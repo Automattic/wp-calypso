@@ -58,13 +58,16 @@ function WPLineItem( {
 			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
 			{ 'plan' === item.type && item.wpcom_meta?.months_per_bill_period && (
 				<LineItemMonthlyBreakdown
-					monthlyPriceBreakdown={ translate( '%(monthlyPrice) per month × %(monthsPerBillPeriod)', {
-						args: {
-							monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
-							monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
-						},
-						comment: 'monthly breakdown of total cost',
-					} ) }
+					monthlyPriceBreakdown={ translate(
+						'%(monthlyPrice)s per month × %(monthsPerBillPeriod)s',
+						{
+							args: {
+								monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
+								monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+							},
+							comment: 'monthly breakdown of total cost',
+						}
+					) }
 				/>
 			) }
 			<span aria-labelledby={ itemSpanId }>
