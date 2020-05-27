@@ -73,7 +73,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 				// enables UI to indicate a "no results" status and indicate
 				// that the results are contextual (if required).
 
-				const hasAPIResults = searchResults && searchResults.length;
+				const hasAPIResults = !! ( searchResults && searchResults.length );
 
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
