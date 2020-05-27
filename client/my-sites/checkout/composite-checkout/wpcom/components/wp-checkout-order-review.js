@@ -48,6 +48,7 @@ export default function WPCheckoutOrderReview( {
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
+					couponStatus={ couponStatus }
 				/>
 			</WPOrderReviewSection>
 

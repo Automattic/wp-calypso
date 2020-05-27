@@ -37,6 +37,7 @@ function WPLineItem( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
+	couponStatus,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -76,10 +77,10 @@ function WPLineItem( {
 			) }
 			{ isGSuite && (
 				<LineItemMeta singleLine={ true }>
-					{ translate( 'billed annually' ) }
-					{ item.amount.value < item.wpcom_meta?.item_original_cost_integer && (
-						<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
-					) }
+					{ item.amount.value < item.wpcom_meta?.item_original_cost_integer &&
+						couponStatus !== 'applied' && (
+							<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
+						) }
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList users={ item.wpcom_meta.extra.google_apps_users } /> }
@@ -154,6 +155,7 @@ WPLineItem.propTypes = {
 	} ),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
+	couponStatus: PropTypes.bool,
 };
 
 function LineItemPrice( { item } ) {
@@ -274,6 +276,7 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
+	couponStatus,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -290,6 +293,7 @@ export function WPOrderReviewLineItems( {
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							onChangePlanLength={ onChangePlanLength }
+							couponStatus={ couponStatus }
 						/>
 					</WPOrderReviewListItem>
 				) ) }
@@ -312,6 +316,7 @@ WPOrderReviewLineItems.propTypes = {
 	),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
+	couponStatus: PropTypes.bool,
 };
 
 const WPOrderReviewList = styled.ul`
