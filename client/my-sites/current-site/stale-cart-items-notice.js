@@ -14,6 +14,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { getSectionName, getSelectedSiteSlug } from 'state/ui/selectors';
+import { reloadCart } from 'lib/cart/actions';
 
 const staleCartItemNoticeId = 'stale-cart-item-notice';
 
@@ -29,10 +30,13 @@ class StaleCartItemsNotice extends React.Component {
 
 		// Show a notice if there are stale items in the cart and it hasn't been shown
 		// in the last 10 minutes (cart abandonment)
+		const cart = CartStore.get();
 		if (
 			this.props.selectedSiteSlug &&
-			hasStaleItem( CartStore.get() ) &&
-			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
+			hasStaleItem( cart ) &&
+			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000 &&
+			cart.hasLoadedFromServer &&
+			! cart.hasPendingServerUpdates
 		) {
 			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
 
@@ -52,6 +56,7 @@ class StaleCartItemsNotice extends React.Component {
 	};
 
 	componentDidMount() {
+		reloadCart();
 		CartStore.on( 'change', this.showStaleCartItemsNotice );
 	}
 
