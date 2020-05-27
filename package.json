@@ -255,7 +255,7 @@
 		"caniuse-lite": "^1.0.30001041",
 		"chai": "^4.2.0",
 		"chai-enzyme": "^1.0.0-beta.1",
-		"chalk": "^3.0.0",
+		"chalk": "^4.0.0",
 		"check-node-version": "^4.0.2",
 		"check-npm-client": "^1.1.1",
 		"chokidar-cli": "^2.1.0",
