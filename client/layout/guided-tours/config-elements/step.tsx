@@ -78,7 +78,7 @@ export default class Step extends Component< Props, State > {
 
 	stepSection: string = null;
 
-	mounted: boolean = false;
+	mounted = false;
 
 	repositionInterval: ReturnType< typeof setInterval > | null = null;
 
@@ -98,7 +98,7 @@ export default class Step extends Component< Props, State > {
 	 * Flag to determine if we're repositioning the Step dialog
 	 * True if the Step dialog is being repositioned.
 	 */
-	isUpdatingPosition: boolean = false;
+	isUpdatingPosition = false;
 
 	UNSAFE_componentWillMount() {
 		this.wait( this.props, this.context ).then( () => {
@@ -124,21 +124,12 @@ export default class Step extends Component< Props, State > {
 		}
 	}
 
-	componentDidUpdate( prevProps: Props ) {
-		const { name: prevName } = prevProps;
-		const { name } = this.props;
-
-		// Reinitialize scrolling behaviour when step changes
-		if ( prevName !== name ) {
-			this.setState( { hasScrolled: false } );
-		}
-	}
-
 	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
 		// Scrolling must happen only once
 		const shouldScrollTo = nextProps.shouldScrollTo && ! this.state.hasScrolled;
 
 		this.wait( nextProps, nextContext ).then( () => {
+			this.resetScrolledState( nextProps );
 			this.setStepSection( nextContext );
 			this.quitIfInvalidRoute( nextProps, nextContext );
 			this.skipIfInvalidContext( nextProps, nextContext );
@@ -195,13 +186,14 @@ export default class Step extends Component< Props, State > {
 		if (
 			! this.props.target ||
 			! this.props.onTargetDisappear ||
-			typeof MutationObserver === 'undefined'
+			typeof window === 'undefined' ||
+			typeof window.MutationObserver === 'undefined'
 		) {
 			return;
 		}
 
 		if ( ! this.observer ) {
-			this.observer = new MutationObserver( () => {
+			this.observer = new window.MutationObserver( () => {
 				const { target, onTargetDisappear } = this.props;
 
 				if ( ! target || ! onTargetDisappear ) {
@@ -346,13 +338,23 @@ export default class Step extends Component< Props, State > {
 
 	onScrollOrResize = () => {
 		if ( ! this.isUpdatingPosition ) {
-			requestAnimationFrame( () => {
+			window.requestAnimationFrame( () => {
 				this.setStepPosition( this.props );
 				this.isUpdatingPosition = false;
 			} );
 			this.isUpdatingPosition = true;
 		}
 	};
+
+	resetScrolledState( nextProps: Props ) {
+		const { name } = this.props;
+		const { name: nextName } = nextProps;
+
+		// Reinitialize scrolling behaviour when step changes
+		if ( nextName !== name ) {
+			this.setState( { hasScrolled: false } );
+		}
+	}
 
 	setStepPosition( props: Props, shouldScrollTo = false ) {
 		const { placement, target } = props;
