@@ -63,40 +63,48 @@ const DisconnectSite = ( {
 							}
 						) }
 					/>
-					<CompactCard href={ siteUrl } target="_blank" rel="noopener noreferrer">
-						<FormattedHeader
-							isSecondary
-							align="left"
-							headerText={ translate( 'Confirm your site is loading' ) }
-							subHeaderText={ translate(
-								'As a first step, we suggest trying to open your site to ensure it’s loading correctly.'
+					<div className="disconnect-site__actions">
+						<CompactCard href={ siteUrl } target="_blank" rel="noopener noreferrer">
+							<FormattedHeader
+								isSecondary
+								align="left"
+								headerText={ translate( 'Confirm your site is loading' ) }
+								subHeaderText={ translate(
+									'As a first step, we suggest trying to open your site to ensure it’s loading correctly.'
+								) }
+							/>
+						</CompactCard>
+						<CompactCard
+							href={ localizeUrl(
+								'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
 							) }
-						/>
-					</CompactCard>
-					<CompactCard
-						href={ localizeUrl(
-							'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
+						>
+							<FormattedHeader
+								isSecondary
+								align="left"
+								headerText={ translate( 'Troubleshoot Jetpack' ) }
+								subHeaderText={ translate(
+									'Select this option if you’re still using Jetpack but seeing this error.'
+								) }
+							/>
+						</CompactCard>
+						<CompactCard href={ confirmHref }>
+							<FormattedHeader
+								isSecondary
+								align="left"
+								headerText={ translate( 'Disconnect Jetpack' ) }
+								subHeaderText={ translate(
+									'Select this option if your site isn’t available anymore or if you’ve stopped using Jetpack and/or WordPress.'
+								) }
+							/>
+						</CompactCard>
+					</div>
+					<p>
+						{ translate(
+							'You might also be seeing this error because you don’t have enough permissions on this site.{{br/}}Please contact your site administrator for more details.',
+							{ components: { br: <br /> } }
 						) }
-					>
-						<FormattedHeader
-							isSecondary
-							align="left"
-							headerText={ translate( 'Troubleshoot Jetpack' ) }
-							subHeaderText={ translate(
-								'Select this option if you’re still using Jetpack but seeing this error.'
-							) }
-						/>
-					</CompactCard>
-					<CompactCard href={ confirmHref }>
-						<FormattedHeader
-							isSecondary
-							align="left"
-							headerText={ translate( 'Disconnect Jetpack' ) }
-							subHeaderText={ translate(
-								'Select this option if your site isn’t available anymore or if you’ve stopped using Jetpack and/or WordPress.'
-							) }
-						/>
-					</CompactCard>
+					</p>
 					<div className="disconnect-site__navigation-links">
 						<NavigationLink href={ backHref } direction="back" />
 					</div>
