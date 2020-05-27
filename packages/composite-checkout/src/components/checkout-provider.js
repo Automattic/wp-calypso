@@ -204,7 +204,7 @@ export function useMessages() {
 function useTransactionStatusHandler( redirectToUrl ) {
 	const localize = useLocalize();
 	const { showErrorMessage, showInfoMessage } = useMessages();
-	const { setFormReady, setFormComplete } = useFormStatus();
+	const { setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const {
 		transactionStatus,
 		transactionRedirectUrl,
@@ -215,6 +215,10 @@ function useTransactionStatusHandler( redirectToUrl ) {
 	const [ paymentMethodId ] = usePaymentMethodId();
 
 	useEffect( () => {
+		if ( transactionStatus === 'pending' ) {
+			debug( 'transaction is beginning' );
+			setFormSubmitting();
+		}
 		if ( transactionStatus === 'error' ) {
 			debug( 'showing error', transactionError );
 			showErrorMessage(
@@ -242,6 +246,7 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		resetTransaction,
 		setFormReady,
 		setFormComplete,
+		setFormSubmitting,
 		showErrorMessage,
 		showInfoMessage,
 		transactionStatus,
