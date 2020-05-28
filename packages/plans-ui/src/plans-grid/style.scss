@@ -1,5 +1,5 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../../mixins.scss';
+@import '../mixins.scss';
 @import '../variables.scss';
 
 .plans-grid {
@@ -154,7 +154,7 @@
 }
 
 .plans-grid__details-heading {
-	.gutenboarding-title {
+	.plans-ui-title {
 		color: var( --studio-black );
 		margin-bottom: 40px;
 		font-size: 32px;

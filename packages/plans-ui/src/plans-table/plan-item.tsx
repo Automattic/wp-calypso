@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from '../../badge';
+import Badge from '../badge';
 
 const TickIcon = <Icon icon={ check } size={ 16 } />;
 

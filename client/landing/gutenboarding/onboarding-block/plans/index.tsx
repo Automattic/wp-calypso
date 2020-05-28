@@ -5,11 +5,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { PlansGrid } from '@automattic/plans-ui';
 
 /**
  * Internal dependencies
  */
-import PlansGrid from '../../components/plans/plans-grid';
 import SignupForm from '../../components/signup-form';
 import Link from '../../components/link';
 import {

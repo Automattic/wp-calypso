@@ -1,8 +1,7 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../../mixins.scss';
-@import '../../../variables.scss';
-@import '../variables.scss';
 @import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import '../mixins.scss';
+@import '../variables.scss';
 
 .plans-table {
 	display: flex;

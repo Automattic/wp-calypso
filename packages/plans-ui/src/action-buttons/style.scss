@@ -1,6 +1,5 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../variables.scss';
-@import '../../_z-index.scss';
+@import '../variables.scss';
 
 .action-buttons {
 	padding: 0 20px;
@@ -14,7 +13,7 @@
 	justify-content: space-between;
 	display: flex;
 	align-items: center;
-	z-index: gutenboarding-z-index( '.gutenboarding__footer' );
+	z-index: 2;
 
 	@include break-small {
 		padding: 0;

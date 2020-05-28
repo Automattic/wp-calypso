@@ -1,0 +1,28 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../mixins';
+
+.plans-ui-title {
+	@include onboarding-heading-text-mobile;
+	color: var( --mainColor );
+
+	@include break-mobile {
+		@include onboarding-heading-text-tablet;
+	}
+
+	@include break-xlarge {
+		@include onboarding-heading-text;
+	}
+}
+
+.plans-ui-subtitle {
+	@include onboarding-large-text;
+	font-family: $default-font;
+	letter-spacing: 0.2px;
+	color: var( --studio-gray-60 );
+	margin-top: 5px;
+	max-width: 550px;
+
+	@include break-small {
+		margin-top: 0;
+	}
+}

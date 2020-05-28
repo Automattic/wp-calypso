@@ -12,8 +12,13 @@ import { __ } from '@wordpress/i18n';
  */
 import { PLANS_STORE } from '../../../stores/plans';
 import PlansGrid, { Props as PlansGridProps } from '../plans-grid';
-import { useTrackModal } from '../../../hooks/use-track-modal';
-import { useSelectedPlan } from '../../../hooks/use-selected-plan';
+//import { useTrackModal } from '../../../hooks/use-track-modal';
+
+function logTODO( ...args: Array< any > ) {
+	console.error( 'TODO', args );
+}
+
+const useTrackModal = logTODO;
 
 /**
  * Style dependencies
@@ -22,13 +27,13 @@ import './style.scss';
 
 interface Props extends Partial< PlansGridProps > {
 	onClose: () => void;
+	currentPlan: Plans.Plan;
 }
 
-const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
+const PlansGridModal: React.FunctionComponent< Props > = ( { onClose, currentPlan } ) => {
 	// This is needed otherwise it throws a warning.
 	Modal.setAppElement( '#wpcom' );
 
-	const plan = useSelectedPlan();
 	const { setPlan } = useDispatch( PLANS_STORE );
 
 	React.useEffect( () => {
@@ -39,26 +44,27 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	const selectedPlanRef = React.useRef< string | undefined >();
 
 	React.useEffect( () => {
-		selectedPlanRef.current = plan?.storeSlug;
-	}, [ plan ] );
+		selectedPlanRef.current = currentPlan?.storeSlug;
+	}, [ currentPlan ] );
 
 	useTrackModal( 'PlansGrid', () => ( {
 		selected_plan: selectedPlanRef.current,
 	} ) );
 
 	const handleConfirm = () => {
-		setPlan( plan?.storeSlug );
+		setPlan( currentPlan?.storeSlug );
 		onClose();
 	};
 
 	return (
 		<Modal
 			isOpen
-			className="gutenboarding-page plans-modal"
+			className="plans-ui-page plans-modal"
 			overlayClassName="plans-modal-overlay"
 			bodyOpenClassName="has-plans-modal"
 		>
 			<PlansGrid
+				currentPlan={ currentPlan }
 				confirmButton={
 					<Button isPrimary onClick={ handleConfirm }>
 						{ __( 'Confirm' ) }

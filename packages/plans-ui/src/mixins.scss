@@ -1,0 +1,164 @@
+@import './variables.scss';
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+@mixin onboarding-font-recoleta {
+	font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
+	font-weight: 400;
+	letter-spacing: -0.4px;
+}
+
+@mixin onboarding-heading-text {
+	@include onboarding-font-recoleta;
+	font-size: 42px;
+	line-height: 57px;
+}
+
+@mixin onboarding-heading-text-tablet {
+	@include onboarding-font-recoleta;
+	font-size: 36px;
+	line-height: 40px;
+}
+
+@mixin onboarding-heading-text-mobile {
+	@include onboarding-font-recoleta;
+	font-size: 32px;
+	line-height: 40px;
+}
+
+@mixin onboarding-large-text {
+	font-size: 16px;
+	line-height: 24px;
+}
+
+@mixin onboarding-medium-text {
+	font-size: 14px;
+	line-height: 17px;
+}
+
+@mixin onboarding-small-text {
+	font-size: 12px;
+	line-height: 14px;
+}
+
+@mixin onboarding-x-small-text {
+	font-size: 11px;
+	line-height: 13px;
+}
+
+@mixin onboarding-block-margin {
+	margin: 0 $gutenboarding-block-margin-mobile;
+
+	@include break-small {
+		margin: 0 $gutenboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		margin: 0 $gutenboarding-block-margin-medium;
+	}
+}
+
+@mixin onboarding-heading-padding {
+	margin: $gutenboarding-heading-padding-mobile;
+
+	@include break-mobile {
+		margin: $gutenboarding-heading-padding-desktop;
+	}
+}
+
+/* (1920x1080) Full HD Display */
+@mixin onboarding-break-gigantic() {
+	@media ( min-width: 1920px ) {
+		@content;
+	}
+}
+
+@mixin onboarding-break-mobile-tall() {
+	@media ( min-height: 750px ) {
+		@content;
+	}
+}
+
+@mixin onboarding-modal-overlay {
+	// Absolute positioning allows the modal
+	// to reuse the <body> element's scrollbar.
+	position: absolute;
+
+	// This positions the domain picker modal
+	// right below the gutenboarding header,
+	// keeping the header clickable.
+	top: $gutenboarding-header-height;
+	left: 0;
+
+	// Using min-height lets the overlay cover
+	// the entire viewport ensuring nothing behind
+	// it can be seen.
+	//
+	// When the domain picker's content is taller
+	// than the viewport height, it will expand taller
+	// than the provided min-height, triggering
+	// the appearance of the <body> element's scrollbar.
+	min-height: calc( 100vh - #{$gutenboarding-header-height} );
+	width: 100%;
+
+	background: var( --studio-white );
+}
+
+@mixin onboarding-block-edge2edge-container {
+	width: calc( 100% + #{$gutenboarding-block-margin-mobile * 2} );
+	margin-left: #{$gutenboarding-block-margin-mobile * -1};
+	margin-right: #{$gutenboarding-block-margin-mobile * -1};
+
+	@include break-small {
+		width: calc( 100% + #{$gutenboarding-block-margin-small * 2} );
+		margin-left: #{$gutenboarding-block-margin-small * -1};
+		margin-right: #{$gutenboarding-block-margin-small * -1};
+	}
+
+	@include break-medium {
+		width: calc( 100% + #{$gutenboarding-block-margin-medium * 2} );
+		margin-left: #{$gutenboarding-block-margin-medium * -1};
+		margin-right: #{$gutenboarding-block-margin-medium * -1};
+	}
+}
+
+@mixin onboarding-block-edge2edge-content {
+	border-left: $gutenboarding-block-margin-mobile solid transparent;
+	border-right: $gutenboarding-block-margin-mobile solid transparent;
+
+	@include break-small {
+		border-left: $gutenboarding-block-margin-small solid transparent;
+		border-right: $gutenboarding-block-margin-small solid transparent;
+	}
+
+	@include break-medium {
+		border-left: $gutenboarding-block-margin-medium solid transparent;
+		border-right: $gutenboarding-block-margin-medium solid transparent;
+	}
+}
+
+@mixin onboarding-block-edge2edge-columns {
+	&:first-child {
+		border-left: $gutenboarding-block-margin-mobile solid transparent;
+	}
+	&:last-child {
+		border-right: $gutenboarding-block-margin-mobile solid transparent;
+	}
+
+	@include break-small {
+		&:first-child {
+			border-left: $gutenboarding-block-margin-small solid transparent;
+		}
+		&:last-child {
+			border-right: $gutenboarding-block-margin-small solid transparent;
+		}
+	}
+
+	@include break-medium {
+		&:first-child {
+			border-left: $gutenboarding-block-margin-medium solid transparent;
+		}
+		&:last-child {
+			border-right: $gutenboarding-block-margin-medium solid transparent;
+		}
+	}
+}
