@@ -11,6 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
+import Connect from './connect';
 import GetToken from './get-token';
 import userModule from 'lib/user';
 import wpcom from 'lib/wp';
@@ -47,14 +48,21 @@ export const connect: PageJS.Callback = ( context, next ) => {
 };
 
 export const tokenRedirect: PageJS.Callback = ( context, next ) => {
-	if ( context.hash && context.hash.access_token ) {
+	// We didn't get an auth token; take a step back
+	// and ask for authorization from the user again
+	if ( context.hash?.error ) {
+		context.primary = <Connect authUrl={ authTokenRedirectPath() } />;
+		return next();
+	}
+
+	if ( context.hash?.access_token ) {
 		debug( 'setting user token' );
 		store.set( 'wpcom_token', context.hash.access_token );
 		// this does not work!
 		wpcom.loadToken( context.hash.access_token );
 	}
 
-	if ( context.hash && context.hash.expires_in ) {
+	if ( context.hash?.expires_in ) {
 		debug( 'setting user token_expires_in' );
 		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 	}
