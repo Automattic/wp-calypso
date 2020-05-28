@@ -98,6 +98,7 @@ import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
 import { AUTO_RENEWAL } from 'lib/url/support';
 import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -260,6 +261,13 @@ export default function CompositeCheckout( {
 			const receiptId = transactionResult?.receipt_id;
 
 			reduxDispatch( clearPurchases() );
+
+			// Removes the destination cookie only if redirecting to the signup destination.
+			// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
+			const destinationFromCookie = retrieveSignupDestination();
+			if ( url.includes( destinationFromCookie ) ) {
+				clearSignupDestinationCookie();
+			}
 
 			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
 				displayRenewalSuccessNotice( responseCart, transactionResult.purchases, translate, moment );
