@@ -5,6 +5,7 @@
  * @package A8C\FSE
  */
 
+// phpcs:disable WordPress.WP.CapitalPDangit.Misspelled
 $markup = '
 <!-- wp:group {"align":"full","style":{"color":{"background":"#2b2729"}}} -->
 <div class="wp-block-group alignfull has-background" style="background-color:#2b2729"><div class="wp-block-group__inner-container"><!-- wp:spacer {"height":60} -->
@@ -26,7 +27,7 @@ $markup = '
 <!-- /wp:paragraph -->
 
 <!-- wp:social-links {"align":"center","className":"margin-top-half"} -->
-<ul class="wp-block-social-links aligncenter margin-top-half"><!-- wp:social-link {"url":"","service":"WordPress"} /-->
+<ul class="wp-block-social-links aligncenter margin-top-half"><!-- wp:social-link {"url":"","service":"wordpress"} /-->
 
 <!-- wp:social-link {"url":"https://facebook.com/","service":"facebook"} /-->
 
@@ -46,6 +47,7 @@ $markup = '
 <!-- /wp:spacer --></div></div>
 <!-- /wp:group -->
 ';
+// phpcs:enable WordPress.WP.CapitalPDangit.Misspelled
 
 return array(
 	'__file'     => 'wp_block',
