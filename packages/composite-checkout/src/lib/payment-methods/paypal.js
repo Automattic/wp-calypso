@@ -48,12 +48,17 @@ export function PaypalLabel() {
 export function PaypalSubmitButton( { disabled } ) {
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-	const { setTransactionRedirecting, setTransactionError } = useTransactionStatus();
+	const {
+		setTransactionPending,
+		setTransactionRedirecting,
+		setTransactionError,
+	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'paypal' );
 	const [ items ] = useLineItems();
 
 	const onClick = () => {
 		onEvent( { type: 'PAYPAL_TRANSACTION_BEGIN' } );
+		setTransactionPending();
 		submitTransaction( {
 			items,
 		} )
