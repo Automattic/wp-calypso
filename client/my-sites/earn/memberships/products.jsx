@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -112,6 +111,6 @@ export default connect( ( state ) => {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
-		products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
+		products: state?.memberships?.productList?.items?.[ siteId ],
 	};
 } )( localize( MembershipsProductsSection ) );
