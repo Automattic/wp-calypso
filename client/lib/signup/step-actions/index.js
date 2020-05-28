@@ -658,22 +658,11 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	return isEmpty( dependenciesNotProvided );
 }
 
-function excludeDomainStep(
-	stepName,
-	tracksEventValue,
-	submitSignupStep,
-	{ isSiteless = false } = {}
-) {
+function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 	let fulfilledDependencies = [];
 	const domainItem = undefined;
 
-	submitSignupStep(
-		{ stepName, domainItem },
-		{
-			domainItem,
-			...( isSiteless && { siteId: null, siteSlug: 'no-site' } ),
-		}
-	);
+	submitSignupStep( { stepName, domainItem }, { domainItem } );
 	recordExcludeStepEvent( stepName, tracksEventValue );
 
 	fulfilledDependencies = [ 'domainItem' ];
@@ -695,7 +684,6 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 export function removeDomainStepForPaidPlans( stepName, defaultDependencies, nextProps ) {
 	const { submitSignupStep, flowName, lastKnownFlow } = nextProps;
 	const flowToCheck = flowName || lastKnownFlow;
-	const isSiteless = isSitelessCheckoutEnabledForFlow( flowToCheck );
 	// This is for domainStepPlanStepSwap A/B test.
 	// Remove the domain step if a paid plan is selected, check https://wp.me/pbxNRc-cj#comment-277
 	// Exit if not in the right flow.
@@ -707,7 +695,7 @@ export function removeDomainStepForPaidPlans( stepName, defaultDependencies, nex
 
 	if ( ! isEmpty( cartItem ) ) {
 		const tracksEventValue = null;
-		excludeDomainStep( stepName, tracksEventValue, submitSignupStep, { isSiteless } );
+		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
 	}
 }
 
