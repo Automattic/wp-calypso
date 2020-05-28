@@ -12,6 +12,7 @@ export default function RadioButton( {
 	onChange,
 	children,
 	label,
+	disabled,
 	id,
 	ariaLabel,
 } ) {
@@ -23,6 +24,7 @@ export default function RadioButton( {
 				type="radio"
 				name={ name }
 				id={ id }
+				disabled={ disabled }
 				value={ value }
 				checked={ checked }
 				onChange={ onChange }
@@ -47,6 +49,7 @@ RadioButton.propTypes = {
 	name: PropTypes.string.isRequired,
 	id: PropTypes.string.isRequired,
 	label: PropTypes.node.isRequired,
+	disabled: PropTypes.bool,
 	checked: PropTypes.bool,
 	value: PropTypes.string.isRequired,
 	onChange: PropTypes.func,
