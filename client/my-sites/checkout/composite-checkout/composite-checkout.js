@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, useStore } from 'react-redux';
 import {
 	WPCheckout,
 	useWpcomStore,
@@ -21,6 +21,7 @@ import {
 	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
+import { flatten } from 'lodash';
 
 /**
  * Internal dependencies
@@ -80,11 +81,28 @@ import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
+	hasRenewalItem,
+	getRenewalItems,
+	hasPlan,
 } from 'lib/cart-values/cart-items';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryStoredCards from 'components/data/query-stored-cards';
+import QuerySitePlans from 'components/data/query-site-plans';
+import QueryPlans from 'components/data/query-plans';
+import QueryProducts from 'components/data/query-products-list';
+import { clearPurchases } from 'state/purchases/actions';
+import { fetchReceiptCompleted } from 'state/receipts/actions';
+import { requestSite } from 'state/sites/actions';
+import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
+import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
+import { AUTO_RENEWAL } from 'lib/url/support';
+import { useLocalizedMoment } from 'components/localized-moment';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
-const { dispatch, registerStore } = defaultRegistry;
+const { select, dispatch, registerStore } = defaultRegistry;
 
 const wpcom = wp.undocumented();
 
@@ -124,16 +142,6 @@ export default function CompositeCheckout( {
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 
-	const getThankYouUrl = useGetThankYouUrl( {
-		siteSlug,
-		redirectTo,
-		purchaseId,
-		feature,
-		cart,
-		isJetpackNotAtomic,
-		product,
-		siteId,
-	} );
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
 
@@ -226,6 +234,21 @@ export default function CompositeCheckout( {
 		recordEvent
 	);
 
+	const getThankYouUrl = useGetThankYouUrl( {
+		siteSlug,
+		redirectTo,
+		purchaseId,
+		feature,
+		cart: responseCart,
+		isJetpackNotAtomic,
+		product,
+		siteId,
+	} );
+
+	const moment = useLocalizedMoment();
+	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, siteId ) );
+	const reduxStore = useStore();
+
 	const onPaymentComplete = useCallback(
 		( { paymentMethodId } ) => {
 			debug( 'payment completed successfully' );
@@ -234,9 +257,81 @@ export default function CompositeCheckout( {
 				type: 'PAYMENT_COMPLETE',
 				payload: { url, couponItem, paymentMethodId, total, responseCart },
 			} );
+
+			const transactionResult = select( 'wpcom' ).getTransactionResult();
+			const receiptId = transactionResult?.receipt_id;
+			debug( 'transactionResult was', transactionResult );
+
+			reduxDispatch( clearPurchases() );
+
+			// Removes the destination cookie only if redirecting to the signup destination.
+			// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
+			const destinationFromCookie = retrieveSignupDestination();
+			if ( url.includes( destinationFromCookie ) ) {
+				debug( 'clearing redirect url cookie' );
+				clearSignupDestinationCookie();
+			}
+
+			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
+				debug( 'purchase had a renewal' );
+				displayRenewalSuccessNotice( responseCart, transactionResult.purchases, translate, moment );
+			}
+
+			if ( receiptId && transactionResult?.purchases && transactionResult?.failed_purchases ) {
+				debug( 'fetching receipt' );
+				reduxDispatch(
+					fetchReceiptCompleted( receiptId, {
+						...transactionResult,
+						purchases: flattenPurchases( transactionResult.purchases ),
+						failedPurchases: flattenPurchases( transactionResult.failed_purchases ),
+					} )
+				);
+			}
+
+			if ( siteId ) {
+				reduxDispatch( requestSite( siteId ) );
+			}
+
+			if (
+				( responseCart.create_new_blog &&
+					Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
+					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
+				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
+			) {
+				notices.info( translate( 'Almost done…' ) );
+
+				const domainName = getDomainNameFromReceiptOrCart( transactionResult, responseCart );
+
+				if ( domainName ) {
+					debug( 'purchase needs to fetch before redirect', domainName );
+					fetchSitesAndUser(
+						domainName,
+						() => {
+							page.redirect( url );
+						},
+						reduxStore
+					);
+
+					return;
+				}
+			}
+
+			debug( 'just redirecting to', url );
 			page.redirect( url );
 		},
-		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
+		[
+			reduxStore,
+			isDomainOnly,
+			moment,
+			reduxDispatch,
+			siteId,
+			recordEvent,
+			translate,
+			getThankYouUrl,
+			total,
+			couponItem,
+			responseCart,
+		]
 	);
 
 	useWpcomStore(
@@ -329,6 +424,12 @@ export default function CompositeCheckout( {
 
 		return (
 			<React.Fragment>
+				<QuerySitePlans siteId={ siteId } />
+				<QueryPlans />
+				<QueryProducts />
+				<QueryContactDetailsCache />
+				<QueryStoredCards />
+
 				<ManagedContactDetailsFormFields
 					needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
 					contactDetails={ contactDetails }
@@ -783,4 +884,70 @@ function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeatur
 
 function getAllTlds( domainNames ) {
 	return Array.from( new Set( domainNames.map( getTld ) ) ).sort();
+}
+
+function displayRenewalSuccessNotice( responseCart, purchases, translate, moment ) {
+	const renewalItem = getRenewalItems( responseCart )[ 0 ];
+	// group all purchases into an array
+	const purchasedProducts = Object.values( purchases ?? {} ).reduce(
+		( result, value ) => result.concat( value ),
+		[]
+	);
+	// and take the first product which matches the product id of the renewalItem
+	const product = purchasedProducts.find( ( item ) => {
+		return String( item.product_id ) === String( renewalItem.product_id );
+	} );
+
+	if ( ! product ) {
+		debug( 'no product found for renewal notice matching', renewalItem, 'in', purchasedProducts );
+		return;
+	}
+
+	if ( product.will_auto_renew ) {
+		debug( 'showing notice for product that will auto-renew' );
+		notices.success(
+			translate(
+				'%(productName)s has been renewed and will now auto renew in the future. ' +
+					'{{a}}Learn more{{/a}}',
+				{
+					args: {
+						productName: renewalItem.product_name,
+					},
+					components: {
+						a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
+					},
+				}
+			),
+			{ persistent: true }
+		);
+		return;
+	}
+
+	debug( 'showing notice for product that will not auto-renew' );
+	notices.success(
+		translate(
+			'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
+				'We sent your receipt to %(email)s.',
+			{
+				args: {
+					productName: renewalItem.product_name,
+					duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+					date: moment( product.expiry ).format( 'LL' ),
+					email: product.user_email,
+				},
+			}
+		),
+		{ persistent: true }
+	);
+}
+
+/**
+ * Purchases are of the format { [siteId]: [ { productId: ... } ] }
+ * so we need to flatten them to get a list of purchases
+ *
+ * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+ * @returns {Array} of product objects [ { productId: ... }, ... ]
+ */
+function flattenPurchases( purchases ) {
+	return flatten( Object.values( purchases ) );
 }
