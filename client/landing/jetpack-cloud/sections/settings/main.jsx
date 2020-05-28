@@ -87,20 +87,20 @@ const SettingsPage = () => {
 		[ DISCONNECTED ]: {
 			[ NO_PRODUCT ]: '',
 			[ HAS_BACKUP ]: translate(
-				'Enter your server credentials to enable one-click restores for [Real-time/Daily] Backups.'
+				'Enter your server credentials to enable one-click restores for backups.'
 			),
 			[ HAS_SCAN ]: translate(
 				'Enter your server credentials to enable Jetpack to auto fix threats.'
 			),
 			[ HAVE_BOTH ]: translate(
-				'Enter your server credentials to enable one-click restores for backups & to auto-fix threats.'
+				'Enter your server credentials to enable one-click restores for backups and to auto-fix threats.'
 			),
 		},
 		[ CONNECTED ]: {
 			[ NO_PRODUCT ]: '',
 			[ HAS_BACKUP ]: translate( 'One-click restores are enabled.' ),
 			[ HAS_SCAN ]: translate( 'Auto-fix threats are enabled.' ),
-			[ HAVE_BOTH ]: translate( 'One-click restores & auto-fix threats are enabled.' ),
+			[ HAVE_BOTH ]: translate( 'One-click restores and auto-fix threats are enabled.' ),
 		},
 	};
 
