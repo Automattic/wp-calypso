@@ -247,14 +247,18 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		// jetpack cloud needs to keep users in the flow
+		const queryArgs = { action: 'lostpassword' };
+		// If we got here coming from Jetpack Cloud login page, we want to go back
+		// to it after we finish the process
 		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
-			return null;
+			const currentUrl = new URL( window.location.href );
+			currentUrl.searchParams.append( 'lostpassword_flow', true );
+			queryArgs.redirect_to = currentUrl.toString();
 		}
 
 		return (
 			<a
-				href={ addQueryArgs( { action: 'lostpassword' }, login( { locale: this.props.locale } ) ) }
+				href={ addQueryArgs( queryArgs, login( { locale: this.props.locale } ) ) }
 				key="lost-password-link"
 				onClick={ this.recordResetPasswordLinkClick }
 				rel="external"
