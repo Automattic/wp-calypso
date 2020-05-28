@@ -40,18 +40,7 @@ const disconnectedProps = ( translate, disconnectedMessage ) => ( {
 	iconPath: disconnectedIcon,
 	className: 'settings__disconnected',
 	title: translate( 'Server status: Not connected' ),
-	content: translate( '%s {{a}}Need help? Find your server credentials{{/a}}', {
-		args: [ disconnectedMessage ],
-		components: {
-			a: (
-				<ExternalLink
-					className="settings__link-external"
-					icon
-					href="https://jetpack.com/support/adding-credentials-to-jetpack/"
-				/>
-			),
-		},
-	} ),
+	content: disconnectedMessage,
 } );
 
 const getCardProps = ( isConnected, message, translate ) => {
@@ -71,23 +60,35 @@ const ConnectionStatus = ( { cardProps } ) => (
 	</Card>
 );
 
-const SettingsPage = () => {
-	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-
+const getStatusMessage = ( isConnected, hasBackup, hasScan, translate ) => {
 	const HAS_BACKUP = 1;
 	const HAS_SCAN = 2;
 	const HAVE_BOTH = 3;
 
+	const helpLink = {
+		components: {
+			a: (
+				<ExternalLink
+					className="settings__link-external"
+					icon
+					href="https://jetpack.com/support/adding-credentials-to-jetpack/"
+				/>
+			),
+		},
+	};
+
 	const disconnectedMessages = {
 		[ HAS_BACKUP ]: translate(
-			'Enter your server credentials to enable one-click restores for backups.'
+			'Enter your server credentials to enable one-click restores for backups. {{a}}Need help? Find your server credentials{{/a}}',
+			helpLink
 		),
 		[ HAS_SCAN ]: translate(
-			'Enter your server credentials to enable Jetpack to auto fix threats.'
+			'Enter your server credentials to enable Jetpack to auto-fix threats. {{a}}Need help? Find your server credentials{{/a}}',
+			helpLink
 		),
 		[ HAVE_BOTH ]: translate(
-			'Enter your server credentials to enable one-click restores for backups and to auto-fix threats.'
+			'Enter your server credentials to enable one-click restores for backups and to auto-fix threats. {{a}}Need help? Find your server credentials{{/a}}',
+			helpLink
 		),
 	};
 
@@ -96,6 +97,23 @@ const SettingsPage = () => {
 		[ HAS_SCAN ]: translate( 'Auto-fix threats are enabled.' ),
 		[ HAVE_BOTH ]: translate( 'One-click restores and auto-fix threats are enabled.' ),
 	};
+
+	const messages = isConnected ? connectedMessages : disconnectedMessages;
+
+	if ( hasBackup && hasScan ) {
+		return messages[ HAVE_BOTH ];
+	} else if ( hasBackup ) {
+		return messages[ HAS_BACKUP ];
+	} else if ( hasScan ) {
+		return messages[ HAS_SCAN ];
+	}
+
+	return '';
+};
+
+const SettingsPage = () => {
+	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
 
 	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
 	const backupState = useSelector( ( state ) => getRewindState( state, siteId ) );
@@ -106,17 +124,7 @@ const SettingsPage = () => {
 	const hasBackup = backupState?.state !== 'unavailable';
 	const hasScan = scanState?.state !== 'unavailable';
 
-	const messages = isConnected ? connectedMessages : disconnectedMessages;
-
-	let message = '';
-
-	if ( hasBackup && hasScan ) {
-		message = messages[ HAVE_BOTH ];
-	} else if ( hasBackup ) {
-		message = messages[ HAS_BACKUP ];
-	} else if ( hasScan ) {
-		message = messages[ HAS_SCAN ];
-	}
+	const message = getStatusMessage( isConnected, hasBackup, hasScan, translate );
 
 	const cardProps = getCardProps( isConnected, message, translate );
 
