@@ -70,6 +70,9 @@ WPCheckoutOrderReview.propTypes = {
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	siteUrl: PropTypes.string,
+	couponStatus: PropTypes.string,
+	couponFieldStateProps: PropTypes.object,
+	variantSelectOverride: PropTypes.object,
 };
 
 const DomainURL = styled.div`
