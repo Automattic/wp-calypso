@@ -1,6 +1,5 @@
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-// FIX ME: This code is duplicated within the domain-picker package
 export function getFreeDomainSuggestions( allSuggestions: DomainSuggestion[] | undefined ) {
 	return allSuggestions?.filter( ( suggestion ) => suggestion.is_free );
 }

@@ -26,7 +26,7 @@ import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
 	getRecommendedDomainSuggestion,
-} from '../../utils/domain-suggestions';
+} from '@automattic/domain-picker';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
 import { trackEventWithFlow } from '../../lib/analytics';
