@@ -28,10 +28,16 @@ export default function WPCheckoutOrderReview( {
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
+	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
 	const isPurchaseFree = total.amount.value === 0;
 
 	const firstDomainItem = items.find( isLineItemADomain );
 	const domainUrl = firstDomainItem ? firstDomainItem.label : siteUrl;
+	const removeCouponAndClearField = ( uuid ) => {
+		removeCoupon( uuid );
+		couponFieldStateProps.setCouponFieldValue( '' );
+		setCouponFieldVisible( false );
+	};
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
@@ -41,7 +47,7 @@ export default function WPCheckoutOrderReview( {
 				<WPOrderReviewLineItems
 					items={ items }
 					removeItem={ removeItem }
-					removeCoupon={ removeCoupon }
+					removeCoupon={ removeCouponAndClearField }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
@@ -50,6 +56,8 @@ export default function WPCheckoutOrderReview( {
 			</WPOrderReviewSection>
 
 			<CouponFieldArea
+				isCouponFieldVisible={ isCouponFieldVisible }
+				setCouponFieldVisible={ setCouponFieldVisible }
 				isPurchaseFree={ isPurchaseFree }
 				couponStatus={ couponStatus }
 				couponFieldStateProps={ couponFieldStateProps }
@@ -71,8 +79,13 @@ WPCheckoutOrderReview.propTypes = {
 	variantSelectOverride: PropTypes.object,
 };
 
-function CouponFieldArea( { isPurchaseFree, couponStatus, couponFieldStateProps } ) {
-	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
+function CouponFieldArea( {
+	isCouponFieldVisible,
+	setCouponFieldVisible,
+	isPurchaseFree,
+	couponStatus,
+	couponFieldStateProps,
+} ) {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
