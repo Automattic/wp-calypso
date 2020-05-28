@@ -22,7 +22,6 @@ import { reducer as httpData } from 'state/data-layer/http-data';
  */
 import account from './account/reducer';
 import accountRecovery from './account-recovery/reducer';
-import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
 import application from './application/reducer';
 import applicationPasswords from './application-passwords/reducer';
@@ -106,7 +105,6 @@ import wordads from './wordads/reducer';
 const reducers = {
 	account,
 	accountRecovery,
-	activePromotions,
 	activityLog,
 	application,
 	applicationPasswords,
