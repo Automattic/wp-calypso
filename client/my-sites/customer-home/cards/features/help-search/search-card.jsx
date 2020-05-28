@@ -92,14 +92,14 @@ const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
 	( ! searchQuery || ! ( searchQuery.trim() ).length )
 		? requestInlineHelpSearchResults()
 		: withAnalytics(
-			composeAnalytics(
+			composeAnalytics (
 				recordTracksEvent( 'calypso_inlinehelp_search', {
 					search_query: searchQuery,
 					location: 'customer-home',
 				} )
 			),
-			requestInlineHelpSearchResults( searchQuery )
-		);
+		requestInlineHelpSearchResults( searchQuery )
+	);
 
 const mapDispatchToProps = {
 	recordTracksEvent,
