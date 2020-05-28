@@ -19952,10 +19952,10 @@ prettier-linter-helpers@^1.0.0:
   resolved "https://registry.yarnpkg.com/wp-prettier/-/wp-prettier-2.0.5-beta-1.tgz#093b25b7519c3fd21a43f32c4e5dafa6db2d95a1"
   integrity sha512-/REeWcNW3tSE5Mh4WT9Q48WoDPmWmakF7QaEhbJTrIiCIjqPNu3onzTikSwnUUBMpwJSWqZNURe7m5UEnBCQBg==
 
-"prettier@npm:wp-prettier@2.0.5-beta-2":
-  version "2.0.5-beta-2"
-  resolved "https://registry.yarnpkg.com/wp-prettier/-/wp-prettier-2.0.5-beta-2.tgz#f48648fef2e6b1b47bbee4691b169e2b83fb5dd6"
-  integrity sha512-k682zy31UOM6oILJCrEEkHXUeZpfd23dV1RM5tQPgglmDz9sFRnPrpiRYsbe7M/AVKB02j34M5NsAxjyEdLWRw==
+"prettier@npm:wp-prettier@2.0.5-beta-4":
+  version "2.0.5-beta-4"
+  resolved "https://registry.yarnpkg.com/wp-prettier/-/wp-prettier-2.0.5-beta-4.tgz#7e8ecc7bd43a39f2b25eb02e1af6ec5ea4faeff3"
+  integrity sha512-qt5wk1kq38bJ95LdSu7UYtZBQK2JhOjJyAOQ9Gm+P7k7nyV+M3VO20XSX3fAJg3URpCxuSCTHyKWde+MfXp2fA==
 
 pretty-error@^2.0.2, pretty-error@^2.1.1:
   version "2.1.1"
