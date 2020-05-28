@@ -1,4 +1,5 @@
 export { default as buildSeoTitle } from './build-seo-title';
+export { default as canCurrentUserManageSiteOptions } from './can-current-user-manage-site-options';
 export { default as canCurrentUserUpgradeSite } from './can-current-user-upgrade-site';
 export { default as canCurrentUserUseAds } from './can-current-user-use-ads';
 export { default as canCurrentUserUseCustomerHome } from './can-current-user-use-customer-home';
@@ -52,4 +53,5 @@ export { default as isRequestingSites } from './is-requesting-sites';
 export { default as isSingleUserSite } from './is-single-user-site';
 export { default as isSiteConflicting } from './is-site-conflicting';
 export { default as isSitePreviewable } from './is-site-previewable';
+export { default as isSSOEnabled } from './is-sso-enabled';
 export { default as verifyJetpackModulesActive } from './verify-jetpack-modules-active';
