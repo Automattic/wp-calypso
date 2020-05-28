@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
@@ -22,7 +22,7 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 
-class MasterbarLoggedOut extends PureComponent {
+class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
 		redirectUri: PropTypes.string,
 		sectionName: PropTypes.string,
