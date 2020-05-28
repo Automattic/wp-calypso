@@ -195,27 +195,26 @@ export const LineItemUI = styled( WPLineItem )`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	font-weight: ${ ( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal ) };
-	color: ${ ( { theme, total } ) =>
-		total ? theme.colors.textColorDark : theme.colors.textColor };
-	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
-	padding: ${ ( { total, isSummaryVisible, tax, subtotal } ) =>
-		isSummaryVisible || total || subtotal || tax ? '10px 0' : '20px 0' };
-	border-bottom: ${ ( { theme, total, isSummaryVisible } ) =>
-		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight };
+	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal) };
+	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : theme.colors.textColor) };
+	font-size: ${( { total } ) => ( total ? '1.2em' : '1.1em') };
+	padding: ${( { total, isSummaryVisible, tax, subtotal } ) =>
+		isSummaryVisible || total || subtotal || tax ? '10px 0' : '20px 0'};
+	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
+		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
 `;
 
 const LineItemMeta = styled.div`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	display: ${ ( { singleLine } ) => ( singleLine ? 'flex' : 'block' ) };
+	color: ${( props ) => props.theme.colors.textColorLight};
+	display: ${( { singleLine } ) => ( singleLine ? 'flex' : 'block') };
 	font-size: 14px;
 	justify-content: space-between;
 	width: 100%;
 `;
 
 const DiscountCalloutUI = styled.div`
-	color: ${ ( props ) => props.theme.colors.success };
+	color: ${( props ) => props.theme.colors.success};
 	text-align: right;
 `;
 
@@ -235,7 +234,7 @@ const DeleteButton = styled( Button )`
 	top: 7px;
 
 	:hover rect {
-		fill: ${ ( props ) => props.theme.colors.error };
+		fill: ${( props ) => props.theme.colors.error};
 	}
 `;
 
@@ -296,11 +295,8 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-<<<<<<< HEAD
 	couponStatus,
-=======
 	isWhiteGloveOffer,
->>>>>>> Change product name in the new checkout page
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -345,7 +341,7 @@ WPOrderReviewLineItems.propTypes = {
 };
 
 const WPOrderReviewList = styled.ul`
-	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	box-sizing: border-box;
 	margin: 20px 30px 20px 0;
 `;
