@@ -4,6 +4,8 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
+
+import { getNewRailcarId } from '@automattic/calypso-analytics';
 import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
 
@@ -32,25 +34,6 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
 type DomainSuggestionQuery = import('@automattic/data-stores').DomainSuggestions.DomainSuggestionQuery;
 type DomainCategory = import('@automattic/data-stores').DomainSuggestions.DomainCategory;
 
-interface AnalyticsRenderEvent {
-	trainTracksType: 'render';
-	fetchAlgo: string;
-	query: string;
-	railcarId: string;
-	result: string;
-	uiPosition: number;
-}
-
-interface AnalyticsInteractEvent {
-	trainTracksType: 'interact';
-	action: 'domain_selected';
-	railcarId: string;
-}
-
-export type RecordsAnalyticsHandler = (
-	event: AnalyticsInteractEvent | AnalyticsRenderEvent
-) => void;
-
 export interface Props {
 	showDomainConnectButton?: boolean;
 
@@ -69,8 +52,6 @@ export interface Props {
 	onClose: () => void;
 
 	onMoreOptions?: () => void;
-
-	recordAnalytics?: RecordsAnalyticsHandler;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
@@ -95,9 +76,6 @@ export interface Props {
 	/** The search results */
 	domainSuggestions?: DomainSuggestion[];
 
-	/** The train track ID for analytics. See https://wp.me/PCYsg-bor */
-	railcarId: string | undefined;
-
 	/** The flow where the Domain Picker is used. Eg Gutenboarding */
 	analyticsFlowId: string;
 
@@ -114,13 +92,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onMoreOptions,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	currentDomain,
-	recordAnalytics,
 	domainSearch,
 	onSetDomainSearch,
 	domainCategory,
 	onSetDomainCategory,
 	domainSuggestions,
-	railcarId,
 	analyticsFlowId,
 	domainCategories,
 	domainSuggestionVendor,
@@ -184,6 +160,15 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 	}, [ allSuggestions, currentDomain ] );
 
+	/** The train track ID for analytics. See https://wp.me/PCYsg-bor */
+	const [ railcarId, setRailcarId ] = useState< string | undefined >();
+	useEffect( () => {
+		// Only generate a railcarId when the domain suggestions change and are not empty.
+		if ( domainSuggestions ) {
+			setRailcarId( getNewRailcarId( 'suggestion' ) );
+		}
+	}, [ domainSuggestions, setRailcarId ] );
+
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
@@ -244,7 +229,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										categorySlug={ domainCategory }
 										onSelect={ setCurrentSelection }
 										railcarId={ railcarId ? `${ railcarId }0` : undefined }
-										recordAnalytics={ recordAnalytics || undefined }
 										uiPosition={ 0 }
 										domainSuggestionVendor={ domainSuggestionVendor }
 									/>
@@ -264,7 +248,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											onSelect={ setCurrentSelection }
 											key={ suggestion.domain_name }
 											railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
-											recordAnalytics={ recordAnalytics || undefined }
 											uiPosition={ i + 1 }
 											domainSearch={ domainSearch }
 											analyticsFlowId={ analyticsFlowId }

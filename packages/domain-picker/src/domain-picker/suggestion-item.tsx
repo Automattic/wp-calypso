@@ -6,10 +6,9 @@ import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
+import { recordTrainTracksRender, recordTrainTracksInteract } from '@automattic/calypso-analytics';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
-
-import type { RecordsAnalyticsHandler } from '.';
 
 interface Props {
 	suggestion: DomainSuggestion;
@@ -18,7 +17,6 @@ interface Props {
 	categorySlug?: string;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	recordAnalytics?: RecordsAnalyticsHandler;
 	uiPosition: number;
 	domainSearch: string;
 	analyticsFlowId: string;
@@ -32,7 +30,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	categorySlug = null,
 	onSelect,
 	railcarId,
-	recordAnalytics,
 	uiPosition,
 	domainSearch,
 	analyticsFlowId,
@@ -56,14 +53,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.
 		// This effectively records the render event only once for each set of search results.
-		if (
-			domain !== previousDomain &&
-			previousRailcarId !== railcarId &&
-			railcarId &&
-			recordAnalytics
-		) {
-			recordAnalytics( {
-				trainTracksType: 'render',
+		if ( domain !== previousDomain && previousRailcarId !== railcarId && railcarId ) {
+			recordTrainTracksRender( {
+				uiAlgo: `/${ analyticsFlowId }/domain-popover`,
 				fetchAlgo,
 				query: domainSearch,
 				railcarId,
@@ -82,14 +74,13 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		previousRailcarId,
 		railcarId,
 		uiPosition,
-		recordAnalytics,
+		analyticsFlowId,
 	] );
 
 	const onDomainSelect = () => {
 		// Use previousRailcarId to make sure the select action matches the last rendered railcarId.
-		if ( previousRailcarId && recordAnalytics ) {
-			recordAnalytics( {
-				trainTracksType: 'interact',
+		if ( previousRailcarId ) {
+			recordTrainTracksInteract( {
 				action: 'domain_selected',
 				railcarId: previousRailcarId,
 			} );

@@ -14,3 +14,8 @@ export {
 	analyticsEvents,
 	pushEventToTracksQueue,
 } from './tracks';
+export {
+	recordTrainTracksRender,
+	recordTrainTracksInteract,
+	getNewRailcarId,
+} from './train-tracks';
