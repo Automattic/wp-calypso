@@ -134,8 +134,9 @@ function ExistingCardPayButton( {
 	useEffect( () => {
 		let isSubscribed = true;
 
-		if ( transactionStatus === 'auth' ) {
+		if ( transactionStatus === 'authorizing' ) {
 			debug( 'showing auth' );
+			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 			showStripeModalAuth( {
 				stripeConfiguration,
 				response: transactionLastResponse,
