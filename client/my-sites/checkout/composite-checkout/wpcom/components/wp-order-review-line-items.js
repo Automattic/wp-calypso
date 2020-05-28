@@ -75,16 +75,16 @@ function WPLineItem( {
 					) }
 					{ 'plan' === item.type && item.wpcom_meta?.months_per_bill_period && (
 						<LineItemMonthlyBreakdown
-							monthlyPriceBreakdown={ translate(
-								'%(monthlyPrice)s per month × %(monthsPerBillPeriod)s',
-								{
+							monthlyPriceBreakdown={
+								': ' +
+								translate( '%(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
 									args: {
 										monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
 										monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
 									},
 									comment: 'monthly breakdown of total cost',
-								}
-							) }
+								} )
+							}
 						/>
 					) }
 				</LineItemMeta>
@@ -187,7 +187,7 @@ function LineItemPrice( { item } ) {
 }
 
 function LineItemMonthlyBreakdown( { monthlyPriceBreakdown } ) {
-	return <span>{ monthlyPriceBreakdown }</span>;
+	return <React.Fragment>{ monthlyPriceBreakdown }</React.Fragment>;
 }
 
 export const LineItemUI = styled( WPLineItem )`
