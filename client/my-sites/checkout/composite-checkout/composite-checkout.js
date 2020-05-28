@@ -211,7 +211,6 @@ export default function CompositeCheckout( {
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
-		variantRequestStatus,
 		variantSelectOverride,
 		responseCart,
 		addItem,
@@ -451,7 +450,6 @@ export default function CompositeCheckout( {
 					countriesList={ countriesList }
 					StateSelect={ StateSelect }
 					renderDomainContactFields={ renderDomainContactFields }
-					variantRequestStatus={ variantRequestStatus }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					domainContactValidationCallback={ domainContactValidationCallback }
