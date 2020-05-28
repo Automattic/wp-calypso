@@ -48,7 +48,7 @@ export function PaypalLabel() {
 
 export function PaypalSubmitButton( { disabled } ) {
 	useTransactionStatusHandler();
-	const { formStatus } = useFormStatus();
+	const { formStatus, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
 	const { setTransactionRedirecting, setTransactionError } = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'paypal' );
@@ -56,6 +56,7 @@ export function PaypalSubmitButton( { disabled } ) {
 
 	const onClick = () => {
 		onEvent( { type: 'PAYPAL_TRANSACTION_BEGIN' } );
+		setFormSubmitting();
 		submitTransaction( {
 			items,
 		} )
