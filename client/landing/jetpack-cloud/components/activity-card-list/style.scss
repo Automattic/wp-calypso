@@ -57,8 +57,8 @@
 		background: var( --color-neutral-5 );
 		content: '';
 		height: 100%;
-		// center on the icons ( they render @ 1.1rem, so half that )
-		left: 0.55rem;
+		// center on the icons ( they render @ 16px, so half that )
+		left: 8px;
 		position: absolute;
 		top: 0;
 		width: 1px;
@@ -70,7 +70,7 @@
 .activity-card-list {
 	.activity-card {
 		margin-bottom: 32px;
-		.activity-card__time-icon.gridicon {
+		.activity-card__time {
 			background: var( --color-surface-backdrop );
 		}
 	}
@@ -92,7 +92,7 @@
 		content: '';
 		height: 16px;
 		// center on the icons ( they render @ 1.1rem, so half that )
-		left: 0.55rem;
+		left: 8px;
 		position: absolute;
 		top: 100%;
 		width: 1px;
@@ -105,7 +105,7 @@
 		// make sure we stay in our element
 		height: 9px;
 		width: 9px;
-		left: calc( 0.55rem - 4px );
+		left: calc( 8px - 4px );
 		position: absolute;
 		// immediately after the existing horizontal line draw on over the top of it
 		top: calc( 100% + 16px );
@@ -135,10 +135,10 @@
 			background: var( --color-neutral-5 );
 			content: '';
 			height: 1px;
-			left: calc( 0.55rem - 32px );
+			left: calc( 8px - 32px );
 			position: absolute;
 			top: 50%;
-			width: calc( 32px - 0.55rem );
+			width: calc( 32px - 8px );
 			z-index: -2;
 		}
 	}
@@ -153,7 +153,7 @@
 				content: '';
 				// make sure we stay in our element
 				height: calc( 50% - 1px );
-				left: calc( 0.55rem - 32px );
+				left: calc( 8px - 32px );
 				position: absolute;
 				// immediately after the existing horizontal line draw on over the top of it
 				top: calc( 50% + 1px );
@@ -175,7 +175,7 @@
 				// make sure we stay in our element
 				height: 9px;
 				width: 9px;
-				left: calc( 0.55rem - 32px - 4px );
+				left: calc( 8px - 32px - 4px );
 				position: absolute;
 				// immediately after the existing horizontal line draw on over the top of it
 				top: calc( 100% - 9px );
