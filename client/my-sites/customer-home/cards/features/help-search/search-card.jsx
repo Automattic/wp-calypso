@@ -63,14 +63,6 @@ class HelpSearchCard extends Component {
 		}
 	};
 
-	onSearch = ( searchQuery ) => {
-		if ( ! searchQuery || ! searchQuery.trim().length ) {
-			// Make an empty search.
-			this.props.requestInlineHelpSearchResults( searchQuery );
-		}
-		this.props.requestInlineSearchResultsAndTrack( searchQuery );
-	};
-
 	componentDidMount() {
 		this.props.requestInlineSearchResultsAndTrack();
 	}
@@ -80,7 +72,7 @@ class HelpSearchCard extends Component {
 			<SearchCard
 				searching={ this.props.isSearching }
 				initialValue={ this.props.query }
-				onSearch={ this.onSearch }
+				onSearch={ this.props.requestInlineSearchResultsAndTrack }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search support articles' ) }
 				delaySearch={ true }
@@ -97,15 +89,17 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 
 const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_inlinehelp_search', {
-				search_query: searchQuery,
-				location: 'customer-home',
-			} )
-		),
-		requestInlineHelpSearchResults( searchQuery )
-	);
+	( ! searchQuery || ! ( searchQuery.trim() ).length )
+		? requestInlineHelpSearchResults()
+		: withAnalytics(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_inlinehelp_search', {
+					search_query: searchQuery,
+					location: 'customer-home',
+				} )
+			),
+			requestInlineHelpSearchResults( searchQuery )
+		);
 
 const mapDispatchToProps = {
 	recordTracksEvent,
