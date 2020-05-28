@@ -2,7 +2,7 @@
  * External dependencies
  */
 import url from 'url';
-import { extend, get, isArray, invert } from 'lodash';
+import { extend, get, isArray, invert, isEmpty } from 'lodash';
 import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
 import { translate } from 'i18n-calypso';
 import config from 'config';
@@ -59,6 +59,7 @@ export function preprocessCartForServer( {
 	extra,
 	products,
 	tax,
+	new_site_data,
 } ) {
 	const needsUrlCoupon = ! (
 		coupon ||
@@ -68,31 +69,24 @@ export function preprocessCartForServer( {
 	);
 	const urlCoupon = needsUrlCoupon ? url.parse( document.URL, true ).query.coupon : '';
 
-	return Object.assign(
-		{
-			coupon,
-			is_coupon_applied,
-			is_coupon_removed,
-			currency,
-			tax,
-			temporary,
-			extra,
-			products: products.map(
-				( { product_id, meta, free_trial, volume, extra: productExtra } ) => ( {
-					product_id,
-					meta,
-					free_trial,
-					volume,
-					extra: productExtra,
-				} )
-			),
-		},
-		needsUrlCoupon &&
-			urlCoupon && {
-				coupon: urlCoupon,
-				is_coupon_applied: false,
-			}
-	);
+	return {
+		coupon,
+		is_coupon_applied,
+		is_coupon_removed,
+		currency,
+		tax,
+		temporary,
+		extra,
+		products: products.map( ( { product_id, meta, free_trial, volume, extra: productExtra } ) => ( {
+			product_id,
+			meta,
+			free_trial,
+			volume,
+			extra: productExtra,
+		} ) ),
+		...( needsUrlCoupon && urlCoupon && { coupon: urlCoupon, is_coupon_applied: false } ),
+		...( ! isEmpty( new_site_data ) && { new_site_data } ),
+	};
 }
 
 /**

@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { isEmpty } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import type { CartItemExtra } from 'lib/cart-values/types';
@@ -42,6 +47,7 @@ export interface RequestCart {
 	temporary: false;
 	extra: string;
 	is_update?: boolean;
+	new_site_data?: NewSiteParams;
 }
 
 /**
@@ -190,6 +196,7 @@ export function convertResponseCartToRequestCart( {
 	coupon,
 	is_coupon_applied,
 	tax,
+	new_site_data,
 }: ResponseCart ): RequestCart {
 	return {
 		products: products.map( convertResponseCartProductToRequestCartProduct ),
@@ -200,6 +207,7 @@ export function convertResponseCartToRequestCart( {
 		temporary: false,
 		tax,
 		extra: '', // TODO: fix this
+		...( ! isEmpty( new_site_data ) && { new_site_data } ),
 	} as RequestCart;
 }
 

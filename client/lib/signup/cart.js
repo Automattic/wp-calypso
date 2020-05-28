@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach } from 'lodash';
+import { forEach, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,6 +25,15 @@ function addProductsToCart( cart, newCartItems ) {
 	return cart;
 }
 
+function addNewCartData( cart, newCartData ) {
+	return {
+		...cart,
+		...( ! isEmpty( newCartData.createNewSiteData ) && {
+			new_site_data: newCartData.createNewSiteData,
+		} ),
+	};
+}
+
 export default {
 	createCart: function ( cartKey, newCartItems, callback ) {
 		let newCart = {
@@ -40,7 +49,7 @@ export default {
 			callback( postError );
 		} );
 	},
-	addToCart: function ( cartKey, newCartItems, callback ) {
+	addToCart: function ( cartKey, newCartItems, newCartData, callback ) {
 		wpcom.undocumented().getCart( cartKey, function ( error, data ) {
 			if ( error ) {
 				return callback( error );
@@ -51,6 +60,7 @@ export default {
 			}
 
 			let newCart = addProductsToCart( data, newCartItems );
+			newCart = addNewCartData( newCart, newCartData );
 			newCart = preprocessCartForServer( newCart );
 
 			wpcom.undocumented().setCart( cartKey, newCart, callback );

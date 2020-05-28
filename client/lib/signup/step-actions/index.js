@@ -260,7 +260,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				siteSlug,
 				isFreeThemePreselected,
 				themeSlugWithRepo,
-				{ isSiteless }
+				{ isSiteless, createNewSiteData: newSiteParams }
 			)
 		);
 	}
@@ -368,15 +368,17 @@ function processItemCart(
 	siteSlug,
 	isFreeThemePreselected,
 	themeSlugWithRepo,
-	{ isSiteless = false } = {}
+	{ isSiteless = false, createNewSiteData } = {}
 ) {
 	const addToCartAndProceed = () => {
 		const newCartItemsToAdd = newCartItems.map( ( item ) =>
 			addPrivacyProtectionIfSupported( item, reduxStore )
 		);
 
-		if ( newCartItemsToAdd.length ) {
-			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
+		if ( newCartItemsToAdd.length || createNewSiteData ) {
+			SignupCart.addToCart( siteSlug, newCartItemsToAdd, { createNewSiteData }, function (
+				cartError
+			) {
 				callback( cartError, providedDependencies );
 			} );
 		} else {
