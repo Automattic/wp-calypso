@@ -33,7 +33,7 @@ const DisconnectSite = ( {
 	site: { name: siteName, URL: siteUrl },
 	translate,
 } ) => {
-	const confirmHref = `/settings/disconnect-site/confirm/${ siteSlug }?type=down`;
+	let confirmHref = `/settings/disconnect-site/confirm/${ siteSlug }`;
 
 	let backHref = '/settings/manage-connection/' + siteSlug;
 	if ( reason ) {
@@ -41,6 +41,8 @@ const DisconnectSite = ( {
 	}
 
 	if ( type === 'down' ) {
+		confirmHref += '?type=down';
+
 		return (
 			<div>
 				<Main className="disconnect-site__down-flow">
