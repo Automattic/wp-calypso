@@ -53,6 +53,31 @@ function WPLineItem( {
 	const shouldShowVariantSelector = item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
 
+	let sublabelAndIntervalPriceBreakdown = '';
+	if ( 'plan' === item.type && item.wpcom_meta?.months_per_bill_period ) {
+		sublabelAndIntervalPriceBreakdown = translate(
+			'%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s',
+			{
+				args: {
+					sublabel: item.sublabel,
+					monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
+					monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+				},
+				comment: 'product type and monthly breakdown of total cost, separated by a colon',
+			}
+		);
+	} else if ( 'plan' !== item.type || ! shouldShowVariantSelector ) {
+		sublabelAndIntervalPriceBreakdown = translate( '%(sublabel)s: %(interval)s', {
+			args: {
+				sublabel: item.sublabel,
+				interval: translate( 'billed annually' ),
+			},
+			comment: 'product type and billing interval, separated by a colon',
+		} );
+	} else {
+		sublabelAndIntervalPriceBreakdown = item.sublabel;
+	}
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
@@ -61,31 +86,9 @@ function WPLineItem( {
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta singleLine={ true }>
-					{ 'plan' !== item.type || ! shouldShowVariantSelector
-						? translate( '%(sublabel)s: %(interval)s', {
-								args: {
-									sublabel: item.sublabel,
-									interval: translate( 'billed annually' ),
-								},
-								comment: 'product type and billing interval, separated by a colon',
-						  } )
-						: item.sublabel }
+					{ sublabelAndIntervalPriceBreakdown }
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
-					) }
-					{ 'plan' === item.type && item.wpcom_meta?.months_per_bill_period && (
-						<LineItemMonthlyBreakdown
-							monthlyPriceBreakdown={
-								': ' +
-								translate( '%(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
-									args: {
-										monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
-										monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
-									},
-									comment: 'monthly breakdown of total cost',
-								} )
-							}
-						/>
 					) }
 				</LineItemMeta>
 			) }
@@ -184,10 +187,6 @@ function LineItemPrice( { item } ) {
 			) }
 		</LineItemPriceUI>
 	);
-}
-
-function LineItemMonthlyBreakdown( { monthlyPriceBreakdown } ) {
-	return <React.Fragment>{ monthlyPriceBreakdown }</React.Fragment>;
 }
 
 export const LineItemUI = styled( WPLineItem )`
