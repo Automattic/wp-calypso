@@ -20,8 +20,8 @@ export const getDefaultPlan = ( _: State, hasPaidDomain: boolean, hasPaidDesign:
 
 export const getSupportedPlans = ( state: State ) => state.supportedPlanSlugs.map( getPlan );
 
-export const getPlanByPath = ( state: State, path: string ) =>
-	getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path );
+export const getPlanByPath = ( state: State, path?: string ) =>
+	path && getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path );
 
 export const getPlansDetails = () => planDetails;
 
