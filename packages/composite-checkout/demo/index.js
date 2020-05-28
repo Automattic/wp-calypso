@@ -398,7 +398,6 @@ function MyCheckoutBody() {
 					activeStepContent={ orderSummaryStep.activeStepContent }
 					completeStepContent={ orderSummaryStep.completeStepContent }
 					titleContent={ orderSummaryStep.titleContent }
-					errorMessage={ 'There was an error with this step.' }
 					isStepActive={ false }
 					isStepComplete={ true }
 					stepNumber={ 1 }
