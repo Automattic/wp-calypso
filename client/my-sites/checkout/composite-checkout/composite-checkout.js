@@ -259,6 +259,7 @@ export default function CompositeCheckout( {
 
 			const transactionResult = select( 'wpcom' ).getTransactionResult();
 			const receiptId = transactionResult?.receipt_id;
+			debug( 'transactionResult was', transactionResult );
 
 			reduxDispatch( clearPurchases() );
 
@@ -266,14 +267,17 @@ export default function CompositeCheckout( {
 			// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
 			const destinationFromCookie = retrieveSignupDestination();
 			if ( url.includes( destinationFromCookie ) ) {
+				debug( 'clearing redirect url cookie' );
 				clearSignupDestinationCookie();
 			}
 
 			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
+				debug( 'purchase had a renewal' );
 				displayRenewalSuccessNotice( responseCart, transactionResult.purchases, translate, moment );
 			}
 
 			if ( receiptId && transactionResult?.purchases && transactionResult?.failed_purchases ) {
+				debug( 'fetching receipt' );
 				reduxDispatch(
 					fetchReceiptCompleted( receiptId, {
 						...transactionResult,
@@ -298,6 +302,7 @@ export default function CompositeCheckout( {
 				const domainName = getDomainNameFromReceiptOrCart( transactionResult, responseCart );
 
 				if ( domainName ) {
+					debug( 'purchase needs to fetch before redirect', domainName );
 					fetchSitesAndUser(
 						domainName,
 						() => {
@@ -310,6 +315,7 @@ export default function CompositeCheckout( {
 				}
 			}
 
+			debug( 'just redirecting to', url );
 			page.redirect( url );
 		},
 		[
