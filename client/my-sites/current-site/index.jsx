@@ -21,6 +21,8 @@ import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
 import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
+import { domainManagementAllRoot } from 'my-sites/domains/paths';
 
 /**
  * Style dependencies
@@ -83,7 +85,7 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
-				{ isEnabled( 'current-site/domain-warning' ) && (
+				{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 					<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 				) }
 				{ isEnabled( 'current-site/stale-cart-notice' ) && (
@@ -102,11 +104,15 @@ class CurrentSite extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		selectedSite: getSelectedSite( state ),
-		anySiteSelected: getSelectedOrAllSites( state ),
-		siteCount: getCurrentUserSiteCount( state ),
-		hasAllSitesList: hasAllSitesList( state ),
-	} ),
+	( state ) => {
+		const currentRoute = getCurrentRoute( state );
+		const isAllSitesDomainsView = currentRoute.startsWith( domainManagementAllRoot() + '/' );
+		return {
+			selectedSite: isAllSitesDomainsView ? null : getSelectedSite( state ),
+			anySiteSelected: getSelectedOrAllSites( state ),
+			siteCount: getCurrentUserSiteCount( state ),
+			hasAllSitesList: hasAllSitesList( state ),
+		};
+	},
 	{ recordGoogleEvent, setLayoutFocus }
 )( localize( CurrentSite ) );
