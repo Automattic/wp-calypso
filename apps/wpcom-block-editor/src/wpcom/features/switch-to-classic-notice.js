@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
 import ReactDOM from 'react-dom';
 import { useState, createInterpolateElement } from '@wordpress/element';
-import { withNotices, Notice } from '@wordpress/components';
+import { Button, Notice, withNotices } from '@wordpress/components';
 import url from 'url';
 /* eslint-enable import/no-extraneous-dependencies */
 
@@ -23,7 +23,7 @@ const ClassicEditorNotice = () => {
 	};
 
 	const noticeText = createInterpolateElement(
-		'If you prefer the Classic editor, you can always switch. Open the options menu by clicking on the button at the top right of your screen, and select <strong>Switch to Classic editor</strong>.',
+		'If you prefer the Classic editor, you can always switch. Click the 3 vertical dots at the top right of your screen, and select <strong>Switch to Classic editor</strong>.',
 		{ strong: <strong /> }
 	);
 
@@ -31,17 +31,17 @@ const ClassicEditorNotice = () => {
 		<div>
 			<h2>{ __( "You're using the most modern WordPress Editor." ) } </h2>
 			<p>{ noticeText }</p>
+			<p>
+				<Button isLink onClick={ dismissNotice }>
+					{ __( 'Dismiss this message' ) }
+				</Button>
+			</p>
 		</div>
 	);
 
 	return (
 		! noticedDismissed && (
-			<Notice
-				className="features__switch-to-classic-notice"
-				status="info"
-				isDismissible={ true }
-				onRemove={ dismissNotice }
-			>
+			<Notice className="features__switch-to-classic-notice" status="info" isDismissible={ false }>
 				{ noticeContent }
 			</Notice>
 		)
@@ -71,6 +71,6 @@ if ( parsedEditorUrl.query[ 'show-classic-notice' ] && ! noticeDismissed ) {
 			postStatus.parentNode.insertBefore( switchToClassicNotice, postStatus );
 
 			ReactDOM.render( <NoticeComponent />, switchToClassicNotice );
-		} );
+		}, 200 );
 	} );
 }
