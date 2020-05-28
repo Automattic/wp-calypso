@@ -164,7 +164,6 @@ function shouldShowCompositeCheckout(
 		'blogger-2-years',
 		'business',
 		'business-2-years',
-		'business-monthly',
 		'concierge-session',
 		'ecommerce',
 		'ecommerce-2-years',
@@ -172,7 +171,6 @@ function shouldShowCompositeCheckout(
 		'personal-2-years',
 		'premium',
 		'premium-2-years',
-		'premium-monthly',
 	];
 	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
