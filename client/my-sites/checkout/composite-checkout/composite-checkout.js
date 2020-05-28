@@ -293,8 +293,8 @@ export default function CompositeCheckout( {
 
 			if (
 				( responseCart.create_new_blog &&
-					transactionResult?.purchases?.length > 0 &&
-					transactionResult?.failed_purchases?.length === 0 ) ||
+					Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
+					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
 				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
 			) {
 				notices.info( translate( 'Almost done…' ) );
