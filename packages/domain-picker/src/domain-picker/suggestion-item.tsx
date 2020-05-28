@@ -6,34 +6,26 @@ import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
-import { recordTrainTracksRender, recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 interface Props {
 	suggestion: DomainSuggestion;
-	isRecommended?: boolean;
-	isSelected?: boolean;
-	categorySlug?: string;
-	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	uiPosition: number;
-	domainSearch: string;
-	analyticsFlowId: string;
-	domainSuggestionVendor: string;
+	isSelected?: boolean;
+	isRecommended?: boolean;
+	onRender: () => void;
+	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	suggestion,
-	isRecommended = false,
-	isSelected = false,
-	categorySlug = null,
-	onSelect,
 	railcarId,
-	uiPosition,
-	domainSearch,
-	analyticsFlowId,
-	domainSuggestionVendor,
+	isSelected = false,
+	isRecommended = false,
+	onSelect,
+	onRender,
 } ) => {
 	const { __ } = useI18n();
 
@@ -42,9 +34,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const domainName = domain.slice( 0, dotPos );
 	const domainTld = domain.slice( dotPos );
 
-	const fetchAlgo = `/domains/search/${ domainSuggestionVendor }/${ analyticsFlowId }${
-		categorySlug ? '/' + categorySlug : ''
-	}`;
 	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
 
@@ -54,28 +43,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		// Only record TrainTracks render event when the domain name and railcarId change.
 		// This effectively records the render event only once for each set of search results.
 		if ( domain !== previousDomain && previousRailcarId !== railcarId && railcarId ) {
-			recordTrainTracksRender( {
-				uiAlgo: `/${ analyticsFlowId }/domain-popover`,
-				fetchAlgo,
-				query: domainSearch,
-				railcarId,
-				result: isRecommended ? domain + '#recommended' : domain,
-				uiPosition,
-			} );
+			onRender();
 			setPreviousDomain( domain );
 			setPreviousRailcarId( railcarId );
 		}
-	}, [
-		domain,
-		domainSearch,
-		fetchAlgo,
-		isRecommended,
-		previousDomain,
-		previousRailcarId,
-		railcarId,
-		uiPosition,
-		analyticsFlowId,
-	] );
+	}, [ domain, previousDomain, previousRailcarId, railcarId, onRender ] );
 
 	const onDomainSelect = () => {
 		// Use previousRailcarId to make sure the select action matches the last rendered railcarId.

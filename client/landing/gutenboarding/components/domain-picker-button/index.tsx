@@ -108,6 +108,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 				onMoreOptions={ handleMoreOptions }
 				onClose={ handlePopoverClose }
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
+				analyticsUiAlgo="domain_popover"
 			/>
 			<DomainPickerModal
 				analyticsFlowId={ FLOW_ID }
@@ -124,6 +125,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 				onDomainSelect={ onDomainSelect }
 				onClose={ handleModalClose }
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
+				analyticsUiAlgo="domain_modal"
 			/>
 		</>
 	);

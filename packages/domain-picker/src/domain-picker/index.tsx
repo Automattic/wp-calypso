@@ -2,11 +2,10 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
+import { times } from 'lodash';
 import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
-
-import { getNewRailcarId } from '@automattic/calypso-analytics';
-import { times } from 'lodash';
+import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -22,8 +21,6 @@ import {
 } from '../utils/domain-suggestions';
 import DomainCategories from '../domain-categories';
 import CloseButton from '../close-button';
-
-const PAID_DOMAINS_TO_SHOW = 5;
 
 /**
  * Style dependencies
@@ -76,13 +73,18 @@ export interface Props {
 	/** The search results */
 	domainSuggestions?: DomainSuggestion[];
 
-	/** The flow where the Domain Picker is used. Eg Gutenboarding */
+	/** The flow where the Domain Picker is used. Eg: Gutenboarding */
 	analyticsFlowId: string;
+
+	/** An identifier for the wrapping UI used for setting ui_algo. Eg: domain_popover */
+	analyticsUiAlgo: string;
 
 	domainCategories: DomainCategory[];
 
 	domainSuggestionVendor: string;
 }
+
+const PAID_DOMAINS_TO_SHOW = 5;
 
 const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainConnectButton,
@@ -98,6 +100,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onSetDomainCategory,
 	domainSuggestions,
 	analyticsFlowId,
+	analyticsUiAlgo,
 	domainCategories,
 	domainSuggestionVendor,
 } ) => {
@@ -161,13 +164,36 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	}, [ allSuggestions, currentDomain ] );
 
 	/** The train track ID for analytics. See https://wp.me/PCYsg-bor */
-	const [ railcarId, setRailcarId ] = useState< string | undefined >();
+	const [ baseRailcarId, setBaseRailcarId ] = useState< string | undefined >();
 	useEffect( () => {
 		// Only generate a railcarId when the domain suggestions change and are not empty.
 		if ( domainSuggestions ) {
-			setRailcarId( getNewRailcarId( 'suggestion' ) );
+			setBaseRailcarId( getNewRailcarId( 'suggestion' ) );
 		}
-	}, [ domainSuggestions, setRailcarId ] );
+	}, [ domainSuggestions, setBaseRailcarId ] );
+
+	const isRecommended = ( suggestion: DomainSuggestion ) => suggestion === recommendedSuggestion;
+
+	const handleItemRender = (
+		suggestion: DomainSuggestion,
+		railcarId: string,
+		uiPosition: number
+	) => {
+		const fetchAlgo = `/domains/search/${ domainSuggestionVendor }/${ analyticsFlowId }${
+			domainCategory ? '/' + domainCategory : ''
+		}`;
+
+		const domain = suggestion.domain_name;
+
+		recordTrainTracksRender( {
+			uiAlgo: `/${ analyticsFlowId }/${ analyticsUiAlgo }`,
+			fetchAlgo,
+			query: domainSearch,
+			railcarId,
+			result: isRecommended( suggestion ) ? domain + '#recommended' : domain,
+			uiPosition,
+		} );
+	};
 
 	return (
 		<Panel className="domain-picker">
@@ -220,17 +246,15 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							{ freeSuggestions &&
 								( freeSuggestions.length ? (
 									<SuggestionItem
-										analyticsFlowId={ analyticsFlowId }
 										suggestion={ freeSuggestions[ 0 ] }
+										railcarId={ baseRailcarId ? `${ baseRailcarId }0` : undefined }
 										isSelected={
 											currentSelection?.domain_name === freeSuggestions[ 0 ].domain_name
 										}
-										domainSearch={ domainSearch }
-										categorySlug={ domainCategory }
+										onRender={ () =>
+											handleItemRender( freeSuggestions[ 0 ], `${ baseRailcarId }0`, 0 )
+										}
 										onSelect={ setCurrentSelection }
-										railcarId={ railcarId ? `${ railcarId }0` : undefined }
-										uiPosition={ 0 }
-										domainSuggestionVendor={ domainSuggestionVendor }
 									/>
 								) : (
 									<SuggestionNone />
@@ -241,17 +265,15 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								( paidSuggestions?.length ? (
 									paidSuggestions.map( ( suggestion, i ) => (
 										<SuggestionItem
-											suggestion={ suggestion }
-											isRecommended={ suggestion === recommendedSuggestion }
-											isSelected={ currentSelection?.domain_name === suggestion.domain_name }
-											categorySlug={ domainCategory }
-											onSelect={ setCurrentSelection }
 											key={ suggestion.domain_name }
-											railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
-											uiPosition={ i + 1 }
-											domainSearch={ domainSearch }
-											analyticsFlowId={ analyticsFlowId }
-											domainSuggestionVendor={ domainSuggestionVendor }
+											suggestion={ suggestion }
+											railcarId={ baseRailcarId ? `${ baseRailcarId }${ i + 1 }` : undefined }
+											isSelected={ currentSelection?.domain_name === suggestion.domain_name }
+											isRecommended={ isRecommended( suggestion ) }
+											onRender={ () =>
+												handleItemRender( suggestion, `${ baseRailcarId }${ i + 1 }`, i + 1 )
+											}
+											onSelect={ setCurrentSelection }
 										/>
 									) )
 								) : (
