@@ -1015,7 +1015,7 @@ function mapStateToProps( state ) {
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
-		canViewAtomicHosting: ! isAllSitesDomainsView && canSiteViewAtomicHosting( state ),
+		canViewAtomicHosting: ! isAllDomainsView && canSiteViewAtomicHosting( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		siteTasklist: getSiteTaskList( state, siteId ),
 		hideChecklistProgress:
