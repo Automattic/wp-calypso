@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
@@ -28,7 +28,6 @@ export default function WPCheckoutOrderReview( {
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
-	const { formStatus } = useFormStatus();
 	const isPurchaseFree = total.amount.value === 0;
 
 	const firstDomainItem = items.find( isLineItemADomain );
@@ -50,14 +49,11 @@ export default function WPCheckoutOrderReview( {
 				/>
 			</WPOrderReviewSection>
 
-			{ ! isPurchaseFree && (
-				<CouponField
-					id="order-review-coupon"
-					disabled={ formStatus !== 'ready' }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
-				/>
-			) }
+			<CouponFieldArea
+				isPurchaseFree={ isPurchaseFree }
+				couponStatus={ couponStatus }
+				couponFieldStateProps={ couponFieldStateProps }
+			/>
 		</div>
 	);
 }
@@ -75,6 +71,33 @@ WPCheckoutOrderReview.propTypes = {
 	variantSelectOverride: PropTypes.object,
 };
 
+function CouponFieldArea( { isPurchaseFree, couponStatus, couponFieldStateProps } ) {
+	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
+	const { formStatus } = useFormStatus();
+	const translate = useTranslate();
+
+	if ( isPurchaseFree ) {
+		return null;
+	}
+
+	if ( isCouponFieldVisible ) {
+		return (
+			<CouponField
+				id="order-review-coupon"
+				disabled={ formStatus !== 'ready' }
+				couponStatus={ couponStatus }
+				couponFieldStateProps={ couponFieldStateProps }
+			/>
+		);
+	}
+
+	return (
+		<CouponEnableButton onClick={ () => setCouponFieldVisible( true ) }>
+			{ translate( 'Add a coupon code' ) }
+		</CouponEnableButton>
+	);
+}
+
 const DomainURL = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
@@ -85,4 +108,9 @@ const DomainURL = styled.div`
 const CouponField = styled( Coupon )`
 	margin: 20px 30px 0 0;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+`;
+
+const CouponEnableButton = styled.button`
+	cursor: pointer;
+	text-decoration: underline;
 `;
