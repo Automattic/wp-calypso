@@ -15,6 +15,7 @@ import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import RegisterDomainStep from 'components/domains/register-domain-step';
+import CartData from 'components/data/cart';
 import { getStepUrl } from 'signup/utils';
 import StepWrapper from 'signup/step-wrapper';
 import {
@@ -452,7 +453,7 @@ class DomainsStep extends React.Component {
 
 		const shouldHideFreeDomainExplainer = 'onboarding-plan-first' === this.props.flowName;
 
-		return (
+		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
 				path={ this.props.path }
@@ -486,6 +487,12 @@ class DomainsStep extends React.Component {
 				shouldHideFreeDomainExplainer={ shouldHideFreeDomainExplainer }
 			/>
 		);
+
+		if ( 'launch-site' === this.props.flowName ) {
+			return <CartData>{ registerDomainStep }</CartData>;
+		}
+
+		return registerDomainStep;
 	};
 
 	mappingForm = () => {

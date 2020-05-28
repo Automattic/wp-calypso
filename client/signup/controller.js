@@ -26,6 +26,7 @@ import {
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
 import { setCurrentFlowName } from 'state/signup/flow/actions';
+import { setSelectedSiteId } from 'state/ui/actions';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
@@ -199,6 +200,10 @@ export default {
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
+
+		if ( flowName !== 'launch-site' ) {
+			context.store.dispatch( setSelectedSiteId( null ) );
+		}
 
 		context.primary = React.createElement( SignupComponent, {
 			store: context.store,
