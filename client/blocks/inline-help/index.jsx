@@ -24,6 +24,7 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import AsyncLoad from 'components/async-load';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
 import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import isInlineHelpVisible from 'state/selectors/is-inline-help-visible';
 
 /**
  * Style dependencies
@@ -127,6 +128,14 @@ class InlineHelp extends Component {
 	closeDialog = () => this.setState( { showDialog: false } );
 
 	render() {
+		// If the Customer Home Support Search is present then
+		// we do not want to render the InlineLine Help FAB at all
+		// otherwise there will be x2 Support Search UIs present on
+		// the page.
+		// see https://github.com/Automattic/wp-calypso/issues/38860
+		if ( ! this.props.isInlineHelpVisible ) {
+			return null;
+		}
 		const { translate, isPopoverVisible } = this.props;
 		const { showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
@@ -179,6 +188,7 @@ const mapStateToProps = ( state ) => {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isInlineHelpVisible: isInlineHelpVisible( state ),
 	};
 };
 

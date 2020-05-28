@@ -28,9 +28,9 @@ import {
 /**
  * Module variables
  */
-const debug = debugFactory( 'calypso:inline-help' );
+const debug = debugFactory( 'calypso:customer-home-help' );
 
-class InlineHelpSearchCard extends Component {
+class HelpSearchCard extends Component {
 	static propTypes = {
 		openResult: PropTypes.func.isRequired,
 		translate: PropTypes.func,
@@ -71,7 +71,9 @@ class InlineHelpSearchCard extends Component {
 
 	onSearch = ( searchQuery ) => {
 		debug( 'search query received: ', searchQuery );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_search', { search_query: searchQuery } );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
+			search_query: searchQuery,
+		} );
 
 		// Make a search
 		this.props.requestInlineHelpSearchResults( searchQuery );
@@ -88,7 +90,7 @@ class InlineHelpSearchCard extends Component {
 				initialValue={ this.props.query }
 				onSearch={ this.onSearch }
 				onKeyDown={ this.onKeyDown }
-				placeholder={ this.props.translate( 'Search for help…' ) }
+				placeholder={ this.props.translate( 'Search support articles' ) }
 				delaySearch={ true }
 			/>
 		);
@@ -108,4 +110,4 @@ const mapDispatchToProps = {
 	selectPreviousResult,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpSearchCard ) );

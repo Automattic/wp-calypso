@@ -6,6 +6,7 @@ import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
@@ -13,29 +14,76 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
+	INLINE_HELP_SHOW,
+	INLINE_HELP_HIDE,
 } from 'state/action-types';
 
+import { getContextualHelpResults } from 'state/inline-help/selectors';
+
 /**
- * Triggers a network request to fetch search results for a query string.
+ * Fetches search results for a given query string.
+ * Triggers an API request. If this returns no results
+ * then hard coded results are returned based on the context of the
+ * current route (see `client/blocks/inline-help/contextual-help.js`).
  *
- * @param  {?string}  searchQuery Search query
+ * @param {string} searchQuery Search query
  * @returns {Function}        Action thunk
  */
-export function requestInlineHelpSearchResults( searchQuery ) {
-	return ( dispatch ) => {
+export function requestInlineHelpSearchResults( searchQuery = '' ) {
+	return ( dispatch, getState ) => {
+		const contextualResults = getContextualHelpResults( getState() );
+
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST,
 			searchQuery,
 		} );
 
+		// Ensure empty strings are removed as valid searches.
+		searchQuery = searchQuery.trim();
+
+		// If the search is empty return contextual results and exist
+		// early to avoid unwanted network requests.
+		if ( ! searchQuery ) {
+			dispatch( {
+				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+				hasAPIResults: false,
+			} );
+			dispatch( {
+				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+				searchQuery,
+				searchResults: contextualResults,
+			} );
+
+			// Exit early
+			return;
+		}
+
 		wpcom
 			.undocumented()
 			.getHelpLinks( searchQuery )
 			.then( ( { wordpress_support_links: searchResults } ) => {
+				// Searches will either:
+				//
+				// 1. return results from the search API endpoint
+				// ...or...
+				// 2. return hard-coded results based on the current route.
+				//
+				// A INLINE_HELP_SEARCH_REQUEST_API_RESULTS action indicates
+				// whether the search results came from the API or not. This
+				// enables UI to indicate a "no results" status and indicate
+				// that the results are contextual (if required).
+
+				const hasAPIResults = !! ( searchResults && searchResults.length );
+
+				dispatch( {
+					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+					hasAPIResults,
+				} );
+
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
-					searchResults,
+					searchResults: hasAPIResults ? searchResults : contextualResults,
 				} );
 			} )
 			.catch( ( error ) => {
@@ -43,6 +91,12 @@ export function requestInlineHelpSearchResults( searchQuery ) {
 					type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
 					searchQuery,
 					error,
+				} );
+
+				// Force reset flag for no API results
+				dispatch( {
+					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+					hasAPIResults: false,
 				} );
 			} );
 	};
@@ -136,6 +190,22 @@ export function hideInlineHelpPopover() {
 	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_POPOVER_HIDE,
+		} );
+	};
+}
+
+export function showInlineHelp() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: INLINE_HELP_SHOW,
+		} );
+	};
+}
+
+export function hideInlineHelp() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: INLINE_HELP_HIDE,
 		} );
 	};
 }

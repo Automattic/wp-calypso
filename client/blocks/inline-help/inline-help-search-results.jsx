@@ -12,7 +12,6 @@ import classNames from 'classnames';
  * Internal Dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import pathToSection from 'lib/path-to-section';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
@@ -21,9 +20,9 @@ import {
 	getSelectedResultIndex,
 	isRequestingInlineHelpSearchResultsForQuery,
 } from 'state/inline-help/selectors';
+import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
 import { setSearchResults, selectResult } from 'state/inline-help/actions';
-import { getContextResults } from './contextual-help';
 import { localizeUrl } from 'lib/i18n-utils';
 
 class InlineHelpSearchResults extends Component {
@@ -39,49 +38,28 @@ class InlineHelpSearchResults extends Component {
 	};
 
 	renderSearchResults() {
-		if ( isEmpty( this.props.searchQuery ) ) {
-			// not searching
-			return this.renderContextHelp();
-		}
-
 		if ( this.props.isSearching ) {
 			// search, but no results so far
 			return <PlaceholderLines />;
 		}
 
-		if ( isEmpty( this.props.searchResults ) ) {
-			// search done, but nothing found
-			return (
-				<div>
-					<p className="inline-help__empty-results">No results.</p>
-					{ this.renderContextHelp() }
-				</div>
-			);
-		}
-
 		// found something
 		const links = this.props.searchResults;
-		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-		);
-	}
 
-	renderContextHelp() {
-		const section = pathToSection( this.props.lastRoute.path );
-		const links = getContextResults( section );
 		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
+			<>
+				{ ! isEmpty( this.props.searchQuery ) && ! this.props.hasAPIResults && (
+					<p className="inline-help__empty-results">{ this.props.translate( 'No results.' ) }</p>
+				) }
+				<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
+			</>
 		);
-	}
-
-	componentDidMount() {
-		const section = pathToSection( this.props.lastRoute.path );
-		this.props.setSearchResults( '', getContextResults( section ) );
 	}
 
 	onHelpLinkClick = ( selectionIndex ) => ( event ) => {
+		const selectedResult = this.props?.searchResults?.[ selectionIndex ] ?? null;
 		this.props.selectResult( selectionIndex );
-		this.props.openResult( event );
+		this.props.openResult( event, selectedResult );
 	};
 
 	renderHelpLink = ( link, index ) => {
@@ -120,6 +98,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	selectedResultIndex: getSelectedResultIndex( state ),
+	hasAPIResults: hasInlineHelpAPIResults( state ),
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,
