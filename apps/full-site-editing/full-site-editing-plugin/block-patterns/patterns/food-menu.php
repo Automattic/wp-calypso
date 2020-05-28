@@ -56,9 +56,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Food Menu', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Food Menu', 'full-site-editing' ),
+	'categories' => array( 'text', 'menu' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Awesome Burger', 'full-site-editing' ),
 		esc_html__( 'The burger that made us famous. 100% pure lean beef grilled to perfection.', 'full-site-editing' ),
@@ -71,4 +72,3 @@ return array(
 		esc_html__( 'Fresh greens with cheddar cheese diced tomatoes, and honey mustard dressing.', 'full-site-editing' )
 	),
 );
-

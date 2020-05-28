@@ -26,7 +26,7 @@ $markup = '
 <!-- /wp:paragraph -->
 
 <!-- wp:social-links {"align":"center","className":"margin-top-half"} -->
-<ul class="wp-block-social-links aligncenter margin-top-half"><!-- wp:social-link {"url":"","service":"wordpress"} /-->
+<ul class="wp-block-social-links aligncenter margin-top-half"><!-- wp:social-link {"url":"","service":"WordPress"} /-->
 
 <!-- wp:social-link {"url":"https://facebook.com/","service":"facebook"} /-->
 
@@ -48,9 +48,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Contact', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Contact', 'full-site-editing' ),
+	'categories' => array( 'contact' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Jennifer Dolan Photography', 'full-site-editing' ),
 		esc_html__( 'San Francisco, California', 'full-site-editing' ),

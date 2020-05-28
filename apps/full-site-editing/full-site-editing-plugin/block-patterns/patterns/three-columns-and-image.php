@@ -66,9 +66,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Three columns', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Three columns', 'full-site-editing' ),
+	'categories' => array( 'images' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Salainis', 'full-site-editing' ),
 		esc_html__( 'I had learned already many of the Outland methods of communicating by forest notes rather than trust to the betraying, high-pitched human voice.', 'full-site-editing' ),

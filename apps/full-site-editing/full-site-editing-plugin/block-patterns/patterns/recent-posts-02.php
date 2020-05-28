@@ -20,9 +20,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Recent Posts', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Recent Posts', 'full-site-editing' ),
+	'categories' => array( 'blog' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Latest Posts', 'full-site-editing' )
 	),

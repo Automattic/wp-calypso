@@ -40,9 +40,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Headline', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Headline', 'full-site-editing' ),
+	'categories' => array( 'blog' ),
+	'content'    => sprintf(
 		$markup,
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/cayla1-w6ftfbpcs9i-unsplash.jpg' ),
 		esc_html__( 'Weekly Recipe', 'full-site-editing' ),

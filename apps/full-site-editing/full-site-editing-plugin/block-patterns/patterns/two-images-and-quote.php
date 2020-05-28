@@ -40,9 +40,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Two images and quote', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Two images and quote', 'full-site-editing' ),
+	'categories' => array( 'images' ),
+	'content'    => sprintf(
 		$markup,
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/bianca-berg-l4-sra8ii80-unsplash-2.jpg' ),
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/bianca-berg-pyvtnjcwc-g-unsplash.jpg' ),

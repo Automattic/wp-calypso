@@ -37,7 +37,8 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Call to Action', 'full-site-editing' ),
-	'content' => $markup,
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Call to Action', 'full-site-editing' ),
+	'categories' => array( 'call-to-action' ),
+	'content'    => $markup,
 );

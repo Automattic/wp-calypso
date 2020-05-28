@@ -12,10 +12,8 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Masonry gallery', 'full-site-editing' ),
-	'content' => $markup,
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Masonry gallery', 'full-site-editing' ),
+	'categories' => array( 'gallery' ),
+	'content'    => $markup,
 );
-
-
-

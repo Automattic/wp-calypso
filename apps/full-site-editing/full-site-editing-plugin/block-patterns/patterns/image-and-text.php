@@ -32,9 +32,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Image and Text', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Image and Text', 'full-site-editing' ),
+	'categories' => array( 'images' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'His latest work is A Life Well-Lived, a selection of photos and stories of people across Nebraska highlighting their stories from the past 70 years. These are photographs and stories of those who might be forgotten in the rush of history.', 'full-site-editing' )
 	),
