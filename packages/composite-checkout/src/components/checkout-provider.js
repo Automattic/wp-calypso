@@ -209,6 +209,7 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		transactionRedirectUrl,
 		transactionError,
 		resetTransaction,
+		setTransactionError,
 	} = useTransactionStatus();
 	const onEvent = useEvents();
 	const [ paymentMethodId ] = usePaymentMethodId();
@@ -235,7 +236,16 @@ function useTransactionStatusHandler( redirectToUrl ) {
 			setFormComplete();
 		}
 		if ( transactionStatus === 'redirecting' ) {
-			debug( 'redirecting' );
+			if ( ! transactionRedirectUrl ) {
+				debug( 'tried to redirect but there was no redirect url' );
+				setTransactionError(
+					localize(
+						'An error occurred while redirecting to the payment partner. Please try again or contact support.'
+					)
+				);
+				return;
+			}
+			debug( 'redirecting to', transactionRedirectUrl );
 			showInfoMessage( localize( 'Redirecting to payment partner…' ) );
 			redirectToUrl( transactionRedirectUrl );
 		}
@@ -243,6 +253,7 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		paymentMethodId,
 		onEvent,
 		resetTransaction,
+		setTransactionError,
 		setFormReady,
 		setFormComplete,
 		setFormSubmitting,

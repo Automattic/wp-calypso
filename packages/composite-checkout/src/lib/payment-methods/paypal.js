@@ -37,7 +37,7 @@ export function PaypalLabel() {
 
 	return (
 		<React.Fragment>
-			<span>{ localize( 'Paypal' ) }</span>
+			<span>{ localize( 'PayPal' ) }</span>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PaypalLogo />
 			</PaymentMethodLogos>
@@ -55,6 +55,7 @@ export function PaypalSubmitButton( { disabled } ) {
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'paypal' );
 	const [ items ] = useLineItems();
+	const localize = useLocalize();
 
 	const onClick = () => {
 		onEvent( { type: 'PAYPAL_TRANSACTION_BEGIN' } );
@@ -63,6 +64,14 @@ export function PaypalSubmitButton( { disabled } ) {
 			items,
 		} )
 			.then( ( response ) => {
+				if ( ! response ) {
+					setTransactionError(
+						localize(
+							'An error occurred while redirecting to PayPal. Please try again or contact support.'
+						)
+					);
+					return;
+				}
 				setTransactionRedirecting( response );
 			} )
 			.catch( ( error ) => {
@@ -100,7 +109,7 @@ const ButtonPayPalIcon = styled( PaypalLogo )`
 
 function PaypalSummary() {
 	const localize = useLocalize();
-	return localize( 'Paypal' );
+	return localize( 'PayPal' );
 }
 
 function PaypalLogo( { className } ) {
