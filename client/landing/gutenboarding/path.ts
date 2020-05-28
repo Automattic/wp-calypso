@@ -3,13 +3,12 @@
  */
 import { findKey } from 'lodash';
 import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
-import { useSelect } from '@wordpress/data';
 import { Plans } from '@automattic/data-stores';
 import { ValuesType } from 'utility-types';
 
 import { getLanguageRouteParam } from '../../lib/i18n-utils';
 
-const PLANS_STORE = Plans.STORE_KEY;
+const plansPaths = Plans.plansPaths;
 
 // The first step (IntentGathering), which is found at the root route (/), is set as
 // `undefined`, as that's what matching our `path` pattern against a route with no explicit
@@ -27,18 +26,14 @@ export const Step = {
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
 export const steps = Object.values( Step ).filter( Boolean );
 
-// TODO: FIX ME
-export function usePathWithFragments() {
-	const supportedPlansPaths = useSelect( ( select ) => select( PLANS_STORE ).getPlansPaths() );
-	const routeFragments = {
-		// We add the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
-		step: `:step(${ steps.join( '|' ) })?`,
-		plan: `:plan(${ supportedPlansPaths.join( '|' ) })?`,
-		lang: getLanguageRouteParam(),
-	};
+const routeFragments = {
+	// We add the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
+	step: `:step(${ steps.join( '|' ) })?`,
+	plan: `:plan(${ plansPaths.join( '|' ) })?`,
+	lang: getLanguageRouteParam(),
+};
 
-	return [ '', ...Object.values( routeFragments ) ].join( '/' );
-}
+export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
 
 export type StepType = ValuesType< typeof Step >;
 export type StepNameType = keyof typeof Step;
@@ -46,7 +41,6 @@ export type StepNameType = keyof typeof Step;
 export function usePath() {
 	const langParam = useLangRouteParam();
 	const planParam = usePlanRouteParam();
-	const path = usePathWithFragments();
 
 	return ( step?: StepType, lang?: string, plan?: string ) => {
 		// When lang is null, remove lang.
@@ -72,19 +66,16 @@ export function usePath() {
 }
 
 export function useLangRouteParam() {
-	const path = usePathWithFragments();
 	const match = useRouteMatch< { lang?: string } >( path );
 	return match?.params.lang;
 }
 
 export function useStepRouteParam() {
-	const path = usePathWithFragments();
 	const match = useRouteMatch< { step?: string } >( path );
 	return match?.params.step as StepType;
 }
 
 export function usePlanRouteParam() {
-	const path = usePathWithFragments();
 	const match = useRouteMatch< { plan?: string } >( path );
 	return match?.params.plan;
 }

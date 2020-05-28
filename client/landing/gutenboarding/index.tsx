@@ -26,17 +26,11 @@ import GUTENBOARDING_BASE_NAME from './basename.json';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
-import { Step, usePathWithFragments } from './path';
+import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
 import { USER_STORE } from './stores/user';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 import { addHotJarScript } from 'lib/analytics/hotjar';
-
-// FIX ME: Find a better way to get the path with fragments
-function PathProvider( { children }: { children: Function } ) {
-	const path = usePathWithFragments();
-	return children( path );
-}
 
 /**
  * Style dependencies
@@ -127,14 +121,9 @@ window.AppBoot = async () => {
 		<I18nProvider locale={ locale }>
 			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
 				<Switch>
-					<PathProvider>
-						{ ( path: string ) => (
-							<Route exact path={ path }>
-								<Gutenboard />
-							</Route>
-						) }
-					</PathProvider>
-
+					<Route exact path={ path }>
+						<Gutenboard />
+					</Route>
 					<Route>
 						<Redirect to="/" />
 					</Route>

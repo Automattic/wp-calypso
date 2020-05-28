@@ -68,6 +68,8 @@ export const PLANS_LIST: Record< string, Plan > = {
 
 export type PlanFeature = { name: string; type: string; data: Array< boolean | string > };
 
+export const plansPaths = Object.keys( PLANS_LIST ).map( ( key ) => PLANS_LIST[ key ].pathSlug );
+
 export type PlanDetail = {
 	id: string;
 	name: string | null;
