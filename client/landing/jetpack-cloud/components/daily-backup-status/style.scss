@@ -67,8 +67,8 @@
 }
 
 .form-button.daily-backup-status__restore-button img {
-	width: 24px;
-	height: 24px;
+	width: 22px;
+	height: 22px;
 	filter: grayscale( 100% ) contrast( 70% );
 }
 
@@ -174,11 +174,11 @@
 .daily-backup-status__credentials-warning {
 	margin-top: 1.5rem;
 	text-align: left;
-	padding: 0 1rem;
 }
 
 .daily-backup-status__credentials-warning-top {
 	display: flex;
+	align-items: center;
 	margin-bottom: 1rem;
 	font-weight: 600;
 	font-size: 0.9rem;
@@ -190,11 +190,21 @@
 	height: 24px;
 	margin-right: 0.5rem;
 }
+.daily-backup-status__credentials-warning-text {
+	padding: 0 8px;
+}
 
-
-.daily-backup-status__activate-restores-button,
-.daily-backup-status__activate-restores-button:visited {
+.daily-backup-status__credentials-warning-text a {
 	display: block;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		display: inline;
+	}
+}
+
+.button.daily-backup-status__activate-restores-button,
+.button.daily-backup-status__activate-restores-button:visited {
+	float: none;
 	width: 100%;
 	margin: 1rem 0;
 	text-align: center;
@@ -202,7 +212,6 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		width: 330px;
-		float: none;
 	}
 }
 
