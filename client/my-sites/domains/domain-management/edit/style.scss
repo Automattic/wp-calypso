@@ -66,8 +66,6 @@
 	.domain-status__card {
 		h2 {
 			font-size: 32px;
-			overflow: hidden;
-			text-overflow: ellipsis;
 
 			@include breakpoint-deprecated( '<480px' ) {
 				&.mobile-m {
@@ -96,6 +94,23 @@
 				}
 				&.desktop-xxl {
 					font-size: 16px;
+				}
+			}
+
+			a {
+				color: currentColor;
+				display: flex;
+				align-items: baseline;
+
+				span {
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+
+				.gridicons-external {
+					margin-left: 4px;
+					transform: translateY( 1px );
+					flex-shrink: 0;
 				}
 			}
 		}

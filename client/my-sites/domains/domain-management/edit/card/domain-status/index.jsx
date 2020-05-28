@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -55,7 +56,12 @@ class DomainStatus extends React.Component {
 
 		return (
 			<Card compact={ true } className={ cardClasses }>
-				<h2 className={ headerClasses }>{ header }</h2>
+				<h2 className={ headerClasses }>
+					<a target="_blank" rel="noopener noreferrer" href={ 'http://' + header }>
+						<span>{ header }</span>
+						<Gridicon icon="external" size={ 18 } />
+					</a>
+				</h2>
 				<div className="domain-status__icon">
 					<MaterialIcon icon={ icon } /> { statusText }
 				</div>
