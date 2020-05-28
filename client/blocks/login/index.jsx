@@ -290,6 +290,18 @@ class Login extends Component {
 						<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
 					</div>
 				);
+
+				// If users arrived here from the lost password flow, show them a specific message about it
+				const currentUrl = new URL( window.location.href );
+				const displayLostPasswordConfirmation =
+					currentUrl.searchParams.get( 'lostpassword_flow' ) === 'true';
+				postHeader = displayLostPasswordConfirmation && (
+					<p className="login__form-post-header">
+						{ translate(
+							'Check your e-mail address linked to the account for the confirmation link, including the spam or junk folder.'
+						) }
+					</p>
+				);
 			}
 
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {

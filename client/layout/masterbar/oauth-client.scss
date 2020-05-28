@@ -749,6 +749,10 @@
 		text-align: center;
 	}
 
+	.login__form-post-header {
+		margin-top: 24px;
+	}
+
 	input:focus:hover[type],
 	input:focus[type] {
 		box-shadow: 0 0 0 2px var( --studio-jetpack-green-10 );
