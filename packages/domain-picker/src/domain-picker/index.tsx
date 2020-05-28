@@ -3,7 +3,6 @@
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon, search } from '@wordpress/icons';
 import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
@@ -11,8 +10,6 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { DomainSuggestions } from '@automattic/data-stores';
-import { STORE_KEY } from '../../stores/onboard';
 import SuggestionItem from './suggestion-item';
 import SuggestionNone from './suggestion-none';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
@@ -20,20 +17,39 @@ import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
 	getRecommendedDomainSuggestion,
-} from '../../utils/domain-suggestions';
-import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
-import { PAID_DOMAINS_TO_SHOW } from '../../constants';
-import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
-import { useTrackModal } from '../../hooks/use-track-modal';
+} from '../utils/domain-suggestions';
 import DomainCategories from '../domain-categories';
 import CloseButton from '../close-button';
+
+const PAID_DOMAINS_TO_SHOW = 5;
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+type DomainSuggestionQuery = import('@automattic/data-stores').DomainSuggestions.DomainSuggestionQuery;
+type DomainCategory = import('@automattic/data-stores').DomainSuggestions.DomainCategory;
+
+interface AnalyticsRenderEvent {
+	trainTracksType: 'render';
+	fetchAlgo: string;
+	query: string;
+	railcarId: string;
+	result: string;
+	uiPosition: number;
+}
+
+interface AnalyticsInteractEvent {
+	trainTracksType: 'interact';
+	action: 'domain_selected';
+	railcarId: string;
+}
+
+export type RecordsAnalyticsHandler = (
+	event: AnalyticsInteractEvent | AnalyticsRenderEvent
+) => void;
 
 export interface Props {
 	showDomainConnectButton?: boolean;
@@ -52,25 +68,42 @@ export interface Props {
 	 */
 	onClose: () => void;
 
-	onCancel?: () => void;
-
 	onMoreOptions?: () => void;
 
-	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
+	recordAnalytics?: RecordsAnalyticsHandler;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
-	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
+	queryParameters?: Partial< DomainSuggestionQuery >;
 
 	currentDomain?: DomainSuggestion;
 
 	quantity?: number;
 
-	/**
-	 * Name used to identify this component in tracks events.
-	 */
-	tracksName: string;
+	/** The domain search query */
+	domainSearch: string;
+	/** Called when the domain search query is changed */
+	onSetDomainSearch: ( query: string ) => void;
+
+	/** The domain category */
+	domainCategory: string | undefined;
+
+	/** Called when the domain category is set */
+	onSetDomainCategory: ( category?: string ) => void;
+
+	/** The search results */
+	domainSuggestions?: DomainSuggestion[];
+
+	/** The train track ID for analytics. See https://wp.me/PCYsg-bor */
+	railcarId: string | undefined;
+
+	/** The flow where the Domain Picker is used. Eg Gutenboarding */
+	analyticsFlowId: string;
+
+	domainCategories: DomainCategory[];
+
+	domainSuggestionVendor: string;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -78,24 +111,26 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainCategories,
 	onDomainSelect,
 	onClose,
-	onCancel,
 	onMoreOptions,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	currentDomain,
 	recordAnalytics,
-	tracksName,
+	domainSearch,
+	onSetDomainSearch,
+	domainCategory,
+	onSetDomainCategory,
+	domainSuggestions,
+	railcarId,
+	analyticsFlowId,
+	domainCategories,
+	domainSuggestionVendor,
 } ) => {
-	const { __, i18nLocale } = useI18n();
+	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
-	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
 
-	const { domainSearch, domainCategory } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
-	const { setDomainSearch, setDomainCategory } = useDispatch( STORE_KEY );
 	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 
-	const allSuggestions = useDomainSuggestions( { locale: i18nLocale, quantity } );
+	const allSuggestions = domainSuggestions;
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, quantity );
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
@@ -120,27 +155,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const CancelButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
 		return (
-			<Button
-				isLink
-				className="domain-picker__cancel-button"
-				onClick={ () => {
-					onCancel && onCancel();
-				} }
-				{ ...props }
-			>
+			<Button isLink className="domain-picker__cancel-button" onClick={ onClose } { ...props }>
 				{ __( 'Cancel' ) }
 			</Button>
 		);
 	};
-
-	const [ railcarId, setRailcarId ] = useState< string | undefined >();
-
-	useEffect( () => {
-		// Only generate a railcarId when the domain suggestions change and are not empty.
-		if ( allSuggestions ) {
-			setRailcarId( getNewRailcarId() );
-		}
-	}, [ allSuggestions ] );
 
 	useEffect( () => {
 		// Auto-select one of the domains when the search results change. If the currently
@@ -164,10 +183,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			setCurrentSelection( latestFreeSuggestion[ 0 ] );
 		}
 	}, [ allSuggestions, currentDomain ] );
-
-	useTrackModal( tracksName, () => ( {
-		selected_domain: getSelectedDomain()?.domain_name,
-	} ) );
 
 	return (
 		<Panel className="domain-picker">
@@ -201,14 +216,18 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							hideLabelFromVision
 							label={ label }
 							placeholder={ label }
-							onChange={ setDomainSearch }
+							onChange={ onSetDomainSearch }
 							value={ domainSearch }
 						/>
 					</div>
 					<div className="domain-picker__body">
 						{ showDomainCategories && (
 							<div className="domain-picker__aside">
-								<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
+								<DomainCategories
+									domainCategories={ domainCategories }
+									selected={ domainCategory }
+									onSelect={ onSetDomainCategory }
+								/>
 							</div>
 						) }
 						<div className="domain-picker__suggestion-item-group">
@@ -216,14 +235,17 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							{ freeSuggestions &&
 								( freeSuggestions.length ? (
 									<SuggestionItem
+										analyticsFlowId={ analyticsFlowId }
 										suggestion={ freeSuggestions[ 0 ] }
 										isSelected={
 											currentSelection?.domain_name === freeSuggestions[ 0 ].domain_name
 										}
+										domainSearch={ domainSearch }
 										onSelect={ setCurrentSelection }
 										railcarId={ railcarId ? `${ railcarId }0` : undefined }
 										recordAnalytics={ recordAnalytics || undefined }
 										uiPosition={ 0 }
+										domainSuggestionVendor={ domainSuggestionVendor }
 									/>
 								) : (
 									<SuggestionNone />
@@ -242,6 +264,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
 											recordAnalytics={ recordAnalytics || undefined }
 											uiPosition={ i + 1 }
+											domainSearch={ domainSearch }
+											analyticsFlowId={ analyticsFlowId }
+											domainSuggestionVendor={ domainSuggestionVendor }
 										/>
 									) )
 								) : (
