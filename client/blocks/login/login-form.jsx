@@ -395,12 +395,13 @@ export class LoginForm extends Component {
 							</Button>
 						</div>
 
-						{ config.isEnabled( 'signup/social' ) && ! isJetpackCloudOAuth2Client( oauth2Client ) && (
+						{ config.isEnabled( 'signup/social' ) && (
 							<div className="login__form-social">
 								<div className="login__form-social-divider">
 									<span>{ this.props.translate( 'or' ) }</span>
 								</div>
 								<SocialLoginForm
+									googleSocialOnly={ isJetpackCloudOAuth2Client( oauth2Client ) }
 									onSuccess={ this.onWooCommerceSocialSuccess }
 									socialService={ this.props.socialService }
 									socialServiceResponse={ this.props.socialServiceResponse }
@@ -639,16 +640,17 @@ export class LoginForm extends Component {
 					) }
 				</Card>
 
-				{ config.isEnabled( 'signup/social' ) && ! isJetpackCloudOAuth2Client( oauth2Client ) && (
+				{ config.isEnabled( 'signup/social' ) && (
 					<Fragment>
 						<Divider>{ this.props.translate( 'or' ) }</Divider>
 						<SocialLoginForm
-							onSuccess={ this.props.onSuccess }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
+							googleSocialOnly={ isJetpackCloudOAuth2Client( oauth2Client ) }
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 							}
+							onSuccess={ this.props.onSuccess }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						/>
 					</Fragment>
