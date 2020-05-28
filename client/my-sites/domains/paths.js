@@ -18,6 +18,10 @@ function resolveRootPath( relativeTo = null ) {
 	return domainManagementRoot();
 }
 
+export function isUnderDomainManagementAll( path ) {
+	return path.startsWith( domainManagementAllRoot() + '/' );
+}
+
 export function domainAddNew( siteName, searchTerm ) {
 	const path = `/domains/add/${ siteName }`;
 

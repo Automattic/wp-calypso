@@ -22,7 +22,7 @@ import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { domainManagementAllRoot } from 'my-sites/domains/paths';
+import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 
 /**
  * Style dependencies
@@ -105,10 +105,9 @@ class CurrentSite extends Component {
 
 export default connect(
 	( state ) => {
-		const currentRoute = getCurrentRoute( state );
-		const isAllSitesDomainsView = currentRoute.startsWith( domainManagementAllRoot() + '/' );
+		const isAllDomainsView = isUnderDomainManagementAll( getCurrentRoute( state ) );
 		return {
-			selectedSite: isAllSitesDomainsView ? null : getSelectedSite( state ),
+			selectedSite: isAllDomainsView ? null : getSelectedSite( state ),
 			anySiteSelected: getSelectedOrAllSites( state ),
 			siteCount: getCurrentUserSiteCount( state ),
 			hasAllSitesList: hasAllSitesList( state ),

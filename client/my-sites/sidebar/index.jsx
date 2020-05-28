@@ -79,7 +79,7 @@ import {
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { domainManagementAllRoot } from 'my-sites/domains/paths';
+import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 
 import { backupMainPath, backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths';
 
@@ -962,12 +962,11 @@ export class MySitesSidebar extends Component {
 function mapStateToProps( state ) {
 	const currentUser = getCurrentUser( state );
 
-	const currentRoute = getCurrentRoute( state );
-	const isAllSitesDomainsView = currentRoute.startsWith( domainManagementAllRoot() + '/' );
+	const isAllDomainsView = isUnderDomainManagementAll( getCurrentRoute( state ) );
 
-	const selectedSiteId = isAllSitesDomainsView ? null : getSelectedSiteId( state );
+	const selectedSiteId = isAllDomainsView ? null : getSelectedSiteId( state );
 	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
-	const siteId = isAllSitesDomainsView
+	const siteId = isAllDomainsView
 		? null
 		: selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 	const site = getSite( state, siteId );
