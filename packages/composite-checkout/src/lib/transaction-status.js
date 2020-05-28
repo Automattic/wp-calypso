@@ -50,13 +50,19 @@ export function useTransactionStatusManager() {
 		[]
 	);
 
-	const { transactionStatus, transactionLastResponse, transactionError } = state;
+	const {
+		transactionStatus,
+		transactionLastResponse,
+		transactionError,
+		transactionRedirectUrl,
+	} = state;
 
 	return useMemo(
 		() => ( {
 			transactionStatus,
 			transactionError,
 			transactionLastResponse,
+			transactionRedirectUrl,
 			resetTransaction,
 			setTransactionError,
 			setTransactionComplete,
@@ -68,6 +74,7 @@ export function useTransactionStatusManager() {
 			transactionStatus,
 			transactionError,
 			transactionLastResponse,
+			transactionRedirectUrl,
 			resetTransaction,
 			setTransactionError,
 			setTransactionComplete,
