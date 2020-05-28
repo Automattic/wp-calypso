@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  */
 import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import { LocalizeProvider } from '../lib/localize';
+import { LocalizeProvider, useLocalize } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager, useFormStatus } from '../lib/form-status';
@@ -23,7 +23,6 @@ import {
 	validateLineItems,
 	validatePaymentMethods,
 } from '../lib/validation';
-import { useLocalize } from '../localize';
 import { usePaymentMethodId } from '../lib/payment-methods';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
