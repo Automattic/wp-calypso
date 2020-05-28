@@ -26,7 +26,7 @@ import GUTENBOARDING_BASE_NAME from './basename.json';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
-import { path, Step } from './path';
+import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
 import { USER_STORE } from './stores/user';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';

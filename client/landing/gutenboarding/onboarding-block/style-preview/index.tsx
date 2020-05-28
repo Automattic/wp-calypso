@@ -19,21 +19,24 @@ import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
 import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
+import { Plans } from '@automattic/data-stores';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
-import { useSelectedPlan } from '../../hooks/use-selected-plan';
+import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
 import './style.scss';
+
+const PLANS_STORE = Plans.STORE_KEY;
 
 const StylePreview: React.FunctionComponent = () => {
 	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const { selectedDesign, hasUsedPlansStep } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
-	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
+
+	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 
@@ -67,9 +70,9 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			createSite( username, freeDomainSuggestion, bearerToken, selectedPlanSlug );
+			createSite( username, freeDomainSuggestion, bearerToken, shouldSiteBePublic );
 		},
-		[ createSite, freeDomainSuggestion, selectedPlanSlug ]
+		[ createSite, freeDomainSuggestion, shouldSiteBePublic ]
 	);
 
 	const handleContinue = () => {

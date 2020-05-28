@@ -3,7 +3,7 @@
  */
 import { controls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
-import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
+import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import reducer from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import * as resolvers from './resolvers';
+import { plansPaths } from './plans-data';
 import persistOptions from './persist';
 
 use( plugins.persistence, persistOptions );
@@ -33,3 +34,4 @@ declare module '@wordpress/data' {
 
 export type State = import('./reducer').State;
 export { STORE_KEY };
+export { plansPaths };

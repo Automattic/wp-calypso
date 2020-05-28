@@ -6,12 +6,12 @@ import Modal from 'react-modal';
 import { useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import PlansGrid, { Props as PlansGridProps } from '../plans-grid';
-import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
 import { useTrackModal } from '../../../hooks/use-track-modal';
 import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 
@@ -19,6 +19,8 @@ import { useSelectedPlan } from '../../../hooks/use-selected-plan';
  * Style dependencies
  */
 import './style.scss';
+
+const PLANS_STORE = Plans.STORE_KEY;
 
 interface Props extends Partial< PlansGridProps > {
 	onClose: () => void;
@@ -36,9 +38,10 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	}, [] );
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
-	const selectedPlanRef = React.useRef();
+	const selectedPlanRef = React.useRef< string | undefined >();
+
 	React.useEffect( () => {
-		selectedPlanRef.current = plan?.getStoreSlug();
+		selectedPlanRef.current = plan?.storeSlug;
 	}, [ plan ] );
 
 	useTrackModal( 'PlansGrid', () => ( {
@@ -46,7 +49,7 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	} ) );
 
 	const handleConfirm = () => {
-		setPlan( plan?.getStoreSlug() );
+		setPlan( plan?.storeSlug );
 		onClose();
 	};
 

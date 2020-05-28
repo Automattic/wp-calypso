@@ -1,7 +1,24 @@
+/**
+ * Internal dependencies
+ */
+import { PLANS_LIST } from './plans-data';
+
+export type PlanSlug = keyof typeof PLANS_LIST;
+
 export type PlanAction = {
 	type: string;
 	slug?: string;
 };
+
+export interface Plan {
+	title: string;
+	productId: number;
+	storeSlug: PlanSlug;
+	pathSlug: string;
+	features: string[];
+	isPopular?: boolean;
+	isFree?: boolean;
+}
 
 /**
  * types of an item from https://public-api.wordpress.com/rest/v1.5/plans response
