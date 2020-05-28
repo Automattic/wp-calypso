@@ -66,7 +66,7 @@ function getPurchasesBySite( purchases, sites ) {
 
 			return result;
 		}, [] )
-		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1)  );
+		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 ) );
 }
 
 function getName( purchase ) {

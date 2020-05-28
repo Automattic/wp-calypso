@@ -59,7 +59,7 @@ const RadioButtonWrapper = styled.div`
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
-	outline: ${getOutline};
+	outline: ${ getOutline };
 
 	:first-of-type {
 		margin: 0;
@@ -73,25 +73,25 @@ const RadioButtonWrapper = styled.div`
 		top: 0;
 		left: 0;
 		content: '';
-		border: ${getBorderWidth} solid ${getBorderColor};
+		border: ${ getBorderWidth } solid ${ getBorderColor };
 		border-radius: 3px;
 		box-sizing: border-box;
 	}
 
 	:hover:before {
-		border: 3px solid ${( props ) => props.theme.colors.highlight};
+		border: 3px solid ${ ( props ) => props.theme.colors.highlight };
 	}
 
 	.payment-logos {
 		display: none;
 
-		@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
+		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 			display: block;
 		}
 	}
 
 	svg {
-		filter: grayscale( ${getGrayscaleValue} );
+		filter: grayscale( ${ getGrayscaleValue } );
 	}
 
 	:hover svg {
@@ -125,12 +125,12 @@ const Label = styled.label`
 		width: 16px;
 		height: 16px;
 		content: '';
-		border: 1px solid ${( props ) => props.theme.colors.borderColor};
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
 		top: 19px;
 		left: 16px;
 		position: absolute;
-		background: ${( props ) => props.theme.colors.surface};
+		background: ${ ( props ) => props.theme.colors.surface };
 		box-sizing: border-box;
 		z-index: 2;
 	}
@@ -144,14 +144,14 @@ const Label = styled.label`
 		top: 23px;
 		left: 20px;
 		position: absolute;
-		background: ${getRadioColor};
+		background: ${ getRadioColor };
 		box-sizing: border-box;
 		z-index: 3;
 	}
 `;
 
 const RadioButtonChildren = styled.div`
-	display: ${( props ) => ( props.checked ? 'block' : 'none') };
+	display: ${ ( props ) => ( props.checked ? 'block' : 'none' ) };
 `;
 
 function getBorderColor( { checked, theme } ) {

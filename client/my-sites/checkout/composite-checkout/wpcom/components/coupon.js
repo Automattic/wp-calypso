@@ -86,7 +86,7 @@ const animateIn = keyframes`
 `;
 
 const CouponWrapper = styled.form`
-	margin: ${( props ) => props.marginTop} 0 0 0;
+	margin: ${ ( props ) => props.marginTop } 0 0 0;
 	padding-top: 0;
 	position: relative;
 `;
@@ -96,7 +96,7 @@ const ApplyButton = styled( Button )`
 	top: 5px;
 	right: 4px;
 	padding: 7px;
-	animation: ${animateIn} 0.2s ease-out;
+	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;
 	margin: 0;
 `;

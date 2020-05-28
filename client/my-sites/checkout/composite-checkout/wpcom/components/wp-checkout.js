@@ -276,12 +276,12 @@ export default function WPCheckout( {
 }
 
 const CheckoutSummaryTitleLink = styled.button`
-	background: ${( props ) => props.theme.colors.background};
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-	color: ${( props ) => props.theme.colors.textColor};
+	background: ${ ( props ) => props.theme.colors.background };
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	color: ${ ( props ) => props.theme.colors.textColor };
 	display: flex;
 	font-size: 16px;
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	justify-content: space-between;
 	padding: 20px 23px 20px 14px;
 	width: 100%;
@@ -290,12 +290,12 @@ const CheckoutSummaryTitleLink = styled.button`
 		border-bottom: none;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		border-bottom: none 0;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: none;
 	}
 `;
@@ -309,7 +309,7 @@ const CheckoutSummaryTitleIcon = styled( Gridicon )`
 `;
 
 const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
-	fill: ${( props ) => props.theme.colors.textColor};
+	fill: ${ ( props ) => props.theme.colors.textColor };
 	margin-left: 4px;
 	transition: transform 0.1s linear;
 	width: 18px;
@@ -328,18 +328,18 @@ const CheckoutSummaryTitlePrice = styled.span`
 `;
 
 const CheckoutSummaryBody = styled.div`
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	display: none;
 
 	.is-visible & {
 		display: block;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 		border-bottom: none;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
 	}
 `;

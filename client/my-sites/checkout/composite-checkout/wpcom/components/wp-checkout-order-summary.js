@@ -231,12 +231,12 @@ const CheckoutSummaryCardUI = styled( CheckoutSummaryCard )`
 const CheckoutSummaryFeatures = styled.div`
 	padding: 20px 20px 0;
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 20px;
 	}
 
 	.checkout__payment-chat-button.is-borderless {
-		color: ${( props ) => props.theme.colors.textColor};
+		color: ${ ( props ) => props.theme.colors.textColor };
 		padding: 0;
 
 		svg {
@@ -247,7 +247,7 @@ const CheckoutSummaryFeatures = styled.div`
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
 	font-size: 16px;
-	font-weight: ${( props ) => props.theme.weights.normal};
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	margin-bottom: 6px;
 `;
 
@@ -268,7 +268,7 @@ const CheckoutSummaryHelpButton = styled.button`
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
-	fill: ${( props ) => props.theme.colors.success};
+	fill: ${ ( props ) => props.theme.colors.success };
 	margin-right: 4px;
 	position: absolute;
 	top: 0;
@@ -284,8 +284,8 @@ const CheckoutSummaryFeaturesListItem = styled.li`
 const CheckoutSummaryAmountWrapper = styled.div`
 	padding: 20px;
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	}
 `;
 
@@ -296,19 +296,19 @@ const CheckoutSummaryLineItem = styled.div`
 	margin-bottom: 4px;
 
 	.is-loading & {
-		animation: ${pulse} 1.5s ease-in-out infinite;
+		animation: ${ pulse } 1.5s ease-in-out infinite;
 	}
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
 const LoadingCopy = styled.p`
-	animation: ${pulse} 1.5s ease-in-out infinite;
-	background: ${( props ) => props.theme.colors.borderColorLight};
+	animation: ${ pulse } 1.5s ease-in-out infinite;
+	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	border-radius: 2px;
-	color: ${( props ) => props.theme.colors.borderColorLight};
+	color: ${ ( props ) => props.theme.colors.borderColorLight };
 	content: '';
 	font-size: 14px;
 	height: 18px;
@@ -324,7 +324,7 @@ const LoadingCopy = styled.p`
 		top: 0;
 		width: 18px;
 		height: 18px;
-		background: ${( props ) => props.theme.colors.borderColorLight};
+		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		border-radius: 100%;
 	}
 `;

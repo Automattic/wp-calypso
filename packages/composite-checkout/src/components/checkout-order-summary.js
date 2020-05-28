@@ -59,7 +59,7 @@ const CheckoutSummaryStepTitle = styled.span`
 `;
 
 const CheckoutSummaryStepTotal = styled.span`
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
 export function CheckoutOrderSummary() {
@@ -87,13 +87,13 @@ export function CheckoutOrderSummary() {
 }
 
 const CheckoutSummaryTitle = styled.div`
-	color: ${( props ) => props.theme.colors.textColor};
-	font-weight: ${( props ) => props.theme.weights.bold};
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	padding: 24px 20px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 24px 20px;
 `;
 
@@ -103,5 +103,5 @@ const CheckoutSummaryLineItem = styled.div`
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
