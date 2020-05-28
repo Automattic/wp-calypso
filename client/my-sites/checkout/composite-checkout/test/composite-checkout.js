@@ -268,7 +268,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when no credits are available', async () => {
@@ -297,7 +297,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the full credits payment method option when full credits are available', async () => {
@@ -317,7 +317,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
@@ -336,7 +336,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
 		const { queryByText } = renderResult;
-		expect( queryByText( 'Paypal' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
