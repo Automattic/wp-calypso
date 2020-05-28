@@ -150,6 +150,7 @@ const SettingsPage = () => {
 					}
 					expanded={ formOpen }
 					onClick={ () => setFormOpen( ! formOpen ) }
+					clickableHeader={ true }
 					className="settings__form-card"
 				>
 					<ServerCredentialsForm
