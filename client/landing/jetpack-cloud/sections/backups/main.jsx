@@ -15,7 +15,7 @@ import DocumentHead from 'components/data/document-head';
 import { updateFilter, setFilter } from 'state/activity-log/actions';
 import {
 	getDailyBackupDeltas,
-	getMetaDiffForDailyBackup,
+	// getMetaDiffForDailyBackup,
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
 } from './utils';
@@ -156,7 +156,9 @@ class BackupsPage extends Component {
 		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
+		// todo: commented as a quick fix before Jetpack Cloud launch. All the non-english account break here.
+		// See: 1169345694087188-as-1176670093007897
+		// const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 		const isToday = today.isSame( this.getSelectedDate(), 'day' );
 
@@ -202,7 +204,7 @@ class BackupsPage extends Component {
 										hasRealtimeBackups,
 										onDateChange: this.onDateChange,
 										deltas,
-										metaDiff,
+										// metaDiff, todo: commented because the non-english account issue
 										doesRewindNeedCredentials,
 										dispatchRecordTracksEvent,
 									} }
@@ -220,7 +222,6 @@ class BackupsPage extends Component {
 								allowRestore,
 								moment,
 								siteSlug,
-								metaDiff,
 								isToday,
 							} }
 						/>

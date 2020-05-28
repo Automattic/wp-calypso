@@ -14,22 +14,22 @@ import { useTranslate } from 'i18n-calypso';
  */
 import mediaImage from 'assets/images/illustrations/media.svg';
 
-const renderMetaDiff = ( metaDiff ) => {
-	const metas = [];
+// const renderMetaDiff = ( metaDiff ) => {
+// 	const metas = [];
+//
+// 	metaDiff.forEach( ( meta ) => {
+// 		if ( meta.num > 0 || meta.num < 0 ) {
+// 			const operator = meta.num < 0 ? '' : '+';
+// 			const plural = meta.num > 1 || meta.num < -1 ? 's' : '';
+// 			// TBD: How do we deal with translating these strings?
+// 			metas.push( `${ operator }${ meta.num } ${ meta.type }${ plural }` );
+// 		}
+// 	} );
+//
+// 	return <div className="daily-backup-status__metas">{ metas.join( ', ' ) }</div>;
+// };
 
-	metaDiff.forEach( ( meta ) => {
-		if ( meta.num > 0 || meta.num < 0 ) {
-			const operator = meta.num < 0 ? '' : '+';
-			const plural = meta.num > 1 || meta.num < -1 ? 's' : '';
-			// TBD: How do we deal with translating these strings?
-			metas.push( `${ operator }${ meta.num } ${ meta.type }${ plural }` );
-		}
-	} );
-
-	return <div className="daily-backup-status__metas">{ metas.join( ', ' ) }</div>;
-};
-
-const BackupChanges = ( { deltas, metaDiff } ) => {
+const BackupChanges = ( { deltas } ) => {
 	const translate = useTranslate();
 
 	const mediaCreated = deltas.mediaCreated.map( ( item ) => (
@@ -135,11 +135,13 @@ const BackupChanges = ( { deltas, metaDiff } ) => {
 	} );
 
 	const hasChanges = !! (
-		deltas.mediaCreated.length ||
-		deltas.posts.length ||
-		deltas.plugins.length ||
-		deltas.themes.length ||
-		!! metaDiff.filter( ( diff ) => 0 !== diff.num ).length
+		(
+			deltas.mediaCreated.length ||
+			deltas.posts.length ||
+			deltas.plugins.length ||
+			deltas.themes.length
+		)
+		//|| !! metaDiff.filter( ( diff ) => 0 !== diff.num ).length
 	);
 
 	return (
@@ -184,7 +186,7 @@ const BackupChanges = ( { deltas, metaDiff } ) => {
 					<div className="daily-backup-status__section-plugins">{ themes }</div>
 				</>
 			) }
-			{ renderMetaDiff( metaDiff ) }
+			{ /*{ renderMetaDiff( metaDiff ) }*/ }
 		</div>
 	);
 };
