@@ -33,5 +33,15 @@ export const rebootAfterLogin = ( tracksEventArgs: object ) => async (
 		await user.clear();
 	}
 
+	// We want to differentiate users going to `/oauth2/authorize` that are coming from
+	// the login flow by setting the `login_flow` query parameter. The other case would be
+	// users going directly to `/oauth2/authorize` because they're already logged in WPCOM.
+	if ( url.startsWith( 'https://public-api.wordpress.com/oauth2/authorize' ) ) {
+		const newUrl = new URL( url );
+		newUrl.searchParams.append( 'login_flow', 'true' );
+		window.location.href = newUrl.toString();
+		return;
+	}
+
 	window.location.href = url;
 };
