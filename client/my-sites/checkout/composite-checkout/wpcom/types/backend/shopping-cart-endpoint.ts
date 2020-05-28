@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import type { CartItemExtra } from 'lib/cart-values/types';
+import { NewSiteParams } from '../checkout-cart';
 
 /**
  * There are three different concepts of "cart" relevant to the shopping cart endpoint:
@@ -84,6 +85,7 @@ export interface ResponseCart {
 		};
 		display_taxes: boolean;
 	};
+	new_site_data?: NewSiteParams;
 }
 
 export interface ResponseCartError {

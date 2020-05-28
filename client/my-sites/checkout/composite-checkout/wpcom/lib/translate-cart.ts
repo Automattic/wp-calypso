@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +45,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		coupon,
 		is_coupon_applied,
 		tax,
+		new_site_data,
 	} = serverCart;
 
 	const taxLineItem: CheckoutCartItem = {
@@ -113,6 +115,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
 			.filter( Boolean ),
 		couponCode: coupon,
+		...( ! isEmpty( new_site_data ) && { createNewSiteData: new_site_data } ),
 	};
 }
 

@@ -22,10 +22,11 @@ import { createStripePaymentMethod } from 'lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
 
-export function applePayProcessor( submitData ) {
+export function applePayProcessor( submitData, createNewSiteData ) {
 	const pending = submitApplePayPayment(
 		{
 			...submitData,
+			createNewSiteData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( select ),
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -41,7 +42,7 @@ export function applePayProcessor( submitData ) {
 	return pending;
 }
 
-export async function stripeCardProcessor( submitData ) {
+export async function stripeCardProcessor( submitData, createNewSiteData ) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
 		...submitData,
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -50,6 +51,7 @@ export async function stripeCardProcessor( submitData ) {
 	const pending = submitStripeCardTransaction(
 		{
 			...submitData,
+			createNewSiteData,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
@@ -67,10 +69,11 @@ export async function stripeCardProcessor( submitData ) {
 	return pending;
 }
 
-export async function existingCardProcessor( submitData ) {
+export async function existingCardProcessor( submitData, createNewSiteData ) {
 	const pending = submitExistingCardPayment(
 		{
 			...submitData,
+			createNewSiteData,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
@@ -97,10 +100,11 @@ function createStripePaymentMethodToken( { stripe, name, country, postalCode } )
 	} );
 }
 
-export async function freePurchaseProcessor( submitData ) {
+export async function freePurchaseProcessor( submitData, createNewSiteData ) {
 	const pending = submitFreePurchaseTransaction(
 		{
 			...submitData,
+			createNewSiteData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( select ),
 			// this data is intentionally empty so we do not charge taxes
@@ -116,10 +120,11 @@ export async function freePurchaseProcessor( submitData ) {
 	return pending;
 }
 
-export async function fullCreditsProcessor( submitData ) {
+export async function fullCreditsProcessor( submitData, createNewSiteData ) {
 	const pending = submitCreditsTransaction(
 		{
 			...submitData,
+			createNewSiteData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( select ),
 			// this data is intentionally empty so we do not charge taxes
@@ -136,7 +141,7 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) {
+export async function payPalProcessor( submitData, getThankYouUrl, couponItem, createNewSiteData ) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const successUrl = formatUrl( {
 		protocol,
@@ -154,6 +159,7 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) 
 	const pending = submitPayPalExpressRequest(
 		{
 			...submitData,
+			createNewSiteData,
 			successUrl,
 			cancelUrl,
 			siteId: select( 'wpcom' )?.getSiteId?.() ?? '',

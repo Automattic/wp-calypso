@@ -28,6 +28,7 @@ import {
 	CartLocation,
 } from '../types';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
+import { NewSiteParams } from '../types/checkout-cart';
 
 const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
 
@@ -308,6 +309,7 @@ export interface ShoppingCartManager {
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	responseCart: ResponseCart;
+	createNewSiteData: NewSiteParams;
 }
 
 /**
@@ -504,6 +506,7 @@ export function useShoppingCart(
 		variantRequestStatus,
 		variantSelectOverride,
 		responseCart,
+		createNewSiteData: cart.createNewSiteData,
 	} as ShoppingCartManager;
 }
 

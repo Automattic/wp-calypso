@@ -12,6 +12,7 @@ import {
 	WPCOMTransactionEndpointDomainDetails,
 	createTransactionEndpointCartFromLineItems,
 } from './transaction-endpoint';
+import { NewSiteParams } from '../wpcom/types/checkout-cart';
 
 export type PayPalExpressEndpoint = (
 	_: PayPalExpressEndpointRequestPayload
@@ -27,6 +28,7 @@ export type PayPalExpressEndpointRequestPayload = {
 };
 
 export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
+	createNewSiteData,
 	successUrl,
 	cancelUrl,
 	siteId,
@@ -46,6 +48,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	subdivisionCode: string;
 	domainDetails: WPCOMTransactionEndpointDomainDetails;
 	items: WPCOMCartItem[];
+	createNewSiteData?: NewSiteParams;
 } ): PayPalExpressEndpointRequestPayload {
 	return {
 		successUrl,
@@ -56,6 +59,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			country,
 			postalCode,
 			subdivisionCode,
+			createNewSiteData,
 			items: items.filter( ( item ) => ! getNonProductWPCOMCartItemTypes().includes( item.type ) ),
 		} ),
 		country,

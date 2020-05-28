@@ -215,6 +215,7 @@ export default function CompositeCheckout( {
 		variantSelectOverride,
 		responseCart,
 		addItem,
+		createNewSiteData,
 	} = useShoppingCart(
 		siteSlug,
 		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
@@ -408,14 +409,18 @@ export default function CompositeCheckout( {
 
 	const paymentProcessors = useMemo(
 		() => ( {
-			'apple-pay': applePayProcessor,
-			'free-purchase': freePurchaseProcessor,
-			card: stripeCardProcessor,
-			'full-credits': fullCreditsProcessor,
-			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
+			'apple-pay': ( transactionData ) => applePayProcessor( transactionData, createNewSiteData ),
+			'free-purchase': ( transactionData ) =>
+				freePurchaseProcessor( transactionData, createNewSiteData ),
+			card: ( transactionData ) => stripeCardProcessor( transactionData, createNewSiteData ),
+			'full-credits': ( transactionData ) =>
+				fullCreditsProcessor( transactionData, createNewSiteData ),
+			'existing-card': ( transactionData ) =>
+				existingCardProcessor( transactionData, createNewSiteData ),
+			paypal: ( transactionData ) =>
+				payPalProcessor( transactionData, getThankYouUrl, couponItem, createNewSiteData ),
 		} ),
-		[ couponItem, getThankYouUrl ]
+		[ couponItem, getThankYouUrl, createNewSiteData ]
 	);
 
 	return (
@@ -747,7 +752,7 @@ function getPlanProductSlugs(
 }
 
 const Discount = styled.span`
-	color: ${ ( props ) => props.theme.colors.discount };
+	color: ${( props ) => props.theme.colors.discount};
 	margin-right: 8px;
 `;
 

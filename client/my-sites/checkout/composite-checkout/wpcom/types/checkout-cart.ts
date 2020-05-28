@@ -55,6 +55,34 @@ export type WPCOMCartCouponItem = CheckoutCartItem & {
 	};
 };
 
+export interface NewSiteParams {
+	blog_title: string;
+	options: {
+		designType?: string;
+		theme: 'pub/hever';
+		use_theme_annotation: false;
+		default_annotation_as_primary_fallback: true;
+		siteGoals?: string;
+		site_style?: string;
+		site_segment?: number;
+		site_vertical?: number;
+		site_vertical_name?: string;
+		site_information: {
+			title: string;
+		};
+		site_creation_flow: string;
+		timezone_string: string;
+		wpcom_coming_soon: 1 | 0;
+		in_page_builder?: boolean;
+		nux_import_engine?: string;
+		nux_import_from_url?: string;
+	};
+	public: 1 | -1;
+	validate: boolean;
+	blog_name: string;
+	find_available_url: boolean;
+}
+
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem | null;
@@ -64,6 +92,7 @@ export interface WPCOMCart {
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	credits: CheckoutCartItem;
 	couponCode: string | null;
+	createNewSiteData?: NewSiteParams;
 }
 
 export const emptyWPCOMCart = {
