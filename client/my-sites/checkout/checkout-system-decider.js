@@ -160,12 +160,19 @@ function shouldShowCompositeCheckout(
 	// so they do not need to go through this check.
 	const isRenewal = !! purchaseId;
 	const pseudoSlugsToAllow = [
-		'personal',
-		'premium',
 		'blogger',
-		'ecommerce',
+		'blogger-2-years',
 		'business',
+		'business-2-years',
+		'business-monthly',
 		'concierge-session',
+		'ecommerce',
+		'ecommerce-2-years',
+		'personal',
+		'personal-2-years',
+		'premium',
+		'premium-2-years',
+		'premium-monthly',
 	];
 	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
