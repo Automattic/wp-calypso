@@ -19,7 +19,7 @@ export default function RadioButton( {
 	const [ isFocused, changeFocus ] = useState( false );
 
 	return (
-		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
+		<RadioButtonWrapper disabled={ disabled } isFocused={ isFocused } checked={ checked }>
 			<Radio
 				type="radio"
 				name={ name }
@@ -37,7 +37,7 @@ export default function RadioButton( {
 				readOnly={ ! onChange }
 				aria-label={ ariaLabel }
 			/>
-			<Label checked={ checked } htmlFor={ id }>
+			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -100,11 +100,32 @@ const RadioButtonWrapper = styled.div`
 	:hover svg {
 		filter: grayscale( 0 );
 	}
+
+	${handleWrapperDisabled};
 `;
+
+function handleWrapperDisabled( { disabled } ) {
+	if ( ! disabled ) {
+		return null;
+	}
+
+	return `
+		:before,
+		:hover:before {
+			border: 1px solid lightgray;
+		}
+
+		svg,
+		:hover svg {
+			filter: grayscale( 100% );
+			opacity: 50%;
+		}
+	`;
+}
 
 const Radio = styled.input`
 	position: absolute;
-	opacity: 0;
+	opacity: 0 !important;
 `;
 
 const Label = styled.label`
@@ -151,7 +172,37 @@ const Label = styled.label`
 		box-sizing: border-box;
 		z-index: 3;
 	}
+
+	${handleLabelDisabled};
 `;
+
+function handleLabelDisabled( { disabled } ) {
+	if ( ! disabled ) {
+		return null;
+	}
+
+	return `
+		color: lightgray;
+		font-style: italic;
+		
+		:hover {
+			cursor: default;
+		}
+		
+		:before {
+			border: 1px solid lightgray;
+			background: lightgray;
+		}
+		
+		:after {
+			background: white;
+		}
+		
+		span {
+			color: lightgray;
+		}
+	`;
+}
 
 const RadioButtonChildren = styled.div`
 	display: ${ ( props ) => ( props.checked ? 'block' : 'none' ) };
