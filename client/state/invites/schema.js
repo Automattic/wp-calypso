@@ -47,3 +47,30 @@ export const inviteItemsSchema = {
 		},
 	},
 };
+
+const inviteLinksArraySchema = {
+	type: 'array',
+	items: {
+		type: 'object',
+		properties: {
+			key: { type: 'string' },
+			role: { type: 'string' },
+			inviteDate: { type: 'string' },
+		},
+		additionalProperties: false,
+	},
+};
+
+export const inviteLinksSchema = {
+	type: 'object',
+	patternProperties: {
+		// Site ID
+		'^\\d+$': {
+			type: 'object',
+			properties: {
+				'^\\[a-zA-Z]+$': inviteLinksArraySchema,
+			},
+			additionalProperties: false,
+		},
+	},
+};
