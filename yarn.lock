@@ -15505,7 +15505,7 @@ jest@^25.3.0:
     import-local "^3.0.2"
     jest-cli "^25.5.4"
 
-jest@^26.0.0:
+jest@^26.0.1:
   version "26.0.1"
   resolved "https://registry.yarnpkg.com/jest/-/jest-26.0.1.tgz#5c51a2e58dff7525b65f169721767173bf832694"
   integrity sha512-29Q54kn5Bm7ZGKIuH2JRmnKl85YRigp0o0asTc6Sb6l2ch1DCXIeZTLLFy9ultJvhkTqbswF5DEx4+RlkmCxWg==
