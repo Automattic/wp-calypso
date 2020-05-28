@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 
@@ -11,7 +11,6 @@ import debugFactory from 'debug';
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import {
-	useMessages,
 	useEvents,
 	usePaymentProcessor,
 	useTransactionStatus,
@@ -38,7 +37,7 @@ export function PaypalLabel() {
 
 	return (
 		<React.Fragment>
-			<span>{ localize( 'Paypal' ) }</span>
+			<span>{ localize( 'PayPal' ) }</span>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PaypalLogo />
 			</PaymentMethodLogos>
@@ -47,20 +46,32 @@ export function PaypalLabel() {
 }
 
 export function PaypalSubmitButton( { disabled } ) {
-	useTransactionStatusHandler();
-	const { formStatus, setFormSubmitting } = useFormStatus();
+	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-	const { setTransactionRedirecting, setTransactionError } = useTransactionStatus();
+	const {
+		setTransactionPending,
+		setTransactionRedirecting,
+		setTransactionError,
+	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'paypal' );
 	const [ items ] = useLineItems();
+	const localize = useLocalize();
 
 	const onClick = () => {
 		onEvent( { type: 'PAYPAL_TRANSACTION_BEGIN' } );
-		setFormSubmitting();
+		setTransactionPending();
 		submitTransaction( {
 			items,
 		} )
 			.then( ( response ) => {
+				if ( ! response ) {
+					setTransactionError(
+						localize(
+							'An error occurred while redirecting to PayPal. Please try again or contact support.'
+						)
+					);
+					return;
+				}
 				setTransactionRedirecting( response );
 			} )
 			.catch( ( error ) => {
@@ -92,51 +103,13 @@ function PayPalButtonContents( { formStatus } ) {
 	return localize( 'Please wait…' );
 }
 
-function useTransactionStatusHandler() {
-	const localize = useLocalize();
-	const { showErrorMessage } = useMessages();
-	const { transactionStatus, transactionError, transactionLastResponse } = useTransactionStatus();
-	const { setFormReady, setFormSubmitting } = useFormStatus();
-	const onEvent = useEvents();
-
-	useEffect( () => {
-		if ( transactionStatus === 'redirecting' ) {
-			debug( 'redirecting to paypal url', transactionLastResponse );
-			// TODO: should this redirect go through the host page?
-			window.location.href = transactionLastResponse;
-			return;
-		}
-		if ( transactionStatus === 'error' ) {
-			setFormReady();
-			onEvent( { type: 'PAYPAL_TRANSACTION_ERROR', payload: transactionError || '' } );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			return;
-		}
-		if ( transactionStatus === 'submitting' ) {
-			setFormSubmitting();
-			return;
-		}
-	}, [
-		onEvent,
-		localize,
-		showErrorMessage,
-		transactionStatus,
-		transactionError,
-		transactionLastResponse,
-		setFormReady,
-		setFormSubmitting,
-	] );
-}
-
 const ButtonPayPalIcon = styled( PaypalLogo )`
 	transform: translateY( 2px );
 `;
 
 function PaypalSummary() {
 	const localize = useLocalize();
-	return localize( 'Paypal' );
+	return localize( 'PayPal' );
 }
 
 function PaypalLogo( { className } ) {

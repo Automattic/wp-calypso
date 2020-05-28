@@ -17,6 +17,7 @@ const initialState = {
 	transactionStatus: 'not-started', // string
 	transactionError: null, // string | null
 	transactionLastResponse: null, // object | null
+	transactionRedirectUrl: null, // string | null
 };
 
 export function useTransactionStatusManager() {
@@ -39,8 +40,8 @@ export function useTransactionStatusManager() {
 		[]
 	);
 	const setTransactionRedirecting = useCallback(
-		( response ) =>
-			dispatch( { type: 'STATUS_SET', payload: { status: 'redirecting', response } } ),
+		( url ) =>
+			dispatch( { type: 'STATUS_SET', payload: { status: 'redirecting', response: null, url } } ),
 		[]
 	);
 	const setTransactionAuthorizing = useCallback(
@@ -49,13 +50,19 @@ export function useTransactionStatusManager() {
 		[]
 	);
 
-	const { transactionStatus, transactionLastResponse, transactionError } = state;
+	const {
+		transactionStatus,
+		transactionLastResponse,
+		transactionError,
+		transactionRedirectUrl,
+	} = state;
 
 	return useMemo(
 		() => ( {
 			transactionStatus,
 			transactionError,
 			transactionLastResponse,
+			transactionRedirectUrl,
 			resetTransaction,
 			setTransactionError,
 			setTransactionComplete,
@@ -67,6 +74,7 @@ export function useTransactionStatusManager() {
 			transactionStatus,
 			transactionError,
 			transactionLastResponse,
+			transactionRedirectUrl,
 			resetTransaction,
 			setTransactionError,
 			setTransactionComplete,
@@ -80,11 +88,12 @@ export function useTransactionStatusManager() {
 function transactionStatusReducer( state, action ) {
 	switch ( action.type ) {
 		case 'STATUS_SET': {
-			const { status, response, error } = action.payload;
+			const { status, response, error, url } = action.payload;
 			return {
 				...state,
 				transactionStatus: status,
 				transactionLastResponse: response,
+				transactionRedirectUrl: url,
 				transactionError: error,
 			};
 		}

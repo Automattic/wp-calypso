@@ -1,15 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
-import debugFactory from 'debug';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Button from '../../components/button';
 import {
-	useMessages,
 	useLineItems,
 	useEvents,
 	renderDisplayValueMarkdown,
@@ -18,8 +16,6 @@ import {
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
-
-const debug = debugFactory( 'composite-checkout:free-purchase-payment-method' );
 
 export function createFreePaymentMethod() {
 	return {
@@ -42,43 +38,18 @@ function FreePurchaseLabel() {
 }
 
 function FreePurchaseSubmitButton( { disabled } ) {
-	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const {
-		transactionStatus,
-		transactionError,
 		setTransactionComplete,
 		setTransactionError,
+		setTransactionPending,
 	} = useTransactionStatus();
-	const { showErrorMessage } = useMessages();
-	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 	const submitTransaction = usePaymentProcessor( 'free-purchase' );
 
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			onEvent( { type: 'FREE_PURCHASE_TRANSACTION_ERROR', payload: transactionError || '' } );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'free transaction is complete' );
-			setFormComplete();
-		}
-	}, [
-		onEvent,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		transactionStatus,
-		transactionError,
-		localize,
-	] );
-
 	const onClick = () => {
-		setFormSubmitting();
+		setTransactionPending();
 		onEvent( { type: 'FREE_TRANSACTION_BEGIN' } );
 		submitTransaction( {
 			items,

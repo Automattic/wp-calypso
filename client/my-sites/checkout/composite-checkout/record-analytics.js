@@ -208,23 +208,26 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 			}
 
-			case 'STRIPE_TRANSACTION_ERROR': {
+			case 'TRANSACTION_ERROR': {
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
 						error_code: null,
-						reason: String( action.payload ),
+						reason: String( action.payload.message ),
 					} )
+				);
+				const payment_method = translateCheckoutPaymentMethodToWpcomPaymentMethod(
+					action.payload.paymentMethodId
 				);
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
-						payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-						reason: String( action.payload ),
+						payment_method,
+						reason: String( action.payload.message ),
 					} )
 				);
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
-						error_message: String( action.payload ),
+						error_message: String( action.payload.message ),
 					} )
 				);
 			}
@@ -247,27 +250,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 			}
 
-			case 'FREE_PURCHASE_TRANSACTION_ERROR': {
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_payment_error', {
-						error_code: null,
-						reason: String( action.payload ),
-					} )
-				);
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
-						error_code: null,
-						payment_method: 'WPCOM_Billing_WPCOM',
-						reason: String( action.payload ),
-					} )
-				);
-				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_free_purchase_transaction_error', {
-						error_message: String( action.payload ),
-					} )
-				);
-			}
-
 			case 'PAYPAL_TRANSACTION_BEGIN': {
 				reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
 				reduxDispatch(
@@ -284,27 +266,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_paypal_submit_clicked', {} )
-				);
-			}
-
-			case 'PAYPAL_TRANSACTION_ERROR': {
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_payment_error', {
-						error_code: null,
-						reason: String( action.payload ),
-					} )
-				);
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
-						error_code: null,
-						payment_method: 'WPCOM_Billing_PayPal_Express',
-						reason: String( action.payload ),
-					} )
-				);
-				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_paypal_transaction_error', {
-						error_message: String( action.payload ),
-					} )
 				);
 			}
 
@@ -326,27 +287,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 			}
 
-			case 'FULL_CREDITS_TRANSACTION_ERROR': {
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_payment_error', {
-						error_code: null,
-						reason: String( action.payload ),
-					} )
-				);
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
-						error_code: null,
-						payment_method: 'WPCOM_Billing_WPCOM',
-						reason: String( action.payload ),
-					} )
-				);
-				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_full_credits_error', {
-						error_message: String( action.payload ),
-					} )
-				);
-			}
-
 			case 'EXISTING_CARD_TRANSACTION_BEGIN': {
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_form_submit', {
@@ -362,27 +302,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_existing_card_submit_clicked', {} )
-				);
-			}
-
-			case 'EXISTING_CARD_TRANSACTION_ERROR': {
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_payment_error', {
-						error_code: null,
-						reason: String( action.payload ),
-					} )
-				);
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
-						error_code: null,
-						payment_method: 'WPCOM_Billing_MoneyPress_Stored',
-						reason: String( action.payload ),
-					} )
-				);
-				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_existing_card_error', {
-						error_message: String( action.payload ),
-					} )
 				);
 			}
 
@@ -411,26 +330,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						is_loading_error: true,
 					} )
 				);
-
-			case 'APPLE_PAY_TRANSACTION_ERROR': {
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_payment_error', {
-						error_code: null,
-						reason: String( action.payload ),
-					} )
-				);
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
-						error_code: null,
-						reason: String( action.payload ),
-					} )
-				);
-				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_apple_pay_error', {
-						error_message: String( action.payload ),
-					} )
-				);
-			}
 
 			case 'VALIDATE_DOMAIN_CONTACT_INFO': {
 				// TODO: Decide what to do here
