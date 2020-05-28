@@ -32,11 +32,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'state/login/actions';
-import {
-	isCrowdsignalOAuth2Client,
-	isJetpackCloudOAuth2Client,
-	isWooOAuth2Client,
-} from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { login } from 'lib/paths';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -295,7 +291,7 @@ export class LoginForm extends Component {
 
 	renderWooCommerce() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-		const { oauth2Client, requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
+		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
 
 		return (
 			<form method="post">
@@ -401,7 +397,6 @@ export class LoginForm extends Component {
 									<span>{ this.props.translate( 'or' ) }</span>
 								</div>
 								<SocialLoginForm
-									googleSocialOnly={ isJetpackCloudOAuth2Client( oauth2Client ) }
 									onSuccess={ this.onWooCommerceSocialSuccess }
 									socialService={ this.props.socialService }
 									socialServiceResponse={ this.props.socialServiceResponse }
@@ -644,7 +639,6 @@ export class LoginForm extends Component {
 					<Fragment>
 						<Divider>{ this.props.translate( 'or' ) }</Divider>
 						<SocialLoginForm
-							googleSocialOnly={ isJetpackCloudOAuth2Client( oauth2Client ) }
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 							}
