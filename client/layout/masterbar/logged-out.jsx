@@ -21,6 +21,7 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
+import { isDefaultLocale, addLocaleToPath } from 'lib/i18n-utils';
 
 class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
@@ -78,7 +79,7 @@ class MasterbarLoggedOut extends React.Component {
 	}
 
 	renderSignupItem() {
-		const { currentQuery, currentRoute, sectionName, translate } = this.props;
+		const { currentQuery, currentRoute, locale, sectionName, translate } = this.props;
 
 		// Hide for some sections
 		if ( includes( [ 'signup' ], sectionName ) ) {
@@ -134,6 +135,10 @@ class MasterbarLoggedOut extends React.Component {
 			signupUrl = '/jetpack/new';
 		} else if ( signupFlow ) {
 			signupUrl += '/' + signupFlow;
+		}
+
+		if ( ! isDefaultLocale( locale ) ) {
+			signupUrl = addLocaleToPath( signupUrl, locale );
 		}
 
 		return (
