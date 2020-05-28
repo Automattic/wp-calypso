@@ -93,19 +93,18 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	let locale = DEFAULT_LOCALE_SLUG;
+	let i18nLocaleData;
 	try {
 		const [ userLocale, { translatedChunks, ...localeData } ]: (
 			| string
 			| any
 		 )[] = await getLocale();
+		i18nLocaleData = localeData;
 		setLocaleData( localeData );
 
 		if ( USE_TRANSLATION_CHUNKS ) {
 			await setupTranslationChunks( userLocale, translatedChunks );
 		}
-
-		locale = userLocale;
 
 		// FIXME: Use rtl detection tooling
 		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
@@ -118,7 +117,7 @@ window.AppBoot = async () => {
 	} catch {}
 
 	ReactDom.render(
-		<I18nProvider locale={ locale }>
+		<I18nProvider localeData={ i18nLocaleData }>
 			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
 				<Switch>
 					<Route exact path={ path }>
