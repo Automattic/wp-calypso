@@ -6,17 +6,20 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { memoize } from 'lodash';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
+import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
 import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import Gridicon from 'components/gridicon';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
 import ScanBadge from 'landing/jetpack-cloud/components/scan-badge';
 import Sidebar from 'layout/sidebar';
@@ -79,7 +82,14 @@ class JetpackCloudSidebar extends Component {
 	} );
 
 	render() {
-		const { selectedSiteSlug, translate, threats, siteId, scanProgress } = this.props;
+		const {
+			selectedSiteSlug,
+			translate,
+			threats,
+			siteId,
+			jetpackAdminUrl,
+			scanProgress,
+		} = this.props;
 		const numberOfThreatsFound = threats.length;
 
 		const backupTitle = 'Backup';
@@ -200,17 +210,13 @@ class JetpackCloudSidebar extends Component {
 							selected={ this.isSelected( '/support' ) }
 						/>
 						<SidebarItem
-							forceInternalLink={ true }
-							label={ translate( 'Manage site', {
+							label={ translate( 'WP Admin', {
 								comment: 'Jetpack Cloud sidebar navigation item',
 							} ) }
-							link={
-								selectedSiteSlug
-									? `https://wordpress.com/home/${ selectedSiteSlug }`
-									: 'https://wordpress.com/stats'
+							link={ jetpackAdminUrl }
+							customIcon={
+								<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
 							}
-							materialIcon="arrow_back"
-							materialIconStyle="filled"
 						/>
 					</SidebarMenu>
 				</SidebarFooter>
@@ -219,9 +225,17 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
+// Borrowed from Calypso: /client/my-sites/sidebar/index.jsx:683
+const getJetpackAdminUrl = ( state, siteId ) =>
+	formatUrl( {
+		...parseUrl( getSiteAdminUrl( state, siteId ) + 'admin.php' ),
+		query: { page: 'jetpack' },
+	} );
+
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const jetpackAdminUrl = getJetpackAdminUrl( state, siteId );
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
 		const threats = getSiteScanThreats( state, siteId );
@@ -229,6 +243,7 @@ export default connect(
 
 		return {
 			siteId,
+			jetpackAdminUrl,
 			isBackupSectionOpen,
 			isScanSectionOpen,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
