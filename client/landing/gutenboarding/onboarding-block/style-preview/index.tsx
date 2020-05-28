@@ -6,7 +6,6 @@ import { useI18n } from '@automattic/react-i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { useHistory } from 'react-router-dom';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -79,7 +78,7 @@ const StylePreview: React.FunctionComponent = () => {
 		// Skip the plans step if the user has used the plans modal to select a plan
 		// If a user has already used the plans step and then gone back, show them the plans step again
 		// to avoid confusion
-		if ( isEnabled( 'gutenboarding/plans-grid' ) && ( ! selectedPlan || hasUsedPlansStep ) ) {
+		if ( ! selectedPlan || hasUsedPlansStep ) {
 			history.push( makePath( Step.Plans ) );
 			return;
 		}
