@@ -67,7 +67,7 @@ export function receiveSite( site ) {
 export function receiveSites( sites ) {
 	return {
 		type: SITES_RECEIVE,
-		sites,
+		sites: sites.filter( ( site ) => ! site.jetpack_connection || site.jetpack ),
 	};
 }
 
@@ -131,7 +131,7 @@ export function requestSite( siteFragment ) {
 			} )
 			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
-				if ( ! ( site && site.capabilities ) ) {
+				if ( ! ( site && site.capabilities ) || ( ! site.jetpack && site.jetpack_connection ) ) {
 					return dispatch( {
 						type: SITE_REQUEST_FAILURE,
 						siteId: siteFragment,
