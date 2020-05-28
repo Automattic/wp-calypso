@@ -747,7 +747,7 @@ function getPlanProductSlugs(
 }
 
 const Discount = styled.span`
-	color: ${( props ) => props.theme.colors.discount};
+	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
 `;
 

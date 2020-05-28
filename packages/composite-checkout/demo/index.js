@@ -211,13 +211,13 @@ const ContactFormTitle = () => {
 
 const Label = styled.label`
 	display: block;
-	color: ${( props ) => props.theme.colors.textColor};
-	font-weight: ${( props ) => props.theme.weights.bold};
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${( props ) => ( props.disabled ? 'default' : 'pointer') };
+		cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	}
 `;
 
@@ -227,12 +227,12 @@ const Input = styled.input`
 	box-sizing: border-box;
 	font-size: 16px;
 	border: 1px solid
-		${( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
+		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
 	padding: 13px 10px 12px 10px;
 
 	:focus {
-		outline: ${( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.outline}
+		outline: ${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline }
 			solid 2px !important;
 	}
 `;

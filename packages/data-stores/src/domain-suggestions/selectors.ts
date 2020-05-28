@@ -19,7 +19,7 @@ const createSelectors = ( vendor: string ) => {
 		return [
 			...state.categories
 				.filter( ( { tier } ) => tier !== null )
-				.sort( ( a, b ) => ( a > b ? 1 : -1)  ),
+				.sort( ( a, b ) => ( a > b ? 1 : -1 ) ),
 			...state.categories
 				.filter( ( { tier } ) => tier === null )
 				.sort( ( a, b ) => a.title.localeCompare( b.title ) ),

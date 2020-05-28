@@ -336,6 +336,6 @@ function RenderContactDetails( {
 
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;
-	color: ${( props ) => props.theme.colors.textColor};
+	color: ${ ( props ) => props.theme.colors.textColor };
 	margin: 0 0 16px;
 `;

@@ -132,16 +132,16 @@ export function CheckoutSummaryArea( { children, className } ) {
 }
 
 export const CheckoutSummaryCard = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	background: ${ ( props ) => props.theme.colors.surface };
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		border-bottom: none 0;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	}
 `;
 
@@ -421,7 +421,7 @@ CheckoutStepBody.propTypes = {
 
 const ContainerUI = styled.div`
 	*:focus {
-		outline: ${( props ) => props.theme.colors.outline} solid 2px;
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 `;
 
@@ -430,11 +430,11 @@ const MainContentUI = styled.div`
 	flex-direction: column;
 	width: 100%;
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		margin: 32px auto;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		align-items: flex-start;
 		flex-direction: row;
 		justify-content: center;
@@ -447,11 +447,11 @@ const CheckoutSummaryUI = styled.div`
 	margin: 0 auto;
 	width: 100%;
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		max-width: 556px;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-left: 24px;
 		margin-right: 0;
 		order: 2;
@@ -460,20 +460,20 @@ const CheckoutSummaryUI = styled.div`
 `;
 
 const CheckoutStepAreaUI = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
+	background: ${ ( props ) => props.theme.colors.surface };
 	box-sizing: border-box;
-	margin: 0 auto ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
+	margin: 0 auto ${ ( props ) => ( props.isLastStepActive ? '100px' : 0 ) };
 	width: 100%;
 
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		max-width: 556px;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin: 0;
 		order: 1;
 		width: 556px;
@@ -481,23 +481,23 @@ const CheckoutStepAreaUI = styled.div`
 `;
 
 const SubmitButtonWrapperUI = styled.div`
-	background: ${( props ) => props.theme.colors.background};
+	background: ${ ( props ) => props.theme.colors.background };
 	padding: 24px;
-	position: ${( props ) => ( props.isLastStepActive ? 'fixed' : 'relative') };
+	position: ${ ( props ) => ( props.isLastStepActive ? 'fixed' : 'relative' ) };
 	bottom: 0;
 	left: 0;
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;
-	border-top-width: ${( props ) => ( props.isLastStepActive ? '1px' : '0') };
+	border-top-width: ${ ( props ) => ( props.isLastStepActive ? '1px' : '0' ) };
 	border-top-style: solid;
-	border-top-color: ${( props ) => props.theme.colors.borderColorLight};
+	border-top-color: ${ ( props ) => props.theme.colors.borderColorLight };
 
 	button {
-		width: ${( props ) => ( props.isLastStepActive ? 'calc( 100% - 60px )' : '100%') };
+		width: ${ ( props ) => ( props.isLastStepActive ? 'calc( 100% - 60px )' : '100%' ) };
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		position: relative;
 		border: 0;
 
@@ -520,12 +520,12 @@ export function useIsStepComplete() {
 }
 
 const StepWrapperUI = styled.div`
-	padding-bottom: ${( props ) => ( props.isFinalStep ? '0' : '32px') };
+	padding-bottom: ${ ( props ) => ( props.isFinalStep ? '0' : '32px' ) };
 	position: relative;
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 24px;
 	}
 `;
@@ -601,12 +601,12 @@ Stepper.propTypes = {
 };
 
 const StepTitle = styled.span`
-	color: ${( props ) =>
-		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor};
-	font-weight: ${( props ) =>
-		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
-	margin-right: ${( props ) => ( props.fullWidth ? '0' : '8px') };
-	flex: ${( props ) => ( props.fullWidth ? '1' : 'inherit') };
+	color: ${ ( props ) =>
+		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor };
+	font-weight: ${ ( props ) =>
+		props.isActive ? props.theme.weights.bold : props.theme.weights.normal };
+	margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
+	flex: ${ ( props ) => ( props.fullWidth ? '1' : 'inherit' ) };
 `;
 
 const StepHeader = styled.h2`
@@ -614,7 +614,7 @@ const StepHeader = styled.h2`
 	display: flex;
 	width: 100%;
 	align-items: center;
-	margin: 0 0 ${( props ) => ( props.isComplete || props.isActive ? '8px' : '0') };
+	margin: 0 0 ${ ( props ) => ( props.isComplete || props.isActive ? '8px' : '0' ) };
 `;
 
 const StepNumberOuterWrapper = styled.div`
@@ -629,7 +629,7 @@ const StepNumberInnerWrapper = styled.div`
 	transform-origin: center center;
 	transition: transform 0.3s 0.1s ease-out;
 	transform-style: preserve-3d;
-	transform: ${( props ) => ( props.isComplete ? 'rotateY(180deg)' : 'rotateY(0)') };
+	transform: ${ ( props ) => ( props.isComplete ? 'rotateY(180deg)' : 'rotateY(0)' ) };
 `;
 
 const StepNumber = styled.div`
@@ -649,7 +649,7 @@ const StepNumber = styled.div`
 	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
-		z-index: ${ ( props ) => ( props.isComplete ? '0' : '1')  };
+		z-index: ${ ( props ) => ( props.isComplete ? '0' : '1' ) };
 	}
 `;
 
@@ -660,7 +660,7 @@ const StepNumberCompleted = styled( StepNumber )`
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
 		backface-visibility: visible;
-		z-index: ${ ( props ) => ( props.isComplete ? '1' : '0')  };
+		z-index: ${ ( props ) => ( props.isComplete ? '1' : '0' ) };
 	}
 
 	svg {
@@ -686,15 +686,15 @@ function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
 }
 
 const StepContentUI = styled.div`
-	color: ${( props ) => props.theme.colors.textColor};
-	display: ${( props ) => ( props.isVisible ? 'block' : 'none') };
+	color: ${ ( props ) => props.theme.colors.textColor };
+	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
 `;
 
 const StepSummaryUI = styled.div`
-	color: ${( props ) => props.theme.colors.textColorLight};
+	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
-	display: ${( props ) => ( props.isVisible ? 'block' : 'none') };
+	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
 `;
 

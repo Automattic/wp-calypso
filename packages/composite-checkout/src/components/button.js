@@ -49,58 +49,58 @@ Button.propTypes = {
 
 const CallToAction = styled.button`
 	display: block;
-	width: ${( props ) => ( props.fullWidth ? '100%' : 'auto') };
+	width: ${ ( props ) => ( props.fullWidth ? '100%' : 'auto' ) };
 	font-size: 16px;
-	border-radius: ${( props ) => ( props.buttonType === 'paypal' ? '50px' : '3px') };
-	padding: ${( props ) => ( props.buttonState === 'text-button' ? '0' : '10px 15px') };
-	background: ${getBackgroundColor};
-	border-width: ${getBorderWeight};
+	border-radius: ${ ( props ) => ( props.buttonType === 'paypal' ? '50px' : '3px' ) };
+	padding: ${ ( props ) => ( props.buttonState === 'text-button' ? '0' : '10px 15px' ) };
+	background: ${ getBackgroundColor };
+	border-width: ${ getBorderWeight };
 	border-style: solid;
-	border-color: ${getBorderColor};
-	color: ${getTextColor};
-	border-bottom-width: ${getBorderElevationWeight};
-	font-weight: ${getFontWeight};
-	text-decoration: ${getTextDecoration};
+	border-color: ${ getBorderColor };
+	color: ${ getTextColor };
+	border-bottom-width: ${ getBorderElevationWeight };
+	font-weight: ${ getFontWeight };
+	text-decoration: ${ getTextDecoration };
 
 	:hover {
-		background: ${getRollOverColor};
-		border-width: ${getBorderWeight};
+		background: ${ getRollOverColor };
+		border-width: ${ getBorderWeight };
 		border-style: solid;
-		border-color: ${getRollOverBorderColor};
-		border-bottom-width: ${getBorderElevationWeight};
+		border-color: ${ getRollOverBorderColor };
+		border-bottom-width: ${ getBorderElevationWeight };
 		text-decoration: none;
-		color: ${getTextColor};
-		cursor: ${( props ) => ( props.buttonState === 'disabled' ? 'not-allowed' : 'pointer') };
+		color: ${ getTextColor };
+		cursor: ${ ( props ) => ( props.buttonState === 'disabled' ? 'not-allowed' : 'pointer' ) };
 	}
 
 	:active {
-		background: ${getRollOverColor};
-		border-width: ${getBorderWeight};
+		background: ${ getRollOverColor };
+		border-width: ${ getBorderWeight };
 		border-style: solid;
-		border-color: ${getRollOverBorderColor};
-		border-top-width: ${getBorderElevationWeight};
-		text-decoration: ${getTextDecoration};
-		color: ${getTextColor};
+		border-color: ${ getRollOverBorderColor };
+		border-top-width: ${ getBorderElevationWeight };
+		text-decoration: ${ getTextDecoration };
+		color: ${ getTextColor };
 	}
 
 	svg {
 		margin-bottom: -1px;
 		transform: translateY( 2px );
-		filter: ${getImageFilter};
-		opacity: ${getImageOpacity};
+		filter: ${ getImageFilter };
+		opacity: ${ getImageOpacity };
 	}
 
 	&.is-busy {
 		animation: components-button__busy-animation 2500ms infinite linear;
 		background-image: linear-gradient(
 			-45deg,
-			${getBackgroundColor} 28%,
-			${getBackgroundAccentColor} 28%,
-			${getBackgroundAccentColor} 72%,
-			${getBackgroundColor} 72%
+			${ getBackgroundColor } 28%,
+			${ getBackgroundAccentColor } 28%,
+			${ getBackgroundAccentColor } 72%,
+			${ getBackgroundColor } 72%
 		);
 		background-size: 200px;
-		border-color: ${getRollOverBorderColor};
+		border-color: ${ getRollOverBorderColor };
 		opacity: 1;
 	}
 

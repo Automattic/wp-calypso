@@ -281,7 +281,7 @@ const StripeFields = styled.div`
 const CreditCardFieldsWrapper = styled.div`
 	padding: 16px;
 	position: relative;
-	display: ${( props ) => ( props.isLoaded ? 'block' : 'none') };
+	display: ${ ( props ) => ( props.isLoaded ? 'block' : 'none' ) };
 	position: relative;
 
 	:after {
@@ -289,7 +289,7 @@ const CreditCardFieldsWrapper = styled.div`
 		width: calc( 100% - 6px );
 		height: 1px;
 		content: '';
-		background: ${( props ) => props.theme.colors.borderColorLight};
+		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		position: absolute;
 		top: 0;
 		left: 3px;
@@ -325,9 +325,9 @@ const Label = styled.label`
 const LabelText = styled.span`
 	display: block;
 	font-size: 14px;
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	margin-bottom: 8px;
-	color: ${( props ) => props.theme.colors.textColor};
+	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
 const StripeFieldWrapper = styled.span`
@@ -340,17 +340,18 @@ const StripeFieldWrapper = styled.span`
 		font-size: 16px;
 		box-sizing: border-box;
 		border: 1px solid
-			${( props ) => ( props.hasError ? props.theme.colors.error : props.theme.colors.borderColor) };
+			${ ( props ) =>
+				props.hasError ? props.theme.colors.error : props.theme.colors.borderColor };
 		padding: 12px 10px;
 		line-height: 1.2;
 	}
 
 	.StripeElement--focus {
-		outline: ${( props ) => props.theme.colors.outline} solid 2px;
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 
 	.StripeElement--focus.StripeElement--invalid {
-		outline: ${( props ) => props.theme.colors.error} solid 2px;
+		outline: ${ ( props ) => props.theme.colors.error } solid 2px;
 	}
 `;
 
@@ -358,9 +359,9 @@ const StripeErrorMessage = styled.span`
 	font-size: 14px;
 	margin-top: 8px;
 	font-style: italic;
-	color: ${( props ) => props.theme.colors.error};
+	color: ${ ( props ) => props.theme.colors.error };
 	display: block;
-	font-weight: ${( props ) => props.theme.weights.normal};
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 `;
 
 function LoadingFields() {

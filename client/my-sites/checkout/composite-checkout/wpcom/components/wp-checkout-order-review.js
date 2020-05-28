@@ -75,7 +75,7 @@ WPCheckoutOrderReview.propTypes = {
 };
 
 const DomainURL = styled.div`
-	color: ${( props ) => props.theme.colors.textColorLight};
+	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	margin-top: -10px;
 	word-break: break-word;
@@ -83,5 +83,5 @@ const DomainURL = styled.div`
 
 const CouponField = styled( Coupon )`
 	margin: 20px 30px 0 0;
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 `;
