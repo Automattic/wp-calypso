@@ -19,6 +19,7 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useEvents,
+	useFormStatus,
 } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
@@ -119,6 +120,7 @@ function PaymentMethod( {
 	ariaLabel,
 	summary,
 } ) {
+	const { formStatus } = useFormStatus();
 	if ( summary ) {
 		return inactiveContent;
 	}
@@ -129,6 +131,7 @@ function PaymentMethod( {
 			value={ id }
 			id={ id }
 			checked={ checked }
+			disabled={ formStatus !== 'ready' }
 			onChange={ onClick ? () => onClick( id ) : null }
 			ariaLabel={ ariaLabel }
 			label={ label }
