@@ -696,13 +696,13 @@ function getCloseButtonUrl( calypsoPort ) {
 
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.closeUrl',
-		'wpcom-block-editor/getCloseButtonUrl',
+		'a8c/wpcom-block-editor/getCloseButtonUrl',
 		( closeUrl ) => calypsoifyGutenberg.closeUrl || closeUrl
 	);
 
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.closeLabel',
-		'wpcom-block-editor/getCloseButtonUrl',
+		'a8c/wpcom-block-editor/getCloseButtonUrl',
 		( closeLabel ) => calypsoifyGutenberg.closeButtonLabel || closeLabel
 	);
 }
