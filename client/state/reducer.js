@@ -20,7 +20,6 @@ import { reducer as httpData } from 'state/data-layer/http-data';
 /**
  * Reducers
  */
-import account from './account/reducer';
 import accountRecovery from './account-recovery/reducer';
 import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
@@ -104,7 +103,6 @@ import wordads from './wordads/reducer';
 // The reducers in this list are not modularized, and are always loaded on boot.
 // Please do not add to this list. See #39261 and p4TIVU-9lM-p2 for more details.
 const reducers = {
-	account,
 	accountRecovery,
 	activePromotions,
 	activityLog,
