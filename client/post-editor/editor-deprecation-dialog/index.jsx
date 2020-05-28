@@ -26,6 +26,7 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import InlineSupportLink from 'components/inline-support-link';
 import { localizeUrl } from 'lib/i18n-utils';
 import FormattedDate from 'components/formatted-date';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -64,6 +65,8 @@ class EditorDeprecationDialog extends Component {
 			return null;
 		}
 
+		const dateFormat = this.props.moment.localeData().longDateFormat( 'LL' );
+
 		return (
 			<Modal
 				title={ translate( 'The new WordPress editor is coming.' ) }
@@ -81,7 +84,7 @@ class EditorDeprecationDialog extends Component {
 							components: {
 								date: (
 									<strong>
-										<FormattedDate date="2020-06-01" format="MMMM D" />
+										<FormattedDate date="2020-06-01" format={ dateFormat } />
 									</strong>
 								),
 								support: (
@@ -150,4 +153,4 @@ export default connect( ( state ) => {
 		isDialogShowing,
 		gutenbergUrl: gutenbergUrl,
 	};
-}, mapDispatchToProps )( localize( EditorDeprecationDialog ) );
+}, mapDispatchToProps )( localize( withLocalizedMoment( EditorDeprecationDialog ) ) );
