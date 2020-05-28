@@ -75,33 +75,26 @@ const SettingsPage = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
-	const NO_PRODUCT = 0;
 	const HAS_BACKUP = 1;
 	const HAS_SCAN = 2;
 	const HAVE_BOTH = 3;
 
-	const DISCONNECTED = 0;
-	const CONNECTED = 1;
+	const disconnectedMessages = {
+		[ HAS_BACKUP ]: translate(
+			'Enter your server credentials to enable one-click restores for backups.'
+		),
+		[ HAS_SCAN ]: translate(
+			'Enter your server credentials to enable Jetpack to auto fix threats.'
+		),
+		[ HAVE_BOTH ]: translate(
+			'Enter your server credentials to enable one-click restores for backups and to auto-fix threats.'
+		),
+	};
 
-	const messages = {
-		[ DISCONNECTED ]: {
-			[ NO_PRODUCT ]: '',
-			[ HAS_BACKUP ]: translate(
-				'Enter your server credentials to enable one-click restores for backups.'
-			),
-			[ HAS_SCAN ]: translate(
-				'Enter your server credentials to enable Jetpack to auto fix threats.'
-			),
-			[ HAVE_BOTH ]: translate(
-				'Enter your server credentials to enable one-click restores for backups and to auto-fix threats.'
-			),
-		},
-		[ CONNECTED ]: {
-			[ NO_PRODUCT ]: '',
-			[ HAS_BACKUP ]: translate( 'One-click restores are enabled.' ),
-			[ HAS_SCAN ]: translate( 'Auto-fix threats are enabled.' ),
-			[ HAVE_BOTH ]: translate( 'One-click restores and auto-fix threats are enabled.' ),
-		},
+	const connectedMessages = {
+		[ HAS_BACKUP ]: translate( 'One-click restores are enabled.' ),
+		[ HAS_SCAN ]: translate( 'Auto-fix threats are enabled.' ),
+		[ HAVE_BOTH ]: translate( 'One-click restores and auto-fix threats are enabled.' ),
 	};
 
 	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
@@ -113,9 +106,17 @@ const SettingsPage = () => {
 	const hasBackup = backupState?.state !== 'unavailable';
 	const hasScan = scanState?.state !== 'unavailable';
 
-	const productCode = hasBackup | ( hasScan << 1 );
+	const messages = isConnected ? connectedMessages : disconnectedMessages;
 
-	const message = messages[ +isConnected ][ productCode ];
+	let message = '';
+
+	if ( hasBackup && hasScan ) {
+		message = messages[ HAVE_BOTH ];
+	} else if ( hasBackup ) {
+		message = messages[ HAS_BACKUP ];
+	} else if ( hasScan ) {
+		message = messages[ HAS_SCAN ];
+	}
 
 	const cardProps = getCardProps( isConnected, message, translate );
 
