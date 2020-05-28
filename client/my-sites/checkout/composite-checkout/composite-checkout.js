@@ -894,14 +894,16 @@ function displayRenewalSuccessNotice( responseCart, purchases, translate, moment
 	);
 	// and take the first product which matches the product id of the renewalItem
 	const product = purchasedProducts.find( ( item ) => {
-		return item.product_id === renewalItem.product_id;
+		return String( item.product_id ) === String( renewalItem.product_id );
 	} );
 
 	if ( ! product ) {
+		debug( 'no product found for renewal notice matching', renewalItem, 'in', purchasedProducts );
 		return;
 	}
 
 	if ( product.will_auto_renew ) {
+		debug( 'showing notice for product that will auto-renew' );
 		notices.success(
 			translate(
 				'%(productName)s has been renewed and will now auto renew in the future. ' +
@@ -920,6 +922,7 @@ function displayRenewalSuccessNotice( responseCart, purchases, translate, moment
 		return;
 	}
 
+	debug( 'showing notice for product that will not auto-renew' );
 	notices.success(
 		translate(
 			'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
