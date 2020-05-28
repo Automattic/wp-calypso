@@ -6,7 +6,7 @@
 
 // Putting here as this css is already enqueued so saves an extra diff for this temporary notice
 // TODO: Remove this after ../wpcom/features/switch-to-classic-notice.js is removed
-.features__switch-to-classic-notice.is-dismissible {
+.features__switch-to-classic-notice.components-notice {
 	margin: 0;
 	padding: 0;
 
