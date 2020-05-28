@@ -50,7 +50,6 @@ import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { isWpComEcommercePlan } from 'lib/plans';
 import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
-import { addBlogSticker } from 'state/sites/blog-stickers/actions';
 
 /**
  * Module variables
@@ -569,5 +568,5 @@ export default connect(
 			siteIsPrivate: isPrivateSite( state, selectedSiteId ),
 		};
 	},
-	{ saveSiteSettings, addBlogSticker }
+	{ saveSiteSettings }
 )( localize( SecurePaymentForm ) );
