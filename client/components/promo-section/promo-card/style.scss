@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .promo-card {
 	display: flex;
 	flex-direction: column;
@@ -29,20 +32,59 @@
 	}
 
 	&.is-primary {
+		align-items: center;
+
+		.action-panel__title {
+			font-family: 'Recoleta', $serif;
+			font-size: 20px;
+			line-height: 28px;
+			margin-bottom: 0;
+		}
+
 		@include breakpoint-deprecated( '>480px' ) {
 			.action-panel__figure {
-				max-width: 310px;
+				display: block;
+				max-width: 120px;
+				margin-bottom: 0;
+			}
+
+			.action-panel__title {
+				font-size: 24px;
+				line-height: 32px;
+			}
+
+			.action-panel__body {
+				font-size: 16px;
+				line-height: 24px;
 			}
 		}
 
 		.action-panel__body {
 			justify-content: center;
+			width: 100%;
 			p {
 				flex-grow: 0;
+				margin-bottom: 8px;
 			}
 		}
 
-		background-color: var( --color-primary-0 );
+		@include break-xlarge {
+			padding-left: 64px;
+			padding-right: 64px;
+		}
+
+		@include breakpoint-deprecated( '>660px' ) {
+			// illustration is too small to fit between 660 and 800px
+			.action-panel__figure {
+				display: none;
+			}
+		}
+
+		@include breakpoint-deprecated( '>800px' ) {
+			.action-panel__figure {
+				display: block;
+			}
+		}
 	}
 
 	.action-panel__cta {
