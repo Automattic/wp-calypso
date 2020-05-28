@@ -102,7 +102,7 @@ export const getMetaDiffForDailyBackup = ( logs, date ) => {
 
 	return [
 		{ type: 'Plugin', num: thisMeta.plugins.val - lastMeta.plugins.val },
-		{ type: 'Theme', num: thisMeta.themes.val - lastMeta.themes.val },
+		{ type: 'Theme', num: thisMeta.themes?.val - lastMeta.themes?.val },
 		{ type: 'Upload', num: thisMeta.uploads.val - lastMeta.uploads.val },
 		{ type: 'Post', num: thisMeta.posts.val - lastMeta.posts.val },
 	];

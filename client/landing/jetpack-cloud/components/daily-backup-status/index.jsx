@@ -90,7 +90,7 @@ class DailyBackupStatus extends Component {
 			hasRealtimeBackups,
 			siteSlug,
 			deltas,
-			metaDiff,
+			// metaDiff,
 			translate,
 		} = this.props;
 		const displayDate = this.getDisplayDate( backup.activityTs );
@@ -123,7 +123,8 @@ class DailyBackupStatus extends Component {
 					dispatchRecordTracksEvent={ dispatchRecordTracksEvent }
 				/>
 				{ showBackupDetails && this.renderBackupDetails( backup ) }
-				{ ! hasRealtimeBackups && <BackupChanges { ...{ deltas, metaDiff } } /> }
+				{ /*{ ! hasRealtimeBackups && <BackupChanges { ...{ deltas, metaDiff } } /> }*/ }
+				{ ! hasRealtimeBackups && <BackupChanges { ...{ deltas } } /> }
 			</>
 		);
 	}
