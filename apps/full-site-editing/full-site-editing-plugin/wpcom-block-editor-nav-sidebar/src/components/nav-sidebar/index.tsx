@@ -35,7 +35,7 @@ const Button = ( {
 );
 
 export default function WpcomBlockEditorNavSidebar() {
-	const [ items, isOpen, postType, selectedItemId ] = useSelect( ( select ) => {
+	const [ items, isOpen, postType, selectedItemId, statusLabels ] = useSelect( ( select ) => {
 		const { getPostType } = select( 'core' ) as any;
 
 		return [
@@ -43,6 +43,7 @@ export default function WpcomBlockEditorNavSidebar() {
 			select( STORE_KEY ).isSidebarOpened(),
 			getPostType( select( 'core/editor' ).getCurrentPostType() ),
 			select( 'core/editor' ).getCurrentPostId(),
+			selectPostStatusLabels( select ),
 		];
 	} );
 
@@ -119,7 +120,12 @@ export default function WpcomBlockEditorNavSidebar() {
 			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__controls">
 				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
 					{ items.map( ( item ) => (
-						<NavItem key={ item.id } item={ item } selected={ item.id === selectedItemId } />
+						<NavItem
+							key={ item.id }
+							item={ item }
+							selected={ item.id === selectedItemId }
+							statusLabel={ statusLabels[ item.status ] }
+						/>
 					) ) }
 				</ul>
 				<CreatePage postType={ postType } />
@@ -132,9 +138,10 @@ export default function WpcomBlockEditorNavSidebar() {
 interface NavItemProps {
 	item: Post;
 	selected: boolean;
+	statusLabel?: string;
 }
 
-function NavItem( { item, selected }: NavItemProps ) {
+function NavItem( { item, selected, statusLabel }: NavItemProps ) {
 	const className = classNames( 'wpcom-block-editor-nav-sidebar__item-button', {
 		'is-selected': selected,
 	} );
@@ -144,6 +151,9 @@ function NavItem( { item, selected }: NavItemProps ) {
 			<Button className={ className }>
 				<div>{ item.title.rendered }</div>
 				<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
+				{ statusLabel && (
+					<div className="wpcom-block-editor-nav-sidebar__label">{ statusLabel }</div>
+				) }
 			</Button>
 		</li>
 	);
@@ -152,12 +162,32 @@ function NavItem( { item, selected }: NavItemProps ) {
 export function selectNavItems( select: typeof import('@wordpress/data').select ): Post[] {
 	const currentPostType = select( 'core/editor' ).getCurrentPostType();
 
+	const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
+	if ( ! statuses ) {
+		return [];
+	}
+
+	const statusFilter = statuses
+		.filter( ( { show_in_list } ) => show_in_list )
+		.map( ( { slug } ) => slug )
+		.join( ',' );
+
 	const items = select( 'core' ).getEntityRecords( 'postType', currentPostType, {
 		_fields: 'id,slug,status,title',
 		orderby: 'modified',
 		per_page: 10,
-		status: 'draft,future,pending,private,publish',
+		status: statusFilter,
 	} );
 
 	return ( items as any ) || [];
+}
+
+export function selectPostStatusLabels(
+	select: typeof import('@wordpress/data').select
+): Record< string, string > {
+	const items = select( 'core' ).getEntityRecords( 'root', 'status' );
+	return ( items || [] ).reduce(
+		( acc, { name, slug } ) => ( slug === 'publish' ? acc : { ...acc, [ slug ]: name } ),
+		{}
+	);
 }
