@@ -142,16 +142,6 @@ export default function CompositeCheckout( {
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 
-	const getThankYouUrl = useGetThankYouUrl( {
-		siteSlug,
-		redirectTo,
-		purchaseId,
-		feature,
-		cart,
-		isJetpackNotAtomic,
-		product,
-		siteId,
-	} );
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
 
@@ -243,6 +233,17 @@ export default function CompositeCheckout( {
 		showAddCouponSuccessMessage,
 		recordEvent
 	);
+
+	const getThankYouUrl = useGetThankYouUrl( {
+		siteSlug,
+		redirectTo,
+		purchaseId,
+		feature,
+		cart: responseCart,
+		isJetpackNotAtomic,
+		product,
+		siteId,
+	} );
 
 	const moment = useLocalizedMoment();
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, siteId ) );
