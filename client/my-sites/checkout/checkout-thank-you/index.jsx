@@ -625,6 +625,7 @@ export class CheckoutThankYou extends React.Component {
 								selectedSite={ selectedSite }
 								selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
 								sitePlans={ sitePlans }
+								displayMode={ displayMode }
 							/>
 						</div>
 					) }
