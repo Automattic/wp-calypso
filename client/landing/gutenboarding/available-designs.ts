@@ -38,7 +38,7 @@ export const getDesignImageUrl = ( design: Design ) => {
  */
 export function prefetchDesignThumbs() {
 	if ( typeof window !== 'undefined' ) {
-		availableDesigns.featured.forEach( ( design: Design ) => {
+		getAvailableDesigns().featured.forEach( ( design: Design ) => {
 			const href = getDesignImageUrl( design );
 			const link = document.createElement( 'link' );
 			link.rel = 'prefetch';
@@ -49,4 +49,17 @@ export function prefetchDesignThumbs() {
 	}
 }
 
-export default availableDesigns;
+export function getAvailableDesigns(
+	includeEdgeDesigns: boolean = isEnabled( 'gutenboarding/edge-templates' )
+) {
+	if ( includeEdgeDesigns ) {
+		return availableDesigns;
+	}
+
+	return {
+		...availableDesigns,
+		featured: availableDesigns.featured.filter( ( design ) => ! design.is_edge ),
+	};
+}
+
+export default getAvailableDesigns();

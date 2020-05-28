@@ -62,11 +62,6 @@
 			"vertical-whitelist": []
 		},
 		{
-			"title": "twentytwenty",
-			"defaults": "twentytwenty",
-			"vertical-whitelist": []
-		},
-		{
 			"title": "alves",
 			"defaults": "alves",
 			"vertical-whitelist": []
@@ -148,10 +143,6 @@
 		{
 			"title": "barnsbury",
 			"demo": "https://barnsburydemo.wordpress.com/"
-		},
-		{
-			"title": "twentytwenty",
-			"demo": "https://twentytwentydemo.wordpress.com/"
 		},
 		{
 			"title": "alves",
