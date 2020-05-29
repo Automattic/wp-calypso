@@ -35,7 +35,7 @@ const EducationEarn = ( { siteSlug } ) => {
 				{
 					externalLink: true,
 					url: `https://wordpress.com/support/category/tools/earning-money-from-your-site/`,
-					icon: 'info',
+					icon: 'arrow-right',
 					text: translate( 'Learn more' ),
 				},
 			] }
