@@ -18,7 +18,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import type { Site, User } from '@automattic/data-stores';
+import type { Site as SiteStore, User as UserStore } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -56,8 +56,8 @@ const USE_TRANSLATION_CHUNKS: string =
 	config.isEnabled( 'use-translation-chunks' ) ||
 	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
-type User = User.CurrentUser;
-type Site = Site.SiteDetails;
+type User = UserStore.CurrentUser;
+type Site = SiteStore.SiteDetails;
 
 interface AppWindow extends Window {
 	currentUser?: User;
