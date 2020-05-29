@@ -3,6 +3,7 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -11,10 +12,10 @@ import type { SiteVertical, Design } from './types';
 import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
 
-const domain: Reducer<
-	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
-	OnboardAction
-> = ( state, action ) => {
+const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
+	state,
+	action
+) => {
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
 	}

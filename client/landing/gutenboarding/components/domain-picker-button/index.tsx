@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { createRef, FunctionComponent, useState, useEffect } from 'react';
+import * as React from 'react';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-
 import classnames from 'classnames';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
  */
 import './style.scss';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 interface Props extends Button.BaseProps {
 	className?: string;
@@ -40,14 +40,14 @@ interface Props extends Button.BaseProps {
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 }
 
-const DomainPickerButton: FunctionComponent< Props > = ( {
+const DomainPickerButton: React.FunctionComponent< Props > = ( {
 	children,
 	className,
 	onDomainSelect,
 	currentDomain,
 	...buttonProps
 } ) => {
-	const buttonRef = createRef< HTMLButtonElement >();
+	const buttonRef = React.createRef< HTMLButtonElement >();
 
 	const domainSuggestions = useDomainSuggestions( { locale: useI18n().i18nLocale, quantity: 10 } );
 
@@ -55,9 +55,9 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		select( DOMAIN_SUGGESTIONS_STORE ).getCategories()
 	);
 
-	const [ railcarId, setRailcarId ] = useState< string | undefined >();
+	const [ railcarId, setRailcarId ] = React.useState< string | undefined >();
 
-	useEffect( () => {
+	React.useEffect( () => {
 		// Only generate a railcarId when the domain suggestions change and are not empty.
 		if ( domainSuggestions ) {
 			setRailcarId( getNewRailcarId() );
@@ -69,8 +69,8 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	);
 	const { setDomainSearch, setDomainCategory } = useDispatch( STORE_KEY );
 
-	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
-	const [ isDomainModalVisible, setDomainModalVisibility ] = useState( false );
+	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = React.useState( false );
+	const [ isDomainModalVisible, setDomainModalVisibility ] = React.useState( false );
 
 	const handlePopoverClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
