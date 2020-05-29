@@ -305,6 +305,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title: translate( 'Start earning money now' ),
 			image: {
 				path: earnSectionImage,
+				align: 'right',
 			},
 			body: translate( 'Turn your website into a reliable source of income.' ),
 		},
