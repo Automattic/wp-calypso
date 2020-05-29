@@ -41,6 +41,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 1.6 =
+* Remove the "Edit as HTML" options for the inner blocks of the Premium Content Block.
 * Remove plugin that notified users of the new location of Block Patterns.
 * Remove obsolete typedefs for @wordpress/icons.
 * Support for any UTF-8 character in the Premium Content block.
