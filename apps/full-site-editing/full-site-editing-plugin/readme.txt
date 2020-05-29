@@ -47,6 +47,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Fixed availability of Premium Content subscription email service.
 * Premium Content block styles adjusted to only load when block is used.
 * Hide Gutenberg's inserter (in favor of ours).
+* Use `require` (rather than `require_once`) for asset files.
 
 = 1.5 =
 * Global Styles: Fix a "Bad array access" error.
