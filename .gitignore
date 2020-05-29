@@ -66,3 +66,5 @@ cached-requests.json
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+/packages/packages-checksum.txt
+/packages_folder_checksum.txt

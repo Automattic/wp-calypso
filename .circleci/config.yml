@@ -97,7 +97,20 @@ references:
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
     paths:
       - '.git'
-
+  # Packages cache
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
+  restore-packages-cache: &restore-packages-cache
+    name: Restore packages cache
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-packages-{{ checksum "packages_folder_checksum.txt" }}-{{ checksum ".nvmrc" }}
+  update-packages-cache: &update-packages-cache
+    name: Build packages if cache doesn't exist or outdated
+    command: yarn run build-packages-if-needed
+  save-packages-cache: &save-packages-cache
+    name: Cache packages folder with built packages
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-packages-{{ checksum "packages_folder_checksum.txt" }}-{{ checksum ".nvmrc" }}
+    paths:
+      - './packages'
   # yarn cache
   #
   # yarn caches the modules it installs in ~/.cache/yarn.
@@ -142,6 +155,11 @@ references:
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
     paths:
       - 'build/.babel-client-cache'
+
+  calculate-packages-folder-checksum: &calculate-packages-folder-checksum
+    name: Create packages folder checksum to and store it as the CircleCI cache key
+    command: |
+      yarn run -s build-packages-checksum > packages_folder_checksum.txt
 
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
@@ -189,11 +207,17 @@ jobs:
       - checkout
       - run: *update-git-master
       - save_cache: *save-git-cache
+      # packages folder cache - restore cache
+      # we need to retrieve packages cache before yarn cache because yarn install builds the packages on postinstall if they aren't restored from the cache
+      - run: *calculate-packages-folder-checksum
+      - restore_cache: *restore-packages-cache
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
-      - save_cache: *save-yarn-cache
-      - run: yarn run build-packages
+      - save_cache: *save-yarn-cache  
+      # packages folder cache - update cache    
+      - run: *update-packages-cache
+      - save_cache: *save-packages-cache
       - persist_to_workspace:
           root: '~'
           paths:
