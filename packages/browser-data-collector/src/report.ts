@@ -50,12 +50,9 @@ export class ReportImpl implements Report {
 			{}
 		);
 
-		// Note `this.start` and `this.end` are timestamps, but here we serialize them
-		// as 0 and an interaval.
 		return {
 			id: this.id,
-			start: 0,
-			end: this.end - this.start,
+			duration: this.end - this.start,
 			...data,
 		};
 	}
