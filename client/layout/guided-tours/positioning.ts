@@ -203,7 +203,7 @@ function scrollIntoView( target: Element, scrollContainer: Element | null ) {
 	if ( isMobile() ) {
 		clientHeight = document.documentElement.clientHeight;
 	} else if ( window === scrollContainer ) {
-		// An improvement here could be to limit DOM access, via some sort of memoization maybe
+		// An improvement here could be to limit DOM access, via some sort of memoization
 		const body = document.querySelector( 'body' );
 
 		if ( body ) {
@@ -214,7 +214,12 @@ function scrollIntoView( target: Element, scrollContainer: Element | null ) {
 		}
 	}
 
-	if ( bottom + DIALOG_PADDING + DIALOG_HEIGHT <= clientHeight ) {
+	if (
+		// Dialog isn't hidden at the bottom of the container
+		bottom + DIALOG_PADDING + DIALOG_HEIGHT <= clientHeight &&
+		// Dialog isn't hidden at the top of the container
+		bottom > MASTERBAR_HEIGHT + DIALOG_PADDING
+	) {
 		return 0;
 	}
 
