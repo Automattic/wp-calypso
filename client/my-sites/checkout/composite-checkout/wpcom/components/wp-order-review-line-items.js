@@ -19,6 +19,7 @@ import joinClasses from './join-classes';
 import Button from './button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
+import { isBusinessPlan } from 'lib/plans';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -78,7 +79,13 @@ function WPLineItem( {
 	} else {
 		sublabelAndIntervalPriceBreakdown = item.sublabel;
 	}
-	const productName = isWhiteGloveOffer ? `${ item.label } (White glove edition)` : item.label;
+
+	const productSlug = item.wpcom_meta?.product_slug;
+	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
+	const productName =
+		isBusinessPlanProduct && isWhiteGloveOffer
+			? `${ item.label } (White glove edition)`
+			: item.label;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
