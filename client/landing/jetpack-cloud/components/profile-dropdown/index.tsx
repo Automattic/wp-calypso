@@ -74,7 +74,12 @@ const ProfileDropdown: React.FC< Props > = ( { isOpen, close } ) => {
 	};
 	const trackedLogOut = useTrackCallback( 'calypso_jetpack_settings_masterbar_logout', logOut );
 	const ref = React.useRef( null );
-	useCallIfOutOfContext( ref, close );
+	// We don't want to call close if it's already closed because we would
+	// track unnecessary events.
+	const closeOnlyIfIsOpen = React.useCallback( () => {
+		isOpen && close();
+	}, [ close, isOpen ] );
+	useCallIfOutOfContext( ref, closeOnlyIfIsOpen );
 
 	return (
 		<div className="profile-dropdown" ref={ ref }>
