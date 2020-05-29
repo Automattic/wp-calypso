@@ -205,6 +205,7 @@ async function downloadLanguages() {
 					const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
 
 					https.get( translationUrl, ( response ) => {
+						response.setEncoding( 'utf8' );
 						let body = '';
 
 						files.forEach( ( file ) => response.pipe( file ) );
