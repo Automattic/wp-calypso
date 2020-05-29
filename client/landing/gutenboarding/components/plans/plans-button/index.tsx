@@ -18,7 +18,7 @@ import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 import { useCurrentStep, Step } from '../../../path';
 import { Plans } from '@automattic/data-stores';
 
-const PLANS = Plans.STORE_KEY;
+const PLANS = Plans.register();
 
 /**
  * Style dependencies

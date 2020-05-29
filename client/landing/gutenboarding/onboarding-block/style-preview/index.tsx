@@ -27,7 +27,7 @@ import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-pl
 import BottomBarMobile from '../../components/bottom-bar-mobile';
 import './style.scss';
 
-const PLANS_STORE = Plans.STORE_KEY;
+const PLANS_STORE = Plans.register();
 
 const StylePreview: React.FunctionComponent = () => {
 	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );

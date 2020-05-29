@@ -16,7 +16,7 @@ export interface Props {
 	onPlanSelect: ( planSlug: string ) => void;
 }
 
-const PLANS_STORE = PlansStore.STORE_KEY;
+const PLANS_STORE = PlansStore.register();
 
 const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSelect } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );

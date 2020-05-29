@@ -10,7 +10,7 @@ import { Plans } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { usePlanRouteParam } from '../path';
 
-const PLANS_STORE = Plans.STORE_KEY;
+const PLANS_STORE = Plans.register();
 
 export function useSelectedPlan() {
 	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );

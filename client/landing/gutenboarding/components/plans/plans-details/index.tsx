@@ -12,7 +12,7 @@ import { useSelect } from '@wordpress/data';
  */
 import './style.scss';
 
-const PLANS_STORE = Plans.STORE_KEY;
+const PLANS_STORE = Plans.register();
 
 const PlansDetails: React.FunctionComponent = ( props ) => {
 	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );

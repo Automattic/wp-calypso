@@ -15,7 +15,7 @@ import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useIsSelectedPlanEcommerce } from './use-selected-plan';
 
-const PLANS_STORE = Plans.STORE_KEY;
+const PLANS_STORE = Plans.register();
 
 const wpcom = wp.undocumented();
 

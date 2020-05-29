@@ -23,7 +23,7 @@ import PlansDetails from '../plans-details';
 import './style.scss';
 import { useSelectedPlan } from 'landing/gutenboarding/hooks/use-selected-plan';
 
-const PLANS_STORE = Plans.STORE_KEY;
+const PLANS_STORE = Plans.register();
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
 const isMobile = window.navigator.userAgent.indexOf( 'Mobi' ) > -1;

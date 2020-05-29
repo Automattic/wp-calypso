@@ -20,7 +20,7 @@ import { useSelectedPlan } from '../../../hooks/use-selected-plan';
  */
 import './style.scss';
 
-const PLANS_STORE = Plans.STORE_KEY;
+const PLANS_STORE = Plans.register();
 
 interface Props extends Partial< PlansGridProps > {
 	onClose: () => void;
