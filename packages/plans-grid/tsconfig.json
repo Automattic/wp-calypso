@@ -29,7 +29,7 @@
 		"importsNotUsedAsValues": "error",
 		"importHelpers": true,
 		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__domain-picker"
+		"tsBuildInfoFile": "../../.tsc-cache/packages__plans-grid"
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
