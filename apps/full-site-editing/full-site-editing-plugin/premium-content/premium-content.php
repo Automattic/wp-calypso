@@ -178,8 +178,10 @@ function premium_content_container_render( $attributes, $content ){
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
-	error_log( 'premium_content_container_render' );
-	error_log( print_r( compact('content'), true ) );
+	wp_enqueue_style( 'premium-content-container-block' );
+
+	//For backwards compatibility, we need to check to support the subscribeButtonText placeholder
+	premium_content_replace_subscribe_button( $attributes, $content );
 
 	return $content;
 }
@@ -199,11 +201,13 @@ function premium_content_block_logged_out_view_render( $attributes, $content, $b
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
-	error_log( 'premium_content_block_logged_out_view_render' );
-	error_log( print_r( compact('content', 'block'), true ) );
+	wp_enqueue_script( 'premium-content-frontend' );
 
 	$visitor_has_access = premium_content_current_visitor_can_access( $attributes );
-	if ( !$visitor_has_access ) {
+	if ( ! $visitor_has_access ) {
+		//The viewer has NOT access to premium content - the viewer should see the logged out view
+		//We need to check that the logged out view has login and subscribe buttons, if not we'll add them here
+		premium_content_add_buttons_if_missing( $attributes, $content );
 		return $content;
 	}
 
@@ -217,6 +221,7 @@ function premium_content_block_subscriber_view_render( $attributes, $content ) {
 
 	$visitor_has_access = premium_content_current_visitor_can_access( $attributes );
 	if ( $visitor_has_access ) {
+		//The viewer has access to premium content - it's ok to render this subscriber view content
 		return $content;
 	}
 
@@ -227,12 +232,18 @@ function premium_content_render_button_block( $attributes ) {
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
-	error_log( 'premium_content_render_button_block' );
-	error_log( print_r( compact('content'), true ) );
 
-	wp_enqueue_style( 'premium-content-container-block' );
-	wp_enqueue_script( 'premium-content-frontend' );
+	$button = premium_content_create_button_markup( $attributes );
 
+	$align_class = '';
+	if ( isset( $attributes['align'] ) && in_array( $attributes['align'], [ 'left', 'center', 'right' ], true ) ) {
+		$align_class = 'align' . $attributes['align'];
+	}
+
+	return "<div class='wp-block-premium-content-logged-out-view__buttons {$align_class}'>{$button}</div>";
+}
+
+function premium_content_create_button_markup( $attributes ) {
 	$button_styles = array();
 	if ( ! empty( $attributes['customBackgroundButtonColor'] ) ) {
 		/**
@@ -258,34 +269,90 @@ function premium_content_render_button_block( $attributes ) {
 			)
 		);
 	}
-	$button_styles = implode( ';', $button_styles );
 
 	if ( $attributes['buttonType'] === 'subscribe' ) {
-		$button = \Jetpack_Memberships::get_instance()->render_button(
+		if ( empty( $attributes['premium-content/container/selectedPlanId'] ) ) {
+			//When we don't know the selectedPlanId, we print this subscribeButtonText placeholder
+			//The container block will have the selectedPlanId
+			//When the container block is rendered, we can replace this placeholder with the recurring payments subscribe button
+			return sprintf(
+				'<subscribeButtonText classNames="%1$s" customTextButtonColor="%2$s" customBackgroundButtonColor="%3$s">%4$s</subscribeButtonText>', // I don't know how to pass this data in a different way. We could also turn it into a class and pass it via a variable.
+				empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
+				empty( $attributes['customTextButtonColor'] ) ? '' : esc_attr( $attributes['customTextButtonColor'] ),
+				empty( $attributes['customBackgroundButtonColor'] ) ? '' : esc_attr( $attributes['customBackgroundButtonColor'] ),
+				empty( $attributes['subscribeButtonText'] ) ? __( 'Subscribe' ) : esc_attr( $attributes['subscribeButtonText'] )
+			);
+		}
+
+		return \Jetpack_Memberships::get_instance()->render_button(
 			array(
-				'planId'                      => empty( $attributes['premium-content/container/selectedPlanId'] ) ? 0 : $attributes['premium-content/container/selectedPlanId'],
-				'submitButtonClasses'         => empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
-				'customTextButtonColor'       => empty( $attributes['customTextButtonColor'] ) ? '' : esc_attr( $attributes['customTextButtonColor'] ),
+				'planId' => empty( $attributes['premium-content/container/selectedPlanId'] ) ? 0 : $attributes['premium-content/container/selectedPlanId'],
+				'submitButtonClasses' => empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
+				'customTextButtonColor' => empty( $attributes['customTextButtonColor'] ) ? '' : esc_attr( $attributes['customTextButtonColor'] ),
 				'customBackgroundButtonColor' => empty( $attributes['customBackgroundButtonColor'] ) ? '' : esc_attr( $attributes['customBackgroundButtonColor'] ),
-				'submitButtonText'            => empty( $attributes['buttonText'] ) ? __( 'Subscribe', 'full-site-editing' ) : esc_attr( $attributes['buttonText'] ),
+				'submitButtonText' => empty( $attributes['buttonText'] ) ? __( 'Subscribe', 'full-site-editing' ) : esc_attr( $attributes['buttonText'] ),
 			)
 		);
-	} else {
-		$button = sprintf(
-			'<div class="wp-block-button"><a role="button" href="%1$s" class="%2$s" style="%3$s">%4$s</a></div>',
-			premium_content_subscription_service()->access_url(),
-			empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
-			esc_attr( $button_styles ),
-			empty( $attributes['buttonText'] ) ? __( 'Log In', 'full-site-editing' ) : $attributes['buttonText']
-		);
 	}
 
-	$align_class = '';
-	if ( isset( $attributes['align'] ) && in_array( $attributes['align'], [ 'left', 'center', 'right' ], true ) ) {
-		$align_class = 'align' . $attributes['align'];
-	}
+	$button_styles = implode( ';', $button_styles );
 
-	return "<div class='wp-block-premium-content-logged-out-view__buttons {$align_class}'>{$button}</div>";
+	return sprintf(
+		'<div class="wp-block-button"><a role="button" href="%1$s" class="%2$s" style="%3$s">%4$s</a></div>',
+		premium_content_subscription_service()->access_url(),
+		empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
+		esc_attr( $button_styles ),
+		empty( $attributes['buttonText'] ) ? __( 'Log In', 'full-site-editing' ) : $attributes['buttonText']
+	);
+}
+
+/*
+ * We need to check to see if the content contains a login and subscribe button
+ * If it has not then this may be because this is an older version of the premium block and the buttons are not saved in the logged out view innerblocks
+ * or there may be some corruption to the logged out view
+ * Either case, the premium content block will need to have a login and subscribe button so this function will append these buttons when not found
+ */
+function premium_content_add_buttons_if_missing( $attributes, &$content ) {
+	if ( stripos( $content, 'wp-block-premium-content-logged-out-view__buttons' ) === false ) {
+		//No buttons found in the logged out view - we need to add them
+		$subscribe_button = premium_content_create_button_markup( array_merge( [
+			'buttonType' => 'subscribe',
+			'buttonText' => empty( $attributes['subscribeButtonText'] ) ? __( 'Subscribe', 'premium-content' ) : esc_attr( $attributes['subscribeButtonText'] ),
+			'premium-content/container/selectedPlanId' => empty( $attributes['selectedPlanId'] ) ? 0 : $attributes['selectedPlanId'],
+		], $attributes ) );
+		$login_button = premium_content_create_button_markup( array_merge( [
+			'buttonType' => 'login',
+			'buttonText' => empty( $attributes['loginButtonText'] ) ? __( 'Log In', 'premium-content' ) : esc_attr( $attributes['loginButtonText'] ),
+		], $attributes ) );
+		$content = $content . "<div class='wp-block-premium-content-logged-out-view__buttons'>{$subscribe_button}{$login_button}</div>";
+	}
+}
+
+/*
+ * We need to support older versions of the premium block where the selectedPlanId is not available outside the container block
+ * In cases like that, we render a subscribeButtonText placeholder that is later replaced when the container block is rendered
+ */
+function premium_content_replace_subscribe_button( $attributes, &$content ) {
+	$content = preg_replace_callback(
+		'#<subscribeButtonText classNames="(.*?)" customTextButtonColor="(.*?)" customBackgroundButtonColor="(.*?)">(.*?)<\/subscribeButtonText>#is',
+		/**
+		 * @param array $matches
+		 *
+		 * @return null|string
+		 */
+		function ( $matches ) use ( $attributes ) {
+			return \Jetpack_Memberships::get_instance()->render_button(
+				array(
+					'planId' => $attributes['selectedPlanId'],
+					'submitButtonClasses' => $matches[1],
+					'customTextButtonColor' => $matches[2],
+					'customBackgroundButtonColor' => $matches[3],
+					'submitButtonText' => $matches[4], // This should be the text actually selected in the editor. I think I'll pass it in attributes.
+				)
+			);
+		},
+		$content
+	);
 }
 
 /**
