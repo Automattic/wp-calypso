@@ -39,6 +39,7 @@ export default function CheckoutSystemDecider( {
 	upgradeIntent,
 	clearTransaction,
 	cart,
+	isWhiteGloveOffer,
 } ) {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
@@ -110,6 +111,7 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
+			isWhiteGloveOffer={ isWhiteGloveOffer }
 		/>
 	);
 }
