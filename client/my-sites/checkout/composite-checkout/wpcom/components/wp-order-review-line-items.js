@@ -38,6 +38,7 @@ function WPLineItem( {
 	getItemVariants,
 	onChangePlanLength,
 	couponStatus,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -77,10 +78,11 @@ function WPLineItem( {
 	} else {
 		sublabelAndIntervalPriceBreakdown = item.sublabel;
 	}
+	const productName = isWhiteGloveOffer ? `${ item.label } (White glove edition)` : item.label;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
+			<LineItemTitle id={ itemSpanId }>{ productName }</LineItemTitle>
 			<span aria-labelledby={ itemSpanId }>
 				<LineItemPrice item={ item } />
 			</span>
@@ -295,6 +297,7 @@ export function WPOrderReviewLineItems( {
 	getItemVariants,
 	onChangePlanLength,
 	couponStatus,
+	isWhiteGloveOffer,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -305,6 +308,7 @@ export function WPOrderReviewLineItems( {
 						<LineItemUI
 							isSummaryVisible={ isSummaryVisible }
 							item={ item }
+							isWhiteGloveOffer={ isWhiteGloveOffer }
 							hasDeleteButton={ canItemBeDeleted( item ) }
 							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
 							variantRequestStatus={ variantRequestStatus }
