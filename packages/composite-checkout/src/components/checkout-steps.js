@@ -521,6 +521,19 @@ export function useIsStepComplete() {
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
+export function useSetStepComplete() {
+	const { setStepCompleteStatus } = useContext( CheckoutStepDataContext );
+	const setTargetStepCompleteStatus = useCallback(
+		( stepNumber, newStatus ) =>
+			setStepCompleteStatus( ( stepCompleteStatus ) => ( {
+				...stepCompleteStatus,
+				[ stepNumber ]: newStatus,
+			} ) ),
+		[ setStepCompleteStatus ]
+	);
+	return setTargetStepCompleteStatus;
+}
+
 const StepWrapperUI = styled.div`
 	padding-bottom: ${ ( props ) => ( props.isFinalStep ? '0' : '32px' ) };
 	position: relative;

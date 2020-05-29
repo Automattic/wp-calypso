@@ -59,7 +59,7 @@ The [Checkout](#checkout) component creates a wrapper for Checkout. Within the c
 
 Each `CheckoutStep` has an `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
 
-Any component within a `CheckoutStep` gets access to the custom hooks above as well as [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
+Any component within a `CheckoutStep` gets access to the custom hooks above as well as [useIsStepActive](#useIsStepActive), [useIsStepComplete](#useIsStepComplete), and [useSetStepComplete](#useSetStepComplete).
 
 ## Submitting the form
 
@@ -394,6 +394,10 @@ A React Hook that returns the `@wordpress/data` registry being used. Only works 
 ### useSelect
 
 A React Hook that accepts a callback which is provided the `select` function from the [Data store](#data-stores). The `select()` function can be called with the name of a store and will return the bound selectors for that store. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useSetStepComplete
+
+A React Hook that will return a function to set a step to "complete". Only works within a step. The function looks like `( stepNumber: number, isComplete: boolean ) => void;`.
 
 ### useTotal
 

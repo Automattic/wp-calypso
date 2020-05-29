@@ -12,6 +12,7 @@ import {
 	CheckoutSummaryCard,
 	useIsStepActive,
 	useIsStepComplete,
+	useSetStepComplete,
 } from './components/checkout-steps';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
@@ -105,6 +106,7 @@ export {
 	useRegisterStore,
 	useRegistry,
 	useSelect,
+	useSetStepComplete,
 	useTotal,
 	useTransactionStatus,
 };
