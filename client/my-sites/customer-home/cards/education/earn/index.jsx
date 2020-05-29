@@ -4,7 +4,6 @@
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
