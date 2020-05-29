@@ -199,16 +199,6 @@ jobs:
           paths:
             - wp-calypso
 
-  typecheck:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: TypeScript typecheck
-          # Report but don't fail the build (`|| exit 0`)
-          command: yarn run typecheck || exit 0
-
   typecheck-strict:
     <<: *defaults
     parallelism: 1
@@ -595,9 +585,6 @@ workflows:
           requires:
             - setup
       - test-server:
-          requires:
-            - setup
-      - typecheck:
           requires:
             - setup
       - typecheck-strict:
