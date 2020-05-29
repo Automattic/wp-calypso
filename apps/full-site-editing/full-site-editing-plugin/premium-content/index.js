@@ -43,7 +43,13 @@ const registerBlock = ( block ) => {
  * Appends a "paid" tag to the Premium Content block title if site requires an upgrade.
  */
 const addPaidBlockFlags = async () => {
-	const membershipsStatus = await apiFetch( { path: '/wpcom/v2/memberships/status' } );
+	let membershipsStatus;
+	try {
+		membershipsStatus = await apiFetch( { path: '/wpcom/v2/memberships/status' } );
+	} catch {
+		// Do not add any flag if request fails.
+		return;
+	}
 	const shouldUpgrade = membershipsStatus.should_upgrade_to_access_memberships;
 	if ( shouldUpgrade ) {
 		const premiumContentBlock = getBlockType( container.name );
