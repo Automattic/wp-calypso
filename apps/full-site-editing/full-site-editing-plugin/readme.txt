@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 1.5
+Stable tag: 1.6
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,17 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.6 =
+* Remove the "Edit as HTML" options for the inner blocks of the Premium Content Block.
+* Remove plugin that notified users of the new location of Block Patterns.
+* Support for any UTF-8 character in the Premium Content block.
+* Fixed availability of Premium Content subscription email service.
+* Premium Content block styles adjusted to only load when block is used.
+* Hide Gutenberg's inserter (in favor of ours).
+* Use `require` (rather than `require_once`) for asset files.
+* Flag Premium Content blocks as paid to make clear they require a paid plan.
+* Onboarding: Fix the dimensions of the preview image.
 
 = 1.5 =
 * Global Styles: Fix a "Bad array access" error.
