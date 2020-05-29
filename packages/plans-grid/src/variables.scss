@@ -1,15 +1,18 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
 @import './functions.scss';
 
-$plans-ui-block-margin-mobile: 20px;
-$plans-ui-block-margin-small: 44px;
-$plans-ui-block-margin-medium: 88px;
+$gutenboarding-block-margin-mobile: 20px;
+$gutenboarding-block-margin-small: 44px;
+$gutenboarding-block-margin-medium: 88px;
+$gutenboarding-footer-height: 64px;
+$gutenboarding-header-height: 64px;
 
 // Plans Table
 $plan-item-count: 5;
 $plan-item-gutter: 20px;
 $plan-item-width: #{100% / $plan-item-count};
 $plan-item-min-width: #{(
-		$break-wide - ( $plans-ui-block-margin-medium * 2 ) -
+		$break-wide - ( $gutenboarding-block-margin-medium * 2 ) -
 			( $plan-item-gutter * ( $plan-item-count - 1 ) )
 	) / $plan-item-count};
 $plan-item-min-width-mobile-portrait: 70vw;
@@ -19,9 +22,9 @@ $plans-table-total-content-width: #{( to-number( $plan-item-min-width ) * $plan-
 
 // Plans Details
 $plans-details-min-width-desktop-mobile: #{to-number( $plans-table-total-content-width ) +
-	$plans-ui-block-margin-mobile * 2};
+	$gutenboarding-block-margin-mobile * 2};
 $plans-details-min-width-desktop-small: #{to-number( $plans-table-total-content-width ) +
-	$plans-ui-block-margin-small * 2};
+	$gutenboarding-block-margin-small * 2};
 $plans-details-min-width-desktop-medium: #{to-number( $plans-table-total-content-width ) +
-	$plans-ui-block-margin-medium * 2};
+	$gutenboarding-block-margin-medium * 2};
 $plans-details-min-width-mobile: 700px;

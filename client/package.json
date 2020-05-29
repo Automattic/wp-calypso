@@ -20,6 +20,7 @@
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
+		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/lasagna": "^0.5.4",
 		"@automattic/load-script": "^1.0.0",

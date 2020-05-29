@@ -1,5 +1,5 @@
 {
-	"name": "@automattic/plans-ui",
+	"name": "@automattic/plans-grid",
 	"version": "1.0.0-alpha.0",
 	"description": "Domain picker.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -14,7 +14,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/plans-ui"
+		"directory": "packages/plans-grid"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -24,7 +24,7 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist ../../.tsc-cache/packages__plans-ui*",
+		"clean": "check-npm-client && npx rimraf dist ../../.tsc-cache/packages__plans-grid*",
 		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
 		"prepublish": "check-npm-client && yarn run clean",
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"

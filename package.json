@@ -149,7 +149,6 @@
 		"@automattic/components": "^1.0.0-alpha.1",
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
-		"@automattic/plans-ui": "^1.0.0-alpha.0",
 		"@automattic/effective-module-tree": "^0.1.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/full-site-editing": "^1.5.0",

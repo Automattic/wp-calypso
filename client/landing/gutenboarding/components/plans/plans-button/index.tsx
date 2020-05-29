@@ -13,7 +13,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
-import PlansModal from '../plans-modal';
+//import PlansModal from '../plans-modal';
 import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 import { useCurrentStep, Step } from '../../../path';
 import { PLANS_STORE } from '../../../stores/plans';
@@ -31,10 +31,10 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	// mobile first to match SCSS media query https://github.com/Automattic/wp-calypso/pull/41471#discussion_r415678275
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
-	const [ isPlansModalVisible, setIsPlanModalVisible ] = React.useState( false );
+	//const [ isPlansModalVisible, setIsPlanModalVisible ] = React.useState( false );
 
 	const handleButtonClick = () => {
-		setIsPlanModalVisible( ( isVisible ) => ! isVisible );
+		//setIsPlanModalVisible( ( isVisible ) => ! isVisible );
 	};
 
 	// This hook is different from `getSelectedPlan` in the store.
@@ -60,7 +60,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 				{ isDesktop && planLabel }
 				<JetpackLogo className="plans-button__jetpack-logo" size={ 16 } monochrome />
 			</Button>
-			{ isPlansModalVisible && <PlansModal onClose={ () => setIsPlanModalVisible( false ) } /> }
+			{ /* { isPlansModalVisible && <PlansModal onClose={ () => setIsPlanModalVisible( false ) } /> } */ }
 		</>
 	);
 };
