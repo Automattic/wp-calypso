@@ -21,7 +21,11 @@ import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/select
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
-import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import {
+	FEATURE_WORDADS_INSTANT,
+	FEATURE_SIMPLE_PAYMENTS,
+	PLAN_PREMIUM,
+} from 'lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
@@ -100,7 +104,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
-						page( `/plans/${ selectedSiteSlug }` );
+						page(
+							`/plans/${ selectedSiteSlug }?feature=${ FEATURE_SIMPLE_PAYMENTS }&plan=${ PLAN_PREMIUM }`
+						);
 					},
 			  };
 		const learnMoreLink = hasSimplePayments
@@ -267,7 +273,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						text: translate( 'Unlock this feature' ),
 						action: () => {
 							trackUpgrade( 'plans', 'ads' );
-							page( `/plans/${ selectedSiteSlug }` );
+							page(
+								`/plans/${ selectedSiteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`
+							);
 						},
 				  };
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
