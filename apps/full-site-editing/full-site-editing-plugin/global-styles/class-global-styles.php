@@ -317,7 +317,7 @@ class Global_Styles {
 	public function enqueue_block_editor_assets() {
 		$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/global-styles.asset.php';
 		$asset        = file_exists( $asset_file )
-			? require_once $asset_file
+			? require $asset_file
 			: null;
 		$dependencies = isset( $asset['dependencies'] ) ?
 			$asset['dependencies'] :
