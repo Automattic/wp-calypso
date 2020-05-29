@@ -12,6 +12,7 @@ import { Button } from '@automattic/components';
 import Gravatar from 'components/gravatar';
 import userUtilities from 'lib/user/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
+import useTrackCallback from 'landing/jetpack-cloud/lib/use-track-callback';
 
 /**
  * Style dependencies
@@ -66,11 +67,12 @@ interface Props {
 const ProfileDropdown: React.FC< Props > = ( { isOpen, close } ) => {
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser );
-	// @todo: track event (what type?)
 	const logOut = ( e: MouseEvent ) => {
 		e.preventDefault();
+		e.stopPropagation();
 		userUtilities.logout();
 	};
+	const trackedLogOut = useTrackCallback( 'calypso_jetpack_settings_masterbar_logout', logOut );
 	const ref = React.useRef( null );
 	useCallIfOutOfContext( ref, close );
 
@@ -97,7 +99,7 @@ const ProfileDropdown: React.FC< Props > = ( { isOpen, close } ) => {
 
 						<div className="profile-dropdown__logout-username">
 							<span>{ user.username }</span>
-							<Button borderless onClick={ logOut }>
+							<Button borderless onClick={ trackedLogOut }>
 								{ translate( 'Log out' ) }
 							</Button>
 						</div>
