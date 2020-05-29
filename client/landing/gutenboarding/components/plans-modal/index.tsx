@@ -29,7 +29,6 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	Modal.setAppElement( '#wpcom' );
 
 	const plan = useSelectedPlan();
-
 	const { setPlan } = useDispatch( PLANS_STORE );
 
 	React.useEffect( () => {
