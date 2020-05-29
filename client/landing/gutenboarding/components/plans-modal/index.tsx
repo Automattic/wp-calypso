@@ -6,33 +6,29 @@ import Modal from 'react-modal';
 import { useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import PlansGrid from '@automattic/plans-grid';
 
 /**
  * Internal dependencies
  */
-import { PLANS_STORE } from '../../../stores/plans';
-import PlansGrid, { Props as PlansGridProps } from '../plans-grid';
-//import { useTrackModal } from '../../../hooks/use-track-modal';
-
-function logTODO( ...args: Array< any > ) {
-	console.error( 'TODO', args );
-}
-
-const useTrackModal = logTODO;
+import { PLANS_STORE } from '../../stores/plans';
+import { useTrackModal } from '../../hooks/use-track-modal';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-interface Props extends Partial< PlansGridProps > {
+interface Props {
 	onClose: () => void;
-	currentPlan: Plans.Plan;
 }
 
-const PlansGridModal: React.FunctionComponent< Props > = ( { onClose, currentPlan } ) => {
+const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	// This is needed otherwise it throws a warning.
 	Modal.setAppElement( '#wpcom' );
+
+	const plan = useSelectedPlan();
 
 	const { setPlan } = useDispatch( PLANS_STORE );
 
@@ -44,27 +40,27 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose, currentPla
 	const selectedPlanRef = React.useRef< string | undefined >();
 
 	React.useEffect( () => {
-		selectedPlanRef.current = currentPlan?.storeSlug;
-	}, [ currentPlan ] );
+		selectedPlanRef.current = plan?.storeSlug;
+	}, [ plan ] );
 
 	useTrackModal( 'PlansGrid', () => ( {
 		selected_plan: selectedPlanRef.current,
 	} ) );
 
 	const handleConfirm = () => {
-		setPlan( currentPlan?.storeSlug );
+		setPlan( plan?.storeSlug );
 		onClose();
 	};
 
 	return (
 		<Modal
 			isOpen
-			className="plans-ui-page plans-modal"
+			className="gutenboarding-page plans-modal"
 			overlayClassName="plans-modal-overlay"
 			bodyOpenClassName="has-plans-modal"
 		>
 			<PlansGrid
-				currentPlan={ currentPlan }
+				currentPlan={ plan }
 				confirmButton={
 					<Button isPrimary onClick={ handleConfirm }>
 						{ __( 'Confirm' ) }

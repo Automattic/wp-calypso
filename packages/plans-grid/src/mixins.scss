@@ -78,31 +78,6 @@
 	}
 }
 
-@mixin onboarding-modal-overlay {
-	// Absolute positioning allows the modal
-	// to reuse the <body> element's scrollbar.
-	position: absolute;
-
-	// This positions the domain picker modal
-	// right below the gutenboarding header,
-	// keeping the header clickable.
-	top: $gutenboarding-header-height;
-	left: 0;
-
-	// Using min-height lets the overlay cover
-	// the entire viewport ensuring nothing behind
-	// it can be seen.
-	//
-	// When the domain picker's content is taller
-	// than the viewport height, it will expand taller
-	// than the provided min-height, triggering
-	// the appearance of the <body> element's scrollbar.
-	min-height: calc( 100vh - #{$gutenboarding-header-height} );
-	width: 100%;
-
-	background: var( --studio-white );
-}
-
 @mixin onboarding-block-edge2edge-container {
 	width: calc( 100% + #{$gutenboarding-block-margin-mobile * 2} );
 	margin-left: #{$gutenboarding-block-margin-mobile * -1};

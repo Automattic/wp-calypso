@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { PlansGrid } from '@automattic/plans-grid';
+import PlansGrid from '@automattic/plans-grid';
 
 /**
  * Internal dependencies

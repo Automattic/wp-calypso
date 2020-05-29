@@ -36,7 +36,6 @@
 		"@wordpress/icons": "^2.0.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
-		"react-modal": "3.11.2",
 		"tslib": "^1.10.0",
 		"use-debounce": "^3.1.0",
 		"uuid": "^7.0.2"
