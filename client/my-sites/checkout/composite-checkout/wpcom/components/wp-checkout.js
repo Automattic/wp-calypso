@@ -232,6 +232,7 @@ export default function WPCheckout( {
 									shouldShowContactDetailsValidationErrors={
 										shouldShowContactDetailsValidationErrors
 									}
+									contactValidationCallback={ contactValidationCallback }
 								/>
 							}
 							completeStepContent={
