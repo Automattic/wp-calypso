@@ -50,6 +50,7 @@ import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { isWpComEcommercePlan } from 'lib/plans';
 import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
+import { isExternal } from 'lib/url';
 
 /**
  * Module variables
@@ -175,7 +176,8 @@ export class SecurePaymentForm extends Component {
 		const { cart, transaction } = this.props;
 
 		const origin = getLocationOrigin( window.location );
-		const successUrl = origin + this.props.redirectTo();
+		const successPath = this.props.redirectTo();
+		const successUrl = isExternal( successPath ) ? successPath : origin + successPath;
 		const cancelUrl = origin + '/checkout/' + get( this.props.selectedSite, 'slug', 'no-site' );
 
 		const cardDetailsCountry = get( transaction, 'payment.newCardDetails.country', null );

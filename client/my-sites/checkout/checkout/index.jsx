@@ -38,7 +38,12 @@ import {
 	hasTransferProduct,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
-import { isJetpackProductSlug } from 'lib/products-values';
+import {
+	isJetpackProductSlug,
+	isJetpackScanSlug,
+	isJetpackBackupSlug,
+	isJetpackCloudProductSlug,
+} from 'lib/products-values';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -92,7 +97,7 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'signup/utils';
-import { isExternal } from 'lib/url';
+import { isExternal, addQueryArgs } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { abtest } from 'lib/abtest';
 
@@ -495,6 +500,7 @@ export class Checkout extends React.Component {
 			selectedSite,
 			selectedSiteSlug,
 			transaction: { step: { data: stepResult = null } = {} } = {},
+			isJetpackNotAtomic,
 		} = this.props;
 
 		const adminUrl = get( selectedSite, [ 'options', 'admin_url' ] );
@@ -541,14 +547,25 @@ export class Checkout extends React.Component {
 
 		this.setDestinationIfEcommPlan( pendingOrReceiptId );
 
-		// if it is one of the Jetpack products, use product info as a parameter.
-		// We want to be product-specific, as the same path will likely be used for
-		// WP.com sites purchasing Search.
-		if (
-			startsWith( product, 'jetpack_backup' ) ||
-			startsWith( product, 'jetpack_search' ) ||
-			startsWith( product, 'jetpack_scan' )
-		) {
+		// If it is a Jetpack Cloud products, use the redirection lib.
+		// For other Jetpack products, use the fallback logic to send to Calypso.
+		if ( isJetpackCloudProductSlug( product ) && isJetpackNotAtomic ) {
+			let source = '';
+			if ( isJetpackBackupSlug( product ) ) {
+				source = 'calypso-backups';
+			} else if ( isJetpackScanSlug( product ) ) {
+				source = 'calypso-scanner';
+			}
+			if ( source ) {
+				return addQueryArgs(
+					{
+						source,
+						site: selectedSiteSlug,
+					},
+					'https://jetpack.com/redirect'
+				);
+			}
+		} else if ( isJetpackProductSlug( product ) ) {
 			signupDestination = this.getFallbackDestination( pendingOrReceiptId );
 		} else {
 			signupDestination =
@@ -620,6 +637,11 @@ export class Checkout extends React.Component {
 		const destinationFromCookie = retrieveSignupDestination();
 
 		this.props.clearPurchases();
+
+		// If the redirect is an external URL, send them out early.
+		if ( isExternal( redirectPath ) ) {
+			return this.handleCheckoutExternalRedirect( redirectPath );
+		}
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
