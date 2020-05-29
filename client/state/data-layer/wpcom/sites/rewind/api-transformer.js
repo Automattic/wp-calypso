@@ -64,6 +64,7 @@ export function transformApi( data ) {
 					? Date.parse( data.last_updated )
 					: data.last_updated * 1000
 			),
+			hasCloud: data.has_cloud,
 		},
 		data.can_autoconfigure && { canAutoconfigure: !! data.can_autoconfigure },
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
