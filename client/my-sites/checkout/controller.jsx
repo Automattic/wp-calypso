@@ -70,7 +70,6 @@ export function checkout( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				upgradeIntent={ context.query.intent }
 				clearTransaction={ false }
-				isWhiteGloveOffer={ 'white-glove' === context.query.type }
 			/>
 		</CartData>
 	);
