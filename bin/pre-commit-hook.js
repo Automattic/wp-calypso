@@ -8,11 +8,8 @@ const chalk = require( 'chalk' );
 const _ = require( 'lodash' );
 const path = require( 'path' );
 
-const composerBinDir = path.join( __dirname, '..', 'vendor', 'bin' );
-const phpcsPath =
-	execSync( 'command -v phpcs', { encoding: 'utf8' } ) || path.join( composerBinDir, 'phpcs' );
-const phpcbfPath =
-	execSync( 'command -v phpcbf', { encoding: 'utf8' } ) || path.join( composerBinDir, 'phpcbf' );
+const phpcsPath = getPathForCommand( 'phpcs' );
+const phpcbfPath = getPathForCommand( 'phpcbf' );
 
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
@@ -36,6 +33,19 @@ function parseGitDiffToPathArray( command ) {
 		.filter( ( name ) => /(?:\.json|\.[jt]sx?|\.scss|\.php)$/.test( name ) );
 }
 
+function getPathForCommand( command ) {
+	const composerBinDir = path.join( __dirname, '..', 'vendor', 'bin' );
+	let path_to_command;
+	try {
+		path_to_command = execSync( 'command -v ' + command, { encoding: 'utf8' } );
+	} catch ( e ) {
+		path_to_command = path.join( composerBinDir, command );
+	}
+	if ( typeof path_to_command === 'undefined' || ! path_to_command ) {
+		return false;
+	}
+	return _.trim( path_to_command );
+}
 function linterFailure() {
 	console.log(
 		chalk.red( 'COMMIT ABORTED:' ),

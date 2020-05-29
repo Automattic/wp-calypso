@@ -38,8 +38,8 @@ require_once __DIR__ . '/premium-content-dom.php';
  * @return void
  */
 function premium_content_block_init() {
-	 $url_path = plugin_dir_url( __FILE__ );
-	$dir       = __DIR__;
+	$url_path = rtrim( plugin_dir_url( __FILE__ ), '/' );
+	$dir      = __DIR__;
 
 	$script_asset_path = "$dir/dist/premium-content.asset.php";
 	if ( ! file_exists( $script_asset_path ) ) {
@@ -94,6 +94,8 @@ function premium_content_block_init() {
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_block_logged_out_view_render',
 		)
 	);
+
+	wp_set_script_translations( 'premium-content-container-block-editor', 'full-site-editing' );
 }
 
 /**
@@ -227,7 +229,7 @@ function premium_content_block_logged_out_view_render( $attributes, $content ) {
 		premium_content_subscription_service()->access_url(),
 		empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
 		esc_attr( $button_styles ),
-		empty( $attributes['loginButtonText'] ) ? __( 'Log In', 'premium-content' ) : $attributes['loginButtonText']
+		empty( $attributes['loginButtonText'] ) ? __( 'Log In', 'full-site-editing' ) : $attributes['loginButtonText']
 	);
 
 	$subscribe_button = sprintf(
@@ -235,7 +237,7 @@ function premium_content_block_logged_out_view_render( $attributes, $content ) {
 		empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
 		empty( $attributes['customTextButtonColor'] ) ? '' : esc_attr( $attributes['customTextButtonColor'] ),
 		empty( $attributes['customBackgroundButtonColor'] ) ? '' : esc_attr( $attributes['customBackgroundButtonColor'] ),
-		empty( $attributes['subscribeButtonText'] ) ? __( 'Subscribe' ) : esc_attr( $attributes['subscribeButtonText'] )
+		empty( $attributes['subscribeButtonText'] ) ? __( 'Subscribe', 'full-site-editing' ) : esc_attr( $attributes['subscribeButtonText'] )
 	);
 
 	return $content . "<div class='wp-block-premium-content-logged-out-view__buttons'>{$subscribe_button}{$login_button}</div>";
