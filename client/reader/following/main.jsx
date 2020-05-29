@@ -96,12 +96,12 @@ const FollowingStream = ( props ) => {
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
 				{ config.isEnabled( 'reader/seen-posts' ) && ! props.hasUnseen && (
 					<Button compact onClick={ markAllAsUnSeen }>
-						{ translate( 'Mark All as Unseen' ) }
+						{ translate( 'Mark all as unseen' ) }
 					</Button>
 				) }
 				{ config.isEnabled( 'reader/seen-posts' ) && props.hasUnseen && (
 					<Button compact onClick={ markAllAsSeen }>
-						{ translate( 'Mark All as Seen' ) }
+						{ translate( 'Mark all as seen' ) }
 					</Button>
 				) }
 				<Button primary compact className="following__manage" href="/following/manage">
