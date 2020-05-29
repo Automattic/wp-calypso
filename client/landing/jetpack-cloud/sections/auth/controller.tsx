@@ -39,6 +39,7 @@ export const connect: PageJS.Callback = ( context, next ) => {
 
 		const authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }`;
 		debug( `authUrl: ${ authUrl }` );
+
 		window.location.replace( authUrl );
 	} else {
 		context.primary = <p>{ 'Oauth un-enabled or client id missing!' }</p>;
@@ -50,6 +51,7 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 	if ( context.hash && context.hash.access_token ) {
 		debug( 'setting user token' );
 		store.set( 'wpcom_token', context.hash.access_token );
+
 		// this does not work!
 		wpcom.loadToken( context.hash.access_token );
 	}
@@ -72,7 +74,20 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 			context.store.dispatch( setCurrentUser( user.data ) );
 		}
 		debug( 'redirecting' );
-		page.redirect( '/' );
+
+		const SESSION_STORAGE_PATH_KEY = 'jetpack_cloud_redirect_path';
+		const SESSION_STORAGE_PATH_KEY_EXPIRES_IN = 'jetpack_cloud_redirect_path_expires_in';
+		const hasExpired =
+			( window.sessionStorage.getItem( SESSION_STORAGE_PATH_KEY_EXPIRES_IN ) ?? 0 ) <
+			new Date().getTime() / 1000;
+		let redirectPath = '/';
+		if ( ! hasExpired ) {
+			const previousPath = window.sessionStorage.getItem( SESSION_STORAGE_PATH_KEY );
+			redirectPath = previousPath ?? '/';
+		}
+		window.sessionStorage.removeItem( SESSION_STORAGE_PATH_KEY );
+		window.sessionStorage.removeItem( SESSION_STORAGE_PATH_KEY_EXPIRES_IN );
+		page.redirect( redirectPath );
 	} );
 
 	next();
