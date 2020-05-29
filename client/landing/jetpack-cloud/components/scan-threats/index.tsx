@@ -159,6 +159,14 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		[ updatingThreats ]
 	);
 
+	const onOpenTrackEvent = React.useCallback( () => {
+		dispatch(
+			recordTracksEvent( `calypso_jetpack_scan_threat_itemtoggle`, {
+				site_id: site.ID,
+			} )
+		);
+	}, [ dispatch, site ] );
+
 	return (
 		<>
 			<SecurityIcon icon="error" />
@@ -217,6 +225,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						isFixing={ isFixing( threat ) }
 						contactSupportUrl={ contactSupportUrl( site.URL ) }
 						isPlaceholder={ false }
+						onOpen={ onOpenTrackEvent }
 					/>
 				) ) }
 			</div>
@@ -243,7 +252,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 					showDialog={ showThreatDialog }
 					onCloseDialog={ closeDialog }
 					onConfirmation={ confirmAction }
-					siteId={ site.ID }
 					siteName={ site.name }
 					threat={ selectedThreat }
 					action={ actionToPerform }
@@ -252,7 +260,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			<FixAllThreatsDialog
 				threats={ allFixableThreats }
 				showDialog={ showFixAllThreatsDialog }
-				siteId={ site.ID }
 				onCloseDialog={ () => setShowFixAllThreatsDialog( false ) }
 				onConfirmation={ confirmFixAllThreats }
 			/>
