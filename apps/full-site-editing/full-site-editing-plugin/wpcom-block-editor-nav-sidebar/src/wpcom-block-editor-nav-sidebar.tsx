@@ -7,6 +7,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Button as OriginalButton } from '@wordpress/components';
 import { chevronLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
+import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -57,6 +58,19 @@ export default function WpcomBlockEditorNavSidebar() {
 
 	const { toggleSidebar } = useDispatch( STORE_KEY );
 
+	let closeUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+	closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', closeUrl );
+
+	let closeLabel = get( postType, [ 'labels', 'all_items' ], __( 'Back' ) );
+	closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', closeLabel );
+
+	const handleClose = ( e: React.WPSyntheticEvent ) => {
+		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
+			e.preventDefault();
+			doAction( 'a8c.wpcom-block-editor.closeEditor' );
+		}
+	};
+
 	return (
 		<div className="wpcom-block-editor-nav-sidebar__container" aria-hidden={ ! isOpen }>
 			{ ( isOpen || isClosing ) && (
@@ -90,13 +104,12 @@ export default function WpcomBlockEditorNavSidebar() {
 			<div className="wpcom-block-editor-nav-sidebar__header-space" />
 			<div className="wpcom-block-editor-nav-sidebar__home-button-container">
 				<Button
-					href={ addQueryArgs( 'edit.php', {
-						post_type: postType.slug,
-					} ) }
+					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar__home-button"
 					icon={ chevronLeft }
+					onClick={ handleClose }
 				>
-					{ get( postType, [ 'labels', 'all_items' ], __( 'Back' ) ) }
+					{ closeLabel }
 				</Button>
 			</div>
 			<ul className="wpcom-block-editor-nav-sidebar__page-list">
