@@ -62,7 +62,7 @@ function MyComponent( { isLoading } ) {
 }
 ```
 
-Using this selectors is the recommended approach when the main component can render different states and we only want to stop the performance tracking in one of them.
+Using this component is the recommended approach when the parent component can render different states and we only want to stop the performance tracking in one of them.
 
 
 #### High Order Component
@@ -79,4 +79,3 @@ export default withPerformanceTrackerStop(MyComponent);
 
 This is the recommended approach when using class components. Similar to `usePerformanceTrackerStop` hook, it assumes that the wrapped component only renders the content of the page we want to
 measure, and not any other state (eg: loading content). In that case, please use `<PerformanceTrackerStop/>` as part of the "main" state output.
-
