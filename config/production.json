@@ -55,7 +55,7 @@
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
-		"jetpack/scan-product": false,
+		"jetpack/scan-product": true,
 		"jetpack/search-product": true,
 		"jitms": true,
 		"lasagna": true,
