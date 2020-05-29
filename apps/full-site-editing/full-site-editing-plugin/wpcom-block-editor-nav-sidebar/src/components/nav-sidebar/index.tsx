@@ -155,7 +155,9 @@ function NavItem( { item, selected, statusLabel }: NavItemProps ) {
 			<Button className={ buttonClasses }>
 				<div className="wpcom-block-editor-nav-sidebar__title-container">
 					<div className={ titleClasses }>{ item.title?.rendered || __( 'Untitled' ) }</div>
-					<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
+					{ item.slug && (
+						<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
+					) }
 				</div>
 				{ statusLabel && (
 					<div className="wpcom-block-editor-nav-sidebar__label">{ statusLabel }</div>
