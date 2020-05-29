@@ -73,7 +73,6 @@ import {
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import createContactValidationCallback from './contact-validation';
 import { fillInSingleCartItemAttributes } from 'lib/cart-values';
 import {
 	hasGoogleApps,
@@ -109,23 +108,6 @@ const wpcom = wp.undocumented();
 const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
-const wpcomValidateDomainContactInformation = ( ...args ) =>
-	new Promise( ( resolve, reject ) => {
-		// Promisify this function
-		wpcom.validateDomainContactInformation(
-			...args,
-			( httpErrors, data ) => {
-				if ( httpErrors ) {
-					return reject( httpErrors );
-				}
-				resolve( data );
-			},
-			{ apiVersion: '1.2' }
-		);
-	} );
-
-const wpcomValidateGSuiteContactInformation = ( ...args ) =>
-	wpcom.validateGoogleAppsContactInformation( ...args );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -134,7 +116,6 @@ export default function CompositeCheckout( {
 	getCart,
 	setCart,
 	getStoredCards,
-	validateDomainContactDetails,
 	allowedPaymentMethods,
 	onlyLoadPaymentMethods,
 	overrideCountryList,
@@ -405,20 +386,6 @@ export default function CompositeCheckout( {
 				serverAllowedPaymentMethods,
 		  } );
 
-	const domainContactValidationCallback = createContactValidationCallback( {
-		type: 'domains',
-		validateContactFunction: validateDomainContactDetails || wpcomValidateDomainContactInformation,
-		recordEvent,
-		showErrorMessage: showErrorMessageBriefly,
-	} );
-
-	const gSuiteContactValidationCallback = createContactValidationCallback( {
-		type: 'gsuite',
-		validateContactFunction: wpcomValidateGSuiteContactInformation,
-		recordEvent,
-		showErrorMessage: showErrorMessageBriefly,
-	} );
-
 	const renderDomainContactFields = (
 		domainNames,
 		contactDetails,
@@ -566,13 +533,12 @@ export default function CompositeCheckout( {
 					renderDomainContactFields={ renderDomainContactFields }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
-					domainContactValidationCallback={ domainContactValidationCallback }
-					gSuiteContactValidationCallback={ gSuiteContactValidationCallback }
 					responseCart={ responseCart }
 					addItemToCart={ addItemWithEssentialProperties }
 					subtotal={ subtotal }
 					isCartPendingUpdate={ isCartPendingUpdate }
 					CheckoutTerms={ CheckoutTerms }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>

@@ -19,8 +19,10 @@ import {
 	useDispatch,
 	useTotal,
 	usePaymentMethod,
+	useEvents,
 	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
+import wp from 'lib/wp';
 import debugFactory from 'debug';
 
 /**
@@ -36,8 +38,34 @@ import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
 import SecondaryCartPromotions from './secondary-cart-promotions';
+import {
+	handleContactValidationResult,
+	isContactValidationResponseValid,
+	prepareContactDetailsForValidation,
+} from 'my-sites/checkout/composite-checkout/contact-validation';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
+const wpcom = wp.undocumented();
+
+const wpcomValidateDomainContactInformation = ( ...args ) =>
+	new Promise( ( resolve, reject ) => {
+		// Promisify this function
+		wpcom.validateDomainContactInformation(
+			...args,
+			( httpErrors, data ) => {
+				if ( httpErrors ) {
+					return reject( httpErrors );
+				}
+				resolve( data );
+			},
+			{ apiVersion: '1.2' }
+		);
+	} );
+
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
+const wpcomValidateGSuiteContactInformation = ( ...args ) =>
+	wpcom.validateGoogleAppsContactInformation( ...args );
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -86,17 +114,17 @@ export default function WPCheckout( {
 	renderDomainContactFields,
 	variantSelectOverride,
 	getItemVariants,
-	domainContactValidationCallback,
-	gSuiteContactValidationCallback,
 	responseCart,
 	addItemToCart,
 	subtotal,
 	isCartPendingUpdate,
+	showErrorMessageBriefly,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
+	const onEvent = useEvents();
 
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
@@ -122,24 +150,37 @@ export default function WPCheckout( {
 			const domainNames = items
 				.filter( isLineItemADomain )
 				.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
-
-			return await domainContactValidationCallback(
-				activePaymentMethod.id,
-				contactInfo,
-				domainNames,
-				applyDomainContactValidationResults
+			const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
+			const validationResult = await wpcomValidateDomainContactInformation(
+				formattedContactDetails,
+				domainNames
 			);
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod.id,
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
 			const domainNames = items
 				.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
 				.map( ( item ) => item.wpcom_meta?.meta ?? '' );
 
-			return await gSuiteContactValidationCallback(
-				activePaymentMethod.id,
-				contactInfo,
-				domainNames,
-				applyDomainContactValidationResults
+			const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
+			const validationResult = await wpcomValidateGSuiteContactInformation(
+				formattedContactDetails,
+				domainNames
 			);
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod.id,
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
 
 		return isCompleteAndValid( contactInfo );

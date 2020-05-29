@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
@@ -11,51 +10,11 @@ import {
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { translate } from 'i18n-calypso';
 
-const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
-
-export default function createContactValidationCallback( {
-	type,
-	validateContactFunction,
-	recordEvent,
-	showErrorMessage,
-} ) {
-	// Resolves to false if there are errors
-	return async function contactValidationCallback(
-		paymentMethodId,
-		contactDetails,
-		domainNames,
-		applyDomainContactValidationResults
-	) {
-		const contact_information = prepareContactDetailsForValidation( type, contactDetails );
-		try {
-			debug( 'contact info validation for', contact_information, domainNames );
-			const data = await validateContactFunction( contact_information, domainNames );
-			debug( 'contact info validation result', data );
-			handleContactValidationResult( {
-				recordEvent,
-				showErrorMessage,
-				paymentMethodId,
-				data,
-				applyDomainContactValidationResults,
-			} );
-			return isContactValidationResponseValid( data, contactDetails );
-		} catch ( error ) {
-			debug( 'contact info validation error:', error );
-			showErrorMessage(
-				translate(
-					'There was an error validating your contact information. Please contact support.'
-				)
-			);
-			return false;
-		}
-	};
-}
-
-function handleContactValidationResult( {
+export function handleContactValidationResult( {
 	recordEvent,
 	showErrorMessage,
 	paymentMethodId,
-	data,
+	validationResult,
 	applyDomainContactValidationResults,
 } ) {
 	recordEvent( {
@@ -65,26 +24,28 @@ function handleContactValidationResult( {
 			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
 		},
 	} );
-	if ( ! data ) {
+	if ( ! validationResult ) {
 		showErrorMessage(
 			translate( 'There was an error validating your contact information. Please contact support.' )
 		);
 	}
-	if ( data && data.messages ) {
+	if ( validationResult && validationResult.messages ) {
 		showErrorMessage(
 			translate(
 				'We could not validate your contact information. Please review and update all the highlighted fields.'
 			)
 		);
 	}
-	applyDomainContactValidationResults( formatDomainContactValidationResponse( data ?? {} ) );
+	applyDomainContactValidationResults(
+		formatDomainContactValidationResponse( validationResult ?? {} )
+	);
 }
 
-function isContactValidationResponseValid( data, contactDetails ) {
+export function isContactValidationResponseValid( data, contactDetails ) {
 	return data && data.success && areRequiredFieldsNotEmpty( contactDetails );
 }
 
-function prepareContactDetailsForValidation( type, contactDetails ) {
+export function prepareContactDetailsForValidation( type, contactDetails ) {
 	if ( type === 'domains' ) {
 		const { contact_information } = prepareDomainContactValidationRequest( contactDetails );
 		return contact_information;
