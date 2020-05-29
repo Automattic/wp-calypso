@@ -55,7 +55,7 @@ const DisconnectSite = ( {
 							}
 						) }
 						subHeaderText={ translate(
-							'Jetpack wasn’t able to connect to your site at {{strong}}%(siteSlug)s{{/strong}}.{{br/}}There might be a few reasons for that, how do you want to proceed?',
+							'Jetpack is unable to connect to your site at {{strong}}%(siteSlug)s{{/strong}}.{{br/}}There might be a few reasons for that — how do you want to proceed?',
 							{
 								args: { siteSlug },
 								components: {
