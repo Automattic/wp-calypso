@@ -49,6 +49,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Hide Gutenberg's inserter (in favor of ours).
 * Use `require` (rather than `require_once`) for asset files.
 * Flag Premium Content blocks as paid to make clear they require a paid plan.
+* Onboarding: Fix the dimensions of the preview image.
 
 = 1.5 =
 * Global Styles: Fix a "Bad array access" error.
