@@ -1,0 +1,32 @@
+/**
+ * External dependencies
+ */
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import DisconnectSurvey from './disconnect-survey';
+import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
+import Main from 'components/main';
+import NavigationLink from 'components/wizard/navigation-link';
+import Troubleshoot from './troubleshoot';
+
+export const SurveyFlow = ( { translate, confirmHref, backHref } ) => {
+	return (
+		<Main className="disconnect-site__site-settings">
+			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<FormattedHeader
+				headerText={ translate( 'Disable Jetpack' ) }
+				subHeaderText={ translate( "Please let us know why you're disabling Jetpack." ) }
+			/>
+			<DisconnectSurvey confirmHref={ confirmHref } />
+			<div className="disconnect-site__navigation-links">
+				<NavigationLink href={ backHref } direction="back" />
+				<NavigationLink href={ confirmHref } direction="forward" />
+			</div>
+			<Troubleshoot />
+		</Main>
+	);
+};
