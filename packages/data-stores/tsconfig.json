@@ -22,6 +22,8 @@
 
 		"forceConsistentCasingInFileNames": true,
 
+		"importsNotUsedAsValues": "error",
+
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
 
