@@ -123,10 +123,11 @@ export default function WPCheckout( {
 		setShouldShowContactDetailsValidationErrors,
 	] = useState( false );
 
-	const contactValidationCallback = async () => {
-		debug( 'validating contact details' );
+	const validateContactDetailsAndDisplayErrors = async () => {
+		debug( 'validating contact details with side effects' );
 		if ( isDomainFieldsVisible ) {
-			const validationResult = getDomainValidationResult( items, contactInfo );
+			const validationResult = await getDomainValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
 				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
@@ -136,7 +137,8 @@ export default function WPCheckout( {
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
-			const validationResult = getGSuiteValidationResult( items, contactInfo );
+			const validationResult = await getGSuiteValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
 				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
@@ -146,7 +148,6 @@ export default function WPCheckout( {
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
-
 		return isCompleteAndValid( contactInfo );
 	};
 
@@ -217,7 +218,7 @@ export default function WPCheckout( {
 									subdivisionCode: contactInfo.state.value,
 								} );
 
-								return contactValidationCallback();
+								return validateContactDetailsAndDisplayErrors();
 							} }
 							activeStepContent={
 								<WPContactForm

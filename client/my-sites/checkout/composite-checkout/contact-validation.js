@@ -90,7 +90,7 @@ export async function getDomainValidationResult( items, contactInfo ) {
 		.filter( isLineItemADomain )
 		.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
-	return await wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
+	return wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
 }
 
 export async function getGSuiteValidationResult( items, contactInfo ) {
@@ -98,5 +98,5 @@ export async function getGSuiteValidationResult( items, contactInfo ) {
 		.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
 		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
-	return await wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
+	return wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
 }
