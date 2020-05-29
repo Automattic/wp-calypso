@@ -15,7 +15,7 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 /**
  * Image dependencies
  */
-import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--free-photo-library.svg';
+import earnCardPrompt from 'assets/images/customer-home/illustration--business.svg';
 
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();
@@ -28,15 +28,19 @@ const EducationEarn = ( { siteSlug } ) => {
 			) }
 			links={ [
 				{
-					buttonLink: true,
-					url:  `/earn/${ siteSlug }`,
-					text: translate( 'Sell Premium Content' ),
-					icon: 'video',
-					tracksEvent: 'calypso_customer_home_free_photo_library_video_support_page_view',
-					statsName: 'view_free_photo_library_video',
+					calypsoLink: true,
+					url: `/earn/${ siteSlug }`,
+					icon: 'arrow-right',
+					text: translate( 'Start making money' ),
+				},
+				{
+					externalLink: true,
+					url: `https://wordpress.com/support/category/tools/earning-money-from-your-site/`,
+					icon: 'info',
+					text: translate( 'Learn more' ),
 				},
 			] }
-			illustration={ freePhotoLibraryVideoPrompt }
+			illustration={ earnCardPrompt }
 		/>
 	);
 };
@@ -47,4 +51,4 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps ) ( EducationEarn );
+export default connect( mapStateToProps )( EducationEarn );

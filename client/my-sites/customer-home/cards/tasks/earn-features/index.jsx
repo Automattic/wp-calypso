@@ -20,13 +20,12 @@ const EarnFeatures = ( { siteSlug } ) => {
 		<Task
 			title={ translate( 'Make money from your website' ) }
 			description={ translate(
-				'Sell just about anything to your visitors -- physical items, digital downloads, memberships, exclusive content, and more. Our new payment tools allow you to accept credit card payments on your website.'
+				'Sell just about anything to your visitors — physical items, digital downloads, memberships, exclusive content, and more.'
 			) }
 			actionText={ translate( 'Start making money' ) }
 			actionUrl={ `/earn/${ siteSlug }` }
 			completeOnStart={ false }
 			illustration={ earnIllustration }
-			timing={ 3 }
 			taskId={ TASK_EARN_FEATURES }
 		/>
 	);
