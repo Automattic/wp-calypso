@@ -150,6 +150,17 @@ export default function WPCheckout( {
 		}
 		return isCompleteAndValid( contactInfo );
 	};
+	const validateContactDetails = async () => {
+		debug( 'validating contact details' );
+		if ( isDomainFieldsVisible ) {
+			const validationResult = getDomainValidationResult( items, contactInfo );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		} else if ( isGSuiteInCart ) {
+			const validationResult = getGSuiteValidationResult( items, contactInfo );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		}
+		return isCompleteAndValid( contactInfo );
+	};
 
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 
@@ -232,7 +243,7 @@ export default function WPCheckout( {
 									shouldShowContactDetailsValidationErrors={
 										shouldShowContactDetailsValidationErrors
 									}
-									contactValidationCallback={ contactValidationCallback }
+									contactValidationCallback={ validateContactDetails }
 								/>
 							}
 							completeStepContent={
