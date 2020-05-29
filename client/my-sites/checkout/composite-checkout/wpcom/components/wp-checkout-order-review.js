@@ -105,25 +105,38 @@ function CouponFieldArea( {
 	}
 
 	return (
-		<CouponEnableButton onClick={ () => setCouponFieldVisible( true ) }>
-			{ translate( 'Add a coupon code' ) }
-		</CouponEnableButton>
+		<CouponLinkWrapper>
+			{ translate( 'Have a coupon? ' ) }
+			<CouponEnableButton onClick={ () => setCouponFieldVisible( true ) }>
+				{ translate( 'Add a coupon code' ) }
+			</CouponEnableButton>
+		</CouponLinkWrapper>
 	);
 }
 
 const DomainURL = styled.div`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
+	color: ${( props ) => props.theme.colors.textColorLight};
 	font-size: 14px;
 	margin-top: -10px;
 	word-break: break-word;
 `;
 
+const CouponLinkWrapper = styled.div`
+	font-size: 14px;
+`;
+
 const CouponField = styled( Coupon )`
 	margin: 20px 30px 0 0;
-	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 `;
 
 const CouponEnableButton = styled.button`
 	cursor: pointer;
 	text-decoration: underline;
+	color: ${( props ) => props.theme.colors.highlight};
+	font-size: 14px;
+
+	:hover {
+		text-decoration: none;
+	}
 `;
