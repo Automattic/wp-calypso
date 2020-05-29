@@ -61,15 +61,15 @@ describe( 'selectors', () => {
 	describe( '#getGuidedTourState()', () => {
 		test( 'should return an empty object if no state is present', () => {
 			const tourState = getGuidedTourState( {
+				route: {
+					query: {
+						initial: {},
+					},
+				},
 				ui: {
 					shouldShow: false,
 					guidedTour: false,
 					actionLog: [],
-					route: {
-						query: {
-							initial: {},
-						},
-					},
 				},
 				preferences: {
 					lastFetchedTimestamp: 1,
@@ -89,13 +89,13 @@ describe( 'selectors', () => {
 			queryArguments = {},
 			userData = {},
 		} ) => ( {
+			route: {
+				query: {
+					initial: queryArguments,
+				},
+			},
 			ui: {
 				actionLog,
-				route: {
-					query: {
-						initial: queryArguments,
-					},
-				},
 			},
 			preferences: {
 				lastFetchedTimestamp: 1,

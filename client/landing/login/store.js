@@ -14,7 +14,6 @@ import { combineReducers, addReducerEnhancer } from 'state/utils';
 import application from 'state/application/reducer';
 import documentHead from 'state/document-head/reducer';
 import language from 'state/ui/language/reducer';
-import route from 'state/ui/route/reducer';
 import masterbarVisibility from 'state/ui/masterbar-visibility/reducer';
 import oauth2ClientsUI from 'state/ui/oauth2-clients/reducer';
 import section from 'state/ui/section/reducer';
@@ -39,7 +38,6 @@ const rootReducer = combineReducers( {
 	oauth2Clients,
 	ui: combineReducers( {
 		language,
-		route,
 		masterbarVisibility,
 		oauth2Clients: oauth2ClientsUI,
 		section,

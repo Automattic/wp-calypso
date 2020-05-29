@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { isEqual, omit } from 'lodash';
 
 /**

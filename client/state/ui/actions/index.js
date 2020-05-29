@@ -14,7 +14,6 @@ import 'state/data-layer/wpcom/sites/jitm';
 /**
  * Re-exports
  */
-export { default as setRoute } from './set-route';
 export { setSection, hideSidebar } from '../section/actions';
 export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
 

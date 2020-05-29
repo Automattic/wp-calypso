@@ -17,11 +17,9 @@ describe( 'getPreviousQuery()', () => {
 
 	test( 'should return previous query if one is found', () => {
 		const stateIn = {
-			ui: {
-				route: {
-					query: {
-						previous: { filter: 'howdy' },
-					},
+			route: {
+				query: {
+					previous: { filter: 'howdy' },
 				},
 			},
 		};

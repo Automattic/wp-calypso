@@ -17,11 +17,9 @@ describe( 'getPreviousPath()', () => {
 
 	test( 'should return previous path if one is found', () => {
 		const stateIn = {
-			ui: {
-				route: {
-					path: {
-						previous: '/hello',
-					},
+			route: {
+				path: {
+					previous: '/hello',
 				},
 			},
 		};

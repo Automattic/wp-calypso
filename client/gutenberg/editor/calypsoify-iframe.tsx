@@ -24,7 +24,8 @@ import {
 } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
-import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
+import { replaceHistory, navigate } from 'state/ui/actions';
+import { setRoute } from 'state/route/actions';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';

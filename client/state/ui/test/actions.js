@@ -10,7 +10,6 @@ import {
 	navigate,
 	setAllSitesSelected,
 	setPreviewShowing,
-	setRoute,
 	setSection,
 	setSelectedSiteId,
 	toggleNotificationsPanel,
@@ -19,7 +18,6 @@ import {
 	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	PREVIEW_IS_SHOWING,
-	ROUTE_SET,
 	SECTION_SET,
 	SELECTED_SITE_SET,
 } from 'state/action-types';
@@ -52,34 +50,6 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: PREVIEW_IS_SHOWING,
 				isShowing: false,
-			} );
-		} );
-	} );
-
-	describe( 'setRoute()', () => {
-		const route = '/foo';
-
-		test( 'should return an action with an empty query object if no query is supplied', () => {
-			const action = setRoute( route );
-
-			expect( action ).to.eql( {
-				type: ROUTE_SET,
-				path: route,
-				query: {},
-			} );
-		} );
-
-		test( 'should return an action object with path and the specified query arguments', () => {
-			const query = {
-				foo: 'bar',
-				bat: 123,
-			};
-			const action = setRoute( route, query );
-
-			expect( action ).to.eql( {
-				type: ROUTE_SET,
-				path: route,
-				query,
 			} );
 		} );
 	} );
