@@ -86,7 +86,7 @@
 		"@wordpress/compose": "*",
 		"@wordpress/data": "*",
 		"@wordpress/date": "*",
-		"@wordpress/dependency-extraction-webpack-plugin": "^2.4.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^2.6.0",
 		"@wordpress/dom-ready": "*",
 		"@wordpress/edit-post": "*",
 		"@wordpress/editor": "*",

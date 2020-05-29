@@ -1,11 +1,6 @@
 {
-	"extends": [ "config:base", "default:pinDigestsDisabled", "default:preserveSemverRanges" ],
+	"extends": [ "config:base", "default:pinDigestsDisabled" ],
 	"packageRules": [
-		{
-			"paths": [ "packages/**" ],
-			"packagePatterns": [ "*" ],
-			"rangeStrategy": "replace"
-		},
 		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
@@ -58,6 +53,7 @@
 	],
 	"postUpdateOptions": [ "yarnDedupeHighest" ],
 	"statusCheckVerify": true,
+	"rangeStrategy": "bump",
 	"ignoreDeps": [ "jquery" ],
 	"labels": [ "Framework", "[Type] Task" ],
 	"lockFileMaintenance": {
