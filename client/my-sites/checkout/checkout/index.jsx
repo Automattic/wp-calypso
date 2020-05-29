@@ -638,6 +638,11 @@ export class Checkout extends React.Component {
 
 		this.props.clearPurchases();
 
+		// If the redirect is an external URL, send them out early.
+		if ( isExternal( redirectPath ) ) {
+			this.handleCheckoutExternalRedirect( redirectPath );
+		}
+
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
 		if ( redirectPath.includes( destinationFromCookie ) ) {
