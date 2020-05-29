@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { NonUndefined } from 'utility-types';
+import type { NonUndefined } from 'utility-types';
 
 // Web stuff
 export type URL = string;

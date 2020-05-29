@@ -12,7 +12,7 @@ import reducer from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import persistOptions from './persist';
-import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
+import type { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
 export type State = import('./reducer').State;
 export { STORE_KEY };

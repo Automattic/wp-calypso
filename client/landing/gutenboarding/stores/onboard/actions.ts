@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import { DomainSuggestions, VerticalsTemplates } from '@automattic/data-stores';
+import type { DomainSuggestions, Site, VerticalsTemplates } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 
 /**
  * Internal dependencies
  */
-import { Design, SiteVertical } from './types';
+import type { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
 
-type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
+type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
 

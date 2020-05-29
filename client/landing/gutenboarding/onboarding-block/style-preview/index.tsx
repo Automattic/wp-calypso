@@ -16,7 +16,6 @@ import { usePath, Step } from '../../path';
 import ViewportSelect from './viewport-select';
 import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
-import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { Plans } from '@automattic/data-stores';
 import { USER_STORE } from '../../stores/user';
@@ -25,6 +24,8 @@ import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
+import type { Viewport } from './types';
+
 import './style.scss';
 
 const PLANS_STORE = Plans.STORE_KEY;
@@ -46,7 +47,7 @@ const StylePreview: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const history = useHistory();
 	const makePath = usePath();
-	const [ selectedViewport, setSelectedViewport ] = React.useState< T.Viewport >( 'desktop' );
+	const [ selectedViewport, setSelectedViewport ] = React.useState< Viewport >( 'desktop' );
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { ValuesType } from 'utility-types';
+import type { ValuesType } from 'utility-types';
 
 /**
  * An ID that identifies the onboarding flow to analytics and other services.
