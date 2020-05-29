@@ -84,7 +84,6 @@ export default function WPCheckout( {
 	countriesList,
 	StateSelect,
 	renderDomainContactFields,
-	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
 	domainContactValidationCallback,
@@ -201,7 +200,6 @@ export default function WPCheckout( {
 							couponFieldStateProps={ couponFieldStateProps }
 							removeCoupon={ removeCouponAndResetActiveStep }
 							onChangePlanLength={ changePlanLength }
-							variantRequestStatus={ variantRequestStatus }
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }

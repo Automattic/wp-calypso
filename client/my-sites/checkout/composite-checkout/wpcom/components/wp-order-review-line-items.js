@@ -33,7 +33,6 @@ function WPLineItem( {
 	className,
 	hasDeleteButton,
 	removeItem,
-	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
@@ -147,7 +146,6 @@ function WPLineItem( {
 			{ shouldShowVariantSelector && (
 				<ItemVariationPicker
 					selectedItem={ item }
-					variantRequestStatus={ variantRequestStatus }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
@@ -290,7 +288,6 @@ export function WPOrderReviewLineItems( {
 	isSummaryVisible,
 	removeItem,
 	removeCoupon,
-	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
@@ -307,7 +304,6 @@ export function WPOrderReviewLineItems( {
 							item={ item }
 							hasDeleteButton={ canItemBeDeleted( item ) }
 							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
-							variantRequestStatus={ variantRequestStatus }
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							onChangePlanLength={ onChangePlanLength }
