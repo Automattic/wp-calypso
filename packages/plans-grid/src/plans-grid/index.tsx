@@ -12,8 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Title, SubTitle } from '../titles';
-import ActionButtons from '../action-buttons';
+import { Title } from '../titles';
 import PlansTable from '../plans-table';
 import PlansDetails from '../plans-details';
 
@@ -28,16 +27,11 @@ const PLANS_STORE = Plans.register();
 const isMobile = window.navigator.userAgent.indexOf( 'Mobi' ) > -1;
 
 export interface Props {
-	confirmButton: React.ReactElement;
-	cancelButton?: React.ReactElement;
+	header: React.ReactElement;
 	currentPlan: Plans.Plan;
 }
 
-const PlansGrid: React.FunctionComponent< Props > = ( {
-	confirmButton,
-	cancelButton,
-	currentPlan,
-} ) => {
+const PlansGrid: React.FunctionComponent< Props > = ( { header, currentPlan } ) => {
 	const { __ } = useI18n();
 
 	const { setPlan } = useDispatch( PLANS_STORE );
@@ -55,17 +49,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 				'show-details': showDetails,
 			} ) }
 		>
-			<div className="plans-grid__header">
-				<div>
-					<Title>{ __( 'Choose a plan' ) }</Title>
-					<SubTitle>
-						{ __(
-							'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
-						) }
-					</SubTitle>
-				</div>
-				<ActionButtons primaryButton={ confirmButton } secondaryButton={ cancelButton } />
-			</div>
+			<div className="plans-grid__header">{ header }</div>
 
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">

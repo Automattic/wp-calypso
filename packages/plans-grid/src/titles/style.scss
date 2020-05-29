@@ -13,16 +13,3 @@
 		@include onboarding-heading-text;
 	}
 }
-
-.plans-ui-subtitle {
-	@include onboarding-large-text;
-	font-family: $default-font;
-	letter-spacing: 0.2px;
-	color: var( --studio-gray-60 );
-	margin-top: 5px;
-	max-width: 550px;
-
-	@include break-small {
-		margin-top: 0;
-	}
-}

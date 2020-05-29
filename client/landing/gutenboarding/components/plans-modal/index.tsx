@@ -14,6 +14,8 @@ import PlansGrid from '@automattic/plans-grid';
 import { PLANS_STORE } from '../../stores/plans';
 import { useTrackModal } from '../../hooks/use-track-modal';
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
+import ActionButtons from '../action-buttons';
+import { Title, SubTitle } from '../titles';
 
 /**
  * Style dependencies
@@ -51,6 +53,31 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 		onClose();
 	};
 
+	const header = (
+		<>
+			<div>
+				<Title>{ __( 'Choose a plan' ) }</Title>
+				<SubTitle>
+					{ __(
+						'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
+					) }
+				</SubTitle>
+			</div>
+			<ActionButtons
+				primaryButton={
+					<Button isPrimary onClick={ handleConfirm }>
+						{ __( 'Confirm' ) }
+					</Button>
+				}
+				secondaryButton={
+					<Button isLink onClick={ onClose }>
+						{ __( 'Close' ) }
+					</Button>
+				}
+			/>
+		</>
+	);
+
 	return (
 		<Modal
 			isOpen
@@ -58,19 +85,7 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 			overlayClassName="plans-modal-overlay"
 			bodyOpenClassName="has-plans-modal"
 		>
-			<PlansGrid
-				currentPlan={ plan }
-				confirmButton={
-					<Button isPrimary onClick={ handleConfirm }>
-						{ __( 'Confirm' ) }
-					</Button>
-				}
-				cancelButton={
-					<Button isLink onClick={ onClose }>
-						{ __( 'Close' ) }
-					</Button>
-				}
-			/>
+			<PlansGrid header={ header } currentPlan={ plan } />
 		</Modal>
 	);
 };

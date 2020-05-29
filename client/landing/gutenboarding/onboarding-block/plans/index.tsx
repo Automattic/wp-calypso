@@ -21,6 +21,8 @@ import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion'
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { usePath, Step } from '../../path';
+import ActionButtons from '../../components/action-buttons';
+import { Title, SubTitle } from '../../components/titles';
 
 export default function PlansStep() {
 	const { __ } = useI18n();
@@ -54,10 +56,18 @@ export default function PlansStep() {
 		createSite( username, freeDomainSuggestion, bearerToken, shouldSiteBePublic );
 	};
 
-	return (
-		<div className="gutenboarding-page plans">
-			<PlansGrid
-				confirmButton={
+	const header = (
+		<>
+			<div>
+				<Title>{ __( 'Choose a plan' ) }</Title>
+				<SubTitle>
+					{ __(
+						'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
+					) }
+				</SubTitle>
+			</div>
+			<ActionButtons
+				primaryButton={
 					<Button
 						isPrimary
 						onClick={ () => {
@@ -67,13 +77,18 @@ export default function PlansStep() {
 						{ __( 'Continue' ) }
 					</Button>
 				}
-				cancelButton={
+				secondaryButton={
 					<Link className="plans__back-link" isLink to={ makePath( Step.Style ) }>
 						{ __( 'Go back' ) }
 					</Link>
 				}
-				currentPlan={ plan }
 			/>
+		</>
+	);
+
+	return (
+		<div className="gutenboarding-page plans">
+			<PlansGrid header={ header } currentPlan={ plan } />
 			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
 		</div>
 	);
