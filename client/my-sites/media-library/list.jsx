@@ -147,14 +147,7 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	getGroupLabel = ( date ) => {
-		const itemDate = new Date( date );
-		const currentDate = new Date();
-
-		if ( itemDate.getFullYear() === currentDate.getFullYear() ) {
-			return this.props.moment( date ).format( 'MMM D' );
-		}
-
-		return this.props.moment( date ).format( 'MMM D, YYYY' );
+		return this.props.moment( date ).format( 'LL' );
 	};
 
 	getItemGroup = ( item ) =>
