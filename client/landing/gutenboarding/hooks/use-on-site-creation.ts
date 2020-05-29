@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -118,34 +117,6 @@ export default function useOnSiteCreation() {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
 				} );
-				go();
-				return;
-			}
-
-			if ( hasPaidDomain && ! isEnabled( 'gutenboarding/plans-grid' ) ) {
-				// I'd rather not make my own product, but this works.
-				// lib/cart-items helpers did not perform well.
-				const domainProduct = {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
-					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
-						source: 'gutenboarding',
-					},
-				};
-
-				const go = async () => {
-					const cart: Cart = await wpcom.getCart( newSite.site_slug );
-					await wpcom.setCart( newSite.blogid, {
-						...cart,
-						products: [ ...cart.products, domainProduct ],
-					} );
-					resetPlan();
-					resetOnboardStore();
-					setSelectedSite( newSite.blogid );
-					window.location.href = `/start/prelaunch?siteSlug=${ newSite.blogid }`;
-				};
 				go();
 				return;
 			}

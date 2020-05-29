@@ -7,7 +7,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import config from 'config';
 import classnames from 'classnames';
 
 /**
@@ -37,9 +36,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	const [ isPlansModalVisible, setIsPlanModalVisible ] = React.useState( false );
 
 	const handleButtonClick = () => {
-		if ( config.isEnabled( 'gutenboarding/plans-grid' ) && Step[ currentStep ] !== 'plans' ) {
-			setIsPlanModalVisible( ( isVisible ) => ! isVisible );
-		}
+		setIsPlanModalVisible( ( isVisible ) => ! isVisible );
 	};
 
 	// This hook is different from `getSelectedPlan` in the store.
@@ -58,6 +55,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 			<Button
 				onClick={ handleButtonClick }
 				label={ __( planLabel ) }
+				disabled={ Step[ currentStep ] === 'plans' }
 				className={ classnames( 'plans-button', { 'is-highlighted': isPlanUserSelectedOrPaid } ) }
 				{ ...buttonProps }
 			>
