@@ -47,7 +47,13 @@ class SecondaryCart extends Component {
 	}
 
 	render() {
-		const { cart, selectedSite, isJetpackNotAtomic, isShowingOnMobile } = this.props;
+		const {
+			cart,
+			selectedSite,
+			isJetpackNotAtomic,
+			isShowingOnMobile,
+			isWhiteGloveOffer,
+		} = this.props;
 
 		const cartClasses = classNames( 'secondary-cart', {
 			'secondary-cart__hidden': ! isShowingOnMobile,
@@ -76,6 +82,7 @@ class SecondaryCart extends Component {
 						cart={ cart }
 						selectedSite={ selectedSite }
 						showCoupon={ true }
+						isWhiteGloveOffer={ isWhiteGloveOffer }
 					/>
 					<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
 
