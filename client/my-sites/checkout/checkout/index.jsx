@@ -552,9 +552,9 @@ export class Checkout extends React.Component {
 		if ( isJetpackCloudProductSlug( product ) && isJetpackNotAtomic ) {
 			let source = '';
 			if ( isJetpackBackupSlug( product ) ) {
-				source = 'jetpack-backup-post-purchase';
+				source = 'calypso-backups';
 			} else if ( isJetpackScanSlug( product ) ) {
-				source = 'jetpack-scan-post-purchase';
+				source = 'calypso-scanner';
 			}
 			if ( source ) {
 				return addQueryArgs(
