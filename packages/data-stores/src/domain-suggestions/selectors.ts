@@ -85,8 +85,6 @@ const createSelectors = ( vendor: string ) => {
 	/**
 	 * Do not use this selector. It is for internal use.
 	 *
-	 * @private
-	 *
 	 * @param state Store state
 	 * @param queryObject Normalized object representing the query
 	 * @returns suggestions
