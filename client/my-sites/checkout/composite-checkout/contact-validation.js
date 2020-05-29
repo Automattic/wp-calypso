@@ -19,7 +19,7 @@ export default function createContactValidationCallback( {
 	recordEvent,
 	showErrorMessage,
 } ) {
-	// Resolves to true if there are errors
+	// Resolves to false if there are errors
 	return async function contactValidationCallback(
 		paymentMethodId,
 		contactDetails,
@@ -38,7 +38,7 @@ export default function createContactValidationCallback( {
 				data,
 				applyDomainContactValidationResults,
 			} );
-			return ! isContactValidationResponseValid( data, contactDetails );
+			return isContactValidationResponseValid( data, contactDetails );
 		} catch ( error ) {
 			debug( 'contact info validation error:', error );
 			showErrorMessage(
@@ -46,7 +46,7 @@ export default function createContactValidationCallback( {
 					'There was an error validating your contact information. Please contact support.'
 				)
 			);
-			return true;
+			return false;
 		}
 	};
 }

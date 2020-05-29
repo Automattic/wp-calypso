@@ -123,26 +123,23 @@ export default function WPCheckout( {
 				.filter( isLineItemADomain )
 				.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
 
-			const hasValidationErrors = await domainContactValidationCallback(
+			return await domainContactValidationCallback(
 				activePaymentMethod.id,
 				contactInfo,
 				domainNames,
 				applyDomainContactValidationResults
 			);
-			return ! hasValidationErrors;
 		} else if ( isGSuiteInCart ) {
 			const domainNames = items
 				.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
 				.map( ( item ) => item.wpcom_meta?.meta ?? '' );
 
-			const hasValidationErrors = await gSuiteContactValidationCallback(
+			return await gSuiteContactValidationCallback(
 				activePaymentMethod.id,
 				contactInfo,
 				domainNames,
 				applyDomainContactValidationResults
 			);
-			debug( 'gSuiteContactValidationCallback returned', hasValidationErrors );
-			return ! hasValidationErrors;
 		}
 
 		return isCompleteAndValid( contactInfo );
