@@ -16,6 +16,11 @@
 		position: relative;
 		color: var( --color-text-subtle );
 	}
+
+	&:disabled {
+		cursor: text;
+		opacity: 0.5;
+	}
 }
 
 .reader-feed-header__site-icon {

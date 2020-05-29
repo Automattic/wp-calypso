@@ -24,8 +24,10 @@ import getUserSetting from 'state/selectors/get-user-setting';
 import { isFollowing } from 'state/reader/follows/selectors';
 import QueryUserSettings from 'components/data/query-user-settings';
 import Gridicon from 'components/gridicon';
-import { subSectionHasUnseen } from 'state/reader/seen-posts/selectors';
-import { requestMarkAllAsSeen, requestMarkAllAsUnseen } from 'state/reader/seen-posts/actions';
+import {
+	requestMarkAllAsSeenFeed,
+	requestMarkAllAsUnseenFeed,
+} from 'state/reader/seen-posts/actions';
 
 /**
  * Style dependencies
@@ -37,7 +39,6 @@ class FeedHeader extends Component {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		showBack: PropTypes.bool,
-		hasUnseen: PropTypes.bool,
 		streamKey: PropTypes.string,
 	};
 
@@ -54,24 +55,15 @@ class FeedHeader extends Component {
 	};
 
 	markAsSeen = () => {
-		this.props.requestMarkAllAsSeen( { section: this.props.streamKey } );
-	};
-
-	markAsUnseen = () => {
-		this.props.requestMarkAllAsUnseen( { section: this.props.streamKey } );
+		this.props.requestMarkAllAsSeenFeed( {
+			identifier: this.props.streamKey,
+			feedId: this.props.feed.feed_ID,
+			feedUrl: this.props.feed.URL,
+		} );
 	};
 
 	render() {
-		const {
-			site,
-			feed,
-			showBack,
-			translate,
-			following,
-			isEmailBlocked,
-			hasUnseen,
-			streamKey,
-		} = this.props;
+		const { site, feed, showBack, translate, following, isEmailBlocked } = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
 		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
 		const description = getSiteDescription( { site, feed } );
@@ -107,20 +99,15 @@ class FeedHeader extends Component {
 								</div>
 							) }
 
-							{ config.isEnabled( 'reader/seen-posts' ) && streamKey && hasUnseen && (
-								<button onClick={ this.markAsSeen } className="reader-feed-header__seen-button">
+							{ config.isEnabled( 'reader/seen-posts' ) && feed && (
+								<button
+									onClick={ this.markAsSeen }
+									className="reader-feed-header__seen-button"
+									disabled={ feed.unseen_count === 0 }
+								>
 									<Gridicon icon="visible" size={ 18 } />
 									<span title={ translate( 'Mark all as seen' ) }>
 										{ translate( 'Mark all as seen' ) }
-									</span>
-								</button>
-							) }
-
-							{ config.isEnabled( 'reader/seen-posts' ) && streamKey && ! hasUnseen && (
-								<button onClick={ this.markAsUnseen } className="reader-feed-header__seen-button">
-									<Gridicon icon="not-visible" size={ 18 } />
-									<span title={ translate( 'Mark all as unseen' ) }>
-										{ translate( 'Mark all as unseen' ) }
 									</span>
 								</button>
 							) }
@@ -170,7 +157,6 @@ export default connect(
 	( state, ownProps ) => ( {
 		following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-		hasUnseen: subSectionHasUnseen( state, ownProps.streamKey ),
 	} ),
-	{ requestMarkAllAsSeen, requestMarkAllAsUnseen }
+	{ requestMarkAllAsSeenFeed, requestMarkAllAsUnseenFeed }
 )( localize( FeedHeader ) );

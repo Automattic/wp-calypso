@@ -2,3 +2,35 @@
 .sidebar ul.reader-sidebar-tags__list {
 	margin-bottom: 20px;
 }
+
+.is-section-reader {
+	.sidebar__menu {
+		user-select: none;
+	}
+
+	.sidebar__menu-link:hover .count {
+		background-color: var( --color-sidebar-text-alternative );
+		border-color: var( --color-sidebar-text-alternative );
+		outline-color: var( --color-sidebar-text-alternative );
+		color: var( --color-text );
+	}
+
+	.sidebar__menu .count {
+		background-color: var( --color-sidebar-menu-hover-background );
+		border-color: var( --color-sidebar-menu-hover-background );
+		outline-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-text-alternative );
+
+		position: absolute;
+		right: 15px;
+	}
+
+	.sidebar__menu-item-siteicon {
+		margin-right: 15px;
+		position: relative;
+	}
+
+	.sidebar__separator {
+		height: 30px;
+	}
+}

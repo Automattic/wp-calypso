@@ -37,7 +37,6 @@ import { requestMarkAsSeen, requestMarkAsUnseen } from 'state/reader/seen-posts/
  * Style dependencies
  */
 import './style.scss';
-import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -162,18 +161,20 @@ class ReaderPostOptionsMenu extends React.Component {
 			return;
 		}
 
-		let seenIds = [ post.seen_ids ];
+		const feedId = post.feed_ID;
+		let feedItemIds = [ post.ID ];
 		let globalIds = [ post.global_ID ];
 
 		if ( size( posts ) ) {
-			seenIds = map( posts, 'seen_ids' );
+			feedItemIds = map( posts, 'ID' );
 			globalIds = map( posts, 'global_ID' );
 		}
 
 		this.props.requestMarkAsSeen( {
-			seenIds,
+			feedId,
+			feedUrl: post.feed_URL,
+			feedItemIds,
 			globalIds,
-			source: SOURCE_READER_WEB,
 		} );
 
 		this.onMenuToggle();
@@ -186,16 +187,19 @@ class ReaderPostOptionsMenu extends React.Component {
 			return;
 		}
 
-		let seenIds = [ post.seen_ids ];
+		const feedId = post.feed_ID;
+		let feedItemIds = [ post.ID ];
 		let globalIds = [ post.global_ID ];
 
 		if ( size( posts ) ) {
-			seenIds = map( posts, 'seen_ids' );
+			feedItemIds = map( posts, 'ID' );
 			globalIds = map( posts, 'global_ID' );
 		}
 
 		this.props.requestMarkAsUnseen( {
-			seenIds,
+			feedId,
+			feedUrl: post.feed_URL,
+			feedItemIds,
 			globalIds,
 		} );
 

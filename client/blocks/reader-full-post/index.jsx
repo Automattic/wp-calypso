@@ -66,7 +66,6 @@ import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
 import { requestMarkAsSeen } from 'state/reader/seen-posts/actions';
-import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
 import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
@@ -264,9 +263,10 @@ export class FullPostView extends React.Component {
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
 			config.isEnabled( 'reader/seen-posts' ) &&
 				this.props.requestMarkAsSeen( {
-					seenIds: [ post.seen_ids ],
+					feedId: post.ID,
+					feedUrl: post.feed_URL,
+					feedItemIds: [ post.feed_ID ],
 					globalIds: [ post.global_ID ],
-					source: SOURCE_READER_WEB,
 				} );
 
 			recordTrackForPost(

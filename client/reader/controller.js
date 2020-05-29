@@ -25,6 +25,8 @@ import { preload } from 'sections-helper';
 import { requestFeedDiscovery } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
+import { isFollowingOpen } from 'state/ui/reader/sidebar/selectors';
+import { toggleReaderSidebarFollowing } from 'state/ui/reader/sidebar/actions';
 
 const analyticsPageTitle = 'Reader';
 
@@ -132,6 +134,13 @@ const exported = {
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
 		const mcKey = 'following';
 		const startDate = getStartDate( context );
+
+		// toggle read
+		const state = context.store.getState();
+		const isOpen = isFollowingOpen( state );
+		if ( ! isOpen ) {
+			context.store.dispatch( toggleReaderSidebarFollowing() );
+		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_following_loaded' );

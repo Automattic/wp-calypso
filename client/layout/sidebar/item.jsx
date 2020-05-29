@@ -67,8 +67,6 @@ export default function SidebarItem( props ) {
 
 				{ customIcon && customIcon }
 
-				{ hasUnseen && <span className="sidebar__bubble" aria-label="You have unseen content" /> }
-
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
 					{ props.label }
@@ -94,7 +92,6 @@ SidebarItem.propTypes = {
 	expandSection: PropTypes.func,
 	preloadSectionName: PropTypes.string,
 	forceInternalLink: PropTypes.bool,
-	hasUnseen: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,

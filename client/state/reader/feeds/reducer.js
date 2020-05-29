@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, keyBy, map, omit, omitBy, reduce } from 'lodash';
+import { assign, keyBy, map, omit, omitBy, reduce, merge, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,6 +11,10 @@ import {
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
+	READER_SEEN_MARK_AS_SEEN_RECEIVE,
+	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_SECTION_RECEIVE,
 } from 'state/reader/action-types';
 import { SERIALIZE } from 'state/action-types';
 import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
@@ -48,6 +52,8 @@ function adaptFeed( feed ) {
 		description: feed.description && decodeEntities( stripHTML( feed.description ) ),
 		last_update: feed.last_update,
 		image: feed.image,
+		organization_id: feed.organization_id,
+		unseen_count: feed.unseen_count,
 	};
 }
 
@@ -73,6 +79,38 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			return handleRequestFailure( state, action );
 		case READER_FEED_UPDATE:
 			return handleFeedUpdate( state, action );
+
+		case READER_SEEN_MARK_AS_SEEN_RECEIVE: {
+			const existingEntry = state[ action.feedId ];
+			return {
+				...state,
+				[ action.feedId ]: merge( {}, existingEntry, {
+					unseen_count: Math.max( existingEntry.unseen_count - action.globalIds.length, 0 ),
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_AS_UNSEEN_RECEIVE: {
+			const existingEntry = state[ action.feedId ];
+			return {
+				...state,
+				[ action.feedId ]: merge( {}, existingEntry, {
+					unseen_count: Math.max( existingEntry.unseen_count + action.globalIds.length, 0 ),
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE: {
+			const existingEntry = state[ action.feedId ];
+			return { ...state, [ action.feedId ]: merge( {}, existingEntry, { unseen_count: 0 } ) };
+		}
+
+		case READER_SEEN_MARK_ALL_AS_SEEN_SECTION_RECEIVE: {
+			forEach( action.feedIds, ( feedId ) => {
+				state[ feedId ] = { ...state[ feedId ], unseen_count: 0 };
+			} );
+			return { ...state };
+		}
 	}
 
 	return state;
