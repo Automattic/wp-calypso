@@ -87,9 +87,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'SUBMIT_BUTTON_LOAD_ERROR':
-				reduxDispatch(
-					reduxDispatch( logStashEventAction( 'submit_button_load', String( action.payload ) ) )
-				);
+				reduxDispatch( logStashEventAction( 'submit_button_load', String( action.payload ) ) );
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_submit_button_load_error', {
@@ -98,9 +96,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'PAYMENT_METHOD_LOAD_ERROR':
-				reduxDispatch(
-					reduxDispatch( logStashEventAction( 'payment_method_load', String( action.payload ) ) )
-				);
+				reduxDispatch( logStashEventAction( 'payment_method_load', String( action.payload ) ) );
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_method_load_error', {
@@ -109,9 +105,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'PAGE_LOAD_ERROR':
-				reduxDispatch(
-					reduxDispatch( logStashEventAction( 'page_load', String( action.payload ) ) )
-				);
+				reduxDispatch( logStashEventAction( 'page_load', String( action.payload ) ) );
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
