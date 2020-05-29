@@ -14,106 +14,33 @@ import { translate } from 'i18n-calypso';
 const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
 
 export default function createContactValidationCallback( {
-	validateDomainContact,
+	type,
+	validateContactFunction,
 	recordEvent,
 	showErrorMessage,
 } ) {
-	return function contactValidationCallback(
-		paymentMethodId,
-		contactDetails,
-		domainNames,
-		applyDomainContactValidationResults
-	) {
-		return new Promise( ( resolve ) => {
-			const { contact_information, domain_names } = prepareDomainContactValidationRequest(
-				domainNames,
-				contactDetails
-			);
-			validateDomainContact(
-				contact_information,
-				domain_names,
-				( httpErrors, data ) => {
-					recordEvent( {
-						type: 'VALIDATE_DOMAIN_CONTACT_INFO',
-						payload: {
-							credits: null,
-							payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
-						},
-					} );
-					debug(
-						'Domain contact info validation for domains',
-						domainNames,
-						'and contact info',
-						contactDetails,
-						'result:',
-						data
-					);
-					if ( ! data ) {
-						showErrorMessage(
-							translate(
-								'There was an error validating your contact information. Please contact support.'
-							)
-						);
-					}
-					if ( data && data.messages ) {
-						showErrorMessage(
-							translate(
-								'We could not validate your contact information. Please review and update all the highlighted fields.'
-							)
-						);
-					}
-					applyDomainContactValidationResults(
-						formatDomainContactValidationResponse( data ?? {} )
-					);
-					resolve( ! ( data && data.success && areRequiredFieldsNotEmpty( contactDetails ) ) );
-				},
-				{ apiVersion: '1.2' }
-			);
-		} );
-	};
-}
-
-export function createGSuiteContactValidationCallback( {
-	validateGSuiteContact,
-	recordEvent,
-	showErrorMessage,
-} ) {
+	// Resolves to true if there are errors
 	return async function contactValidationCallback(
 		paymentMethodId,
 		contactDetails,
 		domainNames,
 		applyDomainContactValidationResults
 	) {
-		const { contact_information } = prepareGSuiteContactValidationRequest( contactDetails );
+		const contact_information = prepareContactDetailsForValidation( type, contactDetails );
 		try {
-			debug( 'GSuite contact info validation for', contact_information, domainNames );
-			recordEvent( {
-				type: 'VALIDATE_DOMAIN_CONTACT_INFO',
-				payload: {
-					credits: null,
-					payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
-				},
+			debug( 'contact info validation for', contact_information, domainNames );
+			const data = await validateContactFunction( contact_information, domainNames );
+			debug( 'contact info validation result', data );
+			handleContactValidationResult( {
+				recordEvent,
+				showErrorMessage,
+				paymentMethodId,
+				data,
+				applyDomainContactValidationResults,
 			} );
-			const data = await validateGSuiteContact( contact_information, domainNames );
-			debug( 'GSuite contact info validation result', data );
-			if ( ! data ) {
-				showErrorMessage(
-					translate(
-						'There was an error validating your contact information. Please contact support.'
-					)
-				);
-			}
-			if ( data && data.messages ) {
-				showErrorMessage(
-					translate(
-						'We could not validate your contact information. Please review and update all the highlighted fields.'
-					)
-				);
-			}
-			applyDomainContactValidationResults( formatDomainContactValidationResponse( data ?? {} ) );
-			return ! ( data && data.success && areRequiredFieldsNotEmpty( contactDetails ) );
+			return ! isContactValidationResponseValid( data, contactDetails );
 		} catch ( error ) {
-			debug( 'GSuite contact info validation error:', error );
+			debug( 'contact info validation error:', error );
 			showErrorMessage(
 				translate(
 					'There was an error validating your contact information. Please contact support.'
@@ -122,4 +49,49 @@ export function createGSuiteContactValidationCallback( {
 			return true;
 		}
 	};
+}
+
+function handleContactValidationResult( {
+	recordEvent,
+	showErrorMessage,
+	paymentMethodId,
+	data,
+	applyDomainContactValidationResults,
+} ) {
+	recordEvent( {
+		type: 'VALIDATE_DOMAIN_CONTACT_INFO',
+		payload: {
+			credits: null,
+			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
+		},
+	} );
+	if ( ! data ) {
+		showErrorMessage(
+			translate( 'There was an error validating your contact information. Please contact support.' )
+		);
+	}
+	if ( data && data.messages ) {
+		showErrorMessage(
+			translate(
+				'We could not validate your contact information. Please review and update all the highlighted fields.'
+			)
+		);
+	}
+	applyDomainContactValidationResults( formatDomainContactValidationResponse( data ?? {} ) );
+}
+
+function isContactValidationResponseValid( data, contactDetails ) {
+	return data && data.success && areRequiredFieldsNotEmpty( contactDetails );
+}
+
+function prepareContactDetailsForValidation( type, contactDetails ) {
+	if ( type === 'domains' ) {
+		const { contact_information } = prepareDomainContactValidationRequest( contactDetails );
+		return contact_information;
+	}
+	if ( type === 'gsuite' ) {
+		const { contact_information } = prepareGSuiteContactValidationRequest( contactDetails );
+		return contact_information;
+	}
+	throw new Error( `Unknown validation type: ${ type }` );
 }

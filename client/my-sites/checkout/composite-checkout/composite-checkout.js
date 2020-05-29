@@ -73,9 +73,7 @@ import {
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import createContactValidationCallback, {
-	createGSuiteContactValidationCallback,
-} from './contact-validation';
+import createContactValidationCallback from './contact-validation';
 import { fillInSingleCartItemAttributes } from 'lib/cart-values';
 import {
 	hasGoogleApps,
@@ -112,7 +110,20 @@ const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 const wpcomValidateDomainContactInformation = ( ...args ) =>
-	wpcom.validateDomainContactInformation( ...args );
+	new Promise( ( resolve, reject ) => {
+		// Promisify this function
+		wpcom.validateDomainContactInformation(
+			...args,
+			( httpErrors, data ) => {
+				if ( httpErrors ) {
+					return reject( httpErrors );
+				}
+				resolve( data );
+			},
+			{ apiVersion: '1.2' }
+		);
+	} );
+
 const wpcomValidateGSuiteContactInformation = ( ...args ) =>
 	wpcom.validateGoogleAppsContactInformation( ...args );
 
@@ -395,13 +406,15 @@ export default function CompositeCheckout( {
 		  } );
 
 	const domainContactValidationCallback = createContactValidationCallback( {
-		validateDomainContact: validateDomainContactDetails || wpcomValidateDomainContactInformation,
+		type: 'domains',
+		validateContactFunction: validateDomainContactDetails || wpcomValidateDomainContactInformation,
 		recordEvent,
 		showErrorMessage: showErrorMessageBriefly,
 	} );
 
-	const gSuiteContactValidationCallback = createGSuiteContactValidationCallback( {
-		validateGSuiteContact: wpcomValidateGSuiteContactInformation,
+	const gSuiteContactValidationCallback = createContactValidationCallback( {
+		type: 'gsuite',
+		validateContactFunction: wpcomValidateGSuiteContactInformation,
 		recordEvent,
 		showErrorMessage: showErrorMessageBriefly,
 	} );
