@@ -9,6 +9,34 @@ import {
 	areRequiredFieldsNotEmpty,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { translate } from 'i18n-calypso';
+import wp from 'lib/wp';
+
+/**
+ * Internal dependencies
+ */
+import { isLineItemADomain } from 'my-sites/checkout/composite-checkout/wpcom/hooks/has-domains';
+
+const wpcom = wp.undocumented();
+
+const wpcomValidateDomainContactInformation = ( ...args ) =>
+	new Promise( ( resolve, reject ) => {
+		// Promisify this function
+		wpcom.validateDomainContactInformation(
+			...args,
+			( httpErrors, data ) => {
+				if ( httpErrors ) {
+					return reject( httpErrors );
+				}
+				resolve( data );
+			},
+			{ apiVersion: '1.2' }
+		);
+	} );
+
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
+const wpcomValidateGSuiteContactInformation = ( ...args ) =>
+	wpcom.validateGoogleAppsContactInformation( ...args );
 
 export function handleContactValidationResult( {
 	recordEvent,
@@ -55,4 +83,20 @@ export function prepareContactDetailsForValidation( type, contactDetails ) {
 		return contact_information;
 	}
 	throw new Error( `Unknown validation type: ${ type }` );
+}
+
+export async function getDomainValidationResult( items, contactInfo ) {
+	const domainNames = items
+		.filter( isLineItemADomain )
+		.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
+	const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
+	return await wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
+}
+
+export async function getGSuiteValidationResult( items, contactInfo ) {
+	const domainNames = items
+		.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
+		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
+	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
+	return await wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
 }

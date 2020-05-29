@@ -22,7 +22,6 @@ import {
 	useEvents,
 	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
-import wp from 'lib/wp';
 import debugFactory from 'debug';
 
 /**
@@ -41,31 +40,11 @@ import SecondaryCartPromotions from './secondary-cart-promotions';
 import {
 	handleContactValidationResult,
 	isContactValidationResponseValid,
-	prepareContactDetailsForValidation,
+	getDomainValidationResult,
+	getGSuiteValidationResult,
 } from 'my-sites/checkout/composite-checkout/contact-validation';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
-const wpcom = wp.undocumented();
-
-const wpcomValidateDomainContactInformation = ( ...args ) =>
-	new Promise( ( resolve, reject ) => {
-		// Promisify this function
-		wpcom.validateDomainContactInformation(
-			...args,
-			( httpErrors, data ) => {
-				if ( httpErrors ) {
-					return reject( httpErrors );
-				}
-				resolve( data );
-			},
-			{ apiVersion: '1.2' }
-		);
-	} );
-
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcomValidateGSuiteContactInformation = ( ...args ) =>
-	wpcom.validateGoogleAppsContactInformation( ...args );
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -147,14 +126,7 @@ export default function WPCheckout( {
 	const contactValidationCallback = async () => {
 		debug( 'validating contact details' );
 		if ( isDomainFieldsVisible ) {
-			const domainNames = items
-				.filter( isLineItemADomain )
-				.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
-			const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
-			const validationResult = await wpcomValidateDomainContactInformation(
-				formattedContactDetails,
-				domainNames
-			);
+			const validationResult = getDomainValidationResult( items, contactInfo );
 			handleContactValidationResult( {
 				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
@@ -164,15 +136,7 @@ export default function WPCheckout( {
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
-			const domainNames = items
-				.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
-				.map( ( item ) => item.wpcom_meta?.meta ?? '' );
-
-			const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
-			const validationResult = await wpcomValidateGSuiteContactInformation(
-				formattedContactDetails,
-				domainNames
-			);
+			const validationResult = getGSuiteValidationResult( items, contactInfo );
 			handleContactValidationResult( {
 				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
