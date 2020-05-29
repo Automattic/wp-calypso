@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { State } from './reducer';
+import type { State } from './reducer';
 
 /**
  * Get template suggestions

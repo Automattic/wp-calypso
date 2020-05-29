@@ -8,7 +8,7 @@ import { apiFetch } from '@wordpress/data-controls';
  */
 import { supportedPlanSlugs } from './reducer';
 import { setPrices } from './actions';
-import { APIPlan, PlanSlug } from './types';
+import type { APIPlan, PlanSlug } from './types';
 import { currenciesFormats } from './constants';
 
 /**

@@ -3,7 +3,7 @@
  */
 import { wpcomRequest } from '../wpcom-request-controls';
 import { createActions } from './actions';
-import { WpcomClientCredentials } from '../shared-types';
+import type { WpcomClientCredentials } from '../shared-types';
 
 export function createResolvers( clientCreds: WpcomClientCredentials ) {
 	const { receiveCurrentUser, receiveCurrentUserFailed } = createActions( clientCreds );

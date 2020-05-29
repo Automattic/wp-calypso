@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { Vertical } from './types';
-import { Action } from './actions';
+import type { Vertical } from './types';
+import type { Action } from './actions';
 
 const verticals: Reducer< Vertical[], Action > = ( state = [], action ) => {
 	if ( action.type === 'RECEIVE_VERTICALS' ) {

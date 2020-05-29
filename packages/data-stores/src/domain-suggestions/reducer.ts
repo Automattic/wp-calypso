@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { DomainSuggestion, DomainCategory } from './types';
-import { Action } from './actions';
+import type { DomainSuggestion, DomainCategory } from './types';
+import type { Action } from './actions';
 import { stringifyDomainQueryObject } from './utils';
 
 const domainSuggestions: Reducer< Record< string, DomainSuggestion[] | undefined >, Action > = (

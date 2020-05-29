@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLANS_LIST } from './plans-data';
+import type { PLANS_LIST } from './plans-data';
 
 export type PlanSlug = keyof typeof PLANS_LIST;
 
