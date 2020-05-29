@@ -19,7 +19,7 @@ import NavigationLink from 'components/wizard/navigation-link';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import Troubleshoot from './troubleshoot';
 import { addQueryArgs } from 'lib/url';
-import { getSelectedSiteSlug, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -27,18 +27,12 @@ import { localizeUrl } from 'lib/i18n-utils';
  */
 import './style.scss';
 
-const DisconnectSite = ( {
-	reason,
-	type,
-	siteSlug,
-	site: { name: siteName, URL: siteUrl },
-	translate,
-} ) => {
-	const confirmHref = `/settings/disconnect-site/confirm/${ siteSlug }`;
+const DisconnectSite = ( { reason, type, site, translate } ) => {
+	const confirmHref = `/settings/disconnect-site/confirm/${ site.slug }`;
 
-	let backHref = '/settings/manage-connection/' + siteSlug;
+	let backHref = '/settings/manage-connection/' + site.slug;
 	if ( reason ) {
-		backHref = '/settings/disconnect-site/' + siteSlug;
+		backHref = '/settings/disconnect-site/' + site.slug;
 	}
 
 	if ( type === 'down' ) {
@@ -50,14 +44,14 @@ const DisconnectSite = ( {
 						headerText={ translate(
 							'Your site {{strong}}%(siteName)s{{/strong}} cannot be accessed',
 							{
-								args: { siteName },
+								args: { siteName: site.name },
 								components: { strong: <strong /> },
 							}
 						) }
 						subHeaderText={ translate(
 							'Jetpack is unable to connect to your site at {{strong}}%(siteSlug)s{{/strong}}.{{br/}}There might be a few reasons for that — how do you want to proceed?',
 							{
-								args: { siteSlug },
+								args: { siteSlug: site.slug },
 								components: {
 									strong: <strong />,
 									br: <br />,
@@ -66,7 +60,7 @@ const DisconnectSite = ( {
 						) }
 					/>
 					<div className="disconnect-site__actions">
-						<CompactCard href={ siteUrl } target="_blank" rel="noopener noreferrer">
+						<CompactCard href={ site.URL } target="_blank" rel="noopener noreferrer">
 							<Gridicon
 								className="disconnect-site__action-icon disconnect-site__confirm-icon"
 								icon="globe"
@@ -147,7 +141,6 @@ const DisconnectSite = ( {
 };
 
 const connectComponent = connect( ( state ) => ( {
-	siteSlug: getSelectedSiteSlug( state ),
 	site: getSelectedSite( state ),
 } ) );
 
