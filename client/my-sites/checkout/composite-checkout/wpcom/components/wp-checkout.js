@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 import {
@@ -29,6 +30,7 @@ import debugFactory from 'debug';
  */
 import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -150,6 +152,23 @@ export default function WPCheckout( {
 		}
 		return isCompleteAndValid( contactInfo );
 	};
+
+	const cachedContactDetails = useSelector( getContactDetailsCache );
+	const shouldValidateCachedContactDetails = useRef( true );
+
+	useEffect( () => {
+		if ( shouldValidateCachedContactDetails.current && cachedContactDetails ) {
+			shouldValidateCachedContactDetails.current = false;
+			// disable editing here?
+			contactValidationCallback().then( ( areDetailsCompleteAndValid ) => {
+				// If the details are already populated and valid, jump to payment method step
+				if ( areDetailsCompleteAndValid ) {
+					debug( 'Contact details are already populated; skipping to payment method step' );
+					// skip to payment step here
+				}
+			} );
+		}
+	}, [ cachedContactDetails, contactValidationCallback ] );
 
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 
