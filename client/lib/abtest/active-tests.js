@@ -157,4 +157,13 @@ export default {
 		localeTargets: 'any',
 		allowExistingUsers: true,
 	},
+	whiteGloveUpsell: {
+		datestamp: '20200603',
+		variations: {
+			variantShowOffer: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+	},
 };
