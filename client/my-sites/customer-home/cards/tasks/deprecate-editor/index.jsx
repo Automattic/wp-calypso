@@ -26,12 +26,16 @@ import blockEditorImage from 'assets/images/illustrations/block-editor-fade.svg'
 import FormattedDate from 'components/formatted-date';
 import { localizeUrl } from 'lib/i18n-utils';
 import InlineSupportLink from 'components/inline-support-link';
+import { useLocalizedMoment } from 'components/localized-moment';
 
 const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const actionCallback = () => {
 		optIn( siteId, gutenbergUrl );
 	};
+	const dateFormat = moment.localeData().longDateFormat( 'LL' );
+
 	return (
 		<Task
 			title={ translate( 'The new WordPress editor is coming.' ) }
@@ -42,7 +46,7 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 						components: {
 							date: (
 								<strong>
-									<FormattedDate date="2020-06-01" format="MMMM D" />
+									<FormattedDate date="2020-06-01" format={ dateFormat } />
 								</strong>
 							),
 							support: (
