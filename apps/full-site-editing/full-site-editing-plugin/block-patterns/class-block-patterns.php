@@ -12,6 +12,8 @@ namespace A8C\FSE;
  */
 class Block_Patterns {
 
+	const PATTERN_NAMESPACE = 'a8c/';
+
 	/**
 	 * Class instance.
 	 *
@@ -24,7 +26,7 @@ class Block_Patterns {
 	 * Block_Patterns constructor.
 	 */
 	private function __construct() {
-		add_filter( 'block_editor_settings', array( $this, 'register_patterns' ), 11 );
+		$this->register_patterns();
 	}
 
 	/**
@@ -41,12 +43,9 @@ class Block_Patterns {
 	}
 
 	/**
-	 * Extends block editor settings to include FSE block patterns.
-	 *
-	 * @param array $settings Default editor settings.
-	 * @return array Filtered editor settings.
+	 * Register FSE block patterns and categories.
 	 */
-	public function register_patterns( $settings ) {
+	public function register_patterns() {
 		// Register Block Pattern Categories.
 		if ( class_exists( 'WP_Block_Pattern_Categories_Registry' ) ) {
 			register_block_pattern_category( 'blog', array( 'label' => _x( 'Blog', 'Block pattern category', 'gutenberg' ) ) );
@@ -56,21 +55,20 @@ class Block_Patterns {
 			register_block_pattern_category( 'menu', array( 'label' => _x( 'Menu', 'Block pattern category', 'gutenberg' ) ) );
 		}
 
-		// Remove core patterns except 'Two Columns of Text'.
-		$settings['__experimentalBlockPatterns'] = wp_list_filter(
-			$settings['__experimentalBlockPatterns'],
-			array(
-				'title' => 'Two Columns of Text',
-			)
-		);
+		if ( class_exists( 'WP_Block_Patterns_Registry' ) && ! \WP_Block_Patterns_Registry::get_instance()->is_registered( 'text-two-columns' ) ) {
+			// Remove core patterns except 'Two Columns of Text'.
+			// Unfortunately, \WP_Block_Patterns_Registry::get_instance()->get_all_registered() doesn't return the pattern names as keys.
+			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
+				if ( 'core/' === substr( $pattern['name'], 0, 5 ) && 'core/text-two-columns' !== $pattern['name'] ) {
+					unregister_block_pattern( $pattern['name'] );
+				}
+			}
 
-		// Add our patterns.
-		$settings['__experimentalBlockPatterns'] = array_merge(
-			$this->get_patterns(),
-			$settings['__experimentalBlockPatterns']
-		);
-
-		return $settings;
+			// Add our patterns.
+			foreach ( $this->get_patterns() as $name => $pattern ) {
+				register_block_pattern( $name, $pattern );
+			}
+		}
 	}
 
 	/**
@@ -133,7 +131,8 @@ class Block_Patterns {
 		// Get the pattern files contents.
 		foreach ( $pattern_files as $pattern_file ) {
 			if ( substr( $pattern_file, -5 ) === '.json' ) {
-				$patterns[] = json_decode(
+				$pattern_name              = self::PATTERN_NAMESPACE . substr( $pattern_file, 0, -5 );
+				$patterns[ $pattern_name ] = json_decode(
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 					file_get_contents( $patterns_dir . $pattern_file ),
 					true
@@ -141,7 +140,8 @@ class Block_Patterns {
 			}
 
 			if ( substr( $pattern_file, -4 ) === '.php' ) {
-				$patterns[] = include_once $patterns_dir . $pattern_file;
+				$pattern_name              = self::PATTERN_NAMESPACE . substr( $pattern_file, 0, -4 );
+				$patterns[ $pattern_name ] = include $patterns_dir . $pattern_file;
 			}
 		}
 
