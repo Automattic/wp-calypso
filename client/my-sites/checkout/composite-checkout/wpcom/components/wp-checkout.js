@@ -122,8 +122,6 @@ export default function WPCheckout( {
 			postalCode: contactInfo.postalCode.value,
 			subdivisionCode: contactInfo.state.value,
 		} );
-		// Touch the fields so they display validation errors
-		touchContactFields();
 
 		if ( isDomainFieldsVisible ) {
 			const domainNames = items
@@ -213,6 +211,8 @@ export default function WPCheckout( {
 							stepId={ 'contact-form' }
 							isCompleteCallback={ () => {
 								setShouldShowContactDetailsValidationErrors( true );
+								// Touch the fields so they display validation errors
+								touchContactFields();
 								return contactValidationCallback();
 							} }
 							activeStepContent={
