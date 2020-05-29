@@ -640,7 +640,7 @@ export class Checkout extends React.Component {
 
 		// If the redirect is an external URL, send them out early.
 		if ( isExternal( redirectPath ) ) {
-			this.handleCheckoutExternalRedirect( redirectPath );
+			return this.handleCheckoutExternalRedirect( redirectPath );
 		}
 
 		// Removes the destination cookie only if redirecting to the signup destination.
