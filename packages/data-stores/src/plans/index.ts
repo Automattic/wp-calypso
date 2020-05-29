@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { controls } from '@wordpress/data-controls';
-import { plugins, registerStore, use } from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 /**
@@ -14,14 +14,11 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 import * as resolvers from './resolvers';
 import { plansPaths } from './plans-data';
-import persistOptions from './persist';
 
 let isRegistered = false;
 
 export function register(): typeof STORE_KEY {
 	if ( ! isRegistered ) {
-		use( plugins.persistence, persistOptions );
-
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
 			resolvers,
