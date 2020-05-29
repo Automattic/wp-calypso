@@ -117,12 +117,7 @@ export default function WPCheckout( {
 	] = useState( false );
 
 	const contactValidationCallback = async () => {
-		updateLocation( {
-			countryCode: contactInfo.countryCode.value,
-			postalCode: contactInfo.postalCode.value,
-			subdivisionCode: contactInfo.state.value,
-		} );
-
+		debug( 'validating contact details' );
 		if ( isDomainFieldsVisible ) {
 			const domainNames = items
 				.filter( isLineItemADomain )
@@ -213,6 +208,13 @@ export default function WPCheckout( {
 								setShouldShowContactDetailsValidationErrors( true );
 								// Touch the fields so they display validation errors
 								touchContactFields();
+								// Update tax location in cart
+								updateLocation( {
+									countryCode: contactInfo.countryCode.value,
+									postalCode: contactInfo.postalCode.value,
+									subdivisionCode: contactInfo.state.value,
+								} );
+
 								return contactValidationCallback();
 							} }
 							activeStepContent={
