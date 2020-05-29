@@ -37,7 +37,7 @@ const wpcom = wp.undocumented();
 /**
  * Make a purchase on WordPress.com.
  *
- * @returns {Readable} A stream of transaction flow steps.
+ * @returns {Function} A stream of transaction flow steps.
  *
  * @param {object} params - Includes the cart, domainDetails etc...
  * @param {Function} onStep - Callback
