@@ -153,22 +153,7 @@ export default function WPCheckout( {
 		return isCompleteAndValid( contactInfo );
 	};
 
-	const cachedContactDetails = useSelector( getContactDetailsCache );
-	const shouldValidateCachedContactDetails = useRef( true );
-
-	useEffect( () => {
-		if ( shouldValidateCachedContactDetails.current && cachedContactDetails ) {
-			shouldValidateCachedContactDetails.current = false;
-			// disable editing here?
-			contactValidationCallback().then( ( areDetailsCompleteAndValid ) => {
-				// If the details are already populated and valid, jump to payment method step
-				if ( areDetailsCompleteAndValid ) {
-					debug( 'Contact details are already populated; skipping to payment method step' );
-					// skip to payment step here
-				}
-			} );
-		}
-	}, [ cachedContactDetails, contactValidationCallback ] );
+	useSkipToLastStepIfFormComplete( contactValidationCallback );
 
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 
@@ -427,3 +412,22 @@ const CheckoutTermsUI = styled.div`
 		text-decoration: none;
 	}
 `;
+
+function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
+	const cachedContactDetails = useSelector( getContactDetailsCache );
+	const shouldValidateCachedContactDetails = useRef( true );
+
+	useEffect( () => {
+		if ( shouldValidateCachedContactDetails.current && cachedContactDetails ) {
+			shouldValidateCachedContactDetails.current = false;
+			// disable editing here?
+			contactValidationCallback().then( ( areDetailsCompleteAndValid ) => {
+				// If the details are already populated and valid, jump to payment method step
+				if ( areDetailsCompleteAndValid ) {
+					debug( 'Contact details are already populated; skipping to payment method step' );
+					// skip to payment step here
+				}
+			} );
+		}
+	}, [ cachedContactDetails, contactValidationCallback ] );
+}
