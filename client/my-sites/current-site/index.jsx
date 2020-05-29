@@ -21,8 +21,6 @@ import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
 import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 
 /**
  * Style dependencies
@@ -36,6 +34,7 @@ class CurrentSite extends Component {
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
+		forceAllSitesView: PropTypes.bool,
 	};
 
 	switchSites = ( event ) => {
@@ -104,14 +103,11 @@ class CurrentSite extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const isAllDomainsView = isUnderDomainManagementAll( getCurrentRoute( state ) );
-		return {
-			selectedSite: isAllDomainsView ? null : getSelectedSite( state ),
-			anySiteSelected: getSelectedOrAllSites( state ),
-			siteCount: getCurrentUserSiteCount( state ),
-			hasAllSitesList: hasAllSitesList( state ),
-		};
-	},
+	( state, ownProps ) => ( {
+		selectedSite: ownProps.forceAllSitesView ? null : getSelectedSite( state ),
+		anySiteSelected: getSelectedOrAllSites( state ),
+		siteCount: getCurrentUserSiteCount( state ),
+		hasAllSitesList: hasAllSitesList( state ),
+	} ),
 	{ recordGoogleEvent, setLayoutFocus }
 )( localize( CurrentSite ) );
