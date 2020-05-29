@@ -10,6 +10,7 @@ import wpcom from 'lib/wp';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import { preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { isDomainRegistration } from 'lib/products-values';
 import { addCartItem } from 'lib/cart-values/cart-items';
 
 function addProductsToCart( cart, newCartItems ) {
@@ -19,6 +20,9 @@ function addProductsToCart( cart, newCartItems ) {
 		} );
 		const addFunction = addCartItem( cartItem );
 
+		if ( isDomainRegistration( cartItem ) ) {
+			cart.products = cart.products.filter( ( item ) => ! isDomainRegistration( item ) );
+		}
 		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
 	} );
 
