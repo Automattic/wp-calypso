@@ -4,6 +4,9 @@
 // Color Schemes
 @import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
 
+// Typography
+@import '~@automattic/typography/src/fonts';
+
 // Shared
 @import 'shared/reset'; // css reset before the rest of the styles are defined
 @import 'shared/animation'; // all UI animation

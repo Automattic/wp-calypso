@@ -35,10 +35,14 @@ function FormattedHeader( {
 	return (
 		<header id={ id } className={ classes }>
 			{ ! isSecondary && (
-				<h1 className="formatted-header__title">{ preventWidows( headerText, 2 ) }</h1>
+				<h1 className="formatted-header__title wp-brand-font">
+					{ preventWidows( headerText, 2 ) }
+				</h1>
 			) }
 			{ isSecondary && (
-				<h2 className="formatted-header__title">{ preventWidows( headerText, 2 ) }</h2>
+				<h2 className="formatted-header__title wp-brand-font">
+					{ preventWidows( headerText, 2 ) }
+				</h2>
 			) }
 			{ subHeaderText && (
 				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>

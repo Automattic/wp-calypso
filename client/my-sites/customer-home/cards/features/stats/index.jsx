@@ -76,7 +76,7 @@ export const StatsV2 = ( {
 					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
 				</>
 			) }
-			<h2 className="stats__heading customer-home__section-heading">
+			<h2 className="stats__heading customer-home__section-heading wp-brand-font">
 				{ translate( 'Stats at a glance' ) }
 			</h2>
 			<Card>
