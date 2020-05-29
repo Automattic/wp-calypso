@@ -200,7 +200,7 @@ class DomainSearchResults extends React.Component {
 			} else {
 				availabilityElement = (
 					<Notice status="is-warning" showDismiss={ false }>
-						{ domainUnavailableMessage } { offer }
+						{ domainUnavailableMessage }
 					</Notice>
 				);
 			}
