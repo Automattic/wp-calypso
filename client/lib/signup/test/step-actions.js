@@ -249,7 +249,9 @@ describe( 'createSiteWithCart()', () => {
 			isSitelessCheckoutEnabledForFlow.mockImplementation( ( flow ) => flow === 'onboarding' );
 		} );
 		test( 'adds the domain registration to the cart without creating a site', () => {
-			SignupCart.addToCart.mockImplementation( ( cartKey, newCartItems, callback ) => callback() );
+			SignupCart.addToCart.mockImplementation( ( cartKey, newCartItems, newCartData, callback ) =>
+				callback()
+			);
 			return new Promise( ( done ) => {
 				const fakeStore = {
 					getState: () => ( {
@@ -268,13 +270,19 @@ describe( 'createSiteWithCart()', () => {
 						expect( SignupCart.addToCart ).toHaveBeenCalledWith(
 							'no-site',
 							[ expect.objectContaining( { meta: 'sitelessdomain.live' } ) ],
+							{
+								createNewSiteData: expect.objectContaining( {
+									blog_name: 'sitelessdomain.live',
+									find_available_url: false,
+								} ),
+							},
 							expect.any( Function )
 						);
 						done();
 					},
 					[],
 					{
-						siteUrl: undefined,
+						siteUrl: 'sitelessdomain.live',
 						flowName: 'onboarding',
 						domainItem: {
 							product_slug: 'dotlive_domain',
