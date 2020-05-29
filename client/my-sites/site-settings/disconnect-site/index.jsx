@@ -18,6 +18,7 @@ import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import Troubleshoot from './troubleshoot';
+import { addQueryArgs } from 'lib/url';
 import { getSelectedSiteSlug, getSelectedSite } from 'state/ui/selectors';
 import { localizeUrl } from 'lib/i18n-utils';
 
@@ -33,7 +34,7 @@ const DisconnectSite = ( {
 	site: { name: siteName, URL: siteUrl },
 	translate,
 } ) => {
-	let confirmHref = `/settings/disconnect-site/confirm/${ siteSlug }`;
+	const confirmHref = `/settings/disconnect-site/confirm/${ siteSlug }`;
 
 	let backHref = '/settings/manage-connection/' + siteSlug;
 	if ( reason ) {
@@ -41,8 +42,6 @@ const DisconnectSite = ( {
 	}
 
 	if ( type === 'down' ) {
-		confirmHref += '?type=down';
-
 		return (
 			<div>
 				<Main className="disconnect-site__down-flow">
@@ -99,7 +98,7 @@ const DisconnectSite = ( {
 								) }
 							/>
 						</CompactCard>
-						<CompactCard href={ confirmHref }>
+						<CompactCard href={ addQueryArgs( { type: 'down' }, confirmHref ) }>
 							<Gridicon
 								className="disconnect-site__action-icon disconnect-site__disconnect-icon"
 								icon="cross-circle"
