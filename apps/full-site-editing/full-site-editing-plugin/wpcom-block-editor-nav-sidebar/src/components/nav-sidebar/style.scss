@@ -115,12 +115,14 @@ $transition-period: 200ms;
 }
 
 .wpcom-block-editor-nav-sidebar__item-button {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+	height: auto;
 	margin: 0;
 	padding: ($panel-padding / 2) $panel-padding;
 	border-radius: $radius-block-ui;
-	display: block;
-	width: 100%;
-	height: auto;
 	text-align: initial;
 
 	&.is-selected {
@@ -134,6 +136,17 @@ $transition-period: 200ms;
 
 	&:not( .is-selected ) .wpcom-block-editor-nav-sidebar__slug {
 		color: $dark-gray-300;
+	}
+}
+
+.wpcom-block-editor-nav-sidebar__title-container {
+	flex: 1;
+}
+
+.wpcom-block-editor-nav-sidebar__title {
+	&.is-untitled {
+		font-style: italic;
+		color: $medium-gray-text;
 	}
 }
 

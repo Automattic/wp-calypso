@@ -142,15 +142,21 @@ interface NavItemProps {
 }
 
 function NavItem( { item, selected, statusLabel }: NavItemProps ) {
-	const className = classNames( 'wpcom-block-editor-nav-sidebar__item-button', {
+	const buttonClasses = classNames( 'wpcom-block-editor-nav-sidebar__item-button', {
 		'is-selected': selected,
+	} );
+
+	const titleClasses = classNames( 'wpcom-block-editor-nav-sidebar__title', {
+		'is-untitled': ! item.title?.rendered,
 	} );
 
 	return (
 		<li>
-			<Button className={ className }>
-				<div>{ item.title.rendered }</div>
-				<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
+			<Button className={ buttonClasses }>
+				<div className="wpcom-block-editor-nav-sidebar__title-container">
+					<div className={ titleClasses }>{ item.title?.rendered || __( 'Untitled' ) }</div>
+					<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
+				</div>
 				{ statusLabel && (
 					<div className="wpcom-block-editor-nav-sidebar__label">{ statusLabel }</div>
 				) }
