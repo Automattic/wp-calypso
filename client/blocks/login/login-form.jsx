@@ -291,7 +291,12 @@ export class LoginForm extends Component {
 
 	renderWooCommerce() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
+		const {
+			oauth2Client,
+			redirectTo,
+			requestError,
+			socialAccountIsLinking: linkingSocialUser,
+		} = this.props;
 
 		return (
 			<form method="post">
@@ -397,12 +402,16 @@ export class LoginForm extends Component {
 									<span>{ this.props.translate( 'or' ) }</span>
 								</div>
 								<SocialLoginForm
-									onSuccess={ this.onWooCommerceSocialSuccess }
-									socialService={ this.props.socialService }
-									socialServiceResponse={ this.props.socialServiceResponse }
+									// additionalRedirectQueryParams={ {
+									// 	client_id: oauth2Client.id,
+									// 	redirect_to: redirectTo,
+									// } }
 									linkingSocialService={
 										this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 									}
+									onSuccess={ this.onWooCommerceSocialSuccess }
+									socialService={ this.props.socialService }
+									socialServiceResponse={ this.props.socialServiceResponse }
 									uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 								/>
 							</div>
@@ -639,6 +648,10 @@ export class LoginForm extends Component {
 					<Fragment>
 						<Divider>{ this.props.translate( 'or' ) }</Divider>
 						<SocialLoginForm
+							// additionalRedirectQueryParams={ {
+							// 	client_id: oauth2Client.id,
+							// 	redirect_to: redirectTo,
+							// } }
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 							}

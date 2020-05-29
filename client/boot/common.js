@@ -336,6 +336,16 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		[ 'signupProgress', 'signupDependencies' ].forEach( ( item ) => store.remove( item ) );
 	}
 
+	// preserve oauth login client flow in the browser session for 5 minutes
+
+	page( '/log-in/?*', function ( context, next ) {
+		const { client_id: clientId, redirect_to: redirectTo } = context.query;
+
+		debug( `detected oatuh flow -- ${ clientId } -- ${ redirectTo }` );
+
+		next();
+	} );
+
 	if ( ! currentUser.get() ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {

@@ -12,20 +12,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { addQueryArgs } from '@wordpress/url';
 import { Card } from '@automattic/components';
-import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
 	isSocialAccountCreating,
 } from 'state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
 import { localizeUrl } from 'lib/i18n-utils';
 import { login } from 'lib/paths';
+import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+import config from 'config';
+import WpcomLoginForm from 'signup/wpcom-login-form';
 
 /**
  * Style dependencies
@@ -34,16 +35,17 @@ import './social.scss';
 
 class SocialLoginForm extends Component {
 	static propTypes = {
+		additionalRedirectQueryParams: PropTypes.object,
 		createSocialUser: PropTypes.func.isRequired,
+		linkingSocialService: PropTypes.string,
+		loginSocialUser: PropTypes.func.isRequired,
+		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
-		onSuccess: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-		loginSocialUser: PropTypes.func.isRequired,
-		uxMode: PropTypes.string.isRequired,
-		linkingSocialService: PropTypes.string,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		uxMode: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -183,7 +185,7 @@ class SocialLoginForm extends Component {
 	};
 
 	render() {
-		const { redirectTo, uxMode } = this.props;
+		const { additionalRedirectQueryParams, redirectTo, uxMode } = this.props;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
 		return (
@@ -191,24 +193,30 @@ class SocialLoginForm extends Component {
 				<div className="login__social-buttons">
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ this.handleGoogleResponse }
-						uxMode={ uxMode }
-						redirectUri={ this.getRedirectUrl( 'google' ) }
 						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
+						redirectUri={ addQueryArgs(
+							this.getRedirectUrl( 'google' ),
+							additionalRedirectQueryParams
+						) }
+						responseHandler={ this.handleGoogleResponse }
 						socialServiceResponse={
 							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 						}
+						uxMode={ uxMode }
 					/>
 
 					<AppleLoginButton
 						clientId={ config( 'apple_oauth_client_id' ) }
-						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ this.getRedirectUrl( 'apple' ) }
 						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
+						redirectUri={ addQueryArgs(
+							this.getRedirectUrl( 'apple' ),
+							additionalRedirectQueryParams
+						) }
+						responseHandler={ this.handleAppleResponse }
 						socialServiceResponse={
 							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 						}
+						uxMode={ uxModeApple }
 					/>
 
 					<p className="login__social-tos">
