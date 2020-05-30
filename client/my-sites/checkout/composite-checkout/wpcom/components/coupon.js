@@ -89,6 +89,10 @@ const CouponWrapper = styled.form`
 	margin: ${ ( props ) => props.marginTop } 0 0 0;
 	padding-top: 0;
 	position: relative;
+
+	p {
+		margin-bottom: 16px;
+	}
 `;
 
 const ApplyButton = styled( Button )`
