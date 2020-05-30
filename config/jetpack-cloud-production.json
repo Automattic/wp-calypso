@@ -19,7 +19,7 @@
 		"jetpack-cloud": true,
 		"jetpack-cloud/backups-restore": true,
 		"jetpack-cloud/backups": true,
-		"jetpack-cloud/on-demand-scan": false,
+		"jetpack-cloud/on-demand-scan": true,
 		"jetpack-cloud/scan-history": true,
 		"jetpack-cloud/scan": true,
 		"jetpack-cloud/settings": true,
