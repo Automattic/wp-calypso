@@ -36,9 +36,18 @@ async function* traverse( dir ) {
 
 async function digestPackagesDir() {
 	const hash = crypto.createHash( 'sha256' );
+	const files = [];
 	for await ( const file of traverse( PACKAGES_DIR ) ) {
+		files.push( file );
+	}
+
+	// sort files, opendir doesn't guarantee order
+	files.sort( ( a, b ) => a.localeCompare( b ) );
+
+	for await ( const file of files ) {
 		hash.update( await fs.promises.readFile( file ) );
 	}
+
 	return checksumFileExplanation + hash.digest( 'base64' );
 }
 
