@@ -193,7 +193,7 @@ jobs:
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
       - save_cache: *save-yarn-cache
-      - run: yarn run build-packages
+      - run: yarn run build-packages:if-needed
       - persist_to_workspace:
           root: '~'
           paths:
