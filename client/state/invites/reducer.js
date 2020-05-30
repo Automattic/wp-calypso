@@ -105,6 +105,7 @@ export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, acti
 			action.links.forEach( ( link ) => {
 				const linkForState = {
 					key: link.invite_key,
+					link: link.link,
 					role: link.role,
 					inviteDate: link.invite_date,
 				};

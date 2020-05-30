@@ -20,7 +20,7 @@ import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { sendInvites, createInviteValidation } from 'lib/invites/actions';
+import { sendInvites, createInviteValidation, generateInviteLinks } from 'lib/invites/actions';
 import { Card } from '@automattic/components';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -45,6 +45,9 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import QuerySiteInvites from 'components/data/query-site-invites';
+import { getInviteLinksForSite } from 'state/invites/selectors';
 
 /**
  * Style dependencies
@@ -436,10 +439,76 @@ class InvitePeople extends React.Component {
 		return inviteForm;
 	};
 
+	isInviteLinksComplete = ( inviteLinks ) => {
+		return (
+			inviteLinks &&
+			'administrator' in inviteLinks &&
+			'editor' in inviteLinks &&
+			'author' in inviteLinks &&
+			'contributor' in inviteLinks
+		);
+	};
+
+	generateInviteLinks = () => {
+		return this.props.generateInviteLinks( this.props.siteId );
+	};
+
+	renderInviteLinkForm = () => {
+		const {
+			//site,
+			translate,
+			inviteLinks,
+			//needsVerification,
+			//isJetpack,
+			//showSSONotice,
+		} = this.props;
+
+		const inviteLinkForm = (
+			<Card>
+				<EmailVerificationGate>
+					<FormSettingExplanation>
+						{ translate(
+							'Use this link to onboard your team members without having to invite them one by one. '
+						) }
+						<strong>
+							{ translate(
+								'Anybody visiting this URL will be able to sign up to your organization, '
+							) }
+						</strong>
+						{ translate(
+							'even if they received the link from somebody else, so make sure that you share it with trusted people.'
+						) }
+					</FormSettingExplanation>
+
+					{ ! this.isInviteLinksComplete( inviteLinks ) && (
+						<FormButton
+							isPrimary={ true }
+							onClick={ this.generateInviteLinks }
+							className="invite-people__generate-link"
+						>
+							{ translate( 'Generate new link' ) }
+						</FormButton>
+					) }
+
+					{ this.isInviteLinksComplete( inviteLinks ) && (
+						<div>
+							<div>{ inviteLinks.administrator.link }</div>
+							<div>{ inviteLinks.editor.link }</div>
+							<div>{ inviteLinks.author.link }</div>
+							<div>{ inviteLinks.contributor.link }</div>
+						</div>
+					) }
+				</EmailVerificationGate>
+			</Card>
+		);
+
+		return inviteLinkForm;
+	};
+
 	state = this.resetState();
 
 	render() {
-		const { site, translate } = this.props;
+		const { site, translate, isWPForTeamsSite } = this.props;
 		if ( site && ! userCan( 'promote_users', site ) ) {
 			return (
 				<Main>
@@ -456,11 +525,20 @@ class InvitePeople extends React.Component {
 		return (
 			<Main className="invite-people">
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
+				{ site.ID && <QuerySiteInvites siteId={ site.ID } /> }
 				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'Invite People' ) }
 				</HeaderCake>
 				{ this.renderInviteForm() }
+				{ isWPForTeamsSite && (
+					<React.Fragment>
+						<HeaderCake isCompact onClick={ this.goBack }>
+							{ translate( 'Invite Link' ) }
+						</HeaderCake>
+						{ this.renderInviteLinkForm() }
+					</React.Fragment>
+				) }
 			</Main>
 		);
 	}
@@ -478,6 +556,8 @@ const connectComponent = connect(
 			showSSONotice: !! ( activating || active ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			inviteLinks: getInviteLinksForSite( state, siteId ),
 		};
 	},
 	( dispatch ) => ( {
@@ -485,6 +565,7 @@ const connectComponent = connect(
 			{
 				sendInvites,
 				activateModule,
+				generateInviteLinks,
 			},
 			dispatch
 		),

@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { acceptedNotice } from 'my-sites/invites/utils';
 import { requestSites, receiveSites } from 'state/sites/actions';
+import { requestSiteInvites } from 'state/invites/actions';
 
 /**
  * Module variables
@@ -71,6 +72,16 @@ export function createAccount( userData, invite, callback ) {
 					callback( error, bearerToken );
 				}
 			);
+	};
+}
+
+export function generateInviteLinks( siteId ) {
+	debug( 'generateInviteLinks', siteId );
+
+	return ( dispatch ) => {
+		wpcom.undocumented().generateInviteLinks( siteId, () => {
+			dispatch( requestSiteInvites( siteId ) );
+		} );
 	};
 }
 

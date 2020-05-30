@@ -263,6 +263,11 @@ Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
+Undocumented.prototype.generateInviteLinks = function ( siteId, fn ) {
+	debug( '/sites/:site_id:/invites/newlinks query', siteId );
+	return this.wpcom.req.post( '/sites/' + siteId + '/invites/links/generate', {}, fn );
+};
+
 Undocumented.prototype.invitesList = function ( siteId, data = {}, fn ) {
 	debug( '/sites/:site_id:/invites query', siteId, data );
 	return this.wpcom.req.get( '/sites/' + siteId + '/invites', data, fn );
