@@ -6,7 +6,7 @@
 	"hostname": "cloud.jetpack.com",
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
-	"login_url": "/connect",
+	"login_url": "https://cloud.jetpack.com/connect",
 	"logout_url": "https://jetpack.com",
 	"site_name": "Jetpack.com",
 	"oauth_client_id": 69041,
@@ -40,7 +40,7 @@
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-auth": true
 	},
-	"site_filter": [ "jetpack" ],
+	"site_filter": ["jetpack"],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f"
