@@ -165,7 +165,7 @@ references:
   calculate-packages-folder-checksum: &calculate-packages-folder-checksum
     name: Create packages folder checksum to and store it as cache key
     command: |
-      yarn run --silent build-packages:calculate-checksum > packages_folder_checksum.txt
+      node bin/calculate-packages-checksum > packages_folder_checksum.txt
 
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
