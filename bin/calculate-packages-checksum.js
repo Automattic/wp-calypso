@@ -17,6 +17,7 @@ const PACKAGES_DIR = './packages';
 const IGNORED_DIRS = [ 'dist', 'node_modules' ];
 const IGNORED_FILES = [ 'packages-checksum.txt' ];
 const isCalledFromCLI = ! module.parent;
+const nvmrcFile = path.resolve( __dirname, '..', '.nvmrc' );
 
 /**
  * Asynchronously yet recursively traverses a given dir
@@ -47,6 +48,9 @@ async function digestPackagesDir() {
 	for await ( const file of files ) {
 		hash.update( await fs.promises.readFile( file ) );
 	}
+
+	// include nvmrc to the hash to make sure to rebuild when node version changes
+	hash.update( await fs.promises.readFile( nvmrcFile ) );
 
 	return checksumFileExplanation + hash.digest( 'base64' );
 }
