@@ -189,18 +189,29 @@ export default function () {
 		clientRender
 	);
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementEdit( ':site', ':domain' ),
-			paths.domainManagementTransferIn( ':site', ':domain' ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementEdit,
-			makeLayout,
-			clientRender,
-		],
-	} );
+	page(
+		paths.domainManagementEdit( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEdit,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementSiteRedirect( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementSiteRedirect,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementTransferIn( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementTransferIn,
+		makeLayout,
+		clientRender
+	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(

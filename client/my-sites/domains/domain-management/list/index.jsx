@@ -429,11 +429,13 @@ export class List extends React.Component {
 	}
 
 	goToEditDomainRoot = ( domain ) => {
-		if ( domain.type !== type.TRANSFER ) {
-			page( domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
-		} else {
-			page( domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
-		}
+		const slug = this.props.selectedSite.slug;
+		const path =
+			{
+				[ type.TRANSFER ]: domainManagementTransferIn( slug, domain.name ),
+				[ type.SITE_REDIRECT ]: domainManagementEdit( slug, domain.name, 'redirect' ),
+			}[ domain.type ] ?? domainManagementEdit( slug, domain.name );
+		page( path );
 	};
 
 	goToPlans = () => {
