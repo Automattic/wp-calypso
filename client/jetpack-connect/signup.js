@@ -261,6 +261,22 @@ export class JetpackSignup extends Component {
 		);
 	}
 
+	renderWooDnaFooter( footerLinks ) {
+		const { authQuery } = this.props;
+		footerLinks.push(
+			<LoggedOutFormLinkItem key="back" href={ authQuery.redirectAfterAuth }>
+				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
+				{
+					// translators: eg: Return to The WordPress.com Blog
+					this.props.translate( 'Return to %(sitename)s', {
+						args: { sitename: decodeEntities( authQuery.blogname ) },
+					} )
+				}
+			</LoggedOutFormLinkItem>
+		);
+		return <LoggedOutFormLinks>{ footerLinks }</LoggedOutFormLinks>;
+	}
+
 	renderWooDna() {
 		const { authQuery, isFullLoginFormVisible, translate, usernameOrEmail } = this.props;
 		const { isCreatingAccount, signUpUsernameOrEmail } = this.state;
@@ -304,6 +320,13 @@ export class JetpackSignup extends Component {
 				subHeader = translate( 'Enter your email address to get started' );
 				pageTitle = translate( 'Connect' );
 			}
+			content = (
+				<LoginBlock
+					locale={ this.props.locale }
+					footer={ this.renderWooDnaFooter( footerLinks ) }
+					userEmail={ email }
+				/>
+			);
 		} else {
 			header = wooDna.name( translate );
 			subHeader = translate( 'Create an account' );
@@ -313,29 +336,11 @@ export class JetpackSignup extends Component {
 					{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
 				</LoggedOutFormLinkItem>
 			);
-		}
-
-		footerLinks.push(
-			<LoggedOutFormLinkItem key="back" href={ authQuery.redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{
-					// translators: eg: Return to The WordPress.com Blog
-					this.props.translate( 'Return to %(sitename)s', {
-						args: { sitename: decodeEntities( authQuery.blogname ) },
-					} )
-				}
-			</LoggedOutFormLinkItem>
-		);
-		const footer = <LoggedOutFormLinks>{ footerLinks }</LoggedOutFormLinks>;
-
-		if ( this.state.showWooDnaLoginForm ) {
-			content = <LoginBlock locale={ this.props.locale } footer={ footer } userEmail={ email } />;
-		} else {
 			content = (
 				<SignupForm
 					disabled={ isCreatingAccount }
 					email={ includes( email, '@' ) ? email : '' }
-					footerLink={ footer }
+					footerLink={ this.renderWooDnaFooter( footerLinks ) }
 					handleLogin={ this.showWooDnaLoginView }
 					handleSocialResponse={ this.handleSocialResponse }
 					isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
