@@ -758,7 +758,7 @@ export class JetpackAuthorize extends Component {
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
 							isWoo={ this.isWooOnboarding() }
-							wooDna={ this.getWooDnaConfig() }
+							wooDna={ wooDna }
 						/>
 						<Card className="jetpack-connect__logged-in-card">
 							<Gravatar user={ this.props.user } size={ 64 } />
