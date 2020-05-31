@@ -70,7 +70,7 @@ export class JetpackSignup extends Component {
 		isCreatingAccount: false,
 		newUsername: null,
 		bearerToken: null,
-		showWooDnaLoginForm: true,
+		wooDnaFormType: 'login',
 	} );
 
 	state = this.constructor.initialState;
@@ -113,14 +113,14 @@ export class JetpackSignup extends Component {
 
 	showWooDnaSignupView = () => {
 		this.setState( {
-			showWooDnaLoginForm: false,
+			wooDnaFormType: 'signup',
 		} );
 		this.props.resetAuthAccountType();
 	};
 
 	showWooDnaLoginView = ( usernameOrEmail ) => {
 		this.setState( {
-			showWooDnaLoginForm: true,
+			wooDnaFormType: 'login',
 			signUpUsernameOrEmail: usernameOrEmail || null,
 		} );
 		this.props.resetAuthAccountType();
@@ -286,7 +286,7 @@ export class JetpackSignup extends Component {
 		const wooDna = this.getWooDnaConfig();
 		let pageTitle;
 
-		if ( this.state.showWooDnaLoginForm ) {
+		if ( 'login' === this.state.wooDnaFormType ) {
 			if ( isFullLoginFormVisible ) {
 				header = translate( 'Log in to your WordPress.com account' );
 				/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
@@ -328,6 +328,7 @@ export class JetpackSignup extends Component {
 				/>
 			);
 		} else {
+			// Woo DNA sign-up form
 			header = wooDna.name( translate );
 			subHeader = translate( 'Create an account' );
 			pageTitle = translate( 'Create a WordPress.com account' );
