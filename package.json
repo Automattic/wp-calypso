@@ -188,7 +188,7 @@
 		"@types/react-redux": "^7.1.7",
 		"@types/react-router-dom": "^5.1.5",
 		"@types/react-transition-group": "^4.2.4",
-		"@types/uuid": "^7.0.4",
+		"@types/uuid": "^8.0.0",
 		"@types/webpack-env": "^1.15.2",
 		"@types/wordpress__api-fetch": "^3.2.2",
 		"@types/wordpress__block-editor": "^2.2.7",
