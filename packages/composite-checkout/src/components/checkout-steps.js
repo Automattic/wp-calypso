@@ -173,7 +173,7 @@ export function CheckoutStepArea( { children, className } ) {
 	);
 }
 
-export function CheckoutSteps( { children } ) {
+export function CheckoutSteps( { children, areStepsActive = true } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
 
@@ -199,7 +199,7 @@ export function CheckoutSteps( { children } ) {
 	return steps.map( ( child ) => {
 		stepNumber = nextStepNumber;
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
-		const isStepActive = activeStepNumber === stepNumber;
+		const isStepActive = areStepsActive && activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 		return (
 			<CheckoutSingleStepDataContext.Provider
@@ -216,6 +216,10 @@ export function CheckoutSteps( { children } ) {
 		);
 	} );
 }
+
+CheckoutSteps.propTypes = {
+	areStepsActive: PropTypes.bool,
+};
 
 export function CheckoutStep( {
 	activeStepContent,
