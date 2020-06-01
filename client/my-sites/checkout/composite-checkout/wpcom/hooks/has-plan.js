@@ -8,6 +8,15 @@ export function useHasPlanInCart() {
 	return isPlanInLineItems( items );
 }
 
+export function usePlanInCart() {
+	const [ items ] = useLineItems();
+	return items.find( isLineItemAPlan );
+}
+
 export function isPlanInLineItems( items ) {
-	return items.some( ( item ) => 'plan' === item.type );
+	return items.some( isLineItemAPlan );
+}
+
+export function isLineItemAPlan( item ) {
+	return 'plan' === item.type;
 }
