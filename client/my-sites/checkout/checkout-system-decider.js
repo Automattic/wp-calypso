@@ -182,6 +182,7 @@ function getCheckoutVariant(
 		'concierge-session',
 		'ecommerce',
 		'ecommerce-2-years',
+		'gapps',
 		'personal',
 		'personal-2-years',
 		'premium',
