@@ -200,6 +200,7 @@
 		"@types/wordpress__editor": "^9.4.2",
 		"@types/wordpress__element": "^2.4.1",
 		"@types/wordpress__keycodes": "^2.3.0",
+		"@types/wordpress__hooks": "2.4.0",
 		"@typescript-eslint/eslint-plugin": "^2.16.0",
 		"@typescript-eslint/parser": "^2.16.0",
 		"@wordpress/a11y": "^2.9.0",
