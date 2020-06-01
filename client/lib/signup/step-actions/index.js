@@ -372,9 +372,7 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	const { siteSlug } = dependencies;
-	const { cartItem, flowName, lastKnownFlow } = stepProvidedItems;
-	const flowToCheck = flowName || lastKnownFlow;
-	const isSiteless = isSitelessCheckoutEnabledForFlow( flowToCheck );
+	const { cartItem } = stepProvidedItems;
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -386,9 +384,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 
 	const newCartItems = [ cartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null, {
-		isSiteless,
-	} );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
 
 export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
