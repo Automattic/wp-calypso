@@ -262,7 +262,10 @@ describe( 'createSiteWithCart()', () => {
 				createSiteWithCart(
 					( error, providedDependencies ) => {
 						expect( error ).toBeFalsy();
-						expect( providedDependencies ).toHaveProperty( 'newSiteParams' );
+						expect( providedDependencies ).toHaveProperty(
+							'siteUrl',
+							'site-url-suggestion.wordpress.com'
+						);
 						expect( providedDependencies ).toHaveProperty( 'siteId', null );
 						expect( providedDependencies ).toHaveProperty( 'siteSlug', 'no-site' );
 						expect( SignupCart.addToCart ).toHaveBeenCalledWith(
@@ -274,7 +277,7 @@ describe( 'createSiteWithCart()', () => {
 					},
 					[],
 					{
-						siteUrl: undefined,
+						siteUrl: 'site-url-suggestion.wordpress.com',
 						flowName: 'onboarding',
 						domainItem: {
 							product_slug: 'dotlive_domain',
