@@ -60,7 +60,7 @@ export default function ConvertToBlocksDialog( { handleResponse, postId, showDia
 			<h1>{ translate( 'Convert to blocks?' ) }</h1>
 			<p>
 				{ translate(
-					'This post contains content you created using the older editor. You can convert this content to blocks, or you can stick with the classic block to simulate the older editor.'
+					'This post contains content you created with the classic editor. You can convert this content into blocks — each paragraph and item will be its own block, that you can edit and move around — or add a Classic block to simulate the classic editor.'
 				) }
 			</p>
 		</Dialog>
