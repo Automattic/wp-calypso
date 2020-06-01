@@ -28,7 +28,10 @@ export class ReaderSidebarNetwork extends Component {
 	};
 
 	render() {
-		const { isOpen, translate, onClick, unseen } = this.props;
+		const { isOpen, translate, onClick, blogs, unseen } = this.props;
+		if ( ! blogs.length ) {
+			return null;
+		}
 		return (
 			<ul className={ unseen && unseen.status ? 'has-unseen' : '' }>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }

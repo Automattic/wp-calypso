@@ -26,14 +26,18 @@ export class ReaderSidebarNetworkList extends Component {
 
 	renderItems() {
 		const { path, blogs, unseen } = this.props;
-		return map( blogs, ( blog ) => (
-			<ReaderSidebarNetworkListItem
-				key={ blog.ID }
-				path={ path }
-				blog={ blog }
-				hasUnseen={ hasSubSectionUnseen( unseen, blog.ID ) }
-			/>
-		) );
+		return map(
+			blogs,
+			( blog ) =>
+				blog && (
+					<ReaderSidebarNetworkListItem
+						key={ blog.ID }
+						path={ path }
+						blog={ blog }
+						hasUnseen={ hasSubSectionUnseen( unseen, blog.ID ) }
+					/>
+				)
+		);
 	}
 
 	render() {

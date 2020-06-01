@@ -34,6 +34,9 @@ export class ReaderSidebarNetworkListItem extends Component {
 
 	render() {
 		const { blog, path, hasUnseen } = this.props;
+		if ( ! blog ) {
+			return null;
+		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
