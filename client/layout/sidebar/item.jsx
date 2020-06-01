@@ -24,7 +24,7 @@ export default function SidebarItem( props ) {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
 	} );
-	const { materialIcon, materialIconStyle, icon, customIcon, hasUnseen, count } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, count } = props;
 
 	let _preloaded = false;
 
