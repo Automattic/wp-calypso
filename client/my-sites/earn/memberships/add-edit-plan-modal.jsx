@@ -189,7 +189,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
 				},
-				translate( 'Added "%s" product.', { args: editedProductName } )
+				translate( 'Added "%s" payment plan.', { args: editedProductName } )
 			);
 		} else if ( reason === 'submit' && product ) {
 			updateProduct(
@@ -205,7 +205,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
 				},
-				translate( 'Updated "%s" product.', { args: editedProductName } )
+				translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 			);
 		}
 		closeDialog();
@@ -216,9 +216,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			<>
 				<p>
 					{ product
-						? translate( 'Edit your existing Recurring Payments plan.' )
+						? translate( 'Edit your existing payment plan.' )
 						: translate(
-								'Each amount you add will create a separate Recurring Payments plan. You can create multiple plans.'
+								'Each amount you add will create a separate payment plan. You can create many of them.'
 						  ) }
 				</p>
 				<FormFieldset>
@@ -226,7 +226,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					{ product && (
 						<Notice
 							text={ translate(
-								'Updating the price will not affect existing subscribers, who will pay what they were originally charged.'
+								'Updating the price will not affect existing recurring subscribers, who will pay what they were originally charged. Existing subscribers will pay the price they were originally charged when they renew'
 							) }
 							showDismiss={ false }
 						/>
@@ -257,19 +257,21 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="renewal_schedule">
-						{ translate( 'Select renewal schedule' ) }
+						{ translate( 'Select renewal frequency' ) }
 					</FormLabel>
 					<FormSelect id="renewal_schedule" value={ editedSchedule } onChange={ onSelectSchedule }>
-						<option value="1 month">{ translate( 'Monthly' ) }</option>
-						<option value="1 year">{ translate( 'Yearly' ) }</option>
+						<option value="1 month">{ translate( 'Renew Monthly' ) }</option>
+						<option value="1 year">{ translate( 'Renew Yearly' ) }</option>
+						<option value="one-time">{ translate( 'One time sale' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="title">
-						{ translate( 'Please describe your subscription' ) }
+						{ translate( 'Please describe your payment plan' ) }
 					</FormLabel>
 					<FormTextInput
 						id="title"
+						placeholder={ translate( 'Example: Cats are Awesome T-shirt' ) }
 						value={ editedProductName }
 						onChange={ onNameChange }
 						onBlur={ () => setFocusedName( true ) }
@@ -285,7 +287,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormToggle onChange={ handleMultiplePerUser } checked={ editedMultiplePerUser }>
-						{ translate( 'Allow the same customer to sign up multiple times to the same plan.' ) }
+						{ translate(
+							'Allow the same customer to purchase or sign up to this plan multiple times.'
+						) }
 					</FormToggle>
 				</FormFieldset>
 			</>
@@ -299,7 +303,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<h6 className="memberships__dialog-form-header">{ translate( 'Posts via email' ) }</h6>
 					<p>
 						{ translate(
-							'Allow members of this recurring payment plan to opt into receiving new posts via email.'
+							'Allow members of this payment plan to opt into receiving new posts via email.'
 						) }{ ' ' }
 						<InlineSupportLink
 							supportPostId={ 154624 }
@@ -312,9 +316,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
 						checked={ editedPostsEmail }
 					>
-						{ translate(
-							'Email newly published posts to members of this recurring payment plan who have opted in.'
-						) }
+						{ translate( 'Email newly published posts to your customers.' ) }
 					</FormToggle>
 				</FormFieldset>
 				<FormFieldset>
@@ -323,7 +325,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					</h6>
 					<p>
 						{ translate(
-							'Add a custom message to the confirmation email that is sent out for this recurring payment plan.'
+							'Add a custom message to the confirmation email that is sent out after the purchase. For example, you can thank your customers.'
 						) }
 					</p>
 					<CountedTextArea
@@ -356,9 +358,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			] }
 		>
 			<FormSectionHeading>
-				{ product
-					? translate( 'Edit Recurring Payment plan' )
-					: translate( 'Add new Recurring Payment plan' ) }
+				{ product ? translate( 'Edit a payment plan' ) : translate( 'Add a new payment plan' ) }
 			</FormSectionHeading>
 			<SectionNav
 				className="memberships__dialog-nav"
