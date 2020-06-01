@@ -36,7 +36,7 @@ class ConvertToBlocksDialog extends Component {
 			},
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate( 'Stick with the Classic Block' ),
 			},
 		];
 
@@ -47,11 +47,11 @@ class ConvertToBlocksDialog extends Component {
 				isVisible={ showDialog }
 				onClose={ this.close }
 			>
-				<h1>{ translate( 'Ready to try blocks?' ) }</h1>
+				<h1>{ translate( 'Convert to blocks?' ) }</h1>
 
 				<p>
 					{ translate(
-						'This post contains content you created using the older editor. For the best editing experience, we recommend converting this content to blocks.'
+						'This post contains content you created using the older editor. You can convert this content to blocks, or you can stick with the classic block to simulate the older editor.'
 					) }
 				</p>
 			</Dialog>
