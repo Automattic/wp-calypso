@@ -65,6 +65,7 @@ const stepNameToModuleName = {
 	passwordless: 'passwordless',
 	'team-site': 'wp-for-teams-site',
 	'upsell-plan': 'upsell',
+	'create-site': 'create-site',
 };
 
 export async function getStepComponent( stepName ) {

@@ -38,6 +38,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	addOrRemoveFromProgressStore = noop,
+	createSiteIfNeeded = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -166,9 +167,7 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			optionalIncomingDependencies: [ 'siteId', 'domainItem', 'newSiteParams' ],
-			providesDependencies: [ 'cartItem', 'siteId', 'siteSlug' ],
-			optionalDependencies: [ 'siteId', 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
@@ -304,12 +303,12 @@ export function generateSteps( {
 			providesDependencies: [
 				'siteId',
 				'siteSlug',
+				'siteUrl',
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
-				'newSiteParams',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan', 'newSiteParams' ],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			fulfilledStepCallback: removeDomainStepForPaidPlans,
 			props: {
 				isDomainOnly: false,
@@ -651,6 +650,14 @@ export function generateSteps( {
 			stepName: 'team-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
+		},
+
+		'create-site': {
+			stepName: 'create-site',
+			apiRequestFunction: createSiteIfNeeded,
+			dependencies: [ 'siteUrl', 'siteId', 'siteSlug', 'cartItem', 'domainItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug' ],
+			optionalDependencies: [ 'siteId', 'siteSlug' ],
 		},
 	};
 }

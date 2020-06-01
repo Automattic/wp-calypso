@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
  */
 import { isEnabled } from 'config';
 import { addQueryArgs } from 'lib/route';
+import { isSitelessCheckoutEnabledForFlow } from 'signup/siteless';
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -110,7 +111,12 @@ export function generateFlows( {
 		},
 
 		onboarding: {
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: [
+				'user',
+				'domains',
+				'plans',
+				...( isSitelessCheckoutEnabledForFlow( 'onboarding' ) ? [ 'create-site' ] : [] ),
+			],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-03-03',
