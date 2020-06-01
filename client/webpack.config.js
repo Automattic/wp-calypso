@@ -195,7 +195,12 @@ const webpackConfig = {
 			} ),
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
-				postCssConfig: { path: __dirname },
+				postCssConfig: {
+					path: __dirname,
+					ctx: {
+						transformCssProperties: browserslistEnv === 'fallback',
+					},
+				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 			} ),
 			{
