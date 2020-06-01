@@ -517,7 +517,7 @@ export class EditorHtmlToolbar extends Component {
 					onClick={ this.openMediaModal }
 				>
 					<Gridicon icon="image" />
-					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
+					<span data-e2e-insert-type="media">{ translate( 'Media library' ) }</span>
 				</button>
 
 				{ config.isEnabled( 'external-media/google-photos' ) && canUserUploadFiles && (
@@ -526,9 +526,7 @@ export class EditorHtmlToolbar extends Component {
 						onClick={ this.openGoogleModal }
 					>
 						<Gridicon icon="shutter" />
-						<span data-e2e-insert-type="google-media">
-							{ translate( 'Google Photos library' ) }
-						</span>
+						<span data-e2e-insert-type="google-media">{ translate( 'Google Photos' ) }</span>
 					</button>
 				) }
 
@@ -538,7 +536,7 @@ export class EditorHtmlToolbar extends Component {
 						onClick={ this.openPexelsModal }
 					>
 						<Gridicon icon="image-multiple" />
-						<span data-e2e-insert-type="pexels">{ translate( 'Free photo library' ) }</span>
+						<span data-e2e-insert-type="pexels">{ translate( 'Pexels free photos' ) }</span>
 					</button>
 				) }
 
