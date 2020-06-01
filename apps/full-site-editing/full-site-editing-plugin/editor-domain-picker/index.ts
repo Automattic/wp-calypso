@@ -3,6 +3,14 @@
  */
 import 'a8c-fse-common-data-stores';
 import { select } from '@wordpress/data';
+import { ReactDOM } from 'react';
+
+/**
+ * Internal dependencies
+ */
+import DomainPickerModal from './domain-picker-modal';
+
+ReactDOM.render( DomainPickerModal, document.body );
 
 /* eslint-disable no-console */
 

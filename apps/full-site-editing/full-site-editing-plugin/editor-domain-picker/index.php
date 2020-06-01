@@ -11,6 +11,9 @@
 
 namespace A8C\FSE\EditorDomainPicker;
 
+// TODO: Remove this before merging.
+define( 'A8C_FSE_DOMAIN_PICKER_ENABLE', true );
+
 /**
  * Enqueue assets
  */

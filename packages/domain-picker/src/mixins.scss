@@ -1,4 +1,5 @@
 @import './variables.scss';
+// NEEDS FIXING: FSE can't seem to import this. This is coming from `client` folder. Should the builder compile SCSS to CSS on dist version?
 @import 'assets/stylesheets/gutenberg-base-styles';
 
 @mixin domain-picker-package--font-recoleta {
