@@ -20,7 +20,6 @@ import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
-import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
@@ -146,7 +145,6 @@ export class ReaderSidebar extends React.Component {
 				<SidebarRegion>
 					<ReaderSidebarNudges />
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 						<ul>
 							<SidebarItem
 								label={ translate( 'Search' ) }
