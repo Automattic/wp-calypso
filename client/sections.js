@@ -195,6 +195,7 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'google-my-business',
@@ -253,6 +254,7 @@ const sections = [
 		module: 'my-sites/plans',
 		secondary: true,
 		group: 'sites',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'accept-invite',
@@ -457,6 +459,7 @@ const sections = [
 		module: 'my-sites/customer-home',
 		secondary: true,
 		group: 'sites',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'hosting',

@@ -16,6 +16,7 @@ import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
 import isSectionEnabled from './sections-filter';
 import { addReducerToStore } from 'state/add-reducer';
+import { performanceTrackerStart } from 'lib/performance-tracking';
 
 import sections from './sections';
 receiveSections( sections );
@@ -68,6 +69,11 @@ function createPageDefinition( path, sectionDefinition ) {
 	// if the section doesn't support logged-out views, redirect to login if user is not logged in
 	if ( ! sectionDefinition.enableLoggedOut ) {
 		page( pathRegex, controller.redirectLoggedOut );
+	}
+
+	// Install navigation performance tracking.
+	if ( sectionDefinition.trackLoadPerformance ) {
+		page( pathRegex, performanceTrackerStart( sectionDefinition.name ) );
 	}
 
 	page( pathRegex, async function ( context, next ) {
