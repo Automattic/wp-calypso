@@ -56,6 +56,7 @@ import { getInviteLinksForSite } from 'state/invites/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
+import ClipboardButton from 'components/forms/clipboard-button';
 
 /**
  * Style dependencies
@@ -96,6 +97,7 @@ class InvitePeople extends React.Component {
 			errors: {},
 			success: [],
 			activeInviteLink: false,
+			showCopyConfirmation: false,
 		};
 	};
 
@@ -480,6 +482,36 @@ class InvitePeople extends React.Component {
 		return false;
 	};
 
+	onInviteLinkCopy = () => {
+		this.setState( {
+			showCopyConfirmation: true,
+		} );
+
+		clearTimeout( this.dismissCopyConfirmation );
+		this.dismissCopyConfirmation = setTimeout( () => {
+			this.setState( {
+				showCopyConfirmation: false,
+			} );
+		}, 4000 );
+	};
+
+	renderCopyButton( link ) {
+		const { translate } = this.props;
+
+		let label;
+		if ( this.state.showCopyConfirmation ) {
+			label = translate( 'Copied!' );
+		} else {
+			label = translate( 'Copy', { context: 'verb' } );
+		}
+
+		return (
+			<ClipboardButton text={ link } onCopy={ this.onInviteLinkCopy } compact>
+				{ label }
+			</ClipboardButton>
+		);
+	}
+
 	renderInviteLinkForm = () => {
 		const {
 			//site,
@@ -499,6 +531,7 @@ class InvitePeople extends React.Component {
 			) );
 
 		const activeInviteLink = this.getActiveInviteLink( this.state.activeInviteLink );
+		const inviteUrlRef = React.createRef();
 
 		const inviteLinkForm = (
 			<Card>
@@ -533,12 +566,17 @@ class InvitePeople extends React.Component {
 								>
 									{ roleOptions }
 								</FormSelect>
+
 								<FormTextInput
 									id="invite-people__link-display"
 									className="invite-people__link-display"
 									value={ activeInviteLink.link }
 									readOnly
+									ref={ inviteUrlRef }
 								/>
+
+								{ this.renderCopyButton( activeInviteLink.link ) }
+
 								<p>Expires on { new Date( activeInviteLink.expiry * 1000 ).toISOString() }</p>
 							</div>
 							<Button onClick={ this.disableInviteLinks } className="invite-people__disable-links">
