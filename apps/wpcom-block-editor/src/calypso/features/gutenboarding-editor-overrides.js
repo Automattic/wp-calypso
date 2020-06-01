@@ -33,7 +33,9 @@ function updateEditor() {
 
 let hasUpdatedSettingsBar = false;
 function updateSettingsBar() {
+	console.log( 'WPCBE: Running update…' );
 	if ( hasUpdatedSettingsBar ) {
+		console.log( 'WPCBE: aborting.' );
 		return;
 	}
 
@@ -45,9 +47,11 @@ function updateSettingsBar() {
 		// `isFseGutenboarding` indicates the launch button will be handled by FSE plugin
 		window?.calypsoifyGutenberg?.isFseGutenboarding
 	) {
+		console.log( 'WPCBE: aborting.' );
 		return;
 	}
 
+	console.log( 'WPCBE: handling…' );
 	hasUpdatedSettingsBar = true;
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
@@ -74,5 +78,6 @@ function updateSettingsBar() {
 		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( launchLink );
 		saveButton && settingsBar.prepend( saveButton );
+		console.log( 'WPCBE: Handled!' );
 	} );
 }

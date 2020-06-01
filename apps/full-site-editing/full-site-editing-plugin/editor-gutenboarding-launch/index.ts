@@ -27,14 +27,17 @@ domReady( () => {
 
 let handled = false;
 function updateEditor() {
+	console.log( 'FSE: Running update…' );
 	if (
 		handled ||
 		! window?.calypsoifyGutenberg?.isFseGutenboarding ||
 		! window?.calypsoifyGutenberg?.frankenflowUrl
 	) {
+		console.log( 'FSE: aborting.' );
 		return;
 	}
 
+	console.log( 'FSE: handling…' );
 	handled = true;
 
 	const awaitSettingsBar = setInterval( () => {
@@ -61,5 +64,6 @@ function updateEditor() {
 		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( launchLink );
 		saveButton && settingsBar.prepend( saveButton );
+		console.log( 'FSE: Handled!' );
 	} );
 }
