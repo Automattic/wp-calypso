@@ -12,15 +12,16 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
+	renderDisplayValueMarkdown,
+	useDispatch,
+	useEvents,
+	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
-	useSelect,
 	useLineItems,
-	useDispatch,
-	useTotal,
 	usePaymentMethod,
-	useEvents,
-	renderDisplayValueMarkdown,
+	useSelect,
+	useTotal,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 
@@ -166,6 +167,9 @@ export default function WPCheckout( {
 
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 
+	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( false );
+	const { formStatus } = useFormStatus();
+
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
 		setSiteId( siteId );
@@ -198,10 +202,9 @@ export default function WPCheckout( {
 			<CheckoutStepArea>
 				<CheckoutStepBody
 					stepId="review-order-step"
-					isStepActive={ false }
+					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
-					stepNumber={ 1 }
-					totalSteps={ 1 }
+					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
 					activeStepContent={
 						<WPCheckoutOrderReview
 							removeItem={ removeItem }
@@ -218,8 +221,17 @@ export default function WPCheckout( {
 					completeStepContent={ <InactiveOrderReview /> }
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit your cart' ) }
+					nextStepButtonText={ translate( 'Save' ) }
+					nextStepButtonAriaLabel={ translate( 'Save your cart' ) }
+					validatingButtonText={
+						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+					}
+					validatingButtonAriaLabel={
+						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+					}
+					formStatus={ formStatus }
 				/>
-				<CheckoutSteps>
+				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
 					{ shouldShowContactStep && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
