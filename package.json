@@ -334,7 +334,7 @@
 		"rimraf": "^3.0.0",
 		"sharp": "^0.25.3",
 		"sinon": "^9.0.2",
-		"sinon-chai": "^3.3.0",
+		"sinon-chai": "^3.5.0",
 		"socket.io": "^2.3.0",
 		"source-map": "^0.7.3",
 		"source-map-loader": "^0.2.4",
