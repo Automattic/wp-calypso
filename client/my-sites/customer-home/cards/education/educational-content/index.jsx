@@ -28,7 +28,7 @@ const EducationalContent = ( { title, description, links, illustration } ) => {
 				<div className="educational-content__links">
 					{ links.map(
 						( { postId, url, calypsoLink, externalLink, text, icon, tracksEvent, statsName } ) => (
-							<div className={ classnames( 'educational-content__link' ) } key={ url }>
+							<div className="educational-content__link" key={ url }>
 								{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 								{ postId && (
 									<InlineSupportLink
