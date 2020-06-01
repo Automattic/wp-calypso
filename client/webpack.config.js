@@ -198,7 +198,7 @@ const webpackConfig = {
 				postCssConfig: {
 					path: __dirname,
 					ctx: {
-						transformCssProperties: browserslistEnv === 'fallback',
+						transformCssProperties: browserslistEnv === 'defaults',
 					},
 				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
