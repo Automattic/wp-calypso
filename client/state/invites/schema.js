@@ -54,8 +54,10 @@ const inviteLinksArraySchema = {
 		type: 'object',
 		properties: {
 			key: { type: 'string' },
+			link: { type: 'string' },
 			role: { type: 'string' },
 			inviteDate: { type: 'string' },
+			expiry: { type: 'string' },
 		},
 		additionalProperties: false,
 	},
@@ -70,7 +72,7 @@ export const inviteLinksSchema = {
 			properties: {
 				'^\\[a-zA-Z]+$': inviteLinksArraySchema,
 			},
-			additionalProperties: false,
+			additionalProperties: true,
 		},
 	},
 };

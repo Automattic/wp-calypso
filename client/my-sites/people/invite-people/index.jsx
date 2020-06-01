@@ -53,6 +53,9 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import { getInviteLinksForSite } from 'state/invites/selectors';
+import { getSiteRoles } from 'state/site-roles/selectors';
+import FormSelect from 'components/forms/form-select';
+import FormTextInput from 'components/forms/form-text-input';
 
 /**
  * Style dependencies
@@ -92,6 +95,7 @@ class InvitePeople extends React.Component {
 			errorToDisplay: false,
 			errors: {},
 			success: [],
+			activeInviteLink: false,
 		};
 	};
 
@@ -444,16 +448,6 @@ class InvitePeople extends React.Component {
 		return inviteForm;
 	};
 
-	isInviteLinksComplete = ( inviteLinks ) => {
-		return (
-			inviteLinks &&
-			'administrator' in inviteLinks &&
-			'editor' in inviteLinks &&
-			'author' in inviteLinks &&
-			'contributor' in inviteLinks
-		);
-	};
-
 	generateInviteLinks = () => {
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
@@ -468,15 +462,43 @@ class InvitePeople extends React.Component {
 		}
 	};
 
+	showInviteLinkForRole = ( event ) => {
+		const { inviteLinks } = this.props;
+		const role = event.target.value || 'administrator';
+		this.setState( { activeInviteLink: inviteLinks[ role ] } );
+	};
+
+	getActiveInviteLink = ( activeInviteLink ) => {
+		if ( activeInviteLink ) {
+			return activeInviteLink;
+		}
+
+		if ( this.props.inviteLinks && typeof this.props.inviteLinks.administrator !== 'undefined' ) {
+			return this.props.inviteLinks.administrator;
+		}
+
+		return false;
+	};
+
 	renderInviteLinkForm = () => {
 		const {
 			//site,
+			siteRoles,
 			translate,
-			inviteLinks,
 			//needsVerification,
 			//isJetpack,
 			//showSSONotice,
 		} = this.props;
+
+		const roleOptions =
+			siteRoles &&
+			siteRoles.map( ( role ) => (
+				<option value={ role.name } key={ role.name }>
+					{ role.display_name }
+				</option>
+			) );
+
+		const activeInviteLink = this.getActiveInviteLink( this.state.activeInviteLink );
 
 		const inviteLinkForm = (
 			<Card>
@@ -495,26 +517,31 @@ class InvitePeople extends React.Component {
 						) }
 					</FormSettingExplanation>
 
-					{ ! this.isInviteLinksComplete( inviteLinks ) && (
+					{ ! activeInviteLink && (
 						<Button onClick={ this.generateInviteLinks } className="invite-people__generate-links">
 							{ translate( 'Generate new links' ) }
 						</Button>
 					) }
 
-					{ this.isInviteLinksComplete( inviteLinks ) && (
+					{ activeInviteLink && (
 						<React.Fragment>
 							<div>
-								<div>administrator: { inviteLinks.administrator.link }</div>
-								<div>editor: { inviteLinks.editor.link }</div>
-								<div>author: { inviteLinks.author.link }</div>
-								<div>contributor: { inviteLinks.contributor.link }</div>
+								<FormSelect
+									id="invite-people__link-role-select"
+									className="invite-people__link-role"
+									onChange={ this.showInviteLinkForRole }
+								>
+									{ roleOptions }
+								</FormSelect>
+								<FormTextInput
+									id="invite-people__link-display"
+									className="invite-people__link-display"
+									value={ activeInviteLink.link }
+									readOnly
+								/>
+								<p>Expires on { new Date( activeInviteLink.expiry * 1000 ).toISOString() }</p>
 							</div>
-							<Button
-								onClick={ this.disableInviteLinks }
-								isSecondary
-								isLarge
-								className="invite-people__disable-links"
-							>
+							<Button onClick={ this.disableInviteLinks } className="invite-people__disable-links">
 								{ translate( 'Disable links' ) }
 							</Button>
 						</React.Fragment>
@@ -579,6 +606,7 @@ const connectComponent = connect(
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			inviteLinks: getInviteLinksForSite( state, siteId ),
+			siteRoles: getSiteRoles( state, siteId ),
 		};
 	},
 	( dispatch ) => ( {

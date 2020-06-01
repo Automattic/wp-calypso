@@ -108,6 +108,7 @@ export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, acti
 					link: link.link,
 					role: link.role,
 					inviteDate: link.invite_date,
+					expiry: link.expiry,
 				};
 
 				inviteLinks = {
