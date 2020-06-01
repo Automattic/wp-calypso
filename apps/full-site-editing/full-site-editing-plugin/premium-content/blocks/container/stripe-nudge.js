@@ -27,7 +27,7 @@ export const StripeNudge = ( { autosaveAndRedirect, stripeConnectUrl } ) => (
 					onClick={ autosaveAndRedirect }
 					target="_top"
 					isDefault
-					className="premium-content-block-nudge__button"
+					className="premium-content-block-nudge__button stripe-nudge__button"
 				>
 					{ __( 'Connect', 'premium-content' ) }
 				</Button>,

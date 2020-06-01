@@ -315,7 +315,7 @@ function Edit( props ) {
 						isLarge
 						href={ upgradeURL }
 						target="_blank"
-						className="premium-content-block-nudge__button"
+						className="premium-content-block-nudge__button plan-nudge__button"
 					>
 						{ __( 'Upgrade Your Plan', 'premium-content' ) }
 					</Button>
