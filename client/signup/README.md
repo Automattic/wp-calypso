@@ -16,18 +16,20 @@ A flow is defined by two properties, `steps` and `destination`:
 - `destination` is a `string` or `function` that determines which page users should be redirected to once they complete the last step in the flow. If provided as a `function`, it is called with all of the dependencies provided in the signup flow, and the user is redirected to whatever it returns.
 
 There are also three optional properties:
+
 - `description` is a brief description of what the flow is for.
 - `lastModified` is a date stamp for when the flow was last updated.
 - `disallowResume` is a boolean that, when true, will send you back to step 1 if you refreshed the page
 
 Example:
+
 ```javascript
 account: { steps: [ 'site', 'user' ], destination: '/' }
 ```
 
 Once you've added the flow to `flows-pure.js`, it'll be available for users at `/start/flow-name` where `flow-name` is the key of your flow in `flows`.
 
-*Note:* flows must include at least one step that creates a user and is able to provide a bearer token. See the `providesToken` property in "Creating a new step".
+_Note:_ flows must include at least one step that creates a user and is able to provide a bearer token. See the `providesToken` property in "Creating a new step".
 
 ## Creating a new step
 
@@ -37,7 +39,6 @@ You can add a new step to Modular Signup from `/client/signup/config/steps-pure.
 
 - `stepName` is the identifier used to reference a step in `/client/signup/config/flows-pure.js`.
 - (optional) `dependencies`, which specify which properties this step needs from other steps in the flow in order to be processed.
-- (optional) `optionalIncomingDependencies`, which specify which properties this step uses from other steps in the flow but are not strictly required to the step processing.
 - (optional) `providesDependencies` is an array that lets the signup framework know what dependencies the step is expected to provide. If the step does not provide all of these, or if it provides more than it says, an error will be thrown (unless `optionalDependencies` is used, see below).
 - (optional) `optionalDependencies` is an array that lists which of the items in `providesDependencies` are optional. If one of these values is missing when a step is submitted there'll be no error.
 - (optional) `delayApiRequestUntilComplete` is a boolean that, when true, causes the step's `apiRequestFunction` to be called only after the user has submitted every step in the signup flow. This is useful for steps that the user should be able to go back and change at any point in signup.
@@ -103,7 +104,7 @@ Note that here `apiRequestFunction` calls an API endpoint (`someRequest` in this
 The above example includes an inline function definition, but we should keep the `apiRequestFunction` values in `StepActions` (`signup/config/step-actions.js`) and include them like:
 
 ```js
-apiRequestFunction: stepActions.createSite
+apiRequestFunction: stepActions.createSite;
 ```
 
 ## Hello World
@@ -129,6 +130,7 @@ export default class extends React.Component {
 ```
 
 4 - add the new step to `/client/signup/config/step-components.js`. Include a reference to the component module:
+
 ```javascript
 const stepNameToModuleName = {
 	...
@@ -172,6 +174,7 @@ render() {
 ```
 
 Make sure to require `SignupActions`:
+
 ```javascript
 import SignupActions from 'lib/signup/actions';
 ```
@@ -183,12 +186,11 @@ handleSubmit = ( event ) => {
 	event.preventDefault();
 
 	SignupActions.submitSignupStep( {
-		stepName: this.props.stepName
+		stepName: this.props.stepName,
 	} );
 
 	this.props.goToNextStep();
-}
+};
 ```
 
 9 - open https://calypso.localhost:3000/start/hello in an incognito window. On opening you should be redirected to the first step showing your updated React component, and when you click the "Get started" button you should be taken to the next step.
-
