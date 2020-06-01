@@ -18,7 +18,6 @@ import {
 	domainManagementEditContactInfo,
 	domainManagementList,
 	domainManagementNameServers,
-	domainManagementPrimaryDomain,
 	domainManagementRedirectSettings,
 	domainManagementSecurity,
 	domainManagementTransfer,
@@ -73,24 +72,6 @@ export default {
 				}
 				analyticsTitle="Domain Management > Edit"
 				component={ component }
-				context={ pageContext }
-				needsCart
-				needsContactDetails
-				needsDomains
-				needsPlans
-				needsProductsList
-				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
-			/>
-		);
-		next();
-	},
-
-	domainManagementPrimaryDomain: function ( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementPrimaryDomain( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Set Primary Domain"
-				component={ DomainManagement.PrimaryDomain }
 				context={ pageContext }
 				needsCart
 				needsContactDetails

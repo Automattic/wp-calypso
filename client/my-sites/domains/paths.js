@@ -97,10 +97,6 @@ export function domainManagementSecurity( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'security' );
 }
 
-export function domainManagementPrimaryDomain( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'primary-domain' );
-}
-
 export function domainManagementTransfer( siteName, domainName, transferType = '' ) {
 	return domainManagementEdit(
 		siteName,
