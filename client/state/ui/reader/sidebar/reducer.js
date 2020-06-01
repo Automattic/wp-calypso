@@ -1,7 +1,10 @@
 /**
+ * External dependencies
+ */
+import { xor } from 'lodash';
+/**
  * Internal dependencies
  */
-
 import {
 	READER_SIDEBAR_LISTS_TOGGLE,
 	READER_SIDEBAR_TAGS_TOGGLE,
@@ -40,15 +43,7 @@ export function isFollowingOpen( state = false, action ) {
 export function openOrganizations( state = [], action ) {
 	switch ( action.type ) {
 		case READER_SIDEBAR_ORGANIZATIONS_TOGGLE: {
-			const opened = state;
-			const index = opened.indexOf( action.organizationId );
-
-			if ( index > -1 ) {
-				opened.splice( index, 1 );
-			} else {
-				opened.push( action.organizationId );
-			}
-			return [ ...opened ];
+			return xor( state, [ action.organizationId ] );
 		}
 	}
 
