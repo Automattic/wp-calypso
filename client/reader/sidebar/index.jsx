@@ -7,16 +7,17 @@ import { defer, startsWith, identity } from 'lodash';
 import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
 import ReaderSidebarHelper from './helper';
+import ReaderSidebarNetwork from './reader-sidebar-network';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
+import QueryUnseenStatusAll from 'components/data/query-unseen-status-all';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import Sidebar from 'layout/sidebar';
@@ -32,24 +33,29 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
 import { getReaderTeams } from 'state/reader/teams/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
-import ReaderSidebarPromo from './promo';
-import QueryUnseenStatusAll from 'components/data/query-unseen-status-all';
 import { getSectionsStatus } from 'state/reader/seen-posts/selectors';
+import {
+	toggleReaderSidebarLists,
+	toggleReaderSidebarTags,
+	toggleReaderSidebarNetwork,
+} from 'state/ui/reader/sidebar/actions';
 import {
 	SECTION_A8C_CONVERSATIONS,
 	SECTION_A8C_FOLLOWING,
 	SECTION_CONVERSATIONS,
 	SECTION_FOLLOWING,
 	SECTION_LISTS,
+	SECTION_NETWORK,
 	SECTION_TAGS,
 } from 'state/reader/seen-posts/constants';
-import { hasSectionUnseen } from 'reader/get-helpers';
+import ReaderSidebarPromo from './promo';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import config from 'config';
+import { getSectionUnseen, hasSectionUnseen } from 'reader/get-helpers';
 
 const A8CConversationsIcon = () => (
 	<svg
@@ -241,6 +247,15 @@ export class ReaderSidebar extends React.Component {
 
 					<QueryReaderLists />
 					<QueryReaderTeams />
+
+					<ReaderSidebarNetwork
+						lists={ this.props.subscribedLists }
+						path={ path }
+						isOpen={ this.props.isNetworkOpen }
+						onClick={ this.props.toggleBlogsVisibility }
+						unseen={ getSectionUnseen( unseenStatuses, SECTION_NETWORK ) }
+					/>
+
 					{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
 						<ReaderSidebarLists
 							lists={ this.props.subscribedLists }
@@ -279,6 +294,7 @@ export default connect(
 	( state ) => {
 		return {
 			unseenStatuses: getSectionsStatus( state ),
+			isNetworkOpen: state.ui.reader.sidebar.isNetworkOpen,
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
 			subscribedLists: getSubscribedLists( state ),
@@ -286,6 +302,7 @@ export default connect(
 		};
 	},
 	{
+		toggleBlogsVisibility: toggleReaderSidebarNetwork,
 		toggleListsVisibility: toggleReaderSidebarLists,
 		toggleTagsVisibility: toggleReaderSidebarTags,
 		setNextLayoutFocus,
