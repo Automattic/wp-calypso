@@ -98,8 +98,8 @@ const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
 					location: 'customer-home',
 				} )
 			),
-		requestInlineHelpSearchResults( searchQuery )
-	);
+			requestInlineHelpSearchResults( searchQuery )
+		);
 
 const mapDispatchToProps = {
 	recordTracksEvent,
