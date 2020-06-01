@@ -405,7 +405,7 @@ CheckoutStepBody.propTypes = {
 	isStepActive: PropTypes.bool.isRequired,
 	isStepComplete: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	stepNumber: PropTypes.number.isRequired,
+	stepNumber: PropTypes.number,
 	stepId: PropTypes.string.isRequired,
 	titleContent: PropTypes.node.isRequired,
 	goToThisStep: PropTypes.func,
