@@ -22,6 +22,7 @@ export interface Props {
 	summary?: string | ReactNode;
 	expandedSummary?: string | ReactNode;
 	clickableHeader?: boolean;
+	onClick?: Function;
 }
 
 class LogItem extends React.PureComponent< Props > {
@@ -47,6 +48,7 @@ class LogItem extends React.PureComponent< Props > {
 			className,
 			expandedSummary,
 			summary,
+			onClick,
 		} = this.props;
 		return (
 			<FoldableCard
@@ -56,6 +58,7 @@ class LogItem extends React.PureComponent< Props > {
 				expandedSummary={ expandedSummary }
 				summary={ summary }
 				clickableHeader={ clickableHeader }
+				onClick={ onClick }
 			>
 				{ children }
 			</FoldableCard>

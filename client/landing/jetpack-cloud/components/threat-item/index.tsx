@@ -26,6 +26,7 @@ interface Props {
 	isPlaceholder: boolean;
 	onFixThreat?: Function;
 	onIgnoreThreat?: Function;
+	onClickHeader?: Function;
 	isFixing: boolean;
 	contactSupportUrl?: string;
 }
@@ -37,6 +38,7 @@ const ThreatItem: React.FC< Props > = ( {
 	onIgnoreThreat,
 	isFixing,
 	contactSupportUrl,
+	onClickHeader,
 } ) => {
 	/**
 	 * Render a CTA button. Currently, this button is rendered three
@@ -119,6 +121,7 @@ const ThreatItem: React.FC< Props > = ( {
 				: {} ) }
 			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 			clickableHeader={ true }
+			onClick={ onClickHeader }
 		>
 			<ThreatDescription
 				status={ threat.status }

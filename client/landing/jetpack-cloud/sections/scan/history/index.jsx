@@ -75,6 +75,19 @@ const ScanHistoryPage = ( {
 		[ dispatchRecordTracksEvent, siteId, siteSlug ]
 	);
 
+	const clickHeader = React.useCallback(
+		( { signature } ) => {
+			const eventName = 'calypso_jetpack_scan_threatitem_headertoggle';
+			dispatch(
+				recordTracksEvent( eventName, {
+					site_id: siteId,
+					threat_signature: signature,
+				} )
+			);
+		},
+		[ dispatch, siteId ]
+	);
+
 	const openDialog = React.useCallback(
 		( threat ) => {
 			const eventName = 'calypso_jetpack_scan_fixthreat_dialogopen';
@@ -143,6 +156,7 @@ const ScanHistoryPage = ( {
 						isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 						contactSupportUrl={ contactSupportUrl( siteSlug ) }
 						isPlaceholder={ isRequestingHistory }
+						onClickHeader={ () => clickHeader( threat ) }
 					/>
 				) ) }
 				{ selectedThreat && (
