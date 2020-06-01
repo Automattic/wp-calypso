@@ -85,6 +85,16 @@ export function generateInviteLinks( siteId ) {
 	};
 }
 
+export function disableInviteLinks( siteId ) {
+	debug( 'disableInviteLinks', siteId );
+
+	return ( dispatch ) => {
+		wpcom.undocumented().disableInviteLinks( siteId, () => {
+			dispatch( requestSiteInvites( siteId ) );
+		} );
+	};
+}
+
 export function acceptInvite( invite, callback ) {
 	return ( dispatch ) => {
 		Dispatcher.handleViewAction( {

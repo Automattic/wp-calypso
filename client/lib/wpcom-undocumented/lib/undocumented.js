@@ -264,8 +264,13 @@ Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
 };
 
 Undocumented.prototype.generateInviteLinks = function ( siteId, fn ) {
-	debug( '/sites/:site_id:/invites/newlinks query', siteId );
+	debug( '/sites/:site_id:/invites/links/generate query', siteId );
 	return this.wpcom.req.post( '/sites/' + siteId + '/invites/links/generate', {}, fn );
+};
+
+Undocumented.prototype.disableInviteLinks = function ( siteId, fn ) {
+	debug( '/sites/:site_id:/invites/links/disable query', siteId );
+	return this.wpcom.req.post( '/sites/' + siteId + '/invites/links/disable', {}, fn );
 };
 
 Undocumented.prototype.invitesList = function ( siteId, data = {}, fn ) {

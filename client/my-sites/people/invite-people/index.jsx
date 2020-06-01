@@ -20,8 +20,13 @@ import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { sendInvites, createInviteValidation, generateInviteLinks } from 'lib/invites/actions';
-import { Card } from '@automattic/components';
+import {
+	sendInvites,
+	createInviteValidation,
+	generateInviteLinks,
+	disableInviteLinks,
+} from 'lib/invites/actions';
+import { Card, Button } from '@automattic/components';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
@@ -453,6 +458,16 @@ class InvitePeople extends React.Component {
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
 
+	disableInviteLinks = () => {
+		if (
+			window.confirm(
+				this.props.translate( 'Are you sure you wish to disable these invite links?' )
+			)
+		) {
+			return this.props.disableInviteLinks( this.props.siteId );
+		}
+	};
+
 	renderInviteLinkForm = () => {
 		const {
 			//site,
@@ -481,22 +496,28 @@ class InvitePeople extends React.Component {
 					</FormSettingExplanation>
 
 					{ ! this.isInviteLinksComplete( inviteLinks ) && (
-						<FormButton
-							isPrimary={ true }
-							onClick={ this.generateInviteLinks }
-							className="invite-people__generate-link"
-						>
-							{ translate( 'Generate new link' ) }
-						</FormButton>
+						<Button onClick={ this.generateInviteLinks } className="invite-people__generate-links">
+							{ translate( 'Generate new links' ) }
+						</Button>
 					) }
 
 					{ this.isInviteLinksComplete( inviteLinks ) && (
-						<div>
-							<div>{ inviteLinks.administrator.link }</div>
-							<div>{ inviteLinks.editor.link }</div>
-							<div>{ inviteLinks.author.link }</div>
-							<div>{ inviteLinks.contributor.link }</div>
-						</div>
+						<React.Fragment>
+							<div>
+								<div>administrator: { inviteLinks.administrator.link }</div>
+								<div>editor: { inviteLinks.editor.link }</div>
+								<div>author: { inviteLinks.author.link }</div>
+								<div>contributor: { inviteLinks.contributor.link }</div>
+							</div>
+							<Button
+								onClick={ this.disableInviteLinks }
+								isSecondary
+								isLarge
+								className="invite-people__disable-links"
+							>
+								{ translate( 'Disable links' ) }
+							</Button>
+						</React.Fragment>
 					) }
 				</EmailVerificationGate>
 			</Card>
@@ -566,6 +587,7 @@ const connectComponent = connect(
 				sendInvites,
 				activateModule,
 				generateInviteLinks,
+				disableInviteLinks,
 			},
 			dispatch
 		),
