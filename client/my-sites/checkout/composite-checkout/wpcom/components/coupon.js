@@ -89,6 +89,10 @@ const CouponWrapper = styled.form`
 	margin: ${ ( props ) => props.marginTop } 0 0 0;
 	padding-top: 0;
 	position: relative;
+
+	p {
+		margin-bottom: 16px;
+	}
 `;
 
 const ApplyButton = styled( Button )`
@@ -103,7 +107,9 @@ const ApplyButton = styled( Button )`
 
 function getCouponErrorMessageFromStatus( translate, status, isFreshOrEdited ) {
 	if ( status === 'invalid' && ! isFreshOrEdited ) {
-		return translate( "We couldn't find your coupon. Please check your code and try again." );
+		return translate(
+			"We couldn't find your coupon. Please check your coupon code and try again."
+		);
 	}
 	if ( status === 'rejected' ) {
 		return translate( 'This coupon does not apply to any items in the cart.' );
