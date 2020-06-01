@@ -33,12 +33,12 @@ const A8CFollowing = ( props ) => {
 			<SectionHeader label={ translate( 'Followed A8C Sites' ) }>
 				{ config.isEnabled( 'reader/seen-posts' ) && ! props.hasUnseen && (
 					<Button compact onClick={ markAllAsUnSeen }>
-						{ translate( 'Mark All as unseen' ) }
+						{ translate( 'Mark all as unseen' ) }
 					</Button>
 				) }
 				{ config.isEnabled( 'reader/seen-posts' ) && props.hasUnseen && (
 					<Button compact onClick={ markAllAsSeen }>
-						{ translate( 'Mark All as seen' ) }
+						{ translate( 'Mark all as seen' ) }
 					</Button>
 				) }
 			</SectionHeader>
