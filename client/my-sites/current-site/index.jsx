@@ -87,10 +87,10 @@ class CurrentSite extends Component {
 				{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 					<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 				) }
-				{ isEnabled( 'current-site/stale-cart-notice' ) && (
+				{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
 					<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 				) }
-				{ isEnabled( 'current-site/notice' ) && (
+				{ selectedSite && isEnabled( 'current-site/notice' ) && (
 					<AsyncLoad
 						require="my-sites/current-site/notice"
 						placeholder={ null }
