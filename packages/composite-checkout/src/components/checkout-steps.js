@@ -96,7 +96,6 @@ function DefaultCheckoutSteps() {
 					isStepActive={ false }
 					isStepComplete={ true }
 					stepNumber={ 1 }
-					totalSteps={ 1 }
 					stepId={ 'order-summary-step' }
 					className={ orderSummaryStep.className }
 				/>
@@ -233,7 +232,7 @@ export function CheckoutStep( {
 	validatingButtonAriaLabel,
 } ) {
 	const localize = useLocalize();
-	const { totalSteps, setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
+	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
 	);
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete } = useContext(
@@ -303,7 +302,6 @@ export function CheckoutStep( {
 			isStepActive={ isStepActive }
 			isStepComplete={ isStepComplete }
 			stepNumber={ stepNumber }
-			totalSteps={ totalSteps }
 			stepId={ stepId }
 			titleContent={ titleContent }
 			goToThisStep={ goToThisStep }
@@ -329,7 +327,6 @@ export function CheckoutStepBody( {
 	isStepComplete,
 	className,
 	stepNumber,
-	totalSteps,
 	stepId,
 	titleContent,
 	goToThisStep,
@@ -350,7 +347,6 @@ export function CheckoutStepBody( {
 				isActive={ isStepActive }
 				isComplete={ isStepComplete }
 				className={ className }
-				isFinalStep={ stepNumber === totalSteps }
 			>
 				<CheckoutStepHeader
 					id={ stepId }
@@ -410,7 +406,6 @@ CheckoutStepBody.propTypes = {
 	isStepComplete: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	stepNumber: PropTypes.number.isRequired,
-	totalSteps: PropTypes.number.isRequired,
 	stepId: PropTypes.string.isRequired,
 	titleContent: PropTypes.node.isRequired,
 	goToThisStep: PropTypes.func,
@@ -535,7 +530,6 @@ export function useSetStepComplete() {
 }
 
 const StepWrapperUI = styled.div`
-	padding-bottom: ${ ( props ) => ( props.isFinalStep ? '0' : '32px' ) };
 	position: relative;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;

@@ -681,7 +681,6 @@ function createStepObjectConverter( paymentData ) {
 				isStepActive={ false }
 				isStepComplete={ true }
 				stepNumber={ 1 }
-				totalSteps={ 1 }
 				stepId={ stepObject.id }
 				key={ stepObject.id }
 				activeStepContent={ stepObject.activeStepContent }
