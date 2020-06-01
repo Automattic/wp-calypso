@@ -24,10 +24,7 @@ import getUserSetting from 'state/selectors/get-user-setting';
 import { isFollowing } from 'state/reader/follows/selectors';
 import QueryUserSettings from 'components/data/query-user-settings';
 import Gridicon from 'components/gridicon';
-import {
-	requestMarkAllAsSeenFeed,
-	requestMarkAllAsUnseenFeed,
-} from 'state/reader/seen-posts/actions';
+import { requestMarkAllAsSeenFeed } from 'state/reader/seen-posts/actions';
 
 /**
  * Style dependencies
@@ -158,5 +155,5 @@ export default connect(
 		following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 	} ),
-	{ requestMarkAllAsSeenFeed, requestMarkAllAsUnseenFeed }
+	{ requestMarkAllAsSeenFeed }
 )( localize( FeedHeader ) );

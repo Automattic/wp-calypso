@@ -47,7 +47,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 					href={ `/read/feeds/${ site.feed_ID }` }
 					onClick={ this.handleSidebarClick }
 				>
-					<Favicon url={ site.URL } className="sidebar__menu-item-siteicon" size={ 18 } />
+					<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 18 } />
 
 					<div className="sidebar__menu-item-sitename">{ site.name }</div>
 					{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }

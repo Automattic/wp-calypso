@@ -25,7 +25,7 @@ import Count from 'components/count';
  */
 import '../style.scss';
 
-export class ReaderSidebarFollowing extends Component {
+export class ReaderSidebarFollowedSites extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sites: PropTypes.array,
@@ -76,7 +76,7 @@ export class ReaderSidebarFollowing extends Component {
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isFollowingOpen }
-				title={ translate( 'Following' ) }
+				title={ translate( 'Followed Sites' ) }
 				onClick={ this.props.toggleReaderSidebarFollowing }
 				materialIcon="check_circle"
 			>
@@ -97,4 +97,4 @@ export default connect(
 	{
 		toggleReaderSidebarFollowing,
 	}
-)( localize( ReaderSidebarFollowing ) );
+)( localize( ReaderSidebarFollowedSites ) );

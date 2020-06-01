@@ -263,6 +263,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_SEEN_MARK_AS_SEEN_RECEIVE: {
 			const urlKey = prepareComparableUrl( action.feedUrl );
 			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
 			return {
 				...state,
 				[ urlKey ]: merge( {}, existingEntry, {
@@ -274,6 +277,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_SEEN_MARK_AS_UNSEEN_RECEIVE: {
 			const urlKey = prepareComparableUrl( action.feedUrl );
 			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
 			return {
 				...state,
 				[ urlKey ]: merge( {}, existingEntry, {
@@ -285,6 +292,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE: {
 			const urlKey = prepareComparableUrl( action.feedUrl );
 			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
 			return { ...state, [ urlKey ]: merge( {}, existingEntry, { unseen_count: 0 } ) };
 		}
 

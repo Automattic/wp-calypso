@@ -82,6 +82,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 
 		case READER_SEEN_MARK_AS_SEEN_RECEIVE: {
 			const existingEntry = state[ action.feedId ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
 			return {
 				...state,
 				[ action.feedId ]: merge( {}, existingEntry, {
@@ -92,6 +96,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 
 		case READER_SEEN_MARK_AS_UNSEEN_RECEIVE: {
 			const existingEntry = state[ action.feedId ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
 			return {
 				...state,
 				[ action.feedId ]: merge( {}, existingEntry, {

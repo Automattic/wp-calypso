@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
  */
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ReaderSidebarOrganizationsListItem from './list-item';
-import Gridicon from 'components/gridicon';
 import getOrganizationSites from 'state/reader/follows/selectors/get-reader-follows-organization';
 import { toggleReaderSidebarOrganization } from 'state/ui/reader/sidebar/actions';
 import { isOrganizationOpen } from 'state/ui/reader/sidebar/selectors';
@@ -25,26 +24,9 @@ import Count from 'components/count';
  * Styles
  */
 import '../style.scss';
-
-export const renderA8CLogo = () => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	return (
-		<svg
-			className="sidebar__menu-icon"
-			width="24"
-			height="24"
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 24 24"
-		>
-			<path
-				d="M12 21.5c-6.1 0-10-4.4-10-9V12c0-4.6 4-9 10-9 6.1 0 10.1 4.3 10.1 9v.6c0 4.5-3.9 8.9-10.1
-				8.9zm6.9-9.5c0-3.3-2.4-6.3-6.8-6.3s-6.8 3-6.8 6.3v.4c0 3.3 2.4 6.4 6.8 6.4s6.8-3 6.8-6.4V12z"
-			/>
-			<path d="M14.1 8.5c.6.4.7 1.2.4 1.7l-2.9 4.6c-.4.6-1.2.8-1.7.4-.7-.4-.9-1.2-.5-1.8l2.9-4.6c.4-.5 1.2-.7 1.8-.3z" />
-		</svg>
-	);
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-};
+import SVGIcon from 'components/svg-icon';
+import AutomatticLogo from 'assets/images/icons/a8c-logo.svg';
+import P2Logo from 'assets/images/icons/p2-logo.svg';
 
 export class ReaderSidebarOrganizationsList extends Component {
 	static propTypes = {
@@ -61,9 +43,9 @@ export class ReaderSidebarOrganizationsList extends Component {
 	renderIcon() {
 		const { organization } = this.props;
 		if ( organization.id === AUTOMATTIC_ORG_ID ) {
-			return renderA8CLogo();
+			return <SVGIcon name="a8c-logo" icon={ AutomatticLogo } classes="sidebar__menu-icon" />;
 		}
-		return <Gridicon icon="institution" className="sidebar__menu-icon" />;
+		return <SVGIcon name="p2-logo" icon={ P2Logo } classes="sidebar__menu-icon" />;
 	}
 
 	renderAll() {
@@ -83,7 +65,6 @@ export class ReaderSidebarOrganizationsList extends Component {
 						className={ ReaderSidebarHelper.itemLinkClass( '/read/' + organization.slug, path, {
 							'sidebar-streams__all': true,
 						} ) }
-						count={ sum }
 					>
 						{ sum > 0 && <Count count={ sum } compact /> }
 					</SidebarItem>

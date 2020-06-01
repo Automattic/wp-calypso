@@ -31,7 +31,10 @@ const loadTrackingPixel = ( { action, userId, feedId, feedIds, feedItemIds } ) =
 		src += `&x_feed_item_ids=${ xFeedItemIds }`;
 	}
 
-	new window.Image().src = src + `&rand=${ Math.random() }&orangutan=1`;
+	// Disable for now
+	return src;
+
+	// new window.Image().src = src + `&rand=${ Math.random() }&orangutan=1`;
 };
 
 export const persistMarkAsSeen = ( { userId, feedId, feedItemIds } ) => {

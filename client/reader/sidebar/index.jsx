@@ -34,7 +34,7 @@ import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/read
 import ReaderSidebarPromo from './promo';
 import QueryReaderOrganizations from 'components/data/query-reader-organizations';
 import { getReaderOrganizations } from 'state/reader/organizations/selectors';
-import ReaderSidebarFollowing from 'reader/sidebar/reader-sidebar-following';
+import ReaderSidebarFollowedSites from 'reader/sidebar/reader-sidebar-followed-sites';
 import config from 'config';
 import SidebarSeparator from 'layout/sidebar/separator';
 
@@ -176,7 +176,7 @@ export class ReaderSidebar extends React.Component {
 										path={ path }
 									/>
 
-									<ReaderSidebarFollowing path={ path } />
+									<ReaderSidebarFollowedSites path={ path } />
 								</>
 							) }
 							<SidebarSeparator />
