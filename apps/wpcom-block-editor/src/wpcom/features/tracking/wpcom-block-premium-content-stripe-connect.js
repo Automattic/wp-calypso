@@ -4,7 +4,7 @@
 import tracksRecordEvent from './track-record-event';
 
 /**
- * Return the event definition object to track `wpcom_block_premium_content_upgrade_click`.
+ * Return the event definition object to track `wpcom_block_premium_content_stripe_connect_click `.
  *
  * @returns {{handler: Function, selector: string, type: string}} event object definition.
  */
