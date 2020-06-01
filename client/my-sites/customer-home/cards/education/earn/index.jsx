@@ -14,7 +14,7 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 /**
  * Image dependencies
  */
-import earnCardPrompt from 'assets/images/customer-home/illustration--business.svg';
+import earnCardPrompt from 'assets/images/customer-home/illustration--task-earn.svg';
 
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();
@@ -31,12 +31,6 @@ const EducationEarn = ( { siteSlug } ) => {
 					url: `/earn/${ siteSlug }`,
 					icon: 'arrow-right',
 					text: translate( 'Start making money' ),
-				},
-				{
-					externalLink: true,
-					url: `https://wordpress.com/support/category/tools/earning-money-from-your-site/`,
-					icon: 'arrow-right',
-					text: translate( 'Learn more' ),
 				},
 			] }
 			illustration={ earnCardPrompt }
