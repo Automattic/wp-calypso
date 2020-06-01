@@ -495,7 +495,7 @@ class InvitePeople extends React.Component {
 		}, 4000 );
 	};
 
-	renderCopyButton( link ) {
+	renderCopyLinkButton = ( link, className ) => {
 		const { translate } = this.props;
 
 		let label;
@@ -506,21 +506,19 @@ class InvitePeople extends React.Component {
 		}
 
 		return (
-			<ClipboardButton text={ link } onCopy={ this.onInviteLinkCopy } compact>
+			<ClipboardButton
+				className={ className }
+				text={ link }
+				onCopy={ this.onInviteLinkCopy }
+				compact
+			>
 				{ label }
 			</ClipboardButton>
 		);
-	}
+	};
 
-	renderInviteLinkForm = () => {
-		const {
-			//site,
-			siteRoles,
-			translate,
-			//needsVerification,
-			//isJetpack,
-			//showSSONotice,
-		} = this.props;
+	renderInviteLinkRoleSelector = ( activeInviteLink ) => {
+		const { siteRoles, translate } = this.props;
 
 		const roleOptions =
 			siteRoles &&
@@ -529,9 +527,61 @@ class InvitePeople extends React.Component {
 					{ role.display_name }
 				</option>
 			) );
+		const inviteUrlRef = React.createRef();
+
+		return (
+			<React.Fragment>
+				<div className="invite-people__link-selector">
+					<FormSelect
+						id="invite-people__link-selector-role"
+						className="invite-people__link-selector-role"
+						onChange={ this.showInviteLinkForRole }
+					>
+						{ roleOptions }
+					</FormSelect>
+
+					<FormTextInput
+						id="invite-people__link-selector-text"
+						className="invite-people__link-selector-text"
+						value={ activeInviteLink.link }
+						readOnly
+						ref={ inviteUrlRef }
+					/>
+					{ this.renderCopyLinkButton(
+						activeInviteLink.link,
+						'invite-people__link-selector-copy'
+					) }
+				</div>
+
+				<div className="invite-people__link-footer">
+					<span className="invite-people__link-expiry">
+						Expires on { new Date( activeInviteLink.expiry * 1000 ).toLocaleDateString() }{ ' ' }
+					</span>
+					<span>
+						(
+						<button className="invite-people__link-disable" onClick={ this.disableInviteLinks }>
+							{ translate( 'Disable invite links' ) }
+						</button>
+						)
+					</span>
+				</div>
+			</React.Fragment>
+		);
+	};
+
+	renderInviteLinkGenerateButton = () => {
+		const { translate } = this.props;
+		return (
+			<Button onClick={ this.generateInviteLinks } className="invite-people__link-generate">
+				{ translate( 'Generate new links' ) }
+			</Button>
+		);
+	};
+
+	renderInviteLinkForm = () => {
+		const { translate } = this.props;
 
 		const activeInviteLink = this.getActiveInviteLink( this.state.activeInviteLink );
-		const inviteUrlRef = React.createRef();
 
 		const inviteLinkForm = (
 			<Card>
@@ -550,40 +600,11 @@ class InvitePeople extends React.Component {
 						) }
 					</FormSettingExplanation>
 
-					{ ! activeInviteLink && (
-						<Button onClick={ this.generateInviteLinks } className="invite-people__generate-links">
-							{ translate( 'Generate new links' ) }
-						</Button>
-					) }
-
-					{ activeInviteLink && (
-						<React.Fragment>
-							<div>
-								<FormSelect
-									id="invite-people__link-role-select"
-									className="invite-people__link-role"
-									onChange={ this.showInviteLinkForRole }
-								>
-									{ roleOptions }
-								</FormSelect>
-
-								<FormTextInput
-									id="invite-people__link-display"
-									className="invite-people__link-display"
-									value={ activeInviteLink.link }
-									readOnly
-									ref={ inviteUrlRef }
-								/>
-
-								{ this.renderCopyButton( activeInviteLink.link ) }
-
-								<p>Expires on { new Date( activeInviteLink.expiry * 1000 ).toISOString() }</p>
-							</div>
-							<Button onClick={ this.disableInviteLinks } className="invite-people__disable-links">
-								{ translate( 'Disable links' ) }
-							</Button>
-						</React.Fragment>
-					) }
+					<div className="invite-people__link">
+						{ activeInviteLink
+							? this.renderInviteLinkRoleSelector( activeInviteLink )
+							: this.renderInviteLinkGenerateButton() }
+					</div>
 				</EmailVerificationGate>
 			</Card>
 		);

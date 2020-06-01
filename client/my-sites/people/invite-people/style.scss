@@ -10,3 +10,43 @@
 .invite-people__action-required .notice {
 	margin-bottom: 0;
 }
+
+.invite-people__link {
+	margin-top: 24px;
+
+	.invite-people__link-selector {
+		display: flex;
+
+		.invite-people__link-selector-role {
+			flex: 1 0 auto;
+			margin-right: 5px;
+		}
+		.invite-people__link-selector-text {
+			flex: 1 1 auto;
+			font-size: 13px;
+			margin-right: 5px;
+		}
+		.invite-people__link-selector-copy {
+			flex: 1 0 auto;
+		}
+	}
+
+	.invite-people__link-footer {
+		color: #acabab;
+		margin-top: 6px;
+		font-size: 12px;
+		font-style: italic;
+
+		.invite-people__link-expiry {
+			color: #acabab;
+		}
+
+		.invite-people__link-disable {
+			color: #c71616;
+			cursor: pointer;
+			font-size: inherit;
+			font-style: inherit;
+			text-decoration: underline;
+		}
+	}
+}
