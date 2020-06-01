@@ -44,12 +44,10 @@ class SocialLoginForm extends Component {
 		linkingSocialService: PropTypes.string,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
-		googleSocialOnly: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		linkingSocialService: '',
-		googleSocialOnly: false,
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
@@ -185,7 +183,7 @@ class SocialLoginForm extends Component {
 	};
 
 	render() {
-		const { googleSocialOnly, redirectTo, uxMode } = this.props;
+		const { redirectTo, uxMode } = this.props;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
 		return (
@@ -202,53 +200,34 @@ class SocialLoginForm extends Component {
 						}
 					/>
 
-					{ ! googleSocialOnly && (
-						<AppleLoginButton
-							clientId={ config( 'apple_oauth_client_id' ) }
-							responseHandler={ this.handleAppleResponse }
-							uxMode={ uxModeApple }
-							redirectUri={ this.getRedirectUrl( 'apple' ) }
-							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
-							socialServiceResponse={
-								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-							}
-						/>
-					) }
+					<AppleLoginButton
+						clientId={ config( 'apple_oauth_client_id' ) }
+						responseHandler={ this.handleAppleResponse }
+						uxMode={ uxModeApple }
+						redirectUri={ this.getRedirectUrl( 'apple' ) }
+						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
+						socialServiceResponse={
+							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+						}
+					/>
 
 					<p className="login__social-tos">
-						{ googleSocialOnly
-							? this.props.translate(
-									"If you continue with Google and don't already have a WordPress.com account, you" +
-										' are creating an account and you agree to our' +
-										' {{a}}Terms of Service{{/a}}.',
-									{
-										components: {
-											a: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-							  )
-							: this.props.translate(
-									"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-										' are creating an account and you agree to our' +
-										' {{a}}Terms of Service{{/a}}.',
-									{
-										components: {
-											a: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-							  ) }
+						{ this.props.translate(
+							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
+								' are creating an account and you agree to our' +
+								' {{a}}Terms of Service{{/a}}.',
+							{
+								components: {
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
 					</p>
 				</div>
 
