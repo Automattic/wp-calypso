@@ -8,15 +8,15 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import * as T from './types';
 import { useI18n } from '@automattic/react-i18n';
+import type { Viewport } from './types';
 
 // TODO FIXME: React elements are a poor choice for static svgs.
 // Refactor, external svg with use?
 
 interface Props {
-	onSelect: ( selection: T.Viewport ) => void;
-	selected: T.Viewport;
+	onSelect: ( selection: Viewport ) => void;
+	selected: Viewport;
 }
 const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) => {
 	const { __ } = useI18n();

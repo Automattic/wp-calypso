@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { BlockEditProps } from '@wordpress/blocks';
+import type { BlockEditProps } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback } from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
@@ -14,7 +14,7 @@ import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
-import { Attributes } from './types';
+import type { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';

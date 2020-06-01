@@ -4,7 +4,7 @@
 import { findKey } from 'lodash';
 import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { Plans } from '@automattic/data-stores';
-import { ValuesType } from 'utility-types';
+import type { ValuesType } from 'utility-types';
 
 import { getLanguageRouteParam } from '../../lib/i18n-utils';
 

@@ -9,14 +9,10 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import * as T from './types';
 import { useLangRouteParam } from '../../path';
 import { isEnabled } from 'config';
-
-type Design = import('../../stores/onboard/types').Design;
-type Font = import('../../constants').Font;
-type SiteVertical = import('../../stores/onboard/types').SiteVertical;
 import { fontPairings } from '../../constants';
+import type { Viewport } from './types';
 
 function getFontsLoadingHTML() {
 	const baseURL = 'https://fonts.googleapis.com/css2';
@@ -57,7 +53,7 @@ function getFontsLoadingHTML() {
 }
 
 interface Props {
-	viewport: T.Viewport;
+	viewport: Viewport;
 }
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();

@@ -9,6 +9,7 @@ import { Icon, wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -31,7 +32,7 @@ import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
 import { trackEventWithFlow } from '../../lib/analytics';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
