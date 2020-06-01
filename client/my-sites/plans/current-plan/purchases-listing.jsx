@@ -264,7 +264,7 @@ class PurchasesListing extends Component {
 		let serviceButton = null;
 		if ( isJetpackBackup( purchase ) ) {
 			const target = isCloudEligible
-				? `https://cloud.jetpack.com/backups/${ site }`
+				? `https://cloud.jetpack.com/backup/${ site }`
 				: `/activity-log/${ site }?group=rewind`;
 			serviceButton = (
 				<Button href={ target } compact>
