@@ -148,7 +148,7 @@ export default {
 			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 95,
 		},
 		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
-		localeTargetes: 'any',
+		localeTargets: 'any',
 		allowExistingUsers: true,
 	},
 };
