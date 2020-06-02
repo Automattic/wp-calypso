@@ -5,6 +5,7 @@ import React from 'react';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-heade
 import ThreatItemSubheader from 'landing/jetpack-cloud/components/threat-item-subheader';
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
 import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
+import useTrackCallback from 'landing/jetpack-cloud/lib/use-track-callback';
 
 /**
  * Style dependencies
@@ -91,6 +93,11 @@ const ThreatItem: React.FC< Props > = ( {
 		[ threat ]
 	);
 
+	const onOpenTrackEvent = useTrackCallback( noop, 'calypso_jetpack_scan_threat_itemtoggle', {
+		threat_signature: threat.signature,
+		section: window.location.pathname.includes( '/scan/history' ) ? 'History' : 'Scanner',
+	} );
+
 	if ( isPlaceholder ) {
 		return (
 			<LogItem
@@ -119,6 +126,7 @@ const ThreatItem: React.FC< Props > = ( {
 				: {} ) }
 			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 			clickableHeader={ true }
+			onClick={ onOpenTrackEvent }
 		>
 			<ThreatDescription
 				status={ threat.status }

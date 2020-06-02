@@ -243,7 +243,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 					showDialog={ showThreatDialog }
 					onCloseDialog={ closeDialog }
 					onConfirmation={ confirmAction }
-					siteId={ site.ID }
 					siteName={ site.name }
 					threat={ selectedThreat }
 					action={ actionToPerform }
@@ -252,7 +251,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			<FixAllThreatsDialog
 				threats={ allFixableThreats }
 				showDialog={ showFixAllThreatsDialog }
-				siteId={ site.ID }
 				onCloseDialog={ () => setShowFixAllThreatsDialog( false ) }
 				onConfirmation={ confirmFixAllThreats }
 			/>

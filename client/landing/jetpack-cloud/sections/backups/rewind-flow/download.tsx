@@ -4,6 +4,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useCallback, useState } from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
+import useTrackCallback from 'landing/jetpack-cloud/lib/use-track-callback';
 
 interface Props {
 	backupDisplayDate: string;
@@ -49,6 +51,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const requestDownload = useCallback(
 		() => dispatch( rewindBackup( siteId, rewindId, rewindConfig ) ),
 		[ dispatch, rewindConfig, rewindId, siteId ]
+	);
+	const trackedRequestDownload = useTrackCallback(
+		requestDownload,
+		'calypso_jetpack_backup_download_click'
 	);
 
 	const renderConfirm = () => (
@@ -84,7 +90,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			<Button
 				className="rewind-flow__primary-button"
 				primary
-				onClick={ requestDownload }
+				onClick={ trackedRequestDownload }
 				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
 			>
 				{ translate( 'Create downloadable file' ) }
@@ -148,6 +154,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 			  );
 
+	const trackFileDownload = useTrackCallback( noop, 'calypso_jetpack_backup_file_download' );
 	const renderReady = () => (
 		<>
 			<div className="rewind-flow__header">
@@ -160,7 +167,12 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				{ translate( 'Your backup is now available for download.' ) }
 			</h3>
 			<p className="rewind-flow__info">{ getReadyCopy() }</p>
-			<Button href={ downloadUrl } primary className="rewind-flow__primary-button">
+			<Button
+				href={ downloadUrl }
+				primary
+				className="rewind-flow__primary-button"
+				onClick={ trackFileDownload }
+			>
 				{ translate( 'Download file' ) }
 			</Button>
 			<CheckYourEmail
@@ -185,7 +197,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					{
 						components: {
 							button: (
-								<Button className="rewind-flow__error-retry-button" onClick={ requestDownload } />
+								<Button
+									className="rewind-flow__error-retry-button"
+									onClick={ trackedRequestDownload }
+								/>
 							),
 						},
 					}
