@@ -178,10 +178,13 @@ WPLineItem.propTypes = {
 };
 
 function LineItemPrice( { item, isSummary } ) {
+	const volume = item.wpcom_meta?.volume || 1;
+	const amountBeforeDiscounts = volume * item.wpcom_meta?.item_original_cost_integer;
 	return (
 		<LineItemPriceUI isSummary={ isSummary }>
-			{ item.amount.value < item.wpcom_meta?.item_original_cost_integer ? (
+			{ item.amount.value < amountBeforeDiscounts ? (
 				<>
+					// Problem: if volume > 1 the display cost here is incorrect.
 					<s>{ item.wpcom_meta?.item_original_cost_display }</s> { item.amount.displayValue }
 				</>
 			) : (
