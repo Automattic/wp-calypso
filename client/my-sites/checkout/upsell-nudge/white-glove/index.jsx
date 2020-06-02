@@ -28,7 +28,7 @@ export class WhiteGlove extends PureComponent {
 
 		return (
 			<>
-				<PageViewTracker path="/checkout/offer-white-glove/:site" title={ title } />
+				<PageViewTracker path="/checkout/:site/offer-white-glove" title={ title } />
 				<DocumentHead title={ title } />
 
 				<CompactCard className="white-glove__card-header">{ this.header() }</CompactCard>

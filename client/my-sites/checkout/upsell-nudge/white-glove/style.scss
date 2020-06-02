@@ -201,6 +201,10 @@ main.white-glove.main {
 		font-family: helvetica, arial, sans-serif;
 		font-size: 16px;
 
+		@include breakpoint-deprecated( '<800px' ) {
+			padding: 15px;
+		}
+
 		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 			margin-top: 10px;
