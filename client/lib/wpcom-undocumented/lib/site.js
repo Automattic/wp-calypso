@@ -66,6 +66,7 @@ resources.forEach( function ( resource ) {
 	UndocumentedSite.prototype[ name ] = list.call( this, resourceOptions );
 } );
 
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * Create an UndocumentedSite instance
  *
