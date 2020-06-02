@@ -1,7 +1,15 @@
+#!/usr/bin/env node
+const yargs = require( 'yargs' );
 const fs = require( 'fs' );
 const { spawnSync } = require( 'child_process' );
 
-const args = process.argv.slice( 2 );
+const argv = yargs
+	.usage( 'Usage: $0 <file>' )
+	.example( '$0 packages/my-package/file.js', 'Rebuild the package containing the file' )
+	.help( 'h' )
+	.alias( 'h', 'help' ).argv;
+
+const args = argv._;
 if ( args.length < 1 ) {
 	console.error( 'failed to rebuild package: at least one filename must be provided' );
 	process.exit( 1 );
