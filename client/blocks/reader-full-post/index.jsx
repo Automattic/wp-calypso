@@ -313,7 +313,7 @@ export class FullPostView extends React.Component {
 		return (
 			<div
 				className="reader-full-post__seen-button"
-				title={ post.is_seen ? 'Mark post as seen' : 'Mark post as unseen' }
+				title={ post.is_seen ? 'Mark post as unseen' : 'Mark post as seen' }
 			>
 				<Gridicon
 					icon={ post.is_seen ? 'not-visible' : 'visible' }

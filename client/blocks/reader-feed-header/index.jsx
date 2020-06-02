@@ -96,6 +96,12 @@ class FeedHeader extends Component {
 								</div>
 							) }
 
+							{ site && following && ! isEmailBlocked && (
+								<div className="reader-feed-header__email-settings">
+									<ReaderSiteNotificationSettings siteId={ siteId } />
+								</div>
+							) }
+
 							{ config.isEnabled( 'reader/seen-posts' ) && feed && (
 								<button
 									onClick={ this.markAsSeen }
@@ -107,12 +113,6 @@ class FeedHeader extends Component {
 										{ translate( 'Mark all as seen' ) }
 									</span>
 								</button>
-							) }
-
-							{ site && following && ! isEmailBlocked && (
-								<div className="reader-feed-header__email-settings">
-									<ReaderSiteNotificationSettings siteId={ siteId } />
-								</div>
 							) }
 						</div>
 					</div>
