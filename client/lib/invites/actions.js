@@ -79,9 +79,13 @@ export function generateInviteLinks( siteId ) {
 	debug( 'generateInviteLinks', siteId );
 
 	return ( dispatch ) => {
-		wpcom.undocumented().generateInviteLinks( siteId, () => {
-			dispatch( requestSiteInvites( siteId ) );
-		} );
+		wpcom
+			.undocumented()
+			.site( siteId )
+			.generateInviteLinks()
+			.then( () => {
+				dispatch( requestSiteInvites( siteId ) );
+			} );
 	};
 }
 
@@ -89,9 +93,13 @@ export function disableInviteLinks( siteId ) {
 	debug( 'disableInviteLinks', siteId );
 
 	return ( dispatch ) => {
-		wpcom.undocumented().disableInviteLinks( siteId, () => {
-			dispatch( requestSiteInvites( siteId ) );
-		} );
+		wpcom
+			.undocumented()
+			.site( siteId )
+			.disableInviteLinks()
+			.then( () => {
+				dispatch( requestSiteInvites( siteId ) );
+			} );
 	};
 }
 
