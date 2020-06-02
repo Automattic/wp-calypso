@@ -123,8 +123,10 @@ export interface ResponseCartProduct {
 	currency: string;
 	product_cost_integer: number;
 	product_cost_display: string;
-	item_original_cost_integer: number;
-	item_original_cost_display: string;
+	item_original_cost_integer: number; // without discounts or volume
+	item_original_cost_display: string; // without discounts or volume
+	item_original_subtotal_integer: number; // without discounts, with volume
+	item_original_subtotal_display: string; // without discounts, with volume
 	item_subtotal_integer: number;
 	item_subtotal_display: string;
 	is_domain_registration: boolean;
@@ -155,6 +157,8 @@ export interface TempResponseCartProduct {
 	item_subtotal_display: null;
 	item_original_cost_display: null;
 	item_original_cost_integer: null;
+	item_original_subtotal_display: null;
+	item_original_subtotal_integer: null;
 	is_domain_registration: boolean | null;
 	is_bundled: boolean | null;
 	meta: string;
@@ -328,6 +332,8 @@ function convertRequestCartProductToResponseCartProduct(
 		currency: null,
 		item_original_cost_display: null,
 		item_original_cost_integer: null,
+		item_original_subtotal_display: null,
+		item_original_subtotal_integer: null,
 		product_cost_integer: null,
 		product_cost_display: null,
 		item_subtotal_integer: null,
