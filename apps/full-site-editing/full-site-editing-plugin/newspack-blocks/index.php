@@ -79,8 +79,24 @@ function newspack_blocks_block_args( $args, $name ) {
 
 	$args['editor_script'] = $block_prefix . 'editor';
 	$args['editor_style']  = $block_prefix . 'editor';
-	$args['script']        = $block_prefix . 'view';
-	$args['style']         = $block_prefix . 'view';
+	
+    // This fires from newspack-blocks at render time.
+    add_action(
+        'newspack_blocks_render_post_carousel',
+        function() {
+            wp_enqueue_style( 'carousel-block-view' );
+            wp_enqueue_script( 'carousel-block-view' );
+        }
+    );
+	
+    // This fires from newspack-blocks at render time.
+    add_action(
+        'newspack_blocks_render_homepage_articles',
+        function() {
+            wp_enqueue_style( 'blog-posts-block-view' );
+            wp_enqueue_script( 'blog-posts-block-view' );
+        }
+    );
 
 	wp_set_script_translations( $block_prefix . 'editor', 'full-site-editing' );
 
