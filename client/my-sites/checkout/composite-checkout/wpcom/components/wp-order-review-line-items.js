@@ -49,7 +49,8 @@ function WPLineItem( {
 	const isDisabled = formStatus !== 'ready';
 
 	// Show the variation picker when this is not a renewal
-	const shouldShowVariantSelector = item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
+	const shouldShowVariantSelector =
+		getItemVariants && item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
 
 	let sublabelAndIntervalPriceBreakdown = '';
@@ -302,7 +303,7 @@ export function WPOrderReviewLineItems( {
 						<LineItemUI
 							isSummaryVisible={ isSummaryVisible }
 							item={ item }
-							hasDeleteButton={ canItemBeDeleted( item ) }
+							hasDeleteButton={ ! isSummaryVisible && canItemBeDeleted( item ) }
 							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }

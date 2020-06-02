@@ -30,7 +30,7 @@ import debugFactory from 'debug';
  */
 import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import WPCheckoutOrderReview, { InactiveOrderReview } from './wp-checkout-order-review';
+import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid } from '../types';
@@ -199,6 +199,7 @@ export default function WPCheckout( {
 					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
 					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
 					activeStepContent={
 						<WPCheckoutOrderReview
 							removeItem={ removeItem }
@@ -212,7 +213,13 @@ export default function WPCheckout( {
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
-					completeStepContent={ <InactiveOrderReview /> }
+					completeStepContent={
+						<WPCheckoutOrderReview
+							isSummaryVisible
+							couponStatus={ couponStatus }
+							siteUrl={ siteUrl }
+						/>
+					}
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit your cart' ) }
 					nextStepButtonText={ translate( 'Save' ) }

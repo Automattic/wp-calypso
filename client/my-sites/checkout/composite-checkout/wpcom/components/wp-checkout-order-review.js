@@ -25,6 +25,7 @@ export default function WPCheckoutOrderReview( {
 	getItemVariants,
 	onChangePlanLength,
 	siteUrl,
+	isSummaryVisible,
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -52,6 +53,7 @@ export default function WPCheckoutOrderReview( {
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					couponStatus={ couponStatus }
+					isSummaryVisible={ isSummaryVisible }
 				/>
 			</WPOrderReviewSection>
 
@@ -61,6 +63,7 @@ export default function WPCheckoutOrderReview( {
 				isPurchaseFree={ isPurchaseFree }
 				couponStatus={ couponStatus }
 				couponFieldStateProps={ couponFieldStateProps }
+				isSummaryVisible={ isSummaryVisible }
 			/>
 		</div>
 	);
