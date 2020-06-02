@@ -196,11 +196,15 @@ export const LineItemUI = styled( WPLineItem )`
 	color: ${ ( { theme, total } ) =>
 		total ? theme.colors.textColorDark : theme.colors.textColor };
 	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
-	padding: ${ ( { total, isSummary, tax, subtotal } ) =>
-		isSummary || total || subtotal || tax ? '10px 0' : '20px 0' };
-	border-bottom: ${ ( { theme, total, isSummary } ) =>
-		isSummary || total ? 0 : '1px solid ' + theme.colors.borderColorLight };
+	padding: ${ ( { total, tax, subtotal } ) => ( total || subtotal || tax ? '10px 0' : '20px 0' ) };
+	border-bottom: ${ ( { theme, total } ) =>
+		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
+
+	.is-summary & {
+		padding: 10px 0;
+		border-bottom: 0;
+	}
 `;
 
 const LineItemMeta = styled.div`
@@ -301,7 +305,6 @@ export function WPOrderReviewLineItems( {
 				.map( ( item ) => (
 					<WPOrderReviewListItem key={ item.id }>
 						<LineItemUI
-							isSummary={ isSummary }
 							item={ item }
 							hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
 							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }

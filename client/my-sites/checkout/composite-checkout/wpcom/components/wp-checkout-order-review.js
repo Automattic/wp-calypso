@@ -65,7 +65,6 @@ export default function WPCheckoutOrderReview( {
 				isPurchaseFree={ isPurchaseFree }
 				couponStatus={ couponStatus }
 				couponFieldStateProps={ couponFieldStateProps }
-				isSummary={ isSummary }
 			/>
 		</div>
 	);
