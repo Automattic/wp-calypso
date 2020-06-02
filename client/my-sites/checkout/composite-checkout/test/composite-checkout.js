@@ -753,7 +753,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 		coupon_discounts_integer: [],
-		tax: {},
+		tax: { location: {}, display_taxes: true },
 	};
 }
 
