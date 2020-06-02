@@ -173,7 +173,7 @@
 		"@storybook/preset-scss": "^1.0.2",
 		"@storybook/preset-typescript": "^1.2.2",
 		"@storybook/react": "^5.3.18",
-		"@testing-library/jest-dom": "^4.2.4",
+		"@testing-library/jest-dom": "^5.9.0",
 		"@testing-library/react": "^9.3.3",
 		"@types/classnames": "^2.2.10",
 		"@types/cookie": "^0.4.0",
