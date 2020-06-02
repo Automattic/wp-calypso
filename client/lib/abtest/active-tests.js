@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import * as RUM_DATA_COLLECTION from 'lib/performance-tracking/const';
+
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -135,5 +140,15 @@ export default {
 		defaultVariation: 'control',
 		localeTargets: 'any',
 		countryCodeTargets: [ 'JP' ],
+	},
+	[ RUM_DATA_COLLECTION.AB_NAME ]: {
+		datestamp: '20200602',
+		variations: {
+			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 5,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 95,
+		},
+		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
+		localeTargetes: 'any',
+		allowExistingUsers: true,
 	},
 };
