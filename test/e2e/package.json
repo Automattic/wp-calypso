@@ -26,7 +26,7 @@
 		"asana-phrase": "^0.0.8",
 		"cached-path-relative": ">=1.0.2",
 		"check-npm-client": "^1.1.1",
-		"chromedriver": "^80.0.0",
+		"chromedriver": "^83.0.0",
 		"concurrently": "^3.6.1",
 		"config": "^1.28.0",
 		"cryptiles": ">=4.1.2",
