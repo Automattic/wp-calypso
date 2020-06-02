@@ -109,8 +109,5 @@
 		"lodash": "*",
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.6.0"
-	},
-	"devDependencies": {
-		"@types/wordpress__hooks": "2.4.0"
 	}
 }
