@@ -55,7 +55,7 @@ class Block_Patterns {
 			register_block_pattern_category( 'menu', array( 'label' => _x( 'Menu', 'Block pattern category', 'full-site-editing' ) ) );
 		}
 
-		if ( class_exists( 'WP_Block_Patterns_Registry' ) && ! \WP_Block_Patterns_Registry::get_instance()->is_registered( 'text-two-columns' ) ) {
+		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
 			// Remove core patterns except 'Two Columns of Text'.
 			// Unfortunately, \WP_Block_Patterns_Registry::get_instance()->get_all_registered() doesn't return the pattern names as keys.
 			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
