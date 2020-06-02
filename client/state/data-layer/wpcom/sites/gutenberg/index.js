@@ -30,7 +30,12 @@ const fetchGutenbergOptInData = ( action ) =>
 
 const setGutenbergOptInData = (
 	{ siteId },
-	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
+	{
+		editor_web: editor,
+		opt_in: optIn,
+		opt_out: optOut,
+		in_editor_deprecation_group: inEditorDeprecationGroup,
+	}
 ) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
