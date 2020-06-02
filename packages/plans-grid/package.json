@@ -34,6 +34,7 @@
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@wordpress/components": "^9.6.0",
 		"@wordpress/icons": "^2.0.0",
+		"@wordpress/primitives": "^1.5.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
 		"tslib": "^1.10.0",
