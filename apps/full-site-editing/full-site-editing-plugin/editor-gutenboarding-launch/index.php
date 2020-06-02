@@ -28,8 +28,8 @@ function enqueue_script_and_style() {
 
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.asset.php';
 	$script_dependencies = isset( $asset_file['dependences'] ) ? $asset_file['dependencies'] : array();
-	$script_version      = isset( $asset_file['verson'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.js' );
-	$style_version       = isset( $asset_file['verson'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.css' );
+	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.js' );
+	$style_version       = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.css' );
 
 	wp_enqueue_script(
 		'a8c-fse-editor-gutenboarding-launch-script',
