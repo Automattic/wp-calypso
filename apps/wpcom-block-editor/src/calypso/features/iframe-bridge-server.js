@@ -13,6 +13,7 @@ import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -560,6 +561,7 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
 /**
  * Prevents the default closing flow and sends a message to the parent frame to
  * perform the navigation on the client side.
+ * Also changes the title on the button to match wpcom's close behavior
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
@@ -567,6 +569,7 @@ function handleCloseEditor( calypsoPort ) {
 	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a'; // maintain support for Gutenberg plugin < v7.7
 	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
 	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
+	const closeModalButtonTitle = __( 'Home' );
 
 	addAction( 'a8c.wpcom-block-editor.closeEditor', 'a8c/wpcom-block-editor/closeEditor', () => {
 		const { port2 } = new MessageChannel();
@@ -593,6 +596,7 @@ function handleCloseEditor( calypsoPort ) {
 
 	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, dispatchAction );
 	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, dispatchAction );
+	$( `#edit-site-editor ${ siteEditorSelector }` ).title( closeModalButtonTitle );
 }
 
 /**
