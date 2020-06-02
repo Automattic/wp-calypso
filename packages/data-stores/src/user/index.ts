@@ -12,8 +12,8 @@ import { createActions } from './actions';
 import { createResolvers } from './resolvers';
 import * as selectors from './selectors';
 import { controls } from '../wpcom-request-controls';
-import { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import { WpcomClientCredentials } from '../shared-types';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
 export { State };

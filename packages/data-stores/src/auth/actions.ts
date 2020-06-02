@@ -7,7 +7,7 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import {
+import type {
 	AuthOptionsSuccessResponse,
 	AuthOptionsErrorResponse,
 	WpLoginSuccessResponse,
@@ -27,7 +27,7 @@ import {
 	wait,
 } from '../wpcom-request-controls';
 import { remoteLoginUser } from './controls';
-import { WpcomClientCredentials } from '../shared-types';
+import type { WpcomClientCredentials } from '../shared-types';
 import { getNextTaskId } from './utils';
 
 export interface ActionsConfig extends WpcomClientCredentials {

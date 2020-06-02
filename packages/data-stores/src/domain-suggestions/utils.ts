@@ -6,7 +6,7 @@ import deterministicStringify from 'fast-json-stable-stringify';
 /**
  * Internal dependencies
  */
-import { DomainSuggestionQuery } from './types';
+import type { DomainSuggestionQuery } from './types';
 
 /**
  * Stable transform to an object key for storage and access.

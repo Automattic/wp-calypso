@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { State } from './reducer';
+import type { State } from './reducer';
 import { planDetails, PLANS_LIST } from './plans-data';
 import { DEFAULT_PAID_PLAN, PLAN_FREE, PLAN_ECOMMERCE } from './constants';
 import type { PlanSlug } from './types';

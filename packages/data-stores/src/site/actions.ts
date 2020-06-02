@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import {
+import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
 	NewSiteSuccessResponse,
 	SiteDetails,
 	SiteError,
 } from './types';
-import { WpcomClientCredentials } from '../shared-types';
+import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {

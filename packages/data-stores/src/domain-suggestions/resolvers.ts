@@ -8,6 +8,7 @@ import { stringify } from 'qs';
  */
 import { receiveCategories, receiveDomainSuggestions } from './actions';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
+import type { Selectors } from './selectors';
 
 export function* getCategories() {
 	const categories = yield fetchAndParse(
@@ -18,9 +19,7 @@ export function* getCategories() {
 
 export function* __internalGetDomainSuggestions(
 	// Resolver has the same signature as corresponding selector without the initial state argument
-	queryObject: Parameters<
-		import('./selectors').Selectors[ '__internalGetDomainSuggestions' ]
-	>[ 1 ]
+	queryObject: Parameters< Selectors[ '__internalGetDomainSuggestions' ] >[ 1 ]
 ) {
 	// If normalized search string (`query`) contains no alphanumerics, endpoint 404s
 	if ( ! queryObject.query ) {

@@ -7,8 +7,8 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { STORE_KEY } from './constants';
-import { DomainSuggestionQuery } from './types';
-import { State } from './reducer';
+import type { DomainSuggestionQuery } from './types';
+import type { State } from './reducer';
 import { stringifyDomainQueryObject } from './utils';
 
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
@@ -84,8 +84,6 @@ const createSelectors = ( vendor: string ) => {
 
 	/**
 	 * Do not use this selector. It is for internal use.
-	 *
-	 * @private
 	 *
 	 * @param state Store state
 	 * @param queryObject Normalized object representing the query
