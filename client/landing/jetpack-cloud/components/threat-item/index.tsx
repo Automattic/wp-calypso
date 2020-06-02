@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
@@ -17,6 +18,7 @@ import ThreatItemSubheader from 'landing/jetpack-cloud/components/threat-item-su
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
 import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
 import useTrackCallback from 'landing/jetpack-cloud/lib/use-track-callback';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -93,9 +95,10 @@ const ThreatItem: React.FC< Props > = ( {
 		[ threat ]
 	);
 
+	const currentRoute = useSelector( getCurrentRoute );
 	const onOpenTrackEvent = useTrackCallback( noop, 'calypso_jetpack_scan_threat_itemtoggle', {
 		threat_signature: threat.signature,
-		section: window.location.pathname.includes( '/scan/history' ) ? 'History' : 'Scanner',
+		section: currentRoute && currentRoute.includes( '/scan/history' ) ? 'History' : 'Scanner',
 	} );
 
 	if ( isPlaceholder ) {
