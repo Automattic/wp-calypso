@@ -35,7 +35,6 @@ import ReaderSidebarPromo from './promo';
 import QueryReaderOrganizations from 'components/data/query-reader-organizations';
 import { getReaderOrganizations } from 'state/reader/organizations/selectors';
 import ReaderSidebarFollowedSites from 'reader/sidebar/reader-sidebar-followed-sites';
-import config from 'config';
 import SidebarSeparator from 'layout/sidebar/separator';
 
 /**
@@ -166,20 +165,19 @@ export class ReaderSidebar extends React.Component {
 									link="/discover"
 								/>
 							) }
-							<SidebarSeparator />
-							{ config.isEnabled( 'reader/seen-posts' ) && (
-								<>
-									<QueryReaderOrganizations />
 
-									<ReaderSidebarOrganizations
-										organizations={ this.props.organizations }
-										path={ path }
-									/>
-
-									<ReaderSidebarFollowedSites path={ path } />
-								</>
-							) }
 							<SidebarSeparator />
+
+							<ReaderSidebarFollowedSites path={ path } />
+
+							<QueryReaderOrganizations />
+							<ReaderSidebarOrganizations
+								organizations={ this.props.organizations }
+								path={ path }
+							/>
+
+							<SidebarSeparator />
+
 							<SidebarItem
 								className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
 									'sidebar-streams__conversations': true,
