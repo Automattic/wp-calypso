@@ -73,13 +73,13 @@ export default function WPCheckoutOrderReview( {
 WPCheckoutOrderReview.propTypes = {
 	summary: PropTypes.bool,
 	className: PropTypes.string,
-	removeItem: PropTypes.func.isRequired,
-	removeCoupon: PropTypes.func.isRequired,
+	removeItem: PropTypes.func,
+	removeCoupon: PropTypes.func,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	siteUrl: PropTypes.string,
 	couponStatus: PropTypes.string,
-	couponFieldStateProps: PropTypes.object,
+	couponFieldStateProps: PropTypes.object.isRequired,
 	variantSelectOverride: PropTypes.array,
 };
 
@@ -127,6 +127,7 @@ const DomainURL = styled.div`
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
+	margin: 10px 0;
 `;
 
 const CouponField = styled( Coupon )`

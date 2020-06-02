@@ -214,7 +214,12 @@ export default function WPCheckout( {
 					}
 					titleContent={ <OrderReviewTitle /> }
 					completeStepContent={
-						<WPCheckoutOrderReview isSummary couponStatus={ couponStatus } siteUrl={ siteUrl } />
+						<WPCheckoutOrderReview
+							isSummary
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							siteUrl={ siteUrl }
+						/>
 					}
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit your cart' ) }
