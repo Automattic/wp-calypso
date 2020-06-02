@@ -363,6 +363,7 @@ class PurchaseMeta extends Component {
 							<AutoRenewToggle
 								planName={ site.plan.product_name_short }
 								siteDomain={ site.domain }
+								siteSlug={ site.slug }
 								purchase={ purchase }
 								toggleSource="manage-purchase"
 							/>
