@@ -3,11 +3,11 @@
  */
 import React from 'react';
 import { useSelect } from '@wordpress/data';
+import { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import { PLANS_STORE } from '../../../stores/plans';
 import PlanItem from './plan-item';
 
 /**
@@ -15,12 +15,14 @@ import PlanItem from './plan-item';
  */
 import './style.scss';
 
+const PLANS_STORE = Plans.register();
+
 export interface Props {
 	selectedPlanSlug: string;
 	onPlanSelect: ( planSlug: string ) => void;
 }
 
-const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSelect } ) => {
+const PlansTable: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSelect } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
 
@@ -46,4 +48,4 @@ const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSele
 	);
 };
 
-export default Plans;
+export default PlansTable;

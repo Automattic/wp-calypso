@@ -6,12 +6,14 @@ import { useI18n } from '@automattic/react-i18n';
 import { Path, SVG } from '@wordpress/primitives';
 import { Icon } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
-/**
- * Internal dependencies
- */
+import { Plans } from '@automattic/data-stores';
 
-import { PLANS_STORE } from '../../../stores/plans';
+/**
+ * Style dependencies
+ */
 import './style.scss';
+
+const PLANS_STORE = Plans.register();
 
 const PlansDetails: React.FunctionComponent = ( props ) => {
 	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );
