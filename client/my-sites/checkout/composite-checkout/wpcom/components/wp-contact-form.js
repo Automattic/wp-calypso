@@ -227,7 +227,8 @@ function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 					) }
 
 					{ ( isGSuiteInCart || showDomainContactSummary ) &&
-						contactInfo.alternateEmail.value?.length > 0 && (
+						contactInfo.alternateEmail.value?.length > 0 &&
+						contactInfo.alternateEmail.value !== contactInfo.email.value && (
 							<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
 						) }
 
