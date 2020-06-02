@@ -580,9 +580,13 @@ function CheckoutStepHeader( {
 				{ title }
 			</StepTitle>
 			{ shouldShowEditButton && (
-				<Button buttonState="text-button" onClick={ onEdit } aria-label={ editButtonAriaLabel }>
+				<HeaderEditButton
+					buttonState="text-button"
+					onClick={ onEdit }
+					aria-label={ editButtonAriaLabel }
+				>
 					{ editButtonText || localize( 'Edit' ) }
-				</Button>
+				</HeaderEditButton>
 			) }
 		</StepHeader>
 	);
@@ -689,6 +693,11 @@ const StepNumberCompleted = styled( StepNumber )`
 	svg {
 		margin-top: 4px;
 	}
+`;
+
+const HeaderEditButton = styled( Button )`
+	font-size: 14px;
+	padding-top: 1px;
 `;
 
 function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {

@@ -123,16 +123,28 @@ const DomainURL = styled.div`
 	font-size: 14px;
 	margin-top: -10px;
 	word-break: break-word;
+
+	.is-summary & {
+		margin-bottom: 10px;
+	}
 `;
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
-	margin: 10px 0;
+	margin: 10px 0 20px;
+
+	.is-summary & {
+		margin-bottom: 0;
+	}
 `;
 
 const CouponField = styled( Coupon )`
 	margin: 20px 30px 0 0;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+
+	.is-summary & {
+		margin: 10px 0 0;
+	}
 `;
 
 const CouponEnableButton = styled.button`
