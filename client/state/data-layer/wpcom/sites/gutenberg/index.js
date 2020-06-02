@@ -12,11 +12,13 @@ import {
 	EDITOR_TYPE_SET,
 	EDITOR_TYPE_UPDATE,
 	GUTENBERG_OPT_IN_OUT_SET,
+	EDITOR_DEPRECATION_GROUP_SET,
 } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { replaceHistory } from 'state/ui/actions';
+import 'state/editor-deprecation-group/init';
 
 const fetchGutenbergOptInData = ( action ) =>
 	http(
@@ -39,6 +41,7 @@ const setGutenbergOptInData = (
 ) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
+	dispatch( { type: EDITOR_DEPRECATION_GROUP_SET, inEditorDeprecationGroup } );
 };
 
 const dispatchFetchGutenbergOptInData = dispatchRequest( {
