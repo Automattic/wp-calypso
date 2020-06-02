@@ -153,10 +153,12 @@ export default function WPCheckout( {
 	const validateContactDetails = async () => {
 		debug( 'validating contact details' );
 		if ( isDomainFieldsVisible ) {
-			const validationResult = getDomainValidationResult( items, contactInfo );
+			const validationResult = await getDomainValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
-			const validationResult = getGSuiteValidationResult( items, contactInfo );
+			const validationResult = await getGSuiteValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
 		return isCompleteAndValid( contactInfo );

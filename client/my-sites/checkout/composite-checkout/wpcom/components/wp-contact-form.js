@@ -366,7 +366,9 @@ function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
 					debug( 'Contact details are already populated; skipping to payment method step' );
 					saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
 					setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
+					return;
 				}
+				debug( 'Contact details are already populated but not valid' );
 			} );
 		}
 	}, [ cachedContactDetails, contactValidationCallback, setStepCompleteStatus ] );
