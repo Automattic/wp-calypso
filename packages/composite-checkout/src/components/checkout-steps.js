@@ -277,8 +277,8 @@ export function CheckoutStep( {
 
 	const classNames = [
 		'checkout-step',
-		...( isStepActive ? [ 'checkout-step--is-active' ] : [] ),
-		...( isStepComplete ? [ 'checkout-step--is-complete' ] : [] ),
+		...( isStepActive ? [ 'is-active' ] : [] ),
+		...( isStepComplete ? [ 'is-complete' ] : [] ),
 		...( className ? [ className ] : [] ),
 	];
 
@@ -538,6 +538,15 @@ const StepWrapperUI = styled.div`
 	position: relative;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
+
+	&.checkout-step {
+		background: ${ ( props ) => props.theme.colors.background };
+	}
+
+	&.checkout-step.is-active,
+	&.checkout-step.is-complete {
+		background: ${ ( props ) => props.theme.colors.surface };
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 24px;
