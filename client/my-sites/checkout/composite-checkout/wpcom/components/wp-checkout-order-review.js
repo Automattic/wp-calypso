@@ -25,7 +25,7 @@ export default function WPCheckoutOrderReview( {
 	getItemVariants,
 	onChangePlanLength,
 	siteUrl,
-	isSummaryVisible,
+	isSummary,
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -41,7 +41,9 @@ export default function WPCheckoutOrderReview( {
 	};
 
 	return (
-		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
+		<div
+			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
+		>
 			{ domainUrl && <DomainURL>{ translate( 'Site: %s', { args: domainUrl } ) }</DomainURL> }
 
 			<WPOrderReviewSection>
@@ -53,7 +55,7 @@ export default function WPCheckoutOrderReview( {
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					couponStatus={ couponStatus }
-					isSummaryVisible={ isSummaryVisible }
+					isSummary={ isSummary }
 				/>
 			</WPOrderReviewSection>
 
@@ -63,7 +65,7 @@ export default function WPCheckoutOrderReview( {
 				isPurchaseFree={ isPurchaseFree }
 				couponStatus={ couponStatus }
 				couponFieldStateProps={ couponFieldStateProps }
-				isSummaryVisible={ isSummaryVisible }
+				isSummary={ isSummary }
 			/>
 		</div>
 	);

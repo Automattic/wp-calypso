@@ -214,11 +214,7 @@ export default function WPCheckout( {
 					}
 					titleContent={ <OrderReviewTitle /> }
 					completeStepContent={
-						<WPCheckoutOrderReview
-							isSummaryVisible
-							couponStatus={ couponStatus }
-							siteUrl={ siteUrl }
-						/>
+						<WPCheckoutOrderReview isSummary couponStatus={ couponStatus } siteUrl={ siteUrl } />
 					}
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit your cart' ) }

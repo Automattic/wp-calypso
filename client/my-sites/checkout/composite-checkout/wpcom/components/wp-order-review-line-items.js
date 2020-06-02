@@ -160,7 +160,7 @@ function WPLineItem( {
 WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
-	isSummaryVisible: PropTypes.bool,
+	isSummary: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
@@ -196,10 +196,10 @@ export const LineItemUI = styled( WPLineItem )`
 	color: ${ ( { theme, total } ) =>
 		total ? theme.colors.textColorDark : theme.colors.textColor };
 	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
-	padding: ${ ( { total, isSummaryVisible, tax, subtotal } ) =>
-		isSummaryVisible || total || subtotal || tax ? '10px 0' : '20px 0' };
-	border-bottom: ${ ( { theme, total, isSummaryVisible } ) =>
-		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight };
+	padding: ${ ( { total, isSummary, tax, subtotal } ) =>
+		isSummary || total || subtotal || tax ? '10px 0' : '20px 0' };
+	border-bottom: ${ ( { theme, total, isSummary } ) =>
+		isSummary || total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
 `;
 
@@ -286,7 +286,7 @@ export function WPOrderReviewTotal( { total, className } ) {
 export function WPOrderReviewLineItems( {
 	items,
 	className,
-	isSummaryVisible,
+	isSummary,
 	removeItem,
 	removeCoupon,
 	variantSelectOverride,
@@ -301,9 +301,9 @@ export function WPOrderReviewLineItems( {
 				.map( ( item ) => (
 					<WPOrderReviewListItem key={ item.id }>
 						<LineItemUI
-							isSummaryVisible={ isSummaryVisible }
+							isSummary={ isSummary }
 							item={ item }
-							hasDeleteButton={ ! isSummaryVisible && canItemBeDeleted( item ) }
+							hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
 							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
@@ -318,7 +318,7 @@ export function WPOrderReviewLineItems( {
 
 WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
-	isSummaryVisible: PropTypes.bool,
+	isSummary: PropTypes.bool,
 	removeItem: PropTypes.func,
 	removeCoupon: PropTypes.func,
 	items: PropTypes.arrayOf(
