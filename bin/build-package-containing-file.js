@@ -37,7 +37,7 @@ if ( ! packageName ) {
 	console.error( 'failed to rebuild package: missing package name' );
 	process.exit( 1 );
 }
-const buildResult = spawnSync( 'yarn', [ 'lerna run prepare', `--scope="${ packageName }"` ], {
+const buildResult = spawnSync( 'yarn', [ 'workspace', `${ packageName }`, 'prepare' ], {
 	shell: true,
 	stdio: 'inherit',
 } );
