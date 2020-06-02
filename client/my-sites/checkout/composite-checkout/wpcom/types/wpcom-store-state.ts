@@ -544,7 +544,6 @@ function prepareFrDomainContactExtraDetailsErrors(
 }
 
 export function prepareDomainContactValidationRequest(
-	domainNames: string[],
 	details: ManagedContactDetails
 ): DomainContactValidationRequest {
 	const extra: DomainContactValidationRequestExtraFields = {};
@@ -573,7 +572,6 @@ export function prepareDomainContactValidationRequest(
 	}
 
 	return {
-		domain_names: domainNames,
 		contact_information: {
 			firstName: details.firstName?.value,
 			lastName: details.lastName?.value,

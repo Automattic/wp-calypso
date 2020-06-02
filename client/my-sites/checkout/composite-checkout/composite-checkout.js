@@ -73,9 +73,6 @@ import {
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import createContactValidationCallback, {
-	createGSuiteContactValidationCallback,
-} from './contact-validation';
 import { fillInSingleCartItemAttributes } from 'lib/cart-values';
 import {
 	hasGoogleApps,
@@ -111,10 +108,6 @@ const wpcom = wp.undocumented();
 const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
-const wpcomValidateDomainContactInformation = ( ...args ) =>
-	wpcom.validateDomainContactInformation( ...args );
-const wpcomValidateGSuiteContactInformation = ( ...args ) =>
-	wpcom.validateGoogleAppsContactInformation( ...args );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -123,7 +116,6 @@ export default function CompositeCheckout( {
 	getCart,
 	setCart,
 	getStoredCards,
-	validateDomainContactDetails,
 	allowedPaymentMethods,
 	onlyLoadPaymentMethods,
 	overrideCountryList,
@@ -394,18 +386,6 @@ export default function CompositeCheckout( {
 				serverAllowedPaymentMethods,
 		  } );
 
-	const domainContactValidationCallback = createContactValidationCallback( {
-		validateDomainContact: validateDomainContactDetails || wpcomValidateDomainContactInformation,
-		recordEvent,
-		showErrorMessage: showErrorMessageBriefly,
-	} );
-
-	const gSuiteContactValidationCallback = createGSuiteContactValidationCallback( {
-		validateGSuiteContact: wpcomValidateGSuiteContactInformation,
-		recordEvent,
-		showErrorMessage: showErrorMessageBriefly,
-	} );
-
 	const renderDomainContactFields = (
 		domainNames,
 		contactDetails,
@@ -553,13 +533,12 @@ export default function CompositeCheckout( {
 					renderDomainContactFields={ renderDomainContactFields }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
-					domainContactValidationCallback={ domainContactValidationCallback }
-					gSuiteContactValidationCallback={ gSuiteContactValidationCallback }
 					responseCart={ responseCart }
 					addItemToCart={ addItemWithEssentialProperties }
 					subtotal={ subtotal }
 					isCartPendingUpdate={ isCartPendingUpdate }
 					CheckoutTerms={ CheckoutTerms }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>

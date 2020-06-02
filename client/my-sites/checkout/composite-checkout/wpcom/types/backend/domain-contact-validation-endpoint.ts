@@ -4,7 +4,6 @@
  * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
  */
 export type DomainContactValidationRequest = {
-	domain_names: string[];
 	contact_information: {
 		firstName?: string;
 		lastName?: string;

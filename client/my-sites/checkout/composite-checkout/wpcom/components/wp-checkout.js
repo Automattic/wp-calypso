@@ -19,6 +19,7 @@ import {
 	useDispatch,
 	useTotal,
 	usePaymentMethod,
+	useEvents,
 	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
@@ -36,6 +37,12 @@ import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
 import SecondaryCartPromotions from './secondary-cart-promotions';
+import {
+	handleContactValidationResult,
+	isContactValidationResponseValid,
+	getDomainValidationResult,
+	getGSuiteValidationResult,
+} from 'my-sites/checkout/composite-checkout/contact-validation';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -86,17 +93,17 @@ export default function WPCheckout( {
 	renderDomainContactFields,
 	variantSelectOverride,
 	getItemVariants,
-	domainContactValidationCallback,
-	gSuiteContactValidationCallback,
 	responseCart,
 	addItemToCart,
 	subtotal,
 	isCartPendingUpdate,
+	showErrorMessageBriefly,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
+	const onEvent = useEvents();
 
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
@@ -116,42 +123,31 @@ export default function WPCheckout( {
 		setShouldShowContactDetailsValidationErrors,
 	] = useState( false );
 
-	const contactValidationCallback = async () => {
-		updateLocation( {
-			countryCode: contactInfo.countryCode.value,
-			postalCode: contactInfo.postalCode.value,
-			subdivisionCode: contactInfo.state.value,
-		} );
-		// Touch the fields so they display validation errors
-		touchContactFields();
-
+	const validateContactDetailsAndDisplayErrors = async () => {
+		debug( 'validating contact details with side effects' );
 		if ( isDomainFieldsVisible ) {
-			const domainNames = items
-				.filter( isLineItemADomain )
-				.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
-
-			const hasValidationErrors = await domainContactValidationCallback(
-				activePaymentMethod.id,
-				contactInfo,
-				domainNames,
-				applyDomainContactValidationResults
-			);
-			return ! hasValidationErrors;
+			const validationResult = await getDomainValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod.id,
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
-			const domainNames = items
-				.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
-				.map( ( item ) => item.wpcom_meta?.meta ?? '' );
-
-			const hasValidationErrors = await gSuiteContactValidationCallback(
-				activePaymentMethod.id,
-				contactInfo,
-				domainNames,
-				applyDomainContactValidationResults
-			);
-			debug( 'gSuiteContactValidationCallback returned', hasValidationErrors );
-			return ! hasValidationErrors;
+			const validationResult = await getGSuiteValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod.id,
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
-
 		return isCompleteAndValid( contactInfo );
 	};
 
@@ -213,7 +209,16 @@ export default function WPCheckout( {
 							stepId={ 'contact-form' }
 							isCompleteCallback={ () => {
 								setShouldShowContactDetailsValidationErrors( true );
-								return contactValidationCallback();
+								// Touch the fields so they display validation errors
+								touchContactFields();
+								// Update tax location in cart
+								updateLocation( {
+									countryCode: contactInfo.countryCode.value,
+									postalCode: contactInfo.postalCode.value,
+									subdivisionCode: contactInfo.state.value,
+								} );
+
+								return validateContactDetailsAndDisplayErrors();
 							} }
 							activeStepContent={
 								<WPContactForm
