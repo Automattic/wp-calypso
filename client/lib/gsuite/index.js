@@ -2,7 +2,7 @@
  * External dependencies
  */
 import formatCurrency from '@automattic/format-currency';
-import { endsWith, get, isNumber, isString, sortBy } from 'lodash';
+import { endsWith, get, isNumber, isString, sortBy, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -166,9 +166,9 @@ function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
  * @returns {boolean} - true if the domain is under our management, false otherwise
  */
 function hasGSuiteWithUs( domain ) {
-	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
-
-	return 'no_subscription' !== domainStatus && 'other_provider' !== domainStatus;
+	const defaultValue = '';
+	const domainStatus = get( domain, 'googleAppsSubscription.status', defaultValue );
+	return ! includes( [ defaultValue, 'no_subscription', 'other_provider' ], domainStatus );
 }
 
 /**
