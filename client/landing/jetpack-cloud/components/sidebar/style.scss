@@ -11,6 +11,16 @@
 		}
 	}
 
+	.sidebar__menu-link-text {
+		line-height: 1.2em;
+
+		@include breakpoint-deprecated( '<960px' ) {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
 	// Expandables
 	.sidebar__menu.is-togglable {
 		.sidebar__heading {
