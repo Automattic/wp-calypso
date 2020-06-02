@@ -195,7 +195,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the review step active', () => {
-				const activeSteps = container.querySelectorAll( '.checkout-step--is-active' );
+				const activeSteps = container.querySelectorAll( '.checkout-step.is-active' );
 				expect( activeSteps ).toHaveLength( 1 );
 				expect( activeSteps[ 0 ] ).toHaveTextContent( 'Review your order' );
 			} );
