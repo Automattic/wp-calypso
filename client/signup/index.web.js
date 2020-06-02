@@ -25,6 +25,7 @@ export default function () {
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
 		controller.start,
+		controller.importSiteInfoFromQuery,
 		makeLayout,
 		clientRender
 	);

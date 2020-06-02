@@ -30,9 +30,17 @@ import { setSelectedSiteId } from 'state/ui/actions';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import {
+	getSiteVerticalId,
+	getSiteVerticalIsUserInput,
+} from 'state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { login } from 'lib/paths';
 import { waitForData } from 'state/data-layer/http-data';
 import { requestGeoLocation } from 'state/data-getters';
+import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -218,6 +226,27 @@ export default {
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName ),
 		} );
+
+		next();
+	},
+	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
+		const state = signupStore.getState();
+		const verticalId = getSiteVerticalId( state );
+		const verticalIsUserInput = getSiteVerticalIsUserInput( state );
+		const siteType = getSiteType( state );
+
+		if ( ! siteType && query.site_type ) {
+			signupStore.dispatch( setSiteType( query.site_type ) );
+		}
+
+		if ( ( ! verticalId || ! verticalIsUserInput ) && query.vertical ) {
+			signupStore.dispatch(
+				setSiteVertical( {
+					id: getDotBlogVerticalId( query.vertical ) || query.vertical,
+					isUserInput: false,
+				} )
+			);
+		}
 
 		next();
 	},
