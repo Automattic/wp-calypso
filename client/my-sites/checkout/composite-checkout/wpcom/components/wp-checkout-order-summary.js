@@ -174,7 +174,7 @@ function getPlanFeatures( plan, translate, hasDomainsInCart ) {
 	) {
 		return [
 			! hasDomainsInCart && translate( 'Free domain for one year' ),
-			translate( 'Install plugins and themes' ),
+			translate( 'Install custom plugins and themes' ),
 			translate( 'Drive traffic to your site with our advanced SEO tools' ),
 			translate( 'Track your stats with Google Analytics' ),
 		];
