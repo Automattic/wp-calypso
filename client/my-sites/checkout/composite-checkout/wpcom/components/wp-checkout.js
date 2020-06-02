@@ -222,9 +222,9 @@ export default function WPCheckout( {
 						/>
 					}
 					editButtonText={ translate( 'Edit' ) }
-					editButtonAriaLabel={ translate( 'Edit your cart' ) }
-					nextStepButtonText={ translate( 'Save' ) }
-					nextStepButtonAriaLabel={ translate( 'Save your cart' ) }
+					editButtonAriaLabel={ translate( 'Edit your order' ) }
+					nextStepButtonText={ translate( 'Save order' ) }
+					nextStepButtonAriaLabel={ translate( 'Save your order' ) }
 					validatingButtonText={
 						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
 					}
