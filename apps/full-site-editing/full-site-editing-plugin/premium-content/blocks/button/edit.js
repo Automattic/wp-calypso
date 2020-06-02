@@ -1,257 +1,102 @@
-import { __ } from '@wordpress/i18n';
-import { useEffect } from '@wordpress/element';
-import { compose } from '@wordpress/compose';
-import { Button, ButtonGroup, PanelBody, withFallbackStyles } from '@wordpress/components';
-import {
-	BlockAlignmentToolbar,
-	BlockControls,
-	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings,
-	RichText,
-	withColors,
-} from '@wordpress/block-editor';
-import { get } from 'lodash';
+/**
+ * External dependencies
+ */
 import classnames from 'classnames';
 
-const { getComputedStyle } = window;
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+import { useCallback } from '@wordpress/element';
+import { Button, ButtonGroup, PanelBody, RangeControl } from '@wordpress/components';
+import { InspectorControls, RichText, __experimentalBlock as Block } from '@wordpress/block-editor';
 
-const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
-	const { textButtonColor, backgroundButtonColor } = ownProps;
-	const backgroundColorValue = backgroundButtonColor && backgroundButtonColor.color;
-	const textColorValue = textButtonColor && textButtonColor.color;
-	//avoid the use of querySelector if textColor color is known and verify if node is available.
+/**
+ * Internal dependencies
+ */
+import ColorEdit from './color-edit';
+import getColorAndStyleProps from './color-props';
 
-	let textNode;
-	let button;
+const MIN_BORDER_RADIUS_VALUE = 0;
+const MAX_BORDER_RADIUS_VALUE = 50;
+const INITIAL_BORDER_RADIUS_POSITION = 5;
 
-	if ( ! textColorValue && node ) {
-		textNode = node.querySelector( '[contenteditable="true"]' );
-	}
-
-	if ( node.querySelector( '.wp-block-button__link' ) ) {
-		button = node.querySelector( '.wp-block-button__link' );
-	} else {
-		button = node;
-	}
-
-	let fallbackBackgroundColor;
-	let fallbackTextColor;
-
-	if ( node && button ) {
-		fallbackBackgroundColor = getComputedStyle( button ).backgroundColor;
-	}
-
-	if ( textNode ) {
-		fallbackTextColor = getComputedStyle( textNode ).color;
-	}
-
-	return {
-		fallbackBackgroundColor: backgroundColorValue || fallbackBackgroundColor,
-		fallbackTextColor: textColorValue || fallbackTextColor,
-	};
-} );
-
-const blockControls = ( props ) => {
-	return (
-		<BlockControls>
-			<BlockAlignmentToolbar
-				value={ props.attributes.align }
-				onChange={ ( newAlignment ) => props.setAttributes( { align: newAlignment } ) }
-				controls={ [ 'left', 'center', 'right' ] }
-			/>
-		</BlockControls>
+function BorderPanel( { borderRadius = '', setAttributes } ) {
+	const setBorderRadius = useCallback(
+		( newBorderRadius ) => {
+			setAttributes( { borderRadius: newBorderRadius } );
+		},
+		[ setAttributes ]
 	);
+	return (
+		<PanelBody title={ __( 'Border settings' ) }>
+			<RangeControl
+				value={ borderRadius }
+				label={ __( 'Border radius' ) }
+				min={ MIN_BORDER_RADIUS_VALUE }
+				max={ MAX_BORDER_RADIUS_VALUE }
+				initialPosition={ INITIAL_BORDER_RADIUS_POSITION }
+				allowReset
+				onChange={ setBorderRadius }
+			/>
+		</PanelBody>
+	);
+}
+
+const BUTTON_TYPES = {
+	login: __( 'Login', 'premium-content' ),
+	subscribe: __( 'Subscribe', 'premium-content' ),
 };
 
-const inspectorControls = ( props ) => {
-	const BUTTON_TYPES = {
-		login: {
-			label: __( 'Login', 'premium-content' ),
-			defaultButtonText: __( 'Log In', 'premium-content' ),
-		},
-		subscribe: {
-			label: __( 'Subscribe', 'premium-content' ),
-			defaultButtonText: __( 'Subscribe', 'premium-content' ),
-		},
-	};
+function ButtonEdit( props ) {
+	const { attributes, setAttributes, className } = props;
+	const { borderRadius, text, type } = attributes;
 
-	const {
-		attributes,
-		setAttributes,
-		backgroundButtonColor,
-		textButtonColor,
-		setBackgroundButtonColor,
-		setTextButtonColor,
-		fallbackBackgroundColor,
-		fallbackTextColor,
-	} = props;
-
-	const backgroundColor = backgroundButtonColor.color || fallbackBackgroundColor;
-	const color = textButtonColor.color || fallbackTextColor;
-
-	function setButtonType( props, type, text ) {
-		props.setAttributes( {
-			buttonType: type,
-			buttonText: text,
-		} );
-	}
+	const colorProps = getColorAndStyleProps( attributes );
 
 	return (
-		<InspectorControls>
-			<PanelBody title={ __( 'Button Type', 'premium-content' ) }>
-				<div className="premium-content-button-group">
+		<>
+			<ColorEdit { ...props } />
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<Block.div className="wp-block-button wp-block-jetpack-recurring-payments">
+				<RichText
+					placeholder={ __( 'Add text…', 'premium-content' ) }
+					value={ text }
+					onChange={ ( value ) => setAttributes( { text: value } ) }
+					withoutInteractiveFormatting
+					className={ classnames( className, 'wp-block-button__link', colorProps.className, {
+						'no-border-radius': borderRadius === 0,
+					} ) }
+					style={ {
+						borderRadius: borderRadius ? borderRadius + 'px' : undefined,
+						...colorProps.style,
+					} }
+				/>
+			</Block.div>
+			<InspectorControls>
+				<PanelBody title={ __( 'Button Type', 'premium-content' ) }>
 					<ButtonGroup aria-label={ __( 'Button Type', 'premium-content' ) }>
-						{ Object.keys( BUTTON_TYPES ).map( ( t ) => (
+						{ Object.entries( BUTTON_TYPES ).map( ( [ buttonType, buttonText ] ) => (
 							<Button
 								isLarge
-								isPrimary={ attributes.buttonType === t }
-								aria-pressed={ attributes.buttonType === t }
-								onClick={ () => setButtonType( props, t, BUTTON_TYPES[ t ].defaultButtonText ) }
+								isPrimary={ type === buttonType }
+								aria-pressed={ type === buttonType }
+								onClick={ () =>
+									setAttributes( {
+										type: buttonType,
+										text: buttonText,
+									} )
+								}
 							>
-								{ BUTTON_TYPES[ t ].label }
+								{ buttonText }
 							</Button>
 						) ) }
 					</ButtonGroup>
-				</div>
-			</PanelBody>
-			<PanelColorSettings
-				title={ __( 'Button Colors', 'premium-content' ) }
-				initialOpen={ true }
-				colorSettings={ [
-					{
-						value: backgroundButtonColor || undefined,
-						onChange: setBackgroundButtonColor,
-						label: __( 'Background Color', 'premium-content' ),
-					},
-					{
-						value: textButtonColor || undefined,
-						onChange: setTextButtonColor,
-						label: __( 'Text Color', 'premium-content' ),
-					},
-				] }
-			/>
-			<ContrastChecker
-				textColor={ color }
-				backgroundColor={ backgroundColor }
-				fallbackBackgroundColor={ fallbackBackgroundColor }
-				fallbackTextColor={ fallbackTextColor }
-			/>
-		</InspectorControls>
+				</PanelBody>
+				<BorderPanel borderRadius={ borderRadius } setAttributes={ setAttributes } />
+			</InspectorControls>
+		</>
 	);
-};
-
-/**
- * Block edit function
- *
- * @typedef { import('@wordpress/block-editor').ColorPalette.Color } Color
- * @property { string } class
- * @property { string } color
- * @property { string } name
- * @property { string } slug
- *
- * @typedef { import('./').Attributes } Attributes
- * @typedef { Object } Props
- * @property { Color } backgroundButtonColor
- * @property { Color } textButtonColor
- * @property { string } fallbackBackgroundColor
- * @property { string } fallbackTextColor
- * @property { Attributes } attributes
- * @property { () => void } setBackgroundButtonColor
- * @property { () => void } setTextButtonColor
- * @property { (attributes: Partial<Attributes>) => void } setAttributes
- *
- * @param { Props } props
- */
-function Edit( props ) {
-	useEffect( () => {
-		setButtonClasses();
-		setCustomButtonColors();
-		setBlockContext();
-	}, [ props.backgroundButtonColor, props.textButtonColor, props.context ] );
-
-	function setBlockContext() {
-		const { context } = props;
-		props.setAttributes( context );
-	}
-
-	function setButtonClasses() {
-		const buttonClasses = getButtonClasses();
-		props.setAttributes( { buttonClasses } );
-	}
-
-	function setCustomButtonColors() {
-		const customTextButtonColor = getTextButtonColor();
-		const customBackgroundButtonColor = getBackgroundButtonColor();
-
-		if ( customTextButtonColor !== undefined ) {
-			props.setAttributes( { customTextButtonColor } );
-		}
-
-		if ( customBackgroundButtonColor !== undefined ) {
-			props.setAttributes( { customBackgroundButtonColor } );
-		}
-	}
-
-	function getTextButtonColor() {
-		return get( props.textButtonColor, 'color' );
-	}
-
-	function getBackgroundButtonColor() {
-		return get( props.backgroundButtonColor, 'color' );
-	}
-
-	function getButtonClasses() {
-		const { textButtonColor, backgroundButtonColor } = props;
-		const textClass = get( textButtonColor, 'class' );
-		const backgroundClass = get( backgroundButtonColor, 'class' );
-		return classnames( 'wp-block-button__link', {
-			'has-text-color': textButtonColor.color,
-			[ textClass ]: textClass,
-			'has-background': backgroundButtonColor.color,
-			[ backgroundClass ]: backgroundClass,
-		} );
-	}
-
-	const {
-		isSelected,
-		attributes,
-		setAttributes,
-		backgroundButtonColor,
-		textButtonColor,
-		setBackgroundButtonColor,
-		setTextButtonColor,
-		fallbackBackgroundColor,
-		fallbackTextColor,
-	} = props;
-
-	const backgroundColor = backgroundButtonColor.color || fallbackBackgroundColor;
-	const color = textButtonColor.color || fallbackTextColor;
-	const buttonStyle = { border: 'none', backgroundColor, color };
-	const buttonClasses = getButtonClasses();
-
-	return [
-		isSelected && blockControls( props ),
-
-		isSelected && inspectorControls( props ),
-
-		<div className={ props.className }>
-			<div className="wp-block-button premium-content-logged-out-view-button">
-				<RichText
-					placeholder={ __( 'Add text…', 'premium-content' ) }
-					value={ attributes.buttonText }
-					onChange={ ( nextValue ) => setAttributes( { buttonText: nextValue } ) }
-					className={ buttonClasses }
-					style={ buttonStyle }
-					allowedFormats={ [ 'core/bold', 'core/italic', 'core/strikethrough' ] }
-					keepPlaceholderOnFocus={ true }
-				/>
-			</div>
-		</div>,
-	];
 }
 
-export default compose( [
-	withColors( { backgroundButtonColor: 'background-color' }, { textButtonColor: 'color' } ),
-	applyFallbackStyles,
-] )( Edit, inspectorControls );
+export default ButtonEdit;

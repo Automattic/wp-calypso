@@ -3,6 +3,7 @@
  */
 import edit from './edit';
 import save from './save';
+import deprecated from './deprecated';
 
 /**
  * WordPress dependencies
@@ -30,41 +31,7 @@ const category = 'common';
 const settings = {
 	name,
 	category,
-	attributes: {
-		subscribeButtonText: {
-			type: 'string',
-			default: 'Subscribe',
-		},
-		loginButtonText: {
-			type: 'string',
-			default: 'Log In',
-		},
-		buttonClasses: {
-			type: 'string',
-			default: '',
-		},
-		backgroundButtonColor: {
-			type: 'string',
-			default: '',
-		},
-		textButtonColor: {
-			type: 'string',
-			default: '',
-		},
-		customBackgroundButtonColor: {
-			type: 'string',
-			default: '',
-		},
-		customTextButtonColor: {
-			type: 'string',
-			default: '',
-		},
-		'premium-content/container/selectedPlanId': {
-			type: 'number',
-			default: 0,
-		},
-	},
-
+	attributes: {},
 	/* translators: block name */
 	title: __( 'Logged Out View', 'full-site-editing' ),
 	/* translators: block description */
@@ -77,7 +44,8 @@ const settings = {
 	},
 	edit,
 	save,
-	context: [ 'premium-content/container/selectedPlanId' ],
+	context: [ 'premium-content/planId' ],
+	deprecated,
 };
 
 /**

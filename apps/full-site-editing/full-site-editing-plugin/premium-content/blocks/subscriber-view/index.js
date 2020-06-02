@@ -14,12 +14,7 @@ const category = 'common';
 const settings = {
 	name,
 	category,
-	attributes: {
-		'premium-content/container/selectedPlanId': {
-			type: 'number',
-			default: 0,
-		},
-	},
+	attributes: {},
 
 	/* translators: block name */
 	title: __( 'Subscriber View', 'full-site-editing' ),
@@ -33,7 +28,7 @@ const settings = {
 	},
 	edit,
 	save,
-	context: [ 'premium-content/container/selectedPlanId' ],
+	context: [ 'premium-content/planId' ],
 };
 
 export { name, category, settings };

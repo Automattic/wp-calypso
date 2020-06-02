@@ -4,7 +4,6 @@
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from '@wordpress/element';
-import { createBlock } from '@wordpress/blocks';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
 
@@ -13,47 +12,25 @@ import { withDispatch, withSelect } from '@wordpress/data';
  */
 import Context from '../container/context';
 
-function getButtonBlocks( block ) {
-	let blocks = [];
-	if ( block.innerBlocks && block.innerBlocks.length > 0 ) {
-		block.innerBlocks.forEach( ( b ) => {
-			if ( b.name === 'premium-content/button' ) {
-				blocks.push( b );
-			}
-			if ( b.innerBlocks && b.innerBlocks.length > 0 ) {
-				blocks = blocks.concat( getButtonBlocks( b ) );
-			}
-		} );
-	}
-	return blocks;
-}
-
 /**
  * Block edit function
  *
  * @typedef { import('./').Attributes } Attributes
- * @typedef {object} Props
+ * @typedef { object } Props
  * @property { boolean } isSelected
  * @property { string } className
  * @property { string } clientId
  * @property { string } containerClientId
  * @property { Attributes } attributes
- * @property { (attributes: Partial<Attributes>) => void } setAttributes
- * @property { () => void } selectBlock
+ * @property { Function } setAttributes
+ * @property { Function } selectBlock
  *
- * @param { Props } props
+ * @param { Props } props Properties
  */
-function Edit( props ) {
+function Edit( { selectContainerBlock } ) {
 	useEffect( () => {
-		props.selectBlock();
-		props.insertButtonBlocksIfMissing();
-		setBlockContext();
-	}, [ props.context ] );
-
-	function setBlockContext() {
-		const { context } = props;
-		props.setAttributes( context );
-	}
+		selectContainerBlock();
+	}, [] );
 
 	return (
 		<Context.Consumer>
@@ -79,17 +56,23 @@ function Edit( props ) {
 								},
 							],
 							[
-								'core/columns',
+								'core/buttons',
 								{},
 								[
 									[
 										'premium-content/button',
 										{
-											buttonType: 'subscribe',
-											buttonText: __( 'Subscribe', 'premium-content' ),
+											text: __( 'Subscribe', 'premium-content' ),
+											type: 'subscribe',
 										},
 									],
-									[ 'premium-content/button' ],
+									[
+										'premium-content/button',
+										{
+											text: __( 'Log In', 'premium-content' ),
+											type: 'login',
+										},
+									],
 								],
 							],
 						] }
@@ -102,51 +85,19 @@ function Edit( props ) {
 
 export default compose( [
 	withSelect( ( select, props ) => {
-		const blockEditor = select( 'core/block-editor' );
+		const { getBlockHierarchyRootClientId } = select( 'core/block-editor' );
 		return {
 			// @ts-ignore difficult to type with JSDoc
-			containerClientId: blockEditor.getBlockHierarchyRootClientId( props.clientId ),
-			block: blockEditor.getBlocksByClientId( props.clientId )[ 0 ],
+			containerClientId: getBlockHierarchyRootClientId( props.clientId ),
 		};
 	} ),
 	withDispatch( ( dispatch, props ) => {
-		const blockEditor = dispatch( 'core/block-editor' );
+		const { selectBlock } = dispatch( 'core/block-editor' );
 		return {
-			selectBlock() {
+			selectContainerBlock() {
 				// @ts-ignore difficult to type with JSDoc
-				blockEditor.selectBlock( props.containerClientId );
-			},
-			insertButtonBlocksIfMissing() {
-				const buttonBlocks = getButtonBlocks( props.block );
-
-				if ( buttonBlocks.length === 0 ) {
-					const { attributes } = props;
-
-					const loginButtonBlock = createBlock( 'premium-content/button', {
-						buttonType: 'login',
-						buttonText: attributes.loginButtonText,
-						buttonClasses: attributes.buttonClasses,
-						backgroundButtonColor: attributes.backgroundButtonColor,
-						textButtonColor: attributes.textButtonColor,
-						customBackgroundButtonColor: attributes.customBackgroundButtonColor,
-						customTextButtonColor: attributes.customTextButtonColor,
-					} );
-					const subscribeButtonBlock = createBlock( 'premium-content/button', {
-						buttonType: 'subscribe',
-						buttonText: attributes.subscribeButtonText,
-						buttonClasses: attributes.buttonClasses,
-						backgroundButtonColor: attributes.backgroundButtonColor,
-						textButtonColor: attributes.textButtonColor,
-						customBackgroundButtonColor: attributes.customBackgroundButtonColor,
-						customTextButtonColor: attributes.customTextButtonColor,
-					} );
-					const columnBlock = createBlock( 'core/columns', {}, [
-						loginButtonBlock,
-						subscribeButtonBlock,
-					] );
-					blockEditor.insertBlocks( columnBlock, -1, props.clientId );
-				}
+				selectBlock( props.containerClientId );
 			},
 		};
 	} ),
-] )( Edit, getButtonBlocks );
+] )( Edit );

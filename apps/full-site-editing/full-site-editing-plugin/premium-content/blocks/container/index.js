@@ -104,7 +104,7 @@ const settings = {
 	edit,
 	save,
 	providesContext: {
-		'premium-content/container/selectedPlanId': 'selectedPlanId',
+		'premium-content/planId': 'selectedPlanId',
 	},
 };
 
