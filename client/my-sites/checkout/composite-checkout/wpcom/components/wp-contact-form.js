@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import {
@@ -10,8 +10,11 @@ import {
 	useFormStatus,
 	useIsStepActive,
 	useLineItems,
+	useSetStepComplete,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -21,6 +24,9 @@ import Field from './field';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+
+const debug = debugFactory( 'calypso:composite-checkout:wp-contact-form' );
 
 export default function WPContactForm( {
 	summary,
@@ -30,6 +36,7 @@ export default function WPContactForm( {
 	countriesList,
 	renderDomainContactFields,
 	shouldShowContactDetailsValidationErrors,
+	contactValidationCallback,
 } ) {
 	const translate = useTranslate();
 	const [ items ] = useLineItems();
@@ -41,6 +48,7 @@ export default function WPContactForm( {
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
+	useSkipToLastStepIfFormComplete( contactValidationCallback );
 
 	if ( summary && isComplete ) {
 		return (
@@ -219,7 +227,8 @@ function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 					) }
 
 					{ ( isGSuiteInCart || showDomainContactSummary ) &&
-						contactInfo.alternateEmail.value?.length > 0 && (
+						contactInfo.alternateEmail.value?.length > 0 &&
+						contactInfo.alternateEmail.value !== contactInfo.email.value && (
 							<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
 						) }
 
@@ -339,3 +348,63 @@ const ContactDetailsFormDescription = styled.p`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	margin: 0 0 16px;
 `;
+
+function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
+	const cachedContactDetails = useSelector( getContactDetailsCache );
+	const shouldValidateCachedContactDetails = useRef( true );
+	const shouldResetFormStatus = useRef( false );
+	const setStepCompleteStatus = useSetStepComplete();
+	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
+
+	useEffect( () => {
+		if ( ! contactValidationCallback ) {
+			debug( 'Cannot validate contact details; no validation callback' );
+			return;
+		}
+		if ( shouldValidateCachedContactDetails.current && cachedContactDetails ) {
+			shouldValidateCachedContactDetails.current = false;
+			if ( formStatus === 'ready' ) {
+				setFormValidating();
+				shouldResetFormStatus.current = true;
+			}
+			contactValidationCallback()
+				.then( ( areDetailsCompleteAndValid ) => {
+					// If the details are already populated and valid, jump to payment method step
+					if ( areDetailsCompleteAndValid ) {
+						debug( 'Contact details are already populated; skipping to payment method step' );
+						saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
+						setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
+					} else {
+						debug( 'Contact details are already populated but not valid' );
+					}
+					if ( shouldResetFormStatus.current ) {
+						setFormReady();
+					}
+				} )
+				.catch( () => {
+					if ( shouldResetFormStatus.current ) {
+						setFormReady();
+					}
+				} );
+		}
+	}, [
+		formStatus,
+		setFormReady,
+		setFormValidating,
+		cachedContactDetails,
+		contactValidationCallback,
+		setStepCompleteStatus,
+	] );
+}
+
+function saveStepNumberToUrl( stepNumber ) {
+	if ( ! window?.location ) {
+		return;
+	}
+	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
+	if ( window.location.hash === newHash ) {
+		return;
+	}
+	window.location.hash = newHash;
+	debug( 'updating url to', window.location.href );
+}
