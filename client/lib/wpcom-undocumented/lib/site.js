@@ -69,12 +69,12 @@ resources.forEach( function ( resource ) {
 /**
  * Create an UndocumentedSite instance
  *
- * @param {[int]}   id          Site ID
- * @param {[WPCOM]} wpcom       WPCOM instance
+ * @param {number}   id          Site ID
+ * @param {object} wpcom       WPCOM instance
  *
- * @returns {{UndocumentedSite}} UndocumentedSite instance
+ * @returns {UndocumentedSite} UndocumentedSite instance
  *
- * @api public
+ * @public
  */
 function UndocumentedSite( id, wpcom ) {
 	debug( 'UndocumentedSite', id );
