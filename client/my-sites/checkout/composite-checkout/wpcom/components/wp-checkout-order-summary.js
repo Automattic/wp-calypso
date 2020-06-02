@@ -26,7 +26,7 @@ import getSupportVariation, {
 	SUPPORT_DIRECTLY,
 } from 'state/selectors/get-inline-help-support-variation';
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
-import { useHasPlanInCart } from '../hooks/has-plan';
+import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
@@ -110,6 +110,7 @@ function CheckoutSummaryFeaturesList() {
 				domains.map( ( domain ) => {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.id } />;
 				} ) }
+			{ hasPlanInCart && <CheckoutSummaryPlanFeatures /> }
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
 				{ supportText }
@@ -134,7 +135,7 @@ function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
 					},
 					args: {
 						domain: domain.wpcom_meta.meta,
-						bundled: translate( 'free with plan' ),
+						bundled: translate( 'free for a year with your plan' ),
 					},
 					comment: 'domain name and bundling message, separated by a dash',
 				} )
@@ -143,6 +144,42 @@ function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
 			) }
 		</CheckoutSummaryFeaturesListItem>
 	);
+}
+
+function CheckoutSummaryPlanFeatures() {
+	const translate = useTranslate();
+	const hasDomainsInCart = useHasDomainsInCart();
+	const planInCart = usePlanInCart();
+	const planFeatures = getPlanFeatures( planInCart, translate, hasDomainsInCart );
+
+	return (
+		<>
+			{ planFeatures &&
+				planFeatures.map( ( feature, index ) => {
+					return (
+						<CheckoutSummaryFeaturesListItem key={ index }>
+							<WPCheckoutCheckIcon />
+							{ feature }
+						</CheckoutSummaryFeaturesListItem>
+					);
+				} ) }
+		</>
+	);
+}
+
+function getPlanFeatures( plan, translate, hasDomainsInCart ) {
+	if (
+		'business-bundle' === plan.wpcom_meta?.product_slug ||
+		'business-bundle-2y' === plan.wpcom_meta?.product_slug
+	) {
+		return [
+			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			translate( 'Install custom plugins and themes' ),
+			translate( 'Drive traffic to your site with our advanced SEO tools' ),
+			translate( 'Track your stats with Google Analytics' ),
+		];
+	}
+	return [];
 }
 
 function CheckoutSummaryHelp() {
