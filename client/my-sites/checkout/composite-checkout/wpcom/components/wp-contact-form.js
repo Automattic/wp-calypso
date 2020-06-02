@@ -352,7 +352,9 @@ const ContactDetailsFormDescription = styled.p`
 function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	const shouldValidateCachedContactDetails = useRef( true );
+	const shouldResetFormStatus = useRef( false );
 	const setStepCompleteStatus = useSetStepComplete();
+	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 
 	useEffect( () => {
 		if ( ! contactValidationCallback ) {
@@ -361,18 +363,38 @@ function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
 		}
 		if ( shouldValidateCachedContactDetails.current && cachedContactDetails ) {
 			shouldValidateCachedContactDetails.current = false;
-			contactValidationCallback().then( ( areDetailsCompleteAndValid ) => {
-				// If the details are already populated and valid, jump to payment method step
-				if ( areDetailsCompleteAndValid ) {
-					debug( 'Contact details are already populated; skipping to payment method step' );
-					saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
-					setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
-					return;
-				}
-				debug( 'Contact details are already populated but not valid' );
-			} );
+			if ( formStatus === 'ready' ) {
+				setFormValidating();
+				shouldResetFormStatus.current = true;
+			}
+			contactValidationCallback()
+				.then( ( areDetailsCompleteAndValid ) => {
+					// If the details are already populated and valid, jump to payment method step
+					if ( areDetailsCompleteAndValid ) {
+						debug( 'Contact details are already populated; skipping to payment method step' );
+						saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
+						setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
+					} else {
+						debug( 'Contact details are already populated but not valid' );
+					}
+					if ( shouldResetFormStatus.current ) {
+						setFormReady();
+					}
+				} )
+				.catch( () => {
+					if ( shouldResetFormStatus.current ) {
+						setFormReady();
+					}
+				} );
 		}
-	}, [ cachedContactDetails, contactValidationCallback, setStepCompleteStatus ] );
+	}, [
+		formStatus,
+		setFormReady,
+		setFormValidating,
+		cachedContactDetails,
+		contactValidationCallback,
+		setStepCompleteStatus,
+	] );
 }
 
 function saveStepNumberToUrl( stepNumber ) {
