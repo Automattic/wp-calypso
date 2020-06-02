@@ -61,7 +61,7 @@ const JetpackCloudMasterBar = () => {
 			<Item
 				tipTarget="me"
 				url="#" // @todo: add a correct URL
-				onClick={ ( e ) => trackedToggle( e ) }
+				onClick={ trackedToggle }
 				icon="user-circle"
 				className={ classnames( 'masterbar__item-me', {
 					'masterbar__item-me--open': isOpen,
