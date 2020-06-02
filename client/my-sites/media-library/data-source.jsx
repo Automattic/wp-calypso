@@ -54,21 +54,21 @@ export class MediaLibraryDataSource extends Component {
 		const sources = [
 			{
 				value: '',
-				label: translate( 'WordPress library' ),
+				label: translate( 'Media library' ),
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
 		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'google_photos',
-				label: translate( 'Google Photos library' ),
+				label: translate( 'Google Photos' ),
 				icon: <GooglePhotosIcon />,
 			} );
 		}
 		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
-				label: translate( 'Free photo library' ),
+				label: translate( 'Pexels free photos' ),
 				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
 		}
