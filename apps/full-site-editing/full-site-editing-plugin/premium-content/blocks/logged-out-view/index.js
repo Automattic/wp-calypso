@@ -17,13 +17,6 @@ const name = 'premium-content/logged-out-view';
 const category = 'common';
 /**
  * @typedef {object} Attributes
- * @property {string} subscribeButtonText
- * @property {string} loginButtonText
- * @property {string} buttonClasses
- * @property {string} backgroundButtonColor
- * @property {string} textButtonColor
- * @property {string} customBackgroundButtonColor
- * @property {string} customTextButtonColor
  *
  * @typedef {import('@wordpress/blocks').BlockConfiguration<Attributes>} BlockConfiguration
  * @type {BlockConfiguration}
