@@ -21,5 +21,5 @@
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const shouldSend = ( _report: Report ): boolean => {
-	return true;
+	return Math.random() <= 0.05;
 };
