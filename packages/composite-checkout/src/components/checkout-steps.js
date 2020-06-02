@@ -309,7 +309,7 @@ export function CheckoutStep( {
 			stepId={ stepId }
 			titleContent={ titleContent }
 			goToThisStep={ goToThisStep }
-			goToNextStep={ nextStepNumber > 0 && goToNextStep }
+			goToNextStep={ nextStepNumber > 0 ? goToNextStep : undefined }
 			activeStepContent={ activeStepContent }
 			formStatus={ formStatus }
 			completeStepContent={ completeStepContent }
