@@ -155,9 +155,9 @@ function CheckoutSummaryPlanFeatures() {
 	return (
 		<>
 			{ planFeatures &&
-				planFeatures.map( ( feature ) => {
+				planFeatures.map( ( feature, index ) => {
 					return (
-						<CheckoutSummaryFeaturesListItem>
+						<CheckoutSummaryFeaturesListItem key={ index }>
 							<WPCheckoutCheckIcon />
 							{ feature }
 						</CheckoutSummaryFeaturesListItem>
@@ -179,7 +179,7 @@ function getPlanFeatures( plan, translate, hasDomainsInCart ) {
 			translate( 'Track your stats with Google Analytics' ),
 		];
 	}
-	return false;
+	return [];
 }
 
 function CheckoutSummaryHelp() {
