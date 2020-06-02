@@ -6,11 +6,11 @@ import Modal from 'react-modal';
 import { useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
+import { PLANS_STORE } from '../../../stores/plans';
 import PlansGrid, { Props as PlansGridProps } from '../plans-grid';
 import { useTrackModal } from '../../../hooks/use-track-modal';
 import { useSelectedPlan } from '../../../hooks/use-selected-plan';
@@ -19,8 +19,6 @@ import { useSelectedPlan } from '../../../hooks/use-selected-plan';
  * Style dependencies
  */
 import './style.scss';
-
-const PLANS_STORE = Plans.STORE_KEY;
 
 interface Props extends Partial< PlansGridProps > {
 	onClose: () => void;
