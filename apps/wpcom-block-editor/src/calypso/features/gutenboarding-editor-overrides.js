@@ -15,20 +15,40 @@ import './gutenboarding-editor-overrides.scss';
 
 domReady( () => {
 	calypsoifyGutenberg.isGutenboarding && updateEditor();
+	updateSettingsBar();
+
 	// Hook fallback incase setGutenboardingStatus runs after initial dom render.
 	window.wp.hooks.addAction( 'setGutenboardingStatus', 'a8c-gutenboarding', ( isGutenboarding ) => {
-		isGutenboarding && updateEditor();
+		if ( isGutenboarding ) {
+			updateEditor();
+		}
+		updateSettingsBar();
 	} );
 } );
 
 function updateEditor() {
 	const body = document.querySelector( 'body' );
 	body.classList.add( 'gutenboarding-editor-overrides' );
-
-	updateSettingsBar();
 }
 
+let hasUpdatedSettingsBar = false;
 function updateSettingsBar() {
+	if ( hasUpdatedSettingsBar ) {
+		return;
+	}
+
+	if (
+		// `isGutenboarding` indicates we should update the launch button
+		! window?.calypsoifyGutenberg?.isGutenboarding ||
+		// `frankenflowUrl` contains required data
+		! window?.calypsoifyGutenberg?.frankenflowUrl ||
+		// `isFseGutenboarding` indicates the launch button will be handled by FSE plugin
+		window?.calypsoifyGutenberg?.isFseGutenboarding
+	) {
+		return;
+	}
+
+	hasUpdatedSettingsBar = true;
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
 		if ( ! settingsBar ) {
