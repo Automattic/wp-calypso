@@ -41,7 +41,7 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/personalPlan": true,
-		"jetpack/scan-product": false,
+		"jetpack/scan-product": true,
 		"jitms": false,
 		"lasagna": false,
 		"layout/app-banner": true,
