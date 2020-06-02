@@ -109,7 +109,7 @@ export const emptyResponseCart = {
 	is_coupon_applied: false,
 	coupon_discounts_integer: [],
 	locale: 'en-us',
-	tax: { location: [], display_taxes: false },
+	tax: { location: {}, display_taxes: false },
 	is_signup: false,
 } as ResponseCart;
 
