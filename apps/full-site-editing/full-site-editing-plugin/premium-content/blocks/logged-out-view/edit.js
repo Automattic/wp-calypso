@@ -27,9 +27,9 @@ import Context from '../container/context';
  *
  * @param { Props } props Properties
  */
-function Edit( { selectContainerBlock } ) {
+function Edit( { selectBlock } ) {
 	useEffect( () => {
-		selectContainerBlock();
+		selectBlock();
 	}, [] );
 
 	return (
@@ -94,7 +94,7 @@ export default compose( [
 	withDispatch( ( dispatch, props ) => {
 		const { selectBlock } = dispatch( 'core/block-editor' );
 		return {
-			selectContainerBlock() {
+			selectBlock() {
 				// @ts-ignore difficult to type with JSDoc
 				selectBlock( props.containerClientId );
 			},

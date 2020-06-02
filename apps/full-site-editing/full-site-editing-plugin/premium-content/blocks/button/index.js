@@ -19,15 +19,13 @@ const category = 'common';
 
 /**
  * @typedef {object} Attributes
- * @property { string } blockID
- * @property { string } buttonText
- * @property { string } align
- * @property { string } buttonType
- * @property { string } buttonClasses
+ * @property { string } text
+ * @property { string } type
+ * @property { number } borderRadius
+ * @property { string } backgroundColor
+ * @property { string } textColor
  * @property { string } backgroundButtonColor
- * @property { string } textButtonColor
- * @property { string } customBackgroundButtonColor
- * @property { string } customTextButtonColor
+ * @property { string } gradient
  *
  * @typedef {import('@wordpress/blocks').BlockConfiguration<Attributes>} BlockConfiguration
  * @type {BlockConfiguration}
