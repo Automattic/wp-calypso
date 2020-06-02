@@ -27,6 +27,8 @@ import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+import QueryRewindState from 'components/data/query-rewind-state';
+import QueryScanState from 'components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -42,6 +44,9 @@ import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete'
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getScanState from 'state/selectors/get-site-scan-state';
+import isJetpackCloudEligible from 'state/selectors/is-jetpack-cloud-eligible';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -113,6 +118,50 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.onNavigate }
 			/>
 		);
+	}
+
+	cloud() {
+		const { scanState, rewindState, isCloudEligible, translate, site } = this.props;
+		if (
+			! site ||
+			! isCloudEligible ||
+			! scanState ||
+			! rewindState ||
+			'uninitialized' === rewindState.state
+		) {
+			return null;
+		}
+
+		const hasScan = 'unavailable' !== scanState.state;
+		const hasBackup = 'unavailable' !== rewindState.state;
+		if ( ! hasScan && ! hasBackup ) {
+			return null;
+		}
+		const sidebarItems = [];
+		if ( hasBackup ) {
+			sidebarItems.push(
+				<SidebarItem
+					key="backup"
+					tipTarget="backup"
+					label={ translate( 'Backup' ) }
+					link={ `https://cloud.jetpack.com/backup/${ site.slug }` }
+					onNavigate={ () => this.trackMenuItemClick( 'backup' ) }
+				/>
+			);
+		}
+		if ( hasScan ) {
+			sidebarItems.push(
+				<SidebarItem
+					key="scan"
+					tipTarget="scan"
+					label={ translate( 'Scan' ) }
+					link={ `https://cloud.jetpack.com/scan/${ site.slug }` }
+					onNavigate={ () => this.trackMenuItemClick( 'scan' ) }
+				/>
+			);
+		}
+
+		return sidebarItems;
 	}
 
 	tools() {
@@ -764,7 +813,12 @@ export class MySitesSidebar extends Component {
 			return <SidebarMenu />;
 		}
 
-		const tools = !! this.tools() || !! this.marketing() || !! this.earn() || !! this.activity();
+		const tools =
+			!! this.cloud() ||
+			!! this.tools() ||
+			!! this.marketing() ||
+			!! this.earn() ||
+			!! this.activity();
 
 		return (
 			<div className="sidebar__menu-wrapper">
@@ -801,6 +855,9 @@ export class MySitesSidebar extends Component {
 
 				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams && this.customize() }
 
+				<QueryRewindState siteId={ this.props.siteId } />
+				<QueryScanState siteId={ this.props.siteId } />
+
 				{ tools && (
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_TOOLS ) }
@@ -808,6 +865,7 @@ export class MySitesSidebar extends Component {
 						title={ this.props.translate( 'Tools' ) }
 						materialIcon="build"
 					>
+						{ this.cloud() }
 						{ this.tools() }
 						{ this.marketing() }
 						{ this.earn() }
@@ -905,6 +963,9 @@ function mapStateToProps( state ) {
 			isSiteChecklistComplete( state, siteId ) ||
 			! getSiteChecklist( state, siteId ) ||
 			! isEligibleForDotcomChecklist( state, siteId ),
+		scanState: getScanState( state, siteId ),
+		rewindState: getRewindState( state, siteId ),
+		isCloudEligible: isJetpackCloudEligible( state, siteId ),
 	};
 }
 
