@@ -60,8 +60,7 @@ class MappedDomainType extends React.Component {
 		}
 
 		if (
-			! this.props.isJetpackSite &&
-			! this.props.isAutomatedTransferSite &&
+			( ! this.props.isJetpackSite || this.props.isSiteAutomatedTransfer ) &&
 			! domain.pointsToWpcom
 		) {
 			return {
@@ -80,7 +79,7 @@ class MappedDomainType extends React.Component {
 
 	renderSettingUpNameservers() {
 		const { domain, translate } = this.props;
-		if ( this.props.isJetpackSite || this.props.isAutomatedTransferSite ) {
+		if ( this.props.isJetpackSite && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
 
