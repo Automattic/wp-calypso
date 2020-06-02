@@ -129,7 +129,7 @@
 		}
 
 		.reader-related-card__excerpt {
-			font-size: 15px;
+			font-size: $font-body;
 		}
 	}
 
@@ -301,7 +301,7 @@
 
 	&.post-excerpt {
 		display: -webkit-box;
-		font-size: 15px;
+		font-size: $font-body;
 		line-height: 25px;
 		max-height: none;
 		overflow: hidden;

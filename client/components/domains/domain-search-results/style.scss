@@ -10,7 +10,7 @@
 }
 
 .domain-search-results__transfer-card-copy {
-	font-size: 16px;
+	font-size: $font-body;
 
 	p {
 		margin-bottom: 0;
@@ -24,7 +24,7 @@
 		font-size: 18px;
 
 		p {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 	}
 }

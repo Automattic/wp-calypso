@@ -194,7 +194,7 @@
 		}
 
 		.reader-post-card__post-details .reader-excerpt {
-			font-size: 15px;
+			font-size: $font-body;
 			font-weight: 400;
 			margin-top: 4px;
 			max-height: 16px * 1.4;
@@ -446,7 +446,7 @@
 }
 
 .reader-post-card .reader-excerpt {
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.55;
 	font-weight: 400;
 	margin-top: 9px;

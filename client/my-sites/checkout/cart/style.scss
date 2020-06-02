@@ -334,7 +334,7 @@ div.popover-cart__popover {
 
 	.cart__total {
 		border-top: 1px solid var( --color-border-subtle );
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 15px;
 	}
 
@@ -378,7 +378,7 @@ div.popover-cart__popover {
 
 	.cart__total {
 		border-top: 1px solid var( --color-border-subtle );
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 15px;
 	}
 

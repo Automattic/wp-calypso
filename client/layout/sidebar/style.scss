@@ -56,7 +56,7 @@
 // like in Reader, and for the expandable menus.
 .sidebar__heading {
 	color: var( --color-sidebar-text-alternative );
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	padding: 16px 8px 6px 16px;
 }
@@ -106,7 +106,7 @@
 // Menu links: The actual anchor tags that contain links to
 // various sections of Calypso.
 .sidebar__menu-link {
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 1;
 	position: relative;
 	padding: 10px 16px 10px 20px;

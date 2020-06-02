@@ -4,12 +4,12 @@
 	padding: 17px 21px;
 
 	h4 {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 600;
 		margin-bottom: 17px;
 	}
 	p {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 
@@ -28,7 +28,7 @@
 	border-radius: 3px;
 	border: 1px solid var( --color-neutral-10 );
 	color: var( --color-neutral-40 );
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 	text-align: center;
 	width: 100%;

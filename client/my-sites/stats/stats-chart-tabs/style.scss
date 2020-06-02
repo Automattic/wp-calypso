@@ -10,7 +10,7 @@ ul.module-tabs {
 
 	.module-tab {
 		margin: 0;
-		font-size: 16px;
+		font-size: $font-body;
 		clear: none;
 		border-top: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
@@ -97,7 +97,7 @@ ul.module-tabs {
 			@include breakpoint-deprecated( '<480px' ) {
 				clear: none;
 				float: right;
-				font-size: 16px;
+				font-size: $font-body;
 				margin-right: 24px;
 				padding: 0;
 			}

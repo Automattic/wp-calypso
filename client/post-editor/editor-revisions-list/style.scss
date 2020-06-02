@@ -32,7 +32,7 @@
 }
 
 .editor-revisions-list__header {
-	$editor-revisions-list-header-font-size: 16px;
+	$editor-revisions-list-header-font-size: $font-body;
 	display: flex;
 	padding: 0 16px;
 	height: 48px;

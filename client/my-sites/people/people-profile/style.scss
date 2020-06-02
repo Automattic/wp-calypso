@@ -46,7 +46,7 @@
 
 .people-profile__username {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
@@ -66,7 +66,7 @@
 	font-size: 13px;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 		margin-top: -3px;
 	}
 }

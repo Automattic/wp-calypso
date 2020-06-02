@@ -46,7 +46,7 @@ $image-height: 47px;
 
 .wp-login__header {
 	color: var( --color-neutral-40 );
-	font-size: 16px;
+	font-size: $font-body;
 	margin-bottom: 16px;
 	text-align: center;
 

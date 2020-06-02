@@ -13,7 +13,7 @@
 .theme__sheet-bar-title {
 	display: block;
 	font-size: 33px;
-	font-weight: 100;
+	font-weight: 400;
 	padding-top: 78px;
 	padding-left: 25px;
 	line-height: 1;
@@ -23,8 +23,8 @@
 	max-width: none;
 	display: block;
 	color: var( --color-text-inverted );
-	font-size: 16px;
-	font-weight: 200;
+	font-size: $font-body;
+	font-weight: 400;
 	padding-top: 5px;
 	padding-left: 25px;
 }
@@ -279,25 +279,25 @@
 
 	h3 {
 		font-size: 20px;
-		font-weight: 200;
+		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 
 	h4 {
 		font-size: 18px;
-		font-weight: 200;
+		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 
 	h5 {
-		font-size: 16px;
-		font-weight: 200;
+		font-size: $font-body;
+		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 
 	h6 {
 		font-size: 14px;
-		font-weight: 200;
+		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 

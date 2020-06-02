@@ -37,7 +37,7 @@
 		flex-direction: column;
 	}
 	&__name {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 	&__detail {
 		font-size: 14px;
@@ -50,7 +50,7 @@
 		text-align: right;
 	}
 	&__price {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 	&__renewal-settings-link a {
 		font-size: 14px;

@@ -298,7 +298,7 @@ a.web-preview__external.button {
 
 .web-preview__loading-message {
 	color: var( --color-text-subtle );
-	font-size: 16px;
+	font-size: $font-body;
 }
 
 .web-preview__loading-message strong {

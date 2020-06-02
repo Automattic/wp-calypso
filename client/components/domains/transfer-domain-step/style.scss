@@ -156,7 +156,7 @@
 		color: var( --color-neutral-50 );
 		align-items: center;
 		display: flex;
-		font-size: 16px;
+		font-size: $font-body;
 		justify-content: space-between;
 	}
 
@@ -291,6 +291,6 @@ input {
 
 		color: var( --color-neutral-70 );
 		margin-bottom: 0;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
