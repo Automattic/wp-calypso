@@ -4,6 +4,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useCallback, useState } from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -52,8 +53,8 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
 	const trackedRequestDownload = useTrackCallback(
-		'calypso_jetpack_backup_download_click',
-		requestDownload
+		requestDownload,
+		'calypso_jetpack_backup_download_click'
 	);
 
 	const renderConfirm = () => (
@@ -153,7 +154,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 			  );
 
-	const trackFileDownload = useTrackCallback( 'calypso_jetpack_backup_file_download' );
+	const trackFileDownload = useTrackCallback( noop, 'calypso_jetpack_backup_file_download' );
 	const renderReady = () => (
 		<>
 			<div className="rewind-flow__header">

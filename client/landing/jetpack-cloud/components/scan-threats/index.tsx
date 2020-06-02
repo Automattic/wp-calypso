@@ -5,7 +5,6 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +23,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { useThreats } from 'landing/jetpack-cloud/lib/use-threats';
 import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
-import useTrackCallback from 'landing/jetpack-cloud/lib/use-track-callback';
 
 /**
  * Style dependencies
@@ -161,8 +159,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		[ updatingThreats ]
 	);
 
-	const onOpenTrackEvent = useTrackCallback( 'calypso_jetpack_scan_threat_itemtoggle', noop );
-
 	return (
 		<>
 			<SecurityIcon icon="error" />
@@ -221,7 +217,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						isFixing={ isFixing( threat ) }
 						contactSupportUrl={ contactSupportUrl( site.URL ) }
 						isPlaceholder={ false }
-						onOpen={ onOpenTrackEvent }
 					/>
 				) ) }
 			</div>

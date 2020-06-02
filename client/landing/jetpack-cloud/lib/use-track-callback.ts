@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 
-const useTrackCallback = ( eventName: string, callback: Function = noop ) => {
+const useTrackCallback = ( callback: Function = noop, eventName: string, eventProps = {} ) => {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const trackedCallback = React.useCallback(
@@ -19,6 +19,7 @@ const useTrackCallback = ( eventName: string, callback: Function = noop ) => {
 			dispatch(
 				recordTracksEvent( eventName, {
 					site_id: siteId,
+					...eventProps,
 				} )
 			);
 			callback( ...rest );

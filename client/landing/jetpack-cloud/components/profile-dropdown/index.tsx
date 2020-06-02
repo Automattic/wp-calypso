@@ -72,7 +72,7 @@ const ProfileDropdown: React.FC< Props > = ( { isOpen, close } ) => {
 		e.stopPropagation();
 		userUtilities.logout();
 	};
-	const trackedLogOut = useTrackCallback( 'calypso_jetpack_settings_masterbar_logout', logOut );
+	const trackedLogOut = useTrackCallback( logOut, 'calypso_jetpack_settings_masterbar_logout' );
 	const ref = React.useRef( null );
 	// We don't want to call close if it's already closed because we would
 	// track unnecessary events.

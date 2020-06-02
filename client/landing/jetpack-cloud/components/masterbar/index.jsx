@@ -41,8 +41,8 @@ const JetpackCloudMasterBar = () => {
 	const isNarrow = useBreakpoint( '<660px' );
 	const isExteriorPage = /^\/(?:backup|scan)\/[^/]*$/.test( currentRoute );
 	const { isOpen, close, toggle } = useOpenClose();
-	const trackedToggle = useTrackCallback( 'calypso_jetpack_masterbar_profile_toggle', toggle );
-	const trackedClose = useTrackCallback( 'calypso_jetpack_masterbar_profile_close', close );
+	const trackedToggle = useTrackCallback( toggle, 'calypso_jetpack_masterbar_profile_toggle' );
+	const trackedClose = useTrackCallback( close, 'calypso_jetpack_masterbar_profile_close' );
 
 	return (
 		<Masterbar
