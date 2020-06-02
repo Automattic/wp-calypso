@@ -158,6 +158,14 @@ function load_editor_domain_picker() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_domain_picker' );
 
 /**
+ * Sigh: load_editor_gutenboarding_launch
+ */
+function load_editor_gutenboarding_launch() {
+	require_once __DIR__ . '/editor-gutenboarding-launch/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_gutenboarding_launch' );
+
+/**
  * Add front-end CoBlocks gallery block scripts.
  *
  * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,

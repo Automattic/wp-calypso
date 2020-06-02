@@ -28,6 +28,9 @@
 		"editor-domain-picker": "check-npm-client && calypso-build --source='editor-domain-picker'",
 		"dev:editor-domain-picker": "check-npm-client && yarn run editor-domain-picker",
 		"build:editor-domain-picker": "check-npm-client && NODE_ENV=production yarn run editor-domain-picker",
+		"editor-gutenboarding-launch": "check-npm-client && calypso-build --source='editor-gutenboarding-launch'",
+		"dev:editor-gutenboarding-launch": "check-npm-client && yarn run editor-gutenboarding-launch",
+		"build:editor-gutenboarding-launch": "check-npm-client && NODE_ENV=production yarn run editor-gutenboarding-launch",
 		"newspack-blocks": "check-npm-client && npm-run-all --parallel newspack-blocks-*",
 		"newspack-blog-posts-block-editor": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-editor'",
 		"newspack-blog-posts-block-view": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-view'",
@@ -106,8 +109,5 @@
 		"lodash": "*",
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.6.0"
-	},
-	"devDependencies": {
-		"@types/wordpress__hooks": "2.4.0"
 	}
 }

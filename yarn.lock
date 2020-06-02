@@ -4078,7 +4078,7 @@
     "@types/react-dom" "*"
     csstype "^2.2.0"
 
-"@types/wordpress__hooks@2.4.0":
+"@types/wordpress__hooks@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/wordpress__hooks/-/wordpress__hooks-2.4.0.tgz#5e3c6fca66d5b5ccc066dd17b22d41d202f51302"
   integrity sha512-SixjDsBvPynmMQxBFX3i4nuWtLifqtml7PhSosoCk5RJy9S7xs/G6vvtcnAuslV3BJTyvxEbAsz4WpKaF0bqMw==
