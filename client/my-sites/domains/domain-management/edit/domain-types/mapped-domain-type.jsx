@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
 import { isExpiringSoon } from 'lib/domains/utils';
@@ -33,6 +33,7 @@ import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { WrapDomainStatusButtons } from './helpers';
+import { domainManagementDomainConnectMapping } from 'my-sites/domains/paths';
 
 class MappedDomainType extends React.Component {
 	resolveStatus() {
@@ -77,6 +78,31 @@ class MappedDomainType extends React.Component {
 		};
 	}
 
+	renderDomainConnect() {
+		const { domain, selectedSite, translate } = this.props;
+		const domainConnectLink = domainManagementDomainConnectMapping(
+			selectedSite.slug,
+			domain.name
+		);
+
+		return (
+			<div>
+				<p>
+					{ translate(
+						'Your domain mapping is almost ready to go. We need to connect with the company where you ' +
+							'purchased your domain so that we can point it to our servers.'
+					) }
+				</p>
+
+				<p>
+					<Button primary href={ domainConnectLink }>
+						{ translate( 'Connect your domain' ) }
+					</Button>
+				</p>
+			</div>
+		);
+	}
+
 	renderSettingUpNameservers() {
 		const { domain, translate } = this.props;
 		if ( this.props.isJetpackSite && ! this.props.isSiteAutomatedTransfer ) {
@@ -85,6 +111,10 @@ class MappedDomainType extends React.Component {
 
 		if ( domain.pointsToWpcom ) {
 			return null;
+		}
+
+		if ( domain.supportsDomainConnect ) {
+			return this.renderDomainConnect();
 		}
 
 		const learnMoreLink = ( linksTo ) => (
