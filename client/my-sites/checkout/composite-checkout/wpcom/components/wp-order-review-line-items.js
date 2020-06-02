@@ -302,19 +302,25 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items
 				.filter( ( item ) => item.label ) // remove items without a label
-				.map( ( item ) => (
-					<WPOrderReviewListItem key={ item.id }>
-						<LineItemUI
-							item={ item }
-							hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
-							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
-							variantSelectOverride={ variantSelectOverride }
-							getItemVariants={ getItemVariants }
-							onChangePlanLength={ onChangePlanLength }
-							couponStatus={ couponStatus }
-						/>
-					</WPOrderReviewListItem>
-				) ) }
+				.map( ( item ) => {
+					if ( isSummary && ! shouldLineItemBeShownWhenStepInactive( item ) ) {
+						return;
+					}
+
+					return (
+						<WPOrderReviewListItem key={ item.id }>
+							<LineItemUI
+								item={ item }
+								hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
+								removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
+								variantSelectOverride={ variantSelectOverride }
+								getItemVariants={ getItemVariants }
+								onChangePlanLength={ onChangePlanLength }
+								couponStatus={ couponStatus }
+							/>
+						</WPOrderReviewListItem>
+					);
+				} ) }
 		</WPOrderReviewList>
 	);
 }
@@ -341,6 +347,11 @@ const WPOrderReviewList = styled.ul`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	box-sizing: border-box;
 	margin: 20px 30px 20px 0;
+
+	.is-summary & {
+		border-top: 0;
+		margin: 0;
+	}
 `;
 
 const WPOrderReviewListItem = styled.li`
@@ -407,4 +418,9 @@ function canItemBeDeleted( item ) {
 		'wordpress-com-credits',
 	];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
+}
+
+function shouldLineItemBeShownWhenStepInactive( item ) {
+	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesToIgnore.includes( item.type );
 }
