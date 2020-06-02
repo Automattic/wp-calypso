@@ -18,7 +18,7 @@ import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
 import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { Plans } from '@automattic/data-stores';
+import { PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
@@ -26,8 +26,6 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
 import './style.scss';
-
-const PLANS_STORE = Plans.register();
 
 const StylePreview: React.FunctionComponent = () => {
 	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );

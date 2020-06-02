@@ -9,13 +9,11 @@ import wp from '../../../lib/wp';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { Plans } from '@automattic/data-stores';
+import { PLANS_STORE } from '../stores/plans';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useIsSelectedPlanEcommerce } from './use-selected-plan';
-
-const PLANS_STORE = Plans.register();
 
 const wpcom = wp.undocumented();
 

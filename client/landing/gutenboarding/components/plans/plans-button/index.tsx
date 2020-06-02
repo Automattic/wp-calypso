@@ -16,9 +16,7 @@ import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automat
 import PlansModal from '../plans-modal';
 import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 import { useCurrentStep, Step } from '../../../path';
-import { Plans } from '@automattic/data-stores';
-
-const PLANS = Plans.register();
+import { PLANS_STORE } from '../../../stores/plans';
 
 /**
  * Style dependencies
@@ -27,7 +25,7 @@ import './style.scss';
 
 const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...buttonProps } ) => {
 	const { __ } = useI18n();
-	const selectedPlan = useSelect( ( select ) => select( PLANS ).getSelectedPlan() );
+	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
 	const currentStep = useCurrentStep();
 
 	// mobile first to match SCSS media query https://github.com/Automattic/wp-calypso/pull/41471#discussion_r415678275

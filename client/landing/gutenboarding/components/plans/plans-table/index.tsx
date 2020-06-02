@@ -2,21 +2,23 @@
  * External dependencies
  */
 import React from 'react';
-import { Plans as PlansStore } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import './style.scss';
+import { PLANS_STORE } from '../../../stores/plans';
 import PlanItem from './plan-item';
-import { useSelect } from '@wordpress/data';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export interface Props {
 	selectedPlanSlug: string;
 	onPlanSelect: ( planSlug: string ) => void;
 }
-
-const PLANS_STORE = PlansStore.register();
 
 const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSelect } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
