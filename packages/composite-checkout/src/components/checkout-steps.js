@@ -309,15 +309,18 @@ export function CheckoutStep( {
 			stepId={ stepId }
 			titleContent={ titleContent }
 			goToThisStep={ goToThisStep }
-			goToNextStep={ goToNextStep }
+			goToNextStep={ nextStepNumber > 0 && goToNextStep }
 			activeStepContent={ activeStepContent }
-			nextStepNumber={ nextStepNumber }
 			formStatus={ formStatus }
 			completeStepContent={ completeStepContent }
 			className={ joinClasses( classNames ) }
 		/>
 	);
 }
+
+CheckoutStep.propTypes = {
+	nextStepNumber: PropTypes.number,
+};
 
 export function CheckoutStepBody( {
 	errorMessage,
@@ -336,7 +339,6 @@ export function CheckoutStepBody( {
 	goToThisStep,
 	goToNextStep,
 	activeStepContent,
-	nextStepNumber,
 	formStatus,
 	completeStepContent,
 	onError,
@@ -368,7 +370,7 @@ export function CheckoutStepBody( {
 				/>
 				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
 					{ activeStepContent }
-					{ nextStepNumber > 0 && goToNextStep && isStepActive && (
+					{ goToNextStep && isStepActive && (
 						<CheckoutNextStepButton
 							onClick={ goToNextStep }
 							value={
@@ -415,7 +417,6 @@ CheckoutStepBody.propTypes = {
 	goToThisStep: PropTypes.func,
 	goToNextStep: PropTypes.func,
 	activeStepContent: PropTypes.node,
-	nextStepNumber: PropTypes.number,
 	formStatus: PropTypes.string,
 	completeStepContent: PropTypes.node,
 };
