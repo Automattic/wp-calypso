@@ -8,14 +8,19 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 import { isEnabled } from 'config';
 import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( isEnabled( 'editor/after-deprecation' ) && inEditorDeprecationGroup( state ) ) {
-		return getWpAdminClassicEditorRedirectionUrl( state, siteId, postId );
-	}
-
 	if ( shouldLoadGutenberg( state, siteId ) ) {
 		return getGutenbergEditorUrl( state, siteId, postId, postType );
+	}
+
+	if (
+		getSelectedEditor( state, siteId ) === 'classic' &&
+		isEnabled( 'editor/after-deprecation' ) &&
+		inEditorDeprecationGroup( state )
+	) {
+		return getWpAdminClassicEditorRedirectionUrl( state, siteId, postId );
 	}
 
 	if ( postId ) {
