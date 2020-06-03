@@ -7,6 +7,10 @@
 	<rule ref="WordPress-Docs"/>
 	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
 
+	<!-- Check for cross-version support for PHP 7.2 and higher. -->
+	<rule ref="PHPCompatibility"/>
+	<config name="testVersion" value="7.2-"/>
+
 	<arg name="extensions" value="php"/>
 
 	<!-- Strip the file paths down to the relevant bit. -->
