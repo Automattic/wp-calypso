@@ -24,7 +24,6 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Headline', 'full-site-editing' ),
 	'categories' => array( 'text' ),
 	'content'    => sprintf(

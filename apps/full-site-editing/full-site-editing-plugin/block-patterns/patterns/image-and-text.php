@@ -32,7 +32,6 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Image and Text', 'full-site-editing' ),
 	'categories' => array( 'images' ),
 	'content'    => sprintf(

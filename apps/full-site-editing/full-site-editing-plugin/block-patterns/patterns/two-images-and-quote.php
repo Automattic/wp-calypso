@@ -17,19 +17,19 @@ $markup = '
 		<!-- /wp:image -->
 	</div>
 	<!-- /wp:jetpack/layout-grid-column -->
-	
+
 	<!-- wp:jetpack/layout-grid-column -->
 	<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
 		<!-- wp:spacer {"height":64} -->
 		<div style="height:64px" aria-hidden="true" class="wp-block-spacer"></div>
 		<!-- /wp:spacer -->
-		
+
 		<!-- wp:image {"sizeSlug":"full","className":"margin-bottom-half"} -->
 		<figure class="wp-block-image size-full margin-bottom-half">
 			<img src="%2$s" alt=""/>
 		</figure>
 		<!-- /wp:image -->
-		
+
 		<!-- wp:paragraph {"fontSize":"small","className":"margin-top-half"} -->
 		<p class="has-small-font-size margin-top-half"><em>%3$s</em></p>
 		<!-- /wp:paragraph -->
@@ -40,7 +40,6 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Two images and quote', 'full-site-editing' ),
 	'categories' => array( 'images' ),
 	'content'    => sprintf(

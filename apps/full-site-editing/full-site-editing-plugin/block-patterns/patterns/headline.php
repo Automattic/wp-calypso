@@ -17,15 +17,15 @@ $markup = '
 			</a>
 		</figure>
 		<!-- /wp:image -->
-		
+
 		<!-- wp:paragraph {"align":"center","textColor":"foreground-light","className":"margin-bottom-half"} -->
 		<p class="has-text-color has-text-align-center has-foreground-light-color margin-bottom-half"><strong>%2$s</strong></p>
 		<!-- /wp:paragraph -->
-		
+
 		<!-- wp:heading {"align":"center","className":"margin-top-half entry-title"} -->
 		<h2 class="has-text-align-center margin-top-half entry-title"><a href="#">%3$s</a></h2>
 		<!-- /wp:heading -->
-		
+
 		<!-- wp:buttons {"align":"center"} -->
 		<div class="wp-block-buttons aligncenter">
 			<!-- wp:button {"borderRadius":0,"className":"is-style-outline"} -->
@@ -40,7 +40,6 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Headline', 'full-site-editing' ),
 	'categories' => array( 'blog' ),
 	'content'    => sprintf(

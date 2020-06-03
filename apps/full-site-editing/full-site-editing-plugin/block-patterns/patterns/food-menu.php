@@ -56,7 +56,6 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Food Menu', 'full-site-editing' ),
 	'categories' => array( 'text', 'menu' ),
 	'content'    => sprintf(

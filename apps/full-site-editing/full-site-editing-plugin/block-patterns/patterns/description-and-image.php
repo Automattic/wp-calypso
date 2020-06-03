@@ -30,7 +30,6 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Description and Image', 'full-site-editing' ),
 	'categories' => array( 'images' ),
 	'content'    => sprintf(

@@ -50,7 +50,6 @@ $markup = '
 // phpcs:enable WordPress.WP.CapitalPDangit.Misspelled
 
 return array(
-	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Contact', 'full-site-editing' ),
 	'categories' => array( 'contact' ),
 	'content'    => sprintf(
