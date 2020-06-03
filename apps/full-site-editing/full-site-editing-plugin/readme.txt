@@ -41,7 +41,8 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 1.7 =
-* Add handling for site launch on WordPree.com
+* Add handling for site launch on WordPree.com.
+* Performance improvements in the block editor.
 
 = 1.6 =
 * Remove the "Edit as HTML" options for the inner blocks of the Premium Content Block.
