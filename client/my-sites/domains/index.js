@@ -278,6 +278,15 @@ export default function () {
 		);
 
 		page(
+			paths.domainManagementFrivolous(),
+			siteSelection,
+			navigation,
+			domainsController.googleAppsWithRegistration,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			'/domains/add/mapping/:domain',
 			siteSelection,
 			navigation,
