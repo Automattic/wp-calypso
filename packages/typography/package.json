@@ -2,7 +2,7 @@
 	"name": "@automattic/typography",
 	"version": "1.0.0",
 	"description": "Typographic elements for WordPress.com products",
-	"main": "dist/typography.css",
+	"main": "css/fonts.css",
 	"keywords": [
 		"wordpress"
 	],
@@ -16,13 +16,9 @@
 		"directory": "packages/typography"
 	},
 	"publishConfig": {
-		"access": "public"
+		"access": "private"
 	},
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
-	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist src/__typography",
-		"prepare": "check-npm-client && node bin/prepare-sass-assets.js && node bin/build-css.js"
 	}
 }

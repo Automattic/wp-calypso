@@ -9,3 +9,5 @@ yarn add @automattic/typography
 ```
 
 ## Usage
+
+`import '@automattic/typography/css/fonts.css';`

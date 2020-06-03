@@ -1,0 +1,42 @@
+@font-face {
+  font-display: swap;
+  font-family: 'Recoleta';
+  font-weight: 400;
+  src: url("https://s1.wp.com/i/fonts/recoleta/400.woff2") format("woff2"), url("https://s1.wp.com/i/fonts/recoleta/400.woff") format("woff"); }
+
+.wpbrandfont {
+  font-family: "Noto Serif", Georgia, "Times New Roman", Times, serif;
+  font-weight: 400; }
+
+[lang*=de] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=en] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=es] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=fi] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=fr] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=id] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=it] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=nl] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=pt] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=sv] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
+
+[lang*=tr] .wpbrandfont {
+  font-family: "Recoleta", "Noto Serif", Georgia, "Times New Roman", Times, serif; }
