@@ -244,6 +244,7 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
+		isWhiteGloveOffer,
 	} );
 
 	const moment = useLocalizedMoment();

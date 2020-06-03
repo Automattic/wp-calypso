@@ -33,6 +33,7 @@ import { getLanguage } from 'lib/i18n-utils';
 import getCountries from 'state/selectors/get-countries';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormInputValidation from 'components/forms/form-input-validation';
+import isSiteWhiteGlove from 'state/selectors/is-site-white-glove';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -126,6 +127,7 @@ class InfoStep extends Component {
 				phoneNumberWithoutCountryCode,
 			},
 			site,
+			isWhiteGlove,
 			translate,
 		} = this.props;
 		const language = getLanguage( currentUserLocale ).name;
@@ -137,7 +139,7 @@ class InfoStep extends Component {
 		return (
 			<div>
 				<IsRebrandCitiesSite onChange={ this.setRebrandCitiesValue } siteId={ site.ID } />
-				<PrimaryHeader />
+				<PrimaryHeader isWhiteGlove={ isWhiteGlove } />
 				{ ! isEnglish && <Notice showDismiss={ false } text={ noticeText } /> }
 				<CompactCard className="book__info-step-site-block">
 					<Site siteId={ site.ID } />
@@ -230,11 +232,12 @@ class InfoStep extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	( state, ownProps ) => ( {
 		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
 		userSettings: getUserSettings( state ),
 		countriesList: getCountries( state, 'sms' ),
+		isWhiteGlove: isSiteWhiteGlove( state, ownProps.site.ID ),
 	} ),
 	{
 		updateConciergeSignupForm,
