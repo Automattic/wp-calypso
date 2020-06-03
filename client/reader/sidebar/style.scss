@@ -33,4 +33,11 @@
 	.sidebar__separator {
 		height: 30px;
 	}
+
+	.sidebar__menu-item-sitename {
+		max-width: 80%;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
 }
