@@ -32,6 +32,7 @@
 	"dependencies": {
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@wordpress/components": "^9.6.0",
 		"@wordpress/icons": "^2.0.0",
 		"classnames": "^2.2.6",

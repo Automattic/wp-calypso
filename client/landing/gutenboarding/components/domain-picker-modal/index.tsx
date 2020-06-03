@@ -4,11 +4,11 @@
 import * as React from 'react';
 import Modal from 'react-modal';
 import { select } from '@wordpress/data';
+import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
 
 /**
  * Internal dependencies
  */
-import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
 import { recordEnterModal, recordCloseModal } from '../../lib/analytics';
 import { STORE_KEY } from '../../stores/onboard';
 
@@ -19,7 +19,6 @@ import './style.scss';
 
 interface Props extends DomainPickerProps {
 	isOpen: boolean;
-	onMoreOptions?: () => void;
 }
 
 const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose, ...props } ) => {
