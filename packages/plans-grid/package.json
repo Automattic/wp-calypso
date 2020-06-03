@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/plans-grid",
 	"version": "1.0.0-alpha.0",
-	"description": "Plans Grid UI component",
+	"description": "WordPress.com Plans Grid UI component",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
