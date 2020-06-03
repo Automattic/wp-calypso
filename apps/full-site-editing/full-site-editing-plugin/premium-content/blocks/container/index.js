@@ -103,9 +103,6 @@ const settings = {
 	],
 	edit,
 	save,
-	providesContext: {
-		'premium-content/planId': 'selectedPlanId',
-	},
 };
 
 export { name, category, settings };

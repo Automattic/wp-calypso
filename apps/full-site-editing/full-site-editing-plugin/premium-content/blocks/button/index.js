@@ -65,7 +65,6 @@ const settings = {
 	},
 	edit,
 	save,
-	context: [ 'premium-content/planId' ],
 };
 
 export { name, category, settings };
