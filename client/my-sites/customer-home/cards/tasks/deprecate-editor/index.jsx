@@ -37,7 +37,7 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 			title={ translate( 'The new WordPress editor is coming.' ) }
 			description={ preventWidows(
 				translate(
-					'Get a head start before we activate it for everyone on in the near future. {{support}}Read more{{/support}}.',
+					'Get a head start before we activate it for everyone in the near future. {{support}}Read more{{/support}}.',
 					{
 						components: {
 							support: (
