@@ -109,7 +109,7 @@ export const emptyResponseCart = {
 	is_coupon_applied: false,
 	coupon_discounts_integer: [],
 	locale: 'en-us',
-	tax: { location: [], display_taxes: false },
+	tax: { location: {}, display_taxes: false },
 	is_signup: false,
 } as ResponseCart;
 
@@ -255,13 +255,14 @@ export function doesCartLocationDifferFromResponseCartLocation(
 	location: CartLocation
 ): boolean {
 	const { countryCode, postalCode, subdivisionCode } = location;
-	if ( countryCode && cart.tax.location.country_code !== countryCode ) {
+	const isMissing = ( value ) => value === null || value === undefined;
+	if ( ! isMissing( countryCode ) && cart.tax.location.country_code !== countryCode ) {
 		return true;
 	}
-	if ( postalCode && cart.tax.location.postal_code !== postalCode ) {
+	if ( ! isMissing( postalCode ) && cart.tax.location.postal_code !== postalCode ) {
 		return true;
 	}
-	if ( subdivisionCode && cart.tax.location.subdivision_code !== subdivisionCode ) {
+	if ( ! isMissing( subdivisionCode ) && cart.tax.location.subdivision_code !== subdivisionCode ) {
 		return true;
 	}
 	return false;

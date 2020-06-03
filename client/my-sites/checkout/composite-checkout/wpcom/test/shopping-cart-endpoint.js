@@ -184,6 +184,14 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 		},
 	};
 
+	it( 'returns true if new values are empty strings that differ', function () {
+		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
+			countryCode: '',
+			subdivisionCode: '',
+			postalCode: '',
+		} );
+		expect( result ).toBe( true );
+	} );
 	it( 'returns true if countryCode differs', function () {
 		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
 			countryCode: 'CA',

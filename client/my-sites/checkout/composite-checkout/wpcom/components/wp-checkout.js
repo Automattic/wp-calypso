@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 import {
@@ -175,6 +175,30 @@ export default function WPCheckout( {
 		setSiteId( siteId );
 	}, [ siteId, setSiteId ] );
 
+	const updateCartContactDetails = useCallback( () => {
+		// Update tax location in cart
+		const nonTaxPaymentMethods = [ 'full-credits', 'free-purchase' ];
+		if ( ! activePaymentMethod || ! contactInfo ) {
+			return;
+		}
+		if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
+			// this data is intentionally empty so we do not charge taxes
+			updateLocation( {
+				countryCode: '',
+				postalCode: '',
+				subdivisionCode: '',
+			} );
+		} else {
+			updateLocation( {
+				countryCode: contactInfo.countryCode?.value ?? '',
+				postalCode: contactInfo.postalCode?.value ?? '',
+				subdivisionCode: contactInfo.state?.value ?? '',
+			} );
+		}
+	}, [ activePaymentMethod, updateLocation, contactInfo ] );
+
+	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
+
 	return (
 		<Checkout>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
@@ -241,12 +265,7 @@ export default function WPCheckout( {
 								setShouldShowContactDetailsValidationErrors( true );
 								// Touch the fields so they display validation errors
 								touchContactFields();
-								// Update tax location in cart
-								updateLocation( {
-									countryCode: contactInfo.countryCode.value,
-									postalCode: contactInfo.postalCode.value,
-									subdivisionCode: contactInfo.state.value,
-								} );
+								updateCartContactDetails();
 
 								return validateContactDetailsAndDisplayErrors();
 							} }
@@ -435,3 +454,20 @@ const CheckoutTermsUI = styled.div`
 		text-decoration: none;
 	}
 `;
+
+function useUpdateCartLocationWhenPaymentMethodChanges(
+	activePaymentMethod,
+	updateCartContactDetails
+) {
+	const previousPaymentMethodId = useRef();
+	const hasInitialized = useRef( false );
+	useEffect( () => {
+		if ( activePaymentMethod?.id && activePaymentMethod.id !== previousPaymentMethodId.current ) {
+			previousPaymentMethodId.current = activePaymentMethod.id;
+			if ( hasInitialized.current ) {
+				updateCartContactDetails();
+			}
+			hasInitialized.current = true;
+		}
+	}, [ activePaymentMethod, updateCartContactDetails ] );
+}
