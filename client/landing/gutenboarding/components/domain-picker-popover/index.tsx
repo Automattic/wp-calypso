@@ -5,11 +5,11 @@ import * as React from 'react';
 import { Popover } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { select } from '@wordpress/data';
+import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
 
 /**
  * Internal dependencies
  */
-import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
 import { recordEnterModal, recordCloseModal } from '../../lib/analytics';
 import { STORE_KEY } from '../../stores/onboard';
 
