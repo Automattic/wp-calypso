@@ -67,6 +67,7 @@ import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/vie
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
 import { requestMarkAsSeen } from 'state/reader/seen-posts/actions';
 import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -427,6 +428,8 @@ export class FullPostView extends React.Component {
 								onCommentClick={ this.handleCommentClick }
 								fullPost={ true }
 							/>
+
+							{ ! isLoading && <PerformanceTrackerStop /> }
 
 							{ showRelatedPosts && (
 								<RelatedPostsFromSameSite
