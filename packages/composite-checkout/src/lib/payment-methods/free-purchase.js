@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -14,7 +16,6 @@ import {
 	useTransactionStatus,
 	usePaymentProcessor,
 } from '../../public-api';
-import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
 
 export function createFreePaymentMethod() {
@@ -23,16 +24,16 @@ export function createFreePaymentMethod() {
 		label: <FreePurchaseLabel />,
 		submitButton: <FreePurchaseSubmitButton />,
 		inactiveContent: <FreePurchaseSummary />,
-		getAriaLabel: ( localize ) => localize( 'Free' ),
+		getAriaLabel: ( __ ) => __( 'Free' ),
 	};
 }
 
 function FreePurchaseLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<div>{ localize( 'Free Purchase' ) }</div>
+			<div>{ __( 'Free Purchase' ) }</div>
 		</React.Fragment>
 	);
 }
@@ -76,20 +77,20 @@ function FreePurchaseSubmitButton( { disabled } ) {
 }
 
 function ButtonContents( { formStatus, total } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
-		return localize( 'Processing…' );
+		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
 		return sprintf(
-			localize( 'Complete Checkout' ),
+			__( 'Complete Checkout' ),
 			renderDisplayValueMarkdown( total.amount.displayValue )
 		);
 	}
-	return localize( 'Please wait…' );
+	return __( 'Please wait…' );
 }
 
 function FreePurchaseSummary() {
-	const localize = useLocalize();
-	return <div>{ localize( 'Free Purchase' ) }</div>;
+	const { __ } = useI18n();
+	return <div>{ __( 'Free Purchase' ) }</div>;
 }

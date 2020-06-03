@@ -5,13 +5,13 @@ import React, { useContext, useEffect, useCallback, useMemo, useState, useRef } 
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import { LocalizeProvider, useLocalize } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager, useFormStatus } from '../lib/form-status';
@@ -29,7 +29,6 @@ const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
 export const CheckoutProvider = ( props ) => {
 	const {
-		locale,
 		total,
 		items,
 		onPaymentComplete,
@@ -112,14 +111,12 @@ export const CheckoutProvider = ( props ) => {
 			<CheckoutProviderPropValidator propsToValidate={ props } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
-					<LocalizeProvider locale={ locale }>
-						<LineItemsProvider items={ items } total={ total }>
-							<CheckoutContext.Provider value={ value }>
-								<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
-								{ children }
-							</CheckoutContext.Provider>
-						</LineItemsProvider>
-					</LocalizeProvider>
+					<LineItemsProvider items={ items } total={ total }>
+						<CheckoutContext.Provider value={ value }>
+							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+							{ children }
+						</CheckoutContext.Provider>
+					</LineItemsProvider>
 				</RegistryProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
@@ -201,7 +198,7 @@ export function useMessages() {
 }
 
 function useTransactionStatusHandler( redirectToUrl ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const { setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const {
@@ -214,6 +211,11 @@ function useTransactionStatusHandler( redirectToUrl ) {
 	const onEvent = useEvents();
 	const [ paymentMethodId ] = usePaymentMethodId();
 
+	const genericErrorMessage = __( 'An error occurred during the transaction' );
+	const redirectErrormessage = __(
+		'An error occurred while redirecting to the payment partner. Please try again or contact support.'
+	);
+	const redirectInfoMessage = __( 'Redirecting to payment partner…' );
 	useEffect( () => {
 		if ( transactionStatus === 'pending' ) {
 			debug( 'transaction is beginning' );
@@ -221,9 +223,7 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		}
 		if ( transactionStatus === 'error' ) {
 			debug( 'showing error', transactionError );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
+			showErrorMessage( transactionError || genericErrorMessage );
 			onEvent( {
 				type: 'TRANSACTION_ERROR',
 				payload: { message: transactionError || '', paymentMethodId },
@@ -238,15 +238,11 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		if ( transactionStatus === 'redirecting' ) {
 			if ( ! transactionRedirectUrl ) {
 				debug( 'tried to redirect but there was no redirect url' );
-				setTransactionError(
-					localize(
-						'An error occurred while redirecting to the payment partner. Please try again or contact support.'
-					)
-				);
+				setTransactionError( redirectErrormessage );
 				return;
 			}
 			debug( 'redirecting to', transactionRedirectUrl );
-			showInfoMessage( localize( 'Redirecting to payment partner…' ) );
+			showInfoMessage( redirectInfoMessage );
 			redirectToUrl( transactionRedirectUrl );
 		}
 	}, [
@@ -263,7 +259,9 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		transactionError,
 		transactionRedirectUrl,
 		redirectToUrl,
-		localize,
+		redirectInfoMessage,
+		redirectErrormessage,
+		genericErrorMessage,
 	] );
 }
 

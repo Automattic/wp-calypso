@@ -7,6 +7,8 @@ import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 import debugFactory from 'debug';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -26,7 +28,6 @@ import {
 	renderDisplayValueMarkdown,
 	useEvents,
 } from '../../public-api';
-import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import Spinner from '../../components/spinner';
 import { useFormStatus } from '../form-status';
@@ -142,12 +143,12 @@ export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 			/>
 		),
 		inactiveContent: <StripeSummary />,
-		getAriaLabel: ( localize ) => localize( 'Credit Card' ),
+		getAriaLabel: ( __ ) => __( 'Credit Card' ),
 	};
 }
 
 function StripeCreditCardFields() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
@@ -204,7 +205,7 @@ function StripeCreditCardFields() {
 
 			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
 				<Label>
-					<LabelText>{ localize( 'Card number' ) }</LabelText>
+					<LabelText>{ __( 'Card number' ) }</LabelText>
 					<StripeFieldWrapper hasError={ cardNumberError }>
 						<CardNumberElement
 							style={ cardNumberStyle }
@@ -223,7 +224,7 @@ function StripeCreditCardFields() {
 				<FieldRow gap="4%" columnWidths="48% 48%">
 					<LeftColumn>
 						<Label>
-							<LabelText>{ localize( 'Expiry date' ) }</LabelText>
+							<LabelText>{ __( 'Expiry date' ) }</LabelText>
 							<StripeFieldWrapper hasError={ cardExpiryError }>
 								<CardExpiryElement
 									style={ cardNumberStyle }
@@ -237,7 +238,7 @@ function StripeCreditCardFields() {
 					</LeftColumn>
 					<RightColumn>
 						<Label>
-							<LabelText>{ localize( 'Security code' ) }</LabelText>
+							<LabelText>{ __( 'Security code' ) }</LabelText>
 							<GridRow gap="4%" columnWidths="67% 29%">
 								<LeftColumn>
 									<StripeFieldWrapper hasError={ cardCvcError }>
@@ -262,12 +263,12 @@ function StripeCreditCardFields() {
 					id="cardholderName"
 					type="Text"
 					autoComplete="cc-name"
-					label={ localize( 'Cardholder name' ) }
-					description={ localize( "Enter your name as it's written on the card" ) }
+					label={ __( 'Cardholder name' ) }
+					description={ __( "Enter your name as it's written on the card" ) }
 					value={ cardholderName?.value ?? '' }
 					onChange={ changeCardholderName }
 					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
-					errorMessage={ localize( 'This field is required' ) }
+					errorMessage={ __( 'This field is required' ) }
 				/>
 			</CreditCardFieldsWrapper>
 		</StripeFields>
@@ -374,7 +375,6 @@ function LoadingFields() {
 }
 
 function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
-	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
@@ -422,7 +422,6 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 		transactionLastResponse,
 		setTransactionError,
 		stripeConfiguration,
-		localize,
 	] );
 
 	return (
@@ -469,14 +468,14 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 }
 
 function ButtonContents( { formStatus, total } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
-		return localize( 'Processing…' );
+		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
+		return sprintf( __( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	}
-	return localize( 'Please wait…' );
+	return __( 'Please wait…' );
 }
 
 function StripeSummary() {
@@ -515,10 +514,10 @@ function isCreditCardFormValid( store ) {
 }
 
 function CreditCardLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	return (
 		<React.Fragment>
-			<span>{ localize( 'Credit or debit card' ) }</span>
+			<span>{ __( 'Credit or debit card' ) }</span>
 			<CreditCardLogos />
 		</React.Fragment>
 	);
@@ -537,14 +536,14 @@ function CreditCardLogos() {
 }
 
 function CreditCardLoading() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<CreditCardFieldsWrapper isLoaded={ true }>
 			<CreditCardField
 				id="credit-card-number"
 				type="Number"
-				label={ localize( 'Card number' ) }
+				label={ __( 'Card number' ) }
 				placeholder="1234 1234 1234 1234"
 				icon={ <LockIcon /> }
 				isIconVisible={ true }
@@ -557,7 +556,7 @@ function CreditCardLoading() {
 					<Field
 						id="card-expiry"
 						type="Number"
-						label={ localize( 'Expiry date' ) }
+						label={ __( 'Expiry date' ) }
 						placeholder="MM / YY"
 						autoComplete="cc-exp"
 						value={ '' }
@@ -566,7 +565,7 @@ function CreditCardLoading() {
 				</LeftColumn>
 				<RightColumn>
 					<label>
-						<LabelText>{ localize( 'Security code' ) }</LabelText>
+						<LabelText>{ __( 'Security code' ) }</LabelText>
 						<GridRow gap="4%" columnWidths="67% 29%">
 							<LeftColumn>
 								<Field
@@ -589,8 +588,8 @@ function CreditCardLoading() {
 			<CreditCardField
 				id="card-holder-name"
 				type="Text"
-				label={ localize( 'Cardholder name' ) }
-				description={ localize( "Enter your name as it's written on the card" ) }
+				label={ __( 'Cardholder name' ) }
+				description={ __( "Enter your name as it's written on the card" ) }
 				autoComplete="cc-name"
 				value={ '' }
 				disabled={ true }
@@ -630,7 +629,7 @@ const LockIconGraphic = styled.svg`
 `;
 
 function CVV( { className } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<svg
@@ -646,7 +645,7 @@ function CVV( { className } ) {
 			height="41"
 		>
 			<title id="cvv-image-title">
-				{ localize( 'An image of the back of the card where you find the security code' ) }
+				{ __( 'An image of the back of the card where you find the security code' ) }
 			</title>
 			<rect x="0" y="0" width="67.0794" height="45" rx="3" fill="#D7DADE" />
 			<rect x="0" y="4" width="67.0794" height="10.4828" fill="#23282D" />
