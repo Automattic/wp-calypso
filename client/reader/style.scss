@@ -55,7 +55,7 @@
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 13px;
+		font-size: $font-body-small;
 		max-width: 180px;
 	}
 }

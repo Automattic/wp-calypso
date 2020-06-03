@@ -181,7 +181,7 @@
 
 .migrate__card-footer {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	a {
 		color: var( --color-text-subtle );

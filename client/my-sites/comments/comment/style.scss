@@ -142,7 +142,7 @@
 
 	.popover__inner {
 		color: var( --color-text-subtle );
-		font-size: 13px;
+		font-size: $font-body-small;
 		max-width: 220px;
 		padding: 16px;
 		text-align: left;

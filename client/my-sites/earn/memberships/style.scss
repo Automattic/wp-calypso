@@ -177,7 +177,7 @@
 
 .memberships__subscriber-email {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		font-size: $font-body;
@@ -283,7 +283,7 @@
 
 .memberships__settings-section-desc {
 	margin-bottom: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	font-style: italic;
 }

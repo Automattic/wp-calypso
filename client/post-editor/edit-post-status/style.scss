@@ -14,7 +14,7 @@
 
 .edit-post-status__label-text {
 	color: var( --color-text );
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: 1.7;
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -41,7 +41,7 @@
 
 .edit-post-status__full-date {
 	color: var( --color-text );
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: flex;
 	margin-bottom: 4px;
 	padding-right: 5px;

@@ -271,14 +271,14 @@
 }
 
 .editor-revisions-list__author {
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: block;
 	margin-bottom: 4px;
 	color: var( --color-text-subtle );
 }
 
 .editor-revisions-list__changes {
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: block;
 }
 

@@ -253,7 +253,7 @@
 
 .mce-toolbar .mce-btn-group .mce-wpcom-icon-button.mce-media button {
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 }
 
@@ -737,7 +737,7 @@ div.mce-path {
 	padding: 0;
 	color: var( --color-neutral-50 );
 	font-family: $sans;
-	font-size: 13px;
+	font-size: $font-body-small;
 	text-overflow: initial;
 
 	&:hover {
@@ -887,7 +887,7 @@ div.mce-menu .mce-menu-item-sep,
 	color: #555;
 	background: #f7f7f7;
 	text-decoration: none;
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: 26px;
 	height: 28px;
 	margin: 0;
@@ -1246,7 +1246,7 @@ i.mce-i-wp_code::before {
 
 .wp-editor-area {
 	font-family: Consolas, Monaco, monospace;
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 10px;
 	margin: 1px 0 0;
 	line-height: 150%;

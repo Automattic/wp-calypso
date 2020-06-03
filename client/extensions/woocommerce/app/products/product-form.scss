@@ -295,19 +295,19 @@
 .products__product-form-details-basic-sku {
 	margin-top: 0;
 	margin-bottom: 12px;
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	.form-label {
 		display: inline;
 		margin-right: 4px;
 		color: var( --color-neutral-70 );
-		font-size: 13px;
+		font-size: $font-body-small;
 		line-height: 35px;
 	}
 
 	input {
 		width: 65%;
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 
 	.form-click-to-edit-input__wrapper {
@@ -435,7 +435,7 @@
 }
 
 .products__all-variations {
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .products__product-form-variation-table-wrapper {
@@ -591,7 +591,7 @@
 }
 
 .products__product-name {
-	font-size: 13px;
+	font-size: $font-body-small;
 	text-align: left;
 }
 
@@ -788,7 +788,7 @@
 	border: 1px solid var( --color-neutral-10 );
 	padding: 16px 16px 4px;
 	margin-top: 4px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --color-neutral-40 );
 }
 

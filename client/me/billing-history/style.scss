@@ -33,7 +33,7 @@
 
 .billing-history__search_terms {
 	display: inline-block;
-	font-size: 13px;
+	font-size: $font-body-small;
 	margin-top: 2px;
 	margin-right: 12px;
 	text-align: left;
@@ -183,7 +183,7 @@
 
 	.billing-history__transaction-date {
 		color: var( --color-neutral );
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-style: italic;
 		padding: 5px 0 0;
 
@@ -210,7 +210,7 @@ textarea.billing-history__billing-details-editable {
 .billing-history__billing-details-editable {
 	border: 1px solid var( --color-neutral-20 );
 	margin-top: 5px;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .billing-history__receipt-details {
@@ -226,7 +226,7 @@ textarea.billing-history__billing-details-editable {
 
 	li {
 		color: var( --color-neutral-70 );
-		font-size: 13px;
+		font-size: $font-body-small;
 		margin: 0 0 15px;
 		padding: 0;
 
@@ -297,14 +297,14 @@ textarea.billing-history__billing-details-editable {
 		.billing-history__receipt-item-name {
 			small {
 				color: var( --color-text-subtle );
-				font-size: 13px;
+				font-size: $font-body-small;
 				margin-left: 5px;
 				text-transform: lowercase;
 			}
 			em {
 				color: var( --color-text-subtle );
 				display: block;
-				font-size: 13px;
+				font-size: $font-body-small;
 			}
 		}
 

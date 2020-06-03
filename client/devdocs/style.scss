@@ -76,7 +76,7 @@ $devdocs-max-width: 720px;
 
 .design__instance-links-label {
 	display: block;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	margin: 8px;
 	color: var( --color-text-subtle );

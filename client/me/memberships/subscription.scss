@@ -1,6 +1,6 @@
 .memberships__subscription-meta {
 	padding: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .memberships__subscription-inner-meta {
@@ -18,7 +18,7 @@
 
 	li {
 		color: var( --color-neutral-60 );
-		font-size: 13px;
+		font-size: $font-body-small;
 
 		@include breakpoint-deprecated( '<660px' ) {
 			clear: both;

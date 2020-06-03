@@ -339,7 +339,7 @@
 .activity-log-item__help-action {
 	color: var( --color-neutral-20 );
 	font-weight: 400;
-	font-size: 13px;
+	font-size: $font-body-small;
 	white-space: nowrap;
 	padding: 2px 7px 3px;
 
@@ -354,7 +354,7 @@
 }
 
 .button.activity-log-item__quick-action {
-	font-size: 13px;
+	font-size: $font-body-small;
 	white-space: nowrap;
 
 	@include breakpoint-deprecated( '<480px' ) {

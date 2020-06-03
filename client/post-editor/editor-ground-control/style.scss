@@ -153,7 +153,7 @@
 
 .editor-ground-control__toggle-sidebar.button.is-borderless,
 .editor-ground-control__preview-button.button.is-borderless {
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .editor-ground-control__publish-button {
@@ -188,7 +188,7 @@
 .editor-ground-control__history-button.button.is-link,
 .editor-ground-control__save.button.is-link,
 .editor-ground-control__save-status {
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .editor-ground-control__save-status {
@@ -208,7 +208,7 @@
 }
 
 .editor-ground-control__email-verification-notice {
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 8px 8px 8px 40px;
 	background: white;
 	color: var( --color-primary );

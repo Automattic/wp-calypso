@@ -65,7 +65,7 @@
 }
 
 .help-courses__course-schedule-item-date {
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: inline-block;
 	margin: 0 10px 0 0;
 	white-space: normal;
@@ -102,7 +102,7 @@
 
 .help-courses__course-video-date {
 	color: var( --color-neutral-light );
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .help-courses__course-video-embed {

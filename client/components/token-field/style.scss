@@ -175,7 +175,7 @@ input[type='text'].token-field__input {
 .token-field__suggestion {
 	color: var( --color-neutral-light );
 	display: block;
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 4px 8px;
 	cursor: pointer;
 

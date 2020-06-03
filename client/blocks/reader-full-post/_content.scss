@@ -58,7 +58,7 @@
 		margin: 0;
 		border: none;
 		background: none;
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 
 	hr {
@@ -179,7 +179,7 @@
 	.wp-caption .wp-media-credit {
 		padding: 12px;
 		margin: 0;
-		font-size: 13px;
+		font-size: $font-body-small;
 		text-align: center;
 		color: var( --color-neutral-40 );
 	}
@@ -280,7 +280,7 @@
 		padding: 16px;
 		border: none;
 		background: none;
-		font-size: 13px;
+		font-size: $font-body-small;
 		width: 175px;
 
 		&.left,
@@ -328,7 +328,7 @@
 		padding: 0;
 		border: none;
 		background: none;
-		font-size: 13px;
+		font-size: $font-body-small;
 		width: 175px;
 		position: relative;
 

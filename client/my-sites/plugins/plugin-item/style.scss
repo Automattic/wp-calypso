@@ -140,7 +140,7 @@
 
 .plugin-item__last-updated {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

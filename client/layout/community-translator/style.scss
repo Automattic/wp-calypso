@@ -6,7 +6,7 @@
 	background: var( --color-primary );
 	cursor: pointer;
 	padding: 4px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	z-index: z-index( 'root', '.community-translator' );
 
 	&.is-active {
