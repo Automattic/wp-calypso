@@ -1,7 +1,13 @@
 /**
+ * Note: this file is imported by `client` and `test/e2e` tests. `test/e2e` do not have the config
+ * required to make aliased imports work (e.g. `import * from 'lib/'). As such, we must use relative
+ * paths here (e.g. `import * from '../../lib/`)
+ */
+
+/**
  * Internal dependencies
  */
-import * as RUM_DATA_COLLECTION from 'lib/performance-tracking/const';
+import * as RUM_DATA_COLLECTION from '../../lib/performance-tracking/const';
 
 export default {
 	cartNudgeUpdateToPremium: {
