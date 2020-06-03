@@ -21,6 +21,7 @@ import Main from 'components/main';
 import { addItem, removeItem } from 'lib/cart/actions';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import {
+	hasPlan,
 	hasDomainInCart,
 	domainMapping,
 	domainTransfer,
@@ -49,6 +50,7 @@ class DomainSearch extends Component {
 		basePath: PropTypes.string.isRequired,
 		context: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		hasPlanInCart: PropTypes.bool,
 		isSiteUpgradeable: PropTypes.bool,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
@@ -182,7 +184,7 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
-							<NewDomainsRedirectionNoticeUpsell />
+							{ ! this.props.hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
 							<RegisterDomainStep
 								suggestion={ suggestion }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
@@ -215,7 +217,7 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -226,6 +228,7 @@ export default connect(
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
 			productsList: getProductsList( state ),
+			hasPlanInCart: hasPlan( ownProps.cart ),
 		};
 	},
 	{
