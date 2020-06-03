@@ -1,15 +1,15 @@
 /**
  * Internal dependencies
  */
-
 import {
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
 	NOTICE_CREATE,
 } from 'state/action-types';
+import wpcom from 'lib/wp';
 
 import 'state/data-layer/wpcom/sites/memberships';
-import wpcom from 'lib/wp';
+import 'state/memberships/init';
 
 export const requestSettings = ( siteId ) => ( {
 	siteId,

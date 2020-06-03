@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -20,6 +19,7 @@ import SectionHeader from 'components/section-header';
 import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { getAllSubscriptions } from 'state/memberships/subscriptions/selectors';
 
 /**
  * Style dependencies
@@ -122,5 +122,5 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 };
 
 export default connect( ( state ) => ( {
-	subscriptions: get( state, 'memberships.subscriptions.items', [] ),
+	subscriptions: getAllSubscriptions( state ),
 } ) )( localize( withLocalizedMoment( MembershipsHistory ) ) );

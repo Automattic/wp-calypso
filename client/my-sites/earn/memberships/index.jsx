@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, orderBy } from 'lodash';
+import { orderBy } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 import { saveAs } from 'browser-filesaver';
 
@@ -35,6 +35,16 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import ExternalLink from 'components/external-link';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { localizeUrl } from 'lib/i18n-utils';
+import { getEarningsWithDefaultsForSiteId } from 'state/memberships/earnings/selectors';
+import {
+	getTotalSubscribersForSiteId,
+	getOwnershipsForSiteId,
+} from 'state/memberships/subscribers/selectors';
+import {
+	getConnectedAccountIdForSiteId,
+	getConnectUrlForSiteId,
+} from 'state/memberships/settings/selectors';
+import { getProductsForSiteId } from 'state/memberships/product-list/selectors';
 
 /**
  * Style dependencies
@@ -577,27 +587,24 @@ class MembershipsSection extends Component {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+	const earnings = getEarningsWithDefaultsForSiteId( state, siteId );
 
 	return {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
-		total: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'total' ], 0 ),
-		lastMonth: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'last_month' ], 0 ),
-		forecast: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'forecast' ], 0 ),
-		currency: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'currency' ], 'USD' ),
-		commission: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'commission' ], '0.1' ),
-		totalSubscribers: get( state, [ 'memberships', 'subscribers', 'list', siteId, 'total' ], 0 ),
-		subscribers: get( state, [ 'memberships', 'subscribers', 'list', siteId, 'ownerships' ], {} ),
-		connectedAccountId: get(
-			state,
-			[ 'memberships', 'settings', siteId, 'connectedAccountId' ],
-			null
-		),
-		connectUrl: get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' ),
+		total: earnings.total,
+		lastMonth: earnings.last_month,
+		forecast: earnings.forecast,
+		currency: earnings.currency,
+		commission: earnings.commission,
+		totalSubscribers: getTotalSubscribersForSiteId( state, siteId ),
+		subscribers: getOwnershipsForSiteId( state, siteId ) ?? {},
+		connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
+		connectUrl: getConnectUrlForSiteId( state, siteId ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
-		products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
+		products: getProductsForSiteId( state, siteId ) ?? [],
 	};
 };
 

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	MEMBERSHIPS_SUBSCRIBERS_LIST,
 	MEMBERSHIPS_SUBSCRIPTION_STOP,
@@ -9,9 +8,10 @@ import {
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 	NOTICE_CREATE,
 } from 'state/action-types';
+import wpcom from 'lib/wp';
 
 import 'state/data-layer/wpcom/sites/memberships';
-import wpcom from 'lib/wp';
+import 'state/memberships/init';
 
 export const requestSubscribers = ( siteId, offset ) => ( {
 	siteId,

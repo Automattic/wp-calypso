@@ -3,12 +3,12 @@
  */
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { listMembershipsConnectedAccounts } from 'state/memberships/actions';
+import { isFetching } from 'state/memberships/connected-accounts/selectors';
 
 class QueryMembershipsConnectedAccounts extends Component {
 	componentDidMount() {
@@ -24,7 +24,7 @@ class QueryMembershipsConnectedAccounts extends Component {
 
 export default connect(
 	( state ) => ( {
-		isFetching: get( state, [ 'memberships', 'connectedAccounts', 'isFetching' ], false ),
+		isFetching: isFetching( state ),
 	} ),
 	{ listMembershipsConnectedAccounts }
 )( QueryMembershipsConnectedAccounts );
