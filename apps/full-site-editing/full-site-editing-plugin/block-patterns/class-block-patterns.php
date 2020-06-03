@@ -52,6 +52,10 @@ class Block_Patterns {
 			register_block_pattern_category( 'call-to-action', array( 'label' => _x( 'Call to Action', 'Block pattern category', 'full-site-editing' ) ) );
 			register_block_pattern_category( 'contact', array( 'label' => _x( 'Contact', 'Block pattern category', 'full-site-editing' ) ) );
 			register_block_pattern_category( 'images', array( 'label' => _x( 'Images', 'Block pattern category', 'full-site-editing' ) ) );
+
+			// The 'Two Columns of Text' pattern is in the 'columns' and 'text' categories.
+			// Removing 'columns' so it doesn't appear as a category with only a single item.
+			unregister_block_pattern_category( 'columns' );
 		}
 
 		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
