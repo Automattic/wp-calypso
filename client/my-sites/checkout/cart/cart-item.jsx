@@ -32,7 +32,7 @@ import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
 import { removeItem } from 'lib/cart/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'lib/plans/constants';
 
 export class CartItem extends React.Component {
 	removeFromCart = ( event ) => {
@@ -315,6 +315,7 @@ export class CartItem extends React.Component {
 					} );
 
 				case PLAN_BUSINESS:
+				case PLAN_BUSINESS_2_YEARS:
 					return isWhiteGloveOffer
 						? `${ cartItem.product_name } (White glove edition)`
 						: cartItem.product_name;
