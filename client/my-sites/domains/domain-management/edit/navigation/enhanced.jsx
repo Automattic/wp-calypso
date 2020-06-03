@@ -2,13 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import { addQueryArgs } from '@wordpress/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getDomainTypeText, isSubdomain } from 'lib/domains';
 import VerticalNav from 'components/vertical-nav';
@@ -35,6 +36,7 @@ import { getUnmappedUrl } from 'lib/site/utils';
 import { withoutHttp } from 'lib/url';
 import RemovePurchase from 'me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
+import { getStepUrl } from 'signup/utils';
 
 import './style.scss';
 
@@ -392,9 +394,20 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		// we don't use the full domain name, to avoid an error about the taken domain
 		const searchTerm = domain.name.split( '.' )[ 0 ];
 
+		let path;
+
+		if ( selectedSite && selectedSite.options && selectedSite.options.is_domain_only ) {
+			path = addQueryArgs( getStepUrl( 'domain', 'domain-only', null, getLocaleSlug() ), {
+				search: 'yes',
+				new: searchTerm,
+			} );
+		} else {
+			path = domainAddNew( selectedSite.slug, searchTerm );
+		}
+
 		return (
 			<DomainManagementNavigationItem
-				path={ domainAddNew( selectedSite.slug, searchTerm ) }
+				path={ path }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
 				text={ translate( 'Find similar domains' ) }
