@@ -43,6 +43,6 @@ $markup = '
 
 return array(
 	'title'      => esc_html__( 'Three images side-by-side', 'full-site-editing' ),
-	'categories' => array( 'images' ),
+	'categories' => array( 'gallery', 'images' ),
 	'content'    => $markup,
 );
