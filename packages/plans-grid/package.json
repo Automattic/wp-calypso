@@ -32,6 +32,7 @@
 	"dependencies": {
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@wordpress/base-styles": "^1.8.0",
 		"@wordpress/components": "^9.6.0",
 		"@wordpress/icons": "^2.0.0",
 		"@wordpress/primitives": "^1.5.0",

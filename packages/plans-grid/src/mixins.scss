@@ -1,5 +1,20 @@
+@import './base-styles.scss';
 @import './variables.scss';
-@import 'assets/stylesheets/gutenberg-base-styles';
+
+// =================================================================================
+// Placeholder mixin - copy of 'client/assets/stylesheets/shared/mixins/placeholder'
+// Adds animation to placeholder section
+// =================================================================================
+
+@mixin placeholder( $color-property: --color-neutral-5 ) {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var( $color-property );
+	color: transparent;
+
+	&::after {
+		content: '\00a0';
+	}
+}
 
 @mixin onboarding-font-recoleta {
 	font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;

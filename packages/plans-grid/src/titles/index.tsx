@@ -3,6 +3,9 @@
  */
 import * as React from 'react';
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

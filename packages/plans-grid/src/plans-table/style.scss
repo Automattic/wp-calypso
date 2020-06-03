@@ -1,5 +1,4 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import '../base-styles.scss';
 @import '../mixins.scss';
 @import '../variables.scss';
 
