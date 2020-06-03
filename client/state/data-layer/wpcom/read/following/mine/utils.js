@@ -29,7 +29,7 @@ export const subscriptionFromApi = ( subscription ) =>
 			organization_id: subscription.organization_id,
 			name: subscription.name,
 			unseen_count: subscription.unseen_count,
-			blavatar: subscription.blavatar,
+			site_icon: subscription.site_icon,
 		},
 		isUndefined
 	);

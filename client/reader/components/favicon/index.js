@@ -13,29 +13,13 @@ function Favicon( props ) {
 		return <Gridicon icon="my-sites" size={ 18 } className={ props.className } />;
 	}
 
-	if ( site.blavatar !== 'use_favicon' ) {
-		return (
-			<img
-				onError={ setError }
-				src={ site.blavatar }
-				className={ className }
-				width={ size }
-				alt={ site.blavatar }
-			/>
-		);
-	}
-
-	const url = new URL( site.URL );
-	let faviconUrl = window.URL && url && url.origin ? url.origin : props.url;
-	faviconUrl += '/favicon.ico';
-
 	return (
 		<img
 			onError={ setError }
-			src={ faviconUrl }
+			src={ site.site_icon }
 			className={ className }
 			width={ size }
-			alt={ faviconUrl }
+			alt={ site.site_icon }
 		/>
 	);
 }

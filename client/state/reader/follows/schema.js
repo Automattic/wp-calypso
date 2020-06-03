@@ -18,7 +18,7 @@ export const items = {
 				organization_id: { type: [ 'integer', 'null' ] },
 				name: { type: [ 'string', 'null' ] },
 				unseen_count: { type: [ 'integer', 'null' ] },
-				blavatar: { type: [ 'string', 'null' ] },
+				site_icon: { type: [ 'string', 'null' ] },
 			},
 		},
 	},
