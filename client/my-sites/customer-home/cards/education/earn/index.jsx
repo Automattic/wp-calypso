@@ -14,7 +14,7 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 /**
  * Image dependencies
  */
-import earnCardPrompt from 'assets/images/customer-home/illustration--task-earn.svg';
+import earnCardPrompt from 'assets/images/customer-home/illustration--secondary-earn.svg';
 
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();

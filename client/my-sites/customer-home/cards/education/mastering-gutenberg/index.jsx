@@ -10,6 +10,11 @@ import { useTranslate } from 'i18n-calypso';
 import { localizeUrl } from 'lib/i18n-utils';
 import EducationalContent from '../educational-content';
 
+/**
+ * Image dependencies
+ */
+import gutenbergIllustration from 'assets/images/customer-home/illustration--secondary-gutenberg.svg';
+
 const MasteringGutenberg = () => {
 	const translate = useTranslate();
 
@@ -37,7 +42,7 @@ const MasteringGutenberg = () => {
 					statsName: 'view_adjust_blocks_video',
 				},
 			] }
-			illustration="/calypso/images/illustrations/gutenberg-mini.svg"
+			illustration={ gutenbergIllustration }
 		/>
 	);
 };
