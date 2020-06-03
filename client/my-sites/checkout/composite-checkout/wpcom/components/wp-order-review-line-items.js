@@ -79,6 +79,17 @@ function WPLineItem( {
 		sublabelAndIntervalPriceBreakdown = item.sublabel;
 	}
 
+	let gsuiteDiscountCallout = null;
+	if (
+		isGSuite &&
+		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer &&
+		couponStatus !== 'applied'
+	) {
+		gsuiteDiscountCallout = (
+			<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
+		);
+	}
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
@@ -96,14 +107,11 @@ function WPLineItem( {
 				</LineItemMeta>
 			) }
 			{ isGSuite && (
-				<LineItemMeta singleLine={ true }>
-					{ item.amount.value < item.wpcom_meta?.item_original_cost_integer &&
-						couponStatus !== 'applied' && (
-							<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
-						) }
-				</LineItemMeta>
+				<GSuiteUsersList
+					users={ item.wpcom_meta.extra.google_apps_users }
+					gsuiteDiscountCallout={ gsuiteDiscountCallout }
+				/>
 			) }
-			{ isGSuite && <GSuiteUsersList users={ item.wpcom_meta.extra.google_apps_users } /> }
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
@@ -180,9 +188,9 @@ WPLineItem.propTypes = {
 function LineItemPrice( { item, isSummary } ) {
 	return (
 		<LineItemPriceUI isSummary={ isSummary }>
-			{ item.amount.value < item.wpcom_meta?.item_original_cost_integer ? (
+			{ item.amount.value < item.wpcom_meta?.item_original_subtotal_integer ? (
 				<>
-					<s>{ item.wpcom_meta?.item_original_cost_display }</s> { item.amount.displayValue }
+					<s>{ item.wpcom_meta?.item_original_subtotal_display }</s> { item.amount.displayValue }
 				</>
 			) : (
 				renderDisplayValueMarkdown( item.amount.displayValue )
@@ -367,13 +375,18 @@ const WPOrderReviewListItem = styled.li`
 	list-style: none;
 `;
 
-function GSuiteUsersList( { users } ) {
+function GSuiteUsersList( { users, gsuiteDiscountCallout } ) {
 	return (
-		<LineItemMeta singleLine={ false }>
-			{ users.map( ( { email } ) => (
-				<div key={ email }>{ email }</div>
-			) ) }
-		</LineItemMeta>
+		<>
+			{ users.map( ( user, index ) => {
+				return (
+					<LineItemMeta singleLine={ true }>
+						<div key={ user.email }>{ user.email }</div>
+						{ index === 0 && gsuiteDiscountCallout }
+					</LineItemMeta>
+				);
+			} ) }
+		</>
 	);
 }
 
