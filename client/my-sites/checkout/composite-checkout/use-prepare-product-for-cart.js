@@ -102,12 +102,13 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 
 function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } ) {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
+	const plans = useSelector( ( state ) => getPlans( state ) );
 	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
 	useEffect( () => {
-		if ( ! planSlug || isFetchingPlans ) {
+		if ( ! planSlug ) {
 			return;
 		}
-		if ( isFetchingPlans ) {
+		if ( isFetchingPlans || plans?.length < 1 ) {
 			debug( 'waiting on plans fetch' );
 			return;
 		}
@@ -136,7 +137,7 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalP
 			cartProduct
 		);
 		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
-	}, [ originalPurchaseId, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, setState ] );
+	}, [ plans, originalPurchaseId, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, setState ] );
 }
 
 function useAddProductFromSlug( {
@@ -147,7 +148,9 @@ function useAddProductFromSlug( {
 	originalPurchaseId,
 } ) {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
+	const plans = useSelector( ( state ) => getPlans( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const products = useSelector( ( state ) => getProductsList( state ) );
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
 	);
@@ -164,7 +167,12 @@ function useAddProductFromSlug( {
 			// If this is a renewal, another hook will handle this
 			return;
 		}
-		if ( isFetchingPlans || isFetchingProducts ) {
+		if (
+			isFetchingPlans ||
+			isFetchingProducts ||
+			plans?.length < 1 ||
+			Object.keys( products || {} ).length < 1
+		) {
 			debug( 'waiting on products/plans fetch' );
 			return;
 		}
@@ -190,6 +198,8 @@ function useAddProductFromSlug( {
 		);
 		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
 	}, [
+		plans,
+		products,
 		originalPurchaseId,
 		isFetchingPlans,
 		planSlug,
