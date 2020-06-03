@@ -43,7 +43,7 @@ function enqueue_script_and_style() {
 		'a8c-fse-editor-gutenboarding-launch-style',
 		plugins_url( 'dist/editor-gutenboarding-launch.css', __FILE__ ),
 		array(),
-		$style_version,
+		$style_version
 	);
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
