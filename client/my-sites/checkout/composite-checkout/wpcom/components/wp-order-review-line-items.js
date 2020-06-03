@@ -37,6 +37,7 @@ function WPLineItem( {
 	getItemVariants,
 	onChangePlanLength,
 	couponStatus,
+	isSummary,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -80,9 +81,11 @@ function WPLineItem( {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
+			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
+				{ item.label }
+			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId }>
-				<LineItemPrice item={ item } />
+				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta singleLine={ true }>
@@ -174,9 +177,9 @@ WPLineItem.propTypes = {
 	couponStatus: PropTypes.string,
 };
 
-function LineItemPrice( { item } ) {
+function LineItemPrice( { item, isSummary } ) {
 	return (
-		<LineItemPriceUI>
+		<LineItemPriceUI isSummary={ isSummary }>
 			{ item.amount.value < item.wpcom_meta?.item_original_cost_integer ? (
 				<>
 					<s>{ item.wpcom_meta?.item_original_cost_display }</s> { item.amount.displayValue }
@@ -223,10 +226,12 @@ const DiscountCalloutUI = styled.div`
 const LineItemTitle = styled.div`
 	flex: 1;
 	word-break: break-word;
+	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
 `;
 
 const LineItemPriceUI = styled.span`
 	margin-left: 12px;
+	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
 `;
 
 const DeleteButton = styled( Button )`
@@ -317,6 +322,7 @@ export function WPOrderReviewLineItems( {
 								getItemVariants={ getItemVariants }
 								onChangePlanLength={ onChangePlanLength }
 								couponStatus={ couponStatus }
+								isSummary={ isSummary }
 							/>
 						</WPOrderReviewListItem>
 					);

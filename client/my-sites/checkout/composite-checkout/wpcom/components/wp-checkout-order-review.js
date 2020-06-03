@@ -139,8 +139,7 @@ const CouponLinkWrapper = styled.div`
 `;
 
 const CouponField = styled( Coupon )`
-	margin: 20px 30px 0 0;
-	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	margin: 20px 30px 20px 0;
 
 	.is-summary & {
 		margin: 10px 0 0;
