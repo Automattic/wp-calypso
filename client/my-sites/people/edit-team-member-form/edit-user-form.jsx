@@ -26,6 +26,7 @@ import {
 	requestExternalContributorsAddition,
 	requestExternalContributorsRemoval,
 } from 'state/data-getters';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
@@ -159,12 +160,14 @@ class EditUserForm extends Component {
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'roles' ) }
 						/>
-						{ ! this.props.isVip && this.isExternalRole( this.state.roles ) && (
-							<ContractorSelect
-								onChange={ this.handleExternalChange }
-								checked={ this.state.isExternalContributor }
-							/>
-						) }
+						{ ! this.props.isVip &&
+							! this.props.isWPForTeamsSite &&
+							this.isExternalRole( this.state.roles ) && (
+								<ContractorSelect
+									onChange={ this.handleExternalChange }
+									checked={ this.state.isExternalContributor }
+								/>
+							) }
 					</Fragment>
 				);
 				break;
@@ -273,6 +276,7 @@ export default localize(
 					undefined !== linkedUserId ? linkedUserId : userId
 				),
 				isVip: isVipSite( state, siteId ),
+				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			};
 		},
 		{

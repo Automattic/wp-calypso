@@ -64,6 +64,7 @@ import accept from 'lib/accept';
  * Style dependencies
  */
 import './style.scss';
+import isSiteWPForTeams from '../../../state/selectors/is-site-wpforteams';
 
 /**
  * Module variables
@@ -375,7 +376,7 @@ class InvitePeople extends React.Component {
 							explanation={ this.renderRoleExplanation() }
 						/>
 
-						{ this.isExternalRole( this.state.role ) && (
+						{ ! this.props.isWPForTeamsSite && this.isExternalRole( this.state.role ) && (
 							<ContractorSelect
 								onChange={ this.onExternalChange }
 								checked={ this.state.isExternal }
