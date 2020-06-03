@@ -99,7 +99,7 @@ export class ConciergeMain extends Component {
 		}
 
 		if ( isEmpty( availableTimes ) ) {
-			return <NoAvailableTimes />;
+			return <NoAvailableTimes site={ site } />;
 		}
 
 		// We have shift data and this is a business site — show the signup steps
