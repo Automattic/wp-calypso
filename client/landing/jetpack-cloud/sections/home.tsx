@@ -35,9 +35,9 @@ function Home( props: Props ) {
 		if ( primarySiteIsEligible === null || siteCapabilities === undefined ) {
 			return;
 		} else if ( primarySiteIsEligible && includes( siteCapabilities, 'backup' ) ) {
-			redirectUrl.pathname = `/backup/${ siteSlug }`;
+			redirectUrl.pathname = `/backup/${ siteSlug ?? '' }`;
 		} else if ( primarySiteIsEligible && includes( siteCapabilities, 'scan' ) ) {
-			redirectUrl.pathname = `/scan/${ siteSlug }`;
+			redirectUrl.pathname = `/scan/${ siteSlug ?? '' }`;
 		}
 
 		page.redirect( redirectUrl.toString() );
@@ -56,7 +56,6 @@ export default connect( ( state ) => {
 
 	const primarySiteIsEligible = siteId
 		? getPrimarySiteIsJetpack( state ) &&
-		  !! siteSlug &&
 		  ! isSiteAtomic( state, siteId ) &&
 		  ! isJetpackSiteMultiSite( state, siteId )
 		: null;
