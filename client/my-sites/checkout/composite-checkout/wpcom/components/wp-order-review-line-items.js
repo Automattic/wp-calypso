@@ -37,6 +37,7 @@ function WPLineItem( {
 	getItemVariants,
 	onChangePlanLength,
 	couponStatus,
+	isSummary,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -49,7 +50,8 @@ function WPLineItem( {
 	const isDisabled = formStatus !== 'ready';
 
 	// Show the variation picker when this is not a renewal
-	const shouldShowVariantSelector = item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
+	const shouldShowVariantSelector =
+		getItemVariants && item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
 
 	let sublabelAndIntervalPriceBreakdown = '';
@@ -79,9 +81,11 @@ function WPLineItem( {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
+			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
+				{ item.label }
+			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId }>
-				<LineItemPrice item={ item } />
+				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta singleLine={ true }>
@@ -159,7 +163,7 @@ function WPLineItem( {
 WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
-	isSummaryVisible: PropTypes.bool,
+	isSummary: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
@@ -173,9 +177,9 @@ WPLineItem.propTypes = {
 	couponStatus: PropTypes.string,
 };
 
-function LineItemPrice( { item } ) {
+function LineItemPrice( { item, isSummary } ) {
 	return (
-		<LineItemPriceUI>
+		<LineItemPriceUI isSummary={ isSummary }>
 			{ item.amount.value < item.wpcom_meta?.item_original_cost_integer ? (
 				<>
 					<s>{ item.wpcom_meta?.item_original_cost_display }</s> { item.amount.displayValue }
@@ -195,11 +199,15 @@ export const LineItemUI = styled( WPLineItem )`
 	color: ${ ( { theme, total } ) =>
 		total ? theme.colors.textColorDark : theme.colors.textColor };
 	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
-	padding: ${ ( { total, isSummaryVisible, tax, subtotal } ) =>
-		isSummaryVisible || total || subtotal || tax ? '10px 0' : '20px 0' };
-	border-bottom: ${ ( { theme, total, isSummaryVisible } ) =>
-		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight };
+	padding: ${ ( { total, tax, subtotal } ) => ( total || subtotal || tax ? '10px 0' : '20px 0' ) };
+	border-bottom: ${ ( { theme, total } ) =>
+		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
+
+	.is-summary & {
+		padding: 10px 0;
+		border-bottom: 0;
+	}
 `;
 
 const LineItemMeta = styled.div`
@@ -218,10 +226,12 @@ const DiscountCalloutUI = styled.div`
 const LineItemTitle = styled.div`
 	flex: 1;
 	word-break: break-word;
+	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
 `;
 
 const LineItemPriceUI = styled.span`
 	margin-left: 12px;
+	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
 `;
 
 const DeleteButton = styled( Button )`
@@ -285,7 +295,7 @@ export function WPOrderReviewTotal( { total, className } ) {
 export function WPOrderReviewLineItems( {
 	items,
 	className,
-	isSummaryVisible,
+	isSummary,
 	removeItem,
 	removeCoupon,
 	variantSelectOverride,
@@ -297,27 +307,33 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items
 				.filter( ( item ) => item.label ) // remove items without a label
-				.map( ( item ) => (
-					<WPOrderReviewListItem key={ item.id }>
-						<LineItemUI
-							isSummaryVisible={ isSummaryVisible }
-							item={ item }
-							hasDeleteButton={ canItemBeDeleted( item ) }
-							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
-							variantSelectOverride={ variantSelectOverride }
-							getItemVariants={ getItemVariants }
-							onChangePlanLength={ onChangePlanLength }
-							couponStatus={ couponStatus }
-						/>
-					</WPOrderReviewListItem>
-				) ) }
+				.map( ( item ) => {
+					if ( isSummary && ! shouldLineItemBeShownWhenStepInactive( item ) ) {
+						return;
+					}
+
+					return (
+						<WPOrderReviewListItem key={ item.id }>
+							<LineItemUI
+								item={ item }
+								hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
+								removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
+								variantSelectOverride={ variantSelectOverride }
+								getItemVariants={ getItemVariants }
+								onChangePlanLength={ onChangePlanLength }
+								couponStatus={ couponStatus }
+								isSummary={ isSummary }
+							/>
+						</WPOrderReviewListItem>
+					);
+				} ) }
 		</WPOrderReviewList>
 	);
 }
 
 WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
-	isSummaryVisible: PropTypes.bool,
+	isSummary: PropTypes.bool,
 	removeItem: PropTypes.func,
 	removeCoupon: PropTypes.func,
 	items: PropTypes.arrayOf(
@@ -337,6 +353,11 @@ const WPOrderReviewList = styled.ul`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	box-sizing: border-box;
 	margin: 20px 30px 20px 0;
+
+	.is-summary & {
+		border-top: 0;
+		margin: 0;
+	}
 `;
 
 const WPOrderReviewListItem = styled.li`
@@ -403,4 +424,9 @@ function canItemBeDeleted( item ) {
 		'wordpress-com-credits',
 	];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
+}
+
+function shouldLineItemBeShownWhenStepInactive( item ) {
+	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesToIgnore.includes( item.type );
 }

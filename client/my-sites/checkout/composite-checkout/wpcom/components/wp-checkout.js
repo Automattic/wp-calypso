@@ -12,15 +12,16 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
+	renderDisplayValueMarkdown,
+	useDispatch,
+	useEvents,
+	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
-	useSelect,
 	useLineItems,
-	useDispatch,
-	useTotal,
 	usePaymentMethod,
-	useEvents,
-	renderDisplayValueMarkdown,
+	useSelect,
+	useTotal,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 
@@ -166,16 +167,13 @@ export default function WPCheckout( {
 
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 
+	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( false );
+	const { formStatus } = useFormStatus();
+
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
 		setSiteId( siteId );
 	}, [ siteId, setSiteId ] );
-
-	const removeCouponAndResetActiveStep = () => {
-		removeCoupon();
-		// Since the first step may now be invalid (eg: newly empty CC fields) we need to go back.
-		setActiveStepNumber( 1 );
-	};
 
 	return (
 		<Checkout>
@@ -198,16 +196,16 @@ export default function WPCheckout( {
 			<CheckoutStepArea>
 				<CheckoutStepBody
 					stepId="review-order-step"
-					isStepActive={ false }
+					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
-					stepNumber={ 1 }
-					totalSteps={ 1 }
-					completeStepContent={
+					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					activeStepContent={
 						<WPCheckoutOrderReview
 							removeItem={ removeItem }
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
-							removeCoupon={ removeCouponAndResetActiveStep }
+							removeCoupon={ removeCoupon }
 							onChangePlanLength={ changePlanLength }
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
@@ -215,8 +213,27 @@ export default function WPCheckout( {
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
+					completeStepContent={
+						<WPCheckoutOrderReview
+							isSummary
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							siteUrl={ siteUrl }
+						/>
+					}
+					editButtonText={ translate( 'Edit' ) }
+					editButtonAriaLabel={ translate( 'Edit your order' ) }
+					nextStepButtonText={ translate( 'Save order' ) }
+					nextStepButtonAriaLabel={ translate( 'Save your order' ) }
+					validatingButtonText={
+						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+					}
+					validatingButtonAriaLabel={
+						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+					}
+					formStatus={ formStatus }
 				/>
-				<CheckoutSteps>
+				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
 					{ shouldShowContactStep && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
@@ -360,10 +377,6 @@ const CheckoutSummaryBody = styled.div`
 		display: block;
 	}
 `;
-
-function setActiveStepNumber( stepNumber ) {
-	window.location.hash = '#step' + stepNumber;
-}
 
 function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 	const [ items, total ] = useLineItems();
