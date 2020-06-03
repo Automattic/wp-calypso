@@ -259,15 +259,15 @@ export class SiteNotice extends React.Component {
 	}
 
 	showWhiteGloveNudge() {
-		const { translate, siteSlug } = this.props;
+		const { translate } = this.props;
 		return (
 			<UpsellNudge
 				event={ 'white-glove' }
 				forceHref={ true }
 				callToAction={ translate( 'Upgrade' ) }
 				compact
-				href={ '/checkout/' + siteSlug + '/offer-white-glove' }
-				title={ translate( 'White Glove Offer' ) }
+				href={ `/checkout/${ this.props.site.slug }/offer-white-glove` }
+				title={ 'White Glove Offer' }
 				tracksClickName={ 'calypso_upgrade_nudge_cta_click' }
 				tracksImpressionName={ 'calypso_upgrade_nudge_impression' }
 			/>
@@ -320,7 +320,6 @@ export default connect(
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 		const sectionName = getSectionName( state );
 		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
-		const siteSlug = get( ownProps, 'site.slug', '' );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
 
@@ -340,7 +339,6 @@ export default connect(
 			hasJITM: getTopJITM( state, messagePath ),
 			messagePath,
 			siteOptions: getSiteOptions( state, siteId ),
-			siteSlug,
 		};
 	},
 	( dispatch ) => {
