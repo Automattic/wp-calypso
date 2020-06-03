@@ -17657,9 +17657,9 @@ neo-async@^2.5.0, neo-async@^2.6.0, neo-async@^2.6.1:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.1.tgz#ac27ada66167fa8849a6addd837f6b189ad2081c"
   integrity sha512-iyam8fBuCUpWeKPGpaNMetEocMt364qkCsfL9JuhjXX6dRnguRVOfk2GZaDpPjcOKiiXCPINZC1GczQ7iTq3Zw==
 
-"newspack-blocks@github:Automattic/newspack-blocks#v1.6.0":
-  version "1.6.0"
-  resolved "https://codeload.github.com/Automattic/newspack-blocks/tar.gz/a82108db122cba23f07934a7d35a7b2362267fef"
+"newspack-blocks@github:Automattic/newspack-blocks#v1.7.0":
+  version "1.7.0"
+  resolved "https://codeload.github.com/Automattic/newspack-blocks/tar.gz/f5a3e21553d2dd1f471f5f638624d28196ae4257"
   dependencies:
     "@wordpress/a11y" "^2.9.0"
     "@wordpress/compose" "^3.9.0"
