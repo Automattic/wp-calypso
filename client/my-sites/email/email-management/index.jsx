@@ -207,6 +207,7 @@ class EmailManagement extends React.Component {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				...emailForwardingAction,
+				...{ frivolous: true },
 			};
 		}
 
