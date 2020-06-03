@@ -132,6 +132,12 @@ function disable() {
 	_cartKey = null;
 }
 
+function fetch() {
+	if ( _synchronizer ) {
+		_synchronizer.fetch();
+	}
+}
+
 CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 	const { action } = payload;
 
@@ -233,7 +239,7 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 			break;
 
 		case CART_RELOAD:
-			update( ( value ) => value );
+			fetch();
 			break;
 	}
 } );
