@@ -502,7 +502,6 @@ export default function CompositeCheckout( {
 		<React.Fragment>
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 			<CheckoutProvider
-				locale={ 'en-us' }
 				items={ itemsForCheckout }
 				total={ total }
 				onPaymentComplete={ onPaymentComplete }
