@@ -210,7 +210,9 @@ A component that looks like a checkout step. Normally you don't need to use this
 
 ## CheckoutSteps
 
-A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
+A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout). It has the following props.
+
+- `areStepsActive?: boolean`. Whether or not the set of steps is active and able to be edited. Defaults to `true`.
 
 ### CheckoutSummaryArea
 

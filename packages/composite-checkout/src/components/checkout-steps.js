@@ -209,6 +209,7 @@ export function CheckoutSteps( { children, areStepsActive = true } ) {
 					nextStepNumber,
 					isStepActive,
 					isStepComplete,
+					areStepsActive,
 				} }
 			>
 				{ child }
@@ -230,7 +231,6 @@ export function CheckoutStep( {
 	isCompleteCallback,
 	editButtonText,
 	editButtonAriaLabel,
-	goToThisStep,
 	nextStepButtonText,
 	nextStepButtonAriaLabel,
 	validatingButtonText,
@@ -240,16 +240,13 @@ export function CheckoutStep( {
 	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
 	);
-	const { stepNumber, nextStepNumber, isStepActive, isStepComplete } = useContext(
+	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
-	const onEditThisStep = () => {
-		goToThisStep();
-		setActiveStepNumber( stepNumber );
-	};
+	const goToThisStep = () => setActiveStepNumber( stepNumber );
 	const onEvent = useEvents();
 	const activePaymentMethod = usePaymentMethod();
 	const finishIsCompleteCallback = ( completeResult ) => {
@@ -312,7 +309,7 @@ export function CheckoutStep( {
 			stepNumber={ stepNumber }
 			stepId={ stepId }
 			titleContent={ titleContent }
-			goToThisStep={ onEditThisStep }
+			goToThisStep={ areStepsActive ? goToThisStep : undefined }
 			goToNextStep={ nextStepNumber > 0 ? goToNextStep : undefined }
 			activeStepContent={ activeStepContent }
 			formStatus={ formStatus }
