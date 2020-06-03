@@ -77,6 +77,7 @@ const NULLISH_KEY = {};
  * The last map is a regular one because the the key for the last map is the string results of args.join().
  */
 function insertDependentKey( map, key, currentIndex, arr ) {
+	console.log( 'insertDependentKey', map, key );
 	if ( key != null && Object( key ) !== key ) {
 		throw new TypeError( 'key must be an object, `null`, or `undefined`' );
 	}
