@@ -206,6 +206,7 @@ export class Checkout extends React.Component {
 			saved_cards: props.cards.length,
 			is_renewal: hasRenewalItem( props.cart ),
 			apple_pay_available: isApplePayAvailable(),
+			product_slug: props.product,
 		} );
 
 		recordViewCheckout( props.cart );
