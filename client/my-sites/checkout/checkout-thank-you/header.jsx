@@ -96,12 +96,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'You will receive an email confirmation shortly.' );
 		}
 
-		let productName = primaryPurchase.productName;
-		if ( 'white-glove' === displayMode ) {
-			productName = `${ productName } (White glove edition)`;
-		}
-
 		if ( isPlan( primaryPurchase ) ) {
+			let productName = primaryPurchase.productName;
+
+			if ( 'white-glove' === displayMode ) {
+				productName = `${ productName } (White glove edition)`;
+			}
+
 			return preventWidows(
 				translate(
 					'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
