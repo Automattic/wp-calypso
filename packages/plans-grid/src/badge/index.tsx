@@ -9,6 +9,8 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
+// @TODO: move to '@automattic/components' and reuse in Gutenboarding
+
 interface Props {
 	children: React.ReactElement[];
 	className?: string;

@@ -1,6 +1,7 @@
 @import './base-styles.scss';
 @import './functions.scss';
 
+// @TODO: share these variables with Gutenboarding from a common package.
 $gutenboarding-block-margin-mobile: 20px;
 $gutenboarding-block-margin-small: 44px;
 $gutenboarding-block-margin-medium: 88px;
