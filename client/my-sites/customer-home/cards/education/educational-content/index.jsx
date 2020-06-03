@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import classnames from 'classnames';
 import { isDesktop } from '@automattic/viewport';
 
 /**
@@ -26,32 +25,30 @@ const EducationalContent = ( { title, description, links, illustration } ) => {
 					{ description }
 				</p>
 				<div className="educational-content__links">
-					{ links.map( ( { postId, url, externalLink, text, icon, tracksEvent, statsName } ) => (
-						<div
-							className={ classnames( 'educational-content__link', {
-								'is-external-link': externalLink,
-							} ) }
-							key={ url }
-						>
-							{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-							{ postId && (
-								<InlineSupportLink
-									supportPostId={ postId }
-									supportLink={ url }
-									showIcon={ false }
-									text={ text }
-									tracksEvent={ tracksEvent }
-									statsGroup="calypso_customer_home"
-									statsName={ statsName }
-								/>
-							) }
-							{ externalLink && (
-								<ExternalLink href={ url } icon>
-									{ text }
-								</ExternalLink>
-							) }
-						</div>
-					) ) }
+					{ links.map(
+						( { postId, url, calypsoLink, externalLink, text, icon, tracksEvent, statsName } ) => (
+							<div className="educational-content__link" key={ url }>
+								{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+								{ postId && (
+									<InlineSupportLink
+										supportPostId={ postId }
+										supportLink={ url }
+										showIcon={ false }
+										text={ text }
+										tracksEvent={ tracksEvent }
+										statsGroup="calypso_customer_home"
+										statsName={ statsName }
+									/>
+								) }
+								{ externalLink && (
+									<ExternalLink href={ url } icon>
+										{ text }
+									</ExternalLink>
+								) }
+								{ calypsoLink && <a href={ url }>{ text }</a> }
+							</div>
+						)
+					) }
 				</div>
 			</div>
 			{ isDesktop() && (
