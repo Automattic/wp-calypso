@@ -43,6 +43,8 @@ function updateEditor() {
 			return;
 		}
 		clearInterval( awaitSettingsBar );
+		const body = document.querySelector( 'body' );
+		body.classList.add( 'editor-gutenberg-launch__fse-overrides' );
 
 		// 'Update'/'Publish' primary button to become 'Save' tertiary button.
 		const saveButton = settingsBar.querySelector( '.editor-post-publish-button__button' );
