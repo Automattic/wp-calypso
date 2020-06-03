@@ -56,7 +56,6 @@ function ButtonEdit( props ) {
 
 	return (
 		<>
-			<ColorEdit { ...props } />
 			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 			<Block.div className="wp-block-button wp-block-jetpack-recurring-payments">
 				<RichText
@@ -93,6 +92,7 @@ function ButtonEdit( props ) {
 						) ) }
 					</ButtonGroup>
 				</PanelBody>
+				<ColorEdit { ...props } />
 				<BorderPanel borderRadius={ borderRadius } setAttributes={ setAttributes } />
 			</InspectorControls>
 		</>
