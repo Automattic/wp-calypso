@@ -222,7 +222,7 @@ function premium_content_block_logged_out_view_render( $attributes, $content, $b
 	}
 
 	// Old versions of the block were rendering the subscribe/login button server-side, so we need to still support them.
-	if ( ! empty( $attributes['subscribeButtonText'] ) ) {
+	if ( ! empty( $attributes['buttonClasses'] ) ) {
 		$buttons = premium_content_create_legacy_buttons_markup( $attributes, $block );
 		return $content . $buttons;
 	}

@@ -59,7 +59,7 @@ const settings = {
 	title: __( 'Premium Content Button', 'premium-content' ),
 	/* translators: block description */
 	description: __( 'Premium Content Button.', 'premium-content' ),
-	parent: [ 'premium-content/logged-out-view' ],
+	parent: [ 'premium-content/logged-out-view', 'core/buttons' ],
 	supports: {
 		align: true,
 		alignWide: false,

@@ -1,10 +1,9 @@
-/* eslint-disable wpcalypso/import-docblock */
 /**
  * WordPress dependencies
  */
+// eslint-disable-next-line wpcalypso/import-docblock
 import { createBlock } from '@wordpress/blocks';
 import { InnerBlocks } from '@wordpress/block-editor';
-/* eslint-enable wpcalypso/import-docblock */
 
 const deprecated = [
 	{
@@ -39,18 +38,27 @@ const deprecated = [
 			},
 		},
 
-		isEligible: ( { subscribeButtonText } ) => !! subscribeButtonText,
+		isEligible: ( { buttonClasses } ) => !! buttonClasses,
 
 		migrate: ( attributes, innerBlocks ) => {
-			const subscribeButton = createBlock( 'premium-content/button', {
-				type: 'subscribe',
-				text: attributes.subscribeButtonText,
-			} );
-			const loginButton = createBlock( 'premium-content/button', {
-				type: 'login',
-				text: attributes.loginButtonText,
-			} );
-			const buttons = createBlock( 'core/buttons', {}, [ subscribeButton, loginButton ] );
+			const createButton = ( type, text ) => {
+				return createBlock( 'premium-content/button', {
+					type,
+					text,
+					backgroundColor: attributes.backgroundButtonColor,
+					textColor: attributes.textButtonColor,
+					style: {
+						color: {
+							background: attributes.customBackgroundButtonColor,
+							text: attributes.customTextButtonColor,
+						},
+					},
+				} );
+			};
+			const buttons = createBlock( 'core/buttons', {}, [
+				createButton( 'subscribe', attributes.subscribeButtonText ),
+				createButton( 'login', attributes.loginButtonText ),
+			] );
 			return [ attributes, [ ...innerBlocks, buttons ] ];
 		},
 
