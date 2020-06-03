@@ -3,7 +3,6 @@
  */
 import { ReportImpl } from './report';
 import { send } from './transports/logstash';
-import { shouldSend } from './should-send';
 
 const inFlightReporters: Map< string, ReportImpl > = new Map();
 
@@ -44,8 +43,5 @@ export const stop = async ( id: string ): Promise< boolean > => {
 
 	await existingReport.stop();
 
-	if ( shouldSend( existingReport ) ) {
-		return send( existingReport.toJSON() );
-	}
-	return false;
+	return send( existingReport.toJSON() );
 };

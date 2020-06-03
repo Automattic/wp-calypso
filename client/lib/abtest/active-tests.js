@@ -1,3 +1,14 @@
+/**
+ * Note: this file is imported by `client` and `test/e2e` tests. `test/e2e` do not have the config
+ * required to make aliased imports work (e.g. `import * from 'lib/'). As such, we must use relative
+ * paths here (e.g. `import * from '../../lib/`)
+ */
+
+/**
+ * Internal dependencies
+ */
+import * as RUM_DATA_COLLECTION from '../../lib/performance-tracking/const';
+
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -135,5 +146,15 @@ export default {
 		defaultVariation: 'control',
 		localeTargets: 'any',
 		countryCodeTargets: [ 'JP' ],
+	},
+	[ RUM_DATA_COLLECTION.AB_NAME ]: {
+		datestamp: '20200602',
+		variations: {
+			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 5,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 95,
+		},
+		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
+		localeTargets: 'any',
+		allowExistingUsers: true,
 	},
 };
