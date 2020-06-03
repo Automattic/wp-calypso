@@ -52,7 +52,9 @@ function ColorPanel( { settings, clientId, enableContrastChecking = true } ) {
 	const [ detectedBackgroundColor, setDetectedBackgroundColor ] = useState();
 	const [ detectedColor, setDetectedColor ] = useState();
 
-	const title = isWebPlatform ? __( 'Color settings' ) : __( 'Color Settings' );
+	const title = isWebPlatform
+		? __( 'Color settings', 'premium-content' )
+		: __( 'Color Settings', 'premium-content' );
 
 	useEffect( () => {
 		if ( isWebPlatform && ! enableContrastChecking ) {
@@ -187,13 +189,13 @@ function ColorEdit( props ) {
 			clientId={ props.clientId }
 			settings={ [
 				{
-					label: __( 'Text Color' ),
+					label: __( 'Text Color', 'premium-content' ),
 					onColorChange: onChangeColor( 'text' ),
 					colorValue: getColorObjectByAttributeValues( colors, textColor, style?.color?.text )
 						.color,
 				},
 				{
-					label: __( 'Background Color' ),
+					label: __( 'Background Color', 'premium-content' ),
 					onColorChange: onChangeColor( 'background' ),
 					colorValue: getColorObjectByAttributeValues(
 						colors,

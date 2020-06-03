@@ -29,10 +29,10 @@ function BorderPanel( { borderRadius = '', setAttributes } ) {
 		[ setAttributes ]
 	);
 	return (
-		<PanelBody title={ __( 'Border settings' ) }>
+		<PanelBody title={ __( 'Border settings', 'premium-content' ) }>
 			<RangeControl
 				value={ borderRadius }
-				label={ __( 'Border radius' ) }
+				label={ __( 'Border radius', 'premium-content' ) }
 				min={ MIN_BORDER_RADIUS_VALUE }
 				max={ MAX_BORDER_RADIUS_VALUE }
 				initialPosition={ INITIAL_BORDER_RADIUS_POSITION }

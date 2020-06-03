@@ -1,10 +1,6 @@
 /**
- * BLOCK: Button Block
- *
- * Registering a basic block with Gutenberg.
- * Simple block, renders and saves the same content without any interactivity.
+ * WordPress dependencies
  */
-
 import { __ } from '@wordpress/i18n';
 import { button as icon } from '@wordpress/icons';
 
