@@ -52,9 +52,11 @@ function Home( props: Props ) {
 
 export default connect( ( state ) => {
 	const siteId = getPrimarySiteId( state );
+	const siteSlug = getPrimarySiteSlug( state );
 
 	const primarySiteIsEligible = siteId
 		? getPrimarySiteIsJetpack( state ) &&
+		  !! siteSlug &&
 		  ! isSiteAtomic( state, siteId ) &&
 		  ! isJetpackSiteMultiSite( state, siteId )
 		: null;
@@ -63,6 +65,6 @@ export default connect( ( state ) => {
 		primarySiteIsEligible,
 		siteCapabilities: primarySiteIsEligible ? getRewindCapabilities( state, siteId ) : null,
 		siteId: primarySiteIsEligible === false ? null : siteId,
-		siteSlug: getPrimarySiteSlug( state ),
+		siteSlug,
 	};
 } )( Home );
