@@ -44,6 +44,7 @@ import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import isSiteWhiteGlove from 'state/selectors/is-site-white-glove';
 
 /**
  * Style dependencies
@@ -112,6 +113,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					isWpcomPlan
 					onClick={ this.handleBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
+					isWhiteGlove={ this.props.isWhiteGlove }
 				/>
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
@@ -329,6 +331,7 @@ export default connect(
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+			isWhiteGlove: isSiteWhiteGlove( state, selectedSiteId ),
 		};
 	},
 	{
