@@ -137,8 +137,12 @@ export class PaidPlanThankYou extends Component {
 								)
 							) }
 						</p>
-
-						<ProgressBar isPulsing total={ 100 } value={ installProgress || 0 } />
+						{ /* Make the progress bar more visibile by starting at 10% */ }
+						<ProgressBar
+							isPulsing
+							total={ 100 }
+							value={ installProgress < 10 ? 10 : installProgress }
+						/>
 					</ThankYou>
 				) }
 				{ installState === INSTALL_STATE_COMPLETE && (
