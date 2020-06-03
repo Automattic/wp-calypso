@@ -212,7 +212,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					text: translate( 'Add premium content subscriptions' ),
 					action: () => {
 						trackCtaButton( 'premium-content' );
-						page( '/earn/payments-plans/${ selectedSiteSlug }' );
+						page( `/earn/payments-plans/${ selectedSiteSlug }` );
 					},
 			  };
 		const title = hasConnectedAccount
