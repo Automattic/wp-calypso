@@ -515,7 +515,8 @@ export default function CompositeCheckout( {
 			card: stripeCardProcessor,
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
+			paypal: ( transactionData ) =>
+				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
 		} ),
 		[ couponItem, getThankYouUrl ]
 	);
