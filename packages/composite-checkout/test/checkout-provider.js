@@ -53,7 +53,6 @@ describe( 'CheckoutProvider', () => {
 	beforeEach( () => {
 		MyCheckout = ( { onPaymentComplete, isLoading } ) => (
 			<CheckoutProvider
-				locale="en-us"
 				items={ items }
 				total={ total }
 				isLoading={ isLoading || null }

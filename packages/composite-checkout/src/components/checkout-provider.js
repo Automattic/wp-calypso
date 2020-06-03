@@ -126,7 +126,6 @@ export const CheckoutProvider = ( props ) => {
 CheckoutProvider.propTypes = {
 	theme: PropTypes.object,
 	registry: PropTypes.object,
-	locale: PropTypes.string.isRequired,
 	total: PropTypes.object.isRequired,
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
@@ -141,7 +140,6 @@ CheckoutProvider.propTypes = {
 
 function CheckoutProviderPropValidator( { propsToValidate } ) {
 	const {
-		locale,
 		total,
 		items,
 		onPaymentComplete,
@@ -154,7 +152,6 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
 
-		validateArg( locale, 'CheckoutProvider missing required prop: locale' );
 		validateArg( total, 'CheckoutProvider missing required prop: total' );
 		validateTotal( total );
 		validateArg( items, 'CheckoutProvider missing required prop: items' );
@@ -168,7 +165,6 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
 	}, [
 		items,
-		locale,
 		onPaymentComplete,
 		paymentMethods,
 		paymentProcessors,
