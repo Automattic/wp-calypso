@@ -95,10 +95,16 @@ const ThreatItem: React.FC< Props > = ( {
 		[ threat ]
 	);
 
+	// We want to track which section are this toggles coming from
 	const currentRoute = useSelector( getCurrentRoute );
+	const currentRouteProp = React.useMemo( () => {
+		return currentRoute
+			? { section: currentRoute.includes( '/scan/history' ) ? 'History' : 'Scanner' }
+			: {};
+	}, [ currentRoute ] );
 	const onOpenTrackEvent = useTrackCallback( noop, 'calypso_jetpack_scan_threat_itemtoggle', {
 		threat_signature: threat.signature,
-		section: currentRoute && currentRoute.includes( '/scan/history' ) ? 'History' : 'Scanner',
+		...currentRouteProp,
 	} );
 
 	if ( isPlaceholder ) {
