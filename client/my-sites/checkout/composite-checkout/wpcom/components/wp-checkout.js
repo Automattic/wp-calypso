@@ -271,6 +271,7 @@ export default function WPCheckout( {
 							titleContent={ <ContactFormTitle /> }
 							editButtonText={ translate( 'Edit' ) }
 							editButtonAriaLabel={ translate( 'Edit the contact details' ) }
+							goToThisStep={ () => setIsOrderReviewActive( false ) }
 							nextStepButtonText={ translate( 'Continue' ) }
 							nextStepButtonAriaLabel={ translate( 'Continue with the entered contact details' ) }
 							validatingButtonText={
@@ -294,6 +295,7 @@ export default function WPCheckout( {
 						titleContent={ paymentMethodStep.titleContent }
 						editButtonText={ translate( 'Edit' ) }
 						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
+						goToThisStep={ () => setIsOrderReviewActive( false ) }
 						nextStepButtonText={ translate( 'Continue' ) }
 						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
 						validatingButtonText={

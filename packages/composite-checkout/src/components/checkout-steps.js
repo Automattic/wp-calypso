@@ -230,6 +230,7 @@ export function CheckoutStep( {
 	isCompleteCallback,
 	editButtonText,
 	editButtonAriaLabel,
+	goToThisStep,
 	nextStepButtonText,
 	nextStepButtonAriaLabel,
 	validatingButtonText,
@@ -245,7 +246,10 @@ export function CheckoutStep( {
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
-	const goToThisStep = () => setActiveStepNumber( stepNumber );
+	const onEditThisStep = () => {
+		goToThisStep();
+		setActiveStepNumber( stepNumber );
+	};
 	const onEvent = useEvents();
 	const activePaymentMethod = usePaymentMethod();
 	const finishIsCompleteCallback = ( completeResult ) => {
@@ -308,7 +312,7 @@ export function CheckoutStep( {
 			stepNumber={ stepNumber }
 			stepId={ stepId }
 			titleContent={ titleContent }
-			goToThisStep={ goToThisStep }
+			goToThisStep={ onEditThisStep }
 			goToNextStep={ nextStepNumber > 0 ? goToNextStep : undefined }
 			activeStepContent={ activeStepContent }
 			formStatus={ formStatus }
