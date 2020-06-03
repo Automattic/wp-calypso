@@ -4,7 +4,7 @@
 	box-shadow: 0 -1px 0 rbga( var( --color-neutral-10 ), 0.5 );
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.foldable-card__main {
@@ -91,7 +91,7 @@
 	font-weight: 600;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 

@@ -1,7 +1,7 @@
 .threat-item-subheader {
 	&__subheader {
 		color: var( --color-threat-ignored );
-		font-size: 14px;
+		font-size: $font-body-small;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;

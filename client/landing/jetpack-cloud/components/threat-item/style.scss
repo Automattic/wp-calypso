@@ -17,7 +17,7 @@
 
 	.log-item__subheader {
 		color: var( --studio-gray-60 );
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	&.is-current {

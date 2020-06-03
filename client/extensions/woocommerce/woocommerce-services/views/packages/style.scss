@@ -144,7 +144,7 @@
 .packages__packages-header {
 	font-weight: 600;
 	padding: 12px 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 	border-top: 0;
 	background: var( --color-neutral-0 );
 }
@@ -166,7 +166,7 @@
 
 .packages__packages-row-details-name {
 	margin-bottom: 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .packages__packages-row-actions {
@@ -221,7 +221,7 @@
 
 .packages__packages-row-dimensions {
 	width: 30%;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		font-size: 11px;

@@ -5,7 +5,7 @@
 
 	border: 5px solid var( --color-neutral-0 );
 	fill: var( --color-neutral-20 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	color: var( --color-neutral-light );
 	text-align: center;
@@ -20,7 +20,7 @@
 }
 
 .importer__uploading-pane-description {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .importer__upload-content {

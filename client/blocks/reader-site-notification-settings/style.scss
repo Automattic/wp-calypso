@@ -7,7 +7,7 @@
 }
 
 .reader-site-notification-settings__button-label {
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
@@ -58,7 +58,7 @@
 .reader-site-notification-settings__popout-instructions {
 	border-top: 1px solid var( --color-neutral-10 );
 	color:var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	padding: 10px 15px;
 	text-align: left;
 

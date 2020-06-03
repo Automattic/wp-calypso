@@ -35,7 +35,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 
 	@include breakpoint-deprecated( '<480px' ) {

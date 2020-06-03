@@ -164,7 +164,7 @@
 	margin: 0 auto;
 	padding: 10px;
 	color: var( --color-primary );
-	font-size: 14px;
+	font-size: $font-body-small;
 	cursor: pointer;
 	transition: all ease-in-out 100ms;
 
@@ -198,7 +198,7 @@
 
 .theme__sheet-content {
 	padding: 20px;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	min-height: 400px; // whilst loading
 
@@ -252,7 +252,7 @@
 
 	h2 {
 		color: var( --color-neutral-light );
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 400;
 
 		margin: -20px -20px 20px;
@@ -296,20 +296,20 @@
 	}
 
 	h6 {
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 
 	pre {
 		font-family: $code;
-		font-size: 14px;
+		font-size: $font-body-small;
 		white-space: pre-wrap;
 		padding: 8px;
 	}
 
 	code {
-		font-size: 14px;
+		font-size: $font-body-small;
 		background: var( --color-neutral-0 );
 		padding: 1px 4px;
 		border-radius: 2px;

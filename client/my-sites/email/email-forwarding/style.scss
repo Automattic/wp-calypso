@@ -49,7 +49,7 @@ ul.email-forwarding__list {
 		position: relative;
 
 		span {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 40px;
 
 			@include breakpoint-deprecated( '<660px' ) {

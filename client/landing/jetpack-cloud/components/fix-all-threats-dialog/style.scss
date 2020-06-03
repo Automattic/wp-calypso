@@ -50,7 +50,7 @@
 
 	&__warning-message {
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	&__btn {

@@ -157,7 +157,7 @@
 
 	.foldable-card__content {
 		padding: 16px;
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.is-loading & {
@@ -257,7 +257,7 @@
 }
 
 .activity-log-item__actor-name {
-	font-size: 14px;
+	font-size: $font-body-small;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
@@ -286,13 +286,13 @@
 	color: var( --color-text-subtle );
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 
 .activity-log-item__description {
 	flex: 1 1 50%;
-	font-size: 14px;
+	font-size: $font-body-small;
 	word-break: break-word;
 
 	@include breakpoint-deprecated( '<960px' ) {

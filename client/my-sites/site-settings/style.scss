@@ -1,5 +1,5 @@
 .site-settings {
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	fieldset {
 		clear: both;
@@ -40,7 +40,7 @@
 	legend,
 	label {
 		margin-bottom: 5px;
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 700;
 	}
 

@@ -3,7 +3,7 @@
 	font-size: 13px;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 

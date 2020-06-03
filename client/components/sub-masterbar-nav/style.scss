@@ -83,7 +83,7 @@
 	border: 0;
 	outline: 0;
 	color: var( --color-masterbar-text );
-	font-size: 14px;
+	font-size: $font-body-small;
 	cursor: pointer;
 	transition: all 200ms ease-in;
 

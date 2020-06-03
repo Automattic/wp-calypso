@@ -90,7 +90,7 @@ $autobar-height: 20px;
 	align-items: center;
 	position: relative;
 	color: var( --color-masterbar-text );
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
 	padding: 0 15px;

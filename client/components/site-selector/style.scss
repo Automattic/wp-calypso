@@ -36,7 +36,7 @@
 // Styles for Site elements within the Selector
 .site-selector .site,
 .site-selector .all-sites {
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	// Highlight selected site
 	&.is-selected {

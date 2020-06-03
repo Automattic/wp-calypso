@@ -1,7 +1,7 @@
 // Comment Base Style
 
 .card.comment {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin: 0 auto;
 	padding: 0;
 
@@ -385,7 +385,7 @@
 }
 
 .comment__reply-textarea {
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 47px; // 1 line
 	line-height: 21px;
 	min-height: 47px; // 1 line
@@ -458,7 +458,7 @@
 
 	input[type='text'],
 	textarea {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.info-popover {

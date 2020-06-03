@@ -33,7 +33,7 @@
 		.product-name {
 			color: var( --color-neutral-70 );
 			display: block;
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-right: 30px;
 		}
 
@@ -210,7 +210,7 @@
 .cart-empty {
 	padding: 30px;
 	text-align: center;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .cart__cart-ad {
