@@ -4,6 +4,9 @@
 import { __ } from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
 import { addAction } from '@wordpress/hooks';
+import { dispatch } from '@wordpress/data';
+// Depend on `core/editor` store.
+import '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -52,11 +55,24 @@ function updateEditor() {
 
 		// Wrap 'Launch' button link to frankenflow.
 		const launchLink = document.createElement( 'a' );
-		launchLink.href = window?.calypsoifyGutenberg?.frankenflowUrl as string;
+
+		// Assert reason: We have an early return above with optional and falsy values. This should be a string.
+		const launchHref = window?.calypsoifyGutenberg?.frankenflowUrl as string;
+
+		launchLink.href = launchHref;
 		launchLink.target = '_top';
 		launchLink.className = 'editor-gutenberg-launch__launch-button components-button is-primary';
 		const textContent = document.createTextNode( __( 'Launch' ) );
 		launchLink.appendChild( textContent );
+
+		const saveAndNavigate = async ( e: Event ) => {
+			// Disable href navigation
+			e.preventDefault();
+			await dispatch( 'core/editor' ).autosave();
+			// Using window.top to escape from the editor iframe on WordPress.com
+			window.top.location.href = launchHref;
+		};
+		launchLink.addEventListener( 'click', saveAndNavigate );
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( launchLink );
