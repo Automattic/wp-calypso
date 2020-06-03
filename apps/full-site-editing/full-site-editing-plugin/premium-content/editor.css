@@ -4,7 +4,7 @@
 	color: #555d66;
 	display: flex;
 	flex-wrap: wrap;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	position: relative;
 	margin: 0 0 0 -1px;
@@ -62,7 +62,7 @@
 }
 
 .premium-content-block-nudge__message {
-	color: var(--color-text-subtle);
+	color: var( --color-text-subtle );
 }
 
 .editor-styles-wrapper a.premium-content-block-nudge__button {
@@ -71,14 +71,14 @@
 }
 
 .membership-button__disclaimer {
-	color: var(--color-gray-200);
+	color: var( --color-gray-200 );
 	flex-basis: 100%;
 	margin: 0;
 	font-style: italic;
 }
 
 .membership-button__disclaimer a {
-	color: var(--color-gray-400);
+	color: var( --color-gray-400 );
 	line-height: 36px;
 }
 
@@ -107,7 +107,7 @@
 
 .premium-content-toolbar-button .components-dropdown-menu__toggle::after {
 	display: block;
-	content: "";
+	content: '';
 	position: absolute;
 	bottom: 1px;
 	right: 0;
@@ -142,6 +142,7 @@
 	margin-bottom: 20px;
 }
 
-div.block-editor-block-list__block[data-type='premium-content/button'] {
-	margin: 0px;
+.editor-styles-wrapper [data-block][data-type='premium-content/button'] {
+	margin-top: 0;
+	width: inherit;
 }
