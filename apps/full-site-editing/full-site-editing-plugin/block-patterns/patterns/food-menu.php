@@ -57,7 +57,7 @@ $markup = '
 
 return array(
 	'title'      => esc_html__( 'Food Menu', 'full-site-editing' ),
-	'categories' => array( 'text', 'menu' ),
+	'categories' => array( 'text' ),
 	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Awesome Burger', 'full-site-editing' ),

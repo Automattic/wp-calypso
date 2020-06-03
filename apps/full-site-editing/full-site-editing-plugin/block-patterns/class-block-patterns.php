@@ -52,7 +52,6 @@ class Block_Patterns {
 			register_block_pattern_category( 'call-to-action', array( 'label' => _x( 'Call to Action', 'Block pattern category', 'full-site-editing' ) ) );
 			register_block_pattern_category( 'contact', array( 'label' => _x( 'Contact', 'Block pattern category', 'full-site-editing' ) ) );
 			register_block_pattern_category( 'images', array( 'label' => _x( 'Images', 'Block pattern category', 'full-site-editing' ) ) );
-			register_block_pattern_category( 'menu', array( 'label' => _x( 'Menu', 'Block pattern category', 'full-site-editing' ) ) );
 		}
 
 		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
