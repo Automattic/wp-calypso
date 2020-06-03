@@ -125,6 +125,7 @@ export default function CompositeCheckout( {
 	purchaseId,
 	cart,
 	couponCode: couponCodeFromUrl,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -234,6 +235,7 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
+		isWhiteGloveOffer,
 	} );
 
 	const moment = useLocalizedMoment();
@@ -493,7 +495,8 @@ export default function CompositeCheckout( {
 			card: stripeCardProcessor,
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
+			paypal: ( transactionData ) =>
+				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
 		} ),
 		[ couponItem, getThankYouUrl ]
 	);
@@ -539,6 +542,7 @@ export default function CompositeCheckout( {
 					isCartPendingUpdate={ isCartPendingUpdate }
 					CheckoutTerms={ CheckoutTerms }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
+					isWhiteGloveOffer={ isWhiteGloveOffer }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>

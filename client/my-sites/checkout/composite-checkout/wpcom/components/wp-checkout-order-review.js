@@ -25,7 +25,11 @@ export default function WPCheckoutOrderReview( {
 	getItemVariants,
 	onChangePlanLength,
 	siteUrl,
+<<<<<<< HEAD
 	isSummary,
+=======
+	isWhiteGloveOffer,
+>>>>>>> White glove: Show offer page (#42786)
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -56,6 +60,7 @@ export default function WPCheckoutOrderReview( {
 					onChangePlanLength={ onChangePlanLength }
 					couponStatus={ couponStatus }
 					isSummary={ isSummary }
+					isWhiteGloveOffer={ isWhiteGloveOffer }
 				/>
 			</WPOrderReviewSection>
 

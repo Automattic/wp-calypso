@@ -41,6 +41,8 @@ import AsyncLoad from 'components/async-load';
 import UpsellNudge from 'blocks/upsell-nudge';
 import { preventWidows } from 'lib/formatting';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import getSiteOptions from 'state/selectors/get-site-options';
+import { abtest } from 'lib/abtest';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -249,6 +251,34 @@ export class SiteNotice extends React.Component {
 		return moment( now ).format( format ) === moment( endsAt ).format( format );
 	}
 
+	isEligibleForWhiteGlove() {
+		const createdAt = get( this.props.siteOptions, 'created_at', '' );
+		const HOURS_IN_MS = 60 * 60 * 1000;
+		const isSiteNew = Date.now() - new Date( createdAt ) < 24 * HOURS_IN_MS; // less than 24 hours
+
+		if ( isSiteNew && 'variantShowOffer' === abtest( 'whiteGloveUpsell' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	showWhiteGloveNudge() {
+		const { translate } = this.props;
+		return (
+			<UpsellNudge
+				event={ 'white-glove' }
+				forceHref={ true }
+				callToAction={ translate( 'Upgrade' ) }
+				compact
+				href={ `/checkout/${ this.props.site.slug }/offer-white-glove` }
+				title={ 'White Glove Offer' }
+				tracksClickName={ 'calypso_upgrade_nudge_cta_click' }
+				tracksImpressionName={ 'calypso_upgrade_nudge_impression' }
+			/>
+		);
+	}
+
 	render() {
 		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
 		if ( ! site || isMigrationInProgress ) {
@@ -258,8 +288,14 @@ export class SiteNotice extends React.Component {
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 		const domainCreditNotice = this.domainCreditNotice();
+		const isEligibleForWhiteGlove = this.isEligibleForWhiteGlove();
+
+		if ( isEligibleForWhiteGlove ) {
+			return this.showWhiteGloveNudge();
+		}
 
 		const showJitms =
+			! this.isEligibleForWhiteGlove() &&
 			! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) &&
 			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
@@ -289,7 +325,6 @@ export default connect(
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 		const sectionName = getSectionName( state );
 		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
-
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
 
@@ -309,6 +344,7 @@ export default connect(
 			isMigrationInProgress,
 			hasJITM: getTopJITM( state, messagePath ),
 			messagePath,
+			siteOptions: getSiteOptions( state, siteId ),
 		};
 	},
 	( dispatch ) => {
