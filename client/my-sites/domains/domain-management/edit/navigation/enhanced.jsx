@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -36,7 +36,6 @@ import { getUnmappedUrl } from 'lib/site/utils';
 import { withoutHttp } from 'lib/url';
 import RemovePurchase from 'me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
-import { getStepUrl } from 'signup/utils';
 
 import './style.scss';
 
@@ -397,7 +396,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		let path;
 
 		if ( selectedSite && selectedSite.options && selectedSite.options.is_domain_only ) {
-			path = addQueryArgs( getStepUrl( 'domain', 'domain-only', null, getLocaleSlug() ), {
+			path = addQueryArgs( '/start/domain/domain-only', {
 				search: 'yes',
 				new: searchTerm,
 			} );
