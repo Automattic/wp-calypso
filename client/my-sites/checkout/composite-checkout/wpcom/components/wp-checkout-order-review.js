@@ -71,7 +71,7 @@ export default function WPCheckoutOrderReview( {
 }
 
 WPCheckoutOrderReview.propTypes = {
-	summary: PropTypes.bool,
+	isSummary: PropTypes.bool,
 	className: PropTypes.string,
 	removeItem: PropTypes.func,
 	removeCoupon: PropTypes.func,
