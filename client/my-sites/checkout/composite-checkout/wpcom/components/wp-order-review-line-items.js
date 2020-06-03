@@ -19,6 +19,7 @@ import joinClasses from './join-classes';
 import Button from './button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
+import { isBusinessPlan } from 'lib/plans';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -38,6 +39,7 @@ function WPLineItem( {
 	getItemVariants,
 	onChangePlanLength,
 	couponStatus,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -78,9 +80,16 @@ function WPLineItem( {
 		sublabelAndIntervalPriceBreakdown = item.sublabel;
 	}
 
+	const productSlug = item.wpcom_meta?.product_slug;
+	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
+	const productName =
+		isBusinessPlanProduct && isWhiteGloveOffer
+			? `${ item.label } (White glove edition)`
+			: item.label;
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
+			<LineItemTitle id={ itemSpanId }>{ productName }</LineItemTitle>
 			<span aria-labelledby={ itemSpanId }>
 				<LineItemPrice item={ item } />
 			</span>
@@ -295,6 +304,7 @@ export function WPOrderReviewLineItems( {
 	getItemVariants,
 	onChangePlanLength,
 	couponStatus,
+	isWhiteGloveOffer,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -305,6 +315,7 @@ export function WPOrderReviewLineItems( {
 						<LineItemUI
 							isSummaryVisible={ isSummaryVisible }
 							item={ item }
+							isWhiteGloveOffer={ isWhiteGloveOffer }
 							hasDeleteButton={ canItemBeDeleted( item ) }
 							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
 							variantRequestStatus={ variantRequestStatus }

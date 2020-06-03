@@ -26,6 +26,7 @@ import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
+import { addQueryArgs } from 'lib/url';
 
 const wpcom = wp.undocumented();
 
@@ -67,7 +68,7 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	redirectToPayPal = ( event ) => {
-		const { cart, transaction } = this.props;
+		const { cart, transaction, isWhiteGloveOffer } = this.props;
 		const origin = getLocationOrigin( window.location );
 		event.preventDefault();
 
@@ -80,6 +81,10 @@ export class PaypalPaymentBox extends React.Component {
 
 		if ( this.props.selectedSite ) {
 			cancelUrl += this.props.selectedSite.slug;
+
+			if ( isWhiteGloveOffer ) {
+				cancelUrl = addQueryArgs( { type: 'white-glove' }, cancelUrl );
+			}
 		} else {
 			cancelUrl += 'no-site';
 		}
@@ -90,6 +95,7 @@ export class PaypalPaymentBox extends React.Component {
 			cart,
 			domainDetails: transaction.domainDetails,
 			'postal-code': getTaxPostalCode( cart ),
+			is_white_glove_offer: this.props.isWhiteGloveOffer,
 		} );
 
 		// get PayPal Express URL from rest endpoint
