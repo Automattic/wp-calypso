@@ -48,6 +48,7 @@ import { getPostByKey } from 'state/reader/posts/selectors';
 import { viewStream } from 'state/reader/watermarks/actions';
 import { Interval, EVERY_MINUTE } from 'lib/interval';
 import { PER_FETCH, INITIAL_FETCH } from 'state/data-layer/wpcom/read/streams';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -370,26 +371,28 @@ class ReaderStream extends React.Component {
 			} );
 
 		return (
-			<PostLifecycle
-				key={ itemKey }
-				ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
-				isSelected={ isSelected }
-				handleClick={ showPost }
-				postKey={ postKey }
-				suppressSiteNameLink={ this.props.suppressSiteNameLink }
-				showPostHeader={ this.props.showPostHeader }
-				showFollowInHeader={ this.props.showFollowInHeader }
-				showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
-				isDiscoverStream={ this.props.isDiscoverStream }
-				showSiteName={ this.props.showSiteNameOnCards }
-				selectedPostKey={ postKey.isCombination ? selectedPostKey : undefined }
-				followSource={ this.props.followSource }
-				blockedSites={ this.props.blockedSites }
-				streamKey={ streamKey }
-				recsStreamKey={ this.props.recsStreamKey }
-				index={ index }
-				compact={ this.props.useCompactCards }
-			/>
+			<React.Fragment key={ itemKey }>
+				<PostLifecycle
+					ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
+					isSelected={ isSelected }
+					handleClick={ showPost }
+					postKey={ postKey }
+					suppressSiteNameLink={ this.props.suppressSiteNameLink }
+					showPostHeader={ this.props.showPostHeader }
+					showFollowInHeader={ this.props.showFollowInHeader }
+					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
+					isDiscoverStream={ this.props.isDiscoverStream }
+					showSiteName={ this.props.showSiteNameOnCards }
+					selectedPostKey={ postKey.isCombination ? selectedPostKey : undefined }
+					followSource={ this.props.followSource }
+					blockedSites={ this.props.blockedSites }
+					streamKey={ streamKey }
+					recsStreamKey={ this.props.recsStreamKey }
+					index={ index }
+					compact={ this.props.useCompactCards }
+				/>
+				{ index === 0 && <PerformanceTrackerStop /> }
+			</React.Fragment>
 		);
 	};
 

@@ -298,6 +298,7 @@ const sections = [
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -305,6 +306,7 @@ const sections = [
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -312,6 +314,7 @@ const sections = [
 		module: 'reader/full-post',
 		secondary: false,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -319,6 +322,7 @@ const sections = [
 		module: 'reader/discover',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -333,6 +337,7 @@ const sections = [
 		module: 'reader/tag-stream',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -340,6 +345,7 @@ const sections = [
 		module: 'reader/liked-stream',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -347,6 +353,7 @@ const sections = [
 		module: 'reader/search',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -361,6 +368,7 @@ const sections = [
 		module: 'reader/conversations',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'help',
