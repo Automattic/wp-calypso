@@ -13,7 +13,7 @@ import EducationalContent from '../educational-content';
 /**
  * Image dependencies
  */
-import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--free-photo-library.svg';
+import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--secondary-free-photo-library.svg';
 
 const FreePhotoLibrary = () => {
 	const translate = useTranslate();
