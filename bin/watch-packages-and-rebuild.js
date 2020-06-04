@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const path = require( 'path' );
 const chokidar = require( 'chokidar' );
+const chalk = require( 'chalk' );
 const util = require( 'util' );
 const promiseExecFile = util.promisify( require( 'child_process' ).execFile );
 const debounce = require( 'lodash/debounce' );
@@ -29,7 +30,7 @@ function handleChange( filePath ) {
 	if ( isPathIgnored( filePath ) ) {
 		return;
 	}
-	console.log( 'heard change in', filePath );
+	console.log( chalk.cyan( 'heard change in' ), filePath );
 	const packageDirectory = getPackageDirectoryFromFilePath( filePath );
 	if ( packageDirectory && ! rebuildQueue.includes( packageDirectory ) ) {
 		rebuildQueue.push( packageDirectory );
@@ -66,7 +67,7 @@ function getPackageDirectoryFromFilePath( filePath ) {
 }
 
 async function rebuildPackage( packageDirectory ) {
-	console.log( 'rebuilding package:', packageDirectory );
+	console.log( chalk.cyan( 'rebuilding package: %s' ), packageDirectory );
 	try {
 		const { stdout } = await promiseExecFile( 'yarn', [ 'prepare' ], {
 			cwd: packageDirectory,
@@ -74,7 +75,7 @@ async function rebuildPackage( packageDirectory ) {
 			stdio: 'inherit',
 		} );
 		console.log( stdout );
-		console.log( 'rebuild complete:', packageDirectory );
+		console.log( chalk.green( 'rebuild complete: %s' ), packageDirectory );
 	} catch ( err ) {
 		console.error( 'rebuild failed:', err );
 	}
