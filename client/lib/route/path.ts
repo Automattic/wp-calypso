@@ -59,8 +59,8 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	// Check last and second-to-last piece for numeric site ID
 	for ( let i = 2; i > 0; i-- ) {
 		const piece = pieces[ pieces.length - i ];
-		// We can't just do parseInt because some string look like numbers, eg: '404-hello'
-		const isNumber = String( piece ).match( /\D/ ) === null;
+		// We can't just do parseInt because some strings look like numbers, eg: '404-hello'
+		const isNumber = /^\d+$/.test( piece );
 		const intPiece = parseInt( piece, 10 );
 		if ( isNumber && Number.isSafeInteger( intPiece ) ) {
 			return intPiece;
