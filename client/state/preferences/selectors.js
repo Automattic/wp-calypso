@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { get, find, has } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { DEFAULT_PREFERENCE_VALUES } from './constants';
+
+import 'state/preferences/init';
 
 export const isFetchingPreferences = ( state ) => !! state.preferences.fetching;
 
