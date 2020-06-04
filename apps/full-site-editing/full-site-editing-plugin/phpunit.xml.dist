@@ -1,5 +1,5 @@
 <phpunit
-	bootstrap="./bin/phpunit-bootstrap.php"
+	bootstrap="phpunit/bootstrap.php"
 	backupGlobals="false"
 	colors="true"
 	convertErrorsToExceptions="true"
@@ -7,8 +7,8 @@
 	convertWarningsToExceptions="true"
 	>
 	<testsuites>
-		<testsuite name="Full Site Editing">
-			<directory suffix="-test.php">./full-site-editing/tests/*</directory>
+		<testsuite name="default">
+			<directory suffix="-test.php">./phpunit/</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>

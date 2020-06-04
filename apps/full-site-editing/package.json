@@ -74,6 +74,7 @@
 		"test:js:update-snapshots": "check-npm-client && npx wp-scripts test-unit-js -u --config='bin/js-unit-config.js' --colors",
 		"test:e2e": "check-npm-client && npx wp-scripts test-e2e --wordpress-base-url='http://localhost:4013' --colors",
 		"test:e2e:watch": "check-npm-client && npm run test-e2e -- --watch",
+		"test:php": "check-npm-client && wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/full-site-editing-plugin/phpunit.xml.dist'",
 		"clean": "check-npm-client && npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "check-npm-client && yarn run clean",
 		"predev": "check-npm-client && yarn run clean",
