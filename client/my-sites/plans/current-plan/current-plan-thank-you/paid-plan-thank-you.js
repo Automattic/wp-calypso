@@ -141,7 +141,7 @@ export class PaidPlanThankYou extends Component {
 						<ProgressBar
 							isPulsing
 							total={ 100 }
-							value={ installProgress < 10 ? 10 : installProgress }
+							value={ Math.max( installProgress, 10 ) }
 						/>
 					</ThankYou>
 				) }
