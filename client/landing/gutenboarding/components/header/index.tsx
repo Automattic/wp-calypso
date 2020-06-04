@@ -19,7 +19,7 @@ import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import PlansButton from '../plans/plans-button';
+import PlansButton from '../plans-button';
 import SignupForm from '../../components/signup-form';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
