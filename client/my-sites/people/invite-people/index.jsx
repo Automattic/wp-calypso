@@ -57,6 +57,7 @@ import { getSiteRoles } from 'state/site-roles/selectors';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import ClipboardButton from 'components/forms/clipboard-button';
+import SectionHeader from 'components/section-header';
 
 /**
  * Style dependencies
@@ -502,7 +503,7 @@ class InvitePeople extends React.Component {
 		if ( this.state.showCopyConfirmation ) {
 			label = translate( 'Copied!' );
 		} else {
-			label = translate( 'Copy', { context: 'verb' } );
+			label = translate( 'Copy link', { context: 'verb' } );
 		}
 
 		return (
@@ -560,7 +561,7 @@ class InvitePeople extends React.Component {
 					<span>
 						(
 						<button className="invite-people__link-disable" onClick={ this.disableInviteLinks }>
-							{ translate( 'Disable invite links' ) }
+							{ translate( 'Disable invite link' ) }
 						</button>
 						)
 					</span>
@@ -573,7 +574,7 @@ class InvitePeople extends React.Component {
 		const { translate } = this.props;
 		return (
 			<Button onClick={ this.generateInviteLinks } className="invite-people__link-generate">
-				{ translate( 'Generate new links' ) }
+				{ translate( 'Generate new link' ) }
 			</Button>
 		);
 	};
@@ -584,9 +585,9 @@ class InvitePeople extends React.Component {
 		const activeInviteLink = this.getActiveInviteLink( this.state.activeInviteLink );
 
 		const inviteLinkForm = (
-			<Card>
+			<Card className="invite-people__link">
 				<EmailVerificationGate>
-					<FormSettingExplanation>
+					<div class="invite-people__link-instructions">
 						{ translate(
 							'Use this link to onboard your team members without having to invite them one by one. '
 						) }
@@ -598,13 +599,11 @@ class InvitePeople extends React.Component {
 						{ translate(
 							'even if they received the link from somebody else, so make sure that you share it with trusted people.'
 						) }
-					</FormSettingExplanation>
-
-					<div className="invite-people__link">
-						{ activeInviteLink
-							? this.renderInviteLinkRoleSelector( activeInviteLink )
-							: this.renderInviteLinkGenerateButton() }
 					</div>
+
+					{ activeInviteLink
+						? this.renderInviteLinkRoleSelector( activeInviteLink )
+						: this.renderInviteLinkGenerateButton() }
 				</EmailVerificationGate>
 			</Card>
 		);
@@ -640,9 +639,7 @@ class InvitePeople extends React.Component {
 				{ this.renderInviteForm() }
 				{ isWPForTeamsSite && (
 					<React.Fragment>
-						<HeaderCake isCompact onClick={ this.goBack }>
-							{ translate( 'Invite Link' ) }
-						</HeaderCake>
+						<SectionHeader label={ translate( 'Invite Link' ) } />
 						{ this.renderInviteLinkForm() }
 					</React.Fragment>
 				) }

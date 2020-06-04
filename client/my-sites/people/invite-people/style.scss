@@ -12,37 +12,50 @@
 }
 
 .invite-people__link {
-	margin-top: 24px;
+
+	.invite-people__link-generate {
+		float: right;
+	}
+
+	.invite-people__link-instructions {
+		font-size: 14px;
+		margin-bottom: 28px;
+	}
 
 	.invite-people__link-selector {
 		display: flex;
+		font-size: 14px;
 
 		.invite-people__link-selector-role {
 			flex: 1 0 auto;
-			margin-right: 5px;
+			font-size: inherit;
+			margin-right: 16px;
 		}
 		.invite-people__link-selector-text {
 			flex: 1 1 auto;
-			font-size: 13px;
-			margin-right: 5px;
+			font-size: inherit;
+			margin-right: 16px;
 		}
 		.invite-people__link-selector-copy {
 			flex: 1 0 auto;
+			font-size: inherit;
+			min-width: 100px;
+			padding: 7px 14px;
 		}
 	}
 
 	.invite-people__link-footer {
-		color: #acabab;
-		margin-top: 6px;
+		color: var( --color-text-subtle );
 		font-size: 12px;
 		font-style: italic;
+		margin-top: 8px;
 
 		.invite-people__link-expiry {
-			color: #acabab;
+			color: var( --color-text-subtle );
 		}
 
 		.invite-people__link-disable {
-			color: #c71616;
+			color: var( --color-error );
 			cursor: pointer;
 			font-size: inherit;
 			font-style: inherit;
