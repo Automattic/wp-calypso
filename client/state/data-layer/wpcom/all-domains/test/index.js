@@ -6,11 +6,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getEmailAccounts, getEmailAccountsFailure, getEmailAccountsSuccess } from '../';
+import { getAllDomains, getAllDomainsError, getAllDomainsSuccess } from '../';
 import {
-	EMAIL_ACCOUNTS_REQUEST,
-	EMAIL_ACCOUNTS_REQUEST_SUCCESS,
-	EMAIL_ACCOUNTS_REQUEST_FAILURE,
+	ALL_DOMAINS_REQUEST,
+	ALL_DOMAINS_REQUEST_SUCCESS,
+	ALL_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -20,20 +20,16 @@ const isErrorNotice = ( action ) => {
 };
 
 describe( 'wpcom-api', () => {
-	describe( 'email accounts request', () => {
-		const siteId = 1,
-			action = {
-				type: EMAIL_ACCOUNTS_REQUEST,
-				siteId,
-			};
+	describe( 'all domains request', () => {
+		const action = { type: ALL_DOMAINS_REQUEST };
 
-		describe( '#getEmailAccounts', () => {
-			test( 'should dispatch an HTTP request to the get email-accounts endpoint', () => {
-				expect( getEmailAccounts( action ) ).to.eql(
+		describe( '#getAllDomains', () => {
+			test( 'should dispatch an HTTP request to the all-domains endpoint', () => {
+				expect( getAllDomains( action ) ).to.eql(
 					http(
 						{
 							method: 'GET',
-							path: '/sites/1/email-accounts',
+							path: '/all-domains',
 						},
 						action
 					)
@@ -41,57 +37,40 @@ describe( 'wpcom-api', () => {
 			} );
 		} );
 
-		describe( '#getEmailAccountsFailure', () => {
+		describe( '#getAllDomainsFailure', () => {
 			const message = 'An error has occurred';
 
-			test( 'should dispatch a get email accounts failure action on error', () => {
-				const resultActions = getEmailAccountsFailure( action, { message } );
+			test( 'should dispatch a get all-domains failure action on error', () => {
+				const resultActions = getAllDomainsError( action, { message } );
 				expect( resultActions ).to.have.lengthOf( 2 );
 				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
 				expect( resultActions[ 1 ] ).to.eql( {
-					type: EMAIL_ACCOUNTS_REQUEST_FAILURE,
-					siteId,
+					type: ALL_DOMAINS_REQUEST_FAILURE,
 					error: { message },
 				} );
 			} );
 		} );
 
-		describe( '#getEmailAccountsSuccess', () => {
-			test( 'should dispatch a get email accounts success action and response', () => {
-				const response = {
-					accounts: [
-						{
-							domain_name: 'test.blog',
-							product_name: 'G Suite Basic',
-							product_slug: 'gapps',
-							product_type: 'gapps',
-							site_id: 1,
-							mailboxes: [
-								{
-									name: 'user',
-									first_name: 'User',
-									last_name: 'One',
-									state: 'suspended',
-								},
-							],
-						},
-					],
-				};
-				expect( getEmailAccountsSuccess( action, response ) ).to.eql( {
-					type: EMAIL_ACCOUNTS_REQUEST_SUCCESS,
-					siteId,
-					response,
+		describe( '#getAllDomainsSuccess', () => {
+			test( 'should dispatch a get all-domains success action and response', () => {
+				const domains = [
+					{
+						domain: 'test.blog',
+					},
+				];
+				expect( getAllDomainsSuccess( action, { domains } ) ).to.eql( {
+					type: ALL_DOMAINS_REQUEST_SUCCESS,
+					domains,
 				} );
 			} );
 
-			test( 'should dispatch a get email accounts failure action on no response', () => {
-				const resultActions = getEmailAccountsSuccess( action, undefined );
+			test( 'should dispatch a get all-domains failure action on no response', () => {
+				const resultActions = getAllDomainsSuccess( action, undefined );
 				expect( resultActions ).to.have.lengthOf( 2 );
 				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
 				expect( resultActions[ 1 ] ).to.eql( {
-					type: EMAIL_ACCOUNTS_REQUEST_FAILURE,
-					siteId,
-					error: { message: 'Failed to retrieve your email accounts. No response was received' },
+					type: ALL_DOMAINS_REQUEST_FAILURE,
+					error: 'Failed to retrieve your domains. No response was received',
 				} );
 			} );
 		} );
