@@ -6,6 +6,9 @@ const promiseExecFile = util.promisify( require( 'child_process' ).execFile );
 const debounce = require( 'lodash/debounce' );
 const debouncedProcessRebuildQueue = debounce( processRebuildQueue, 100 );
 
+const ignoredPaths = [ 'dist', 'test', 'tests' ];
+const ignoredExtensions = [ '.css', '.md', '.d.ts' ];
+
 const packagesDirectoryPath = path.join( '.', 'packages' );
 const watcher = chokidar.watch( packagesDirectoryPath, {
 	ignored: /^\./,
@@ -39,11 +42,9 @@ function isPathIgnored( filePath ) {
 	if ( filePathPieces.length < 2 ) {
 		return true;
 	}
-	const ignoredPaths = [ 'dist', 'test', 'tests' ];
 	if ( ignoredPaths.find( ( ignored ) => filePathPieces.includes( ignored ) ) ) {
 		return true;
 	}
-	const ignoredExtensions = [ '.css', '.md', '.d.ts' ];
 	if ( ignoredExtensions.find( ( ignored ) => filePath.endsWith( ignored ) ) ) {
 		return true;
 	}
