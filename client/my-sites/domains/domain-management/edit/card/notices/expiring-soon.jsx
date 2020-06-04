@@ -108,9 +108,8 @@ function ExpiringSoon( props ) {
 	return (
 		<div>
 			<p>{ noticeText }</p>
-			{ domain.currentUserCanManage &&
-				( purchase || isLoadingPurchase ) &&
-				( <RenewButton
+			{ domain.currentUserCanManage && ( purchase || isLoadingPurchase ) && (
+				<RenewButton
 					primary={ true }
 					purchase={ purchase }
 					selectedSite={ selectedSite }
