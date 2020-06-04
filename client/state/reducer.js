@@ -6,11 +6,6 @@
 }]*/
 
 /**
- * External dependencies
- */
-import { reducer as form } from 'redux-form';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
@@ -121,7 +116,6 @@ const reducers = {
 	embeds,
 	experiments,
 	exporter,
-	form,
 	googleMyBusiness,
 	gsuiteUsers,
 	gutenbergOptInOut,
