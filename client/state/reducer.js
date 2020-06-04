@@ -72,7 +72,6 @@ import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
 import sharing from './sharing/reducer';
-import shortcodes from './shortcodes/reducer';
 import simplePayments from './simple-payments/reducer';
 import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
@@ -150,7 +149,6 @@ const reducers = {
 	rewind,
 	selectedEditor,
 	sharing,
-	shortcodes,
 	simplePayments,
 	siteAddressChange,
 	siteKeyrings,
