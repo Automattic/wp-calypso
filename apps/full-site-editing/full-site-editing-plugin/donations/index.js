@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-registerBlockType( 'donations', {
+registerBlockType( 'a8c/donations', {
 	title: __( 'Donations', 'donations' ),
 	description: __( 'Accept donations on your site.', 'donations' ),
 	category: 'common',
@@ -38,4 +38,10 @@ registerBlockType( 'donations', {
 		/* translators: block keyword */
 		__( 'paywall', 'donations' ),
 	],
+	edit() {
+		return <div>Donations block</div>;
+	},
+	save() {
+		return <div>Donations block</div>;
+	},
 } );
