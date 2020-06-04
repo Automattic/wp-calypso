@@ -20,6 +20,7 @@ import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
+import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
@@ -107,6 +108,12 @@ export class ReaderSidebar extends React.Component {
 		}
 	};
 
+	handleReaderSidebarFollowedSitesClicked() {
+		recordAction( 'clicked_reader_sidebar_followed_sites' );
+		recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
+		recordTrack( 'calypso_reader_sidebar_followed_sites_clicked' );
+	}
+
 	handleReaderSidebarConversationsClicked() {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
@@ -137,99 +144,189 @@ export class ReaderSidebar extends React.Component {
 		recordTrack( 'calypso_reader_sidebar_like_activity_clicked' );
 	}
 
+	renderForRegularUsers() {
+		const { path, translate } = this.props;
+		return (
+			<SidebarMenu>
+				<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
+				<ul>
+					<QueryReaderLists />
+					<QueryReaderTeams />
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+							'sidebar-streams__following': true,
+						} ) }
+						label={ translate( 'Followed Sites' ) }
+						onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+						materialIcon="check_circle"
+						link="/read"
+					/>
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
+							'sidebar-streams__conversations': true,
+						} ) }
+						label={ translate( 'Conversations' ) }
+						onNavigate={ this.handleReaderSidebarConversationsClicked }
+						materialIcon="question_answer"
+						link="/read/conversations"
+					/>
+
+					{ isDiscoverEnabled() && (
+						<SidebarItem
+							className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
+								'sidebar-streams__discover': true,
+							} ) }
+							label={ translate( 'Discover' ) }
+							onNavigate={ this.handleReaderSidebarDiscoverClicked }
+							icon="my-sites"
+							link="/discover"
+						/>
+					) }
+
+					<SidebarItem
+						label={ translate( 'Search' ) }
+						onNavigate={ this.handleReaderSidebarSearchClicked }
+						materialIcon="search"
+						link="/read/search"
+						className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
+							'sidebar-streams__search': true,
+						} ) }
+					/>
+
+					<SidebarItem
+						label={ translate( 'My Likes' ) }
+						onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+						materialIcon="star_border"
+						link="/activities/likes"
+						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+							'sidebar-activity__likes': true,
+						} ) }
+					/>
+
+					{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
+						<ReaderSidebarLists
+							lists={ this.props.subscribedLists }
+							path={ path }
+							isOpen={ this.props.isListsOpen }
+							onClick={ this.props.toggleListsVisibility }
+							currentListOwner={ this.state.currentListOwner }
+							currentListSlug={ this.state.currentListSlug }
+						/>
+					) }
+
+					<ReaderSidebarTags
+						tags={ this.props.followedTags }
+						path={ path }
+						isOpen={ this.props.isTagsOpen }
+						onClick={ this.props.toggleTagsVisibility }
+						onFollowTag={ this.highlightNewTag }
+						currentTag={ this.state.currentTag }
+					/>
+				</ul>
+			</SidebarMenu>
+		);
+	}
+
+	renderForAutomattic() {
+		const { path, translate } = this.props;
+		return (
+			<SidebarMenu>
+				<ul>
+					<QueryReaderLists />
+					<QueryReaderTeams />
+					<QueryReaderOrganizations />
+
+					<SidebarItem
+						label={ translate( 'Search' ) }
+						onNavigate={ this.handleReaderSidebarSearchClicked }
+						materialIcon="search"
+						link="/read/search"
+						className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
+							'sidebar-streams__search': true,
+						} ) }
+					/>
+					{ isDiscoverEnabled() && (
+						<SidebarItem
+							className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
+								'sidebar-streams__discover': true,
+							} ) }
+							label={ translate( 'Discover' ) }
+							onNavigate={ this.handleReaderSidebarDiscoverClicked }
+							icon="my-sites"
+							link="/discover"
+						/>
+					) }
+
+					<SidebarSeparator />
+					<ReaderSidebarFollowedSites path={ path } />
+					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+					<SidebarSeparator />
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
+							'sidebar-streams__conversations': true,
+						} ) }
+						label={ translate( 'Conversations' ) }
+						onNavigate={ this.handleReaderSidebarConversationsClicked }
+						materialIcon="question_answer"
+						link="/read/conversations"
+					/>
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
+							'sidebar-streams__conversations': true,
+						} ) }
+						label="A8C Conversations"
+						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+						link="/read/conversations/a8c"
+						customIcon={ <A8CConversationsIcon /> }
+					/>
+
+					<SidebarItem
+						label={ translate( 'My Likes' ) }
+						onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+						materialIcon="star_border"
+						link="/activities/likes"
+						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+							'sidebar-activity__likes': true,
+						} ) }
+					/>
+
+					{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
+						<ReaderSidebarLists
+							lists={ this.props.subscribedLists }
+							path={ path }
+							isOpen={ this.props.isListsOpen }
+							onClick={ this.props.toggleListsVisibility }
+							currentListOwner={ this.state.currentListOwner }
+							currentListSlug={ this.state.currentListSlug }
+						/>
+					) }
+
+					<ReaderSidebarTags
+						tags={ this.props.followedTags }
+						path={ path }
+						isOpen={ this.props.isTagsOpen }
+						onClick={ this.props.toggleTagsVisibility }
+						onFollowTag={ this.highlightNewTag }
+						currentTag={ this.state.currentTag }
+					/>
+				</ul>
+			</SidebarMenu>
+		);
+	}
+
 	render() {
-		const { path, teams, translate } = this.props;
+		const { teams } = this.props;
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 					<ReaderSidebarNudges />
-					<SidebarMenu>
-						<ul>
-							<SidebarItem
-								label={ translate( 'Search' ) }
-								onNavigate={ this.handleReaderSidebarSearchClicked }
-								materialIcon="search"
-								link="/read/search"
-								className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
-									'sidebar-streams__search': true,
-								} ) }
-							/>
-							{ isDiscoverEnabled() && (
-								<SidebarItem
-									className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
-										'sidebar-streams__discover': true,
-									} ) }
-									label={ translate( 'Discover' ) }
-									onNavigate={ this.handleReaderSidebarDiscoverClicked }
-									icon="my-sites"
-									link="/discover"
-								/>
-							) }
 
-							<SidebarSeparator />
-
-							<ReaderSidebarFollowedSites path={ path } />
-
-							<QueryReaderOrganizations />
-							<ReaderSidebarOrganizations
-								organizations={ this.props.organizations }
-								path={ path }
-							/>
-
-							<SidebarSeparator />
-
-							<SidebarItem
-								className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
-									'sidebar-streams__conversations': true,
-								} ) }
-								label={ translate( 'Conversations' ) }
-								onNavigate={ this.handleReaderSidebarConversationsClicked }
-								materialIcon="question_answer"
-								link="/read/conversations"
-							/>
-							<QueryReaderLists />
-							<QueryReaderTeams />
-
-							{ isAutomatticTeamMember( teams ) && (
-								<SidebarItem
-									className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
-										'sidebar-streams__conversations': true,
-									} ) }
-									label="A8C Conversations"
-									onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
-									link="/read/conversations/a8c"
-									customIcon={ <A8CConversationsIcon /> }
-								/>
-							) }
-							<SidebarItem
-								label={ translate( 'My Likes' ) }
-								onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-								materialIcon="star_border"
-								link="/activities/likes"
-								className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
-									'sidebar-activity__likes': true,
-								} ) }
-							/>
-							{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
-								<ReaderSidebarLists
-									lists={ this.props.subscribedLists }
-									path={ path }
-									isOpen={ this.props.isListsOpen }
-									onClick={ this.props.toggleListsVisibility }
-									currentListOwner={ this.state.currentListOwner }
-									currentListSlug={ this.state.currentListSlug }
-								/>
-							) }
-							<ReaderSidebarTags
-								tags={ this.props.followedTags }
-								path={ path }
-								isOpen={ this.props.isTagsOpen }
-								onClick={ this.props.toggleTagsVisibility }
-								onFollowTag={ this.highlightNewTag }
-								currentTag={ this.state.currentTag }
-							/>
-						</ul>
-					</SidebarMenu>
+					{ isAutomatticTeamMember( teams ) && this.renderForAutomattic() }
+					{ ! isAutomatticTeamMember( teams ) && this.renderForRegularUsers() }
 				</SidebarRegion>
 
 				<ReaderSidebarPromo />
