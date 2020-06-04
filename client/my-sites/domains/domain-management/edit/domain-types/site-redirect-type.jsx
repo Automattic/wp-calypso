@@ -18,6 +18,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'state/purchases/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
@@ -46,7 +47,7 @@ class SiteRedirectType extends React.Component {
 	}
 
 	renderDefaultRenewButton() {
-		const { domain, purchase } = this.props;
+		const { domain, purchase, isLoadingPurchase } = this.props;
 
 		if ( ! domain.currentUserCanManage ) {
 			return null;
@@ -54,13 +55,15 @@ class SiteRedirectType extends React.Component {
 
 		return (
 			<div>
-				<RenewButton
-					compact={ true }
-					purchase={ purchase }
-					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-					tracksProps={ { source: 'site-redirect-url', domain_status: domain.name } }
-				/>
+				{ ( isLoadingPurchase || purchase ) && (
+					<RenewButton
+						compact={ true }
+						purchase={ purchase }
+						selectedSite={ this.props.selectedSite }
+						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+						tracksProps={ { source: 'site-redirect-url', domain_status: domain.name } }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -163,9 +166,13 @@ class SiteRedirectType extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const { subscriptionId } = ownProps.domain;
+		const currentUserId = getCurrentUserId( state );
+		const purchase = subscriptionId
+			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
+			: null;
 
 		return {
-			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
 		};

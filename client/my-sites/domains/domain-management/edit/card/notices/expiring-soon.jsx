@@ -16,7 +16,7 @@ function ExpiringSoon( props ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const { domain, purchase, selectedSite } = props;
+	const { domain, purchase, isLoadingPurchase, selectedSite } = props;
 	const { expiry } = domain;
 
 	if ( ! isExpiringSoon( domain, 30 ) ) {
@@ -108,8 +108,9 @@ function ExpiringSoon( props ) {
 	return (
 		<div>
 			<p>{ noticeText }</p>
-			{ domain.currentUserCanManage && (
-				<RenewButton
+			{ domain.currentUserCanManage &&
+				( purchase || isLoadingPurchase ) &&
+				( <RenewButton
 					primary={ true }
 					purchase={ purchase }
 					selectedSite={ selectedSite }
