@@ -18,8 +18,10 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
-
 import wp from 'lib/wp';
+
+import 'state/purchases/init';
+
 const wpcom = wp.undocumented();
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
