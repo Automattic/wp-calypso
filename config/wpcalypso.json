@@ -75,6 +75,7 @@
 		"layout/support-article-dialog": true,
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": false,
+		"list/all-domains": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
