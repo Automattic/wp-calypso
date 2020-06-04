@@ -107,7 +107,7 @@ let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
 // we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 // also we don't minify so dont name them .min.js
 //
-// Desktop: no chunks or dll here, just one big file for the desktop app
+// Desktop app bundles a specific version of Calypso and doesn't need the chunk hashes in file names.
 if ( isDevelopment || isDesktop ) {
 	outputFilename = '[name].js';
 	outputChunkFilename = '[name].js';
@@ -162,7 +162,7 @@ const webpackConfig = {
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: isDesktop ? false : { name: 'manifest' },
+		runtimeChunk: { name: 'manifest' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,

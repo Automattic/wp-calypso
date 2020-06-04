@@ -20,6 +20,7 @@ class Desktop extends React.Component {
 		const {
 			app,
 			entrypoint,
+			manifest,
 			faviconURL,
 			i18nLocaleScript,
 			isRTL,
@@ -66,7 +67,6 @@ class Desktop extends React.Component {
 							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
 						</EnvironmentBadge>
 					) }
-
 					{ app && (
 						<script
 							type="text/javascript"
@@ -83,7 +83,13 @@ class Desktop extends React.Component {
 							} }
 						/>
 					) }
-
+					<script
+						type="text/javascript"
+						dangerouslySetInnerHTML={ {
+							__html: manifest,
+						} }
+					/>
+					) }
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
