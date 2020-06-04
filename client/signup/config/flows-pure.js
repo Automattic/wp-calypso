@@ -250,11 +250,11 @@ export function generateFlows( {
 	}
 
 	if ( isEnabled( 'signup/wpforteams' ) ) {
-		flows[ 'wp-for-teams' ] = {
-			steps: [ 'team-site', 'user' ],
+		flows.p2 = {
+			steps: [ 'p2-site', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'WordPress for Teams signup flow',
-			lastModified: '2020-03-23',
+			description: 'P2 signup flow',
+			lastModified: '2020-06-04',
 		};
 	}
 
