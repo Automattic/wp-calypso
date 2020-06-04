@@ -38,6 +38,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 	const [ , setPaymentMethod ] = usePaymentMethodId();
 	const onClickPaymentMethod = ( newMethod ) => {
 		debug( 'setting payment method to', newMethod );
+		onEvent( { type: 'PAYMENT_METHOD_SELECT', payload: newMethod } );
 		setPaymentMethod( newMethod );
 	};
 	const paymentMethods = useAllPaymentMethods();
