@@ -122,9 +122,15 @@ $min_results_height: 175px;
 		min-height: $min_results_height;
 		list-style: none;
 		text-align: left;
-		margin: $search_results_top_spacing 0 0;
+		margin: #{$search_results_top_spacing + 1px } #{-$card_padding_small} 0;
 		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
 		border-top: 1px solid var( --color-border-subtle );
+
+
+		@include break-mobile {
+			margin-left: -$card_padding_large;
+			margin-right: -$card_padding_large;
+		}
 	}
 
 	.help-search__results-item {
@@ -135,7 +141,7 @@ $min_results_height: 175px;
 			font-weight: normal;
 			line-height: 1;
 			display: block;
-			padding: 10px 15px;
+			padding: 10px $card_padding_small;
 
 			// Ellipsis overflow handling
 			flex: 1;
@@ -147,6 +153,11 @@ $min_results_height: 175px;
 			&:hover,
 			&:focus {
 				cursor: pointer;
+			}
+
+			@include break-mobile {
+				padding-left: $card_padding_large;
+				padding-right: $card_padding_large;
 			}
 		}
 
