@@ -29,7 +29,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 ); /* 30p
 		width: 720px;
 		height: $wpcom-modal-content-min-height;
 		overflow: visible;
-		top: calc( 50% - $wpcom-modal-footer-height );
+		top: calc( 50% - #{$wpcom-modal-footer-height / 2} );
 	}
 
 	.components-modal__header {
