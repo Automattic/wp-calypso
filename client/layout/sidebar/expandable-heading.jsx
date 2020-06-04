@@ -46,7 +46,7 @@ const ExpandableSidebarHeading = ( {
 };
 
 ExpandableSidebarHeading.propTypes = {
-	title: TranslatableString.isRequired,
+	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 	icon: PropTypes.string,

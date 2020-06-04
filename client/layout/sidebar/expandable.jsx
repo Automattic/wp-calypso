@@ -9,6 +9,7 @@ import { get, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
+import TranslatableString from 'components/translatable/proptype';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'layout/sidebar/menu';
 
@@ -75,7 +76,7 @@ export const ExpandableSidebarMenu = ( props ) => {
 };
 
 ExpandableSidebarMenu.propTypes = {
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 	icon: PropTypes.string,
