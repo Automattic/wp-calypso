@@ -325,7 +325,6 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items
 				.filter( ( item ) => item.label ) // remove items without a label
-<<<<<<< HEAD
 				.map( ( item ) => {
 					if ( isSummary && ! shouldLineItemBeShownWhenStepInactive( item ) ) {
 						return;
@@ -342,27 +341,11 @@ export function WPOrderReviewLineItems( {
 								onChangePlanLength={ onChangePlanLength }
 								couponStatus={ couponStatus }
 								isSummary={ isSummary }
+								isWhiteGloveOffer={ isWhiteGloveOffer }
 							/>
 						</WPOrderReviewListItem>
 					);
 				} ) }
-=======
-				.map( ( item ) => (
-					<WPOrderReviewListItem key={ item.id }>
-						<LineItemUI
-							isSummaryVisible={ isSummaryVisible }
-							item={ item }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
-							hasDeleteButton={ canItemBeDeleted( item ) }
-							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
-							variantSelectOverride={ variantSelectOverride }
-							getItemVariants={ getItemVariants }
-							onChangePlanLength={ onChangePlanLength }
-							couponStatus={ couponStatus }
-						/>
-					</WPOrderReviewListItem>
-				) ) }
->>>>>>> White glove: Show offer page (#42786)
 		</WPOrderReviewList>
 	);
 }
