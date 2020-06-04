@@ -100,7 +100,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			let productName = primaryPurchase.productName;
 
 			if ( 'white-glove' === displayMode ) {
-				productName = `${ productName } (White glove edition)`;
+				productName = `${ productName } (Expert guidance edition)`;
 			}
 
 			return preventWidows(

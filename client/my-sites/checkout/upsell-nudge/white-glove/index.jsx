@@ -24,7 +24,7 @@ import './style.scss';
 
 export class WhiteGlove extends PureComponent {
 	render() {
-		const title = 'Checkout ‹ White Glove';
+		const title = 'Checkout ‹ Expert guidance';
 
 		return (
 			<>
@@ -49,7 +49,7 @@ export class WhiteGlove extends PureComponent {
 				<div className="white-glove__header-logo-container">
 					<WordPressLogo className="white-glove__header-logo" size={ 32 } />
 				</div>
-				<h2>{ `White Glove Service for ${ productPrice }.` }</h2>
+				<h2>{ `Expert Guidance for ${ productPrice }.` }</h2>
 			</header>
 		);
 	}
@@ -75,15 +75,15 @@ export class WhiteGlove extends PureComponent {
 				</div>
 
 				<div className="white-glove__benefits">
-					<Checklist content="Two thirty minute sessions with your very own WordPress experts" />
+					<Checklist content="Two thirty-minute sessions with your very own WordPress expert" />
 					<Checklist content="A free upgrade to our most popular Business Plan" />
 					<Checklist content="Access to hundreds of themes and plugins" />
 				</div>
 
 				<div className="white-glove__column-pane">
 					<div className="white-glove__content-right">
-						More support. More customization. Our White Glove Service lets you take control. We’ll
-						show you how.
+						More support. More customization. We'll help you craft the best digital experience for
+						your visitors.
 					</div>
 				</div>
 			</>

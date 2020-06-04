@@ -272,7 +272,7 @@ export class SiteNotice extends React.Component {
 				callToAction={ translate( 'Upgrade' ) }
 				compact
 				href={ `/checkout/${ this.props.site.slug }/offer-white-glove` }
-				title={ 'White Glove Offer' }
+				title={ 'Expert Guidance Offer' }
 				tracksClickName={ 'calypso_upgrade_nudge_cta_click' }
 				tracksImpressionName={ 'calypso_upgrade_nudge_impression' }
 			/>

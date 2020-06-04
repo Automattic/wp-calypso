@@ -317,7 +317,7 @@ export class CartItem extends React.Component {
 				case PLAN_BUSINESS:
 				case PLAN_BUSINESS_2_YEARS:
 					return isWhiteGloveOffer
-						? `${ cartItem.product_name } (White glove edition)`
+						? `${ cartItem.product_name } (Expert guidance edition)`
 						: cartItem.product_name;
 
 				default:
