@@ -719,4 +719,232 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 	} );
+
+	describe( 'transientItems()', () => {
+		const siteId = 2916284;
+		const site = {
+			ID: siteId,
+		};
+		const anotherSiteId = 87654321;
+		const mediaId = 42;
+		const transientMediaId = 'media-32';
+		const transientMediaItem = {
+			ID: transientMediaId,
+		};
+		const serverMediaItem = {
+			ID: mediaId,
+		};
+		const justSavedMediaItem = {
+			ID: mediaId,
+			transientId: transientMediaId,
+		};
+		const baseState = deepFreeze( {} );
+
+		describe( 'MEDIA_SOURCE_CHANGE', () => {
+			const action = changeMediaSource( site.ID );
+
+			test( 'should clear the transient items and id mappings for the site', () => {
+				const result = transientItems( {}, action );
+
+				expect( result ).to.eql( {
+					[ siteId ]: {
+						transientItems: {},
+						transientIdsToServerIds: {},
+					},
+				} );
+			} );
+
+			test( 'should not clear a different site', () => {
+				const anotherSiteState = Symbol( 'another site' );
+				const result = transientItems(
+					{
+						[ anotherSiteId ]: anotherSiteState,
+						[ action.siteId ]: {},
+					},
+					action
+				);
+
+				expect( result ).to.deep.eql( {
+					[ siteId ]: {
+						transientItems: {},
+						transientIdsToServerIds: {},
+					},
+					[ anotherSiteId ]: anotherSiteState,
+				} );
+			} );
+		} );
+
+		describe( 'MEDIA_ITEM_CREATE', () => {
+			const action = createMediaItem( site, transientMediaItem );
+
+			test( 'should add the transient item to the map of transient items for the site', () => {
+				const result = transientItems( baseState, action );
+
+				expect( result ).to.deep.eql( {
+					[ action.site.ID ]: {
+						transientItems: {
+							[ transientMediaItem.ID ]: transientMediaItem,
+						},
+						transientIdsToServerIds: {},
+					},
+				} );
+			} );
+
+			test( 'should preserve existing transient media items', () => {
+				const anotherTransientMediaItem = {
+					ID: 'another-transient-media-123',
+				};
+				const result = transientItems(
+					{
+						[ action.site.ID ]: {
+							transientItems: {
+								[ anotherTransientMediaItem.ID ]: anotherTransientMediaItem,
+							},
+						},
+					},
+					action
+				);
+
+				expect( result ).to.deep.eql( {
+					[ action.site.ID ]: {
+						transientItems: {
+							[ anotherTransientMediaItem.ID ]: anotherTransientMediaItem,
+							[ action.transientMedia.ID ]: action.transientMedia,
+						},
+						transientIdsToServerIds: {},
+					},
+				} );
+			} );
+
+			test( 'should leave transientIdsToServerIds alone', () => {
+				const transientIdsToServerIds = Symbol( 'transient ids to server ids' );
+				const result = transientItems(
+					{
+						[ action.site.ID ]: {
+							transientIdsToServerIds,
+						},
+					},
+					action
+				);
+
+				expect( result ).to.deep.eql( {
+					[ action.site.ID ]: {
+						transientItems: {
+							[ action.transientMedia.ID ]: action.transientMedia,
+						},
+						transientIdsToServerIds,
+					},
+				} );
+			} );
+		} );
+
+		describe( 'MEDIA_RECEIVE', () => {
+			test( 'should do nothing and ignore media that does not have a `transientId` property', () => {
+				const action = receiveMedia( siteId, serverMediaItem );
+				const result = transientItems( {}, action );
+
+				expect( result ).to.deep.eql( {} );
+			} );
+
+			test( 'should remove the transient item and create a mapping of transient id -> server id', () => {
+				const action = receiveMedia( siteId, justSavedMediaItem );
+				const result = transientItems(
+					{
+						[ siteId ]: {
+							transientItems: { [ justSavedMediaItem.transientId ]: transientMediaItem },
+						},
+					},
+					action
+				);
+
+				expect( result ).to.deep.eql( {
+					[ siteId ]: {
+						transientItems: {},
+						transientIdsToServerIds: { [ justSavedMediaItem.transientId ]: justSavedMediaItem.ID },
+					},
+				} );
+			} );
+
+			test( 'should leave unrelated mappings, transient items and sites alone', () => {
+				const anotherSiteState = Symbol( 'another site state' );
+				const otherTransientItem = {
+					ID: 'other transient item',
+				};
+				const existingMappings = {
+					'previously-transient-media': 1234442,
+				};
+				const action = receiveMedia( siteId, justSavedMediaItem );
+
+				const state = {
+					[ anotherSiteId ]: anotherSiteState,
+					[ siteId ]: {
+						transientItems: {
+							[ otherTransientItem.ID ]: otherTransientItem,
+							[ justSavedMediaItem.transientId ]: justSavedMediaItem,
+						},
+						transientIdsToServerIds: existingMappings,
+					},
+				};
+
+				const result = transientItems( state, action );
+
+				expect( result ).to.deep.eql( {
+					[ anotherSiteId ]: anotherSiteState,
+					[ siteId ]: {
+						transientItems: {
+							[ otherTransientItem.ID ]: otherTransientItem,
+						},
+						transientIdsToServerIds: {
+							...existingMappings,
+							[ justSavedMediaItem.transientId ]: justSavedMediaItem.ID,
+						},
+					},
+				} );
+			} );
+		} );
+
+		describe( 'MEDIA_ITEM_REQUEST_FAILURE', () => {
+			const action = failMediaItemRequest( siteId, transientMediaId );
+
+			test( 'should clear the transient item for the failed upload', () => {
+				const state = {
+					[ siteId ]: {
+						transientItems: {
+							[ transientMediaId ]: transientMediaItem,
+						},
+					},
+				};
+
+				const result = transientItems( state, action );
+
+				expect( result ).to.deep.eql( {
+					[ siteId ]: {
+						transientItems: {},
+						transientIdsToServerIds: {},
+					},
+				} );
+			} );
+
+			test( 'should do nothing if the transient Id does not exist', () => {
+				const state = {
+					[ siteId ]: {
+						transientItems: {
+							'a-different-media-123': transientMediaItem,
+						},
+					},
+				};
+
+				const result = transientItems( state, action );
+
+				expect( result ).to.deep.eql( {
+					[ siteId ]: {
+						transientItems: {
+							'a-different-media-123': transientMediaItem,
+						},
+						transientIdsToServerIds: {},
+					},
+				} );
+			} );
+		} );
+	} );
 } );
