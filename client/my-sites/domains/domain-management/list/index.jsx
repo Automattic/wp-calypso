@@ -23,6 +23,7 @@ import Main from 'components/main';
 import {
 	domainManagementEdit,
 	domainManagementList,
+	domainManagementSiteRedirect,
 	domainManagementTransferIn,
 } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
@@ -429,12 +430,23 @@ export class List extends React.Component {
 	}
 
 	goToEditDomainRoot = ( domain ) => {
-		const slug = this.props.selectedSite.slug;
-		const path =
-			{
-				[ type.TRANSFER ]: domainManagementTransferIn( slug, domain.name ),
-				[ type.SITE_REDIRECT ]: domainManagementEdit( slug, domain.name, 'redirect' ),
-			}[ domain.type ] ?? domainManagementEdit( slug, domain.name );
+		const { selectedSite } = this.props;
+		let path;
+
+		switch ( domain.type ) {
+			case type.TRANSFER:
+				path = domainManagementTransferIn( selectedSite.slug, domain.name );
+				break;
+
+			case type.SITE_REDIRECT:
+				path = domainManagementSiteRedirect( selectedSite.slug, domain.name );
+				break;
+
+			default:
+				path = domainManagementEdit( selectedSite.slug, domain.name );
+				break;
+		}
+
 		page( path );
 	};
 
