@@ -28,6 +28,9 @@ import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/
 import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
+import { isEnabled } from 'config';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -340,5 +343,22 @@ export default {
 		}
 
 		redirectIfBlockEditor( context, next );
+	},
+
+	classic: ( context, next ) => {
+		// Redirect to WP Admin Classic Editor if user is in Calypso Classic
+		// Editor deprecation group and `classic` is the selected editor.
+		if ( isEnabled( 'editor/after-deprecation' ) && has( window, 'location.replace' ) ) {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+
+			if ( 'classic' === getSelectedEditor( state, siteId ) && inEditorDeprecationGroup( state ) ) {
+				const postId = getPostID( context );
+				const url = getWpAdminClassicEditorRedirectionUrl( state, siteId, postId );
+				return window.location.replace( url );
+			}
+		}
+
+		return next();
 	},
 };

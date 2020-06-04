@@ -18,6 +18,7 @@ export default function () {
 		'/post/:site?/:post?',
 		siteSelection,
 		controller.gutenberg,
+		controller.classic,
 		controller.post,
 		makeLayout,
 		clientRender
@@ -30,6 +31,7 @@ export default function () {
 		'/page/:site?/:post?',
 		siteSelection,
 		controller.gutenberg,
+		controller.classic,
 		controller.post,
 		makeLayout,
 		clientRender
@@ -43,6 +45,7 @@ export default function () {
 			'/edit/:type/:site?/:post?',
 			siteSelection,
 			controller.gutenberg,
+			controller.classic,
 			controller.post,
 			makeLayout,
 			clientRender
