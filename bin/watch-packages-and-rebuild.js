@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 const path = require( 'path' );
-const { spawnSync } = require( 'child_process' );
 const chokidar = require( 'chokidar' );
+const util = require( 'util' );
+const promiseExecFile = util.promisify( require( 'child_process' ).execFile );
 
 const packagesDirectoryPath = path.join( '.', 'packages' );
 const watcher = chokidar.watch( packagesDirectoryPath, {
@@ -11,13 +12,14 @@ const watcher = chokidar.watch( packagesDirectoryPath, {
 } );
 watcher.on( 'change', handleChange ).on( 'add', handleChange ).on( 'unlink', handleChange );
 
-let rebuildQueue = [];
+const rebuildQueue = [];
 
 setTimeout( processRebuildQueue, 100 );
 
-function processRebuildQueue() {
-	rebuildQueue.forEach( rebuildPackage );
-	rebuildQueue = [];
+async function processRebuildQueue() {
+	const queueSnapshot = [ ...rebuildQueue ];
+	rebuildQueue.length = 0;
+	await Promise.all( queueSnapshot.map( rebuildPackage ) );
 	setTimeout( processRebuildQueue, 100 );
 }
 
@@ -62,15 +64,17 @@ function getPackageDirectoryFromFilePath( filePath ) {
 	return path.join( relativeFilePathPieces[ 0 ], relativeFilePathPieces[ 1 ] );
 }
 
-function rebuildPackage( packageDirectory ) {
+async function rebuildPackage( packageDirectory ) {
 	console.log( 'rebuilding package:', packageDirectory );
-	const buildResult = spawnSync( 'yarn', [ 'prepare' ], {
-		cwd: packageDirectory,
-		shell: true,
-		stdio: 'inherit',
-	} );
-	if ( buildResult.status ) {
-		console.error( 'failed to rebuild package: exited with code %d', buildResult.status );
+	try {
+		const { stdout } = await promiseExecFile( 'yarn', [ 'prepare' ], {
+			cwd: packageDirectory,
+			shell: true,
+			stdio: 'inherit',
+		} );
+		console.log( stdout );
+		console.log( 'rebuild complete:', packageDirectory );
+	} catch ( err ) {
+		console.error( 'rebuild failed:', err );
 	}
-	console.log( 'rebuild complete:', packageDirectory );
 }
