@@ -74,7 +74,7 @@ async function rebuildPackage( packageDirectory ) {
 			shell: true,
 			stdio: 'inherit',
 		} );
-		console.log( stdout );
+		console.info( stdout );
 		console.log( chalk.green( 'rebuild complete: %s' ), packageDirectory );
 	} catch ( err ) {
 		console.error( 'rebuild failed:', err );
