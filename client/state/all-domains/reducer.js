@@ -3,7 +3,6 @@
  */
 import { combineReducers, withSchemaValidation } from 'state/utils';
 import {
-	ALL_DOMAINS_RECEIVE,
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_FAILURE,
 	ALL_DOMAINS_REQUEST_SUCCESS,
@@ -13,7 +12,7 @@ import { allDomainsSchema } from './schema';
 
 export const allDomains = withSchemaValidation( allDomainsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
-		case ALL_DOMAINS_RECEIVE: {
+		case ALL_DOMAINS_REQUEST_SUCCESS: {
 			const {
 				response: { domains },
 			} = action;
