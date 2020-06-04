@@ -89,7 +89,6 @@ class Desktop extends React.Component {
 							__html: manifest,
 						} }
 					/>
-					) }
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
