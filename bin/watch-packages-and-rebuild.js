@@ -3,6 +3,8 @@ const path = require( 'path' );
 const chokidar = require( 'chokidar' );
 const util = require( 'util' );
 const promiseExecFile = util.promisify( require( 'child_process' ).execFile );
+const debounce = require( 'lodash/debounce' );
+const debouncedProcessRebuildQueue = debounce( processRebuildQueue, 100 );
 
 const packagesDirectoryPath = path.join( '.', 'packages' );
 const watcher = chokidar.watch( packagesDirectoryPath, {
@@ -14,13 +16,10 @@ watcher.on( 'change', handleChange ).on( 'add', handleChange ).on( 'unlink', han
 
 const rebuildQueue = [];
 
-setTimeout( processRebuildQueue, 100 );
-
 async function processRebuildQueue() {
 	const queueSnapshot = [ ...rebuildQueue ];
 	rebuildQueue.length = 0;
 	await Promise.all( queueSnapshot.map( rebuildPackage ) );
-	setTimeout( processRebuildQueue, 100 );
 }
 
 function handleChange( filePath ) {
@@ -31,6 +30,7 @@ function handleChange( filePath ) {
 	const packageDirectory = getPackageDirectoryFromFilePath( filePath );
 	if ( packageDirectory && ! rebuildQueue.includes( packageDirectory ) ) {
 		rebuildQueue.push( packageDirectory );
+		debouncedProcessRebuildQueue();
 	}
 }
 
