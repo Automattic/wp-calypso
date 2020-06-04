@@ -21,7 +21,7 @@ $wpcom-modal-padding-v: 40px;
 $wpcom-modal-padding-h: 50px;
 $wpcom-modal-content-min-height: 350px;
 $wpcom-modal-footer-padding-v: 20px;
-$wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 ); /* 30px button + 20px top padding + 20px bottom padding */
+$wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 // Core modal style overrides
 .wpcom-block-editor-nux {
@@ -68,7 +68,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 ); /* 30p
 		margin: 0 auto;
 		z-index: 2;
 
-		//
 		&::before {
 			display: inline-block;
 			content: '';
