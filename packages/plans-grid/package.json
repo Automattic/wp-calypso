@@ -32,7 +32,6 @@
 	"dependencies": {
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@wordpress/base-styles": "^1.8.0",
 		"@wordpress/components": "^9.6.0",
 		"@wordpress/icons": "^2.0.0",
 		"@wordpress/primitives": "^1.5.0",
@@ -41,6 +40,9 @@
 		"tslib": "^1.10.0",
 		"use-debounce": "^3.1.0",
 		"uuid": "^7.0.2"
+	},
+	"devDependencies": {
+		"@wordpress/base-styles": "^1.8.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.18.0",
