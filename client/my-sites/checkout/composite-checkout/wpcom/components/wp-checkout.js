@@ -245,6 +245,7 @@ export default function WPCheckout( {
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
 							siteUrl={ siteUrl }
+							isWhiteGloveOffer={ isWhiteGloveOffer }
 						/>
 					}
 					editButtonText={ translate( 'Edit' ) }

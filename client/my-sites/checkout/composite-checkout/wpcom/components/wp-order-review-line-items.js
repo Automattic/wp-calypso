@@ -181,6 +181,7 @@ WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummary: PropTypes.bool,
+	isWhiteGloveOffer: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
