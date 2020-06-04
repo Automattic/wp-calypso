@@ -11,6 +11,11 @@ namespace A8C\FSE\Earn\Donations;
  * Initialize the Donations block.
  */
 function fse_donations_block() {
+	$gate = apply_filters( 'wpcom_donations_block_init', false );
+	if ( ! $gate ) {
+		return;
+	}
+
 	$asset_file = include plugin_dir_path( __FILE__ ) . 'dist/donations.asset.php';
 
 	wp_enqueue_script(
