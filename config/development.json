@@ -75,6 +75,7 @@
 		"i18n/translation-scanner": true,
 		"ive/use-external-assignment": true,
 		"jetpack/api-cache": true,
+		"jetpack/advanced-features": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
@@ -85,6 +86,11 @@
 		"jetpack/search-product": true,
 		"jetpack/features-section": false,
 		"jetpack/scan-product": true,
+		"jetpack-cloud/backups-restore": true,
+		"jetpack-cloud/backups": true,
+		"jetpack-cloud/on-demand-scan": true,
+		"jetpack-cloud/scan-history": true,
+		"jetpack-cloud/scan": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"lasagna": true,
@@ -215,5 +221,11 @@
 		"woocommerce/onboarding-oauth": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
+	},
+	"sections": {
+		"jetpack-cloud": false,
+		"scan": true,
+		"backups": true,
+		"jetpack-cloud-settings": false
 	}
 }
