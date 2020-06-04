@@ -12,6 +12,9 @@ import {
 	ALL_DOMAINS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+import 'state/all-domains/init';
+import 'state/data-layer/wpcom/all-domains/index';
+
 /**
  * Module vars
  */

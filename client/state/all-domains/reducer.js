@@ -10,21 +10,16 @@ import {
 
 import { allDomainsSchema } from './schema';
 
-export const allDomains = withSchemaValidation( allDomainsSchema, ( state = {}, action ) => {
+export const allDomains = withSchemaValidation( allDomainsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
-		case ALL_DOMAINS_REQUEST_SUCCESS: {
-			const {
-				response: { domains },
-			} = action;
-
-			return domains;
-		}
+		case ALL_DOMAINS_REQUEST_SUCCESS:
+			return action.domains;
 	}
 
 	return state;
 } );
 
-export const errors = ( state = {}, action ) => {
+export const errors = ( state = null, action ) => {
 	switch ( action.type ) {
 		case ALL_DOMAINS_REQUEST:
 		case ALL_DOMAINS_REQUEST_SUCCESS:
@@ -37,7 +32,7 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export const requesting = ( state = {}, action ) => {
+export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ALL_DOMAINS_REQUEST:
 		case ALL_DOMAINS_REQUEST_FAILURE:
@@ -49,7 +44,7 @@ export const requesting = ( state = {}, action ) => {
 };
 
 export default combineReducers( {
-	allDomains,
+	domains: allDomains,
 	requesting,
 	errors,
 } );
