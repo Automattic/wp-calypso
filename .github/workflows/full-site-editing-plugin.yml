@@ -4,21 +4,19 @@ on:
     paths:
     - 'apps/full-site-editing/full-site-editing-plugin/**'
 
-name: build-fse-plugin
+name: FSE plugin
 
 jobs:
   build:
     name: Build FSE plugin
     runs-on: ubuntu-latest
-    env:
-      CALYPSO_APP: fse_plugin
-      TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
     steps:
     - name: Checkout code
       uses: actions/checkout@master
 
     # https://github.com/actions/cache/blob/master/examples.md#node---lerna
-    - name: Restore lerna
+    - name: Restore node_modules cache
+      id: cache
       uses: actions/cache@master
       with:
         path: |
@@ -27,10 +25,16 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
 
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: yarn install --frozen-lockfile # Not needed when restoring from cache.
+
+    - name: Build packages
+      if: steps.cache.outputs.cache-hit == 'true'
+      run: yarn run postinstall # Needed only when not running yarn install.
 
     - name: Build FSE
-      run: cd apps/full-site-editing && yarn build
+      run: yarn build
+      working-directory: apps/full-site-editing
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v1
@@ -38,5 +42,70 @@ jobs:
         name: fse-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
 
+  mc_upload:
+    name: Create wpcom sync diff
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      CALYPSO_APP: fse_plugin
+      TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@master
+
+    # It saves a bit of time to download the artifact rather than doing a build.
+    - name: Get Build
+      uses: actions/download-artifact@master
+      with:
+        name: fse-build-archive
+        path: apps/full-site-editing/full-site-editing-plugin
+
     - name: Send hook to Mission Control
       run: .github/workflows/send-calypso-app-build-trigger.sh
+
+  phpunit:
+    name: Run phpunit tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@master
+
+    # It saves a bit of time to download the artifact rather than doing a build.
+    - name: Get build
+      uses: actions/download-artifact@master
+      with:
+        name: fse-build-archive
+        path: apps/full-site-editing/full-site-editing-plugin
+
+    - name: Run composer
+      uses: nick-zh/composer-php@master
+      with:
+        action: 'install'
+
+    # We still need to access some local node modules to run things.
+    - name: Restore node_modules cache
+      id: cache
+      uses: actions/cache@master
+      with:
+        path: |
+          node_modules
+          */*/node_modules
+        key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: yarn install --frozen-lockfile
+
+    - name: Setup wp-env dependencies
+      run: |
+        echo '{ "plugins": [ "./dev-plugin", "./full-site-editing-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
+      working-directory: apps/full-site-editing
+
+    - name: Start wp-env
+      run: npx wp-env start
+      working-directory: apps/full-site-editing
+
+    - name: Run phpunit command
+      run: yarn test:php
+      working-directory: apps/full-site-editing
