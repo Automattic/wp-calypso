@@ -35,7 +35,7 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 
 		if ( empty( $instance['account'] ) || empty( $instance['uuid'] ) ) {
 			if ( current_user_can( 'edit_theme_options' ) ) {
-				echo esc_js( $args['before_widget'] );
+				echo $args['before_widget']; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo '<p>' . sprintf(
 					wp_kses(
 						/* translators: %1$s - URL to manage the widget, %2$s - documentation URL. */
@@ -48,9 +48,9 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 						)
 					),
 					esc_url( admin_url( 'widgets.php' ) ),
-					'https://support.wordpress.com/widgets/mailerlite'
+					'https://wordpress.com/support/widgets/mailerlite'
 				) . '</p>';
-				echo esc_js( $args['after_widget'] );
+				echo $args['after_widget']; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			return;
 		}
@@ -110,7 +110,7 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 		echo '
 		<p><label for="' . esc_attr( $this->get_field_id( 'account' ) ) . '">';
 		/* translators: link to documentation */
-		printf( wp_kses_post( __( 'Account ID <a href="%s" target="_blank">(instructions)</a>:', 'jetpack' ) ), 'https://en.support.wordpress.com/widgets/mailerlite' );
+		printf( wp_kses_post( __( 'Account ID <a href="%s" target="_blank">(instructions)</a>:', 'jetpack' ) ), 'https://wordpress.com/support/widgets/mailerlite' );
 		echo '<input class="widefat" id="' . esc_attr( $this->get_field_id( 'account' ) ) . '" name="' . esc_attr( $this->get_field_name( 'account' ) ) . '" type="text" value="' . esc_attr( $instance['account'] ) . '" />
 		</label></p>
 		<p><label for="' . esc_attr( $this->get_field_id( 'shelf' ) ) . '">' . esc_html__( 'UUID:', 'jetpack' );
@@ -119,10 +119,12 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 		';
 	}
 }
-add_action(
-	'widgets_init',
-	function () {
-		register_widget( '\A8C\FSE\Mailerlite\WPCOM_Widget_Mailerlite' );
-	}
-);
+
+/**
+ * Registers the widget via widgets_init hook.
+ */
+function mailerlite_register_widget() {
+	register_widget( '\A8C\FSE\Mailerlite\WPCOM_Widget_Mailerlite' );
+}
+add_action( 'widgets_init', '\A8C\FSE\Mailerlite\mailerlite_register_widget' );
 
