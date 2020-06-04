@@ -17,7 +17,7 @@ let rebuildQueue = [];
 setTimeout( processRebuildQueue, 100 );
 
 function processRebuildQueue() {
-	rebuildQueue.map( rebuildPackage );
+	rebuildQueue.forEach( rebuildPackage );
 	rebuildQueue = [];
 	setTimeout( processRebuildQueue, 100 );
 }
