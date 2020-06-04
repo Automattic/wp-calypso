@@ -42,7 +42,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 = 1.7 =
 * Save the post before navigation when launching a WordPress.com site.
-* Add handling for site launch on WordPree.com.
+* Add handling for site launch on WordPress.com.
 * Performance improvements in the block editor.
 
 = 1.6 =
