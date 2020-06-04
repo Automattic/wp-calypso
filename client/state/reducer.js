@@ -31,7 +31,6 @@ import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
 import connectedApplications from './connected-applications/reducer';
-import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
@@ -115,7 +114,6 @@ const reducers = {
 	billingTransactions,
 	checklist,
 	connectedApplications,
-	countries,
 	countryStates,
 	currentUser,
 	dataRequests,
