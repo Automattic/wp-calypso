@@ -49,6 +49,9 @@ const settings = {
 		gradient: {
 			type: 'string',
 		},
+		style: {
+			type: 'string',
+		},
 	},
 	icon,
 	/* translators: block name */
