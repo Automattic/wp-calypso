@@ -97,6 +97,10 @@ export function domainManagementSecurity( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'security' );
 }
 
+export function domainManagementSiteRedirect( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'redirect' );
+}
+
 export function domainManagementTransfer( siteName, domainName, transferType = '' ) {
 	return domainManagementEdit(
 		siteName,
