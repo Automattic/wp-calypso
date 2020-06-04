@@ -39,9 +39,6 @@ const addPaidBlockFlags = async () => {
 	}
 };
 
-/**
- * Function to register blocks provided by CoBlocks.
- */
 function registerDonationsBlock() {
 	registerBlockType( 'a8c/donations', {
 		title: __( 'Donations', 'donations' ),
@@ -93,7 +90,7 @@ function registerDonationsBlock() {
 		},
 	} );
 
-	// Done after blocks are registered so the status API request doesn't suspend the execution.
+	// Done after registration so the status API request doesn't suspend the execution.
 	addPaidBlockFlags();
 }
 
