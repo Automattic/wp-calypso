@@ -21,13 +21,14 @@ import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
 import {
+	domainManagementRoot,
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementSiteRedirect,
 	domainManagementTransferIn,
 } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
-import { Button } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';
@@ -46,12 +47,13 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import getSites from 'state/selectors/get-sites';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 /**
  * Style dependencies
  */
 import './style.scss';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
 export class List extends React.Component {
 	static propTypes = {
@@ -61,6 +63,7 @@ export class List extends React.Component {
 		cart: PropTypes.object,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
+		hasSingleSite: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -403,12 +406,14 @@ export class List extends React.Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
+		const { translate, selectedSite, renderAllSites, isDomainOnly, hasSingleSite } = this.props;
+
 		const domains =
-			this.props.selectedSite.jetpack || ( this.props.renderAllSites && this.props.isDomainOnly )
+			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
 				? this.filterOutWpcomDomains( this.props.domains )
 				: this.props.domains;
 
-		return domains.map( ( domain, index ) => {
+		const domainListItems = domains.map( ( domain, index ) => {
 			return (
 				<ListItem
 					key={ index + domain.name }
@@ -427,6 +432,17 @@ export class List extends React.Component {
 				/>
 			);
 		} );
+
+		if ( hasSingleSite || renderAllSites || ! config.isEnabled( 'manage/all-domains' ) ) {
+			return domainListItems;
+		}
+
+		return [
+			...domainListItems,
+			<CompactCard href={ domainManagementRoot() }>
+				{ translate( 'Manage all your domains' ) }
+			</CompactCard>,
+		];
 	}
 
 	goToEditDomainRoot = ( domain ) => {
@@ -499,6 +515,7 @@ export default connect(
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const selectedSite = get( ownProps, 'selectedSite', null );
 		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
+		const siteCount = get( getSites( state ), 'length', 0 );
 
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
@@ -507,6 +524,7 @@ export default connect(
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,
+			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
 		};
