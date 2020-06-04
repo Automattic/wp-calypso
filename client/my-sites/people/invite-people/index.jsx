@@ -503,7 +503,7 @@ class InvitePeople extends React.Component {
 		if ( this.state.showCopyConfirmation ) {
 			label = translate( 'Copied!' );
 		} else {
-			label = translate( 'Copy link', { context: 'verb' } );
+			label = translate( 'Copy link' );
 		}
 
 		return (
