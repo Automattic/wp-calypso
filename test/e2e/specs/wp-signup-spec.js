@@ -179,7 +179,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await driver.get( magicLoginLink );
 			const magicLoginPage = await MagicLoginPage.Expect( driver );
 			await magicLoginPage.finishLogin();
-			return await CustomerHomePage.Expect( driver );
+			try {
+				await CustomerHomePage.Expect( driver );
+			} catch ( e ) {
+				await ReaderPage.Expect( driver )
+			}
 		} );
 
 		after( 'Can delete our newly created account', async function () {
