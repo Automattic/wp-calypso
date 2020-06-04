@@ -28,7 +28,7 @@ const isMobile = window.navigator.userAgent.indexOf( 'Mobi' ) > -1;
 
 export interface Props {
 	header: React.ReactElement;
-	currentPlan: Plans.Plan;
+	currentPlan?: Plans.Plan;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( { header, currentPlan } ) => {

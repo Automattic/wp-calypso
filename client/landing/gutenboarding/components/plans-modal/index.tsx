@@ -65,7 +65,7 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 			</div>
 			<ActionButtons
 				primaryButton={
-					<Button isPrimary onClick={ handleConfirm }>
+					<Button isPrimary disabled={ ! plan } onClick={ handleConfirm }>
 						{ __( 'Confirm' ) }
 					</Button>
 				}
