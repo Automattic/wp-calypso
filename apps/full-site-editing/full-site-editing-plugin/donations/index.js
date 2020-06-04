@@ -41,7 +41,7 @@ const addPaidBlockFlags = async () => {
 
 function registerDonationsBlock() {
 	registerBlockType( 'a8c/donations', {
-		title: __( 'Donations', 'donations' ),
+		title: __( 'Donations (a8c-only)', 'donations' ),
 		description: __( 'Accept donations on your site.', 'donations' ),
 		category: 'common',
 		icon: (
