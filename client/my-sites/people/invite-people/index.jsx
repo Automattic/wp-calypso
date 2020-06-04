@@ -58,6 +58,7 @@ import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import ClipboardButton from 'components/forms/clipboard-button';
 import SectionHeader from 'components/section-header';
+import accept from 'lib/accept';
 
 /**
  * Style dependencies
@@ -456,13 +457,17 @@ class InvitePeople extends React.Component {
 	};
 
 	disableInviteLinks = () => {
-		if (
-			window.confirm(
-				this.props.translate( 'Are you sure you wish to disable these invite links?' )
-			)
-		) {
-			return this.props.disableInviteLinks( this.props.siteId );
-		}
+		accept(
+			<div>
+				<p>{ this.props.translate( 'Are you sure you wish to disable the invite link?' ) }</p>
+			</div>,
+			( accepted ) => {
+				if ( accepted ) {
+					this.props.disableInviteLinks( this.props.siteId );
+				}
+			},
+			this.props.translate( 'Disable', { context: 'Disable invite link.' } )
+		);
 	};
 
 	showInviteLinkForRole = ( event ) => {
