@@ -466,7 +466,7 @@ class InvitePeople extends React.Component {
 					this.props.disableInviteLinks( this.props.siteId );
 				}
 			},
-			this.props.translate( 'Disable', { context: 'Disable invite link.' } )
+			this.props.translate( 'Disable' )
 		);
 	};
 
