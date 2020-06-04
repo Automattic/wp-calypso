@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const fs = require( 'fs' );
 const path = require( 'path' );
 const { spawnSync } = require( 'child_process' );
 const chokidar = require( 'chokidar' );
@@ -27,9 +26,9 @@ function handleChange( filePath ) {
 		return;
 	}
 	console.log( 'heard change in', filePath );
-	const packageName = getPackageNameFromFilePath( filePath );
-	if ( packageName && ! rebuildQueue.includes( packageName ) ) {
-		rebuildQueue.push( packageName );
+	const packageDirectory = getPackageDirectoryFromFilePath( filePath );
+	if ( packageDirectory && ! rebuildQueue.includes( packageDirectory ) ) {
+		rebuildQueue.push( packageDirectory );
 	}
 }
 
@@ -49,7 +48,7 @@ function isPathIgnored( filePath ) {
 	return false;
 }
 
-function getPackageNameFromFilePath( filePath ) {
+function getPackageDirectoryFromFilePath( filePath ) {
 	const relativeFilePath = path.relative( '.', filePath );
 	const relativeFilePathPieces = relativeFilePath.split( path.sep );
 	if ( relativeFilePathPieces.length < 2 ) {
@@ -60,31 +59,18 @@ function getPackageNameFromFilePath( filePath ) {
 		console.error( 'failed to rebuild package: file is outside packages directory', filePath );
 		return null;
 	}
-
-	const packageJSONFile = path.join(
-		relativeFilePathPieces[ 0 ],
-		relativeFilePathPieces[ 1 ],
-		'package.json'
-	);
-	const rawData = fs.readFileSync( packageJSONFile );
-	const parsedData = JSON.parse( rawData );
-	const packageName = parsedData.name;
-	if ( ! packageName ) {
-		console.error( 'failed to rebuild package: missing package name', filePath );
-		return null;
-	}
-
-	return packageName;
+	return path.join( relativeFilePathPieces[ 0 ], relativeFilePathPieces[ 1 ] );
 }
 
-function rebuildPackage( packageName ) {
-	console.log( 'rebuilding package:', packageName );
-	const buildResult = spawnSync( 'yarn', [ 'workspace', `${ packageName }`, 'prepare' ], {
+function rebuildPackage( packageDirectory ) {
+	console.log( 'rebuilding package:', packageDirectory );
+	const buildResult = spawnSync( 'yarn', [ 'prepare' ], {
+		cwd: packageDirectory,
 		shell: true,
 		stdio: 'inherit',
 	} );
 	if ( buildResult.status ) {
 		console.error( 'failed to rebuild package: exited with code %d', buildResult.status );
 	}
-	console.log( 'rebuild complete:', packageName );
+	console.log( 'rebuild complete:', packageDirectory );
 }
