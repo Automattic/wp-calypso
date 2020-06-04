@@ -401,7 +401,6 @@ function MyCheckoutBody() {
 					isStepActive={ false }
 					isStepComplete={ true }
 					stepNumber={ 1 }
-					totalSteps={ 1 }
 					stepId={ 'order-summary' }
 				/>
 				<CheckoutSteps>

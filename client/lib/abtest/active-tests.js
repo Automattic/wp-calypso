@@ -38,7 +38,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	showCompositeCheckout: {
-		datestamp: '20200508',
+		datestamp: '20200603',
 		variations: {
 			composite: 50,
 			regular: 50,
@@ -120,8 +120,8 @@ export default {
 	domainStepPlanStepSwap: {
 		datestamp: '20200513',
 		variations: {
-			variantShowSwapped: 50,
-			control: 50,
+			variantShowSwapped: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

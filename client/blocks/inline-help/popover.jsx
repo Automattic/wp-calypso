@@ -100,7 +100,9 @@ class InlineHelpPopover extends Component {
 
 	moreHelpClicked = () => {
 		this.props.onClose();
-		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
+			location: 'inline-help-popover',
+		} );
 	};
 
 	setSecondaryViewKey = ( secondaryViewKey ) => {
@@ -109,13 +111,17 @@ class InlineHelpPopover extends Component {
 
 	openSecondaryView = ( secondaryViewKey ) => {
 		this.setSecondaryViewKey( secondaryViewKey );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show` );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
+			location: 'inline-help-popover',
+		} );
 		this.setState( { showSecondaryView: true } );
 	};
 
 	closeSecondaryView = () => {
 		this.setSecondaryViewKey( '' );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide`, {
+			location: 'inline-help-popover',
+		} );
 		this.props.selectResult( -1 );
 		this.props.resetContactForm();
 		this.setState( { showSecondaryView: false } );
@@ -314,6 +320,7 @@ const optOut = ( siteId, classicUrl ) => {
 			),
 			recordTracksEvent( 'calypso_gutenberg_opt_in', {
 				opt_in: false,
+				location: 'inline-help-popover',
 			} ),
 			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt Out' )
 		),
@@ -332,6 +339,7 @@ const optIn = ( siteId, gutenbergUrl ) => {
 			),
 			recordTracksEvent( 'calypso_gutenberg_opt_in', {
 				opt_in: true,
+				location: 'inline-help-popover',
 			} ),
 			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt In' )
 		),

@@ -195,7 +195,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the review step active', () => {
-				const activeSteps = container.querySelectorAll( '.checkout-step--is-active' );
+				const activeSteps = container.querySelectorAll( '.checkout-step.is-active' );
 				expect( activeSteps ).toHaveLength( 1 );
 				expect( activeSteps[ 0 ] ).toHaveTextContent( 'Review your order' );
 			} );
@@ -681,7 +681,6 @@ function createStepObjectConverter( paymentData ) {
 				isStepActive={ false }
 				isStepComplete={ true }
 				stepNumber={ 1 }
-				totalSteps={ 1 }
 				stepId={ stepObject.id }
 				key={ stepObject.id }
 				activeStepContent={ stepObject.activeStepContent }

@@ -1,5 +1,12 @@
-@import '../../variables.scss';
-@import '../../functions.scss';
+@import './base-styles.scss';
+@import './functions.scss';
+
+// @TODO: share these variables with Gutenboarding from a common package.
+$gutenboarding-block-margin-mobile: 20px;
+$gutenboarding-block-margin-small: 44px;
+$gutenboarding-block-margin-medium: 88px;
+$gutenboarding-heading-padding-desktop: 64px 0 80px;
+$gutenboarding-heading-padding-mobile: 44px 0 50px;
 
 // Plans Table
 $plan-item-count: 5;

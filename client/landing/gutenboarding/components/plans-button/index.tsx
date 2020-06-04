@@ -14,9 +14,9 @@ import classnames from 'classnames';
  */
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
 import PlansModal from '../plans-modal';
-import { useSelectedPlan } from '../../../hooks/use-selected-plan';
-import { useCurrentStep, Step } from '../../../path';
-import { PLANS_STORE } from '../../../stores/plans';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
+import { useCurrentStep, Step } from '../../path';
+import { PLANS_STORE } from '../../stores/plans';
 
 /**
  * Style dependencies

@@ -6,14 +6,12 @@ import { planDetails, PLANS_LIST } from './plans-data';
 import { DEFAULT_PAID_PLAN, PLAN_FREE, PLAN_ECOMMERCE } from './constants';
 import type { PlanSlug } from './types';
 
-function getPlan( slug?: PlanSlug ) {
-	if ( slug ) {
-		return PLANS_LIST[ slug ];
-	}
-	return null;
+function getPlan( slug: PlanSlug ) {
+	return PLANS_LIST[ slug ];
 }
 
-export const getSelectedPlan = ( state: State ) => getPlan( state.selectedPlanSlug );
+export const getSelectedPlan = ( state: State ) =>
+	state.selectedPlanSlug ? getPlan( state.selectedPlanSlug ) : null;
 
 export const getDefaultPlan = ( _: State, hasPaidDomain: boolean, hasPaidDesign: boolean ) =>
 	hasPaidDomain || hasPaidDesign ? getPlan( DEFAULT_PAID_PLAN ) : getPlan( PLAN_FREE );

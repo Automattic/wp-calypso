@@ -242,12 +242,12 @@ class AutoRenewToggle extends Component {
 }
 
 export default connect(
-	( state, { purchase } ) => ( {
+	( state, { purchase, siteSlug } ) => ( {
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: ! isExpiring( purchase ),
 		currentUserId: getCurrentUserId( state ),
 		isAtomicSite: isSiteAtomic( state, purchase.siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
+		siteSlug: siteSlug || getSelectedSiteSlug( state ),
 	} ),
 	{
 		fetchUserPurchases,

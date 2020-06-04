@@ -583,11 +583,11 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getAllByLabelText, getByText } = renderResult;
+		const { getAllByLabelText, getAllByText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
 		getAllByLabelText( 'bar.com' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$0' )
 		);
@@ -619,9 +619,9 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByText, getAllByText } = renderResult;
-		expect( getByText( 'Domain Registration: billed annually' ) ).toBeInTheDocument();
-		expect( getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
@@ -634,9 +634,9 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
-		expect( getByText( 'bar.com' ) ).toBeInTheDocument();
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'adds renewal products to the cart when the url has multiple renewals', async () => {
@@ -652,10 +652,10 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByText, getAllByText } = renderResult;
-		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
-		expect( getByText( 'Domain Registration: billed annually' ) ).toBeInTheDocument();
-		expect( getAllByText( 'bar.com' ) ).toHaveLength( 3 );
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'bar.com' ) ).toHaveLength( 5 );
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
@@ -753,7 +753,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 		coupon_discounts_integer: [],
-		tax: {},
+		tax: { location: {}, display_taxes: true },
 	};
 }
 

@@ -96,7 +96,6 @@ function DefaultCheckoutSteps() {
 					isStepActive={ false }
 					isStepComplete={ true }
 					stepNumber={ 1 }
-					totalSteps={ 1 }
 					stepId={ 'order-summary-step' }
 					className={ orderSummaryStep.className }
 				/>
@@ -174,7 +173,7 @@ export function CheckoutStepArea( { children, className } ) {
 	);
 }
 
-export function CheckoutSteps( { children } ) {
+export function CheckoutSteps( { children, areStepsActive = true } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
 
@@ -200,7 +199,7 @@ export function CheckoutSteps( { children } ) {
 	return steps.map( ( child ) => {
 		stepNumber = nextStepNumber;
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
-		const isStepActive = activeStepNumber === stepNumber;
+		const isStepActive = areStepsActive && activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 		return (
 			<CheckoutSingleStepDataContext.Provider
@@ -210,6 +209,7 @@ export function CheckoutSteps( { children } ) {
 					nextStepNumber,
 					isStepActive,
 					isStepComplete,
+					areStepsActive,
 				} }
 			>
 				{ child }
@@ -217,6 +217,10 @@ export function CheckoutSteps( { children } ) {
 		);
 	} );
 }
+
+CheckoutSteps.propTypes = {
+	areStepsActive: PropTypes.bool,
+};
 
 export function CheckoutStep( {
 	activeStepContent,
@@ -233,10 +237,10 @@ export function CheckoutStep( {
 	validatingButtonAriaLabel,
 } ) {
 	const localize = useLocalize();
-	const { totalSteps, setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
+	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
 	);
-	const { stepNumber, nextStepNumber, isStepActive, isStepComplete } = useContext(
+	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
@@ -274,8 +278,8 @@ export function CheckoutStep( {
 
 	const classNames = [
 		'checkout-step',
-		...( isStepActive ? [ 'checkout-step--is-active' ] : [] ),
-		...( isStepComplete ? [ 'checkout-step--is-complete' ] : [] ),
+		...( isStepActive ? [ 'is-active' ] : [] ),
+		...( isStepComplete ? [ 'is-complete' ] : [] ),
 		...( className ? [ className ] : [] ),
 	];
 
@@ -303,19 +307,21 @@ export function CheckoutStep( {
 			isStepActive={ isStepActive }
 			isStepComplete={ isStepComplete }
 			stepNumber={ stepNumber }
-			totalSteps={ totalSteps }
 			stepId={ stepId }
 			titleContent={ titleContent }
-			goToThisStep={ goToThisStep }
-			goToNextStep={ goToNextStep }
+			goToThisStep={ areStepsActive ? goToThisStep : undefined }
+			goToNextStep={ nextStepNumber > 0 ? goToNextStep : undefined }
 			activeStepContent={ activeStepContent }
-			nextStepNumber={ nextStepNumber }
 			formStatus={ formStatus }
 			completeStepContent={ completeStepContent }
 			className={ joinClasses( classNames ) }
 		/>
 	);
 }
+
+CheckoutStep.propTypes = {
+	nextStepNumber: PropTypes.number,
+};
 
 export function CheckoutStepBody( {
 	errorMessage,
@@ -329,13 +335,11 @@ export function CheckoutStepBody( {
 	isStepComplete,
 	className,
 	stepNumber,
-	totalSteps,
 	stepId,
 	titleContent,
 	goToThisStep,
 	goToNextStep,
 	activeStepContent,
-	nextStepNumber,
 	formStatus,
 	completeStepContent,
 	onError,
@@ -350,7 +354,6 @@ export function CheckoutStepBody( {
 				isActive={ isStepActive }
 				isComplete={ isStepComplete }
 				className={ className }
-				isFinalStep={ stepNumber === totalSteps }
 			>
 				<CheckoutStepHeader
 					id={ stepId }
@@ -368,7 +371,7 @@ export function CheckoutStepBody( {
 				/>
 				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
 					{ activeStepContent }
-					{ nextStepNumber > 0 && goToNextStep && isStepActive && (
+					{ goToNextStep && isStepActive && (
 						<CheckoutNextStepButton
 							onClick={ goToNextStep }
 							value={
@@ -409,14 +412,12 @@ CheckoutStepBody.propTypes = {
 	isStepActive: PropTypes.bool.isRequired,
 	isStepComplete: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	stepNumber: PropTypes.number.isRequired,
-	totalSteps: PropTypes.number.isRequired,
+	stepNumber: PropTypes.number,
 	stepId: PropTypes.string.isRequired,
 	titleContent: PropTypes.node.isRequired,
 	goToThisStep: PropTypes.func,
 	goToNextStep: PropTypes.func,
 	activeStepContent: PropTypes.node,
-	nextStepNumber: PropTypes.number,
 	formStatus: PropTypes.string,
 	completeStepContent: PropTypes.node,
 };
@@ -535,10 +536,18 @@ export function useSetStepComplete() {
 }
 
 const StepWrapperUI = styled.div`
-	padding-bottom: ${ ( props ) => ( props.isFinalStep ? '0' : '32px' ) };
 	position: relative;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
+
+	&.checkout-step {
+		background: ${ ( props ) => props.theme.colors.background };
+	}
+
+	&.checkout-step.is-active,
+	&.checkout-step.is-complete {
+		background: ${ ( props ) => props.theme.colors.surface };
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 24px;
@@ -572,9 +581,13 @@ function CheckoutStepHeader( {
 				{ title }
 			</StepTitle>
 			{ shouldShowEditButton && (
-				<Button buttonState="text-button" onClick={ onEdit } aria-label={ editButtonAriaLabel }>
+				<HeaderEditButton
+					buttonState="text-button"
+					onClick={ onEdit }
+					aria-label={ editButtonAriaLabel }
+				>
 					{ editButtonText || localize( 'Edit' ) }
-				</Button>
+				</HeaderEditButton>
 			) }
 		</StepHeader>
 	);
@@ -681,6 +694,11 @@ const StepNumberCompleted = styled( StepNumber )`
 	svg {
 		margin-top: 4px;
 	}
+`;
+
+const HeaderEditButton = styled( Button )`
+	font-size: 14px;
+	padding-top: 1px;
 `;
 
 function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {

@@ -80,16 +80,20 @@ describe( 'addItemToResponseCart', function () {
 			included_domain_purchase_amount: null,
 			is_bundled: null,
 			is_domain_registration: null,
+			is_renewal: undefined,
 			item_subtotal_display: null,
 			item_subtotal_integer: null,
 			meta: undefined,
 			price: null,
 			item_original_cost_display: null,
 			item_original_cost_integer: null,
+			item_original_subtotal_display: null,
+			item_original_subtotal_integer: null,
 			product_cost_display: null,
 			product_cost_integer: null,
 			product_name: '',
 			product_type: null,
+			subscription_id: undefined,
 			uuid: 'calypso-shopping-cart-endpoint-uuid-100',
 			volume: 1,
 		};
@@ -180,6 +184,14 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 		},
 	};
 
+	it( 'returns true if new values are empty strings that differ', function () {
+		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
+			countryCode: '',
+			subdivisionCode: '',
+			postalCode: '',
+		} );
+		expect( result ).toBe( true );
+	} );
 	it( 'returns true if countryCode differs', function () {
 		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
 			countryCode: 'CA',
