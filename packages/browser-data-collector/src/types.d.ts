@@ -1,5 +1,15 @@
 interface Navigator {
 	deviceMemory: number;
+	connection: {
+		effectiveType: EffectiveConnectionType;
+	};
+}
+
+declare enum EffectiveConnectionType {
+	'2g',
+	'3g',
+	'4g',
+	'slow-2g',
 }
 
 interface Window {
@@ -12,7 +22,7 @@ interface Window {
 
 declare module 'wpcom-xhr-request';
 
-type ReportData = Map< string, number | string | boolean >;
+declare type ReportData = Map< string, number | string | boolean >;
 
 interface Report {
 	id: string;
@@ -22,4 +32,4 @@ interface Report {
 	toJSON: () => object;
 }
 
-type Collector = ( report: Report ) => Promise< Report > | Report;
+declare type Collector = ( report: Report ) => Promise< Report > | Report;

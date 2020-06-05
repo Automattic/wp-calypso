@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getNavigationStart } from './api/performance-timing';
-import { deviceMemory, performanceTiming, environment } from './collectors';
+import { deviceMemory, performanceTiming, environment, networkInformation } from './collectors';
 
 export class ReportImpl implements Report {
 	id: string;
@@ -24,13 +24,13 @@ export class ReportImpl implements Report {
 	private initializeFromFullPage() {
 		this.start = getNavigationStart();
 		this.data.set( 'fullPage', true );
-		this.collectors = [ deviceMemory, performanceTiming, environment ];
+		this.collectors = [ deviceMemory, performanceTiming, environment, networkInformation ];
 	}
 
 	private initializeFromSPANavigation() {
 		this.start = Date.now();
 		this.data.set( 'fullPage', false );
-		this.collectors = [ deviceMemory, environment ];
+		this.collectors = [ deviceMemory, environment, networkInformation ];
 	}
 
 	async stop() {
