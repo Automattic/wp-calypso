@@ -103,7 +103,7 @@ jobs:
       working-directory: apps/full-site-editing
 
     - name: Start wp-env
-      run: npx wp-env start
+      run: npx wp-env start || npx wp-env start # Retry if failed.
       working-directory: apps/full-site-editing
 
     - name: Run phpunit command
