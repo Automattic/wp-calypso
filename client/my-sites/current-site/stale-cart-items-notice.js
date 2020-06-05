@@ -20,9 +20,6 @@ const staleCartItemNoticeId = 'stale-cart-item-notice';
 
 class StaleCartItemsNotice extends React.Component {
 	showStaleCartItemsNotice = () => {
-		// Remove any existing stale cart notice
-		this.props.removeNotice( staleCartItemNoticeId );
-
 		// Don't show on the checkout page?
 		if ( this.props.sectionName === 'upgrades' ) {
 			return null;
@@ -39,6 +36,9 @@ class StaleCartItemsNotice extends React.Component {
 			! cart.hasPendingServerUpdates
 		) {
 			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
+
+			// Remove any existing stale cart notice
+			this.props.removeNotice( staleCartItemNoticeId );
 
 			this.props.infoNotice( this.props.translate( 'Your cart is awaiting payment.' ), {
 				id: staleCartItemNoticeId,
