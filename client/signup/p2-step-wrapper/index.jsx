@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import StepWrapper from 'signup/step-wrapper';
  */
 import './style.scss';
 
-export default class P2StepWrapper extends Component {
+class P2StepWrapper extends Component {
 	render() {
 		return (
 			<div className="p2-step-wrapper">
@@ -38,7 +39,19 @@ export default class P2StepWrapper extends Component {
 					fallbackHeaderText={ this.props.fallbackHeaderText }
 					stepContent={ this.props.children }
 				/>
+				<div className="p2-step-wrapper__footer">
+					<img
+						src="https://wpcom.files.wordpress.com/2020/05/w-logo-1.png"
+						className="p2-step-wrapper__w-logo"
+						alt="WP.com logo"
+					/>
+					<span className="p2-step-wrapper__footer-text">
+						{ this.props.translate( 'Powered by WordPress.com' ) }
+					</span>
+				</div>
 			</div>
 		);
 	}
 }
+
+export default localize( P2StepWrapper );

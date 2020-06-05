@@ -324,7 +324,7 @@ class P2Site extends React.Component {
 				</form>
 
 				<div className="p2-site__learn-more">
-					<a href="#learn-more-link" className="p2-site__learn-more-link">
+					<a href="https://wordpress.com/support" className="p2-site__learn-more-link">
 						Learn more about P2
 					</a>
 				</div>
