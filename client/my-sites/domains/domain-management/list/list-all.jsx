@@ -48,7 +48,7 @@ class ListAll extends Component {
 			<Main wideLayout>
 				<FormattedHeader headerText={ translate( 'All Domains' ) } align="left" />
 				<div className="list-all__container">
-					{ config.isEnabled( 'list/all-domains' ) && <QueryAllDomains /> }
+					{ config.isEnabled( 'manage/all-domains' ) && <QueryAllDomains /> }
 					{ this.props.sites.map( ( site, index ) => this.renderSingleSite( site, index ) ) }
 				</div>
 			</Main>
