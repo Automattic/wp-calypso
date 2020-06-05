@@ -39,7 +39,7 @@
 	font-size: 18px;
 	color: #fff;
 
-	&:hover {
+	&:hover, &:focus {
 		background-color: #0267ff;
 		border: none;
 		color: #fff;
