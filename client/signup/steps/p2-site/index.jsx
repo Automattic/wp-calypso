@@ -19,7 +19,7 @@ import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
-import StepWrapper from 'signup/step-wrapper';
+import P2StepWrapper from 'signup/p2-step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -305,27 +305,22 @@ class P2Site extends React.Component {
 		return this.props.translate( 'Continue' );
 	};
 
-	renderSiteForm = () => {
-		return (
-			<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
-				{ this.formFields() }
-				<div className="p2-site__form-footer">
-					<FormButton className="p2-site__form-submit-btn">{ this.buttonText() }</FormButton>
-				</div>
-			</form>
-		);
-	};
-
 	render() {
 		return (
-			<StepWrapper
+			<P2StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				subHeaderText=""
 				fallbackHeaderText={ this.props.translate( "Let's get started" ) }
-				stepContent={ this.renderSiteForm() }
-			/>
+			>
+				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
+					{ this.formFields() }
+					<div className="p2-site__form-footer">
+						<FormButton className="p2-site__form-submit-btn">{ this.buttonText() }</FormButton>
+					</div>
+				</form>
+			</P2StepWrapper>
 		);
 	}
 }
