@@ -56,31 +56,6 @@ function WPLineItem( {
 		getItemVariants && item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
 
-	let sublabelAndIntervalPriceBreakdown = '';
-	if ( 'plan' === item.type && item.wpcom_meta?.months_per_bill_period ) {
-		sublabelAndIntervalPriceBreakdown = translate(
-			'%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s',
-			{
-				args: {
-					sublabel: item.sublabel,
-					monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
-					monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
-				},
-				comment: 'product type and monthly breakdown of total cost, separated by a colon',
-			}
-		);
-	} else if ( 'plan' !== item.type || ! shouldShowVariantSelector ) {
-		sublabelAndIntervalPriceBreakdown = translate( '%(sublabel)s: %(interval)s', {
-			args: {
-				sublabel: item.sublabel,
-				interval: translate( 'billed annually' ),
-			},
-			comment: 'product type and billing interval, separated by a colon',
-		} );
-	} else {
-		sublabelAndIntervalPriceBreakdown = item.sublabel;
-	}
-
 	let gsuiteDiscountCallout = null;
 	if (
 		isGSuite &&
@@ -109,7 +84,10 @@ function WPLineItem( {
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta singleLine={ true }>
-					{ sublabelAndIntervalPriceBreakdown }
+					<LineItemSublabelAndPrice
+						item={ item }
+						shouldShowVariantSelector={ shouldShowVariantSelector }
+					/>
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
 					) }
@@ -454,4 +432,28 @@ function canItemBeDeleted( item ) {
 function shouldLineItemBeShownWhenStepInactive( item ) {
 	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
 	return ! itemTypesToIgnore.includes( item.type );
+}
+
+function LineItemSublabelAndPrice( { item, shouldShowVariantSelector } ) {
+	const translate = useTranslate();
+	if ( 'plan' === item.type && item.wpcom_meta?.months_per_bill_period ) {
+		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
+			args: {
+				sublabel: item.sublabel,
+				monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
+				monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+			},
+			comment: 'product type and monthly breakdown of total cost, separated by a colon',
+		} );
+	}
+	if ( 'plan' !== item.type || ! shouldShowVariantSelector ) {
+		return translate( '%(sublabel)s: %(interval)s', {
+			args: {
+				sublabel: item.sublabel,
+				interval: translate( 'billed annually' ),
+			},
+			comment: 'product type and billing interval, separated by a colon',
+		} );
+	}
+	return item.sublabel;
 }
