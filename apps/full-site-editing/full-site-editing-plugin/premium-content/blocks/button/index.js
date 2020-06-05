@@ -68,6 +68,10 @@ const settings = {
 		reusable: false,
 		lightBlockWrapper: true,
 	},
+	styles: [
+		{ name: 'fill', label: __( 'Fill', 'premium-content' ), isDefault: true },
+		{ name: 'outline', label: __( 'Outline', 'premium-content' ) },
+	],
 	edit,
 	save,
 };
