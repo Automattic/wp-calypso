@@ -23,14 +23,18 @@ import {
 } from 'state/analytics/actions';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import blockEditorImage from 'assets/images/illustrations/block-editor-fade.svg';
+import FormattedDate from 'components/formatted-date';
 import { localizeUrl } from 'lib/i18n-utils';
 import InlineSupportLink from 'components/inline-support-link';
+import { useLocalizedMoment } from 'components/localized-moment';
 
 const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const actionCallback = () => {
 		optIn( siteId, gutenbergUrl );
 	};
+	const dateFormat = moment.localeData().longDateFormat( 'LL' );
 
 	return (
 		<Task
@@ -40,6 +44,11 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 					'Get a head start before we activate it for everyone in the near future. {{support}}Read more{{/support}}.',
 					{
 						components: {
+							date: (
+								<strong>
+									<FormattedDate date="2020-07-01" format={ dateFormat } />
+								</strong>
+							),
 							support: (
 								<InlineSupportLink
 									supportPostId={ 167510 }
