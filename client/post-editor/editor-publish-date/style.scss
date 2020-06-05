@@ -28,7 +28,7 @@ $side-margin: 16;
 	line-height: #{$option-height}px;
 
 	color: var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	white-space: nowrap;
 	overflow: hidden;
@@ -110,7 +110,7 @@ $side-margin: 16;
 .editor-publish-date__choose-header {
 	text-align: center;
 	margin: 4px auto 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 21px;
 	padding-top: 7px;
 	padding-bottom: 9px;

@@ -8,7 +8,7 @@
 	.product-reviews-widget__label {
 		color: var( --color-neutral-70 );
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 600;
 		margin-bottom: 4px;
 	}
@@ -18,7 +18,7 @@
 	}
 
 	a {
-		font-size: 13px;
+		font-size: $font-body-small;
 		line-height: 1.25;
 	}
 }

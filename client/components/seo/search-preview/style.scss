@@ -44,7 +44,7 @@
 
 .search-preview__url {
 	color: #006621; // matching Google results
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 17px;
 	line-height: 16px;
 	max-width: 616px;
@@ -52,7 +52,7 @@
 
 .search-preview__snippet {
 	color: #545454; // matching Google results
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: 1.4;
 	max-width: 616px;
 }

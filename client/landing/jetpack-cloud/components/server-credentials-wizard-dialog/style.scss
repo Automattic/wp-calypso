@@ -36,12 +36,12 @@
 
 		&__warning-message {
 			color: var( --color-text-subtle );
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 
 		&__link-external {
 			display: inline-block;
-			font-size: 14px;
+			font-size: $font-body-small;
 			font-style: italic;
 			margin-left: 30px;
 			padding-top: 8px;

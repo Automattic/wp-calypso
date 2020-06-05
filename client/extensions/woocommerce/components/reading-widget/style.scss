@@ -12,7 +12,7 @@
 		}
 
 		p {
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 	}
 
@@ -64,7 +64,7 @@
 
 		.reading-widget__subscription-form-explanation {
 			flex: 1 0 0;
-			font-size: 14px;
+			font-size: $font-body-small;
 			margin-bottom: 24px;
 
 			@include breakpoint-deprecated( '>660px' ) {
@@ -93,7 +93,7 @@
 
 			.multi-checkbox {
 				margin-bottom: 8px;
-				font-size: 13px;
+				font-size: $font-body-small;
 				display: flex;
 				flex-wrap: wrap;
 

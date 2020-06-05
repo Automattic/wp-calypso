@@ -29,7 +29,7 @@
 }
 
 .get-apps__description {
-	font-size: 13px;
+	font-size: $font-body-small;
 	margin-bottom: 4px;
 
 	@include breakpoint-deprecated('>480px') {
@@ -173,7 +173,7 @@
 	padding: 0 24px;
 
 	@include breakpoint-deprecated('>480px') {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 
@@ -185,7 +185,7 @@
 
 .get-apps__also-available {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 }
 

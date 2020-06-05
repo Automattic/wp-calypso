@@ -1,5 +1,5 @@
 .reader-combined-card__header {
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: flex;
 	max-height: 32px;
 	margin-bottom: 20px;
@@ -169,7 +169,7 @@
 }
 
 .reader-combined-card__post-author-and-time {
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	font-family: $sans;
 	overflow: hidden;

@@ -71,7 +71,7 @@
 	color: var( --color-neutral-70 );
 	display: flex;
 	flex-shrink: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	justify-content: space-between;
 	padding: 11px 15px 11px 16px;
@@ -103,7 +103,7 @@
 
 .editor-sidebar__header-title {
 	padding: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: inherit;
 
 	// Needed for extra specificity over .button style

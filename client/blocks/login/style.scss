@@ -120,7 +120,7 @@
 	label {
 		color: var( --color-neutral-70 );
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		line-height: 1.5;
 		font-weight: 600;
 		margin-bottom: 5px;
@@ -201,7 +201,7 @@
 
 .login__form-signup-link {
 	clear: both;
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding-top: 20px;
 
 	&.disabled {

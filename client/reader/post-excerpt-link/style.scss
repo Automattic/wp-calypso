@@ -44,7 +44,7 @@
 .post-excerpt-link__helper {
 	max-height: 0;
 	overflow: hidden;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	margin: 0;
 	transition: all 0.15s ease-in-out;

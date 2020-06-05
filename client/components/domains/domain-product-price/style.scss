@@ -1,7 +1,7 @@
 .domain-product-price {
 	color: var( --color-text );
 	font-weight: 400;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1;
 	display: flex;
 	flex-direction: column;
@@ -36,7 +36,7 @@
 
 	@include breakpoint-deprecated( '<660px' ) {
 		display: inline-block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		text-align: left;
 	}
 

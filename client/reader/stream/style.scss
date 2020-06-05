@@ -81,7 +81,7 @@
 	.reader-post-byline {
 		margin: 8px 0;
 		padding: 0;
-		font-size: 14px;
+		font-size: $font-body-small;
 		color: var( --color-neutral-20 );
 
 		.gravatar {
@@ -112,10 +112,10 @@
 
 		.reader__post-time-placeholder {
 			position: relative;
-			font-size: 14px;
+			font-size: $font-body-small;
 
 			@include breakpoint-deprecated( '<480px' ) {
-				font-size: 13px;
+				font-size: $font-body-small;
 			}
 		}
 	}
@@ -202,7 +202,7 @@
 
 		.reader-post-byline {
 			margin: 0;
-			font-size: 13px;
+			font-size: $font-body-small;
 			position: absolute;
 				top: 34px;
 				left: 44px;
@@ -369,7 +369,7 @@
 
 .reader__x-post,
 .reader__x-post-to {
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-family: $sans;
 	color: var( --color-text-subtle );
 	position: relative;
@@ -422,7 +422,7 @@
 
 .reader-stream__recommended-posts-header {
 	color: var( --color-neutral-20 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	letter-spacing: 0.01em;
 	margin: 13px 0 17px;

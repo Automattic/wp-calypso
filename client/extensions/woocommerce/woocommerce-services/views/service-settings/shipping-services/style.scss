@@ -80,14 +80,14 @@
 
 	.shipping-services__entry-title {
 		flex-basis: 70%;
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 
 	.form-text-input {
 		flex-basis: 10%;
 		margin: 8px;
 		padding: 6px 12px;
-		font-size: 13px;
+		font-size: $font-body-small;
 		min-width: 42px;
 	}
 
@@ -95,7 +95,7 @@
 		flex-basis: 20%;
 		padding: 6px 32px 5px 14px;
 		line-height: 22px;
-		font-size: 13px;
+		font-size: $font-body-small;
 		box-shadow: none;
 
 		&:disabled {

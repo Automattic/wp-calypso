@@ -9,7 +9,7 @@
 
 .plugin-sections__content {
 	font-family: $sans;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 21px;
 	word-wrap: break-word;
@@ -23,7 +23,7 @@
 	h4,
 	h5,
 	h6 {
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 600;
 		margin-bottom: 16px;
 	}
@@ -51,7 +51,7 @@
 		}
 	}
 	code {
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding: 1px 4px;
 		border-radius: 2px;
 		background: var( --color-neutral-0 );

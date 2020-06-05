@@ -1,7 +1,7 @@
 @import './variables.scss';
 
 .post-likes {
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	.post-likes__item {
 		display: inline-block;

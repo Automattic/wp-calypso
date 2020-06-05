@@ -8,7 +8,7 @@
 	span {
 		background: var( --color-surface );
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding-left: 8px;
 		padding-right: 8px;
 		position: relative;

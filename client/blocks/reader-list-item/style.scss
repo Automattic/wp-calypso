@@ -1,7 +1,7 @@
 .reader-list-item {
 	display: flex;
 	flex-flow: row wrap;
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 100%;
 
 	@include breakpoint-deprecated( '<660px' ) {

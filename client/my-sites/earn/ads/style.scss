@@ -54,7 +54,7 @@
 	text-transform: uppercase;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 		line-height: 1.8;
 	}
 }

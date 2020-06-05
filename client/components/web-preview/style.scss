@@ -147,7 +147,7 @@ a.web-preview__external.button {
 
 	.form-text-input {
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: $font-body-small;
 		height: 35px;
 		border-color: transparent;
 		text-overflow: ellipsis;

@@ -2,7 +2,7 @@
 	color: var( --color-neutral-50 );
 	display: block;
 	font-family: $sans;
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 8px 16px;
 	cursor: pointer;
 	text-decoration: underline;

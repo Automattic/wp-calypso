@@ -59,7 +59,7 @@
 	color: var( --color-text );
 	display: flex;
 	flex-wrap: wrap;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 
 	.gravatar {

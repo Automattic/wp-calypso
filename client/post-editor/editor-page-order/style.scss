@@ -12,7 +12,7 @@
 
 input[type='number'].editor-page-order__input {
 	-moz-appearance: textfield;
-	font-size: 13px;
+	font-size: $font-body-small;
 	width: 50px;
 
 	&::-webkit-outer-spin-button,
