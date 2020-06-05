@@ -30,7 +30,7 @@ interface Props {
 	onRequestClose: () => void;
 }
 
-const SignupForm = ( { onRequestClose }: Props ) => {
+const SignupFormModal = ( { onRequestClose }: Props ) => {
 	const { __ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
@@ -161,21 +161,25 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		`${ window.location.origin }/${ GUTENBOARDING_BASE_NAME }${ makePath( Step.CreateSite ) }?new`
 	);
 	const signupUrl = encodeURIComponent(
-		`/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }?signup`
+		`/${ GUTENBOARDING_BASE_NAME }${ makePath( Step.Signup ) }`
 	);
 	const loginUrl = `/log-in/${ GUTENBOARDING_BASE_NAME }${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
 	return (
-		<div
+		<Modal
 			className={ 'signup-form' }
 			title={ __( 'Save your progress' ) }
-			// onRequestClose={ closeModal }
-			// focusOnMount={ false }
-			// isDismissible={ false }
-			// overlayClassName={ 'signup-form__overlay' }
+			onRequestClose={ closeModal }
+			focusOnMount={ false }
+			isDismissible={ false }
+			overlayClassName={ 'signup-form__overlay' }
 			// set to false so that 1password's autofill doesn't automatically close the modal
-			// shouldCloseOnClickOutside={ false }
+			shouldCloseOnClickOutside={ false }
+
+			// TDOD? factor out modal from content
 		>
+			<SignupFormHeader onRequestClose={ closeModal } />
+
 			<div className="signup-form__body">
 				<h1 className="signup-form__title">{ __( 'Save your progress' ) }</h1>
 
@@ -234,8 +238,8 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			</div>
 
 			<div id="g-recaptcha"></div>
-		</div>
+		</Modal>
 	);
 };
 
-export default SignupForm;
+export default SignupFormModal;

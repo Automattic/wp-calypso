@@ -18,6 +18,7 @@ import type { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
+import Signup from './signup';
 import Plans from './plans';
 import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
 
@@ -103,6 +104,10 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 
 				<Route path={ makePath( Step.DesignSelection ) }>
 					<DesignSelector />
+				</Route>
+
+				<Route path={ makePath( Step.Signup ) }>
+					<Signup />
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>

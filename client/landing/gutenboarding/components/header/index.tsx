@@ -20,7 +20,7 @@ import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans/plans-button';
-import SignupForm from '../../components/signup-form';
+import SignupFormModal from '../../components/signup-form-modal';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import {
@@ -203,7 +203,7 @@ const Header: React.FunctionComponent = () => {
 					<PlansButton />
 				</div>
 			</section>
-			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
+			{ showSignupDialog && <SignupFormModal onRequestClose={ closeAuthDialog } /> }
 		</div>
 	);
 };

@@ -20,7 +20,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import SignupForm from '../../components/signup-form';
+import SignupFormModal from '../../components/signup-form-model';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
@@ -116,7 +116,7 @@ const StylePreview: React.FunctionComponent = () => {
 					<FontSelect />
 					<Preview viewport={ selectedViewport } />
 				</div>
-				{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
+				{ showSignupDialog && <SignupFormModal onRequestClose={ closeAuthDialog } /> }
 			</div>
 			<BottomBarMobile backUrl={ makePath( Step.DesignSelection ) } onContinue={ handleContinue } />
 		</>

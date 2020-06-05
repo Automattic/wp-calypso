@@ -10,7 +10,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import PlansGrid from '../../components/plans/plans-grid';
-import SignupForm from '../../components/signup-form';
+import SignupFormModal from '../../components/signup-form-modal';
 import Link from '../../components/link';
 import {
 	useSelectedPlan,
@@ -73,7 +73,9 @@ export default function PlansStep() {
 					</Link>
 				}
 			/>
-			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
+			{ showSignupDialog && (
+				<SignupFormModal onRequestClose={ () => setShowSignupDialog( false ) } />
+			) }
 		</div>
 	);
 }
