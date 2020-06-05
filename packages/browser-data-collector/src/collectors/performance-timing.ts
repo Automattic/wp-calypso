@@ -14,6 +14,7 @@ import {
 	getConnectEnd,
 	getSecureConnectionStart,
 	getRequestStart,
+	getResponseStart,
 	getResponseEnd,
 	getDomLoading,
 	getDomInteractive,
@@ -45,6 +46,7 @@ export const collector: Collector = ( report ) => {
 	report.data.set( 'connectEnd', normalize( getConnectEnd(), report.start ) );
 	report.data.set( 'secureConnectionStart', normalize( getSecureConnectionStart(), report.start ) );
 	report.data.set( 'requestStart', normalize( getRequestStart(), report.start ) );
+	report.data.set( 'responseStart', normalize( getResponseStart(), report.start ) );
 	report.data.set( 'responseEnd', normalize( getResponseEnd(), report.start ) );
 	report.data.set( 'domLoading', normalize( getDomLoading(), report.start ) );
 	report.data.set( 'domInteractive', normalize( getDomInteractive(), report.start ) );
