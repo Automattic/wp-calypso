@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -12,7 +11,6 @@ import Button from '../../components/button';
 import {
 	useLineItems,
 	useEvents,
-	renderDisplayValueMarkdown,
 	useTransactionStatus,
 	usePaymentProcessor,
 } from '../../public-api';
@@ -39,7 +37,7 @@ function FreePurchaseLabel() {
 }
 
 function FreePurchaseSubmitButton( { disabled } ) {
-	const [ items, total ] = useLineItems();
+	const [ items ] = useLineItems();
 	const {
 		setTransactionComplete,
 		setTransactionError,
@@ -71,21 +69,18 @@ function FreePurchaseSubmitButton( { disabled } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents formStatus={ formStatus } />
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus } ) {
 	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf(
-			__( 'Complete Checkout' ),
-			renderDisplayValueMarkdown( total.amount.displayValue )
-		);
+		return __( 'Complete Checkout' );
 	}
 	return __( 'Please wait…' );
 }
