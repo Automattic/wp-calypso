@@ -459,7 +459,11 @@ class InvitePeople extends React.Component {
 	disableInviteLinks = () => {
 		accept(
 			<div>
-				<p>{ this.props.translate( 'Are you sure you wish to disable the invite link?' ) }</p>
+				<p>
+					{ this.props.translate(
+						'Once this invite link is disabled, nobody will be able to use it to join your team. Are you sure?'
+					) }
+				</p>
 			</div>,
 			( accepted ) => {
 				if ( accepted ) {
