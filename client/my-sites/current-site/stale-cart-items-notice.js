@@ -42,8 +42,6 @@ class StaleCartItemsNotice extends React.Component {
 
 			this.props.infoNotice( this.props.translate( 'Your cart is awaiting payment.' ), {
 				id: staleCartItemNoticeId,
-				isPersistent: false,
-				duration: 10000,
 				button: this.props.translate( 'View your cart' ),
 				href: '/checkout/' + this.props.selectedSiteSlug,
 				onClick: this.clickStaleCartItemsNotice,
