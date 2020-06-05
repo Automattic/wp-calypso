@@ -13,6 +13,7 @@ import reducer, {
 	queryRequests,
 	mediaItemRequests,
 	selectedItems,
+	transientItems,
 } from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
 import {
