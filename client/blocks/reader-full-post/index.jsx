@@ -330,7 +330,7 @@ export class FullPostView extends React.Component {
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
-			<ReaderMain className={ classNames( classes ) }>
+			<ReaderMain className={ classNames( classes ) } isFullPost={ true }>
 				{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 				{ ! post || post._state === 'pending' ? (
 					<DocumentHead title={ translate( 'Loading' ) } />

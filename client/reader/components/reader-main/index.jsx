@@ -35,6 +35,14 @@ const setIsReaderPage = ( add ) => {
 	}
 };
 
+const setIsReaderFullPost = ( add ) => {
+	if ( add ) {
+		document.querySelector( 'body' ).classList.add( 'is-reader-full-post' );
+	} else if ( activeReaderMainRefCount === 0 ) {
+		document.querySelector( 'body' ).classList.remove( 'is-reader-full-post' );
+	}
+};
+
 /**
  * A specialization of `Main` that adds a class to the body of the document
  *
@@ -45,11 +53,19 @@ export default class ReaderMain extends React.Component {
 	componentDidMount() {
 		activeReaderMainRefCount++;
 		setIsReaderPage( true );
+
+		if ( this.props.isFullPost ) {
+			setIsReaderFullPost( true );
+		}
 	}
 
 	componentWillUnmount() {
 		activeReaderMainRefCount--;
 		setIsReaderPage( false );
+
+		if ( this.props.isFullPost ) {
+			setIsReaderFullPost( false );
+		}
 	}
 
 	render() {
