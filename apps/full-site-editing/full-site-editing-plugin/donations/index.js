@@ -8,6 +8,12 @@ import { __, _x } from '@wordpress/i18n';
 /* eslint-enable wpcalypso/import-docblock */
 
 /**
+ * Internal dependencies
+ */
+import edit from './edit';
+import './style.scss';
+
+/**
  * Appends a "paid" tag to the Donations block title if site requires an upgrade.
  */
 const addPaidBlockFlags = async () => {
@@ -82,9 +88,7 @@ function registerDonationsBlock() {
 			/* translators: block keyword */
 			__( 'paywall', 'donations' ),
 		],
-		edit() {
-			return <div>Donations block</div>;
-		},
+		edit,
 		save() {
 			return <div>Donations block</div>;
 		},

@@ -19,11 +19,18 @@ function fse_donations_block() {
 	$asset_file = include plugin_dir_path( __FILE__ ) . 'dist/donations.asset.php';
 
 	wp_enqueue_script(
-		'donations',
+		'a8c-donations',
 		plugins_url( 'dist/donations.js', __FILE__ ),
 		$asset_file['dependencies'],
 		$asset_file['version'],
 		true
+	);
+
+	wp_enqueue_style(
+		'a8c-donations',
+		plugins_url( 'dist/donations.css', __FILE__ ),
+		array(),
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/donations.css' )
 	);
 }
 

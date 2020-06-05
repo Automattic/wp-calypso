@@ -1,0 +1,17 @@
+.donations__container {
+  position: relative;
+}
+
+.donations__tabs {
+  display: flex;
+}
+
+.donations__tab {
+  display: none;
+  position: absolute;
+}
+
+.donations__tab.active {
+  display: block;
+}
+
