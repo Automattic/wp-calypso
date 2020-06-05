@@ -18,10 +18,6 @@ const category = 'common';
  * @property { string } text
  * @property { string } type
  * @property { number } borderRadius
- * @property { string } backgroundColor
- * @property { string } textColor
- * @property { string } backgroundButtonColor
- * @property { string } gradient
  *
  * @typedef {import('@wordpress/blocks').BlockConfiguration<Attributes>} BlockConfiguration
  * @type {BlockConfiguration}

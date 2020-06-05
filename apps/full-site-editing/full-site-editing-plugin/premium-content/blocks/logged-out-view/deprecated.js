@@ -1,13 +1,9 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
+// eslint-disable-next-line wpcalypso/import-docblock
 import { createBlock } from '@wordpress/blocks';
-import { getColorClassName, InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 
 const deprecated = [
 	{
@@ -49,12 +45,9 @@ const deprecated = [
 				const textColor = attributes.textButtonColor;
 				const backgroundColor = attributes.backgroundButtonColor;
 
-				const textClass = getColorClassName( 'color', textColor );
-				const backgroundClass = getColorClassName( 'background-color', backgroundColor );
 				return createBlock( 'premium-content/button', {
 					type,
 					text,
-					className: classnames( textClass, backgroundClass ),
 					backgroundColor,
 					textColor,
 					style: {
