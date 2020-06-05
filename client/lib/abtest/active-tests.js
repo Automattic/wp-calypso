@@ -158,10 +158,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	whiteGloveUpsell: {
-		datestamp: '20200603',
+		datestamp: '20200608',
 		variations: {
-			variantShowOffer: 10,
-			control: 90,
+			variantShowOffer: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
