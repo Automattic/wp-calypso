@@ -252,7 +252,7 @@ function useStripeJs( stripeConfiguration ) {
 		} );
 
 		return () => ( isSubscribed = false );
-	}, [ stripeConfiguration, stripeJs ] );
+	}, [ stripeConfiguration, stripeJs, stripeLocale ] );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
