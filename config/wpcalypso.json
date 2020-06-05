@@ -123,7 +123,7 @@
 		"publicize-preview": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/seen-posts": true,
+		"reader/seen-posts": false,
 		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,
 		"republicize": true,
