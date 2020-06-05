@@ -96,7 +96,7 @@ function WPLineItem( {
 	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
 	const productName =
 		isBusinessPlanProduct && isWhiteGloveOffer
-			? `${ item.label } (Expert guidance edition)`
+			? `${ item.label } (with Expert guidance)`
 			: item.label;
 
 	return (
