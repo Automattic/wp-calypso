@@ -7,12 +7,12 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestUnseenStatusAll } from 'state/reader/seen-posts/actions';
+import { requestOrganizations } from 'state/reader/organizations/actions';
 
-export default function QueryUnseenStatusAll() {
+export default function QueryReaderOrganizations() {
 	const dispatch = useDispatch();
 	React.useEffect( () => {
-		dispatch( requestUnseenStatusAll() );
+		dispatch( requestOrganizations() );
 	}, [ dispatch ] );
 
 	return null;

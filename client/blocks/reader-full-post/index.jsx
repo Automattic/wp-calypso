@@ -65,8 +65,8 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
-import { requestMarkAsSeen } from 'state/reader/seen-posts/actions';
-import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
+import { requestMarkAsSeen, requestMarkAsUnseen } from 'state/reader/seen-posts/actions';
+import Gridicon from 'components/gridicon';
 import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
@@ -262,12 +262,7 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			config.isEnabled( 'reader/seen-posts' ) &&
-				this.props.requestMarkAsSeen( {
-					seenIds: [ post.seen_ids ],
-					globalIds: [ post.global_ID ],
-					source: SOURCE_READER_WEB,
-				} );
+			config.isEnabled( 'reader/seen-posts' ) && this.markAsSeen();
 
 			recordTrackForPost(
 				'calypso_reader_article_opened',
@@ -291,6 +286,43 @@ export class FullPostView extends React.Component {
 		if ( this.props.previousPost ) {
 			showSelectedPost( { postKey: this.props.previousPost } );
 		}
+	};
+
+	markAsSeen = () => {
+		const { post } = this.props;
+		this.props.requestMarkAsSeen( {
+			feedId: post.feed_ID,
+			feedUrl: post.feed_URL,
+			feedItemIds: [ post.feed_item_id ],
+			globalIds: [ post.global_ID ],
+		} );
+	};
+
+	markAsUnseen = () => {
+		const { post } = this.props;
+		this.props.requestMarkAsUnseen( {
+			feedId: post.feed_ID,
+			feedUrl: post.feed_URL,
+			feedItemIds: [ post.feed_item_id ],
+			globalIds: [ post.global_ID ],
+		} );
+	};
+
+	renderMarkAsSenButton = () => {
+		const { post } = this.props;
+		return (
+			<div
+				className="reader-full-post__seen-button"
+				title={ post.is_seen ? 'Mark post as unseen' : 'Mark post as seen' }
+			>
+				<Gridicon
+					icon={ post.is_seen ? 'not-visible' : 'visible' }
+					size={ 18 }
+					onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
+					ref={ this.seenTooltipContextRef }
+				/>
+			</div>
+		);
 	};
 
 	render() {
@@ -374,6 +406,8 @@ export class FullPostView extends React.Component {
 							/>
 						) }
 						<div className="reader-full-post__sidebar-comment-like">
+							{ config.isEnabled( 'reader/seen-posts' ) && this.renderMarkAsSenButton() }
+
 							{ shouldShowComments( post ) && (
 								<CommentButton
 									key="comment-button"
@@ -532,5 +566,6 @@ export default connect(
 		likePost,
 		unlikePost,
 		requestMarkAsSeen,
+		requestMarkAsUnseen,
 	}
 )( FullPostView );

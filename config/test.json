@@ -89,7 +89,7 @@
 		"publicize-preview": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/seen-posts": false,
+		"reader/seen-posts": true,
 		"reader/user-mention-suggestions": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
