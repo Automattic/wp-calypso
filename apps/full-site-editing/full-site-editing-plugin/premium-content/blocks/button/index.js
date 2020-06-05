@@ -42,18 +42,6 @@ const settings = {
 		borderRadius: {
 			type: 'number',
 		},
-		backgroundColor: {
-			type: 'string',
-		},
-		textColor: {
-			type: 'string',
-		},
-		gradient: {
-			type: 'string',
-		},
-		style: {
-			type: 'object',
-		},
 	},
 	icon,
 	/* translators: block name */
@@ -67,6 +55,7 @@ const settings = {
 		html: false,
 		reusable: false,
 		lightBlockWrapper: true,
+		__experimentalColor: { gradients: true },
 	},
 	styles: [
 		{ name: 'fill', label: __( 'Fill', 'premium-content' ), isDefault: true },

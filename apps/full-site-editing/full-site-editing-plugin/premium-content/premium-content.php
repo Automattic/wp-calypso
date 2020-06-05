@@ -267,8 +267,9 @@ function premium_content_render_button_block( $attributes, $content, $block ) {
 		return '';
 	}
 
-	$url = null;
-	if ( 'subscribe' === $attributes['type'] ) {
+	if ( 'login' === $attributes['type'] ) {
+		$url = premium_content_subscription_service()->access_url();
+	} else {
 		\Jetpack_Gutenberg::load_assets_as_required( 'recurring-payments', array( 'thickbox', 'wp-polyfill' ) );
 		add_thickbox();
 		global $wp;
@@ -283,13 +284,8 @@ function premium_content_render_button_block( $attributes, $content, $block ) {
 			),
 			'https://subscribe.wordpress.com/memberships/'
 		);
-	} elseif ( 'login' === $attributes['type'] ) {
-		$url = premium_content_subscription_service()->access_url();
 	}
 
-	if ( empty( $url ) ) {
-		return $content;
-	}
 	return preg_replace( '/(<a\b[^><]*)>/i', '$1 href="' . esc_url( $url ) . '">', $content );
 }
 

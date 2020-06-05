@@ -118,22 +118,22 @@
 
 /* Subscribe/Login buttons */
 
-.editor-styles-wrapper [data-block][data-type='premium-content/button'] {
-	width: inherit; /* Resets `.wp-block-jetpack-recurring-payments` width */
-}
-
-.editor-styles-wrapper [data-block][data-type='premium-content/button'],
-.editor-styles-wrapper [data-block][data-type='premium-content/logged-out-view'] [data-type='core/button'] {
+.editor-styles-wrapper .wp-premium-content-logged-out-view [data-type='core/button'] {
 	margin-top: 0;
 }
 
 @media ( min-width: 660px ) {
-	.editor-styles-wrapper [data-type='premium-content/logged-out-view'] .wp-block-button__link {
+	.wp-premium-content-logged-out-view .wp-block-button__link {
 		min-width: 200px;
 	}
 }
 
-.editor-styles-wrapper .block-editor-block-preview__content [data-block][data-type='premium-content/button'] {
-	margin-bottom: 0;
-	text-align: center;
+.wp-premium-content-logged-out-view .wp-block-buttons .wp-block-button__link {
+	margin-right: 20px;
+}
+
+.block-editor-block-preview__content .wp-block-premium-content-button {
+	left: 50%;
+	position: relative;
+	transform: translateX( -50% );
 }

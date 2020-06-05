@@ -9,13 +9,7 @@ import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from '@wordpress/element';
 import { Button, ButtonGroup, PanelBody, RangeControl } from '@wordpress/components';
-import { InspectorControls, RichText, __experimentalBlock as Block } from '@wordpress/block-editor';
-
-/**
- * Internal dependencies
- */
-import ColorEdit from './color-edit';
-import getColorAndStyleProps from './color-props';
+import { InspectorControls, RichText } from '@wordpress/block-editor';
 
 const MIN_BORDER_RADIUS_VALUE = 0;
 const MAX_BORDER_RADIUS_VALUE = 50;
@@ -48,30 +42,28 @@ const BUTTON_TYPES = {
 	login: __( 'Log in', 'premium-content' ),
 };
 
-function ButtonEdit( props ) {
-	const { attributes, setAttributes, className } = props;
-	const { borderRadius, text, type } = attributes;
-
-	const colorProps = getColorAndStyleProps( attributes );
+function ButtonEdit( { attributes, setAttributes } ) {
+	const { borderRadius, className, text, type } = attributes;
 
 	return (
 		<>
-			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-			<Block.div className="wp-block-button wp-block-jetpack-recurring-payments">
-				<RichText
-					placeholder={ __( 'Add text…', 'premium-content' ) }
-					value={ text }
-					onChange={ ( value ) => setAttributes( { text: value } ) }
-					withoutInteractiveFormatting
-					className={ classnames( className, 'wp-block-button__link', colorProps.className, {
+			<RichText
+				placeholder={ __( 'Add text…', 'premium-content' ) }
+				value={ text }
+				onChange={ ( value ) => setAttributes( { text: value } ) }
+				withoutInteractiveFormatting
+				className={ classnames(
+					className,
+					'wp-block-premium-content-button',
+					'wp-block-button__link',
+					{
 						'no-border-radius': borderRadius === 0,
-					} ) }
-					style={ {
-						borderRadius: borderRadius ? borderRadius + 'px' : undefined,
-						...colorProps.style,
-					} }
-				/>
-			</Block.div>
+					}
+				) }
+				style={ {
+					borderRadius: borderRadius ? borderRadius + 'px' : undefined,
+				} }
+			/>
 			<InspectorControls>
 				<PanelBody title={ __( 'Button Type', 'premium-content' ) }>
 					<ButtonGroup aria-label={ __( 'Button Type', 'premium-content' ) }>
@@ -92,7 +84,6 @@ function ButtonEdit( props ) {
 						) ) }
 					</ButtonGroup>
 				</PanelBody>
-				<ColorEdit { ...props } />
 				<BorderPanel borderRadius={ borderRadius } setAttributes={ setAttributes } />
 			</InspectorControls>
 		</>
