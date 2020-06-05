@@ -12,8 +12,7 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Collage gallery', 'full-site-editing' ),
-	'content' => $markup,
+	'title'      => esc_html__( 'Collage gallery', 'full-site-editing' ),
+	'categories' => array( 'gallery' ),
+	'content'    => $markup,
 );
-

@@ -5,6 +5,7 @@
  * @package A8C\FSE
  */
 
+// phpcs:disable WordPress.WP.CapitalPDangit.Misspelled
 $markup = '
 <!-- wp:group {"align":"full","style":{"color":{"background":"#2b2729"}}} -->
 <div class="wp-block-group alignfull has-background" style="background-color:#2b2729"><div class="wp-block-group__inner-container"><!-- wp:spacer {"height":60} -->
@@ -46,11 +47,12 @@ $markup = '
 <!-- /wp:spacer --></div></div>
 <!-- /wp:group -->
 ';
+// phpcs:enable WordPress.WP.CapitalPDangit.Misspelled
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Contact', 'full-site-editing' ),
-	'content' => sprintf(
+	'title'      => esc_html__( 'Contact', 'full-site-editing' ),
+	'categories' => array( 'contact' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Jennifer Dolan Photography', 'full-site-editing' ),
 		esc_html__( 'San Francisco, California', 'full-site-editing' ),
