@@ -16,7 +16,7 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
@@ -111,7 +111,10 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
 } );
+
+const termsReducer = withStorageKey( 'terms', combinedReducer );
+export default termsReducer;

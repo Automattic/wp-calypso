@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get, range } from 'lodash';
 
 /**
@@ -9,6 +8,8 @@ import { get, range } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
+
+import 'state/terms/init';
 
 /**
  * Returns true if currently requesting terms for the taxonomies query, or false
