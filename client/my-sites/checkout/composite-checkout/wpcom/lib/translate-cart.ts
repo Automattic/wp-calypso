@@ -59,7 +59,8 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',
-		label: String( translate( 'Coupon: %s', { args: coupon } ) ),
+		label: String( translate( 'Total savings' ) ),
+		sublabel: coupon ? String( translate( 'Coupon: %s', { args: coupon } ) ) : undefined,
 		type: 'coupon',
 		amount: {
 			currency: currency,
