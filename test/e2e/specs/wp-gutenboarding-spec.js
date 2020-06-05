@@ -23,9 +23,9 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( 'Gutenboarding: (' + screenSize + ') @parallel', function () {
+describe( 'Gutenboarding: (' + screenSize + ')', function () {
 	this.timeout( mochaTimeOut );
-	describe( 'Visit Gutenboarding page as a new user', function () {
+	describe( 'Visit Gutenboarding page as a new user @parallel @canary', function () {
 		before( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
