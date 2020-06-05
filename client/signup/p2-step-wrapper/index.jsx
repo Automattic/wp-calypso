@@ -16,14 +16,28 @@ import './style.scss';
 export default class P2StepWrapper extends Component {
 	render() {
 		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				subHeaderText={ this.props.fallbackHeaderText }
-				fallbackHeaderText={ this.props.fallbackHeaderText }
-				stepContent={ this.props.children }
-			/>
+			<div className="p2-step-wrapper">
+				<div className="p2-step-wrapper__header">
+					<div className="p2-step-wrapper__header-logo">
+						<img
+							src="https://wpcom.files.wordpress.com/2020/06/p2-logo-small.png"
+							width="52"
+							height="24"
+							alt="P2 logo"
+						/>
+					</div>
+					{ this.props.headerText && (
+						<div className="p2-step-wrapper__header-text">{ this.props.headerText }</div>
+					) }
+				</div>
+				<StepWrapper
+					flowName={ this.props.flowName }
+					stepName={ this.props.stepName }
+					positionInFlow={ this.props.positionInFlow }
+					fallbackHeaderText={ this.props.fallbackHeaderText }
+					stepContent={ this.props.children }
+				/>
+			</div>
 		);
 	}
 }
