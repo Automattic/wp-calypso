@@ -22,6 +22,8 @@ class StaleCartItemsNotice extends React.Component {
 	showStaleCartItemsNotice = () => {
 		// Don't show on the checkout page?
 		if ( this.props.sectionName === 'upgrades' ) {
+			// Remove any existing stale cart notice
+			this.props.removeNotice( staleCartItemNoticeId );
 			return null;
 		}
 
