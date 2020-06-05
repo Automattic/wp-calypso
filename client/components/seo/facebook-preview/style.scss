@@ -44,7 +44,7 @@
 	color: #1d2129;
 	flex-grow: 1;
 	font-family: helvetica, arial, sans-serif;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 16px;
 	overflow-y: hidden;
 }
@@ -52,7 +52,7 @@
 .facebook-preview__url {
 	color: #606770;
 	font-family: helvetica, arial, sans-serif;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 12px;
 	text-transform: uppercase;
 	text-overflow: ellipsis;

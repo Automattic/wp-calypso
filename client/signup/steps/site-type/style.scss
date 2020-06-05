@@ -51,7 +51,7 @@
 	}
 
 	.site-type__option-badge {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 6px;
 		// Offset .badge padding-left to vertically align badge text with site type description.
 		margin-left: -( $badge-padding-x );

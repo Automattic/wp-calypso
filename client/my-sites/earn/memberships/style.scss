@@ -187,7 +187,7 @@
 
 .memberships__subscriber-subscribed {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin-top: 4px;
 }
 
@@ -228,7 +228,7 @@
 	color: var( --color-neutral-30 );
 	padding-bottom: 12px;
 	padding-top: 24px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 1.6;
 	font-style: italic;
 	text-align: center;

@@ -105,7 +105,7 @@
 
 		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 		}
 	}
@@ -280,7 +280,7 @@ ul.module-header-actions {
 
 	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 
@@ -342,7 +342,7 @@ ul.module-header-actions {
 
 			@include breakpoint-deprecated( '>960px' ) {
 				.stats__module-list & {
-					font-size: 12px;
+					font-size: $font-body-extra-small;
 				}
 			}
 
@@ -399,7 +399,7 @@ ul.module-header-actions {
 	th {
 		border-bottom: 1px solid var( --color-border-subtle );
 		border-right: 1px solid var( --color-border-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 8px 12px;
 		white-space: nowrap; // 1
 
@@ -479,7 +479,7 @@ ul.module-header-actions {
 
 	.stats-detail-weeks__value {
 		display: block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		&.is-rising {
 			color: var( --color-success );
@@ -587,5 +587,5 @@ ul.module-header-actions {
 }
 
 .stats__module-list .stats-module__availability-warning-message {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

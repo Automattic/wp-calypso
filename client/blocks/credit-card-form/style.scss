@@ -14,7 +14,7 @@
 	}
 
 	p {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin: 0;
 
 		@include breakpoint-deprecated( '>660px' ) {

@@ -119,7 +119,7 @@ $side-margin: 16;
 .editor-publish-date__header-chrono {
 	position: absolute;
 	top: 16px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 	color: var( --color-neutral-70 );
 }

@@ -199,7 +199,7 @@
 .site-selector__hidden-sites-message {
 	color: var( --color-text-subtle );
 	display: block;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding: 16px 16px 24px;
 
 	.site-selector__manage-hidden-sites {

@@ -36,7 +36,7 @@
 
 .mailchimp__getting-started-subtitle-text {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 	padding-bottom: 4px;
 }
@@ -235,7 +235,7 @@
 		0 1px 2px var( --color-neutral-0 );
 	flex-grow: 0;
 	width: 255px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	background: var( --color-surface );
 
 	@include breakpoint-deprecated( '<960px' ) {
@@ -288,7 +288,7 @@
 
 .mailchimp__header-description {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 }
 

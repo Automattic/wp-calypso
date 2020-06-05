@@ -324,7 +324,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-timeframe {
 	margin-bottom: 1.4em;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-style: italic;
 	font-weight: 400;
 	color: var( --color-text-subtle );
@@ -446,7 +446,7 @@ $plan-features-sidebar-width: 272px;
 	color: var( --color-neutral-70 );
 
 	@include breakpoint-deprecated( '<960px' ) {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	@include breakpoint-deprecated( '<1040px' ) {

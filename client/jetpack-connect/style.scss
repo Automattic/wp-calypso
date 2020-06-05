@@ -208,7 +208,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__note {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	text-align: center;
 }
 
@@ -274,7 +274,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__install-step-text {
 	color: var( --color-neutral-light );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 8px 0 16px;
 	flex-grow: 2;
 }
@@ -338,7 +338,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .example-components__install-plugin-footer-button {
 	display: inline-block;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding: 7px 14px;
 	line-height: 1;
 	color: var( --color-text-inverted );
@@ -390,7 +390,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.example-components__content-wp-admin-connect-button {
 		display: inline-block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 7px 14px;
 		line-height: 1;
 		color: var( --color-text-inverted );
@@ -412,7 +412,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.example-components__content-wp-admin-connect-button {
 		display: inline-block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		line-height: 1;
 		padding: 11px 10px;
 		color: var( --color-text-inverted );
@@ -431,11 +431,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .example-components__content-wp-admin-plugin-name {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .example-components__content-wp-admin-plugin-activate-link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --studio-blue-50 );
 }
 
@@ -444,7 +444,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .example-components__content-wp-admin-activate-link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	display: inline-block;
 	padding: 7px 14px;
 	line-height: 1;
@@ -458,7 +458,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.example-components__site-address-container
 	.example-components__browser-chrome-url {
 	height: 40px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 }
 
@@ -1058,7 +1058,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			padding-bottom: 0;
 			margin-top: 16px;
 			p {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 
 			.signup-form__social-buttons-tos {
@@ -1126,7 +1126,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			.jetpack-connect__tos-link,
 			.jetpack-connect__tos-link a {
 				color: var( --color-neutral-60 );
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 		}
 

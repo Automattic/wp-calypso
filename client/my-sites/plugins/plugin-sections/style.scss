@@ -80,7 +80,7 @@
 	background: var( --color-surface );
 	color: var( --color-neutral-light );
 	cursor: pointer;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 
 	&:focus {

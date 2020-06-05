@@ -253,7 +253,7 @@
 	}
 
 	.checkout__recent-renewals li {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	.checkout__terms,
@@ -272,7 +272,7 @@
 		}
 
 		p {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			margin: 0;
 
 			@include breakpoint-deprecated( '>660px' ) {
@@ -567,7 +567,7 @@
 			}
 			.checkout__wechat-qrcode-redirect {
 				color: var( --color-text-subtle );
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 		}
 
@@ -630,7 +630,7 @@
 			}
 
 			p {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				font-weight: 400;
 				margin: 10px 0 0;
 			}
@@ -733,7 +733,7 @@
 	line-height: 40px;
 	display: block;
 	clear: both;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding-bottom: 5px;
 
 	img {
@@ -865,7 +865,7 @@
 
 .checkout__credit-card-payment-box-progress-bar {
 	color: var( --color-neutral-light );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding-bottom: 1em;
 	text-align: center;
 }
@@ -1115,7 +1115,7 @@
 	}
 	.form__hidden-input a {
 		display: block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-left: 15px;
 	}
 	select {
@@ -1130,7 +1130,7 @@
 	margin-left: 15px;
 	color: var( --color-neutral-20 );
 	display: block;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-style: italic;
 }
 

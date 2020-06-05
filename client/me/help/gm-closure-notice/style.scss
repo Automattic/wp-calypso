@@ -5,7 +5,7 @@
 	font-size: $font-body-small;
 	&.card.is-compact {
 		margin: 0 0 16px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		a {
 			font-size: 1em;

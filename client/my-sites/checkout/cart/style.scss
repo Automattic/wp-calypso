@@ -41,7 +41,7 @@
 		.product-domain-renewal-date {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			text-overflow: ellipsis;
 			overflow: hidden;
 		}
@@ -186,13 +186,13 @@
 			padding: 15px 15px 0;
 
 			input[type='text'] {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				margin: 0 4% 0 0;
 				width: 70%;
 			}
 
 			.button {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				height: 34px;
 				padding: 4px;
 				width: 26%;
@@ -204,7 +204,7 @@
 .cart-items__expander {
 	color: var( --color-primary );
 	text-decoration: none;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .cart-empty {
@@ -218,7 +218,7 @@
 	border: 1px solid var( --color-neutral-0 );
 	border-radius: 4px;
 	color: var( --color-text );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 15px 15px 0;
 	padding: 10px;
 

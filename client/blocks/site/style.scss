@@ -169,7 +169,7 @@
 .site__badge {
 	background: var( --color-sidebar-menu-hover-background );
 	color: var( --color-sidebar-menu-hover-text );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	border-radius: 12px;
 	clear: both;
 	display: inline-block;

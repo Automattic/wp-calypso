@@ -67,7 +67,7 @@ $date-picker_nav_button_size: 20px;
 .date-picker__next-month {
 	float: right;
 	padding: 1px 8px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	text-transform: capitalize;
 	cursor: pointer;
 	z-index: 2;

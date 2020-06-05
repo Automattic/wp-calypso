@@ -118,7 +118,7 @@
 
 .notice__content {
 	padding: 13px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	flex-grow: 1;
 
 	.notice__text {
@@ -199,7 +199,7 @@
 // specificity for general `a` elements within notice is too great
 a.notice__action {
 	cursor: pointer;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
@@ -255,7 +255,7 @@ a.notice__action {
 	line-height: 1.5;
 
 	.notice__content {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 6px 10px;
 	}
 
@@ -293,7 +293,7 @@ a.notice__action {
 		background: transparent;
 		display: inline-block;
 		margin: 0;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		align-self: center;
 		margin-left: 16px;
 		padding: 0 10px;

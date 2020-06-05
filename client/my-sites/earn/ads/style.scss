@@ -121,7 +121,7 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		&:first-child, &:last-child {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 }

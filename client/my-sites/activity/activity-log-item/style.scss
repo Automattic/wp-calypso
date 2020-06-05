@@ -282,7 +282,7 @@
 
 .activity-log-item__actor-role,
 .activity-log-item__description-summary {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 
 	@include breakpoint-deprecated( '<480px' ) {
