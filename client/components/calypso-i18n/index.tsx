@@ -107,7 +107,7 @@ async function getLocaleData( locale: string ) {
  * 2. If i18nLocalStrings is present use those strings and data.
  * 3. If we have a currentUser object, use that locale to fetch data.
  * 4. Fetch the current user and use language to fetch data.
- * 5. TODO (#39312): If we have a URL locale slug, fetch and use data.
+ * 5. If we have a URL locale slug, fetch and use data.
  * 6. Fallback to "en" locale without data.
  *
  * @returns Tuple of locale slug and locale data
