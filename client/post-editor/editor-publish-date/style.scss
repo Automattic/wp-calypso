@@ -89,7 +89,7 @@ $side-margin: 16;
 	.editor-publish-date__header.is-back-dated &,
 	.editor-publish-date__header.is-published & {
 		top: 6px;
-		font-size: 10px;
+		font-size: $font-body-extra-small;
 		line-height: 12px;
 	}
 }

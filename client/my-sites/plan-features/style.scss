@@ -409,7 +409,7 @@ $plan-features-sidebar-width: 272px;
 	transform: translateY( -21px );
 	padding: 0 8px;
 	background: var( --color-neutral-70 );
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;

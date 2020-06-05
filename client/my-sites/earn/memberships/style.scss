@@ -70,7 +70,7 @@
 	text-transform: uppercase;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 10px;
+		font-size: $font-body-extra-small;
 		line-height: 1.6;
 	}
 }
@@ -98,7 +98,7 @@
 	text-transform: uppercase;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 10px;
+		font-size: $font-body-extra-small;
 		line-height: 1.6;
 	}
 }
