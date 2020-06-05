@@ -9,23 +9,18 @@ import debugModule from 'debug';
  */
 import config from 'config';
 import userModule from 'lib/user';
+import { once } from 'lib/memoize-last';
 
 /**
  * Module Variables
  */
-let user;
 const debug = debugModule( 'calypso:user:utilities' );
 
-function initUser() {
-	user = user || userModule();
-	return user;
-}
+const user = once( () => userModule() );
 
 const userUtils = {
 	getLogoutUrl( redirect ) {
-		initUser();
-
-		const userData = user.get();
+		const userData = user().get();
 		let url = '/logout',
 			subdomain = '';
 
@@ -54,23 +49,22 @@ const userUtils = {
 	},
 
 	logout( redirect ) {
-		initUser();
 		const logoutUrl = userUtils.getLogoutUrl( redirect );
 
 		// Clear any data stored locally within the user data module or localStorage
-		user.clear().then( () => {
-			window.location.href = logoutUrl;
-		} );
+		user()
+			.clear()
+			.then( () => {
+				window.location.href = logoutUrl;
+			} );
 	},
 
 	getLocaleSlug() {
-		initUser();
-		return user.get().localeSlug;
+		return user().get().localeSlug;
 	},
 
 	isLoggedIn() {
-		initUser();
-		return Boolean( user.data );
+		return Boolean( user().data );
 	},
 };
 
