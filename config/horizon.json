@@ -103,7 +103,7 @@
 		"press-this": true,
 		"privacy-policy": true,
 		"reader": true,
-		"reader/seen-posts": true,
+		"reader/seen-posts": false,
 		"reader/user-mention-suggestions": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,

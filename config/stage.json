@@ -117,7 +117,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/seen-posts": true,
+		"reader/seen-posts": false,
 		"reader/user-mention-suggestions": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
