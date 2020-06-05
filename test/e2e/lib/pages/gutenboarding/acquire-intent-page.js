@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, Key } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -13,6 +13,8 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.acquire-intent' ) );
 	}
+	/*
+	Note: Vertical input temporary removed. Need to review this when adding back.
 
 	async enterVertical( verticalLabel ) {
 		const verticalWrapperSelector = By.css( '.vertical-select__input-wrapper' );
@@ -25,15 +27,16 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 		await verticalElement.sendKeys( verticalLabel );
 		return await verticalElement.sendKeys( Key.ENTER );
 	}
+	*/
 
 	async enterSiteTitle( siteTitle ) {
-		const siteTitleSelector = By.css( '.site-title .madlib__input' );
+		const siteTitleSelector = By.css( '#site-title__input' );
 		const siteTitleElement = this.driver.findElement( siteTitleSelector );
 		return await siteTitleElement.sendKeys( siteTitle );
 	}
 
 	async goToNextStep() {
-		const nextButtonSelector = By.css( '.acquire-intent__next-button' );
+		const nextButtonSelector = By.css( '.acquire-intent__next' );
 		return await driverHelper.clickWhenClickable( this.driver, nextButtonSelector );
 	}
 }

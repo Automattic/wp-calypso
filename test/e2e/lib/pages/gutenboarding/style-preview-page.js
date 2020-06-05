@@ -14,7 +14,7 @@ export default class StylePreviewPage extends AsyncBaseContainer {
 		super( driver, By.css( '.style-preview' ) );
 	}
 
-	async continueToCreateSite() {
+	async continue() {
 		const continueButton = By.css(
 			'.style-preview__actions-continue-button, .bottom-bar-mobile__continue-button'
 		);

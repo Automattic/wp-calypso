@@ -12,6 +12,7 @@ import NewPage from '../lib/pages/gutenboarding/new-page.js';
 import AcquireIntentPage from '../lib/pages/gutenboarding/acquire-intent-page.js';
 import DesignSelectorPage from '../lib/pages/gutenboarding/design-selector-page.js';
 import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
+import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -30,7 +31,6 @@ before( async function () {
 describe( 'Gutenboarding: (' + screenSize + ')', function () {
 	this.timeout( mochaTimeOut );
 	describe( 'Visit Gutenboarding page as a new user @parallel @canary', function () {
-		const vertical = dataHelper.randomPhrase();
 		const siteTitle = dataHelper.randomPhrase();
 
 		before( async function () {
@@ -45,7 +45,6 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 
 		step( 'Can see Acquire Intent and set a vertical and site title', async function () {
 			const acquireIntentPage = await AcquireIntentPage.Expect( driver );
-			await acquireIntentPage.enterVertical( vertical );
 			await acquireIntentPage.enterSiteTitle( siteTitle );
 			return await acquireIntentPage.goToNextStep();
 		} );
@@ -58,9 +57,13 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			);
 		} );
 
-		step( 'Can see Style Preview and continue to site creation', async function () {
+		step( 'Can see Style Preview and continue', async function () {
 			const stylePreviewPage = await StylePreviewPage.Expect( driver );
-			return await stylePreviewPage.continueToCreateSite();
+			return await stylePreviewPage.continue();
+		} );
+
+		step( 'Can see Plans Grid', async function () {
+			return await PlansPage.Expect( driver );
 		} );
 	} );
 
