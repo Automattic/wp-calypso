@@ -13,11 +13,18 @@ import userModule from 'lib/user';
 /**
  * Module Variables
  */
-const user = userModule();
+let user;
 const debug = debugModule( 'calypso:user:utilities' );
+
+function initUser() {
+	user = user || userModule();
+	return user;
+}
 
 const userUtils = {
 	getLogoutUrl( redirect ) {
+		initUser();
+
 		const userData = user.get();
 		let url = '/logout',
 			subdomain = '';
@@ -47,6 +54,7 @@ const userUtils = {
 	},
 
 	logout( redirect ) {
+		initUser();
 		const logoutUrl = userUtils.getLogoutUrl( redirect );
 
 		// Clear any data stored locally within the user data module or localStorage
@@ -56,10 +64,12 @@ const userUtils = {
 	},
 
 	getLocaleSlug() {
+		initUser();
 		return user.get().localeSlug;
 	},
 
 	isLoggedIn() {
+		initUser();
 		return Boolean( user.data );
 	},
 };
