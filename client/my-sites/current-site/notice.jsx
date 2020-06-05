@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import config, { isEnabled } from 'config';
 import { get, reject, transform } from 'lodash';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -255,8 +256,10 @@ export class SiteNotice extends React.Component {
 		const createdAt = get( this.props.siteOptions, 'created_at', '' );
 		const HOURS_IN_MS = 60 * 60 * 1000;
 		const isSiteNew = Date.now() - new Date( createdAt ) < 24 * HOURS_IN_MS; // less than 24 hours
+		const cookies = cookie.parse( document.cookie );
+		const countryCodeFromCookie = cookies.country_code;
 
-		if ( isSiteNew && 'variantShowOffer' === abtest( 'whiteGloveUpsell' ) ) {
+		if ( isSiteNew && 'variantShowOffer' === abtest( 'whiteGloveUpsell', countryCodeFromCookie ) ) {
 			return true;
 		}
 

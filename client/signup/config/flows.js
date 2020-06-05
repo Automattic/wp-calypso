@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assign, get, includes, indexOf, reject } from 'lodash';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -108,7 +109,13 @@ function filterDestination( destination, dependencies ) {
 		return getCheckoutUrl( dependencies );
 	}
 
-	if ( dependencies?.cartItem === null && 'variantShowOffer' === abtest( 'whiteGloveUpsell' ) ) {
+	const cookies = cookie.parse( document.cookie );
+	const countryCodeFromCookie = cookies.country_code;
+
+	if (
+		dependencies?.cartItem === null &&
+		'variantShowOffer' === abtest( 'whiteGloveUpsell', countryCodeFromCookie )
+	) {
 		return getWhiteGloveUpsellUrl( dependencies );
 	}
 
