@@ -9,10 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import DomainManagement from 'my-sites/domains/domain-management';
 import { getCurrentUser } from 'state/current-user/selectors';
 import getVisibleSites from 'state/selectors/get-visible-sites';
 import Main from 'components/main';
+import QueryAllDomains from 'components/data/query-all-domains';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getAllDomains, getAllRequestingSiteDomains } from 'state/sites/domains/selectors';
 import FormattedHeader from 'components/formatted-header';
@@ -46,6 +48,7 @@ class ListAll extends Component {
 			<Main wideLayout>
 				<FormattedHeader headerText={ translate( 'All Domains' ) } align="left" />
 				<div className="list-all__container">
+					{ config.isEnabled( 'manage/all-domains' ) && <QueryAllDomains /> }
 					{ this.props.sites.map( ( site, index ) => this.renderSingleSite( site, index ) ) }
 				</div>
 			</Main>
