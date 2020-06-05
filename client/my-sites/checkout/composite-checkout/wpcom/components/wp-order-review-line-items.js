@@ -51,9 +51,9 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== 'ready';
 
+	const isRenewal = item.wpcom_meta?.extra?.purchaseId;
 	// Show the variation picker when this is not a renewal
-	const shouldShowVariantSelector =
-		getItemVariants && item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
+	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
 
 	let gsuiteDiscountCallout = null;
@@ -84,10 +84,7 @@ function WPLineItem( {
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta singleLine={ true }>
-					<LineItemSublabelAndPrice
-						item={ item }
-						shouldShowVariantSelector={ shouldShowVariantSelector }
-					/>
+					<LineItemSublabelAndPrice item={ item } isRenewal={ isRenewal } />
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
 					) }
@@ -434,9 +431,16 @@ function shouldLineItemBeShownWhenStepInactive( item ) {
 	return ! itemTypesToIgnore.includes( item.type );
 }
 
-function LineItemSublabelAndPrice( { item, shouldShowVariantSelector } ) {
+function LineItemSublabelAndPrice( { item, isRenewal } ) {
 	const translate = useTranslate();
-	if ( 'plan' === item.type && item.wpcom_meta?.months_per_bill_period ) {
+	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
+	const isDomainMap = item.type === 'domain_map';
+	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
+
+	if ( isRenewal ) {
+		return item.sublabel || null;
+	}
+	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period ) {
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: item.sublabel,
@@ -446,7 +450,10 @@ function LineItemSublabelAndPrice( { item, shouldShowVariantSelector } ) {
 			comment: 'product type and monthly breakdown of total cost, separated by a colon',
 		} );
 	}
-	if ( 'plan' !== item.type || ! shouldShowVariantSelector ) {
+	if (
+		( isDomainRegistration || isDomainMap || isGSuite ) &&
+		item.wpcom_meta?.months_per_bill_period === 12
+	) {
 		return translate( '%(sublabel)s: %(interval)s', {
 			args: {
 				sublabel: item.sublabel,
@@ -455,5 +462,5 @@ function LineItemSublabelAndPrice( { item, shouldShowVariantSelector } ) {
 			comment: 'product type and billing interval, separated by a colon',
 		} );
 	}
-	return item.sublabel;
+	return item.sublabel || null;
 }
