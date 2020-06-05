@@ -3,7 +3,7 @@
  */
 import React, { useEffect } from 'react';
 import { setLocaleData } from '@wordpress/i18n';
-import { useI18n, I18nProvider } from '@automattic/react-i18n';
+import { I18nProvider } from '@automattic/react-i18n';
 import type { Site as SiteStore, User as UserStore } from '@automattic/data-stores';
 import { subscribe, select } from '@wordpress/data';
 
@@ -12,7 +12,6 @@ import { subscribe, select } from '@wordpress/data';
  */
 import {
 	getLanguageFile,
-	switchWebpackCSS,
 	getLanguageManifestFile,
 	getTranslationChunkFile,
 } from 'lib/i18n-utils/switch-locale';
@@ -68,19 +67,8 @@ export const CalypsoI18nProvider: React.FunctionComponent< {
 		setLocaleData( cachedLocaleData );
 	}, [ cachedLocaleData ] );
 
-	useRTLCSS();
-
 	return <I18nProvider localeData={ cachedLocaleData }>{ children }</I18nProvider>;
 };
-
-function useRTLCSS() {
-	const { isRTL } = useI18n();
-	const rtl = isRTL();
-	useEffect( () => {
-		switchWebpackCSS( rtl );
-	}, [ rtl ] );
-	return null;
-}
 
 async function getLocaleData( locale: string ) {
 	if ( locale === DEFAULT_LOCALE_SLUG ) {
