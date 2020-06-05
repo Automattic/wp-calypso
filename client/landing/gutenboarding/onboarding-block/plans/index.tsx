@@ -70,6 +70,7 @@ export default function PlansStep() {
 				primaryButton={
 					<Button
 						isPrimary
+						disabled={ ! plan }
 						onClick={ () => {
 							currentUser ? handleCreateSite( currentUser.username ) : setShowSignupDialog( true );
 						} }
