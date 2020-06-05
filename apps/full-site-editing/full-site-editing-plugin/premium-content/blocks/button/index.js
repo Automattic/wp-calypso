@@ -52,7 +52,7 @@ const settings = {
 			type: 'string',
 		},
 		style: {
-			type: 'string',
+			type: 'object',
 		},
 	},
 	icon,
