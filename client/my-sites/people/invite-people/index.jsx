@@ -478,6 +478,7 @@ class InvitePeople extends React.Component {
 		const { inviteLinks } = this.props;
 		const role = event.target.value || 'administrator';
 		this.setState( { activeInviteLink: inviteLinks[ role ] } );
+		this.setState( { showCopyConfirmation: false } );
 	};
 
 	getActiveInviteLink = ( activeInviteLink ) => {
