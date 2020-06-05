@@ -379,11 +379,44 @@ export function withStripeProps( WrappedComponent ) {
  * @returns {string} A stripe-supported locale string like 'en'
  */
 function getStripeLocaleForLocale( locale ) {
+	const stripeSupportedLocales = [
+		'ar',
+		'bg',
+		'cs',
+		'da',
+		'de',
+		'el',
+		'et',
+		'en',
+		'es',
+		'fi',
+		'fr',
+		'he',
+		'id',
+		'it',
+		'ja',
+		'lt',
+		'lv',
+		'ms',
+		'nb',
+		'nl',
+		'pl',
+		'pt',
+		'ru',
+		'sk',
+		'sl',
+		'sv',
+		'zh',
+	];
 	if ( ! locale ) {
 		return 'auto';
 	}
 	if ( locale.toLowerCase() === 'pt-br' ) {
 		return 'pt-BR';
 	}
-	return locale.toLowerCase().substring( 0, 2 );
+	const stripeLocale = locale.toLowerCase().substring( 0, 2 );
+	if ( ! stripeSupportedLocales.includes( stripeLocale ) ) {
+		return 'auto';
+	}
+	return stripeLocale;
 }
