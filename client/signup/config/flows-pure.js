@@ -17,7 +17,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
-	getEditorDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -359,15 +358,6 @@ export function generateFlows( {
 		lastModified: '2020-04-28',
 		pageTitle: translate( 'Launch your site' ),
 		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
-	};
-
-	flows.prelaunch = {
-		steps: [ 'plans-with-domain' ],
-		destination: getEditorDestination,
-		description: 'Flow for creating a site with a paid domain from /new',
-		lastModified: '2020-04-08',
-		pageTitle: translate( 'Get a domain for your site' ),
-		providesDependenciesInQuery: [ 'siteSlug' ],
 	};
 
 	return flows;

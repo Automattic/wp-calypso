@@ -29,7 +29,6 @@ const stepNameToModuleName = {
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',
-	'plans-with-domain': 'plans',
 	'plans-store-nux': 'plans-atomic-store',
 	site: 'site',
 	'rebrand-cities-welcome': 'rebrand-cities-welcome',
