@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useI18n } from '@automattic/react-i18n';
+import { sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -77,7 +78,10 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 				{ paymentMethods.map( ( method ) => (
 					<CheckoutErrorBoundary
 						key={ method.id }
-						errorMessage={ __( 'There was a problem with the payment method:' ) + ' ' + method.id }
+						errorMessage={ sprintf(
+							__( 'There was a problem with the payment method: %s' ),
+							method.id
+						) }
 						onError={ onError }
 					>
 						<PaymentMethod
