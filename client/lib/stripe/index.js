@@ -5,11 +5,13 @@ import debugFactory from 'debug';
 import React, { useEffect, useState, useContext, createContext } from 'react';
 import { loadScript } from '@automattic/load-script';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { getStripeConfiguration } from 'lib/store-transactions';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:stripe' );
 
@@ -213,6 +215,8 @@ function useStripeJs( stripeConfiguration ) {
 	const [ stripeJs, setStripeJs ] = useState( null );
 	const [ isStripeLoading, setStripeLoading ] = useState( true );
 	const [ stripeLoadingError, setStripeLoadingError ] = useState();
+	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const stripeLocale = getStripeLocaleForLocale( locale );
 	useEffect( () => {
 		let isSubscribed = true;
 		async function loadAndInitStripe() {
@@ -224,7 +228,11 @@ function useStripeJs( stripeConfiguration ) {
 				setStripeLoading( false );
 				if ( ! stripeJs ) {
 					setStripeLoadingError();
-					setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+					setStripeJs(
+						window.Stripe( stripeConfiguration.public_key, {
+							locale: stripeLocale,
+						} )
+					);
 				}
 				return;
 			}
@@ -233,7 +241,8 @@ function useStripeJs( stripeConfiguration ) {
 			debug( 'stripe.js loaded!' );
 			isSubscribed && setStripeLoading( false );
 			isSubscribed && setStripeLoadingError();
-			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+			isSubscribed &&
+				setStripeJs( window.Stripe( stripeConfiguration.public_key, { locale: stripeLocale } ) );
 		}
 
 		loadAndInitStripe().catch( ( error ) => {
@@ -359,4 +368,22 @@ export function withStripeProps( WrappedComponent ) {
 		const newProps = { ...props, ...stripeData };
 		return <WrappedComponent { ...newProps } />;
 	};
+}
+
+/**
+ * Transforms a locale like en-us to a Stripe supported locale
+ *
+ * See https://stripe.com/docs/js/appendix/supported_locales
+ *
+ * @param {string} locale A locale string like 'en-us'
+ * @returns {string} A stripe-supported locale string like 'en'
+ */
+function getStripeLocaleForLocale( locale ) {
+	if ( ! locale ) {
+		return 'auto';
+	}
+	if ( locale.toLowerCase() === 'pt-br' ) {
+		return 'pt-BR';
+	}
+	return locale.toLowerCase().substring( 0, 2 );
 }
