@@ -4,6 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -39,10 +40,11 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import './style.scss';
 
 const DomainManagementNavigationItemContents = function ( props ) {
-	const { materialIcon, text, description } = props;
+	const { gridicon, materialIcon, text, description } = props;
 	return (
 		<React.Fragment>
-			<MaterialIcon icon={ materialIcon } className="navigation__icon" />
+			{ gridicon && <Gridicon className="navigation__icon" icon={ gridicon } /> }
+			{ ! gridicon && <MaterialIcon icon={ materialIcon } className="navigation__icon" /> }
 			<div>
 				<div>{ text }</div>
 				<small>{ description }</small>
@@ -52,7 +54,7 @@ const DomainManagementNavigationItemContents = function ( props ) {
 };
 
 const DomainManagementNavigationItem = function ( props ) {
-	const { path, onClick, external, materialIcon, text, description } = props;
+	const { path, onClick, external, gridicon, materialIcon, text, description } = props;
 
 	return (
 		<VerticalNavItem
@@ -63,6 +65,7 @@ const DomainManagementNavigationItem = function ( props ) {
 		>
 			<DomainManagementNavigationItemContents
 				materialIcon={ materialIcon }
+				gridicon={ gridicon }
 				text={ text }
 				description={ description }
 			/>
@@ -298,6 +301,24 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		);
 	}
 
+	getManageSite() {
+		if ( ! config.isEnabled( 'manage/all-domains' ) ) {
+			return null;
+		}
+
+		const { selectedSite, translate } = this.props;
+		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
+
+		return (
+			<DomainManagementNavigationItem
+				path={ `/home/${ selectedSite.slug }` }
+				gridicon="my-sites"
+				text={ translate( 'Manage your site' ) }
+				description={ wpcomUrl }
+			/>
+		);
+	}
+
 	handleChangeSiteAddressClick = () => {
 		const { domain } = this.props;
 		const domainType = getDomainTypeText( domain );
@@ -528,6 +549,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	renderRegisteredDomainNavigation() {
 		return (
 			<React.Fragment>
+				{ this.getManageSite() }
 				{ this.getNameServers() }
 				{ this.getEmail() }
 				{ this.getContactsAndPrivacy() }
@@ -542,6 +564,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	renderSiteRedirectNavigation() {
 		return (
 			<React.Fragment>
+				{ this.getManageSite() }
 				{ this.getRedirectSettings() }
 				{ this.getDeleteDomain() }
 			</React.Fragment>
@@ -551,6 +574,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	renderMappedDomainNavigation() {
 		return (
 			<React.Fragment>
+				{ this.getManageSite() }
 				{ this.getDnsRecords() }
 				{ this.getEmail() }
 				{ this.getDomainConnectMapping() }
@@ -563,12 +587,18 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	renderTransferInDomainNavigation() {
-		return <React.Fragment>{ this.getDeleteDomain() }</React.Fragment>;
+		return (
+			<React.Fragment>
+				{ this.getManageSite() }
+				{ this.getDeleteDomain() }
+			</React.Fragment>
+		);
 	}
 
 	renderWpcomDomainNavigation() {
 		return (
 			<React.Fragment>
+				{ this.getManageSite() }
 				{ this.getSiteAddressChange() }
 				{ this.getPickCustomDomain() }
 			</React.Fragment>
