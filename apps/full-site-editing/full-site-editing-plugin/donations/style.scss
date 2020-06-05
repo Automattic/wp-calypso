@@ -1,17 +1,36 @@
 .donations__container {
-  position: relative;
+  border: 1px solid #ddd;
+  display: grid;
+  grid-template-columns: repeat( 3, 1fr );
 }
 
-.donations__tabs {
-  display: flex;
+.donations__container .components-button {
+  border-bottom: 1px solid #ddd;
+}
+
+.donations__container .components-button:first-child.active {
+  border-right: 1px solid #ddd;
+}
+
+.donations__container .components-button:nth-child( 2 ).active {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+.donations__container .components-button:nth-child( 3 ).active {
+  border-left: 1px solid #ddd;
+}
+
+.donations__container .components-button.active {
+  border-bottom: none;
 }
 
 .donations__tab {
-  display: none;
-  position: absolute;
+  grid-area: 2/1/2/4;
+  visibility: hidden;
 }
 
 .donations__tab.active {
-  display: block;
+  visibility: visible;
 }
 

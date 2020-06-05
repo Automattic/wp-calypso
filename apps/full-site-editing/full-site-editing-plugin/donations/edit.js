@@ -8,6 +8,7 @@ import classNames from 'classnames';
  */
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -19,39 +20,35 @@ const Edit = () => {
 	const isActive = ( button ) => ( activeTab === button ? 'active' : null );
 
 	return (
-		<>
-			<div className="donations__container">
-				<div className="donations__tabs">
-					<button className={ isActive( 'one-time' ) } onClick={ () => setActiveTab( 'one-time' ) }>
-						{ __( 'One-Time' ) }
-					</button>
-					<button className={ isActive( 'monthly' ) } onClick={ () => setActiveTab( 'monthly' ) }>
-						{ __( 'Monthly' ) }
-					</button>
-					<button className={ isActive( 'annually' ) } onClick={ () => setActiveTab( 'annually' ) }>
-						{ __( 'Annually' ) }
-					</button>
-				</div>
-				<div
-					id="donations__tab-one-time"
-					className={ classNames( 'donations__tab', { active: isActive( 'one-time' ) } ) }
-				>
-					{ __( 'One-Time' ) }
-				</div>
-				<div
-					id="donations__tab-monthly"
-					className={ classNames( 'donations__tab', { active: isActive( 'monthly' ) } ) }
-				>
-					{ __( 'Monthly' ) }
-				</div>
-				<div
-					id="donations__tab-annually"
-					className={ classNames( 'donations__tab', { active: isActive( 'annually' ) } ) }
-				>
-					{ __( 'Annually' ) }
-				</div>
+		<div className="donations__container">
+			<Button className={ isActive( 'one-time' ) } onClick={ () => setActiveTab( 'one-time' ) }>
+				{ __( 'One-Time' ) }
+			</Button>
+			<Button className={ isActive( 'monthly' ) } onClick={ () => setActiveTab( 'monthly' ) }>
+				{ __( 'Monthly' ) }
+			</Button>
+			<Button className={ isActive( 'annually' ) } onClick={ () => setActiveTab( 'annually' ) }>
+				{ __( 'Annually' ) }
+			</Button>
+			<div
+				id="donations__tab-one-time"
+				className={ classNames( 'donations__tab', { active: isActive( 'one-time' ) } ) }
+			>
+				{ __( 'One time' ) }
 			</div>
-		</>
+			<div
+				id="donations__tab-monthly"
+				className={ classNames( 'donations__tab', { active: isActive( 'monthly' ) } ) }
+			>
+				{ __( 'Monthly' ) }
+			</div>
+			<div
+				id="donations__tab-annually"
+				className={ classNames( 'donations__tab', { active: isActive( 'annually' ) } ) }
+			>
+				{ __( 'Annually' ) }
+			</div>
+		</div>
 	);
 };
 
