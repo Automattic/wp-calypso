@@ -15,6 +15,7 @@ export const getConnectEnd = (): number => window?.performance?.timing?.connectE
 export const getSecureConnectionStart = (): number =>
 	window?.performance?.timing?.secureConnectionStart;
 export const getRequestStart = (): number => window?.performance?.timing?.requestStart;
+export const getResponseStart = (): number => window?.performance?.timing?.responseStart;
 export const getResponseEnd = (): number => window?.performance?.timing?.responseEnd;
 export const getDomLoading = (): number => window?.performance?.timing?.domLoading;
 export const getDomInteractive = (): number => window?.performance?.timing?.domInteractive;
