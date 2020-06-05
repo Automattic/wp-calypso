@@ -1,10 +1,14 @@
 body.is-section-signup {
 	background: #ffffff;
+	color: #00101c;
 }
 
 .p2-step-wrapper {
 	margin: 0 auto;
 	max-width: 336px;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 .p2-step-wrapper__header {
@@ -19,4 +23,24 @@ body.is-section-signup {
 
 .p2-step-wrapper__header-logo {
 	margin-bottom: 40px;
+}
+
+.p2-step-wrapper__footer {
+	text-align: center;
+	margin-top: auto;
+	margin-bottom: 35px;
+}
+
+.p2-step-wrapper__w-logo {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin-bottom: 3px;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.p2-step-wrapper__footer-text {
+	font-size: 14px;
+	line-height: 17px;
 }
