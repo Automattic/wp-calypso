@@ -18,7 +18,6 @@ import {
 } from 'lib/i18n-utils/switch-locale';
 import config from 'config';
 import { getUrlParts } from 'lib/url/url-parts';
-import { getLanguageSlugs } from 'lib/i18n-utils';
 import { USER_STORE } from 'landing/gutenboarding/stores/user'; // TODO: should this be imported from somewhere else?
 
 type User = UserStore.CurrentUser;
@@ -103,24 +102,15 @@ async function getLocaleData( locale: string ) {
 /**
  * Load the user's locale
  *
- * 1. If there's an explicit locale slug, use that locale.
- * 2. If i18nLocalStrings is present use those strings and data.
- * 3. If we have a currentUser object, use that locale to fetch data.
- * 4. Fetch the current user and use language to fetch data.
- * 5. If we have a URL locale slug, fetch and use data.
- * 6. Fallback to "en" locale without data.
+ * 1. If i18nLocalStrings is present use those strings and data.
+ * 2. If we have a currentUser object, use that locale to fetch data.
+ * 3. Fetch the current user and use language to fetch data.
+ * 4. If we have a URL locale slug, fetch and use data.
+ * 5. Fallback to "en" locale without data.
  *
  * @returns Tuple of locale slug and locale data
  */
 async function getLocale(): Promise< [ string, object ] > {
-	// Explicit locale slug.
-	const pathname = new URL( window.location.href ).pathname;
-	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
-	if ( getLanguageSlugs().includes( lastPathSegment ) ) {
-		const data = await getLocaleData( lastPathSegment );
-		return [ lastPathSegment, data ];
-	}
-
 	// Bootstraped locale
 	if ( window.i18nLocaleStrings ) {
 		const bootstrappedLocaleData = JSON.parse( window.i18nLocaleStrings );
