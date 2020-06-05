@@ -33,9 +33,11 @@ const settings = {
 			type: 'string',
 			source: 'html',
 			selector: 'a',
+			default: __( 'Subscribe', 'premium-content' ),
 		},
 		type: {
 			type: 'string',
+			default: 'subscribe',
 		},
 		borderRadius: {
 			type: 'number',

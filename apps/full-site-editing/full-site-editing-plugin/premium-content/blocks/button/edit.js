@@ -44,8 +44,8 @@ function BorderPanel( { borderRadius = '', setAttributes } ) {
 }
 
 const BUTTON_TYPES = {
-	login: __( 'Login', 'premium-content' ),
 	subscribe: __( 'Subscribe', 'premium-content' ),
+	login: __( 'Log in', 'premium-content' ),
 };
 
 function ButtonEdit( props ) {
