@@ -349,6 +349,7 @@
 	fill: var( --color-neutral-light );
 	flex: 0 0 15px;
 	margin-right: 5px;
+	margin-top: 3px;
 }
 
 .reader-post-card__byline .reader-avatar {
@@ -361,7 +362,7 @@
 	.gravatar {
 		float: left;
 		height: 32px;
-		margin: 2px 6px 0 0;
+		margin: 4px 6px 0 0;
 		vertical-align: text-top;
 		width: 32px;
 	}
