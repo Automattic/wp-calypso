@@ -4,6 +4,8 @@
 import React, { useEffect } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -17,7 +19,6 @@ import {
 	useTransactionStatus,
 	usePaymentProcessor,
 } from '../../public-api';
-import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import PaymentLogo from './payment-logo.js';
@@ -86,14 +87,14 @@ function formatDate( cardExpiry ) {
 }
 
 export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
 				<CardDetails>**** { last4 }</CardDetails>
-				{ `${ localize( 'Expiry:' ) }  ${ formatDate( cardExpiry ) }` }
+				{ `${ __( 'Expiry:' ) }  ${ formatDate( cardExpiry ) }` }
 			</div>
 			<div>
 				<PaymentLogo brand={ brand } isSummary={ true } />
@@ -114,7 +115,6 @@ function ExistingCardPayButton( {
 	paymentMethodToken,
 	paymentPartnerProcessorId,
 } ) {
-	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const {
@@ -161,7 +161,6 @@ function ExistingCardPayButton( {
 		transactionStatus,
 		stripeConfiguration,
 		transactionLastResponse,
-		localize,
 	] );
 
 	return (
@@ -207,18 +206,18 @@ function ExistingCardPayButton( {
 }
 
 function ButtonContents( { formStatus, total } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
-		return localize( 'Processing…' );
+		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
+		return sprintf( __( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	}
-	return localize( 'Please wait…' );
+	return __( 'Please wait…' );
 }
 
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<SummaryDetails>
@@ -226,7 +225,7 @@ function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
 			<SummaryLine>
 				<PaymentLogo brand={ brand } isSummary={ true } />
 				<CardDetails>**** { last4 }</CardDetails>
-				{ `${ localize( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }
+				{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }
 			</SummaryLine>
 		</SummaryDetails>
 	);

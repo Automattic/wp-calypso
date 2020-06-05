@@ -366,7 +366,6 @@ function MyCheckout() {
 
 	return (
 		<CheckoutProvider
-			locale={ 'en' }
 			items={ items }
 			total={ total }
 			onEvent={ onEvent }

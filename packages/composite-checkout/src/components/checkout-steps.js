@@ -5,11 +5,11 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
 import joinClasses from '../lib/join-classes';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useFormStatus } from '../lib/form-status';
@@ -144,7 +144,7 @@ export const CheckoutSummaryCard = styled.div`
 `;
 
 export function CheckoutStepArea( { children, className } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const { formStatus } = useFormStatus();
 
@@ -163,7 +163,7 @@ export function CheckoutStepArea( { children, className } ) {
 
 			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
 				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with the submit button.' ) }
+					errorMessage={ __( 'There was a problem with the submit button.' ) }
 					onError={ onSubmitButtonLoadError }
 				>
 					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
@@ -236,7 +236,7 @@ export function CheckoutStep( {
 	validatingButtonText,
 	validatingButtonAriaLabel,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
 	);
@@ -298,12 +298,12 @@ export function CheckoutStep( {
 	return (
 		<CheckoutStepBody
 			onError={ onError }
-			editButtonText={ editButtonText || localize( 'Edit' ) }
-			editButtonAriaLabel={ editButtonAriaLabel || localize( 'Edit this step' ) }
-			nextStepButtonText={ nextStepButtonText || localize( 'Continue' ) }
-			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || localize( 'Continue to the next step' ) }
-			validatingButtonText={ validatingButtonText || localize( 'Please wait…' ) }
-			validatingButtonAriaLabel={ validatingButtonAriaLabel || localize( 'Please wait…' ) }
+			editButtonText={ editButtonText || __( 'Edit' ) }
+			editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
+			nextStepButtonText={ nextStepButtonText || __( 'Continue' ) }
+			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || __( 'Continue to the next step' ) }
+			validatingButtonText={ validatingButtonText || __( 'Please wait…' ) }
+			validatingButtonAriaLabel={ validatingButtonAriaLabel || __( 'Please wait…' ) }
 			isStepActive={ isStepActive }
 			isStepComplete={ isStepComplete }
 			stepNumber={ stepNumber }
@@ -344,10 +344,10 @@ export function CheckoutStepBody( {
 	completeStepContent,
 	onError,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	return (
 		<CheckoutErrorBoundary
-			errorMessage={ errorMessage || localize( 'There was an error with this step.' ) }
+			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
 			onError={ onError }
 		>
 			<StepWrapperUI
@@ -565,7 +565,7 @@ function CheckoutStepHeader( {
 	editButtonText,
 	editButtonAriaLabel,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const shouldShowEditButton = !! onEdit;
 
 	return (
@@ -586,7 +586,7 @@ function CheckoutStepHeader( {
 					onClick={ onEdit }
 					aria-label={ editButtonAriaLabel }
 				>
-					{ editButtonText || localize( 'Edit' ) }
+					{ editButtonText || __( 'Edit' ) }
 				</HeaderEditButton>
 			) }
 		</StepHeader>

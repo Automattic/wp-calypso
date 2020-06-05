@@ -4,12 +4,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import Button from '../../components/button';
-import { useLocalize } from '../../lib/localize';
 import {
 	useEvents,
 	usePaymentProcessor,
@@ -28,16 +28,16 @@ export function createPayPalMethod() {
 		label: <PaypalLabel />,
 		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
-		getAriaLabel: ( localize ) => localize( 'PayPal' ),
+		getAriaLabel: ( __ ) => __( 'PayPal' ),
 	};
 }
 
 export function PaypalLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<span>{ localize( 'PayPal' ) }</span>
+			<span>{ __( 'PayPal' ) }</span>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PaypalLogo />
 			</PaymentMethodLogos>
@@ -55,7 +55,7 @@ export function PaypalSubmitButton( { disabled } ) {
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'paypal' );
 	const [ items ] = useLineItems();
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	const onClick = () => {
 		onEvent( { type: 'PAYPAL_TRANSACTION_BEGIN' } );
@@ -66,7 +66,7 @@ export function PaypalSubmitButton( { disabled } ) {
 			.then( ( response ) => {
 				if ( ! response ) {
 					setTransactionError(
-						localize(
+						__(
 							'An error occurred while redirecting to PayPal. Please try again or contact support.'
 						)
 					);
@@ -93,14 +93,14 @@ export function PaypalSubmitButton( { disabled } ) {
 }
 
 function PayPalButtonContents( { formStatus } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
-		return localize( 'Processing…' );
+		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
 		return <ButtonPayPalIcon />;
 	}
-	return localize( 'Please wait…' );
+	return __( 'Please wait…' );
 }
 
 const ButtonPayPalIcon = styled( PaypalLogo )`
@@ -108,8 +108,8 @@ const ButtonPayPalIcon = styled( PaypalLogo )`
 `;
 
 function PaypalSummary() {
-	const localize = useLocalize();
-	return localize( 'PayPal' );
+	const { __ } = useI18n();
+	return __( 'PayPal' );
 }
 
 function PaypalLogo( { className } ) {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -10,11 +11,9 @@ import Button from '../../components/button';
 import {
 	useLineItems,
 	useEvents,
-	renderDisplayValueMarkdown,
 	useTransactionStatus,
 	usePaymentProcessor,
 } from '../../public-api';
-import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
 
 export function createFreePaymentMethod() {
@@ -23,22 +22,22 @@ export function createFreePaymentMethod() {
 		label: <FreePurchaseLabel />,
 		submitButton: <FreePurchaseSubmitButton />,
 		inactiveContent: <FreePurchaseSummary />,
-		getAriaLabel: ( localize ) => localize( 'Free' ),
+		getAriaLabel: ( __ ) => __( 'Free' ),
 	};
 }
 
 function FreePurchaseLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<div>{ localize( 'Free Purchase' ) }</div>
+			<div>{ __( 'Free Purchase' ) }</div>
 		</React.Fragment>
 	);
 }
 
 function FreePurchaseSubmitButton( { disabled } ) {
-	const [ items, total ] = useLineItems();
+	const [ items ] = useLineItems();
 	const {
 		setTransactionComplete,
 		setTransactionError,
@@ -70,26 +69,23 @@ function FreePurchaseSubmitButton( { disabled } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents formStatus={ formStatus } />
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
-	const localize = useLocalize();
+function ButtonContents( { formStatus } ) {
+	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
-		return localize( 'Processing…' );
+		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf(
-			localize( 'Complete Checkout' ),
-			renderDisplayValueMarkdown( total.amount.displayValue )
-		);
+		return __( 'Complete Checkout' );
 	}
-	return localize( 'Please wait…' );
+	return __( 'Please wait…' );
 }
 
 function FreePurchaseSummary() {
-	const localize = useLocalize();
-	return <div>{ localize( 'Free Purchase' ) }</div>;
+	const { __ } = useI18n();
+	return <div>{ __( 'Free Purchase' ) }</div>;
 }
