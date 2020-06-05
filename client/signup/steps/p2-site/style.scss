@@ -38,6 +38,12 @@
 	font-weight: normal;
 	font-size: 18px;
 	color: #fff;
+
+	&:hover {
+		background-color: #0267ff;
+		border: none;
+		color: #fff;
+	}
 }
 
 .p2-site__form .form-label {
@@ -52,4 +58,17 @@
 	height: 60px;
 	font-size: 18px;
 	line-height: 22px;
+	color: #00101c;
+}
+
+.p2-site__form .form-input-validation {
+	color: #d63638;
+	font-size: 14px;
+	padding: 0;
+	padding-top: 9px;
+	padding-left: 2px;
+
+	svg {
+		display: none;
+	}
 }
