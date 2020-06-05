@@ -20,9 +20,9 @@ export default class P2StepWrapper extends Component {
 				<div className="p2-step-wrapper__header">
 					<div className="p2-step-wrapper__header-logo">
 						<img
-							src="https://wpcom.files.wordpress.com/2020/06/p2-logo-small.png"
-							width="52"
-							height="24"
+							src="https://wpcom.files.wordpress.com/2020/05/logo.png"
+							width="67"
+							height="32"
 							alt="P2 logo"
 						/>
 					</div>
@@ -31,6 +31,7 @@ export default class P2StepWrapper extends Component {
 					) }
 				</div>
 				<StepWrapper
+					hideFormattedHeader
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
