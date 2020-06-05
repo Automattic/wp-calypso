@@ -107,7 +107,7 @@ class PodcastCoverImageSetting extends PureComponent {
 			if ( isFailedUpload ) {
 				this.props.deleteMedia( siteId, transientMediaId );
 			} else {
-				this.props.receiveMedia( siteId, media );
+				this.props.receiveMedia( siteId, { ...media, transientId: transientMediaId } );
 			}
 
 			if ( isUploadInProgress ) {

@@ -31,6 +31,9 @@ import 'state/data-layer/wpcom/sites/media';
  * Returns an action object used in signalling that media item(s) for the site
  * have been received.
  *
+ * Note: `media` items may contain an optional `transientId` field which when
+ * present denotes the transient ID that referred to the media item.
+ *
  * @param  {number}         siteId Site ID
  * @param  {(Array|object)} media  Media item(s) received
  * @param  {number}         found  Number of found media

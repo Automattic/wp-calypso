@@ -121,7 +121,7 @@ class SiteIconSetting extends Component {
 			if ( isFailedUpload ) {
 				this.props.deleteMedia( siteId, transientMediaId );
 			} else {
-				this.props.receiveMedia( siteId, media );
+				this.props.receiveMedia( siteId, { ...media, transientId: transientMediaId } );
 			}
 
 			if ( isUploadInProgress ) {
@@ -148,7 +148,7 @@ class SiteIconSetting extends Component {
 					}
 				}
 			} else {
-				this.saveSiteIconSetting( siteId, media );
+				this.saveSiteIconSetting( siteId, { ...media, transientId: transientMediaId } );
 			}
 		};
 

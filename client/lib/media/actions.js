@@ -211,7 +211,13 @@ function uploadFiles( uploader, files, site ) {
 					);
 
 					reduxDispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
-					reduxDispatch( receiveMedia( siteId, data.media, data.found ) );
+					reduxDispatch(
+						receiveMedia(
+							siteId,
+							{ ...data.media[ 0 ], transientId: transientMedia.ID },
+							data.found
+						)
+					);
 
 					// also refetch media limits
 					Dispatcher.handleServerAction( {

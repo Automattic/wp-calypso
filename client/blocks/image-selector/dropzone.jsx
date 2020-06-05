@@ -53,7 +53,7 @@ class ImageSelectorDropZone extends Component {
 			if ( isFailedUpload ) {
 				this.props.deleteMedia( siteId, transientMediaId );
 			} else {
-				this.props.receiveMedia( siteId, media );
+				this.props.receiveMedia( siteId, { ...media, transientId: transientMediaId } );
 			}
 
 			/**
