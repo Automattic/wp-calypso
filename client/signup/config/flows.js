@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assign, get, includes, indexOf, reject } from 'lodash';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
+import { abtest } from 'lib/abtest';
 
 const user = userFactory();
 
@@ -75,6 +77,10 @@ function getEditorDestination( dependencies ) {
 	return `/block-editor/page/${ dependencies.siteSlug }/home`;
 }
 
+function getWhiteGloveUpsellUrl( dependencies ) {
+	return `/checkout/${ dependencies.siteSlug }/offer-white-glove`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -98,6 +104,16 @@ function removeUserStepFromFlow( flow ) {
 function filterDestination( destination, dependencies ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
+	}
+
+	const cookies = cookie.parse( document.cookie );
+	const countryCodeFromCookie = cookies.country_code;
+
+	if (
+		dependencies?.cartItem === null &&
+		'variantShowOffer' === abtest( 'whiteGloveUpsell', countryCodeFromCookie )
+	) {
+		return getWhiteGloveUpsellUrl( dependencies );
 	}
 
 	return destination;

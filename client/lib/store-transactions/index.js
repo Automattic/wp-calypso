@@ -37,7 +37,7 @@ const wpcom = wp.undocumented();
 /**
  * Make a purchase on WordPress.com.
  *
- * @returns {Readable} A stream of transaction flow steps.
+ * @returns {Function} A stream of transaction flow steps.
  *
  * @param {object} params - Includes the cart, domainDetails etc...
  * @param {Function} onStep - Callback
@@ -350,6 +350,7 @@ TransactionFlow.prototype._submitWithPayment = function ( payment ) {
 		cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
 		domain_details: this._initialData.domainDetails,
 		payment,
+		is_white_glove_offer: this._initialData?.isWhiteGloveOffer,
 	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );

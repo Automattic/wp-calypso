@@ -19,6 +19,7 @@ import joinClasses from './join-classes';
 import Button from './button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
+import { isBusinessPlan } from 'lib/plans';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -38,6 +39,7 @@ function WPLineItem( {
 	onChangePlanLength,
 	couponStatus,
 	isSummary,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -90,10 +92,17 @@ function WPLineItem( {
 		);
 	}
 
+	const productSlug = item.wpcom_meta?.product_slug;
+	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
+	const productName =
+		isBusinessPlanProduct && isWhiteGloveOffer
+			? `${ item.label } (with Expert guidance)`
+			: item.label;
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ item.label }
+				{ productName }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId }>
 				<LineItemPrice item={ item } isSummary={ isSummary } />
@@ -172,6 +181,7 @@ WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummary: PropTypes.bool,
+	isWhiteGloveOffer: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
@@ -310,6 +320,7 @@ export function WPOrderReviewLineItems( {
 	getItemVariants,
 	onChangePlanLength,
 	couponStatus,
+	isWhiteGloveOffer,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -331,6 +342,7 @@ export function WPOrderReviewLineItems( {
 								onChangePlanLength={ onChangePlanLength }
 								couponStatus={ couponStatus }
 								isSummary={ isSummary }
+								isWhiteGloveOffer={ isWhiteGloveOffer }
 							/>
 						</WPOrderReviewListItem>
 					);
