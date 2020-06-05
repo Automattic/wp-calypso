@@ -118,14 +118,15 @@
 
 /* Subscribe/Login buttons */
 
-.editor-styles-wrapper .wp-premium-content-logged-out-view [data-type='core/button'] {
-	margin-top: 0;
-}
-
 @media ( min-width: 660px ) {
 	.wp-premium-content-logged-out-view .wp-block-button__link {
 		min-width: 200px;
 	}
+}
+
+.wp-premium-content-logged-out-view .wp-block-buttons .wp-block-button__link,
+.wp-premium-content-logged-out-view .wp-block-buttons .wp-block-button {
+	margin-top: 0;
 }
 
 .wp-premium-content-logged-out-view .wp-block-buttons .wp-block-button__link {

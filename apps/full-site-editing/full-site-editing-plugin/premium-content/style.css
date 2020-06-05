@@ -29,6 +29,10 @@
 	min-width: 200px;
 }
 
+.wp-block-premium-content-logged-out-view .wp-block-buttons .wp-block-button__link {
+	margin-right: 20px;
+}
+
 /* Legacy Subscribe/Login buttons */
 
 .premium-content-logged-out-view-button {
