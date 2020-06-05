@@ -3,11 +3,13 @@
 }
 
 .p2-site__wordpress-domain-suffix {
-	color: var( --color-neutral-light );
-	line-height: 40px;
-	margin-left: -122px;
+	color: #0267ff;
+	line-height: 22px;
 	pointer-events: none;
 	position: absolute;
+	font-size: 18px;
+	top: 62px;
+	right: 24px;
 }
 
 .p2-site__validation-site,
@@ -19,4 +21,44 @@
 
 .p2-site__validation-site-title.validation-fieldset {
 	margin-bottom: 20px;
+}
+
+body.is-section-signup {
+	background: #ffffff;
+}
+
+.p2-site__form {
+	margin: 0 auto 16px;
+	max-width: 336px;
+}
+
+.p2-site__form-footer {
+	margin-top: 64px;
+}
+
+.p2-site__form-submit-btn.is-primary {
+	float: none;
+	margin: 0;
+	width: 100%;
+	background-color: #0267ff;
+	border: none;
+	border-radius: 40px;
+	height: 60px;
+	font-weight: normal;
+	font-size: 18px;
+	color: #fff;
+}
+
+.p2-site__form .form-label {
+	color: #00101c;
+	font-weight: normal;
+	font-size: 18px;
+	letter-spacing: -0.26px;
+	margin-bottom: 16px;
+}
+
+.p2-site__form .form-text-input {
+	height: 60px;
+	font-size: 18px;
+	line-height: 22px;
 }

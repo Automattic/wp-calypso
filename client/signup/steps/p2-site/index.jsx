@@ -20,8 +20,6 @@ import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import StepWrapper from 'signup/step-wrapper';
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -307,17 +305,14 @@ class P2Site extends React.Component {
 		return this.props.translate( 'Continue' );
 	};
 
-	formFooter = () => {
-		return <FormButton>{ this.buttonText() }</FormButton>;
-	};
-
 	renderSiteForm = () => {
 		return (
-			<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
+			<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
 				{ this.formFields() }
-
-				<LoggedOutFormFooter>{ this.formFooter() }</LoggedOutFormFooter>
-			</LoggedOutForm>
+				<div className="p2-site__form-footer">
+					<FormButton className="p2-site__form-submit-btn">{ this.buttonText() }</FormButton>
+				</div>
+			</form>
 		);
 	};
 
