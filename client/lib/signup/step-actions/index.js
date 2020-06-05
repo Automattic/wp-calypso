@@ -385,6 +385,7 @@ export function createAccount(
 	},
 	reduxStore
 ) {
+	// See client/signup/config/flows-pure.js p2 flow for more info.
 	if ( flowName === 'p2' ) {
 		flowName = 'wp-for-teams';
 	}

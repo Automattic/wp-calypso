@@ -250,12 +250,18 @@ export function generateFlows( {
 	}
 
 	if ( isEnabled( 'signup/wpforteams' ) ) {
-		flows.p2 = {
+		flows[ 'wp-for-teams' ] = {
 			steps: [ 'p2-site', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'P2 signup flow',
 			lastModified: '2020-06-04',
 		};
+
+		// Original name for the project was "WP for Teams". Since then, we've renamed it to "P2".
+		// However, backend and Marketing is expecting `wp-for-teams` as the `signup_flow_name` var
+		// so we force it in client/lib/signup/step-actions/index.js `createAccount` function.
+		// Keeping both flows for clarity.
+		flows.p2 = { ...flows[ 'wp-for-teams' ] };
 	}
 
 	flows.domain = {
