@@ -155,7 +155,7 @@ describe( 'PostQueryManager', () => {
 			test( 'should return false if query is not ISO 8601', () => {
 				const isMatch = PostQueryManager.matches(
 					{
-						after: '2014',
+						after: '14',
 					},
 					DEFAULT_POST
 				);
@@ -190,7 +190,7 @@ describe( 'PostQueryManager', () => {
 			test( 'should return false if query is not ISO 8601', () => {
 				const isMatch = PostQueryManager.matches(
 					{
-						before: '2018',
+						before: '18',
 					},
 					DEFAULT_POST
 				);
@@ -225,7 +225,7 @@ describe( 'PostQueryManager', () => {
 			test( 'should return false if query is not ISO 8601', () => {
 				const isMatch = PostQueryManager.matches(
 					{
-						modified_after: '2014',
+						modified_after: '14',
 					},
 					DEFAULT_POST
 				);
@@ -260,7 +260,7 @@ describe( 'PostQueryManager', () => {
 			test( 'should return false if query is not ISO 8601', () => {
 				const isMatch = PostQueryManager.matches(
 					{
-						modified_before: '2018',
+						modified_before: '18',
 					},
 					DEFAULT_POST
 				);
