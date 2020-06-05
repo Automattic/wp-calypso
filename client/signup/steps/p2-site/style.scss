@@ -24,7 +24,7 @@
 }
 
 .p2-site__form-footer {
-	margin-top: 64px;
+	margin-top: 41px;
 }
 
 .p2-site__form-submit-btn.is-primary {
@@ -71,4 +71,16 @@
 	svg {
 		display: none;
 	}
+}
+
+.p2-site__learn-more {
+	padding-top: 48px;
+	text-align: center;
+}
+
+.p2-site__learn-more-link {
+	color: #0267ff;
+	text-decoration-line: underline;
+	font-size: 15px;
+	line-height: 28px;
 }
