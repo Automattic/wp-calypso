@@ -81,7 +81,7 @@
 }
 
 .activity-log-item__time {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 	text-transform: uppercase;
 	white-space: nowrap;

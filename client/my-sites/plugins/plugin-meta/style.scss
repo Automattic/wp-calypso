@@ -140,7 +140,7 @@
 	.plugin-action__label {
 		@include breakpoint-deprecated( '<480px' ) {
 			flex-flow: row;
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 			margin-right: auto;
 		}
 	}

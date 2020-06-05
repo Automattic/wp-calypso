@@ -395,7 +395,7 @@
 .sharing-connection__keyring-user {
 	display: inline-block;
 	margin-left: 8px;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	text-transform: uppercase;
 	color: var( --color-neutral-light );
@@ -648,7 +648,7 @@
 
 .sharing-buttons-preview__fake-like {
 	color: var( --color-neutral-40 );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 }
 
 .sharing-buttons-preview .sortable-list__navigation {
@@ -784,7 +784,7 @@
 	background-color: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
 	border-bottom: 0;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 1;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -802,7 +802,7 @@
 .sharing-buttons-preview__label {
 	display: block;
 	margin: 8px 0;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	line-height: 1.2;
 	text-transform: uppercase;

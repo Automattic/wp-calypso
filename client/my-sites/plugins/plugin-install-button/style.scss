@@ -37,7 +37,7 @@
 		align-content: space-between;
 
 		a {
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 			text-transform: uppercase;
 		}
 	}
@@ -45,7 +45,7 @@
 
 .plugin-install-button__warning {
 	margin-right: 8px;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color:  var( --color-neutral-light );
 	text-transform: uppercase;
 	white-space: nowrap;
