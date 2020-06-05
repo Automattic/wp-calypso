@@ -322,6 +322,12 @@ class P2Site extends React.Component {
 						<FormButton className="p2-site__form-submit-btn">{ this.buttonText() }</FormButton>
 					</div>
 				</form>
+
+				<div className="p2-site__learn-more">
+					<a href="#learn-more-link" className="p2-site__learn-more-link">
+						Learn more about P2
+					</a>
+				</div>
 			</P2StepWrapper>
 		);
 	}
