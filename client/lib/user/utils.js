@@ -16,6 +16,9 @@ import { once } from 'lib/memoize-last';
  */
 const debug = debugModule( 'calypso:user:utilities' );
 
+// Delay initialisation of `user`, to avoid circular dependency issues.
+// `user` becomes a function that runs `userModule()` when it's first invoked,
+// saves the return value, and simply returns it on subsequent calls.
 const user = once( () => userModule() );
 
 const userUtils = {
