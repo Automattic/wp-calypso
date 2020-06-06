@@ -1,0 +1,22 @@
+// Increase specificity
+.components-panel__row {
+	.domain-picker__suggestion-item {
+		border: 1px solid var( --studio-gray-5 );
+		padding: 14px;
+		margin-bottom: 0;
+
+		// override bad styles from wp-admin/css/forms.min.css
+		& > input[type='radio'] {
+			text-align: unset;
+		}
+
+		+ .domain-picker__suggestion-item {
+			margin-top: -1px;
+		}
+	}
+	// Don't show close button & more button when inside a modal.
+	.domain-picker__close-button,
+	.domain-picker__more-button {
+		display: none;
+	}
+}
