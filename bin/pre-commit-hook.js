@@ -12,6 +12,18 @@ const composerBinDir = path.join( __dirname, '..', 'vendor', 'bin' );
 const phpcsPath = path.join( composerBinDir, 'phpcs' );
 const phpcbfPath = path.join( composerBinDir, 'phpcbf' );
 
+/**
+ * Wraps a given path with double quotes if it contains spaces
+ *
+ * @param {string} pathToQuote path to wrap with quotes
+ */
+function quotedPath( pathToQuote ) {
+	if ( pathToQuote.includes( ' ' ) ) {
+		return `"${ pathToQuote }"`;
+	}
+	return pathToQuote;
+}
+
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
 		'under the GNU General Public License v2 (or later). All materials must have ' +
@@ -118,7 +130,9 @@ toPHPCBF.forEach( ( file ) => console.log( `PHPCBF formatting staged file: ${ fi
 if ( toPHPCBF.length ) {
 	if ( phpcs ) {
 		try {
-			execSync( `${ phpcbfPath } --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }` );
+			execSync(
+				`${ quotedPath( phpcbfPath ) } --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }`
+			);
 		} catch ( error ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 			// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L210
@@ -174,10 +188,14 @@ if ( toEslint.length ) {
 // and finally PHPCS
 if ( toPHPCS.length ) {
 	if ( phpcs ) {
-		const lintResult = spawnSync( phpcsPath, [ '--standard=apps/phpcs.xml', ...toPHPCS ], {
-			shell: true,
-			stdio: 'inherit',
-		} );
+		const lintResult = spawnSync(
+			quotedPath( phpcsPath ),
+			[ '--standard=apps/phpcs.xml', ...toPHPCS ],
+			{
+				shell: true,
+				stdio: 'inherit',
+			}
+		);
 
 		if ( lintResult.status ) {
 			linterFailure();
