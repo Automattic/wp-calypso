@@ -47,5 +47,8 @@
 		"@wordpress/i18n": "^3.10.0",
 		"react": "^16.8"
 	},
-	"private": true
+	"private": true,
+	"devDependencies": {
+		"@wordpress/base-styles": "1.9.0"
+	}
 }

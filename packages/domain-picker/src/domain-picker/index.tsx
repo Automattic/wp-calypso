@@ -2,18 +2,20 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
+import { useDebounce } from 'use-debounce';
+
 import { times } from 'lodash';
 import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
-
 /**
  * Internal dependencies
  */
 import SuggestionItem from './suggestion-item';
 import SuggestionNone from './suggestion-none';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
+import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
 import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
@@ -29,7 +31,6 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 type DomainSuggestionQuery = import('@automattic/data-stores').DomainSuggestions.DomainSuggestionQuery;
-type DomainCategory = import('@automattic/data-stores').DomainSuggestions.DomainCategory;
 
 export interface Props {
 	showDomainConnectButton?: boolean;
@@ -59,17 +60,6 @@ export interface Props {
 
 	quantity?: number;
 
-	/** The domain search query */
-	domainSearch: string;
-	/** Called when the domain search query is changed */
-	onSetDomainSearch: ( query: string ) => void;
-
-	/** The domain category */
-	domainCategory: string | undefined;
-
-	/** Called when the domain category is set */
-	onSetDomainCategory: ( category?: string ) => void;
-
 	/** The search results */
 	domainSuggestions?: DomainSuggestion[];
 
@@ -79,9 +69,13 @@ export interface Props {
 	/** An identifier for the wrapping UI used for setting ui_algo. Eg: domain_popover */
 	analyticsUiAlgo: string;
 
-	domainCategories: DomainCategory[];
-
 	domainSuggestionVendor: string;
+
+	/** The domain search query */
+	domainSearch: string;
+
+	/** Called when the domain search query is changed */
+	onSetDomainSearch: ( value: string ) => void;
 }
 
 const PAID_DOMAINS_TO_SHOW = 5;
@@ -94,20 +88,26 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onMoreOptions,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	currentDomain,
-	domainSearch,
-	onSetDomainSearch,
-	domainCategory,
-	onSetDomainCategory,
-	domainSuggestions,
 	analyticsFlowId,
 	analyticsUiAlgo,
-	domainCategories,
 	domainSuggestionVendor,
+	domainSearch,
+	onSetDomainSearch,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
 
 	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
+	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
+
+	const [ debouncedDomainSearch ] = useDebounce( domainSearch, 100 );
+
+	const domainSuggestions = useDomainSuggestions(
+		debouncedDomainSearch,
+		domainCategory,
+		useI18n().i18nLocale,
+		10
+	);
 
 	const allSuggestions = domainSuggestions;
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
@@ -188,7 +188,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		recordTrainTracksRender( {
 			uiAlgo: `/${ analyticsFlowId }/${ analyticsUiAlgo }`,
 			fetchAlgo,
-			query: domainSearch,
+			query: debouncedDomainSearch,
 			railcarId,
 			result: isRecommended( suggestion ) ? domain + '#recommended' : domain,
 			uiPosition,
@@ -228,17 +228,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							label={ label }
 							placeholder={ label }
 							onChange={ onSetDomainSearch }
-							value={ domainSearch }
+							value={ debouncedDomainSearch }
 						/>
 					</div>
 					<div className="domain-picker__body">
 						{ showDomainCategories && (
 							<div className="domain-picker__aside">
-								<DomainCategories
-									domainCategories={ domainCategories }
-									selected={ domainCategory }
-									onSelect={ onSetDomainCategory }
-								/>
+								<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
 							</div>
 						) }
 						<div className="domain-picker__suggestion-item-group">
