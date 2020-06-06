@@ -42,7 +42,6 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		is_coupon_applied,
 		tax,
 	} = serverCart;
 
@@ -96,7 +95,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 	return {
 		items: products.map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
-		coupon: is_coupon_applied ? savingsLineItem : null,
+		coupon: Math.abs( savings_total_integer ) > 0 ? savingsLineItem : null,
 		total: totalItem,
 		subtotal: subtotalItem,
 		credits: {
