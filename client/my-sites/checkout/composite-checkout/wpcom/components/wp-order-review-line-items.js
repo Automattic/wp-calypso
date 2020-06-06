@@ -55,6 +55,7 @@ function WPLineItem( {
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
+	const isSavings = item.type === 'coupon';
 
 	let gsuiteDiscountCallout = null;
 	if (
@@ -83,13 +84,14 @@ function WPLineItem( {
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
-				<LineItemMeta singleLine={ true }>
+				<LineItemMeta>
 					<LineItemSublabelAndPrice item={ item } isRenewal={ isRenewal } />
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
 					) }
 				</LineItemMeta>
 			) }
+			{ isSavings && <SavingsList item={ item } /> }
 			{ isGSuite && (
 				<GSuiteUsersList
 					users={ item.wpcom_meta.extra.google_apps_users }
@@ -205,7 +207,7 @@ export const LineItemUI = styled( WPLineItem )`
 
 const LineItemMeta = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	display: ${ ( { singleLine } ) => ( singleLine ? 'flex' : 'block' ) };
+	display: flex;
 	font-size: 14px;
 	justify-content: space-between;
 	width: 100%;
@@ -367,7 +369,7 @@ function GSuiteUsersList( { users, gsuiteDiscountCallout } ) {
 		<>
 			{ users.map( ( user, index ) => {
 				return (
-					<LineItemMeta singleLine={ true } key={ user.email }>
+					<LineItemMeta key={ user.email }>
 						<div key={ user.email }>{ user.email }</div>
 						{ index === 0 && gsuiteDiscountCallout }
 					</LineItemMeta>
@@ -463,4 +465,22 @@ function LineItemSublabelAndPrice( { item, isRenewal } ) {
 		} );
 	}
 	return item.sublabel || null;
+}
+
+function SavingsList( { item } ) {
+	const translate = useTranslate();
+	const savingsItems = [];
+	if ( item.wpcom_meta?.couponCode ) {
+		savingsItems.push( translate( 'Coupon: %s', { args: item.wpcom_meta?.couponCode } ) );
+	}
+	if ( savingsItems.length < 1 ) {
+		return null;
+	}
+	return (
+		<React.Fragment>
+			{ savingsItems.map( ( savingsItem ) => (
+				<LineItemMeta key={ savingsItem }>{ savingsItem }</LineItemMeta>
+			) ) }
+		</React.Fragment>
+	);
 }
