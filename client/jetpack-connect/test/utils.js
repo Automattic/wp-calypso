@@ -1,6 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+/**
+ * External dependencies
+ */
+import page from 'page';
+import { externalRedirect } from 'lib/route';
 
 /**
  * Internal dependencies
@@ -10,7 +15,10 @@ import {
 	cleanUrl,
 	getRoleFromScope,
 	parseAuthorizationQuery,
+	redirect,
 } from '../utils';
+
+import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 
 jest.mock( 'config', () => ( input ) => {
 	const lookupTable = {
@@ -130,5 +138,58 @@ describe( 'parseAuthorizationQuery', () => {
 
 	test( 'should return null data on valid input', () => {
 		expect( parseAuthorizationQuery( {} ) ).toBeNull();
+	} );
+} );
+
+jest.mock( 'lib/route/path', () => ( {
+	externalRedirect: jest.fn(),
+} ) );
+
+jest.mock( 'page', () => ( {
+	redirect: jest.fn(),
+} ) );
+
+describe( 'redirect', () => {
+	beforeEach( () => {
+		externalRedirect.mockReset();
+		page.redirect.mockReset();
+	} );
+	test( 'should fire redirect', () => {
+		const results = [
+			{ type: 'plans_selection', url: 'example.com', expected: JPC_PATH_PLANS + '/example.com' },
+			{ type: 'remote_install', url: 'example.com', expected: JPC_PATH_REMOTE_INSTALL },
+			{
+				type: 'install_instructions',
+				url: 'example.com',
+				expected: '/jetpack/connect/instructions?url=example.com',
+			},
+			{
+				type: 'remote_auth',
+				url: 'example.com',
+				expected: decodeURI( addCalypsoEnvQueryArg( 'example.com' + REMOTE_PATH_AUTH ) ),
+			},
+		];
+
+		results.forEach( ( { type, url, expected } ) =>
+			expect( redirect( type, url ) ).toBe( expected )
+		);
+	} );
+
+	test( 'external redirect should be called once during remote authorization', () => {
+		redirect( 'remote_auth', 'example.com' );
+		expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should redirect once', () => {
+		redirect( 'plans_selection', 'example.com' );
+		expect( page.redirect ).toHaveBeenCalledTimes( 1 );
+		page.redirect.mockReset();
+
+		redirect( 'remote_install', 'example.com' );
+		expect( page.redirect ).toHaveBeenCalledTimes( 1 );
+		page.redirect.mockReset();
+
+		redirect( 'install_instructions', 'example.com' );
+		expect( page.redirect ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

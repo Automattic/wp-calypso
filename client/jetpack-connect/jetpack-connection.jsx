@@ -17,7 +17,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import page from 'page';
 import versionCompare from 'lib/version-compare';
-import { addCalypsoEnvQueryArg } from './utils';
+import { redirect } from './utils';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
@@ -26,14 +26,8 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { urlToSlug } from 'lib/url';
 
-import {
-	JPC_PATH_PLANS,
-	JPC_PATH_REMOTE_INSTALL,
-	MINIMUM_JETPACK_VERSION,
-	REMOTE_PATH_AUTH,
-} from './constants';
+import { MINIMUM_JETPACK_VERSION } from './constants';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_OWNED,
@@ -113,9 +107,9 @@ const jetpackConnection = ( WrappedComponent ) => {
 					! isMobileAppFlow &&
 					! skipRemoteInstall
 				) {
-					this.redirect( 'remote_install', JPC_PATH_REMOTE_INSTALL );
+					this.redirect( 'remote_install' );
 				} else {
-					this.redirect( 'install_instructions', '/jetpack/connect/instructions' );
+					this.redirect( 'install_instructions', url );
 				}
 			}
 		};
@@ -131,19 +125,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			if ( ! this.state.redirecting ) {
 				this.setState( { redirecting: true } );
 
-				this.recordTracks( url, type );
-
-				type === 'plans_selection' && page.redirect( `${ JPC_PATH_PLANS }/${ urlToSlug( url ) }` );
-				type === 'remote_install' && page.redirect( url );
-				type === 'remote_auth' &&
-					externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
-
-				if ( type === 'install_instructions' ) {
-					{
-						const urlWithQuery = addQueryArgs( { url: url }, url );
-						page( urlWithQuery );
-					}
-				}
+				redirect( type, url );
 			}
 		};
 
