@@ -128,6 +128,35 @@ class Login extends Component {
 		);
 	};
 
+	handleTwoFactorRequested = ( authType ) => {
+		if ( this.props.onTwoFactorRequested ) {
+			this.props.onTwoFactorRequested( authType );
+		} else {
+			page(
+				login( {
+					isNative: true,
+					isJetpack: this.props.isJetpack,
+					isGutenboarding: this.props.isGutenboarding,
+					// If no notification is sent, the user is using the authenticator for 2FA by default
+					twoFactorAuthType: authType,
+				} )
+			);
+		}
+	};
+
+	handleSocialConnectStart = () => {
+		if ( this.props.onSocialConnectStart ) {
+			this.props.onSocialConnectStart();
+		} else {
+			page(
+				login( {
+					isNative: true,
+					socialConnect: true,
+				} )
+			);
+		}
+	};
+
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
 			let defaultAuthType;
@@ -140,22 +169,9 @@ class Login extends Component {
 			} else {
 				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
 			}
-			page(
-				login( {
-					isNative: true,
-					isJetpack: this.props.isJetpack,
-					isGutenboarding: this.props.isGutenboarding,
-					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: defaultAuthType,
-				} )
-			);
+			this.handleTwoFactorRequested( defaultAuthType );
 		} else if ( this.props.isLinking ) {
-			page(
-				login( {
-					isNative: true,
-					socialConnect: true,
-				} )
-			);
+			this.handleSocialConnectStart();
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -163,12 +179,7 @@ class Login extends Component {
 
 	handleValid2FACode = () => {
 		if ( this.props.isLinking ) {
-			page(
-				login( {
-					isNative: true,
-					socialConnect: true,
-				} )
-			);
+			this.handleSocialConnectStart();
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -419,6 +430,7 @@ class Login extends Component {
 					twoFactorNotificationSent={ twoFactorNotificationSent }
 					handleValid2FACode={ this.handleValid2FACode }
 					rebootAfterLogin={ this.rebootAfterLogin }
+					switchTwoFactorAuthType={ this.handleTwoFactorRequested }
 				/>
 			);
 		}
