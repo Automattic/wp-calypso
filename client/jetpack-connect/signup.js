@@ -122,6 +122,8 @@ export class JetpackSignup extends Component {
 		this.setState( {
 			wooDnaFormType: 'login',
 			signUpUsernameOrEmail: usernameOrEmail || null,
+			loginSocialConnect: false,
+			loginTwoFactorAuthType: null,
 		} );
 		this.props.resetAuthAccountType();
 	};
@@ -279,7 +281,12 @@ export class JetpackSignup extends Component {
 
 	renderWooDna() {
 		const { authQuery, isFullLoginFormVisible, translate, usernameOrEmail } = this.props;
-		const { isCreatingAccount, signUpUsernameOrEmail } = this.state;
+		const {
+			isCreatingAccount,
+			signUpUsernameOrEmail,
+			loginSocialConnect,
+			loginTwoFactorAuthType,
+		} = this.state;
 		let header, subHeader, content;
 		const footerLinks = [];
 		const email = signUpUsernameOrEmail || usernameOrEmail || authQuery.userEmail;
@@ -325,6 +332,12 @@ export class JetpackSignup extends Component {
 					locale={ this.props.locale }
 					footer={ this.renderWooDnaFooter( footerLinks ) }
 					userEmail={ email }
+					socialConnect={ loginSocialConnect }
+					twoFactorAuthType={ loginTwoFactorAuthType }
+					onTwoFactorRequested={ ( authType ) =>
+						this.setState( { loginTwoFactorAuthType: authType } )
+					}
+					onSocialConnectStart={ () => this.setState( { loginSocialConnect: true } ) }
 				/>
 			);
 		} else {

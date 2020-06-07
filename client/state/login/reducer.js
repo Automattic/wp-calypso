@@ -43,6 +43,7 @@ import {
 	CURRENT_USER_RECEIVE,
 } from 'state/action-types';
 import { login } from 'lib/paths';
+import { addQueryArgs } from 'lib/route';
 
 export const isRequesting = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -82,6 +83,8 @@ export const redirectTo = combineReducers( {
 				const { path, query } = action;
 				if ( startsWith( path, '/log-in' ) ) {
 					return query.redirect_to || state;
+				} else if ( '/jetpack/connect/authorize' === path ) {
+					return addQueryArgs( query, path );
 				}
 
 				return state;
