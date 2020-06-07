@@ -1,7 +1,7 @@
 module.exports = () => ( {
 	plugins: {
 		'postcss-custom-properties': {
-			importFrom: [ require.resolve( '@automattic/calypso-color-schemes' ) ],
+			importFrom: [ require.resolve( '@automattic/calypso-color-schemes/js' ) ],
 			// @TODO: Drop `preserve: false` workaround if possible
 			// See https://github.com/Automattic/jetpack/pull/13854#issuecomment-550898168
 			preserve: false,
