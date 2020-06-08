@@ -10,6 +10,11 @@ import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 
 /**
+ * Internal dependencies
+ */
+import { DOMAIN_SUGGESTIONS_STORE } from '../constants';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -30,7 +35,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 	};
 
 	const domainCategories = useSelect( ( select ) =>
-		select( 'automattic/domains/suggestions' ).getCategories()
+		select( DOMAIN_SUGGESTIONS_STORE ).getCategories()
 	);
 
 	return (

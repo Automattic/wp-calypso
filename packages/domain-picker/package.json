@@ -39,7 +39,8 @@
 		"lodash": "^4.17.15",
 		"tslib": "^1.10.0",
 		"use-debounce": "^3.1.0",
-		"uuid": "^7.0.2"
+		"uuid": "^7.0.2",
+		"@wordpress/base-styles": "^1.9.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.18.0",
@@ -47,8 +48,5 @@
 		"@wordpress/i18n": "^3.10.0",
 		"react": "^16.8"
 	},
-	"private": true,
-	"devDependencies": {
-		"@wordpress/base-styles": "1.9.0"
-	}
+	"private": true
 }

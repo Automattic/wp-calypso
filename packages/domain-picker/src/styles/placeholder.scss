@@ -6,7 +6,7 @@
 // ==========================================================================
 
 @mixin placeholder( $color-property: $light-gray-200 ) {
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: domain-picker-loading-fade 1.6s ease-in-out infinite;
 	background: $color-property;
 	color: transparent;
 
@@ -15,8 +15,8 @@
 	}
 }
 
-// Another pulsing animation for placeholders
-@keyframes loading-fade {
+// a pulsing animation for placeholders
+@keyframes domain-picker-loading-fade {
 	0% {
 		opacity: 0.5;
 	}

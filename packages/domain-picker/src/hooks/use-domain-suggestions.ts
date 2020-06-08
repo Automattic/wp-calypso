@@ -2,13 +2,17 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
-import { DomainSuggestions } from '@automattic/data-stores';
+import { useDebounce } from 'use-debounce';
 
-import { DOMAIN_SUGGESTION_VENDOR, PAID_DOMAINS_TO_SHOW } from './constants';
-
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register( {
-	vendor: DOMAIN_SUGGESTION_VENDOR,
-} );
+/**
+ * Internal dependencies
+ */
+import {
+	DOMAIN_SUGGESTION_VENDOR,
+	PAID_DOMAINS_TO_SHOW,
+	DOMAIN_SUGGESTIONS_STORE,
+	DOMAIN_SEARCH_DEBOUNCE_INTERVAL,
+} from '../constants';
 
 export function useDomainSuggestions(
 	searchTerm = '',
@@ -16,12 +20,14 @@ export function useDomainSuggestions(
 	locale = 'en',
 	quantity = PAID_DOMAINS_TO_SHOW
 ) {
+	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
+
 	return useSelect(
 		( select ) => {
-			if ( ! searchTerm ) {
+			if ( ! domainSearch ) {
 				return;
 			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( searchTerm, {
+			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: true,
 				include_dotblogsubdomain: false,
@@ -31,6 +37,6 @@ export function useDomainSuggestions(
 				category_slug: domainCategory,
 			} );
 		},
-		[ searchTerm, domainCategory, quantity ]
+		[ domainSearch, domainCategory, quantity ]
 	);
 }

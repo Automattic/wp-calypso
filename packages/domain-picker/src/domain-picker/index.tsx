@@ -23,6 +23,7 @@ import {
 } from '../utils/domain-suggestions';
 import DomainCategories from '../domain-categories';
 import CloseButton from '../close-button';
+import { PAID_DOMAINS_TO_SHOW } from '../constants';
 
 /**
  * Style dependencies
@@ -77,8 +78,6 @@ export interface Props {
 	/** Called when the domain search query is changed */
 	onSetDomainSearch: ( value: string ) => void;
 }
-
-const PAID_DOMAINS_TO_SHOW = 5;
 
 const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainConnectButton,

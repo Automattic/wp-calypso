@@ -188,7 +188,6 @@ $domain-picker__suggestion-item-height: 24px;
 	}
 
 	&.placeholder {
-		color: red;
 		@include placeholder();
 		max-width: 30%;
 		margin-right: auto; // position the placeholder to the left overriding justify-content: space-between
