@@ -131,7 +131,7 @@ describe( 'CompositeCheckout', () => {
 			temporary: false,
 			allowed_payment_methods: [ 'WPCOM_Billing_Stripe_Payment_Method' ],
 			savings_total_integer: 0,
-			savings_total_display: '-R$0',
+			savings_total_display: 'R$0',
 			total_tax_integer: 700,
 			total_tax_display: 'R$7',
 			total_cost_integer: 15600,
@@ -668,13 +668,14 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getAllByLabelText } = renderResult;
+		const { getAllByLabelText, getAllByText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( '$0' )
+		getAllByLabelText( 'Total savings' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$10' )
 		);
+		expect( getAllByText( 'Coupon: MYCOUPONCODE' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'displays loading while old cart store is loading', async () => {
@@ -742,8 +743,8 @@ async function mockSetCartEndpoint( _, requestCart ) {
 			'WPCOM_Billing_Ebanx',
 			'WPCOM_Billing_Web_Payment',
 		],
-		savings_total_display: '$0',
-		savings_total_integer: 0,
+		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
+		savings_total_integer: requestCoupon ? 1000 : 0,
 		total_tax_display: 'R$7',
 		total_tax_integer: taxInteger,
 		total_cost_display: 'R$156',
@@ -773,6 +774,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$144',
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -789,6 +791,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$0',
 					item_subtotal_integer: 0,
 					item_subtotal_display: 'R$0',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -805,6 +808,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
 					item_subtotal_display: 'R$70',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
