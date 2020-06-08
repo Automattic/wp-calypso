@@ -51,7 +51,7 @@ import {
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import getCountries from 'state/selectors/get-countries';
-import { fetchPaymentCountries } from 'state/countries/actions';
+import { fetchDomainCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import { getPlan, findPlansKeys } from 'lib/plans';
@@ -608,7 +608,7 @@ function useCountryList( overrideCountryList ) {
 	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
 
 	const reduxDispatch = useDispatch();
-	const globalCountryList = useSelector( ( state ) => getCountries( state, 'payments' ) );
+	const globalCountryList = useSelector( ( state ) => getCountries( state, 'domains' ) );
 
 	// Has the global list been populated?
 	const isListFetched = globalCountryList?.length > 0;
@@ -619,7 +619,7 @@ function useCountryList( overrideCountryList ) {
 				setCountriesList( globalCountryList );
 			} else {
 				debug( 'countries list is empty; dispatching request for data' );
-				reduxDispatch( fetchPaymentCountries() );
+				reduxDispatch( fetchDomainCountries() );
 			}
 		}
 	}, [ shouldFetchList, isListFetched, globalCountryList, reduxDispatch ] );
