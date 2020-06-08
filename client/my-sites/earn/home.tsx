@@ -273,17 +273,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
-						trackUpgrade( 'any-paid-plan', 'premium-content' );
+						trackUpgrade( 'any-paid-plan', 'paid-newsletters' );
 						page( `/plans/${ selectedSiteSlug }` );
 					},
 			  }
-			: {
-					text: translate( 'Learn how to get started' ),
-					action: () => {
-						trackCtaButton( 'learn-paid-newsletters' );
-						page( `https://wordpress.com/support/paid-newsletters/` );
-					},
-			  };
+			: null;
 		const title = translate( 'Send paid email newsletters' );
 		const body = isFreePlan
 			? translate(
@@ -294,7 +288,21 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  )
-			: translate( 'Share premium content with paying subscribers automatically through email.' );
+			: translate(
+					'Share premium content with paying subscribers automatically through email. Read this {{a}}support article{{/a}} to learn how to get started.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://wordpress.com/support/paid-newsletters/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+			  );
+
 		return {
 			title,
 			body,
