@@ -885,14 +885,6 @@ export class MySitesSidebar extends Component {
 
 				<QuerySiteChecklist siteId={ this.props.siteId } />
 
-				{ isEnabled( 'jetpack/features-section' ) && (
-					<ExpandableSidebarMenu
-						expanded={ false }
-						title={ this.props.translate( 'Jetpack' ) }
-						materialIcon="edit"
-					/>
-				) }
-
 				<ExpandableSidebarMenu
 					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
 					expanded={ this.props.isSiteSectionOpen }
