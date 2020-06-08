@@ -15,8 +15,8 @@ import save from './save';
 import './style.scss';
 
 registerBlockType( 'a8c/post-content', {
-	title: __( 'Content' ),
-	description: __( 'The page content.' ),
+	title: __( 'Content', 'full-site-editing' ),
+	description: __( 'The page content.', 'full-site-editing' ),
 	icon: 'layout',
 	category: 'layout',
 	supports: {

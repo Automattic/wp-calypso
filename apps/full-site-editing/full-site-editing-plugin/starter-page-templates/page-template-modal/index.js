@@ -393,14 +393,14 @@ class PageTemplateModal extends Component {
 						className="page-template-modal__close-button components-icon-button"
 						onClick={ this.props.toggleTemplateModal }
 						icon="no-alt"
-						label={ __( 'Close Layout Selector' ) }
+						label={ __( 'Close Layout Selector', 'full-site-editing' ) }
 					/>
 				) : (
 					<IconButton
 						className="page-template-modal__close-button components-icon-button"
 						onClick={ this.closeModal }
 						icon="arrow-left-alt2"
-						label={ __( 'Go back' ) }
+						label={ __( 'Go back', 'full-site-editing' ) }
 					/>
 				) }
 

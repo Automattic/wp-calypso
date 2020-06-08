@@ -177,7 +177,8 @@ const TemplateEdit = compose(
 						<Placeholder className="template-block__overlay" onClick={ save }>
 							{ navigateToTemplate && (
 								<div className="template-block__loading">
-									<Spinner /> { sprintf( __( 'Loading editor for: %s' ), templateTitle ) }
+									<Spinner />{ ' ' }
+									{ sprintf( __( 'Loading editor for: %s', 'full-site-editing' ), templateTitle ) }
 								</div>
 							) }
 							<Button
@@ -188,7 +189,7 @@ const TemplateEdit = compose(
 								isLarge
 								ref={ navButton }
 							>
-								{ sprintf( __( 'Edit %s' ), templateTitle ) }
+								{ sprintf( __( 'Edit %s', 'full-site-editing' ), templateTitle ) }
 							</Button>
 						</Placeholder>
 					</Fragment>

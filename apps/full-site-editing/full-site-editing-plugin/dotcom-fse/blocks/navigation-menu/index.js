@@ -19,8 +19,8 @@ const icon = (
 );
 
 registerBlockType( 'a8c/navigation-menu', {
-	title: __( 'Navigation Menu' ),
-	description: __( 'Visual placeholder for site-wide navigation and menus.' ),
+	title: __( 'Navigation Menu', 'full-site-editing' ),
+	description: __( 'Visual placeholder for site-wide navigation and menus.', 'full-site-editing' ),
 	icon,
 	category: 'layout',
 	supports: {
