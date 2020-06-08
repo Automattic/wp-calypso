@@ -60,7 +60,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 		setDomainPickerMode( undefined );
 	};
 
-	const handleMoreOptions = () => {
+	const onClickMoreOptions = () => {
 		setDomainPickerMode( 'modal' );
 	};
 
@@ -89,7 +89,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 			analyticsFlowId={ FLOW_ID }
 			domainSearch={ searchVal }
 			onSetDomainSearch={ setDomainSearch }
-			onMoreOptions={ handleMoreOptions }
+			onMoreOptions={ onClickMoreOptions }
 			showDomainConnectButton={ domainPickerMode === 'modal' }
 			onClose={ handleClose }
 			showDomainCategories={ domainPickerMode === 'modal' }
@@ -97,7 +97,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 			onDomainSelect={ onDomainSelect }
 			domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			analyticsUiAlgo={ domainPickerMode === 'modal' ? 'domain_modal' : 'domain_popover' }
-		></DomainPicker>
+		/>
 	);
 
 	return (
