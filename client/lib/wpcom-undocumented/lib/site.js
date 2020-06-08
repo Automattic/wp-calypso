@@ -66,15 +66,16 @@ resources.forEach( function ( resource ) {
 	UndocumentedSite.prototype[ name ] = list.call( this, resourceOptions );
 } );
 
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * Create an UndocumentedSite instance
  *
- * @param {[int]}   id          Site ID
- * @param {[WPCOM]} wpcom       WPCOM instance
+ * @param {number}   id          Site ID
+ * @param {object} wpcom       WPCOM instance
  *
- * @returns {{UndocumentedSite}} UndocumentedSite instance
+ * @returns {UndocumentedSite} UndocumentedSite instance
  *
- * @api public
+ * @public
  */
 function UndocumentedSite( id, wpcom ) {
 	debug( 'UndocumentedSite', id );
@@ -414,6 +415,36 @@ UndocumentedSite.prototype.deleteInvites = function ( inviteIds ) {
 		{
 			invite_ids: inviteIds,
 		}
+	);
+};
+/**
+ * Generate invite links
+ *
+ * @returns {Promise}             A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.generateInviteLinks = function () {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ this._id }/invites/links/generate`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{}
+	);
+};
+
+/**
+ * Disable invite links
+ *
+ * @returns {Promise}             A Promise to resolve when complete.
+ */
+
+UndocumentedSite.prototype.disableInviteLinks = function () {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ this._id }/invites/links/disable`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{}
 	);
 };
 

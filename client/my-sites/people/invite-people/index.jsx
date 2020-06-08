@@ -20,8 +20,13 @@ import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { sendInvites, createInviteValidation } from 'lib/invites/actions';
-import { Card } from '@automattic/components';
+import {
+	sendInvites,
+	createInviteValidation,
+	generateInviteLinks,
+	disableInviteLinks,
+} from 'lib/invites/actions';
+import { Card, Button } from '@automattic/components';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
@@ -45,6 +50,15 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import QuerySiteInvites from 'components/data/query-site-invites';
+import { getInviteLinksForSite } from 'state/invites/selectors';
+import { getSiteRoles } from 'state/site-roles/selectors';
+import FormSelect from 'components/forms/form-select';
+import FormTextInput from 'components/forms/form-text-input';
+import ClipboardButton from 'components/forms/clipboard-button';
+import SectionHeader from 'components/section-header';
+import accept from 'lib/accept';
 
 /**
  * Style dependencies
@@ -84,6 +98,8 @@ class InvitePeople extends React.Component {
 			errorToDisplay: false,
 			errors: {},
 			success: [],
+			activeInviteLink: false,
+			showCopyConfirmation: false,
 		};
 	};
 
@@ -436,10 +452,179 @@ class InvitePeople extends React.Component {
 		return inviteForm;
 	};
 
+	generateInviteLinks = () => {
+		return this.props.generateInviteLinks( this.props.siteId );
+	};
+
+	disableInviteLinks = () => {
+		accept(
+			<div>
+				<p>
+					{ this.props.translate(
+						'Once this invite link is disabled, nobody will be able to use it to join your team. Are you sure?'
+					) }
+				</p>
+			</div>,
+			( accepted ) => {
+				if ( accepted ) {
+					this.props.disableInviteLinks( this.props.siteId );
+				}
+			},
+			this.props.translate( 'Disable' )
+		);
+	};
+
+	showInviteLinkForRole = ( event ) => {
+		const { inviteLinks } = this.props;
+		const role = event.target.value || 'administrator';
+		this.setState( { activeInviteLink: inviteLinks[ role ] } );
+		this.setState( { showCopyConfirmation: false } );
+	};
+
+	getActiveInviteLink = ( activeInviteLink ) => {
+		if ( activeInviteLink ) {
+			return activeInviteLink;
+		}
+
+		if ( this.props.inviteLinks && typeof this.props.inviteLinks.administrator !== 'undefined' ) {
+			return this.props.inviteLinks.administrator;
+		}
+
+		return false;
+	};
+
+	onInviteLinkCopy = () => {
+		this.setState( {
+			showCopyConfirmation: true,
+		} );
+
+		clearTimeout( this.dismissCopyConfirmation );
+		this.dismissCopyConfirmation = setTimeout( () => {
+			this.setState( {
+				showCopyConfirmation: false,
+			} );
+		}, 4000 );
+	};
+
+	renderCopyLinkButton = ( link, className ) => {
+		const { translate } = this.props;
+
+		let label;
+		if ( this.state.showCopyConfirmation ) {
+			label = translate( 'Copied!' );
+		} else {
+			label = translate( 'Copy link' );
+		}
+
+		return (
+			<ClipboardButton
+				className={ className }
+				text={ link }
+				onCopy={ this.onInviteLinkCopy }
+				compact
+			>
+				{ label }
+			</ClipboardButton>
+		);
+	};
+
+	renderInviteLinkRoleSelector = ( activeInviteLink ) => {
+		const { siteRoles, translate } = this.props;
+
+		const roleOptions =
+			siteRoles &&
+			siteRoles.map( ( role ) => (
+				<option value={ role.name } key={ role.name }>
+					{ role.display_name }
+				</option>
+			) );
+		const inviteUrlRef = React.createRef();
+
+		return (
+			<React.Fragment>
+				<div className="invite-people__link-selector">
+					<FormSelect
+						id="invite-people__link-selector-role"
+						className="invite-people__link-selector-role"
+						onChange={ this.showInviteLinkForRole }
+					>
+						{ roleOptions }
+					</FormSelect>
+
+					<FormTextInput
+						id="invite-people__link-selector-text"
+						className="invite-people__link-selector-text"
+						value={ activeInviteLink.link }
+						readOnly
+						ref={ inviteUrlRef }
+					/>
+					{ this.renderCopyLinkButton(
+						activeInviteLink.link,
+						'invite-people__link-selector-copy'
+					) }
+				</div>
+
+				<div className="invite-people__link-footer">
+					<span className="invite-people__link-expiry">
+						Expires on { new Date( activeInviteLink.expiry * 1000 ).toLocaleDateString() }{ ' ' }
+					</span>
+					<span>
+						(
+						<button className="invite-people__link-disable" onClick={ this.disableInviteLinks }>
+							{ translate( 'Disable invite link' ) }
+						</button>
+						)
+					</span>
+				</div>
+			</React.Fragment>
+		);
+	};
+
+	renderInviteLinkGenerateButton = () => {
+		const { translate } = this.props;
+		return (
+			<Button onClick={ this.generateInviteLinks } className="invite-people__link-generate">
+				{ translate( 'Generate new link' ) }
+			</Button>
+		);
+	};
+
+	renderInviteLinkForm = () => {
+		const { translate } = this.props;
+
+		const activeInviteLink = this.getActiveInviteLink( this.state.activeInviteLink );
+
+		const inviteLinkForm = (
+			<Card className="invite-people__link">
+				<EmailVerificationGate>
+					<div class="invite-people__link-instructions">
+						{ translate(
+							'Use this link to onboard your team members without having to invite them one by one. '
+						) }
+						<strong>
+							{ translate(
+								'Anybody visiting this URL will be able to sign up to your organization, '
+							) }
+						</strong>
+						{ translate(
+							'even if they received the link from somebody else, so make sure that you share it with trusted people.'
+						) }
+					</div>
+
+					{ activeInviteLink
+						? this.renderInviteLinkRoleSelector( activeInviteLink )
+						: this.renderInviteLinkGenerateButton() }
+				</EmailVerificationGate>
+			</Card>
+		);
+
+		return inviteLinkForm;
+	};
+
 	state = this.resetState();
 
 	render() {
-		const { site, translate } = this.props;
+		const { site, translate, isWPForTeamsSite } = this.props;
 		if ( site && ! userCan( 'promote_users', site ) ) {
 			return (
 				<Main>
@@ -456,11 +641,18 @@ class InvitePeople extends React.Component {
 		return (
 			<Main className="invite-people">
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
+				{ site.ID && <QuerySiteInvites siteId={ site.ID } /> }
 				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'Invite People' ) }
 				</HeaderCake>
 				{ this.renderInviteForm() }
+				{ isWPForTeamsSite && (
+					<React.Fragment>
+						<SectionHeader label={ translate( 'Invite Link' ) } />
+						{ this.renderInviteLinkForm() }
+					</React.Fragment>
+				) }
 			</Main>
 		);
 	}
@@ -478,6 +670,9 @@ const connectComponent = connect(
 			showSSONotice: !! ( activating || active ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			inviteLinks: getInviteLinksForSite( state, siteId ),
+			siteRoles: getSiteRoles( state, siteId ),
 		};
 	},
 	( dispatch ) => ( {
@@ -485,6 +680,8 @@ const connectComponent = connect(
 			{
 				sendInvites,
 				activateModule,
+				generateInviteLinks,
+				disableInviteLinks,
 			},
 			dispatch
 		),

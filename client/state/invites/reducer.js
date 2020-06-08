@@ -19,7 +19,7 @@ import {
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { inviteItemsSchema } from './schema';
+import { inviteItemsSchema, inviteLinksSchema } from './schema';
 
 /**
  * Returns the updated site invites requests state after an action has been
@@ -91,6 +91,35 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
 					accepted: deleteInvites( state[ action.siteId ].accepted, action.inviteIds ),
 					pending: deleteInvites( state[ action.siteId ].pending, action.inviteIds ),
 				},
+			};
+		}
+	}
+
+	return state;
+} );
+
+export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case INVITES_REQUEST_SUCCESS: {
+			let inviteLinks = {};
+			action.links.forEach( ( link ) => {
+				const linkForState = {
+					key: link.invite_key,
+					link: link.link,
+					role: link.role,
+					inviteDate: link.invite_date,
+					expiry: link.expiry,
+				};
+
+				inviteLinks = {
+					...inviteLinks,
+					[ link.role ]: linkForState,
+				};
+			} );
+
+			return {
+				...state,
+				[ action.siteId ]: inviteLinks,
 			};
 		}
 	}
@@ -214,4 +243,11 @@ export function deleting( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( { requesting, items, counts, requestingResend, deleting } );
+export default combineReducers( {
+	requesting,
+	items,
+	counts,
+	requestingResend,
+	deleting,
+	links,
+} );
