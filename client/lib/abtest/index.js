@@ -63,7 +63,7 @@ export const saveABTestVariation = ( name, variation ) =>
 
 export const getAllTests = () => keys( activeTests ).map( ABTest );
 
-const isUserSignedIn = () => user().get() !== false;
+const isUserSignedIn = () => user() && user().get() !== false;
 
 const parseDateStamp = ( datestamp ) => {
 	const format = 'YYYYMMDD';
@@ -299,7 +299,7 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function () {
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function () {
-	return user().get() && new Date( user().get().date ) < new Date( this.startDate );
+	return user() && user().get() && new Date( user().get().date ) < new Date( this.startDate );
 };
 
 ABTest.prototype.getSavedVariation = function () {
@@ -310,7 +310,7 @@ ABTest.prototype.assignVariation = function () {
 	let variationName, randomAllocationAmount;
 	let sum = 0;
 
-	const userId = user().data?.ID;
+	const userId = user()?.data?.ID;
 	const allocationsTotal = reduce(
 		this.variationDetails,
 		( allocations, allocation ) => {

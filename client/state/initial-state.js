@@ -94,7 +94,7 @@ function shouldAddSympathy() {
 // scenario where state data may have been stored without this
 // check being performed.
 function verifyStoredRootState( state ) {
-	const currentUserId = user().get()?.ID ?? null;
+	const currentUserId = user()?.get()?.ID ?? null;
 	const storedUserId = state?.currentUser?.id ?? null;
 
 	if ( currentUserId !== storedUserId ) {
@@ -159,7 +159,7 @@ export function getStateFromCache( reducer, subkey, forceLoggedOutUser = false )
 }
 
 function getReduxStateKey( forceLoggedOutUser = false ) {
-	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user().get()?.ID ?? null );
+	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user()?.get()?.ID ?? null );
 }
 
 function getReduxStateKeyForUserId( userId ) {

@@ -143,7 +143,7 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user().get() ) {
+		if ( user() && user().get() ) {
 			flow = removeUserStepFromFlow( flow );
 		}
 

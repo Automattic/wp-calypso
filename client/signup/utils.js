@@ -20,7 +20,7 @@ function isEligibleForSwapStepsTest() {
 	const countryCodeFromCookie = cookies.country_code;
 	const isUserFromUS = 'US' === countryCodeFromCookie;
 
-	if ( user().get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
+	if ( user() && user().get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
 		return true;
 	}
 
