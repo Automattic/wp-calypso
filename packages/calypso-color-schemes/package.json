@@ -24,12 +24,12 @@
 		"access": "public"
 	},
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist src/__color-studio",
+		"clean": "check-npm-client && npx rimraf js css src/__color-studio",
 		"prepare": "check-npm-client && node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {
 		"postcss": "7.0.32",
-		"postcss-custom-properties": "9.1.1",
+		"postcss-custom-properties": "^9.1.1",
 		"node-sass": "^4.13.0"
 	}
 }

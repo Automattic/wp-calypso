@@ -26,13 +26,13 @@ And this will give you the CSS.
 
 ### Using the JS output
 
-Sometimes, calypso-color-schemes properties are consumed in JavaScript. To avoid parsing them on your own, or to help `postcss-custom-properties` use them without parsing them (much faster), use the JS output as follows:
+Sometimes, `calypso-color-schemes` properties are consumed in JavaScript. To avoid parsing CSS syntax on your own, or to help `postcss-custom-properties` use them without parsing the CSS (much faster), use the JS output as follows:
 
 ```js
 import { customProperties } import '@automattic/calypso-color-schemes/js' // mind the js suffix
 ```
 
-Then your `postcss.config.js` can look like this:
+Or with `postcss-custom-properties`, and `postcss.config.js` can look like this:
 
 ```js
 module.exports = () => ( {
@@ -43,3 +43,7 @@ module.exports = () => ( {
     }
 });
 ```
+
+### Note on using the JS output
+
+The CSS files include variable definitions for all Calypso color schemes (Classic Blue, Contrast, Midnight, ...), but the JS exports include only variables from the `:root` selector, i.e., only the fallback default theme.
