@@ -50,6 +50,7 @@ export class LanguagePickerModal extends PureComponent {
 		languages: PropTypes.array.isRequired,
 		selected: PropTypes.string,
 		countryCode: PropTypes.string,
+		empathyMode: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -59,6 +60,7 @@ export class LanguagePickerModal extends PureComponent {
 		isVisible: false,
 		selected: 'en',
 		countryCode: '',
+		empathyMode: false,
 	};
 
 	constructor( props ) {
@@ -71,6 +73,7 @@ export class LanguagePickerModal extends PureComponent {
 			isSearchOpen: false,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
+			empathyMode: props.empathyMode,
 		};
 
 		this.languagesList = React.createRef();
@@ -363,9 +366,14 @@ export class LanguagePickerModal extends PureComponent {
 		}
 	};
 
+	handleEmpathyModeToggle = ( event ) => {
+		this.setState( { empathyMode: event.target.checked } );
+	};
+
 	handleSelectLanguage = () => {
-		const langSlug = this.state.selectedLanguageSlug;
-		this.props.onSelected( langSlug );
+		const { empathyMode, selectedLanguageSlug } = this.state;
+		const langSlug = selectedLanguageSlug;
+		this.props.onSelected( langSlug, empathyMode );
 		this.handleClose();
 	};
 
@@ -451,11 +459,12 @@ export class LanguagePickerModal extends PureComponent {
 
 	renderEmpathyModeCheckbox() {
 		const { translate } = this.props;
+		const { empathyMode } = this.state;
 
 		return (
 			<div className="language-picker__modal-empathy-mode">
 				<FormLabel>
-					<FormCheckbox />
+					<FormCheckbox checked={ empathyMode } onChange={ this.handleEmpathyModeToggle } />
 					<span>{ translate( 'Empathy mode' ) }</span>
 				</FormLabel>
 			</div>

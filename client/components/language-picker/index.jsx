@@ -44,6 +44,7 @@ export class LanguagePicker extends PureComponent {
 
 		this.state = {
 			selectedLanguage: this.findLanguage( props.valueKey, props.value ),
+			empathyMode: false,
 		};
 	}
 
@@ -73,7 +74,7 @@ export class LanguagePicker extends PureComponent {
 		return language;
 	}
 
-	selectLanguage = ( languageSlug ) => {
+	selectLanguage = ( languageSlug, empathyMode ) => {
 		// Find the language by the slug
 		const language = this.findLanguage( 'langSlug', languageSlug );
 		if ( ! language ) {
@@ -82,10 +83,11 @@ export class LanguagePicker extends PureComponent {
 
 		// onChange takes an object in shape of a DOM event as argument
 		const value = language[ this.props.valueKey ] || language.langSlug;
-		const event = { target: { value } };
+		const event = { target: { value, empathyMode } };
 		this.props.onChange( event );
 		this.setState( {
 			selectedLanguage: language,
+			empathyMode,
 		} );
 	};
 
@@ -130,6 +132,7 @@ export class LanguagePicker extends PureComponent {
 				onSelected={ this.selectLanguage }
 				selected={ selectedLanguageSlug }
 				countryCode={ countryCode }
+				empathyMode={ this.state.empathyMode }
 			/>
 		);
 	}

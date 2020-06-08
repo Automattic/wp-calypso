@@ -25,7 +25,7 @@ export function enableLanguageEmpatyhMode() {
 	// wrap translations from i18n
 	i18n.registerTranslateHook( ( translation, options ) => {
 		const locale = i18n.getLocaleSlug();
-		if ( 'en' === locale || options.original === defaultUntranslatedPlacehoder ) {
+		if ( locale === i18n.defaultLocaleSlug || options.original === defaultUntranslatedPlacehoder ) {
 			return translation;
 		}
 

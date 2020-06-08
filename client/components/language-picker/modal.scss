@@ -155,6 +155,8 @@
 	}
 
 	.form-label {
+		position: relative;
+		z-index: 1;
 		margin: 0;
 		padding: 4px 8px;
 	}
