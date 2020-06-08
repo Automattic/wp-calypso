@@ -16,8 +16,10 @@ export default class StylePreviewPage extends AsyncBaseContainer {
 
 	async continue() {
 		const continueButton = By.css(
-			'.style-preview__actions-continue-button, .bottom-bar-mobile__continue-button'
+			this.screenSize === 'MOBILE'
+				? '.bottom-bar-mobile__continue-button'
+				: '.style-preview__actions-continue-button'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, continueButton );
+		await driverHelper.clickWhenClickable( this.driver, continueButton );
 	}
 }

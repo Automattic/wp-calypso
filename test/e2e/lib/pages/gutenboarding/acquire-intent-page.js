@@ -25,7 +25,11 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	}
 
 	async skipStep() {
-		const skipButtonSelector = By.css( '.acquire-intent__skip-site-title' );
+		const skipButtonSelector = By.css(
+			this.screenSize === 'MOBILE'
+				? '.acquire-intent__footer .acquire-intent__skip-site-title'
+				: '.site-title__input-wrapper .acquire-intent__skip-site-title'
+		);
 		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
 	}
 }
