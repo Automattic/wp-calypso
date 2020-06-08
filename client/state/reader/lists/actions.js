@@ -26,6 +26,7 @@ import {
 	READER_LISTS_UNFOLLOW_FAILURE,
 } from 'state/reader/action-types';
 
+import 'state/data-layer/wpcom/read/lists/items';
 import 'state/reader/init';
 
 /**

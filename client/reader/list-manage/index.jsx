@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import { getListByOwnerAndSlug } from 'state/reader/lists/selectors';
+import { getListByOwnerAndSlug, getListItems } from 'state/reader/lists/selectors';
 import FormattedHeader from 'components/formatted-header';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
@@ -21,16 +21,18 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import QueryReaderList from 'components/data/query-reader-list';
+import QueryReaderListItems from 'components/data/query-reader-list-items';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
 
 function ReaderListEdit( props ) {
-	const list = props.list;
+	const { list, listItems } = props;
 	return (
 		<>
-			<QueryReaderList owner={ props.owner } slug={ props.slug } />
+			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
+			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<Main>
 				<FormattedHeader headerText={ `Manage ${ list?.title || props.slug }` } />
 				{ ! list && <Card>Loading...</Card> }
@@ -92,6 +94,15 @@ function ReaderListEdit( props ) {
 						</Card>
 
 						<Card>
+							<FormSectionHeading>Sites in List</FormSectionHeading>
+							<pre>
+								{ ! listItems && 'Loading...' }
+								{ listItems &&
+									listItems.map( ( item ) => JSON.stringify( item, null, 2 ) + '\n\n' ) }
+							</pre>
+						</Card>
+
+						<Card>
 							<FormSectionHeading>DANGER!!</FormSectionHeading>
 							<Button scary primary>
 								DELETE LIST FOREVER
@@ -104,6 +115,11 @@ function ReaderListEdit( props ) {
 	);
 }
 
-export default connect( ( state, ownProps ) => ( {
-	list: getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
-} ) )( ReaderListEdit );
+export default connect( ( state, ownProps ) => {
+	const list = getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug );
+	const listItems = list ? getListItems( state, list.ID ) : undefined;
+	return {
+		list,
+		listItems,
+	};
+} )( ReaderListEdit );

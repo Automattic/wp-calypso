@@ -16,10 +16,12 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/items/index.js', {
 					{
 						method: 'GET',
 						path: `/read/lists/${ action.listOwner }/${ action.listSlug }/items`,
+						apiVersion: '1.2',
 					},
 					action
 				),
-			onSuccess: ( action, { listId, listItems } ) => receiveReaderListItems( listId, listItems ),
+			onSuccess: ( action, apiResponse ) =>
+				receiveReaderListItems( apiResponse.list_ID, apiResponse.items ),
 			onError: ( action, error ) => errorNotice( error ),
 		} ),
 	],
