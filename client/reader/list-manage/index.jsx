@@ -8,7 +8,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
+import Site from 'blocks/site';
+import SitePlaceholder from 'blocks/site/placeholder';
 import { getListByOwnerAndSlug, getListItems } from 'state/reader/lists/selectors';
+import { getSite, hasAllSitesList } from 'state/sites/selectors';
 import FormattedHeader from 'components/formatted-header';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
@@ -26,9 +29,11 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
+import './style.scss';
 
 function ReaderListEdit( props ) {
 	const { list, listItems } = props;
+	const [ selectedSection, setSelectedSection ] = React.useState( 'details' );
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
@@ -40,74 +45,96 @@ function ReaderListEdit( props ) {
 					<>
 						<SectionNav>
 							<NavTabs>
-								<NavItem selected={ true }>Details</NavItem>
-								<NavItem count={ 69 }>Sites</NavItem>
+								<NavItem
+									selected={ selectedSection === 'details' }
+									onClick={ () => setSelectedSection( 'details' ) }
+								>
+									Details
+								</NavItem>
+								<NavItem
+									selected={ selectedSection === 'sites' }
+									count={ listItems?.length }
+									onClick={ () => setSelectedSection( 'sites' ) }
+								>
+									Sites
+								</NavItem>
 							</NavTabs>
 						</SectionNav>
-						<Card>
-							<FormSectionHeading>List Details</FormSectionHeading>
+						{ selectedSection === 'details' && (
+							<>
+								<Card>
+									<FormSectionHeading>List Details</FormSectionHeading>
 
-							<FormFieldset>
-								<FormLabel htmlFor="list-name">Name</FormLabel>
-								<FormTextInput id="list-name" name="list-name" value={ list.title } />
-								<FormSettingExplanation>The name of the list.</FormSettingExplanation>
-							</FormFieldset>
+									<FormFieldset>
+										<FormLabel htmlFor="list-name">Name</FormLabel>
+										<FormTextInput id="list-name" name="list-name" value={ list.title } />
+										<FormSettingExplanation>The name of the list.</FormSettingExplanation>
+									</FormFieldset>
 
-							<FormFieldset>
-								<FormLabel htmlFor="list-slug">Slug</FormLabel>
-								<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
-								<FormSettingExplanation>
-									The slug for the list. This is used to build the URL to the list.
-								</FormSettingExplanation>
-							</FormFieldset>
+									<FormFieldset>
+										<FormLabel htmlFor="list-slug">Slug</FormLabel>
+										<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
+										<FormSettingExplanation>
+											The slug for the list. This is used to build the URL to the list.
+										</FormSettingExplanation>
+									</FormFieldset>
 
-							<FormFieldset>
-								<FormLegend>Visibility</FormLegend>
-								<FormLabel>
-									<FormRadio value="public" checked={ list.is_public } />
-									<span>Everyone can view this list</span>
-								</FormLabel>
+									<FormFieldset>
+										<FormLegend>Visibility</FormLegend>
+										<FormLabel>
+											<FormRadio value="public" checked={ list.is_public } />
+											<span>Everyone can view this list</span>
+										</FormLabel>
 
-								<FormLabel>
-									<FormRadio value="private" checked={ ! list.is_public } />
-									<span>Only I can view this list</span>
-								</FormLabel>
-								<FormSettingExplanation>
-									Don't worry, posts from private sites will only appear to those with access.
-									Adding a private site to a public list will not make posts from that site
-									accessible to everyone.
-								</FormSettingExplanation>
-							</FormFieldset>
+										<FormLabel>
+											<FormRadio value="private" checked={ ! list.is_public } />
+											<span>Only I can view this list</span>
+										</FormLabel>
+										<FormSettingExplanation>
+											Don't worry, posts from private sites will only appear to those with access.
+											Adding a private site to a public list will not make posts from that site
+											accessible to everyone.
+										</FormSettingExplanation>
+									</FormFieldset>
 
-							<FormFieldset>
-								<FormLabel htmlFor="list-description">Description</FormLabel>
-								<FormTextarea
-									name="list-description"
-									id="list-description"
-									placeholder="What's your list about?"
-									value={ list.description }
-								/>
-							</FormFieldset>
-							<FormButtonsBar>
-								<FormButton primary>Save</FormButton>
-							</FormButtonsBar>
-						</Card>
+									<FormFieldset>
+										<FormLabel htmlFor="list-description">Description</FormLabel>
+										<FormTextarea
+											name="list-description"
+											id="list-description"
+											placeholder="What's your list about?"
+											value={ list.description }
+										/>
+									</FormFieldset>
+									<FormButtonsBar>
+										<FormButton primary>Save</FormButton>
+									</FormButtonsBar>
+								</Card>
 
-						<Card>
-							<FormSectionHeading>Sites in List</FormSectionHeading>
-							<pre>
-								{ ! listItems && 'Loading...' }
-								{ listItems &&
-									listItems.map( ( item ) => JSON.stringify( item, null, 2 ) + '\n\n' ) }
-							</pre>
-						</Card>
-
-						<Card>
-							<FormSectionHeading>DANGER!!</FormSectionHeading>
-							<Button scary primary>
-								DELETE LIST FOREVER
-							</Button>
-						</Card>
+								<Card>
+									<FormSectionHeading>DANGER!!</FormSectionHeading>
+									<Button scary primary>
+										DELETE LIST FOREVER
+									</Button>
+								</Card>
+							</>
+						) }
+						{ selectedSection === 'sites' &&
+							props.sites?.map( ( site ) => (
+								<Card className="list-manage__site-card">
+									{ /* Shares same index order as props.listItems */ }
+									{ ! site ? (
+										<SitePlaceholder />
+									) : (
+										<>
+											<Site site={ site } />
+											<Button scary primary>
+												Remove from list
+											</Button>
+										</>
+									) }
+								</Card>
+							) ) }
 					</>
 				) }
 			</Main>
@@ -115,11 +142,15 @@ function ReaderListEdit( props ) {
 	);
 }
 
+const bindStateToGetSiteFn = ( state ) => ( item ) => getSite( state, item.site_ID );
 export default connect( ( state, ownProps ) => {
 	const list = getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug );
 	const listItems = list ? getListItems( state, list.ID ) : undefined;
 	return {
 		list,
 		listItems,
+		getSite: bindStateToGetSiteFn( state ),
+		hasLoadedSites: hasAllSitesList( state ),
+		sites: listItems?.map( bindStateToGetSiteFn( state ) ),
 	};
 } )( ReaderListEdit );
