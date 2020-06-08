@@ -64,7 +64,6 @@ import accept from 'lib/accept';
  * Style dependencies
  */
 import './style.scss';
-import isSiteWPForTeams from '../../../state/selectors/is-site-wpforteams';
 
 /**
  * Module variables
