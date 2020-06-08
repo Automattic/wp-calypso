@@ -152,6 +152,16 @@ export function generateSteps( {
 			},
 		},
 
+		'user-simple': {
+			stepName: 'user-simple',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [ 'bearer_token', 'username' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],

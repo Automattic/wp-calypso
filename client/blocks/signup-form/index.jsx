@@ -966,16 +966,26 @@ class SignupForm extends Component {
 
 		/*
 
-			AB Test: passwordlessSignup
+			AB Test 1: passwordlessSignup
 
 			`<PasswordlessSignupForm />` is for the `onboarding` flow.
 
 			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
-		if (
-			( this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse' ) &&
-			'passwordless' === abtest( 'passwordlessSignup' )
-		) {
+		const isPasswordlessSignup =
+			( 'onboarding' === this.props.flowName || 'test-fse' === this.props.flowName ) &&
+			'passwordless' === abtest( 'passwordlessSignup' );
+
+		/*
+			AB Test 2: passwordlessAfterPlans
+
+			`<PasswordlessSignupForm />` is for the `onboarding-domains-passwordless` flow.
+
+			We are testing whether a having a passwordless account creation after domain and plans, improves signup rate in the `onboarding` flow
+		*/
+		const isPasswordlessAfterPlans = 'onboarding-plans-passwordless' === this.props.flowName;
+
+		if ( isPasswordlessSignup || isPasswordlessAfterPlans ) {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
 				? this.getLoginLink()
 				: localizeUrl( config( 'login_url' ), this.props.locale );
