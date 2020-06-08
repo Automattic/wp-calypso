@@ -5,7 +5,7 @@ DocumentHead
 
 ## Usage
 
-Render the component, passing `title`, `formattedTitle`, `unreadCount`, `link` or `meta`. It does not accept any children, nor does it render any elements to the page.
+Render the component, passing `title`, `skipTitleFormatting`, `unreadCount`, `link` or `meta`. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
 import React from 'react';
@@ -28,7 +28,7 @@ export default function HomeSection() {
 
 ### `title`
 
-The window title will be formatted using the `title` property plus some other internal application state (like the application name, or the number of unread messages). Use `formattedTitle` instead if you want to set the window title without any extra formatting.
+The window title will be formatted using the `title` property plus some other internal application state (like the application name, or the number of unread messages). Pass `skipTitleFormatting=true` if you want to set the window title without any extra formatting.
 
 <table>
 	<tr><th>Type</th><td>String</td></tr>
@@ -36,12 +36,12 @@ The window title will be formatted using the `title` property plus some other in
 	<tr><th>Default</th><td>""</td></tr>
 </table>
 
-### `formattedTitle`
+### `skipTitleFormatting`
 
 <table>
-	<tr><th>Type</th><td>String</td></tr>
+	<tr><th>Type</th><td>Boolean</td></tr>
 	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td>""</td></tr>
+	<tr><th>Default</th><td>false</td></tr>
 </table>
 
 ### `unreadCount`

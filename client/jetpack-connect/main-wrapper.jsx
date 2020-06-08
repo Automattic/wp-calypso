@@ -48,8 +48,8 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		return (
 			<Main className={ classNames( className, wrapperClassName ) }>
 				<DocumentHead
-					title={ pageTitle ? null : translate( 'Jetpack Connect' ) }
-					formattedTitle={ pageTitle }
+					title={ pageTitle || translate( 'Jetpack Connect' ) }
+					skipTitleFormatting={ Boolean( pageTitle ) }
 				/>
 				<div className="jetpack-connect__main-logo">
 					<JetpackHeader
