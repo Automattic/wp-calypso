@@ -27,9 +27,9 @@ import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
 import getSiteScanIsInitial from 'state/selectors/get-site-scan-is-initial';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
-import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
+import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
+import { triggerScanRun } from 'lib/jetpack/trigger-scan-run';
 import { withApplySiteOffset, applySiteOffsetType } from 'components/jetpack/site-offset';
 
 /**

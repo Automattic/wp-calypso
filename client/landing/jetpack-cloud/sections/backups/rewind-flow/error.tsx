@@ -8,7 +8,7 @@ import React, { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
+import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import Gridicon from 'components/gridicon';
 
 interface Props {

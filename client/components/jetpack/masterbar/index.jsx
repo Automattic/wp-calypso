@@ -16,7 +16,7 @@ import JetpackLogo from 'components/jetpack-logo';
 import Masterbar from 'layout/masterbar/masterbar';
 import ProfileDropdown from 'components/jetpack/profile-dropdown';
 import { useBreakpoint } from '@automattic/viewport-react';
-import useTrackCallback from 'landing/jetpack-cloud/lib/use-track-callback';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 
 /**
  * Style dependencies
