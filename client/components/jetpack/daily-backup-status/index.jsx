@@ -31,7 +31,7 @@ import BackupChanges from './backup-changes';
  * Style dependencies
  */
 import './style.scss';
-import contactSupportUrl from 'lib/jetpack-cloud/contact-support-url';
+import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import missingCredentialsIcon from './missing-credentials.svg';
 import cloudErrorIcon from './icons/cloud-error.svg';
 import cloudWarningIcon from './icons/cloud-warning.svg';

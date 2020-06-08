@@ -12,7 +12,7 @@ import { Button } from '@automattic/components';
 import Gravatar from 'components/gravatar';
 import userUtilities from 'lib/user/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
-import useTrackCallback from 'lib/jetpack-cloud/use-track-callback';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 
 /**
  * Style dependencies

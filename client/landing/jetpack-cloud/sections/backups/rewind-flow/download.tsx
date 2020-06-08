@@ -21,7 +21,7 @@ import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import useTrackCallback from 'lib/jetpack-cloud/use-track-callback';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 
 interface Props {
 	backupDisplayDate: string;

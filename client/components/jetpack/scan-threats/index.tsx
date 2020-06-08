@@ -16,9 +16,9 @@ import ThreatDialog from 'components/jetpack/threat-dialog';
 import ThreatItem from 'components/jetpack/threat-item';
 import { FixableThreat, Threat, ThreatAction } from 'components/jetpack/threat-item/types';
 import { recordTracksEvent } from 'state/analytics/actions';
-import contactSupportUrl from 'lib/jetpack-cloud/contact-support-url';
-import { useThreats } from 'lib/jetpack-cloud/use-threats';
-import { triggerScanRun } from 'lib/jetpack-cloud/trigger-scan-run';
+import contactSupportUrl from 'lib/jetpack/contact-support-url';
+import { useThreats } from 'lib/jetpack/use-threats';
+import { triggerScanRun } from 'lib/jetpack/trigger-scan-run';
 
 /**
  * Style dependencies

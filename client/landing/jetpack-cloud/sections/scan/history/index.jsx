@@ -21,9 +21,9 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import isRequestingJetpackScanHistory from 'state/selectors/is-requesting-jetpack-scan-history';
 import getSiteScanHistory from 'state/selectors/get-site-scan-history';
-import contactSupportUrl from 'lib/jetpack-cloud/contact-support-url';
+import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import { withLocalizedMoment } from 'components/localized-moment';
-import { useThreats } from 'lib/jetpack-cloud/use-threats';
+import { useThreats } from 'lib/jetpack/use-threats';
 
 /**
  * Style dependencies

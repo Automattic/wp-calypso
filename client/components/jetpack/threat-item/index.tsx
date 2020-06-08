@@ -17,7 +17,7 @@ import ThreatItemHeader from 'components/jetpack/threat-item-header';
 import ThreatItemSubheader from 'components/jetpack/threat-item-subheader';
 import { Threat } from 'components/jetpack/threat-item/types';
 import { getThreatFix } from 'components/jetpack/threat-item/utils';
-import useTrackCallback from 'lib/jetpack-cloud/use-track-callback';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
