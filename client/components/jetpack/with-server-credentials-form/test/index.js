@@ -14,7 +14,7 @@ import * as actions from 'state/jetpack/credentials/actions';
 /**
  * Internal dependencies
  */
-import withServerCredentialsForm from 'landing/jetpack-cloud/components/with-server-credentials-form';
+import withServerCredentialsForm from 'components/jetpack/with-server-credentials-form';
 
 /**
  * Mocks
