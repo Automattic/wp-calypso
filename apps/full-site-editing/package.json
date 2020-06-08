@@ -82,9 +82,9 @@
 		"prepare": "check-npm-client && yarn run sync:newspack-blocks --nodemodules"
 	},
 	"dependencies": {
-		"@automattic/format-currency": "^1.0.0-alpha.0",
-		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "*",
+		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@wordpress/api-fetch": "*",
 		"@wordpress/block-editor": "*",
 		"@wordpress/blocks": "*",
@@ -109,5 +109,8 @@
 		"lodash": "*",
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0"
+	},
+	"devDependencies": {
+		"@wordpress/eslint-plugin": "^6.0.0"
 	}
 }
