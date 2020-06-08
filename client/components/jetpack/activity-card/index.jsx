@@ -26,7 +26,7 @@ import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import QueryRewindState from 'components/data/query-rewind-state';
 import StreamsMediaPreview from './activity-card-streams-media-preview';
-import { isSuccessfulRealtimeBackup } from 'my-sites/backup/utils';
+import { isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**

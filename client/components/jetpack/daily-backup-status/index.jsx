@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 import { withLocalizedMoment } from 'components/localized-moment';
 import Button from 'components/forms/form-button';
-import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'my-sites/backup/utils';
+import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
 import {
 	backupDownloadPath,
 	backupRestorePath,

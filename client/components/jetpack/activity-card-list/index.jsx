@@ -10,7 +10,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isActivityBackup } from 'my-sites/backup/utils';
+import { isActivityBackup } from 'lib/jetpack/backup-utils';
 import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
