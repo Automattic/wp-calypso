@@ -358,7 +358,7 @@ function premium_content_paywall_initialize() {
 function premium_content_subscription_service() {
 	$interface = apply_filters( 'earn_premium_content_subscription_service', null );
 	if ( ! $interface instanceof Subscription_Service ) {
-		_doing_it_wrong( __FUNCTION__, 'No Subscription_Service registered for the earn_premium_content_subscription_service filter', 'premium-content' );
+		_doing_it_wrong( __FUNCTION__, 'No Subscription_Service registered for the earn_premium_content_subscription_service filter', 'full-site-editing' );
 	}
 	return $interface;
 }

@@ -62,14 +62,14 @@ function Edit( { selectBlock } ) {
 									[
 										'premium-content/button',
 										{
-											text: __( 'Subscribe', 'premium-content' ),
+											text: __( 'Subscribe', 'full-site-editing' ),
 											type: 'subscribe',
 										},
 									],
 									[
 										'premium-content/button',
 										{
-											text: __( 'Log In', 'premium-content' ),
+											text: __( 'Log In', 'full-site-editing' ),
 											type: 'login',
 										},
 									],

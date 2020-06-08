@@ -29,7 +29,7 @@ const settings = {
 			type: 'string',
 			source: 'html',
 			selector: 'a',
-			default: __( 'Subscribe', 'premium-content' ),
+			default: __( 'Subscribe', 'full-site-editing' ),
 		},
 		type: {
 			type: 'string',
@@ -41,9 +41,9 @@ const settings = {
 	},
 	icon,
 	/* translators: block name */
-	title: __( 'Premium Content Button', 'premium-content' ),
+	title: __( 'Premium Content Button', 'full-site-editing' ),
 	/* translators: block description */
-	description: __( 'Premium Content Button.', 'premium-content' ),
+	description: __( 'Premium Content Button.', 'full-site-editing' ),
 	parent: [ 'premium-content/logged-out-view', 'core/buttons' ],
 	supports: {
 		align: true,
@@ -54,8 +54,8 @@ const settings = {
 		__experimentalColor: { gradients: true },
 	},
 	styles: [
-		{ name: 'fill', label: __( 'Fill', 'premium-content' ), isDefault: true },
-		{ name: 'outline', label: __( 'Outline', 'premium-content' ) },
+		{ name: 'fill', label: __( 'Fill', 'full-site-editing' ), isDefault: true },
+		{ name: 'outline', label: __( 'Outline', 'full-site-editing' ) },
 	],
 	edit,
 	save,

@@ -23,10 +23,10 @@ function BorderPanel( { borderRadius = '', setAttributes } ) {
 		[ setAttributes ]
 	);
 	return (
-		<PanelBody title={ __( 'Border settings', 'premium-content' ) }>
+		<PanelBody title={ __( 'Border settings', 'full-site-editing' ) }>
 			<RangeControl
 				value={ borderRadius }
-				label={ __( 'Border radius', 'premium-content' ) }
+				label={ __( 'Border radius', 'full-site-editing' ) }
 				min={ MIN_BORDER_RADIUS_VALUE }
 				max={ MAX_BORDER_RADIUS_VALUE }
 				initialPosition={ INITIAL_BORDER_RADIUS_POSITION }
@@ -38,8 +38,8 @@ function BorderPanel( { borderRadius = '', setAttributes } ) {
 }
 
 const BUTTON_TYPES = {
-	subscribe: __( 'Subscribe', 'premium-content' ),
-	login: __( 'Log in', 'premium-content' ),
+	subscribe: __( 'Subscribe', 'full-site-editing' ),
+	login: __( 'Log in', 'full-site-editing' ),
 };
 
 function ButtonEdit( { attributes, setAttributes, className } ) {
@@ -49,7 +49,7 @@ function ButtonEdit( { attributes, setAttributes, className } ) {
 		<>
 			<RichText
 				tagName={ Block.div }
-				placeholder={ __( 'Add text…', 'premium-content' ) }
+				placeholder={ __( 'Add text…', 'full-site-editing' ) }
 				value={ text }
 				onChange={ ( value ) => setAttributes( { text: value } ) }
 				withoutInteractiveFormatting
@@ -61,10 +61,11 @@ function ButtonEdit( { attributes, setAttributes, className } ) {
 				} }
 			/>
 			<InspectorControls>
-				<PanelBody title={ __( 'Button Type', 'premium-content' ) }>
-					<ButtonGroup aria-label={ __( 'Button Type', 'premium-content' ) }>
+				<PanelBody title={ __( 'Button Type', 'full-site-editing' ) }>
+					<ButtonGroup aria-label={ __( 'Button Type', 'full-site-editing' ) }>
 						{ Object.entries( BUTTON_TYPES ).map( ( [ buttonType, buttonText ] ) => (
 							<Button
+								key={ buttonType }
 								isLarge
 								isPrimary={ type === buttonType }
 								aria-pressed={ type === buttonType }
