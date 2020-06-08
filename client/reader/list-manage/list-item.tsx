@@ -8,6 +8,7 @@ import React from 'react';
  */
 import { Card } from '@automattic/components';
 import { ItemType } from './types';
+import SiteItem from './site-item';
 
 function renderPlaceholderContent( item: ItemType ) {
 	return <pre>{ JSON.stringify( item, null, 2 ) }</pre>;
@@ -18,7 +19,7 @@ export default function ListItem( props: { item: ItemType } ) {
 	return (
 		<Card className="list-manage__site-card">
 			{ item.feed_ID !== null && renderPlaceholderContent( item ) }
-			{ item.site_ID !== null && renderPlaceholderContent( item ) }
+			{ item.site_ID !== null && <SiteItem item={ item } /> }
 			{ item.tag_ID !== null && renderPlaceholderContent( item ) }
 		</Card>
 	);
