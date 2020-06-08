@@ -184,6 +184,7 @@ function getPlanFeatures( plan, translate, hasDomainsInCart ) {
 		return [
 			! hasDomainsInCart && translate( 'Free domain for one year' ),
 			translate( 'Unlimited access to our library of Premium Themes' ),
+			translate( 'Subscriber-only content and simple payment buttons' ),
 			translate( 'Track your stats with Google Analytics' ),
 		];
 	} else if (
@@ -195,6 +196,7 @@ function getPlanFeatures( plan, translate, hasDomainsInCart ) {
 			translate( 'Install custom plugins and themes' ),
 			translate( 'Drive traffic to your site with our advanced SEO tools' ),
 			translate( 'Track your stats with Google Analytics' ),
+			translate( 'Real-time backups and activity logs' ),
 		];
 	} else if (
 		'ecommerce-bundle' === plan.wpcom_meta?.product_slug ||
@@ -205,8 +207,8 @@ function getPlanFeatures( plan, translate, hasDomainsInCart ) {
 			translate( 'Install custom plugins and themes' ),
 			translate( 'Accept payments in 60+ countries' ),
 			translate( 'Integrations with top shipping carriers' ),
-			translate( 'Unlimited products or services' ),
-			translate( 'eCommerce marketing tools' ),
+			translate( 'Unlimited products or services for your online store' ),
+			translate( 'eCommerce marketing tools for emails and social networks' ),
 		];
 	}
 	return [];
