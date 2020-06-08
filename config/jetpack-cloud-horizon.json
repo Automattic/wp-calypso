@@ -30,8 +30,7 @@
 		"jetpack-cloud": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-auth": false,
-		"scan": true,
-		"backups": true
+		"scan": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud"
