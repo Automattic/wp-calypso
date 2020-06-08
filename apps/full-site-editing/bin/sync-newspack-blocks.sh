@@ -125,7 +125,7 @@ cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 
 # Fix the text domain
-npx eslint . --fix
+npx eslint . --fix > /dev/null 2>&1
 
 if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json
