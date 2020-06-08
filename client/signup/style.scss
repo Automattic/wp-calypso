@@ -21,6 +21,10 @@ body.is-section-signup {
 	&.is-p2-signup {
 		background: #ffffff;
 		color: #00101c;
+
+		.layout__content {
+			padding: 0;
+		}
 	}
 
 	// Adjust the padding as we no longer
