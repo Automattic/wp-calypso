@@ -209,8 +209,8 @@ describe( 'CompositeCheckout', () => {
 		} );
 
 		MyCheckout = ( { cartChanges, additionalProps } ) => (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-				<ReduxProvider store={ store }>
+			<ReduxProvider store={ store }>
+				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 					<CompositeCheckout
 						siteSlug={ 'foo.com' }
 						setCart={ mockSetCartEndpoint }
@@ -221,8 +221,8 @@ describe( 'CompositeCheckout', () => {
 						overrideCountryList={ countryList }
 						{ ...additionalProps }
 					/>
-				</ReduxProvider>
-			</StripeHookProvider>
+				</StripeHookProvider>
+			</ReduxProvider>
 		);
 	} );
 
