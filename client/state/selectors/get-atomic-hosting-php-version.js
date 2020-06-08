@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/hosting/init';
+
+/**
  * Returns the PHP version used for given siteId
  *
  * @param  {object}  state   Global state tree

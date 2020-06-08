@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { keyedReducer, combineReducers } from 'state/utils';
+import { combineReducers, keyedReducer, withStorageKey } from 'state/utils';
 import {
 	HOSTING_PHP_VERSION_SET,
 	HOSTING_SFTP_USER_UPDATE,
@@ -40,4 +40,5 @@ const atomicHostingReducer = combineReducers( {
 	sftpUsers,
 } );
 
-export default keyedReducer( 'siteId', atomicHostingReducer );
+const reducer = keyedReducer( 'siteId', atomicHostingReducer );
+export default withStorageKey( 'atomicHosting', reducer );
