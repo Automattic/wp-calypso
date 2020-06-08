@@ -75,13 +75,13 @@
 		"i18n/translation-scanner": true,
 		"ive/use-external-assignment": true,
 		"jetpack/api-cache": true,
-		"jetpack/advanced-features": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connect/woocommerce": true,
+		"jetpack/features-section": false,
 		"jetpack/happychat": true,
 		"jetpack/search-product": true,
 		"jetpack/features-section": false,
@@ -223,9 +223,9 @@
 		"wpcom-user-bootstrap": false
 	},
 	"sections": {
-		"jetpack-cloud": false,
+		"jetpack-cloud": true,
 		"scan": true,
 		"backups": true,
-		"jetpack-cloud-settings": false
+		"jetpack-cloud-settings": true
 	}
 }

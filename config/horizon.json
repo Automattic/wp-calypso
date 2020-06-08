@@ -51,6 +51,7 @@
 		"jetpack/api-cache": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
+		"jetpack/features-section": false,
 		"jetpack/happychat": true,
 		"jetpack/features-section": false,
 		"jetpack/scan-product": true,
@@ -142,5 +143,11 @@
 	"boom_analytics_key": "horizon",
 	"google_analytics_key": "UA-10673494-20",
 	"google_recaptcha_site_key": "6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn",
-	"hotjar_enabled": true
+	"hotjar_enabled": true,
+	"sections": {
+		"jetpack-cloud": true,
+		"scan": true,
+		"backups": true,
+		"jetpack-cloud-settings": true
+	}
 }

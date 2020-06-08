@@ -64,6 +64,7 @@
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/woocommerce": true,
+		"jetpack/features-section": false,
 		"jetpack/happychat": true,
 		"jetpack/features-section": false,
 		"jetpack/scan-product": true,

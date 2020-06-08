@@ -382,8 +382,15 @@ export class MySitesSidebar extends Component {
 				title={ translate( 'Jetpack' ) }
 			>
 				<SidebarItem
-					// expandSection={ this.expandBackupSection }
-					label={ translate( 'Latest backups', {
+					label={ translate( 'Activity Log', {
+						comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
+					} ) }
+					link={ backupActivityPath( site.slug ) }
+					onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Activity Log' ) }
+					selected={ itemLinkMatches( backupActivityPath(), this.props.path ) }
+				/>
+				<SidebarItem
+					label={ translate( 'Backup', {
 						comment: 'Jetpack Cloud / Backup sidebar navigation item',
 					} ) }
 					link={ backupMainPath( site.slug ) }
@@ -394,17 +401,7 @@ export class MySitesSidebar extends Component {
 					}
 				/>
 				<SidebarItem
-					// expandSection={ this.expandBackupSection }
-					label={ translate( 'Activity log', {
-						comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
-					} ) }
-					link={ backupActivityPath( site.slug ) }
-					onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Activity Log' ) }
-					selected={ itemLinkMatches( backupActivityPath(), this.props.path ) }
-				/>
-				<SidebarItem
-					// expandSection={ this.expandScanSection }
-					label={ translate( 'Scanner', {
+					label={ translate( 'Scan', {
 						comment: 'Jetpack Cloud / Scanner sidebar navigation item',
 					} ) }
 					link={ site?.slug ? `/scan/${ site.slug }` : '/scan' }
@@ -414,15 +411,6 @@ export class MySitesSidebar extends Component {
 						! itemLinkMatches( '/scan/history', this.props.path )
 					}
 				></SidebarItem>
-				<SidebarItem
-					// expandSection={ this.expandScanSection }
-					label={ translate( 'History', {
-						comment: 'Jetpack Cloud / Scan History sidebar navigation item',
-					} ) }
-					link={ site?.slug ? `/scan/history/${ site.slug }` : '/scan/history' }
-					onNavigate={ this.onNavigate( 'Jetpack Cloud Scan / History' ) }
-					selected={ itemLinkMatches( '/scan/history', this.props.path ) }
-				/>
 			</ExpandableSidebarMenu>
 		);
 	}
@@ -893,6 +881,8 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
+				{ isEnabled( 'jetpack/features-section' ) && this.jetpack() }
+
 				<QuerySiteChecklist siteId={ this.props.siteId } />
 
 				{ isEnabled( 'jetpack/features-section' ) && (
@@ -924,8 +914,6 @@ export class MySitesSidebar extends Component {
 				) : null }
 
 				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams && this.customize() }
-
-				{ isEnabled( 'jetpack/advanced-features' ) && this.jetpack() }
 
 				<QueryRewindState siteId={ this.props.siteId } />
 				<QueryScanState siteId={ this.props.siteId } />
