@@ -1,10 +1,21 @@
-/** @format */
 /**
  * External dependencies
  */
 
-import i18n from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 import interpolateComponents from 'interpolate-components';
+
+const TRANSLATION_PLACEHOLDER = translate( "I don't understand" );
+
+function encodeUntranslatedString( originalString, placeholder = TRANSLATION_PLACEHOLDER ) {
+	let output = placeholder;
+
+	while ( output.length < originalString.length ) {
+		output += ' ' + placeholder;
+	}
+
+	return output.substr( 0, originalString.length );
+}
 
 export function enableLanguageEmpatyhMode() {
 	// wrap translations from i18n
@@ -26,6 +37,6 @@ export function enableLanguageEmpatyhMode() {
 
 			return translation;
 		}
-		return locale + '-untranslated';
+		return '👉 ' + encodeUntranslatedString( options.original );
 	} );
 }
