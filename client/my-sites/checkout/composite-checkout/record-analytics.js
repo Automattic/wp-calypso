@@ -22,6 +22,16 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		debug( 'heard checkout event', action );
 		switch ( action.type ) {
 			case 'CHECKOUT_LOADED':
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_page_view', {
+						saved_cards: [],
+						is_renewal: action.payload?.is_renewal,
+						apple_pay_available: null,
+						product_slug: action.payload?.product_slug,
+						is_composite: true,
+					} )
+				);
+
 				return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
 
 			case 'PAYMENT_COMPLETE': {

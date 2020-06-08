@@ -138,11 +138,6 @@ export default function CompositeCheckout( {
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
 
-	useEffect( () => {
-		debug( 'composite checkout has loaded' );
-		recordEvent( { type: 'CHECKOUT_LOADED' } );
-	}, [ recordEvent ] );
-
 	const showErrorMessage = useCallback(
 		( error ) => {
 			debug( 'error', error );
@@ -500,6 +495,19 @@ export default function CompositeCheckout( {
 		} ),
 		[ couponItem, getThankYouUrl ]
 	);
+
+	useEffect( () => {
+		debug( 'composite checkout has loaded' );
+		recordEvent( {
+			type: 'CHECKOUT_LOADED',
+			payload: {
+				saved_cards: 0, // TODO: get this
+				apple_pay_available: isApplePayAvailable,
+				product_slug: product,
+				is_renewal: hasRenewalItem( responseCart ),
+			},
+		} );
+	}, [ recordEvent ] );
 
 	return (
 		<React.Fragment>
