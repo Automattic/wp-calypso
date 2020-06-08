@@ -63,12 +63,15 @@ function renderInput( name, onChange, values, type = 'text' ) {
 
 function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
 	// Mutate action creators to make assertions on them
+	/* eslint-disable no-import-assign */
 	actions.updateCredentials = jest.fn( () => ( {
 		type: 'update-credentials',
 	} ) );
+	// eslint-disable-line
 	actions.deleteCredentials = jest.fn( () => ( {
 		type: 'delete-credentials',
 	} ) );
+	/* eslint-enable no-import-assign */
 
 	// We create a simple form to test the utilities and data provided by
 	// the withServerCredentials HOC.
