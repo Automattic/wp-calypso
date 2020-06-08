@@ -22,31 +22,31 @@ const Edit = () => {
 	return (
 		<div className="donations__container">
 			<Button className={ isActive( 'one-time' ) } onClick={ () => setActiveTab( 'one-time' ) }>
-				{ __( 'One-Time' ) }
+				{ __( 'One-Time', 'full-site-editing' ) }
 			</Button>
 			<Button className={ isActive( 'monthly' ) } onClick={ () => setActiveTab( 'monthly' ) }>
-				{ __( 'Monthly' ) }
+				{ __( 'Monthly', 'full-site-editing' ) }
 			</Button>
 			<Button className={ isActive( 'annually' ) } onClick={ () => setActiveTab( 'annually' ) }>
-				{ __( 'Annually' ) }
+				{ __( 'Annually', 'full-site-editing' ) }
 			</Button>
 			<div
 				id="donations__tab-one-time"
 				className={ classNames( 'donations__tab', { active: isActive( 'one-time' ) } ) }
 			>
-				{ __( 'One time' ) }
+				{ __( 'One time', 'full-site-editing' ) }
 			</div>
 			<div
 				id="donations__tab-monthly"
 				className={ classNames( 'donations__tab', { active: isActive( 'monthly' ) } ) }
 			>
-				{ __( 'Monthly' ) }
+				{ __( 'Monthly', 'full-site-editing' ) }
 			</div>
 			<div
 				id="donations__tab-annually"
 				className={ classNames( 'donations__tab', { active: isActive( 'annually' ) } ) }
 			>
-				{ __( 'Annually' ) }
+				{ __( 'Annually', 'full-site-editing' ) }
 			</div>
 		</div>
 	);

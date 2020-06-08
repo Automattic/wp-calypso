@@ -34,7 +34,7 @@ const addPaidBlockFlags = async () => {
 		const paidFlag = _x(
 			'paid',
 			'Short label appearing near a block requiring a paid plan',
-			'premium-content'
+			'full-site-editing'
 		);
 
 		unregisterBlockType( 'a8c/donations' );
@@ -47,8 +47,8 @@ const addPaidBlockFlags = async () => {
 
 function registerDonationsBlock() {
 	registerBlockType( 'a8c/donations', {
-		title: __( 'Donations (a8c-only)', 'donations' ),
-		description: __( 'Accept donations on your site.', 'donations' ),
+		title: __( 'Donations (a8c-only)', 'full-site-editing' ),
+		description: __( 'Accept donations on your site.', 'full-site-editing' ),
 		category: 'common',
 		icon: (
 			<svg
@@ -84,9 +84,9 @@ function registerDonationsBlock() {
 		keywords: [
 			'donations',
 			/* translators: block keyword */
-			__( 'premium', 'donations' ),
+			__( 'premium', 'full-site-editing' ),
 			/* translators: block keyword */
-			__( 'paywall', 'donations' ),
+			__( 'paywall', 'full-site-editing' ),
 		],
 		edit,
 		save() {
