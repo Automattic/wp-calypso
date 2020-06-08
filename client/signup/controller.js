@@ -112,6 +112,15 @@ export default {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
 						window.location.replace( window.location.origin + '/new' + window.location.search );
+					} else if ( 'variantPasswordless' === abtest( 'passwordlessAfterPlans', countryCode ) ) {
+						const stepName = getStepName( context.params );
+						const stepSectionName = getStepSectionName( context.params );
+						const urlWithoutLocale = getStepUrl(
+							'onboarding-plans-passwordless',
+							stepName,
+							stepSectionName
+						);
+						window.location = urlWithoutLocale;
 					} else {
 						removeWhiteBackground();
 						next();

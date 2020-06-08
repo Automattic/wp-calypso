@@ -125,6 +125,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'onboarding-plans-passwordless': {
+			steps: [ 'domains', 'plans', 'user' ],
+			destination: getSignupDestination,
+			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pbxNRc-m0',
+			lastModified: '2020-03-03',
+			showRecaptcha: true,
+		},
+
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,
