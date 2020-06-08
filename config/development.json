@@ -220,11 +220,5 @@
 		"woocommerce/onboarding-oauth": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
-	},
-	"sections": {
-		"jetpack-cloud": true,
-		"scan": true,
-		"backups": true,
-		"jetpack-cloud-settings": true
 	}
 }
