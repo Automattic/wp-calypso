@@ -13,7 +13,7 @@ import { getHttpData } from 'state/data-layer/http-data';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
 import { setFilter } from 'state/activity-log/actions';
-import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
+import ActivityCardList from 'components/jetpack/activity-card-list';
 import DocumentHead from 'components/data/document-head';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Main from 'components/main';
