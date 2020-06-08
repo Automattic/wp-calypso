@@ -65,6 +65,7 @@
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
+		"jetpack/features-section": false,
 		"jetpack/scan-product": true,
 		"jetpack/search-product": true,
 		"jitms": true,
