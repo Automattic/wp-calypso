@@ -96,7 +96,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 			currentDomain={ currentDomain }
 			onDomainSelect={ onDomainSelect }
 			domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
-			analyticsUiAlgo={ domainPickerMode === 'modal' ? 'popover_popover' : 'domain_popover' }
+			analyticsUiAlgo={ domainPickerMode === 'modal' ? 'domain_modal' : 'domain_popover' }
 		></DomainPicker>
 	);
 
