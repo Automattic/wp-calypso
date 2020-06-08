@@ -449,7 +449,7 @@ export class LanguagePickerModal extends PureComponent {
 		);
 	}
 
-	renderEmapthModeCheckbox() {
+	renderEmpathyModeCheckbox() {
 		const { translate } = this.props;
 
 		return (
@@ -506,7 +506,7 @@ export class LanguagePickerModal extends PureComponent {
 				</SectionNav>
 				{ this.renderLanguageList() }
 				{ this.renderSuggestedLanguages() }
-				{ this.renderEmapthModeCheckbox() }
+				{ this.renderEmpathyModeCheckbox() }
 			</Dialog>
 		);
 	}
