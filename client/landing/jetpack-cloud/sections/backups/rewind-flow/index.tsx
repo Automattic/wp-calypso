@@ -8,7 +8,7 @@ import React, { FunctionComponent, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import { applySiteOffsetType, useApplySiteOffset } from 'components/jetpack-cloud/site-offset';
+import { applySiteOffsetType, useApplySiteOffset } from 'components/jetpack/site-offset';
 import { Card } from '@automattic/components';
 import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getRequestActivityId, requestActivity } from 'state/data-getters';

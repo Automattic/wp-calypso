@@ -12,9 +12,9 @@ import { flowRight as compose } from 'lodash';
  */
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
-import SecurityIcon from 'components/jetpack-cloud/security-icon';
-import ScanPlaceholder from 'components/jetpack-cloud/scan-placeholder';
-import ScanThreats from 'components/jetpack-cloud/scan-threats';
+import SecurityIcon from 'components/jetpack/security-icon';
+import ScanPlaceholder from 'components/jetpack/scan-placeholder';
+import ScanThreats from 'components/jetpack/scan-threats';
 import { Scan, Site } from 'landing/jetpack-cloud/sections/scan/types';
 import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
@@ -30,7 +30,7 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
-import { withApplySiteOffset, applySiteOffsetType } from 'components/jetpack-cloud/site-offset';
+import { withApplySiteOffset, applySiteOffsetType } from 'components/jetpack/site-offset';
 
 /**
  * Style dependencies

@@ -27,7 +27,7 @@ class MySitesNavigation extends React.Component {
 		};
 
 		const asyncSidebar = config.isEnabled( 'jetpack-cloud' ) ? (
-			<AsyncLoad require="components/jetpack-cloud/sidebar" { ...asyncProps } />
+			<AsyncLoad require="components/jetpack/sidebar" { ...asyncProps } />
 		) : (
 			<AsyncLoad require="my-sites/sidebar" { ...asyncProps } />
 		);
