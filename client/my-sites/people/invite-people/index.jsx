@@ -9,6 +9,7 @@ import debugModule from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -100,6 +101,7 @@ class InvitePeople extends React.Component {
 			success: [],
 			activeInviteLink: false,
 			showCopyConfirmation: false,
+			isGeneratingInviteLinks: false,
 		};
 	};
 
@@ -453,6 +455,9 @@ class InvitePeople extends React.Component {
 	};
 
 	generateInviteLinks = () => {
+		this.setState( {
+			isGeneratingInviteLinks: true,
+		} );
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
 
@@ -582,8 +587,12 @@ class InvitePeople extends React.Component {
 
 	renderInviteLinkGenerateButton = () => {
 		const { translate } = this.props;
+		const classNames = classnames( 'invite-people__link-generate', {
+			'is-busy': this.state.isGeneratingInviteLinks,
+		} );
+
 		return (
-			<Button onClick={ this.generateInviteLinks } className="invite-people__link-generate">
+			<Button onClick={ this.generateInviteLinks } className={ classNames }>
 				{ translate( 'Generate new link' ) }
 			</Button>
 		);
