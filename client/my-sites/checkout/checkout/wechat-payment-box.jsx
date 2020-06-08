@@ -28,7 +28,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { Button } from '@automattic/components';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import CheckoutTerms from './checkout-terms';
 
@@ -175,7 +175,7 @@ export class WechatPaymentBox extends Component {
 
 					<CheckoutTerms cart={ cart } />
 
-					<DomainRegistrationRefundPolicy cart={ cart } />
+					<DomainRefundPolicy cart={ cart } />
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
