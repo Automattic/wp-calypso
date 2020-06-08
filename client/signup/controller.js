@@ -59,7 +59,7 @@ const removeWhiteBackground = function () {
 
 const addP2SignupClassName = () => {
 	if ( document.body.className.indexOf( 'is-p2-signup' ) === -1 ) {
-		document.body.className += ' is-p2-signup';
+		document.body.className += 'is-p2-signup';
 	}
 };
 
@@ -78,7 +78,7 @@ export default {
 		) {
 			removeWhiteBackground();
 			next();
-		} else if ( context.pathname.indexOf( 'p2' ) ) {
+		} else if ( context.pathname.indexOf( 'p2' ) >= 0 ) {
 			removeWhiteBackground();
 			addP2SignupClassName();
 
