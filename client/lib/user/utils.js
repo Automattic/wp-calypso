@@ -8,18 +8,12 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import userModule from 'lib/user';
-import { once } from 'lib/memoize-last';
+import user from 'lib/user';
 
 /**
  * Module Variables
  */
 const debug = debugModule( 'calypso:user:utilities' );
-
-// Delay initialisation of `user`, to avoid circular dependency issues.
-// `user` becomes a function that runs `userModule()` when it's first invoked,
-// saves the return value, and simply returns it on subsequent calls.
-const user = once( () => userModule() );
 
 const userUtils = {
 	getLogoutUrl( redirect ) {
