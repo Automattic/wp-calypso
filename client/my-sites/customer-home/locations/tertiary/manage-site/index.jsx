@@ -40,7 +40,7 @@ const ManageSite = ( { cards } ) => {
 
 	return (
 		<>
-			<h2 className="manage-site__heading customer-home__section-heading wp-brand-font">
+			<h2 className="manage-site__heading customer-home__section-heading">
 				{ translate( 'Manage your site' ) }
 			</h2>
 			{ cards.map(
