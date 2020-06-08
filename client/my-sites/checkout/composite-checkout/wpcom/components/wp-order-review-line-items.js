@@ -85,7 +85,7 @@ function WPLineItem( {
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta>
-					<LineItemSublabelAndPrice item={ item } isRenewal={ isRenewal } />
+					<LineItemSublabelAndPrice item={ item } />
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
 					) }
@@ -433,15 +433,12 @@ function shouldLineItemBeShownWhenStepInactive( item ) {
 	return ! itemTypesToIgnore.includes( item.type );
 }
 
-function LineItemSublabelAndPrice( { item, isRenewal } ) {
+function LineItemSublabelAndPrice( { item } ) {
 	const translate = useTranslate();
 	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
 	const isDomainMap = item.type === 'domain_map';
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
 
-	if ( isRenewal ) {
-		return item.sublabel || null;
-	}
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period ) {
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
 			args: {
