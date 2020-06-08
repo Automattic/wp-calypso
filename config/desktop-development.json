@@ -49,7 +49,6 @@
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connection-rebranding": true,
-		"jetpack/features-section": false,
 		"jetpack/happychat": true,
 		"jetpack/scan-product": true,
 		"jetpack/features-section": false,

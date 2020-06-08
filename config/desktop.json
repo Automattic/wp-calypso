@@ -40,7 +40,6 @@
 		"ive/use-external-assignment": false,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
-		"jetpack/features-section": false,
 		"jetpack/personalPlan": true,
 		"jetpack/scan-product": true,
 		"jetpack/features-section": false,

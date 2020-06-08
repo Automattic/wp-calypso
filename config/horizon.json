@@ -51,7 +51,6 @@
 		"jetpack/api-cache": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
-		"jetpack/features-section": false,
 		"jetpack/happychat": true,
 		"jetpack/features-section": false,
 		"jetpack/scan-product": true,
