@@ -29,6 +29,8 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
@@ -447,6 +449,19 @@ export class LanguagePickerModal extends PureComponent {
 		);
 	}
 
+	renderEmapthModeCheckbox() {
+		const { translate } = this.props;
+
+		return (
+			<div className="language-picker__modal-empathy-mode">
+				<FormLabel>
+					<FormCheckbox />
+					<span>{ translate( 'Emapthy mode' ) }</span>
+				</FormLabel>
+			</div>
+		);
+	}
+
 	render() {
 		const { isVisible, translate } = this.props;
 		const { filter, search, isSearchOpen } = this.state;
@@ -491,6 +506,7 @@ export class LanguagePickerModal extends PureComponent {
 				</SectionNav>
 				{ this.renderLanguageList() }
 				{ this.renderSuggestedLanguages() }
+				{ this.renderEmapthModeCheckbox() }
 			</Dialog>
 		);
 	}

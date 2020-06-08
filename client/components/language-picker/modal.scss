@@ -145,3 +145,17 @@
 		margin-left: 16px;
 	}
 }
+
+.language-picker__modal-empathy-mode {
+	display: flex;
+	padding: 8px 16px;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		justify-content: flex-end;
+	}
+
+	.form-label {
+		margin: 0;
+		padding: 4px 8px;
+	}
+}
