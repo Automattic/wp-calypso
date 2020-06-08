@@ -11,7 +11,7 @@ import moment from 'moment';
  */
 import Badge from 'components/badge';
 import { Threat } from 'components/jetpack/threat-item/types';
-import { getThreatType, getThreatVulnerability } from 'components/jetpackt-item/utils';
+import { getThreatType, getThreatVulnerability } from 'components/jetpack/threat-item/utils';
 
 /**
  * Style dependencies
