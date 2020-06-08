@@ -18,7 +18,7 @@ import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 } from 'state/action-types';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import { isFetchingAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
@@ -32,8 +32,6 @@ import {
 	createPathWithoutImmediateLoginInformation,
 } from 'state/immediate-login/utils';
 import { saveImmediateLoginInformation } from 'state/immediate-login/actions';
-
-const user = userFactory();
 
 /**
  * Module variables
@@ -165,7 +163,7 @@ const handler = ( dispatch, action, getState ) => {
 
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
-			user.decrementSiteCount();
+			user().decrementSiteCount();
 			return;
 	}
 };

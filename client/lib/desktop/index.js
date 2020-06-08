@@ -3,14 +3,11 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:desktop' );
-
 /**
  * Internal dependencies
  */
 import { newPost } from 'lib/paths';
-import userFactory from 'lib/user';
-const user = userFactory();
+import user from 'lib/user';
 import { ipcRenderer as ipc } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
@@ -32,6 +29,7 @@ import { requestSite } from 'state/sites/actions';
 /**
  * Module variables
  */
+const debug = debugFactory( 'calypso:desktop' );
 
 const Desktop = {
 	/**
@@ -104,14 +102,14 @@ const Desktop = {
 	sendUserLoginStatus: function () {
 		let status = true;
 
-		if ( user.data === false || user.data instanceof Array ) {
+		if ( user().data === false || user().data instanceof Array ) {
 			status = false;
 		}
 
 		debug( 'Sending logged-in = ' + status );
 
 		ipc.send( 'user-login-status', status );
-		ipc.send( 'user-auth', user, oAuthToken.getToken() );
+		ipc.send( 'user-auth', user(), oAuthToken.getToken() );
 	},
 
 	onToggleNotifications: function () {

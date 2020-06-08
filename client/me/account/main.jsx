@@ -47,7 +47,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
 import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import _user from 'lib/user';
+import user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
 import AccountSettingsCloseLink from './close-link';
@@ -59,7 +59,6 @@ import { withLocalizedMoment } from 'components/localized-moment';
  */
 import './style.scss';
 
-const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
 
 /**
@@ -399,7 +398,7 @@ const Account = createReactClass( {
 
 	renderJoinDate() {
 		const { translate, moment } = this.props;
-		const dateMoment = moment( user.get().date );
+		const dateMoment = moment( user().get().date );
 
 		return (
 			<span>
@@ -490,7 +489,7 @@ const Account = createReactClass( {
 	renderPrimarySite() {
 		const { requestingMissingSites, translate } = this.props;
 
-		if ( ! user.get().visible_site_count ) {
+		if ( ! user().get().visible_site_count ) {
 			return (
 				<Button
 					href={ config( 'signup_url' ) }
@@ -710,7 +709,7 @@ const Account = createReactClass( {
 							'You will not be able to change your username back.',
 						{
 							args: {
-								username: user.get().username,
+								username: user().get().username,
 							},
 							components: {
 								strong: <strong />,
@@ -725,7 +724,7 @@ const Account = createReactClass( {
 							'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
 						{
 							args: {
-								displayName: user.get().display_name,
+								displayName: user().get().display_name,
 							},
 							components: {
 								myProfileLink: (

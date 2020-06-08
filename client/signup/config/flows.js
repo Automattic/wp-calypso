@@ -9,12 +9,10 @@ import cookie from 'cookie';
  */
 import config from 'config';
 import stepConfig from './steps';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
 import { abtest } from 'lib/abtest';
-
-const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
 	return addQueryArgs(
@@ -145,7 +143,7 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user && user.get() ) {
+		if ( user().get() ) {
 			flow = removeUserStepFromFlow( flow );
 		}
 

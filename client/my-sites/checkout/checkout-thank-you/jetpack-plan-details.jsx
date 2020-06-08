@@ -9,11 +9,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import { getSiteFileModDisableReason } from 'lib/site/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
-const user = userFactory();
 import { localizeUrl } from 'lib/i18n-utils';
 
 const BasicDetails = ( { translate } ) => (
@@ -23,7 +22,7 @@ const BasicDetails = ( { translate } ) => (
 		description={ translate(
 			'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
 				'Follow the instructions in the email to get started.',
-			{ args: { email: user.get().email } }
+			{ args: { email: user().get().email } }
 		) }
 	/>
 );

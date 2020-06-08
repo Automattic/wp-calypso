@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -10,9 +9,7 @@ import i18n from 'i18n-calypso';
  */
 import { GOOGLE_APPS_LEARNING_CENTER } from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
-
-const user = userFactory();
+import user from 'lib/user';
 
 const GoogleAppsDetails = () => {
 	return (
@@ -36,7 +33,7 @@ const GoogleAppsDetails = () => {
 						),
 					},
 					args: {
-						email: user.get().email,
+						email: user().get().email,
 					},
 				}
 			) }

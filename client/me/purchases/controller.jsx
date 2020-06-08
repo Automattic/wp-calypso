@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { noop } from 'lodash';
 import React from 'react';
 
@@ -21,18 +20,16 @@ import PurchasesList from './purchases-list';
 import { concatTitle } from 'lib/react-helpers';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-
-const user = userFactory();
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 function setTitle( context, ...title ) {
 	context.store.dispatch( setDocumentHeadTitle( concatTitle( titles.purchases, ...title ) ) );
 }
 
-const userHasNoSites = () => user.get().site_count <= 0;
+const userHasNoSites = () => user().get().site_count <= 0;
 
 function noSites( context, analyticsPath ) {
 	setTitle( context );
