@@ -7,10 +7,7 @@ import React, { FunctionComponent, useRef, useState } from 'react';
 /**
  * Internal dependencies
  */
-import {
-	backupDownloadPath,
-	backupRestorePath,
-} from 'landing/jetpack-cloud/sections/backups/paths';
+import { backupDownloadPath, backupRestorePath } from 'my-sites/backup/paths';
 import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';

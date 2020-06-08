@@ -10,21 +10,18 @@ import { get } from 'lodash';
  */
 import { withLocalizedMoment } from 'components/localized-moment';
 import Button from 'components/forms/form-button';
-import {
-	isSuccessfulDailyBackup,
-	isSuccessfulRealtimeBackup,
-} from 'landing/jetpack-cloud/sections/backups/utils';
+import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'my-sites/backup/utils';
 import {
 	backupDownloadPath,
 	backupRestorePath,
 	backupMainPath,
 	settingsPath,
-} from 'landing/jetpack-cloud/sections/backups/paths';
+} from 'my-sites/backup/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 import ActivityCard from 'components/jetpack/activity-card';
 import ExternalLink from 'components/external-link';
-import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
+import { INDEX_FORMAT } from 'my-sites/backup/main';
 import BackupChanges from './backup-changes';
 
 /**

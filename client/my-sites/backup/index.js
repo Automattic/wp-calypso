@@ -17,7 +17,7 @@ import {
 	backupRestore,
 	backups,
 	showUpsellIfNoBackup,
-} from 'landing/jetpack-cloud/sections/backups/controller';
+} from 'my-sites/backup/controller';
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {

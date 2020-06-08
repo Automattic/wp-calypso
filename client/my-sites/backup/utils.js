@@ -6,7 +6,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
+import { INDEX_FORMAT } from 'my-sites/backup/main';
 
 /**
  * if the activityDateString is on the same date as we are looking at

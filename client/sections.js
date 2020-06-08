@@ -477,11 +477,11 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'jetpack-cloud',
-		paths: [ '/', '/settings' ],
-		module: 'landing/jetpack-cloud',
+		name: 'backup',
+		paths: [ '/backup' ],
+		module: 'my-sites/backup',
 		secondary: true,
-		group: 'jetpack-cloud',
+		group: 'sites',
 		enableLoggedOut: true,
 	},
 	{
@@ -493,9 +493,9 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'backups',
-		paths: [ '/backup' ],
-		module: 'landing/jetpack-cloud/sections/backups',
+		name: 'jetpack-cloud',
+		paths: [ '/', '/settings' ],
+		module: 'landing/jetpack-cloud',
 		secondary: true,
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
