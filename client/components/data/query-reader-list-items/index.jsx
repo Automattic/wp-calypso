@@ -1,22 +1,20 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { requestReaderListItems } from 'state/reader/lists/actions';
 
-class QueryReaderListItems extends Component {
-	componentDidMount() {
-		this.props.requestReaderListItems();
-	}
+export default function QueryReaderListItems( { listAuthor, listSlug } ) {
+	const dispatch = useDispatch();
 
-	render() {
-		return null;
-	}
+	React.useEffect( () => {
+		dispatch( requestReaderListItems( listAuthor, listSlug ) );
+	}, [ dispatch, listAuthor, listSlug ] );
+
+	return null;
 }
-
-export default connect( null, { requestReaderListItems } )( QueryReaderListItems );
