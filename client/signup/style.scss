@@ -18,6 +18,11 @@ body.is-section-signup {
 		}
 	}
 
+	&.is-p2-signup {
+		background: #ffffff;
+		color: #00101c;
+	}
+
 	// Adjust the padding as we no longer
 	// show the masterbar.
 	.layout__content {
@@ -50,7 +55,6 @@ body.is-section-signup {
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
 body.is-section-signup .layout:not( .dops ),
 body.is-section-signup .layout.gravatar {
-
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
@@ -66,7 +70,7 @@ body.is-section-signup .layout.gravatar {
 			padding-bottom: 16px;
 			margin-bottom: 24px;
 			border-radius: 6px;
-			@include elevation ( 3dp );
+			@include elevation( 3dp );
 		}
 
 		.empty-content__title {
@@ -95,7 +99,7 @@ body.is-section-signup .layout.gravatar {
 		right: 0;
 		max-height: 350px;
 		overflow: auto;
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -297,7 +301,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		}
 	}
 
-
 	.logged-out-form__footer {
 		text-align: center;
 		.button.is-primary {
@@ -386,7 +389,8 @@ body.is-section-signup.is-new-launch-flow {
 
 // Text and heading color override for new flow
 body.is-section-signup.is-new-launch-flow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
-	&.gravatar .formatted-header, .formatted-header {
+	&.gravatar .formatted-header,
+	.formatted-header {
 		.formatted-header__title {
 			color: var( --color-text );
 		}

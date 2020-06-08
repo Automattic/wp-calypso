@@ -57,6 +57,12 @@ const removeWhiteBackground = function () {
 	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
 };
 
+const addP2SignupClassName = () => {
+	if ( document.body.className.indexOf( 'is-p2-signup' ) === -1 ) {
+		document.body.className += ' is-p2-signup';
+	}
+};
+
 export default {
 	redirectTests( context, next ) {
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
@@ -71,6 +77,11 @@ export default {
 			context.params.flowName === 'crowdsignal'
 		) {
 			removeWhiteBackground();
+			next();
+		} else if ( context.pathname.indexOf( 'p2' ) ) {
+			removeWhiteBackground();
+			addP2SignupClassName();
+
 			next();
 		} else {
 			waitForData( {
