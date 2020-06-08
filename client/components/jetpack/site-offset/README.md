@@ -64,7 +64,7 @@ The `SiteOffsetProvider` component takes one prop: `site`. It is a string that i
 ```jsx
 import React from 'react';
 import ReactDom from 'react-dom';
-import { SiteOffsetProvider } from 'components/jetpackoffset/context';
+import { SiteOffsetProvider } from 'components/jetpack/site-offset/context';
 
 ReactDom.render(
 	<SiteOffsetProvider siteId={ siteId }>
