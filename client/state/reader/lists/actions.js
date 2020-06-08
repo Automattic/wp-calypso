@@ -285,10 +285,10 @@ export function updateDescription( listId, newDescription ) {
 	};
 }
 
-export const requestReaderListItems = ( owner, slug ) => ( {
+export const requestReaderListItems = ( listOwner, listSlug ) => ( {
 	type: READER_LIST_ITEMS_REQUEST,
-	owner,
-	slug,
+	listOwner,
+	listSlug,
 } );
 
 export const receiveReaderListItems = ( listId, listItems ) => ( {

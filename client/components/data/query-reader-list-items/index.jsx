@@ -9,12 +9,12 @@ import { useDispatch } from 'react-redux';
  */
 import { requestReaderListItems } from 'state/reader/lists/actions';
 
-export default function QueryReaderListItems( { listAuthor, listSlug } ) {
+export default function QueryReaderListItems( { listOwner, listSlug } ) {
 	const dispatch = useDispatch();
 
 	React.useEffect( () => {
-		dispatch( requestReaderListItems( listAuthor, listSlug ) );
-	}, [ dispatch, listAuthor, listSlug ] );
+		dispatch( requestReaderListItems( listOwner, listSlug ) );
+	}, [ dispatch, listOwner, listSlug ] );
 
 	return null;
 }

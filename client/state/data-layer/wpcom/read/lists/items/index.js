@@ -15,7 +15,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/items/index.js', {
 				http(
 					{
 						method: 'GET',
-						path: `/read/lists/${ action.listAuthor }/${ action.listSlug }/items`,
+						path: `/read/lists/${ action.listOwner }/${ action.listSlug }/items`,
 					},
 					action
 				),
