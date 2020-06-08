@@ -9,7 +9,7 @@ import React from 'react';
 import BackupActivityLogPage from './backup-activity-log';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
-import UpsellSwitch from 'landing/jetpack-cloud/components/upsell-switch';
+import UpsellSwitch from 'components/jetpack-cloud/upsell-switch';
 import BackupsUpsell from './backup-upsell';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';

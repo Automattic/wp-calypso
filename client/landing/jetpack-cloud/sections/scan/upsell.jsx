@@ -9,11 +9,11 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
+import SecurityIcon from 'components/jetpack-cloud/security-icon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Upsell from 'landing/jetpack-cloud/components/upsell';
+import Upsell from 'components/jetpack-cloud/upsell';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 

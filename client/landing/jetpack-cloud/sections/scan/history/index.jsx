@@ -11,8 +11,8 @@ import page from 'page';
  */
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
-import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
-import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
+import ThreatDialog from 'components/jetpack-cloud/threat-dialog';
+import ThreatItem from 'components/jetpack-cloud/threat-item';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { recordTracksEvent } from 'state/analytics/actions';

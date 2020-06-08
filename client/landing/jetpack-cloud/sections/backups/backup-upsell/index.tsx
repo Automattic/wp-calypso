@@ -12,8 +12,8 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Upsell from 'landing/jetpack-cloud/components/upsell';
-import { UpsellComponentProps } from 'landing/jetpack-cloud/components/upsell-switch';
+import Upsell from 'components/jetpack-cloud/upsell';
+import { UpsellComponentProps } from 'components/jetpack-cloud/upsell-switch';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**

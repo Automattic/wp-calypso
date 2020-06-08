@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { SiteOffsetProvider } from 'landing/jetpack-cloud/components/site-offset/context';
+import { SiteOffsetProvider } from 'components/jetpack-cloud/site-offset/context';
 
 export default function wrapInSiteOffsetProvider( context, next ) {
 	context.primary = (

@@ -10,7 +10,7 @@ import { localize, useTranslate } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
+import ServerCredentialsForm from 'components/jetpack-cloud/server-credentials-form';
 import { Card } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 import getRewindState from 'state/selectors/get-rewind-state';
