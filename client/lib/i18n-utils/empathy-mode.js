@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import i18n, { translate } from 'i18n-calypso';
 import interpolateComponents from 'interpolate-components';
 
