@@ -392,7 +392,7 @@ function GSuiteUsersList( { users, gsuiteDiscountCallout } ) {
 		<>
 			{ users.map( ( user, index ) => {
 				return (
-					<LineItemMeta singleLine={ true }>
+					<LineItemMeta singleLine={ true } key={ user.email }>
 						<div key={ user.email }>{ user.email }</div>
 						{ index === 0 && gsuiteDiscountCallout }
 					</LineItemMeta>
