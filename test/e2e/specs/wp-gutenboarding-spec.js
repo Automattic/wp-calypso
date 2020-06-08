@@ -49,12 +49,9 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			return await acquireIntentPage.goToNextStep();
 		} );
 
-		step( 'Can see Design Selector and select one design', async function () {
+		step( 'Can see Design Selector and select a random free design', async function () {
 			const designSelectorPage = await DesignSelectorPage.Expect( driver );
-			const designOptionsCount = await designSelectorPage.getDesignOptionsCount();
-			return await designSelectorPage.selectDesign(
-				dataHelper.getRandomInt( 1, designOptionsCount )
-			);
+			return await designSelectorPage.selectFreeDesign();
 		} );
 
 		step( 'Can see Style Preview and continue', async function () {
@@ -62,8 +59,11 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			return await stylePreviewPage.continue();
 		} );
 
-		step( 'Can see Plans Grid', async function () {
-			return await PlansPage.Expect( driver );
+		step( 'Can see Plans Grid with no selected plan', async function () {
+			const plansPage = await PlansPage.Expect( driver );
+			const hasSelectedPlan = await plansPage.hasSelectedPlan();
+
+			return assert.strictEqual( hasSelectedPlan, false, 'There is a preselected plan' );
 		} );
 	} );
 
@@ -74,6 +74,31 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 		step( 'Can visit Gutenboarding', async function () {
 			await NewPage.Visit( driver );
+		} );
+	} );
+
+	describe( 'Skip first step in Gutenboarding and select paid design @parallel', function () {
+		before( async function () {
+			await driverManager.ensureNotLoggedIn( driver );
+			await NewPage.Visit( driver );
+		} );
+
+		step( 'Can skip Acquire Intent step', async function () {
+			const acquireIntentPage = await AcquireIntentPage.Expect( driver );
+			return await acquireIntentPage.skipStep();
+		} );
+
+		step( 'Can see Design Selector and select a random paid design', async function () {
+			const designSelectorPage = await DesignSelectorPage.Expect( driver );
+			return await designSelectorPage.selectPaidDesign();
+		} );
+
+		step( 'Can see Plans Grid with a pre-selected plan', async function () {
+			const stylePreviewPage = await StylePreviewPage.Expect( driver );
+			await stylePreviewPage.continue();
+			const plansPage = await PlansPage.Expect( driver );
+			const hasSelectedPlan = await plansPage.hasSelectedPlan();
+			return assert.strictEqual( hasSelectedPlan, true, 'There is no pre-selected plan' );
 		} );
 	} );
 } );

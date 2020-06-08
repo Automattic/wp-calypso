@@ -7,25 +7,26 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../../async-base-container';
-import * as driverHelper from '../../driver-helper';
+import * as dataHelper from '../../data-helper';
 
 export default class DesignSelectorPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.design-selector' ) );
 		this.designOptionClassName = '.design-selector__design-option';
+		this.designGridSelectorFree = '.design-selector__grid > button[data-e2e-button="freeOption"]';
 	}
 
-	async getDesignOptionsCount() {
-		const designGridSelector = By.css( '.design-selector__grid' );
-		const designOptionSelector = By.css( this.designOptionClassName );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, designGridSelector );
-		return await driverHelper.getElementCount( this.driver, designOptionSelector );
-	}
-
-	async selectDesign( position ) {
-		const chosenDesignOptionSelector = By.css(
-			`${ this.designOptionClassName }:nth-child(${ position })`
+	async selectFreeDesign() {
+		const freeOptions = await this.driver.findElements(
+			By.xpath( '//button[@data-e2e-button="freeOption"]' )
 		);
-		return await driverHelper.clickWhenClickable( this.driver, chosenDesignOptionSelector );
+		return freeOptions[ dataHelper.getRandomInt( 0, freeOptions.length - 1 ) ].click();
+	}
+
+	async selectPaidDesign() {
+		const paidOptions = await this.driver.findElements(
+			By.xpath( '//button[@data-e2e-button="paidOption"]' )
+		);
+		return paidOptions[ dataHelper.getRandomInt( 0, paidOptions.length - 1 ) ].click();
 	}
 }

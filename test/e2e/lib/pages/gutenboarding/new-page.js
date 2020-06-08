@@ -20,8 +20,7 @@ export default class NewPage extends AsyncBaseContainer {
 	}
 
 	static getGutenboardingURL() {
-		// using forceWpCalypso flag because Gutenboarding is enabled only on wpcalypso
-		return dataHelper.getCalypsoURL( 'new', undefined, { forceWpCalypso: true } );
+		return dataHelper.getCalypsoURL( 'new' );
 	}
 
 	async waitForBlock() {

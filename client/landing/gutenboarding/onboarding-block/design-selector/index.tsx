@@ -59,6 +59,7 @@ const DesignSelector: React.FunctionComponent = () => {
 						<button
 							key={ design.slug }
 							className="design-selector__design-option"
+							data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
 							onClick={ () => {
 								setSelectedDesign( design );
 
