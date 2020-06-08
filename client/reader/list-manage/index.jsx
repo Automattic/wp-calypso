@@ -8,10 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
 import { getListByOwnerAndSlug, getListItems } from 'state/reader/lists/selectors';
-import { getSite, hasAllSitesList } from 'state/sites/selectors';
 import FormattedHeader from 'components/formatted-header';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
@@ -29,6 +26,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
+import ListItem from './list-item';
 import './style.scss';
 
 function ReaderListEdit( props ) {
@@ -120,21 +118,7 @@ function ReaderListEdit( props ) {
 							</>
 						) }
 						{ selectedSection === 'sites' &&
-							props.sites?.map( ( site ) => (
-								<Card className="list-manage__site-card">
-									{ /* Shares same index order as props.listItems */ }
-									{ ! site ? (
-										<SitePlaceholder />
-									) : (
-										<>
-											<Site site={ site } />
-											<Button scary primary>
-												Remove from list
-											</Button>
-										</>
-									) }
-								</Card>
-							) ) }
+							props.listItems?.map( ( item ) => <ListItem key={ item.ID } item={ item } /> ) }
 					</>
 				) }
 			</Main>
@@ -142,15 +126,11 @@ function ReaderListEdit( props ) {
 	);
 }
 
-const bindStateToGetSiteFn = ( state ) => ( item ) => getSite( state, item.site_ID );
 export default connect( ( state, ownProps ) => {
 	const list = getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug );
 	const listItems = list ? getListItems( state, list.ID ) : undefined;
 	return {
 		list,
 		listItems,
-		getSite: bindStateToGetSiteFn( state ),
-		hasLoadedSites: hasAllSitesList( state ),
-		sites: listItems?.map( bindStateToGetSiteFn( state ) ),
 	};
 } )( ReaderListEdit );
