@@ -19429,14 +19429,6 @@ postcss-custom-media@^7.0.8:
   dependencies:
     postcss "^7.0.14"
 
-postcss-custom-properties@9.1.1:
-  version "9.1.1"
-  resolved "https://registry.yarnpkg.com/postcss-custom-properties/-/postcss-custom-properties-9.1.1.tgz#55822d70ff48004f6d307a338ba64a7fb0a4bfff"
-  integrity sha512-GVu+j7vwMTKUGhGXckYAFAAG5tTJUkSt8LuSyimtZdVVmdAEZYYqserkAgX8vwMhgGDPA4vJtWt7VgFxgiooDA==
-  dependencies:
-    postcss "^7.0.17"
-    postcss-values-parser "^3.0.5"
-
 postcss-custom-properties@^8.0.11:
   version "8.0.11"
   resolved "https://registry.yarnpkg.com/postcss-custom-properties/-/postcss-custom-properties-8.0.11.tgz#2d61772d6e92f22f5e0d52602df8fae46fa30d97"
