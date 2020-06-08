@@ -456,7 +456,7 @@ export class LanguagePickerModal extends PureComponent {
 			<div className="language-picker__modal-empathy-mode">
 				<FormLabel>
 					<FormCheckbox />
-					<span>{ translate( 'Emapthy mode' ) }</span>
+					<span>{ translate( 'Empathy mode' ) }</span>
 				</FormLabel>
 			</div>
 		);
