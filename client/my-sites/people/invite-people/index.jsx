@@ -375,7 +375,7 @@ class InvitePeople extends React.Component {
 							explanation={ this.renderRoleExplanation() }
 						/>
 
-						{ this.isExternalRole( this.state.role ) && (
+						{ ! this.props.isWPForTeamsSite && this.isExternalRole( this.state.role ) && (
 							<ContractorSelect
 								onChange={ this.onExternalChange }
 								checked={ this.state.isExternal }
