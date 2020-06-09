@@ -286,6 +286,12 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		// When the new Jetpack section is active,
+		// Activity Log goes there instead of here
+		if ( isEnabled( 'jetpack/features-section' ) ) {
+			return null;
+		}
+
 		let activityLink = '/activity-log' + siteSuffix,
 			activityLabel = translate( 'Activity' );
 
@@ -372,7 +378,12 @@ export class MySitesSidebar extends Component {
 	}
 
 	jetpack() {
-		const { isJetpackSectionOpen, site, translate } = this.props;
+		const { isJetpack, isJetpackSectionOpen, site, siteSuffix, path, translate } = this.props;
+
+		let activityLogUrl = '/activity-log' + siteSuffix;
+		if ( isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+			activityLogUrl += '?group=rewind';
+		}
 
 		return (
 			<ExpandableSidebarMenu
@@ -385,9 +396,10 @@ export class MySitesSidebar extends Component {
 					label={ translate( 'Activity Log', {
 						comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
 					} ) }
-					link={ backupActivityPath( site.slug ) }
-					onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Activity Log' ) }
-					selected={ itemLinkMatches( backupActivityPath(), this.props.path ) }
+					link={ activityLogUrl }
+					onNavigate={ this.trackActivityClick }
+					selected={ itemLinkMatches( [ '/activity-log' ], path ) }
+					expandSection={ this.expandJetpackSection }
 				/>
 				<SidebarItem
 					label={ translate( 'Backup', {
@@ -396,8 +408,8 @@ export class MySitesSidebar extends Component {
 					link={ backupMainPath( site.slug ) }
 					onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Latest backups' ) }
 					selected={
-						itemLinkMatches( backupMainPath(), this.props.path ) &&
-						! itemLinkMatches( backupActivityPath(), this.props.path )
+						itemLinkMatches( backupMainPath(), path ) &&
+						! itemLinkMatches( backupActivityPath(), path )
 					}
 				/>
 				<SidebarItem
@@ -407,8 +419,7 @@ export class MySitesSidebar extends Component {
 					link={ site?.slug ? `/scan/${ site.slug }` : '/scan' }
 					onNavigate={ this.onNavigate( 'Jetpack Cloud Scan / Scanner' ) }
 					selected={
-						itemLinkMatches( '/scan', this.props.path ) &&
-						! itemLinkMatches( '/scan/history', this.props.path )
+						itemLinkMatches( '/scan', path ) && ! itemLinkMatches( '/scan/history', path )
 					}
 				></SidebarItem>
 			</ExpandableSidebarMenu>
