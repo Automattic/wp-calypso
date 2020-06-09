@@ -20,16 +20,16 @@ import PurchasesList from './purchases-list';
 import { concatTitle } from 'lib/react-helpers';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
-import user from 'lib/user';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 function setTitle( context, ...title ) {
 	context.store.dispatch( setDocumentHeadTitle( concatTitle( titles.purchases, ...title ) ) );
 }
 
-const userHasNoSites = () => user().get().site_count <= 0;
+const userHasNoSites = ( state ) => getCurrentUserSiteCount( state ) <= 0;
 
 function noSites( context, analyticsPath ) {
 	setTitle( context );
@@ -45,7 +45,9 @@ function noSites( context, analyticsPath ) {
 }
 
 export function addCardDetails( context, next ) {
-	if ( userHasNoSites() ) {
+	const state = context.store.getState();
+
+	if ( userHasNoSites( state ) ) {
 		return noSites( context, '/me/purchases/:site/:purchaseId/payment/add' );
 	}
 
