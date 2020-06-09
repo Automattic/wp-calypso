@@ -29,7 +29,9 @@
 	"sections": {
 		"jetpack-cloud": true,
 		"jetpack-cloud-settings": true,
-		"jetpack-cloud-auth": false
+		"jetpack-cloud-auth": false,
+		"scan": true,
+		"backups": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud"
