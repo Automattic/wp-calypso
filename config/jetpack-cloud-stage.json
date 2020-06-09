@@ -18,7 +18,6 @@
 		"jetpack-cloud": true,
 		"jetpack/on-demand-scan": true,
 		"jetpack/backups-restore": true,
-		"jetpack-cloud/settings": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
@@ -31,8 +30,6 @@
 	"enable_all_sections": false,
 	"sections": {
 		"jetpack-cloud": true,
-		"scan": true,
-		"backups": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-auth": true
 	},

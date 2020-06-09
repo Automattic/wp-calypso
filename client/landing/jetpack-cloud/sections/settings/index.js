@@ -13,7 +13,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import { settings } from 'landing/jetpack-cloud/sections/settings/controller';
 
 export default function () {
-	if ( config.isEnabled( 'jetpack-cloud/settings' ) ) {
+	if ( config.isEnabled( 'jetpack-cloud' ) ) {
 		page( '/settings', siteSelection, sites, navigation, makeLayout, clientRender );
 		page( '/settings/:site', siteSelection, navigation, settings, makeLayout, clientRender );
 	}
