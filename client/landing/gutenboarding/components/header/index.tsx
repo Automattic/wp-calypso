@@ -50,6 +50,7 @@ const Header: React.FunctionComponent = () => {
 		'DomainsModal',
 		'Plans',
 		'PlansModal',
+		'CreateSite',
 	].includes( currentStep );
 
 	return (
