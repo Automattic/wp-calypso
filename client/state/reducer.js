@@ -19,7 +19,6 @@ import account from './account/reducer';
 import accountRecovery from './account-recovery/reducer';
 import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
-import applicationPasswords from './application-passwords/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
@@ -95,7 +94,6 @@ const reducers = {
 	accountRecovery,
 	activePromotions,
 	activityLog,
-	applicationPasswords,
 	atomicTransfer,
 	billingTransactions,
 	checklist,
