@@ -606,7 +606,7 @@ class InvitePeople extends React.Component {
 		const inviteLinkForm = (
 			<Card className="invite-people__link">
 				<EmailVerificationGate>
-					<div class="invite-people__link-instructions">
+					<div className="invite-people__link-instructions">
 						{ translate(
 							'Use this link to onboard your team members without having to invite them one by one. '
 						) }
