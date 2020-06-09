@@ -92,6 +92,24 @@ function dependenciesContainCartItem( dependencies ) {
 	);
 }
 
+function addLoadingScreenClassNamesToBody() {
+	if ( ! document ) {
+		return;
+	}
+
+	if ( document.body.className.indexOf( 'has-loading-screen-signup' ) === -1 ) {
+		document.body.className += ' has-loading-screen-signup';
+	}
+}
+
+function removeLoadingScreenClassNamesFromBody() {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.className = document.body.className.split( 'has-loading-screen-signup' ).join( '' );
+}
+
 class Signup extends React.Component {
 	static propTypes = {
 		store: PropTypes.object.isRequired,
@@ -255,10 +273,14 @@ class Signup extends React.Component {
 
 		if ( startLoadingScreen ) {
 			this.setState( { shouldShowLoadingScreen: true } );
+
+			addLoadingScreenClassNamesToBody();
 		}
 
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
+
+			removeLoadingScreenClassNamesFromBody();
 		}
 	};
 
