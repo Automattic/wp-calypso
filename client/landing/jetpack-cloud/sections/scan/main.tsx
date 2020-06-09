@@ -7,6 +7,7 @@ import { Button, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import config, { isEnabled } from 'config';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -235,7 +236,14 @@ class ScanPage extends Component< Props > {
 
 		const isJetpackCom = !! config( 'env_id' ).includes( 'jetpack-cloud' );
 
-		return ! isJetpackCom && <ThreatHistoryList { ...{ filter } } />;
+		return (
+			! isJetpackCom && (
+				<div className="scan__history">
+					{ this.renderHeader( 'History' ) }
+					<ThreatHistoryList { ...{ filter } } />
+				</div>
+			)
+		);
 	}
 
 	render() {
@@ -243,8 +251,14 @@ class ScanPage extends Component< Props > {
 		if ( ! siteId ) {
 			return;
 		}
+		const isJetpackCom = !! config( 'env_id' ).includes( 'jetpack-cloud' );
 		return (
-			<Main className="scan__main">
+			<Main
+				classNames={ classNames( {
+					scan__main: true,
+					is_jetpackcom: isJetpackCom,
+				} ) }
+			>
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ siteId } />
