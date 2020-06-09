@@ -4,6 +4,8 @@
 import wpcom from 'lib/wp';
 import {
 	READER_LIST_DISMISS_NOTICE,
+	READER_LIST_EXPORT_REQUEST,
+	READER_LIST_EXPORT_RECEIVE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_REQUEST,
@@ -296,6 +298,17 @@ export const receiveReaderListItems = ( listId, listItems ) => ( {
 	type: READER_LIST_ITEMS_RECEIVE,
 	listId,
 	listItems,
+} );
+
+export const requestReaderListExport = ( listId ) => ( {
+	type: READER_LIST_EXPORT_REQUEST,
+	listId,
+} );
+
+export const receiveReaderListExport = ( listId, listExport ) => ( {
+	type: READER_LIST_EXPORT_RECEIVE,
+	listId,
+	listExport,
 } );
 
 function createQuery( owner, slug ) {
