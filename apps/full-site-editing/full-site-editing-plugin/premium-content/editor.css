@@ -123,3 +123,9 @@
 		min-width: 200px;
 	}
 }
+
+.block-editor-block-preview__content .wp-block-premium-content-button .wp-block-button__link {
+	left: 50%;
+	position: relative;
+	transform: translateX( -50% );
+}

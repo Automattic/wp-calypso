@@ -12,8 +12,9 @@
 
 /* Subscribe/Login buttons */
 
+
 @media ( min-width: 660px ) {
-	.wp-premium-content-logged-out-view .wp-block-button__link {
+	.wp-block-premium-content-logged-out-view .wp-block-button__link {
 		min-width: 200px;
 	}
 }
