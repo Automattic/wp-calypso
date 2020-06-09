@@ -2,13 +2,11 @@
  * External dependencies
  */
 import * as React from 'react';
+import classnames from 'classnames';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import { useSelect } from '@wordpress/data';
-import { USER_STORE } from '../../stores/user';
-
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import classnames from 'classnames';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import DomainPicker from '@automattic/domain-picker';
 
@@ -19,7 +17,6 @@ import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
-import { useCurrentStep } from '../../path';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
@@ -44,9 +41,9 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 	currentDomain,
 	...buttonProps
 } ) => {
-	const buttonRef = React.createRef< HTMLButtonElement >();
+	const { __ } = useI18n();
 
-	const [ domainSearch, setDomainSearch ] = React.useState< string >( '' );
+	const buttonRef = React.createRef< HTMLButtonElement >();
 
 	const [ domainPickerMode, setDomainPickerMode ] = React.useState<
 		'popover' | 'modal' | undefined
@@ -64,30 +61,13 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 		setDomainPickerMode( 'modal' );
 	};
 
-	const { __ } = useI18n();
-
-	const currentStep = useCurrentStep();
-
-	const { siteTitle, siteVertical } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-
-	const prioritisedSearch = domainSearch.trim() || siteTitle;
-	let searchVal;
-
-	if ( currentStep !== 'IntentGathering' ) {
-		searchVal =
-			prioritisedSearch ||
-			siteVertical?.label.trim() ||
-			currentUser?.username ||
-			__( 'My new site' );
-	} else {
-		searchVal = prioritisedSearch || '';
-	}
+	const domainSearch = useSelect( ( select ) => select( STORE_KEY ).getDomainSearch() );
+	const { setDomainSearch } = useDispatch( STORE_KEY );
 
 	const domainPicker = (
 		<DomainPicker
 			analyticsFlowId={ FLOW_ID }
-			domainSearch={ searchVal }
+			domainSearch={ domainSearch || __( 'My new site' ) }
 			onSetDomainSearch={ setDomainSearch }
 			onMoreOptions={ onClickMoreOptions }
 			showDomainConnectButton={ domainPickerMode === 'modal' }

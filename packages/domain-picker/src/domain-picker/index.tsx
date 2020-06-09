@@ -2,13 +2,12 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
-import { useDebounce } from 'use-debounce';
-
 import { times } from 'lodash';
 import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
+import type { DomainSuggestions } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
@@ -30,8 +29,7 @@ import { PAID_DOMAINS_TO_SHOW } from '../constants';
  */
 import './style.scss';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
-type DomainSuggestionQuery = import('@automattic/data-stores').DomainSuggestions.DomainSuggestionQuery;
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 export interface Props {
 	showDomainConnectButton?: boolean;
@@ -52,17 +50,9 @@ export interface Props {
 
 	onMoreOptions?: () => void;
 
-	/**
-	 * Additional parameters for the domain suggestions query.
-	 */
-	queryParameters?: Partial< DomainSuggestionQuery >;
-
-	currentDomain?: DomainSuggestion;
-
 	quantity?: number;
 
-	/** The search results */
-	domainSuggestions?: DomainSuggestion[];
+	currentDomain?: DomainSuggestion;
 
 	/** The flow where the Domain Picker is used. Eg: Gutenboarding */
 	analyticsFlowId: string;
@@ -72,7 +62,7 @@ export interface Props {
 
 	domainSuggestionVendor: string;
 
-	/** The domain search query */
+	/** The initial domain search query */
 	domainSearch: string;
 
 	/** Called when the domain search query is changed */
@@ -97,12 +87,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const label = __( 'Search for a domain' );
 
 	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
+
 	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
 
-	const [ debouncedDomainSearch ] = useDebounce( domainSearch, 100 );
-
 	const domainSuggestions = useDomainSuggestions(
-		debouncedDomainSearch,
+		domainSearch.trim(),
 		domainCategory,
 		useI18n().i18nLocale,
 		10
@@ -187,7 +176,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		recordTrainTracksRender( {
 			uiAlgo: `/${ analyticsFlowId }/${ analyticsUiAlgo }`,
 			fetchAlgo,
-			query: debouncedDomainSearch,
+			query: domainSearch,
 			railcarId,
 			result: isRecommended( suggestion ) ? domain + '#recommended' : domain,
 			uiPosition,
@@ -227,7 +216,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							label={ label }
 							placeholder={ label }
 							onChange={ onSetDomainSearch }
-							value={ debouncedDomainSearch }
+							value={ domainSearch }
 						/>
 					</div>
 					<div className="domain-picker__body">
