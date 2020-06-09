@@ -82,6 +82,7 @@ import P2SignupProcessingScreen from 'signup/p2-processing-screen';
  * Style dependencies
  */
 import './style.scss';
+import { addP2SignupClassName } from './controller';
 
 const debug = debugModule( 'calypso:signup' );
 
@@ -108,6 +109,10 @@ function removeLoadingScreenClassNamesFromBody() {
 	}
 
 	document.body.className = document.body.className.split( 'has-loading-screen-signup' ).join( '' );
+}
+
+function isWPForTeamsFlow( flowName ) {
+	return flowName === 'wp-for-teams' || flowName === 'p2';
 }
 
 class Signup extends React.Component {
@@ -274,13 +279,20 @@ class Signup extends React.Component {
 		if ( startLoadingScreen ) {
 			this.setState( { shouldShowLoadingScreen: true } );
 
-			addLoadingScreenClassNamesToBody();
+			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+				addLoadingScreenClassNamesToBody();
+
+				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
+				addP2SignupClassName();
+			}
 		}
 
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
 
-			removeLoadingScreenClassNamesFromBody();
+			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+				removeLoadingScreenClassNamesFromBody();
+			}
 		}
 	};
 
@@ -515,8 +527,9 @@ class Signup extends React.Component {
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
-		const isP2Flow = this.props.flowName === 'p2' || this.props.flowName === 'wp-for-teams';
-		const ProcessingScreen = isP2Flow ? P2SignupProcessingScreen : SignupProcessingScreen;
+		const ProcessingScreen = isWPForTeamsFlow( this.props.flowName )
+			? P2SignupProcessingScreen
+			: SignupProcessingScreen;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -591,13 +604,15 @@ class Signup extends React.Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
-				<SignupHeader
-					positionInFlow={ this.getPositionInFlow() }
-					flowLength={ this.getFlowLength() }
-					flowName={ this.props.flowName }
-					showProgressIndicator={ showProgressIndicator }
-					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-				/>
+				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+					<SignupHeader
+						positionInFlow={ this.getPositionInFlow() }
+						flowLength={ this.getFlowLength() }
+						flowName={ this.props.flowName }
+						showProgressIndicator={ showProgressIndicator }
+						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+					/>
+				) }
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
 				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
 					<SiteMockups stepName={ this.props.stepName } />
