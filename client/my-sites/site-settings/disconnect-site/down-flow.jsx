@@ -51,7 +51,9 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 						isSecondary
 						align="left"
 						headerText={ translate( 'Confirm that your site loads.' ) }
-						subHeaderText={ translate( 'First, open your site to see if it loads properly.' ) }
+						subHeaderText={ translate(
+							'Visit your site to make sure it loads properly. If there’s an issue, fix your site before worrying about Jetpack! That may resolve this error.'
+						) }
 					/>
 				</CompactCard>
 				<CompactCard
