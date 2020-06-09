@@ -109,3 +109,45 @@ jobs:
     - name: Run phpunit command
       run: yarn test:php
       working-directory: apps/full-site-editing
+
+  e2e-tests:
+    name: Run e2e tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@master
+
+    # It saves a bit of time to download the artifact rather than doing a build.
+    - name: Get build
+      uses: actions/download-artifact@master
+      with:
+        name: fse-build-archive
+        path: apps/full-site-editing/full-site-editing-plugin
+
+    # We still need to access some local node modules to run things.
+    - name: Restore node_modules cache
+      id: cache
+      uses: actions/cache@master
+      with:
+        path: |
+          node_modules
+          */*/node_modules
+        key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: yarn install --frozen-lockfile
+
+    - name: Setup wp-env dependencies
+      run: |
+        echo '{ "plugins": [ "./dev-plugin", "./full-site-editing-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
+      working-directory: apps/full-site-editing
+
+    - name: Start wp-env
+      run: npx wp-env start || npx wp-env start # Retry if failed.
+      working-directory: apps/full-site-editing
+
+    - name: Run e2e tests
+      run: yarn test:e2e
+      working-directory: apps/full-site-editing

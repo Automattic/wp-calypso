@@ -241,7 +241,7 @@
 		"@wordpress/priority-queue": "^1.6.0",
 		"@wordpress/redux-routine": "^3.9.0",
 		"@wordpress/rich-text": "^3.16.0",
-		"@wordpress/scripts": "^9.1.0",
+		"@wordpress/scripts": "^10.0.0",
 		"@wordpress/server-side-render": "^1.12.0",
 		"@wordpress/shortcode": "^2.7.0",
 		"@wordpress/url": "^2.15.0",
