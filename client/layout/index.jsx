@@ -175,7 +175,7 @@ class Layout extends Component {
 				/>
 				<HtmlIsIframeClassname />
 				<DocumentHead />
-				<QuerySites primaryAndRecent />
+				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
