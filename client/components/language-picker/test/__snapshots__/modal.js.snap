@@ -175,5 +175,19 @@ exports[`LanguagePickerModal should render 1`] = `
       </div>
     </div>
   </div>
+  <div
+    className="language-picker__modal-empathy-mode"
+  >
+    <FormLabel>
+      <FormInputCheckbox
+        checked={false}
+        disabled={true}
+        onChange={[Function]}
+      />
+      <span>
+        Empathy mode
+      </span>
+    </FormLabel>
+  </div>
 </Dialog>
 `;
