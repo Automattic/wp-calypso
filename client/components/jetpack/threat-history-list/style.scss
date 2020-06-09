@@ -1,0 +1,22 @@
+.threat-history-list {
+	&__filters-wrapper {
+		text-align: center;
+	}
+
+	&__filters.is-placeholder {
+		@include placeholder( --color-neutral-10 );
+		height: 36px;
+		width: 175px;
+		border-radius: 4px;
+	}
+
+	&__filters {
+		margin: 8px 0 24px;
+		display: inline-flex;
+
+		.segmented-control__item.is-selected a {
+			background: var( --color-neutral-30 );
+			color: #fff;
+		}
+	}
+}
