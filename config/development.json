@@ -155,6 +155,7 @@
 		"rubberband-scroll-disable": false,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
+		"security/security-checkup": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,

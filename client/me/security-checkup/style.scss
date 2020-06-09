@@ -1,0 +1,25 @@
+.security-checkup__title-card {
+	h2 {
+		font-size: $font-title-medium;
+	}
+}
+
+.security-checkup__nav-item {
+	span {
+		display: flex;
+		align-items: center;
+		> .security-checkup__nav-item-icon {
+			fill: var( --color-neutral-60 );
+			width: 32px;
+			height: 32px;
+			margin-right: 16px;
+		}
+		div {
+			color: var( --color-neutral-90 );
+			small {
+				color: var( --color-neutral-50 );
+				font-size: $font-body-small;
+			}
+		}
+	}
+}

@@ -49,6 +49,12 @@ export default class extends React.Component {
 				title: i18n.translate( 'Account Recovery' ),
 				path: '/me/security/account-recovery',
 			},
+			config.isEnabled( 'security/security-checkup' )
+				? {
+						title: i18n.translate( 'Security Checkup' ),
+						path: '/me/security/security-checkup',
+				  }
+				: null,
 		].filter( ( tab ) => tab !== null );
 
 		return tabs;
@@ -60,8 +66,8 @@ export default class extends React.Component {
 	};
 
 	getSelectedText = () => {
-		let text = '',
-			filteredPath = this.getFilteredPath(),
+		let text = '';
+		const filteredPath = this.getFilteredPath(),
 			found = find( this.getNavtabs(), { path: filteredPath } );
 
 		if ( 'undefined' !== typeof found ) {
