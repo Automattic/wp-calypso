@@ -23,10 +23,13 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 		<Main className="disconnect-site__down-flow">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<FormattedHeader
-				headerText={ translate( 'Your site ,{{strong}}%(siteName)s{{/strong}}, cannot be accessed', {
-					args: { siteName: site.name },
-					components: { strong: <strong /> },
-				} ) }
+				headerText={ translate(
+					'Your site, {{strong}}%(siteName)s{{/strong}}, cannot be accessed',
+					{
+						args: { siteName: site.name },
+						components: { strong: <strong /> },
+					}
+				) }
 				subHeaderText={ translate(
 					'Jetpack wasn’t able to connect to {{strong}}%(siteSlug)s{{/strong}}.{{br/}}Let’s figure out why — there are a few things to try.',
 					{
@@ -47,10 +50,8 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 					<FormattedHeader
 						isSecondary
 						align="left"
-						headerText={ translate( 'Confirm that your site loads' ) }
-						subHeaderText={ translate(
-							'First, open your site to see if it loads properly.'
-						) }
+						headerText={ translate( 'Confirm that your site loads.' ) }
+						subHeaderText={ translate( 'First, open your site to see if it loads properly.' ) }
 					/>
 				</CompactCard>
 				<CompactCard
@@ -65,7 +66,7 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 					<FormattedHeader
 						isSecondary
 						align="left"
-						headerText={ translate( 'Troubleshoot Jetpack' ) }
+						headerText={ translate( 'Troubleshoot Jetpack.' ) }
 						subHeaderText={ translate(
 							'If your site is working but you’re still seeing this error, let’s troubleshoot your Jetpack connection.'
 						) }
@@ -79,7 +80,7 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 					<FormattedHeader
 						isSecondary
 						align="left"
-						headerText={ translate( 'Disconnect Jetpack' ) }
+						headerText={ translate( 'Disconnect Jetpack.' ) }
 						subHeaderText={ translate(
 							'If you’re no longer using Jetpack and/or WordPress for your site, or you’ve taken your site down, it’s time to disconnect Jetpack.'
 						) }
