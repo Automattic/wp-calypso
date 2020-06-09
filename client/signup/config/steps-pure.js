@@ -151,14 +151,44 @@ export function generateSteps( {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
 		},
-
-		'user-simple': {
-			stepName: 'user-simple',
+		'user-plans-passwordless': {
+			stepName: 'user-plans-passwordless',
 			apiRequestFunction: createAccount,
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'username' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				// Flow is to be use on English locale only, no need to translate labels
+				fallbackHeaderText: "Let's get started",
+				fallbackSubHeaderText: "You're one step away to get going with your site",
+				hasInitializedSitesBackUrl: '',
+				submittingButtonText: 'Go to Checkout »',
+				defaultButtonText: 'Go to Checkout »',
+				emailInputLabel: 'Your email address',
+
+				// Used translations to insert html
+				explanationText: i18n.translate(
+					"You'll be able to log in to your account using this address.{{br/}}" +
+						'You can also set a password later.',
+					{
+						components: { br: <br /> },
+					}
+				),
+				socialAlternativeText: 'Or continue using:',
+
+				// Used translations to insert html
+				socialTosText: i18n.translate(
+					'By proceeding, you agree to our {{a}}Terms of Service{{/a}}.',
+					{
+						components: {
+							a: <a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+						},
+					}
+				),
+				socialGoogleLabel: 'Google',
+				socialAppleLabel: 'Apple',
+				footerText: 'Do you already have a WordPress.com account?',
+				footerLoginText: 'Log in here',
 			},
 		},
 

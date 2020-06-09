@@ -126,7 +126,7 @@ export function generateFlows( {
 		},
 
 		'onboarding-plans-passwordless': {
-			steps: [ 'domains', 'plans', 'user-simple' ],
+			steps: [ 'domains', 'plans', 'user-plans-passwordless' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pbxNRc-m0',
 			lastModified: '2020-03-03',
