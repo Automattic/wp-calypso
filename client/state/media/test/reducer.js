@@ -94,7 +94,7 @@ describe( 'reducer', () => {
 
 		test( 'should return an error when there is not enough space to upload during external media request', () => {
 			const error = {
-				error: 'upload_error',
+				error: 'rest_upload_limited_space',
 				message: 'Not enough space to upload',
 			};
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
@@ -108,7 +108,7 @@ describe( 'reducer', () => {
 
 		test( 'should return an error when the space quota has been exceeded during external media request', () => {
 			const error = {
-				error: 'upload_error',
+				error: 'rest_upload_user_quota_exceeded',
 				message: 'You have used your space quota',
 			};
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
@@ -191,7 +191,7 @@ describe( 'reducer', () => {
 
 		test( 'should return an error when there is not enough space to upload', () => {
 			const error = {
-				error: 'upload_error',
+				error: 'rest_upload_limited_space',
 				message: 'Not enough space to upload',
 			};
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
@@ -205,7 +205,7 @@ describe( 'reducer', () => {
 
 		test( 'should return an error when the space quota has been exceeded', () => {
 			const error = {
-				error: 'upload_error',
+				error: 'rest_upload_user_quota_exceeded',
 				message: 'You have used your space quota',
 			};
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
@@ -213,6 +213,20 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ],
+				},
+			} );
+		} );
+
+		test( 'should return an error when file is too big to upload', () => {
+			const error = {
+				error: 'rest_upload_file_too_big',
+				message: 'This file is too big',
+			};
+			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE ],
 				},
 			} );
 		} );

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
+import { Threat } from 'components/jetpack/threat-item/types';
 
 type ScanState = 'unavailable' | 'provisioning' | 'idle' | 'scanning';
 

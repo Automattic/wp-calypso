@@ -51,6 +51,7 @@
 		"jetpack/connection-rebranding": true,
 		"jetpack/happychat": true,
 		"jetpack/scan-product": true,
+		"jetpack/features-section": false,
 		"jetpack_core_inline_update": true,
 		"jitms": false,
 		"lasagna": false,

@@ -545,7 +545,6 @@ function CreditCardLoading() {
 				id="credit-card-number"
 				type="Number"
 				label={ __( 'Card number' ) }
-				placeholder="1234 1234 1234 1234"
 				icon={ <LockIcon /> }
 				isIconVisible={ true }
 				autoComplete="cc-number"
@@ -558,7 +557,6 @@ function CreditCardLoading() {
 						id="card-expiry"
 						type="Number"
 						label={ __( 'Expiry date' ) }
-						placeholder="MM / YY"
 						autoComplete="cc-exp"
 						value={ '' }
 						disabled={ true }
@@ -572,7 +570,6 @@ function CreditCardLoading() {
 								<Field
 									id="card-cvc"
 									type="Number"
-									placeholder="CVC"
 									autoComplete="cc-csc"
 									value={ '' }
 									disabled={ true }

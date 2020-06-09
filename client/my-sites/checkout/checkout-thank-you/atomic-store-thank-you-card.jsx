@@ -17,15 +17,13 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanClass } from 'lib/plans';
 import { getCurrentUserEmail, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 
 const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
 const RESEND_ERROR = 'RESEND_ERROR';
 const RESEND_NOT_SENT = 'RESEND_NOT_SENT';
 const RESEND_PENDING = 'RESEND_PENDING';
 const RESEND_SUCCESS = 'RESEND_SUCCESS';
-
-const user = userFactory();
 
 class AtomicStoreThankYouCard extends Component {
 	state = { resendStatus: RESEND_NOT_SENT };
@@ -40,7 +38,7 @@ class AtomicStoreThankYouCard extends Component {
 		}
 	}
 
-	checkVerification = () => user.fetch();
+	checkVerification = () => user().fetch();
 
 	resendEmail = () => {
 		const { translate } = this.props;
@@ -54,7 +52,7 @@ class AtomicStoreThankYouCard extends Component {
 
 		this.setState( { resendStatus: RESEND_PENDING } );
 
-		user.sendVerificationEmail( ( error ) => {
+		user().sendVerificationEmail( ( error ) => {
 			if ( error ) {
 				this.props.errorNotice(
 					translate( "Couldn't resend verification email. Please try again." ),

@@ -100,6 +100,7 @@ class InvitePeople extends React.Component {
 			success: [],
 			activeInviteLink: false,
 			showCopyConfirmation: false,
+			isGeneratingInviteLinks: false,
 		};
 	};
 
@@ -375,7 +376,7 @@ class InvitePeople extends React.Component {
 							explanation={ this.renderRoleExplanation() }
 						/>
 
-						{ this.isExternalRole( this.state.role ) && (
+						{ ! this.props.isWPForTeamsSite && this.isExternalRole( this.state.role ) && (
 							<ContractorSelect
 								onChange={ this.onExternalChange }
 								checked={ this.state.isExternal }
@@ -453,6 +454,9 @@ class InvitePeople extends React.Component {
 	};
 
 	generateInviteLinks = () => {
+		this.setState( {
+			isGeneratingInviteLinks: true,
+		} );
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
 
@@ -582,8 +586,13 @@ class InvitePeople extends React.Component {
 
 	renderInviteLinkGenerateButton = () => {
 		const { translate } = this.props;
+
 		return (
-			<Button onClick={ this.generateInviteLinks } className="invite-people__link-generate">
+			<Button
+				onClick={ this.generateInviteLinks }
+				className="invite-people__link-generate"
+				busy={ this.state.isGeneratingInviteLinks }
+			>
 				{ translate( 'Generate new link' ) }
 			</Button>
 		);
@@ -597,7 +606,7 @@ class InvitePeople extends React.Component {
 		const inviteLinkForm = (
 			<Card className="invite-people__link">
 				<EmailVerificationGate>
-					<div class="invite-people__link-instructions">
+					<div className="invite-people__link-instructions">
 						{ translate(
 							'Use this link to onboard your team members without having to invite them one by one. '
 						) }

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:me:form-base' );
@@ -10,9 +9,7 @@ const debug = debugFactory( 'calypso:me:form-base' );
  * Internal dependencies
  */
 import notices from 'notices';
-import userFactory from 'lib/user';
-
-const user = userFactory();
+import user from 'lib/user';
 
 export default {
 	componentDidMount: function () {
@@ -91,11 +88,13 @@ export default {
 					this.props.markSaved && this.props.markSaved();
 
 					if ( this.state && this.state.redirect ) {
-						user.clear().then( () => {
-							// Sometimes changes in settings require a url refresh to update the UI.
-							// For example when the user changes the language.
-							window.location = this.state.redirect + '?updated=success';
-						} );
+						user()
+							.clear()
+							.then( () => {
+								// Sometimes changes in settings require a url refresh to update the UI.
+								// For example when the user changes the language.
+								window.location = this.state.redirect + '?updated=success';
+							} );
 						return;
 					}
 					// if we set submittingForm too soon the UI updates before the response is handled

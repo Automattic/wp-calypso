@@ -58,6 +58,9 @@
 		"premium-content": "check-npm-client && calypso-build --source='premium-content'",
 		"dev:premium-content": "check-npm-client && yarn run premium-content",
 		"build:premium-content": "check-npm-client && NODE_ENV=production yarn run premium-content",
+		"donations": "check-npm-client && calypso-build --source='donations'",
+		"dev:donations": "check-npm-client && yarn run donations",
+		"build:donations": "check-npm-client && NODE_ENV=production yarn run donations",
 		"block-inserter-modifications": "check-npm-client && npm-run-all --parallel block-inserter-modifications-*",
 		"block-inserter-modifications-new-blocks-showcase": "check-npm-client && calypso-build --source='block-inserter-modifications/new-blocks-showcase'",
 		"block-inserter-modifications-contextual-tips": "check-npm-client && calypso-build --source='block-inserter-modifications/contextual-tips'",
@@ -74,6 +77,7 @@
 		"test:js:update-snapshots": "check-npm-client && npx wp-scripts test-unit-js -u --config='bin/js-unit-config.js' --colors",
 		"test:e2e": "check-npm-client && npx wp-scripts test-e2e --wordpress-base-url='http://localhost:4013' --colors",
 		"test:e2e:watch": "check-npm-client && npm run test-e2e -- --watch",
+		"test:php": "check-npm-client && npx wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/full-site-editing-plugin/phpunit.xml.dist'",
 		"clean": "check-npm-client && npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "check-npm-client && yarn run clean",
 		"predev": "check-npm-client && yarn run clean",
@@ -82,9 +86,9 @@
 		"prepare": "check-npm-client && yarn run sync:newspack-blocks --nodemodules"
 	},
 	"dependencies": {
-		"@automattic/format-currency": "^1.0.0-alpha.0",
-		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "*",
+		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@wordpress/api-fetch": "*",
 		"@wordpress/block-editor": "*",
 		"@wordpress/blocks": "*",
@@ -97,6 +101,7 @@
 		"@wordpress/edit-post": "*",
 		"@wordpress/editor": "*",
 		"@wordpress/element": "*",
+		"@wordpress/env": "*",
 		"@wordpress/hooks": "*",
 		"@wordpress/html-entities": "*",
 		"@wordpress/i18n": "*",
@@ -109,5 +114,8 @@
 		"lodash": "*",
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0"
+	},
+	"devDependencies": {
+		"@wordpress/eslint-plugin": "^6.0.0"
 	}
 }

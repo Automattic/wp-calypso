@@ -10,7 +10,7 @@ import config from 'config';
 
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
-import wrapInSiteOffsetProvider from 'landing/jetpack-cloud/lib/wrap-in-site-offset';
+import wrapInSiteOffsetProvider from 'lib/jetpack/wrap-in-site-offset';
 import {
 	showUpsellIfNoScan,
 	showUpsellIfNoScanHistory,
@@ -19,7 +19,7 @@ import {
 } from 'landing/jetpack-cloud/sections/scan/controller';
 
 export default function () {
-	if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
+	if ( config.isEnabled( 'jetpack-cloud' ) || config.isEnabled( 'jetpack/features-section' ) ) {
 		page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
 		page(
 			'/scan/:site',
@@ -32,17 +32,28 @@ export default function () {
 			clientRender
 		);
 
-		if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
-			page(
-				'/scan/history/:site/:filter?',
-				siteSelection,
-				navigation,
-				scanHistory,
-				wrapInSiteOffsetProvider,
-				showUpsellIfNoScanHistory,
-				makeLayout,
-				clientRender
-			);
-		}
+		page(
+			'/scan/history/:site/:filter?',
+			siteSelection,
+			navigation,
+			scanHistory,
+			wrapInSiteOffsetProvider,
+			showUpsellIfNoScanHistory,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/scan/:site/:filter?',
+			siteSelection,
+			navigation,
+			scan,
+			wrapInSiteOffsetProvider,
+			showUpsellIfNoScan,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		page( '/scan*', () => page.redirect( '/' ) );
 	}
 }

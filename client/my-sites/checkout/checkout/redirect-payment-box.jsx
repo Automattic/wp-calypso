@@ -26,7 +26,7 @@ import CountrySpecificPaymentFields from './country-specific-payment-fields';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import { addQueryArgs } from 'lib/url';
 
@@ -339,7 +339,7 @@ export class RedirectPaymentBox extends PureComponent {
 					<TermsOfService
 						hasRenewableSubscription={ hasRenewableSubscription( this.props.cart ) }
 					/>
-					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
+					<DomainRefundPolicy cart={ this.props.cart } />
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">

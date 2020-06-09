@@ -42,7 +42,6 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		is_coupon_applied,
 		tax,
 	} = serverCart;
 
@@ -57,9 +56,9 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const couponLineItem: WPCOMCartCouponItem = {
-		id: 'coupon-line-item',
-		label: String( translate( 'Coupon: %s', { args: coupon } ) ),
+	const savingsLineItem: WPCOMCartCouponItem = {
+		id: 'savings-line-item',
+		label: String( translate( 'Total savings' ) ),
 		type: 'coupon',
 		amount: {
 			currency: currency,
@@ -96,7 +95,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 	return {
 		items: products.map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
-		coupon: is_coupon_applied ? couponLineItem : null,
+		coupon: Math.abs( savings_total_integer ) > 0 ? savingsLineItem : null,
 		total: totalItem,
 		subtotal: subtotalItem,
 		credits: {

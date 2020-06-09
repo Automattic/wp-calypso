@@ -10,10 +10,8 @@ import { translate } from 'i18n-calypso';
  */
 import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import { abtest } from 'lib/abtest';
-
-const user = userFactory();
 
 const { defaultFlowName } = flows;
 
@@ -22,7 +20,7 @@ function isEligibleForSwapStepsTest() {
 	const countryCodeFromCookie = cookies.country_code;
 	const isUserFromUS = 'US' === countryCodeFromCookie;
 
-	if ( user && user.get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
+	if ( user() && user().get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
 		return true;
 	}
 
@@ -73,7 +71,7 @@ export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 		// when the user is logged in, the locale slug is meaningless in a
 		// signup URL, as the page will be translated in the language the user
 		// has in their settings.
-		locale = localeSlug && ! user.get() ? `/${ localeSlug }` : '';
+		locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route

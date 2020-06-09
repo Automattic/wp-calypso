@@ -398,13 +398,22 @@ function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
 }
 
 function saveStepNumberToUrl( stepNumber ) {
-	if ( ! window?.location ) {
+	if ( ! window?.history || ! window?.location ) {
 		return;
 	}
 	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
 	if ( window.location.hash === newHash ) {
 		return;
 	}
-	window.location.hash = newHash;
-	debug( 'updating url to', window.location.href );
+	const newUrl = window.location.hash
+		? window.location.href.replace( window.location.hash, newHash )
+		: window.location.href + newHash;
+	debug( 'updating url to', newUrl );
+	window.history.replaceState( null, '', newUrl );
+	// Modifying history does not trigger a hashchange event which is what
+	// composite-checkout uses to change its current step, so we must fire one
+	// manually. (HashChangeEvent is part of the web API so I'm not sure why
+	// eslint reports this as undefined.)
+	const event = new HashChangeEvent( 'hashchange' ); // eslint-disable-line no-undef
+	window.dispatchEvent( event );
 }

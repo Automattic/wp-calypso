@@ -70,13 +70,17 @@ import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-
 import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 import {
-	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
-	SIDEBAR_SECTION_TOOLS,
+	SIDEBAR_SECTION_JETPACK,
 	SIDEBAR_SECTION_MANAGE,
+	SIDEBAR_SECTION_SITE,
+	SIDEBAR_SECTION_TOOLS,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
+import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 
 /**
  * Style dependencies
@@ -93,6 +97,7 @@ export class MySitesSidebar extends Component {
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 	};
+	s;
 
 	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
 
@@ -101,6 +106,8 @@ export class MySitesSidebar extends Component {
 	expandToolsSection = () => this.props.expandSection( SIDEBAR_SECTION_TOOLS );
 
 	expandManageSection = () => this.props.expandSection( SIDEBAR_SECTION_MANAGE );
+
+	expandJetpackSection = () => this.props.expandSection( SIDEBAR_SECTION_JETPACK );
 
 	toggleSection = memoize( ( id ) => () => this.props.toggleSection( id ) );
 
@@ -362,6 +369,50 @@ export class MySitesSidebar extends Component {
 				forceInternalLink
 				expandSection={ this.expandDesignSection }
 			/>
+		);
+	}
+
+	jetpack() {
+		const { isJetpackSectionOpen, site, translate } = this.props;
+
+		return (
+			<ExpandableSidebarMenu
+				expanded={ isJetpackSectionOpen }
+				materialIcon="jetpack"
+				onClick={ this.toggleSection( SIDEBAR_SECTION_JETPACK ) }
+				title={ translate( 'Jetpack' ) }
+			>
+				<SidebarItem
+					label={ translate( 'Activity Log', {
+						comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
+					} ) }
+					link={ backupActivityPath( site.slug ) }
+					onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Activity Log' ) }
+					selected={ itemLinkMatches( backupActivityPath(), this.props.path ) }
+				/>
+				<SidebarItem
+					label={ translate( 'Backup', {
+						comment: 'Jetpack Cloud / Backup sidebar navigation item',
+					} ) }
+					link={ backupMainPath( site.slug ) }
+					onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Latest backups' ) }
+					selected={
+						itemLinkMatches( backupMainPath(), this.props.path ) &&
+						! itemLinkMatches( backupActivityPath(), this.props.path )
+					}
+				/>
+				<SidebarItem
+					label={ translate( 'Scan', {
+						comment: 'Jetpack Cloud / Scanner sidebar navigation item',
+					} ) }
+					link={ site?.slug ? `/scan/${ site.slug }` : '/scan' }
+					onNavigate={ this.onNavigate( 'Jetpack Cloud Scan / Scanner' ) }
+					selected={
+						itemLinkMatches( '/scan', this.props.path ) &&
+						! itemLinkMatches( '/scan/history', this.props.path )
+					}
+				></SidebarItem>
+			</ExpandableSidebarMenu>
 		);
 	}
 
@@ -831,7 +882,9 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
-				<QuerySiteChecklist siteId={ this.props.siteId } />
+				{ isEnabled( 'jetpack/features-section' ) && this.jetpack() }
+
+				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
 
 				<ExpandableSidebarMenu
 					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
@@ -873,21 +926,19 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) }
 
-				{
-					<ExpandableSidebarMenu
-						onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
-						expanded={ this.props.isManageSectionOpen }
-						title={ this.props.translate( 'Manage' ) }
-						materialIcon="settings"
-					>
-						<ul>
-							{ this.hosting() }
-							{ this.upgrades() }
-							{ this.users() }
-							{ this.siteSettings() }
-						</ul>
-					</ExpandableSidebarMenu>
-				}
+				<ExpandableSidebarMenu
+					onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
+					expanded={ this.props.isManageSectionOpen }
+					title={ this.props.translate( 'Manage' ) }
+					materialIcon="settings"
+				>
+					<ul>
+						{ this.hosting() }
+						{ this.upgrades() }
+						{ this.users() }
+						{ this.siteSettings() }
+					</ul>
+				</ExpandableSidebarMenu>
 
 				{ this.wpAdmin() }
 			</div>
@@ -898,7 +949,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<Sidebar>
 				<SidebarRegion>
-					<CurrentSite />
+					<CurrentSite forceAllSitesView={ this.props.forceAllSitesView } />
 					{ this.renderSidebarMenus() }
 				</SidebarRegion>
 				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
@@ -909,9 +960,14 @@ export class MySitesSidebar extends Component {
 
 function mapStateToProps( state ) {
 	const currentUser = getCurrentUser( state );
-	const selectedSiteId = getSelectedSiteId( state );
+
+	const isAllDomainsView = isUnderDomainManagementAll( getCurrentRoute( state ) );
+
+	const selectedSiteId = isAllDomainsView ? null : getSelectedSiteId( state );
 	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
-	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
+	const siteId = isAllDomainsView
+		? null
+		: selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 	const site = getSite( state, siteId );
 
 	const isJetpack = isJetpackSite( state, siteId );
@@ -920,6 +976,7 @@ function mapStateToProps( state ) {
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
+	const isJetpackSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_JETPACK );
 
 	const isMigrationInProgress =
 		isSiteMigrationInProgress( state, selectedSiteId ) || isSiteMigrationActiveRoute( state );
@@ -937,6 +994,7 @@ function mapStateToProps( state ) {
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
+		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
@@ -944,6 +1002,7 @@ function mapStateToProps( state ) {
 		isDesignSectionOpen,
 		isToolsSectionOpen,
 		isManageSectionOpen,
+		isJetpackSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
@@ -956,7 +1015,7 @@ function mapStateToProps( state ) {
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
-		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+		canViewAtomicHosting: ! isAllDomainsView && canSiteViewAtomicHosting( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		siteTasklist: getSiteTaskList( state, siteId ),
 		hideChecklistProgress:
