@@ -29,6 +29,7 @@ export class LanguagePicker extends PureComponent {
 		onChange: PropTypes.func,
 		onClick: PropTypes.func,
 		countryCode: PropTypes.string,
+		empathyMode: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,6 +38,7 @@ export class LanguagePicker extends PureComponent {
 		onChange: noop,
 		onClick: noop,
 		countryCode: '',
+		empathyMode: false,
 	};
 
 	constructor( props ) {
@@ -44,7 +46,7 @@ export class LanguagePicker extends PureComponent {
 
 		this.state = {
 			selectedLanguage: this.findLanguage( props.valueKey, props.value ),
-			empathyMode: false,
+			empathyMode: props.empathyMode,
 		};
 	}
 
@@ -52,6 +54,12 @@ export class LanguagePicker extends PureComponent {
 		if ( nextProps.value !== this.props.value || nextProps.valueKey !== this.props.valueKey ) {
 			this.setState( {
 				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value ),
+			} );
+		}
+
+		if ( nextProps.empathyMode !== this.props.empathyMode ) {
+			this.setState( {
+				empathyMode: nextProps.empathyMode,
 			} );
 		}
 	}
