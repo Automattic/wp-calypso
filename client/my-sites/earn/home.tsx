@@ -29,6 +29,7 @@ import {
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Image dependencies
@@ -277,7 +278,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						page( `/plans/${ selectedSiteSlug }` );
 					},
 			  }
-			: null;
+			: {
+					text: translate( 'Learn how to get started' ),
+					action: () => {
+						trackCtaButton( 'learn-paid-newsletters' );
+						if ( window && window.location ) {
+							window.location.href = localizeUrl(
+								'https://wordpress.com/support/paid-newsletters/'
+							);
+						}
+					},
+			  };
 		const title = translate( 'Send paid email newsletters' );
 		const body = isFreePlan
 			? translate(
@@ -288,20 +299,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  )
-			: translate(
-					'Share premium content with paying subscribers automatically through email. Read this {{a}}support article{{/a}} to learn how to get started.',
-					{
-						components: {
-							a: (
-								<a
-									href="https://wordpress.com/support/paid-newsletters/"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-			  );
+			: translate( 'Share premium content with paying subscribers automatically through email.' );
 
 		return {
 			title,
