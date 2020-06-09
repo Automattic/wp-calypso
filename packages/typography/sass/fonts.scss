@@ -15,7 +15,7 @@ $brand-serif: 'Recoleta', $serif;
 }
 
 // Use Recoleta on page headings for supported languages
-$langs: de, en, es, fi, fr, id, it, nl, pt, sv, tr;
+$langs: af, ca, cs, da, de, en, es, eu, fi, fr, gl, hr, hu, id, is, it, lv, mt, nb, nl, pl, pt, ro, ru, sk, sl, sq, sr, sv, sw, tr, uz;
 
 @each $lang in $langs {
 	[lang*=#{$lang}] {
