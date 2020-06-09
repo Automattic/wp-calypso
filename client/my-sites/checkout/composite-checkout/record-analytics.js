@@ -123,7 +123,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				let legacyPaymentMethodSlug = ''; // eslint-disable-line no-case-declarations
 				if (
 					rawPaymentMethodSlug === 'card' ||
-					startsWith( rawPaymentMethodSlug, 'existingCard' )
+				rawPaymentMethodSlug.startsWith( 'existingCard' )
 				) {
 					legacyPaymentMethodSlug = 'credit_card';
 				} else if ( rawPaymentMethodSlug === 'apple-pay' ) {
