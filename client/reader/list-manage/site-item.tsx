@@ -8,36 +8,43 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
-import { getSite } from 'state/sites/selectors';
-import QuerySite from 'components/data/query-sites';
-import { ItemType } from './types';
+import Gridicon from 'components/gridicon';
+import QueryReaderSite from 'components/data/query-reader-site';
+import { getSite } from 'state/reader/sites/selectors';
+import { ItemType, Site } from './types';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function SiteItem( props: { item: ItemType; onRemove: ( e: MouseEvent ) => void } ) {
 	const siteId = props.item.site_ID as number;
-	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const site: Site = useSelector( ( state ) => getSite( state, siteId ) ) as Site;
 
 	if ( ! site ) {
 		return (
 			<>
-				<QuerySite siteId={ siteId } />
+				<QueryReaderSite siteId={ siteId } />
 				<SitePlaceholder />
 			</>
 		);
-	} else if ( site.is_error ) {
-		return (
-			<>
-				<div className="site-item__error">{ JSON.stringify( site, null, 2 ) }</div>
-				<Button scary primary onClick={ props.onRemove }>
-					Remove from list
-				</Button>
-			</>
-		);
 	}
+
 	return (
 		<>
-			<Site site={ site } />
+			<div className="site-item list-item">
+				<a className="list-item__content" href={ `/read/feeds/${ site.feed_ID }` }>
+					<div className="list-item__icon">
+						{ site.icon?.img && (
+							<img src={ site.icon.img } className="list-item__img image" alt="" />
+						) }
+						{ ! site.icon?.img && <Gridicon icon="site" size={ 36 } /> }
+					</div>
+
+					<div className="list-item__info">
+						<div className="list-item__title">{ site.name || site.URL || site.feed_URL }</div>
+						<div className="list-item__domain">{ site.feed_URL }</div>
+					</div>
+				</a>
+			</div>
 			<Button scary primary onClick={ props.onRemove }>
 				Remove from list
 			</Button>

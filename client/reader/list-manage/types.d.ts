@@ -20,3 +20,18 @@ export type Feed = {
 	organization_id: number;
 	unseen_count: number;
 };
+
+export type Site = {
+	ID: number;
+	URL: string;
+	feed_ID: number;
+	feed_URL: string;
+	icon: {
+		img: string;
+		ico: string;
+	};
+	is_private: boolean;
+	name: string;
+	slug: string;
+	title: string;
+};
