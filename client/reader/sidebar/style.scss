@@ -8,6 +8,12 @@
 		user-select: none;
 	}
 
+	.sidebar__menu-link-reader {
+		line-height: 1.8;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
 	.sidebar__menu-link:hover .count {
 		background-color: var( --color-sidebar-text-alternative );
 		border-color: var( --color-sidebar-text-alternative );
