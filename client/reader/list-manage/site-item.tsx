@@ -41,7 +41,7 @@ export default function SiteItem( props: { item: Item; onRemove: ( e: MouseEvent
 
 					<div className="list-item__info">
 						<div className="list-item__title">{ site.name || site.URL || site.feed_URL }</div>
-						<div className="list-item__domain">{ site.feed_URL }</div>
+						<div className="list-item__domain">{ site.description || site.feed_URL }</div>
 					</div>
 				</a>
 			</div>

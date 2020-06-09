@@ -24,6 +24,7 @@ export type Feed = {
 export type Site = {
 	ID: number;
 	URL: string;
+	description: string;
 	feed_ID: number;
 	feed_URL: string;
 	icon: {
