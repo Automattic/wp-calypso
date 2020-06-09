@@ -23,12 +23,12 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 		<Main className="disconnect-site__down-flow">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<FormattedHeader
-				headerText={ translate( 'Your site {{strong}}%(siteName)s{{/strong}} cannot be accessed', {
+				headerText={ translate( 'Your site ,{{strong}}%(siteName)s{{/strong}}, cannot be accessed', {
 					args: { siteName: site.name },
 					components: { strong: <strong /> },
 				} ) }
 				subHeaderText={ translate(
-					'Jetpack is unable to connect to your site at {{strong}}%(siteSlug)s{{/strong}}.{{br/}}There might be a few reasons for that — how do you want to proceed?',
+					'Jetpack wasn’t able to connect to {{strong}}%(siteSlug)s{{/strong}}.{{br/}}Let’s figure out why — there are a few things to try.',
 					{
 						args: { siteSlug: site.slug },
 						components: {
@@ -47,9 +47,9 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 					<FormattedHeader
 						isSecondary
 						align="left"
-						headerText={ translate( 'Confirm your site is loading' ) }
+						headerText={ translate( 'Confirm that your site loads' ) }
 						subHeaderText={ translate(
-							'As a first step, we suggest trying to open your site to ensure it’s loading correctly.'
+							'First, open your site to see if it loads properly.'
 						) }
 					/>
 				</CompactCard>
@@ -67,7 +67,7 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 						align="left"
 						headerText={ translate( 'Troubleshoot Jetpack' ) }
 						subHeaderText={ translate(
-							'Select this option if you’re still using Jetpack but seeing this error.'
+							'If your site is working but you’re still seeing this error, let’s troubleshoot your Jetpack connection.'
 						) }
 					/>
 				</CompactCard>
@@ -81,14 +81,14 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 						align="left"
 						headerText={ translate( 'Disconnect Jetpack' ) }
 						subHeaderText={ translate(
-							'Select this option if your site isn’t available anymore or if you’ve stopped using Jetpack and/or WordPress.'
+							'If you’re no longer using Jetpack and/or WordPress for your site, or you’ve taken your site down, it’s time to disconnect Jetpack.'
 						) }
 					/>
 				</CompactCard>
 			</div>
 			<p>
 				{ translate(
-					'You might also be seeing this error because you don’t have enough permissions on this site.{{br/}}Please contact your site administrator for more details.',
+					'Note: You may be seeing this error because you don’t have admin permissions for this site.{{br/}}If you think you should, contact your site administrator.',
 					{ components: { br: <br /> } }
 				) }
 			</p>
