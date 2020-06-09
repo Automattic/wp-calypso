@@ -21,7 +21,7 @@ import {
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {
-	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+	if ( config.isEnabled( 'jetpack-cloud' ) || config.isEnabled( 'jetpack/features-section' ) ) {
 		/* handles /backup/activity, see `backupActivityPath` */
 		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );
 
@@ -48,7 +48,7 @@ export default function () {
 			clientRender
 		);
 
-		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
+		if ( config.isEnabled( 'jetpack/backups-restore' ) ) {
 			/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
 			page(
 				backupRestorePath( ':site', ':rewindId' ),
@@ -60,6 +60,7 @@ export default function () {
 				clientRender
 			);
 		}
+
 		/* handles /backup/:site, see `backupMainPath` */
 		page(
 			backupMainPath( ':site' ),
@@ -73,5 +74,7 @@ export default function () {
 		);
 		/* handles /backups, see `backupMainPath` */
 		page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
+	} else {
+		page( `${ backupMainPath() }*`, () => page.redirect( '/ ' ) );
 	}
 }

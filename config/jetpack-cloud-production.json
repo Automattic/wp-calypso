@@ -17,12 +17,8 @@
 		"current-site/stale-cart-notice": false,
 		"i18n/community-translator": false,
 		"jetpack-cloud": true,
-		"jetpack-cloud/backups-restore": true,
-		"jetpack-cloud/backups": true,
-		"jetpack-cloud/on-demand-scan": true,
-		"jetpack-cloud/scan-history": true,
-		"jetpack-cloud/scan": true,
-		"jetpack-cloud/settings": true,
+		"jetpack/on-demand-scan": true,
+		"jetpack/backups-restore": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
@@ -35,10 +31,10 @@
 	"enable_all_sections": false,
 	"sections": {
 		"jetpack-cloud": true,
-		"scan": true,
-		"backups": true,
 		"jetpack-cloud-settings": true,
-		"jetpack-cloud-auth": true
+		"jetpack-cloud-auth": true,
+		"scan": true,
+		"backups": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",

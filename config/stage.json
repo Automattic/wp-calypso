@@ -62,6 +62,8 @@
 		"jetpack/happychat": true,
 		"jetpack/scan-product": true,
 		"jetpack/search-product": true,
+		"jetpack/on-demand-scan": true,
+		"jetpack/backups-restore": true,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
