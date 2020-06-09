@@ -13,6 +13,20 @@
 		float: right;
 		margin-top: 4px;
 	}
+
+	.button.comments__manage-comments-button {
+		color: inherit;
+		float: right;
+		margin-top: -2px;
+		margin-right: 14px;
+		padding: 0;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			span {
+				display: none;
+			}
+		}
+	}
 }
 
 .comments__info-bar {
