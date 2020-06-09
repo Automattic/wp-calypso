@@ -58,7 +58,7 @@ const deprecated = [
 					},
 				} );
 			};
-			const buttons = createBlock( 'core/buttons', {}, [
+			const buttons = createBlock( 'premium-content/buttons', {}, [
 				createButton( 'subscribe', attributes.subscribeButtonText ),
 				createButton( 'login', attributes.loginButtonText ),
 			] );

@@ -4,6 +4,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
+import { addFilter } from '@wordpress/hooks';
 import { _x } from '@wordpress/i18n';
 /* eslint-enable wpcalypso/import-docblock */
 
@@ -13,6 +14,7 @@ import { _x } from '@wordpress/i18n';
 import * as container from './blocks/container';
 import * as subscriberView from './blocks/subscriber-view';
 import * as loggedOutView from './blocks/logged-out-view';
+import * as buttons from './blocks/buttons';
 import * as button from './blocks/button';
 
 /**
@@ -73,13 +75,36 @@ const addPaidBlockFlags = async () => {
 };
 
 /**
+ * Sets the `premium-content/buttons` block as possible parent of `core/button`, so users can insert regular buttons
+ * the Premium Content buttons group.
+ */
+const setButtonsParentBlock = () => {
+	addFilter(
+		'blocks.registerBlockType',
+		'premium-content/set-buttons-parent-block',
+		( settings, name ) => {
+			if ( 'core/button' !== name ) {
+				return settings;
+			}
+
+			return {
+				...settings,
+				parent: [ ...settings.parent, 'premium-content/buttons' ],
+			};
+		}
+	);
+};
+
+/**
  * Function to register blocks provided by CoBlocks.
  */
 export const registerPremiumContentBlocks = () => {
-	[ container, loggedOutView, subscriberView, button ].forEach( registerBlock );
+	[ container, loggedOutView, subscriberView, buttons, button ].forEach( registerBlock );
 
 	// Done after blocks are registered so the status API request doesn't suspend the execution.
 	addPaidBlockFlags();
+
+	setButtonsParentBlock();
 };
 
 registerPremiumContentBlocks();

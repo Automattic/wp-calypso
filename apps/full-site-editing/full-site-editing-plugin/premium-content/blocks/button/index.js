@@ -24,6 +24,11 @@ const category = 'common';
  */
 const settings = {
 	name,
+	title: __( 'Premium Content button', 'full-site-editing' ),
+	description: __(
+		'Prompt non-subscriber visitors to take action with a button-style link.',
+		'full-site-editing'
+	),
 	attributes: {
 		text: {
 			type: 'string',
@@ -40,11 +45,8 @@ const settings = {
 		},
 	},
 	icon,
-	/* translators: block name */
-	title: __( 'Premium Content Button', 'full-site-editing' ),
-	/* translators: block description */
-	description: __( 'Premium Content Button.', 'full-site-editing' ),
-	parent: [ 'premium-content/logged-out-view', 'core/buttons' ],
+	keywords: [ __( 'link', 'full-site-editing' ) ],
+	parent: [ 'premium-content/buttons' ],
 	supports: {
 		align: true,
 		alignWide: false,

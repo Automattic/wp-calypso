@@ -55,26 +55,7 @@ function Edit( { selectBlock } ) {
 									),
 								},
 							],
-							[
-								'core/buttons',
-								{},
-								[
-									[
-										'premium-content/button',
-										{
-											text: __( 'Subscribe', 'full-site-editing' ),
-											type: 'subscribe',
-										},
-									],
-									[
-										'premium-content/button',
-										{
-											text: __( 'Log In', 'full-site-editing' ),
-											type: 'login',
-										},
-									],
-								],
-							],
+							[ 'premium-content/buttons' ],
 						] }
 					/>
 				</div>
