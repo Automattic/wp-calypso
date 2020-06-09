@@ -279,7 +279,7 @@ export class JetpackAuthorize extends Component {
 					'woocommerce-onboarding',
 				],
 				from
-			) || this.getWooDnaConfig( props )
+			) || Boolean( this.getWooDnaConfig( props ) )
 		);
 	};
 
