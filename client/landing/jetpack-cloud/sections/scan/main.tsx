@@ -134,7 +134,7 @@ class ScanPage extends Component< Props > {
 						}
 					) }
 				</p>
-				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
+				{ isEnabled( 'jetpack/on-demand-scan' ) && (
 					<Button primary className="scan__button" onClick={ () => dispatchScanRun( siteId ) }>
 						{ translate( 'Scan now' ) }
 					</Button>
@@ -187,7 +187,7 @@ class ScanPage extends Component< Props > {
 					) }
 				</p>
 				{ this.renderContactSupportButton() }
-				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
+				{ isEnabled( 'jetpack/on-demand-scan' ) && (
 					<Button
 						className="scan__button scan__retry-bottom"
 						onClick={ () => dispatchScanRun( siteId ) }

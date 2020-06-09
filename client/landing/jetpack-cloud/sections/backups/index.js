@@ -48,16 +48,18 @@ export default function () {
 			clientRender
 		);
 
-		/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
-		page(
-			backupRestorePath( ':site', ':rewindId' ),
-			siteSelection,
-			navigation,
-			backupRestore,
-			wrapInSiteOffsetProvider,
-			makeLayout,
-			clientRender
-		);
+		if ( config.isEnabled( 'jetpack/backups-restore' ) ) {
+			/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
+			page(
+				backupRestorePath( ':site', ':rewindId' ),
+				siteSelection,
+				navigation,
+				backupRestore,
+				wrapInSiteOffsetProvider,
+				makeLayout,
+				clientRender
+			);
+		}
 
 		/* handles /backup/:site, see `backupMainPath` */
 		page(
