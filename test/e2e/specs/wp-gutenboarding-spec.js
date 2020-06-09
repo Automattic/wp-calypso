@@ -43,7 +43,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			assert( blockExists, 'Onboarding block is not rendered' );
 		} );
 
-		step( 'Can see Acquire Intent and set a vertical and site title', async function () {
+		step( 'Can see Acquire Intent and set site title', async function () {
 			const acquireIntentPage = await AcquireIntentPage.Expect( driver );
 			await acquireIntentPage.enterSiteTitle( siteTitle );
 			await acquireIntentPage.goToNextStep();
