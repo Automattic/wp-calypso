@@ -74,5 +74,7 @@ export default function () {
 		);
 		/* handles /backups, see `backupMainPath` */
 		page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
+	} else {
+		page( `${ backupMainPath() }*`, () => page.redirect( '/ ' ) );
 	}
 }

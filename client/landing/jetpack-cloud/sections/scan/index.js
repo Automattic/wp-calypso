@@ -42,5 +42,7 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+	} else {
+		page( '/scan*', () => page.redirect( '/' ) );
 	}
 }
