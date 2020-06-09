@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -34,10 +33,8 @@ import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryLocations from 'woocommerce/components/query-locations';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-
-const user = userFactory();
 
 class StoreLocationSetupView extends Component {
 	constructor( props ) {
@@ -275,9 +272,9 @@ class StoreLocationSetupView extends Component {
 	closeVerifyEmailDialog = () => {
 		this.setState( { showEmailVerificationDialog: false } );
 		// Re-fetch the user to see if they actually took care of things
-		user.fetch();
+		user().fetch();
 		this.setState( { isFetchingUser: true } );
-		user.once( 'change', () => this.setState( { isFetchingUser: false } ) );
+		user().once( 'change', () => this.setState( { isFetchingUser: false } ) );
 	};
 
 	render = () => {

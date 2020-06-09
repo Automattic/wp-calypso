@@ -47,19 +47,23 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
 import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
+import {
+	getCurrentUserDate,
+	getCurrentUserDisplayName,
+	getCurrentUserName,
+	getCurrentUserVisibleSiteCount,
+} from 'state/current-user/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
 
 /**
@@ -398,8 +402,8 @@ const Account = createReactClass( {
 	},
 
 	renderJoinDate() {
-		const { translate, moment } = this.props;
-		const dateMoment = moment( user.get().date );
+		const { currentUserDate, translate, moment } = this.props;
+		const dateMoment = moment( currentUserDate );
 
 		return (
 			<span>
@@ -488,9 +492,9 @@ const Account = createReactClass( {
 	},
 
 	renderPrimarySite() {
-		const { requestingMissingSites, translate } = this.props;
+		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
 
-		if ( ! user.get().visible_site_count ) {
+		if ( ! visibleSiteCount ) {
 			return (
 				<Button
 					href={ config( 'signup_url' ) }
@@ -671,7 +675,7 @@ const Account = createReactClass( {
 	 * These form fields are displayed when a username change is in progress.
 	 */
 	renderUsernameFields() {
-		const { translate, username } = this.props;
+		const { currentUserDisplayName, currentUserName, translate, username } = this.props;
 
 		const isSaveButtonDisabled =
 			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
@@ -710,7 +714,7 @@ const Account = createReactClass( {
 							'You will not be able to change your username back.',
 						{
 							args: {
-								username: user.get().username,
+								username: currentUserName,
 							},
 							components: {
 								strong: <strong />,
@@ -725,7 +729,7 @@ const Account = createReactClass( {
 							'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
 						{
 							args: {
-								displayName: user.get().display_name,
+								displayName: currentUserDisplayName,
 							},
 							components: {
 								myProfileLink: (
@@ -835,6 +839,10 @@ export default compose(
 		( state ) => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 			countryCode: requestGeoLocation().data,
+			currentUserDate: getCurrentUserDate( state ),
+			currentUserDisplayName: getCurrentUserDisplayName( state ),
+			currentUserName: getCurrentUserName( state ),
+			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 		} ),
 		{ bumpStat, errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),
