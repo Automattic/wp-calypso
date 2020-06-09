@@ -96,12 +96,12 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		domainSearch.trim(),
 		domainCategory,
 		useI18n().i18nLocale,
-		10
+		quantity
 	);
 
 	const allSuggestions = domainSuggestions;
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, quantity );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions );
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 	const hasSuggestions = freeSuggestions?.length || paidSuggestions?.length;
 
@@ -251,7 +251,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									<SuggestionNone />
 								) ) }
 							{ ! paidSuggestions &&
-								times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+								times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 							{ paidSuggestions &&
 								( paidSuggestions?.length ? (
 									paidSuggestions.map( ( suggestion, i ) => (
