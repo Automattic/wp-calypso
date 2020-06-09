@@ -11,6 +11,7 @@ import { snakeCase } from 'lodash';
  * Internal dependencies
  */
 import { recordPurchase } from 'lib/analytics/record-purchase';
+import { recordAddEvent } from 'lib/analytics/cart';
 import { logToLogstash } from 'state/logstash/actions';
 import config from 'config';
 
@@ -371,6 +372,10 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_summary_help_click' )
 				);
+			}
+
+			case 'CART_ADD_ITEM': {
+				return reduxDispatch( recordAddEvent( action.payload ) );
 			}
 
 			default:

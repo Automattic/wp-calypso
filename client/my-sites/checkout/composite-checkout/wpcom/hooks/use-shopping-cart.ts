@@ -454,6 +454,10 @@ export function useShoppingCart(
 	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
 		( requestCartProductToAdd ) => {
 			hookDispatch( { type: 'ADD_CART_ITEM', requestCartProductToAdd } );
+			onEvent?.( {
+				type: 'CART_ADD_ITEM',
+				payload: requestCartProductToAdd,
+			} );
 		},
 		[]
 	);
