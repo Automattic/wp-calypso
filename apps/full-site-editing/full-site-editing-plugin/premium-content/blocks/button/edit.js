@@ -11,6 +11,12 @@ import { useCallback } from '@wordpress/element';
 import { Button, ButtonGroup, PanelBody, RangeControl } from '@wordpress/components';
 import { InspectorControls, RichText, __experimentalBlock as Block } from '@wordpress/block-editor';
 
+/**
+ * Internal dependencies
+ */
+import ColorEdit from './color-edit';
+import getColorAndStyleProps from './color-props';
+
 const MIN_BORDER_RADIUS_VALUE = 0;
 const MAX_BORDER_RADIUS_VALUE = 50;
 const INITIAL_BORDER_RADIUS_POSITION = 5;
@@ -42,24 +48,30 @@ const BUTTON_TYPES = {
 	login: __( 'Log in', 'full-site-editing' ),
 };
 
-function ButtonEdit( { attributes, setAttributes, className } ) {
+function ButtonEdit( props ) {
+	const { attributes, setAttributes, className } = props;
 	const { borderRadius, text, type } = attributes;
+
+	const colorProps = getColorAndStyleProps( attributes );
 
 	return (
 		<>
-			<RichText
-				tagName={ Block.div }
-				placeholder={ __( 'Add text…', 'full-site-editing' ) }
-				value={ text }
-				onChange={ ( value ) => setAttributes( { text: value } ) }
-				withoutInteractiveFormatting
-				className={ classnames( className, 'wp-block-button__link', {
-					'no-border-radius': borderRadius === 0,
-				} ) }
-				style={ {
-					borderRadius: borderRadius ? borderRadius + 'px' : undefined,
-				} }
-			/>
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<Block.div className="wp-block-button">
+				<RichText
+					placeholder={ __( 'Add text…', 'full-site-editing' ) }
+					value={ text }
+					onChange={ ( value ) => setAttributes( { text: value } ) }
+					withoutInteractiveFormatting
+					className={ classnames( className, 'wp-block-button__link', colorProps.className, {
+						'no-border-radius': borderRadius === 0,
+					} ) }
+					style={ {
+						borderRadius: borderRadius ? borderRadius + 'px' : undefined,
+						...colorProps.style,
+					} }
+				/>
+			</Block.div>
 			<InspectorControls>
 				<PanelBody title={ __( 'Button Type', 'full-site-editing' ) }>
 					<ButtonGroup aria-label={ __( 'Button Type', 'full-site-editing' ) }>
@@ -81,6 +93,7 @@ function ButtonEdit( { attributes, setAttributes, className } ) {
 						) ) }
 					</ButtonGroup>
 				</PanelBody>
+				<ColorEdit { ...props } />
 				<BorderPanel borderRadius={ borderRadius } setAttributes={ setAttributes } />
 			</InspectorControls>
 		</>

@@ -43,6 +43,18 @@ const settings = {
 		borderRadius: {
 			type: 'number',
 		},
+		backgroundColor: {
+			type: 'string',
+		},
+		textColor: {
+			type: 'string',
+		},
+		gradient: {
+			type: 'string',
+		},
+		style: {
+			type: 'object',
+		},
 	},
 	icon,
 	keywords: [ __( 'link', 'full-site-editing' ) ],
@@ -53,7 +65,6 @@ const settings = {
 		html: false,
 		reusable: false,
 		lightBlockWrapper: true,
-		__experimentalColor: { gradients: true },
 	},
 	styles: [
 		{ name: 'fill', label: __( 'Fill', 'full-site-editing' ), isDefault: true },

@@ -123,18 +123,3 @@
 		min-width: 200px;
 	}
 }
-
-.wp-premium-content-logged-out-view .wp-block-buttons .wp-block-button__link,
-.wp-premium-content-logged-out-view .wp-block-buttons .wp-block-button {
-	margin-top: 0;
-}
-
-.wp-premium-content-logged-out-view .wp-block-buttons .wp-block-button__link {
-	margin-right: 20px;
-}
-
-.block-editor-block-preview__content .wp-block-premium-content-button {
-	left: 50%;
-	position: relative;
-	transform: translateX( -50% );
-}

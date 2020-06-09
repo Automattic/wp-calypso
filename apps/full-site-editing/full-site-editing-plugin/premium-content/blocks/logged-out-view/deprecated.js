@@ -41,15 +41,12 @@ const deprecated = [
 		isEligible: ( { buttonClasses } ) => !! buttonClasses,
 
 		migrate: ( attributes, innerBlocks ) => {
-			const createButton = ( type, text ) => {
-				const textColor = attributes.textButtonColor;
-				const backgroundColor = attributes.backgroundButtonColor;
-
-				return createBlock( 'premium-content/button', {
+			const createButton = ( type, text ) =>
+				createBlock( 'premium-content/button', {
 					type,
 					text,
-					backgroundColor,
-					textColor,
+					backgroundColor: attributes.backgroundButtonColor,
+					textColor: attributes.textButtonColor,
 					style: {
 						color: {
 							background: attributes.customBackgroundButtonColor,
@@ -57,7 +54,6 @@ const deprecated = [
 						},
 					},
 				} );
-			};
 			const buttons = createBlock( 'premium-content/buttons', {}, [
 				createButton( 'subscribe', attributes.subscribeButtonText ),
 				createButton( 'login', attributes.loginButtonText ),
