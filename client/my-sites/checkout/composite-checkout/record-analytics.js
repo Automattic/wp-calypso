@@ -129,7 +129,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				} else if ( rawPaymentMethodSlug === 'apple-pay' ) {
 					legacyPaymentMethodSlug = 'web_payment';
 				} else {
-					legacyPaymentMethodSlug = snakeCase( String( action.payload ) );
+					legacyPaymentMethodSlug = snakeCase( rawPaymentMethodSlug );
 				}
 
 				return reduxDispatch(
