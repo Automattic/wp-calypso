@@ -630,8 +630,9 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
-		if ( this.getWooDnaConfig() ) {
-			return this.renderWooDnaFooterLinks();
+		const wooDnaFooterLinks = this.renderWooDnaFooterLinks();
+		if ( wooDnaFooterLinks ) {
+			return wooDnaFooterLinks;
 		}
 
 		return (
@@ -660,11 +661,14 @@ export class JetpackAuthorize extends Component {
 
 	renderWooDnaFooterLinks() {
 		const { translate } = this.props;
-		const { name, helpUrl } = this.getWooDnaConfig();
+		const wooDna = this.getWooDnaConfig();
+		if ( ! wooDna ) {
+			return null;
+		}
 		/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
 		const helpButtonLabel = translate( 'Get help setting up %(pluginName)s', {
 			args: {
-				pluginName: name( translate ),
+				pluginName: wooDna.name( translate ),
 			},
 		} );
 
@@ -677,7 +681,7 @@ export class JetpackAuthorize extends Component {
 					eventName="calypso_jpc_authorize_chat_initiated"
 					label={ helpButtonLabel }
 				>
-					<HelpButton label={ helpButtonLabel } url={ helpUrl } />
+					<HelpButton label={ helpButtonLabel } url={ wooDna.helpUrl } />
 				</JetpackConnectHappychatButton>
 				{ this.renderBackToWpAdminLink() }
 			</LoggedOutFormLinks>
