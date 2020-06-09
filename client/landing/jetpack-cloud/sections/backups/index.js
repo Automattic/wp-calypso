@@ -21,7 +21,7 @@ import {
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {
-	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+	if ( config.isEnabled( 'jetpack-cloud' ) || config.isEnabled( 'jetpack/feature-sections' ) ) {
 		/* handles /backup/activity, see `backupActivityPath` */
 		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );
 
@@ -48,18 +48,17 @@ export default function () {
 			clientRender
 		);
 
-		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
-			/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
-			page(
-				backupRestorePath( ':site', ':rewindId' ),
-				siteSelection,
-				navigation,
-				backupRestore,
-				wrapInSiteOffsetProvider,
-				makeLayout,
-				clientRender
-			);
-		}
+		/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
+		page(
+			backupRestorePath( ':site', ':rewindId' ),
+			siteSelection,
+			navigation,
+			backupRestore,
+			wrapInSiteOffsetProvider,
+			makeLayout,
+			clientRender
+		);
+
 		/* handles /backup/:site, see `backupMainPath` */
 		page(
 			backupMainPath( ':site' ),
