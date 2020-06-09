@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import wp from 'lib/wp';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -496,18 +496,14 @@ export default function CompositeCheckout( {
 		[ couponItem, getThankYouUrl ]
 	);
 
-	useEffect( () => {
-		debug( 'composite checkout has loaded' );
-		recordEvent( {
-			type: 'CHECKOUT_LOADED',
-			payload: {
-				saved_cards: 0, // TODO: get this
-				apple_pay_available: isApplePayAvailable,
-				product_slug: product,
-				is_renewal: hasRenewalItem( responseCart ),
-			},
-		} );
-	}, [ recordEvent ] );
+	useRecordCheckoutLoaded(
+		recordEvent,
+		isApplePayAvailable,
+		responseCart,
+		storedCards,
+		isLoadingStoredCards,
+		product
+	);
 
 	return (
 		<React.Fragment>
@@ -633,6 +629,30 @@ function useCountryList( overrideCountryList ) {
 	}, [ shouldFetchList, isListFetched, globalCountryList, reduxDispatch ] );
 
 	return countriesList;
+}
+
+function useRecordCheckoutLoaded(
+	recordEvent,
+	isApplePayAvailable,
+	responseCart,
+	storedCards,
+	isLoadingStoredCards,
+	product
+) {
+	const hasRecordedCheckoutLoad = useRef( false );
+	if ( ! isLoadingStoredCards && ! hasRecordedCheckoutLoad.current ) {
+		debug( 'composite checkout has loaded' );
+		recordEvent( {
+			type: 'CHECKOUT_LOADED',
+			payload: {
+				saved_cards: storedCards.length,
+				apple_pay_available: isApplePayAvailable,
+				product_slug: product,
+				is_renewal: hasRenewalItem( responseCart ),
+			},
+		} );
+		hasRecordedCheckoutLoad.current = true;
+	}
 }
 
 function CountrySelectMenu( {
