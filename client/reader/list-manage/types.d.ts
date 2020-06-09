@@ -3,7 +3,19 @@ export type Item = {
 	feed_ID: number | null;
 	tag_ID: number | null;
 	site_ID: number | null;
-	[ propName: string ]: string | number | null;
+	meta: {
+		data?: {
+			site?: Site;
+			feed?: Feed;
+			tag?: { tag: Tag };
+		};
+		links?: {
+			site?: string;
+			feed?: string;
+			tag?: string;
+		};
+	};
+	[ propName: string ]: string | number | object | null;
 };
 
 export type Feed = {
@@ -33,6 +45,14 @@ export type Site = {
 	};
 	is_private: boolean;
 	name: string;
+	slug: string;
+	title: string;
+};
+
+export type Tag = {
+	ID: number;
+	URL: string;
+	display_name: string;
 	slug: string;
 	title: string;
 };

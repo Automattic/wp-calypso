@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,22 +9,15 @@ import { useSelector } from 'react-redux';
 import { Button } from '@automattic/components';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Gridicon from 'components/gridicon';
-import QueryReaderSite from 'components/data/query-reader-site';
-import { getSite } from 'state/reader/sites/selectors';
 import { Item, Site } from './types';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function SiteItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
-	const siteId = props.item.site_ID as number;
-	const site: Site = useSelector( ( state ) => getSite( state, siteId ) ) as Site;
+	const site: Site = props.item.meta.data?.site as Site;
 
 	if ( ! site ) {
-		return (
-			<>
-				<QueryReaderSite siteId={ siteId } />
-				<SitePlaceholder />
-			</>
-		);
+		// TODO: Add support for removing invalid site list item
+		return <SitePlaceholder />;
 	}
 
 	return (
