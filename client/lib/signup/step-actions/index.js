@@ -202,7 +202,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	if ( shouldSkipDomainStep || shouldHideFreePlan || shouldHideDomainStep ) {
 		newSiteParams.blog_name =
-			get( user().get(), 'username' ) ||
+			user().get()?.username ||
 			get( signupDependencies, 'username' ) ||
 			siteTitle ||
 			siteType ||

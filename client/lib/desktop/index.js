@@ -102,7 +102,7 @@ const Desktop = {
 	sendUserLoginStatus: function () {
 		let status = true;
 
-		if ( user().data === false || user().data instanceof Array ) {
+		if ( user().get() === false ) {
 			status = false;
 		}
 

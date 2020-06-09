@@ -187,7 +187,7 @@ const communityTranslatorJumpstart = {
 			languageJson[ '' ][ 'Plural-Forms' ] ||
 			languageJson[ '' ][ 'plural-forms' ] ||
 			translationDataFromPage.pluralForms;
-		translationDataFromPage.currentUserId = user().data.ID;
+		translationDataFromPage.currentUserId = user().get().ID;
 
 		const currentLocale = find( languages, ( lang ) => lang.langSlug === localeCode );
 		if ( currentLocale ) {
@@ -322,7 +322,7 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 
 	if ( changed && _isTranslatorEnabled !== undefined ) {
 		debug( tracksEvent );
-		recordTracksEvent( tracksEvent, { locale: user().data.localeSlug } );
+		recordTracksEvent( tracksEvent, { locale: user().get().localeSlug } );
 	}
 
 	_isTranslatorEnabled = newSetting;
