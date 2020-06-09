@@ -8,24 +8,20 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
-import Button from 'components/forms/form-button';
+import { applySiteOffset } from 'lib/site/timezone';
+import { backupDownloadPath, backupRestorePath, backupMainPath } from 'my-sites/backup/paths';
+import { Card } from '@automattic/components';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 	INDEX_FORMAT,
 } from 'lib/jetpack/backup-utils';
-import {
-	backupDownloadPath,
-	backupRestorePath,
-	backupMainPath,
-	settingsPath,
-} from 'my-sites/backup/paths';
-import { applySiteOffset } from 'lib/site/timezone';
-import { Card } from '@automattic/components';
+import { settingsPath } from 'lib/jetpack/paths';
+import { withLocalizedMoment } from 'components/localized-moment';
 import ActivityCard from 'components/jetpack/activity-card';
-import ExternalLink from 'components/external-link';
 import BackupChanges from './backup-changes';
+import Button from 'components/forms/form-button';
+import ExternalLink from 'components/external-link';
 
 /**
  * Style dependencies

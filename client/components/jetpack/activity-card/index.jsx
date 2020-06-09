@@ -10,7 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { backupDownloadPath, backupRestorePath, settingsPath } from 'my-sites/backup/paths';
+import { backupDownloadPath, backupRestorePath } from 'my-sites/backup/paths';
+import { settingsPath } from 'lib/jetpack/paths';
 import { Card } from '@automattic/components';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { withApplySiteOffset } from 'components/jetpack/site-offset';

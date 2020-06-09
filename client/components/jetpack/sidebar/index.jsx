@@ -11,28 +11,29 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 /**
  * Internal dependencies
  */
-import QueryJetpackScan from 'components/data/query-jetpack-scan';
-import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
+import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
+import {
+	expandMySitesSidebarSection as expandSection,
+	toggleMySitesSidebarSection as toggleSection,
+} from 'state/my-sites/sidebar/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
-import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
+import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
+import { itemLinkMatches } from 'my-sites/sidebar/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { settingsPath } from 'lib/jetpack/paths';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
+import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
+import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
 import Gridicon from 'components/gridicon';
-import { itemLinkMatches } from 'my-sites/sidebar/utils';
+import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import ScanBadge from 'components/jetpack/scan-badge';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
-import {
-	expandMySitesSidebarSection as expandSection,
-	toggleMySitesSidebarSection as toggleSection,
-} from 'state/my-sites/sidebar/actions';
-import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
 
 // Lowercase because these are used as keys for sidebar state.
 export const SIDEBAR_SECTION_SCAN = 'scan';
@@ -181,11 +182,11 @@ class JetpackCloudSidebar extends Component {
 						label={ translate( 'Settings', {
 							comment: 'Jetpack Cloud / Backups sidebar navigation item',
 						} ) }
-						link={ selectedSiteSlug ? `/settings/${ selectedSiteSlug }` : '/settings' }
+						link={ selectedSiteSlug ? settingsPath( selectedSiteSlug ) : settingsPath() }
 						onNavigate={ this.onNavigate( 'Jetpack Cloud / Settings' ) }
 						materialIcon="settings"
 						materialIconStyle="filled"
-						selected={ this.isSelected( '/settings' ) }
+						selected={ this.isSelected( settingsPath() ) }
 					/>
 				</SidebarRegion>
 				<SidebarFooter>
