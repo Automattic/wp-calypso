@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import {
 	capitalize,
 	deburr,
@@ -459,12 +459,17 @@ export class LanguagePickerModal extends PureComponent {
 
 	renderEmpathyModeCheckbox() {
 		const { translate } = this.props;
-		const { empathyMode } = this.state;
+		const { empathyMode, selectedLanguageSlug } = this.state;
+		const isDefaultLanguageSelected = i18n.defaultLocaleSlug === selectedLanguageSlug;
 
 		return (
 			<div className="language-picker__modal-empathy-mode">
 				<FormLabel>
-					<FormCheckbox checked={ empathyMode } onChange={ this.handleEmpathyModeToggle } />
+					<FormCheckbox
+						checked={ empathyMode && ! isDefaultLanguageSelected }
+						disabled={ isDefaultLanguageSelected }
+						onChange={ this.handleEmpathyModeToggle }
+					/>
 					<span>{ translate( 'Empathy mode' ) }</span>
 				</FormLabel>
 			</div>
