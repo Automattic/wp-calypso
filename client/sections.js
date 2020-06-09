@@ -487,9 +487,9 @@ const sections = [
 	{
 		name: 'scan',
 		paths: [ '/scan' ],
-		module: 'landing/jetpack-cloud/sections/scan',
+		module: 'my-sites/scan',
 		secondary: true,
-		group: 'jetpack-cloud',
+		group: 'sites',
 		enableLoggedOut: true,
 	},
 	{

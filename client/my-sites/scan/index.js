@@ -16,7 +16,7 @@ import {
 	showUpsellIfNoScanHistory,
 	scan,
 	scanHistory,
-} from 'landing/jetpack-cloud/sections/scan/controller';
+} from 'my-sites/scan/controller';
 
 export default function () {
 	if ( config.isEnabled( 'jetpack-cloud' ) || config.isEnabled( 'jetpack/features-section' ) ) {
