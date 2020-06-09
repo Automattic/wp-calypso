@@ -34,6 +34,7 @@ class CurrentSite extends Component {
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
+		forceAllSitesView: PropTypes.bool,
 	};
 
 	switchSites = ( event ) => {
@@ -83,13 +84,13 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
-				{ isEnabled( 'current-site/domain-warning' ) && (
+				{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 					<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 				) }
-				{ isEnabled( 'current-site/stale-cart-notice' ) && (
+				{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
 					<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 				) }
-				{ isEnabled( 'current-site/notice' ) && (
+				{ selectedSite && isEnabled( 'current-site/notice' ) && (
 					<AsyncLoad
 						require="my-sites/current-site/notice"
 						placeholder={ null }
@@ -102,8 +103,8 @@ class CurrentSite extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		selectedSite: getSelectedSite( state ),
+	( state, ownProps ) => ( {
+		selectedSite: ownProps.forceAllSitesView ? null : getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),

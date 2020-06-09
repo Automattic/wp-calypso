@@ -6,6 +6,9 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+}
+
+.scan__main.is_jetpackcom {
 	min-height: calc( 100vh - 111px ); // Padding of .layout__content: 79px + 32px;
 }
 
