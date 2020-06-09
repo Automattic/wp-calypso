@@ -14,8 +14,11 @@ import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
 import { addQueryArgs } from 'lib/url';
 import { localizeUrl } from 'lib/i18n-utils';
+import { useTranslate } from 'i18n-calypso';
 
-export default function DownFlow( { translate, confirmHref, backHref, site } ) {
+export default function DownFlow( { confirmHref, backHref, site } ) {
+	const translate = useTranslate();
+
 	return (
 		<Main className="disconnect-site__down-flow">
 			<DocumentHead title={ translate( 'Site Settings' ) } />

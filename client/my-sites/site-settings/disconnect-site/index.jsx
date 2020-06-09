@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,7 +18,7 @@ import { getSelectedSite } from 'state/ui/selectors';
  */
 import './style.scss';
 
-const DisconnectSite = ( { reason, type, site, translate } ) => {
+const DisconnectSite = ( { reason, type, site } ) => {
 	const confirmHref = `/settings/disconnect-site/confirm/${ site.slug }`;
 
 	let backHref = '/settings/manage-connection/' + site.slug;
@@ -28,21 +27,14 @@ const DisconnectSite = ( { reason, type, site, translate } ) => {
 	}
 
 	if ( type === 'down' ) {
-		return (
-			<DownFlow
-				translate={ translate }
-				confirmHref={ confirmHref }
-				backHref={ backHref }
-				site={ site }
-			/>
-		);
+		return <DownFlow confirmHref={ confirmHref } backHref={ backHref } site={ site } />;
 	}
 
-	return <SurveyFlow translate={ translate } confirmHref={ confirmHref } backHref={ backHref } />;
+	return <SurveyFlow confirmHref={ confirmHref } backHref={ backHref } />;
 };
 
 const connectComponent = connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) );
 
-export default flowRight( connectComponent, localize, redirectNonJetpack() )( DisconnectSite );
+export default flowRight( connectComponent, redirectNonJetpack() )( DisconnectSite );

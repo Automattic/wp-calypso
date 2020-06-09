@@ -12,8 +12,11 @@ import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
 import Troubleshoot from './troubleshoot';
+import { useTranslate } from 'i18n-calypso';
 
-export default function SurveyFlow( { translate, confirmHref, backHref } ) {
+export default function SurveyFlow( { confirmHref, backHref } ) {
+	const translate = useTranslate();
+
 	return (
 		<Main className="disconnect-site__site-settings">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
