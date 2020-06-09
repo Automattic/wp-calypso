@@ -82,7 +82,6 @@ import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 
-
 /**
  * Style dependencies
  */
