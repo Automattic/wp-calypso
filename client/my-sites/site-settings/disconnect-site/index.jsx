@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { DownFlow } from './down-flow';
+import DownFlow from './down-flow';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
-import { SurveyFlow } from './survey-flow';
+import SurveyFlow from './survey-flow';
 import { getSelectedSite } from 'state/ui/selectors';
 
 /**

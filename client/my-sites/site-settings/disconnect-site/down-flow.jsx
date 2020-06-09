@@ -15,7 +15,7 @@ import NavigationLink from 'components/wizard/navigation-link';
 import { addQueryArgs } from 'lib/url';
 import { localizeUrl } from 'lib/i18n-utils';
 
-export const DownFlow = ( { translate, confirmHref, backHref, site } ) => {
+export default function DownFlow( { translate, confirmHref, backHref, site } ) {
 	return (
 		<Main className="disconnect-site__down-flow">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
@@ -94,4 +94,4 @@ export const DownFlow = ( { translate, confirmHref, backHref, site } ) => {
 			</div>
 		</Main>
 	);
-};
+}

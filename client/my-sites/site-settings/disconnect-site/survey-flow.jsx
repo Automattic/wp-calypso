@@ -13,7 +13,7 @@ import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
 import Troubleshoot from './troubleshoot';
 
-export const SurveyFlow = ( { translate, confirmHref, backHref } ) => {
+export default function SurveyFlow( { translate, confirmHref, backHref } ) {
 	return (
 		<Main className="disconnect-site__site-settings">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
@@ -29,4 +29,4 @@ export const SurveyFlow = ( { translate, confirmHref, backHref } ) => {
 			<Troubleshoot />
 		</Main>
 	);
-};
+}
