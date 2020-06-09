@@ -67,7 +67,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 	const domainPicker = (
 		<DomainPicker
 			analyticsFlowId={ FLOW_ID }
-			domainSearch={ domainSearch || __( 'My new site' ) }
+			initialDomainSearch={ domainSearch || __( 'My new site' ) }
 			onSetDomainSearch={ setDomainSearch }
 			onMoreOptions={ onClickMoreOptions }
 			showDomainConnectButton={ domainPickerMode === 'modal' }

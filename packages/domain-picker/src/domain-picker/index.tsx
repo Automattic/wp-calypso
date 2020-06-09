@@ -63,7 +63,7 @@ export interface Props {
 	domainSuggestionVendor: string;
 
 	/** The initial domain search query */
-	domainSearch: string;
+	initialDomainSearch: string;
 
 	/** Called when the domain search query is changed */
 	onSetDomainSearch: ( value: string ) => void;
@@ -80,7 +80,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	analyticsFlowId,
 	analyticsUiAlgo,
 	domainSuggestionVendor,
-	domainSearch,
+	initialDomainSearch,
 	onSetDomainSearch,
 } ) => {
 	const { __ } = useI18n();
@@ -88,6 +88,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 
+	// keep domain query in local state to allow free editing of the input value while the modal is open
+	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
 	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
 
 	const domainSuggestions = useDomainSuggestions(
@@ -183,6 +185,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		} );
 	};
 
+	const handleInputChange = ( searchQuery: string ) => {
+		setDomainSearch( searchQuery );
+		onSetDomainSearch( searchQuery );
+	};
+
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
@@ -215,7 +222,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							hideLabelFromVision
 							label={ label }
 							placeholder={ label }
-							onChange={ onSetDomainSearch }
+							onChange={ handleInputChange }
 							value={ domainSearch }
 						/>
 					</div>
