@@ -5,7 +5,7 @@ import debugFactory from 'debug';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
 import { defaultRegistry } from '@automattic/composite-checkout';
-import { snakeCase, startsWith } from 'lodash';
+import { snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -115,15 +115,15 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					} )
 				);
 
-			case 'PAYMENT_METHOD_SELECT':
+			case 'PAYMENT_METHOD_SELECT': {
 				reduxDispatch( logStashEventAction( 'payment_method_select', String( action.payload ) ) );
 
 				// Need to convert to the slug format used in old checkout so events are comparable
-				const rawPaymentMethodSlug = String( action.payload ); // eslint-disable-line no-case-declarations
-				let legacyPaymentMethodSlug = ''; // eslint-disable-line no-case-declarations
+				const rawPaymentMethodSlug = String( action.payload );
+				let legacyPaymentMethodSlug = '';
 				if (
 					rawPaymentMethodSlug === 'card' ||
-				rawPaymentMethodSlug.startsWith( 'existingCard' )
+					rawPaymentMethodSlug.startsWith( 'existingCard' )
 				) {
 					legacyPaymentMethodSlug = 'credit_card';
 				} else if ( rawPaymentMethodSlug === 'apple-pay' ) {
@@ -135,6 +135,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug )
 				);
+			}
 
 			case 'PAGE_LOAD_ERROR':
 				reduxDispatch( logStashEventAction( 'page_load', String( action.payload ) ) );
