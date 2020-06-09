@@ -22,6 +22,11 @@ body.is-section-signup {
 		background: #ffffff;
 		color: #00101c;
 
+		&.has-loading-screen-signup {
+			background: #00101c;
+			color: #ffffff;
+		}
+
 		.layout__content {
 			padding: 0;
 		}

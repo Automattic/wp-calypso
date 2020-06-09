@@ -57,13 +57,21 @@ const removeWhiteBackground = function () {
 	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
 };
 
-const addP2SignupClassName = () => {
+export const addP2SignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
 	if ( document.body.className.indexOf( 'is-p2-signup' ) === -1 ) {
 		document.body.className += ' is-p2-signup';
 	}
 };
 
-const removeP2SignupClassName = function () {
+export const removeP2SignupClassName = function () {
+	if ( ! document ) {
+		return;
+	}
+
 	document.body.className = document.body.className.split( 'is-p2-signup' ).join( '' );
 };
 
