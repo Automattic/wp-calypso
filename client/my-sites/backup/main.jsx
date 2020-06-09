@@ -18,7 +18,8 @@ import {
 	// getMetaDiffForDailyBackup,
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
-} from './utils';
+	INDEX_FORMAT,
+} from 'lib/jetpack/backup-utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -50,8 +51,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
  * Style dependencies
  */
 import './style.scss';
-
-export const INDEX_FORMAT = 'YYYYMMDD';
 
 class BackupsPage extends Component {
 	componentDidMount() {
@@ -173,8 +172,8 @@ class BackupsPage extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 
-				<div className="backups__main-wrap">
-					<div className="backups__last-backup-status">
+				<div className="backup__main-wrap">
+					<div className="backup__last-backup-status">
 						<BackupDatePicker
 							{ ...{
 								onDateChange: this.onDateChange,
@@ -187,7 +186,7 @@ class BackupsPage extends Component {
 							} }
 						/>
 
-						{ isLoadingBackups && <div className="backups__is-loading" /> }
+						{ isLoadingBackups && <div className="backup__is-loading" /> }
 
 						{ ! isLoadingBackups && (
 							<>
@@ -238,11 +237,11 @@ class BackupsPage extends Component {
 		const restorablePoints = logs.filter( ( event ) => !! event.activityIsRewindable );
 
 		return (
-			<div className="backups__search">
-				<div className="backups__search-header">
+			<div className="backup__search">
+				<div className="backup__search-header">
 					{ translate( 'Find a backup or restore point' ) }
 				</div>
-				<div className="backups__search-description">
+				<div className="backup__search-description">
 					{ translate(
 						'This is the complete event history for your site. Filter by date range and/ or activity type.'
 					) }
@@ -255,7 +254,7 @@ class BackupsPage extends Component {
 	render() {
 		const { isEmptyFilter } = this.props;
 		return (
-			<div className="backups__page">
+			<div className="backup__page">
 				{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
 			</div>
 		);

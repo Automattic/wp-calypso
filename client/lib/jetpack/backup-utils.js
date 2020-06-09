@@ -3,10 +3,7 @@
  */
 import moment from 'moment';
 
-/**
- * Internal dependencies
- */
-import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
+export const INDEX_FORMAT = 'YYYYMMDD';
 
 /**
  * if the activityDateString is on the same date as we are looking at

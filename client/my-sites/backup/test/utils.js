@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getBackupAttemptsForDate } from '../utils';
+import { getBackupAttemptsForDate } from 'lib/jetpack/backup-utils';
 
 describe( 'getBackupAttemptsForDate', () => {
 	test( 'should filter out rewind complete items not on date in utc', () => {

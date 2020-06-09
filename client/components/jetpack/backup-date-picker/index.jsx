@@ -14,7 +14,7 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import Button from 'components/forms/form-button';
 import DateRangeSelector from 'my-sites/activity/filterbar/date-range-selector';
 import Gridicon from 'components/gridicon';
-import { backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths';
+import { backupActivityPath } from 'my-sites/backup/paths';
 
 /**
  * Style dependencies

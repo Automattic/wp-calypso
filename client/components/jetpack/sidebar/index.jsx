@@ -32,7 +32,7 @@ import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
-import { backupMainPath, backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths';
+import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
 
 // Lowercase because these are used as keys for sidebar state.
 export const SIDEBAR_SECTION_SCAN = 'scan';

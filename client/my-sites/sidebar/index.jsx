@@ -78,10 +78,9 @@ import {
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
-
-import { backupMainPath, backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths';
 
 /**
  * Style dependencies
