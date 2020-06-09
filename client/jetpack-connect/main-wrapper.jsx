@@ -21,7 +21,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
 		isWoo: PropTypes.bool,
-		wooDna: PropTypes.object,
+		wooDnaConfig: PropTypes.object,
 		partnerSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		pageTitle: PropTypes.string,
@@ -30,22 +30,30 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static defaultProps = {
 		isWide: false,
 		isWoo: false,
-		wooDna: null,
+		wooDnaConfig: null,
 	};
 
 	render() {
-		const { isWide, className, children, partnerSlug, translate, wooDna, pageTitle } = this.props;
+		const {
+			isWide,
+			className,
+			children,
+			partnerSlug,
+			translate,
+			wooDnaConfig,
+			pageTitle,
+		} = this.props;
 
 		const isWoo = config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isWoo;
 
 		const wrapperClassName = classNames( 'jetpack-connect__main', {
 			'is-wide': isWide,
-			'is-woocommerce': isWoo || wooDna,
+			'is-woocommerce': isWoo || wooDnaConfig,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 		} );
 
-		const width = isWoo || wooDna ? 200 : undefined;
-		const darkColorScheme = isWoo || wooDna ? false : true;
+		const width = isWoo || wooDnaConfig ? 200 : undefined;
+		const darkColorScheme = isWoo || wooDnaConfig ? false : true;
 
 		return (
 			<Main className={ classNames( className, wrapperClassName ) }>
@@ -57,7 +65,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					<JetpackHeader
 						partnerSlug={ partnerSlug }
 						isWoo={ isWoo }
-						isWooDna={ !! wooDna }
+						isWooDna={ !! wooDnaConfig }
 						width={ width }
 						darkColorScheme={ darkColorScheme }
 					/>

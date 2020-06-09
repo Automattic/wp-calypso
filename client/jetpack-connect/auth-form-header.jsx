@@ -25,7 +25,7 @@ export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 		isWoo: PropTypes.bool,
-		wooDna: PropTypes.object,
+		wooDnaConfig: PropTypes.object,
 
 		// Connected props
 		translate: PropTypes.func.isRequired,
@@ -55,7 +55,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getHeaderText() {
-		const { translate, partnerSlug, isWoo, wooDna } = this.props;
+		const { translate, partnerSlug, isWoo, wooDnaConfig } = this.props;
 
 		let host = '';
 		switch ( partnerSlug ) {
@@ -94,8 +94,8 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( wooDna ) {
-			return wooDna.name( translate );
+		if ( wooDnaConfig ) {
+			return wooDnaConfig.name( translate );
 		}
 
 		switch ( currentState ) {
@@ -110,7 +110,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, isWoo, wooDna } = this.props;
+		const { translate, isWoo, wooDnaConfig } = this.props;
 		const currentState = this.getState();
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
@@ -124,7 +124,7 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( wooDna ) {
+		if ( wooDnaConfig ) {
 			switch ( currentState ) {
 				case 'logged-in-success':
 				case 'auth-in-progress':

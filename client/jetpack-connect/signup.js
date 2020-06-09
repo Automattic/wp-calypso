@@ -369,7 +369,10 @@ export class JetpackSignup extends Component {
 		}
 
 		return (
-			<MainWrapper wooDna={ wooDna } pageTitle={ wooDna.name( translate ) + ' — ' + pageTitle }>
+			<MainWrapper
+				wooDnaConfig={ wooDna }
+				pageTitle={ wooDna.name( translate ) + ' — ' + pageTitle }
+			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<FormattedHeader headerText={ header } subHeaderText={ subHeader } />
