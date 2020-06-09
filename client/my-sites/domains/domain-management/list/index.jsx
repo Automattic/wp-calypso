@@ -50,6 +50,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import getSites from 'state/selectors/get-sites';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 /**
  * Style dependencies
  */
@@ -459,7 +460,12 @@ export class List extends React.Component {
 				break;
 
 			default:
-				path = domainManagementEdit( selectedSite.slug, domain.name );
+				path = domainManagementEdit(
+					selectedSite.slug,
+					domain.name,
+					null,
+					this.props.currentRoute
+				);
 				break;
 		}
 
@@ -518,6 +524,7 @@ export default connect(
 		const siteCount = get( getSites( state ), 'length', 0 );
 
 		return {
+			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
