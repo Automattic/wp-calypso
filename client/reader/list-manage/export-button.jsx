@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -10,17 +10,18 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import ReaderExportButton from 'blocks/reader-export-button/button';
 import wpcom from 'lib/wp';
 import { errorNotice } from 'state/notices/actions';
-import ReaderExportButton from './button';
 
-class ConnectedReaderExportButton extends React.Component {
+class ReaderListExportButton extends React.Component {
 	static propTypes = {
+		listId: PropTypes.number.isRequired,
 		saveAs: PropTypes.string,
 	};
 
 	static defaultProps = {
-		saveAs: 'wpcom-subscriptions.opml',
+		saveAs: 'reader-list-subscriptions.opml',
 	};
 
 	state = { disabled: false };
@@ -31,7 +32,7 @@ class ConnectedReaderExportButton extends React.Component {
 			return;
 		}
 
-		wpcom.undocumented().exportReaderFeed( this.onApiResponse );
+		wpcom.undocumented().exportReaderList( this.props.listId, this.onApiResponse );
 		this.setState( {
 			disabled: true,
 		} );
@@ -54,8 +55,12 @@ class ConnectedReaderExportButton extends React.Component {
 	};
 
 	render() {
+		if ( ! this.props.listId ) {
+			return null;
+		}
+
 		return <ReaderExportButton onClick={ this.onClick } />;
 	}
 }
 
-export default connect( null, { errorNotice } )( localize( ConnectedReaderExportButton ) );
+export default connect( null, { errorNotice } )( localize( ReaderListExportButton ) );

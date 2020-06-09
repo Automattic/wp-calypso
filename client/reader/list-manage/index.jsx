@@ -26,7 +26,9 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
+import ReaderExportButton from 'blocks/reader-export-button';
 import ListItem from './list-item';
+
 import './style.scss';
 
 function ReaderListEdit( props ) {

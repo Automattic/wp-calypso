@@ -2216,6 +2216,19 @@ Undocumented.prototype.importReaderFeed = function ( file, fn ) {
 };
 
 /**
+ * Exports a Reader list as an OPML XML file.
+ * A JSON object is returned with the XML given as a String
+ * in the `opml` field.
+ *
+ * @param 	{number}	listId	The list ID
+ * @param  	{Function} 	fn      The callback function
+ * @returns {Promise}  	promise
+ */
+Undocumented.prototype.exportReaderList = function ( listId, fn ) {
+	return this.wpcom.req.get( `/read/lists/${ listId }/export`, { apiNamespace: 'wpcom/v2' }, fn );
+};
+
+/**
  * Creates a Push Notification registration for the device
  *
  * @param {string}     registration   The registration to be stored
