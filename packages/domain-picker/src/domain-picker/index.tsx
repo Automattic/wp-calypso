@@ -251,7 +251,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									<SuggestionNone />
 								) ) }
 							{ ! paidSuggestions &&
-								times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+								times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 							{ paidSuggestions &&
 								( paidSuggestions?.length ? (
 									paidSuggestions.map( ( suggestion, i ) => (

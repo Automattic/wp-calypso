@@ -15,10 +15,13 @@ import DomainPicker from '@automattic/domain-picker';
  */
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
-import { FLOW_ID } from '../../constants';
+import {
+	FLOW_ID,
+	DOMAINS_SUGGESTION_COUNT_IN_POPOVER,
+	DOMAINS_SUGGESTION_COUNT_IN_MODAL,
+} from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
-
 const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
 
 /**
@@ -77,6 +80,11 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 			onDomainSelect={ onDomainSelect }
 			domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			analyticsUiAlgo={ domainPickerMode === 'modal' ? 'domain_modal' : 'domain_popover' }
+			quantity={
+				domainPickerMode === 'modal'
+					? DOMAINS_SUGGESTION_COUNT_IN_MODAL
+					: DOMAINS_SUGGESTION_COUNT_IN_POPOVER
+			}
 		/>
 	);
 

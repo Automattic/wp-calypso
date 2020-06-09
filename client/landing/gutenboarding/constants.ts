@@ -9,6 +9,9 @@ import type { ValuesType } from 'utility-types';
  */
 export const FLOW_ID = 'gutenboarding';
 
+export const DOMAINS_SUGGESTION_COUNT_IN_POPOVER = 5;
+export const DOMAINS_SUGGESTION_COUNT_IN_MODAL = 10;
+
 /**
  * Debounce our input + HTTP dependent select changes
  *
