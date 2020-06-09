@@ -552,10 +552,13 @@ function useInitializeCartFromServer(
 					);
 					let responseCart = convertRawResponseCartToResponseCart( response );
 					if ( productsToAdd?.length ) {
-						responseCart = productsToAdd.reduce(
-							( updatedCart, productToAdd ) => addItemToResponseCart( updatedCart, productToAdd ),
-							responseCart
-						);
+						responseCart = productsToAdd.reduce( ( updatedCart, productToAdd ) => {
+							onEvent?.( {
+								type: 'CART_ADD_ITEM',
+								payload: productToAdd,
+							} );
+							return addItemToResponseCart( updatedCart, productToAdd );
+						}, responseCart );
 					}
 					if ( couponToAdd ) {
 						responseCart = addCouponToResponseCart( responseCart, couponToAdd );

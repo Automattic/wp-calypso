@@ -3,9 +3,11 @@
  */
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
+} from 'my-sites/checkout/composite-checkout/wpcom';
 import { defaultRegistry } from '@automattic/composite-checkout';
-import { snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -117,21 +119,20 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'PAYMENT_METHOD_SELECT': {
-				reduxDispatch( logStashEventAction( 'payment_method_select', String( action.payload ) ) );
+				reduxDispatch(
+					logStashEventAction(
+						'payment_method_select',
+						String( action.payload ),
+						{},
+						'payment_method_select'
+					)
+				);
 
 				// Need to convert to the slug format used in old checkout so events are comparable
 				const rawPaymentMethodSlug = String( action.payload );
-				let legacyPaymentMethodSlug = '';
-				if (
-					rawPaymentMethodSlug === 'card' ||
-					rawPaymentMethodSlug.startsWith( 'existingCard' )
-				) {
-					legacyPaymentMethodSlug = 'credit_card';
-				} else if ( rawPaymentMethodSlug === 'apple-pay' ) {
-					legacyPaymentMethodSlug = 'web_payment';
-				} else {
-					legacyPaymentMethodSlug = snakeCase( rawPaymentMethodSlug );
-				}
+				const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
+					rawPaymentMethodSlug
+				);
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug )
@@ -144,6 +145,14 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
 						error_message: String( action.payload ),
+					} )
+				);
+
+			case 'STORED_CARD_ERROR':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
+						error_type: action.payload.type,
+						error_message: String( action.payload.message ),
 					} )
 				);
 
@@ -389,15 +398,15 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 	};
 }
 
-function logStashEventAction( type, message, additionalData = {} ) {
+function logStashEventAction( type, payload, additionalData = {}, message ) {
 	return logToLogstash( {
 		feature: 'calypso_client',
-		message: 'composite checkout load error',
+		message: message ?? 'composite checkout load error',
 		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 		extra: {
 			env: config( 'env_id' ),
 			type,
-			message,
+			payload,
 			...additionalData,
 		},
 	} );
