@@ -21,12 +21,15 @@ const output = renderSync( { file: INPUT_FILE } );
 
 writeFileSync( OUTPUT_FILE, output.css );
 
-// export CSS properties into a JavaScript file, so whoever uses it doesn't need to parse it over and over
-( async function () {
-	await postcss( [
-		postcssCustomProperties( {
-			importFrom: OUTPUT_FILE,
-			exportTo: [ OUTPUT_JS_FILE ],
-		} ),
-	] ).process( output.css, { from: INPUT_FILE } );
-} )();
+// export CSS properties into a JavaScript file, so whoever uses it doesn't need to parse CSS over and over
+postcss( [
+	postcssCustomProperties( {
+		importFrom: OUTPUT_FILE,
+		exportTo: [ OUTPUT_JS_FILE ],
+	} ),
+] )
+	.process( output.css, { from: INPUT_FILE } )
+	.catch( ( e ) => {
+		// eslint-disable-next-line no-console
+		console.error( 'calypso-color-schemes', e );
+	} );
