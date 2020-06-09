@@ -83,7 +83,7 @@
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jetpack/search-product": true,
-		"jetpack/features-section": true,
+		"jetpack/features-section": false,
 		"jetpack/scan-product": true,
 		"jetpack/backups-restore": true,
 		"jetpack/on-demand-scan": true,
