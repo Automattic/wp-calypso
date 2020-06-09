@@ -96,16 +96,16 @@ export class JetpackSignup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { requestError } = this.props;
+		const { loginRequestError } = this.props;
 
-		if ( prevProps.requestError || ! requestError ) {
+		if ( prevProps.loginRequestError || ! loginRequestError ) {
 			return;
 		}
 
 		if (
 			this.getWooDnaConfig() &&
-			'usernameOrEmail' === requestError.field &&
-			'unknown_user' === requestError.code
+			'usernameOrEmail' === loginRequestError.field &&
+			'unknown_user' === loginRequestError.code
 		) {
 			this.showWooDnaSignupView();
 		}
@@ -415,7 +415,7 @@ export class JetpackSignup extends Component {
 
 const connectComponent = connect(
 	( state ) => ( {
-		requestError: getRequestError( state ),
+		loginRequestError: getRequestError( state ),
 		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		isFullLoginFormVisible: !! getAuthAccountType( state ),
 	} ),
