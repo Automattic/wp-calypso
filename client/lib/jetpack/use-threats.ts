@@ -11,6 +11,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { fixAllThreats, fixThreat, ignoreThreat } from 'state/jetpack-scan/threats/actions';
 import { FixableThreat, Threat } from 'components/jetpack/threat-item/types';
 import getSiteScanUpdatingThreats from 'state/selectors/get-site-scan-updating-threats';
+import { requestJetpackScanHistory } from 'state/jetpack-scan/history/actions';
 
 export const useThreats = ( siteId: number ) => {
 	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat >();
@@ -32,6 +33,7 @@ export const useThreats = ( siteId: number ) => {
 				);
 				const actionCreator = action === 'fix' ? fixThreat : ignoreThreat;
 				dispatch( actionCreator( siteId, selectedThreat.id ) );
+				dispatch( requestJetpackScanHistory( siteId ) );
 			}
 		},
 		[ dispatch, selectedThreat, siteId ]
