@@ -9,7 +9,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import { getSelectedDomain, getDomainTypeText } from 'lib/domains';
+import { getSelectedDomain } from 'lib/domains';
 import Header from 'my-sites/domains/domain-management/components/header';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
@@ -45,7 +45,7 @@ class Edit extends React.Component {
 				>
 					{ this.props.translate( '%(domainType)s Settings', {
 						args: {
-							domainType: getDomainTypeText( domain ),
+							domainType: this.getDomainTypeText( domain ),
 						},
 					} ) }
 				</Header>
@@ -95,6 +95,27 @@ class Edit extends React.Component {
 	goToDomainManagement = () => {
 		page( domainManagementList( this.props.selectedSite.slug ) );
 	};
+
+	getDomainTypeText( domain ) {
+		const { translate } = this.props;
+
+		switch ( domain.type ) {
+			case domainTypes.MAPPED:
+				return translate( 'Mapped Domain' );
+
+			case domainTypes.REGISTERED:
+				return translate( 'Registered Domain' );
+
+			case domainTypes.SITE_REDIRECT:
+				return translate( 'Site Redirect' );
+
+			case domainTypes.TRANSFER:
+				return translate( 'Transfer', { context: 'noun', comment: 'A transfer of a domain' } );
+
+			case domainTypes.WPCOM:
+				return translate( 'Default Site Domain' );
+		}
+	}
 }
 
 export default localize( Edit );
