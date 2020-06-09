@@ -1,4 +1,4 @@
-export type ItemType = {
+export type Item = {
 	id: string;
 	feed_ID: number | null;
 	tag_ID: number | null;

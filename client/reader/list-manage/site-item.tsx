@@ -12,10 +12,10 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Gridicon from 'components/gridicon';
 import QueryReaderSite from 'components/data/query-reader-site';
 import { getSite } from 'state/reader/sites/selectors';
-import { ItemType, Site } from './types';
+import { Item, Site } from './types';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function SiteItem( props: { item: ItemType; onRemove: ( e: MouseEvent ) => void } ) {
+export default function SiteItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
 	const siteId = props.item.site_ID as number;
 	const site: Site = useSelector( ( state ) => getSite( state, siteId ) ) as Site;
 
