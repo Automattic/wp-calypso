@@ -348,13 +348,25 @@ class TranslatorLauncher extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isEmpathyModeEnabled } = this.props;
 		const { isEnabled, isActive, infoDialogVisible } = this.state;
 
-		const launcherClasses = classNames( 'community-translator', { 'is-active': isActive } );
+		const launcherClasses = classNames( 'community-translator', {
+			'is-active': isActive,
+			'is-incompatible': isEmpathyModeEnabled,
+		} );
 		const toggleString = isActive
 			? translate( 'Disable Translator' )
 			: translate( 'Enable Translator' );
+		const buttonString = isEmpathyModeEnabled
+			? translate( "Community Translator can't be use when Empathy mode is enabled" )
+			: toggleString;
+		const ButtonWrapper = ( props ) =>
+			isEmpathyModeEnabled ? (
+				<a href="/me/account" { ...props } />
+			) : (
+				<button onClick={ this.toggle } { ...props } />
+			);
 
 		return (
 			<Fragment>
@@ -362,14 +374,13 @@ class TranslatorLauncher extends React.Component {
 				{ isEnabled && (
 					<Fragment>
 						<div className={ launcherClasses }>
-							<button
+							<ButtonWrapper
 								className="community-translator__button"
-								onClick={ this.toggle }
 								title={ translate( 'Community Translator' ) }
 							>
 								<Gridicon icon="globe" />
-								<div className="community-translator__text">{ toggleString }</div>
-							</button>
+								<div className="community-translator__text">{ buttonString }</div>
+							</ButtonWrapper>
 						</div>
 						{ infoDialogVisible && this.renderConfirmationModal() }
 					</Fragment>
@@ -384,6 +395,7 @@ export default connect(
 	( state ) => ( {
 		isUserSettingsReady: !! getUserSettings( state ),
 		isTranslatorEnabled: getOriginalUserSetting( state, 'enable_translator' ),
+		isEmpathyModeEnabled: getOriginalUserSetting( state, 'i18n_empathy_mode' ),
 		selectedLanguageSlug: getCurrentLocaleSlug( state ),
 	} ),
 	{ setLocale }

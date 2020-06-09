@@ -12,6 +12,11 @@
 	&.is-active {
 		background: var( --color-accent );
 	}
+
+	&.is-incompatible {
+		background: var( --color-neutral-5 );
+		// border: 1px solid var( --color-neutral-10 );
+	}
 }
 
 .community-translator__button {
@@ -31,6 +36,10 @@
 			margin-right: 6px;
 			padding: 0 2px;
 		}
+	}
+
+	.is-incompatible & {
+		color: var( --color-neutral-20 );
 	}
 }
 
