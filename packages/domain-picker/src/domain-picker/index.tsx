@@ -22,7 +22,10 @@ import {
 } from '../utils/domain-suggestions';
 import DomainCategories from '../domain-categories';
 import CloseButton from '../close-button';
-import { PAID_DOMAINS_TO_SHOW } from '../constants';
+import {
+	PAID_DOMAINS_TO_SHOW_WITH_CATEGORIES_MODE,
+	PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
+} from '../constants';
 
 /**
  * Style dependencies
@@ -75,7 +78,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onDomainSelect,
 	onClose,
 	onMoreOptions,
-	quantity = PAID_DOMAINS_TO_SHOW,
+	quantity = showDomainCategories
+		? PAID_DOMAINS_TO_SHOW_WITH_CATEGORIES_MODE
+		: PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
 	currentDomain,
 	analyticsFlowId,
 	analyticsUiAlgo,
