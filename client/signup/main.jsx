@@ -76,6 +76,7 @@ import {
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
+import P2SignupProcessingScreen from 'signup/p2-processing-screen';
 
 /**
  * Style dependencies
@@ -492,6 +493,9 @@ class Signup extends React.Component {
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
+		const isP2Flow = this.props.flowName === 'p2' || this.props.flowName === 'wp-for-teams';
+		const ProcessingScreen = isP2Flow ? P2SignupProcessingScreen : SignupProcessingScreen;
+
 		return (
 			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
@@ -499,7 +503,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen />
+						<ProcessingScreen />
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
