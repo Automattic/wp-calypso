@@ -770,6 +770,14 @@ class SignupForm extends Component {
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
 
+	getExplanation = () => {
+		return (
+			<p className="signup-form__terms-of-service-link signup-form__terms-of-service-link-is-explanation-text">
+				{ this.props.explanationText }
+			</p>
+		);
+	};
+
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ] );
@@ -852,14 +860,19 @@ class SignupForm extends Component {
 			? this.getLoginLink()
 			: localizeUrl( config( 'login_url' ), this.props.locale );
 
+		const loginTextByFlowName =
+			flowName === 'onboarding'
+				? translate( 'Log in to create a site for your existing account.' )
+				: translate( 'Already have a WordPress.com account?' );
+
+		const footerLoginText = this.props.footerLoginText || loginTextByFlowName;
 		return (
 			<>
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ flowName === 'onboarding'
-							? translate( 'Log in to create a site for your existing account.' )
-							: translate( 'Already have a WordPress.com account?' ) }
-					</LoggedOutFormLinkItem>
+					{ this.props.footerText && (
+						<div className="signup-form__footer-text">{ this.props.footerText }</div>
+					) }
+					<LoggedOutFormLinkItem href={ logInUrl }>{ footerLoginText }</LoggedOutFormLinkItem>
 					{ this.props.oauth2Client && (
 						<LoggedOutFormBackLink
 							oauth2Client={ this.props.oauth2Client }
@@ -989,11 +1002,30 @@ class SignupForm extends Component {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
 				? this.getLoginLink()
 				: localizeUrl( config( 'login_url' ), this.props.locale );
+			const textProps = pick( this.props, [
+				'submittingButtonText',
+				'defaultButtonText',
+				'headerText',
+				'subHeaderText',
+				'emailInputLabel',
+			] );
+
+			const socialTextProps = pick( this.props, [
+				'socialAlternativeText',
+				'socialTosText',
+				'socialGoogleLabel',
+				'socialAppleLabel',
+			] );
+
+			const renderTerms = this.props.explanationText
+				? this.getExplanation
+				: this.termsOfServiceLink;
 
 			return (
 				<div
 					className={ classNames( 'signup-form', this.props.className, {
 						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
+						'is-passwordless-after-plans': isPasswordlessAfterPlans,
 					} ) }
 				>
 					{ this.getNotice() }
@@ -1002,17 +1034,19 @@ class SignupForm extends Component {
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
-						renderTerms={ this.termsOfServiceLink }
+						renderTerms={ renderTerms }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						recaptchaClientId={ this.props.recaptchaClientId }
+						{ ...textProps }
 					/>
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
+							{ ...socialTextProps }
 						/>
 					) }
 
