@@ -21,7 +21,7 @@ import {
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {
-	if ( config.isEnabled( 'jetpack-cloud' ) || config.isEnabled( 'jetpack/feature-sections' ) ) {
+	if ( config.isEnabled( 'jetpack-cloud' ) || config.isEnabled( 'jetpack/features-section' ) ) {
 		/* handles /backup/activity, see `backupActivityPath` */
 		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );
 
