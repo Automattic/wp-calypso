@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  */
 import EducationalContent from '../educational-content';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+export const EDUCATION_EARN = 'home-education-earn';
 
 /**
  * Image dependencies
@@ -34,6 +35,7 @@ const EducationEarn = ( { siteSlug } ) => {
 				},
 			] }
 			illustration={ earnCardPrompt }
+			cardName={ EDUCATION_EARN }
 		/>
 	);
 };

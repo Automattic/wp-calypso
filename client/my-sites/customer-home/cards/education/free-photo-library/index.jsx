@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { localizeUrl } from 'lib/i18n-utils';
 import EducationalContent from '../educational-content';
+import { EDUCATION_FREE_PHOTO_LIBRARY } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
@@ -30,11 +31,10 @@ const FreePhotoLibrary = () => {
 					url: localizeUrl( 'https://wordpress.com/support/free-photo-library/' ),
 					text: translate( 'Learn more' ),
 					icon: 'video',
-					tracksEvent: 'calypso_customer_home_free_photo_library_video_support_page_view',
-					statsName: 'view_free_photo_library_video',
 				},
 			] }
 			illustration={ freePhotoLibraryVideoPrompt }
+			cardName={ EDUCATION_FREE_PHOTO_LIBRARY }
 		/>
 	);
 };
