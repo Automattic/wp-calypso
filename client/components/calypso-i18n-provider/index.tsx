@@ -6,7 +6,7 @@ import { setLocaleData as setWpI18nLocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@automattic/react-i18n';
 import i18n from 'i18n-calypso';
 
-export const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
+const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 	const [ localeData, setLocaleData ] = React.useState( i18n.state.locale );
 
 	useEffect( () => {
@@ -27,3 +27,5 @@ export const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => 
 
 	return <I18nProvider localeData={ localeData }>{ children }</I18nProvider>;
 };
+
+export default CalypsoI18nProvider;
