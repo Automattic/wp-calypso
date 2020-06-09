@@ -8,6 +8,7 @@ import React from 'react';
  */
 import { Card } from '@automattic/components';
 import { ItemType } from './types';
+import FeedItem from './feed-item';
 import SiteItem from './site-item';
 
 function renderPlaceholderContent( item: ItemType ) {
@@ -18,7 +19,7 @@ export default function ListItem( props: { item: ItemType } ) {
 	const { item } = props;
 	return (
 		<Card className="list-manage__site-card">
-			{ item.feed_ID !== null && renderPlaceholderContent( item ) }
+			{ item.feed_ID !== null && <FeedItem item={ item } /> }
 			{ item.site_ID !== null && <SiteItem item={ item } /> }
 			{ item.tag_ID !== null && renderPlaceholderContent( item ) }
 		</Card>

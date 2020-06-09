@@ -53,7 +53,7 @@ export const editList = ( context, next ) => {
 	const mcKey = 'list';
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-	recordTrack( 'calypso_reader_list_loaded', {
+	recordTrack( 'calypso_reader_list_edit_loaded', {
 		list_owner: context.params.user,
 		list_slug: context.params.list,
 	} );
@@ -64,6 +64,29 @@ export const editList = ( context, next ) => {
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
+		/>
+	);
+	next();
+};
+
+export const editListItems = ( context, next ) => {
+	const basePath = '/read/list/:owner/:slug/edit/items';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit > Items`;
+	const mcKey = 'list';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_edit_items_loaded', {
+		list_owner: context.params.user,
+		list_slug: context.params.list,
+	} );
+
+	context.primary = (
+		<AsyncLoad
+			require="reader/list-manage"
+			key="list-manage"
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+			showItems
 		/>
 	);
 	next();

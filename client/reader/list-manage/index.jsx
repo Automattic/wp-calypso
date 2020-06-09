@@ -31,7 +31,7 @@ import './style.scss';
 
 function ReaderListEdit( props ) {
 	const { list, listItems } = props;
-	const [ selectedSection, setSelectedSection ] = React.useState( 'details' );
+	const selectedSection = props.showItems ? 'items' : 'details';
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
@@ -45,14 +45,14 @@ function ReaderListEdit( props ) {
 							<NavTabs>
 								<NavItem
 									selected={ selectedSection === 'details' }
-									onClick={ () => setSelectedSection( 'details' ) }
+									path={ `/read/list/${ props.owner }/${ props.slug }/edit` }
 								>
 									Details
 								</NavItem>
 								<NavItem
-									selected={ selectedSection === 'sites' }
+									selected={ selectedSection === 'items' }
 									count={ listItems?.length }
-									onClick={ () => setSelectedSection( 'sites' ) }
+									path={ `/read/list/${ props.owner }/${ props.slug }/edit/items` }
 								>
 									Sites
 								</NavItem>
@@ -117,7 +117,7 @@ function ReaderListEdit( props ) {
 								</Card>
 							</>
 						) }
-						{ selectedSection === 'sites' &&
+						{ selectedSection === 'items' &&
 							props.listItems?.map( ( item ) => <ListItem key={ item.ID } item={ item } /> ) }
 					</>
 				) }
