@@ -22,7 +22,7 @@ function removeNestedProperties( cartItem ) {
 	return omit( cartItem, [ 'extra' ] );
 }
 
-function recordAddEvent( cartItem ) {
+export function recordAddEvent( cartItem ) {
 	recordTracksEvent( 'calypso_cart_product_add', removeNestedProperties( cartItem ) );
 	recordAddToCart( { cartItem } );
 }

@@ -384,7 +384,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			}
 
 			case 'CART_ADD_ITEM': {
-				return reduxDispatch( recordAddEvent( action.payload ) );
+				return recordAddEvent( action.payload );
 			}
 
 			default:
