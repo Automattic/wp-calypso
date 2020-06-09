@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 import { withLocalizedMoment } from 'components/localized-moment';
 import Button from 'components/forms/form-button';
-import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
+import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup, INDEX_FORMAT } from 'lib/jetpack/backup-utils';
 import {
 	backupDownloadPath,
 	backupRestorePath,
@@ -21,7 +21,6 @@ import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 import ActivityCard from 'components/jetpack/activity-card';
 import ExternalLink from 'components/external-link';
-import { INDEX_FORMAT } from 'my-sites/backup/main';
 import BackupChanges from './backup-changes';
 
 /**
