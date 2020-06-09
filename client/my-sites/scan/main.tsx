@@ -17,7 +17,7 @@ import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'components/jetpack/security-icon';
 import ScanPlaceholder from 'components/jetpack/scan-placeholder';
 import ScanThreats from 'components/jetpack/scan-threats';
-import { Scan, Site } from 'landing/jetpack-cloud/sections/scan/types';
+import { Scan, Site } from 'my-sites/scan/types';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
