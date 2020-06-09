@@ -201,34 +201,26 @@ class SiteIndicator extends Component {
 
 	errorAccessing() {
 		const { site, translate } = this.props;
-		let accessFailedMessage;
 
 		// Don't show the button if the site is not defined.
 		if ( site ) {
-			const { siteIsAutomatedTransfer } = this.props;
-			accessFailedMessage = (
+			return (
 				<span>
 					{ translate( 'This site cannot be accessed.' ) }
 					<Button
 						borderless
 						compact
 						scary
-						href={ `/settings/disconnect-site/${ site.slug }${
-							siteIsAutomatedTransfer ? '' : '?type=down'
-						}` }
+						href={ `/settings/disconnect-site/${ site.slug }?type=down` }
 						onClick={ this.props.trackSiteDisconnect }
 					>
-						{ siteIsAutomatedTransfer
-							? translate( 'Remove Site' )
-							: translate( 'I’d like to fix this now' ) }
+						{ translate( 'I’d like to fix this now' ) }
 					</Button>
 				</span>
 			);
-		} else {
-			accessFailedMessage = <span>{ translate( 'This site cannot be accessed.' ) }</span>;
 		}
 
-		return accessFailedMessage;
+		return <span>{ translate( 'This site cannot be accessed.' ) }</span>;
 	}
 
 	getText() {
