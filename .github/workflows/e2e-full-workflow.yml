@@ -1,0 +1,69 @@
+name: e2e full suite
+on: pull_request
+jobs:
+  wait-for-calypso-live:
+    name: Wait for Calypso.live
+    runs-on: ubuntu-latest
+    if: github.event.label.name == '[Status] Needs Review' || github.event.label.name == '[Status] Needs e2e Testing' || github.event.label.name == '[Status] Needs e2e Testing Gutenberg Edge' || github.event.label.name == '[Status] Needs e2e Testing horizon'
+    steps:
+      - uses: actions/checkout@v1
+      - name: Check external author
+        run: |
+              if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
+                echo 'PRs from external authors cannot run on calypso.live'
+                exit 1
+              fi
+      - name: Wait for calypso.live build
+        if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronize' ) && contains( github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing' )
+        env:
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: ./test/e2e/scripts/wait-for-running-branch.sh
+  e2e-full-suite-desktop:
+    name: e2e Full Suite - Desktop
+    runs-on: ubuntu-latest
+    needs: wait-for-calypso-live
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install npm deps
+        run: cd test/e2e && npm ci
+      - name: Decrypt Config
+        env:
+          NODE_CONFIG_ENV: test
+          CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
+        run: cd test/e2e && npm run decryptconfig
+      - name: Run Tests
+        env:
+          NODE_CONFIG_ENV: test
+          BRANCHNAME: $GITHUB_REF
+          TEST_VIDEO: true
+        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
+      - uses: actions/upload-artifact@master
+        if: always()
+        with:
+          name: screenshots
+          path: ./test/e2e/screenshots
+  e2e-full-suite-mobile:
+    name: e2e Full Suite - Mobile
+    runs-on: ubuntu-latest
+    needs: wait-for-calypso-live
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install npm deps
+        run: cd test/e2e && npm ci
+      - name: Decrypt Config
+        env:
+          NODE_CONFIG_ENV: test
+          CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
+        run: cd test/e2e && npm run decryptconfig
+      - name: Run Tests
+        env:
+          NODE_CONFIG_ENV: test
+          BRANCHNAME: $GITHUB_REF
+          TEST_VIDEO: true
+        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }}
+      - uses: actions/upload-artifact@master
+        if: always()
+        with:
+          name: screenshots
+          path: ./test/e2e/screenshots
+
