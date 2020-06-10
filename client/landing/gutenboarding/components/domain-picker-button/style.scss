@@ -39,10 +39,6 @@
 			box-shadow: 0 0 0 1px var( --studio-blue-60 );
 			color: var( --studio-blue-60 );
 		}
-
-		&:disabled {
-			opacity: 1;
-		}
 	}
 
 	&__label {
@@ -54,14 +50,6 @@
 	svg {
 		margin-left: 0.2em;
 		transition: transform 100ms ease-in-out;
-	}
-
-	&.is-open svg {
-		transform: rotate( 180deg );
-	}
-
-	&.is-modal-open {
-		display: none; // Hide domain picker button when modal is open
 	}
 }
 

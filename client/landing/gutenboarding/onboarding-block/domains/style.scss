@@ -1,0 +1,10 @@
+// Don't show close button & more button.
+.domains {
+	.domain-picker__close-button,
+	.domain-picker__more-button {
+		display: none;
+	}
+	.domain-picker__panel-row-footer {
+		display: none;
+	}
+}

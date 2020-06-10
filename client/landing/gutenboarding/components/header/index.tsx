@@ -30,7 +30,6 @@ import {
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
-import { trackEventWithFlow } from '../../lib/analytics';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
@@ -150,12 +149,13 @@ const Header: React.FunctionComponent = () => {
 	const hasPlaceholder =
 		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
 
-	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
-		trackEventWithFlow( 'calypso_newsite_domain_select', {
-			domain_name: suggestion?.domain_name,
-		} );
-		setDomain( suggestion );
-	};
+	const showFullHeader = ! [
+		'IntentGathering',
+		'Domains',
+		'DomainsModal',
+		'Plans',
+		'PlansModal',
+	].includes( currentStep );
 
 	return (
 		<div
@@ -180,27 +180,22 @@ const Header: React.FunctionComponent = () => {
 						// We display the DomainPickerButton as soon as we have a domain suggestion,
 						// unless we're still at the IntentGathering step. In that case, we only
 						// show it comes from a site title (but hide it if it comes from a vertical).
-						domainElement &&
-							( siteTitle || previousRecommendedDomain || currentStep !== 'IntentGathering' ) && (
-								<div
-									className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
-										'has-content': hasContent,
-										'has-placeholder': hasPlaceholder,
-									} ) }
-								>
-									<DomainPickerButton
-										className="gutenboarding__header-domain-picker-button"
-										currentDomain={ domain }
-										onDomainSelect={ onDomainSelect }
-									>
-										{ domainElement }
-									</DomainPickerButton>
-								</div>
-							)
+						domainElement && showFullHeader && (
+							<div
+								className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
+									'has-content': hasContent,
+									'has-placeholder': hasPlaceholder,
+								} ) }
+							>
+								<DomainPickerButton className="gutenboarding__header-domain-picker-button">
+									{ domainElement }
+								</DomainPickerButton>
+							</div>
+						)
 					}
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
-					{ currentStep !== 'IntentGathering' && currentStep !== 'Plans' && <PlansButton /> }
+					{ showFullHeader && <PlansButton /> }
 				</div>
 			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }

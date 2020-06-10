@@ -19,6 +19,7 @@ import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import Plans from './plans';
+import Domains from './domains';
 import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
 
 import './colors.scss';
@@ -107,6 +108,14 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 
 				<Route path={ makePath( Step.Style ) }>
 					{ canUseStyleStep() ? <StylePreview /> : redirectToLatestStep }
+				</Route>
+
+				<Route path={ makePath( Step.Domains ) }>
+					<Domains />
+				</Route>
+
+				<Route path={ makePath( Step.DomainsModal ) }>
+					<Domains isModal />
 				</Route>
 
 				<Route path={ makePath( Step.Plans ) }>

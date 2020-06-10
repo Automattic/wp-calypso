@@ -45,7 +45,7 @@ type Assign3< T extends object, U extends object, V extends object > = Assign< T
 // Button _without_ href
 // LinkProps _without_ component
 // LinkProps `to` is optional
-type Props = Omit<
+export type Props = Omit<
 	Assign3< Button.AnchorProps, Omit< LinkProps, 'component' >, Partial< Pick< LinkProps, 'to' > > >,
 	'disabled' | 'href'
 >;
