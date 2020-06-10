@@ -20,6 +20,7 @@ export const Step = {
 	Signup: 'signup',
 	Login: 'login',
 	CreateSite: 'create-site',
+	Domains: 'domains',
 	Plans: 'plans',
 	DomainsModal: 'domains-modal',
 	PlansModal: 'plans-modal',

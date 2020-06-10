@@ -12,10 +12,10 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath } from '../../path';
 import Link from '../../components/link';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
+import useStepNavigation from '../../hooks/use-step-navigation';
 import { prefetchDesignThumbs } from '../../available-designs';
 import { recordSiteTitleSkip } from '../../lib/analytics';
 
@@ -30,8 +30,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 
 	const history = useHistory();
-	const makePath = usePath();
-	const nextStepPath = makePath( Step.DesignSelection );
+	const { nextStepPath } = useStepNavigation();
 
 	useTrackStep( 'IntentGathering', () => ( {
 		has_selected_site_title: !! getSelectedSiteTitle(),
@@ -51,8 +50,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 		handleSiteTitleSubmit();
 	};
 
-	// translators: Button label for advancing to Design Picker step in onboarding
-	const nextLabel = __( 'Choose design' );
+	// translators: Button label for advancing to second step in onboarding
+	const nextLabel = __( 'Continue' );
 
 	// translators: Button label for skipping filling an optional input in onboarding
 	const skipLabel = __( 'Skip for now' );

@@ -17,10 +17,10 @@ import {
 	useShouldSiteBePublicOnSelectedPlan,
 } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
+import useStepNavigation from '../../hooks/use-step-navigation';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { usePath, Step } from '../../path';
 import ActionButtons from '../../components/action-buttons';
 import { Title, SubTitle } from '../../components/titles';
 
@@ -30,9 +30,8 @@ interface Props {
 
 const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __ } = useI18n();
-	const makePath = usePath();
-
 	const history = useHistory();
+	const { previousStepPath } = useStepNavigation();
 
 	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -58,7 +57,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		selected_plan: selectedPlanRef.current,
 	} ) );
 
-	const handleBack = () => ( isModal ? history.goBack() : history.push( makePath( Step.Style ) ) );
+	const handleBack = () => ( isModal ? history.goBack() : history.push( previousStepPath ) );
 	const handlePlanSelect = () => {
 		if ( isModal ) {
 			history.goBack();

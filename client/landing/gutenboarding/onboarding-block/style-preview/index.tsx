@@ -12,7 +12,6 @@ import { useHistory } from 'react-router-dom';
  */
 import Preview from './preview';
 import Link from '../../components/link';
-import { usePath, Step } from '../../path';
 import ViewportSelect from './viewport-select';
 import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
@@ -20,8 +19,9 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
+import useStepNavigation from '../../hooks/use-step-navigation';
+import SignupForm from '../../components/signup-form';
 import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
 import type { Viewport } from './types';
@@ -44,7 +44,8 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const { __ } = useI18n();
 	const history = useHistory();
-	const makePath = usePath();
+	const { previousStepPath, nextStepPath } = useStepNavigation();
+
 	const [ selectedViewport, setSelectedViewport ] = React.useState< Viewport >( 'desktop' );
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
@@ -78,7 +79,7 @@ const StylePreview: React.FunctionComponent = () => {
 		// If a user has already used the plans step and then gone back, show them the plans step again
 		// to avoid confusion
 		if ( ! selectedPlan || hasUsedPlansStep ) {
-			history.push( makePath( Step.Plans ) );
+			history.push( nextStepPath );
 			return;
 		}
 
@@ -97,8 +98,8 @@ const StylePreview: React.FunctionComponent = () => {
 					</div>
 					<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
 					<div className="style-preview__actions">
-						<Link isLink to={ makePath( Step.DesignSelection ) }>
-							{ __( 'Choose another design' ) }
+						<Link isLink to={ previousStepPath }>
+							{ __( 'Go back' ) }
 						</Link>
 						{ hasSelectedDesign && (
 							<Button
@@ -118,7 +119,7 @@ const StylePreview: React.FunctionComponent = () => {
 				</div>
 				{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 			</div>
-			<BottomBarMobile backUrl={ makePath( Step.DesignSelection ) } onContinue={ handleContinue } />
+			<BottomBarMobile backUrl={ previousStepPath } onContinue={ handleContinue } />
 		</>
 	);
 };
