@@ -83,8 +83,7 @@ export function PaypalSubmitButton( { disabled } ) {
 		<Button
 			disabled={ disabled }
 			onClick={ onClick }
-			buttonState="primary"
-			buttonType="paypal"
+			buttonState="paypal"
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
