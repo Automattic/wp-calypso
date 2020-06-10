@@ -63,7 +63,8 @@ export function useWpcomProductVariants( { siteId, productSlug, credits, couponD
 }
 
 function VariantPrice( { variant } ) {
-	const isDiscounted = variant.priceFinal !== variant.priceFullBeforeDiscount;
+	const currentPrice = variant.priceFinal || variant.priceFull;
+	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
 	return (
 		<React.Fragment>
 			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
@@ -72,7 +73,7 @@ function VariantPrice( { variant } ) {
 					{ myFormatCurrency( variant.priceFullBeforeDiscount, variant.product.currency_code ) }
 				</DoNotPayThis>
 			) }
-			{ myFormatCurrency( variant.priceFinal, variant.product.currency_code ) }
+			{ myFormatCurrency( currentPrice, variant.product.currency_code ) }
 		</React.Fragment>
 	);
 }
