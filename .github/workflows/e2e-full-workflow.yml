@@ -67,13 +67,13 @@ jobs:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Split Test files
-        run: echo "::set-env name=TESTFILES::"$(npx mocha-split-tests -r ./runtime.log -f "specs*/**/*spec.js" -s "," -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})""
+        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -r ./runtime.log -f 'specs*/**/*spec.js' -s ',' -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\""
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }} -f ${TESTFILES}
+        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }} -f $TESTFILES
       - uses: actions/upload-artifact@master
         if: always()
         with:
@@ -111,13 +111,13 @@ jobs:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Split Test files
-        run: echo "::set-env name=TESTFILES::"$(npx mocha-split-tests -r ./runtime.log -f "specs*/**/*spec.js" -s "," -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})""
+        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -r ./runtime.log -f 'specs*/**/*spec.js' -s ',' -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\""
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }} -f ${TESTFILES}
+        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }} -f $TESTFILES
       - uses: actions/upload-artifact@master
         if: always()
         with:
