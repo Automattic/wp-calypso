@@ -24,8 +24,8 @@ jobs:
     needs: wait-for-calypso-live
     steps:
       - uses: actions/checkout@v1
-      - name: Install npm deps
-        run: cd test/e2e && npm ci
+      - name: Install yarn deps
+        run: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
@@ -48,8 +48,8 @@ jobs:
     needs: wait-for-calypso-live
     steps:
       - uses: actions/checkout@v1
-      - name: Install npm deps
-        run: cd test/e2e && npm ci
+      - name: Install yarn deps
+        run: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
