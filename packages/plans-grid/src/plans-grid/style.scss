@@ -9,18 +9,6 @@
 	@include break-small {
 		margin-bottom: 0;
 	}
-
-	.action-buttons {
-		.components-button.is-link {
-			@include onboarding-medium-text;
-			color: var( --studio-gray-40 );
-			white-space: nowrap;
-		}
-		.components-button.is-primary {
-			height: auto;
-			padding: 13px 29px;
-		}
-	}
 }
 
 .plans-grid__header {

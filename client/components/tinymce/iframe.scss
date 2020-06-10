@@ -108,7 +108,7 @@ a img {
 .wp-caption-dd {
 	background: var( --color-neutral-0 );
 	color: var( --color-neutral-50 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.7;
 	padding: 16px;
 }

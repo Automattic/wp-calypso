@@ -45,7 +45,6 @@ describe( 'Checkout', () => {
 			beforeEach( () => {
 				MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -111,7 +110,6 @@ describe( 'Checkout', () => {
 				const registry = createRegistry();
 				MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -177,7 +175,6 @@ describe( 'Checkout', () => {
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -222,7 +219,6 @@ describe( 'Checkout', () => {
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -267,7 +263,6 @@ describe( 'Checkout', () => {
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
-							locale="en-us"
 							items={ items }
 							total={ total }
 							onPaymentComplete={ noop }

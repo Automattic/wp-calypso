@@ -26,13 +26,13 @@
 
 	span {
 		color: var( --color-text-subtle );
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-weight: normal;
 	}
 }
 
 .gsuite-price__price-per-user-per-year {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 }

@@ -63,7 +63,7 @@
 	cursor: pointer;
 	padding: 0 16px 0 8px;
 	color: #fff;
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		display: none;

@@ -1,48 +1,62 @@
 /**
  * Internal dependencies
  */
-import { getNavigationStart } from './api/performance-timing';
-import { deviceMemory, performanceTiming, environment, networkInformation } from './collectors';
+import {
+	deviceMemory,
+	performanceTiming,
+	environment,
+	networkInformation,
+	fullPageStart,
+	inlineStart,
+	pageVisibilityStart,
+	pageVisibilityStop,
+} from './collectors';
 
 export class ReportImpl implements Report {
 	id: string;
-	start!: number;
+	beginning!: number;
 	end?: number;
-	data: ReportData;
-	collectors!: Collector[];
+	data: ReportData = new Map();
+	startCollectors!: Collector[];
+	stopCollectors!: Collector[];
 
-	constructor( id: string, isInitial: boolean ) {
+	static async fromNow( id: string ) {
+		const report = new ReportImpl( id, false );
+		await report.start();
+		return report;
+	}
+
+	static async fromPageStart( id: string ) {
+		const report = new ReportImpl( id, true );
+		await report.start();
+		return report;
+	}
+
+	private constructor( id: string, isInitial: boolean ) {
 		this.id = id;
-		this.data = new Map();
 		if ( isInitial ) {
-			this.initializeFromFullPage();
+			this.startCollectors = [ fullPageStart, pageVisibilityStart ];
+			this.stopCollectors = [
+				deviceMemory,
+				performanceTiming,
+				environment,
+				pageVisibilityStop,
+				networkInformation,
+			];
 		} else {
-			this.initializeFromSPANavigation();
+			this.startCollectors = [ inlineStart, pageVisibilityStart ];
+			this.stopCollectors = [ deviceMemory, environment, pageVisibilityStop, networkInformation ];
 		}
 	}
 
-	private initializeFromFullPage() {
-		this.start = getNavigationStart();
-		this.data.set( 'fullPage', true );
-		this.collectors = [ deviceMemory, performanceTiming, environment, networkInformation ];
-	}
-
-	private initializeFromSPANavigation() {
-		this.start = Date.now();
-		this.data.set( 'fullPage', false );
-		this.collectors = [ deviceMemory, environment, networkInformation ];
+	private async start() {
+		await Promise.all( this.startCollectors.map( ( collector ) => collector( this ) ) );
+		return this;
 	}
 
 	async stop() {
 		this.end = Date.now();
-		await Promise.all( this.collectors.map( ( collector ) => collector( this ) ) );
-		return this;
-	}
-
-	toJSON(): object {
-		if ( this.end === undefined ) {
-			throw new Error( "Can't serialize a report that has not been stopped" );
-		}
+		await Promise.all( this.stopCollectors.map( ( collector ) => collector( this ) ) );
 
 		// Transform this.data Map into a regular object
 		const data = Array.from( this.data.entries() ).reduce(
@@ -52,7 +66,7 @@ export class ReportImpl implements Report {
 
 		return {
 			id: this.id,
-			duration: this.end - this.start,
+			duration: this.end - this.beginning,
 			...data,
 		};
 	}

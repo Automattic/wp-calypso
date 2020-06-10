@@ -156,7 +156,7 @@
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 
@@ -213,7 +213,7 @@ a.notice__action {
 			flex-grow: 0;
 		align-items: center;
 		border-radius: 0;
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin: 0 0 0 auto; // forces the element to the right;
 		padding: 13px 16px;
 

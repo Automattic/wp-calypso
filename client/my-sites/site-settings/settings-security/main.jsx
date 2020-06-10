@@ -9,6 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
+import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import FormSecurity from 'my-sites/site-settings/form-security';
 import getRewindState from 'state/selectors/get-rewind-state';
@@ -53,7 +55,10 @@ const SiteSettingsSecurity = ( {
 	);
 	const hasScanProduct = sitePurchases.some( ( p ) => p.productSlug.includes( 'jetpack_scan' ) );
 
-	const showCredentials = isRewindActive || hasScanProduct;
+	// If Jetpack section is enabled, we no longer display the credentials here, instead we
+	// display a Banner with a CTA that points to their new location (Settings > Jetpack).
+	const isJetpackSectionEnabled = config.isEnabled( 'jetpack/features-section' );
+	const showCredentials = ( isRewindActive || hasScanProduct ) && ! isJetpackSectionEnabled;
 
 	return (
 		<Main className="settings-security site-settings">
@@ -69,6 +74,20 @@ const SiteSettingsSecurity = ( {
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
+			{ isJetpackSectionEnabled && (
+				<Banner
+					callToAction="Take me there!"
+					title={ translate( 'Looking for Jetpack backups and security scans settings?' ) }
+					description={ translate(
+						"In order to simplify your experience we've moved these to their dedicated section under the Jetpack settings tab."
+					) }
+					dismissPreferenceName="backup-scan-security-settings-moved"
+					dismissTemporary
+					horizontal
+					href="/settings/jetpack"
+					jetpack
+				/>
+			) }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>

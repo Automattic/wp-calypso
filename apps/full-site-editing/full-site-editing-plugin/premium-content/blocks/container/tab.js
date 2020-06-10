@@ -2,12 +2,12 @@
  *
  * @typedef { import('react').ReactNode } ReactNode
  *
- * @typedef { Object } Tab
+ * @typedef {object} Tab
  * @property { string } id
  * @property { (ReactNode | string) } label
  * @property { string } className
  *
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { Tab } tab
  * @property { Tab } selectedTab
  * @property { string } className

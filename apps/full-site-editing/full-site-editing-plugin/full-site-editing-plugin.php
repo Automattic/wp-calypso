@@ -291,6 +291,14 @@ function load_block_inserter_modifications() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
 
 /**
+ * Load Mailerlite module
+ */
+function load_mailerlite() {
+	require_once __DIR__ . '/mailerlite/subscriber-popup.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
+
+/**
  * Load WPCOM block editor nav sidebar
  */
 function load_wpcom_block_editor_sidebar() {
@@ -299,3 +307,11 @@ function load_wpcom_block_editor_sidebar() {
 	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
+
+/**
+ * Load Donations block.
+ */
+function load_donations() {
+	require_once __DIR__ . '/donations/donations.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_donations' );

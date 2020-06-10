@@ -1,5 +1,5 @@
 .editor-drawer {
-	font-size: 13px;
+	font-size: $font-body-small;
 	background: white;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .editor-drawer .form-textarea {
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-family: $serif;
 	resize: vertical;
 	-webkit-appearance: none;

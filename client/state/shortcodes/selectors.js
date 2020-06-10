@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/shortcodes/init';
 
 /**
  * Returns true if currently requesting that shortcode for the specified site ID, or

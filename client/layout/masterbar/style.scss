@@ -90,7 +90,7 @@ $autobar-height: 20px;
 	align-items: center;
 	position: relative;
 	color: var( --color-masterbar-text );
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
 	padding: 0 15px;
@@ -478,7 +478,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__recent-drafts-heading {
-	font-size: 13px;
+	font-size: $font-body-small;
 	box-sizing: border-box;
 	z-index: 1;
 	padding: 0 16px;

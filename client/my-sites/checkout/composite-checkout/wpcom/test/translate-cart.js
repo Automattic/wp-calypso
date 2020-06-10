@@ -763,7 +763,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.coupon.id ).toBeDefined();
 			} );
 			it( 'has the expected label', function () {
-				expect( clientCart.coupon.label ).toBe( 'Coupon: fakecoupon' );
+				expect( clientCart.coupon.label ).toBe( 'Total savings' );
 			} );
 			it( 'has the expected type', function () {
 				expect( clientCart.coupon.type ).toBe( 'coupon' );

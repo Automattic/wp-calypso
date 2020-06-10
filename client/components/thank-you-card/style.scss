@@ -96,7 +96,7 @@
 }
 
 .thank-you-card__description {
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	width: 280px;
 	max-width: 100%;
@@ -113,7 +113,7 @@
 	display: inline-block;
 	border-radius: 4px;
 	background-color: var( --color-surface );
-	font-size: 14px;
+	font-size: $font-body-small;
 	max-width: 280px;
 	padding: 8px 24px;
 	margin: 0 auto;

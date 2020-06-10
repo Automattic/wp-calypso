@@ -19,6 +19,7 @@ import joinClasses from './join-classes';
 import Button from './button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
+import { isBusinessPlan } from 'lib/plans';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -38,6 +39,7 @@ function WPLineItem( {
 	onChangePlanLength,
 	couponStatus,
 	isSummary,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -49,35 +51,11 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== 'ready';
 
+	const isRenewal = item.wpcom_meta?.extra?.purchaseId;
 	// Show the variation picker when this is not a renewal
-	const shouldShowVariantSelector =
-		getItemVariants && item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
+	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
-
-	let sublabelAndIntervalPriceBreakdown = '';
-	if ( 'plan' === item.type && item.wpcom_meta?.months_per_bill_period ) {
-		sublabelAndIntervalPriceBreakdown = translate(
-			'%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s',
-			{
-				args: {
-					sublabel: item.sublabel,
-					monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
-					monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
-				},
-				comment: 'product type and monthly breakdown of total cost, separated by a colon',
-			}
-		);
-	} else if ( 'plan' !== item.type || ! shouldShowVariantSelector ) {
-		sublabelAndIntervalPriceBreakdown = translate( '%(sublabel)s: %(interval)s', {
-			args: {
-				sublabel: item.sublabel,
-				interval: translate( 'billed annually' ),
-			},
-			comment: 'product type and billing interval, separated by a colon',
-		} );
-	} else {
-		sublabelAndIntervalPriceBreakdown = item.sublabel;
-	}
+	const isSavings = item.type === 'coupon';
 
 	let gsuiteDiscountCallout = null;
 	if (
@@ -90,22 +68,30 @@ function WPLineItem( {
 		);
 	}
 
+	const productSlug = item.wpcom_meta?.product_slug;
+	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
+	const productName =
+		isBusinessPlanProduct && isWhiteGloveOffer
+			? `${ item.label } (with Expert guidance)`
+			: item.label;
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ item.label }
+				{ productName }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId }>
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
-				<LineItemMeta singleLine={ true }>
-					{ sublabelAndIntervalPriceBreakdown }
+				<LineItemMeta>
+					<LineItemSublabelAndPrice item={ item } />
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
 					) }
 				</LineItemMeta>
 			) }
+			{ isSavings && <SavingsList item={ item } /> }
 			{ isGSuite && (
 				<GSuiteUsersList
 					users={ item.wpcom_meta.extra.google_apps_users }
@@ -172,6 +158,7 @@ WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummary: PropTypes.bool,
+	isWhiteGloveOffer: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
@@ -220,7 +207,7 @@ export const LineItemUI = styled( WPLineItem )`
 
 const LineItemMeta = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	display: ${ ( { singleLine } ) => ( singleLine ? 'flex' : 'block' ) };
+	display: flex;
 	font-size: 14px;
 	justify-content: space-between;
 	width: 100%;
@@ -310,6 +297,7 @@ export function WPOrderReviewLineItems( {
 	getItemVariants,
 	onChangePlanLength,
 	couponStatus,
+	isWhiteGloveOffer,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -331,6 +319,7 @@ export function WPOrderReviewLineItems( {
 								onChangePlanLength={ onChangePlanLength }
 								couponStatus={ couponStatus }
 								isSummary={ isSummary }
+								isWhiteGloveOffer={ isWhiteGloveOffer }
 							/>
 						</WPOrderReviewListItem>
 					);
@@ -380,7 +369,7 @@ function GSuiteUsersList( { users, gsuiteDiscountCallout } ) {
 		<>
 			{ users.map( ( user, index ) => {
 				return (
-					<LineItemMeta singleLine={ true }>
+					<LineItemMeta key={ user.email }>
 						<div key={ user.email }>{ user.email }</div>
 						{ index === 0 && gsuiteDiscountCallout }
 					</LineItemMeta>
@@ -442,4 +431,53 @@ function canItemBeDeleted( item ) {
 function shouldLineItemBeShownWhenStepInactive( item ) {
 	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
 	return ! itemTypesToIgnore.includes( item.type );
+}
+
+function LineItemSublabelAndPrice( { item } ) {
+	const translate = useTranslate();
+	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
+	const isDomainMap = item.type === 'domain_map';
+	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
+
+	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period ) {
+		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
+			args: {
+				sublabel: item.sublabel,
+				monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
+				monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+			},
+			comment: 'product type and monthly breakdown of total cost, separated by a colon',
+		} );
+	}
+	if (
+		( isDomainRegistration || isDomainMap || isGSuite ) &&
+		item.wpcom_meta?.months_per_bill_period === 12
+	) {
+		return translate( '%(sublabel)s: %(interval)s', {
+			args: {
+				sublabel: item.sublabel,
+				interval: translate( 'billed annually' ),
+			},
+			comment: 'product type and billing interval, separated by a colon',
+		} );
+	}
+	return item.sublabel || null;
+}
+
+function SavingsList( { item } ) {
+	const translate = useTranslate();
+	const savingsItems = [];
+	if ( item.wpcom_meta?.couponCode ) {
+		savingsItems.push( translate( 'Coupon: %s', { args: item.wpcom_meta?.couponCode } ) );
+	}
+	if ( savingsItems.length < 1 ) {
+		return null;
+	}
+	return (
+		<React.Fragment>
+			{ savingsItems.map( ( savingsItem ) => (
+				<LineItemMeta key={ savingsItem }>{ savingsItem }</LineItemMeta>
+			) ) }
+		</React.Fragment>
+	);
 }

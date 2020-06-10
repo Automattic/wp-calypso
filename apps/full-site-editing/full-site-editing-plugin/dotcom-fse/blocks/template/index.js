@@ -16,9 +16,9 @@ import './site-logo';
 
 if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 	registerBlockType( 'a8c/template', {
-		title: __( 'Template Part' ),
+		title: __( 'Template Part', 'full-site-editing' ),
 		__experimentalDisplayName: 'label',
-		description: __( 'Display a Template Part.' ),
+		description: __( 'Display a Template Part.', 'full-site-editing' ),
 		icon: 'layout',
 		category: 'layout',
 		attributes: {

@@ -19,9 +19,7 @@ import account from './account/reducer';
 import accountRecovery from './account-recovery/reducer';
 import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
-import application from './application/reducer';
 import applicationPasswords from './application-passwords/reducer';
-import atomicHosting from './hosting/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
@@ -73,7 +71,6 @@ import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
 import sharing from './sharing/reducer';
-import shortcodes from './shortcodes/reducer';
 import simplePayments from './simple-payments/reducer';
 import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
@@ -98,9 +95,7 @@ const reducers = {
 	accountRecovery,
 	activePromotions,
 	activityLog,
-	application,
 	applicationPasswords,
-	atomicHosting,
 	atomicTransfer,
 	billingTransactions,
 	checklist,
@@ -152,7 +147,6 @@ const reducers = {
 	rewind,
 	selectedEditor,
 	sharing,
-	shortcodes,
 	simplePayments,
 	siteAddressChange,
 	siteKeyrings,

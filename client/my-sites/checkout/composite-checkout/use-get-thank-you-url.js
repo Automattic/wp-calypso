@@ -50,6 +50,7 @@ export function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	previousRoute,
 	isEligibleForSignupDestinationResult,
+	isWhiteGloveOffer,
 } ) {
 	debug( 'starting getThankYouPageUrl' );
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
@@ -149,7 +150,9 @@ export function getThankYouPageUrl( {
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
-	const displayModeParam = getDisplayModeParamFromCart( cart );
+	const displayModeParam = isWhiteGloveOffer
+		? { d: 'white-glove' }
+		: getDisplayModeParamFromCart( cart );
 	if ( isEligibleForSignupDestinationResult && signupDestination ) {
 		debug( 'is elligible for signup destination', signupDestination );
 		return getUrlWithQueryParam( signupDestination, displayModeParam );
@@ -299,6 +302,7 @@ export function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	product,
 	siteId,
+	isWhiteGloveOffer,
 } ) {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
@@ -340,6 +344,7 @@ export function useGetThankYouUrl( {
 			product,
 			previousRoute,
 			isEligibleForSignupDestinationResult,
+			isWhiteGloveOffer,
 		} );
 		debug( 'getThankYouUrl returned', url );
 		return url;

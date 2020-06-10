@@ -1,0 +1,22 @@
+.p2-site__site-url.form-text-input {
+	padding-right: 122px;
+}
+
+.p2-site__wordpress-domain-suffix {
+	color: var( --color-neutral-light );
+	line-height: 40px;
+	margin-left: -122px;
+	pointer-events: none;
+	position: absolute;
+}
+
+.p2-site__validation-site,
+.p2-site__validation-site-title {
+	.validation-fieldset__validation-message {
+		min-height: 0;
+	}
+}
+
+.p2-site__validation-site-title.validation-fieldset {
+	margin-bottom: 20px;
+}

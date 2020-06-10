@@ -81,7 +81,7 @@
 }
 
 .plan-item__domain-summary {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 22px;
 	min-height: 44px; // temporary until domain picker is in
 }
@@ -107,7 +107,7 @@
 }
 
 .plan-item__domain-picker-button.components-button {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 19px;
 	letter-spacing: 0.2px;
 	word-break: break-word;
@@ -137,7 +137,7 @@
 }
 
 .plan-item__feature-item {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 22px;
 	letter-spacing: 0.2px;
 	margin: 4px 0;

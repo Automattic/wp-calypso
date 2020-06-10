@@ -112,7 +112,7 @@
 
 		@include breakpoint-deprecated( '>660px' ) {
 			margin-bottom: 5px;
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 	}
 

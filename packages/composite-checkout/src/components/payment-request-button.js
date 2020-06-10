@@ -4,11 +4,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import styled from '@emotion/styled';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
 import Button from './button';
 import { useFormStatus } from '../lib/form-status';
 
@@ -21,7 +21,7 @@ export default function PaymentRequestButton( {
 	disabled,
 	disabledReason,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const onClick = ( event ) => {
 		event.persist();
@@ -37,7 +37,7 @@ export default function PaymentRequestButton( {
 	if ( formStatus === 'submitting' ) {
 		return (
 			<Button disabled fullWidth>
-				{ localize( 'Completing your purchase', { context: 'Loading state on /checkout' } ) }
+				{ __( 'Completing your purchase' ) }
 			</Button>
 		);
 	}
@@ -54,7 +54,7 @@ export default function PaymentRequestButton( {
 	}
 	return (
 		<Button disabled={ disabled } onClick={ onClick } fullWidth>
-			{ localize( 'Select a payment card' ) }
+			{ __( 'Select a payment card' ) }
 		</Button>
 	);
 }

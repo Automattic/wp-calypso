@@ -17,7 +17,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
-	getEditorDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -251,11 +250,17 @@ export function generateFlows( {
 
 	if ( isEnabled( 'signup/wpforteams' ) ) {
 		flows[ 'wp-for-teams' ] = {
-			steps: [ 'team-site', 'user' ],
+			steps: [ 'p2-site', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'WordPress for Teams signup flow',
-			lastModified: '2020-03-23',
+			description: 'P2 signup flow',
+			lastModified: '2020-06-04',
 		};
+
+		// Original name for the project was "WP for Teams". Since then, we've renamed it to "P2".
+		// However, backend and Marketing is expecting `wp-for-teams` as the `signup_flow_name` var
+		// so we force it in client/lib/signup/step-actions/index.js `createAccount` function.
+		// Keeping both flows for clarity.
+		flows.p2 = { ...flows[ 'wp-for-teams' ] };
 	}
 
 	flows.domain = {
@@ -359,15 +364,6 @@ export function generateFlows( {
 		lastModified: '2020-04-28',
 		pageTitle: translate( 'Launch your site' ),
 		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
-	};
-
-	flows.prelaunch = {
-		steps: [ 'plans-with-domain' ],
-		destination: getEditorDestination,
-		description: 'Flow for creating a site with a paid domain from /new',
-		lastModified: '2020-04-08',
-		pageTitle: translate( 'Get a domain for your site' ),
-		providesDependenciesInQuery: [ 'siteSlug' ],
 	};
 
 	return flows;

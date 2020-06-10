@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
-import Support from 'my-sites/customer-home/cards/features/support';
 import QuickStart from 'my-sites/customer-home/cards/features/quick-start';
 import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
 import HelpSearch from 'my-sites/customer-home/cards/features/help-search';
@@ -22,13 +21,11 @@ import {
 	FEATURE_GO_MOBILE,
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
-	FEATURE_HELP_SEARCH,
 } from 'my-sites/customer-home/cards/constants';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: GoMobile,
-	[ FEATURE_SUPPORT ]: Support,
-	[ FEATURE_HELP_SEARCH ]: HelpSearch,
+	[ FEATURE_SUPPORT ]: HelpSearch,
 	[ ACTION_QUICK_LINKS ]: QuickLinks,
 	[ FEATURE_QUICK_START ]: QuickStart,
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,

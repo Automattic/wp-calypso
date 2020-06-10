@@ -4,7 +4,7 @@
 import { ReportImpl } from './report';
 import { send } from './transports/logstash';
 
-const inFlightReporters: Map< string, ReportImpl > = new Map();
+const inFlightReporters: Map< string, Promise< ReportImpl > > = new Map();
 
 /**
  * Starts a new report
@@ -13,18 +13,17 @@ const inFlightReporters: Map< string, ReportImpl > = new Map();
  * @param obj Options
  * @param obj.fullPageLoad `true` if the report should start measuring from the load of the page, `false` to start measuring from now.
  */
-export const start = ( id: string, { fullPageLoad = true }: { fullPageLoad?: boolean } = {} ) => {
-	const existingReport = inFlightReporters.get( id );
+export const start = async (
+	id: string,
+	{ fullPageLoad = true }: { fullPageLoad?: boolean } = {}
+) => {
+	// There is a report in progress for this key, ignore this second call.
+	if ( inFlightReporters.has( id ) ) return;
 
-	// There is a report in progress. Probably the user clicked twice.
-	if ( existingReport ) return;
-
-	if ( existingReport ) {
-		throw new Error( `A report with the same key '${ id }'is already in process.` );
-	}
-
-	const report = new ReportImpl( id, fullPageLoad );
-	inFlightReporters.set( id, report );
+	inFlightReporters.set(
+		id,
+		fullPageLoad ? ReportImpl.fromPageStart( id ) : ReportImpl.fromNow( id )
+	);
 };
 
 /**
@@ -41,7 +40,10 @@ export const stop = async ( id: string ): Promise< boolean > => {
 
 	inFlightReporters.delete( id );
 
-	await existingReport.stop();
+	// The report may be still starting, wait for it.
+	const startedReport = await existingReport;
 
-	return send( existingReport.toJSON() );
+	const payload = await startedReport.stop();
+
+	return send( payload );
 };

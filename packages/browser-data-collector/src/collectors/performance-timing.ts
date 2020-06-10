@@ -34,32 +34,35 @@ const normalize = ( value: number, start: number ): number => {
 
 export const collector: Collector = ( report ) => {
 	// Ensure these values are relative to the beginning of the report
-	report.data.set( 'navigationStart', normalize( getNavigationStart(), report.start ) );
-	report.data.set( 'unloadEventStart', normalize( getUnloadEventStart(), report.start ) );
-	report.data.set( 'unloadEventEnd', normalize( getUunloadEventEnd(), report.start ) );
-	report.data.set( 'redirectStart', normalize( getRedirectStart(), report.start ) );
-	report.data.set( 'redirectEnd', normalize( getRedirectEnd(), report.start ) );
-	report.data.set( 'fetchStart', normalize( getFetchStart(), report.start ) );
-	report.data.set( 'domainLookupStart', normalize( getDomainLookupStart(), report.start ) );
-	report.data.set( 'domainLookupEnd', normalize( getDomainLookupEnd(), report.start ) );
-	report.data.set( 'connectStart', normalize( getConnectStart(), report.start ) );
-	report.data.set( 'connectEnd', normalize( getConnectEnd(), report.start ) );
-	report.data.set( 'secureConnectionStart', normalize( getSecureConnectionStart(), report.start ) );
-	report.data.set( 'requestStart', normalize( getRequestStart(), report.start ) );
-	report.data.set( 'responseStart', normalize( getResponseStart(), report.start ) );
-	report.data.set( 'responseEnd', normalize( getResponseEnd(), report.start ) );
-	report.data.set( 'domLoading', normalize( getDomLoading(), report.start ) );
-	report.data.set( 'domInteractive', normalize( getDomInteractive(), report.start ) );
+	report.data.set( 'navigationStart', normalize( getNavigationStart(), report.beginning ) );
+	report.data.set( 'unloadEventStart', normalize( getUnloadEventStart(), report.beginning ) );
+	report.data.set( 'unloadEventEnd', normalize( getUunloadEventEnd(), report.beginning ) );
+	report.data.set( 'redirectStart', normalize( getRedirectStart(), report.beginning ) );
+	report.data.set( 'redirectEnd', normalize( getRedirectEnd(), report.beginning ) );
+	report.data.set( 'fetchStart', normalize( getFetchStart(), report.beginning ) );
+	report.data.set( 'domainLookupStart', normalize( getDomainLookupStart(), report.beginning ) );
+	report.data.set( 'domainLookupEnd', normalize( getDomainLookupEnd(), report.beginning ) );
+	report.data.set( 'connectStart', normalize( getConnectStart(), report.beginning ) );
+	report.data.set( 'connectEnd', normalize( getConnectEnd(), report.beginning ) );
+	report.data.set(
+		'secureConnectionStart',
+		normalize( getSecureConnectionStart(), report.beginning )
+	);
+	report.data.set( 'requestStart', normalize( getRequestStart(), report.beginning ) );
+	report.data.set( 'responseStart', normalize( getResponseStart(), report.beginning ) );
+	report.data.set( 'responseEnd', normalize( getResponseEnd(), report.beginning ) );
+	report.data.set( 'domLoading', normalize( getDomLoading(), report.beginning ) );
+	report.data.set( 'domInteractive', normalize( getDomInteractive(), report.beginning ) );
 	report.data.set(
 		'domContentLoadedEventStart',
-		normalize( getDomContentLoadedEventStart(), report.start )
+		normalize( getDomContentLoadedEventStart(), report.beginning )
 	);
 	report.data.set(
 		'domContentLoadedEventEnd',
-		normalize( getDomContentLoadedEventEnd(), report.start )
+		normalize( getDomContentLoadedEventEnd(), report.beginning )
 	);
-	report.data.set( 'domComplete', normalize( getDomComplete(), report.start ) );
-	report.data.set( 'loadEventStart', normalize( getLoadEventStart(), report.start ) );
-	report.data.set( 'loadEventEnd', normalize( getloadEventEnd(), report.start ) );
+	report.data.set( 'domComplete', normalize( getDomComplete(), report.beginning ) );
+	report.data.set( 'loadEventStart', normalize( getLoadEventStart(), report.beginning ) );
+	report.data.set( 'loadEventEnd', normalize( getloadEventEnd(), report.beginning ) );
 	return report;
 };

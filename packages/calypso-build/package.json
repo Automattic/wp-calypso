@@ -61,7 +61,7 @@
 		"jest-emotion": "^10.0.27",
 		"jest-enzyme": "^7.1.2",
 		"node-sass": "^4.13.0",
-		"postcss-custom-properties": "^9.0.2",
+		"postcss-custom-properties": "^9.1.1",
 		"postcss-loader": "^3.0.0",
 		"recursive-copy": "^2.0.10",
 		"sass-loader": "^8.0.0",

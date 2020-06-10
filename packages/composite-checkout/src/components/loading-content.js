@@ -4,19 +4,15 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
-
-/**
- * Internal dependencies
- */
-import { useLocalize } from '../lib/localize';
+import { useI18n } from '@automattic/react-i18n';
 
 export default function LoadingContent() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<LoadingContentWrapperUI>
 			<LoadingCard>
-				<LoadingTitle>{ localize( 'Loading checkout' ) }</LoadingTitle>
+				<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
 				<LoadingCopy />
 				<LoadingCopy />
 			</LoadingCard>

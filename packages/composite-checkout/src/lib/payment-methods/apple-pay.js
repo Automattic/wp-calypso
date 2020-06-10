@@ -3,6 +3,7 @@
  */
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import debugFactory from 'debug';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import {
 	useLineItems,
 	useEvents,
 } from '../../public-api';
-import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
@@ -27,16 +27,16 @@ export function createApplePayMethod( stripe, stripeConfiguration ) {
 			<ApplePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
 		inactiveContent: <ApplePaySummary />,
-		getAriaLabel: ( localize ) => localize( 'Apple Pay' ),
+		getAriaLabel: ( __ ) => __( 'Apple Pay' ),
 	};
 }
 
 export function ApplePayLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<span>{ localize( 'Apple Pay' ) }</span>
+			<span>{ __( 'Apple Pay' ) }</span>
 			<PaymentMethodLogos className="apple-pay__logo payment-logos">
 				<ApplePayIcon fill="black" />
 			</PaymentMethodLogos>
@@ -45,7 +45,7 @@ export function ApplePayLabel() {
 }
 
 export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
 	const {
@@ -101,7 +101,7 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 				paymentRequest={ paymentRequest }
 				paymentType="apple-pay"
 				disabled
-				disabledReason={ localize( 'This payment type is not supported' ) }
+				disabledReason={ __( 'This payment type is not supported' ) }
 			/>
 		);
 	}
@@ -116,8 +116,8 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 }
 
 export function ApplePaySummary() {
-	const localize = useLocalize();
-	return <React.Fragment>{ localize( 'Apple Pay' ) }</React.Fragment>;
+	const { __ } = useI18n();
+	return <React.Fragment>{ __( 'Apple Pay' ) }</React.Fragment>;
 }
 
 function ApplePayIcon( { fill, className } ) {

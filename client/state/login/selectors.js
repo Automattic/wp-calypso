@@ -278,3 +278,12 @@ export const getSocialAccountLinkService = ( state ) =>
  */
 export const getSocialAccountLinkAuthInfo = ( state ) =>
 	get( state, 'login.socialAccountLink.authInfo', null );
+
+/**
+ * Gets the last username/email that was checked.
+ *
+ * @param  {object}   state  Global state tree
+ * @returns {?string}         Email address or username.
+ */
+export const getLastCheckedUsernameOrEmail = ( state ) =>
+	get( state, 'login.lastCheckedUsernameOrEmail', null );

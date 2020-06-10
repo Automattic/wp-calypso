@@ -26,6 +26,7 @@ export default function WPCheckoutOrderReview( {
 	onChangePlanLength,
 	siteUrl,
 	isSummary,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -56,6 +57,7 @@ export default function WPCheckoutOrderReview( {
 					onChangePlanLength={ onChangePlanLength }
 					couponStatus={ couponStatus }
 					isSummary={ isSummary }
+					isWhiteGloveOffer={ isWhiteGloveOffer }
 				/>
 			</WPOrderReviewSection>
 
@@ -93,7 +95,7 @@ function CouponFieldArea( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
-	if ( isPurchaseFree ) {
+	if ( isPurchaseFree || couponStatus === 'applied' ) {
 		return null;
 	}
 

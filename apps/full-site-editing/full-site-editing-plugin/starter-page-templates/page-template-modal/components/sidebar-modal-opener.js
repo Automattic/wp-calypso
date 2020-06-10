@@ -32,7 +32,7 @@ class SidebarModalOpener extends Component {
 		return (
 			<div className="sidebar-modal-opener">
 				<Button isSecondary onClick={ this.toggleWarningModal }>
-					{ __( 'Change Layout' ) }
+					{ __( 'Change Layout', 'full-site-editing' ) }
 				</Button>
 
 				{ isOpen && (
@@ -51,22 +51,23 @@ class SidebarModalOpener extends Component {
 
 				{ this.state.isWarningOpen && (
 					<Modal
-						title={ __( 'Overwrite Page Content?' ) }
+						title={ __( 'Overwrite Page Content?', 'full-site-editing' ) }
 						isDismissible={ false }
 						onRequestClose={ this.toggleWarningModal }
 						className="sidebar-modal-opener__warning-modal"
 					>
 						<div className="sidebar-modal-opener__warning-text">
 							{ __(
-								`Changing the page's layout will remove any customizations or edits you have already made.`
+								`Changing the page's layout will remove any customizations or edits you have already made.`,
+								'full-site-editing'
 							) }
 						</div>
 						<div className="sidebar-modal-opener__warning-options">
 							<Button isDefault onClick={ this.toggleWarningModal }>
-								{ __( 'Cancel' ) }
+								{ __( 'Cancel', 'full-site-editing' ) }
 							</Button>
 							<Button isPrimary onClick={ this.toggleTemplateModal }>
-								{ __( 'Change Layout' ) }
+								{ __( 'Change Layout', 'full-site-editing' ) }
 							</Button>
 						</div>
 					</Modal>

@@ -82,7 +82,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           Return to %(sitename)s
         </LoggedOutFormLinkItem>
         <LoggedOutFormLinkItem
-          href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F"
+          href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&from=banner-44-slide-1-dashboard"
           onClick={[Function]}
         >
           Sign in as a different user

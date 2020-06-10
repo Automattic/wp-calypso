@@ -22,6 +22,7 @@ export type WPCOMTransactionEndpointRequestPayload = {
 	cart: WPCOMTransactionEndpointCart;
 	payment: WPCOMTransactionEndpointPaymentDetails;
 	domainDetails?: WPCOMTransactionEndpointDomainDetails;
+	isWhiteGloveOffer: boolean;
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {
@@ -153,6 +154,9 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	storedDetailsId: string;
 	name: string;
 } ): WPCOMTransactionEndpointRequestPayload {
+	const urlParams = new URLSearchParams( window.location.search );
+	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
+
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
 			siteId,
@@ -173,6 +177,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			postalCode,
 			zip: postalCode, // TODO: do we need this in addition to postalCode?
 		},
+		isWhiteGloveOffer: isWhiteGlove,
 	};
 }
 

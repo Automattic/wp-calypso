@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import styled from '@emotion/styled';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import {
 	useTotal,
 	renderDisplayValueMarkdown,
 } from '../public-api';
-import { useLocalize } from '../lib/localize';
 import { useTranslate } from 'i18n-calypso';
 
 export default function CheckoutOrderSummaryStep() {
@@ -41,11 +41,11 @@ const ProductListItem = styled.li`
 `;
 
 export function CheckoutOrderSummaryStepTitle() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const total = useTotal();
 	return (
 		<CheckoutSummaryStepTitle>
-			<span>{ localize( 'You are all set to check out' ) }</span>
+			<span>{ __( 'You are all set to check out' ) }</span>
 			<CheckoutSummaryStepTotal>
 				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
 			</CheckoutSummaryStepTotal>

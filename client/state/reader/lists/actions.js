@@ -4,6 +4,8 @@
 import wpcom from 'lib/wp';
 import {
 	READER_LIST_DISMISS_NOTICE,
+	READER_LIST_ITEMS_REQUEST,
+	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
@@ -282,6 +284,18 @@ export function updateDescription( listId, newDescription ) {
 		} );
 	};
 }
+
+export const requestReaderListItems = ( listOwner, listSlug ) => ( {
+	type: READER_LIST_ITEMS_REQUEST,
+	listOwner,
+	listSlug,
+} );
+
+export const receiveReaderListItems = ( listId, listItems ) => ( {
+	type: READER_LIST_ITEMS_RECEIVE,
+	listId,
+	listItems,
+} );
 
 function createQuery( owner, slug ) {
 	const preparedOwner = decodeURIComponent( owner );

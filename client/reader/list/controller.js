@@ -12,43 +12,59 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
-const exported = {
-	listListing( context, next ) {
-		const basePath = '/read/list/:owner/:slug';
-		const fullAnalyticsPageTitle =
-			analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
-		const mcKey = 'list';
-		const streamKey =
-			'list:' + JSON.stringify( { owner: context.params.user, slug: context.params.list } );
+export const listListing = ( context, next ) => {
+	const basePath = '/read/list/:owner/:slug';
+	const fullAnalyticsPageTitle =
+		analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
+	const mcKey = 'list';
+	const streamKey =
+		'list:' + JSON.stringify( { owner: context.params.user, slug: context.params.list } );
 
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		recordTrack( 'calypso_reader_list_loaded', {
-			list_owner: context.params.user,
-			list_slug: context.params.list,
-		} );
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_loaded', {
+		list_owner: context.params.user,
+		list_slug: context.params.list,
+	} );
 
-		context.primary = (
-			<AsyncLoad
-				require="reader/list-stream"
-				key={ 'tag-' + context.params.user + '-' + context.params.list }
-				streamKey={ streamKey }
-				owner={ encodeURIComponent( context.params.user ) }
-				slug={ encodeURIComponent( context.params.list ) }
-				showPrimaryFollowButtonOnCards={ false }
-				trackScrollPage={ trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				) }
-				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			/>
-		);
-		next();
-	},
+	context.primary = (
+		<AsyncLoad
+			require="reader/list-stream"
+			key={ 'tag-' + context.params.user + '-' + context.params.list }
+			streamKey={ streamKey }
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+			showPrimaryFollowButtonOnCards={ false }
+			trackScrollPage={ trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				analyticsPageTitle,
+				mcKey
+			) }
+			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+		/>
+	);
+	next();
 };
 
-export default exported;
+export const editList = ( context, next ) => {
+	const basePath = '/read/list/:owner/:slug/edit';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit`;
+	const mcKey = 'list';
 
-export const { listListing } = exported;
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_loaded', {
+		list_owner: context.params.user,
+		list_slug: context.params.list,
+	} );
+
+	context.primary = (
+		<AsyncLoad
+			require="reader/list-manage"
+			key="list-manage"
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+		/>
+	);
+	next();
+};

@@ -49,7 +49,7 @@
 
 .formatted-header__subtitle {
 	color: var( --color-neutral-50 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	padding: 0 20px 24px;
 
 	@include breakpoint-deprecated( '>480px' ) {

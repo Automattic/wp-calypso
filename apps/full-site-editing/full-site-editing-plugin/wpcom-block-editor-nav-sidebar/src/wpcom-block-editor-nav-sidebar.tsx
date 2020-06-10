@@ -61,7 +61,7 @@ export default function WpcomBlockEditorNavSidebar() {
 	let closeUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
 	closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', closeUrl );
 
-	let closeLabel = get( postType, [ 'labels', 'all_items' ], __( 'Back' ) );
+	let closeLabel = get( postType, [ 'labels', 'all_items' ], __( 'Back', 'full-site-editing' ) );
 	closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', closeLabel );
 
 	const handleClose = ( e: React.WPSyntheticEvent ) => {

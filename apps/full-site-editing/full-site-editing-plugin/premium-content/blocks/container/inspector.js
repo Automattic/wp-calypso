@@ -24,17 +24,17 @@ const API_STATE_NOT_REQUESTING = 0;
 const API_STATE_REQUESTING = 1;
 
 /**
- * @typedef { Object } PlanAttributes
+ * @typedef {object} PlanAttributes
  * @property { string } newPlanCurrency
  * @property { string } newPlanName
  * @property { number } newPlanPrice
  * @property { string } newPlanInterval
  *
- * @typedef { Object } Currency
+ * @typedef {object} Currency
  * @property { string } label
  * @property { string } symbol
  *
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { PlanAttributes } attributes
  * @property { (attributes: Partial<PlanAttributes>) => void } setAttributes
  * @property { string } className
@@ -55,7 +55,7 @@ export default function Inspector( props ) {
 					href={ `https://wordpress.com/earn/payments/${ siteSlug }` }
 					className={ 'wp-block-premium-content-container---link-to-earn' }
 				>
-					{ __( 'Manage your subscriptions.', 'premium-content' ) }
+					{ __( 'Manage your subscriptions.', 'full-site-editing' ) }
 				</ExternalLink>
 			) }
 			<PanelBody
@@ -66,8 +66,8 @@ export default function Inspector( props ) {
 				{ apiState === API_STATE_REQUESTING && (
 					<Placeholder
 						icon="lock"
-						label={ __( 'Premium Content', 'premium-content' ) }
-						instructions={ __( 'Saving plan...', 'premium-content' ) }
+						label={ __( 'Premium Content', 'full-site-editing' ) }
+						instructions={ __( 'Saving plan…', 'full-site-editing' ) }
 					>
 						<Spinner />
 					</Placeholder>
@@ -129,7 +129,7 @@ export default function Inspector( props ) {
 									}
 								}
 							>
-								{ __( 'Add subscription', 'premium-content' ) }
+								{ __( 'Add subscription', 'full-site-editing' ) }
 							</Button>
 						</PanelRow>
 					</div>

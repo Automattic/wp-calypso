@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -14,7 +16,6 @@ import {
 	useEvents,
 	renderDisplayValueMarkdown,
 } from '../../public-api';
-import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
 
 export function createFullCreditsMethod() {
@@ -23,17 +24,17 @@ export function createFullCreditsMethod() {
 		label: <FullCreditsLabel />,
 		submitButton: <FullCreditsSubmitButton />,
 		inactiveContent: <FullCreditsSummary />,
-		getAriaLabel: ( localize ) => localize( 'Credits' ),
+		getAriaLabel: ( __ ) => __( 'Credits' ),
 	};
 }
 
 function FullCreditsLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<div>{ localize( 'Credits' ) }</div>
-			<div>{ localize( 'Pay entirely with credits' ) }</div>
+			<div>{ __( 'Credits' ) }</div>
+			<div>{ __( 'Pay entirely with credits' ) }</div>
 		</React.Fragment>
 	);
 }
@@ -77,20 +78,20 @@ function FullCreditsSubmitButton( { disabled } ) {
 }
 
 function ButtonContents( { formStatus, total } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
-		return localize( 'Processing…' );
+		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
 		return sprintf(
-			localize( 'Pay %s with WordPress.com Credits' ),
+			__( 'Pay %s with WordPress.com Credits' ),
 			renderDisplayValueMarkdown( total.amount.displayValue )
 		);
 	}
-	return localize( 'Please wait…' );
+	return __( 'Please wait…' );
 }
 
 function FullCreditsSummary() {
-	const localize = useLocalize();
-	return localize( 'Pay using Credits' );
+	const { __ } = useI18n();
+	return __( 'Pay using Credits' );
 }
