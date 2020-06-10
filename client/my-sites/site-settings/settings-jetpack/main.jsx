@@ -9,15 +9,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
-import FormSecurity from 'my-sites/site-settings/form-security';
 import getRewindState from 'state/selectors/get-rewind-state';
 import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
@@ -28,7 +24,7 @@ import { getSitePurchases } from 'state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const SiteSettingsSecurity = ( {
+const SiteSettingsJetpack = ( {
 	rewindState,
 	sitePurchases,
 	site,
@@ -36,6 +32,7 @@ const SiteSettingsSecurity = ( {
 	siteIsJetpack,
 	translate,
 } ) => {
+	//todo: this check makes sense in Jetpack section?
 	if ( ! siteIsJetpack ) {
 		return (
 			<JetpackManageErrorPage
@@ -43,8 +40,8 @@ const SiteSettingsSecurity = ( {
 					args: { site: site.name },
 				} ) }
 				actionURL={ '/settings/general/' + site.slug }
-				title={ translate( 'No security configuration is required.' ) }
-				line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
+				title={ translate( 'No Jetpack configuration is required.' ) }
+				// line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
@@ -55,46 +52,28 @@ const SiteSettingsSecurity = ( {
 	);
 	const hasScanProduct = sitePurchases.some( ( p ) => p.productSlug.includes( 'jetpack_scan' ) );
 
-	// If Jetpack section is enabled, we no longer display the credentials here, instead we
-	// display a Banner with a CTA that points to their new location (Settings > Jetpack).
-	const isJetpackSectionEnabled = config.isEnabled( 'jetpack/features-section' );
-	const showCredentials = ( isRewindActive || hasScanProduct ) && ! isJetpackSectionEnabled;
+	const showCredentials = isRewindActive || hasScanProduct;
 
 	return (
-		<Main className="settings-security site-settings">
+		<Main className="settings-jetpack site-settings">
 			<QueryRewindState siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
-				className="settings-security__page-heading"
+				className="settings-jetpack__page-heading"
 				headerText={ translate( 'Settings' ) }
 				align="left"
 			/>
-			<SiteSettingsNavigation site={ site } section="security" />
+			<SiteSettingsNavigation site={ site } section="jetpack" />
+
 			{ showCredentials && <JetpackCredentials /> }
-			{ isJetpackSectionEnabled && (
-				<Banner
-					callToAction="Take me there!"
-					title={ translate( 'Looking for Jetpack backups and security scans settings?' ) }
-					description={ translate(
-						"In order to simplify your experience we've moved these to their dedicated section under the Jetpack settings tab."
-					) }
-					dismissPreferenceName="backup-scan-security-settings-moved"
-					dismissTemporary
-					horizontal
-					href={ `/settings/jetpack/${ site.slug }` }
-					jetpack
-				/>
-			) }
-			<JetpackMonitor />
-			<FormSecurity />
 		</Main>
 	);
 };
 
-SiteSettingsSecurity.propTypes = {
+SiteSettingsJetpack.propTypes = {
 	rewindState: PropTypes.bool,
 	sitePurchases: PropTypes.array,
 	site: PropTypes.object,
@@ -115,4 +94,4 @@ export default connect( ( state ) => {
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),
 	};
-} )( localize( SiteSettingsSecurity ) );
+} )( localize( SiteSettingsJetpack ) );
