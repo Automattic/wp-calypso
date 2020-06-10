@@ -9,6 +9,7 @@ import {
 	CheckoutModal,
 	useFormStatus,
 	useEvents,
+	Button,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -16,7 +17,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import joinClasses from './join-classes';
-import Button from './button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 import { isBusinessPlan } from 'lib/plans';
@@ -237,6 +237,10 @@ const DeleteButton = styled( Button )`
 
 	:hover rect {
 		fill: ${ ( props ) => props.theme.colors.error };
+	}
+
+	svg {
+		opacity: 1;
 	}
 `;
 
