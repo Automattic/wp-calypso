@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import i18n, { translate } from 'i18n-calypso';
-import interpolateComponents from 'interpolate-components';
-import sprintf from '@tannin/sprintf';
+import i18n, { I18N, translate } from 'i18n-calypso';
 
 let defaultUntranslatedPlacehoder = translate( "I don't understand" );
 
@@ -22,28 +20,6 @@ function encodeUntranslatedString( originalString, placeholder = defaultUntransl
 	return output.substr( 0, originalString.length );
 }
 
-function replaceArgs( translation, options ) {
-	if ( options.args ) {
-		const sprintfArgs = Array.isArray( options.args ) ? options.args.slice( 0 ) : [ options.args ];
-		sprintfArgs.unshift( translation );
-		try {
-			translation = sprintf( ...sprintfArgs );
-		} catch ( error ) {
-			if ( ! window || ! window.console ) {
-				return;
-			}
-			const errorMethod = this.throwErrors ? 'error' : 'warn';
-			if ( typeof error !== 'string' ) {
-				window.console[ errorMethod ]( error );
-			} else {
-				window.console[ errorMethod ]( 'i18n sprintf error:', sprintfArgs );
-			}
-		}
-	}
-
-	return translation;
-}
-
 let isDisabled = false;
 
 export function disableLanguageEmpathyMode() {
@@ -52,6 +28,12 @@ export function disableLanguageEmpathyMode() {
 }
 
 export function enableLanguageEmpathyMode() {
+	const i18nEmpathy = new I18N();
+	const i18nEmpathyTranslate = i18nEmpathy.translate.bind( i18nEmpathy );
+	const i18nEmpathyRegisterHook = i18nEmpathy.registerTranslateHook.bind( i18nEmpathy );
+
+	i18n.translateHooks.forEach( i18nEmpathyRegisterHook );
+
 	// wrap translations from i18n
 	i18n.registerTranslateHook( ( translation, options ) => {
 		const locale = i18n.getLocaleSlug();
@@ -64,16 +46,7 @@ export function enableLanguageEmpathyMode() {
 		}
 
 		if ( i18n.hasTranslation( options ) ) {
-			if ( options.components ) {
-				translation = interpolateComponents( {
-					mixedString: replaceArgs( options.original, options ),
-					components: options.components,
-				} );
-			} else {
-				translation = replaceArgs( options.original, options );
-			}
-
-			return translation;
+			return i18nEmpathyTranslate( options );
 		}
 		return '👉 ' + encodeUntranslatedString( options.original );
 	} );
