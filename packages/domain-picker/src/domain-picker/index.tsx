@@ -7,13 +7,14 @@ import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/comp
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
-
+import type { DomainSuggestions } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
 import SuggestionItem from './suggestion-item';
 import SuggestionNone from './suggestion-none';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
+import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
 import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
@@ -21,15 +22,17 @@ import {
 } from '../utils/domain-suggestions';
 import DomainCategories from '../domain-categories';
 import CloseButton from '../close-button';
+import {
+	PAID_DOMAINS_TO_SHOW_WITH_CATEGORIES_MODE,
+	PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
+} from '../constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
-type DomainSuggestionQuery = import('@automattic/data-stores').DomainSuggestions.DomainSuggestionQuery;
-type DomainCategory = import('@automattic/data-stores').DomainSuggestions.DomainCategory;
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 export interface Props {
 	showDomainConnectButton?: boolean;
@@ -50,28 +53,9 @@ export interface Props {
 
 	onMoreOptions?: () => void;
 
-	/**
-	 * Additional parameters for the domain suggestions query.
-	 */
-	queryParameters?: Partial< DomainSuggestionQuery >;
-
-	currentDomain?: DomainSuggestion;
-
 	quantity?: number;
 
-	/** The domain search query */
-	domainSearch: string;
-	/** Called when the domain search query is changed */
-	onSetDomainSearch: ( query: string ) => void;
-
-	/** The domain category */
-	domainCategory: string | undefined;
-
-	/** Called when the domain category is set */
-	onSetDomainCategory: ( category?: string ) => void;
-
-	/** The search results */
-	domainSuggestions?: DomainSuggestion[];
+	currentDomain?: DomainSuggestion;
 
 	/** The flow where the Domain Picker is used. Eg: Gutenboarding */
 	analyticsFlowId: string;
@@ -79,12 +63,14 @@ export interface Props {
 	/** An identifier for the wrapping UI used for setting ui_algo. Eg: domain_popover */
 	analyticsUiAlgo: string;
 
-	domainCategories: DomainCategory[];
-
 	domainSuggestionVendor: string;
-}
 
-const PAID_DOMAINS_TO_SHOW = 5;
+	/** The initial domain search query */
+	initialDomainSearch: string;
+
+	/** Called when the domain search query is changed */
+	onSetDomainSearch: ( value: string ) => void;
+}
 
 const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainConnectButton,
@@ -92,26 +78,35 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onDomainSelect,
 	onClose,
 	onMoreOptions,
-	quantity = PAID_DOMAINS_TO_SHOW,
+	quantity = showDomainCategories
+		? PAID_DOMAINS_TO_SHOW_WITH_CATEGORIES_MODE
+		: PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
 	currentDomain,
-	domainSearch,
-	onSetDomainSearch,
-	domainCategory,
-	onSetDomainCategory,
-	domainSuggestions,
 	analyticsFlowId,
 	analyticsUiAlgo,
-	domainCategories,
 	domainSuggestionVendor,
+	initialDomainSearch,
+	onSetDomainSearch,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
 
 	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 
+	// keep domain query in local state to allow free editing of the input value while the modal is open
+	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
+	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
+
+	const domainSuggestions = useDomainSuggestions(
+		domainSearch.trim(),
+		domainCategory,
+		useI18n().i18nLocale,
+		quantity
+	);
+
 	const allSuggestions = domainSuggestions;
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, quantity );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions );
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 	const hasSuggestions = freeSuggestions?.length || paidSuggestions?.length;
 
@@ -195,6 +190,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		} );
 	};
 
+	const handleInputChange = ( searchQuery: string ) => {
+		setDomainSearch( searchQuery );
+		onSetDomainSearch( searchQuery );
+	};
+
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
@@ -227,18 +227,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							hideLabelFromVision
 							label={ label }
 							placeholder={ label }
-							onChange={ onSetDomainSearch }
+							onChange={ handleInputChange }
 							value={ domainSearch }
 						/>
 					</div>
 					<div className="domain-picker__body">
 						{ showDomainCategories && (
 							<div className="domain-picker__aside">
-								<DomainCategories
-									domainCategories={ domainCategories }
-									selected={ domainCategory }
-									onSelect={ onSetDomainCategory }
-								/>
+								<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
 							</div>
 						) }
 						<div className="domain-picker__suggestion-item-group">
@@ -260,7 +256,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									<SuggestionNone />
 								) ) }
 							{ ! paidSuggestions &&
-								times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+								times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 							{ paidSuggestions &&
 								( paidSuggestions?.length ? (
 									paidSuggestions.map( ( suggestion, i ) => (
