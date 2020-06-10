@@ -13,7 +13,7 @@ import DocumentHead from 'components/data/document-head';
 import getRewindState from 'state/selectors/get-rewind-state';
 import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-//import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
@@ -23,23 +23,29 @@ import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-//import SettingsSectionHeader from '../settings-section-header';
-//import SpamFilteringSettings from '../spam-filtering-settings';
 
-const SiteSettingsJetpack = ( { rewindState, sitePurchases, site, siteId, translate } ) => {
-	// if ( ! siteIsJetpack ) {
-	// 	return (
-	// 		<JetpackManageErrorPage
-	// 			action={ translate( 'Manage general settings for %(site)s', {
-	// 				args: { site: site.name },
-	// 			} ) }
-	// 			actionURL={ '/settings/general/' + site.slug }
-	// 			title={ translate( 'No security configuration is required.' ) }
-	// 			line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
-	// 			illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-	// 		/>
-	// 	);
-	// }
+const SiteSettingsJetpack = ( {
+	rewindState,
+	sitePurchases,
+	site,
+	siteId,
+	siteIsJetpack,
+	translate,
+} ) => {
+	//todo: this check makes sense in Jetpack section?
+	if ( ! siteIsJetpack ) {
+		return (
+			<JetpackManageErrorPage
+				action={ translate( 'Manage general settings for %(site)s', {
+					args: { site: site.name },
+				} ) }
+				actionURL={ '/settings/general/' + site.slug }
+				title={ translate( 'No Jetpack configuration is required.' ) }
+				// line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
+				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+			/>
+		);
+	}
 
 	const isRewindActive = [ 'awaitingCredentials', 'provisioning', 'active' ].includes(
 		rewindState.state
