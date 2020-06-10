@@ -29,7 +29,105 @@ import Main from 'components/main';
 import ListItem from './list-item';
 import './style.scss';
 
-export default function ReaderListEdit( props ) {
+function ListForm( { list, onChange, onSubmit } ) {
+	return (
+		<Card>
+			<FormFieldset>
+				<FormLabel htmlFor="list-name">Name</FormLabel>
+				<FormTextInput
+					id="list-name"
+					name="list-name"
+					data-key="title"
+					value={ list.title }
+					onChange={ onChange }
+				/>
+				<FormSettingExplanation>The name of the list.</FormSettingExplanation>
+			</FormFieldset>
+
+			<FormFieldset>
+				<FormLabel htmlFor="list-slug">Slug</FormLabel>
+				<FormTextInput
+					id="list-slug"
+					name="list-slug"
+					data-key="slug"
+					value={ list.slug }
+					onChange={ onChange }
+				/>
+				<FormSettingExplanation>
+					The slug for the list. This is used to build the URL to the list.
+				</FormSettingExplanation>
+			</FormFieldset>
+
+			<FormFieldset>
+				<FormLegend>Visibility</FormLegend>
+				<FormLabel>
+					<FormRadio
+						checked={ list.is_public }
+						data-key="is_public"
+						onChange={ onChange }
+						value="public"
+					/>
+					<span>Everyone can view this list</span>
+				</FormLabel>
+
+				<FormLabel>
+					<FormRadio
+						checked={ ! list.is_public }
+						data-key="is_public"
+						onChange={ onChange }
+						value="private"
+					/>
+					<span>Only I can view this list</span>
+				</FormLabel>
+				<FormSettingExplanation>
+					Don't worry, posts from private sites will only appear to those with access. Adding a
+					private site to a public list will not make posts from that site accessible to everyone.
+				</FormSettingExplanation>
+			</FormFieldset>
+
+			<FormFieldset>
+				<FormLabel htmlFor="list-description">Description</FormLabel>
+				<FormTextarea
+					data-key="description"
+					id="list-description"
+					name="list-description"
+					onChange={ onChange }
+					placeholder="What's your list about?"
+					value={ list.description }
+				/>
+			</FormFieldset>
+			<FormButtonsBar>
+				<FormButton primary onClick={ onSubmit }>
+					Save
+				</FormButton>
+			</FormButtonsBar>
+		</Card>
+	);
+}
+
+function ReaderListCreate() {
+	const [ list, updateList ] = React.useState( {
+		title: '',
+		slug: '',
+		is_public: true,
+		description: '',
+	} );
+	const onChange = ( event ) => {
+		const update = { [ event.target.dataset.key ]: event.target.value };
+		if ( 'is_public' in update ) {
+			update.is_public = update.is_public === 'public';
+		}
+		updateList( { ...list, ...update } );
+	};
+	return (
+		<Main>
+			<FormattedHeader headerText="Create List" />
+			<ListForm list={ list } onChange={ onChange } />
+		</Main>
+	);
+}
+
+function ReaderListEdit( props ) {
 	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
@@ -64,54 +162,7 @@ export default function ReaderListEdit( props ) {
 						</SectionNav>
 						{ selectedSection === 'details' && (
 							<>
-								<Card>
-									<FormSectionHeading>List Details</FormSectionHeading>
-
-									<FormFieldset>
-										<FormLabel htmlFor="list-name">Name</FormLabel>
-										<FormTextInput id="list-name" name="list-name" value={ list.title } />
-										<FormSettingExplanation>The name of the list.</FormSettingExplanation>
-									</FormFieldset>
-
-									<FormFieldset>
-										<FormLabel htmlFor="list-slug">Slug</FormLabel>
-										<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
-										<FormSettingExplanation>
-											The slug for the list. This is used to build the URL to the list.
-										</FormSettingExplanation>
-									</FormFieldset>
-
-									<FormFieldset>
-										<FormLegend>Visibility</FormLegend>
-										<FormLabel>
-											<FormRadio value="public" checked={ list.is_public } />
-											<span>Everyone can view this list</span>
-										</FormLabel>
-
-										<FormLabel>
-											<FormRadio value="private" checked={ ! list.is_public } />
-											<span>Only I can view this list</span>
-										</FormLabel>
-										<FormSettingExplanation>
-											Don't worry, posts from private sites will only appear to those with access.
-											Adding a private site to a public list will not make posts from that site
-											accessible to everyone.
-										</FormSettingExplanation>
-									</FormFieldset>
-
-									<FormFieldset>
-										<FormLabel htmlFor="list-description">Description</FormLabel>
-										<FormTextarea
-											name="list-description"
-											id="list-description"
-											placeholder="What's your list about?"
-											value={ list.description }
-										/>
-									</FormFieldset>
-									<FormButtonsBar>
-										<FormButton primary>Save</FormButton>
-									</FormButtonsBar>
-								</Card>
+								<ListForm list={ list } />
 
 								<Card>
 									<FormSectionHeading>DANGER!!</FormSectionHeading>
@@ -128,4 +179,8 @@ export default function ReaderListEdit( props ) {
 			</Main>
 		</>
 	);
+}
+
+export default function ReaderListManage( props ) {
+	return props.isCreateForm ? ReaderListCreate() : ReaderListEdit( props );
 }
