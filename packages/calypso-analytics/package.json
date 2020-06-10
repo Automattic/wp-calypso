@@ -27,7 +27,7 @@
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__calypso-analytics*\"",
 		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepare": "check-npm-client && tsc --project ./tsconfig.json && if [ \"$TRANSPILE_TARGET\" != 'esm' ]; then tsc --project ./tsconfig-cjs.json; fi",
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
