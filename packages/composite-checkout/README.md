@@ -131,8 +131,7 @@ While the `Checkout` component takes care of most everything, there are many sit
 
 A generic button component that is used internally for almost all buttons (like the "Continue" button on each step). You can use it if you want a button with a similar appearance. It has the following explicit props, and any additional props will be passed on directly to the HTML `button` (eg: `onClick`).
 
-- `buttonState?: 'disabled'|'primary'|'secondary'|'text-button'|'borderless'`. An optional special button style.
-- `buttonType?: 'paypal'|'apple-pay'`. The type of button. Leave as undefined unless you want to style the button like PayPal or Apple Pay.
+- `buttonState?: 'paypal'|'primary'|'secondary'|'text-button'|'borderless'`. An optional special button style.
 - `fullWidth?: bool`. The button width defaults to 'auto', but if this is set it will be '100%'.
 - `isBusy?: bool`. If true, the button will be displayed as a loading spinner.
 
