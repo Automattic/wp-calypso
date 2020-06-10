@@ -228,7 +228,7 @@ class PostCommentList extends React.Component {
 	};
 
 	renderCommentManageLink = () => {
-		const { siteId, postId, translate } = this.props;
+		const { siteId, postId } = this.props;
 
 		if ( ! siteId || ! postId ) {
 			return null;
