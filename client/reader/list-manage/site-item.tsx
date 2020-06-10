@@ -41,7 +41,7 @@ function renderSiteError( err: SiteError ) {
 		<div className="site-item list-item is-error">
 			<div className="list-item__content">
 				<div className="list-item__icon">
-					<Gridicon icon="cross-circle" size={ 36 } /> }
+					<Gridicon icon="notice" size={ 24 } /> }
 				</div>
 
 				<div className="list-item__info">

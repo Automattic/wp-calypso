@@ -39,14 +39,13 @@ function renderFeedError( err: FeedError ) {
 		<div className="feed-item list-item is-error">
 			<div className="list-item__content">
 				<div className="list-item__icon">
-					<Gridicon icon="cross-circle" size={ 36 } /> }
+					<Gridicon icon="notice" size={ 24 } /> }
 				</div>
 
 				<div className="list-item__info">
 					<div className="list-item__title">
 						{ err.error_data.no_such_feed ? 'Site has been deleted' : 'Unknown error' }
 					</div>
-					<div className="list-item__domain"></div>
 				</div>
 			</div>
 		</div>
