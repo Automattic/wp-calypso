@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -151,6 +152,7 @@ export function generateSteps( {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
 		},
+
 		'user-plans-passwordless': {
 			stepName: 'user-plans-passwordless',
 			apiRequestFunction: createAccount,
@@ -161,7 +163,6 @@ export function generateSteps( {
 				// Flow is to be use on English locale only, no need to translate labels
 				fallbackHeaderText: "Let's get started",
 				fallbackSubHeaderText: "You're one step away to get going with your site",
-				hasInitializedSitesBackUrl: '',
 				submittingButtonText: 'Go to Checkout »',
 				defaultButtonText: 'Go to Checkout »',
 				emailInputLabel: 'Your email address',
