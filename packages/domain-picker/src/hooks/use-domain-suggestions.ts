@@ -9,16 +9,15 @@ import { useDebounce } from 'use-debounce';
  */
 import {
 	DOMAIN_SUGGESTION_VENDOR,
-	PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
 	DOMAIN_SUGGESTIONS_STORE,
 	DOMAIN_SEARCH_DEBOUNCE_INTERVAL,
 } from '../constants';
 
 export function useDomainSuggestions(
 	searchTerm = '',
+	quantity: number,
 	domainCategory?: string,
-	locale = 'en',
-	quantity = PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE
+	locale = 'en'
 ) {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
 

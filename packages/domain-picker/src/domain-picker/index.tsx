@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { times } from 'lodash';
-import { TextControl } from '@wordpress/components';
+import { Button, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
@@ -21,10 +21,7 @@ import {
 	getRecommendedDomainSuggestion,
 } from '../utils/domain-suggestions';
 import DomainCategories from '../domain-categories';
-import {
-	PAID_DOMAINS_TO_SHOW_WITH_CATEGORIES_MODE,
-	PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
-} from '../constants';
+import { PAID_DOMAINS_TO_SHOW, PAID_DOMAINS_TO_SHOW_EXPANDED } from '../constants';
 import { DomainNameExplanationImage } from '../domain-name-explanation/';
 /**
  * Style dependencies
@@ -45,7 +42,11 @@ export interface Props {
 	 */
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 
+	/** Paid omain suggestions to show when the picker isn't expanded */
 	quantity?: number;
+
+	/** Domain suggestions to show when the picker is expanded */
+	quantityExpanded?: number;
 
 	currentDomain?: DomainSuggestion;
 
@@ -68,9 +69,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	header,
 	showDomainCategories,
 	onDomainSelect,
-	quantity = showDomainCategories
-		? PAID_DOMAINS_TO_SHOW_WITH_CATEGORIES_MODE
-		: PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
+	quantity = PAID_DOMAINS_TO_SHOW,
+	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
 	currentDomain,
 	analyticsFlowId,
 	analyticsUiAlgo,
@@ -83,6 +83,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	// We're not keeping the current selection in local state at the moment
 	//const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
+	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	// keep domain query in local state to allow free editing of the input value while the modal is open
 	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
@@ -90,14 +91,17 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const domainSuggestions = useDomainSuggestions(
 		domainSearch.trim(),
+		quantityExpanded,
 		domainCategory,
-		useI18n().i18nLocale,
-		quantity
+		useI18n().i18nLocale
 	);
 
 	const allSuggestions = domainSuggestions;
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
+		0,
+		isExpanded ? quantityExpanded : quantity
+	);
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
 	// We're not using auto-selection right now.
@@ -220,6 +224,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							) : (
 								<SuggestionNone />
 							) ) }
+						{ ! isExpanded && (
+							<div className="domain-picker__show-more">
+								<Button onClick={ () => setIsExpanded( true ) }>
+									{ __( 'View more results' ) }
+								</Button>
+							</div>
+						) }
 					</div>
 				</div>
 			) : (
