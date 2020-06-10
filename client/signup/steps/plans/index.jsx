@@ -79,12 +79,6 @@ export class PlansStep extends Component {
 
 		this.props.submitSignupStep( step, {
 			cartItem,
-			// dependencies used only for 'plans-with-domain' step in Gutenboarding pre-launch flow
-			...( this.isGutenboarding() &&
-				! this.props.isLaunchPage && {
-					isPreLaunch: true,
-					isGutenboardingCreate: true,
-				} ),
 		} );
 		this.props.goToNextStep();
 	};
@@ -116,11 +110,9 @@ export class PlansStep extends Component {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
-	isGutenboarding = () =>
-		this.props.flowName === 'new-launch' || this.props.flowName === 'prelaunch'; // signup flows coming from Gutenboarding
-
 	getGutenboardingHeader() {
-		if ( this.isGutenboarding() ) {
+		// launch flow coming from Gutenboarding
+		if ( this.props.flowName === 'new-launch' ) {
 			const { headerText, subHeaderText } = this.props;
 
 			return (
@@ -218,7 +210,7 @@ export class PlansStep extends Component {
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ backUrl }
 				backLabelText={ backLabelText }
-				hideFormattedHeader={ this.isGutenboarding() }
+				hideFormattedHeader={ !! this.getGutenboardingHeader() }
 			/>
 		);
 	}
