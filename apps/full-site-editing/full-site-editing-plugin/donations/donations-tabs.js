@@ -10,13 +10,19 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
-const DonationsTabs = () => {
+/**
+ * Internal dependencies
+ */
+import StripeNudge from './stripe-nudge';
+
+const DonationsTabs = ( { stripeConnectUrl } ) => {
 	const [ activeTab, setActiveTab ] = useState( 'one-time' );
 
 	const isActive = ( button ) => ( activeTab === button ? 'active' : null );
 
 	return (
 		<div className="donations__container">
+			{ stripeConnectUrl && <StripeNudge stripeConnectUrl={ stripeConnectUrl } /> }
 			<Button className={ isActive( 'one-time' ) } onClick={ () => setActiveTab( 'one-time' ) }>
 				{ __( 'One-Time', 'full-site-editing' ) }
 			</Button>
