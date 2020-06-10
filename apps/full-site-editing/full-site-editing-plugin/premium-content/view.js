@@ -1,5 +1,3 @@
-/* global tb_show, tb_remove */
-
 document.addEventListener( 'DOMContentLoaded', function () {
 	let premiumContentJWTToken = '';
 
@@ -26,16 +24,12 @@ document.addEventListener( 'DOMContentLoaded', function () {
 					date.toGMTString() +
 					'; path=/';
 			}
-			if ( data && data.action === 'close' ) {
-				tb_remove();
-
-				if ( premiumContentJWTToken ) {
-					document.location.href = updateQueryStringParameter(
-						document.location.href,
-						'token',
-						premiumContentJWTToken
-					);
-				}
+			if ( data && data.action === 'close' && premiumContentJWTToken ) {
+				document.location.href = updateQueryStringParameter(
+					document.location.href,
+					'token',
+					premiumContentJWTToken
+				);
 			}
 		}
 	}
@@ -49,33 +43,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 		return uri + separator + key + '=' + value;
 	}
 
-	function setupSubscribeButton() {
-		const block = document.querySelector( '.wp-block-premium-content-button-subscribe' );
-
-		if ( ! block ) {
-			return;
-		}
-
-		if ( block.getAttribute( 'data-premium-content-button-subscribe-setup' ) === 'true' ) {
-			return;
-		}
-
-		block.addEventListener( 'click', ( event ) => {
-			event.preventDefault();
-			window.scrollTo( 0, 0 );
-			tb_show( null, block.getAttribute( 'href' ) + '&display=alternate&TB_iframe=true', null );
-			const tbWindow = document.querySelector( '#TB_window' );
-			tbWindow.classList.add( 'jetpack-memberships-modal' );
-
-			// This line has to come after the Thickbox has opened otherwise Firefox doesn't scroll to the top.
-			window.scrollTo( 0, 0 );
-		} );
-
-		block.setAttribute( 'data-premium-content-button-subscribe-setup', 'true' );
-	}
-
 	if ( typeof window !== 'undefined' ) {
 		window.addEventListener( 'message', handleIframeResult, false );
 	}
-	setupSubscribeButton();
 } );
