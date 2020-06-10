@@ -85,7 +85,6 @@
 	margin-top: 2px;
 }
 
-.site-item__error {
+.list-item.is-error .list-item__title {
 	font-style: italic;
-	line-height: 48px;
 }
