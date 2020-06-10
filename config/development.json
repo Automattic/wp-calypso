@@ -72,6 +72,7 @@
 		"home/layout-dev": true,
 		"inline-help": true,
 		"i18n/community-translator": false,
+		"i18n/empathy-mode": true,
 		"i18n/translation-scanner": true,
 		"ive/use-external-assignment": true,
 		"jetpack/api-cache": true,

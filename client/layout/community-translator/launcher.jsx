@@ -410,7 +410,9 @@ export default connect(
 	( state ) => ( {
 		isUserSettingsReady: !! getUserSettings( state ),
 		isTranslatorEnabled: getOriginalUserSetting( state, 'enable_translator' ),
-		isEmpathyModeEnabled: getOriginalUserSetting( state, 'i18n_empathy_mode' ),
+		isEmpathyModeEnabled:
+			config.isEnabled( 'i18n/empathy-mode' ) &&
+			getOriginalUserSetting( state, 'i18n_empathy_mode' ),
 		selectedLanguageSlug: getCurrentLocaleSlug( state ),
 	} ),
 	{ setLocale }

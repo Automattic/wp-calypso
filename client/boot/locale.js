@@ -83,7 +83,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'use-translation-chunks' ) ||
 		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
-	if ( currentUser.i18n_empathy_mode ) {
+	if ( config.isEnabled( 'i18n/empathy-mode' ) && currentUser.i18n_empathy_mode ) {
 		enableLanguageEmpatyhMode();
 	}
 

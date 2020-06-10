@@ -23,6 +23,7 @@ import {
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { Dialog } from '@automattic/components';
 import QueryLanguageNames from 'components/data/query-language-names';
 import SectionNav from 'components/section-nav';
@@ -458,6 +459,10 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	renderEmpathyModeCheckbox() {
+		if ( ! config.isEnabled( 'i18n/empathy-mode' ) ) {
+			return null;
+		}
+
 		const { translate } = this.props;
 		const { empathyMode, selectedLanguageSlug } = this.state;
 		const isDefaultLanguageSelected = i18n.defaultLocaleSlug === selectedLanguageSlug;
