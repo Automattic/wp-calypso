@@ -20,6 +20,7 @@ import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';
 import { bumpStat } from 'lib/analytics/mc';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
+import userSettings from 'lib/user-settings';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import { setLocale } from 'state/ui/language/actions';
@@ -196,8 +197,29 @@ class TranslatorLauncher extends React.Component {
 		this.setState( { infoDialogVisible: false } );
 	};
 
+	toggleOffEmpathyMode = () => {
+		userSettings.saveSettings(
+			( error ) => {
+				if ( ! error ) {
+					window.location =
+						window.location.href.replace( window.location.search, '' ) +
+						'?disable-empathy-mode=success';
+				}
+			},
+			{ i18n_empathy_mode: false }
+		);
+	};
+
 	toggle = ( event ) => {
 		event.preventDefault();
+
+		const { isEmpathyModeEnabled } = this.props;
+
+		if ( isEmpathyModeEnabled ) {
+			this.toggleOffEmpathyMode();
+			return;
+		}
+
 		const nextIsActive = translator.toggle();
 		bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
 		this.setState( { isActive: nextIsActive } );
@@ -358,15 +380,7 @@ class TranslatorLauncher extends React.Component {
 		const toggleString = isActive
 			? translate( 'Disable Translator' )
 			: translate( 'Enable Translator' );
-		const buttonString = isEmpathyModeEnabled
-			? translate( "Community Translator can't be use when Empathy mode is enabled" )
-			: toggleString;
-		const ButtonWrapper = ( props ) =>
-			isEmpathyModeEnabled ? (
-				<a href="/me/account" { ...props } />
-			) : (
-				<button onClick={ this.toggle } { ...props } />
-			);
+		const buttonString = isEmpathyModeEnabled ? translate( 'Disable Empathy mode' ) : toggleString;
 
 		return (
 			<Fragment>
@@ -374,13 +388,14 @@ class TranslatorLauncher extends React.Component {
 				{ isEnabled && (
 					<Fragment>
 						<div className={ launcherClasses }>
-							<ButtonWrapper
+							<button
+								onClick={ this.toggle }
 								className="community-translator__button"
 								title={ translate( 'Community Translator' ) }
 							>
 								<Gridicon icon="globe" />
 								<div className="community-translator__text">{ buttonString }</div>
-							</ButtonWrapper>
+							</button>
 						</div>
 						{ infoDialogVisible && this.renderConfirmationModal() }
 					</Fragment>
