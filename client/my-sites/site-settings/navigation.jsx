@@ -30,6 +30,7 @@ export class SiteSettingsNavigation extends Component {
 			writing: translate( 'Writing', { context: 'settings screen' } ),
 			discussion: translate( 'Discussion', { context: 'settings screen' } ),
 			security: translate( 'Security', { context: 'settings screen' } ),
+			jetpack: 'Jetpack',
 		};
 	}
 
@@ -87,6 +88,16 @@ export class SiteSettingsNavigation extends Component {
 					>
 						{ strings.discussion }
 					</NavItem>
+
+					{ config.isEnabled( 'jetpack/features-section' ) && site.jetpack && (
+						<NavItem
+							path={ `/settings/jetpack/${ site.slug }` }
+							preloadSectionName="settings-jetpack"
+							selected={ section === 'jetpack' }
+						>
+							{ strings.jetpack }
+						</NavItem>
+					) }
 				</NavTabs>
 			</SectionNav>
 		);

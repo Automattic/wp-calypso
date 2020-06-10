@@ -161,6 +161,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-jetpack',
+		paths: [ '/settings/jetpack' ],
+		module: 'my-sites/site-settings/settings-jetpack',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',
