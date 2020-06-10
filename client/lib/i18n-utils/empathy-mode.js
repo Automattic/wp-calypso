@@ -44,11 +44,22 @@ function replaceArgs( translation, options ) {
 	return translation;
 }
 
+let isDisabled = false;
+
+export function disableLanguageEmpathyMode() {
+	isDisabled = ! isDisabled;
+	i18n.reRenderTranslations();
+}
+
 export function enableLanguageEmpatyhMode() {
 	// wrap translations from i18n
 	i18n.registerTranslateHook( ( translation, options ) => {
 		const locale = i18n.getLocaleSlug();
-		if ( locale === i18n.defaultLocaleSlug || options.original === defaultUntranslatedPlacehoder ) {
+		if (
+			isDisabled ||
+			locale === i18n.defaultLocaleSlug ||
+			options.original === defaultUntranslatedPlacehoder
+		) {
 			return translation;
 		}
 

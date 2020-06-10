@@ -20,7 +20,7 @@ import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';
 import { bumpStat } from 'lib/analytics/mc';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
-import userSettings from 'lib/user-settings';
+import { disableLanguageEmpathyMode } from 'lib/i18n-utils/empathy-mode';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import { setLocale } from 'state/ui/language/actions';
@@ -198,16 +198,7 @@ class TranslatorLauncher extends React.Component {
 	};
 
 	toggleOffEmpathyMode = () => {
-		userSettings.saveSettings(
-			( error ) => {
-				if ( ! error ) {
-					window.location =
-						window.location.href.replace( window.location.search, '' ) +
-						'?disable-empathy-mode=success';
-				}
-			},
-			{ i18n_empathy_mode: false }
-		);
+		disableLanguageEmpathyMode();
 	};
 
 	toggle = ( event ) => {
