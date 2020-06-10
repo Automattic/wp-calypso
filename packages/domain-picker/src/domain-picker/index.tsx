@@ -118,7 +118,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				disabled={ ! hasSuggestions }
 				onClick={ () => {
 					currentSelection && onDomainSelect( currentSelection );
-					onClose();
 				} }
 				{ ...props }
 			>
