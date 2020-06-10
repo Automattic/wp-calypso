@@ -111,7 +111,7 @@
 		"immutability-helper": "^3.0.1",
 		"immutable": "^3.8.2",
 		"inherits": "^2.0.4",
-		"interpolate-components": "1.1.1",
+		"interpolate-components": "^1.1.1",
 		"is-my-json-valid": "^2.20.0",
 		"jquery": "^1.12.3",
 		"keymaster": "^1.6.2",
