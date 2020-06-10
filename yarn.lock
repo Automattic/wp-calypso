@@ -43,9 +43,6 @@
     loose-envify "^1.4.0"
     react-lifecycles-compat "^3.0.4"
 
-"@automattic/typography@file:packages/typography":
-  version "1.0.0"
-
 "@babel/cli@^7.8.4":
   version "7.8.4"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.8.4.tgz#505fb053721a98777b2b175323ea4f090b7d3c1c"

@@ -2,7 +2,7 @@
 	"name": "@automattic/typography",
 	"version": "1.0.0",
 	"description": "Typographic elements for WordPress.com products",
-	"main": "css/fonts.css",
+	"main": "sass/fonts.scss",
 	"keywords": [
 		"wordpress"
 	],
@@ -19,6 +19,7 @@
 		"access": "private"
 	},
 	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
+		"url": "https://github.com/Automattic/wp-calypso/issues",
+		"private": true
 	}
 }

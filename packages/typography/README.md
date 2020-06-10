@@ -1,6 +1,6 @@
 # Typography
 
-@automattic/typography is a set of CSS/Sass files for shared typographic elements across WordPress.com products. Right now, this package contains the `@font-face` declaration for the WordPress.com brand font.
+@automattic/typography is a Sass file for shared typographic elements across WordPress.com products. Right now, this package contains the `@font-face` declaration for the WordPress.com brand font.
 
 ## Installation
 
@@ -10,10 +10,10 @@ yarn add @automattic/typography
 
 ## Usage
 
-Include the CSS/Sass:
-
-`@import '~@automattic/typography/css/fonts.css';`
+Import the Sass file:
 
 `@import '~@automattic/typography/sass/fonts';`
 
-Then apply the class name `.wp-brand-font` to any elements that should display with Recoleta.
+Then apply the class name `wp-brand-font` to any elements that should display with Recoleta:
+
+`<h1 className="wp-brand-font">Brand font heading</h1>`
