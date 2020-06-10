@@ -384,7 +384,7 @@ export function CheckoutStepBody( {
 									? validatingButtonAriaLabel || 'Please wait…'
 									: nextStepButtonAriaLabel || 'Continue to next step'
 							}
-							buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
+							buttonState="primary"
 							disabled={ formStatus !== 'ready' }
 							isBusy={ formStatus === 'validating' }
 						/>

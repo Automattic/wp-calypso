@@ -68,7 +68,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 		<Button
 			disabled={ disabled }
 			onClick={ onClick }
-			buttonState={ disabled ? 'disabled' : 'primary' }
+			buttonState="primary"
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
