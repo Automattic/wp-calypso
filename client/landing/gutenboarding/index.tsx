@@ -53,7 +53,6 @@ function generateGetSuperProps() {
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 const USE_TRANSLATION_CHUNKS: boolean =
-	false || // TODO: Force disable translation chunks
 	config.isEnabled( 'use-translation-chunks' ) ||
 	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 

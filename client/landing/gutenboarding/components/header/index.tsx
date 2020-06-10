@@ -119,7 +119,7 @@ const Header: React.FunctionComponent< Props > = ( { changeLocale } ) => {
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-language">
 					<Button onClick={ handleChangeLocale }>
-						<span>Site Language: </span>
+						<span>{ __( 'Site Language' ) } </span>
 						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
 					</Button>
 				</div>
