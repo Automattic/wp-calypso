@@ -21,12 +21,16 @@ const testIgnorePattern = path.join( dir, '**/test/**' );
 console.log( 'Building %s', dir );
 const baseCommand = `npx --no-install babel --presets="${ babelPresetFile }" --ignore "${ testIgnorePattern }" --extensions='.js,.jsx,.ts,.tsx'`;
 
+const transpileEsmOnly = process.env.TRANSPILE_TARGET === 'esm';
+
 execSync( `${ baseCommand } -d "${ outputDirEsm }" "${ inputDir }"`, {
 	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults' } ),
 	cwd: root,
 } );
 
-execSync( `${ baseCommand } -d "${ outputDirCommon }" "${ inputDir }"`, {
-	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults', MODULES: 'commonjs' } ),
-	cwd: root,
-} );
+if ( ! transpileEsmOnly ) {
+	execSync( `${ baseCommand } -d "${ outputDirCommon }" "${ inputDir }"`, {
+		env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults', MODULES: 'commonjs' } ),
+		cwd: root,
+	} );
+}

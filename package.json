@@ -75,7 +75,7 @@
 		"build-client-if-prod": "check-npm-client && node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || yarn run build-client-both",
 		"build-client-if-desktop": "check-npm-client && node -e \"(process.env.CALYPSO_ENV === 'desktop' || process.env.CALYPSO_ENV === 'desktop-development') && process.exit(1)\" || yarn run build-client-fallback",
 		"build-client-stats": "check-npm-client && NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true PROGRESS=true yarn run build-client-evergreen",
-		"build-packages": "check-npm-client && npx lerna run prepare --stream",
+		"build-packages": "check-npm-client && TRANSPILE_TARGET=esm npx lerna run prepare --stream",
 		"build-packages:watch": "check-npm-client && node bin/watch-packages-and-rebuild.js",
 		"build-languages": "check-npm-client && yarn run translate && node bin/build-languages.js",
 		"build-languages-if-enabled": "check-npm-client && node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run build-languages",
