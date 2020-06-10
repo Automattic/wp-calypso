@@ -7,6 +7,9 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, '[Status] Needs Review') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing Gutenberg Edge') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing horizon')
     steps:
       - uses: actions/checkout@v2
+      - name: Prime calypso.live
+        run: |
+            curl --silent "https://${{ hash-github.event.pull_request.head.sha }}.calypso.live"
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -16,10 +19,10 @@ jobs:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          key: v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
           restore-keys: |
-            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
+            v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+            v1-yarn-modules-{{ checksum ".nvmrc" }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Check external author
@@ -53,10 +56,10 @@ jobs:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          key: v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
           restore-keys: |
-            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
+            v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+            v1-yarn-modules-{{ checksum ".nvmrc" }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
@@ -97,10 +100,10 @@ jobs:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          key: v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
           restore-keys: |
-            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
+            v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+            v1-yarn-modules-{{ checksum ".nvmrc" }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
