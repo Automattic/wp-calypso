@@ -3,6 +3,19 @@
 
 $domain-picker__suggestion-item-height: 24px;
 
+.domain-picker__empty-state {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&--text {
+		max-width: 320px;
+		font-size: 0.9em;
+		margin: 0 10px;
+		color: $dark-gray-500;
+	}
+}
+
 .domain-picker__search {
 	position: relative;
 	margin-bottom: 20px;
