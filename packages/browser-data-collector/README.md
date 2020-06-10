@@ -15,8 +15,7 @@ stop('my-page');
 ```
 
 This will send a report to `Logstash` including (but not limited to):
-	- `start`: always 0
-	- `end`: when `stop()` was called relative to when `start()` was called. If `fullPageLoad:true`, then it is relative to when the navigation started.
+	- `duration`: when `stop()` was called relative to when `start()` was called. If `fullPageLoad:true`, then it is relative to when the navigation started.
 	- `id`: name of the report, `"my-page"` in this case
 	- Environment data like Calypso version or build target
 	- Data from the Performance Timing API
