@@ -26,9 +26,12 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
+import ListItem from './list-item';
+import './style.scss';
 
 function ReaderListEdit( props ) {
 	const { list, listItems } = props;
+	const selectedSection = props.showItems ? 'items' : 'details';
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
@@ -40,74 +43,82 @@ function ReaderListEdit( props ) {
 					<>
 						<SectionNav>
 							<NavTabs>
-								<NavItem selected={ true }>Details</NavItem>
-								<NavItem count={ 69 }>Sites</NavItem>
+								<NavItem
+									selected={ selectedSection === 'details' }
+									path={ `/read/list/${ props.owner }/${ props.slug }/edit` }
+								>
+									Details
+								</NavItem>
+								<NavItem
+									selected={ selectedSection === 'items' }
+									count={ listItems?.length }
+									path={ `/read/list/${ props.owner }/${ props.slug }/edit/items` }
+								>
+									Sites
+								</NavItem>
 							</NavTabs>
 						</SectionNav>
-						<Card>
-							<FormSectionHeading>List Details</FormSectionHeading>
+						{ selectedSection === 'details' && (
+							<>
+								<Card>
+									<FormSectionHeading>List Details</FormSectionHeading>
 
-							<FormFieldset>
-								<FormLabel htmlFor="list-name">Name</FormLabel>
-								<FormTextInput id="list-name" name="list-name" value={ list.title } />
-								<FormSettingExplanation>The name of the list.</FormSettingExplanation>
-							</FormFieldset>
+									<FormFieldset>
+										<FormLabel htmlFor="list-name">Name</FormLabel>
+										<FormTextInput id="list-name" name="list-name" value={ list.title } />
+										<FormSettingExplanation>The name of the list.</FormSettingExplanation>
+									</FormFieldset>
 
-							<FormFieldset>
-								<FormLabel htmlFor="list-slug">Slug</FormLabel>
-								<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
-								<FormSettingExplanation>
-									The slug for the list. This is used to build the URL to the list.
-								</FormSettingExplanation>
-							</FormFieldset>
+									<FormFieldset>
+										<FormLabel htmlFor="list-slug">Slug</FormLabel>
+										<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
+										<FormSettingExplanation>
+											The slug for the list. This is used to build the URL to the list.
+										</FormSettingExplanation>
+									</FormFieldset>
 
-							<FormFieldset>
-								<FormLegend>Visibility</FormLegend>
-								<FormLabel>
-									<FormRadio value="public" checked={ list.is_public } />
-									<span>Everyone can view this list</span>
-								</FormLabel>
+									<FormFieldset>
+										<FormLegend>Visibility</FormLegend>
+										<FormLabel>
+											<FormRadio value="public" checked={ list.is_public } />
+											<span>Everyone can view this list</span>
+										</FormLabel>
 
-								<FormLabel>
-									<FormRadio value="private" checked={ ! list.is_public } />
-									<span>Only I can view this list</span>
-								</FormLabel>
-								<FormSettingExplanation>
-									Don't worry, posts from private sites will only appear to those with access.
-									Adding a private site to a public list will not make posts from that site
-									accessible to everyone.
-								</FormSettingExplanation>
-							</FormFieldset>
+										<FormLabel>
+											<FormRadio value="private" checked={ ! list.is_public } />
+											<span>Only I can view this list</span>
+										</FormLabel>
+										<FormSettingExplanation>
+											Don't worry, posts from private sites will only appear to those with access.
+											Adding a private site to a public list will not make posts from that site
+											accessible to everyone.
+										</FormSettingExplanation>
+									</FormFieldset>
 
-							<FormFieldset>
-								<FormLabel htmlFor="list-description">Description</FormLabel>
-								<FormTextarea
-									name="list-description"
-									id="list-description"
-									placeholder="What's your list about?"
-									value={ list.description }
-								/>
-							</FormFieldset>
-							<FormButtonsBar>
-								<FormButton primary>Save</FormButton>
-							</FormButtonsBar>
-						</Card>
+									<FormFieldset>
+										<FormLabel htmlFor="list-description">Description</FormLabel>
+										<FormTextarea
+											name="list-description"
+											id="list-description"
+											placeholder="What's your list about?"
+											value={ list.description }
+										/>
+									</FormFieldset>
+									<FormButtonsBar>
+										<FormButton primary>Save</FormButton>
+									</FormButtonsBar>
+								</Card>
 
-						<Card>
-							<FormSectionHeading>Sites in List</FormSectionHeading>
-							<pre>
-								{ ! listItems && 'Loading...' }
-								{ listItems &&
-									listItems.map( ( item ) => JSON.stringify( item, null, 2 ) + '\n\n' ) }
-							</pre>
-						</Card>
-
-						<Card>
-							<FormSectionHeading>DANGER!!</FormSectionHeading>
-							<Button scary primary>
-								DELETE LIST FOREVER
-							</Button>
-						</Card>
+								<Card>
+									<FormSectionHeading>DANGER!!</FormSectionHeading>
+									<Button scary primary>
+										DELETE LIST FOREVER
+									</Button>
+								</Card>
+							</>
+						) }
+						{ selectedSection === 'items' &&
+							props.listItems?.map( ( item ) => <ListItem key={ item.ID } item={ item } /> ) }
 					</>
 				) }
 			</Main>
