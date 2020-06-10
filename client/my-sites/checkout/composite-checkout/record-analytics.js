@@ -209,13 +209,12 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						reason: String( action.payload.message ),
 					} )
 				);
-				const payment_method = translateCheckoutPaymentMethodToWpcomPaymentMethod(
-					action.payload.paymentMethodId
-				);
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
-						payment_method,
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
+								?.name || '',
 						reason: String( action.payload.message ),
 					} )
 				);
