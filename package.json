@@ -60,6 +60,7 @@
 		"build-css": "check-npm-client && run-p -s build-css:*",
 		"build-css:directly": "check-npm-client && node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/directly.scss public/directly.css --output-style compressed && yarn run -s postcss public/directly.css",
 		"build-css:editor": "check-npm-client && node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/editor.scss public/editor.css --output-style compressed && yarn run -s postcss public/editor.css",
+		"build-css:reader-mobile": "check-npm-client && node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/reader-mobile.scss public/reader-mobile.css --output-style compressed && yarn run -s postcss public/reader-mobile.css",
 		"build-devdocs:search-index": "check-npm-client && node bin/generate-devdocs-search-index.js",
 		"build-docker": "check-npm-client && node bin/build-docker.js",
 		"build-static": "check-npm-client && npx ncp static public",
