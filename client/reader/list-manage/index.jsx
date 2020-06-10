@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -29,8 +29,12 @@ import Main from 'components/main';
 import ListItem from './list-item';
 import './style.scss';
 
-function ReaderListEdit( props ) {
-	const { list, listItems } = props;
+export default function ReaderListEdit( props ) {
+	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
+	const listItems = useSelector( ( state ) =>
+		list ? getListItems( state, list.ID ) : undefined
+	);
+
 	const selectedSection = props.showItems ? 'items' : 'details';
 	return (
 		<>
@@ -118,19 +122,10 @@ function ReaderListEdit( props ) {
 							</>
 						) }
 						{ selectedSection === 'items' &&
-							props.listItems?.map( ( item ) => <ListItem key={ item.ID } item={ item } /> ) }
+							listItems?.map( ( item ) => <ListItem key={ item.ID } item={ item } /> ) }
 					</>
 				) }
 			</Main>
 		</>
 	);
 }
-
-export default connect( ( state, ownProps ) => {
-	const list = getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug );
-	const listItems = list ? getListItems( state, list.ID ) : undefined;
-	return {
-		list,
-		listItems,
-	};
-} )( ReaderListEdit );
