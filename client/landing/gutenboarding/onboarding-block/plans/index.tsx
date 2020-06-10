@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef, useState } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
-import { useI18n } from '@automattic/react-i18n';
+import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
 import PlansGrid from '@automattic/plans-grid';
 
 /**
@@ -24,15 +24,17 @@ import { usePath, Step } from '../../path';
 import ActionButtons from '../../components/action-buttons';
 import { Title, SubTitle } from '../../components/titles';
 
-export default function PlansStep() {
+interface Props {
+	isModal?: boolean;
+}
+
+const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __ } = useI18n();
 	const makePath = usePath();
 
-	const location = useLocation() as any;
-	const isModal = location.state?.fromPlansButton;
 	const history = useHistory();
 
-	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
@@ -42,19 +44,18 @@ export default function PlansStep() {
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
-	useEffect( () => {
+	React.useEffect( () => {
 		setHasUsedPlansStep( true );
 	}, [] );
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
-	const selectedPlanRef = useRef< string | undefined >();
-	useEffect( () => {
+	const selectedPlanRef = React.useRef< string | undefined >();
+	React.useEffect( () => {
 		selectedPlanRef.current = plan?.storeSlug;
 	}, [ plan ] );
 
-	useTrackStep( 'Plans', () => ( {
+	useTrackStep( isModal ? 'PlansModal' : 'Plans', () => ( {
 		selected_plan: selectedPlanRef.current,
-		from_plans_button: !! isModal,
 	} ) );
 
 	const handleBack = () => ( isModal ? history.goBack() : history.push( makePath( Step.Style ) ) );
@@ -94,4 +95,6 @@ export default function PlansStep() {
 			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
 		</div>
 	);
-}
+};
+
+export default PlansStep;
