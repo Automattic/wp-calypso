@@ -3,6 +3,7 @@
  */
 import i18n, { translate } from 'i18n-calypso';
 import interpolateComponents from 'interpolate-components';
+import sprintf from '@tannin/sprintf';
 
 let defaultUntranslatedPlacehoder = translate( "I don't understand" );
 
@@ -21,6 +22,28 @@ function encodeUntranslatedString( originalString, placeholder = defaultUntransl
 	return output.substr( 0, originalString.length );
 }
 
+function replaceArgs( translation, options ) {
+	if ( options.args ) {
+		const sprintfArgs = Array.isArray( options.args ) ? options.args.slice( 0 ) : [ options.args ];
+		sprintfArgs.unshift( translation );
+		try {
+			translation = sprintf( ...sprintfArgs );
+		} catch ( error ) {
+			if ( ! window || ! window.console ) {
+				return;
+			}
+			const errorMethod = this.throwErrors ? 'error' : 'warn';
+			if ( typeof error !== 'string' ) {
+				window.console[ errorMethod ]( error );
+			} else {
+				window.console[ errorMethod ]( 'i18n sprintf error:', sprintfArgs );
+			}
+		}
+	}
+
+	return translation;
+}
+
 export function enableLanguageEmpatyhMode() {
 	// wrap translations from i18n
 	i18n.registerTranslateHook( ( translation, options ) => {
@@ -32,11 +55,11 @@ export function enableLanguageEmpatyhMode() {
 		if ( i18n.hasTranslation( options.original ) ) {
 			if ( options.components ) {
 				translation = interpolateComponents( {
-					mixedString: options.original,
+					mixedString: replaceArgs( options.original, options ),
 					components: options.components,
 				} );
 			} else {
-				translation = options.original;
+				translation = replaceArgs( options.original, options );
 			}
 
 			return translation;

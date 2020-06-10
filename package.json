@@ -174,6 +174,7 @@
 		"@storybook/preset-scss": "^1.0.2",
 		"@storybook/preset-typescript": "^1.2.2",
 		"@storybook/react": "^5.3.18",
+		"@tannin/sprintf": "^1.1.0",
 		"@testing-library/jest-dom": "^5.9.0",
 		"@testing-library/react": "^10.0.5",
 		"@types/classnames": "^2.2.10",
