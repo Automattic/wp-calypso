@@ -6,7 +6,22 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.event.pull_request.labels.*.name, '[Status] Needs Review') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing Gutenberg Edge') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing horizon')
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-yarn-modules
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          restore-keys: |
+            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
+      - name: Install yarn deps
+        run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
@@ -28,7 +43,20 @@ jobs:
         ci_node_total: [4]
         ci_node_index: [0, 1, 2, 3]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-yarn-modules
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          restore-keys: |
+            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
@@ -37,7 +65,7 @@ jobs:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Split Test files
-        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -r ./runtime.log -f \"specs*/**/*spec.js\" -s \",\" -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\""
+        run: echo "::set-env name=TESTFILES::"$(npx mocha-split-tests -r ./runtime.log -f "specs*/**/*spec.js" -s "," -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})""
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
@@ -59,7 +87,20 @@ jobs:
         ci_node_total: [4]
         ci_node_index: [0, 1, 2, 3]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-yarn-modules
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          restore-keys: |
+            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+            v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
@@ -68,7 +109,7 @@ jobs:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Split Test files
-        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -r ./runtime.log -f \"specs*/**/*spec.js\" -s \",\" -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\""
+        run: echo "::set-env name=TESTFILES::"$(npx mocha-split-tests -r ./runtime.log -f "specs*/**/*spec.js" -s "," -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})""
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
