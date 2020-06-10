@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install yarn deps
-        run: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
+        run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
@@ -49,7 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install yarn deps
-        run: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
+        run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
