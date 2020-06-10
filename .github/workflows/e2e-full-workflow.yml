@@ -18,10 +18,10 @@ jobs:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          key: v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-            v1-yarn-modules-{{ checksum ".nvmrc" }}
+            v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+            v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Check external author
@@ -55,10 +55,10 @@ jobs:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          key: v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-            v1-yarn-modules-{{ checksum ".nvmrc" }}
+            v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+            v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
@@ -99,10 +99,10 @@ jobs:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }
+          key: v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            v1-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-            v1-yarn-modules-{{ checksum ".nvmrc" }}
+            v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+            v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
