@@ -203,11 +203,6 @@ function getCheckoutVariant(
 		return 'disallowed-product';
 	}
 
-	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
-		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
-		return 'composite-checkout';
-	}
-
 	debug( 'shouldShowCompositeCheckout true' );
 	return 'composite-checkout';
 }
