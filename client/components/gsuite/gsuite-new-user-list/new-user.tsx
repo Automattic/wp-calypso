@@ -66,7 +66,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				value={ mailBox }
 				isError={ hasMailBoxError }
 				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-					onUserValueChange( 'mailBox', event.target.value );
+					onUserValueChange( 'mailBox', event.target.value.toLowerCase() );
 				} }
 				onBlur={ () => {
 					setMailBoxFieldTouched( wasValidated );
@@ -85,13 +85,14 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					value={ mailBox }
 					isError={ hasMailBoxError }
 					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-						onUserValueChange( 'mailBox', event.target.value );
+						onUserValueChange( 'mailBox', event.target.value.toLowerCase() );
 					} }
 					onBlur={ () => {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 					onKeyUp={ onReturnKeyPress }
 				/>
+
 				<GSuiteDomainsSelect
 					domains={ domains }
 					onChange={ ( event ) => {
@@ -128,8 +129,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							} }
 							onKeyUp={ onReturnKeyPress }
 						/>
+
 						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
 					</div>
+
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
 							placeholder={ translate( 'Last name' ) }
@@ -144,8 +147,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							} }
 							onKeyUp={ onReturnKeyPress }
 						/>
+
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>
+
 					<div>
 						<Button
 							className="gsuite-new-user-list__new-user-remove-user-button"
