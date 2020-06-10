@@ -79,10 +79,19 @@ function VariantPrice( { variant } ) {
 }
 
 function VariantPriceDiscount( { variant } ) {
+	const translate = useTranslate();
 	const discountPercentage = Math.round(
 		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
 	);
-	return <Discount>{ discountPercentage }%</Discount>;
+	return (
+		<Discount>
+			{ translate( 'Save %(percent)s%%', {
+				args: {
+					percent: discountPercentage,
+				},
+			} ) }
+		</Discount>
+	);
 }
 
 function useVariantWpcomPlanProductSlugs( productSlug ) {
