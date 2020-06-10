@@ -8,8 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Prime calypso.live
-        run: |
-            curl --silent "https://${{ hash-github.event.pull_request.head.sha }}.calypso.live"
+        run: curl --silent "https://${{ github.event.pull_request.head.sha }}.calypso.live"
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
