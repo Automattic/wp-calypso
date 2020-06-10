@@ -624,8 +624,8 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 		},
 
-		'team-site': {
-			stepName: 'team-site',
+		'p2-site': {
+			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
 		},

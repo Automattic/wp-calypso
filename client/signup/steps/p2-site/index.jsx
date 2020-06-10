@@ -29,7 +29,7 @@ import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions'
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:steps:wp-for-teams-site' );
+const debug = debugFactory( 'calypso:steps:p2-site' );
 
 /**
  * Constants
@@ -43,8 +43,8 @@ const ERROR_CODE_MISSING_SITE_TITLE = 123; // Random number, we don't need it.
 let siteUrlsSearched = [],
 	timesValidationFailed = 0;
 
-class WpForTeamsSite extends React.Component {
-	static displayName = 'WpForTeamsSite';
+class P2Site extends React.Component {
+	static displayName = 'P2Site';
 
 	constructor( props ) {
 		super( props );
@@ -191,7 +191,7 @@ class WpForTeamsSite extends React.Component {
 
 	save = () => {
 		this.props.saveSignupStep( {
-			stepName: 'wp-for-teams-site',
+			stepName: 'p2-site',
 			form: this.state.form,
 		} );
 	};
@@ -250,7 +250,7 @@ class WpForTeamsSite extends React.Component {
 			<>
 				<ValidationFieldset
 					errorMessages={ this.getErrorMessagesWithLogin( 'siteTitle' ) }
-					className="wp-for-teams-site__validation-site-title"
+					className="p2-site__validation-site-title"
 				>
 					<FormLabel htmlFor="site-title-input">
 						{ this.props.translate( "What's the name of your team or project?" ) }
@@ -259,7 +259,7 @@ class WpForTeamsSite extends React.Component {
 						id="site-title-input"
 						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						autoCapitalize={ 'off' }
-						className="wp-for-teams-site__site-title"
+						className="p2-site__site-title"
 						disabled={ fieldDisabled }
 						type="text"
 						name="site-title"
@@ -271,7 +271,7 @@ class WpForTeamsSite extends React.Component {
 				</ValidationFieldset>
 				<ValidationFieldset
 					errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }
-					className="wp-for-teams-site__validation-site"
+					className="p2-site__validation-site"
 				>
 					<FormLabel htmlFor="site-address-input">
 						{ this.props.translate( 'Choose a site address' ) }
@@ -279,7 +279,7 @@ class WpForTeamsSite extends React.Component {
 					<FormTextInput
 						id="site-address-input"
 						autoCapitalize={ 'off' }
-						className="wp-for-teams-site__site-url"
+						className="p2-site__site-url"
 						disabled={ fieldDisabled }
 						type="text"
 						name="site"
@@ -289,7 +289,7 @@ class WpForTeamsSite extends React.Component {
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent }
 					/>
-					<span className="wp-for-teams-site__wordpress-domain-suffix">.wordpress.com</span>
+					<span className="p2-site__wordpress-domain-suffix">.wordpress.com</span>
 				</ValidationFieldset>
 			</>
 		);
@@ -335,4 +335,4 @@ class WpForTeamsSite extends React.Component {
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep } )( localize( WpForTeamsSite ) );
+export default connect( null, { saveSignupStep, submitSignupStep } )( localize( P2Site ) );
