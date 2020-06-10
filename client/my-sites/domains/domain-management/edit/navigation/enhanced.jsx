@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
+import { addQueryArgs } from '@wordpress/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getDomainTypeText, isSubdomain } from 'lib/domains';
 import VerticalNav from 'components/vertical-nav';
@@ -392,9 +393,20 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		// we don't use the full domain name, to avoid an error about the taken domain
 		const searchTerm = domain.name.split( '.' )[ 0 ];
 
+		let path;
+
+		if ( selectedSite && selectedSite.options && selectedSite.options.is_domain_only ) {
+			path = addQueryArgs( '/start/domain/domain-only', {
+				search: 'yes',
+				new: searchTerm,
+			} );
+		} else {
+			path = domainAddNew( selectedSite.slug, searchTerm );
+		}
+
 		return (
 			<DomainManagementNavigationItem
-				path={ domainAddNew( selectedSite.slug, searchTerm ) }
+				path={ path }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
 				text={ translate( 'Find similar domains' ) }
