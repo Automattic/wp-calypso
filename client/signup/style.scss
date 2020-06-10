@@ -19,12 +19,12 @@ body.is-section-signup {
 	}
 
 	&.is-p2-signup {
-		background: #ffffff;
-		color: #00101c;
+		background: var( --p2-color-text-white );
+		color: var( --p2-color-text );
 
 		&.has-loading-screen-signup {
-			background: #00101c;
-			color: #ffffff;
+			background: var( --p2-color-text );
+			color: var( --p2-color-text-white );
 		}
 
 		.layout__content {

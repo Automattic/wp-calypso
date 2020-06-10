@@ -3,7 +3,7 @@
 }
 
 .p2-site__wordpress-domain-suffix {
-	color: #0267ff;
+	color: var( --p2-color-btn-primary );
 	line-height: 22px;
 	pointer-events: none;
 	position: absolute;
@@ -31,23 +31,24 @@
 	float: none;
 	margin: 0;
 	width: 100%;
-	background-color: #0267ff;
+	background-color: var( --p2-color-btn-primary );
 	border: none;
 	border-radius: 40px;
 	height: 60px;
 	font-weight: normal;
 	font-size: 18px;
-	color: #fff;
+	color: var( --p2-color-text-white );
 
-	&:hover, &:focus {
-		background-color: #0267ff;
+	&:hover,
+	&:focus {
+		background-color: var( --p2-color-btn-primary );
 		border: none;
-		color: #fff;
+		color: var( --p2-color-text-white );
 	}
 }
 
 .p2-site__form .form-label {
-	color: #00101c;
+	color: var( --p2-color-text );
 	font-weight: normal;
 	font-size: 18px;
 	letter-spacing: -0.26px;
@@ -58,11 +59,11 @@
 	height: 60px;
 	font-size: 18px;
 	line-height: 22px;
-	color: #00101c;
+	color: var( --p2-color-text );
 }
 
 .p2-site__form .form-input-validation {
-	color: #d63638;
+	color: var( --p2-color-text-red );
 	font-size: 14px;
 	padding: 0;
 	padding-top: 9px;
@@ -79,7 +80,7 @@
 }
 
 .p2-site__learn-more-link {
-	color: #0267ff;
+	color: var( --p2-color-btn-primary );
 	text-decoration-line: underline;
 	font-size: 15px;
 	line-height: 28px;
