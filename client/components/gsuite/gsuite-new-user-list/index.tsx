@@ -10,7 +10,12 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import GSuiteNewUser from './new-user';
-import { newUser, GSuiteNewUser as NewUser, validateUsers } from 'lib/gsuite/new-users';
+import {
+	newUser,
+	GSuiteNewUser as NewUser,
+	sanitizeEmail,
+	validateUsers,
+} from 'lib/gsuite/new-users';
 
 /**
  * Style dependencies
@@ -38,16 +43,26 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const onUserValueChange = ( uuid: string ) => ( fieldName: string, fieldValue: string ) => {
-		const modifiedUserList = users.map( ( user ) => {
+	const onUserValueChange = ( uuid: string ) => (
+		fieldName: string,
+		fieldValue: string,
+		mailBoxFieldTouched = false
+	) => {
+		const changedUsers = users.map( ( user ) => {
 			if ( user.uuid !== uuid ) {
 				return user;
 			}
 
-			return { ...user, [ fieldName ]: { value: fieldValue, error: null } };
+			const changedUser = { ...user, [ fieldName ]: { value: fieldValue, error: null } };
+
+			if ( 'firstName' === fieldName && ! mailBoxFieldTouched ) {
+				return { ...changedUser, mailBox: { value: sanitizeEmail( fieldValue ), error: null } };
+			}
+
+			return changedUser;
 		} );
 
-		onUsersChange( validateUsers( modifiedUserList, extraValidation ) );
+		onUsersChange( validateUsers( changedUsers, extraValidation ) );
 	};
 
 	const onUserAdd = () => {
