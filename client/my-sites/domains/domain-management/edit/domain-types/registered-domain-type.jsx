@@ -24,6 +24,7 @@ import {
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
@@ -116,7 +117,7 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderExpired() {
-		const { domain, purchase, translate, moment } = this.props;
+		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
 		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
 
 		if ( ! domain.expired || domain.pendingTransfer ) {
@@ -188,17 +189,19 @@ class RegisteredDomainType extends React.Component {
 		return (
 			<div>
 				<p>{ message }</p>
-				{ domain.currentUserCanManage && ( domain.isRenewable || domain.isRedeemable ) && (
-					<RenewButton
-						primary={ true }
-						purchase={ purchase }
-						selectedSite={ this.props.selectedSite }
-						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
-						reactivate={ ! domain.isRenewable && domain.isRedeemable }
-						tracksProps={ { source: 'registered-domain-status', domain_status: 'expired' } }
-					/>
-				) }
+				{ domain.currentUserCanManage &&
+					( isLoadingPurchase || purchase ) &&
+					( domain.isRenewable || domain.isRedeemable ) && (
+						<RenewButton
+							primary={ true }
+							purchase={ purchase }
+							selectedSite={ this.props.selectedSite }
+							subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+							redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
+							reactivate={ ! domain.isRenewable && domain.isRedeemable }
+							tracksProps={ { source: 'registered-domain-status', domain_status: 'expired' } }
+						/>
+					) }
 			</div>
 		);
 	}
@@ -240,7 +243,7 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderDefaultRenewButton() {
-		const { domain, purchase } = this.props;
+		const { domain, purchase, isLoadingPurchase } = this.props;
 
 		if ( ! domain.currentUserCanManage ) {
 			return null;
@@ -252,13 +255,15 @@ class RegisteredDomainType extends React.Component {
 
 		return (
 			<div>
-				<RenewButton
-					compact={ true }
-					purchase={ purchase }
-					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-					tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
-				/>
+				{ ( isLoadingPurchase || purchase ) && (
+					<RenewButton
+						compact={ true }
+						purchase={ purchase }
+						selectedSite={ this.props.selectedSite }
+						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+						tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -364,7 +369,12 @@ class RegisteredDomainType extends React.Component {
 						purchase={ purchase }
 						domain={ domain }
 					/>
-					<ExpiringSoon selectedSite={ selectedSite } purchase={ purchase } domain={ domain } />
+					<ExpiringSoon
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+						domain={ domain }
+					/>
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 					{ this.renderOutboundTransferInProgress() }
@@ -420,9 +430,13 @@ class RegisteredDomainType extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const { subscriptionId } = ownProps.domain;
+		const currentUserId = getCurrentUserId( state );
+		const purchase = subscriptionId
+			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
+			: null;
 
 		return {
-			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
