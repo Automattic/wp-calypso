@@ -15,7 +15,7 @@
 
 	&.is-incompatible {
 		background: var( --color-neutral-5 );
-		// border: 1px solid var( --color-neutral-10 );
+		border: 1px solid var( --color-neutral-10 );
 	}
 }
 
@@ -41,6 +41,21 @@
 	.is-incompatible & {
 		color: var( --color-neutral-20 );
 	}
+}
+
+.community-translator__badge {
+	position: absolute;
+	left: 50%;
+	top: -8px;
+	padding: 1px 3px;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 2px;
+	background: var( --color-neutral-5 );
+	color: var( --color-neutral-20 );
+	font-size: 0.6em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	transform: translateX( -50% );
 }
 
 .community-translator__text {

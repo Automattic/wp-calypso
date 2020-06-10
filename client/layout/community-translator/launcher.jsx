@@ -364,7 +364,7 @@ class TranslatorLauncher extends React.Component {
 	}
 
 	render() {
-		const { translate, isEmpathyModeEnabled } = this.props;
+		const { translate, isEmpathyModeEnabled, selectedLanguageSlug } = this.props;
 		const { isEnabled, isActive, infoDialogVisible } = this.state;
 
 		const launcherClasses = classNames( 'community-translator', {
@@ -391,6 +391,9 @@ class TranslatorLauncher extends React.Component {
 								title={ translate( 'Community Translator' ) }
 							>
 								<Gridicon icon="globe" />
+								{ isEmpathyModeEnabled && (
+									<span className="community-translator__badge">{ selectedLanguageSlug }</span>
+								) }
 								<div className="community-translator__text">{ buttonString }</div>
 							</button>
 						</div>
