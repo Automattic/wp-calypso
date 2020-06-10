@@ -80,7 +80,9 @@ export function cancelPurchase( context, next ) {
 }
 
 export function confirmCancelDomain( context, next ) {
-	if ( userHasNoSites() ) {
+	const state = context.store.getState();
+
+	if ( userHasNoSites( state ) ) {
 		return noSites( context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain' );
 	}
 
@@ -96,7 +98,9 @@ export function confirmCancelDomain( context, next ) {
 }
 
 export function editCardDetails( context, next ) {
-	if ( userHasNoSites() ) {
+	const state = context.store.getState();
+
+	if ( userHasNoSites( state ) ) {
 		return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
 	}
 
