@@ -40,10 +40,9 @@ export default function Button( {
 }
 
 Button.propTypes = {
-	buttonState: PropTypes.string, // Either 'disabled', 'primary', 'secondary', 'text-button', 'borderless'.
+	buttonState: PropTypes.oneOf( [ 'primary', 'secondary', 'text-button', 'borderless' ] ),
 	buttonType: PropTypes.string, // Service type (i.e. 'paypal' or 'apple-pay').
 	fullWidth: PropTypes.bool,
-	onClick: PropTypes.func,
 	isBusy: PropTypes.bool,
 };
 
@@ -66,7 +65,7 @@ const CallToAction = styled.button`
 			props.buttonState === 'default' ? props.theme.colors.borderColorDark : 'transparent' };
 		text-decoration: none;
 		color: ${ getTextColor };
-		cursor: ${ ( props ) => ( props.buttonState === 'disabled' ? 'not-allowed' : 'pointer' ) };
+		cursor: ${ ( props ) => ( props.disabled ? 'not-allowed' : 'pointer' ) };
 	}
 
 	:active {
@@ -112,8 +111,11 @@ function getImageOpacity( { buttonState } ) {
 	return buttonState === 'primary' ? '1' : '0.5';
 }
 
-function getRollOverColor( { buttonState, buttonType, theme } ) {
+function getRollOverColor( { disabled, buttonState, buttonType, theme } ) {
 	const { colors } = theme;
+	if ( disabled ) {
+		return colors.disabledPaymentButtons;
+	}
 	switch ( buttonState ) {
 		case 'primary':
 			if ( buttonType === 'apple-pay' ) {
@@ -125,8 +127,6 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 			return colors.primaryOver;
 		case 'secondary':
 			return colors.highlightOver;
-		case 'disabled':
-			return colors.disabledPaymentButtons;
 		case 'text-button':
 		case 'borderless':
 			return 'none';
@@ -135,8 +135,11 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 	}
 }
 
-function getTextColor( { buttonState, theme } ) {
+function getTextColor( { disabled, buttonState, theme } ) {
 	const { colors } = theme;
+	if ( disabled ) {
+		return colors.disabledButtons;
+	}
 	switch ( buttonState ) {
 		case 'primary':
 			return colors.surface;
@@ -144,15 +147,16 @@ function getTextColor( { buttonState, theme } ) {
 			return colors.surface;
 		case 'text-button':
 			return colors.highlight;
-		case 'disabled':
-			return colors.disabledButtons;
 		default:
 			return colors.textColor;
 	}
 }
 
-function getBackgroundColor( { buttonType, buttonState, theme } ) {
+function getBackgroundColor( { disabled, buttonType, buttonState, theme } ) {
 	const { colors } = theme;
+	if ( disabled ) {
+		return colors.disabledPaymentButtons;
+	}
 	switch ( buttonState ) {
 		case 'primary':
 			if ( buttonType === 'apple-pay' ) {
@@ -162,8 +166,6 @@ function getBackgroundColor( { buttonType, buttonState, theme } ) {
 				return colors.paypalGold;
 			}
 			return colors.primary;
-		case 'disabled':
-			return colors.disabledPaymentButtons;
 		case 'secondary':
 			return colors.highlight;
 		default:
@@ -171,8 +173,11 @@ function getBackgroundColor( { buttonType, buttonState, theme } ) {
 	}
 }
 
-function getBackgroundAccentColor( { buttonState, buttonType, theme } ) {
+function getBackgroundAccentColor( { disabled, buttonState, buttonType, theme } ) {
 	const { colors } = theme;
+	if ( disabled ) {
+		return colors.disabledPaymentButtonsAccent;
+	}
 	switch ( buttonState ) {
 		case 'primary':
 			if ( buttonType === 'apple-pay' ) {
@@ -184,8 +189,6 @@ function getBackgroundAccentColor( { buttonState, buttonType, theme } ) {
 			return colors.primaryOver;
 		case 'secondary':
 			return colors.highlightOver;
-		case 'disabled':
-			return colors.disabledPaymentButtonsAccent;
 		case 'text-button':
 		case 'borderless':
 			return 'none';
@@ -194,8 +197,8 @@ function getBackgroundAccentColor( { buttonState, buttonType, theme } ) {
 	}
 }
 
-function getFontWeight( { buttonState, theme } ) {
-	if ( buttonState === 'disabled' || buttonState === 'text-button' ) {
+function getFontWeight( { disabled, buttonState, theme } ) {
+	if ( disabled || buttonState === 'text-button' ) {
 		return theme.weights.normal;
 	}
 	return theme.weights.bold;
