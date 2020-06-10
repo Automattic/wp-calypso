@@ -90,7 +90,7 @@ export default function PlansStep() {
 
 	return (
 		<div className="gutenboarding-page plans">
-			<PlansGrid header={ header } currentPlan={ plan } onPlanSelect={ handlePlanSelect } />
+			<PlansGrid header={ header } onPlanSelect={ handlePlanSelect } />
 			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
 		</div>
 	);
