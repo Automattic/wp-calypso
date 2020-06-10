@@ -5,10 +5,8 @@
 /**
  * Internal dependencies
  */
-import type {
-	CheckoutPaymentMethodSlug,
-	translateCheckoutPaymentMethodToTracksPaymentMethod,
-} from './types/checkout-payment-method-slug';
+import type { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug';
+import { translateCheckoutPaymentMethodToTracksPaymentMethod } from './types/checkout-payment-method-slug';
 import type { WPCOMPaymentMethodClass } from './types/backend/payment-method';
 import {
 	readWPCOMPaymentMethodClass,
@@ -73,7 +71,6 @@ import {
 
 export type {
 	CheckoutPaymentMethodSlug,
-	translateCheckoutPaymentMethodToTracksPaymentMethod,
 	WPCOMPaymentMethodClass,
 	RequestCart,
 	RequestCartProduct,
@@ -98,6 +95,7 @@ export {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
 	emptyResponseCart,
 	convertResponseCartToRequestCart,
 	removeItemFromResponseCart,

@@ -10,6 +10,7 @@ import { areDomainsInLineItems } from './hooks/has-domains';
 import {
 	prepareDomainContactDetails,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
@@ -30,6 +31,7 @@ export {
 	prepareDomainContactDetails,
 	getNonProductWPCOMCartItemTypes,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
