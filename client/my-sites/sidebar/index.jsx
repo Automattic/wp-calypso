@@ -597,13 +597,22 @@ export class MySitesSidebar extends Component {
 		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
 		const displayPlanName = ! ( isJetpack && ! isAtomicSite && ! isVip );
 
-		const icon = isUpgraded ? 'star' : 'star-outline';
+		let icon = <JetpackLogo size={ 24 } className="sidebar__menu-icon" />;
+		if ( isEnabled( 'jetpack/features-section' ) ) {
+			icon = (
+				<Gridicon
+					icon={ isUpgraded ? 'star' : 'star-outline' }
+					className="sidebar__menu-icon"
+					size={ 24 }
+				/>
+			);
+		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
-					<Gridicon icon={ icon } className="sidebar__menu-icon" size={ 24 } />
+					{ icon }
 					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
