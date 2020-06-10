@@ -20,7 +20,7 @@ import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';
 import { bumpStat } from 'lib/analytics/mc';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
-import { disableLanguageEmpathyMode } from 'lib/i18n-utils/empathy-mode';
+import { toggleLanguageEmpathyMode } from 'lib/i18n-utils/empathy-mode';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import { setLocale } from 'state/ui/language/actions';
@@ -197,8 +197,8 @@ class TranslatorLauncher extends React.Component {
 		this.setState( { infoDialogVisible: false } );
 	};
 
-	toggleOffEmpathyMode = () => {
-		disableLanguageEmpathyMode();
+	toggleEmpathyMode = () => {
+		toggleLanguageEmpathyMode();
 	};
 
 	toggle = ( event ) => {
@@ -207,7 +207,7 @@ class TranslatorLauncher extends React.Component {
 		const { isEmpathyModeEnabled } = this.props;
 
 		if ( isEmpathyModeEnabled ) {
-			this.toggleOffEmpathyMode();
+			this.toggleEmpathyMode();
 			return;
 		}
 

@@ -22,12 +22,12 @@ function encodeUntranslatedString( originalString, placeholder = defaultUntransl
 
 let isDisabled = false;
 
-export function disableLanguageEmpathyMode() {
+export function toggleLanguageEmpathyMode() {
 	isDisabled = ! isDisabled;
 	i18n.reRenderTranslations();
 }
 
-export function enableLanguageEmpathyMode() {
+export function initLanguageEmpathyMode() {
 	const i18nEmpathy = new I18N();
 	const i18nEmpathyTranslate = i18nEmpathy.translate.bind( i18nEmpathy );
 	const i18nEmpathyRegisterHook = i18nEmpathy.registerTranslateHook.bind( i18nEmpathy );
