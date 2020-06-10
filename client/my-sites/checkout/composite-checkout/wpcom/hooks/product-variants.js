@@ -54,42 +54,33 @@ export function useWpcomProductVariants( { siteId, productSlug, credits, couponD
 
 		return productsWithPrices.map( ( variant ) => ( {
 			variantLabel: getTermText( variant.plan.term, translate ),
-			variantDetails: (
-				<VariantPrice variant={ variant } productsWithPrices={ productsWithPrices } />
-			),
+			variantDetails: <VariantPrice variant={ variant } />,
 			productSlug: variant.planSlug,
 			productId: variant.product.product_id,
 		} ) );
 	};
 }
 
-function VariantPrice( { variant, productsWithPrices } ) {
-	const highestMonthlyPrice = Math.max(
-		...productsWithPrices.map( ( product ) => {
-			return product.priceMonthly;
-		} )
-	);
-
-	const percentSavings = ( monthlyPrice ) => {
-		const savings = Math.round( 100 * ( 1 - monthlyPrice / highestMonthlyPrice ) );
-		return savings > 0 ? <Discount>-{ savings.toString() }%</Discount> : null;
-	};
-
-	const highestTermPrice = ( term ) => {
-		if ( term !== TERM_BIENNIALLY ) {
-			return;
-		}
-		const annualPrice = Math.round( 100 * 24 * highestMonthlyPrice );
-		return <DoNotPayThis>{ localizeCurrency( annualPrice, 'USD' ) }</DoNotPayThis>;
-	};
-
+function VariantPrice( { variant } ) {
+	const isDiscounted = variant.priceFinal !== variant.priceFullBeforeDiscount;
 	return (
 		<React.Fragment>
-			{ percentSavings( variant.priceMonthly ) }
-			{ highestTermPrice( variant.plan.term ) }
-			{ variant.product.cost_display }
+			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
+			{ isDiscounted && (
+				<DoNotPayThis>
+					{ localizeCurrency( variant.priceFullBeforeDiscount, variant.product.currency_code ) }
+				</DoNotPayThis>
+			) }
+			{ localizeCurrency( variant.priceFinal, variant.product.currency_code ) }
 		</React.Fragment>
 	);
+}
+
+function VariantPriceDiscount( { variant } ) {
+	const discountPercentage = Math.round(
+		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
+	);
+	return <Discount>{ discountPercentage }%</Discount>;
 }
 
 function useVariantWpcomPlanProductSlugs( productSlug ) {
@@ -141,8 +132,12 @@ function getTermText( term, translate ) {
 }
 
 // TODO: replace this with a real localize function
-function localizeCurrency( amount ) {
-	const decimalAmount = ( amount / 100 ).toFixed( 2 );
+function localizeCurrency( amount, currency ) {
+	if ( currency !== 'USD' ) {
+		debug( 'cannot localize non-USD currency', currency );
+		return amount;
+	}
+	const decimalAmount = Number.parseFloat( amount ).toFixed( 2 );
 	return `$${ decimalAmount }`;
 }
 
