@@ -4,7 +4,7 @@ jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
     runs-on: ubuntu-latest
-    if: github.event.label.name == '[Status] Needs Review' || github.event.label.name == '[Status] Needs e2e Testing' || github.event.label.name == '[Status] Needs e2e Testing Gutenberg Edge' || github.event.label.name == '[Status] Needs e2e Testing horizon'
+    if: contains(github.event.pull_request.labels.*.name, '[Status] Needs Review') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing Gutenberg Edge') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing horizon')
     steps:
       - uses: actions/checkout@v1
       - name: Check external author
