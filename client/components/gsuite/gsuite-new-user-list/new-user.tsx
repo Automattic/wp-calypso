@@ -17,6 +17,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import { GSuiteNewUser as NewUser } from 'lib/gsuite/new-users';
 
 interface Props {
+	autoFocus: boolean;
 	domains: string[];
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
@@ -25,6 +26,7 @@ interface Props {
 }
 
 const GSuiteNewUser: FunctionComponent< Props > = ( {
+	autoFocus,
 	domains,
 	onUserRemove,
 	onUserValueChange,
@@ -110,6 +112,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				<div className="gsuite-new-user-list__new-user-name">
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
+							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 							placeholder={ translate( 'First name' ) }
 							value={ firstName }
 							maxLength={ 60 }

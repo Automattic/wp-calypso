@@ -23,6 +23,7 @@ import {
 import './style.scss';
 
 interface Props {
+	autoFocus?: boolean;
 	children?: ReactNode;
 	domains?: string[];
 	extraValidation: ( user: NewUser ) => NewUser;
@@ -40,6 +41,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	onUsersChange,
 	users,
 	onReturnKeyPress,
+	autoFocus = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -80,6 +82,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			{ users.map( ( user ) => (
 				<Fragment key={ user.uuid }>
 					<GSuiteNewUser
+						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						domains={ domains ? domains.map( ( domain ) => domain.name ) : [ selectedDomainName ] }
 						user={ user }
 						onUserValueChange={ onUserValueChange( user.uuid ) }
