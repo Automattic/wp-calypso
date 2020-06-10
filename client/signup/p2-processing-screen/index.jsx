@@ -26,9 +26,22 @@ export class P2SignupProcessingScreen extends Component {
 					/>
 				</div>
 
-				<h2>Hooray!</h2>
-				<h2>Your new P2 is</h2>
-				<h2>almost ready.</h2>
+				<div className="p2-processing-screen__text">
+					<h2>Hooray!</h2>
+					<h2>Your new P2 is</h2>
+					<h2>almost ready.</h2>
+				</div>
+
+				<div className="p2-processing-screen__footer">
+					<img
+						src="https://wpcom.files.wordpress.com/2020/06/w-logo-light.png"
+						className="p2-processing-screen__w-logo"
+						alt="WP.com logo"
+					/>
+					<span className="p2-processing-screen__footer-text">
+						{ this.props.translate( 'Powered by WordPress.com' ) }
+					</span>
+				</div>
 			</div>
 		);
 	}
