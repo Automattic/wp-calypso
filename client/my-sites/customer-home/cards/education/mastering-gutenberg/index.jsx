@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { localizeUrl } from 'lib/i18n-utils';
 import EducationalContent from '../educational-content';
+import { EDUCATION_GUTENBERG } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
@@ -30,19 +31,16 @@ const MasteringGutenberg = () => {
 					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/#blocks' ),
 					text: translate( 'Adding and moving blocks' ),
 					icon: 'video',
-					tracksEvent: 'calypso_customer_home_customizing_with_blocks_support_page_view',
-					statsName: 'view_customizing_with_blocks_video',
 				},
 				{
 					postId: 147594,
 					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/#configuring-a-block' ),
 					text: translate( 'Adjust settings of blocks' ),
 					icon: 'video',
-					tracksEvent: 'calypso_customer_home_adjust_blocks_support_page_view',
-					statsName: 'view_adjust_blocks_video',
 				},
 			] }
 			illustration={ gutenbergIllustration }
+			cardName={ EDUCATION_GUTENBERG }
 		/>
 	);
 };
