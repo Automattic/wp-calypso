@@ -6,6 +6,7 @@
  * WordPress dependencies
  */
 import { useState, useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -23,8 +24,13 @@ const Edit = () => {
 	const [ upgradeUrl, setUpgradeUrl ] = useState( '' );
 
 	const mapStatusToState = ( result ) => {
-		setShouldUpgrade( result.should_upgrade_to_access_memberships );
-		setUpgradeUrl( result.upgrade_url );
+		if ( ( ! result && typeof result !== 'object' ) || result.errors ) {
+			setLoadingError( __( 'Could not load data from WordPress.com.', 'full-site-editing' ) );
+		} else {
+			setShouldUpgrade( result.should_upgrade_to_access_memberships );
+			setUpgradeUrl( result.upgrade_url );
+		}
+
 		setIsLoading( false );
 	};
 
