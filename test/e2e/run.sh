@@ -251,7 +251,6 @@ elif [ $CIRCLE_NODE_TOTAL > 1 ]; then
       done
     done
 else # Not using multiple CircleCI containers, just queue up the tests in sequence
-  if [ "$CI" != "true" ]; then
     IFS=, read -r -a SCREENSIZE_ARRAY <<< "$SCREENSIZES"
     IFS=, read -r -a LOCALE_ARRAY <<< "$LOCALES"
     for size in ${SCREENSIZE_ARRAY[@]}; do
@@ -266,7 +265,6 @@ else # Not using multiple CircleCI containers, just queue up the tests in sequen
         done
       done
     done
-  fi
 fi
 
 if [ $CLEAN == 1 ]; then
