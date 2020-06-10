@@ -228,8 +228,11 @@ class PostCommentList extends React.Component {
 	};
 
 	renderCommentManageLink = () => {
-		const siteId = get( this.props, 'post.site_ID' );
-		const postId = get( this.props, 'post.ID' );
+		const { siteId, postId, translate } = this.props;
+
+		if ( ! siteId || ! postId ) {
+			return null;
+		}
 
 		return (
 			<Button
@@ -238,7 +241,7 @@ class PostCommentList extends React.Component {
 				borderless
 			>
 				<Gridicon icon="chat" />
-				<span>{ this.props.translate( 'Manage', { context: 'manage comments' } ) }</span>
+				<span>{ translate( 'Manage', { context: 'manage comments' } ) }</span>
 			</Button>
 		);
 	};
