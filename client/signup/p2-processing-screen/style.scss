@@ -1,0 +1,36 @@
+.p2-processing-screen {
+	margin: 0 auto;
+	max-width: 387px;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	padding-top: 80px;
+	color: #ffffff;
+}
+
+.p2-processing-screen__text {
+	font-weight: bold;
+	font-size: 48px;
+	line-height: 58px;
+	margin-top: 111px;
+}
+
+.p2-processing-screen__footer {
+	text-align: center;
+	margin-top: auto;
+	margin-bottom: 35px;
+}
+
+.p2-processing-screen__w-logo {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin-bottom: 3px;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.p2-processing-screen__footer-text {
+	font-size: 14px;
+	line-height: 17px;
+}
