@@ -6,6 +6,8 @@ import {
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
+	READER_LIST_ITEM_DELETE_FEED,
+	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
@@ -296,6 +298,27 @@ export const receiveReaderListItems = ( listId, listItems ) => ( {
 	type: READER_LIST_ITEMS_RECEIVE,
 	listId,
 	listItems,
+} );
+
+export const deleteReaderListFeed = ( listOwner, listSlug, feedId ) => ( {
+	type: READER_LIST_ITEM_DELETE_FEED,
+	listOwner,
+	listSlug,
+	feedId,
+} );
+
+export const deleteReaderListSite = ( listOwner, listSlug, siteId ) => ( {
+	type: READER_LIST_ITEM_DELETE_FEED,
+	listOwner,
+	listSlug,
+	feedId: `site:${ siteId }`,
+} );
+
+export const deleteReaderListTag = ( listOwner, listSlug, tagSlug ) => ( {
+	type: READER_LIST_ITEM_DELETE_TAG,
+	listOwner,
+	listSlug,
+	tagSlug,
 } );
 
 function createQuery( owner, slug ) {
