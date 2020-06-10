@@ -35,7 +35,8 @@
 	"exclude": [ "**/test/*" ],
 	"references": [
 		{
-			"path": "../data-stores"
+			"path": "../data-stores",
+			"path": "../react-i18n"
 		}
 	]
 }
