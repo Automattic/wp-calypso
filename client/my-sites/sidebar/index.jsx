@@ -378,7 +378,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<ExpandableSidebarMenu
 				expanded={ isJetpackSectionOpen }
-				materialIcon="jetpack"
+				customIcon={ <JetpackLogo size={ 24 } className="sidebar__menu-icon" /> }
 				onClick={ this.toggleSection( SIDEBAR_SECTION_JETPACK ) }
 				title={ translate( 'Jetpack' ) }
 			>
@@ -557,13 +557,15 @@ export class MySitesSidebar extends Component {
 
 		let planLink = '/plans' + this.props.siteSuffix;
 
+		const isUpgraded =
+			site &&
+			( isPersonal( site.plan ) ||
+				isPremium( site.plan ) ||
+				isBusiness( site.plan ) ||
+				isEcommerce( site.plan ) );
+
 		// Show plan details for upgraded sites
-		if (
-			isPersonal( site.plan ) ||
-			isPremium( site.plan ) ||
-			isBusiness( site.plan ) ||
-			isEcommerce( site.plan )
-		) {
+		if ( isUpgraded ) {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
@@ -584,11 +586,13 @@ export class MySitesSidebar extends Component {
 		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
 		const displayPlanName = ! ( isJetpack && ! isAtomicSite && ! isVip );
 
+		const icon = isUpgraded ? 'star' : 'star-outline';
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
-					<JetpackLogo className="sidebar__menu-icon" size={ 24 } />
+					<Gridicon icon={ icon } className="sidebar__menu-icon" size={ 24 } />
 					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
