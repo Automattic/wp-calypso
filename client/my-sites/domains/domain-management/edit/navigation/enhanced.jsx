@@ -27,6 +27,7 @@ import {
 	domainManagementRedirectSettings,
 	domainTransferIn,
 	domainManagementSecurity,
+	isUnderDomainManagementAll,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
 import { type as domainTypes, transferStatus, sslStatuses } from 'lib/domains/constants';
@@ -37,6 +38,7 @@ import { getUnmappedUrl } from 'lib/site/utils';
 import { withoutHttp } from 'lib/url';
 import RemovePurchase from 'me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 import './style.scss';
 
@@ -303,11 +305,12 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getManageSite() {
-		if ( ! config.isEnabled( 'manage/all-domains' ) ) {
+		const { isManagingAllSites, selectedSite, translate } = this.props;
+
+		if ( ! config.isEnabled( 'manage/all-domains' ) || ! isManagingAllSites ) {
 			return null;
 		}
 
-		const { selectedSite, translate } = this.props;
 		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
 
 		return (
@@ -633,6 +636,11 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent, recordGoogleEvent } )(
-	localize( withLocalizedMoment( DomainManagementNavigationEnhanced ) )
-);
+export default connect(
+	( state ) => {
+		return {
+			isManagingAllSites: isUnderDomainManagementAll( getCurrentRoute( state ) ),
+		};
+	},
+	{ recordTracksEvent, recordGoogleEvent }
+)( localize( withLocalizedMoment( DomainManagementNavigationEnhanced ) ) );
