@@ -106,13 +106,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 	return (
 		<div>
-			<FormFieldset className="gsuite-new-user-list__new-user-email-fieldset">
-				<div className="gsuite-new-user-list__new-user-email">
-					{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
-				</div>
-				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
-			</FormFieldset>
-
 			<FormFieldset className="gsuite-new-user-list__new-user-name-fieldset">
 				<div className="gsuite-new-user-list__new-user-name">
 					<div className="gsuite-new-user-list__new-user-name-container">
@@ -161,6 +154,14 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						</Button>
 					</div>
 				</div>
+			</FormFieldset>
+
+			<FormFieldset className="gsuite-new-user-list__new-user-email-fieldset">
+				<div className="gsuite-new-user-list__new-user-email">
+					{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
+				</div>
+
+				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 			</FormFieldset>
 		</div>
 	);
