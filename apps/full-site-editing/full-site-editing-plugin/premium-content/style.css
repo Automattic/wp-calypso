@@ -23,6 +23,7 @@
 
 .wp-block-premium-content-logged-out-view__buttons {
 	display: flex;
+	margin-top: 20px;
 }
 
 .wp-block-premium-content-logged-out-view__buttons .wp-block-button__link {
