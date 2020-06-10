@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,9 +15,10 @@ import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
 import { addQueryArgs } from 'lib/url';
 import { localizeUrl } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { useTranslate } from 'i18n-calypso';
 
-export default function DownFlow( { confirmHref, backHref, site } ) {
+function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) {
 	const translate = useTranslate();
 
 	return (
@@ -42,7 +44,12 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 				) }
 			/>
 			<div className="disconnect-site__actions">
-				<CompactCard href={ site.URL } target="_blank" rel="noopener noreferrer">
+				<CompactCard
+					onClick={ () => tracks( 'calypso_jetpack_site_indicator_disconnect_confirm' ) }
+					href={ site.URL }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					<Gridicon
 						className="disconnect-site__action-icon disconnect-site__confirm-icon"
 						icon="globe"
@@ -57,6 +64,7 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 					/>
 				</CompactCard>
 				<CompactCard
+					onClick={ () => tracks( 'calypso_jetpack_site_indicator_disconnect_troubleshoot' ) }
 					href={ localizeUrl(
 						'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
 					) }
@@ -74,7 +82,10 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 						) }
 					/>
 				</CompactCard>
-				<CompactCard href={ addQueryArgs( { type: 'down' }, confirmHref ) }>
+				<CompactCard
+					onClick={ () => tracks( 'calypso_jetpack_site_indicator_disconnect_disconnect' ) }
+					href={ addQueryArgs( { type: 'down' }, confirmHref ) }
+				>
 					<Gridicon
 						className="disconnect-site__action-icon disconnect-site__disconnect-icon"
 						icon="cross-circle"
@@ -101,3 +112,7 @@ export default function DownFlow( { confirmHref, backHref, site } ) {
 		</Main>
 	);
 }
+
+export default connect( null, {
+	recordTracksEvent,
+} )( DownFlow );
