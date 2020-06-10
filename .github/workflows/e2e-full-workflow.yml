@@ -22,6 +22,11 @@ jobs:
     name: e2e Full Suite - Desktop
     runs-on: ubuntu-latest
     needs: wait-for-calypso-live
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_node_total: [4]
+        ci_node_index: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v1
       - name: Install yarn deps
@@ -31,12 +36,14 @@ jobs:
           NODE_CONFIG_ENV: test
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
+      - name: Split Test files
+        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -f \"specs*/**/*spec.js\" -s \",\" -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\"
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
+        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }} -f ${TESTFILES}
       - uses: actions/upload-artifact@master
         if: always()
         with:
@@ -46,6 +53,11 @@ jobs:
     name: e2e Full Suite - Mobile
     runs-on: ubuntu-latest
     needs: wait-for-calypso-live
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_node_total: [4]
+        ci_node_index: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v1
       - name: Install yarn deps
@@ -55,12 +67,14 @@ jobs:
           NODE_CONFIG_ENV: test
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
+      - name: Split Test files
+        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -f \"specs*/**/*spec.js\" -s \",\" -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\"
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }}
+        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }} -f ${TESTFILES}
       - uses: actions/upload-artifact@master
         if: always()
         with:

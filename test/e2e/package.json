@@ -23,6 +23,7 @@
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
 		"@babel/runtime": "^7.3.1",
+		"@peakon/mocha-split-tests": "^1.2.1",
 		"asana-phrase": "^0.0.8",
 		"cached-path-relative": ">=1.0.2",
 		"check-npm-client": "^1.1.1",

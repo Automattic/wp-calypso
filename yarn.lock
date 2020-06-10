@@ -2813,6 +2813,14 @@
   dependencies:
     "@types/node" ">= 8"
 
+"@peakon/mocha-split-tests@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@peakon/mocha-split-tests/-/mocha-split-tests-1.2.1.tgz#cdd898cdd83f65e984423c1e8fb683c169d0a1d6"
+  integrity sha512-y5IrFaQ146XsTriy3FZc5jW2j3MjsDqSzeIsHi8EuNoGlTxz1oHvmUgw9pmnmjBjU2pWYRXIfuINpOZbpPJ7NA==
+  dependencies:
+    commander "^4.1.0"
+    glob "^7.1.6"
+
 "@popperjs/core@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.4.0.tgz#0e1bdf8d021e7ea58affade33d9d607e11365915"
@@ -8254,7 +8262,7 @@ commander@^3.0.2:
   resolved "https://registry.yarnpkg.com/commander/-/commander-3.0.2.tgz#6837c3fb677ad9933d1cfba42dd14d5117d6b39e"
   integrity sha512-Gar0ASD4BDyKC4hl4DwHqDrmvjoxWKZigVnAbn5H1owvm4CxCPdb0HQDehwNYMJpla5+M2tPmPARzhtYuwpHow==
 
-commander@^4.0.1, commander@^4.1.1:
+commander@^4.0.1, commander@^4.1.0, commander@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-4.1.1.tgz#9fd602bd936294e9e9ef46a3f4d6964044b18068"
   integrity sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==
