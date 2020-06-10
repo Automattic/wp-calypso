@@ -51,7 +51,7 @@ export function disableLanguageEmpathyMode() {
 	i18n.reRenderTranslations();
 }
 
-export function enableLanguageEmpatyhMode() {
+export function enableLanguageEmpathyMode() {
 	// wrap translations from i18n
 	i18n.registerTranslateHook( ( translation, options ) => {
 		const locale = i18n.getLocaleSlug();

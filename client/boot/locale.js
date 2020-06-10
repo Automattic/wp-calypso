@@ -17,7 +17,7 @@ import {
 } from 'lib/i18n-utils/switch-locale';
 import { getUrlParts } from 'lib/url/url-parts';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
-import { enableLanguageEmpatyhMode } from 'lib/i18n-utils/empathy-mode';
+import { enableLanguageEmpathyMode } from 'lib/i18n-utils/empathy-mode';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -84,7 +84,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 	if ( config.isEnabled( 'i18n/empathy-mode' ) && currentUser.i18n_empathy_mode ) {
-		enableLanguageEmpatyhMode();
+		enableLanguageEmpathyMode();
 	}
 
 	if ( useTranslationChunks && '__requireChunkCallback__' in window ) {
