@@ -406,7 +406,7 @@ function logStashEventAction( type, payload, additionalData = {}, message ) {
 		extra: {
 			env: config( 'env_id' ),
 			type,
-			payload,
+			message: payload,
 			...additionalData,
 		},
 	} );
