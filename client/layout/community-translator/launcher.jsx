@@ -20,7 +20,10 @@ import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';
 import { bumpStat } from 'lib/analytics/mc';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
-import { toggleLanguageEmpathyMode } from 'lib/i18n-utils/empathy-mode';
+import {
+	getLanguageEmpathyModeActive,
+	toggleLanguageEmpathyMode,
+} from 'lib/i18n-utils/empathy-mode';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import { setLocale } from 'state/ui/language/actions';
@@ -371,7 +374,10 @@ class TranslatorLauncher extends React.Component {
 		const toggleString = isActive
 			? translate( 'Disable Translator' )
 			: translate( 'Enable Translator' );
-		const buttonString = isEmpathyModeEnabled ? translate( 'Disable Empathy mode' ) : toggleString;
+		const toggleEmpathyModeString = getLanguageEmpathyModeActive()
+			? translate( 'Deactivate Empathy mode' )
+			: translate( 'Activate Empathy mode' );
+		const buttonString = isEmpathyModeEnabled ? toggleEmpathyModeString : toggleString;
 
 		return (
 			<Fragment>

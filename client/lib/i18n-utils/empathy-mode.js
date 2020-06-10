@@ -20,17 +20,22 @@ function encodeUntranslatedString( originalString, placeholder = defaultUntransl
 	return output.substr( 0, originalString.length );
 }
 
-let isDisabled = false;
+let isActive = true;
 
 export function toggleLanguageEmpathyMode() {
-	isDisabled = ! isDisabled;
+	isActive = ! isActive;
 	i18n.reRenderTranslations();
+}
+
+export function getLanguageEmpathyModeActive() {
+	return isActive;
 }
 
 export function initLanguageEmpathyMode() {
 	const i18nEmpathy = new I18N();
 	const i18nEmpathyTranslate = i18nEmpathy.translate.bind( i18nEmpathy );
 	const i18nEmpathyRegisterHook = i18nEmpathy.registerTranslateHook.bind( i18nEmpathy );
+	const translationsWhitelist = [ defaultUntranslatedPlacehoder, 'Deactivate Empathy mode' ];
 
 	i18n.translateHooks.forEach( i18nEmpathyRegisterHook );
 
@@ -38,9 +43,9 @@ export function initLanguageEmpathyMode() {
 	i18n.registerTranslateHook( ( translation, options ) => {
 		const locale = i18n.getLocaleSlug();
 		if (
-			isDisabled ||
+			! isActive ||
 			locale === i18n.defaultLocaleSlug ||
-			options.original === defaultUntranslatedPlacehoder
+			translationsWhitelist.includes( options.original )
 		) {
 			return translation;
 		}
