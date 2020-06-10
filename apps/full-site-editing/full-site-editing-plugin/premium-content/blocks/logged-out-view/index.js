@@ -37,6 +37,7 @@ const settings = {
 	},
 	edit,
 	save,
+	context: [ 'premium-content/planId' ],
 	deprecated,
 };
 

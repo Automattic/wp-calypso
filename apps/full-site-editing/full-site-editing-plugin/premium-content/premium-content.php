@@ -51,7 +51,7 @@ function premium_content_block_init() {
 	$index_js     = 'dist/premium-content.js';
 	$script_asset = include $script_asset_path;
 	wp_register_script(
-		'premium-content-container-block-editor',
+		'premium-content-editor',
 		"$url_path/$index_js",
 		$script_asset['dependencies'],
 		$script_asset['version'],
@@ -68,7 +68,7 @@ function premium_content_block_init() {
 
 	$editor_css = 'editor.css';
 	wp_register_style(
-		'premium-content-container-block-editor',
+		'premium-content-editor',
 		"$url_path/$editor_css",
 		array(),
 		filemtime( "$dir/$editor_css" ),
@@ -77,7 +77,7 @@ function premium_content_block_init() {
 
 	$style_css = 'style.css';
 	wp_register_style(
-		'premium-content-container-block',
+		'premium-content-frontend',
 		"$url_path/$style_css",
 		array(),
 		filemtime( "$dir/$style_css" )
@@ -85,8 +85,9 @@ function premium_content_block_init() {
 	register_block_type(
 		'premium-content/container',
 		array(
-			'editor_script'   => 'premium-content-container-block-editor',
-			'editor_style'    => 'premium-content-container-block-editor',
+			'editor_script'   => 'premium-content-editor',
+			'editor_style'    => 'premium-content-editor',
+			'style'           => 'premium-content-frontend',
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_container_render',
 			'providesContext' => array(
 				'premium-content/planId' => 'selectedPlanId',
@@ -104,14 +105,16 @@ function premium_content_block_init() {
 		'premium-content/logged-out-view',
 		array(
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_block_logged_out_view_render',
+			'script'          => 'premium-content-frontend',
+			'style'           => 'premium-content-frontend',
 			'context'         => array( 'premium-content/planId' ),
 		)
 	);
 	register_block_type(
-		'premium-content/button',
+		'premium-content/login-button',
 		array(
-			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_render_button_block',
-			'context'         => array( 'premium-content/planId' ),
+			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_render_login_button_block',
+			'style'           => 'premium-content-frontend',
 		)
 	);
 
@@ -195,7 +198,6 @@ function premium_content_container_render( $attributes, $content ) {
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
-	wp_enqueue_style( 'premium-content-container-block' );
 
 	return $content;
 }
@@ -213,7 +215,6 @@ function premium_content_block_logged_out_view_render( $attributes, $content, $b
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
-	wp_enqueue_script( 'premium-content-frontend' );
 
 	$visitor_has_access = premium_content_current_visitor_can_access( $attributes, $block );
 	if ( $visitor_has_access ) {
@@ -253,38 +254,26 @@ function premium_content_block_subscriber_view_render( $attributes, $content, $b
 	return '';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 /**
- * Server-side rendering for the `premium-content/button` block.
+ * Server-side rendering for the `premium-content/login-button` block.
  *
  * @param array  $attributes Block attributes.
  * @param string $content Block content.
- * @param object $block Block object.
  *
  * @return string Final content to render.
  */
-function premium_content_render_button_block( $attributes, $content, $block ) {
+function premium_content_render_login_button_block( $attributes, $content ) {
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
 
-	if ( 'login' === $attributes['type'] ) {
-		$url = premium_content_subscription_service()->access_url();
-	} else {
-		\Jetpack_Gutenberg::load_assets_as_required( 'recurring-payments', array( 'thickbox', 'wp-polyfill' ) );
-		add_thickbox();
-		global $wp;
-		$blog_id = defined( 'IS_WPCOM' ) && IS_WPCOM ? get_current_blog_id() : Jetpack_Options::get_option( 'id' );
-		$url     = add_query_arg(
-			array(
-				'blog'     => esc_attr( $blog_id ),
-				'plan'     => esc_attr( $block->context['premium-content/planId'] ),
-				'lang'     => esc_attr( get_locale() ),
-				'pid'      => esc_attr( get_the_ID() ), // Needed for analytics purposes.
-				'redirect' => esc_attr( rawurlencode( home_url( $wp->request ) ) ), // Needed for redirect back in case of redirect-based flow.
-			),
-			'https://subscribe.wordpress.com/memberships/'
-		);
+	if ( is_user_logged_in() ) {
+		// The viewer is logged it, so they shouldn't see the login button.
+		return '';
 	}
+
+	$url = premium_content_subscription_service()->access_url();
 
 	return preg_replace( '/(<a\b[^><]*)>/i', '$1 href="' . esc_url( $url ) . '">', $content );
 }

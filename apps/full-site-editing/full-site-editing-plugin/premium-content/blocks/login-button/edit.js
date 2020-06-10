@@ -8,7 +8,7 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 import { useCallback } from '@wordpress/element';
-import { Button, ButtonGroup, PanelBody, RangeControl } from '@wordpress/components';
+import { PanelBody, RangeControl } from '@wordpress/components';
 import { InspectorControls, RichText, __experimentalBlock as Block } from '@wordpress/block-editor';
 
 /**
@@ -43,14 +43,9 @@ function BorderPanel( { borderRadius = '', setAttributes } ) {
 	);
 }
 
-const BUTTON_TYPES = {
-	subscribe: __( 'Subscribe', 'full-site-editing' ),
-	login: __( 'Log in', 'full-site-editing' ),
-};
-
-function ButtonEdit( props ) {
+function LoginButtonEdit( props ) {
 	const { attributes, setAttributes, className } = props;
-	const { borderRadius, text, type } = attributes;
+	const { borderRadius, text } = attributes;
 
 	const colorProps = getColorAndStyleProps( attributes );
 
@@ -73,26 +68,6 @@ function ButtonEdit( props ) {
 				/>
 			</Block.div>
 			<InspectorControls>
-				<PanelBody title={ __( 'Button Type', 'full-site-editing' ) }>
-					<ButtonGroup aria-label={ __( 'Button Type', 'full-site-editing' ) }>
-						{ Object.entries( BUTTON_TYPES ).map( ( [ buttonType, buttonText ] ) => (
-							<Button
-								key={ buttonType }
-								isLarge
-								isPrimary={ type === buttonType }
-								aria-pressed={ type === buttonType }
-								onClick={ () =>
-									setAttributes( {
-										type: buttonType,
-										text: buttonText,
-									} )
-								}
-							>
-								{ buttonText }
-							</Button>
-						) ) }
-					</ButtonGroup>
-				</PanelBody>
 				<ColorEdit { ...props } />
 				<BorderPanel borderRadius={ borderRadius } setAttributes={ setAttributes } />
 			</InspectorControls>
@@ -100,4 +75,4 @@ function ButtonEdit( props ) {
 	);
 }
 
-export default ButtonEdit;
+export default LoginButtonEdit;

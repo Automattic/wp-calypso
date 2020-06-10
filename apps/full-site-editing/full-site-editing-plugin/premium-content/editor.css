@@ -118,13 +118,11 @@
 
 /* Subscribe/Login buttons */
 
-@media ( min-width: 660px ) {
-	.wp-premium-content-logged-out-view .wp-block-button__link {
-		min-width: 200px;
-	}
+.wp-block-buttons .wp-block[data-type='jetpack/recurring-payments'] {
+	display: inline-block;
 }
 
-.block-editor-block-preview__content .wp-block-premium-content-button .wp-block-button__link {
+.block-editor-block-preview__content .wp-block-premium-content-login-button .wp-block-button__link {
 	left: 50%;
 	position: relative;
 	transform: translateX( -50% );

@@ -1,12 +1,14 @@
-/* eslint-disable wpcalypso/import-docblock */
+/**
+ * External dependencies
+ */
+import { mergeWith } from 'lodash';
+
 /**
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
-import { addFilter } from '@wordpress/hooks';
 import { _x } from '@wordpress/i18n';
-/* eslint-enable wpcalypso/import-docblock */
 
 /**
  * Internal dependencies
@@ -14,8 +16,7 @@ import { _x } from '@wordpress/i18n';
 import * as container from './blocks/container';
 import * as subscriberView from './blocks/subscriber-view';
 import * as loggedOutView from './blocks/logged-out-view';
-import * as buttons from './blocks/buttons';
-import * as button from './blocks/button';
+import * as loginButton from './blocks/login-button';
 
 /**
  * Function to register an individual block.
@@ -43,68 +44,106 @@ const registerBlock = ( block ) => {
 };
 
 /**
- * Appends a "paid" tag to the Premium Content block title if site requires an upgrade.
+ * Updates the settings of the given block.
+ *
+ * @param name {string} Block name
+ * @param settings {object} Block settings
  */
-const addPaidBlockFlags = async () => {
-	let membershipsStatus;
-	try {
-		membershipsStatus = await apiFetch( { path: '/wpcom/v2/memberships/status' } );
-	} catch {
-		// Do not add any flag if request fails.
+const updateBlockType = ( name, settings ) => {
+	const blockType = getBlockType( name );
+	if ( ! blockType ) {
 		return;
 	}
-	const shouldUpgrade = membershipsStatus.should_upgrade_to_access_memberships;
-	if ( shouldUpgrade ) {
-		const premiumContentBlock = getBlockType( container.name );
-		if ( ! premiumContentBlock ) {
-			return;
+	unregisterBlockType( name );
+	const updatedSettings = mergeWith( {}, blockType, settings, ( objValue, srcValue ) => {
+		if ( Array.isArray( objValue ) ) {
+			return objValue.concat( srcValue );
 		}
+	} );
+	registerBlockType( name, updatedSettings );
+};
 
-		const paidFlag = _x(
-			'paid',
-			'Short label appearing near a block requiring a paid plan',
-			'full-site-editing'
-		);
-
-		unregisterBlockType( container.name );
-		registerBlockType( container.name, {
-			...premiumContentBlock,
-			title: `${ premiumContentBlock.title } (${ paidFlag })`,
-		} );
+/**
+ * Gets the current status of the Memberships module.
+ *
+ * @returns {Promise} Memberships status
+ */
+const getMembershipsStatus = async () => {
+	try {
+		return apiFetch( { path: '/wpcom/v2/memberships/status' } );
+	} catch {
+		return null;
 	}
 };
 
 /**
- * Sets the `premium-content/buttons` block as possible parent of `core/button`, so users can insert regular buttons
- * the Premium Content buttons group.
+ * Appends a "paid" tag to the Premium Content block title if site requires an upgrade.
+ *
+ * @param membershipsStatus {object} Memberships status
  */
-const setButtonsParentBlock = () => {
-	addFilter(
-		'blocks.registerBlockType',
-		'premium-content/set-buttons-parent-block',
-		( settings, name ) => {
-			if ( 'core/button' !== name ) {
-				return settings;
-			}
+const addPaidBlockFlags = ( membershipsStatus ) => {
+	if ( ! membershipsStatus.should_upgrade_to_access_memberships ) {
+		return;
+	}
 
-			return {
-				...settings,
-				parent: [ ...settings.parent, 'premium-content/buttons' ],
-			};
-		}
+	const paidFlag = _x(
+		'paid',
+		'Short label appearing near a block requiring a paid plan',
+		'full-site-editing'
 	);
+
+	updateBlockType( container.name, { title: `${ container.settings.title } (${ paidFlag })` } );
 };
 
 /**
- * Function to register blocks provided by CoBlocks.
+ * Hides the login button block from the inserter if the Memberships module is not set up.
+ *
+ * @param membershipsStatus {object} Memberships status
+ */
+const hideLoginButtonIfMembershipsNotSetUp = ( membershipsStatus ) => {
+	if (
+		! membershipsStatus.should_upgrade_to_access_memberships &&
+		membershipsStatus.connected_account_id
+	) {
+		return;
+	}
+
+	updateBlockType( loginButton.name, { supports: { inserter: false } } );
+};
+
+/**
+ * Sets the buttons block as possible parent of the Recurring Payments block, so it can be inserted in the buttons group
+ * displayed in the non-subscriber view of the Premium Content block.
+ *
+ * @param membershipsStatus {object} Memberships status
+ */
+const setButtonsParentBlock = ( membershipsStatus ) => {
+	if (
+		membershipsStatus.should_upgrade_to_access_memberships ||
+		! membershipsStatus.connected_account_id
+	) {
+		return;
+	}
+
+	updateBlockType( 'jetpack/recurring-payments', { parent: [ 'core/buttons' ] } );
+};
+
+/**
+ * Configures the Premium Content blocks.
+ */
+const configurePremiumContentBlocks = async () => {
+	const membershipsStatus = await getMembershipsStatus();
+	addPaidBlockFlags( membershipsStatus );
+	hideLoginButtonIfMembershipsNotSetUp( membershipsStatus );
+	setButtonsParentBlock( membershipsStatus );
+};
+
+/**
+ * Function to register Premium Content blocks.
  */
 export const registerPremiumContentBlocks = () => {
-	[ container, loggedOutView, subscriberView, buttons, button ].forEach( registerBlock );
-
-	// Done after blocks are registered so the status API request doesn't suspend the execution.
-	addPaidBlockFlags();
-
-	setButtonsParentBlock();
+	[ container, loggedOutView, subscriberView, loginButton ].forEach( registerBlock );
 };
 
 registerPremiumContentBlocks();
+configurePremiumContentBlocks();

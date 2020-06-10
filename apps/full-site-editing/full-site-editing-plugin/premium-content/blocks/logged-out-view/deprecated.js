@@ -41,10 +41,16 @@ const deprecated = [
 		isEligible: ( { buttonClasses } ) => !! buttonClasses,
 
 		migrate: ( attributes, innerBlocks ) => {
-			const createButton = ( type, text ) =>
-				createBlock( 'premium-content/button', {
-					type,
-					text,
+			const buttons = createBlock( 'core/buttons', {}, [
+				createBlock( 'jetpack/recurring-payments', {
+					submitButtonText: attributes.subscribeButtonText,
+					backgroundButtonColor: attributes.backgroundButtonColor,
+					textButtonColor: attributes.textButtonColor,
+					customBackgroundButtonColor: attributes.customBackgroundButtonColor,
+					customTextButtonColor: attributes.customTextButtonColor,
+				} ),
+				createBlock( 'premium-content/login-button', {
+					text: attributes.loginButtonText,
 					backgroundColor: attributes.backgroundButtonColor,
 					textColor: attributes.textButtonColor,
 					style: {
@@ -53,10 +59,7 @@ const deprecated = [
 							text: attributes.customTextButtonColor,
 						},
 					},
-				} );
-			const buttons = createBlock( 'premium-content/buttons', {}, [
-				createButton( 'subscribe', attributes.subscribeButtonText ),
-				createButton( 'login', attributes.loginButtonText ),
+				} ),
 			] );
 			return [ attributes, [ ...innerBlocks, buttons ] ];
 		},

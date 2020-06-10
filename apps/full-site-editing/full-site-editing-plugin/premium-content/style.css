@@ -10,13 +10,10 @@
 	margin: 0;
 }
 
-/* Subscribe/Login buttons */
+/* Login button */
 
-
-@media ( min-width: 660px ) {
-	.wp-block-premium-content-logged-out-view .wp-block-button__link {
-		min-width: 200px;
-	}
+.wp-block-premium-content-login-button {
+	margin-bottom: 8px;
 }
 
 /* Legacy Subscribe/Login buttons */

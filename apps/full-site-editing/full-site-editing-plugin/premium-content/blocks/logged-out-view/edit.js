@@ -27,10 +27,17 @@ import Context from '../container/context';
  *
  * @param { Props } props Properties
  */
-function Edit( { selectBlock } ) {
+function Edit( { context, innerBlocks, selectBlock, setRecurringPaymentsPlan } ) {
+	const planId = context[ 'premium-content/planId' ];
+
 	useEffect( () => {
 		selectBlock();
 	}, [] );
+
+	useEffect( () => {
+		// Updates the plan on any Recurring Payment inner block.
+		setRecurringPaymentsPlan( planId );
+	}, [ planId, innerBlocks ] );
 
 	return (
 		<Context.Consumer>
@@ -55,7 +62,20 @@ function Edit( { selectBlock } ) {
 									),
 								},
 							],
-							[ 'premium-content/buttons' ],
+							[
+								'core/buttons',
+								{},
+								[
+									[
+										'jetpack/recurring-payments',
+										{
+											planId,
+											submitButtonText: __( 'Subscribe', 'full-site-editing' ),
+										},
+									],
+									[ 'premium-content/login-button' ],
+								],
+							],
 						] }
 					/>
 				</div>
@@ -66,18 +86,41 @@ function Edit( { selectBlock } ) {
 
 export default compose( [
 	withSelect( ( select, props ) => {
-		const { getBlockHierarchyRootClientId } = select( 'core/block-editor' );
+		const { getBlock, getBlockHierarchyRootClientId } = select( 'core/block-editor' );
 		return {
 			// @ts-ignore difficult to type with JSDoc
 			containerClientId: getBlockHierarchyRootClientId( props.clientId ),
+			innerBlocks: getBlock( props.clientId ).innerBlocks,
 		};
 	} ),
-	withDispatch( ( dispatch, props ) => {
+	withDispatch( ( dispatch, props, registry ) => {
 		const { selectBlock } = dispatch( 'core/block-editor' );
 		return {
 			selectBlock() {
 				// @ts-ignore difficult to type with JSDoc
 				selectBlock( props.containerClientId );
+			},
+			/**
+			 * Updates the selected plan on the Recurring Payments inner block.
+			 *
+			 * @param planId {int} Recurring Payments plan.
+			 */
+			setRecurringPaymentsPlan( planId ) {
+				const { updateBlockAttributes } = dispatch( 'core/block-editor' );
+				const { getBlock } = registry.select( 'core/block-editor' );
+
+				const updatePlanAttribute = ( block ) => {
+					if ( block.name === 'jetpack/recurring-payments' ) {
+						updateBlockAttributes( block.clientId, {
+							planId,
+						} );
+					}
+
+					block.innerBlocks.forEach( updatePlanAttribute );
+				};
+
+				const block = getBlock( props.clientId );
+				updatePlanAttribute( block );
 			},
 		};
 	} ),
