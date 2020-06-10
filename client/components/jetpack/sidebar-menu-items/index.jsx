@@ -71,7 +71,6 @@ const JetpackSidebarMenuItems = ( { path, showIcons, tracksPrefix } ) => {
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
 	const scanThreats = useSelector( ( state ) => getSiteScanThreats( state, siteId ) );
 
-	// TODO: Make sure Tracks events are named correctly
 	const onNavigate = ( event, params ) =>
 		trackClickAndNavigate( dispatch, tracksPrefix, event, params );
 
