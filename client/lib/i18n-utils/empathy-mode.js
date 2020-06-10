@@ -63,7 +63,7 @@ export function enableLanguageEmpathyMode() {
 			return translation;
 		}
 
-		if ( i18n.hasTranslation( options.original ) ) {
+		if ( i18n.hasTranslation( options ) ) {
 			if ( options.components ) {
 				translation = interpolateComponents( {
 					mixedString: replaceArgs( options.original, options ),

@@ -127,8 +127,9 @@ function getTranslationFromTannin( tannin, options ) {
 function getTranslation( i18n, options ) {
 	for ( let i = translationLookup.length - 1; i >= 0; i-- ) {
 		const lookup = translationLookup[ i ]( Object.assign( {}, options ) );
+		const key = options.context ? options.context + '\u0004' + options.original : options.original;
 		// Only get the translation from tannin if it exists.
-		if ( i18n.state.locale[ lookup.original ] ) {
+		if ( i18n.state.locale[ key ] ) {
 			return getTranslationFromTannin( i18n.state.tannin, lookup );
 		}
 	}
