@@ -91,6 +91,11 @@ type TracksPlanSelectEventProperties = {
 	 * The selected level domain name
 	 */
 	selected_plan: string | undefined;
+
+	/**
+	 * The selected level domain name
+	 */
+	from_plans_button: boolean;
 };
 
 export type TracksEventProperties =

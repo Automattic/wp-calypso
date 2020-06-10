@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useI18n } from '@automattic/react-i18n';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -11,7 +12,6 @@ import PlansGrid from '@automattic/plans-grid';
  * Internal dependencies
  */
 import SignupForm from '../../components/signup-form';
-import Link from '../../components/link';
 import {
 	useSelectedPlan,
 	useShouldSiteBePublicOnSelectedPlan,
@@ -27,6 +27,10 @@ import { Title, SubTitle } from '../../components/titles';
 export default function PlansStep() {
 	const { __ } = useI18n();
 	const makePath = usePath();
+
+	const location = useLocation() as any;
+	const isModal = location.state?.fromPlansButton;
+	const history = useHistory();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -50,10 +54,18 @@ export default function PlansStep() {
 
 	useTrackStep( 'Plans', () => ( {
 		selected_plan: selectedPlanRef.current,
+		from_plans_button: !! isModal,
 	} ) );
 
-	const handleCreateSite = ( username: string, bearerToken?: string ) => {
-		createSite( username, freeDomainSuggestion, bearerToken, shouldSiteBePublic );
+	const handleBack = () => ( isModal ? history.goBack() : history.push( makePath( Step.Style ) ) );
+	const handlePlanSelect = () => {
+		if ( isModal ) {
+			history.goBack();
+		} else {
+			currentUser
+				? createSite( currentUser.username, freeDomainSuggestion, undefined, shouldSiteBePublic )
+				: setShowSignupDialog( true );
+		}
 	};
 
 	const header = (
@@ -67,21 +79,10 @@ export default function PlansStep() {
 				</SubTitle>
 			</div>
 			<ActionButtons
-				primaryButton={
-					<Button
-						isPrimary
-						disabled={ ! plan }
-						onClick={ () => {
-							currentUser ? handleCreateSite( currentUser.username ) : setShowSignupDialog( true );
-						} }
-					>
-						{ __( 'Continue' ) }
-					</Button>
-				}
 				secondaryButton={
-					<Link className="plans__back-link" isLink to={ makePath( Step.Style ) }>
+					<Button className="plans__back-link" isLink onClick={ handleBack }>
 						{ __( 'Go back' ) }
-					</Link>
+					</Button>
 				}
 			/>
 		</>
@@ -89,7 +90,7 @@ export default function PlansStep() {
 
 	return (
 		<div className="gutenboarding-page plans">
-			<PlansGrid header={ header } currentPlan={ plan } />
+			<PlansGrid header={ header } currentPlan={ plan } onPlanSelect={ handlePlanSelect } />
 			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
 		</div>
 	);

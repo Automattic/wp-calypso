@@ -109,9 +109,12 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					{ canUseStyleStep() ? <StylePreview /> : redirectToLatestStep }
 				</Route>
 
-				<Route path={ makePath( Step.Plans ) }>
-					{ canUseStyleStep() ? <Plans /> : redirectToLatestStep }
-				</Route>
+				<Route
+					path={ makePath( Step.Plans ) }
+					render={ ( { location }: any ) =>
+						canUseStyleStep() || location.state?.fromPlansButton ? <Plans /> : redirectToLatestStep
+					}
+				/>
 
 				<Route path={ makePath( Step.CreateSite ) }>
 					{ canUseCreateSiteStep() ? <CreateSite /> : redirectToLatestStep }
