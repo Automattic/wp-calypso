@@ -15,6 +15,7 @@ import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { requestProductsList } from 'state/products-list/actions';
+import { myFormatCurrency } from 'blocks/subscription-length-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -68,10 +69,10 @@ function VariantPrice( { variant } ) {
 			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
 			{ isDiscounted && (
 				<DoNotPayThis>
-					{ localizeCurrency( variant.priceFullBeforeDiscount, variant.product.currency_code ) }
+					{ myFormatCurrency( variant.priceFullBeforeDiscount, variant.product.currency_code ) }
 				</DoNotPayThis>
 			) }
-			{ localizeCurrency( variant.priceFinal, variant.product.currency_code ) }
+			{ myFormatCurrency( variant.priceFinal, variant.product.currency_code ) }
 		</React.Fragment>
 	);
 }
@@ -129,16 +130,6 @@ function getTermText( term, translate ) {
 		case TERM_MONTHLY:
 			return translate( 'One month' );
 	}
-}
-
-// TODO: replace this with a real localize function
-function localizeCurrency( amount, currency ) {
-	if ( currency !== 'USD' ) {
-		debug( 'cannot localize non-USD currency', currency );
-		return amount;
-	}
-	const decimalAmount = Number.parseFloat( amount ).toFixed( 2 );
-	return `$${ decimalAmount }`;
 }
 
 const Discount = styled.span`
