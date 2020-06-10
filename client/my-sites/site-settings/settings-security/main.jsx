@@ -84,7 +84,7 @@ const SiteSettingsSecurity = ( {
 					dismissPreferenceName="backup-scan-security-settings-moved"
 					dismissTemporary
 					horizontal
-					href="/settings/jetpack"
+					href={ `/settings/jetpack/${ site.slug }` }
 					jetpack
 				/>
 			) }
