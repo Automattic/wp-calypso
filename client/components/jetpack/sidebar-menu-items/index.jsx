@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { useTranslate } from 'i18n-calypso';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
+import { activityLogPath, backupPath, scanPath, settingsPath } from 'lib/jetpack/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection } from 'state/my-sites/sidebar/actions';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -54,9 +55,9 @@ export const JetpackCloudSidebarMenuItems = ( { path } ) => {
 				label={ translate( 'Settings', {
 					comment: 'Jetpack sidebar navigation item',
 				} ) }
-				link={ `/settings/${ siteSlug }` }
+				link={ settingsPath( siteSlug ) }
 				onNavigate={ onNavigate }
-				selected={ itemLinkMatches( [ '/settings' ], path ) }
+				selected={ itemLinkMatches( [ settingsPath( siteSlug ) ], path ) }
 			/>
 		</>
 	);
@@ -85,27 +86,27 @@ const JetpackSidebarMenuItems = ( { path, showIcons, tracksPrefix } ) => {
 				label={ translate( 'Activity Log', {
 					comment: 'Jetpack sidebar menu item',
 				} ) }
-				link={ `/activity-log/${ siteSlug }` }
+				link={ activityLogPath( siteSlug ) }
 				onNavigate={ onNavigate( 'activity_clicked' ) }
-				selected={ currentPathMatches( '/activity-log' ) }
+				selected={ currentPathMatches( activityLogPath( siteSlug ) ) }
 				expandSection={ expandSection }
 			/>
 			<SidebarItem
 				materialIcon={ showIcons ? 'backup' : undefined }
 				materialIconStyle="filled"
 				label="Backup"
-				link={ `/backup/${ siteSlug }` }
+				link={ backupPath( siteSlug ) }
 				onNavigate={ onNavigate( 'item_clicked', { menu_item: 'backup' } ) }
-				selected={ currentPathMatches( '/backup' ) }
+				selected={ currentPathMatches( backupPath( siteSlug ) ) }
 				expandSection={ expandSection }
 			/>
 			<SidebarItem
 				materialIcon={ showIcons ? 'security' : undefined }
 				materialIconStyle="filled"
 				label="Scan"
-				link={ `/scan/${ siteSlug }` }
+				link={ scanPath( siteSlug ) }
 				onNavigate={ onNavigate( 'item_clicked', { menu_item: 'scan' } ) }
-				selected={ currentPathMatches( '/scan' ) }
+				selected={ currentPathMatches( scanPath( siteSlug ) ) }
 				expandSection={ expandSection }
 			>
 				<ScanBadge progress={ scanProgress } numberOfThreatsFound={ scanThreats?.length ?? 0 } />
