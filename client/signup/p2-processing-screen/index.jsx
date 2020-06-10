@@ -19,7 +19,7 @@ export class P2SignupProcessingScreen extends Component {
 			<div className="p2-processing-screen">
 				<div className="p2-processing-screen__logo">
 					<img
-						src="https://wpcom.files.wordpress.com/2020/06/p2-logo-light-small.png"
+						src="https://wpcom.files.wordpress.com/2020/06/p2-logo-light.png"
 						width="67"
 						height="32"
 						alt="P2 logo"
@@ -34,7 +34,7 @@ export class P2SignupProcessingScreen extends Component {
 
 				<div className="p2-processing-screen__footer">
 					<img
-						src="https://wpcom.files.wordpress.com/2020/06/w-logo-light.png"
+						src="https://wpcom.files.wordpress.com/2020/06/w-logo-light-1.png"
 						className="p2-processing-screen__w-logo"
 						alt="WP.com logo"
 					/>
