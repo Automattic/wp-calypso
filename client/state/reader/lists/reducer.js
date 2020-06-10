@@ -22,6 +22,7 @@ import {
 	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_FOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_SUCCESS,
+	READER_LIST_ITEMS_RECEIVE,
 } from 'state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
@@ -57,6 +58,17 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	}
 	return state;
 } );
+
+export const listItems = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_LIST_ITEMS_RECEIVE:
+			return {
+				...state,
+				[ action.listId ]: action.listItems,
+			};
+	}
+	return state;
+};
 
 /**
  * Tracks which list IDs the current user is subscribed to.
@@ -201,6 +213,7 @@ export function missingLists( state = [], action ) {
 
 export default combineReducers( {
 	items,
+	listItems,
 	subscribedLists,
 	updatedLists,
 	isRequestingList,
