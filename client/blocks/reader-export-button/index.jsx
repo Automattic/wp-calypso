@@ -12,15 +12,25 @@ import { connect } from 'react-redux';
  */
 import wpcom from 'lib/wp';
 import { errorNotice } from 'state/notices/actions';
-import ReaderExportButton from './button';
+import Gridicon from 'components/gridicon';
+import {
+	READER_EXPORT_TYPE_SUBSCRIPTIONS,
+	READER_EXPORT_TYPE_LIST,
+} from 'blocks/reader-export-button/constants';
 
-class ConnectedReaderExportButton extends React.Component {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+class ReaderExportButton extends React.Component {
 	static propTypes = {
-		saveAs: PropTypes.string,
+		exportType: PropTypes.oneOf( [ READER_EXPORT_TYPE_SUBSCRIPTIONS, READER_EXPORT_TYPE_LIST ] ),
+		listId: PropTypes.number, // only when exporting a list
 	};
 
 	static defaultProps = {
-		saveAs: 'wpcom-subscriptions.opml',
+		exportType: READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	};
 
 	state = { disabled: false };
@@ -31,7 +41,12 @@ class ConnectedReaderExportButton extends React.Component {
 			return;
 		}
 
-		wpcom.undocumented().exportReaderFeed( this.onApiResponse );
+		if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
+			wpcom.undocumented().exportReaderList( this.props.listId, this.onApiResponse );
+		} else {
+			wpcom.undocumented().exportReaderSubscriptions( this.onApiResponse );
+		}
+
 		this.setState( {
 			disabled: true,
 		} );
@@ -49,13 +64,25 @@ class ConnectedReaderExportButton extends React.Component {
 			return;
 		}
 
+		let filename;
+		if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
+			filename = 'wpcom-reader-list.opml';
+		} else {
+			filename = 'wpcom-subscriptions.opml';
+		}
+
 		const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } ); // eslint-disable-line no-undef
-		saveAs( blob, this.props.saveAs );
+		saveAs( blob, filename );
 	};
 
 	render() {
-		return <ReaderExportButton onClick={ this.onClick } />;
+		return (
+			<button className="reader-export-button" onClick={ this.onClick }>
+				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
+				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
+			</button>
+		);
 	}
 }
 
-export default connect( null, { errorNotice } )( localize( ConnectedReaderExportButton ) );
+export default connect( null, { errorNotice } )( localize( ReaderExportButton ) );

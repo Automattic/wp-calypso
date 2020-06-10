@@ -2177,14 +2177,14 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 };
 
 /**
- * Exports the user's Reader feed as an OPML XML file.
+ * Exports the user's Reader subscriptions as an OPML XML file.
  * A JSON object is returned with the XML given as a String
  * in the `opml` field.
  *
- * @param  {Function} fn      The callback function
- * @returns {Promise}  promise
+ * @param  {Function} 	fn      The callback function
+ * @returns {Promise}  	promise
  */
-Undocumented.prototype.exportReaderFeed = function ( fn ) {
+Undocumented.prototype.exportReaderSubscriptions = function ( fn ) {
 	debug( '/read/following/mine/export' );
 	const query = {
 		apiVersion: '1.2',

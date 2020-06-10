@@ -28,7 +28,11 @@ import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
 import ReaderExportButton from 'blocks/reader-export-button';
 import ListItem from './list-item';
+import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 function ReaderListEdit( props ) {
@@ -117,6 +121,12 @@ function ReaderListEdit( props ) {
 										DELETE LIST FOREVER
 									</Button>
 								</Card>
+
+								{ listItems && (
+									<Card>
+										<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
+									</Card>
+								) }
 							</>
 						) }
 						{ selectedSection === 'items' &&
