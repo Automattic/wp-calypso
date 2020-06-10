@@ -23,7 +23,6 @@ export const I18nProvider: React.FunctionComponent< Props > = ( { children, loca
 	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData ), [
 		localeData,
 	] );
-
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
 

@@ -29,11 +29,14 @@ import useOnLogin from './hooks/use-on-login';
 
 registerBlockType( name, settings );
 
-export function Gutenboard() {
-	const { __ } = useI18n();
+interface Props {
+	changeLocale: ( locale: string ) => {};
+}
 
-	useOnSignup();
+const Gutenboard: React.FunctionComponent< Props > = ( { changeLocale } ) => {
+	const { __ } = useI18n();
 	useOnLogin();
+	useOnSignup();
 	useOnSiteCreation();
 	usePageViewTracksEvents();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
@@ -81,6 +84,7 @@ export function Gutenboard() {
 				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
 					{ showSignupDialog && <SignupForm onRequestClose={ onSignupDialogClose } /> }
+					<Header changeLocale={ changeLocale } />
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }
@@ -106,4 +110,6 @@ export function Gutenboard() {
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-}
+};
+
+export default Gutenboard;

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import '@automattic/calypso-polyfills';
-import { setLocaleData } from '@wordpress/i18n';
+import { setLocaleData, LocaleData } from '@wordpress/i18n';
 import { I18nProvider, useI18n } from '@automattic/react-i18n';
 import { getLanguageSlugs } from '../../lib/i18n-utils';
 import {
@@ -24,7 +24,7 @@ import type { Site as SiteStore, User as UserStore } from '@automattic/data-stor
  * Internal dependencies
  */
 import GUTENBOARDING_BASE_NAME from './basename.json';
-import { Gutenboard } from './gutenboard';
+import Gutenboard from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
 import { Step, path } from './path';
@@ -78,6 +78,42 @@ declare const window: AppWindow;
  */
 const DEVELOPMENT_BASENAME = '/gutenboarding';
 
+const GutenboardingApp: React.FunctionComponent< LocaleData | undefined > = ( {
+	initialLocaleData,
+} ) => {
+	const [ localeData, setLocale ] = React.useState( initialLocaleData );
+
+	const updateLocale = async ( newLocale: string ) => {
+		if ( newLocale === DEFAULT_LOCALE_SLUG ) {
+			setLocale( undefined );
+		}
+		try {
+			const newLocaleData = await getLanguageFile( newLocale );
+			setLocale( newLocaleData );
+		} catch {}
+	};
+
+	React.useEffect( () => {
+		setLocaleData( localeData );
+	}, [ localeData ] );
+
+	return (
+		<I18nProvider localeData={ localeData }>
+			<WindowLocaleEffectManager />
+			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
+				<Switch>
+					<Route exact path={ path }>
+						<Gutenboard changeLocale={ updateLocale } />
+					</Route>
+					<Route>
+						<Redirect to="/" />
+					</Route>
+				</Switch>
+			</BrowserRouter>
+		</I18nProvider>
+	);
+};
+
 window.AppBoot = async () => {
 	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
 		const url = new URL( window.location.href );
@@ -118,48 +154,9 @@ window.AppBoot = async () => {
 	} catch {}
 
 	ReactDom.render(
-		<CalypsoI18nProvider initialLocaleData={ initialLocaleData }>
-			<WindowLocaleEffectManager />
-			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
-				<Switch>
-					<Route exact path={ path }>
-						<Gutenboard />
-					</Route>
-					<Route>
-						<Redirect to="/" />
-					</Route>
-				</Switch>
-			</BrowserRouter>
-		</CalypsoI18nProvider>,
+		<GutenboardingApp initialLocaleData={ initialLocaleData } />,
 		document.getElementById( 'wpcom' )
 	);
-};
-
-const CalypsoI18nProvider: React.FunctionComponent< {
-	initialLocaleData: any;
-} > = ( { children, initialLocaleData } ) => {
-	const [ localeData, setLocale ] = React.useState( initialLocaleData );
-
-	// For testing
-	React.useEffect( () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-		// @ts-ignore
-		window.updateLocale = async ( newLocale: string ) => {
-			if ( newLocale === DEFAULT_LOCALE_SLUG ) {
-				setLocale( undefined );
-			}
-			try {
-				const newLocaleData = await getLanguageFile( newLocale );
-				setLocale( newLocaleData );
-			} catch {}
-		};
-	}, [] );
-
-	React.useEffect( () => {
-		setLocaleData( localeData );
-	}, [ localeData ] );
-
-	return <I18nProvider localeData={ localeData }>{ children }</I18nProvider>;
 };
 
 function WindowLocaleEffectManager() {

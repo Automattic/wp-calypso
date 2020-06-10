@@ -51,6 +51,18 @@ $padding--gutenboarding__header: $grid-unit-10;
 	}
 }
 
+.gutenboarding__header-site-language {
+	margin-right: 15px;
+}
+
+.gutenboarding__header-site-language-badge {
+	display: inline-block;
+	padding: 1px 8px;
+	margin: 0 4px;
+	border: 1px solid $light-gray-500;
+	text-transform: uppercase;
+}
+
 .gutenboarding__header-section {
 	display: flex;
 	width: 100%;

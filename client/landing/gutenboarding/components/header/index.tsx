@@ -5,7 +5,7 @@ import * as React from 'react';
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { useViewportMatch } from '@wordpress/compose';
-import { useI18n, withI18n, I18nReact } from '@automattic/react-i18n';
+import { useI18n } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
@@ -17,15 +17,30 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
 import { useCurrentStep } from '../../path';
+import SignupForm from '../../components/signup-form';
+import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
+import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
+import {
+	getFreeDomainSuggestions,
+	getPaidDomainSuggestions,
+	getRecommendedDomainSuggestion,
+} from '../../utils/domain-suggestions';
+import { PAID_DOMAINS_TO_SHOW } from '../../constants';
+import { usePath, useCurrentStep, Step } from '../../path';
+import { trackEventWithFlow } from '../../lib/analytics';
+import { Button } from '@wordpress/components';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const Header: React.FunctionComponent = () => {
-	const { __ } = useI18n();
+interface Props {
+	changeLocale: ( locale: string ) => {};
+}
 
+const Header: React.FunctionComponent< Props > = ( { changeLocale } ) => {
+	const { __, i18nLocale } = useI18n();
 	const currentStep = useCurrentStep();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
@@ -50,6 +65,17 @@ const Header: React.FunctionComponent = () => {
 
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
+	
+	// todo: just for testing purposes, replace with the actual language picker
+	const handleChangeLocale = () => {
+		if ( i18nLocale === 'en' ) {
+			push( makePath( Step[ currentStep ], 'fr' ) );
+			changeLocale( 'fr' );
+		} else {
+			push( makePath( Step[ currentStep ], 'en' ) );
+			changeLocale( 'en' );
+		}
+	};
 
 	return (
 		<div
@@ -70,7 +96,7 @@ const Header: React.FunctionComponent = () => {
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">
-						{ siteTitle ? siteTitle : <StartYourWebsite /> }
+						{ siteTitle ? siteTitle : __( 'Start your website' ) }
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
@@ -91,6 +117,12 @@ const Header: React.FunctionComponent = () => {
 						)
 					}
 				</div>
+				<div className="gutenboarding__header-section-item gutenboarding__header-site-language">
+					<Button onClick={ handleChangeLocale }>
+						<span>Site Language: </span>
+						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
+					</Button>
+				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
 					<PlansButton />
 				</div>
@@ -98,13 +130,5 @@ const Header: React.FunctionComponent = () => {
 		</div>
 	);
 };
-
-const StartYourWebsite = withI18n(
-	class extends React.PureComponent< I18nReact > {
-		render() {
-			return this.props.__( 'Start your website' );
-		}
-	}
-);
 
 export default Header;
