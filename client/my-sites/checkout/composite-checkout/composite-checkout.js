@@ -498,6 +498,7 @@ export default function CompositeCheckout( {
 
 	useRecordCheckoutLoaded(
 		recordEvent,
+		isLoadingCart,
 		isApplePayAvailable,
 		isApplePayLoading,
 		responseCart,
@@ -634,6 +635,7 @@ function useCountryList( overrideCountryList ) {
 
 function useRecordCheckoutLoaded(
 	recordEvent,
+	isLoadingCart,
 	isApplePayAvailable,
 	isApplePayLoading,
 	responseCart,
@@ -642,7 +644,12 @@ function useRecordCheckoutLoaded(
 	product
 ) {
 	const hasRecordedCheckoutLoad = useRef( false );
-	if ( ! isLoadingStoredCards && ! isApplePayLoading && ! hasRecordedCheckoutLoad.current ) {
+	if (
+		! isLoadingCart &&
+		! isLoadingStoredCards &&
+		! isApplePayLoading &&
+		! hasRecordedCheckoutLoad.current
+	) {
 		debug( 'composite checkout has loaded' );
 		recordEvent( {
 			type: 'CHECKOUT_LOADED',
