@@ -37,7 +37,7 @@ jobs:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Split Test files
-        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -f \"specs*/**/*spec.js\" -s \",\" -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\"
+        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -r ./runtime.log -f \"specs*/**/*spec.js\" -s \",\" -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\""
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
@@ -68,7 +68,7 @@ jobs:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Split Test files
-        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -f \"specs*/**/*spec.js\" -s \",\" -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\"
+        run: echo "::set-env name=TESTFILES::\"$(npx mocha-split-tests -r ./runtime.log -f \"specs*/**/*spec.js\" -s \",\" -t ${{ matrix.ci_node_total }} -g ${{ matrix.ci_node_index }})\""
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
