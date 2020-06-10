@@ -11,6 +11,7 @@ import config from 'config';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import wrapInSiteOffsetProvider from 'lib/jetpack/wrap-in-site-offset';
+import wpcomUpsellController from 'lib/jetpack/wpcom-upsell-controller';
 import {
 	backupActivity,
 	backupDownload,
@@ -18,6 +19,7 @@ import {
 	backups,
 	showUpsellIfNoBackup,
 } from 'my-sites/backup/controller';
+import WPCOMUpsell from 'landing/jetpack-cloud/sections/wpcom-upsell';
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {
@@ -33,6 +35,7 @@ export default function () {
 			backupActivity,
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoBackup,
+			wpcomUpsellController( WPCOMUpsell ),
 			makeLayout,
 			clientRender
 		);
@@ -44,6 +47,7 @@ export default function () {
 			navigation,
 			backupDownload,
 			wrapInSiteOffsetProvider,
+			wpcomUpsellController( WPCOMUpsell ),
 			makeLayout,
 			clientRender
 		);
@@ -56,6 +60,7 @@ export default function () {
 				navigation,
 				backupRestore,
 				wrapInSiteOffsetProvider,
+				wpcomUpsellController( WPCOMUpsell ),
 				makeLayout,
 				clientRender
 			);
@@ -69,6 +74,7 @@ export default function () {
 			backups,
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoBackup,
+			wpcomUpsellController( WPCOMUpsell ),
 			makeLayout,
 			clientRender
 		);
