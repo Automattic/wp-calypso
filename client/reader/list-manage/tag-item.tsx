@@ -21,9 +21,9 @@ export default function TagItem( props: { item: Item; onRemove: ( e: MouseEvent 
 	) : (
 		<>
 			<div className="tag-item list-item">
-				<a className="list-item__content" href={ `/read/tag/${ tag.slug }` }>
+				<a className="list-item__content" href={ `/read/tag/${ encodeURIComponent( tag.slug ) }` }>
 					<div className="list-item__icon">
-						<Gridicon icon="site" size={ 36 } />
+						<Gridicon icon="tag" size={ 36 } />
 					</div>
 
 					<div className="list-item__info">
