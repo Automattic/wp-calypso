@@ -200,7 +200,7 @@ const Header: React.FunctionComponent = () => {
 					}
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
-					<PlansButton />
+					{ currentStep !== 'IntentGathering' && currentStep !== 'Plans' && <PlansButton /> }
 				</div>
 			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
