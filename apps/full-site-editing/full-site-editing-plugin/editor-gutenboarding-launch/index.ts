@@ -70,7 +70,7 @@ function updateEditor() {
 		const saveAndNavigate = async ( e: Event ) => {
 			// Disable href navigation
 			e.preventDefault();
-			await dispatch( 'core/editor' ).autosave();
+			await dispatch( 'core/editor' ).savePost();
 			// Using window.top to escape from the editor iframe on WordPress.com
 			window.top.location.href = launchHref;
 		};
