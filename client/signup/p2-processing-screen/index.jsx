@@ -27,15 +27,13 @@ export class P2SignupProcessingScreen extends Component {
 				</div>
 
 				<div className="p2-processing-screen__text">
-					{ this.props.translate(
-						'{{h2}}Hooray!{{/h2}}{{h2}}Your new P2 is{{/h2}}{{h2}}almost ready.{{/h2}}',
-						{
-							components: {
-								// eslint-disable-next-line jsx-a11y/heading-has-content
-								h2: <h2 />,
-							},
-						}
-					) }
+					{ this.props.translate( '{{h2}}Hooray!{{br/}}Your new P2 is{{br/}}almost ready.{{/h2}}', {
+						components: {
+							// eslint-disable-next-line jsx-a11y/heading-has-content
+							h2: <h2 />,
+							br: <br />,
+						},
+					} ) }
 				</div>
 
 				<div className="p2-processing-screen__footer">
