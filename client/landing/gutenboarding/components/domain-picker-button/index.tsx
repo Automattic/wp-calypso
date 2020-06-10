@@ -48,7 +48,11 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 		'popover' | 'modal' | undefined
 	>();
 
-	const handlePopoverToggle = () => {
+	const handlePopoverToggle = ( e?: React.FocusEvent ) => {
+		// Don't collide with button toggling
+		if ( e?.relatedTarget === buttonRef.current ) {
+			return;
+		}
 		setDomainPickerMode( ( mode ) => ( mode ? undefined : 'popover' ) );
 	};
 

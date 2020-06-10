@@ -35,11 +35,11 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClos
 		}
 	}, [ isOpen ] );
 
-	const handleClose = () => {
+	const handleClose = ( e?: React.FocusEvent ) => {
 		recordCloseModal( tracksName, {
 			selected_domain: select( STORE_KEY ).getSelectedDomain()?.domain_name,
 		} );
-		onClose?.();
+		onClose?.( e );
 	};
 
 	// Don't render popover when isOpen is false.
