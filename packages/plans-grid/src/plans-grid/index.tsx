@@ -8,6 +8,10 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { Plans, DomainSuggestions } from '@automattic/data-stores';
+<<<<<<< HEAD
+=======
+import classNames from 'classnames';
+>>>>>>> Show domain name in plans grid
 
 /**
  * Internal dependencies

@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import type { DomainSuggestions } from '@automattic/data-stores/dist/types';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 const CrossIcon = <Icon icon={ close } size={ 17 } />;
@@ -96,6 +96,10 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const hasDomain = !! domain;
+
+	const domainName = domain?.domain_name;
+
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
 
@@ -139,6 +143,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							{ domainMessage.icon }
 							{ domainMessage.domainMessage }
 						</Button>
+					) }
+					{ hasDomain && isFree && (
+						<div className="plan-item__domain-name">{ __( 'Ads included on site' ) }</div>
 					) }
 				</div>
 				<div className="plan-item__features">
