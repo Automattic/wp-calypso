@@ -104,13 +104,13 @@ yarn run build-packages
 Or even specific packages:
 
 ```bash
-npx lerna run prepare --scope="@automattic/calypso-build"
+yarn workspace @automattic/calypso-build run prepare
 ```
 
 Or specific apps:
 
 ```bash
-npx lerna run build --scope="@automattic/calypso-build"
+yarn workspace @automattic/wpcom-block-editor run build
 ```
 
 All `prepare` scripts found in all `package.json`s of apps and packages are always run on Calypso's `yarn`. Therefore independent apps in `/apps` directory can use `build` instead of `prepare` so avoid unnecessary builds.
@@ -118,7 +118,7 @@ All `prepare` scripts found in all `package.json`s of apps and packages are alwa
 You can also run other custom `package.json` scripts only for your app or package:
 
 ```bash
-npx lerna run your-script --scope="@automattic/your-package"
+yarn workspace @automattic/your-package run your-script
 ```
 
 ## Developing packages

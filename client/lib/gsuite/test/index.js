@@ -3,14 +3,14 @@
  */
 import {
 	canDomainAddGSuite,
+	canUserPurchaseGSuite,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
-	getMonthlyPrice,
 	getGSuiteSupportedDomains,
+	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
-	isGSuiteRestricted,
 } from 'lib/gsuite';
 
 jest.mock( 'lib/user/', () => {
@@ -121,8 +121,19 @@ describe( 'index', () => {
 			);
 		} );
 
-		test( 'Returns primary domain if no selected domain', () => {
-			expect( getEligibleGSuiteDomain( '', domains ) ).toEqual( 'primary-domain.blog' );
+		test( 'Returns primary domain if no selected domain and the primary domain is eligible', () => {
+			const domainsWithEligiblePrimaryDomain = domains.map( ( domain ) =>
+				domain.isPrimary ? { ...domain, hasWpcomNameservers: true } : domain
+			);
+			expect( getEligibleGSuiteDomain( '', domainsWithEligiblePrimaryDomain ) ).toEqual(
+				'primary-domain.blog'
+			);
+		} );
+
+		test( 'Returns the first eligible domain if no selected domain and the primary domain is not eligible', () => {
+			expect( getEligibleGSuiteDomain( '', domains ) ).toEqual(
+				'mapped-domain-with-wpcom-nameservers.blog'
+			);
 		} );
 
 		test( 'Returns first non-primary domain if no selected domain and no primary domain in domains', () => {
@@ -249,9 +260,9 @@ describe( 'index', () => {
 		} );
 	} );
 
-	describe( '#isGSuiteRestricted', () => {
-		test( 'returns false if user is not G Suite restricted', () => {
-			expect( isGSuiteRestricted() ).toEqual( false );
+	describe( '#canUserPurchaseGSuite', () => {
+		test( 'returns true if the user is allowed to purchase G Suite', () => {
+			expect( canUserPurchaseGSuite() ).toEqual( true );
 		} );
 	} );
 } );

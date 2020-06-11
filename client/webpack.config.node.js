@@ -90,7 +90,7 @@ const webpackConfig = {
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
-					options: { forceRequire: true, onlyIsomorphic: true },
+					options: { useRequire: true, onlyIsomorphic: true },
 				},
 			},
 			TranspileConfig.loader( {

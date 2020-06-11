@@ -36,7 +36,15 @@ import Experiment, { LoadingVariations, DefaultVariation, Variation } from 'comp
  */
 import './style.scss';
 
-const Home = ( { canUserUseCustomerHome, layout, site, siteId, trackViewSiteAction } ) => {
+const Home = ( {
+	canUserUseCustomerHome,
+	isDev,
+	forcedView,
+	layout,
+	site,
+	siteId,
+	trackViewSiteAction,
+} ) => {
 	const translate = useTranslate();
 
 	if ( ! canUserUseCustomerHome ) {
@@ -69,7 +77,7 @@ const Home = ( { canUserUseCustomerHome, layout, site, siteId, trackViewSiteActi
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-			{ siteId && <QueryHomeLayout siteId={ siteId } /> }
+			{ siteId && <QueryHomeLayout siteId={ siteId } isDev={ isDev } forcedView={ forcedView } /> }
 			<SidebarNavigation />
 			<Experiment name="user_home_test">
 				<LoadingVariations>
@@ -101,12 +109,14 @@ const Home = ( { canUserUseCustomerHome, layout, site, siteId, trackViewSiteActi
 };
 
 Home.propTypes = {
+	canUserUseCustomerHome: PropTypes.bool.isRequired,
+	isDev: PropTypes.bool,
+	isStaticHomePage: PropTypes.bool.isRequired,
+	forcedView: PropTypes.string,
 	layout: PropTypes.object,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
-	canUserUseCustomerHome: PropTypes.bool.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
-	isStaticHomePage: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state ) => {

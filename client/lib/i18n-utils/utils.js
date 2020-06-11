@@ -210,7 +210,7 @@ const urlLocalizationMapping = {
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog ),
 	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', 'jetpack_com_locales' ),
-	'wordpress.com/support': setLocalizedWpComPath( '/support', 'support_site_locales' ),
+	'en.support.wordpress.com': setLocalizedWpComPath( '/support', 'support_site_locales' ),
 	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog ),
 	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', 'forum_locales' ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),

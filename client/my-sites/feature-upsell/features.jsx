@@ -22,9 +22,9 @@ import TipInfo from '../../components/purchase-detail/tip-info';
 /**
  * Image dependencies
  */
-import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
+import googleAdwordsImage from 'assets/images/illustrations/adwords-google.svg';
 import supportImage from 'assets/images/illustrations/dotcom-support.svg';
-import adsRemovedImage from 'assets/images/illustrations/ads-removed.svg';
+import adsRemovedImage from 'assets/images/illustrations/removed-ads.svg';
 import themesImage from 'assets/images/illustrations/themes.svg';
 import dashboardImage from 'assets/images/illustrations/dashboard.svg';
 import wordAdsImage from 'assets/images/illustrations/dotcom-wordads.svg';

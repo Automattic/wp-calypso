@@ -4,18 +4,16 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { STORE_KEY as PLANS_STORE } from '../stores/plans';
-import { PLAN_FREE, PLAN_ECOMMERCE } from '../stores/plans/constants';
+import { PLANS_STORE } from '../stores/plans';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
-import { useSelectedPlan } from './use-selected-plan';
+import { useSelectedPlan, useIsSelectedPlanEcommerce } from './use-selected-plan';
 
 const wpcom = wp.undocumented();
 
@@ -64,6 +62,7 @@ export default function useOnSiteCreation() {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const selectedPlan = useSelectedPlan();
+	const isEcommercePlan = useIsSelectedPlanEcommerce();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { resetPlan } = useDispatch( PLANS_STORE );
@@ -79,11 +78,11 @@ export default function useOnSiteCreation() {
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan && selectedPlan?.getStoreSlug() !== PLAN_FREE ) {
+			if ( selectedPlan && ! selectedPlan?.isFree ) {
 				const planProduct = {
-					meta: selectedPlan.getTitle(),
-					product_id: selectedPlan.getProductId(),
-					product_slug: selectedPlan.getStoreSlug(),
+					meta: selectedPlan.title,
+					product_id: selectedPlan.productId,
+					product_slug: selectedPlan.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
@@ -107,44 +106,15 @@ export default function useOnSiteCreation() {
 					resetOnboardStore();
 					setSelectedSite( newSite.blogid );
 
-					const redirectionUrl =
-						selectedPlan.getStoreSlug() === PLAN_ECOMMERCE
-							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
-							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+					const redirectionUrl = isEcommercePlan
+						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
+						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
 				} );
-				go();
-				return;
-			}
-
-			if ( hasPaidDomain && ! isEnabled( 'gutenboarding/plans-grid' ) ) {
-				// I'd rather not make my own product, but this works.
-				// lib/cart-items helpers did not perform well.
-				const domainProduct = {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
-					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
-						source: 'gutenboarding',
-					},
-				};
-
-				const go = async () => {
-					const cart: Cart = await wpcom.getCart( newSite.site_slug );
-					await wpcom.setCart( newSite.blogid, {
-						...cart,
-						products: [ ...cart.products, domainProduct ],
-					} );
-					resetPlan();
-					resetOnboardStore();
-					setSelectedSite( newSite.blogid );
-					window.location.href = `/start/prelaunch?siteSlug=${ newSite.blogid }`;
-				};
 				go();
 				return;
 			}
@@ -167,5 +137,7 @@ export default function useOnSiteCreation() {
 		resetPlan,
 		setIsRedirecting,
 		setSelectedSite,
+		flowCompleteTrackingParams,
+		isEcommercePlan,
 	] );
 }

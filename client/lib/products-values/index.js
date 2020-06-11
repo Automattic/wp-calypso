@@ -234,6 +234,12 @@ export function isJetpackScan( product ) {
 	return isJetpackScanSlug( product.product_slug );
 }
 
+export function isJetpackCloudProductSlug( productSlug ) {
+	return (
+		JETPACK_SCAN_PRODUCTS.includes( productSlug ) || JETPACK_BACKUP_PRODUCTS.includes( productSlug )
+	);
+}
+
 export function isJetpackProductSlug( productSlug ) {
 	return includes( JETPACK_PRODUCTS_LIST, productSlug );
 }

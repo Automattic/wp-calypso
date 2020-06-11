@@ -10,7 +10,7 @@
 	margin-bottom: 4px;
 	color: var( --color-text-subtle );
 	padding-bottom: 8px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 18px;
 }
 
@@ -108,7 +108,7 @@
 
 .shipping__zones-header {
 	padding: 12px 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 	border-top: 0;
 	background: var( --color-neutral-0 );
 }
@@ -134,7 +134,7 @@
 
 .shipping__zones-row-location-name {
 	margin-bottom: 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .shipping__zones-row-location-name {
@@ -142,7 +142,7 @@
 }
 
 .shipping__zones-row-method {
-	font-size: 14px;
+	font-size: $font-body-small;
 	display: flex;
 	flex-direction: column;
 
@@ -156,7 +156,7 @@
 .shipping__card-name {
 	margin-bottom: 0;
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: 22px;
 }
 

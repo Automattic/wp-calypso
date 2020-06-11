@@ -17,6 +17,7 @@ import StartPage from '../lib/pages/signup/start-page.js';
 import JetpackAddNewSitePage from '../lib/pages/signup/jetpack-add-new-site-page';
 
 import AboutPage from '../lib/pages/signup/about-page.js';
+import CustomerHomePage from '../lib/pages/customer-home-page'
 import DomainFirstPage from '../lib/pages/signup/domain-first-page';
 import ReaderLandingPage from '../lib/pages/signup/reader-landing-page';
 import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page.js';
@@ -51,6 +52,8 @@ import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-
 import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import SignUpStep from '../lib/flows/sign-up-step';
+import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
+import ActivateAccountFlow from '../lib/flows/activate-account-flow';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 import AccountSettingsPage from '../lib/pages/account/account-settings-page';
@@ -176,7 +179,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await driver.get( magicLoginLink );
 			const magicLoginPage = await MagicLoginPage.Expect( driver );
 			await magicLoginPage.finishLogin();
-			return await ReaderPage.Expect( driver );
+			try {
+				await CustomerHomePage.Expect( driver );
+			} catch ( e ) {
+				await ReaderPage.Expect( driver )
+			}
 		} );
 
 		after( 'Can delete our newly created account', async function () {
@@ -358,7 +365,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency @parallel @canary', function () {
+	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -488,6 +495,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
+		} );
+
+		step( 'Can launch the site', async function () {
+			const navBarComponent = await NavBarComponent.Expect( driver );
+			await navBarComponent.clickMySites();
+			await new ActivateAccountFlow( driver, emailAddress ).activateAccount();
+			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
 		after( 'Can delete our newly created account', async function () {

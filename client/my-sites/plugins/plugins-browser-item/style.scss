@@ -75,13 +75,13 @@
 .plugins-browser-item__title {
 	color: var( --color-neutral-70 );
 	font-weight: 600;
-	font-size: 15px;
+	font-size: $font-body;
 	margin-top: 3px;
 }
 
 .plugins-browser-item__author {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .plugins-browser-item .plugin-icon {

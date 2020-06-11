@@ -11,7 +11,7 @@ import Plan from './plan';
 /**
  * @typedef { import('./plan').Plan } Plan
  *
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { Plan[] } plans
  * @property { undefined | Plan } selectedPlan
  * @property { (plan: Plan) => void } onSelected

@@ -6,7 +6,7 @@
 		margin: 0;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 	}
 }

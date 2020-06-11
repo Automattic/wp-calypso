@@ -6,11 +6,6 @@
 }]*/
 
 /**
- * External dependencies
- */
-import { reducer as form } from 'redux-form';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
@@ -24,15 +19,11 @@ import account from './account/reducer';
 import accountRecovery from './account-recovery/reducer';
 import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
-import application from './application/reducer';
 import applicationPasswords from './application-passwords/reducer';
-import atomicHosting from './hosting/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
 import connectedApplications from './connected-applications/reducer';
-import countries from './countries/reducer';
-import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
@@ -74,15 +65,12 @@ import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
 import postTypes from './post-types/reducer';
-import preferences from './preferences/reducer';
 import productsList from './products-list/reducer';
-import purchases from './purchases/reducer';
 import pushNotifications from './push-notifications/reducer';
 import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
 import sharing from './sharing/reducer';
-import shortcodes from './shortcodes/reducer';
 import simplePayments from './simple-payments/reducer';
 import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
@@ -91,7 +79,6 @@ import siteSettings from './site-settings/reducer';
 import sites from './sites/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
-import terms from './terms/reducer';
 import timezones from './timezones/reducer';
 import ui from './ui/reducer';
 import userDevices from './user-devices/reducer';
@@ -108,15 +95,11 @@ const reducers = {
 	accountRecovery,
 	activePromotions,
 	activityLog,
-	application,
 	applicationPasswords,
-	atomicHosting,
 	atomicTransfer,
 	billingTransactions,
 	checklist,
 	connectedApplications,
-	countries,
-	countryStates,
 	currentUser,
 	dataRequests,
 	documentHead,
@@ -124,7 +107,6 @@ const reducers = {
 	embeds,
 	experiments,
 	exporter,
-	form,
 	googleMyBusiness,
 	gsuiteUsers,
 	gutenbergOptInOut,
@@ -159,15 +141,12 @@ const reducers = {
 	plugins,
 	postFormats,
 	postTypes,
-	preferences,
 	productsList,
-	purchases,
 	pushNotifications,
 	receipts,
 	rewind,
 	selectedEditor,
 	sharing,
-	shortcodes,
 	simplePayments,
 	siteAddressChange,
 	siteKeyrings,
@@ -176,7 +155,6 @@ const reducers = {
 	sites,
 	storedCards,
 	support,
-	terms,
 	timezones,
 	ui,
 	userDevices,

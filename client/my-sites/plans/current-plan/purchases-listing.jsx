@@ -18,6 +18,7 @@ import {
 } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
+import isJetpackCloudEligible from 'state/selectors/is-jetpack-cloud-eligible';
 import { Button, Card } from '@automattic/components';
 import MyPlanCard from './my-plan-card';
 import QuerySites from 'components/data/query-sites';
@@ -46,6 +47,8 @@ import {
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 } from 'lib/products-values/constants';
+import Gridicon from 'components/gridicon';
+import QueryRewindState from 'components/data/query-rewind-state';
 
 class PurchasesListing extends Component {
 	static propTypes = {
@@ -66,9 +69,9 @@ class PurchasesListing extends Component {
 	};
 
 	isLoading() {
-		const { currentPlan, selectedSite, isRequestingPlans } = this.props;
+		const { currentPlan, selectedSite, isRequestingPlans, isCloudEligible } = this.props;
 
-		return ! currentPlan || ! selectedSite || isRequestingPlans;
+		return ! currentPlan || ! selectedSite || isRequestingPlans || undefined === isCloudEligible;
 	}
 
 	isFreePlan( purchase ) {
@@ -248,20 +251,35 @@ class PurchasesListing extends Component {
 	}
 
 	getProductActionButtons( purchase ) {
-		const { translate, selectedSiteSlug: site } = this.props;
+		const { translate, selectedSiteSlug: site, isCloudEligible } = this.props;
 		const actionButton = this.getActionButton( purchase );
+
+		const maybeExternalIcon = isCloudEligible && (
+			<>
+				&nbsp;
+				<Gridicon icon="external" />
+			</>
+		);
 
 		let serviceButton = null;
 		if ( isJetpackBackup( purchase ) ) {
+			const target = isCloudEligible
+				? `https://cloud.jetpack.com/backup/${ site }`
+				: `/activity-log/${ site }?group=rewind`;
 			serviceButton = (
-				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
+				<Button href={ target } compact>
 					{ translate( 'View backups' ) }
+					{ maybeExternalIcon }
 				</Button>
 			);
 		} else if ( isJetpackScan( purchase ) ) {
+			const target = isCloudEligible
+				? `https://cloud.jetpack.com/scan/${ site }`
+				: `/activity-log/${ site }`;
 			serviceButton = (
-				<Button href={ `/activity-log/${ site }` } compact>
+				<Button href={ target } compact>
 					{ translate( 'View scan results' ) }
+					{ maybeExternalIcon }
 				</Button>
 			);
 		}
@@ -337,6 +355,7 @@ class PurchasesListing extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<QuerySitePurchases siteId={ selectedSiteId } />
+				<QueryRewindState siteId={ selectedSiteId } />
 
 				{ this.renderPlan() }
 				{ this.renderProducts() }
@@ -357,5 +376,6 @@ export default connect( ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
+		isCloudEligible: isJetpackCloudEligible( state, selectedSiteId ),
 	};
 } )( localize( withLocalizedMoment( PurchasesListing ) ) );

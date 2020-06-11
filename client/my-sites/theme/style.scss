@@ -13,7 +13,7 @@
 .theme__sheet-bar-title {
 	display: block;
 	font-size: 33px;
-	font-weight: 100;
+	font-weight: 400;
 	padding-top: 78px;
 	padding-left: 25px;
 	line-height: 1;
@@ -23,8 +23,8 @@
 	max-width: none;
 	display: block;
 	color: var( --color-text-inverted );
-	font-size: 16px;
-	font-weight: 200;
+	font-size: $font-body;
+	font-weight: 400;
 	padding-top: 5px;
 	padding-left: 25px;
 }
@@ -164,7 +164,7 @@
 	margin: 0 auto;
 	padding: 10px;
 	color: var( --color-primary );
-	font-size: 14px;
+	font-size: $font-body-small;
 	cursor: pointer;
 	transition: all ease-in-out 100ms;
 
@@ -198,7 +198,7 @@
 
 .theme__sheet-content {
 	padding: 20px;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	min-height: 400px; // whilst loading
 
@@ -252,7 +252,7 @@
 
 	h2 {
 		color: var( --color-neutral-light );
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 400;
 
 		margin: -20px -20px 20px;
@@ -279,37 +279,37 @@
 
 	h3 {
 		font-size: 20px;
-		font-weight: 200;
+		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 
 	h4 {
 		font-size: 18px;
-		font-weight: 200;
+		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 
 	h5 {
-		font-size: 16px;
-		font-weight: 200;
+		font-size: $font-body;
+		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 
 	h6 {
-		font-size: 14px;
-		font-weight: 200;
+		font-size: $font-body-small;
+		font-weight: 400;
 		margin: 40px 0 10px;
 	}
 
 	pre {
 		font-family: $code;
-		font-size: 14px;
+		font-size: $font-body-small;
 		white-space: pre-wrap;
 		padding: 8px;
 	}
 
 	code {
-		font-size: 14px;
+		font-size: $font-body-small;
 		background: var( --color-neutral-0 );
 		padding: 1px 4px;
 		border-radius: 2px;
@@ -328,7 +328,7 @@
 		border-bottom: 1px solid #e9eff3;
 		padding: 20px;
 
-		font-size: 13px;
+		font-size: $font-body-small;
 		line-height: 21px;
 
 		& > p:first-child {

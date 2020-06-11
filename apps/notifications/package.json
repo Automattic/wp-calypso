@@ -22,7 +22,7 @@
 		"build": "check-npm-client && calypso-build --config='./webpack.config.js'"
 	},
 	"dependencies": {
-		"@automattic/calypso-color-schemes": "^2.1.0",
+		"@automattic/calypso-color-schemes": "^2.1.1",
 		"@automattic/calypso-polyfills": "^1.0.0"
 	}
 }

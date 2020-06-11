@@ -52,7 +52,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import './style.scss';
 
 const SecurityAccountRecovery = ( props ) => (
-	<Main className="security-account-recovery">
+	<Main className="security security-account-recovery">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
 

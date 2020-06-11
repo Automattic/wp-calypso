@@ -29,11 +29,11 @@ const Connect: FunctionComponent< Props > = ( { authUrl } ) => {
 				<JetpackLogo full monochrome={ false } size={ 72 } />
 				<p>
 					{ translate(
-						'Welcome to Jetpack Cloud. Authorize with your WordPress.com credentials to get started.'
+						'Welcome to Jetpack. Authorize with your WordPress.com credentials to get started.'
 					) }
 				</p>
 				<Button primary href={ authUrl }>
-					{ translate( 'Authorize Jetpack Cloud' ) }
+					{ translate( 'Authorize Jetpack' ) }
 				</Button>
 			</div>
 		</Main>

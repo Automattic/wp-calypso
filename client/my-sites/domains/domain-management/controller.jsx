@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
 import page from 'page';
 import React from 'react';
 
@@ -18,9 +17,9 @@ import {
 	domainManagementEditContactInfo,
 	domainManagementList,
 	domainManagementNameServers,
-	domainManagementPrimaryDomain,
 	domainManagementRedirectSettings,
 	domainManagementSecurity,
+	domainManagementSiteRedirect,
 	domainManagementTransfer,
 	domainManagementTransferIn,
 	domainManagementTransferOut,
@@ -61,18 +60,11 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
-		const isTransfer = includes( pageContext.path, '/transfer/in/' );
-		const component = isTransfer ? DomainManagement.TransferIn : DomainManagement.Edit;
-
 		pageContext.primary = (
 			<DomainManagementData
-				analyticsPath={
-					isTransfer
-						? domainManagementTransferIn( ':site', ':domain' )
-						: domainManagementEdit( ':site', ':domain' )
-				}
+				analyticsPath={ domainManagementEdit( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ component }
+				component={ DomainManagement.Edit }
 				context={ pageContext }
 				needsCart
 				needsContactDetails
@@ -85,12 +77,30 @@ export default {
 		next();
 	},
 
-	domainManagementPrimaryDomain: function ( pageContext, next ) {
+	domainManagementSiteRedirect( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
-				analyticsPath={ domainManagementPrimaryDomain( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Set Primary Domain"
-				component={ DomainManagement.PrimaryDomain }
+				analyticsPath={ domainManagementSiteRedirect( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Edit"
+				component={ DomainManagement.SiteRedirect }
+				context={ pageContext }
+				needsCart
+				needsContactDetails
+				needsDomains
+				needsPlans
+				needsProductsList
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+			/>
+		);
+		next();
+	},
+
+	domainManagementTransferIn( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementTransferIn( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Edit"
+				component={ DomainManagement.TransferIn }
 				context={ pageContext }
 				needsCart
 				needsContactDetails

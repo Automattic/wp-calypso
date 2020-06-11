@@ -20,14 +20,13 @@ import {
 	myMemberships,
 	purchasesRoot,
 } from 'me/purchases/paths';
-import { domainManagementUserRoot } from 'my-sites/domains/paths';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import userUtilities from 'lib/user/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/logout/actions';
@@ -38,11 +37,6 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Module variables
- */
-const user = userFactory();
 
 class MeSidebar extends React.Component {
 	onNavigate = () => {
@@ -65,7 +59,7 @@ class MeSidebar extends React.Component {
 		if ( config.isEnabled( 'login/wp-login' ) ) {
 			try {
 				const { redirect_to } = await this.props.logoutUser( redirectTo );
-				await user.clear();
+				await user().clear();
 				window.location.href = redirect_to || '/';
 			} catch {
 				// The logout endpoint might fail if the nonce has expired.
@@ -100,7 +94,6 @@ class MeSidebar extends React.Component {
 			[ myMemberships ]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
-			[ domainManagementUserRoot() ]: 'domains',
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
 		let selected;
@@ -165,17 +158,6 @@ class MeSidebar extends React.Component {
 								onNavigate={ this.onNavigate }
 								preloadSectionName="purchases"
 							/>
-
-							{ config.isEnabled( 'manage/all-domains' ) && (
-								<SidebarItem
-									selected={ selected === 'domains' }
-									link={ domainManagementUserRoot() }
-									label={ translate( 'Domains' ) }
-									materialIcon="language"
-									onNavigate={ this.onNavigate }
-									preloadSectionName="domains"
-								/>
-							) }
 
 							<SidebarItem
 								selected={ selected === 'security' }

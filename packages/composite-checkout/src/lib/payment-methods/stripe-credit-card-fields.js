@@ -7,6 +7,8 @@ import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 import debugFactory from 'debug';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -26,7 +28,6 @@ import {
 	renderDisplayValueMarkdown,
 	useEvents,
 } from '../../public-api';
-import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import Spinner from '../../components/spinner';
 import { useFormStatus } from '../form-status';
@@ -129,7 +130,7 @@ export function createStripePaymentMethodStore() {
 
 export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 	return {
-		id: 'stripe-card',
+		id: 'card',
 		label: <CreditCardLabel />,
 		activeContent: (
 			<StripeCreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
@@ -142,12 +143,12 @@ export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 			/>
 		),
 		inactiveContent: <StripeSummary />,
-		getAriaLabel: ( localize ) => localize( 'Credit Card' ),
+		getAriaLabel: ( __ ) => __( 'Credit Card' ),
 	};
 }
 
 function StripeCreditCardFields() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
@@ -204,7 +205,7 @@ function StripeCreditCardFields() {
 
 			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
 				<Label>
-					<LabelText>{ localize( 'Card number' ) }</LabelText>
+					<LabelText>{ __( 'Card number' ) }</LabelText>
 					<StripeFieldWrapper hasError={ cardNumberError }>
 						<CardNumberElement
 							style={ cardNumberStyle }
@@ -223,7 +224,7 @@ function StripeCreditCardFields() {
 				<FieldRow gap="4%" columnWidths="48% 48%">
 					<LeftColumn>
 						<Label>
-							<LabelText>{ localize( 'Expiry date' ) }</LabelText>
+							<LabelText>{ __( 'Expiry date' ) }</LabelText>
 							<StripeFieldWrapper hasError={ cardExpiryError }>
 								<CardExpiryElement
 									style={ cardNumberStyle }
@@ -237,7 +238,7 @@ function StripeCreditCardFields() {
 					</LeftColumn>
 					<RightColumn>
 						<Label>
-							<LabelText>{ localize( 'Security code' ) }</LabelText>
+							<LabelText>{ __( 'Security code' ) }</LabelText>
 							<GridRow gap="4%" columnWidths="67% 29%">
 								<LeftColumn>
 									<StripeFieldWrapper hasError={ cardCvcError }>
@@ -262,12 +263,12 @@ function StripeCreditCardFields() {
 					id="cardholderName"
 					type="Text"
 					autoComplete="cc-name"
-					label={ localize( 'Cardholder name' ) }
-					description={ localize( "Enter your name as it's written on the card" ) }
+					label={ __( 'Cardholder name' ) }
+					description={ __( "Enter your name as it's written on the card" ) }
 					value={ cardholderName?.value ?? '' }
 					onChange={ changeCardholderName }
 					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
-					errorMessage={ localize( 'This field is required' ) }
+					errorMessage={ __( 'This field is required' ) }
 				/>
 			</CreditCardFieldsWrapper>
 		</StripeFields>
@@ -281,7 +282,7 @@ const StripeFields = styled.div`
 const CreditCardFieldsWrapper = styled.div`
 	padding: 16px;
 	position: relative;
-	display: ${( props ) => ( props.isLoaded ? 'block' : 'none') };
+	display: ${ ( props ) => ( props.isLoaded ? 'block' : 'none' ) };
 	position: relative;
 
 	:after {
@@ -289,7 +290,7 @@ const CreditCardFieldsWrapper = styled.div`
 		width: calc( 100% - 6px );
 		height: 1px;
 		content: '';
-		background: ${( props ) => props.theme.colors.borderColorLight};
+		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		position: absolute;
 		top: 0;
 		left: 3px;
@@ -325,9 +326,9 @@ const Label = styled.label`
 const LabelText = styled.span`
 	display: block;
 	font-size: 14px;
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	margin-bottom: 8px;
-	color: ${( props ) => props.theme.colors.textColor};
+	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
 const StripeFieldWrapper = styled.span`
@@ -340,17 +341,18 @@ const StripeFieldWrapper = styled.span`
 		font-size: 16px;
 		box-sizing: border-box;
 		border: 1px solid
-			${( props ) => ( props.hasError ? props.theme.colors.error : props.theme.colors.borderColor) };
+			${ ( props ) =>
+				props.hasError ? props.theme.colors.error : props.theme.colors.borderColor };
 		padding: 12px 10px;
 		line-height: 1.2;
 	}
 
 	.StripeElement--focus {
-		outline: ${( props ) => props.theme.colors.outline} solid 2px;
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 
 	.StripeElement--focus.StripeElement--invalid {
-		outline: ${( props ) => props.theme.colors.error} solid 2px;
+		outline: ${ ( props ) => props.theme.colors.error } solid 2px;
 	}
 `;
 
@@ -358,9 +360,9 @@ const StripeErrorMessage = styled.span`
 	font-size: 14px;
 	margin-top: 8px;
 	font-style: italic;
-	color: ${( props ) => props.theme.colors.error};
+	color: ${ ( props ) => props.theme.colors.error };
 	display: block;
-	font-weight: ${( props ) => props.theme.weights.normal};
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 `;
 
 function LoadingFields() {
@@ -373,56 +375,23 @@ function LoadingFields() {
 }
 
 function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
-	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { formStatus } = useFormStatus();
 	const {
 		transactionStatus,
 		transactionLastResponse,
-		transactionError,
 		resetTransaction,
 		setTransactionComplete,
 		setTransactionAuthorizing,
 		setTransactionRedirecting,
 		setTransactionError,
+		setTransactionPending,
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
-
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			debug( 'showing error', transactionError );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: transactionError || '' } );
-			resetTransaction();
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'marking complete' );
-			setFormComplete();
-		}
-		if ( transactionStatus === 'redirecting' ) {
-			debug( 'redirecting' );
-			showInfoMessage( localize( 'Redirecting...' ) );
-			// TODO: make this redirect able to be mocked
-			window.location = transactionLastResponse.redirect_url;
-		}
-	}, [
-		onEvent,
-		resetTransaction,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		showInfoMessage,
-		transactionStatus,
-		transactionError,
-		transactionLastResponse,
-		localize,
-	] );
 
 	useEffect( () => {
 		let isSubscribed = true;
@@ -439,13 +408,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 					isSubscribed && setTransactionComplete();
 				} )
 				.catch( ( error ) => {
-					debug( 'showing error for auth', error.message );
-					showErrorMessage(
-						localize( 'Authorization failed for that card. Please try a different payment method.' )
-					);
-					onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error.message } );
 					isSubscribed && setTransactionError( error.message );
-					isSubscribed && setFormReady();
 				} );
 		}
 
@@ -454,23 +417,21 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 		onEvent,
 		setTransactionComplete,
 		resetTransaction,
-		setFormReady,
 		showInfoMessage,
 		showErrorMessage,
 		transactionStatus,
 		transactionLastResponse,
 		setTransactionError,
 		stripeConfiguration,
-		localize,
 	] );
 
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isCreditCardFormValid( store ) ) {
+				if ( isCreditCardFormValid( store, __ ) ) {
 					debug( 'submitting stripe payment' );
-					setFormSubmitting();
+					setTransactionPending();
 					onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
 					submitTransaction( {
 						stripe,
@@ -487,7 +448,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 							}
 							if ( stripeResponse?.redirect_url ) {
 								debug( 'stripe transaction requires redirect' );
-								setTransactionRedirecting( stripeResponse );
+								setTransactionRedirecting( stripeResponse.redirect_url );
 								return;
 							}
 							debug( 'stripe transaction is successful' );
@@ -495,14 +456,10 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 						} )
 						.catch( ( error ) => {
 							setTransactionError( error.message );
-							setFormReady();
-							onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: error.message } );
-							debug( 'showing error for submit', error.message );
-							showErrorMessage( error.message );
 						} );
 				}
 			} }
-			buttonState={ disabled ? 'disabled' : 'primary' }
+			buttonType="primary"
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
@@ -512,14 +469,14 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 }
 
 function ButtonContents( { formStatus, total } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
-		return localize( 'Processing…' );
+		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
+		return sprintf( __( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	}
-	return localize( 'Please wait…' );
+	return __( 'Please wait…' );
 }
 
 function StripeSummary() {
@@ -536,7 +493,7 @@ function StripeSummary() {
 	);
 }
 
-function isCreditCardFormValid( store ) {
+function isCreditCardFormValid( store, __ ) {
 	const cardholderName = store.selectors.getCardholderName( store.getState() );
 	const errors = store.selectors.getCardDataErrors( store.getState() );
 	const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
@@ -548,8 +505,8 @@ function isCreditCardFormValid( store ) {
 	if ( incompleteFieldKeys.length > 0 ) {
 		// Show "this field is required" for each incomplete field
 		incompleteFieldKeys.map( ( key ) =>
-			store.dispatch( store.actions.setCardDataError( key, 'This field is required' ) )
-		); // TODO: localize this message
+			store.dispatch( store.actions.setCardDataError( key, __( 'This field is required' ) ) )
+		);
 	}
 	if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 		return false;
@@ -558,10 +515,10 @@ function isCreditCardFormValid( store ) {
 }
 
 function CreditCardLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	return (
 		<React.Fragment>
-			<span>{ localize( 'Credit or debit card' ) }</span>
+			<span>{ __( 'Credit or debit card' ) }</span>
 			<CreditCardLogos />
 		</React.Fragment>
 	);
@@ -580,15 +537,14 @@ function CreditCardLogos() {
 }
 
 function CreditCardLoading() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<CreditCardFieldsWrapper isLoaded={ true }>
 			<CreditCardField
 				id="credit-card-number"
 				type="Number"
-				label={ localize( 'Card number' ) }
-				placeholder="1234 1234 1234 1234"
+				label={ __( 'Card number' ) }
 				icon={ <LockIcon /> }
 				isIconVisible={ true }
 				autoComplete="cc-number"
@@ -600,8 +556,7 @@ function CreditCardLoading() {
 					<Field
 						id="card-expiry"
 						type="Number"
-						label={ localize( 'Expiry date' ) }
-						placeholder="MM / YY"
+						label={ __( 'Expiry date' ) }
 						autoComplete="cc-exp"
 						value={ '' }
 						disabled={ true }
@@ -609,13 +564,12 @@ function CreditCardLoading() {
 				</LeftColumn>
 				<RightColumn>
 					<label>
-						<LabelText>{ localize( 'Security code' ) }</LabelText>
+						<LabelText>{ __( 'Security code' ) }</LabelText>
 						<GridRow gap="4%" columnWidths="67% 29%">
 							<LeftColumn>
 								<Field
 									id="card-cvc"
 									type="Number"
-									placeholder="CVC"
 									autoComplete="cc-csc"
 									value={ '' }
 									disabled={ true }
@@ -632,8 +586,8 @@ function CreditCardLoading() {
 			<CreditCardField
 				id="card-holder-name"
 				type="Text"
-				label={ localize( 'Cardholder name' ) }
-				description={ localize( "Enter your name as it's written on the card" ) }
+				label={ __( 'Cardholder name' ) }
+				description={ __( "Enter your name as it's written on the card" ) }
 				autoComplete="cc-name"
 				value={ '' }
 				disabled={ true }
@@ -673,7 +627,7 @@ const LockIconGraphic = styled.svg`
 `;
 
 function CVV( { className } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<svg
@@ -689,7 +643,7 @@ function CVV( { className } ) {
 			height="41"
 		>
 			<title id="cvv-image-title">
-				{ localize( 'An image of the back of the card where you find the security code' ) }
+				{ __( 'An image of the back of the card where you find the security code' ) }
 			</title>
 			<rect x="0" y="0" width="67.0794" height="45" rx="3" fill="#D7DADE" />
 			<rect x="0" y="4" width="67.0794" height="10.4828" fill="#23282D" />

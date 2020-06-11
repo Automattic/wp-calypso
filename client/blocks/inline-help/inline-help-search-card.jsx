@@ -17,6 +17,7 @@ import {
 	getInlineHelpCurrentlySelectedLink,
 	getSelectedResultIndex,
 	isRequestingInlineHelpSearchResultsForQuery,
+	getInlineHelpCurrentlySelectedResult,
 } from 'state/inline-help/selectors';
 import {
 	requestInlineHelpSearchResults,
@@ -62,24 +63,38 @@ class InlineHelpSearchCard extends Component {
 				break;
 			case 'Enter': {
 				const hasSelection = this.props.selectedResultIndex >= 0;
-				hasSelection && this.props.openResult( event );
+				hasSelection && this.props.openResult( event, this.props.selectedResult );
 				break;
 			}
 		}
 	};
 
-	onSearch = ( searchQuery ) => {
+	searchHelperHandler = ( searchQuery ) => {
+		const query = searchQuery.trim();
+		if ( ! query || ! query.length ) {
+			return debug( 'empty query. Skip recording tracks-event.' );
+		}
+
 		debug( 'search query received: ', searchQuery );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_search', { search_query: searchQuery } );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
+			search_query: searchQuery,
+			location: 'inline-help-popover',
+		} );
+
+		// Make a search
 		this.props.requestInlineHelpSearchResults( searchQuery );
 	};
+
+	componentDidMount() {
+		this.props.requestInlineHelpSearchResults();
+	}
 
 	render() {
 		return (
 			<SearchCard
 				searching={ this.props.isSearching }
 				initialValue={ this.props.query }
-				onSearch={ this.onSearch }
+				onSearch={ this.searchHelperHandler }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
 				delaySearch={ true }
@@ -92,6 +107,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
 	selectedLink: getInlineHelpCurrentlySelectedLink( state ),
 	selectedResultIndex: getSelectedResultIndex( state ),
+	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,

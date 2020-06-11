@@ -48,7 +48,7 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features__item {
 		border-bottom: solid 1px var( --color-neutral-5 );
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.plan-features__item:last-child {
@@ -78,7 +78,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__mobile-plan {
-	font-size: 14px;
+	font-size: $font-body-small;
 	border: solid 1px var( --color-neutral-5 );
 	background-color: var( --color-surface );
 	margin-bottom: 24px;
@@ -92,7 +92,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table {
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	border-spacing: 16px 0;
 	margin-top: -16px;
@@ -442,7 +442,7 @@ $plan-features-sidebar-width: 272px;
 	display: flex;
 	margin: 0 24px;
 	padding: 12px 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-neutral-70 );
 
 	@include breakpoint-deprecated( '<960px' ) {

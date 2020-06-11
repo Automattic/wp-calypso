@@ -171,14 +171,12 @@ export default function () {
 
 	if ( config.isEnabled( 'manage/all-domains' ) ) {
 		page(
-			paths.domainManagementUserRoot(),
+			paths.domainManagementRoot(),
 			...getCommonHandlers( { noSitePath: false } ),
 			domainManagementController.domainManagementListAllSites,
 			makeLayout,
 			clientRender
 		);
-
-		page.redirect( paths.domainManagementRoot(), paths.domainManagementUserRoot() );
 	} else {
 		page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
 	}
@@ -194,7 +192,7 @@ export default function () {
 	registerMultiPage( {
 		paths: [
 			paths.domainManagementEdit( ':site', ':domain' ),
-			paths.domainManagementTransferIn( ':site', ':domain' ),
+			paths.domainManagementEdit( ':site', ':domain', null, paths.domainManagementRoot() ),
 		],
 		handlers: [
 			...getCommonHandlers(),
@@ -205,9 +203,17 @@ export default function () {
 	} );
 
 	page(
-		paths.domainManagementPrimaryDomain( ':site', ':domain' ),
+		paths.domainManagementSiteRedirect( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementPrimaryDomain,
+		domainManagementController.domainManagementSiteRedirect,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementTransferIn( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementTransferIn,
 		makeLayout,
 		clientRender
 	);

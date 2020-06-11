@@ -1,4 +1,7 @@
-type FontPair = import('../../constants').FontPair;
+/**
+ * Internal dependencies
+ */
+import type { FontPair } from '../../constants';
 
 export interface SiteVertical {
 	/**

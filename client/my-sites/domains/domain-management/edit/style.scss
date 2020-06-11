@@ -66,8 +66,6 @@
 	.domain-status__card {
 		h2 {
 			font-size: 32px;
-			overflow: hidden;
-			text-overflow: ellipsis;
 
 			@include breakpoint-deprecated( '<480px' ) {
 				&.mobile-m {
@@ -80,7 +78,7 @@
 					font-size: 20px;
 				}
 				&.mobile-xxl {
-					font-size: 16px;
+					font-size: $font-body;
 				}
 			}
 
@@ -95,13 +93,30 @@
 					font-size: 20px;
 				}
 				&.desktop-xxl {
-					font-size: 16px;
+					font-size: $font-body;
+				}
+			}
+
+			a {
+				color: currentColor;
+				display: flex;
+				align-items: baseline;
+
+				span {
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+
+				.gridicons-external {
+					margin-left: 4px;
+					transform: translateY( 1px );
+					flex-shrink: 0;
 				}
 			}
 		}
 
 		> .domain-status__icon {
-			font-size: 16px;
+			font-size: $font-body;
 			display: flex;
 			align-items: center;
 			border-bottom: 0;
@@ -116,7 +131,7 @@
 		}
 
 		.mapped-domain-type__small-message {
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 
 

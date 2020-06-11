@@ -162,7 +162,7 @@ class TwoStep extends Component {
 
 	render() {
 		return (
-			<Main className="two-step">
+			<Main className="security two-step">
 				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
 				<MeSidebarNavigation />
 

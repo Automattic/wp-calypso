@@ -18,6 +18,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import type { Site as SiteStore, User as UserStore } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -26,7 +27,7 @@ import GUTENBOARDING_BASE_NAME from './basename.json';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
-import { path, Step } from './path';
+import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
 import { USER_STORE } from './stores/user';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
@@ -55,8 +56,8 @@ const USE_TRANSLATION_CHUNKS: string =
 	config.isEnabled( 'use-translation-chunks' ) ||
 	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
-type User = import('@automattic/data-stores').User.CurrentUser;
-type Site = import('@automattic/data-stores').Site.SiteDetails;
+type User = UserStore.CurrentUser;
+type Site = SiteStore.SiteDetails;
 
 interface AppWindow extends Window {
 	currentUser?: User;
@@ -93,19 +94,18 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	let locale = DEFAULT_LOCALE_SLUG;
+	let i18nLocaleData;
 	try {
 		const [ userLocale, { translatedChunks, ...localeData } ]: (
 			| string
 			| any
 		 )[] = await getLocale();
+		i18nLocaleData = localeData;
 		setLocaleData( localeData );
 
 		if ( USE_TRANSLATION_CHUNKS ) {
 			await setupTranslationChunks( userLocale, translatedChunks );
 		}
-
-		locale = userLocale;
 
 		// FIXME: Use rtl detection tooling
 		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
@@ -118,7 +118,7 @@ window.AppBoot = async () => {
 	} catch {}
 
 	ReactDom.render(
-		<I18nProvider locale={ locale }>
+		<I18nProvider localeData={ i18nLocaleData }>
 			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
 				<Switch>
 					<Route exact path={ path }>

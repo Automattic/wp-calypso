@@ -89,7 +89,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		@include breakpoint-deprecated( '<660px' ) {
 			.button {
-				font-size: 16px;
+				font-size: $font-body;
 				padding-top: 12px;
 				padding-bottom: 14px;
 			}
@@ -377,7 +377,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .example-components__connect-jetpack {
 	.example-components__content-wp-admin-plugin-name {
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin-bottom: 8px;
 	}
 
@@ -977,7 +977,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		.formatted-header__subtitle {
 			color: var( --color-primary-10 );
 			margin-top: 1em;
-			font-size: 16px;
+			font-size: $font-body;
 			line-height: 24px;
 			font-weight: 400;
 		}
@@ -1046,7 +1046,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			text-align: center;
 			text-decoration: underline;
 			color: var( --color-neutral-60 );
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 
 		.signup-form__social {
@@ -1197,13 +1197,13 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 	}
 
 	.product-card__billing-timeframe {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.product-card__header {
 		.plan-price,
 		.plan-price * {
-			font-size: 16px;
+			font-size: $font-body;
 			line-height: 21px;
 		}
 	}

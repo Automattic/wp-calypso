@@ -38,7 +38,7 @@ jest.mock( 'lib/impure-lodash', () => ( {
 			return false;
 		}
 
-		return require.requireActual( 'lodash' ).isPlainObject( obj );
+		return jest.requireActual( 'lodash' ).isPlainObject( obj );
 	},
 	uniqueId: () => 'media-1',
 } ) );

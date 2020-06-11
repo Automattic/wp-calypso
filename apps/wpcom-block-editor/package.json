@@ -21,7 +21,9 @@
 		"build:prod": "check-npm-client && NODE_ENV=production yarn run bundle --",
 		"build": "check-npm-client && npm-run-all --parallel \"build:* -- {@}\" --",
 		"clean": "check-npm-client && npx rimraf dist",
-		"prebuild": "check-npm-client && yarn run clean"
+		"prebuild": "check-npm-client && yarn run clean",
+		"dev": "check-npm-client && node bin/npm-run-build.js --dev",
+		"wpcom-sync": "check-npm-client && ./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
 		"debug": "^4.1.1"

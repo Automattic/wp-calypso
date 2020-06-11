@@ -20,61 +20,90 @@ function getTipDescription( text, conversion, textFallback ) {
 const tips = [
 	{
 		context: 'theme',
-		keywords: [ 'theme', __( 'theme' ) ],
+		keywords: [ 'theme', __( 'theme', 'full-site-editing' ) ],
 		description: getTipDescription(
-			__( 'You can visit the <a>theme directory</a> to select a different design for your site.' ),
+			__(
+				'You can visit the <a>theme directory</a> to select a different design for your site.',
+				'full-site-editing'
+			),
 			{
 				a: <TipLink section="themes" />,
 			},
-			__( 'You can visit the theme directory to select a different design for your site.' )
+			__(
+				'You can visit the theme directory to select a different design for your site.',
+				'full-site-editing'
+			)
 		),
 		permission: 'settings',
 	},
 	{
 		context: 'css',
-		keywords: [ 'css', __( 'css' ), 'style', __( 'style' ) ],
+		keywords: [
+			'css',
+			__( 'css', 'full-site-editing' ),
+			'style',
+			__( 'style', 'full-site-editing' ),
+		],
 		description: getTipDescription(
-			__( 'You can visit the the <a>Customizer</a> to edit the CSS on your site.' ),
+			__(
+				'You can visit the the <a>Customizer</a> to edit the CSS on your site.',
+				'full-site-editing'
+			),
 			{
 				a: <TipLink section="customizer" subsection="custom_css" />,
 			},
-			__( 'You can visit the the Customizer to edit the CSS on your site.' )
+			__( 'You can visit the the Customizer to edit the CSS on your site.', 'full-site-editing' )
 		),
 		permission: 'settings',
 	},
 	{
 		context: 'plugin',
-		keywords: [ 'plugin', __( 'plugin' ) ],
+		keywords: [ 'plugin', __( 'plugin', 'full-site-editing' ) ],
 		description: getTipDescription(
-			__( 'You can visit the <a>plugin directory</a> to get started with installing new plugins.' ),
+			__(
+				'You can visit the <a>plugin directory</a> to get started with installing new plugins.',
+				'full-site-editing'
+			),
 			{
 				a: <TipLink section="plugins" />,
 			},
-			__( 'You can visit the plugin directory to get started with installing new plugins.' )
+			__(
+				'You can visit the plugin directory to get started with installing new plugins.',
+				'full-site-editing'
+			)
 		),
 		permission: 'settings',
 	},
 	{
 		context: 'header',
-		keywords: [ 'header', __( 'header' ) ],
+		keywords: [ 'header', __( 'header', 'full-site-editing' ) ],
 		description: getTipDescription(
-			__( 'You can visit the the <a>Customizer</a> to edit your logo and site title.' ),
+			__(
+				'You can visit the the <a>Customizer</a> to edit your logo and site title.',
+				'full-site-editing'
+			),
 			{
 				a: <TipLink section="customizer" subsection="title_tagline" />,
 			},
-			__( 'You can visit the the Customizer to edit your logo and site title.' )
+			__(
+				'You can visit the the Customizer to edit your logo and site title.',
+				'full-site-editing'
+			)
 		),
 		permission: 'settings',
 	},
 	{
 		context: 'color',
-		keywords: [ 'color', __( 'color' ) ],
+		keywords: [ 'color', __( 'color', 'full-site-editing' ) ],
 		description: getTipDescription(
-			__( 'You can visit the the <a>Customizer</a> to edit the colors on your site.' ),
+			__(
+				'You can visit the the <a>Customizer</a> to edit the colors on your site.',
+				'full-site-editing'
+			),
 			{
 				a: <TipLink section="customizer" subsection="colors" />,
 			},
-			__( 'You can visit the the Customizer to edit the colors on your site.' )
+			__( 'You can visit the the Customizer to edit the colors on your site.', 'full-site-editing' )
 		),
 		permission: 'settings',
 	},

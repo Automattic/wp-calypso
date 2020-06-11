@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import { startsWith } from 'lodash';
+import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -78,7 +78,7 @@ class CurrentPlan extends Component {
 	}
 
 	renderThankYou() {
-		const { currentPlan, product } = this.props;
+		const { currentPlan, product, selectedSite } = this.props;
 
 		if ( startsWith( product, 'jetpack_backup' ) ) {
 			return <BackupProductThankYou />;
@@ -89,7 +89,9 @@ class CurrentPlan extends Component {
 		}
 
 		if ( startsWith( product, 'jetpack_search' ) ) {
-			return <SearchProductThankYou />;
+			const jetpackVersion = get( selectedSite, 'options.jetpack_version', 0 );
+
+			return <SearchProductThankYou { ...{ jetpackVersion } } />;
 		}
 
 		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {

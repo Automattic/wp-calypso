@@ -5,11 +5,11 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
 import joinClasses from '../lib/join-classes';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useFormStatus } from '../lib/form-status';
@@ -93,11 +93,9 @@ function DefaultCheckoutSteps() {
 					activeStepContent={ orderSummaryStep.activeStepContent }
 					completeStepContent={ orderSummaryStep.completeStepContent }
 					titleContent={ orderSummaryStep.titleContent }
-					errorMessage={ 'There was an error with this step.' }
 					isStepActive={ false }
 					isStepComplete={ true }
 					stepNumber={ 1 }
-					totalSteps={ 1 }
 					stepId={ 'order-summary-step' }
 					className={ orderSummaryStep.className }
 				/>
@@ -132,21 +130,21 @@ export function CheckoutSummaryArea( { children, className } ) {
 }
 
 export const CheckoutSummaryCard = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	background: ${ ( props ) => props.theme.colors.surface };
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		border-bottom: none 0;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	}
 `;
 
 export function CheckoutStepArea( { children, className } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const { formStatus } = useFormStatus();
 
@@ -165,7 +163,7 @@ export function CheckoutStepArea( { children, className } ) {
 
 			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
 				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with the submit button.' ) }
+					errorMessage={ __( 'There was a problem with the submit button.' ) }
 					onError={ onSubmitButtonLoadError }
 				>
 					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
@@ -175,7 +173,7 @@ export function CheckoutStepArea( { children, className } ) {
 	);
 }
 
-export function CheckoutSteps( { children } ) {
+export function CheckoutSteps( { children, areStepsActive = true } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
 
@@ -201,7 +199,7 @@ export function CheckoutSteps( { children } ) {
 	return steps.map( ( child ) => {
 		stepNumber = nextStepNumber;
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
-		const isStepActive = activeStepNumber === stepNumber;
+		const isStepActive = areStepsActive && activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 		return (
 			<CheckoutSingleStepDataContext.Provider
@@ -211,6 +209,7 @@ export function CheckoutSteps( { children } ) {
 					nextStepNumber,
 					isStepActive,
 					isStepComplete,
+					areStepsActive,
 				} }
 			>
 				{ child }
@@ -218,6 +217,10 @@ export function CheckoutSteps( { children } ) {
 		);
 	} );
 }
+
+CheckoutSteps.propTypes = {
+	areStepsActive: PropTypes.bool,
+};
 
 export function CheckoutStep( {
 	activeStepContent,
@@ -233,11 +236,11 @@ export function CheckoutStep( {
 	validatingButtonText,
 	validatingButtonAriaLabel,
 } ) {
-	const localize = useLocalize();
-	const { totalSteps, setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
+	const { __ } = useI18n();
+	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
 	);
-	const { stepNumber, nextStepNumber, isStepActive, isStepComplete } = useContext(
+	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
@@ -275,8 +278,8 @@ export function CheckoutStep( {
 
 	const classNames = [
 		'checkout-step',
-		...( isStepActive ? [ 'checkout-step--is-active' ] : [] ),
-		...( isStepComplete ? [ 'checkout-step--is-complete' ] : [] ),
+		...( isStepActive ? [ 'is-active' ] : [] ),
+		...( isStepComplete ? [ 'is-complete' ] : [] ),
 		...( className ? [ className ] : [] ),
 	];
 
@@ -294,30 +297,31 @@ export function CheckoutStep( {
 
 	return (
 		<CheckoutStepBody
-			errorMessage={ localize( 'There was an error with this step.' ) }
 			onError={ onError }
-			editButtonText={ editButtonText || localize( 'Edit' ) }
-			editButtonAriaLabel={ editButtonAriaLabel || localize( 'Edit this step' ) }
-			nextStepButtonText={ nextStepButtonText || localize( 'Continue' ) }
-			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || localize( 'Continue to the next step' ) }
-			validatingButtonText={ validatingButtonText || localize( 'Please wait…' ) }
-			validatingButtonAriaLabel={ validatingButtonAriaLabel || localize( 'Please wait…' ) }
+			editButtonText={ editButtonText || __( 'Edit' ) }
+			editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
+			nextStepButtonText={ nextStepButtonText || __( 'Continue' ) }
+			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || __( 'Continue to the next step' ) }
+			validatingButtonText={ validatingButtonText || __( 'Please wait…' ) }
+			validatingButtonAriaLabel={ validatingButtonAriaLabel || __( 'Please wait…' ) }
 			isStepActive={ isStepActive }
 			isStepComplete={ isStepComplete }
 			stepNumber={ stepNumber }
-			totalSteps={ totalSteps }
 			stepId={ stepId }
 			titleContent={ titleContent }
-			goToThisStep={ goToThisStep }
-			goToNextStep={ goToNextStep }
+			goToThisStep={ areStepsActive ? goToThisStep : undefined }
+			goToNextStep={ nextStepNumber > 0 ? goToNextStep : undefined }
 			activeStepContent={ activeStepContent }
-			nextStepNumber={ nextStepNumber }
 			formStatus={ formStatus }
 			completeStepContent={ completeStepContent }
 			className={ joinClasses( classNames ) }
 		/>
 	);
 }
+
+CheckoutStep.propTypes = {
+	nextStepNumber: PropTypes.number,
+};
 
 export function CheckoutStepBody( {
 	errorMessage,
@@ -331,24 +335,25 @@ export function CheckoutStepBody( {
 	isStepComplete,
 	className,
 	stepNumber,
-	totalSteps,
 	stepId,
 	titleContent,
 	goToThisStep,
 	goToNextStep,
 	activeStepContent,
-	nextStepNumber,
 	formStatus,
 	completeStepContent,
 	onError,
 } ) {
+	const { __ } = useI18n();
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
+		<CheckoutErrorBoundary
+			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
+			onError={ onError }
+		>
 			<StepWrapperUI
 				isActive={ isStepActive }
 				isComplete={ isStepComplete }
 				className={ className }
-				isFinalStep={ stepNumber === totalSteps }
 			>
 				<CheckoutStepHeader
 					id={ stepId }
@@ -366,7 +371,7 @@ export function CheckoutStepBody( {
 				/>
 				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
 					{ activeStepContent }
-					{ nextStepNumber > 0 && goToNextStep && isStepActive && (
+					{ goToNextStep && isStepActive && (
 						<CheckoutNextStepButton
 							onClick={ goToNextStep }
 							value={
@@ -379,7 +384,7 @@ export function CheckoutStepBody( {
 									? validatingButtonAriaLabel || 'Please wait…'
 									: nextStepButtonAriaLabel || 'Continue to next step'
 							}
-							buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
+							buttonType="primary"
 							disabled={ formStatus !== 'ready' }
 							isBusy={ formStatus === 'validating' }
 						/>
@@ -407,21 +412,19 @@ CheckoutStepBody.propTypes = {
 	isStepActive: PropTypes.bool.isRequired,
 	isStepComplete: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	stepNumber: PropTypes.number.isRequired,
-	totalSteps: PropTypes.number.isRequired,
+	stepNumber: PropTypes.number,
 	stepId: PropTypes.string.isRequired,
 	titleContent: PropTypes.node.isRequired,
 	goToThisStep: PropTypes.func,
 	goToNextStep: PropTypes.func,
 	activeStepContent: PropTypes.node,
-	nextStepNumber: PropTypes.number,
 	formStatus: PropTypes.string,
 	completeStepContent: PropTypes.node,
 };
 
 const ContainerUI = styled.div`
 	*:focus {
-		outline: ${( props ) => props.theme.colors.outline} solid 2px;
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 `;
 
@@ -430,11 +433,11 @@ const MainContentUI = styled.div`
 	flex-direction: column;
 	width: 100%;
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		margin: 32px auto;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		align-items: flex-start;
 		flex-direction: row;
 		justify-content: center;
@@ -447,11 +450,11 @@ const CheckoutSummaryUI = styled.div`
 	margin: 0 auto;
 	width: 100%;
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		max-width: 556px;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-left: 24px;
 		margin-right: 0;
 		order: 2;
@@ -460,20 +463,20 @@ const CheckoutSummaryUI = styled.div`
 `;
 
 const CheckoutStepAreaUI = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
+	background: ${ ( props ) => props.theme.colors.surface };
 	box-sizing: border-box;
-	margin: 0 auto ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
+	margin: 0 auto ${ ( props ) => ( props.isLastStepActive ? '100px' : 0 ) };
 	width: 100%;
 
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		max-width: 556px;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin: 0;
 		order: 1;
 		width: 556px;
@@ -481,23 +484,23 @@ const CheckoutStepAreaUI = styled.div`
 `;
 
 const SubmitButtonWrapperUI = styled.div`
-	background: ${( props ) => props.theme.colors.background};
+	background: ${ ( props ) => props.theme.colors.background };
 	padding: 24px;
-	position: ${( props ) => ( props.isLastStepActive ? 'fixed' : 'relative') };
+	position: ${ ( props ) => ( props.isLastStepActive ? 'fixed' : 'relative' ) };
 	bottom: 0;
 	left: 0;
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;
-	border-top-width: ${( props ) => ( props.isLastStepActive ? '1px' : '0') };
+	border-top-width: ${ ( props ) => ( props.isLastStepActive ? '1px' : '0' ) };
 	border-top-style: solid;
-	border-top-color: ${( props ) => props.theme.colors.borderColorLight};
+	border-top-color: ${ ( props ) => props.theme.colors.borderColorLight };
 
 	button {
-		width: ${( props ) => ( props.isLastStepActive ? 'calc( 100% - 60px )' : '100%') };
+		width: ${ ( props ) => ( props.isLastStepActive ? 'calc( 100% - 60px )' : '100%' ) };
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		position: relative;
 		border: 0;
 
@@ -519,13 +522,34 @@ export function useIsStepComplete() {
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
+export function useSetStepComplete() {
+	const { setStepCompleteStatus } = useContext( CheckoutStepDataContext );
+	const setTargetStepCompleteStatus = useCallback(
+		( stepNumber, newStatus ) =>
+			setStepCompleteStatus( ( stepCompleteStatus ) => ( {
+				...stepCompleteStatus,
+				[ stepNumber ]: newStatus,
+			} ) ),
+		[ setStepCompleteStatus ]
+	);
+	return setTargetStepCompleteStatus;
+}
+
 const StepWrapperUI = styled.div`
-	padding-bottom: ${( props ) => ( props.isFinalStep ? '0' : '32px') };
 	position: relative;
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	&.checkout-step {
+		background: ${ ( props ) => props.theme.colors.background };
+	}
+
+	&.checkout-step.is-active,
+	&.checkout-step.is-complete {
+		background: ${ ( props ) => props.theme.colors.surface };
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 24px;
 	}
 `;
@@ -541,7 +565,7 @@ function CheckoutStepHeader( {
 	editButtonText,
 	editButtonAriaLabel,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const shouldShowEditButton = !! onEdit;
 
 	return (
@@ -557,9 +581,13 @@ function CheckoutStepHeader( {
 				{ title }
 			</StepTitle>
 			{ shouldShowEditButton && (
-				<Button buttonState="text-button" onClick={ onEdit } aria-label={ editButtonAriaLabel }>
-					{ editButtonText || localize( 'Edit' ) }
-				</Button>
+				<HeaderEditButton
+					buttonType="text-button"
+					onClick={ onEdit }
+					aria-label={ editButtonAriaLabel }
+				>
+					{ editButtonText || __( 'Edit' ) }
+				</HeaderEditButton>
 			) }
 		</StepHeader>
 	);
@@ -601,12 +629,12 @@ Stepper.propTypes = {
 };
 
 const StepTitle = styled.span`
-	color: ${( props ) =>
-		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor};
-	font-weight: ${( props ) =>
-		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
-	margin-right: ${( props ) => ( props.fullWidth ? '0' : '8px') };
-	flex: ${( props ) => ( props.fullWidth ? '1' : 'inherit') };
+	color: ${ ( props ) =>
+		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor };
+	font-weight: ${ ( props ) =>
+		props.isActive ? props.theme.weights.bold : props.theme.weights.normal };
+	margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
+	flex: ${ ( props ) => ( props.fullWidth ? '1' : 'inherit' ) };
 `;
 
 const StepHeader = styled.h2`
@@ -614,7 +642,7 @@ const StepHeader = styled.h2`
 	display: flex;
 	width: 100%;
 	align-items: center;
-	margin: 0 0 ${( props ) => ( props.isComplete || props.isActive ? '8px' : '0') };
+	margin: 0 0 ${ ( props ) => ( props.isComplete || props.isActive ? '8px' : '0' ) };
 `;
 
 const StepNumberOuterWrapper = styled.div`
@@ -629,7 +657,7 @@ const StepNumberInnerWrapper = styled.div`
 	transform-origin: center center;
 	transition: transform 0.3s 0.1s ease-out;
 	transform-style: preserve-3d;
-	transform: ${( props ) => ( props.isComplete ? 'rotateY(180deg)' : 'rotateY(0)') };
+	transform: ${ ( props ) => ( props.isComplete ? 'rotateY(180deg)' : 'rotateY(0)' ) };
 `;
 
 const StepNumber = styled.div`
@@ -649,7 +677,7 @@ const StepNumber = styled.div`
 	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
-		z-index: ${ ( props ) => ( props.isComplete ? '0' : '1')  };
+		z-index: ${ ( props ) => ( props.isComplete ? '0' : '1' ) };
 	}
 `;
 
@@ -660,12 +688,17 @@ const StepNumberCompleted = styled( StepNumber )`
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
 		backface-visibility: visible;
-		z-index: ${ ( props ) => ( props.isComplete ? '1' : '0')  };
+		z-index: ${ ( props ) => ( props.isComplete ? '1' : '0' ) };
 	}
 
 	svg {
 		margin-top: 4px;
 	}
+`;
+
+const HeaderEditButton = styled( Button )`
+	font-size: 14px;
+	padding-top: 1px;
 `;
 
 function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
@@ -686,15 +719,15 @@ function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
 }
 
 const StepContentUI = styled.div`
-	color: ${( props ) => props.theme.colors.textColor};
-	display: ${( props ) => ( props.isVisible ? 'block' : 'none') };
+	color: ${ ( props ) => props.theme.colors.textColor };
+	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
 `;
 
 const StepSummaryUI = styled.div`
-	color: ${( props ) => props.theme.colors.textColorLight};
+	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
-	display: ${( props ) => ( props.isVisible ? 'block' : 'none') };
+	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
 `;
 

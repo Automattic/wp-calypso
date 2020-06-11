@@ -70,7 +70,7 @@ export async function submitApplePayPayment( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function makePayPalExpressRequest( transactionData, submit ) {
+export async function submitPayPalExpressRequest( transactionData, submit ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 	} );
@@ -148,8 +148,9 @@ export function WordPressCreditsLabel( { credits } ) {
 	return (
 		<React.Fragment>
 			<div>
-				{ translate( 'WordPress.com Credits: %(amount)s', {
+				{ translate( 'WordPress.com Credits: %(amount)s available', {
 					args: { amount: credits.amount.displayValue },
+					comment: "The total value of credits on the user's account",
 				} ) }
 			</div>
 			<WordPressLogo />

@@ -26,7 +26,7 @@
 
 		h1.current-section__site-title {
 			color: var( --color-neutral-70 );
-			font-size: 16px;
+			font-size: $font-body;
 			font-weight: 400;
 			padding-left: 8px;
 		}
@@ -203,7 +203,7 @@ html {
 	}
 
 	h3 {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 600;
 		line-height: 23px;
 
@@ -214,7 +214,7 @@ html {
 	}
 
 	p {
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 24px;
 
 		@include breakpoint-deprecated('>660px') {

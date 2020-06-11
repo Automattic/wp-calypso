@@ -8,6 +8,7 @@
 		"allowJs": false,
 		"jsx": "react",
 		"declaration": true,
+		"declarationMap": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",

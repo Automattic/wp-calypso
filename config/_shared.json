@@ -133,11 +133,12 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false,
-		"scan": false,
-		"backups": false,
-		"jetpack-cloud-settings": false
+		"jetpack-cloud-settings": false,
+		"jetpack-cloud-auth": false
 	},
 	"site_filter": [],
 	"theme": "default",
-	"site_name": "WordPress.com"
+	"site_name": "WordPress.com",
+	"restricted_me_access": true,
+	"theme_color": "#135e96"
 }

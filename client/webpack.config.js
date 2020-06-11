@@ -20,6 +20,7 @@ const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' 
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
+const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const {
 	cssNameFromFilename,
@@ -195,7 +196,13 @@ const webpackConfig = {
 			} ),
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
-				postCssConfig: { path: __dirname },
+				postCssConfig: {
+					path: __dirname,
+					ctx: {
+						transformCssProperties: browserslistEnv === 'defaults',
+						customProperties: calypsoColorSchemes,
+					},
+				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 			} ),
 			{
@@ -311,6 +318,17 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 // Replace `lodash` with `lodash-es`.
 if ( isCalypsoClient ) {
 	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
+}
+
+// Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
+if ( isCalypsoClient ) {
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
+			if ( res.context.includes( '@wordpress/components/' ) ) {
+				res.request = 'components/empty-component';
+			}
+		} )
+	);
 }
 
 if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {

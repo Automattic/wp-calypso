@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Action } from 'redux';
+import type { Action } from 'redux';
 
 export interface CurrentUser {
 	ID: number;

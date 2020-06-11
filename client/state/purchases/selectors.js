@@ -18,6 +18,9 @@ import {
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { TYPE_PERSONAL } from 'lib/plans/constants';
 import { getPlanRawPrice } from 'state/plans/selectors';
+
+import 'state/purchases/init';
+
 /**
  * Return the list of purchases from state object
  *

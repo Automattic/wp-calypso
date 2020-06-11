@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { FunctionKeys } from 'utility-types';
+import type { FunctionKeys } from 'utility-types';
 
 /**
  * Mapped types

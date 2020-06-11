@@ -9,18 +9,32 @@ This plugin should not be confused with the site editor work in core Gutenberg. 
 * `full-site-editing-plugin/`: The root of the FSE plugin.
   - `full-site-editing-plugin.php`: All initialization code should go here.
   - `block-patterns/`: Additional block patterns for Gutenberg.
-  - `blog-posts-block/`: A wrapper for the Newspack Homepage Articles block.
   - `common/`: General functionality which doesn't fit a specific feature and is always executed.
   - `dotcom-fse/`: (_deprecated_) An early experiment for a consistent site editing experience in Gutenberg. (Superceeded by the site-editor work in Gutenberg.)
   - `e2e-test-helpers/`: Functions to assist with e2e tests in Puppeteer.
   - `event-countdown-block/`: A block which counts down to a specified date.
   - `global-styles/`: (_deprecated_) A plugin which adds a global font picker to the editor. (Superceeded by global style work in Gutenberg.)
   - `jetpack-timeline/`: A block which lets you create a timeline of events.
+  - `newspack-blocks/`: Container for newspack blocks such as the carousel block and the blog post block. 
   - `posts-list-block/`: (_deprecated_) A simple block to show a list of posts on a page. (Superceeded by the blog-posts-block.)
   - `site-editor/`: Gutenberg site-editor integration code for WordPress.com.
   - `starter-page-templates/`: Allows you to select different page layouts made of blocks.
   - `wpcom-block-editor-nux/`: WordPress.com-specific NUX dialogue.
 
+## Shared WordPress scripts
+
+WordPress has a mechanism to share scripts. We already depend on many core provided scripts. This plugin also includes its own shared scripts.
+
+The following scripts are made available by the plugin:
+
+- `a8c-fse-common-data-stores`: Import this script to register data stores.
+
+At the moment, scripts are only enqueued for their side effects, i.e. you cannot import anything from them. The imports serve to ensure the script
+is enqueued by WordPress as a script dependency. To depend on a script, add an import:
+
+```js
+import 'a8c-fse-common-data-stores';
+```
 
 ## Build System
 

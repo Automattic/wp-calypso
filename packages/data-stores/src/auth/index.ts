@@ -13,7 +13,7 @@ import reducer, { State } from './reducer';
 import { createActions, ActionsConfig } from './actions';
 import { controls } from './controls';
 import * as selectors from './selectors';
-import { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 
 export * from './types';

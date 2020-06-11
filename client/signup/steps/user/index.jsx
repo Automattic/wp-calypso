@@ -12,7 +12,11 @@ import cookie from 'cookie';
 /**
  * Internal dependencies
  */
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isJetpackCloudOAuth2Client,
+} from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import flows from 'signup/config/flows';
 import SignupForm from 'blocks/signup-form';
@@ -30,6 +34,7 @@ import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'lib/login';
 import { abtest } from 'lib/abtest';
+import JetpackLogo from 'components/jetpack-logo';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -60,6 +65,7 @@ export class UserStep extends Component {
 
 		if (
 			this.props.flowName !== nextProps.flowName ||
+			this.props.locale !== nextProps.locale ||
 			this.props.subHeaderText !== nextProps.subHeaderText
 		) {
 			this.setSubHeaderText( nextProps );
@@ -321,6 +327,15 @@ export class UserStep extends Component {
 						{ translate( 'Create a WordPress.com account' ) }
 					</div>
 				</Fragment>
+			);
+		}
+
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			return (
+				<div className={ classNames( 'signup-form__jetpack-cloud-wrapper' ) }>
+					<JetpackLogo full={ false } size={ 60 } />
+					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
+				</div>
 			);
 		}
 

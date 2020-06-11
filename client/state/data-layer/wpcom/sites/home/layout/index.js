@@ -9,12 +9,16 @@ import { setHomeLayout } from 'state/home/actions';
 import config from 'config';
 
 const requestLayout = ( action ) => {
+	const isDev = config.isEnabled( 'home/layout-dev' ) || action.isDev;
 	return http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/home/layout`,
 			apiNamespace: 'wpcom/v2',
-			...( config.isEnabled( 'home/layout-dev' ) && { query: { dev: true } } ),
+			query: {
+				...( isDev && { dev: true } ),
+				...( isDev && action.forcedView && { view: action.forcedView } ),
+			},
 		},
 		action
 	);

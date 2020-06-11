@@ -65,7 +65,7 @@ $theme-info-height: 54px;
 	flex: 1 1 auto;
 	position: relative;
 	color: var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	padding: 16px 14px;
 	margin: inherit;
@@ -82,7 +82,7 @@ $theme-info-height: 54px;
 	flex: 0 0 auto;
 	padding: 18px 10px 0;
 	color: var( --color-success );
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 600;
 }
 

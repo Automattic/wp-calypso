@@ -145,22 +145,22 @@ function get_footer_credit_options() {
 	 */
 	return apply_filters(
 		'a8c_fse_update_footer_credit_options',
-		[
-			[
-				'label'      => __( 'Proudly powered by WordPress' ),
+		array(
+			array(
+				'label'      => __( 'Proudly powered by WordPress', 'full-site-editing' ),
 				'value'      => 'default',
 				'renderType' => 'text',
-			],
-			[
-				'label'       => __( 'WordPress Icon' ),
+			),
+			array(
+				'label'       => __( 'WordPress Icon', 'full-site-editing' ),
 				'value'       => 'svg',
 				'renderType'  => 'icon',
-				'renderProps' => [
+				'renderProps' => array(
 					'icon'  => 'wordpress',
 					'color' => 'gray',
-				],
-			],
-		]
+				),
+			),
+		)
 	);
 }
 

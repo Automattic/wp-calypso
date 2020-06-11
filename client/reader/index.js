@@ -40,7 +40,11 @@ export async function lazyLoadDependencies() {
 		const lasagnaMiddleware = await import(
 			/* webpackChunkName: "lasagnaMiddleware" */ 'state/lasagna/middleware.js'
 		);
+		const seenPostsMiddleware = await import(
+			/* webpackChunkName: "seenPostsMiddleware" */ 'state/reader/seen-posts/middleware.js'
+		);
 		addMiddleware( lasagnaMiddleware.default );
+		addMiddleware( seenPostsMiddleware.default );
 	}
 }
 
@@ -99,8 +103,11 @@ export default async function () {
 		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
 		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 
-		// old recommendations page
+		// Old recommendations page
 		page( '/recommendations', '/read/search' );
+
+		// Old Freshly Pressed
+		page( '/read/fresh', '/discover' );
 	}
 
 	// Automattic Employee Posts

@@ -62,34 +62,34 @@ type DivProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 const UpsellWrapperUI = styled.div< DivProps >`
-	background: ${( props ) => props.theme.colors.surface};
+	background: ${ ( props ) => props.theme.colors.surface };
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 24px;
 	}
 
 	.cart__upsell-wrapper {
-		@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-			border-left: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-			border-right: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+			border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+			border-right: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		}
 
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-			border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+			border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		}
 	}
 
 	.cart__upsell-header {
-		border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		box-shadow: none;
 		margin-left: 20px;
 		margin-right: 20px;
 		padding-left: 0;
 		padding-right: 0;
 
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			border-top: none;
-			border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+			border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 			margin-left: 0;
 			margin-right: 0;
 			padding-left: 20px;
@@ -97,7 +97,7 @@ const UpsellWrapperUI = styled.div< DivProps >`
 		}
 
 		.section-header__label {
-			color: ${( props ) => props.theme.colors.textColor};
+			color: ${ ( props ) => props.theme.colors.textColor };
 			font-size: 16px;
 		}
 	}
@@ -105,7 +105,7 @@ const UpsellWrapperUI = styled.div< DivProps >`
 	.cart__upsell-body {
 		padding: 0 20px 20px;
 
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			padding: 20px;
 		}
 

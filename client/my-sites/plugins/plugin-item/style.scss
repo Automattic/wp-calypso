@@ -84,7 +84,7 @@
 .plugin-item__title {
 	color: var( --color-neutral-70 );
 	display: block;
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	margin-top: 3px;
 	overflow: hidden;
@@ -140,7 +140,7 @@
 
 .plugin-item__last-updated {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

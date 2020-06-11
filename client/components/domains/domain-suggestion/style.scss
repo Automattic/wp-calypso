@@ -173,7 +173,7 @@
 }
 
 .domain-registration-suggestion__title {
-	font-size: 16px;
+	font-size: $font-body;
 	word-break: break-all;
 
 	@include breakpoint-deprecated( '>480px' ) {

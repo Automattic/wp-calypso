@@ -13,7 +13,10 @@ import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { localizeUrl } from 'lib/i18n-utils';
 
-const trackForumOpen = () => recordTracksEvent( 'calypso_inlinehelp_forums_open' );
+const trackForumOpen = () =>
+	recordTracksEvent( 'calypso_inlinehelp_forums_open', {
+		location: 'inline-help-popover',
+	} );
 
 const InlineHelpForumView = ( { translate = identity } ) => (
 	<div className="inline-help__forum-view">

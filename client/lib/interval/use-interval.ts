@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 /**
  * Internal dependencies
  */
-import { TimeoutMS } from 'types';
+import type { TimeoutMS } from 'types';
 
 /**
  * useInterval implementation from @see https://overreacted.io/making-setinterval-declarative-with-react-hooks/

@@ -31,11 +31,11 @@
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"tslib": "^1.10.0",
-		"@wordpress/compose": "1.x.x - 3.x.x"
+		"@wordpress/compose": "1.x.x - 3.x.x",
+		"@wordpress/i18n": "^3.11.0",
+		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "<=3",
 		"react": "^16.8"
 	},
 	"private": true

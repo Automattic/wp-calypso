@@ -24,9 +24,7 @@ import { parse as parseURL } from 'url';
 // Libraries
 import wpcom from 'lib/wp';
 import guessTimezone from 'lib/i18n-utils/guess-timezone';
-
-/* eslint-enable no-restricted-imports */
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import { getSavedVariations } from 'lib/abtest';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { recordRegistration } from 'lib/analytics/signup';
@@ -67,7 +65,6 @@ import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user'
 /**
  * Constants
  */
-const user = userFactory();
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
@@ -205,7 +202,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	if ( shouldSkipDomainStep || shouldHideFreePlan || shouldHideDomainStep ) {
 		newSiteParams.blog_name =
-			get( user.get(), 'username' ) ||
+			user().get()?.username ||
 			get( signupDependencies, 'username' ) ||
 			siteTitle ||
 			siteType ||
@@ -332,15 +329,15 @@ function processItemCart(
 		}
 	};
 
-	if ( ! user.get() && isFreeThemePreselected ) {
+	if ( ! user().get() && isFreeThemePreselected ) {
 		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-	} else if ( user.get() && isFreeThemePreselected ) {
+	} else if ( user().get() && isFreeThemePreselected ) {
 		fetchSitesAndUser(
 			siteSlug,
 			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
 			reduxStore
 		);
-	} else if ( user.get() ) {
+	} else if ( user().get() ) {
 		fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
 	} else {
 		addToCartAndProceed();
@@ -388,6 +385,11 @@ export function createAccount(
 	},
 	reduxStore
 ) {
+	// See client/signup/config/flows-pure.js p2 flow for more info.
+	if ( flowName === 'p2' ) {
+		flowName = 'wp-for-teams';
+	}
+
 	const state = reduxStore.getState();
 
 	const siteVertical = getSiteVertical( state );
@@ -534,7 +536,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 			providedDependencies = { siteSlug };
 		}
 
-		if ( user.get() && isEmpty( errors ) ) {
+		if ( user().get() && isEmpty( errors ) ) {
 			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
 		} else {
 			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
@@ -571,7 +573,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			providedDependencies = { siteSlug };
 		}
 
-		if ( user.get() && isEmpty( errors ) ) {
+		if ( user().get() && isEmpty( errors ) ) {
 			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
 		} else {
 			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );

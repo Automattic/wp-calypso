@@ -22,6 +22,10 @@ export default class MyHomePage extends AsyncBaseContainer {
 		this.confirmEmailTaskSelector = By.css( '.customer-home__main [data-task="email_verified"]' );
 		this.startTaskButtonSelector = By.css( '.customer-home__main .site-setup-list__task-action' );
 		this.taskBadgeSelector = By.css( '.customer-home__main .site-setup-list__task-badge' );
+		this.launchSiteTaskSelector = By.css( '.customer-home__main [data-task="site_launched"]' );
+		this.launchSiteTaskCompleteSelector = By.css(
+			'.customer-home__main [data-task="site_launched"] .nav-item__complete'
+		);
 	}
 
 	async closeCelebrateNotice() {
@@ -45,9 +49,20 @@ export default class MyHomePage extends AsyncBaseContainer {
 		return assert( badgeText === 'Complete', 'Could not locate message that email is verified.' );
 	}
 
+	async isSiteLaunched() {
+		await this.closeCelebrateNotice();
+		return await driverHelper.isElementPresent( this.driver, this.launchSiteTaskCompleteSelector );
+	}
+
 	async updateHomepageFromSiteSetup() {
 		await this.closeCelebrateNotice();
 		await driverHelper.clickWhenClickable( this.driver, this.updateHomepageTaskSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.startTaskButtonSelector );
+	}
+
+	async launchSiteFromSiteSetup() {
+		await this.closeCelebrateNotice();
+		await driverHelper.clickWhenClickable( this.driver, this.launchSiteTaskSelector );
 		return await driverHelper.clickWhenClickable( this.driver, this.startTaskButtonSelector );
 	}
 }

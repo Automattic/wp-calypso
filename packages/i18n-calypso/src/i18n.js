@@ -142,7 +142,7 @@ function I18N() {
 	}
 	this.defaultLocaleSlug = 'en';
 	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
-	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1) ;
+	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1 );
 	this.state = {
 		numberFormatSettings: {},
 		tannin: undefined,

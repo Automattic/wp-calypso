@@ -32,7 +32,7 @@
 }
 
 .editor-revisions-list__header {
-	$editor-revisions-list-header-font-size: 16px;
+	$editor-revisions-list-header-font-size: $font-body;
 	display: flex;
 	padding: 0 16px;
 	height: 48px;
@@ -271,14 +271,14 @@
 }
 
 .editor-revisions-list__author {
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: block;
 	margin-bottom: 4px;
 	color: var( --color-text-subtle );
 }
 
 .editor-revisions-list__changes {
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: block;
 }
 
@@ -292,7 +292,7 @@
 		border-radius: 12px;
 		padding: 0;
 		line-height: 12px;
-		font-size: 14px;
+		font-size: $font-body-small;
 		height: 14px;
 		width: 14px;
 		color: white;

@@ -10,7 +10,7 @@ add_action(
 	function() {
 
 		$asset_file   = __DIR__ . '/dist/event-countdown-block.asset.php';
-		$asset        = file_exists( $asset_file ) ? require_once $asset_file : null;
+		$asset        = file_exists( $asset_file ) ? require $asset_file : null;
 		$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
 		$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( __DIR__ . '/dist/event-countdown-block.js' );
 

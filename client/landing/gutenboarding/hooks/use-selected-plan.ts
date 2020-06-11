@@ -6,8 +6,8 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { STORE_KEY as PLANS_STORE } from '../stores/plans';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { PLANS_STORE } from '../stores/plans';
 import { usePlanRouteParam } from '../path';
 
 export function useSelectedPlan() {
@@ -29,4 +29,13 @@ export function useSelectedPlan() {
 	 * 3. selecting a paid domain or design
 	 */
 	return selectedPlan || planFromPath || defaultPlan;
+}
+
+export function useIsSelectedPlanEcommerce() {
+	const currentSlug = useSelectedPlan()?.storeSlug;
+	return useSelect( ( select ) => select( PLANS_STORE ).isPlanEcommerce( currentSlug ) );
+}
+
+export function useShouldSiteBePublicOnSelectedPlan() {
+	return useIsSelectedPlanEcommerce();
 }

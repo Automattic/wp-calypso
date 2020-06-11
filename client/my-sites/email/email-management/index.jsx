@@ -16,11 +16,11 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import {
+	canUserPurchaseGSuite,
 	getEligibleGSuiteDomain,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithAnotherProvider,
 	hasGSuiteWithUs,
-	isGSuiteRestricted,
 } from 'lib/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
@@ -142,7 +142,7 @@ class EmailManagement extends React.Component {
 
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
 
-		if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
+		if ( emailForwardingDomain && ! canUserPurchaseGSuite() && selectedDomainName ) {
 			return this.addEmailForwardingCard( emailForwardingDomain );
 		}
 

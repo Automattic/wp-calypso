@@ -18,9 +18,8 @@ import Badge from '../../components/badge';
 import designs, { getDesignImageUrl } from '../../available-designs';
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
 import Link from '../../components/link';
+import type { Design } from '../../stores/onboard/types';
 import './style.scss';
-
-type Design = import('../../stores/onboard/types').Design;
 
 const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
@@ -60,6 +59,7 @@ const DesignSelector: React.FunctionComponent = () => {
 						<button
 							key={ design.slug }
 							className="design-selector__design-option"
+							data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
 							onClick={ () => {
 								setSelectedDesign( design );
 

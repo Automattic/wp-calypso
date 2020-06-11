@@ -80,7 +80,7 @@ class SocialLogin extends Component {
 		const title = this.props.translate( 'Social Login' );
 
 		return (
-			<Main className="social-login">
+			<Main className="security social-login">
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
 				<MeSidebarNavigation />

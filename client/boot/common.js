@@ -43,7 +43,7 @@ import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
@@ -138,6 +138,23 @@ const oauthTokenMiddleware = () => {
 					'jetpack-cloud-production',
 				].includes( config( 'env_id' ) );
 				const redirectPath = isDesktop || isJetpackCloud ? config( 'login_url' ) : '/authorize';
+
+				const currentPath = window.location.pathname;
+				// In the context of Jetpack Cloud, if the user isn't authorized, we want
+				// to save the current path (/<product>/<site-slug>) so we can redirect
+				// the user back to it once the login flow is finished. We also set an expiration
+				// to this because we don't want to redirect by mistake a user with an old path
+				// stored in their session.
+				if ( isJetpackCloud && currentPath !== '/' ) {
+					const EXPIRATION_IN_SECONDS = 300;
+					const SESSION_STORAGE_PATH_KEY = 'jetpack_cloud_redirect_path';
+					const SESSION_STORAGE_PATH_KEY_EXPIRES_IN = 'jetpack_cloud_redirect_path_expires_in';
+					window.sessionStorage.setItem( SESSION_STORAGE_PATH_KEY, currentPath );
+					window.sessionStorage.setItem(
+						SESSION_STORAGE_PATH_KEY_EXPIRES_IN,
+						parseInt( new Date().getTime() / 1000 ) + EXPIRATION_IN_SECONDS
+					);
+				}
 				page( redirectPath );
 				return;
 			}
@@ -296,11 +313,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		// to avoid bumping stats and changing focus to the content
 		if ( isLegacyRoute( path ) ) {
 			return next();
-		}
-
-		// Focus UI on the content on page navigation
-		if ( ! config.isEnabled( 'code-splitting' ) ) {
-			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
 		// Bump general stat tracking overall Newdash usage

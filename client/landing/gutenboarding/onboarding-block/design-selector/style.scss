@@ -49,7 +49,7 @@
 		cursor: pointer;
 		float: left;
 		width: 100%;
-		margin: 0;
+		margin: 32px; // only applies in IE
 
 		&:hover,
 		&:focus {

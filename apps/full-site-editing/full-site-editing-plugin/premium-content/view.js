@@ -1,4 +1,4 @@
-document.addEventListener( 'DOMContentLoaded', function(){
+document.addEventListener( 'DOMContentLoaded', function () {
 	let premiumContentJWTToken = '';
 
 	/**
@@ -44,6 +44,6 @@ document.addEventListener( 'DOMContentLoaded', function(){
 	}
 
 	if ( typeof window !== 'undefined' ) {
-		window.addEventListener('message', handleIframeResult, false);
+		window.addEventListener( 'message', handleIframeResult, false );
 	}
 } );

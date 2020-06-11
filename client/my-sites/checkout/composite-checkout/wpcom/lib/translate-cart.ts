@@ -42,7 +42,6 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		is_coupon_applied,
 		tax,
 	} = serverCart;
 
@@ -57,9 +56,9 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const couponLineItem: WPCOMCartCouponItem = {
-		id: 'coupon-line-item',
-		label: String( translate( 'Coupon: %s', { args: coupon } ) ),
+	const savingsLineItem: WPCOMCartCouponItem = {
+		id: 'savings-line-item',
+		label: String( translate( 'Total savings' ) ),
 		type: 'coupon',
 		amount: {
 			currency: currency,
@@ -96,7 +95,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 	return {
 		items: products.map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
-		coupon: is_coupon_applied ? couponLineItem : null,
+		coupon: Math.abs( savings_total_integer ) > 0 ? savingsLineItem : null,
 		total: totalItem,
 		subtotal: subtotalItem,
 		credits: {
@@ -127,6 +126,11 @@ function translateReponseCartProductToWPCOMCartItem(
 		currency,
 		item_original_cost_display,
 		item_original_cost_integer,
+		item_original_monthly_cost_display,
+		item_original_monthly_cost_integer,
+		item_original_subtotal_display,
+		item_original_subtotal_integer,
+		months_per_bill_period,
 		item_subtotal_display,
 		item_subtotal_integer,
 		is_domain_registration,
@@ -157,9 +161,13 @@ function translateReponseCartProductToWPCOMCartItem(
 
 	// for displaying crossed-out original price
 	let itemOriginalCostDisplay = item_original_cost_display || '';
+	let itemOriginalSubtotalDisplay = item_original_subtotal_display || '';
+	let itemOriginalMonthlyCostDisplay = item_original_monthly_cost_display || '';
 	// but for the credits item this is confusing and unnecessary
 	if ( 'wordpress-com-credits' === product_slug ) {
 		itemOriginalCostDisplay = '';
+		itemOriginalSubtotalDisplay = '';
+		itemOriginalMonthlyCostDisplay = '';
 	}
 
 	return {
@@ -183,6 +191,11 @@ function translateReponseCartProductToWPCOMCartItem(
 			is_bundled: is_bundled || false,
 			item_original_cost_display: itemOriginalCostDisplay,
 			item_original_cost_integer: item_original_cost_integer || 0,
+			item_original_monthly_cost_display: itemOriginalMonthlyCostDisplay,
+			item_original_monthly_cost_integer: item_original_monthly_cost_integer || 0,
+			item_original_subtotal_display: itemOriginalSubtotalDisplay,
+			item_original_subtotal_integer: item_original_subtotal_integer || 0,
+			months_per_bill_period,
 			product_cost_integer: product_cost_integer || 0,
 			product_cost_display: product_cost_display || '',
 		},

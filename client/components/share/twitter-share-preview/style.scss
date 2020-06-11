@@ -3,7 +3,7 @@
 	border: 1px solid #e6ecf0;
 	color: #14171a;
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.375;
 	margin: 0 auto;
 	max-width: 565px;
@@ -38,12 +38,12 @@
 
 .twitter-share-preview__profile-handle {
 	color: #657786;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .twitter-share-preview__message,
 .twitter-share-preview__article-url {
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 22px;
 }
 

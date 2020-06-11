@@ -161,6 +161,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-jetpack',
+		paths: [ '/settings/jetpack' ],
+		module: 'my-sites/site-settings/settings-jetpack',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',
@@ -195,6 +202,7 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'google-my-business',
@@ -227,7 +235,7 @@ const sections = [
 	},
 	{
 		name: 'domains',
-		paths: [ '/domains', '/me/domains' ],
+		paths: [ '/domains' ],
 		module: 'my-sites/domains',
 		secondary: true,
 		group: 'sites',
@@ -253,6 +261,7 @@ const sections = [
 		module: 'my-sites/plans',
 		secondary: true,
 		group: 'sites',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'accept-invite',
@@ -296,13 +305,15 @@ const sections = [
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c' ],
+		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c', '/recommendations' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -310,6 +321,7 @@ const sections = [
 		module: 'reader/full-post',
 		secondary: false,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -317,6 +329,7 @@ const sections = [
 		module: 'reader/discover',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -331,6 +344,7 @@ const sections = [
 		module: 'reader/tag-stream',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -338,13 +352,15 @@ const sections = [
 		module: 'reader/liked-stream',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/search', '/recommendations' ],
+		paths: [ '/read/search' ],
 		module: 'reader/search',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -359,6 +375,7 @@ const sections = [
 		module: 'reader/conversations',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'help',
@@ -457,6 +474,7 @@ const sections = [
 		module: 'my-sites/customer-home',
 		secondary: true,
 		group: 'sites',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'hosting',
@@ -466,25 +484,25 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'jetpack-cloud',
-		paths: [ '/', '/settings' ],
-		module: 'landing/jetpack-cloud',
+		name: 'backup',
+		paths: [ '/backup' ],
+		module: 'my-sites/backup',
 		secondary: true,
-		group: 'jetpack-cloud',
+		group: 'sites',
 		enableLoggedOut: true,
 	},
 	{
 		name: 'scan',
 		paths: [ '/scan' ],
-		module: 'landing/jetpack-cloud/sections/scan',
+		module: 'my-sites/scan',
 		secondary: true,
-		group: 'jetpack-cloud',
+		group: 'sites',
 		enableLoggedOut: true,
 	},
 	{
-		name: 'backups',
-		paths: [ '/backup' ],
-		module: 'landing/jetpack-cloud/sections/backups',
+		name: 'jetpack-cloud',
+		paths: [ '/', '/settings' ],
+		module: 'landing/jetpack-cloud',
 		secondary: true,
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,

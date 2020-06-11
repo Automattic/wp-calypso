@@ -3,6 +3,7 @@
  */
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import debugFactory from 'debug';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -11,13 +12,10 @@ import {
 	useTransactionStatus,
 	usePaymentProcessor,
 	useLineItems,
-	useMessages,
 	useEvents,
 } from '../../public-api';
-import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
-import { useFormStatus } from '../form-status';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
@@ -29,16 +27,16 @@ export function createApplePayMethod( stripe, stripeConfiguration ) {
 			<ApplePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
 		inactiveContent: <ApplePaySummary />,
-		getAriaLabel: ( localize ) => localize( 'Apple Pay' ),
+		getAriaLabel: ( __ ) => __( 'Apple Pay' ),
 	};
 }
 
 export function ApplePayLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<span>{ localize( 'Apple Pay' ) }</span>
+			<span>{ __( 'Apple Pay' ) }</span>
 			<PaymentMethodLogos className="apple-pay__logo payment-logos">
 				<ApplePayIcon fill="black" />
 			</PaymentMethodLogos>
@@ -47,24 +45,20 @@ export function ApplePayLabel() {
 }
 
 export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
-	const { setFormSubmitting, setFormReady, setFormComplete } = useFormStatus();
-	const { showErrorMessage } = useMessages();
 	const {
-		transactionStatus,
-		transactionError,
-		resetTransaction,
 		setTransactionError,
 		setTransactionComplete,
+		setTransactionPending,
 	} = useTransactionStatus();
 	const onEvent = useEvents();
 	const submitTransaction = usePaymentProcessor( 'apple-pay' );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
-			setFormSubmitting();
+			setTransactionPending();
 			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
 			submitTransaction( {
 				stripe,
@@ -78,25 +72,19 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 					setTransactionComplete();
 				} )
 				.catch( ( error ) => {
-					// TODO: do these things automatically
 					setTransactionError( error.message );
-					setFormReady();
-					onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: error.message } );
-					showErrorMessage( error.message );
 				} );
 		},
 		[
 			submitTransaction,
-			setFormReady,
 			setTransactionComplete,
 			setTransactionError,
+			setTransactionPending,
 			onEvent,
 			items,
 			total,
 			stripe,
 			stripeConfiguration,
-			showErrorMessage,
-			setFormSubmitting,
 		]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
@@ -106,31 +94,6 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 	} );
 	debug( 'apple-pay button isLoading', isLoading );
 
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			debug( 'showing error', transactionError );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: transactionError || '' } );
-			resetTransaction();
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'marking complete' );
-			setFormComplete();
-		}
-	}, [
-		onEvent,
-		resetTransaction,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		transactionStatus,
-		transactionError,
-		localize,
-	] );
-
 	if ( ! isLoading && ! canMakePayment ) {
 		onEvent( { type: 'APPLE_PAY_LOADING_ERROR', payload: 'This payment type is not supported' } );
 		return (
@@ -138,7 +101,7 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 				paymentRequest={ paymentRequest }
 				paymentType="apple-pay"
 				disabled
-				disabledReason={ localize( 'This payment type is not supported' ) }
+				disabledReason={ __( 'This payment type is not supported' ) }
 			/>
 		);
 	}
@@ -153,8 +116,8 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 }
 
 export function ApplePaySummary() {
-	const localize = useLocalize();
-	return <React.Fragment>{ localize( 'Apple Pay' ) }</React.Fragment>;
+	const { __ } = useI18n();
+	return <React.Fragment>{ __( 'Apple Pay' ) }</React.Fragment>;
 }
 
 function ApplePayIcon( { fill, className } ) {

@@ -19,6 +19,7 @@ import {
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
+	CART_RELOAD,
 } from 'lib/cart/action-types';
 import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
@@ -131,6 +132,12 @@ function disable() {
 	_cartKey = null;
 }
 
+function fetch() {
+	if ( _synchronizer ) {
+		_synchronizer.fetch();
+	}
+}
+
 CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 	const { action } = payload;
 
@@ -229,6 +236,10 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 
 		case CART_TAX_POSTAL_CODE_SET:
 			update( setTaxPostalCode( action.postalCode ) );
+			break;
+
+		case CART_RELOAD:
+			fetch();
 			break;
 	}
 } );

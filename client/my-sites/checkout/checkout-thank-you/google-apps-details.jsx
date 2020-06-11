@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -10,11 +9,12 @@ import i18n from 'i18n-calypso';
  */
 import { GOOGLE_APPS_LEARNING_CENTER } from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
-
-const user = userFactory();
+import { useSelector } from 'react-redux';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 
 const GoogleAppsDetails = () => {
+	const email = useSelector( getCurrentUserEmail );
+
 	return (
 		<PurchaseDetail
 			icon="mail"
@@ -36,7 +36,7 @@ const GoogleAppsDetails = () => {
 						),
 					},
 					args: {
-						email: user.get().email,
+						email,
 					},
 				}
 			) }

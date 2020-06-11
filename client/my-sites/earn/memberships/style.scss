@@ -43,7 +43,7 @@
 	margin-bottom: 24px;
 }
 .memberships__onboarding-paragraph {
-	font-size: 15px;
+	font-size: $font-body;
 	margin-bottom: 24px;
 	color: var( --color-text-subtle );
 }
@@ -64,7 +64,7 @@
 
 .memberships__earnings-breakdown-label {
 	color: var( --color-neutral-60 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	letter-spacing: 0.1em;
 	line-height: 1.8;
 	text-transform: uppercase;
@@ -92,7 +92,7 @@
 
 .memberships__earnings-breakdown-label {
 	color: var( --color-neutral-60 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	letter-spacing: 0.1em;
 	line-height: 1.8;
 	text-transform: uppercase;
@@ -111,7 +111,7 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		width: auto;
 		float: right;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 
@@ -160,7 +160,7 @@
 
 .memberships__subscriber-username {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
@@ -177,10 +177,10 @@
 
 .memberships__subscriber-email {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 		margin-top: -3px;
 	}
 }
@@ -202,7 +202,7 @@
 
 .memberships__module-products-list {
 	color: var( --color-neutral );
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 .memberships__module-products-list-icon {
 	margin-right: 6px;
@@ -216,12 +216,12 @@
 }
 .memberships__products-product-price {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.5;
 }
 .memberships__products-product-title {
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 .memberships__earnings-breakdown-notes {
 	clear: both;
@@ -260,7 +260,7 @@
 }
 
 .memberships__dialog-form-header {
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	margin-bottom: 1.5em;
 }
@@ -272,7 +272,7 @@
 
 .memberships__settings-section-title {
 	margin-bottom: 4px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 18px;
 	color: var( --color-neutral-70 );
 
@@ -283,7 +283,7 @@
 
 .memberships__settings-section-desc {
 	margin-bottom: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	font-style: italic;
 }

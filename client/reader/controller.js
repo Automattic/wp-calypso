@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
 import { sectionify } from 'lib/route';
@@ -25,6 +25,8 @@ import { preload } from 'sections-helper';
 import { requestFeedDiscovery } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
+import { isFollowingOpen } from 'state/ui/reader/sidebar/selectors';
+import { toggleReaderSidebarFollowing } from 'state/ui/reader/sidebar/actions';
 
 const analyticsPageTitle = 'Reader';
 
@@ -50,7 +52,7 @@ const exported = {
 	},
 
 	prettyRedirects( context, next ) {
-		// Do we have a 'pretty' site or feed URL?
+		// Do we have a 'pretty' site or feed URL? We only use this for /discover.
 		let redirect;
 		if ( context.params.blog_id ) {
 			redirect = getPrettySiteUrl( context.params.blog_id );
@@ -132,6 +134,13 @@ const exported = {
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
 		const mcKey = 'following';
 		const startDate = getStartDate( context );
+
+		// toggle read
+		const state = context.store.getState();
+		const isOpen = isFollowingOpen( state );
+		if ( ! isOpen ) {
+			context.store.dispatch( toggleReaderSidebarFollowing() );
+		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_following_loaded' );
@@ -263,7 +272,7 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="reader/team/main"
+				require="reader/a8c/main"
 				key="read-a8c"
 				className="is-a8c"
 				listName="Automattic"

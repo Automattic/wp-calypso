@@ -39,12 +39,23 @@ export default function CheckoutSystemDecider( {
 	upgradeIntent,
 	clearTransaction,
 	cart,
+	isWhiteGloveOffer,
 } ) {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
 	const reduxDispatch = useDispatch();
+	const checkoutVariant = getCheckoutVariant(
+		cart,
+		countryCode,
+		locale,
+		product,
+		purchaseId,
+		isJetpack,
+		isAtomic
+	);
+
 	useEffect( () => {
 		if ( product ) {
 			reduxDispatch(
@@ -60,6 +71,21 @@ export default function CheckoutSystemDecider( {
 		}
 	}, [ reduxDispatch, product ] );
 
+	useEffect( () => {
+		if ( 'disallowed-product' === checkoutVariant ) {
+			reduxDispatch(
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'CheckoutSystemDecider unsupported product for composite checkout',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					extra: {
+						productSlug: product,
+					},
+				} )
+			);
+		}
+	}, [ reduxDispatch, checkoutVariant, product ] );
+
 	// TODO: fetch the current cart, ideally without using CartData, and use that to pass to shouldShowCompositeCheckout
 
 	if ( ! cart || ! cart.currency ) {
@@ -67,17 +93,7 @@ export default function CheckoutSystemDecider( {
 		return null; // TODO: replace with loading page
 	}
 
-	if (
-		shouldShowCompositeCheckout(
-			cart,
-			countryCode,
-			locale,
-			product,
-			purchaseId,
-			isJetpack,
-			isAtomic
-		)
-	) {
+	if ( 'composite-checkout' === checkoutVariant ) {
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 				<CompositeCheckout
@@ -90,6 +106,7 @@ export default function CheckoutSystemDecider( {
 					feature={ selectedFeature }
 					plan={ plan }
 					cart={ cart }
+					isWhiteGloveOffer={ isWhiteGloveOffer }
 				/>
 			</StripeHookProvider>
 		);
@@ -110,11 +127,12 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
+			isWhiteGloveOffer={ isWhiteGloveOffer }
 		/>
 	);
 }
 
-function shouldShowCompositeCheckout(
+function getCheckoutVariant(
 	cart,
 	countryCode,
 	locale,
@@ -125,38 +143,33 @@ function shouldShowCompositeCheckout(
 ) {
 	if ( config.isEnabled( 'composite-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
-		return true;
+		return 'composite-checkout';
 	}
 
 	// Disable if this is a jetpack site
 	if ( isJetpack && ! isAtomic ) {
 		debug( 'shouldShowCompositeCheckout false because jetpack site' );
-		return false;
+		return 'jetpack-site';
 	}
 	// Disable for non-USD
 	if ( cart.currency !== 'USD' ) {
 		debug( 'shouldShowCompositeCheckout false because currency is not USD' );
-		return false;
-	}
-	// Disable for GSuite plans
-	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'gapps' ) ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains GSuite' );
-		return false;
+		return 'disallowed-currency';
 	}
 	// Disable for jetpack plans
 	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) ) ) {
 		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
-		return false;
+		return 'jetpack-product';
 	}
 	// Disable for non-EN
 	if ( ! locale?.toLowerCase().startsWith( 'en' ) ) {
 		debug( 'shouldShowCompositeCheckout false because locale is not EN' );
-		return false;
+		return 'disallowed-locale';
 	}
 	// Disable for non-US
 	if ( countryCode?.toLowerCase() !== 'us' ) {
 		debug( 'shouldShowCompositeCheckout false because country is not US' );
-		return false;
+		return 'disallowed-geo';
 	}
 
 	// If the URL is adding a product, only allow things already supported.
@@ -165,12 +178,17 @@ function shouldShowCompositeCheckout(
 	// so they do not need to go through this check.
 	const isRenewal = !! purchaseId;
 	const pseudoSlugsToAllow = [
-		'personal',
-		'premium',
 		'blogger',
-		'ecommerce',
+		'blogger-2-years',
 		'business',
+		'business-2-years',
 		'concierge-session',
+		'ecommerce',
+		'ecommerce-2-years',
+		'personal',
+		'personal-2-years',
+		'premium',
+		'premium-2-years',
 	];
 	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
@@ -183,19 +201,21 @@ function shouldShowCompositeCheckout(
 			'shouldShowCompositeCheckout false because product does not match list of allowed products',
 			productSlug
 		);
-		return false;
+		return 'disallowed-product';
 	}
 
 	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
 		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
-		return true;
+		return 'composite-checkout';
 	}
+
 	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
 		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
-		return true;
+		return 'composite-checkout';
 	}
+
 	debug( 'shouldShowCompositeCheckout false because test not enabled' );
-	return false;
+	return 'test-not-enabled';
 }
 
 function fetchStripeConfigurationWpcom( args ) {

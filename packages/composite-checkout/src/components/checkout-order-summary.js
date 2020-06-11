@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import styled from '@emotion/styled';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import {
 	useTotal,
 	renderDisplayValueMarkdown,
 } from '../public-api';
-import { useLocalize } from '../lib/localize';
 import { useTranslate } from 'i18n-calypso';
 
 export default function CheckoutOrderSummaryStep() {
@@ -41,11 +41,11 @@ const ProductListItem = styled.li`
 `;
 
 export function CheckoutOrderSummaryStepTitle() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const total = useTotal();
 	return (
 		<CheckoutSummaryStepTitle>
-			<span>{ localize( 'You are all set to check out' ) }</span>
+			<span>{ __( 'You are all set to check out' ) }</span>
 			<CheckoutSummaryStepTotal>
 				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
 			</CheckoutSummaryStepTotal>
@@ -59,7 +59,7 @@ const CheckoutSummaryStepTitle = styled.span`
 `;
 
 const CheckoutSummaryStepTotal = styled.span`
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
 export function CheckoutOrderSummary() {
@@ -87,13 +87,13 @@ export function CheckoutOrderSummary() {
 }
 
 const CheckoutSummaryTitle = styled.div`
-	color: ${( props ) => props.theme.colors.textColor};
-	font-weight: ${( props ) => props.theme.weights.bold};
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	padding: 24px 20px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 24px 20px;
 `;
 
@@ -103,5 +103,5 @@ const CheckoutSummaryLineItem = styled.div`
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;

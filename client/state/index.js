@@ -9,6 +9,7 @@ import dynamicMiddlewares from 'redux-dynamic-middlewares';
  * Internal dependencies
  */
 import initialReducer from './reducer';
+import { isEnabled } from 'config';
 
 /**
  * Store enhancers
@@ -35,6 +36,7 @@ import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 
 export function createReduxStore( initialState, reducer = initialReducer ) {
 	const isBrowser = typeof window === 'object';
+	const isDesktop = isEnabled( 'desktop' );
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
 	const middlewares = [
@@ -57,6 +59,7 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
+		isDesktop && require( './desktop/middleware.js' ).default,
 		navigationMiddleware,
 	].filter( Boolean );
 

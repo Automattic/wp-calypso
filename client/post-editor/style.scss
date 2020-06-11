@@ -156,7 +156,7 @@
 
 	// typography for HTML view
 	font-family: $monospace;
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-bottom: 64px;
 
 	@include breakpoint-deprecated( '<480px' ) {

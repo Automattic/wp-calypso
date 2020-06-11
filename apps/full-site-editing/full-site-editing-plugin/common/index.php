@@ -10,7 +10,26 @@
  */
 
 namespace A8C\FSE\Common;
-use function A8C\FSE\is_full_site_editing_active;
+
+/**
+ * Register data stores that may be useful for a variety of concerns
+ */
+function register_data_stores() {
+	$path         = plugin_dir_path( __FILE__ ) . 'dist/data_stores.js';
+	$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/data-stores.asset.php';
+	$asset        = file_exists( $asset_file ) ? require $asset_file : null;
+	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
+	$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( $path );
+
+	wp_register_script(
+		'a8c-fse-common-data-stores',
+		plugins_url( 'dist/data-stores.js', __FILE__ ),
+		$dependencies,
+		$version,
+		true
+	);
+}
+add_action( 'init', __NAMESPACE__ . '\register_data_stores' );
 
 /**
  * Can be used to determine if the current screen is the block editor.
@@ -53,8 +72,7 @@ function is_homepage_title_hidden() {
  * @return bool True if the common module assets should be loaded.
  */
 function should_load_assets() {
-	// TODO - remove is_F_S_E check when we remove the "block patterns moved" notice plugin.
-	return (bool) is_homepage_title_hidden() || ! is_full_site_editing_active();
+	return (bool) is_homepage_title_hidden();
 }
 
 /**

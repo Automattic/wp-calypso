@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
-import debugFactory from 'debug';
+import React from 'react';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -11,15 +12,11 @@ import Button from '../../components/button';
 import {
 	useTransactionStatus,
 	usePaymentProcessor,
-	useMessages,
 	useLineItems,
 	useEvents,
 	renderDisplayValueMarkdown,
 } from '../../public-api';
-import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
-
-const debug = debugFactory( 'composite-checkout:full-credits-payment-method' );
 
 export function createFullCreditsMethod() {
 	return {
@@ -27,59 +24,34 @@ export function createFullCreditsMethod() {
 		label: <FullCreditsLabel />,
 		submitButton: <FullCreditsSubmitButton />,
 		inactiveContent: <FullCreditsSummary />,
-		getAriaLabel: ( localize ) => localize( 'Credits' ),
+		getAriaLabel: ( __ ) => __( 'Credits' ),
 	};
 }
 
 function FullCreditsLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<div>{ localize( 'Credits' ) }</div>
-			<div>{ localize( 'Pay entirely with credits' ) }</div>
+			<div>{ __( 'Credits' ) }</div>
+			<div>{ __( 'Pay entirely with credits' ) }</div>
 		</React.Fragment>
 	);
 }
 
 function FullCreditsSubmitButton( { disabled } ) {
-	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const {
-		transactionStatus,
-		transactionError,
 		setTransactionComplete,
 		setTransactionError,
+		setTransactionPending,
 	} = useTransactionStatus();
-	const { showErrorMessage } = useMessages();
-	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 	const submitTransaction = usePaymentProcessor( 'full-credits' );
 
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			onEvent( { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: transactionError || '' } );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'full credits transaction is complete' );
-			setFormComplete();
-		}
-	}, [
-		onEvent,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		transactionStatus,
-		transactionError,
-		localize,
-	] );
-
 	const onClick = () => {
-		setFormSubmitting();
+		setTransactionPending();
 		onEvent( { type: 'FULL_CREDITS_TRANSACTION_BEGIN' } );
 		submitTransaction( {
 			items,
@@ -88,11 +60,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 				setTransactionComplete();
 			} )
 			.catch( ( error ) => {
-				// TODO: do these things automatically
 				setTransactionError( error.message );
-				setFormReady();
-				onEvent( { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: error.message } );
-				showErrorMessage( error.message );
 			} );
 	};
 
@@ -100,7 +68,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 		<Button
 			disabled={ disabled }
 			onClick={ onClick }
-			buttonState={ disabled ? 'disabled' : 'primary' }
+			buttonType="primary"
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
@@ -110,20 +78,20 @@ function FullCreditsSubmitButton( { disabled } ) {
 }
 
 function ButtonContents( { formStatus, total } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
-		return localize( 'Processing…' );
+		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
 		return sprintf(
-			localize( 'Pay %s with WordPress.com Credits' ),
+			__( 'Pay %s with WordPress.com Credits' ),
 			renderDisplayValueMarkdown( total.amount.displayValue )
 		);
 	}
-	return localize( 'Please wait…' );
+	return __( 'Please wait…' );
 }
 
 function FullCreditsSummary() {
-	const localize = useLocalize();
-	return localize( 'Pay using Credits' );
+	const { __ } = useI18n();
+	return __( 'Pay using Credits' );
 }

@@ -13,7 +13,7 @@
 
 	h3 {
 		font-weight: 600;
-		font-size: 16px;
+		font-size: $font-body;
 		margin-bottom: 8px;
 	}
 
@@ -24,7 +24,7 @@
 			margin-bottom: 0;
 		}
 
-		&:not( .is-external-link ) .gridicon {
+		.gridicon {
 			vertical-align: text-bottom;
 			margin-right: 0.5rem;
 			fill: var( --color-neutral );

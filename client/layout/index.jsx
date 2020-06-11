@@ -13,7 +13,7 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import JetpackCloudMasterbar from 'landing/jetpack-cloud/components/masterbar';
+import JetpackCloudMasterbar from 'components/jetpack/masterbar';
 import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
 import config from 'config';
@@ -175,7 +175,7 @@ class Layout extends Component {
 				/>
 				<HtmlIsIframeClassname />
 				<DocumentHead />
-				<QuerySites primaryAndRecent />
+				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
@@ -213,11 +213,13 @@ class Layout extends Component {
 						{ this.props.primary }
 					</div>
 				</div>
-				{ config.isEnabled( 'i18n/community-translator' ) ? (
-					isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
-				) : (
-					<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
-				) }
+				{ config.isEnabled( 'i18n/community-translator' )
+					? isCommunityTranslatorEnabled() && (
+							<AsyncLoad require="components/community-translator" />
+					  )
+					: config( 'restricted_me_access' ) && (
+							<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
+					  ) }
 				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
 					<AsyncLoad require="components/happychat" />
@@ -266,9 +268,7 @@ export default connect( ( state ) => {
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
-	const isNewLaunchFlow =
-		startsWith( currentRoute, '/start/new-launch' ) ||
-		startsWith( currentRoute, '/start/prelaunch' );
+	const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
 
 	return {
 		masterbarIsHidden:

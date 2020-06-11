@@ -27,7 +27,7 @@ export default function NewPlan( props ) {
 					props.onClose();
 				} }
 			>
-				{ __( 'Add a new subscription', 'premium-content' ) }
+				{ __( 'Add a new subscription', 'full-site-editing' ) }
 			</MenuItem>
 		</MenuGroup>
 	);

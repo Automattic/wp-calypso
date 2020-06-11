@@ -2,8 +2,9 @@
  * External dependencies
  */
 import { DomainSuggestions } from '@automattic/data-stores';
-import { getSignupDomainsSuggestionsVendor } from '../../utils/domain-suggestions';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 export const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register( {
-	vendor: getSignupDomainsSuggestionsVendor(),
+	/* Returns an ID for the domain suggestions vendor. Passing `true` to getSuggestionsVendor returns the signup variant.*/
+	vendor: getSuggestionsVendor( true ),
 } );

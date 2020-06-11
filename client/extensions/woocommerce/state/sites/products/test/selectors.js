@@ -21,7 +21,9 @@ import productVariations from '../../product-variations/test/fixtures/variations
 
 const preInitializedState = {
 	extensions: {
-		woocommerce: {},
+		woocommerce: {
+			sites: {},
+		},
 	},
 };
 const loadingState = {

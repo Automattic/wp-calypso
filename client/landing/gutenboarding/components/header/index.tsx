@@ -9,6 +9,7 @@ import { Icon, wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -18,10 +19,10 @@ import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import PlansButton from '../plans/plans-button';
+import PlansButton from '../plans-button';
 import SignupForm from '../../components/signup-form';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
-import { useSelectedPlan } from '../../hooks/use-selected-plan';
+import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
@@ -31,7 +32,7 @@ import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
 import { trackEventWithFlow } from '../../lib/analytics';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
@@ -40,7 +41,8 @@ const Header: React.FunctionComponent = () => {
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
+
+	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
@@ -126,8 +128,8 @@ const Header: React.FunctionComponent = () => {
 	);
 
 	const handleCreateSite = React.useCallback(
-		( username: string, bearerToken?: string, planSlug?: string ) => {
-			createSite( username, freeDomainSuggestion, bearerToken, planSlug );
+		( username: string, bearerToken?: string, isPublicSite?: boolean ) => {
+			createSite( username, freeDomainSuggestion, bearerToken, isPublicSite );
 		},
 		[ createSite, freeDomainSuggestion ]
 	);
@@ -138,9 +140,9 @@ const Header: React.FunctionComponent = () => {
 
 	React.useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
-			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlanSlug );
+			handleCreateSite( newUser.username, newUser.bearerToken, shouldSiteBePublic );
 		}
-	}, [ newSite, newUser, handleCreateSite, selectedPlanSlug ] );
+	}, [ newSite, newUser, handleCreateSite, shouldSiteBePublic ] );
 
 	const hasContent =
 		!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== '';

@@ -35,6 +35,7 @@
 		"@wordpress/data-controls": "^1.4.0",
 		"@wordpress/url": "^2.8.2",
 		"fast-json-stable-stringify": "^2.1.0",
+		"i18n-calypso": "^5.0.0",
 		"qs": "^6.9.1",
 		"redux": "^4.0.4",
 		"tslib": "^1.10.0",

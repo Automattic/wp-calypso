@@ -1,0 +1,22 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+.plans-button {
+	white-space: nowrap;
+	&[disabled]:hover {
+		color: $dark-gray-primary;
+	}
+
+	&.is-highlighted {
+		color: var( --studio-blue-40 );
+
+		&:hover {
+		 	color: var( --studio-blue-40 );
+		}
+	}
+}
+
+.plans-button__jetpack-logo {
+	@include break-mobile {
+		margin-left: 8px;
+	}
+}

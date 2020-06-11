@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 import {
@@ -9,16 +9,19 @@ import {
 	CheckoutStep,
 	CheckoutStepArea,
 	CheckoutSteps,
+	CheckoutStepBody,
 	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
+	renderDisplayValueMarkdown,
+	useDispatch,
+	useEvents,
+	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
-	useSelect,
 	useLineItems,
-	useDispatch,
-	useTotal,
 	usePaymentMethod,
-	renderDisplayValueMarkdown,
+	useSelect,
+	useTotal,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 
@@ -35,6 +38,12 @@ import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
 import SecondaryCartPromotions from './secondary-cart-promotions';
+import {
+	handleContactValidationResult,
+	isContactValidationResponseValid,
+	getDomainValidationResult,
+	getGSuiteValidationResult,
+} from 'my-sites/checkout/composite-checkout/contact-validation';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -64,7 +73,7 @@ const ContactFormTitle = () => {
 
 const OrderReviewTitle = () => {
 	const translate = useTranslate();
-	return translate( 'Review your order' );
+	return translate( 'Your order' );
 };
 
 const paymentMethodStep = getDefaultPaymentMethodStep();
@@ -83,20 +92,20 @@ export default function WPCheckout( {
 	countriesList,
 	StateSelect,
 	renderDomainContactFields,
-	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
-	domainContactValidationCallback,
-	gSuiteContactValidationCallback,
 	responseCart,
 	addItemToCart,
 	subtotal,
 	isCartPendingUpdate,
+	showErrorMessageBriefly,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
+	const onEvent = useEvents();
 
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
@@ -116,57 +125,80 @@ export default function WPCheckout( {
 		setShouldShowContactDetailsValidationErrors,
 	] = useState( false );
 
-	const contactValidationCallback = async () => {
-		updateLocation( {
-			countryCode: contactInfo.countryCode.value,
-			postalCode: contactInfo.postalCode.value,
-			subdivisionCode: contactInfo.state.value,
-		} );
-		// Touch the fields so they display validation errors
-		touchContactFields();
-
+	const validateContactDetailsAndDisplayErrors = async () => {
+		debug( 'validating contact details with side effects' );
 		if ( isDomainFieldsVisible ) {
-			const domainNames = items
-				.filter( isLineItemADomain )
-				.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
-
-			const hasValidationErrors = await domainContactValidationCallback(
-				activePaymentMethod.id,
-				contactInfo,
-				domainNames,
-				applyDomainContactValidationResults
-			);
-			return ! hasValidationErrors;
+			const validationResult = await getDomainValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod.id,
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
-			const domainNames = items
-				.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
-				.map( ( item ) => item.wpcom_meta?.meta ?? '' );
-
-			const hasValidationErrors = await gSuiteContactValidationCallback(
-				activePaymentMethod.id,
-				contactInfo,
-				domainNames,
-				applyDomainContactValidationResults
-			);
-			debug( 'gSuiteContactValidationCallback returned', hasValidationErrors );
-			return ! hasValidationErrors;
+			const validationResult = await getGSuiteValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod.id,
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
-
+		return isCompleteAndValid( contactInfo );
+	};
+	const validateContactDetails = async () => {
+		debug( 'validating contact details' );
+		if ( isDomainFieldsVisible ) {
+			const validationResult = await getDomainValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		} else if ( isGSuiteInCart ) {
+			const validationResult = await getGSuiteValidationResult( items, contactInfo );
+			debug( 'validating contact details result', validationResult );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		}
 		return isCompleteAndValid( contactInfo );
 	};
 
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
+
+	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( false );
+	const { formStatus } = useFormStatus();
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
 		setSiteId( siteId );
 	}, [ siteId, setSiteId ] );
 
-	const removeCouponAndResetActiveStep = () => {
-		removeCoupon();
-		// Since the first step may now be invalid (eg: newly empty CC fields) we need to go back.
-		setActiveStepNumber( 1 );
-	};
+	const updateCartContactDetails = useCallback( () => {
+		// Update tax location in cart
+		const nonTaxPaymentMethods = [ 'full-credits', 'free-purchase' ];
+		if ( ! activePaymentMethod || ! contactInfo ) {
+			return;
+		}
+		if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
+			// this data is intentionally empty so we do not charge taxes
+			updateLocation( {
+				countryCode: '',
+				postalCode: '',
+				subdivisionCode: '',
+			} );
+		} else {
+			updateLocation( {
+				countryCode: contactInfo.countryCode?.value ?? '',
+				postalCode: contactInfo.postalCode?.value ?? '',
+				subdivisionCode: contactInfo.state?.value ?? '',
+			} );
+		}
+	}, [ activePaymentMethod, updateLocation, contactInfo ] );
+
+	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 
 	return (
 		<Checkout>
@@ -187,42 +219,58 @@ export default function WPCheckout( {
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
 			<CheckoutStepArea>
-				<CheckoutSteps>
-					<CheckoutStep
-						stepId="review-order-step"
-						isCompleteCallback={ () => true }
-						activeStepContent={
-							<WPCheckoutOrderReview
-								removeItem={ removeItem }
-								couponStatus={ couponStatus }
-								couponFieldStateProps={ couponFieldStateProps }
-								removeCoupon={ removeCouponAndResetActiveStep }
-								onChangePlanLength={ changePlanLength }
-								variantRequestStatus={ variantRequestStatus }
-								variantSelectOverride={ variantSelectOverride }
-								getItemVariants={ getItemVariants }
-								siteUrl={ siteUrl }
-							/>
-						}
-						titleContent={ <OrderReviewTitle /> }
-						completeStepContent={ <InactiveOrderReview /> }
-						editButtonText={ translate( 'Edit' ) }
-						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
-						nextStepButtonText={ translate( 'Continue' ) }
-						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-						validatingButtonText={
-							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						}
-						validatingButtonAriaLabel={
-							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						}
-					/>
+				<CheckoutStepBody
+					stepId="review-order-step"
+					isStepActive={ isOrderReviewActive }
+					isStepComplete={ true }
+					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					activeStepContent={
+						<WPCheckoutOrderReview
+							removeItem={ removeItem }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							removeCoupon={ removeCoupon }
+							onChangePlanLength={ changePlanLength }
+							variantSelectOverride={ variantSelectOverride }
+							getItemVariants={ getItemVariants }
+							siteUrl={ siteUrl }
+							isWhiteGloveOffer={ isWhiteGloveOffer }
+						/>
+					}
+					titleContent={ <OrderReviewTitle /> }
+					completeStepContent={
+						<WPCheckoutOrderReview
+							isSummary
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							siteUrl={ siteUrl }
+							isWhiteGloveOffer={ isWhiteGloveOffer }
+						/>
+					}
+					editButtonText={ translate( 'Edit' ) }
+					editButtonAriaLabel={ translate( 'Edit your order' ) }
+					nextStepButtonText={ translate( 'Save order' ) }
+					nextStepButtonAriaLabel={ translate( 'Save your order' ) }
+					validatingButtonText={
+						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+					}
+					validatingButtonAriaLabel={
+						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+					}
+					formStatus={ formStatus }
+				/>
+				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
 					{ shouldShowContactStep && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
 							isCompleteCallback={ () => {
 								setShouldShowContactDetailsValidationErrors( true );
-								return contactValidationCallback();
+								// Touch the fields so they display validation errors
+								touchContactFields();
+								updateCartContactDetails();
+
+								return validateContactDetailsAndDisplayErrors();
 							} }
 							activeStepContent={
 								<WPContactForm
@@ -236,6 +284,7 @@ export default function WPCheckout( {
 									shouldShowContactDetailsValidationErrors={
 										shouldShowContactDetailsValidationErrors
 									}
+									contactValidationCallback={ validateContactDetails }
 								/>
 							}
 							completeStepContent={
@@ -283,12 +332,12 @@ export default function WPCheckout( {
 }
 
 const CheckoutSummaryTitleLink = styled.button`
-	background: ${( props ) => props.theme.colors.background};
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-	color: ${( props ) => props.theme.colors.textColor};
+	background: ${ ( props ) => props.theme.colors.background };
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	color: ${ ( props ) => props.theme.colors.textColor };
 	display: flex;
 	font-size: 16px;
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	justify-content: space-between;
 	padding: 20px 23px 20px 14px;
 	width: 100%;
@@ -297,12 +346,12 @@ const CheckoutSummaryTitleLink = styled.button`
 		border-bottom: none;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		border-bottom: none 0;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: none;
 	}
 `;
@@ -316,7 +365,7 @@ const CheckoutSummaryTitleIcon = styled( Gridicon )`
 `;
 
 const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
-	fill: ${( props ) => props.theme.colors.textColor};
+	fill: ${ ( props ) => props.theme.colors.textColor };
 	margin-left: 4px;
 	transition: transform 0.1s linear;
 	width: 18px;
@@ -335,25 +384,21 @@ const CheckoutSummaryTitlePrice = styled.span`
 `;
 
 const CheckoutSummaryBody = styled.div`
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	display: none;
 
 	.is-visible & {
 		display: block;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 		border-bottom: none;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
 	}
 `;
-
-function setActiveStepNumber( stepNumber ) {
-	window.location.hash = '#step' + stepNumber;
-}
 
 function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 	const [ items, total ] = useLineItems();
@@ -375,43 +420,6 @@ function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 			</WPOrderReviewSection>
 		</>
 	);
-}
-
-function InactiveOrderReview() {
-	const [ items ] = useLineItems();
-	return (
-		<SummaryContent>
-			<ProductList>
-				{ items.filter( shouldLineItemBeShownWhenStepInactive ).map( ( product ) => {
-					return <InactiveOrderReviewLineItem key={ product.id } product={ product } />;
-				} ) }
-			</ProductList>
-		</SummaryContent>
-	);
-}
-
-function InactiveOrderReviewLineItem( { product } ) {
-	const gSuiteUsersCount = product.wpcom_meta?.extra?.google_apps_users?.length ?? 0;
-	if ( gSuiteUsersCount ) {
-		return (
-			<ProductListItem>
-				{ product.label } ({ gSuiteUsersCount })
-			</ProductListItem>
-		);
-	}
-	if ( isLineItemADomain( product ) ) {
-		return (
-			<ProductListItem>
-				<strong>{ product.label }</strong>
-			</ProductListItem>
-		);
-	}
-	return <ProductListItem>{ product.label }</ProductListItem>;
-}
-
-function shouldLineItemBeShownWhenStepInactive( item ) {
-	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
-	return ! itemTypesToIgnore.includes( item.type );
 }
 
 const CheckoutTermsUI = styled.div`
@@ -450,29 +458,19 @@ const CheckoutTermsUI = styled.div`
 	}
 `;
 
-const SummaryContent = styled.div`
-	margin-top: 12px;
-
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
-	}
-`;
-
-const ProductList = styled.ul`
-	margin: 0;
-	padding: 0;
-`;
-
-const ProductListItem = styled.li`
-	color: ${( props ) => props.theme.colors.textColor};
-	font-size: 14px;
-	margin: 0 0 6px;
-	padding: 0;
-	list-style-type: none;
-
-	&:last-of-type {
-		margin-bottom: 0;
-	}
-`;
+function useUpdateCartLocationWhenPaymentMethodChanges(
+	activePaymentMethod,
+	updateCartContactDetails
+) {
+	const previousPaymentMethodId = useRef();
+	const hasInitialized = useRef( false );
+	useEffect( () => {
+		if ( activePaymentMethod?.id && activePaymentMethod.id !== previousPaymentMethodId.current ) {
+			previousPaymentMethodId.current = activePaymentMethod.id;
+			if ( hasInitialized.current ) {
+				updateCartContactDetails();
+			}
+			hasInitialized.current = true;
+		}
+	}, [ activePaymentMethod, updateCartContactDetails ] );
+}

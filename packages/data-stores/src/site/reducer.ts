@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails } from './types';
-import { Action } from './actions';
+import type { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails } from './types';
+import type { Action } from './actions';
 
 export const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
 	if ( action.type === 'RECEIVE_NEW_SITE' ) {

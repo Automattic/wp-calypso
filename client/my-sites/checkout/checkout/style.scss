@@ -162,7 +162,7 @@
 
 	h5 {
 		color: var( --color-neutral-40 );
-		font-size: 15px;
+		font-size: $font-body;
 		font-weight: 600;
 		opacity: 0.7;
 		text-transform: uppercase;
@@ -228,7 +228,7 @@
 		position: relative;
 
 		select {
-			font-size: 15px;
+			font-size: $font-body;
 			width: 100%;
 		}
 
@@ -292,7 +292,7 @@
 	.cart__coupon {
 		cursor: pointer;
 		display: none;
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin: 0;
 		padding: 10px 0;
 
@@ -340,7 +340,7 @@
 		.checkout__payment-box-section .checkout__new-card-toggle {
 			box-shadow: none;
 			cursor: pointer;
-			font-size: 13px;
+			font-size: $font-body-small;
 			position: absolute;
 		}
 
@@ -379,7 +379,7 @@
 	.checkout__summary-toggle {
 		cursor: pointer;
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding: 10px;
 		margin: 0 auto;
 
@@ -518,7 +518,7 @@
 
 				> span {
 					color: var( --color-text-subtle );
-					font-size: 15px;
+					font-size: $font-body;
 				}
 			}
 
@@ -597,7 +597,7 @@
 	// -----------------------------------
 	.supporting-text {
 		border-top: 1px solid var( --color-neutral-10 );
-		font-size: 13px;
+		font-size: $font-body-small;
 		list-style: none;
 		margin: 0;
 		padding: 15px 0;
@@ -625,7 +625,7 @@
 
 			h6 {
 				color: var( --color-neutral-50 );
-				font-size: 14px;
+				font-size: $font-body-small;
 				font-weight: 600;
 			}
 
@@ -662,7 +662,7 @@
 	}
 
 	h6 {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 600;
 	}
 
@@ -694,7 +694,7 @@
 
 	strong {
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: normal;
 		line-height: 130%;
 	}
@@ -854,7 +854,7 @@
 .checkout__privacy-protection-price-text {
 	color: var( --color-neutral-light );
 	margin: 4px 0 0;
-	font-size: 15px;
+	font-size: $font-body;
 
 	span {
 		&.free-with-plan {
@@ -908,7 +908,7 @@
 .checkout__privacy-protection-radio-price-text {
 	color: var( --color-primary );
 	margin: 4px 0 0 10px;
-	font-size: 15px;
+	font-size: $font-body;
 }
 
 .checkout__alternative-payment-methods {

@@ -1,4 +1,5 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins.scss';
 @import '../../variables.scss';
 @import '../../_z-index.scss';
 
@@ -15,6 +16,21 @@
 	display: flex;
 	align-items: center;
 	z-index: gutenboarding-z-index( '.gutenboarding__footer' );
+
+	.components-button.is-link {
+		@include onboarding-medium-text;
+		color: var( --studio-gray-40 );
+		white-space: nowrap;
+	}
+	.components-button.is-primary {
+		height: auto;
+		padding: 13px 29px;
+
+		&[disabled] {
+			background: var( --studio-gray-10 );
+			color: $white;
+		}
+	}
 
 	@include break-small {
 		padding: 0;

@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
@@ -112,6 +113,8 @@ class ListStream extends React.Component {
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
+					showEdit={ config.isEnabled( 'reader/list-management' ) && list && list.is_owner }
+					editUrl={ window.location.href + '/edit' }
 				/>
 			</Stream>
 		);

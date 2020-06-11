@@ -13,7 +13,7 @@ import PurchaseDetail from 'components/purchase-detail';
 /**
  * Image dependencies
  */
-import adsRemovedImage from 'assets/images/illustrations/ads-removed.svg';
+import adsRemovedImage from 'assets/images/illustrations/removed-ads.svg';
 
 export default localize( ( { isBusinessPlan, selectedSite, translate } ) => {
 	return (

@@ -4,7 +4,7 @@
 import { Button } from '@wordpress/components';
 import { Link as RouterLink, LinkProps } from 'react-router-dom';
 import React, { forwardRef, FunctionComponent } from 'react';
-import { Assign } from 'utility-types';
+import type { Assign } from 'utility-types';
 
 interface LinkButtonProps extends Button.AnchorProps {
 	navigate: () => void;

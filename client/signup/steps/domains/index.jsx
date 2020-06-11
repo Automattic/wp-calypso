@@ -15,6 +15,7 @@ import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import RegisterDomainStep from 'components/domains/register-domain-step';
+import CartData from 'components/data/cart';
 import { getStepUrl } from 'signup/utils';
 import StepWrapper from 'signup/step-wrapper';
 import {
@@ -381,7 +382,7 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteGoals, signupDependencies } = this.props;
+		const { flowName, isDomainOnly, siteType, siteGoals, signupDependencies } = this.props;
 		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
 
 		// 'subdomain' flow coming from .blog landing pages
@@ -404,7 +405,8 @@ class DomainsStep extends React.Component {
 			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
 			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' )
+			'blog' === get( signupDependencies, 'siteType' ) ||
+			'blog' === siteType
 		) {
 			return true;
 		}
@@ -452,7 +454,7 @@ class DomainsStep extends React.Component {
 
 		const shouldHideFreeDomainExplainer = 'onboarding-plan-first' === this.props.flowName;
 
-		return (
+		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
 				path={ this.props.path }
@@ -486,6 +488,12 @@ class DomainsStep extends React.Component {
 				shouldHideFreeDomainExplainer={ shouldHideFreeDomainExplainer }
 			/>
 		);
+
+		if ( 'launch-site' === this.props.flowName ) {
+			return <CartData>{ registerDomainStep }</CartData>;
+		}
+
+		return registerDomainStep;
 	};
 
 	mappingForm = () => {
@@ -670,7 +678,7 @@ class DomainsStep extends React.Component {
 					</div>
 				}
 				showSiteMockups={ this.props.showSiteMockups }
-				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
 				isTopButtons={ showSkip }

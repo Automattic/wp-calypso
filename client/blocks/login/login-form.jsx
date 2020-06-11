@@ -397,12 +397,12 @@ export class LoginForm extends Component {
 									<span>{ this.props.translate( 'or' ) }</span>
 								</div>
 								<SocialLoginForm
-									onSuccess={ this.onWooCommerceSocialSuccess }
-									socialService={ this.props.socialService }
-									socialServiceResponse={ this.props.socialServiceResponse }
 									linkingSocialService={
 										this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 									}
+									onSuccess={ this.onWooCommerceSocialSuccess }
+									socialService={ this.props.socialService }
+									socialServiceResponse={ this.props.socialServiceResponse }
 									uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 								/>
 							</div>
@@ -639,12 +639,12 @@ export class LoginForm extends Component {
 					<Fragment>
 						<Divider>{ this.props.translate( 'or' ) }</Divider>
 						<SocialLoginForm
-							onSuccess={ this.props.onSuccess }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 							}
+							onSuccess={ this.props.onSuccess }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						/>
 					</Fragment>
@@ -655,7 +655,7 @@ export class LoginForm extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, props ) => {
 		const accountType = getAuthAccountTypeSelector( state );
 
 		return {
@@ -673,6 +673,7 @@ export default connect(
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
 			userEmail:
+				props.userEmail ||
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),

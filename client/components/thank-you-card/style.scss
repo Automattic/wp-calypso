@@ -71,7 +71,7 @@
 }
 
 .thank-you-card__price {
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	color: var( --color-success-5 );
 
@@ -96,7 +96,7 @@
 }
 
 .thank-you-card__description {
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	width: 280px;
 	max-width: 100%;
@@ -104,7 +104,7 @@
 	line-height: 20px;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 	}
 }
 
@@ -113,7 +113,7 @@
 	display: inline-block;
 	border-radius: 4px;
 	background-color: var( --color-surface );
-	font-size: 14px;
+	font-size: $font-body-small;
 	max-width: 280px;
 	padding: 8px 24px;
 	margin: 0 auto;

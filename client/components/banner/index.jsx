@@ -32,6 +32,7 @@ import DismissibleCard from 'blocks/dismissible-card';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -227,7 +228,7 @@ export class Banner extends Component {
 						{ callToAction &&
 							( forceHref ? (
 								<Button compact primary={ primaryButton } target={ target }>
-									{ callToAction }
+									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
 								<Button
@@ -237,7 +238,7 @@ export class Banner extends Component {
 									primary={ primaryButton }
 									target={ target }
 								>
-									{ callToAction }
+									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
 					</div>

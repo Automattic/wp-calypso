@@ -116,7 +116,7 @@
 	body.is-section-signup .layout & {
 		button.search-filters__tld-button,
 		button.search-filters__popover-button {
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
 		}

@@ -45,7 +45,7 @@
 	max-width: 25vw;
 	white-space: nowrap;
 	font-family: $serif;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.1;
 
 	&::after {

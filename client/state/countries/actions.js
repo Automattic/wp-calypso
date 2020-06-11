@@ -10,6 +10,7 @@ import {
 import 'state/data-layer/wpcom/domains/countries-list/index.js';
 import 'state/data-layer/wpcom/me/transactions/supported-countries';
 import 'state/data-layer/wpcom/meta/sms-country-codes';
+import 'state/countries/init';
 
 export const fetchDomainCountries = () => ( { type: COUNTRIES_DOMAINS_FETCH } );
 

@@ -131,7 +131,7 @@ describe( 'CompositeCheckout', () => {
 			temporary: false,
 			allowed_payment_methods: [ 'WPCOM_Billing_Stripe_Payment_Method' ],
 			savings_total_integer: 0,
-			savings_total_display: '-R$0',
+			savings_total_display: 'R$0',
 			total_tax_integer: 700,
 			total_tax_display: 'R$7',
 			total_cost_integer: 15600,
@@ -209,8 +209,8 @@ describe( 'CompositeCheckout', () => {
 		} );
 
 		MyCheckout = ( { cartChanges, additionalProps } ) => (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-				<ReduxProvider store={ store }>
+			<ReduxProvider store={ store }>
+				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 					<CompositeCheckout
 						siteSlug={ 'foo.com' }
 						setCart={ mockSetCartEndpoint }
@@ -221,8 +221,8 @@ describe( 'CompositeCheckout', () => {
 						overrideCountryList={ countryList }
 						{ ...additionalProps }
 					/>
-				</ReduxProvider>
-			</StripeHookProvider>
+				</StripeHookProvider>
+			</ReduxProvider>
 		);
 	} );
 
@@ -268,7 +268,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when no credits are available', async () => {
@@ -297,7 +297,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the full credits payment method option when full credits are available', async () => {
@@ -317,7 +317,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
@@ -336,7 +336,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
 		const { queryByText } = renderResult;
-		expect( queryByText( 'Paypal' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
@@ -583,11 +583,11 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getAllByLabelText, getByText } = renderResult;
+		const { getAllByLabelText, getAllByText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
 		getAllByLabelText( 'bar.com' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$0' )
 		);
@@ -619,9 +619,9 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByText, getAllByText } = renderResult;
-		expect( getByText( 'Domain Registration: billed annually' ) ).toBeInTheDocument();
-		expect( getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
@@ -634,9 +634,9 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
-		expect( getByText( 'bar.com' ) ).toBeInTheDocument();
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'adds renewal products to the cart when the url has multiple renewals', async () => {
@@ -652,10 +652,10 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByText, getAllByText } = renderResult;
-		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
-		expect( getByText( 'Domain Registration: billed annually' ) ).toBeInTheDocument();
-		expect( getAllByText( 'bar.com' ) ).toHaveLength( 3 );
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'bar.com' ) ).toHaveLength( 5 );
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
@@ -668,13 +668,14 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getAllByLabelText } = renderResult;
+		const { getAllByLabelText, getAllByText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( '$0' )
+		getAllByLabelText( 'Total savings' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$10' )
 		);
+		expect( getAllByText( 'Coupon: MYCOUPONCODE' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'displays loading while old cart store is loading', async () => {
@@ -742,8 +743,8 @@ async function mockSetCartEndpoint( _, requestCart ) {
 			'WPCOM_Billing_Ebanx',
 			'WPCOM_Billing_Web_Payment',
 		],
-		savings_total_display: '$0',
-		savings_total_integer: 0,
+		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
+		savings_total_integer: requestCoupon ? 1000 : 0,
 		total_tax_display: 'R$7',
 		total_tax_integer: taxInteger,
 		total_cost_display: 'R$156',
@@ -753,7 +754,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 		coupon_discounts_integer: [],
-		tax: {},
+		tax: { location: {}, display_taxes: true },
 	};
 }
 
@@ -773,6 +774,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$144',
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -789,6 +791,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$0',
 					item_subtotal_integer: 0,
 					item_subtotal_display: 'R$0',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -805,6 +808,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
 					item_subtotal_display: 'R$70',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,

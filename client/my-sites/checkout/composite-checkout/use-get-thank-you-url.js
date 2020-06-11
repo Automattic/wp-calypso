@@ -50,11 +50,14 @@ export function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	previousRoute,
 	isEligibleForSignupDestinationResult,
+	isWhiteGloveOffer,
 } ) {
+	debug( 'starting getThankYouPageUrl' );
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
 	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo && ! isExternal( redirectTo ) ) {
+		debug( 'has external redirectTo, so returning that', redirectTo );
 		return redirectTo;
 	}
 	if ( redirectTo ) {
@@ -74,13 +77,16 @@ export function getThankYouPageUrl( {
 					plan_upgraded: 1,
 				},
 			} );
+			debug( 'returning sanitized internal redirectTo', redirectTo );
 			return sanitizedRedirectTo;
 		}
+		debug( 'ignorning redirectTo', redirectTo );
 	}
 
 	// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 	// The `:receiptId` string is filled in by our pending page after the PayPal checkout
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
+	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
 
 	const fallbackUrl = getFallbackDestination( {
 		pendingOrReceiptId,
@@ -90,29 +96,45 @@ export function getThankYouPageUrl( {
 		isJetpackNotAtomic,
 		product,
 	} );
+	debug( 'fallbackUrl is', fallbackUrl );
 
 	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
 	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
 
 	// Fetch the thank-you page url from a cookie if it is set
 	const signupDestination = getUrlFromCookie();
+	debug( 'cookie url is', signupDestination );
 
 	if ( hasRenewalItem( cart ) ) {
 		const renewalItem = getRenewalItems( cart )[ 0 ];
-		return managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
+		const managePurchaseUrl = managePurchase(
+			renewalItem.extra.purchaseDomain,
+			renewalItem.extra.purchaseId
+		);
+		debug(
+			'renewal item in cart',
+			renewalItem,
+			'so returning managePurchaseUrl',
+			managePurchaseUrl
+		);
+		return managePurchaseUrl;
 	}
 
 	// If cart is empty, then send the user to a generic page (not post-purchase related).
 	// For example, this case arises when a Skip button is clicked on a concierge upsell
 	// nudge opened by a direct link to /offer-support-session.
 	if ( ':receiptId' === pendingOrReceiptId && getAllCartItems( cart ).length === 0 ) {
-		return signupDestination || fallbackUrl;
+		const emptyCartUrl = signupDestination || fallbackUrl;
+		debug( 'cart is empty or receipt ID is pending, so returning', emptyCartUrl );
+		return emptyCartUrl;
 	}
 
 	// Domain only flow
 	if ( cart.create_new_blog ) {
 		const newBlogUrl = signupDestination || fallbackUrl;
-		return `${ newBlogUrl }/${ pendingOrReceiptId }`;
+		const newBlogReceiptUrl = `${ newBlogUrl }/${ pendingOrReceiptId }`;
+		debug( 'new blog created, so returning', newBlogReceiptUrl );
+		return newBlogReceiptUrl;
 	}
 
 	const redirectPathForConciergeUpsell = getRedirectUrlForConciergeNudge( {
@@ -122,15 +144,20 @@ export function getThankYouPageUrl( {
 		previousRoute,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
+		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
 		return redirectPathForConciergeUpsell;
 	}
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
-	const displayModeParam = getDisplayModeParamFromCart( cart );
+	const displayModeParam = isWhiteGloveOffer
+		? { d: 'white-glove' }
+		: getDisplayModeParamFromCart( cart );
 	if ( isEligibleForSignupDestinationResult && signupDestination ) {
+		debug( 'is elligible for signup destination', signupDestination );
 		return getUrlWithQueryParam( signupDestination, displayModeParam );
 	}
+	debug( 'returning fallback url', fallbackUrl );
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
@@ -162,21 +189,28 @@ function getFallbackDestination( {
 		const isJetpackProduct = product && JETPACK_BACKUP_PRODUCTS.includes( product );
 		// If we just purchased a Jetpack product, redirect to the my plans page.
 		if ( isJetpackNotAtomic && isJetpackProduct ) {
+			debug( 'the site is jetpack and bought a jetpack product', siteSlug, product );
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ product }`;
 		}
 		// If we just purchased a Jetpack plan (not a Jetpack product), redirect to the Jetpack onboarding plugin install flow.
 		if ( isJetpackNotAtomic ) {
+			debug( 'the site is jetpack and has no jetpack product' );
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&install=all`;
 		}
 
-		return feature && isValidFeatureKey( feature )
-			? `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`
-			: `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
+		const siteWithReceiptOrCartUrl =
+			feature && isValidFeatureKey( feature )
+				? `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`
+				: `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
+		debug( 'site with receipt or cart; feature is', feature );
+		return siteWithReceiptOrCartUrl;
 	}
 
 	if ( siteSlug ) {
+		debug( 'just site slug', siteSlug );
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
+	debug( 'fallback is just root' );
 	return '/';
 }
 
@@ -268,6 +302,7 @@ export function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	product,
 	siteId,
+	isWhiteGloveOffer,
 } ) {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
@@ -309,6 +344,7 @@ export function useGetThankYouUrl( {
 			product,
 			previousRoute,
 			isEligibleForSignupDestinationResult,
+			isWhiteGloveOffer,
 		} );
 		debug( 'getThankYouUrl returned', url );
 		return url;

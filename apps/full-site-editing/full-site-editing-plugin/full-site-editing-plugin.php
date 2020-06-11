@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 1.5
+ * Version: 1.9
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '1.5' );
+define( 'PLUGIN_VERSION', '1.9' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -148,6 +148,22 @@ function load_common_module() {
 	require_once __DIR__ . '/common/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
+
+/**
+ * Sigh: load_editor_domain_picker
+ */
+function load_editor_domain_picker() {
+	require_once __DIR__ . '/editor-domain-picker/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_domain_picker' );
+
+/**
+ * Sigh: load_editor_gutenboarding_launch
+ */
+function load_editor_gutenboarding_launch() {
+	require_once __DIR__ . '/editor-gutenboarding-launch/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_gutenboarding_launch' );
 
 /**
  * Add front-end CoBlocks gallery block scripts.
@@ -275,6 +291,14 @@ function load_block_inserter_modifications() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
 
 /**
+ * Load Mailerlite module
+ */
+function load_mailerlite() {
+	require_once __DIR__ . '/mailerlite/subscriber-popup.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
+
+/**
  * Load WPCOM block editor nav sidebar
  */
 function load_wpcom_block_editor_sidebar() {
@@ -283,3 +307,11 @@ function load_wpcom_block_editor_sidebar() {
 	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
+
+/**
+ * Load Donations block.
+ */
+function load_donations() {
+	require_once __DIR__ . '/donations/donations.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_donations' );

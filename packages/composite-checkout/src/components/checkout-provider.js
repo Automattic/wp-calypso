@@ -5,17 +5,17 @@ import React, { useContext, useEffect, useCallback, useMemo, useState, useRef } 
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, defaultRegistry } from '../lib/registry';
-import { useFormStatusManager } from '../lib/form-status';
-import { useTransactionStatusManager } from '../lib/transaction-status';
+import { useFormStatusManager, useFormStatus } from '../lib/form-status';
+import { useTransactionStatusManager, useTransactionStatus } from '../lib/transaction-status';
 import defaultTheme from '../theme';
 import {
 	validateArg,
@@ -23,18 +23,19 @@ import {
 	validateLineItems,
 	validatePaymentMethods,
 } from '../lib/validation';
+import { usePaymentMethodId } from '../lib/payment-methods';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
 export const CheckoutProvider = ( props ) => {
 	const {
-		locale,
 		total,
 		items,
 		onPaymentComplete,
 		showErrorMessage,
 		showInfoMessage,
 		showSuccessMessage,
+		redirectToUrl,
 		theme,
 		paymentMethods,
 		paymentProcessors,
@@ -110,11 +111,12 @@ export const CheckoutProvider = ( props ) => {
 			<CheckoutProviderPropValidator propsToValidate={ props } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
-					<LocalizeProvider locale={ locale }>
-						<LineItemsProvider items={ items } total={ total }>
-							<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
-						</LineItemsProvider>
-					</LocalizeProvider>
+					<LineItemsProvider items={ items } total={ total }>
+						<CheckoutContext.Provider value={ value }>
+							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+							{ children }
+						</CheckoutContext.Provider>
+					</LineItemsProvider>
 				</RegistryProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
@@ -124,7 +126,6 @@ export const CheckoutProvider = ( props ) => {
 CheckoutProvider.propTypes = {
 	theme: PropTypes.object,
 	registry: PropTypes.object,
-	locale: PropTypes.string.isRequired,
 	total: PropTypes.object.isRequired,
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
@@ -139,7 +140,6 @@ CheckoutProvider.propTypes = {
 
 function CheckoutProviderPropValidator( { propsToValidate } ) {
 	const {
-		locale,
 		total,
 		items,
 		onPaymentComplete,
@@ -152,7 +152,6 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
 
-		validateArg( locale, 'CheckoutProvider missing required prop: locale' );
 		validateArg( total, 'CheckoutProvider missing required prop: total' );
 		validateTotal( total );
 		validateArg( items, 'CheckoutProvider missing required prop: items' );
@@ -166,7 +165,6 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
 	}, [
 		items,
-		locale,
 		onPaymentComplete,
 		paymentMethods,
 		paymentProcessors,
@@ -193,4 +191,78 @@ export function useMessages() {
 		throw new Error( 'useMessages can only be used inside a CheckoutProvider' );
 	}
 	return { showErrorMessage, showInfoMessage, showSuccessMessage };
+}
+
+function useTransactionStatusHandler( redirectToUrl ) {
+	const { __ } = useI18n();
+	const { showErrorMessage, showInfoMessage } = useMessages();
+	const { setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const {
+		transactionStatus,
+		transactionRedirectUrl,
+		transactionError,
+		resetTransaction,
+		setTransactionError,
+	} = useTransactionStatus();
+	const onEvent = useEvents();
+	const [ paymentMethodId ] = usePaymentMethodId();
+
+	const genericErrorMessage = __( 'An error occurred during the transaction' );
+	const redirectErrormessage = __(
+		'An error occurred while redirecting to the payment partner. Please try again or contact support.'
+	);
+	const redirectInfoMessage = __( 'Redirecting to payment partner…' );
+	useEffect( () => {
+		if ( transactionStatus === 'pending' ) {
+			debug( 'transaction is beginning' );
+			setFormSubmitting();
+		}
+		if ( transactionStatus === 'error' ) {
+			debug( 'showing error', transactionError );
+			showErrorMessage( transactionError || genericErrorMessage );
+			onEvent( {
+				type: 'TRANSACTION_ERROR',
+				payload: { message: transactionError || '', paymentMethodId },
+			} );
+			resetTransaction();
+			setFormReady();
+		}
+		if ( transactionStatus === 'complete' ) {
+			debug( 'marking complete' );
+			setFormComplete();
+		}
+		if ( transactionStatus === 'redirecting' ) {
+			if ( ! transactionRedirectUrl ) {
+				debug( 'tried to redirect but there was no redirect url' );
+				setTransactionError( redirectErrormessage );
+				return;
+			}
+			debug( 'redirecting to', transactionRedirectUrl );
+			showInfoMessage( redirectInfoMessage );
+			redirectToUrl( transactionRedirectUrl );
+		}
+	}, [
+		paymentMethodId,
+		onEvent,
+		resetTransaction,
+		setTransactionError,
+		setFormReady,
+		setFormComplete,
+		setFormSubmitting,
+		showErrorMessage,
+		showInfoMessage,
+		transactionStatus,
+		transactionError,
+		transactionRedirectUrl,
+		redirectToUrl,
+		redirectInfoMessage,
+		redirectErrormessage,
+		genericErrorMessage,
+	] );
+}
+
+function TransactionStatusHandler( { redirectToUrl } ) {
+	const defaultRedirect = useCallback( ( url ) => ( window.location = url ), [] );
+	useTransactionStatusHandler( redirectToUrl || defaultRedirect );
+	return null;
 }

@@ -27,6 +27,8 @@ import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+import QueryRewindState from 'components/data/query-rewind-state';
+import QueryScanState from 'components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -42,6 +44,9 @@ import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete'
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getScanState from 'state/selectors/get-site-scan-state';
+import isJetpackCloudEligible from 'state/selectors/is-jetpack-cloud-eligible';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -65,13 +70,17 @@ import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-
 import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 import {
-	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
-	SIDEBAR_SECTION_TOOLS,
+	SIDEBAR_SECTION_JETPACK,
 	SIDEBAR_SECTION_MANAGE,
+	SIDEBAR_SECTION_SITE,
+	SIDEBAR_SECTION_TOOLS,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
+import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 
 /**
  * Style dependencies
@@ -88,6 +97,7 @@ export class MySitesSidebar extends Component {
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 	};
+	s;
 
 	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
 
@@ -96,6 +106,8 @@ export class MySitesSidebar extends Component {
 	expandToolsSection = () => this.props.expandSection( SIDEBAR_SECTION_TOOLS );
 
 	expandManageSection = () => this.props.expandSection( SIDEBAR_SECTION_MANAGE );
+
+	expandJetpackSection = () => this.props.expandSection( SIDEBAR_SECTION_JETPACK );
 
 	toggleSection = memoize( ( id ) => () => this.props.toggleSection( id ) );
 
@@ -113,6 +125,50 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.onNavigate }
 			/>
 		);
+	}
+
+	cloud() {
+		const { scanState, rewindState, isCloudEligible, site } = this.props;
+		if (
+			! site ||
+			! isCloudEligible ||
+			! scanState ||
+			! rewindState ||
+			'uninitialized' === rewindState.state
+		) {
+			return null;
+		}
+
+		const hasScan = 'unavailable' !== scanState.state;
+		const hasBackup = 'unavailable' !== rewindState.state;
+		if ( ! hasScan && ! hasBackup ) {
+			return null;
+		}
+		const sidebarItems = [];
+		if ( hasBackup ) {
+			sidebarItems.push(
+				<SidebarItem
+					key="backup"
+					tipTarget="backup"
+					label="Backup"
+					link={ `https://cloud.jetpack.com/backup/${ site.slug }` }
+					onNavigate={ () => this.trackMenuItemClick( 'backup' ) }
+				/>
+			);
+		}
+		if ( hasScan ) {
+			sidebarItems.push(
+				<SidebarItem
+					key="scan"
+					tipTarget="scan"
+					label="Scan"
+					link={ `https://cloud.jetpack.com/scan/${ site.slug }` }
+					onNavigate={ () => this.trackMenuItemClick( 'scan' ) }
+				/>
+			);
+		}
+
+		return sidebarItems;
 	}
 
 	tools() {
@@ -231,6 +287,12 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		// When the new Jetpack section is active,
+		// Activity Log goes there instead of here
+		if ( isEnabled( 'jetpack/features-section' ) ) {
+			return null;
+		}
+
 		let activityLink = '/activity-log' + siteSuffix,
 			activityLabel = translate( 'Activity' );
 
@@ -313,6 +375,51 @@ export class MySitesSidebar extends Component {
 				forceInternalLink
 				expandSection={ this.expandDesignSection }
 			/>
+		);
+	}
+
+	jetpack() {
+		const { isJetpack, isJetpackSectionOpen, site, siteSuffix, path, translate } = this.props;
+
+		let activityLogUrl = '/activity-log' + siteSuffix;
+		if ( isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+			activityLogUrl += '?group=rewind';
+		}
+
+		return (
+			<ExpandableSidebarMenu
+				expanded={ isJetpackSectionOpen }
+				customIcon={ <JetpackLogo size={ 24 } className="sidebar__menu-icon" /> }
+				onClick={ this.toggleSection( SIDEBAR_SECTION_JETPACK ) }
+				title="Jetpack"
+			>
+				<SidebarItem
+					label={ translate( 'Activity Log', {
+						comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
+					} ) }
+					link={ activityLogUrl }
+					onNavigate={ this.trackActivityClick }
+					selected={ itemLinkMatches( [ '/activity-log' ], path ) }
+					expandSection={ this.expandJetpackSection }
+				/>
+				<SidebarItem
+					label="Backup"
+					link={ backupMainPath( site.slug ) }
+					onNavigate={ this.onNavigate() }
+					selected={
+						itemLinkMatches( backupMainPath(), path ) &&
+						! itemLinkMatches( backupActivityPath(), path )
+					}
+				/>
+				<SidebarItem
+					label="Scan"
+					link={ site?.slug ? `/scan/${ site.slug }` : '/scan' }
+					onNavigate={ this.onNavigate() }
+					selected={
+						itemLinkMatches( '/scan', path ) && ! itemLinkMatches( '/scan/history', path )
+					}
+				/>
+			</ExpandableSidebarMenu>
 		);
 	}
 
@@ -457,13 +564,15 @@ export class MySitesSidebar extends Component {
 
 		let planLink = '/plans' + this.props.siteSuffix;
 
+		const isUpgraded =
+			site &&
+			( isPersonal( site.plan ) ||
+				isPremium( site.plan ) ||
+				isBusiness( site.plan ) ||
+				isEcommerce( site.plan ) );
+
 		// Show plan details for upgraded sites
-		if (
-			isPersonal( site.plan ) ||
-			isPremium( site.plan ) ||
-			isBusiness( site.plan ) ||
-			isEcommerce( site.plan )
-		) {
+		if ( isUpgraded ) {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
@@ -484,11 +593,22 @@ export class MySitesSidebar extends Component {
 		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
 		const displayPlanName = ! ( isJetpack && ! isAtomicSite && ! isVip );
 
+		let icon = <JetpackLogo size={ 24 } className="sidebar__menu-icon" />;
+		if ( isEnabled( 'jetpack/features-section' ) ) {
+			icon = (
+				<Gridicon
+					icon={ isUpgraded ? 'star' : 'star-outline' }
+					className="sidebar__menu-icon"
+					size={ 24 }
+				/>
+			);
+		}
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
-					<JetpackLogo className="sidebar__menu-icon" size={ 24 } />
+					{ icon }
 					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
@@ -764,7 +884,12 @@ export class MySitesSidebar extends Component {
 			return <SidebarMenu />;
 		}
 
-		const tools = !! this.tools() || !! this.marketing() || !! this.earn() || !! this.activity();
+		const tools =
+			!! this.cloud() ||
+			!! this.tools() ||
+			!! this.marketing() ||
+			!! this.earn() ||
+			!! this.activity();
 
 		return (
 			<div className="sidebar__menu-wrapper">
@@ -777,7 +902,9 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
-				<QuerySiteChecklist siteId={ this.props.siteId } />
+				{ isEnabled( 'jetpack/features-section' ) && this.jetpack() }
+
+				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
 
 				<ExpandableSidebarMenu
 					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
@@ -801,6 +928,9 @@ export class MySitesSidebar extends Component {
 
 				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams && this.customize() }
 
+				<QueryRewindState siteId={ this.props.siteId } />
+				<QueryScanState siteId={ this.props.siteId } />
+
 				{ tools && (
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_TOOLS ) }
@@ -808,6 +938,7 @@ export class MySitesSidebar extends Component {
 						title={ this.props.translate( 'Tools' ) }
 						materialIcon="build"
 					>
+						{ this.cloud() }
 						{ this.tools() }
 						{ this.marketing() }
 						{ this.earn() }
@@ -815,21 +946,19 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) }
 
-				{
-					<ExpandableSidebarMenu
-						onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
-						expanded={ this.props.isManageSectionOpen }
-						title={ this.props.translate( 'Manage' ) }
-						materialIcon="settings"
-					>
-						<ul>
-							{ this.hosting() }
-							{ this.upgrades() }
-							{ this.users() }
-							{ this.siteSettings() }
-						</ul>
-					</ExpandableSidebarMenu>
-				}
+				<ExpandableSidebarMenu
+					onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
+					expanded={ this.props.isManageSectionOpen }
+					title={ this.props.translate( 'Manage' ) }
+					materialIcon="settings"
+				>
+					<ul>
+						{ this.hosting() }
+						{ this.upgrades() }
+						{ this.users() }
+						{ this.siteSettings() }
+					</ul>
+				</ExpandableSidebarMenu>
 
 				{ this.wpAdmin() }
 			</div>
@@ -840,7 +969,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<Sidebar>
 				<SidebarRegion>
-					<CurrentSite />
+					<CurrentSite forceAllSitesView={ this.props.forceAllSitesView } />
 					{ this.renderSidebarMenus() }
 				</SidebarRegion>
 				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
@@ -851,9 +980,14 @@ export class MySitesSidebar extends Component {
 
 function mapStateToProps( state ) {
 	const currentUser = getCurrentUser( state );
-	const selectedSiteId = getSelectedSiteId( state );
+
+	const isAllDomainsView = isUnderDomainManagementAll( getCurrentRoute( state ) );
+
+	const selectedSiteId = isAllDomainsView ? null : getSelectedSiteId( state );
 	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
-	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
+	const siteId = isAllDomainsView
+		? null
+		: selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 	const site = getSite( state, siteId );
 
 	const isJetpack = isJetpackSite( state, siteId );
@@ -862,6 +996,7 @@ function mapStateToProps( state ) {
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
+	const isJetpackSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_JETPACK );
 
 	const isMigrationInProgress =
 		isSiteMigrationInProgress( state, selectedSiteId ) || isSiteMigrationActiveRoute( state );
@@ -879,6 +1014,7 @@ function mapStateToProps( state ) {
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
+		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
@@ -886,6 +1022,7 @@ function mapStateToProps( state ) {
 		isDesignSectionOpen,
 		isToolsSectionOpen,
 		isManageSectionOpen,
+		isJetpackSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
@@ -898,13 +1035,16 @@ function mapStateToProps( state ) {
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
-		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+		canViewAtomicHosting: ! isAllDomainsView && canSiteViewAtomicHosting( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		siteTasklist: getSiteTaskList( state, siteId ),
 		hideChecklistProgress:
 			isSiteChecklistComplete( state, siteId ) ||
 			! getSiteChecklist( state, siteId ) ||
 			! isEligibleForDotcomChecklist( state, siteId ),
+		scanState: getScanState( state, siteId ),
+		rewindState: getRewindState( state, siteId ),
+		isCloudEligible: isJetpackCloudEligible( state, siteId ),
 	};
 }
 

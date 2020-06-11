@@ -36,12 +36,13 @@ export function requestSiteInvites( siteId ) {
 		wpcom
 			.undocumented()
 			.invitesList( siteId, { status: 'all', number: 100 } )
-			.then( ( { found, invites } ) => {
+			.then( ( { found, invites, links } ) => {
 				dispatch( {
 					type: INVITES_REQUEST_SUCCESS,
 					siteId,
 					found,
 					invites,
+					links,
 				} );
 			} )
 			.catch( ( error ) => {

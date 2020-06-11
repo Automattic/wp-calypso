@@ -34,7 +34,10 @@ import {
 	isNextDomainFree,
 } from 'lib/cart-values/cart-items';
 import { isPlan } from 'lib/products-values';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import {
+	DOMAINS_WITH_PLANS_ONLY,
+	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
+} from 'state/current-user/constants';
 
 /**
  * Style dependencies
@@ -53,6 +56,7 @@ class UseYourDomainStep extends React.Component {
 		basePath: PropTypes.string,
 		cart: PropTypes.object,
 		domainsWithPlansOnly: PropTypes.bool,
+		primaryWithPlansOnly: PropTypes.bool,
 		goBack: PropTypes.func,
 		initialQuery: PropTypes.string,
 		isSignupStep: PropTypes.bool,
@@ -238,6 +242,7 @@ class UseYourDomainStep extends React.Component {
 			cart,
 			currencyCode,
 			domainsWithPlansOnly,
+			primaryWithPlansOnly,
 			productsList,
 			selectedSite,
 			translate,
@@ -263,7 +268,7 @@ class UseYourDomainStep extends React.Component {
 			mappingProductPrice = translate(
 				'Free with your plan, but registration costs at your current provider still apply'
 			);
-		} else if ( domainsWithPlansOnly ) {
+		} else if ( domainsWithPlansOnly || primaryWithPlansOnly ) {
 			mappingProductPrice = translate(
 				'Included in paid plans, but registration costs at your current provider still apply'
 			);
@@ -440,6 +445,7 @@ export default connect(
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+		primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
 		selectedSite: getSelectedSite( state ),
 		productsList: getProductsList( state ),
 	} ),

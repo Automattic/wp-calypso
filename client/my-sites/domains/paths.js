@@ -4,6 +4,24 @@
 import { filter, startsWith } from 'lodash';
 import { stringify } from 'qs';
 
+function resolveRootPath( relativeTo = null ) {
+	if ( relativeTo ) {
+		if ( relativeTo === domainManagementRoot() ) {
+			return domainManagementAllRoot();
+		}
+
+		if ( relativeTo.startsWith( domainManagementAllRoot() + '/' ) ) {
+			return domainManagementAllRoot();
+		}
+	}
+
+	return domainManagementRoot();
+}
+
+export function isUnderDomainManagementAll( path ) {
+	return path.startsWith( domainManagementAllRoot() + '/' );
+}
+
 export function domainAddNew( siteName, searchTerm ) {
 	const path = `/domains/add/${ siteName }`;
 
@@ -14,19 +32,22 @@ export function domainAddNew( siteName, searchTerm ) {
 	return path;
 }
 
-export function domainManagementUserRoot() {
-	return '/me/domains';
+export function domainManagementAllRoot() {
+	return '/domains/manage/all';
 }
 
 export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
-export function domainManagementList( siteName ) {
+export function domainManagementList( siteName, relativeTo = null ) {
+	if ( relativeTo && relativeTo.startsWith( domainManagementAllRoot() + '/' ) ) {
+		return domainManagementRoot();
+	}
 	return domainManagementRoot() + '/' + siteName;
 }
 
-export function domainManagementEdit( siteName, domainName, slug ) {
+export function domainManagementEdit( siteName, domainName, slug, relativeTo = null ) {
 	slug = slug || 'edit';
 
 	// Encodes only real domain names and not parameter placeholders
@@ -36,7 +57,7 @@ export function domainManagementEdit( siteName, domainName, slug ) {
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return domainManagementRoot() + '/' + domainName + '/' + slug + '/' + siteName;
+	return resolveRootPath( relativeTo ) + '/' + domainName + '/' + slug + '/' + siteName;
 }
 
 export function domainManagementAddGSuiteUsers( siteName, domainName ) {
@@ -101,8 +122,8 @@ export function domainManagementSecurity( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'security' );
 }
 
-export function domainManagementPrimaryDomain( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'primary-domain' );
+export function domainManagementSiteRedirect( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'redirect' );
 }
 
 export function domainManagementTransfer( siteName, domainName, transferType = '' ) {

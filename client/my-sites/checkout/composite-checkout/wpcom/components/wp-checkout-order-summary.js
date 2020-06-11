@@ -26,7 +26,7 @@ import getSupportVariation, {
 	SUPPORT_DIRECTLY,
 } from 'state/selectors/get-inline-help-support-variation';
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
-import { useHasPlanInCart } from '../hooks/has-plan';
+import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
@@ -110,6 +110,7 @@ function CheckoutSummaryFeaturesList() {
 				domains.map( ( domain ) => {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.id } />;
 				} ) }
+			{ hasPlanInCart && <CheckoutSummaryPlanFeatures /> }
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
 				{ supportText }
@@ -134,7 +135,7 @@ function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
 					},
 					args: {
 						domain: domain.wpcom_meta.meta,
-						bundled: translate( 'free with plan' ),
+						bundled: translate( 'free for a year with your plan' ),
 					},
 					comment: 'domain name and bundling message, separated by a dash',
 				} )
@@ -143,6 +144,74 @@ function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
 			) }
 		</CheckoutSummaryFeaturesListItem>
 	);
+}
+
+function CheckoutSummaryPlanFeatures() {
+	const translate = useTranslate();
+	const hasDomainsInCart = useHasDomainsInCart();
+	const planInCart = usePlanInCart();
+	const planFeatures = getPlanFeatures( planInCart, translate, hasDomainsInCart );
+
+	return (
+		<>
+			{ planFeatures &&
+				planFeatures.map( ( feature, index ) => {
+					return (
+						<CheckoutSummaryFeaturesListItem key={ index }>
+							<WPCheckoutCheckIcon />
+							{ feature }
+						</CheckoutSummaryFeaturesListItem>
+					);
+				} ) }
+		</>
+	);
+}
+
+function getPlanFeatures( plan, translate, hasDomainsInCart ) {
+	if (
+		'personal-bundle' === plan.wpcom_meta?.product_slug ||
+		'personal-bundle-2y' === plan.wpcom_meta?.product_slug
+	) {
+		return [
+			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			translate( 'Remove WordPress.com ads' ),
+			translate( 'Limit your content to paying subscribers.' ),
+		];
+	} else if (
+		'value_bundle' === plan.wpcom_meta?.product_slug ||
+		'value_bundle-2y' === plan.wpcom_meta?.product_slug
+	) {
+		return [
+			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			translate( 'Unlimited access to our library of Premium Themes' ),
+			translate( 'Subscriber-only content and simple payment buttons' ),
+			translate( 'Track your stats with Google Analytics' ),
+		];
+	} else if (
+		'business-bundle' === plan.wpcom_meta?.product_slug ||
+		'business-bundle-2y' === plan.wpcom_meta?.product_slug
+	) {
+		return [
+			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			translate( 'Install custom plugins and themes' ),
+			translate( 'Drive traffic to your site with our advanced SEO tools' ),
+			translate( 'Track your stats with Google Analytics' ),
+			translate( 'Real-time backups and activity logs' ),
+		];
+	} else if (
+		'ecommerce-bundle' === plan.wpcom_meta?.product_slug ||
+		'ecommerce-bundle-2y' === plan.wpcom_meta?.product_slug
+	) {
+		return [
+			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			translate( 'Install custom plugins and themes' ),
+			translate( 'Accept payments in 60+ countries' ),
+			translate( 'Integrations with top shipping carriers' ),
+			translate( 'Unlimited products or services for your online store' ),
+			translate( 'eCommerce marketing tools for emails and social networks' ),
+		];
+	}
+	return [];
 }
 
 function CheckoutSummaryHelp() {
@@ -231,12 +300,12 @@ const CheckoutSummaryCardUI = styled( CheckoutSummaryCard )`
 const CheckoutSummaryFeatures = styled.div`
 	padding: 20px 20px 0;
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 20px;
 	}
 
 	.checkout__payment-chat-button.is-borderless {
-		color: ${( props ) => props.theme.colors.textColor};
+		color: ${ ( props ) => props.theme.colors.textColor };
 		padding: 0;
 
 		svg {
@@ -247,7 +316,7 @@ const CheckoutSummaryFeatures = styled.div`
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
 	font-size: 16px;
-	font-weight: ${( props ) => props.theme.weights.normal};
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	margin-bottom: 6px;
 `;
 
@@ -268,7 +337,7 @@ const CheckoutSummaryHelpButton = styled.button`
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
-	fill: ${( props ) => props.theme.colors.success};
+	fill: ${ ( props ) => props.theme.colors.success };
 	margin-right: 4px;
 	position: absolute;
 	top: 0;
@@ -284,8 +353,8 @@ const CheckoutSummaryFeaturesListItem = styled.li`
 const CheckoutSummaryAmountWrapper = styled.div`
 	padding: 20px;
 
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	}
 `;
 
@@ -296,19 +365,19 @@ const CheckoutSummaryLineItem = styled.div`
 	margin-bottom: 4px;
 
 	.is-loading & {
-		animation: ${pulse} 1.5s ease-in-out infinite;
+		animation: ${ pulse } 1.5s ease-in-out infinite;
 	}
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
-	font-weight: ${( props ) => props.theme.weights.bold};
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
 const LoadingCopy = styled.p`
-	animation: ${pulse} 1.5s ease-in-out infinite;
-	background: ${( props ) => props.theme.colors.borderColorLight};
+	animation: ${ pulse } 1.5s ease-in-out infinite;
+	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	border-radius: 2px;
-	color: ${( props ) => props.theme.colors.borderColorLight};
+	color: ${ ( props ) => props.theme.colors.borderColorLight };
 	content: '';
 	font-size: 14px;
 	height: 18px;
@@ -324,7 +393,7 @@ const LoadingCopy = styled.p`
 		top: 0;
 		width: 18px;
 		height: 18px;
-		background: ${( props ) => props.theme.colors.borderColorLight};
+		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		border-radius: 100%;
 	}
 `;

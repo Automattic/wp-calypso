@@ -22,7 +22,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
 import HelpButton from './help-button';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
 import JetpackConnectHappychatButton from './happychat-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -618,18 +617,7 @@ export class JetpackAuthorize extends Component {
 	renderFooterLinks() {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
-		const { blogname, redirectAfterAuth } = this.props.authQuery;
-		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{
-					// translators: eg: Return to The WordPress.com Blog
-					translate( 'Return to %(sitename)s', {
-						args: { sitename: decodeEntities( blogname ) },
-					} )
-				}
-			</LoggedOutFormLinkItem>
-		);
+		const { from } = this.props.authQuery;
 
 		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
 			return null;
@@ -637,13 +625,13 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
+				{ this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
 					href={ login( {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
-						isWoo: this.isWooOnboarding(),
+						from,
 					} ) }
 					onClick={ this.handleSignIn }
 				>
@@ -656,6 +644,26 @@ export class JetpackAuthorize extends Component {
 					<HelpButton />
 				</JetpackConnectHappychatButton>
 			</LoggedOutFormLinks>
+		);
+	}
+
+	renderBackToWpAdminLink() {
+		const { translate } = this.props;
+		const { blogname, redirectAfterAuth } = this.props.authQuery;
+
+		if ( ! this.isWaitingForConfirmation() ) {
+			return null;
+		}
+		return (
+			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
+				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
+				{
+					// translators: eg: Return to The WordPress.com Blog
+					translate( 'Return to %(sitename)s', {
+						args: { sitename: decodeEntities( blogname ) },
+					} )
+				}
+			</LoggedOutFormLinkItem>
 		);
 	}
 
@@ -734,7 +742,6 @@ const connectComponent = connect(
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
-			isAtomic: isSiteAutomatedTransfer( state, authQuery.clientId ),
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,

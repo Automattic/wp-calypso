@@ -39,3 +39,12 @@ $root-font-size: 16px;
 // If there are exceptions to these stacks,
 // please mark them with a //typography-exception comment
 // so we can easily search for them later.
+
+// Typography size variables
+
+$font-title-large: rem( 32px );
+$font-title-medium: rem( 24px );
+$font-title-small: rem( 20px );
+$font-body: rem( 16px );
+$font-body-small: rem( 14px );
+$font-body-extra-small: rem( 12px );

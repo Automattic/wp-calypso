@@ -5,13 +5,6 @@
  * https://github.com/Automattic/mShots/issues/16
  * https://github.com/Automattic/wp-calypso/issues/40564
  *
- * You'll need capture-website and sharp:
- *
- * npm i capture-website sharp
- *
- * (I didn't want to add these to dependencies just for this script since these are kinda heavy ones)
- * https://www.npmjs.com/package/capture-website
- * https://www.npmjs.com/package/sharp
  *
  * Ensure browser is installed by removing `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true` in `package.json` and run `npm ci`
  * (maybe there's easier way?)

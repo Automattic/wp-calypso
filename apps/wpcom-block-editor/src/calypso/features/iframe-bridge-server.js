@@ -8,7 +8,7 @@ import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
-import { addFilter } from '@wordpress/hooks';
+import { addAction, addFilter, applyFilters, doAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -568,9 +568,7 @@ function handleCloseEditor( calypsoPort ) {
 	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
 	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
 
-	const dispatchAction = ( e ) => {
-		e.preventDefault();
-
+	addAction( 'a8c.wpcom-block-editor.closeEditor', 'a8c/wpcom-block-editor/closeEditor', () => {
 		const { port2 } = new MessageChannel();
 		calypsoPort.postMessage(
 			{
@@ -581,6 +579,16 @@ function handleCloseEditor( calypsoPort ) {
 			},
 			[ port2 ]
 		);
+	} );
+
+	const dispatchAction = ( e ) => {
+		if ( ! applyFilters( 'a8c.wpcom-block-editor.shouldCloseEditor', true ) ) {
+			return;
+		}
+
+		e.preventDefault();
+
+		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
 	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, dispatchAction );
@@ -685,6 +693,18 @@ function getCloseButtonUrl( calypsoPort ) {
 
 		window.wp.hooks.doAction( 'updateCloseButtonOverrides', data );
 	};
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.closeUrl',
+		'a8c/wpcom-block-editor/getCloseButtonUrl',
+		( closeUrl ) => calypsoifyGutenberg.closeUrl || closeUrl
+	);
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.closeLabel',
+		'a8c/wpcom-block-editor/getCloseButtonUrl',
+		( closeLabel ) => calypsoifyGutenberg.closeButtonLabel || closeLabel
+	);
 }
 
 /**
@@ -706,6 +726,7 @@ function getGutenboardingStatus( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const { isGutenboarding, frankenflowUrl } = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
+		calypsoifyGutenberg.isFseGutenboarding = isGutenboarding;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
 		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
@@ -742,7 +763,8 @@ function initPort( message ) {
 
 	class MediaUpload extends Component {
 		openModal = () => {
-			const mediaChannel = new MessageChannel();
+			const mediaSelectChannel = new MessageChannel();
+			const mediaCancelChannel = new MessageChannel();
 
 			calypsoPort.postMessage(
 				{
@@ -754,16 +776,25 @@ function initPort( message ) {
 						value: this.props.value,
 					},
 				},
-				[ mediaChannel.port2 ]
+				[ mediaSelectChannel.port2, mediaCancelChannel.port2 ]
 			);
 
-			mediaChannel.port1.onmessage = ( { data } ) => {
+			mediaSelectChannel.port1.onmessage = ( { data } ) => {
 				this.props.onSelect( data );
 
 				// this is a once-only port
 				// to send more messages we have to re-open the
 				// modal and create a new channel
-				mediaChannel.port1.close();
+				mediaSelectChannel.port1.close();
+			};
+
+			mediaCancelChannel.port1.onmessage = () => {
+				this.props.onClose();
+
+				// this is a once-only port
+				// to send more messages we have to re-open the
+				// modal and create a new channel
+				mediaCancelChannel.port1.close();
 			};
 		};
 

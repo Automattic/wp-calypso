@@ -150,7 +150,7 @@
 		}
 
 		span {
-			font-size: 13px;
+			font-size: $font-body-small;
 			font-weight: 400;
 		}
 
@@ -192,7 +192,7 @@
 		span {
 			color: var( --color-text-subtle );
 			display: inline-block;
-			font-size: 13px;
+			font-size: $font-body-small;
 			margin-left: 8px;
 			margin-top: 2px;
 			vertical-align: top;

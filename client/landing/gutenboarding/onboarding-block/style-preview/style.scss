@@ -89,7 +89,7 @@
 		order: 1;
 
 		@include break-xlarge {
-			display: initial;
+			display: inline-block;
 			width: auto;
 			order: 2;
 		}
@@ -140,6 +140,8 @@
 
 .style-preview__content {
 	padding-bottom: $gutenboarding-footer-height + 28px;
+	display: flex; // needed for IE
+	height: 100%; // needed for IE
 
 	@include break-small {
 		padding-bottom: 0;
@@ -344,6 +346,13 @@
 	width: 100%;
 	margin: 0 auto;
 	height: 100%;
+	@include break-small {
+		min-height: 400px;
+	}
+
+	@include break-wide {
+		min-height: 600px;
+	}
 
 	.is-viewport-mobile &,
 	.is-viewport-tablet & {

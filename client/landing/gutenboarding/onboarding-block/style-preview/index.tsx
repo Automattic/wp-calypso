@@ -6,7 +6,6 @@ import { useI18n } from '@automattic/react-i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { useHistory } from 'react-router-dom';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -17,15 +16,16 @@ import { usePath, Step } from '../../path';
 import ViewportSelect from './viewport-select';
 import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
-import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
+import { PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
-import { useSelectedPlan } from '../../hooks/use-selected-plan';
+import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
+import type { Viewport } from './types';
+
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
@@ -33,7 +33,8 @@ const StylePreview: React.FunctionComponent = () => {
 	const { selectedDesign, hasUsedPlansStep } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
-	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
+
+	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 
@@ -44,7 +45,7 @@ const StylePreview: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const history = useHistory();
 	const makePath = usePath();
-	const [ selectedViewport, setSelectedViewport ] = React.useState< T.Viewport >( 'desktop' );
+	const [ selectedViewport, setSelectedViewport ] = React.useState< Viewport >( 'desktop' );
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
@@ -67,16 +68,16 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			createSite( username, freeDomainSuggestion, bearerToken, selectedPlanSlug );
+			createSite( username, freeDomainSuggestion, bearerToken, shouldSiteBePublic );
 		},
-		[ createSite, freeDomainSuggestion, selectedPlanSlug ]
+		[ createSite, freeDomainSuggestion, shouldSiteBePublic ]
 	);
 
 	const handleContinue = () => {
 		// Skip the plans step if the user has used the plans modal to select a plan
 		// If a user has already used the plans step and then gone back, show them the plans step again
 		// to avoid confusion
-		if ( isEnabled( 'gutenboarding/plans-grid' ) && ( ! selectedPlan || hasUsedPlansStep ) ) {
+		if ( ! selectedPlan || hasUsedPlansStep ) {
 			history.push( makePath( Step.Plans ) );
 			return;
 		}

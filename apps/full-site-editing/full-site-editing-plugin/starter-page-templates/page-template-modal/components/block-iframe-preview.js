@@ -212,7 +212,7 @@ const BlockFramePreview = ( {
 		<div ref={ frameContainerRef }>
 			<iframe
 				ref={ iframeRef }
-				title={ __( 'Preview' ) }
+				title={ __( 'Preview', 'full-site-editing' ) }
 				className={ classnames( 'editor-styles-wrapper', className ) }
 				style={ style }
 			/>

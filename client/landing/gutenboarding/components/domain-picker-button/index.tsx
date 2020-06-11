@@ -1,106 +1,110 @@
 /**
  * External dependencies
  */
-import React, { createRef, FunctionComponent, useState } from 'react';
+import * as React from 'react';
+import classnames from 'classnames';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import classnames from 'classnames';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
+import type { DomainSuggestions } from '@automattic/data-stores';
+import DomainPicker from '@automattic/domain-picker';
 
 /**
  * Internal dependencies
  */
-import { Props as DomainPickerProps } from '../domain-picker';
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
-import { recordTrainTracksEvent, RecordTrainTracksEventProps } from '../../lib/analytics';
+import { STORE_KEY } from '../../stores/onboard';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
+const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
-interface Props extends Omit< DomainPickerProps, 'onClose' | 'tracksName' >, Button.BaseProps {
+interface Props extends Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
+	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 }
 
-const DomainPickerButton: FunctionComponent< Props > = ( {
+const DomainPickerButton: React.FunctionComponent< Props > = ( {
 	children,
 	className,
 	onDomainSelect,
 	currentDomain,
 	...buttonProps
 } ) => {
-	const buttonRef = createRef< HTMLButtonElement >();
+	const { __ } = useI18n();
 
-	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
-	const [ isDomainModalVisible, setDomainModalVisibility ] = useState( false );
+	const buttonRef = React.createRef< HTMLButtonElement >();
 
-	const handlePopoverClose = ( e?: React.FocusEvent ) => {
-		// Don't collide with button toggling
-		if ( e?.relatedTarget === buttonRef.current ) {
-			return;
-		}
-		setDomainPopoverVisibility( false );
+	const [ domainPickerMode, setDomainPickerMode ] = React.useState<
+		'popover' | 'modal' | undefined
+	>();
+
+	const handlePopoverToggle = () => {
+		setDomainPickerMode( ( mode ) => ( mode ? undefined : 'popover' ) );
 	};
 
-	const handleModalClose = () => {
-		setDomainModalVisibility( false );
+	const handleClose = () => {
+		setDomainPickerMode( undefined );
 	};
 
-	const handleModalCancel = () => {
-		setDomainModalVisibility( false );
+	const onClickMoreOptions = () => {
+		setDomainPickerMode( 'modal' );
 	};
 
-	const handleMoreOptions = () => {
-		setDomainPopoverVisibility( false );
-		setDomainModalVisibility( true );
-	};
+	const domainSearch = useSelect( ( select ) => select( STORE_KEY ).getDomainSearch() );
+	const { setDomainSearch } = useDispatch( STORE_KEY );
 
-	const recordAnalytics = ( event: RecordTrainTracksEventProps ) => {
-		recordTrainTracksEvent( `/${ FLOW_ID }/domain-popover`, event );
-	};
+	const domainPicker = (
+		<DomainPicker
+			analyticsFlowId={ FLOW_ID }
+			initialDomainSearch={ domainSearch || __( 'My new site' ) }
+			onSetDomainSearch={ setDomainSearch }
+			onMoreOptions={ onClickMoreOptions }
+			showDomainConnectButton={ domainPickerMode === 'modal' }
+			onClose={ handleClose }
+			showDomainCategories={ domainPickerMode === 'modal' }
+			currentDomain={ currentDomain }
+			onDomainSelect={ onDomainSelect }
+			domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
+			analyticsUiAlgo={ domainPickerMode === 'modal' ? 'domain_modal' : 'domain_popover' }
+		/>
+	);
 
 	return (
 		<>
 			<Button
 				{ ...buttonProps }
-				aria-expanded={ isDomainPopoverVisible }
+				aria-expanded={ !! domainPickerMode }
 				aria-haspopup="menu"
-				aria-pressed={ isDomainPopoverVisible }
+				aria-pressed={ !! domainPickerMode }
 				className={ classnames( 'domain-picker-button', className, {
-					'is-open': isDomainPopoverVisible,
-					'is-modal-open': isDomainModalVisible,
+					'is-open': !! domainPickerMode,
+					'is-modal-open': domainPickerMode === 'modal',
 				} ) }
-				onClick={ () => setDomainPopoverVisibility( ( s ) => ! s ) }
+				onClick={ handlePopoverToggle }
 				ref={ buttonRef }
 			>
 				<span className="domain-picker-button__label">{ children }</span>
 				<Icon icon={ chevronDown } size={ 22 } />
 			</Button>
 			<DomainPickerPopover
-				isOpen={ isDomainPopoverVisible }
-				showDomainConnectButton={ false }
-				showDomainCategories={ false }
-				currentDomain={ currentDomain }
-				onDomainSelect={ onDomainSelect }
-				onMoreOptions={ handleMoreOptions }
-				onClose={ handlePopoverClose }
-				recordAnalytics={ recordAnalytics }
-			/>
-			<DomainPickerModal
-				isOpen={ isDomainModalVisible }
-				showDomainConnectButton
-				showDomainCategories
-				currentDomain={ currentDomain }
-				onDomainSelect={ onDomainSelect }
-				onClose={ handleModalClose }
-				onCancel={ handleModalCancel }
-				recordAnalytics={ recordAnalytics }
-			/>
+				isOpen={ domainPickerMode === 'popover' }
+				onClose={ handlePopoverToggle }
+			>
+				{ domainPicker }
+			</DomainPickerPopover>
+			<DomainPickerModal isOpen={ domainPickerMode === 'modal' } onClose={ handleClose }>
+				{ domainPicker }
+			</DomainPickerModal>
 		</>
 	);
 };

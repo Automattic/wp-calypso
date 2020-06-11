@@ -156,7 +156,7 @@
 		color: var( --color-neutral-50 );
 		align-items: center;
 		display: flex;
-		font-size: 16px;
+		font-size: $font-body;
 		justify-content: space-between;
 	}
 
@@ -244,7 +244,7 @@
 
 	p {
 		color: var( --color-neutral-40 );
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 
@@ -284,13 +284,13 @@ input {
 
 	legend {
 		small {
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-left: 10px;
 			color: var( --color-primary );
 		}
 
 		color: var( --color-neutral-70 );
 		margin-bottom: 0;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }

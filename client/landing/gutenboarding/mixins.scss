@@ -13,6 +13,12 @@
 	line-height: 57px;
 }
 
+@mixin onboarding-heading-text-tablet {
+	@include onboarding-font-recoleta;
+	font-size: 36px;
+	line-height: 40px;
+}
+
 @mixin onboarding-heading-text-mobile {
 	@include onboarding-font-recoleta;
 	font-size: 32px;
@@ -25,7 +31,7 @@
 }
 
 @mixin onboarding-medium-text {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 17px;
 }
 

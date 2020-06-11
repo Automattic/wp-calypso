@@ -8,7 +8,7 @@ import { useEffect } from 'react';
  */
 import { useOnUnmount } from './use-on-unmount';
 import { recordEnterModal, recordCloseModal } from '../lib/analytics';
-import { TracksEventProperties } from '../lib/analytics/types';
+import type { TracksEventProperties } from '../lib/analytics/types';
 
 /**
  * Records events in tracks on opening and closing the modal

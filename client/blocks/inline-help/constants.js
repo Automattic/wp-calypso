@@ -5,6 +5,7 @@ export const RESULT_LINK = 'link';
 export const RESULT_ARTICLE = 'article';
 export const RESULT_TOUR = 'tour';
 export const RESULT_VIDEO = 'video';
+export const RESULT_POST_ID = 'post_id';
 export const VIEW_CONTACT = 'contact';
 export const VIEW_RICH_RESULT = 'richresult';
 export const VIEW_FORUM = 'forums';
