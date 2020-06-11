@@ -54,7 +54,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
  * Style dependencies
  */
 import './style.scss';
-import './style.wordpressdotcom.scss';
 
 class BackupsPage extends Component {
 	componentDidMount() {

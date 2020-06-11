@@ -13,7 +13,6 @@ import ActivityCard from 'components/jetpack/activity-card';
  * Style dependencies
  */
 import './style.scss';
-import './style.wordpressdotcom.scss';
 
 class BackupDelta extends Component {
 	renderRealtime() {
