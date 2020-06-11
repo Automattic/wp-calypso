@@ -26,8 +26,10 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 					},
 					action
 				),
-			onSuccess: ( action, apiResponse ) => receiveReaderListAddFeed( apiResponse.feed_id ),
-			onError: ( action, error ) => errorNotice( error ), // @todo Need better handling, especially of 409 (already on list)
+			onSuccess: ( action, apiResponse ) =>
+				receiveReaderListAddFeed( action.listOwner, action.listSlug, apiResponse.feed_id ),
+			onError: ( action, error ) =>
+				receiveReaderListAddFeed( action.listOwner, action.listSlug, null, error ),
 		} ),
 	],
 } );

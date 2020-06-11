@@ -30,7 +30,8 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/tags/new/index.js', {
 					action.tagSlug,
 					apiResponse.tagId
 				),
-			onError: ( action, error ) => errorNotice( error ), // @todo Need better handling, especially of 409 (already on list)
+			onError: ( action, error ) =>
+				receiveReaderListAddTag( action.listOwner, action.listSlug, action.tagSlug, null, error ),
 		} ),
 	],
 } );

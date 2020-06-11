@@ -336,24 +336,22 @@ export const addReaderListTag = ( listOwner, listSlug, tagSlug ) => ( {
 	tagSlug,
 } );
 
-export function receiveAddReaderListFeed( listOwner, listSlug, feedId ) {
-	return {
-		type: READER_LIST_ITEM_ADD_FEED_RECEIVE,
-		listOwner,
-		listSlug,
-		feedId,
-	};
-}
+export const receiveAddReaderListFeed = ( listOwner, listSlug, feedId, error ) => ( {
+	type: READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	listOwner,
+	listSlug,
+	feedId,
+	error,
+} );
 
-export function receiveAddReaderListTag( listOwner, listSlug, tagSlug, tagId ) {
-	return {
-		type: READER_LIST_ITEM_ADD_TAG_RECEIVE,
-		listOwner,
-		listSlug,
-		tagSlug,
-		tagId,
-	};
-}
+export const receiveAddReaderListTag = ( listOwner, listSlug, tagSlug, tagId, error ) => ( {
+	type: READER_LIST_ITEM_ADD_TAG_RECEIVE,
+	listOwner,
+	listSlug,
+	tagSlug,
+	tagId,
+	error,
+} );
 
 function createQuery( owner, slug ) {
 	const preparedOwner = decodeURIComponent( owner );
