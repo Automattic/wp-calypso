@@ -62,6 +62,8 @@ jobs:
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
         run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile --ignore-scripts
+      - name: Install xvfb
+        run: sudo apt-get install xvfb
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
