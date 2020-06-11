@@ -33,11 +33,11 @@ describe( 'getMediaItemServerIdFromTransientId()', () => {
 		];
 
 		it.each( nullObjects )( 'should be null safe for %s', ( nullState ) => {
-			expect( getMediaItemServerIdFromTransientId( nullState, siteId ) ).toBeNull();
+			expect( getMediaItemServerIdFromTransientId( nullState, siteId ) ).toBeUndefined();
 		} );
 
 		it( 'should be null safe when the site is not present', () => {
-			expect( getMediaItemServerIdFromTransientId( state, 'not a site ID' ) ).toBeNull();
+			expect( getMediaItemServerIdFromTransientId( state, 'not a site ID' ) ).toBeUndefined();
 		} );
 	} );
 } );

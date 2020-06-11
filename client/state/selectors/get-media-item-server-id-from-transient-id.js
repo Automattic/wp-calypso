@@ -4,8 +4,8 @@
  * @param {object} state The current state
  * @param {number} siteId The site ID
  * @param {(number|string)} transientId The transient ID of the media item to get the server ID for
- * @returns {(number|null)} The `number` server ID if it exists, null otherwise.
+ * @returns {?number} The `number` server ID if it exists, null otherwise.
  */
 export default function getMediaItemServerIdFromTransientId( state, siteId, transientId ) {
-	return state?.media?.transientItems?.[ siteId ]?.transientIdsToServerIds?.[ transientId ] ?? null;
+	return state?.media?.transientItems?.[ siteId ]?.transientIdsToServerIds?.[ transientId ];
 }
