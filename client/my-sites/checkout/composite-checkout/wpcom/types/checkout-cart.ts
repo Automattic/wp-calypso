@@ -39,8 +39,8 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		volume?: number;
 		item_original_cost_display: string;
 		item_original_cost_integer: number;
-		item_original_monthly_cost_display: string;
-		item_original_monthly_cost_integer: number;
+		item_subtotal_monthly_cost_display: string;
+		item_subtotal_monthly_cost_integer: number;
 		item_original_subtotal_display: string;
 		item_original_subtotal_integer: number;
 		months_per_bill_period: null | number;

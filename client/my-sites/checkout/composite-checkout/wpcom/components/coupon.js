@@ -6,13 +6,13 @@ import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
+import { Button } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import joinClasses from './join-classes';
 import Field from './field';
-import Button from './button';
 
 export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
@@ -59,7 +59,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton buttonState={ isPending ? 'disabled' : 'secondary' }>
+				<ApplyButton disabled={ isPending } buttonType="secondary">
 					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
 				</ApplyButton>
 			) }
@@ -95,7 +95,7 @@ const ApplyButton = styled( Button )`
 	position: absolute;
 	top: 5px;
 	right: 4px;
-	padding: 7px;
+	padding: 8px;
 	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;
 	margin: 0;

@@ -6,7 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { createList, editList, editListItems, listListing } from './controller';
+
+import { createList, editList, editListItems, exportList, listListing } from './controller';
 import { sidebar, updateLastRoute } from 'reader/controller';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -27,6 +28,17 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page( '/read/list/', updateLastRoute, sidebar, createList, makeLayout, clientRender );
+
+	page(
+		'/read/list/:user/:list/export',
+		updateLastRoute,
+		sidebar,
+		exportList,
+		makeLayout,
+		clientRender
+	);
+
 	page( '/read/list/:user/:list', updateLastRoute, sidebar, listListing, makeLayout, clientRender );
 }

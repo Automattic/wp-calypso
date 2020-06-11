@@ -4,11 +4,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import Button from './button';
+import { Button } from '@automattic/composite-checkout';
 
 export default function Field( {
 	type,

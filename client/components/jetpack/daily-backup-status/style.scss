@@ -450,3 +450,14 @@
 		padding: 0;
 	}
 }
+
+/* WordPress.com-only styles */
+.wordpressdotcom .daily-backup-status {
+	padding-top: initial;
+	margin-bottom: 1rem;
+	box-shadow: 0 0 0 1px #dcdcde;
+
+	&__success, &__failed {
+		padding: 2rem;
+	}
+}

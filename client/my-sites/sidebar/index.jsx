@@ -78,9 +78,9 @@ import {
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
-import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
+import JetpackSidebarMenuItems from 'components/jetpack/sidebar/menu-items/calypso';
 
 /**
  * Style dependencies
@@ -379,12 +379,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	jetpack() {
-		const { isJetpack, isJetpackSectionOpen, site, siteSuffix, path, translate } = this.props;
-
-		let activityLogUrl = '/activity-log' + siteSuffix;
-		if ( isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
-			activityLogUrl += '?group=rewind';
-		}
+		const { isJetpackSectionOpen, path } = this.props;
 
 		return (
 			<ExpandableSidebarMenu
@@ -393,31 +388,10 @@ export class MySitesSidebar extends Component {
 				onClick={ this.toggleSection( SIDEBAR_SECTION_JETPACK ) }
 				title="Jetpack"
 			>
-				<SidebarItem
-					label={ translate( 'Activity Log', {
-						comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
-					} ) }
-					link={ activityLogUrl }
-					onNavigate={ this.trackActivityClick }
-					selected={ itemLinkMatches( [ '/activity-log' ], path ) }
+				<JetpackSidebarMenuItems
+					path={ path }
+					showIcons={ false }
 					expandSection={ this.expandJetpackSection }
-				/>
-				<SidebarItem
-					label="Backup"
-					link={ backupMainPath( site.slug ) }
-					onNavigate={ this.onNavigate() }
-					selected={
-						itemLinkMatches( backupMainPath(), path ) &&
-						! itemLinkMatches( backupActivityPath(), path )
-					}
-				/>
-				<SidebarItem
-					label="Scan"
-					link={ site?.slug ? `/scan/${ site.slug }` : '/scan' }
-					onNavigate={ this.onNavigate() }
-					selected={
-						itemLinkMatches( '/scan', path ) && ! itemLinkMatches( '/scan/history', path )
-					}
 				/>
 			</ExpandableSidebarMenu>
 		);

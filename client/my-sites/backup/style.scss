@@ -59,3 +59,32 @@
 	height: 245px;
 	@include placeholder( --color-neutral-10 );
 }
+
+/* WordPress.com-only styles */
+.wordpressdotcom.backup__page {
+	.backup__is-loading {
+		margin: 1rem 0;
+	}
+
+	.backup__main-wrap {
+		margin-left: initial;
+		margin-right: initial;
+	}
+
+	.backup__last-backup-status {
+		padding: initial;
+		background: initial;
+	}
+
+	.button {
+		color: var( --color-neutral-70 );
+
+		&.is-primary {
+			color: var( --color-text-inverted );
+		}
+
+		&[disabled] {
+			color: var( --color-neutral-20 );
+		}
+	}
+}

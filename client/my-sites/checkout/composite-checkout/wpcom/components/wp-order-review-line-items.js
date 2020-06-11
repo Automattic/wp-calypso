@@ -9,6 +9,7 @@ import {
 	CheckoutModal,
 	useFormStatus,
 	useEvents,
+	Button,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -16,7 +17,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import joinClasses from './join-classes';
-import Button from './button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 import { isBusinessPlan } from 'lib/plans';
@@ -101,7 +101,7 @@ function WPLineItem( {
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
-						buttonState="borderless"
+						buttonType="borderless"
 						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );
@@ -237,6 +237,10 @@ const DeleteButton = styled( Button )`
 
 	:hover rect {
 		fill: ${ ( props ) => props.theme.colors.error };
+	}
+
+	svg {
+		opacity: 1;
 	}
 `;
 
@@ -443,7 +447,7 @@ function LineItemSublabelAndPrice( { item } ) {
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: item.sublabel,
-				monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
+				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
 				monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
 			},
 			comment: 'product type and monthly breakdown of total cost, separated by a colon',
