@@ -23,7 +23,7 @@ jobs:
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
-        run: CHROMEDRIVER_VERSION=LATEST yarn install --frozen-lockfile
+        run: CHROMEDRIVER_VERSION=$(<test/e2e/.chromedriver_version) yarn install --frozen-lockfile
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
@@ -61,7 +61,7 @@ jobs:
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
-        run: CHROMEDRIVER_VERSION=LATEST yarn install --frozen-lockfile --ignore-scripts
+        run: CHROMEDRIVER_VERSION=$(<test/e2e/.chromedriver_version) yarn install --frozen-lockfile --ignore-scripts
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
