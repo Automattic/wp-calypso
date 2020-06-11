@@ -119,6 +119,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	iframePort: MessagePort | null = null;
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
+	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	successfulIframeLoad = false;
 
@@ -202,6 +203,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// the kind of assignment which causes re-renders and we
 			// want it set immediately
 			this.mediaSelectPort = ports[ 0 ];
+			this.mediaCancelPort = ports[ 1 ];
 
 			if ( value ) {
 				const ids = Array.isArray( value )
@@ -377,6 +379,12 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// and prevent sending more messages (which will be ignored)
 			this.mediaSelectPort.close();
 			this.mediaSelectPort = null;
+		}
+
+		if ( ! this.state.classicBlockEditorId && ! media && this.mediaCancelPort ) {
+			this.mediaCancelPort.postMessage( true );
+			this.mediaCancelPort.close();
+			this.mediaCancelPort = null;
 		}
 
 		this.setState( { classicBlockEditorId: null, isMediaModalVisible: false } );
