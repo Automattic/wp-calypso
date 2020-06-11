@@ -42,12 +42,13 @@ import ListItem from './list-item';
 import './style.scss';
 
 function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmit } ) {
+	const translate = useTranslate();
 	const isNameValid = typeof list.title === 'string' && list.title.length > 0;
 	const isSlugValid = isCreateForm || ( typeof list.slug === 'string' && list.slug.length > 0 );
 	return (
 		<Card>
 			<FormFieldset>
-				<FormLabel htmlFor="list-name">Name (Required)</FormLabel>
+				<FormLabel htmlFor="list-name">{ translate( 'Name (Required)' ) }</FormLabel>
 				<FormTextInput
 					data-key="title"
 					id="list-name"
@@ -56,12 +57,12 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 					onChange={ onChange }
 					value={ list.title }
 				/>
-				<FormSettingExplanation>The name of the list.</FormSettingExplanation>
+				<FormSettingExplanation>{ translate( 'The name of the list.' ) }</FormSettingExplanation>
 			</FormFieldset>
 
 			{ ! isCreateForm && (
 				<FormFieldset>
-					<FormLabel htmlFor="list-slug">Slug (Required)</FormLabel>
+					<FormLabel htmlFor="list-slug">{ translate( 'Slug (Required)' ) }</FormLabel>
 					<FormTextInput
 						data-key="slug"
 						id="list-slug"
@@ -71,13 +72,13 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 						value={ list.slug }
 					/>
 					<FormSettingExplanation>
-						The slug for the list. This is used to build the URL to the list.
+						{ translate( 'The slug for the list. This is used to build the URL to the list.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 			) }
 
 			<FormFieldset>
-				<FormLegend>Visibility</FormLegend>
+				<FormLegend>{ translate( 'Visibility' ) }</FormLegend>
 				<FormLabel>
 					<FormRadio
 						checked={ list.is_public }
@@ -85,7 +86,7 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 						onChange={ onChange }
 						value="public"
 					/>
-					<span>Everyone can view this list</span>
+					<span>{ translate( 'Everyone can view this list' ) }</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -95,16 +96,18 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 						onChange={ onChange }
 						value="private"
 					/>
-					<span>Only I can view this list</span>
+					<span>{ translate( 'Only I can view this list' ) }</span>
 				</FormLabel>
 				<FormSettingExplanation>
-					Don't worry, posts from private sites will only appear to those with access. Adding a
-					private site to a public list will not make posts from that site accessible to everyone.
+					{ translate(
+						"Don't worry, posts from private sites will only appear to those with access. " +
+							'Adding a private site to a public list will not make posts from that site accessible to everyone.'
+					) }
 				</FormSettingExplanation>
 			</FormFieldset>
 
 			<FormFieldset>
-				<FormLabel htmlFor="list-description">Description</FormLabel>
+				<FormLabel htmlFor="list-description">{ translate( 'Description' ) }</FormLabel>
 				<FormTextarea
 					data-key="description"
 					id="list-description"
@@ -120,7 +123,7 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 					disabled={ isSubmissionDisabled || ! isNameValid || ! isSlugValid }
 					onClick={ onSubmit }
 				>
-					Save
+					{ translate( 'Save' ) }
 				</FormButton>
 			</FormButtonsBar>
 		</Card>
