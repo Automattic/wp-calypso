@@ -38,7 +38,7 @@ const CallToAction = styled.button`
 	border-radius: ${ ( props ) => ( props.buttonType === 'paypal' ? '50px' : '2px' ) };
 	padding: ${ ( props ) => ( props.buttonType === 'text-button' ? '0' : '10px 15px' ) };
 	border: ${ ( props ) =>
-		props.buttonType === 'default' ? '1px solid ' + props.theme.colors.borderColor : '0' };
+		! props.buttonType ? '1px solid ' + props.theme.colors.borderColor : '0' };
 	background: ${ getBackgroundColor };
 	color: ${ getTextColor };
 	font-weight: ${ getFontWeight };
@@ -47,7 +47,7 @@ const CallToAction = styled.button`
 	:hover {
 		background: ${ getRollOverColor };
 		border-color: ${ ( props ) =>
-			props.buttonType === 'default' ? props.theme.colors.borderColorDark : 'transparent' };
+			! props.buttonType ? props.theme.colors.borderColorDark : 'transparent' };
 		text-decoration: none;
 		color: ${ getTextColor };
 		cursor: ${ ( props ) => ( props.disabled ? 'not-allowed' : 'pointer' ) };
