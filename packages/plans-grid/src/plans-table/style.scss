@@ -12,8 +12,18 @@
 	width: $plan-item-width;
 	min-width: $plan-item-min-width;
 
+	// to collapse double borders into one
 	+ .plan-item {
-		margin-left: $plan-item-gutter;
+		margin-left: -1px;
+	}
+
+	// we need to push all items down so the popular badge
+	// doesn't get truncated from top
+	margin-top: 10px;
+
+	&.is-popular {
+		margin-top: 10px;
+		transform: translateY( -30px );
 	}
 }
 
@@ -23,11 +33,12 @@
 
 	// Only mobile & tablets has borders (and paddings)
 	border: 1px solid $light-gray-500;
-	padding: 20px;
+	padding: 40px 20px;
 
-	@include break-large {
-		border: 0;
-		padding: 0;
+	&.is-popular {
+		border: 1px solid $light-gray-900;
+		border-top: none;
+		padding-top: 50px; // to make up for the transform
 	}
 }
 
@@ -50,7 +61,14 @@
 }
 
 .plan-item__badge {
-	margin-left: 8px;
+	margin: 0;
+	display: block;
+	background: black;
+	text-align: center;
+	text-transform: uppercase;
+	color: white;
+	padding: 3px;
+	font-size: $font-body-extra-small;
 }
 
 .plan-item__price-amount {
@@ -146,7 +164,7 @@
 
 .plan-item__feature-item {
 	font-size: $font-body-small;
-	line-height: 22px;
+	line-height: 32px;
 	letter-spacing: 0.2px;
 	margin: 4px 0;
 }

@@ -10,7 +10,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from '../badge';
 import type { DomainSuggestions } from '@automattic/data-stores/dist/types';
 
 const TickIcon = <Icon icon={ check } size={ 16 } />;
@@ -48,11 +47,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	const nbsp = '\u00A0';
 
 	return (
-		<div className="plan-item">
-			<div className="plan-item__viewport">
+		<div className={ classNames( 'plan-item', { 'is-popular': isPopular } ) }>
+			{ isPopular && <span className="plan-item__badge">{ __( 'Popular' ) }</span> }
+			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
 				<div className="plan-item__heading">
 					<div className="plan-item__name">{ name }</div>
-					{ isPopular && <Badge className="plan-item__badge">{ __( 'Popular' ) }</Badge> }
 				</div>
 				<div className="plan-item__price">
 					<div className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }>
