@@ -12,12 +12,35 @@
 	.comments__conversation-follow-button {
 		float: right;
 		margin-top: 4px;
+		margin-left: 14px;
+		text-align: right;
+	}
+
+	.comments__actions-wrapper {
+		text-align: right;
+		width: 100%;
+	}
+
+	.button.comments__manage-comments-button {
+		color: inherit;
+		margin-top: -2px;
+		padding: 0;
+
+		.gridicon {
+			top: 8px;
+		}
+
+		@include breakpoint-deprecated( '<660px' ) {
+			span {
+				display: none;
+			}
+		}
 	}
 }
 
 .comments__info-bar {
-	margin: 0 24px -24px 0;
-	overflow: auto;
+	margin: 0 8px -8px 0;
+	width: 100%;
 
 	&.is-no-comments {
 		display: none;
