@@ -13,6 +13,19 @@ h1.account-close__confirm-dialog-header {
 	color: var( --color-neutral-70 );
 }
 
+.account-close__confirm-dialog-alternative {
+	margin-bottom: 14px;
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.account-close__confirm-dialog-alternative-actions a {
+	font-size: $font-body-small;
+	margin-right: 8px;
+}
+
 .account-close__confirm-dialog-label {
 	margin-bottom: 8px;
 	line-height: 24px;
