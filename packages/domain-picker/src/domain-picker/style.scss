@@ -83,6 +83,23 @@ $domain-picker__suggestion-item-height: 24px;
 		margin-top: -1px;
 	}
 
+	// animate the added domains after you click expand
+	@for $i from 7 through 14 {
+		&:nth-child( #{$i} ) {
+			transform: translateY( 20px );
+			opacity: 0;
+			animation: domain-picker-item-slide-up 0.1s ease-in forwards;
+			animation-delay: #{( $i - 7 ) * 40ms};
+		}
+	}
+
+	@keyframes domain-picker-item-slide-up {
+		100% {
+			transform: translateY( 0 );
+			opacity: 1;
+		}
+	}
+
 	&.components-button {
 		&.is-tertiary {
 			color: var( --color-text );
