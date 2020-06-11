@@ -92,10 +92,10 @@ export default {
 		) {
 			removeWhiteBackground();
 			next();
-		} else if ( context.pathname.indexOf( 'p2' ) >= 0 ) {
+		} else if ( context.pathname.includes( 'p2' ) ) {
 			// We still want to keep the original styling for the new user creation step
 			// so people know they are creating an account at WP.com.
-			if ( context.pathname.indexOf( 'user' ) >= 0 ) {
+			if ( context.pathname.includes( 'user' ) ) {
 				removeP2SignupClassName();
 			} else {
 				addP2SignupClassName();
