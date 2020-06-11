@@ -125,8 +125,8 @@ export interface ResponseCartProduct {
 	product_cost_display: string;
 	item_original_cost_integer: number; // without discounts or volume
 	item_original_cost_display: string; // without discounts or volume
-	item_original_monthly_cost_display: string;
-	item_original_monthly_cost_integer: number;
+	item_subtotal_monthly_cost_display: string;
+	item_subtotal_monthly_cost_integer: number;
 	item_original_subtotal_integer: number; // without discounts, with volume
 	item_original_subtotal_display: string; // without discounts, with volume
 	item_subtotal_integer: number;
@@ -158,8 +158,8 @@ export interface TempResponseCartProduct {
 	product_cost_display: null;
 	item_subtotal_integer: null;
 	item_subtotal_display: null;
-	item_original_monthly_cost_display: null;
-	item_original_monthly_cost_integer: null;
+	item_subtotal_monthly_cost_display: null;
+	item_subtotal_monthly_cost_integer: null;
 	item_original_cost_display: null;
 	item_original_cost_integer: null;
 	item_original_subtotal_display: null;
@@ -339,8 +339,8 @@ function convertRequestCartProductToResponseCartProduct(
 		currency: null,
 		item_original_cost_display: null,
 		item_original_cost_integer: null,
-		item_original_monthly_cost_display: null,
-		item_original_monthly_cost_integer: null,
+		item_subtotal_monthly_cost_display: null,
+		item_subtotal_monthly_cost_integer: null,
 		item_original_subtotal_display: null,
 		item_original_subtotal_integer: null,
 		product_cost_integer: null,
