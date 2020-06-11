@@ -4,7 +4,6 @@
 import page from 'page';
 import wp from 'lib/wp';
 import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
@@ -26,12 +25,7 @@ import { flatten } from 'lodash';
 /**
  * Internal dependencies
  */
-import { requestPlans } from 'state/plans/actions';
-import {
-	computeProductsWithPrices,
-	getProductsList,
-	isProductsListFetching,
-} from 'state/products-list/selectors';
+import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import {
 	useStoredCards,
 	useIsApplePayAvailable,
@@ -54,10 +48,8 @@ import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
-import { getPlan, findPlansKeys } from 'lib/plans';
+import { getPlan } from 'lib/plans';
 import { getTld } from 'lib/domains';
-import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
-import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
@@ -96,6 +88,7 @@ import { AUTO_RENEWAL } from 'lib/url/support';
 import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
+import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -400,12 +393,6 @@ export default function CompositeCheckout( {
 
 		return (
 			<React.Fragment>
-				<QuerySitePlans siteId={ siteId } />
-				<QueryPlans />
-				<QueryProducts />
-				<QueryContactDetailsCache />
-				<QueryStoredCards />
-
 				<ManagedContactDetailsFormFields
 					needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
 					contactDetails={ contactDetails }
@@ -493,7 +480,7 @@ export default function CompositeCheckout( {
 			paypal: ( transactionData ) =>
 				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
 		} ),
-		[ couponItem, getThankYouUrl ]
+		[ couponItem, getThankYouUrl, isWhiteGloveOffer ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -509,6 +496,12 @@ export default function CompositeCheckout( {
 
 	return (
 		<React.Fragment>
+			<QuerySitePlans siteId={ siteId } />
+			<QueryPlans />
+			<QueryProducts />
+			<QueryContactDetailsCache />
+			<QueryStoredCards />
+
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 			<CheckoutProvider
 				items={ itemsForCheckout }
@@ -705,136 +698,6 @@ function CountrySelectMenu( {
 	);
 }
 
-function getTermText( term, translate ) {
-	switch ( term ) {
-		case TERM_BIENNIALLY:
-			return translate( 'Two years' );
-
-		case TERM_ANNUALLY:
-			return translate( 'One year' );
-
-		case TERM_MONTHLY:
-			return translate( 'One month' );
-	}
-}
-
-// TODO: replace this with a real localize function
-function localizeCurrency( amount ) {
-	const decimalAmount = ( amount / 100 ).toFixed( 2 );
-	return `$${ decimalAmount }`;
-}
-
-function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscounts } ) {
-	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
-
-	const availableVariants = useVariantWpcomPlanProductSlugs( productSlug );
-
-	const productsWithPrices = useSelector( ( state ) => {
-		return computeProductsWithPrices(
-			state,
-			siteId,
-			availableVariants, // : WPCOMProductSlug[]
-			credits || 0, // : number
-			couponDiscounts || {} // object of product ID / absolute amount pairs
-		);
-	} );
-
-	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
-	const shouldFetchProducts = ! productsWithPrices;
-
-	useEffect( () => {
-		// Trigger at most one HTTP request
-		debug( 'deciding whether to request product variant data' );
-		if ( shouldFetchProducts && ! haveFetchedProducts ) {
-			debug( 'dispatching request for product variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedProducts( true );
-		}
-	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
-
-	return ( anyProductSlug ) => {
-		if ( anyProductSlug !== productSlug ) {
-			return [];
-		}
-
-		const highestMonthlyPrice = Math.max(
-			...productsWithPrices.map( ( variant ) => {
-				return variant.priceMonthly;
-			} )
-		);
-
-		const percentSavings = ( monthlyPrice ) => {
-			const savings = Math.round( 100 * ( 1 - monthlyPrice / highestMonthlyPrice ) );
-			return savings > 0 ? <Discount>-{ savings.toString() }%</Discount> : null;
-		};
-
-		// What the customer would pay if using the
-		// most expensive schedule
-		const highestTermPrice = ( term ) => {
-			if ( term !== TERM_BIENNIALLY ) {
-				return;
-			}
-			const annualPrice = Math.round( 100 * 24 * highestMonthlyPrice );
-			return <DoNotPayThis>{ localizeCurrency( annualPrice, 'USD' ) }</DoNotPayThis>;
-		};
-
-		return productsWithPrices.map( ( variant ) => {
-			const label = getTermText( variant.plan.term, translate );
-			const price = (
-				<React.Fragment>
-					{ percentSavings( variant.priceMonthly ) }
-					{ highestTermPrice( variant.plan.term ) }
-					{ variant.product.cost_display }
-				</React.Fragment>
-			);
-
-			return {
-				variantLabel: label,
-				variantDetails: price,
-				productSlug: variant.planSlug,
-				productId: variant.product.product_id,
-			};
-		} );
-	};
-}
-
-function useVariantWpcomPlanProductSlugs( productSlug ) {
-	const reduxDispatch = useDispatch();
-
-	const chosenPlan = getPlan( productSlug );
-
-	const [ haveFetchedPlans, setHaveFetchedPlans ] = useState( false );
-	const shouldFetchPlans = ! chosenPlan;
-
-	useEffect( () => {
-		// Trigger at most one HTTP request
-		debug( 'deciding whether to request plan variant data' );
-		if ( shouldFetchPlans && ! haveFetchedPlans ) {
-			debug( 'dispatching request for plan variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedPlans( true );
-		}
-	}, [ haveFetchedPlans, shouldFetchPlans, reduxDispatch ] );
-
-	if ( ! chosenPlan ) {
-		return [];
-	}
-
-	// Only construct variants for WP.com plans
-	if ( chosenPlan.group !== GROUP_WPCOM ) {
-		return [];
-	}
-
-	// : WPCOMProductSlug[]
-	return findPlansKeys( {
-		group: chosenPlan.group,
-		type: chosenPlan.type,
-	} );
-}
-
 function useCachedDomainContactDetails() {
 	const reduxDispatch = useDispatch();
 	const [ haveRequestedCachedDetails, setHaveRequestedCachedDetails ] = useState( false );
@@ -863,16 +726,6 @@ function getPlanProductSlugs(
 		} )
 		.map( ( item ) => item.wpcom_meta.product_slug );
 }
-
-const Discount = styled.span`
-	color: ${ ( props ) => props.theme.colors.discount };
-	margin-right: 8px;
-`;
-
-const DoNotPayThis = styled.span`
-	text-decoration: line-through;
-	margin-right: 8px;
-`;
 
 function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeature, plan ) {
 	debug( 'getAnalyticsPath', { purchaseId, product, selectedSiteSlug, selectedFeature, plan } );
