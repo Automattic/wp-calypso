@@ -452,28 +452,15 @@ export class List extends React.Component {
 
 		switch ( domain.type ) {
 			case type.TRANSFER:
-				path = domainManagementTransferIn(
-					selectedSite.slug,
-					domain.name,
-					currentRoute
-				);
+				path = domainManagementTransferIn( selectedSite.slug, domain.name, currentRoute );
 				break;
 
 			case type.SITE_REDIRECT:
-				path = domainManagementSiteRedirect(
-					selectedSite.slug,
-					domain.name,
-					currentRoute
-				);
+				path = domainManagementSiteRedirect( selectedSite.slug, domain.name, currentRoute );
 				break;
 
 			default:
-				path = domainManagementEdit(
-					selectedSite.slug,
-					domain.name,
-					null,
-					currentRoute
-				);
+				path = domainManagementEdit( selectedSite.slug, domain.name, null, currentRoute );
 				break;
 		}
 
