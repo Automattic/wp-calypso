@@ -3,7 +3,7 @@
  */
 import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
-import { I18nProvider, useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@automattic/react-i18n';
 import { getLanguageSlugs } from '../../lib/i18n-utils';
 import {
 	getLanguageFile,
@@ -25,6 +25,7 @@ import type { Site as SiteStore, User as UserStore } from '@automattic/data-stor
  */
 import GUTENBOARDING_BASE_NAME from './basename.json';
 import Gutenboard from './gutenboard';
+import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
 import { Step, path } from './path';
@@ -117,11 +118,7 @@ window.AppBoot = async () => {
 	} catch {}
 
 	ReactDom.render(
-		<I18nProvider
-			initialLocaleData={ initialLocaleData }
-			defaultLocaleSlug={ DEFAULT_LOCALE_SLUG }
-			getLanguageFile={ getLanguageFile }
-		>
+		<LocaleContext initialLocaleData={ initialLocaleData }>
 			<WindowLocaleEffectManager />
 			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
 				<Switch>
@@ -133,23 +130,35 @@ window.AppBoot = async () => {
 					</Route>
 				</Switch>
 			</BrowserRouter>
-		</I18nProvider>,
+		</LocaleContext>,
 		document.getElementById( 'wpcom' )
 	);
 };
 
 function WindowLocaleEffectManager() {
-	const { isRTL, i18nLocale } = useI18n();
-	const isRtl = isRTL();
-	const htmlLangAttribute = i18nLocale;
+	const { __, isRTL, i18nLocale } = useI18n();
+
+	// Some languages may need to set an html lang attribute that is different from their slug
+	let lang = __( 'html_lang_attribute' );
+
+	// Some languages don't have the translation for html_lang_attribute
+	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug
+	if ( lang === 'html_lang_attribute' ) {
+		lang = i18nLocale;
+	}
 
 	React.useEffect( () => {
-		document.documentElement.lang = htmlLangAttribute;
+		document.documentElement.lang = lang;
+	}, [ lang ] );
+
+	const isRtl = isRTL();
+
+	React.useEffect( () => {
 		document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
 		document.body.classList[ isRtl ? 'add' : 'remove' ]( 'rtl' );
-
 		switchWebpackCSS( isRtl );
 	}, [ isRtl ] );
+
 	return null;
 }
 
