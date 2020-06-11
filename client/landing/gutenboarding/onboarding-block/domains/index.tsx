@@ -43,12 +43,6 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const { setDomain, setDomainSearch } = useDispatch( ONBOARD_STORE );
 
-	// Keep a copy of the selected plan locally so it's available when the component is unmounting
-	// const selectedPlanRef = React.useRef< string | undefined >();
-	// React.useEffect( () => {
-	// 	selectedPlanRef.current = plan?.storeSlug;
-	// }, [ plan ] );
-
 	useTrackStep( isModal ? 'DomainsModal' : 'Domains', () => ( {
 		selected_domain: domain?.domain_name,
 	} ) );

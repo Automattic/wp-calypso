@@ -17,28 +17,55 @@
 	align-items: center;
 	z-index: gutenboarding-z-index( '.gutenboarding__footer' );
 
-	.components-button.is-link {
-		@include onboarding-medium-text;
-		color: var( --studio-gray-40 );
-		white-space: nowrap;
-	}
-	.components-button.is-primary {
-		height: auto;
-		padding: 13px 29px;
-
-		&[disabled] {
-			background: var( --studio-gray-10 );
-			color: $white;
-		}
-	}
-
 	@include break-small {
 		padding: 0;
+		margin-left: 20px;
 		position: static;
 		border: none;
 
-		& > div {
-			margin-left: 14px;
+		.action_buttons__button {
+			margin-left: 20px;
+
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+	}
+}
+
+button.action_buttons__button.components-button {
+	@include onboarding-medium-text;
+	font-weight: 600;
+	min-width: 160px;
+	height: 42px;
+	justify-content: center;
+
+	&:active,
+	&:hover,
+	&:focus {
+		outline-color: transparent;
+	}
+
+	&.action-buttons__back {
+		color: var( --studio-gray-40 );
+		white-space: nowrap;
+		min-width: 0;
+		height: auto;
+	}
+
+	&.action-buttons__next {
+		color: var( --studio-white );
+		box-shadow: 0 0 0 1px var( --studio-blue-40 );
+	}
+	&.action-buttons__skip {
+		color: var( --studio-gray-20 );
+		box-shadow: inset 0 0 0 1px var( --studio-gray-20 );
+
+		&:active,
+		&:hover,
+		&:focus {
+			color: var( --studio-gray-30 );
+			box-shadow: inset 0 0 0 1px var( --studio-gray-30 );
 		}
 	}
 }

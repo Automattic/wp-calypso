@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import PlansGrid from '@automattic/plans-grid';
@@ -21,7 +20,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import ActionButtons from '../../components/action-buttons';
+import ActionButtons, { BackButton } from '../../components/action-buttons';
 import { Title, SubTitle } from '../../components/titles';
 
 interface Props {
@@ -78,13 +77,9 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 					) }
 				</SubTitle>
 			</div>
-			<ActionButtons
-				secondaryButton={
-					<Button className="plans__back-link" isLink onClick={ handleBack }>
-						{ __( 'Go back' ) }
-					</Button>
-				}
-			/>
+			<ActionButtons>
+				<BackButton onClick={ handleBack } />
+			</ActionButtons>
 		</>
 	);
 

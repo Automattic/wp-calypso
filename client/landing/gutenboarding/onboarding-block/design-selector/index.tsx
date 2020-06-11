@@ -18,8 +18,8 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import Badge from '../../components/badge';
 import designs, { getDesignImageUrl } from '../../available-designs';
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
-import Link from '../../components/link';
 import type { Design } from '../../stores/onboard/types';
+import ActionButtons, { BackButton } from '../../components/action-buttons';
 
 /**
  * Style dependencies
@@ -41,6 +41,8 @@ const DesignSelector: React.FunctionComponent = () => {
 		is_selected_design_premium: hasPaidDesign(),
 	} ) );
 
+	const handleBack = () => push( previousStepPath );
+
 	return (
 		<div className="gutenboarding-page design-selector">
 			<div className="design-selector__header">
@@ -50,9 +52,9 @@ const DesignSelector: React.FunctionComponent = () => {
 						{ __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
 					</SubTitle>
 				</div>
-				<Link className="design-selector__start-over-button" to={ previousStepPath } isLink>
-					{ __( 'Go back' ) }
-				</Link>
+				<ActionButtons>
+					<BackButton onClick={ handleBack } />
+				</ActionButtons>
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">

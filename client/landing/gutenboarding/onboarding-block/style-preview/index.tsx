@@ -4,14 +4,12 @@
 import React, { useCallback, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { Button } from '@wordpress/components';
 import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import Preview from './preview';
-import Link from '../../components/link';
 import ViewportSelect from './viewport-select';
 import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
@@ -23,9 +21,12 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import SignupForm from '../../components/signup-form';
 import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
-import BottomBarMobile from '../../components/bottom-bar-mobile';
+import ActionButtons, { BackButton, NextButton } from '../../components/action-buttons';
 import type { Viewport } from './types';
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
@@ -86,6 +87,10 @@ const StylePreview: React.FunctionComponent = () => {
 		currentUser ? handleCreateSite( currentUser.username ) : handleSignup();
 	};
 
+	const handleBack = () => {
+		history.push( previousStepPath );
+	};
+
 	return (
 		<>
 			<div className="gutenboarding-page style-preview">
@@ -97,21 +102,10 @@ const StylePreview: React.FunctionComponent = () => {
 						</SubTitle>
 					</div>
 					<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
-					<div className="style-preview__actions">
-						<Link isLink to={ previousStepPath }>
-							{ __( 'Go back' ) }
-						</Link>
-						{ hasSelectedDesign && (
-							<Button
-								className="style-preview__actions-continue-button"
-								isPrimary
-								isLarge
-								onClick={ handleContinue }
-							>
-								{ __( 'Continue' ) }
-							</Button>
-						) }
-					</div>
+					<ActionButtons className="style-preview__actions">
+						<BackButton onClick={ handleBack } />
+						{ hasSelectedDesign && <NextButton onClick={ handleContinue } /> }
+					</ActionButtons>
 				</div>
 				<div className="style-preview__content">
 					<FontSelect />
@@ -119,7 +113,6 @@ const StylePreview: React.FunctionComponent = () => {
 				</div>
 				{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 			</div>
-			<BottomBarMobile backUrl={ previousStepPath } onContinue={ handleContinue } />
 		</>
 	);
 };
