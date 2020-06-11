@@ -29,7 +29,7 @@ import Main from 'components/main';
 import ListItem from './list-item';
 import './style.scss';
 
-function ListForm( { list, onChange, onSubmit } ) {
+function ListForm( { isCreateForm, list, onChange, onSubmit } ) {
 	return (
 		<Card>
 			<FormFieldset>
@@ -44,19 +44,21 @@ function ListForm( { list, onChange, onSubmit } ) {
 				<FormSettingExplanation>The name of the list.</FormSettingExplanation>
 			</FormFieldset>
 
-			<FormFieldset>
-				<FormLabel htmlFor="list-slug">Slug</FormLabel>
-				<FormTextInput
-					id="list-slug"
-					name="list-slug"
-					data-key="slug"
-					value={ list.slug }
-					onChange={ onChange }
-				/>
-				<FormSettingExplanation>
-					The slug for the list. This is used to build the URL to the list.
-				</FormSettingExplanation>
-			</FormFieldset>
+			{ ! isCreateForm && (
+				<FormFieldset>
+					<FormLabel htmlFor="list-slug">Slug</FormLabel>
+					<FormTextInput
+						id="list-slug"
+						name="list-slug"
+						data-key="slug"
+						value={ list.slug }
+						onChange={ onChange }
+					/>
+					<FormSettingExplanation>
+						The slug for the list. This is used to build the URL to the list.
+					</FormSettingExplanation>
+				</FormFieldset>
+			) }
 
 			<FormFieldset>
 				<FormLegend>Visibility</FormLegend>
@@ -122,7 +124,7 @@ function ReaderListCreate() {
 	return (
 		<Main>
 			<FormattedHeader headerText="Create List" />
-			<ListForm list={ list } onChange={ onChange } />
+			<ListForm isCreateForm list={ list } onChange={ onChange } />
 		</Main>
 	);
 }
