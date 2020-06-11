@@ -77,7 +77,7 @@ jobs:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s { matrix.screensize } -S ${{ github.event.pull_request.head.sha }} -f ${{ steps.split-test-files.outputs.files }}
+        run: cd test/e2e && ./run.sh -R -g -s {{ matrix.screensize }} -S ${{ github.event.pull_request.head.sha }} -f ${{ steps.split-test-files.outputs.files }}
       - uses: actions/upload-artifact@master
         if: always()
         with:
