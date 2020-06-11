@@ -18,6 +18,10 @@
 	}
 }
 
+.domain-picker-button__container {
+	display: inline-flex;
+}
+
 .domain-picker-button {
 	&.components-button {
 		@include onboarding-medium-text;

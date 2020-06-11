@@ -19,11 +19,17 @@ import './style.scss';
 
 interface Props {
 	onClose: Function;
+	onFocusOutside: Function;
 	isOpen: boolean;
 	children: any;
 }
 
-const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClose, children } ) => {
+const DomainPickerPopover: React.FunctionComponent< Props > = ( {
+	isOpen,
+	onClose,
+	onFocusOutside,
+	children,
+} ) => {
 	// Popover expands at medium viewport width
 	const isMobile = useViewportMatch( 'medium', '<' );
 
@@ -35,11 +41,18 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClos
 		}
 	}, [ isOpen ] );
 
-	const handleClose = ( e?: React.FocusEvent ) => {
+	const handleClose = () => {
 		recordCloseModal( tracksName, {
 			selected_domain: select( STORE_KEY ).getSelectedDomain()?.domain_name,
 		} );
-		onClose?.( e );
+		onClose?.();
+	};
+
+	const handleFocusOutside = () => {
+		recordCloseModal( tracksName, {
+			selected_domain: select( STORE_KEY ).getSelectedDomain()?.domain_name,
+		} );
+		onFocusOutside?.();
 	};
 
 	// Don't render popover when isOpen is false.
@@ -56,7 +69,7 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClos
 				focusOnMount={ isMobile ? 'container' : 'firstElement' }
 				noArrow
 				onClose={ handleClose }
-				onFocusOutside={ handleClose }
+				onFocusOutside={ handleFocusOutside }
 				position={ 'bottom center' }
 				expandOnMobile={ true }
 			>

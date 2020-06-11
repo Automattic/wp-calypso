@@ -42,18 +42,20 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const buttonRef = React.createRef< HTMLButtonElement >();
+	const containerRef = React.createRef< HTMLDivElement >();
 
 	const [ domainPickerMode, setDomainPickerMode ] = React.useState<
 		'popover' | 'modal' | undefined
 	>();
 
-	const handlePopoverToggle = ( e?: React.FocusEvent ) => {
-		// Don't collide with button toggling
-		if ( e?.relatedTarget === buttonRef.current ) {
-			return;
-		}
+	const handlePopoverToggle = () => {
 		setDomainPickerMode( ( mode ) => ( mode ? undefined : 'popover' ) );
+	};
+
+	const handlePopoverFocusOutside = () => {
+		if ( ! containerRef?.current?.contains( document.activeElement ) ) {
+			handlePopoverToggle();
+		}
 	};
 
 	const handleClose = () => {
@@ -84,7 +86,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 	);
 
 	return (
-		<>
+		<div ref={ containerRef } className="domain-picker-button__container" tabIndex={ -1 }>
 			<Button
 				{ ...buttonProps }
 				aria-expanded={ !! domainPickerMode }
@@ -95,7 +97,6 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 					'is-modal-open': domainPickerMode === 'modal',
 				} ) }
 				onClick={ handlePopoverToggle }
-				ref={ buttonRef }
 			>
 				<span className="domain-picker-button__label">{ children }</span>
 				<Icon icon={ chevronDown } size={ 22 } />
@@ -103,13 +104,14 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 			<DomainPickerPopover
 				isOpen={ domainPickerMode === 'popover' }
 				onClose={ handlePopoverToggle }
+				onFocusOutside={ handlePopoverFocusOutside }
 			>
 				{ domainPicker }
 			</DomainPickerPopover>
 			<DomainPickerModal isOpen={ domainPickerMode === 'modal' } onClose={ handleClose }>
 				{ domainPicker }
 			</DomainPickerModal>
-		</>
+		</div>
 	);
 };
 
