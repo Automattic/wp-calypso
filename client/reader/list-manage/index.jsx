@@ -2,13 +2,17 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import { getListByOwnerAndSlug, getListItems } from 'state/reader/lists/selectors';
+import {
+	getListByOwnerAndSlug,
+	getListItems,
+	isCreatingList as isCreatingListSelector,
+} from 'state/reader/lists/selectors';
 import FormattedHeader from 'components/formatted-header';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
@@ -26,33 +30,38 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
+import { createReaderList } from 'state/reader/lists/actions';
 import ListItem from './list-item';
 import './style.scss';
 
-function ListForm( { isCreateForm, list, onChange, onSubmit } ) {
+function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmit } ) {
+	const isNameValid = typeof list.title === 'string' && list.title.length > 0;
+	const isSlugValid = isCreateForm || ( typeof list.slug === 'string' && list.slug.length > 0 );
 	return (
 		<Card>
 			<FormFieldset>
-				<FormLabel htmlFor="list-name">Name</FormLabel>
+				<FormLabel htmlFor="list-name">Name (Required)</FormLabel>
 				<FormTextInput
-					id="list-name"
-					name="list-name"
 					data-key="title"
-					value={ list.title }
+					id="list-name"
+					isValid={ isNameValid }
+					name="list-name"
 					onChange={ onChange }
+					value={ list.title }
 				/>
 				<FormSettingExplanation>The name of the list.</FormSettingExplanation>
 			</FormFieldset>
 
 			{ ! isCreateForm && (
 				<FormFieldset>
-					<FormLabel htmlFor="list-slug">Slug</FormLabel>
+					<FormLabel htmlFor="list-slug">Slug (Required)</FormLabel>
 					<FormTextInput
-						id="list-slug"
-						name="list-slug"
 						data-key="slug"
-						value={ list.slug }
+						id="list-slug"
+						isValid={ isSlugValid }
+						name="list-slug"
 						onChange={ onChange }
+						value={ list.slug }
 					/>
 					<FormSettingExplanation>
 						The slug for the list. This is used to build the URL to the list.
@@ -99,7 +108,11 @@ function ListForm( { isCreateForm, list, onChange, onSubmit } ) {
 				/>
 			</FormFieldset>
 			<FormButtonsBar>
-				<FormButton primary onClick={ onSubmit }>
+				<FormButton
+					primary
+					disabled={ isSubmissionDisabled || ! isNameValid || ! isSlugValid }
+					onClick={ onSubmit }
+				>
 					Save
 				</FormButton>
 			</FormButtonsBar>
@@ -108,11 +121,13 @@ function ListForm( { isCreateForm, list, onChange, onSubmit } ) {
 }
 
 function ReaderListCreate() {
+	const dispatch = useDispatch();
+	const isCreatingList = useSelector( isCreatingListSelector );
 	const [ list, updateList ] = React.useState( {
-		title: '',
-		slug: '',
-		is_public: true,
 		description: '',
+		is_public: true,
+		slug: '',
+		title: '',
 	} );
 	const onChange = ( event ) => {
 		const update = { [ event.target.dataset.key ]: event.target.value };
@@ -124,7 +139,13 @@ function ReaderListCreate() {
 	return (
 		<Main>
 			<FormattedHeader headerText="Create List" />
-			<ListForm isCreateForm list={ list } onChange={ onChange } />
+			<ListForm
+				isCreateForm
+				isSubmissionDisabled={ isCreatingList }
+				list={ list }
+				onChange={ onChange }
+				onSubmit={ () => dispatch( createReaderList( list ) ) }
+			/>
 		</Main>
 	);
 }
