@@ -98,9 +98,7 @@ function addLoadingScreenClassNamesToBody() {
 		return;
 	}
 
-	if ( document.body.className.indexOf( 'has-loading-screen-signup' ) === -1 ) {
-		document.body.className += ' has-loading-screen-signup';
-	}
+	document.body.classList.add( 'has-loading-screen-signup' );
 }
 
 function removeLoadingScreenClassNamesFromBody() {
@@ -108,7 +106,7 @@ function removeLoadingScreenClassNamesFromBody() {
 		return;
 	}
 
-	document.body.className = document.body.className.split( 'has-loading-screen-signup' ).join( '' );
+	document.body.classList.remove( 'has-loading-screen-signup' );
 }
 
 function isWPForTeamsFlow( flowName ) {

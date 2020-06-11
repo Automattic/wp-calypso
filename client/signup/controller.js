@@ -54,7 +54,11 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let initialContext;
 
 const removeWhiteBackground = function () {
-	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-white-signup' );
 };
 
 export const addP2SignupClassName = () => {
@@ -62,9 +66,7 @@ export const addP2SignupClassName = () => {
 		return;
 	}
 
-	if ( document.body.className.indexOf( 'is-p2-signup' ) === -1 ) {
-		document.body.className += ' is-p2-signup';
-	}
+	document.body.classList.add( 'is-p2-signup' );
 };
 
 export const removeP2SignupClassName = function () {
@@ -72,7 +74,7 @@ export const removeP2SignupClassName = function () {
 		return;
 	}
 
-	document.body.className = document.body.className.split( 'is-p2-signup' ).join( '' );
+	document.body.classList.remove( 'is-p2-signup' );
 };
 
 export default {
