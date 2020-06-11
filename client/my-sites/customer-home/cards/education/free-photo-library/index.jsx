@@ -30,7 +30,7 @@ const FreePhotoLibrary = () => {
 					postId: 145498,
 					url: localizeUrl( 'https://wordpress.com/support/free-photo-library/' ),
 					text: translate( 'Learn more' ),
-					icon: 'video',
+					materialIcon: 'play_circle_outline',
 				},
 			] }
 			illustration={ freePhotoLibraryVideoPrompt }

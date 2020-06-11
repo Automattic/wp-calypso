@@ -30,13 +30,13 @@ const MasteringGutenberg = () => {
 					postId: 147594,
 					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/#blocks' ),
 					text: translate( 'Adding and moving blocks' ),
-					icon: 'video',
+					materialIcon: 'play_circle_outline',
 				},
 				{
 					postId: 147594,
 					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/#configuring-a-block' ),
 					text: translate( 'Adjust settings of blocks' ),
-					icon: 'video',
+					materialIcon: 'play_circle_outline',
 				},
 			] }
 			illustration={ gutenbergIllustration }
