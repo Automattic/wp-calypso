@@ -18,28 +18,34 @@ import {
 	deleteReaderListTag,
 } from 'state/reader/lists/actions';
 
-export default function ListItem( props: { item: Item; owner: string; listSlug: string } ) {
-	const { item, owner, listSlug } = props;
+export default function ListItem( props: { item: Item; owner: string; list: any } ) {
+	const { item, owner, list } = props;
 	const dispatch = useDispatch();
 	return (
 		<Card className="list-manage__site-card">
 			{ item.feed_ID !== null && (
 				<FeedItem
 					item={ item }
-					onRemove={ () => dispatch( deleteReaderListFeed( owner, listSlug, item.feed_ID ) ) }
+					onRemove={ () =>
+						dispatch( deleteReaderListFeed( list.id, owner, list.slug, item.feed_ID ) )
+					}
 				/>
 			) }
 			{ item.site_ID !== null && (
 				<SiteItem
 					item={ item }
-					onRemove={ () => dispatch( deleteReaderListSite( owner, listSlug, item.site_ID ) ) }
+					onRemove={ () =>
+						dispatch( deleteReaderListSite( list.id, owner, list.slug, item.site_ID ) )
+					}
 				/>
 			) }
 			{ item.tag_ID !== null && (
 				<TagItem
 					item={ item }
 					onRemove={ () =>
-						dispatch( deleteReaderListTag( owner, listSlug, item.meta.data?.tag?.tag.slug ) )
+						dispatch(
+							deleteReaderListTag( list.id, owner, list.slug, item.meta.data?.tag?.tag.slug )
+						)
 					}
 				/>
 			) }

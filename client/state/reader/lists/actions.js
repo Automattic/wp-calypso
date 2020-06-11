@@ -300,22 +300,25 @@ export const receiveReaderListItems = ( listId, listItems ) => ( {
 	listItems,
 } );
 
-export const deleteReaderListFeed = ( listOwner, listSlug, feedId ) => ( {
+export const deleteReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
 	type: READER_LIST_ITEM_DELETE_FEED,
+	listId,
 	listOwner,
 	listSlug,
 	feedId,
 } );
 
-export const deleteReaderListSite = ( listOwner, listSlug, siteId ) => ( {
+export const deleteReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
 	type: READER_LIST_ITEM_DELETE_FEED,
+	listId,
 	listOwner,
 	listSlug,
 	feedId: `site:${ siteId }`,
 } );
 
-export const deleteReaderListTag = ( listOwner, listSlug, tagSlug ) => ( {
+export const deleteReaderListTag = ( listId, listOwner, listSlug, tagSlug ) => ( {
 	type: READER_LIST_ITEM_DELETE_TAG,
+	listId,
 	listOwner,
 	listSlug,
 	tagSlug,
