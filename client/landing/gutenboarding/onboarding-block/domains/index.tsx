@@ -18,6 +18,8 @@ import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { FLOW_ID } from '../../constants';
+import ActionButtons, { BackButton, NextButton, SkipButton } from '../../components/action-buttons';
+import { Title, SubTitle } from '../../components/titles';
 
 /**
  * Style dependencies
@@ -43,35 +45,53 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const { setDomain, setDomainSearch } = useDispatch( ONBOARD_STORE );
 
+	// Keep a copy of the selected domain locally so it's available when the component is unmounting
+	const selectedDomainRef = React.useRef< string | undefined >();
+	React.useEffect( () => {
+		selectedDomainRef.current = domain?.domain_name;
+	}, [ domain ] );
+
 	useTrackStep( isModal ? 'DomainsModal' : 'Domains', () => ( {
-		selected_domain: domain?.domain_name,
+		selected_domain: selectedDomainRef.current,
 	} ) );
+
+	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
+		setDomain( suggestion );
+	};
 
 	const handleBack = () => ( isModal ? history.goBack() : history.push( previousStepPath ) );
 	const handleNext = () => {
+		trackEventWithFlow( 'calypso_newsite_domain_select', {
+			domain_name: domain?.domain_name,
+		} );
 		if ( isModal ) {
 			history.goBack();
 		} else {
 			history.push( nextStepPath );
 		}
 	};
+	const handleSkip = () => history.push( nextStepPath );
 
-	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
-		trackEventWithFlow( 'calypso_newsite_domain_select', {
-			domain_name: suggestion?.domain_name,
-		} );
-		setDomain( suggestion );
-		handleNext();
-	};
+	const header = (
+		<div className="domains__header">
+			<div>
+				<Title>{ __( 'Choose a domain' ) }</Title>
+				<SubTitle>{ __( 'Free for the first year with any paid plan.' ) }</SubTitle>
+			</div>
+			<ActionButtons>
+				<BackButton onClick={ handleBack } />
+				{ domain ? <NextButton onClick={ handleNext } /> : <SkipButton onClick={ handleSkip } /> }
+			</ActionButtons>
+		</div>
+	);
 
 	return (
 		<div className="gutenboarding-page domains">
 			<DomainPicker
+				header={ header }
 				analyticsFlowId={ FLOW_ID }
 				initialDomainSearch={ domainSearch || __( 'My new site' ) }
 				onSetDomainSearch={ setDomainSearch }
-				showDomainConnectButton={ isModal }
-				onClose={ handleBack }
 				currentDomain={ domain }
 				onDomainSelect={ onDomainSelect }
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
