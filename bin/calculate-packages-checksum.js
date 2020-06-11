@@ -14,10 +14,14 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 
 const PACKAGES_DIR = './packages';
-const IGNORED_DIRS = [ 'dist', 'node_modules' ];
+const APPS_DIR = './apps';
+const IGNORED_DIRS = [ 'dist' ];
 const IGNORED_FILES = [ 'packages-checksum.txt' ];
 const isCalledFromCLI = ! module.parent;
 const nvmrcFile = path.resolve( __dirname, '..', '.nvmrc' );
+const babelConfigFile = path.resolve( __dirname, '..', 'babel.config.js' );
+const packageJSON = path.resolve( __dirname, '..', 'package.json' );
+const yarnLock = path.resolve( __dirname, '..', 'yarn.lock' );
 
 /**
  * Asynchronously yet recursively traverses a given dir
@@ -42,6 +46,10 @@ async function digestPackagesDir() {
 		files.push( file );
 	}
 
+	for await ( const file of traverse( APPS_DIR ) ) {
+		files.push( file );
+	}
+
 	// sort files, opendir doesn't guarantee order
 	files.sort( ( a, b ) => a.localeCompare( b ) );
 
@@ -51,6 +59,15 @@ async function digestPackagesDir() {
 
 	// include nvmrc to the hash to make sure to rebuild when node version changes
 	hash.update( await fs.promises.readFile( nvmrcFile ) );
+
+	// include babelConfigFile to the hash to make sure to rebuild when it version changes
+	hash.update( await fs.promises.readFile( babelConfigFile ) );
+
+	// include packageJSON JSON file to rebuild if something is installed/updated/deleted
+	hash.update( await fs.promises.readFile( packageJSON ) );
+
+	// include yarnLock JSON file to rebuild if something is installed/updated/deleted
+	hash.update( await fs.promises.readFile( yarnLock ) );
 
 	return checksumFileExplanation + hash.digest( 'base64' );
 }
