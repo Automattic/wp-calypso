@@ -170,7 +170,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getNameServers() {
-		const { translate, domain, selectedSite } = this.props;
+		const { translate, domain, currentRoute, selectedSite } = this.props;
 
 		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
 			return null;
@@ -180,7 +180,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementNameServers( selectedSite.slug, domain.name ) }
+				path={ domainManagementNameServers( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
 				description={ description }
@@ -189,13 +189,13 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getDnsRecords() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, translate, currentRoute, domain } = this.props;
 
 		const description = this.getDestinationText();
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementDns( selectedSite.slug, domain.name ) }
+				path={ domainManagementDns( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Update your DNS records' ) }
 				description={ description }
@@ -638,8 +638,10 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 export default connect(
 	( state ) => {
+		const currentRoute = getCurrentRoute( state );
 		return {
-			isManagingAllSites: isUnderDomainManagementAll( getCurrentRoute( state ) ),
+			currentRoute,
+			isManagingAllSites: isUnderDomainManagementAll( currentRoute ),
 		};
 	},
 	{ recordTracksEvent, recordGoogleEvent }

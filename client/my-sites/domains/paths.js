@@ -106,12 +106,12 @@ export function domainManagementChangeSiteAddress( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'change-site-address' );
 }
 
-export function domainManagementNameServers( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'name-servers' );
+export function domainManagementNameServers( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'name-servers', relativeTo );
 }
 
-export function domainManagementDns( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'dns' );
+export function domainManagementDns( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'dns', relativeTo );
 }
 
 export function domainManagementRedirectSettings( siteName, domainName ) {
@@ -126,7 +126,12 @@ export function domainManagementSiteRedirect( siteName, domainName, relativeTo =
 	return domainManagementEdit( siteName, domainName, 'redirect', relativeTo );
 }
 
-export function domainManagementTransfer( siteName, domainName, transferType = '', relativeTo = null ) {
+export function domainManagementTransfer(
+	siteName,
+	domainName,
+	transferType = '',
+	relativeTo = null
+) {
 	return domainManagementEdit(
 		siteName,
 		domainName,

@@ -121,21 +121,31 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		paths.domainManagementDns( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementDns,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementDns( ':site', ':domain' ),
+			paths.domainManagementDns( ':site', ':domain', paths.domainManagementRoot() ),
+		],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementDns,
+			makeLayout,
+			clientRender,
+		],
+	} );
 
-	page(
-		paths.domainManagementNameServers( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementNameServers,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementNameServers( ':site', ':domain' ),
+			paths.domainManagementNameServers( ':site', ':domain', paths.domainManagementRoot() ),
+		],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementNameServers,
+			makeLayout,
+			clientRender,
+		],
+	} );
 
 	page(
 		paths.domainManagementTransfer( ':site', ':domain' ),
@@ -211,20 +221,20 @@ export default function () {
 			...getCommonHandlers(),
 			domainManagementController.domainManagementSiteRedirect,
 			makeLayout,
-			clientRender
+			clientRender,
 		],
 	} );
 
 	registerMultiPage( {
 		paths: [
 			paths.domainManagementTransferIn( ':site', ':domain' ),
-			paths.domainManagementTransferIn( ':site', ':domain', paths.domainManagementRoot()  ),
+			paths.domainManagementTransferIn( ':site', ':domain', paths.domainManagementRoot() ),
 		],
 		handlers: [
 			...getCommonHandlers(),
 			domainManagementController.domainManagementTransferIn,
 			makeLayout,
-			clientRender
+			clientRender,
 		],
 	} );
 
