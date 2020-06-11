@@ -202,21 +202,31 @@ export default function () {
 		],
 	} );
 
-	page(
-		paths.domainManagementSiteRedirect( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementSiteRedirect,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementSiteRedirect( ':site', ':domain' ),
+			paths.domainManagementSiteRedirect( ':site', ':domain', paths.domainManagementRoot() ),
+		],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementSiteRedirect,
+			makeLayout,
+			clientRender
+		],
+	} );
 
-	page(
-		paths.domainManagementTransferIn( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferIn,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementTransferIn( ':site', ':domain' ),
+			paths.domainManagementTransferIn( ':site', ':domain', paths.domainManagementRoot()  ),
+		],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementTransferIn,
+			makeLayout,
+			clientRender
+		],
+	} );
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(

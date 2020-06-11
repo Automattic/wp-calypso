@@ -122,20 +122,21 @@ export function domainManagementSecurity( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'security' );
 }
 
-export function domainManagementSiteRedirect( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'redirect' );
+export function domainManagementSiteRedirect( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'redirect', relativeTo );
 }
 
-export function domainManagementTransfer( siteName, domainName, transferType = '' ) {
+export function domainManagementTransfer( siteName, domainName, transferType = '', relativeTo = null ) {
 	return domainManagementEdit(
 		siteName,
 		domainName,
-		filter( [ 'transfer', transferType ] ).join( '/' )
+		filter( [ 'transfer', transferType ] ).join( '/' ),
+		relativeTo
 	);
 }
 
-export function domainManagementTransferIn( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'in' );
+export function domainManagementTransferIn( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransfer( siteName, domainName, 'in', relativeTo );
 }
 
 export function domainManagementTransferInPrecheck( siteName, domainName ) {
