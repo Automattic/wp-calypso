@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Returns true if currently requesting roles for the specified site ID, or
@@ -24,5 +28,11 @@ export const isRequestingSiteRoles = ( state, siteId ) => {
  * @returns {Array}           Site roles
  */
 export const getSiteRoles = ( state, siteId ) => {
-	return get( state.siteRoles.items, [ siteId ] );
+	let siteRoles = get( state.siteRoles.items, [ siteId ] );
+
+	if ( siteRoles && isSiteWPForTeams( state, siteId ) ) {
+		siteRoles = siteRoles.filter( ( role ) => role.name !== 'contributor' );
+	}
+
+	return siteRoles;
 };
