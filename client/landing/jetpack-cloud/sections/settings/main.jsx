@@ -2,23 +2,21 @@
  * External dependencies
  */
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import ServerCredentialsForm from 'components/jetpack/server-credentials-form';
 import { Card } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
-import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ExternalLink from 'components/external-link';
+import { useSelectedSiteId, useRewindState } from './hooks';
 
 /**
  * Style dependencies
@@ -54,7 +52,7 @@ const disconnectedProps = ( translate ) => ( {
 	),
 } );
 
-const ConnectionStatus = ( { isConnected } ) => {
+export const ConnectionStatus = ( { isConnected } ) => {
 	const translate = useTranslate();
 	const cardProps = isConnected ? connectedProps( translate ) : disconnectedProps( translate );
 
@@ -69,11 +67,10 @@ const ConnectionStatus = ( { isConnected } ) => {
 	);
 };
 
-const SettingsPage = () => {
+export const SettingsPage = () => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-
-	const rewind = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const siteId = useSelectedSiteId();
+	const rewind = useRewindState( siteId );
 	const isInitialized = rewind.state !== 'uninitialized';
 	const isConnected = rewind.state === 'active';
 
