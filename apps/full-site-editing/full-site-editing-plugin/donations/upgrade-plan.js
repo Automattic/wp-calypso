@@ -24,10 +24,6 @@ const UpgradePlan = ( { upgradeUrl } ) => {
 				) }
 			>
 				<Button
-					/**
-					 * @see https://github.com/DefinitelyTyped/DefinitelyTyped/pull/42883
-					 */
-					// @ts-ignore isSecondary is missing from the type definition
 					isSecondary
 					isLarge
 					href={ upgradeUrl }
