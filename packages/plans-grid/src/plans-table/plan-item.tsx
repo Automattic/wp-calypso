@@ -98,8 +98,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const hasDomain = !! domain;
 
-	const domainName = domain?.domain_name;
-
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
 
