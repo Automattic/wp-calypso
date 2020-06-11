@@ -55,7 +55,7 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async confirmCurrentPlan( planName ) {
-		let selector = by.css( `.is-current.is-${ planName }-plan` );
+		let selector = by.css( `.is-${ planName }-plan .plan-pill` );
 		if ( host !== 'WPCOM' ) {
 			selector = by.css( `.is-${ planName }-plan` );
 		}
