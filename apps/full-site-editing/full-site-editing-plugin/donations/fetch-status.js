@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-
+/* eslint-disable wpcalypso/import-docblock */
 /**
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-
-/**
- * Internal dependencies
- */
 
 const fetchStatus = async () => {
 	try {

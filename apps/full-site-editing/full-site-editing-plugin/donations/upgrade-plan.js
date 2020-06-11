@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-
+/* eslint-disable wpcalypso/import-docblock */
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 import { Button, ExternalLink, Placeholder } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 
 const UpgradePlan = ( { upgradeUrl } ) => {
 	return (

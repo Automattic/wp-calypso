@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/import-docblock */
 /**
  * WordPress dependencies
  */

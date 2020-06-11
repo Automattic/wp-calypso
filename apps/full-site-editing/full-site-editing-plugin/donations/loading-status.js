@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-
+/* eslint-disable wpcalypso/import-docblock */
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 import { Placeholder, Spinner } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 
 const LoadingStatus = () => {
 	return (

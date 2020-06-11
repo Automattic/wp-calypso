@@ -10,10 +10,6 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
-/**
- * Internal dependencies
- */
-
 const DonationsTabs = () => {
 	const [ activeTab, setActiveTab ] = useState( 'one-time' );
 
