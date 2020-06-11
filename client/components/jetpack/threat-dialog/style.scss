@@ -12,7 +12,7 @@
 		}
 
 		&__header--ignore-threat {
-			color: var( --color-threat-found );
+			color: var( --color-error-50 );
 		}
 
 		&__threat-title {
@@ -41,7 +41,7 @@
 		}
 
 		&__warning-icon--ignore-threat {
-			fill: var( --color-threat-found );
+			fill: var( --color-error-50 );
 		}
 
 		&__warning-message {

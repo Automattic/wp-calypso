@@ -1,6 +1,6 @@
 .threat-item-subheader {
 	&__subheader {
-		color: var( --color-threat-ignored );
+		color: var( --studio-gray-50 );
 		font-size: $font-body-small;
 		display: flex;
 		flex-direction: column;
@@ -17,7 +17,7 @@
 		white-space: nowrap;
 
 		&.is-fixed {
-			color: var( --color-threat-fixed );
+			color: var( --studio-jetpack-green-40 );
 		}
 	}
 
@@ -26,7 +26,7 @@
 
 		@include breakpoint-deprecated( '>1040px' ) {
 			display: inline-block;
-			background: var( --color-threat-ignored );
+			background: var( --studio-gray-50 );
 			margin: 0 12px;
 			width: 4px;
 			height: 4px;
@@ -45,11 +45,11 @@
 		color: #fff;
 
 		&.is-fixed {
-			background-color: var( --color-threat-fixed );
+			background-color: var( --studio-jetpack-green-40 );
 		}
 
 		&.is-ignored {
-			background-color: var( --color-threat-ignored );
+			background-color: var( --studio-gray-50 );
 		}
 	}
 
