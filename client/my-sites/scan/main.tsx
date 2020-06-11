@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, ProgressBar } from '@automattic/components';
+import { Button, Card, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import config, { isEnabled } from 'config';
@@ -32,7 +32,9 @@ import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { triggerScanRun } from 'lib/jetpack/trigger-scan-run';
 import { withApplySiteOffset, applySiteOffsetType } from 'components/jetpack/site-offset';
-import ThreatHistoryList from 'components/jetpack/threat-history-list';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
 
 /**
  * Style dependencies
@@ -231,40 +233,43 @@ class ScanPage extends Component< Props > {
 		return this.renderScanOkay();
 	}
 
-	maybeRenderHistory() {
-		const { filter } = this.props;
-
-		const isJetpackCom = !! config( 'env_id' ).includes( 'jetpack-cloud' );
-
-		return (
-			! isJetpackCom && (
-				<div className="scan__history">
-					{ this.renderHeader( 'History' ) }
-					<ThreatHistoryList { ...{ filter } } />
-				</div>
-			)
-		);
-	}
-
 	render() {
-		const { siteId } = this.props;
+		const { siteId, siteSlug } = this.props;
+
 		if ( ! siteId ) {
 			return;
 		}
-		const isJetpackCom = !! config( 'env_id' ).includes( 'jetpack-cloud' );
+
 		return (
 			<Main
 				classNames={ classNames( {
 					scan__main: true,
-					is_jetpackcom: isJetpackCom,
+					is_jetpackcom: config.isEnabled( 'jetpack-cloud' ),
 				} ) }
 			>
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				<div className="scan__content">{ this.renderScanState() }</div>
-				{ this.maybeRenderHistory() }
+				<div className="scan__content">
+					{ ! config.isEnabled( 'jetpack-cloud' ) && (
+						<>
+							<h1 className="history__header">{ translate( 'Jetpack Scan' ) }</h1>
+							<SectionNav>
+								<NavTabs>
+									<NavItem path={ `/scan/${ siteSlug }` } selected={ true }>
+										{ translate( 'Scanner' ) }
+									</NavItem>
+									<NavItem path={ `/scan/history/${ siteSlug }` } selected={ false }>
+										{ translate( 'History' ) }
+									</NavItem>
+								</NavTabs>
+							</SectionNav>
+							<Card>{ this.renderScanState() }</Card>
+						</>
+					) }
+					{ config.isEnabled( 'jetpack-cloud' ) && this.renderScanState() }
+				</div>
 			</Main>
 		);
 	}
@@ -288,6 +293,7 @@ export default connect(
 		return {
 			site,
 			siteId,
+			siteSlug: site.slug,
 			siteUrl,
 			scanState,
 			scanProgress,

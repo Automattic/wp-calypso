@@ -26,8 +26,7 @@ export function showUpsellIfNoScanHistory( context, next ) {
 }
 
 export function scan( context, next ) {
-	const { filter } = context.params;
-	context.primary = <ScanPage filter={ filter } />;
+	context.primary = <ScanPage />;
 	next();
 }
 

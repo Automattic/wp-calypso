@@ -46,18 +46,6 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
-
-		page(
-			'/scan/:site/:filter?',
-			siteSelection,
-			navigation,
-			scan,
-			wrapInSiteOffsetProvider,
-			showUpsellIfNoScan,
-			wpcomUpsellController( WPCOMUpsell ),
-			makeLayout,
-			clientRender
-		);
 	} else {
 		page( '/scan*', () => page.redirect( '/' ) );
 	}
