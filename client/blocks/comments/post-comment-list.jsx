@@ -241,7 +241,7 @@ class PostCommentList extends React.Component {
 				borderless
 			>
 				<Gridicon icon="chat" />
-				<span>{ translate( 'Manage', { context: 'manage comments' } ) }</span>
+				<span>{ translate( 'Manage comments', { context: 'links to Comments' } ) }</span>
 			</Button>
 		);
 	};
@@ -418,18 +418,6 @@ class PostCommentList extends React.Component {
 
 		return (
 			<div className="comments__comment-list">
-				<div>
-					{ showConversationFollowButton && (
-						<ConversationFollowButton
-							className="comments__conversation-follow-button"
-							siteId={ siteId }
-							postId={ postId }
-							post={ this.props.post }
-							followSource={ followSource }
-						/>
-					) }
-					{ showManageCommentsButton && this.renderCommentManageLink() }
-				</div>
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
@@ -445,6 +433,18 @@ class PostCommentList extends React.Component {
 						) }
 					</div>
 				) }
+				<div className="comments__actions-wrapper">
+					{ showConversationFollowButton && (
+						<ConversationFollowButton
+							className="comments__conversation-follow-button"
+							siteId={ siteId }
+							postId={ postId }
+							post={ this.props.post }
+							followSource={ followSource }
+						/>
+					) }
+					{ showManageCommentsButton && this.renderCommentManageLink() }
+				</div>
 				{ showFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
