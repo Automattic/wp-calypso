@@ -28,8 +28,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 				),
 			onSuccess: ( action, apiResponse ) =>
 				receiveReaderListAddFeed( action.listOwner, action.listSlug, apiResponse.feed_id ),
-			onError: ( action, error ) =>
-				receiveReaderListAddFeed( action.listOwner, action.listSlug, null, error ),
+			onError: ( action, error ) => errorNotice( error ),
 		} ),
 	],
 } );

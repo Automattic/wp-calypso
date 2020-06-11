@@ -30,8 +30,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/tags/new/index.js', {
 					action.tagSlug,
 					apiResponse.tagId
 				),
-			onError: ( action, error ) =>
-				receiveReaderListAddTag( action.listOwner, action.listSlug, action.tagSlug, null, error ),
+			onError: ( action, error ) => errorNotice( error ),
 		} ),
 	],
 } );
