@@ -67,8 +67,8 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 						<Next step="add-new-page">{ translate( 'Get started!' ) }</Next>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://wordpress.com/support/simple-payments/">
-						{ translate( 'Learn more about Simple Payments.' ) }
+					<Link href="https://wordpress.com/support/pay-with-paypal-button/">
+						{ translate( 'Learn more about Pay with PayPal buttons.' ) }
 					</Link>
 				</Fragment>
 			) }

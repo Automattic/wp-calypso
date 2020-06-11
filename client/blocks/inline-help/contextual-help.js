@@ -1207,7 +1207,7 @@ const getVideosForSection = () => ( {
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/V8UToJoSf4Q',
-			title: translate( 'Add a Simple Payment Button' ),
+			title: translate( 'Add a Pay with PayPal Button' ),
 			description: translate(
 				'Find out how to add a payment button to your WordPress.com website.'
 			),

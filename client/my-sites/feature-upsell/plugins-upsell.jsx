@@ -146,10 +146,10 @@ class PluginsUpsellComponent extends Component {
 					<div className="feature-upsell__features-list-item">
 						<Feature
 							icon={ <Gridicon icon="money" size={ 48 } /> }
-							title="Easily Accept Credit Card Payments with Simple Payments"
+							title="Easily Accept Credit Card Payments with a Pay with PayPal button"
 							description={
 								<span>
-									The <i>Simple Payments</i> feature lets you accept credit card payments right on
+									The <i>Pay with PayPal</i> button lets you accept credit card payments right on
 									your site. Whether you’re selling products or services, collecting membership
 									fees, or receiving donations, you’ll have a secure checkout process that you can
 									turn on with the click of a button.

@@ -480,7 +480,7 @@ class SimplePaymentsDialog extends Component {
 							className="editor-simple-payments-modal__nudge-nudge"
 							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
 							description={ translate(
-								'Get simple payments, advanced social media tools, your own domain, and more.'
+								'Get Pay with PayPal button, advanced social media tools, your own domain, and more.'
 							) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							event="editor_simple_payments_modal_nudge"
@@ -492,9 +492,9 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href={ localizeUrl( 'https://wordpress.com/support/simple-payments/' ) }
+							href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' ) }
 						>
-							{ translate( 'Learn more about Simple Payments' ) }
+							{ translate( 'Learn more about Pay with PayPal buttons' ) }
 						</a>
 					}
 				/>,
@@ -525,9 +525,9 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href={ localizeUrl( 'https://wordpress.com/support/simple-payments/' ) }
+							href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' ) }
 						>
-							{ translate( 'Learn more about Simple Payments' ) }
+							{ translate( 'Learn more about Pay with PayPal buttons' ) }
 						</a>
 					}
 				/>,

@@ -51,7 +51,7 @@ class SimplePaymentsView extends Component {
 						<Gridicon icon="cross" />
 					</div>
 					<p className="wpview-type-simple-payments__unsupported-message">
-						{ translate( "Your plan doesn't include Simple Payments." ) }
+						{ translate( "Your plan doesn't include Pay with PayPal buttons." ) }
 					</p>
 				</div>
 			);

@@ -141,8 +141,8 @@ export const SimplePaymentsEmailTour = makeTour(
 							{ translate( 'Got it, thanks!' ) }
 						</DelegatingQuit>
 					</ButtonRow>
-					<Link href="https://wordpress.com/support/simple-payments">
-						{ translate( 'Learn more about Simple Payments.' ) }
+					<Link href="https://wordpress.com/support/pay-with-paypal-button/">
+						{ translate( 'Learn more about Pay with PayPal buttons.' ) }
 					</Link>
 				</Fragment>
 			) }
