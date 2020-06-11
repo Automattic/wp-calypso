@@ -41,14 +41,11 @@ export default function CheckoutModal( {
 				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
 
 				<CheckoutModalActions>
-					<Button
-						buttonState="default"
-						onClick={ () => handleCancelAction( cancelAction, closeModal ) }
-					>
+					<Button onClick={ () => handleCancelAction( cancelAction, closeModal ) }>
 						{ cancelButtonCTA || __( 'Cancel' ) }
 					</Button>
 					<Button
-						buttonState="primary"
+						buttonType="primary"
 						onClick={ () => {
 							handlePrimaryAction( primaryAction, closeModal );
 						} }

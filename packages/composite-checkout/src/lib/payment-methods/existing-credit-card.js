@@ -196,7 +196,7 @@ function ExistingCardPayButton( {
 						setTransactionError( error.message );
 					} );
 			} }
-			buttonState="primary"
+			buttonType="primary"
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>

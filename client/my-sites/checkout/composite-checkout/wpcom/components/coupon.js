@@ -59,7 +59,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton disabled={ isPending } buttonState="secondary">
+				<ApplyButton disabled={ isPending } buttonType="secondary">
 					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
 				</ApplyButton>
 			) }

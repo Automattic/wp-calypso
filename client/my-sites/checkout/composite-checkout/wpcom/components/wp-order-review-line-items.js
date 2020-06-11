@@ -101,7 +101,7 @@ function WPLineItem( {
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
-						buttonState="borderless"
+						buttonType="borderless"
 						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );

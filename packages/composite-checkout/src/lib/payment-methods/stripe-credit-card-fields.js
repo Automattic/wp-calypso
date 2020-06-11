@@ -459,7 +459,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 						} );
 				}
 			} }
-			buttonState="primary"
+			buttonType="primary"
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
