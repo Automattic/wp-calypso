@@ -241,7 +241,7 @@ class PostCommentList extends React.Component {
 				borderless
 			>
 				<Gridicon icon="chat" />
-				<span>{ translate( 'Manage comments', { context: 'links to Comments' } ) }</span>
+				<span>{ translate( 'Manage comments' ) }</span>
 			</Button>
 		);
 	};
