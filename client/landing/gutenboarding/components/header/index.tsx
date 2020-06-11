@@ -9,7 +9,6 @@ import { Icon, wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
-import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -30,8 +29,6 @@ import {
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
-
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
@@ -149,7 +146,7 @@ const Header: React.FunctionComponent = () => {
 	const hasPlaceholder =
 		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
 
-	const showFullHeader = ! [
+	const hideFullHeader = [
 		'IntentGathering',
 		'Domains',
 		'DomainsModal',
@@ -180,7 +177,7 @@ const Header: React.FunctionComponent = () => {
 						// We display the DomainPickerButton as soon as we have a domain suggestion,
 						// unless we're still at the IntentGathering step. In that case, we only
 						// show it comes from a site title (but hide it if it comes from a vertical).
-						domainElement && showFullHeader && (
+						domainElement && ! hideFullHeader && (
 							<div
 								className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
 									'has-content': hasContent,
@@ -195,7 +192,7 @@ const Header: React.FunctionComponent = () => {
 					}
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
-					{ showFullHeader && <PlansButton /> }
+					{ ! hideFullHeader && <PlansButton /> }
 				</div>
 			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }

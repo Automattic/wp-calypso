@@ -23,6 +23,8 @@ export default function useStepNavigation(): { previousStepPath: string; nextSte
 	const currentStep = useCurrentStep();
 	const siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
 
+	// If the user enters a site title on Intent Capture step we are showing Domains step next.
+	// Else, we're showing Domains step before Plans step.
 	const steps = siteTitle
 		? [ Step.IntentGathering, Step.Domains, Step.DesignSelection, Step.Style, Step.Plans ]
 		: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
