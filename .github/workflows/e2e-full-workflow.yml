@@ -75,7 +75,7 @@ jobs:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }} -f $TESTFILES
+        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }} -f ${TESTFILES}
       - uses: actions/upload-artifact@master
         if: always()
         with:
@@ -121,7 +121,7 @@ jobs:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }} -f $TESTFILES
+        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }} -f ${{ TESTFILES }}
       - uses: actions/upload-artifact@master
         if: always()
         with:
