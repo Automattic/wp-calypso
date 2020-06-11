@@ -36,8 +36,8 @@
 button.action_buttons__button.components-button {
 	@include onboarding-medium-text;
 	font-weight: 600;
-	min-width: 160px;
 	height: 42px;
+	min-width: 120px;
 	justify-content: center;
 
 	&:active,
@@ -67,5 +67,9 @@ button.action_buttons__button.components-button {
 			color: var( --studio-gray-30 );
 			box-shadow: inset 0 0 0 1px var( --studio-gray-30 );
 		}
+	}
+
+	@include break-small {
+		min-width: 160px;
 	}
 }

@@ -6,7 +6,8 @@
 
 	.design-selector,
 	.style-preview,
-	.plans {
+	.plans,
+	.domains {
 		--contrastColor: var( --studio-white );
 		// TODO: This should be Gutenberg's main color
 		--mainColor: var( --studio-gray-100 );
