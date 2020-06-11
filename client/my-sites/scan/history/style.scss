@@ -1,0 +1,24 @@
+.history {
+	&__header {
+		color: var( --studio-black );
+		font-size: 28px;
+		line-height: 1;
+		margin: 32px 0 16px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: 36px;
+			font-weight: 600;
+			margin: 32px 0 24px;
+		}
+	}
+
+	p {
+		font-size: 18px;
+		margin-bottom: 16px;
+		line-height: 24px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-bottom: 24px;
+		}
+	}
+}

@@ -15,6 +15,7 @@ import accountPasswordData from 'lib/account-password-data';
 import SocialLoginComponent from 'me/social-login';
 import ConnectedAppsComponent from 'me/connected-applications';
 import AccountRecoveryComponent from 'me/security-account-recovery';
+import SecurityCheckupComponent from 'me/security-checkup';
 import { getSocialServiceFromClientId } from 'lib/login';
 
 export function password( context, next ) {
@@ -54,6 +55,14 @@ export function connectedApplications( context, next ) {
 
 export function accountRecovery( context, next ) {
 	context.primary = React.createElement( AccountRecoveryComponent, {
+		userSettings: userSettings,
+		path: context.path,
+	} );
+	next();
+}
+
+export function securityCheckup( context, next ) {
+	context.primary = React.createElement( SecurityCheckupComponent, {
 		userSettings: userSettings,
 		path: context.path,
 	} );

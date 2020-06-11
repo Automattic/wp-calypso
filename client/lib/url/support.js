@@ -28,6 +28,7 @@ export const DOMAIN_HELPER_PREFIX = `${ root }/domain-helper/?host=`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;
 export const DOMAIN_WAITING = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAINS = `${ root }/domains`;
+export const DOMAIN_CANCEL = `${ root }/domains/#cancel-a-domain-name`;
 export const DOMAIN_CONNECT = `${ root }/domain-connect`;
 export const DOMAIN_EXPIRATION = `${ root }/domains/domain-expiration/`;
 export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration/#renewing-a-domain-in-the-redemption-period`;

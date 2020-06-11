@@ -189,13 +189,18 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		paths.domainManagementEdit( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementEdit,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementEdit( ':site', ':domain' ),
+			paths.domainManagementEdit( ':site', ':domain', null, paths.domainManagementRoot() ),
+		],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementEdit,
+			makeLayout,
+			clientRender,
+		],
+	} );
 
 	page(
 		paths.domainManagementSiteRedirect( ':site', ':domain' ),

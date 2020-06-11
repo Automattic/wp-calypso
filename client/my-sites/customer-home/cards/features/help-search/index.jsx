@@ -19,7 +19,6 @@ import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import HelpSearchCard from './search-card';
 import HelpSearchResults from './search-results';
 
-import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import { RESULT_POST_ID, RESULT_LINK } from 'blocks/inline-help/constants';
 
 /**
@@ -63,7 +62,6 @@ const HelpSearch = ( props ) => {
 
 	return (
 		<>
-			<QuerySupportTypes />
 			<Card className="help-search">
 				<div className="help-search__inner">
 					<CardHeading>{ translate( 'Get help' ) }</CardHeading>

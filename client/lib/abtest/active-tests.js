@@ -150,8 +150,8 @@ export default {
 	[ RUM_DATA_COLLECTION.AB_NAME ]: {
 		datestamp: '20200602',
 		variations: {
-			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 5,
-			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 95,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 50,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 50,
 		},
 		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
 		localeTargets: 'any',
@@ -160,8 +160,8 @@ export default {
 	whiteGloveUpsell: {
 		datestamp: '20200608',
 		variations: {
-			variantShowOffer: 0,
-			control: 100,
+			variantShowOffer: 10,
+			control: 90,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,

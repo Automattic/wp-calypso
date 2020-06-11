@@ -100,6 +100,10 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
 	} );
 }
 
+export function getListItems( state, listId ) {
+	return state.reader?.lists?.listItems?.[ listId ];
+}
+
 /**
  * Check if the user is subscribed to the specified list
  *

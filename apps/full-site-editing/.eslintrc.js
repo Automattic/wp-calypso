@@ -11,6 +11,7 @@ module.exports = {
 			},
 		],
 	},
+	ignorePatterns: [ '**/dist/*' ],
 	overrides: [
 		{
 			files: [ './**/?(*.)spec.[jt]s?(x)', './full-site-editing-plugin/e2e-test-helpers/**' ],

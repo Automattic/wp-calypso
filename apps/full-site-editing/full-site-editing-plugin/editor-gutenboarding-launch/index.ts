@@ -64,13 +64,13 @@ function updateEditor() {
 		launchLink.href = launchHref;
 		launchLink.target = '_top';
 		launchLink.className = 'editor-gutenberg-launch__launch-button components-button is-primary';
-		const textContent = document.createTextNode( __( 'Launch' ) );
+		const textContent = document.createTextNode( __( 'Launch', 'full-site-editing' ) );
 		launchLink.appendChild( textContent );
 
 		const saveAndNavigate = async ( e: Event ) => {
 			// Disable href navigation
 			e.preventDefault();
-			await dispatch( 'core/editor' ).autosave();
+			await dispatch( 'core/editor' ).savePost();
 			// Using window.top to escape from the editor iframe on WordPress.com
 			window.top.location.href = launchHref;
 		};

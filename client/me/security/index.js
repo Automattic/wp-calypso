@@ -13,6 +13,7 @@ import {
 	accountRecovery,
 	connectedApplications,
 	password,
+	securityCheckup,
 	socialLogin,
 	twoStep,
 } from './controller';
@@ -35,4 +36,8 @@ export default function () {
 	);
 
 	page( '/me/security/account-recovery', sidebar, accountRecovery, makeLayout, clientRender );
+
+	if ( config.isEnabled( 'security/security-checkup' ) ) {
+		page( '/me/security/security-checkup', sidebar, securityCheckup, makeLayout, clientRender );
+	}
 }

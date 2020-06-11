@@ -11,13 +11,12 @@ import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { getAllStoredItems, setStoredItem, clearStorage } from 'lib/browser-storage';
 import { isSupportSession } from 'lib/user/support-user-interop';
 import config from 'config';
-import User from 'lib/user';
+import user from 'lib/user';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:state' );
-const user = User();
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
@@ -95,7 +94,7 @@ function shouldAddSympathy() {
 // scenario where state data may have been stored without this
 // check being performed.
 function verifyStoredRootState( state ) {
-	const currentUserId = user?.get()?.ID ?? null;
+	const currentUserId = user()?.get()?.ID ?? null;
 	const storedUserId = state?.currentUser?.id ?? null;
 
 	if ( currentUserId !== storedUserId ) {
@@ -160,7 +159,7 @@ export function getStateFromCache( reducer, subkey, forceLoggedOutUser = false )
 }
 
 function getReduxStateKey( forceLoggedOutUser = false ) {
-	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user?.get()?.ID ?? null );
+	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user()?.get()?.ID ?? null );
 }
 
 function getReduxStateKeyForUserId( userId ) {

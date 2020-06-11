@@ -133,9 +133,8 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false,
-		"scan": false,
-		"backups": false,
-		"jetpack-cloud-settings": false
+		"jetpack-cloud-settings": false,
+		"jetpack-cloud-auth": false
 	},
 	"site_filter": [],
 	"theme": "default",

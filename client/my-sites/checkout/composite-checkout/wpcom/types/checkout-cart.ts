@@ -82,7 +82,7 @@ export const emptyWPCOMCart = {
 		} as CheckoutCartItemAmount,
 	} as CheckoutCartItem,
 	coupon: {
-		id: 'coupon-line-item',
+		id: 'savings-line-item',
 		label: 'Coupon',
 		type: 'coupon',
 		amount: {

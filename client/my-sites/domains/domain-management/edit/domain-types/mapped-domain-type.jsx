@@ -23,6 +23,7 @@ import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
@@ -146,7 +147,7 @@ class MappedDomainType extends React.Component {
 	}
 
 	renderDefaultRenewButton() {
-		const { domain, purchase, translate } = this.props;
+		const { domain, purchase, isLoadingPurchase, translate } = this.props;
 
 		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
 			return null;
@@ -168,14 +169,16 @@ class MappedDomainType extends React.Component {
 
 		return (
 			<div>
-				<RenewButton
-					compact={ true }
-					purchase={ purchase }
-					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( subscriptionId, 10 ) }
-					customLabel={ customLabel }
-					tracksProps={ tracksProps }
-				/>
+				{ ( isLoadingPurchase || purchase ) && (
+					<RenewButton
+						compact={ true }
+						purchase={ purchase }
+						selectedSite={ this.props.selectedSite }
+						subscriptionId={ parseInt( subscriptionId, 10 ) }
+						customLabel={ customLabel }
+						tracksProps={ tracksProps }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -275,7 +278,12 @@ class MappedDomainType extends React.Component {
 						domain={ domain }
 					/>
 					{ this.renderSettingUpNameservers() }
-					<ExpiringSoon selectedSite={ selectedSite } purchase={ purchase } domain={ domain } />
+					<ExpiringSoon
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+						domain={ domain }
+					/>
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<div>{ expiresText }</div>
@@ -316,16 +324,24 @@ class MappedDomainType extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const { subscriptionId, bundledPlanSubscriptionId } = ownProps.domain;
+		const currentUserId = getCurrentUserId( state );
+
 		const purchaseSubscriptionId = bundledPlanSubscriptionId
 			? bundledPlanSubscriptionId
 			: subscriptionId;
+
+		const purchase = purchaseSubscriptionId
+			? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
+			: null;
+
+		const mappingPurchase = subscriptionId
+			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
+			: null;
+
 		return {
-			purchase: purchaseSubscriptionId
-				? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
-				: null,
-			mappingPurchase: subscriptionId
-				? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-				: null,
+			purchase: purchase && currentUserId === purchase.userId ? purchase : null,
+			mappingPurchase:
+				mappingPurchase && currentUserId === mappingPurchase.userId ? mappingPurchase : null,
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),

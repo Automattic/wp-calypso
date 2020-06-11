@@ -4,7 +4,6 @@
 import * as React from 'react';
 import Modal from 'react-modal';
 import { select } from '@wordpress/data';
-import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
 
 /**
  * Internal dependencies
@@ -17,11 +16,13 @@ import { STORE_KEY } from '../../stores/onboard';
  */
 import './style.scss';
 
-interface Props extends DomainPickerProps {
+interface Props {
+	onClose: Function;
 	isOpen: boolean;
+	children: any;
 }
 
-const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose, ...props } ) => {
+const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose, children } ) => {
 	if ( ! isOpen ) {
 		return null;
 	}
@@ -54,13 +55,7 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose,
 			overlayClassName="domain-picker-modal-overlay"
 			bodyOpenClassName="has-domain-picker-modal"
 		>
-			<DomainPicker
-				showDomainConnectButton
-				showDomainCategories
-				quantity={ 10 }
-				onClose={ handleClose }
-				{ ...props }
-			/>
+			{ children }
 		</Modal>
 	);
 };

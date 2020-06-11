@@ -95,7 +95,7 @@ function CouponFieldArea( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
-	if ( isPurchaseFree ) {
+	if ( isPurchaseFree || couponStatus === 'applied' ) {
 		return null;
 	}
 

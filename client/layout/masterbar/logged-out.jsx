@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
@@ -21,8 +21,9 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
+import { isDefaultLocale, addLocaleToPath } from 'lib/i18n-utils';
 
-class MasterbarLoggedOut extends PureComponent {
+class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
 		redirectUri: PropTypes.string,
 		sectionName: PropTypes.string,
@@ -78,7 +79,7 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 
 	renderSignupItem() {
-		const { currentQuery, currentRoute, sectionName, translate } = this.props;
+		const { currentQuery, currentRoute, locale, sectionName, translate } = this.props;
 
 		// Hide for some sections
 		if ( includes( [ 'signup' ], sectionName ) ) {
@@ -134,6 +135,10 @@ class MasterbarLoggedOut extends PureComponent {
 			signupUrl = '/jetpack/new';
 		} else if ( signupFlow ) {
 			signupUrl += '/' + signupFlow;
+		}
+
+		if ( ! isDefaultLocale( locale ) ) {
+			signupUrl = addLocaleToPath( signupUrl, locale );
 		}
 
 		return (

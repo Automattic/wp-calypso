@@ -49,6 +49,7 @@ export function PaypalSubmitButton( { disabled } ) {
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 	const {
+		transactionStatus,
 		setTransactionPending,
 		setTransactionRedirecting,
 		setTransactionError,
@@ -82,18 +83,20 @@ export function PaypalSubmitButton( { disabled } ) {
 		<Button
 			disabled={ disabled }
 			onClick={ onClick }
-			buttonState={ disabled ? 'disabled' : 'primary' }
 			buttonType="paypal"
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			<PayPalButtonContents formStatus={ formStatus } />
+			<PayPalButtonContents formStatus={ formStatus } transactionStatus={ transactionStatus } />
 		</Button>
 	);
 }
 
-function PayPalButtonContents( { formStatus } ) {
+function PayPalButtonContents( { formStatus, transactionStatus } ) {
 	const { __ } = useI18n();
+	if ( transactionStatus === 'redirecting' ) {
+		return __( 'Redirecting to PayPal…' );
+	}
 	if ( formStatus === 'submitting' ) {
 		return __( 'Processing…' );
 	}

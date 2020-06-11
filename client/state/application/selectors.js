@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import 'state/application/init';
+
 export function isOffline( state ) {
 	return state.application.connectionState === 'OFFLINE';
 }

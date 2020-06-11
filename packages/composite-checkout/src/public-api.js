@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import Button from './components/button';
 import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
 import {
 	Checkout,
@@ -59,6 +60,7 @@ import { usePaymentProcessor } from './lib/payment-processors';
 
 // Re-export the public API
 export {
+	Button,
 	Checkout,
 	CheckoutCheckIcon,
 	CheckoutModal,

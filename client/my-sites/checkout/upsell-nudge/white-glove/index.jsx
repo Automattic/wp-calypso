@@ -69,7 +69,7 @@ export class WhiteGlove extends PureComponent {
 						<img
 							className="white-glove__doodle"
 							alt="Website expert offering a support session"
-							src="/calypso/images/people/he-image402x.png"
+							src="/calypso/images/people/happy-customer.png"
 						/>
 					</div>
 				</div>

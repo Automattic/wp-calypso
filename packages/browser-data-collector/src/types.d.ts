@@ -27,9 +27,8 @@ declare type ReportData = Map< string, number | string | boolean >;
 interface Report {
 	id: string;
 	data: ReportData;
-	start: number;
+	beginning: number;
 	end?: number;
-	toJSON: () => object;
 }
 
 declare type Collector = ( report: Report ) => Promise< Report > | Report;
