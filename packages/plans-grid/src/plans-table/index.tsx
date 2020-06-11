@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { useSelect } from '@wordpress/data';
-import { Plans } from '@automattic/data-stores';
+import { Plans, DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -20,9 +20,14 @@ const PLANS_STORE = Plans.register();
 export interface Props {
 	selectedPlanSlug: string;
 	onPlanSelect: ( planSlug: string ) => void;
+	currentDomain?: DomainSuggestions.DomainSuggestion;
 }
 
-const PlansTable: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSelect } ) => {
+const PlansTable: React.FunctionComponent< Props > = ( {
+	selectedPlanSlug,
+	onPlanSelect,
+	currentDomain,
+} ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
 
@@ -34,6 +39,7 @@ const PlansTable: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPla
 						<PlanItem
 							key={ plan.storeSlug }
 							slug={ plan.storeSlug }
+							domain={ currentDomain }
 							features={ plan.features ?? [] }
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }

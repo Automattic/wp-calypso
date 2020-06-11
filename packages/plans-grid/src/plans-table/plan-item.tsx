@@ -11,6 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Badge from '../badge';
+import type { DomainSuggestions } from '@automattic/data-stores/dist/types';
 
 const TickIcon = <Icon icon={ check } size={ 16 } />;
 
@@ -19,7 +20,7 @@ export interface Props {
 	name: string;
 	price: string;
 	features: Array< string >;
-	domainName?: string;
+	domain?: DomainSuggestions.DomainSuggestion;
 	isPopular?: boolean;
 	isFree?: boolean;
 	isSelected?: boolean;
@@ -33,13 +34,15 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	isPopular = false,
 	isSelected = false,
 	isFree = false,
-	domainName,
+	domain,
 	features,
 	onSelect,
 } ) => {
 	const { __ } = useI18n();
 
-	const hasDomain = !! domainName;
+	const hasDomain = !! domain;
+
+	const domainName = domain?.domain_name;
 
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
@@ -78,24 +81,16 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</Button>
 				</div>
 				<div className="plan-item__domain">
-					<div className="plan-item__domain-summary">
-						{ isFree ? __( 'Free WordPress.com subdomain' ) : __( 'Free domain for 1 year' ) }
+					<div className={ classNames( 'plan-item__domain-summary', { 'is-paid': ! isFree } ) }>
+						{ isFree ? __( 'No custom domain' ) : __( 'Free domain for 1 year' ) }
 					</div>
-					{ hasDomain && (
-						<div className="plan-item__domain-name">
-							{ /*
-						<Button
-							className={ classNames( 'plan-item__domain-picker-button', {
-								'has-domain': hasDomain,
-							} ) }
-							isLink
-						>
-							<span>{ hasDomain ? domainName : __( 'Choose domain' ) }</span>
-							<Icon icon="arrow-down-alt2" size={ 14 }></Icon>
-						</Button>
-						*/ }
+					{ hasDomain && ! isFree && ! domain?.is_free && (
+						<div className={ classNames( 'plan-item__domain-name', { 'is-paid': ! isFree } ) }>
 							{ domainName }
 						</div>
+					) }
+					{ hasDomain && isFree && (
+						<div className="plan-item__domain-name">{ __( 'Ads included on site' ) }</div>
 					) }
 				</div>
 				<div className="plan-item__features">

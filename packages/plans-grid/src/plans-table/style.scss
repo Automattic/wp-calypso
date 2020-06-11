@@ -45,6 +45,10 @@
 	display: inline-block;
 }
 
+.plan-item__domain-name {
+	font-size: $font-body-small;
+}
+
 .plan-item__badge {
 	margin-left: 8px;
 }
@@ -83,7 +87,11 @@
 .plan-item__domain-summary {
 	font-size: $font-body-small;
 	line-height: 22px;
-	min-height: 44px; // temporary until domain picker is in
+}
+
+.plan-item__domain-summary.is-paid {
+	color: var( --studio-blue-40 );
+	font-weight: bold;
 }
 
 .plan-item__select-button.components-button {
