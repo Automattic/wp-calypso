@@ -60,8 +60,6 @@ jobs:
           restore-keys: |
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
-      - name: Install yarn deps
-        run: DETECT_CHROMEDRIVER_VERSION=true yarn install --frozen-lockfile
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
