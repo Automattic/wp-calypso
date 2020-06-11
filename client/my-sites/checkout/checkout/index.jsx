@@ -459,9 +459,9 @@ export class Checkout extends React.Component {
 	maybeShowPlanBumpOfferConcierge( receiptId, stepResult ) {
 		const { cart, selectedSiteSlug } = this.props;
 
-		if ( hasPersonalPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+		if ( hasPremiumPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showBusinessPlanBump' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/business/${ receiptId }`;
 			}
 		}
 

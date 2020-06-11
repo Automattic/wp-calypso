@@ -225,9 +225,9 @@ function maybeShowPlanBumpOfferConcierge( {
 	didPurchaseFail,
 	isTransactionResultEmpty,
 } ) {
-	if ( hasPersonalPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
-		if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
-			return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
+	if ( hasPremiumPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
+		if ( 'variantShowPlanBump' === abtest( 'showBusinessPlanBump' ) ) {
+			return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
 		}
 	}
 
