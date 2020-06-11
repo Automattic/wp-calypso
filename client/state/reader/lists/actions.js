@@ -36,6 +36,7 @@ import 'state/data-layer/wpcom/read/lists';
 import 'state/data-layer/wpcom/read/lists/items';
 import 'state/data-layer/wpcom/read/lists/feeds/delete';
 import 'state/data-layer/wpcom/read/lists/tags/delete';
+import 'state/data-layer/wpcom/read/lists/feeds/new';
 import 'state/reader/init';
 
 /**

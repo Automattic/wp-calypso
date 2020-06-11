@@ -5,7 +5,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { READER_LIST_ITEM_ADD_FEED } from 'state/reader/action-types';
-import { receiveReaderListAddFeed } from 'state/reader/lists/actions';
+import { receiveAddReaderListFeed } from 'state/reader/lists/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
@@ -27,8 +27,11 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) =>
-				receiveReaderListAddFeed( action.listOwner, action.listSlug, apiResponse.feed_id ),
-			onError: ( action, error ) => errorNotice( error ),
+				receiveAddReaderListFeed( action.listOwner, action.listSlug, apiResponse.feed_id ),
+			onError: ( action, error ) => {
+				console.error( error );
+				return errorNotice( `Could not add feed to list: ${ error?.body?.message }` );
+			},
 		} ),
 	],
 } );
