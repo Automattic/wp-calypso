@@ -51,7 +51,7 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 		} else if ( ! accountRecoveryPhoneValidated ) {
 			icon = getWarningIcon();
 			description = translate(
-				'You still need to validate your recovery SMS number: {{strong}}%(recoveryPhoneNumber)s{{/strong}}',
+				'You still need to verify your recovery SMS number: {{strong}}%(recoveryPhoneNumber)s{{/strong}}',
 				{
 					args: {
 						recoveryPhoneNumber: accountRecoveryPhone.numberFull,

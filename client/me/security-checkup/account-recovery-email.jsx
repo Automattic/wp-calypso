@@ -51,7 +51,7 @@ class SecurityCheckupAccountRecoveryEmail extends React.Component {
 		} else if ( ! accountRecoveryEmailValidated ) {
 			icon = getWarningIcon();
 			description = translate(
-				'You still need to validate your recovery email address: {{strong}}%(recoveryEmailAddress)s{{/strong}}',
+				'You still need to verify your recovery email address: {{strong}}%(recoveryEmailAddress)s{{/strong}}',
 				{
 					args: {
 						recoveryEmailAddress: accountRecoveryEmail,
