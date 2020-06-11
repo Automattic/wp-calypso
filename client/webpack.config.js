@@ -230,6 +230,7 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ __dirname, 'node_modules' ],
+		mainFields: [ 'browser', [ 'exports', 'import' ], 'module', 'main' ],
 		alias: Object.assign(
 			{
 				debug: path.resolve( __dirname, '../node_modules/debug' ),

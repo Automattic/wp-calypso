@@ -114,6 +114,7 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
+		mainFields: [ [ 'exports', 'import' ], 'module', 'main' ],
 		alias: {
 			config: 'server/config',
 		},
