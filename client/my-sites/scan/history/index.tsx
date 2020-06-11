@@ -1,0 +1,50 @@
+/**
+ * External dependencies
+ */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { useSelector } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import DocumentHead from 'components/data/document-head';
+import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
+import FormattedHeader from 'components/formatted-header';
+import ThreatHistoryList from 'components/jetpack/threat-history-list';
+import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import ScanNavigation from '../navigation';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+interface Props {
+	filter: string;
+}
+
+export default function ScanHistoryPage( { filter }: Props ) {
+	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+
+	return (
+		<Main className="history">
+			<DocumentHead title={ translate( 'Scan' ) } />
+			<SidebarNavigation />
+			<QueryJetpackScanHistory siteId={ siteId } />
+			<PageViewTracker path="/scan/history/:site" title="Scan History" />
+			<FormattedHeader headerText={ 'Jetpack Scan' } align="left" />
+			<ScanNavigation section={ 'history' } />
+			<p className="history__description">
+				{ translate(
+					'The scanning history contains a record of all previously active threats on your site.'
+				) }
+			</p>
+			<ThreatHistoryList filter={ filter } />
+		</Main>
+	);
+}
