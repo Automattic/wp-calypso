@@ -16,8 +16,11 @@ const category = 'design';
 /**
  * @typedef {object} Attributes
  * @property { string } text
- * @property { string } type
  * @property { number } borderRadius
+ * @property { string } backgroundColor
+ * @property { string } textColor
+ * @property { string } gradient
+ * @property { object } style
  *
  * @typedef {import('@wordpress/blocks').BlockConfiguration<Attributes>} BlockConfiguration
  * @type {BlockConfiguration}

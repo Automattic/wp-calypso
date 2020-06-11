@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+// eslint-disable-next-line wpcalypso/import-docblock
 import {
 	__experimentalAlignmentHookSettingsProvider as AlignmentHookSettingsProvider,
 	InnerBlocks,
@@ -10,10 +11,6 @@ import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
 
 const ALLOWED_BLOCKS = [
 	'core/button',

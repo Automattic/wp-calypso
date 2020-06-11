@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-// eslint-disable-next-line wpcalypso/import-docblock
 import { __ } from '@wordpress/i18n';
 import { button as icon } from '@wordpress/icons';
 

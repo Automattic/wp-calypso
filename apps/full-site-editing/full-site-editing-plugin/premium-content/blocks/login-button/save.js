@@ -14,11 +14,9 @@ import { RichText } from '@wordpress/block-editor';
 import getColorAndStyleProps from './color-props';
 
 export default function save( { attributes } ) {
-	const { borderRadius, text, type } = attributes;
+	const { borderRadius, text } = attributes;
 	const colorProps = getColorAndStyleProps( attributes );
 	const buttonClasses = classnames( 'wp-block-button__link', colorProps.className, {
-		// `wp-block-premium-content-subscribe` ensures the subscribe dialog is opened in the same page using ThickBox.
-		'wp-block-premium-content-button-subscribe': type === 'subscribe',
 		'no-border-radius': borderRadius === 0,
 	} );
 	const buttonStyle = {
