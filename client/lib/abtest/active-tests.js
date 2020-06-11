@@ -38,7 +38,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	showCompositeCheckout: {
-		datestamp: '20200603',
+		datestamp: '20200611',
 		variations: {
 			composite: 100,
 			regular: 0,
