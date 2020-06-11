@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import momentDate from 'moment';
 import page from 'page';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 
@@ -20,9 +21,11 @@ import {
 	isSuccessfulRealtimeBackup,
 	INDEX_FORMAT,
 } from 'lib/jetpack/backup-utils';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
+import FormattedHeader from 'components/formatted-header';
 import BackupDelta from 'components/jetpack/backup-delta';
 import DailyBackupStatus from 'components/jetpack/daily-backup-status';
 import BackupDatePicker from 'components/jetpack/backup-date-picker';
@@ -162,9 +165,8 @@ class BackupsPage extends Component {
 		const isToday = today.isSame( this.getSelectedDate(), 'day' );
 
 		return (
-			<Main>
+			<>
 				<DocumentHead title={ translate( 'Latest backups' ) } />
-				<SidebarNavigation />
 				<PageViewTracker path="/backup/:site" title="Backups" />
 
 				<QueryRewindState siteId={ siteId } />
@@ -226,7 +228,7 @@ class BackupsPage extends Component {
 						/>
 					) }
 				</div>
-			</Main>
+			</>
 		);
 	}
 
@@ -254,8 +256,17 @@ class BackupsPage extends Component {
 	render() {
 		const { isEmptyFilter } = this.props;
 		return (
-			<div className="backup__page">
-				{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
+			<div
+				className={ classNames( 'backup__page', {
+					wordpressdotcom: ! isJetpackCloud(),
+				} ) }
+			>
+				<Main wideLayout={ ! isJetpackCloud() }>
+					<SidebarNavigation />
+					{ ! isJetpackCloud() && <FormattedHeader headerText="Jetpack Backup" align="left" /> }
+
+					{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
+				</Main>
 			</div>
 		);
 	}

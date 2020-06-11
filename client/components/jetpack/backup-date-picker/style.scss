@@ -68,12 +68,12 @@
 	}
 }
 
-.backup-date-picker__button--previous {
+.button.backup-date-picker__button--previous {
 	margin-left: initial;
 	margin-right: 8px;
 }
 
-.backup-date-picker__button--next {
+.button.backup-date-picker__button--next {
 	margin-left: 8px;
 	margin-right: initial;
 }
@@ -121,4 +121,16 @@
 
 .backup-date-picker__search-icon.gridicon {
 	fill: var( --studio-jetpack-green-40 );
+}
+
+/* WordPress.com-only styles */
+.wordpressdotcom .backup-date-picker {
+	margin-bottom: 1rem;
+	padding: 1rem;
+	background: #fff;
+	box-shadow: 0 0 0 1px #dcdcde;
+
+	&__search-icon.gridicon {
+		fill: currentColor;
+	}
 }
