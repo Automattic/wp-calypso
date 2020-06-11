@@ -6,16 +6,18 @@
  * External dependencies
  */
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, BlockControls } from '@wordpress/block-editor';
 import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { TimelineIcon } from './icon';
 import { BlockAppender } from './block-appender';
+import { ToolbarButton } from '@wordpress/components';
 
 export function registerTimelineBlock() {
 	registerBlockType( 'jetpack/timeline', {
@@ -71,17 +73,33 @@ export function registerTimelineBlock() {
 				},
 			],
 		},
+		attributes: {
+			isAlternating: {
+				type: 'boolean',
+				default: false,
+			},
+		},
 		edit: ( props ) => {
-			const { clientId } = props;
+			const { clientId, attributes, setAttributes } = props;
+			const { isAlternating } = attributes;
 
 			const addItem = () => {
 				const block = createBlock( 'jetpack/timeline-item' );
 				dispatch( 'core/block-editor' ).insertBlock( block, undefined, clientId );
 			};
 
+			const toggleAlternate = () => setAttributes( { isAlternating: ! isAlternating } );
+
+			const classes = classnames( 'wp-block-jetpack-timeline', {
+				'is-alternating': isAlternating,
+			} );
+
 			return (
 				<>
-					<ul className="wp-block-jetpack-timeline">
+					<BlockControls>
+						<ToolbarButton onClick={ toggleAlternate }>Toggle Alternating</ToolbarButton>
+					</BlockControls>
+					<ul className={ classes }>
 						<InnerBlocks
 							allowedBlocks={ [ 'jetpack/timeline-item' ] }
 							template={ [ [ 'jetpack/timeline-item' ] ] }
@@ -92,9 +110,14 @@ export function registerTimelineBlock() {
 			);
 		},
 
-		save: () => {
+		save: ( props ) => {
+			const { attributes } = props;
+			const classes = classnames( 'wp-block-jetpack-timeline', {
+				'is-alternating': attributes.isAlternating,
+			} );
+
 			return (
-				<ul className="wp-block-jetpack-timeline">
+				<ul className={ classes }>
 					<InnerBlocks.Content />
 				</ul>
 			);
