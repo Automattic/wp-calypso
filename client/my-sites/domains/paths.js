@@ -72,16 +72,16 @@ export function domainManagementAddGSuiteUsers( siteName, domainName ) {
 	return path;
 }
 
-export function domainManagementContactsPrivacy( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'contacts-privacy' );
+export function domainManagementContactsPrivacy( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'contacts-privacy', relativeTo );
 }
 
-export function domainManagementEditContactInfo( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'edit-contact-info' );
+export function domainManagementEditContactInfo( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'edit-contact-info', relativeTo );
 }
 
-export function domainManagementManageConsent( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'manage-consent' );
+export function domainManagementManageConsent( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'manage-consent', relativeTo );
 }
 
 export function domainManagementEmail( siteName, domainName ) {

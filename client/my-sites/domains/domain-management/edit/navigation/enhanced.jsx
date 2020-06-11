@@ -204,7 +204,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getContactsAndPrivacy() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { privateDomain, privacyAvailable } = domain;
 
 		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
@@ -222,7 +222,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementContactsPrivacy( selectedSite.slug, domain.name ) }
+				path={ domainManagementContactsPrivacy( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="chrome_reader_mode"
 				text={ translate( 'Update your contact information' ) }
 				description={ description }

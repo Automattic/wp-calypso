@@ -89,29 +89,44 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		paths.domainManagementContactsPrivacy( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementContactsPrivacy,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementContactsPrivacy( ':site', ':domain' ),
+			paths.domainManagementContactsPrivacy( ':site', ':domain', paths.domainManagementRoot() ),
+		],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementContactsPrivacy,
+			makeLayout,
+			clientRender,
+		],
+	} );
 
-	page(
-		paths.domainManagementEditContactInfo( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementEditContactInfo,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementEditContactInfo( ':site', ':domain' ),
+			paths.domainManagementEditContactInfo( ':site', ':domain', paths.domainManagementRoot() ),
+		],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementEditContactInfo,
+			makeLayout,
+			clientRender,
+		],
+	} );
 
-	page(
-		paths.domainManagementManageConsent( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementManageConsent,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementManageConsent( ':site', ':domain' ),
+			paths.domainManagementManageConsent( ':site', ':domain', paths.domainManagementRoot() ),
+		],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementManageConsent,
+			makeLayout,
+			clientRender,
+		],
+	} );
 
 	page(
 		paths.domainManagementDomainConnectMapping( ':site', ':domain' ),
