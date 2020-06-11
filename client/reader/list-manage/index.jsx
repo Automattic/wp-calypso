@@ -113,7 +113,7 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 					id="list-description"
 					name="list-description"
 					onChange={ onChange }
-					placeholder="What's your list about?"
+					placeholder={ translate( "What's your list about?" ) }
 					value={ list.description }
 				/>
 			</FormFieldset>
@@ -131,6 +131,7 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 }
 
 function ReaderListCreate() {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isCreatingList = useSelector( isCreatingListSelector );
 	const [ list, updateList ] = React.useState( {
@@ -148,7 +149,7 @@ function ReaderListCreate() {
 	};
 	return (
 		<Main>
-			<FormattedHeader headerText="Create List" />
+			<FormattedHeader headerText={ translate( 'Create List' ) } />
 			<ListForm
 				isCreateForm
 				isSubmissionDisabled={ isCreatingList }
@@ -172,7 +173,11 @@ function ReaderListEdit( props ) {
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<Main>
-				<FormattedHeader headerText={ `Manage ${ list?.title || props.slug }` } />
+				<FormattedHeader
+					headerText={ translate( 'Manage %(listName)s', {
+						args: { listName: list?.title || props.slug },
+					} ) }
+				/>
 				{ ! list && <Card>Loading...</Card> }
 				{ list && (
 					<>
