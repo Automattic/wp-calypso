@@ -96,6 +96,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		useI18n().i18nLocale
 	);
 
+	// Reset expansion state after every search
+	useEffect( () => {
+		setIsExpanded( false );
+	}, [ domainSearch ] );
+
 	const allSuggestions = domainSuggestions;
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
