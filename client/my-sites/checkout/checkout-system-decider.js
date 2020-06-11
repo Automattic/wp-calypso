@@ -17,6 +17,7 @@ import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { abtest } from 'lib/abtest';
 import { logToLogstash } from 'state/logstash/actions';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -203,8 +204,18 @@ function getCheckoutVariant(
 		return 'disallowed-product';
 	}
 
-	debug( 'shouldShowCompositeCheckout true' );
-	return 'composite-checkout';
+	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
+		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
+		return 'composite-checkout';
+	}
+
+	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
+		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
+		return 'composite-checkout';
+	}
+
+	debug( 'shouldShowCompositeCheckout false because test not enabled' );
+	return 'test-not-enabled';
 }
 
 function fetchStripeConfigurationWpcom( args ) {
