@@ -150,8 +150,8 @@ export default {
 	[ RUM_DATA_COLLECTION.AB_NAME ]: {
 		datestamp: '20200602',
 		variations: {
-			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 5,
-			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 95,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 50,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 50,
 		},
 		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
 		localeTargets: 'any',
