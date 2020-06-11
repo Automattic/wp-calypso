@@ -80,7 +80,7 @@ import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosti
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
-import { CalypsoJetpackSidebarMenuItems as JetpackSidebarMenuItems } from 'components/jetpack/sidebar-menu-items';
+import JetpackSidebarMenuItems from 'components/jetpack/sidebar/menu-items/calypso';
 
 /**
  * Style dependencies
@@ -388,7 +388,11 @@ export class MySitesSidebar extends Component {
 				onClick={ this.toggleSection( SIDEBAR_SECTION_JETPACK ) }
 				title="Jetpack"
 			>
-				<JetpackSidebarMenuItems path={ path } showIcons={ false } tracksPrefix="calypso" />
+				<JetpackSidebarMenuItems
+					path={ path }
+					showIcons={ false }
+					expandSection={ this.expandJetpackSection }
+				/>
 			</ExpandableSidebarMenu>
 		);
 	}

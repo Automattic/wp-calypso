@@ -9,11 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { useTranslate } from 'i18n-calypso';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
-import { activityLogPath, backupPath, scanPath, settingsPath } from 'lib/jetpack/paths';
+import { activityLogPath, backupPath, scanPath } from 'lib/jetpack/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { expandMySitesSidebarSection } from 'state/my-sites/sidebar/actions';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { SIDEBAR_SECTION_JETPACK } from 'my-sites/sidebar/constants';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
@@ -22,48 +20,7 @@ import QueryScanState from 'components/data/query-jetpack-scan';
 import SidebarItem from 'layout/sidebar/item';
 import ScanBadge from 'components/jetpack/scan-badge';
 
-const trackClickAndNavigate = ( dispatch, prefix, event, params ) => () => {
-	dispatch( recordTracksEvent( `${ prefix }_${ event }`, params ) );
-
-	setNextLayoutFocus( 'content' );
-	window.scrollTo( 0, 0 );
-};
-
-export const CalypsoJetpackSidebarMenuItems = ( { path } ) => (
-	<JetpackSidebarMenuItems
-		path={ path }
-		showIcons={ false }
-		tracksPrefix="calypso_mysites_jetpack_sidebar"
-	/>
-);
-
-export const JetpackCloudSidebarMenuItems = ( { path } ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
-
-	const TRACKS_PREFIX = 'calypso_jetpack_sidebar';
-
-	const onNavigate = trackClickAndNavigate( dispatch, TRACKS_PREFIX, 'settings_clicked' );
-
-	return (
-		<>
-			<JetpackSidebarMenuItems path={ path } showIcons={ true } tracksPrefix={ TRACKS_PREFIX } />
-			<SidebarItem
-				materialIcon="settings"
-				materialIconStyle="filled"
-				label={ translate( 'Settings', {
-					comment: 'Jetpack sidebar navigation item',
-				} ) }
-				link={ settingsPath( siteSlug ) }
-				onNavigate={ onNavigate }
-				selected={ itemLinkMatches( [ settingsPath( siteSlug ) ], path ) }
-			/>
-		</>
-	);
-};
-
-const JetpackSidebarMenuItems = ( { path, showIcons, tracksPrefix } ) => {
+export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
@@ -72,11 +29,13 @@ const JetpackSidebarMenuItems = ( { path, showIcons, tracksPrefix } ) => {
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
 	const scanThreats = useSelector( ( state ) => getSiteScanThreats( state, siteId ) );
 
-	const onNavigate = ( event, params ) =>
-		trackClickAndNavigate( dispatch, tracksPrefix, event, params );
+	const onNavigate = ( event ) => () => {
+		dispatch( recordTracksEvent( event ) );
 
+		setNextLayoutFocus( 'content' );
+		window.scrollTo( 0, 0 );
+	};
 	const currentPathMatches = ( url ) => itemLinkMatches( [ url ], path );
-	const expandSection = () => expandMySitesSidebarSection( SIDEBAR_SECTION_JETPACK );
 
 	return (
 		<>
@@ -87,7 +46,7 @@ const JetpackSidebarMenuItems = ( { path, showIcons, tracksPrefix } ) => {
 					comment: 'Jetpack sidebar menu item',
 				} ) }
 				link={ activityLogPath( siteSlug ) }
-				onNavigate={ onNavigate( 'activity_clicked' ) }
+				onNavigate={ onNavigate( tracksEventNames.activityClicked ) }
 				selected={ currentPathMatches( activityLogPath( siteSlug ) ) }
 				expandSection={ expandSection }
 			/>
@@ -96,7 +55,7 @@ const JetpackSidebarMenuItems = ( { path, showIcons, tracksPrefix } ) => {
 				materialIconStyle="filled"
 				label="Backup"
 				link={ backupPath( siteSlug ) }
-				onNavigate={ onNavigate( 'item_clicked', { menu_item: 'backup' } ) }
+				onNavigate={ onNavigate( tracksEventNames.backupClicked ) }
 				selected={ currentPathMatches( backupPath( siteSlug ) ) }
 				expandSection={ expandSection }
 			/>
@@ -105,7 +64,7 @@ const JetpackSidebarMenuItems = ( { path, showIcons, tracksPrefix } ) => {
 				materialIconStyle="filled"
 				label="Scan"
 				link={ scanPath( siteSlug ) }
-				onNavigate={ onNavigate( 'item_clicked', { menu_item: 'scan' } ) }
+				onNavigate={ onNavigate( tracksEventNames.scanClicked ) }
 				selected={ currentPathMatches( scanPath( siteSlug ) ) }
 				expandSection={ expandSection }
 			>

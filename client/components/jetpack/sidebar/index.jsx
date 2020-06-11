@@ -20,7 +20,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import { JetpackCloudSidebarMenuItems as SidebarMenuItems } from 'components/jetpack/sidebar-menu-items';
+import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
 
 // To be removed after jetpack/features-section flag is permanently enabled
 import { isEnabled } from 'config';
@@ -85,7 +85,7 @@ class JetpackCloudSidebar extends Component {
 		if ( isEnabled( 'jetpack/features-section' ) ) {
 			return (
 				<SidebarMenu>
-					<SidebarMenuItems path={ this.props.path } />
+					<JetpackCloudSidebarMenuItems path={ this.props.path } />
 				</SidebarMenu>
 			);
 		}
