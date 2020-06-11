@@ -12,6 +12,7 @@ import {
 	MEDIA_ERRORS_CLEAR,
 	MEDIA_ITEM_CREATE,
 	MEDIA_ITEM_ERRORS_CLEAR,
+	MEDIA_ITEM_ERRORS_SET,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
@@ -258,6 +259,22 @@ export function clearMediaItemErrors( siteId, mediaId ) {
 		type: MEDIA_ITEM_ERRORS_CLEAR,
 		siteId,
 		mediaId,
+	};
+}
+
+/**
+ * Returns an action object used in signaling to store errors for a certain media item.
+ *
+ * @param {number} siteId Site ID
+ * @param {(number|string)} mediaId Server or transient media ID to set the errors for
+ * @param {Array<object>} errors Errors for the media item
+ */
+export function setMediaItemErrors( siteId, mediaId, errors ) {
+	return {
+		type: MEDIA_ITEM_ERRORS_SET,
+		siteId,
+		mediaId,
+		errors,
 	};
 }
 

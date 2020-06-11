@@ -5,10 +5,13 @@ import path from 'path';
 import photon from 'photon';
 import { includes, omitBy, startsWith, get } from 'lodash';
 import { isUri } from 'valid-url';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:media' );
 
 /**
  * Internal dependencies
  */
+import { reduxGetState } from 'lib/redux-bridge';
 import resize from 'lib/resize-image-url';
 import {
 	MimeTypes,
@@ -23,6 +26,8 @@ import { stringify } from 'lib/shortcode';
 import impureLodash from 'lib/impure-lodash';
 import versionCompare from 'lib/version-compare';
 import { getUrlParts } from 'lib/url';
+import wpcom from 'lib/wp';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 
 const { uniqueId } = impureLodash;
 
@@ -657,3 +662,36 @@ export function mediaURLToProxyConfig( mediaUrl, siteSlug ) {
 		isRelativeToSiteRoot,
 	};
 }
+
+export const getFileUploader = () => ( file, siteId ) => {
+	// Determine upload mechanism by object type
+	const isUrl = 'string' === typeof file;
+
+	// Assign parent ID if currently editing post
+	const postId = getEditorPostId( reduxGetState() );
+	const title = file.title;
+	if ( postId ) {
+		file = {
+			parent_id: postId,
+			[ isUrl ? 'url' : 'file' ]: file,
+		};
+	} else if ( file.fileContents ) {
+		//if there's no parent_id, but the file object is wrapping a Blob
+		//(contains fileContents, fileName etc) still wrap it in a new object
+		file = {
+			file: file,
+		};
+	}
+
+	if ( title ) {
+		file.title = title;
+	}
+
+	debug( 'Uploading media to %d from %o', siteId, file );
+
+	if ( isUrl ) {
+		return wpcom.site( siteId ).addMediaUrls( {}, file );
+	}
+
+	return wpcom.site( siteId ).addMediaFiles( {}, file );
+};
