@@ -20,6 +20,7 @@ import { backupActivityPath } from 'my-sites/backup/paths';
  * Style dependencies
  */
 import './style.scss';
+import './style.wordpressdotcom.scss';
 
 class BackupDatePicker extends Component {
 	static propTypes = {

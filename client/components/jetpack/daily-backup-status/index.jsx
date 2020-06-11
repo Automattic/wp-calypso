@@ -27,6 +27,7 @@ import ExternalLink from 'components/external-link';
  * Style dependencies
  */
 import './style.scss';
+import './style.wordpressdotcom.scss';
 import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import missingCredentialsIcon from './missing-credentials.svg';
 import cloudErrorIcon from './icons/cloud-error.svg';
