@@ -238,3 +238,17 @@ html {
 .empty-content__illustration {
 	filter: hue-rotate( -80deg ) saturate( 1.5 );
 }
+
+.backup__main-wrap {
+	margin-left: -16px;
+	margin-right: -16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
+.backup-date-picker__search-icon.gridicon {
+	fill: var( --studio-jetpack-green-40 );
+}
