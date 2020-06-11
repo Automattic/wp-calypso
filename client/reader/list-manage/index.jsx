@@ -159,11 +159,11 @@ function ReaderListCreate() {
 
 function ReaderListEdit( props ) {
 	const { selectedSection } = props;
+	const translate = useTranslate();
 	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
 	);
-	const translate = useTranslate();
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
