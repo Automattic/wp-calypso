@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import i18n from 'i18n-calypso';
 import page from 'page';
 
@@ -126,10 +127,10 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		return canChat ? dispatch( openChat() ) : navigateTo( '/help' );
 	};
 
-	const baseOptions = { duration: 10000, id: action.noticeId };
+	const baseOptions = { id: action.noticeId };
 
-	const announce = ( message, options ) =>
-		dispatch( errorNotice( message, options ? { ...baseOptions, ...options } : baseOptions ) );
+	const announce = ( children, options = {} ) =>
+		dispatch( errorNotice( null, { ...baseOptions, children, ...options } ) );
 
 	const spreadHappiness = ( message ) => {
 		const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_failure', {
@@ -185,7 +186,8 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		case 'invalid_credentials':
 			announce(
 				i18n.translate(
-					"We couldn't connect to your site. Please verify your credentials and give it another try."
+					'{{p}}We couldn’t connect to your site. Please verify your credentials and give it another try. More details:{{/p}}{{p}}%(data)s: %(message)s{{/p}}',
+					{ args: error, components: { p: <p /> } }
 				)
 			);
 			spreadHappiness( 'Restore Credentials: invalid credentials' );
