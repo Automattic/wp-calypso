@@ -443,7 +443,7 @@ function LineItemSublabelAndPrice( { item } ) {
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: item.sublabel,
-				monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
+				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
 				monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
 			},
 			comment: 'product type and monthly breakdown of total cost, separated by a colon',
