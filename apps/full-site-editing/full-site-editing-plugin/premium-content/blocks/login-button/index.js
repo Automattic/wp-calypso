@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { createBlock } from '@wordpress/blocks';
 import { button as icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -59,33 +58,10 @@ const settings = {
 		align: true,
 		alignWide: false,
 		html: false,
-		reusable: false,
 		lightBlockWrapper: true,
 	},
-	styles: [
-		{ name: 'fill', label: __( 'Fill', 'full-site-editing' ), isDefault: true },
-		{ name: 'outline', label: __( 'Outline', 'full-site-editing' ) },
-	],
-	parent: [ 'core/buttons' ],
 	edit,
 	save,
-	transforms: {
-		from: [
-			{
-				type: 'block',
-				blocks: [ 'core/button' ],
-				__experimentalConvert: ( block ) =>
-					createBlock( 'premium-content/login-button', block.attributes ),
-			},
-		],
-		to: [
-			{
-				type: 'block',
-				blocks: [ 'core/button' ],
-				__experimentalConvert: ( block ) => createBlock( 'core/button', block.attributes ),
-			},
-		],
-	},
 };
 
 export { name, category, settings };

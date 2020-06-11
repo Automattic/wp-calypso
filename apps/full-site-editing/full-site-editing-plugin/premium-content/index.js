@@ -16,6 +16,7 @@ import { _x } from '@wordpress/i18n';
 import * as container from './blocks/container';
 import * as subscriberView from './blocks/subscriber-view';
 import * as loggedOutView from './blocks/logged-out-view';
+import * as buttons from './blocks/buttons';
 import * as loginButton from './blocks/login-button';
 
 /**
@@ -96,11 +97,11 @@ const addPaidBlockFlags = ( membershipsStatus ) => {
 };
 
 /**
- * Hides the login button block from the inserter if the Memberships module is not set up.
+ * Hides the buttons block from the inserter if the Memberships module is not set up.
  *
  * @param membershipsStatus {object} Memberships status
  */
-const hideLoginButtonIfMembershipsNotSetUp = ( membershipsStatus ) => {
+const hideButtonsIfMembershipsNotSetUp = ( membershipsStatus ) => {
 	if (
 		! membershipsStatus.should_upgrade_to_access_memberships &&
 		membershipsStatus.connected_account_id
@@ -108,24 +109,8 @@ const hideLoginButtonIfMembershipsNotSetUp = ( membershipsStatus ) => {
 		return;
 	}
 
+	updateBlockType( buttons.name, { supports: { inserter: false } } );
 	updateBlockType( loginButton.name, { supports: { inserter: false } } );
-};
-
-/**
- * Sets the buttons block as possible parent of the Recurring Payments block, so it can be inserted in the buttons group
- * displayed in the non-subscriber view of the Premium Content block.
- *
- * @param membershipsStatus {object} Memberships status
- */
-const setButtonsParentBlock = ( membershipsStatus ) => {
-	if (
-		membershipsStatus.should_upgrade_to_access_memberships ||
-		! membershipsStatus.connected_account_id
-	) {
-		return;
-	}
-
-	updateBlockType( 'jetpack/recurring-payments', { parent: [ 'core/buttons' ] } );
 };
 
 /**
@@ -134,15 +119,14 @@ const setButtonsParentBlock = ( membershipsStatus ) => {
 const configurePremiumContentBlocks = async () => {
 	const membershipsStatus = await getMembershipsStatus();
 	addPaidBlockFlags( membershipsStatus );
-	hideLoginButtonIfMembershipsNotSetUp( membershipsStatus );
-	setButtonsParentBlock( membershipsStatus );
+	hideButtonsIfMembershipsNotSetUp( membershipsStatus );
 };
 
 /**
  * Function to register Premium Content blocks.
  */
 export const registerPremiumContentBlocks = () => {
-	[ container, loggedOutView, subscriberView, loginButton ].forEach( registerBlock );
+	[ container, loggedOutView, subscriberView, buttons, loginButton ].forEach( registerBlock );
 };
 
 registerPremiumContentBlocks();

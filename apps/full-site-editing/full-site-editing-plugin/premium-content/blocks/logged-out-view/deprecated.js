@@ -41,7 +41,7 @@ const deprecated = [
 		isEligible: ( { buttonClasses } ) => !! buttonClasses,
 
 		migrate: ( attributes, innerBlocks ) => {
-			const buttons = createBlock( 'core/buttons', {}, [
+			const buttons = createBlock( 'premium-content/buttons', {}, [
 				createBlock( 'jetpack/recurring-payments', {
 					submitButtonText: attributes.subscribeButtonText,
 					backgroundButtonColor: attributes.backgroundButtonColor,
