@@ -23,7 +23,11 @@
 
 	&.is-popular {
 		margin-top: 10px;
+<<<<<<< HEAD
 		transform: translateY( -20px );
+=======
+		transform: translateY( -30px );
+>>>>>>> Match designs 1:1
 	}
 }
 
@@ -36,8 +40,14 @@
 	padding: 40px 20px;
 
 	&.is-popular {
+<<<<<<< HEAD
 		border-top: none;
 		padding-top: 40px; // to make up for the transform
+=======
+		border: 1px solid $light-gray-900;
+		border-top: none;
+		padding-top: 50px; // to make up for the transform
+>>>>>>> Match designs 1:1
 	}
 }
 
@@ -66,7 +76,11 @@
 	text-align: center;
 	text-transform: uppercase;
 	color: white;
+<<<<<<< HEAD
 	padding: 2.5px;
+=======
+	padding: 3px;
+>>>>>>> Match designs 1:1
 	font-size: $font-body-extra-small;
 }
 
