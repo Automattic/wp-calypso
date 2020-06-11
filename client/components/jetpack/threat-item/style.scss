@@ -1,6 +1,4 @@
 .threat-item {
-	// Override the error color to a slightly different red.
-	--color-error-20: var( --color-threat-found );
 	.foldable-card__main {
 		flex: auto;
 	}
