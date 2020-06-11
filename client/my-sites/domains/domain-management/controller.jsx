@@ -236,7 +236,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementRedirectSettings( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Redirect Settings"
-				component={ DomainManagement.SiteRedirect }
+				component={ DomainManagement.SiteRedirectSettings }
 				context={ pageContext }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>

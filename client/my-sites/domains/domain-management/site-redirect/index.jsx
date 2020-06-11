@@ -21,7 +21,10 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import Main from 'components/main';
 import Notice from 'components/notice';
 import notices from 'notices';
-import { domainManagementEdit, domainManagementRedirectSettings } from 'my-sites/domains/paths';
+import {
+	domainManagementSiteRedirect,
+	domainManagementRedirectSettings,
+} from 'my-sites/domains/paths';
 import {
 	closeSiteRedirectNotice,
 	fetchSiteRedirect,
@@ -172,7 +175,7 @@ class SiteRedirect extends React.Component {
 		const { selectedDomainName, selectedSite } = this.props;
 
 		this.props.recordCancelClick( selectedDomainName );
-		page( domainManagementEdit( selectedSite.slug, selectedDomainName ) );
+		page( domainManagementSiteRedirect( selectedSite.slug, selectedDomainName ) );
 	};
 }
 
