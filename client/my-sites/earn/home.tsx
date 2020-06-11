@@ -29,6 +29,7 @@ import {
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Image dependencies
@@ -39,6 +40,7 @@ import recurringImage from 'assets/images/earn/recurring.svg';
 import referralImage from 'assets/images/earn/referral.svg';
 import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
 import premiumContentImage from 'assets/images/earn/premium-content.svg';
+import paidNewsletterImage from 'assets/images/earn/newsletters.svg';
 
 interface ConnectedProps {
 	siteId: number;
@@ -263,6 +265,56 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	/**
+	 * Return the content to display in the Paid Newsletter card based on the current plan.
+	 *
+	 * @returns {object} Object with props to render a PromoCard.
+	 */
+	const getPaidNewsletterCard = () => {
+		const cta = isFreePlan
+			? {
+					text: translate( 'Unlock this feature' ),
+					action: () => {
+						trackUpgrade( 'any-paid-plan', 'paid-newsletters' );
+						page( `/plans/${ selectedSiteSlug }` );
+					},
+			  }
+			: {
+					text: translate( 'Learn how to get started' ),
+					action: () => {
+						trackCtaButton( 'learn-paid-newsletters' );
+						if ( window && window.location ) {
+							window.location.href = localizeUrl(
+								'https://wordpress.com/support/paid-newsletters/'
+							);
+						}
+					},
+			  };
+		const title = translate( 'Send paid email newsletters' );
+		const body = isFreePlan
+			? translate(
+					'Share premium content with paying subscribers automatically through email. {{em}}Available with any paid plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
+			  )
+			: translate( 'Share premium content with paying subscribers automatically through email.' );
+
+		return {
+			title,
+			body,
+			badge: translate( 'New' ),
+			image: {
+				path: paidNewsletterImage,
+			},
+			actions: {
+				cta,
+			},
+		};
+	};
+
+	/**
 	 * Return the content to display in the Peer Referrals card.
 	 *
 	 * @returns {object} Object with props to render a PromoCard.
@@ -386,6 +438,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
 			getPremiumContentCard(),
+			getPaidNewsletterCard(),
 			getAdsCard(),
 			getPeerReferralsCard(),
 		] ),
