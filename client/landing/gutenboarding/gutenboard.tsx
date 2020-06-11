@@ -29,11 +29,7 @@ import useOnLogin from './hooks/use-on-login';
 
 registerBlockType( name, settings );
 
-interface Props {
-	changeLocale: ( locale: string ) => {};
-}
-
-const Gutenboard: React.FunctionComponent< Props > = ( { changeLocale } ) => {
+const Gutenboard: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	useOnLogin();
 	useOnSignup();
@@ -84,7 +80,6 @@ const Gutenboard: React.FunctionComponent< Props > = ( { changeLocale } ) => {
 				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
 					{ showSignupDialog && <SignupForm onRequestClose={ onSignupDialogClose } /> }
-					<Header changeLocale={ changeLocale } />
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }

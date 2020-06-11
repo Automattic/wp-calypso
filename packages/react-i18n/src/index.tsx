@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { createI18n, I18n, LocaleData } from '@wordpress/i18n';
+import { createI18n, I18n, LocaleData, setLocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 export interface I18nReact {
@@ -16,15 +16,50 @@ export interface I18nReact {
 
 const I18nContext = React.createContext< I18nReact >( makeContextValue() );
 
+export type ChangeLocaleFunction = ( newLocale: string ) => void;
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const ChangeLocaleContext = React.createContext< ChangeLocaleFunction >( () => {} );
+
 interface Props {
-	localeData?: LocaleData;
+	initialLocaleData?: LocaleData;
+	getLanguageFile: ( targetLocaleSlug: string ) => Promise< LocaleData >;
+	defaultLocaleSlug: string;
 }
-export const I18nProvider: React.FunctionComponent< Props > = ( { children, localeData } ) => {
+
+export const I18nProvider: React.FunctionComponent< Props > = ( {
+	children,
+	initialLocaleData,
+	getLanguageFile,
+	defaultLocaleSlug,
+} ) => {
+	const [ localeData, setLocale ] = React.useState( initialLocaleData );
+
+	const changeLocale = async ( newLocale: string ) => {
+		if ( newLocale === defaultLocaleSlug ) {
+			setLocale( undefined );
+		}
+		try {
+			const newLocaleData = await getLanguageFile( newLocale );
+			setLocale( newLocaleData );
+		} catch {}
+	};
+
+	React.useEffect( () => {
+		setLocaleData( localeData );
+	}, [ localeData ] );
+
 	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData ), [
 		localeData,
 	] );
-	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
+	return (
+		<ChangeLocaleContext.Provider value={ changeLocale }>
+			<I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
+		</ChangeLocaleContext.Provider>
+	);
 };
+
+export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 
 /**
  * React hook providing i18n translate functions

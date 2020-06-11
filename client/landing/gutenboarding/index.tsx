@@ -2,7 +2,7 @@
  * External dependencies
  */
 import '@automattic/calypso-polyfills';
-import { setLocaleData, LocaleData } from '@wordpress/i18n';
+import { setLocaleData } from '@wordpress/i18n';
 import { I18nProvider, useI18n } from '@automattic/react-i18n';
 import { getLanguageSlugs } from '../../lib/i18n-utils';
 import {
@@ -77,42 +77,6 @@ declare const window: AppWindow;
  */
 const DEVELOPMENT_BASENAME = '/gutenboarding';
 
-const GutenboardingApp: React.FunctionComponent< LocaleData | undefined > = ( {
-	initialLocaleData,
-} ) => {
-	const [ localeData, setLocale ] = React.useState( initialLocaleData );
-
-	const updateLocale = async ( newLocale: string ) => {
-		if ( newLocale === DEFAULT_LOCALE_SLUG ) {
-			setLocale( undefined );
-		}
-		try {
-			const newLocaleData = await getLanguageFile( newLocale );
-			setLocale( newLocaleData );
-		} catch {}
-	};
-
-	React.useEffect( () => {
-		setLocaleData( localeData );
-	}, [ localeData ] );
-
-	return (
-		<I18nProvider localeData={ localeData }>
-			<WindowLocaleEffectManager />
-			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
-				<Switch>
-					<Route exact path={ path }>
-						<Gutenboard changeLocale={ updateLocale } />
-					</Route>
-					<Route>
-						<Redirect to="/" />
-					</Route>
-				</Switch>
-			</BrowserRouter>
-		</I18nProvider>
-	);
-};
-
 window.AppBoot = async () => {
 	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
 		const url = new URL( window.location.href );
@@ -153,7 +117,23 @@ window.AppBoot = async () => {
 	} catch {}
 
 	ReactDom.render(
-		<GutenboardingApp initialLocaleData={ initialLocaleData } />,
+		<I18nProvider
+			initialLocaleData={ initialLocaleData }
+			defaultLocaleSlug={ DEFAULT_LOCALE_SLUG }
+			getLanguageFile={ getLanguageFile }
+		>
+			<WindowLocaleEffectManager />
+			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
+				<Switch>
+					<Route exact path={ path }>
+						<Gutenboard />
+					</Route>
+					<Route>
+						<Redirect to="/" />
+					</Route>
+				</Switch>
+			</BrowserRouter>
+		</I18nProvider>,
 		document.getElementById( 'wpcom' )
 	);
 };

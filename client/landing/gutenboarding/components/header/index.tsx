@@ -5,7 +5,7 @@ import * as React from 'react';
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n, ChangeLocaleContextConsumer, ChangeLocaleFunction } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
@@ -35,11 +35,7 @@ import { Button } from '@wordpress/components';
  */
 import './style.scss';
 
-interface Props {
-	changeLocale: ( locale: string ) => {};
-}
-
-const Header: React.FunctionComponent< Props > = ( { changeLocale } ) => {
+const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
 	const currentStep = useCurrentStep();
 
@@ -67,7 +63,7 @@ const Header: React.FunctionComponent< Props > = ( { changeLocale } ) => {
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
 	
 	// todo: just for testing purposes, replace with the actual language picker
-	const handleChangeLocale = () => {
+	const handleChangeLocale = ( changeLocale: ChangeLocaleFunction ) => {
 		if ( i18nLocale === 'en' ) {
 			push( makePath( Step[ currentStep ], 'fr' ) );
 			changeLocale( 'fr' );
@@ -75,6 +71,19 @@ const Header: React.FunctionComponent< Props > = ( { changeLocale } ) => {
 			push( makePath( Step[ currentStep ], 'en' ) );
 			changeLocale( 'en' );
 		}
+	};
+
+	const changeLocaleButton = () => {
+		return (
+			<ChangeLocaleContextConsumer>
+				{ ( changeLocale ) => (
+					<Button onClick={ () => handleChangeLocale( changeLocale ) }>
+						<span>{ __( 'Site Language' ) } </span>
+						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
+					</Button>
+				) }
+			</ChangeLocaleContextConsumer>
+		);
 	};
 
 	return (
@@ -118,10 +127,7 @@ const Header: React.FunctionComponent< Props > = ( { changeLocale } ) => {
 					}
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-language">
-					<Button onClick={ handleChangeLocale }>
-						<span>{ __( 'Site Language' ) } </span>
-						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
-					</Button>
+					{ changeLocaleButton() }
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
 					<PlansButton />
