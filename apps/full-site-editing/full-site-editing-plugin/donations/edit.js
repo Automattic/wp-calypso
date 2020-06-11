@@ -39,11 +39,10 @@ const Edit = () => {
 		setIsLoading( false );
 	};
 
-	const updateData = () => {
-		fetchStatus().then( mapStatusToState, apiError );
-	};
-
-	useEffect( () => updateData() );
+	useEffect( () => {
+		const updateData = () => fetchStatus().then( mapStatusToState, apiError );
+		updateData();
+	}, [] );
 
 	if ( isLoading ) {
 		return <LoadingStatus />;
