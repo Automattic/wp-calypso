@@ -41,8 +41,11 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 1.9 =
+* Add Mailerlite subscriber widget.
 * When launching a site created via `/new`, save the post content.
   Prevent lost content alert.
+* Update block pattern categories.
+* Fix text-domain of translated strings.
 
 = 1.8 =
 * Fix issue with Newspack blocks not loading assets.
