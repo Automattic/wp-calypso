@@ -384,7 +384,7 @@ export function CheckoutStepBody( {
 									? validatingButtonAriaLabel || 'Please wait…'
 									: nextStepButtonAriaLabel || 'Continue to next step'
 							}
-							buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
+							buttonType="primary"
 							disabled={ formStatus !== 'ready' }
 							isBusy={ formStatus === 'validating' }
 						/>
@@ -582,7 +582,7 @@ function CheckoutStepHeader( {
 			</StepTitle>
 			{ shouldShowEditButton && (
 				<HeaderEditButton
-					buttonState="text-button"
+					buttonType="text-button"
 					onClick={ onEdit }
 					aria-label={ editButtonAriaLabel }
 				>
