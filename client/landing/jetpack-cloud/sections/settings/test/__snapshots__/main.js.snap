@@ -1,0 +1,186 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectionStatus should render as expected 1`] = `
+<Card
+  className="settings_disconnected"
+  compact={true}
+>
+  <img
+    alt=""
+    className="settings__icon"
+    src="server-disconnected.svg"
+  />
+  <div
+    className="settings__details"
+  >
+    <div
+      className="settings__details-head"
+    >
+       
+      Server status: Not connected
+       
+    </div>
+    <div>
+      Enter your server credentials to enable one-click restores for Backups. 
+      <ExternalLink
+        className="settings__link-external"
+        href="https://jetpack.com/support/adding-credentials-to-jetpack/"
+        icon={true}
+        iconSize={18}
+        key="interpolation-child-1/.0"
+        showIconFirst={false}
+      >
+        Need help? Find your server credentials
+      </ExternalLink>
+    </div>
+  </div>
+</Card>
+`;
+
+exports[`ConnectionStatus should render as expected when connected 1`] = `
+<Card
+  className="settings_connected"
+  compact={true}
+>
+  <img
+    alt=""
+    className="settings__icon"
+    src="server-connected.svg"
+  />
+  <div
+    className="settings__details"
+  >
+    <div
+      className="settings__details-head"
+    >
+       
+      Server status: Connected
+       
+    </div>
+    <div>
+      One-click restores are enabled.
+    </div>
+  </div>
+</Card>
+`;
+
+exports[`SettingsPage should render as expected 1`] = `
+<Main
+  className="settings"
+>
+  <Connect(DocumentHead)
+    title="Settings"
+  />
+  <Connect(MySitesSidebarNavigation) />
+  <Connect(QueryRewindState)
+    siteId={1}
+  />
+  <Connect(PageViewTracker)
+    path="/settings/:site"
+    title="Settings"
+  />
+  <div
+    className="settings__title"
+  >
+    <h2>
+      Server connection details
+    </h2>
+  </div>
+  <ConnectionStatus
+    isConnected={true}
+  />
+  <Localized(FoldableCard)
+    className="settings__form-card"
+    expanded={false}
+    header="Show connection details"
+    onClick={[Function]}
+  >
+    <Connect(ServerCredentialsForm)
+      labels={
+        Object {
+          "save": "Save credentials",
+        }
+      }
+      role="main"
+      showCancelButton={false}
+      siteId={1}
+    />
+  </Localized(FoldableCard)>
+</Main>
+`;
+
+exports[`SettingsPage should render as expected when not connected 1`] = `
+<Main
+  className="settings"
+>
+  <Connect(DocumentHead)
+    title="Settings"
+  />
+  <Connect(MySitesSidebarNavigation) />
+  <Connect(QueryRewindState)
+    siteId={1}
+  />
+  <Connect(PageViewTracker)
+    path="/settings/:site"
+    title="Settings"
+  />
+  <div
+    className="settings__title"
+  >
+    <h2>
+      Server connection details
+    </h2>
+  </div>
+  <ConnectionStatus
+    isConnected={false}
+  />
+  <Localized(FoldableCard)
+    className="settings__form-card"
+    expanded={false}
+    header="Show connection details"
+    onClick={[Function]}
+  >
+    <Connect(ServerCredentialsForm)
+      labels={
+        Object {
+          "save": "Save credentials",
+        }
+      }
+      role="main"
+      showCancelButton={false}
+      siteId={1}
+    />
+  </Localized(FoldableCard)>
+</Main>
+`;
+
+exports[`SettingsPage should render as expected when not initialized 1`] = `
+<Main
+  className="settings"
+>
+  <Connect(DocumentHead)
+    title="Settings"
+  />
+  <Connect(MySitesSidebarNavigation) />
+  <Connect(QueryRewindState)
+    siteId={1}
+  />
+  <Connect(PageViewTracker)
+    path="/settings/:site"
+    title="Settings"
+  />
+  <div
+    className="settings__title"
+  >
+    <h2>
+      Server connection details
+    </h2>
+  </div>
+  <div
+    className="settings__status-uninitialized"
+  />
+  <div
+    className="settings__form-uninitialized"
+  />
+</Main>
+`;
