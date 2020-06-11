@@ -224,8 +224,9 @@ function ReaderListEdit( props ) {
 						{ selectedSection === 'export' && (
 							<Card>
 								<p>
-									You can export this list to use on other services. The file will be in OPML
-									format.
+									{ translate(
+										'You can export this list to use on other services. The file will be in OPML format.'
+									) }
 								</p>
 								<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
 							</Card>
