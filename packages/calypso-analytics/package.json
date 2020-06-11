@@ -6,8 +6,12 @@
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"sideEffects": true,
-	"main": "dist/cjs/index",
-	"module": "dist/esm/index",
+	"main": "dist/cjs/index.js",
+	"exports": {
+		"import": "dist/esm/index.js",
+		"require": "dist/cjs/index.js"
+	},
+	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",

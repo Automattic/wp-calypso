@@ -3,7 +3,11 @@
 	"description": "Official JavaScript library for the WordPress.com REST API",
 	"version": "6.0.0",
 	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
+	"exports": {
+		"import": "dist/esm/index.js",
+		"require": "dist/cjs/index.js"
+	},
+	"type": "module",
 	"author": "Automattic, Inc.",
 	"private": true,
 	"scripts": {

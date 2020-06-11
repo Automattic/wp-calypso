@@ -10,7 +10,11 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
+	"exports": {
+		"import": "dist/esm/index.js",
+		"require": "dist/cjs/index.js"
+	},
+	"type": "module",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",

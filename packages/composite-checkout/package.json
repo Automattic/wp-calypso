@@ -3,7 +3,11 @@
 	"version": "1.0.0",
 	"description": "A checkout component for Automattic brands",
 	"main": "dist/cjs/public-api.js",
-	"module": "dist/esm/public-api.js",
+	"exports": {
+		"import": "dist/esm/public-api.js",
+		"require": "dist/cjs/public-api.js"
+	},
+	"type": "module",
 	"sideEffects": false,
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
