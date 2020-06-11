@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,12 +27,17 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
+import ReaderExportButton from 'blocks/reader-export-button';
 import ListItem from './list-item';
+import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
+
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 function ReaderListEdit( props ) {
-	const { list, listItems } = props;
-	const selectedSection = props.showItems ? 'items' : 'details';
+	const { list, listItems, selectedSection, translate } = props;
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
@@ -47,15 +53,24 @@ function ReaderListEdit( props ) {
 									selected={ selectedSection === 'details' }
 									path={ `/read/list/${ props.owner }/${ props.slug }/edit` }
 								>
-									Details
+									{ translate( 'Details' ) }
 								</NavItem>
 								<NavItem
 									selected={ selectedSection === 'items' }
 									count={ listItems?.length }
 									path={ `/read/list/${ props.owner }/${ props.slug }/edit/items` }
 								>
-									Sites
+									{ translate( 'Sites' ) }
 								</NavItem>
+
+								{ listItems && (
+									<NavItem
+										selected={ selectedSection === 'export' }
+										path={ `/read/list/${ props.owner }/${ props.slug }/export` }
+									>
+										{ translate( 'Export' ) }
+									</NavItem>
+								) }
 							</NavTabs>
 						</SectionNav>
 						{ selectedSection === 'details' && (
@@ -119,6 +134,16 @@ function ReaderListEdit( props ) {
 						) }
 						{ selectedSection === 'items' &&
 							props.listItems?.map( ( item ) => <ListItem key={ item.ID } item={ item } /> ) }
+
+						{ selectedSection === 'export' && (
+							<Card>
+								<p>
+									You can export this list to use on other services. The file will be in OPML
+									format.
+								</p>
+								<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
+							</Card>
+						) }
 					</>
 				) }
 			</Main>
@@ -133,4 +158,4 @@ export default connect( ( state, ownProps ) => {
 		list,
 		listItems,
 	};
-} )( ReaderListEdit );
+} )( localize( ReaderListEdit ) );
