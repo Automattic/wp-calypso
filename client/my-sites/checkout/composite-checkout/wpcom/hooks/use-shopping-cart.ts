@@ -454,6 +454,10 @@ export function useShoppingCart(
 	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
 		( requestCartProductToAdd ) => {
 			hookDispatch( { type: 'ADD_CART_ITEM', requestCartProductToAdd } );
+			onEvent?.( {
+				type: 'CART_ADD_ITEM',
+				payload: requestCartProductToAdd,
+			} );
 		},
 		[]
 	);
@@ -548,10 +552,13 @@ function useInitializeCartFromServer(
 					);
 					let responseCart = convertRawResponseCartToResponseCart( response );
 					if ( productsToAdd?.length ) {
-						responseCart = productsToAdd.reduce(
-							( updatedCart, productToAdd ) => addItemToResponseCart( updatedCart, productToAdd ),
-							responseCart
-						);
+						responseCart = productsToAdd.reduce( ( updatedCart, productToAdd ) => {
+							onEvent?.( {
+								type: 'CART_ADD_ITEM',
+								payload: productToAdd,
+							} );
+							return addItemToResponseCart( updatedCart, productToAdd );
+						}, responseCart );
 					}
 					if ( couponToAdd ) {
 						responseCart = addCouponToResponseCart( responseCart, couponToAdd );

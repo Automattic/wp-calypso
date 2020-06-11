@@ -3,13 +3,17 @@
  */
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
+} from 'my-sites/checkout/composite-checkout/wpcom';
 import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import { recordPurchase } from 'lib/analytics/record-purchase';
+import { recordAddEvent } from 'lib/analytics/cart';
 import { logToLogstash } from 'state/logstash/actions';
 import config from 'config';
 
@@ -21,6 +25,16 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		debug( 'heard checkout event', action );
 		switch ( action.type ) {
 			case 'CHECKOUT_LOADED':
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_page_view', {
+						saved_cards: action.payload?.saved_cards,
+						is_renewal: action.payload?.is_renewal,
+						apple_pay_available: action.payload?.apple_pay_available,
+						product_slug: action.payload?.product_slug,
+						is_composite: true,
+					} )
+				);
+
 				return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
 
 			case 'PAYMENT_COMPLETE': {
@@ -104,12 +118,41 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					} )
 				);
 
+			case 'PAYMENT_METHOD_SELECT': {
+				reduxDispatch(
+					logStashEventAction(
+						'payment_method_select',
+						String( action.payload ),
+						{},
+						'payment_method_select'
+					)
+				);
+
+				// Need to convert to the slug format used in old checkout so events are comparable
+				const rawPaymentMethodSlug = String( action.payload );
+				const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
+					rawPaymentMethodSlug
+				);
+
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug )
+				);
+			}
+
 			case 'PAGE_LOAD_ERROR':
 				reduxDispatch( logStashEventAction( 'page_load', String( action.payload ) ) );
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
 						error_message: String( action.payload ),
+					} )
+				);
+
+			case 'STORED_CARD_ERROR':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
+						error_type: action.payload.type,
+						error_message: String( action.payload.message ),
 					} )
 				);
 
@@ -339,6 +382,10 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 			}
 
+			case 'CART_ADD_ITEM': {
+				return recordAddEvent( action.payload );
+			}
+
 			default:
 				debug( 'unknown checkout event', action );
 				return reduxDispatch(
@@ -350,15 +397,15 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 	};
 }
 
-function logStashEventAction( type, message, additionalData = {} ) {
+function logStashEventAction( type, payload, additionalData = {}, message ) {
 	return logToLogstash( {
 		feature: 'calypso_client',
-		message: 'composite checkout load error',
+		message: message ?? 'composite checkout load error',
 		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 		extra: {
 			env: config( 'env_id' ),
 			type,
-			message,
+			message: payload,
 			...additionalData,
 		},
 	} );

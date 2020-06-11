@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import wp from 'lib/wp';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -137,11 +137,6 @@ export default function CompositeCheckout( {
 
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
-
-	useEffect( () => {
-		debug( 'composite checkout has loaded' );
-		recordEvent( { type: 'CHECKOUT_LOADED' } );
-	}, [ recordEvent ] );
 
 	const showErrorMessage = useCallback(
 		( error ) => {
@@ -501,6 +496,17 @@ export default function CompositeCheckout( {
 		[ couponItem, getThankYouUrl ]
 	);
 
+	useRecordCheckoutLoaded(
+		recordEvent,
+		isLoadingCart,
+		isApplePayAvailable,
+		isApplePayLoading,
+		responseCart,
+		storedCards,
+		isLoadingStoredCards,
+		product
+	);
+
 	return (
 		<React.Fragment>
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
@@ -625,6 +631,37 @@ function useCountryList( overrideCountryList ) {
 	}, [ shouldFetchList, isListFetched, globalCountryList, reduxDispatch ] );
 
 	return countriesList;
+}
+
+function useRecordCheckoutLoaded(
+	recordEvent,
+	isLoadingCart,
+	isApplePayAvailable,
+	isApplePayLoading,
+	responseCart,
+	storedCards,
+	isLoadingStoredCards,
+	product
+) {
+	const hasRecordedCheckoutLoad = useRef( false );
+	if (
+		! isLoadingCart &&
+		! isLoadingStoredCards &&
+		! isApplePayLoading &&
+		! hasRecordedCheckoutLoad.current
+	) {
+		debug( 'composite checkout has loaded' );
+		recordEvent( {
+			type: 'CHECKOUT_LOADED',
+			payload: {
+				saved_cards: storedCards.length,
+				apple_pay_available: isApplePayAvailable,
+				product_slug: product,
+				is_renewal: hasRenewalItem( responseCart ),
+			},
+		} );
+		hasRecordedCheckoutLoad.current = true;
+	}
 }
 
 function CountrySelectMenu( {

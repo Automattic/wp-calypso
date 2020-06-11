@@ -17,7 +17,7 @@ import {
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
-export function useStoredCards( getStoredCards ) {
+export function useStoredCards( getStoredCards, onEvent ) {
 	const [ state, dispatch ] = useReducer( storedCardsReducer, {
 		storedCards: [],
 		isLoading: true,
@@ -30,13 +30,19 @@ export function useStoredCards( getStoredCards ) {
 		}
 
 		// TODO: handle errors
-		fetchStoredCards().then( ( cards ) => {
-			debug( 'stored cards fetched', cards );
-			isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
-		} );
+		fetchStoredCards()
+			.then( ( cards ) => {
+				debug( 'stored cards fetched', cards );
+				isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
+			} )
+			.catch( ( error ) => {
+				debug( 'stored cards failed to load', error );
+				onEvent( { type: 'STORED_CARD_ERROR', payload: error.message } );
+				isSubscribed && dispatch( { type: 'FETCH_END', payload: [] } );
+			} );
 
 		return () => ( isSubscribed = false );
-	}, [ getStoredCards ] );
+	}, [ getStoredCards, onEvent ] );
 	return state;
 }
 
