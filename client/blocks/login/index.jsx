@@ -70,6 +70,8 @@ class Login extends Component {
 		twoFactorNotificationSent: PropTypes.string,
 		isSecurityKeySupported: PropTypes.bool,
 		userEmail: PropTypes.string,
+		onSocialConnectStart: PropTypes.func,
+		onTwoFactorRequested: PropTypes.func,
 	};
 
 	state = {
