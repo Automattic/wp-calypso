@@ -20,12 +20,7 @@ class P2StepWrapper extends Component {
 			<div className="p2-step-wrapper">
 				<div className="p2-step-wrapper__header">
 					<div className="p2-step-wrapper__header-logo">
-						<img
-							src="https://wpcom.files.wordpress.com/2020/05/logo.png"
-							width="67"
-							height="32"
-							alt="P2 logo"
-						/>
+						<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
 					</div>
 					{ this.props.headerText && (
 						<div className="p2-step-wrapper__header-text">{ this.props.headerText }</div>
@@ -41,7 +36,7 @@ class P2StepWrapper extends Component {
 				/>
 				<div className="p2-step-wrapper__footer">
 					<img
-						src="https://wpcom.files.wordpress.com/2020/05/w-logo-1.png"
+						src="/calypso/images/p2/w-logo.png"
 						className="p2-step-wrapper__w-logo"
 						alt="WP.com logo"
 					/>
