@@ -7,6 +7,7 @@ import {
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_DELETE_FEED,
+	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
@@ -309,18 +310,19 @@ export const deleteReaderListFeed = ( listId, listOwner, listSlug, feedId ) => (
 } );
 
 export const deleteReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
-	type: READER_LIST_ITEM_DELETE_FEED,
+	type: READER_LIST_ITEM_DELETE_SITE,
 	listId,
 	listOwner,
 	listSlug,
-	feedId: `site:${ siteId }`,
+	siteId,
 } );
 
-export const deleteReaderListTag = ( listId, listOwner, listSlug, tagSlug ) => ( {
+export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug ) => ( {
 	type: READER_LIST_ITEM_DELETE_TAG,
 	listId,
 	listOwner,
 	listSlug,
+	tagId,
 	tagSlug,
 } );
 

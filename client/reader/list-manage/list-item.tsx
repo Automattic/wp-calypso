@@ -27,7 +27,7 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 				<FeedItem
 					item={ item }
 					onRemove={ () =>
-						dispatch( deleteReaderListFeed( list.id, owner, list.slug, item.feed_ID ) )
+						dispatch( deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) )
 					}
 				/>
 			) }
@@ -35,7 +35,7 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 				<SiteItem
 					item={ item }
 					onRemove={ () =>
-						dispatch( deleteReaderListSite( list.id, owner, list.slug, item.site_ID ) )
+						dispatch( deleteReaderListSite( list.ID, owner, list.slug, item.site_ID ) )
 					}
 				/>
 			) }
@@ -44,7 +44,13 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 					item={ item }
 					onRemove={ () =>
 						dispatch(
-							deleteReaderListTag( list.id, owner, list.slug, item.meta.data?.tag?.tag.slug )
+							deleteReaderListTag(
+								list.ID,
+								owner,
+								list.slug,
+								item.tag_ID,
+								item.meta.data?.tag?.tag.slug
+							)
 						)
 					}
 				/>
