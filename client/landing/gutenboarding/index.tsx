@@ -139,11 +139,17 @@ window.AppBoot = async () => {
 };
 
 function WindowLocaleEffectManager() {
-	const { isRTL } = useI18n();
-	const rtl = isRTL();
+	const { isRTL, i18nLocale } = useI18n();
+	const isRtl = isRTL();
+	const htmlLangAttribute = i18nLocale;
+
 	React.useEffect( () => {
-		switchWebpackCSS( rtl );
-	}, [ rtl ] );
+		document.documentElement.lang = htmlLangAttribute;
+		document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+		document.body.classList[ isRtl ? 'add' : 'remove' ]( 'rtl' );
+
+		switchWebpackCSS( isRtl );
+	}, [ isRtl ] );
 	return null;
 }
 
