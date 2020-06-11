@@ -314,7 +314,6 @@ class P2Site extends React.Component {
 				headerText={ this.props.translate(
 					'Share, discuss, review, and collaborate across time zones, without interruptions.'
 				) }
-				fallbackHeaderText={ this.props.translate( "Let's get started" ) }
 			>
 				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }

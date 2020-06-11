@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,39 +15,45 @@ import StepWrapper from 'signup/step-wrapper';
  */
 import './style.scss';
 
-class P2StepWrapper extends Component {
-	render() {
-		return (
-			<div className="p2-step-wrapper">
-				<div className="p2-step-wrapper__header">
-					<div className="p2-step-wrapper__header-logo">
-						<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
-					</div>
-					{ this.props.headerText && (
-						<div className="p2-step-wrapper__header-text">{ this.props.headerText }</div>
-					) }
+function P2StepWrapper( { flowName, stepName, headerText, positionInFlow, children } ) {
+	const translate = useTranslate();
+
+	return (
+		<div className="p2-step-wrapper">
+			<div className="p2-step-wrapper__header">
+				<div className="p2-step-wrapper__header-logo">
+					<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
 				</div>
-				<StepWrapper
-					hideFormattedHeader
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					positionInFlow={ this.props.positionInFlow }
-					fallbackHeaderText={ this.props.fallbackHeaderText }
-					stepContent={ this.props.children }
-				/>
-				<div className="p2-step-wrapper__footer">
-					<img
-						src="/calypso/images/p2/w-logo.png"
-						className="p2-step-wrapper__w-logo"
-						alt="WP.com logo"
-					/>
-					<span className="p2-step-wrapper__footer-text">
-						{ this.props.translate( 'Powered by WordPress.com' ) }
-					</span>
-				</div>
+				{ headerText && <div className="p2-step-wrapper__header-text">{ headerText }</div> }
 			</div>
-		);
-	}
+			<StepWrapper
+				hideFormattedHeader
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
+				fallbackHeaderText=""
+				stepContent={ children }
+			/>
+			<div className="p2-step-wrapper__footer">
+				<img
+					src="/calypso/images/p2/w-logo.png"
+					className="p2-step-wrapper__w-logo"
+					alt="WP.com logo"
+				/>
+				<span className="p2-step-wrapper__footer-text">
+					{ translate( 'Powered by WordPress.com' ) }
+				</span>
+			</div>
+		</div>
+	);
 }
 
-export default localize( P2StepWrapper );
+P2StepWrapper.propTypes = {
+	headerText: PropTypes.string,
+	flowName: PropTypes.string,
+	stepName: PropTypes.string,
+	positionInFlow: PropTypes.number,
+	children: PropTypes.node,
+};
+
+export default P2StepWrapper;
