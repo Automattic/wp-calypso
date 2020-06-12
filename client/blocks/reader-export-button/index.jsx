@@ -25,12 +25,14 @@ import './style.scss';
 
 class ReaderExportButton extends React.Component {
 	static propTypes = {
+		disabled: PropTypes.bool,
 		exportType: PropTypes.oneOf( [ READER_EXPORT_TYPE_SUBSCRIPTIONS, READER_EXPORT_TYPE_LIST ] ),
 		listId: PropTypes.number, // only when exporting a list
 	};
 
 	static defaultProps = {
 		exportType: READER_EXPORT_TYPE_SUBSCRIPTIONS,
+		disabled: false,
 	};
 
 	state = { disabled: false };
@@ -77,7 +79,11 @@ class ReaderExportButton extends React.Component {
 
 	render() {
 		return (
-			<button className="reader-export-button" onClick={ this.onClick }>
+			<button
+				className="reader-export-button"
+				onClick={ this.onClick }
+				disabled={ this.props.disabled || this.state.disabled }
+			>
 				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
 				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
 			</button>
