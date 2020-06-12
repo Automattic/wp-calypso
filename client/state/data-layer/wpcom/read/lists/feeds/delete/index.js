@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -16,14 +21,14 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 			fetch: ( action ) =>
 				http(
 					{
-						method: 'GET',
+						method: 'POST',
 						path: `/read/lists/${ action.listOwner }/${ action.listSlug }/feeds/${ action.feedId }/delete`,
 						apiVersion: '1.2',
 						body: {},
 					},
 					action
 				),
-			onError: () => errorNotice( 'Error removing feed from list' ),
+			onError: () => errorNotice( translate( 'Unable to remove feed from list' ) ),
 		} ),
 	],
 	[ READER_LIST_ITEM_DELETE_SITE ]: [
@@ -31,14 +36,14 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 			fetch: ( action ) =>
 				http(
 					{
-						method: 'GET',
+						method: 'POST',
 						path: `/read/lists/${ action.listOwner }/${ action.listSlug }/feeds/site:${ action.siteId }/delete`,
 						apiVersion: '1.2',
 						body: {},
 					},
 					action
 				),
-			onError: () => errorNotice( 'Error removing site from list' ),
+			onError: () => errorNotice( translate( 'Unable to remove site from list' ) ),
 		} ),
 	],
 } );

@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -13,14 +18,14 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/tags/delete/index.js', {
 			fetch: ( action ) =>
 				http(
 					{
-						method: 'GET',
+						method: 'POST',
 						path: `/read/lists/${ action.listOwner }/${ action.listSlug }/tags/${ action.tagSlug }/delete`,
 						apiVersion: '1.2',
 						body: {},
 					},
 					action
 				),
-			onError: () => errorNotice( 'Error removing tag from list' ),
+			onError: () => errorNotice( translate( 'Unable to remove tag from list' ) ),
 		} ),
 	],
 } );
