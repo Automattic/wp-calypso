@@ -2,10 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
-import { sprintf } from '@wordpress/i18n';
-import { useViewportMatch } from '@wordpress/compose';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
@@ -14,20 +11,9 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { USER_STORE } from '../../stores/user';
-import { SITE_STORE } from '../../stores/site';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
-import SignupForm from '../../components/signup-form';
-import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
-import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
-import {
-	getFreeDomainSuggestions,
-	getPaidDomainSuggestions,
-	getRecommendedDomainSuggestion,
-} from '../../utils/domain-suggestions';
-import { PAID_DOMAINS_TO_SHOW } from '../../constants';
-import { usePath, useCurrentStep, Step } from '../../path';
+import { useCurrentStep } from '../../path';
 
 /**
  * Style dependencies
@@ -35,28 +21,13 @@ import { usePath, useCurrentStep, Step } from '../../path';
 import './style.scss';
 
 const Header: React.FunctionComponent = () => {
-	const { __, i18nLocale } = useI18n();
+	const { __ } = useI18n();
 
 	const currentStep = useCurrentStep();
 
-	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-
-	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
-
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
-	const makePath = usePath();
-
-	const { createSite, setDomain } = useDispatch( ONBOARD_STORE );
-
-	const allSuggestions = useDomainSuggestions( { searchOverride: siteTitle, locale: i18nLocale } );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
-		0,
-		PAID_DOMAINS_TO_SHOW
-	);
-	const freeDomainSuggestion = getFreeDomainSuggestions( allSuggestions )?.[ 0 ];
-	const recommendedDomainSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
+	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	React.useEffect( () => {
 		if ( ! siteTitle ) {
@@ -64,91 +35,14 @@ const Header: React.FunctionComponent = () => {
 		}
 	}, [ siteTitle, setDomain ] );
 
-	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
-	const [ previousRecommendedDomain, setPreviousRecommendedDomain ] = React.useState( '' );
-	if (
-		recommendedDomainSuggestion &&
-		previousRecommendedDomain !== recommendedDomainSuggestion.domain_name
-	) {
-		setPreviousRecommendedDomain( recommendedDomainSuggestion.domain_name );
-	}
-
-	const {
-		location: { pathname, search },
-		push,
-	} = useHistory();
-
-	React.useEffect( () => {
-		// This handles opening the signup modal when there is a ?signup query parameter
-		// then removes the parameter.
-		// The use case is a user clicking "Create account" from login
-		// TODO: We can remove this condition when we've converted signup into it's own page
-		if ( ! showSignupDialog && new URLSearchParams( search ).has( 'signup' ) ) {
-			setShowSignupDialog( true );
-			push( makePath( Step[ currentStep ] ) );
-		} else {
-			// Dialogs usually close naturally when the user clicks the browser's
-			// back/forward buttons because their parent is unmounted. However
-			// this header isn't unmounted on route changes so we need to
-			// explicitly hide the dialog.
-			setShowSignupDialog( false );
-		}
-	}, [ pathname, setShowSignupDialog ] ); // eslint-disable-line react-hooks/exhaustive-deps
-
-	const isMobile = useViewportMatch( 'mobile', '<' );
-
-	const getDomainElementContent = () => {
-		// If no site title entered (user skips intent gathering)
-		// and no domain was selected, show "Pick a domain"
-		if ( ! siteTitle && ! domain ) {
-			return __( 'Pick a domain' );
-		}
-
-		if ( recommendedDomainSuggestion || previousRecommendedDomain !== '' ) {
-			/* translators: domain name is available, eg: "yourname.com is available" */
-			return sprintf(
-				__( '%s is available' ),
-				recommendedDomainSuggestion
-					? recommendedDomainSuggestion.domain_name
-					: previousRecommendedDomain
-			);
-		}
-
-		return __( 'Pick a domain' );
-	};
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
 		domain.domain_name
 	) : (
 		<span className="gutenboarding__header-domain-picker-button-domain">
-			{ isMobile && __( 'Domain available' ) }
-			{ ! isMobile && getDomainElementContent() }
+			{ __( 'Choose a domain' ) }
 		</span>
 	);
-
-	const handleCreateSite = React.useCallback(
-		( username: string, bearerToken?: string, isPublicSite?: boolean ) => {
-			createSite( username, freeDomainSuggestion, bearerToken, isPublicSite );
-		},
-		[ createSite, freeDomainSuggestion ]
-	);
-
-	const closeAuthDialog = () => {
-		setShowSignupDialog( false );
-	};
-
-	React.useEffect( () => {
-		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
-			handleCreateSite( newUser.username, newUser.bearerToken, shouldSiteBePublic );
-		}
-	}, [ newSite, newUser, handleCreateSite, shouldSiteBePublic ] );
-
-	const hasContent =
-		!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== '';
-
-	const hasPlaceholder =
-		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
 
 	const hideFullHeader = [
 		'IntentGathering',
@@ -188,8 +82,7 @@ const Header: React.FunctionComponent = () => {
 						domainElement && (
 							<div
 								className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
-									'has-content': hasContent,
-									'has-placeholder': hasPlaceholder,
+									'no-domain': ! domain,
 								} ) }
 							>
 								<DomainPickerButton className="gutenboarding__header-domain-picker-button">
@@ -203,7 +96,6 @@ const Header: React.FunctionComponent = () => {
 					<PlansButton />
 				</div>
 			</section>
-			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 		</div>
 	);
 };
