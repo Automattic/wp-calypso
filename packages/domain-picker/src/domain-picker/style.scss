@@ -152,7 +152,7 @@ $domain-picker__suggestion-item-height: 24px;
 
 .domain-picker__price {
 	color: var( --studio-gray-40 );
-	white-space: nowrap;
+	text-align: right;
 	min-height: $domain-picker__suggestion-item-height;
 
 	&.placeholder {
