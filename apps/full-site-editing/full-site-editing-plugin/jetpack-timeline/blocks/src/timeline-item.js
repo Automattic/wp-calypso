@@ -1,10 +1,16 @@
 /**
  * External dependencies
  */
-
-import { InspectorControls, InnerBlocks, PanelColorSettings } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	InnerBlocks,
+	PanelColorSettings,
+	BlockControls,
+} from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
+import { ToolbarButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -27,27 +33,40 @@ export function registerTimelineItemBlock() {
 				borderColor: attributes.background,
 			};
 
+			const setAlignment = ( alignment ) => setAttributes( { alignment } );
+
+			const classes = classnames( 'wp-block-jetpack-timeline-item', {
+				'is-left': attributes.alignment === 'left',
+				'is-right': attributes.alignment === 'right',
+			} );
+
 			return (
-				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-				<li style={ style } className="wp-block-jetpack-timeline-item">
-					<InspectorControls>
-						<PanelColorSettings
-							title={ __( 'Color Settings', 'full-site-editing' ) }
-							colorSettings={ [
-								{
-									value: attributes.background,
-									onChange: ( background ) => setAttributes( { background } ),
-									label: __( 'Background Color', 'full-site-editing' ),
-								},
-							] }
-						/>
-					</InspectorControls>
-					<div className="timeline-item">
-						<div className="timeline-item__bubble" style={ bubbleStyle } />
-						<div className="timeline-item__dot" style={ style } />
-						<InnerBlocks template={ [ [ 'core/paragraph' ] ] } />
-					</div>
-				</li>
+				<>
+					<BlockControls>
+						<ToolbarButton onClick={ () => setAlignment( 'left' ) }>Left</ToolbarButton>
+						<ToolbarButton onClick={ () => setAlignment( 'auto' ) }>Auto</ToolbarButton>
+						<ToolbarButton onClick={ () => setAlignment( 'right' ) }>Right</ToolbarButton>
+					</BlockControls>
+					<li style={ style } className={ classes }>
+						<InspectorControls>
+							<PanelColorSettings
+								title={ __( 'Color Settings', 'full-site-editing' ) }
+								colorSettings={ [
+									{
+										value: attributes.background,
+										onChange: ( background ) => setAttributes( { background } ),
+										label: __( 'Background Color', 'full-site-editing' ),
+									},
+								] }
+							/>
+						</InspectorControls>
+						<div className="timeline-item">
+							<div className="timeline-item__bubble" style={ bubbleStyle } />
+							<div className="timeline-item__dot" style={ style } />
+							<InnerBlocks template={ [ [ 'core/paragraph' ] ] } />
+						</div>
+					</li>
+				</>
 			);
 		},
 		save: ( { attributes } ) => {
@@ -70,6 +89,10 @@ export function registerTimelineItemBlock() {
 			);
 		},
 		attributes: {
+			alignment: {
+				type: 'string',
+				default: 'auto',
+			},
 			background: {
 				type: 'string',
 				default: '#eeeeee',

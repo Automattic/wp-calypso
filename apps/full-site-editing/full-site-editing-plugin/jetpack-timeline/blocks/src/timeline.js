@@ -8,6 +8,7 @@
 
 import { InnerBlocks, BlockControls } from '@wordpress/block-editor';
 import { registerBlockType, createBlock } from '@wordpress/blocks';
+import { ToolbarButton } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
@@ -17,7 +18,6 @@ import classnames from 'classnames';
  */
 import { TimelineIcon } from './icon';
 import { BlockAppender } from './block-appender';
-import { ToolbarButton } from '@wordpress/components';
 
 export function registerTimelineBlock() {
 	registerBlockType( 'jetpack/timeline', {
