@@ -27,6 +27,7 @@ import getSupportVariation, {
 } from 'state/selectors/get-inline-help-support-variation';
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
+import { useHasRenewalInCart } from '../hooks/has-renewal';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
@@ -152,7 +153,8 @@ function CheckoutSummaryPlanFeatures() {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const planInCart = usePlanInCart();
-	const planFeatures = getPlanFeatures( planInCart, translate, hasDomainsInCart );
+	const hasRenewalInCart = useHasRenewalInCart();
+	const planFeatures = getPlanFeatures( planInCart, translate, hasDomainsInCart, hasRenewalInCart );
 
 	return (
 		<>
@@ -169,13 +171,14 @@ function CheckoutSummaryPlanFeatures() {
 	);
 }
 
-function getPlanFeatures( plan, translate, hasDomainsInCart ) {
+function getPlanFeatures( plan, translate, hasDomainsInCart, hasRenewalInCart ) {
+	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart;
 	if (
 		'personal-bundle' === plan.wpcom_meta?.product_slug ||
 		'personal-bundle-2y' === plan.wpcom_meta?.product_slug
 	) {
 		return [
-			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			showFreeDomainFeature && translate( 'Free domain for one year' ),
 			translate( 'Remove WordPress.com ads' ),
 			translate( 'Limit your content to paying subscribers.' ),
 		];
@@ -184,7 +187,7 @@ function getPlanFeatures( plan, translate, hasDomainsInCart ) {
 		'value_bundle-2y' === plan.wpcom_meta?.product_slug
 	) {
 		return [
-			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			showFreeDomainFeature && translate( 'Free domain for one year' ),
 			translate( 'Unlimited access to our library of Premium Themes' ),
 			translate( 'Subscriber-only content and simple payment buttons' ),
 			translate( 'Track your stats with Google Analytics' ),
@@ -194,7 +197,7 @@ function getPlanFeatures( plan, translate, hasDomainsInCart ) {
 		'business-bundle-2y' === plan.wpcom_meta?.product_slug
 	) {
 		return [
-			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			showFreeDomainFeature && translate( 'Free domain for one year' ),
 			translate( 'Install custom plugins and themes' ),
 			translate( 'Drive traffic to your site with our advanced SEO tools' ),
 			translate( 'Track your stats with Google Analytics' ),
@@ -205,7 +208,7 @@ function getPlanFeatures( plan, translate, hasDomainsInCart ) {
 		'ecommerce-bundle-2y' === plan.wpcom_meta?.product_slug
 	) {
 		return [
-			! hasDomainsInCart && translate( 'Free domain for one year' ),
+			showFreeDomainFeature && translate( 'Free domain for one year' ),
 			translate( 'Install custom plugins and themes' ),
 			translate( 'Accept payments in 60+ countries' ),
 			translate( 'Integrations with top shipping carriers' ),
