@@ -2,13 +2,13 @@
  * External dependencies
  */
 import * as React from 'react';
-import { sprintf } from '@wordpress/i18n';
-import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@automattic/react-i18n';
-import { Icon, wordpress } from '@wordpress/icons';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
+import { sprintf } from '@wordpress/i18n';
+import { useViewportMatch } from '@wordpress/compose';
+import { Icon, wordpress } from '@wordpress/icons';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import classnames from 'classnames';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
-import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
 import SignupForm from '../../components/signup-form';
@@ -29,6 +28,11 @@ import {
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
@@ -161,7 +165,11 @@ const Header: React.FunctionComponent = () => {
 			aria-label={ __( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<section className="gutenboarding__header-section">
+			<section
+				className={ classnames( 'gutenboarding__header-section', {
+					'gutenboarding__header-section--compact': hideFullHeader,
+				} ) }
+			>
 				<div className="gutenboarding__header-section-item">
 					<div className="gutenboarding__header-wp-logo">
 						<Icon icon={ wordpress } size={ 28 } />
@@ -177,7 +185,7 @@ const Header: React.FunctionComponent = () => {
 						// We display the DomainPickerButton as soon as we have a domain suggestion,
 						// unless we're still at the IntentGathering step. In that case, we only
 						// show it comes from a site title (but hide it if it comes from a vertical).
-						domainElement && ! hideFullHeader && (
+						domainElement && (
 							<div
 								className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
 									'has-content': hasContent,
@@ -191,8 +199,8 @@ const Header: React.FunctionComponent = () => {
 						)
 					}
 				</div>
-				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
-					{ ! hideFullHeader && <PlansButton /> }
+				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
+					<PlansButton />
 				</div>
 			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
