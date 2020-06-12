@@ -10,6 +10,7 @@ export default function Field( {
 	type,
 	id,
 	className,
+	inputClassName,
 	isError,
 	onChange,
 	label,
@@ -46,6 +47,7 @@ export default function Field( {
 
 			<InputWrapper>
 				<Input
+					className={ inputClassName }
 					id={ id }
 					icon={ icon }
 					value={ value }
@@ -73,6 +75,7 @@ Field.propTypes = {
 	type: PropTypes.string,
 	id: PropTypes.string.isRequired,
 	className: PropTypes.string,
+	inputClassName: PropTypes.string,
 	isError: PropTypes.bool,
 	onChange: PropTypes.func,
 	label: PropTypes.string,

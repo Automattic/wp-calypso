@@ -47,6 +47,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 		>
 			<Field
 				id={ id }
+				inputClassName="coupon-code"
 				value={ couponFieldValue }
 				disabled={ disabled || isPending }
 				placeholder={ translate( 'Enter your coupon code' ) }
