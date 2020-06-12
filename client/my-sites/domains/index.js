@@ -18,6 +18,16 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
+function registerStandardDomainManagementPages( pathFunction, controller ) {
+	registerMultiPage( {
+		paths: [
+			pathFunction( ':site', ':domain' ),
+			pathFunction( ':site', ':domain', paths.domainManagementRoot() ),
+		],
+		handlers: [ ...getCommonHandlers(), controller, makeLayout, clientRender ],
+	} );
+}
+
 function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
 	warnIfJetpack = true,
@@ -81,86 +91,40 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		paths.domainManagementRedirectSettings( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementRedirectSettings,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementRedirectSettings,
+		domainManagementController.domainManagementRedirectSettings
 	);
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementContactsPrivacy( ':site', ':domain' ),
-			paths.domainManagementContactsPrivacy( ':site', ':domain', paths.domainManagementRoot() ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementContactsPrivacy,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementEditContactInfo( ':site', ':domain' ),
-			paths.domainManagementEditContactInfo( ':site', ':domain', paths.domainManagementRoot() ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementEditContactInfo,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementManageConsent( ':site', ':domain' ),
-			paths.domainManagementManageConsent( ':site', ':domain', paths.domainManagementRoot() ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementManageConsent,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	page(
-		paths.domainManagementDomainConnectMapping( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementDomainConnectMapping,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementContactsPrivacy,
+		domainManagementController.domainManagementContactsPrivacy
 	);
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementDns( ':site', ':domain' ),
-			paths.domainManagementDns( ':site', ':domain', paths.domainManagementRoot() ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementDns,
-			makeLayout,
-			clientRender,
-		],
-	} );
+	registerStandardDomainManagementPages(
+		paths.domainManagementEditContactInfo,
+		domainManagementController.domainManagementEditContactInfo
+	);
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementNameServers( ':site', ':domain' ),
-			paths.domainManagementNameServers( ':site', ':domain', paths.domainManagementRoot() ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementNameServers,
-			makeLayout,
-			clientRender,
-		],
-	} );
+	registerStandardDomainManagementPages(
+		paths.domainManagementManageConsent,
+		domainManagementController.domainManagementManageConsent
+	);
+
+	registerStandardDomainManagementPages(
+		paths.domainManagementDomainConnectMapping,
+		domainManagementController.domainManagementDomainConnectMapping
+	);
+
+	registerStandardDomainManagementPages(
+		paths.domainManagementDns,
+		domainManagementController.domainManagementDns
+	);
+
+	registerStandardDomainManagementPages(
+		paths.domainManagementNameServers,
+		domainManagementController.domainManagementNameServers
+	);
 
 	page(
 		paths.domainManagementTransfer( ':site', ':domain' ),
@@ -214,44 +178,20 @@ export default function () {
 		clientRender
 	);
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementEdit( ':site', ':domain' ),
-			paths.domainManagementEdit( ':site', ':domain', null, paths.domainManagementRoot() ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementEdit,
-			makeLayout,
-			clientRender,
-		],
-	} );
+	registerStandardDomainManagementPages(
+		paths.domainManagementEdit,
+		domainManagementController.domainManagementEdit
+	);
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementSiteRedirect( ':site', ':domain' ),
-			paths.domainManagementSiteRedirect( ':site', ':domain', paths.domainManagementRoot() ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementSiteRedirect,
-			makeLayout,
-			clientRender,
-		],
-	} );
+	registerStandardDomainManagementPages(
+		paths.domainManagementSiteRedirect,
+		domainManagementController.domainManagementSiteRedirect
+	);
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementTransferIn( ':site', ':domain' ),
-			paths.domainManagementTransferIn( ':site', ':domain', paths.domainManagementRoot() ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementTransferIn,
-			makeLayout,
-			clientRender,
-		],
-	} );
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransferIn,
+		domainManagementController.domainManagementTransferIn
+	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(

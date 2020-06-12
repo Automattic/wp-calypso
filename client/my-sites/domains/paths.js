@@ -114,8 +114,8 @@ export function domainManagementDns( siteName, domainName, relativeTo = null ) {
 	return domainManagementEdit( siteName, domainName, 'dns', relativeTo );
 }
 
-export function domainManagementRedirectSettings( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'redirect-settings' );
+export function domainManagementRedirectSettings( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'redirect-settings', relativeTo );
 }
 
 export function domainManagementSecurity( siteName, domainName ) {
@@ -214,6 +214,6 @@ export function getSectionName( pathname ) {
 	return matches ? matches[ 1 ] : null;
 }
 
-export function domainManagementDomainConnectMapping( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'domain-connect-mapping' );
+export function domainManagementDomainConnectMapping( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'domain-connect-mapping', relativeTo );
 }

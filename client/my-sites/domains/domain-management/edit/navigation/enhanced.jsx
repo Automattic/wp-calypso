@@ -549,11 +549,11 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getRedirectSettings() {
-		const { domain, selectedSite, translate } = this.props;
+		const { domain, selectedSite, currentRoute, translate } = this.props;
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name ) }
+				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Redirect settings' ) }
 				description={ translate( 'Update your site redirect' ) }
