@@ -14,7 +14,7 @@ import store from 'store';
  */
 import { setupLocale } from './locale';
 import config from 'config';
-import { ReduxWrappedLayout } from 'controller';
+import { ProviderWrappedLayout } from 'controller';
 import notices from 'notices';
 import { getToken } from 'lib/oauth-token';
 import emailVerification from 'components/email-verification';
@@ -402,7 +402,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 };
 
 function renderLayout( reduxStore ) {
-	const layoutElement = React.createElement( ReduxWrappedLayout, {
+	const layoutElement = React.createElement( ProviderWrappedLayout, {
 		store: reduxStore,
 	} );
 
