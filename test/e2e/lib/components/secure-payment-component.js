@@ -22,7 +22,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			2 * config.get( 'explicitWaitMS' )
 		);
 		this.paymentButtonSelector = By.css(
-			'.credit-card-payment-box button.is-primary:not([disabled]), .composite-checkout .checkout-button'
+			'.credit-card-payment-box button.is-primary:not([disabled]),.composite-checkout .checkout-submit-button button'
 		);
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
@@ -95,7 +95,9 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async submitPaymentDetails() {
-		const disabledPaymentButton = By.css( '.credit-card-payment-box button[disabled]' );
+		const disabledPaymentButton = By.css(
+			'.credit-card-payment-box button[disabled],.composite-checkout .checkout-submit-button button[disabled]'
+		);
 
 		await driverHelper.waitTillNotPresent( this.driver, disabledPaymentButton );
 		return await driverHelper.clickWhenClickable( this.driver, this.paymentButtonSelector );
