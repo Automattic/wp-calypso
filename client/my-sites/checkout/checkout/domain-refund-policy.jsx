@@ -111,8 +111,8 @@ class DomainRefundPolicy extends React.Component {
 
 		return (
 			<>
-				{ policies.map( ( policy, index ) => (
-					<div className="checkout__domain-refund-policy" key={ index }>
+				{ policies.map( ( policy ) => (
+					<div className="checkout__domain-refund-policy" key={ policy }>
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>{ policy }</p>
 					</div>
