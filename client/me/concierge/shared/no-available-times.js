@@ -13,7 +13,6 @@ import PrimaryHeader from './primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteWhiteGlove from 'state/selectors/is-site-white-glove';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
-import { stubFalse } from 'lodash';
 
 class NoAvailableTimes extends Component {
 	componentDidMount() {
