@@ -11,7 +11,6 @@ import type { DomainSuggestions } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
-import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { trackEventWithFlow } from '../../lib/analytics';
@@ -39,7 +38,6 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const history = useHistory();
 	const { goBack, goNext } = useStepNavigation();
 
-	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
 
@@ -97,7 +95,6 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
 			/>
-			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
 		</div>
 	);
 };

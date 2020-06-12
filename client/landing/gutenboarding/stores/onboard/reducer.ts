@@ -137,6 +137,16 @@ const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, act
 	return state;
 };
 
+const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_SHOW_SIGNUP_DIALOG' ) {
+		return action.showSignup;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -149,6 +159,7 @@ const reducer = combineReducers( {
 	selectedSite,
 	siteTitle,
 	siteVertical,
+	showSignupDialog,
 } );
 
 export type State = ReturnType< typeof reducer >;
