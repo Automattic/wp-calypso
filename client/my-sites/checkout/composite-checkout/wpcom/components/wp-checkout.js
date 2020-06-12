@@ -220,6 +220,7 @@ export default function WPCheckout( {
 			</CheckoutSummaryArea>
 			<CheckoutStepArea>
 				<CheckoutStepBody
+					className="wp-checkout__review-order-step"
 					stepId="review-order-step"
 					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
