@@ -35,7 +35,7 @@ export function initLanguageEmpathyMode() {
 	const i18nEmpathy = new I18N();
 	const i18nEmpathyTranslate = i18nEmpathy.translate.bind( i18nEmpathy );
 	const i18nEmpathyRegisterHook = i18nEmpathy.registerTranslateHook.bind( i18nEmpathy );
-	const translationsWhitelist = [ defaultUntranslatedPlacehoder, 'Deactivate Empathy mode' ];
+	const translationsWhitelist = [ defaultUntranslatedPlacehoder ];
 
 	i18n.translateHooks.forEach( i18nEmpathyRegisterHook );
 

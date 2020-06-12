@@ -375,8 +375,8 @@ class TranslatorLauncher extends React.Component {
 			? translate( 'Disable Translator' )
 			: translate( 'Enable Translator' );
 		const toggleEmpathyModeString = getLanguageEmpathyModeActive()
-			? translate( 'Deactivate Empathy mode' )
-			: translate( 'Activate Empathy mode' );
+			? 'Deactivate Empathy mode'
+			: 'Activate Empathy mode';
 		const buttonString = isEmpathyModeEnabled ? toggleEmpathyModeString : toggleString;
 
 		return (

@@ -463,7 +463,6 @@ export class LanguagePickerModal extends PureComponent {
 			return null;
 		}
 
-		const { translate } = this.props;
 		const { empathyMode, selectedLanguageSlug } = this.state;
 		const isDefaultLanguageSelected = i18n.defaultLocaleSlug === selectedLanguageSlug;
 
@@ -475,7 +474,9 @@ export class LanguagePickerModal extends PureComponent {
 						disabled={ isDefaultLanguageSelected }
 						onChange={ this.handleEmpathyModeToggle }
 					/>
-					<span>{ translate( 'Empathy mode' ) }</span>
+					<span title="Pretend to use that language but display English where a translated exists">
+						Empathy mode
+					</span>
 				</FormLabel>
 			</div>
 		);
