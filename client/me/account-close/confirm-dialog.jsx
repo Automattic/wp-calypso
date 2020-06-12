@@ -10,6 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import FormLabel from 'components/forms/form-label';
@@ -60,12 +61,20 @@ class AccountCloseConfirmDialog extends React.Component {
 		page( '/me/account/closed' );
 	};
 
+	handleAlternaticeActionClick = ( evt ) => {
+		recordTracksEvent( 'calypso_close_account_alternative_clicked', {
+			type: 'Action Link',
+			label: evt.target.dataset.tracksLabel,
+		} );
+	};
+
 	render() {
 		const { isVisible, currentUsername, translate } = this.props;
 		const isDeleteButtonDisabled = currentUsername && this.state.inputValue !== currentUsername;
 
 		const alternativeOptions = [
 			{
+				englishText: 'Start a new site',
 				text: translate( 'Start a new site' ),
 				href: '/jetpack/new',
 				supportLink:
@@ -73,24 +82,28 @@ class AccountCloseConfirmDialog extends React.Component {
 				supportPostId: 3991,
 			},
 			{
+				englishText: "Change your site's address",
 				text: translate( "Change your site's address" ),
 				href: '/settings/general',
 				supportLink: 'https://wordpress.com/support/changing-site-address/',
 				supportPostId: 11280,
 			},
 			{
+				englishText: 'Change your username',
 				text: translate( 'Change your username' ),
 				href: '/me/account',
 				supportLink: 'https://wordpress.com/support/change-your-username',
 				supportPostId: 2116,
 			},
 			{
+				englishText: 'Change your password',
 				text: translate( 'Change your password' ),
 				href: '/me/security',
 				supportLink: 'https://wordpress.com/support/passwords/#change-your-password',
 				supportPostId: 89,
 			},
 			{
+				englishText: 'Delete a site',
 				text: translate( 'Delete a site' ),
 				href: '/settings/delete-site',
 				supportLink: 'https://wordpress.com/support/delete-site/',
@@ -161,21 +174,32 @@ class AccountCloseConfirmDialog extends React.Component {
 							) }
 						</p>
 
-						{ alternativeOptions.map( ( { text, href, supportLink, supportPostId } ) => (
-							<div className="account-close__confirm-dialog-alternative" key={ href }>
-								<Button href={ href } className="account-close__confirm-dialog-alternative-action">
-									{ text }
-									<Gridicon icon="chevron-right" />
-								</Button>
-								<InlineSupportLink
-									supportPostId={ supportPostId }
-									supportLink={ supportLink }
-									showText={ false }
-									iconSize={ 20 }
-									tracksEvent="calypso_close_account_alternative_clicked"
-								/>
-							</div>
-						) ) }
+						{ alternativeOptions.map(
+							( { englishText, text, href, supportLink, supportPostId } ) => (
+								<div className="account-close__confirm-dialog-alternative" key={ href }>
+									<Button
+										href={ href }
+										className="account-close__confirm-dialog-alternative-action"
+										onClick={ this.handleAlternaticeActionClick }
+										data-tracks-label={ englishText }
+									>
+										{ text }
+										<Gridicon icon="chevron-right" />
+									</Button>
+									<InlineSupportLink
+										supportPostId={ supportPostId }
+										supportLink={ supportLink }
+										showText={ false }
+										iconSize={ 20 }
+										tracksEvent="calypso_close_account_alternative_clicked"
+										tracksOptions={ {
+											type: 'Support Doc',
+											label: englishText,
+										} }
+									/>
+								</div>
+							)
+						) }
 					</>
 				) }
 			</Dialog>
