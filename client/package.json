@@ -117,7 +117,7 @@
 		"lodash-es": "^4.17.15",
 		"lru": "^3.1.0",
 		"lunr": "^2.3.8",
-		"marked": "^0.7.0",
+		"marked": "^0.8.2",
 		"moment": "^2.26.0",
 		"moment-timezone": "^0.5.31",
 		"morgan": "^1.9.1",
