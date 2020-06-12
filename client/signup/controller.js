@@ -67,7 +67,8 @@ export default {
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.params.flowName === 'user' ||
-			context.params.flowName === 'account'
+			context.params.flowName === 'account' ||
+			context.params.flowName === 'crowdsignal'
 		) {
 			removeWhiteBackground();
 			next();
