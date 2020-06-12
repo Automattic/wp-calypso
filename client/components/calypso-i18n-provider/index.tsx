@@ -11,7 +11,8 @@ const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 
 	useEffect( () => {
 		const onChange = () => {
-			const nextLocaleData = i18n.state.locale;
+			// Create a new object to ensure the provider sees the data has changed
+			const nextLocaleData = Object.assign( {}, i18n.state.locale );
 			setLocaleData( nextLocaleData );
 		};
 
