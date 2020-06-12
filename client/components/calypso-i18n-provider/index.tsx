@@ -13,18 +13,17 @@ const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 		const onChange = () => {
 			// Create a new object to ensure the provider sees the data has changed
 			const nextLocaleData = Object.assign( {}, i18n.state.locale );
+
+			setWpI18nLocaleData( nextLocaleData );
 			setLocaleData( nextLocaleData );
 		};
 
 		i18n.on( 'change', onChange );
+
 		return () => {
 			i18n.off( 'change', onChange );
 		};
 	}, [] );
-
-	useEffect( () => {
-		setWpI18nLocaleData( localeData );
-	}, [ localeData ] );
 
 	return <I18nProvider localeData={ localeData }>{ children }</I18nProvider>;
 };
