@@ -26,8 +26,8 @@ export default function ScanNavigation( { section }: Props ) {
 	}
 
 	const strings = {
-		scanner: translate( 'Scanner', { context: 'scan screen' } ),
-		history: translate( 'History', { context: 'scan screen' } ),
+		scanner: translate( 'Scanner' ),
+		history: translate( 'History' ),
 	};
 	const selectedText = strings[ section ];
 
