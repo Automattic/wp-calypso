@@ -162,6 +162,11 @@ $domain-picker__suggestion-item-height: 24px;
 	color: var( --studio-gray-40 );
 	text-align: right;
 	min-height: $domain-picker__suggestion-item-height;
+	flex-basis: 0;
+
+	@include break-small {
+		flex-basis: auto;
+	}
 
 	&.placeholder {
 		@include placeholder();
