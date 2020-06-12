@@ -1,9 +1,5 @@
-.p2-site__site-url.form-text-input {
-	padding-right: 122px;
-}
-
 .p2-site__wordpress-domain-suffix {
-	color: var( --p2-color-btn-primary );
+	color: var( --p2-color-link );
 	line-height: 22px;
 	pointer-events: none;
 	position: absolute;
@@ -20,28 +16,29 @@
 }
 
 .p2-site__validation-site-title.validation-fieldset {
-	margin-bottom: 20px;
+	margin-bottom: 48px;
 }
 
 .p2-site__form-footer {
-	margin-top: 41px;
+	margin-top: 48px;
 }
 
 .p2-site__form-submit-btn.is-primary {
 	float: none;
 	margin: 0;
+	padding: 18px 24px;
 	width: 100%;
-	background-color: var( --p2-color-btn-primary );
+	background-color: var( --p2-color-link );
 	border: none;
 	border-radius: 40px;
-	height: 60px;
 	font-weight: normal;
 	font-size: 18px;
 	color: var( --p2-color-text-white );
+	transition: background 0.2s ease;
 
 	&:hover,
 	&:focus {
-		background-color: var( --p2-color-btn-primary );
+		background-color: var( --p2-color-link-dark );
 		border: none;
 		color: var( --p2-color-text-white );
 	}
@@ -56,10 +53,52 @@
 }
 
 .p2-site__form .form-text-input {
-	height: 60px;
+	padding: 18px 24px;
+	line-height: 1;
+	border-radius: 2px;
 	font-size: 18px;
-	line-height: 22px;
 	color: var( --p2-color-text );
+	border-color: var( --p2-color-border );
+
+	&:hover {
+		border-color: var( --p2-color-link );
+	}
+
+	&:focus,
+	&:focus:hover {
+		box-shadow: 0 0 0 1px var( --p2-color-link );
+	}
+
+	&.is-error {
+		border-color: var( --p2-color-error );
+
+		&:hover {
+			border-color: var( --p2-color-error );
+		}
+
+		&:focus,
+		&:focus:hover {
+			box-shadow: 0 0 0 1px var( --p2-color-error );
+		}
+	}
+
+	&.is-valid {
+		border-color: var( --p2-color-valid );
+
+		&:hover {
+			border-color: var( --p2-color-valid );
+		}
+
+		&:focus,
+		&:focus:hover {
+			border-color: var( --p2-color-valid );
+			box-shadow: 0 0 0 1px var( --p2-color-valid );
+		}
+	}
+}
+
+.p2-site__form .p2-site__site-url.form-text-input {
+	padding-right: 94px;
 }
 
 .p2-site__form .form-input-validation {
@@ -80,7 +119,7 @@
 }
 
 .p2-site__learn-more-link {
-	color: var( --p2-color-btn-primary );
+	color: var( --p2-color-link );
 	text-decoration-line: underline;
 	font-size: 15px;
 	line-height: 28px;

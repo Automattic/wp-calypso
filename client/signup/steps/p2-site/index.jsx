@@ -251,7 +251,7 @@ class P2Site extends React.Component {
 					className="p2-site__validation-site-title"
 				>
 					<FormLabel htmlFor="site-title-input">
-						{ this.props.translate( "What's the name of your team or project?" ) }
+						{ this.props.translate( 'Name your team or project' ) }
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
