@@ -39,12 +39,14 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
 			<FormattedHeader headerText={ 'Jetpack Scan' } align="left" />
 			<ScanNavigation section={ 'history' } />
-			<p className="history__description">
-				{ translate(
-					'The scanning history contains a record of all previously active threats on your site.'
-				) }
-			</p>
-			<ThreatHistoryList filter={ filter } />
+			<section className="history__body">
+				<p className="history__description">
+					{ translate(
+						'The scanning history contains a record of all previously active threats on your site.'
+					) }
+				</p>
+				<ThreatHistoryList filter={ filter } />
+			</section>
 		</Main>
 	);
 }
