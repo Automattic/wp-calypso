@@ -15,6 +15,10 @@ $progress-widget-height: 300px;
 	z-index: 50;
 	background-color: $white;
 
+	&.gutenboarding-page {
+		max-width: none;
+	}
+
 	.create-site__header {
 		display: flex;
 		justify-content: space-between;
