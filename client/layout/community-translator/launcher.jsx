@@ -378,11 +378,12 @@ class TranslatorLauncher extends React.Component {
 			? 'Deactivate Empathy mode'
 			: 'Activate Empathy mode';
 		const buttonString = isEmpathyModeEnabled ? toggleEmpathyModeString : toggleString;
+		const shouldRenderLauncherButton = isEnabled || isEmpathyModeEnabled;
 
 		return (
 			<Fragment>
 				<QueryUserSettings />
-				{ isEnabled && (
+				{ shouldRenderLauncherButton && (
 					<Fragment>
 						<div className={ launcherClasses }>
 							<button
