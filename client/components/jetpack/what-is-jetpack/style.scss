@@ -1,0 +1,24 @@
+.what-is-jetpack {
+	display: flex;
+	align-items: center;
+	font-size: $font-body-small;
+	line-height: 21px;
+
+	&__jetpack-logo {
+		margin: 0 40px;
+	}
+
+	&__question {
+		margin-bottom: 12px;
+		font-weight: 600;
+		color: var( --color-neutral-40 );
+	}
+
+	&__answer {
+		color: var( --color-neutral-50 );
+
+		a {
+			text-decoration: underline;
+		}
+	}
+}
