@@ -70,7 +70,9 @@ export default function WPCheckoutOrderSummary() {
 				) ) }
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
-					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
+					<span className="wp-checkout-order-summary__total-price">
+						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+					</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
 		</CheckoutSummaryCardUI>
