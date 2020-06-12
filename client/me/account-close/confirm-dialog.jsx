@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { Dialog, Button } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 import FormLabel from 'components/forms/form-label';
 import InlineSupportLink from 'components/inline-support-link';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -63,10 +64,44 @@ class AccountCloseConfirmDialog extends React.Component {
 		const { isVisible, currentUsername, translate } = this.props;
 		const isDeleteButtonDisabled = currentUsername && this.state.inputValue !== currentUsername;
 
+		const alternativeOptions = [
+			{
+				text: translate( 'Start a new site' ),
+				href: '/jetpack/new',
+				supportLink:
+					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account',
+				supportPostId: 3991,
+			},
+			{
+				text: translate( "Change your site's address" ),
+				href: '/settings/general',
+				supportLink: 'https://wordpress.com/support/changing-site-address/',
+				supportPostId: 11280,
+			},
+			{
+				text: translate( 'Change your username' ),
+				href: '/me/account',
+				supportLink: 'https://wordpress.com/support/change-your-username',
+				supportPostId: 2116,
+			},
+			{
+				text: translate( 'Change your password' ),
+				href: '/me/security',
+				supportLink: 'https://wordpress.com/support/passwords/#change-your-password',
+				supportPostId: 89,
+			},
+			{
+				text: translate( 'Delete a site' ),
+				href: '/settings/delete-site',
+				supportLink: 'https://wordpress.com/support/delete-site/',
+				supportPostId: 14411,
+			},
+		];
+
 		const alternativeOptionsButtons = [
 			<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary onClick={ this.handleProceedingToConfirmation }>
-				{ translate( 'Proceed' ) }
+				{ translate( 'Continue' ) }
 			</Button>,
 		];
 
@@ -77,9 +112,6 @@ class AccountCloseConfirmDialog extends React.Component {
 			</Button>,
 		];
 
-		const guideLinkText = translate( 'View a guide' );
-		const actionLinkText = translate( 'Try it' );
-
 		return (
 			<Dialog
 				isVisible={ isVisible }
@@ -88,13 +120,11 @@ class AccountCloseConfirmDialog extends React.Component {
 			>
 				<h1 className="account-close__confirm-dialog-header">
 					{ this.state.displayAlternativeOptions
-						? translate(
-								'Before you close your account, were you looking to do the following instead?'
-						  )
+						? translate( 'Are you sure?' )
 						: translate( 'Confirm account closure' ) }
 				</h1>
 				{ ! this.state.displayAlternativeOptions && (
-					<Fragment>
+					<>
 						<FormLabel
 							htmlFor="confirmAccountCloseInput"
 							className="account-close__confirm-dialog-label"
@@ -121,75 +151,32 @@ class AccountCloseConfirmDialog extends React.Component {
 							aria-required="true"
 							id="confirmAccountCloseInput"
 						/>
-					</Fragment>
+					</>
 				) }
 				{ this.state.displayAlternativeOptions && (
-					<div>
-						<div className="account-close__confirm-dialog-alternative">
-							<p>{ translate( 'Start a new site' ) }</p>
-							<div className="account-close__confirm-dialog-alternative-actions">
-								<InlineSupportLink
-									supportPostId={ 3991 }
-									supportLink="https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account"
-									showIcon={ false }
-									text={ guideLinkText }
-								/>
-								<a href="/jetpack/new/">{ actionLinkText }</a>
-							</div>
-						</div>
+					<>
+						<p>
+							{ translate(
+								"Here's a few options to try before you permanently delete your account."
+							) }
+						</p>
 
-						<div className="account-close__confirm-dialog-alternative">
-							<p>{ translate( "Change your site's address" ) }</p>
-							<div className="account-close__confirm-dialog-alternative-actions">
+						{ alternativeOptions.map( ( { text, href, supportLink, supportPostId } ) => (
+							<div className="account-close__confirm-dialog-alternative" key={ href }>
+								<Button href={ href } className="account-close__confirm-dialog-alternative-action">
+									{ text }
+									<Gridicon icon="chevron-right" />
+								</Button>
 								<InlineSupportLink
-									supportPostId={ 11280 }
-									supportLink="https://wordpress.com/support/changing-site-address/"
-									showIcon={ false }
-									text={ guideLinkText }
+									supportPostId={ supportPostId }
+									supportLink={ supportLink }
+									showText={ false }
+									iconSize={ 20 }
+									tracksEvent="calypso_close_account_alternative_clicked"
 								/>
-								<a href="/settings/general">{ actionLinkText }</a>
 							</div>
-						</div>
-
-						<div className="account-close__confirm-dialog-alternative">
-							<p>{ translate( 'Change your username' ) }</p>
-							<div className="account-close__confirm-dialog-alternative-actions">
-								<InlineSupportLink
-									supportPostId={ 2116 }
-									supportLink="https://wordpress.com/support/change-your-username"
-									showIcon={ false }
-									text={ guideLinkText }
-								/>
-								<a href="/me/account">{ actionLinkText }</a>
-							</div>
-						</div>
-
-						<div className="account-close__confirm-dialog-alternative">
-							<p>{ translate( 'Change your password' ) }</p>
-							<div className="account-close__confirm-dialog-alternative-actions">
-								<InlineSupportLink
-									supportPostId={ 89 }
-									supportLink="https://wordpress.com/support/passwords/#change-your-password"
-									showIcon={ false }
-									text={ guideLinkText }
-								/>
-								<a href="/me/security">{ actionLinkText }</a>
-							</div>
-						</div>
-
-						<div className="account-close__confirm-dialog-alternative">
-							<p>{ translate( 'Delete a site' ) }</p>
-							<div className="account-close__confirm-dialog-alternative-actions">
-								<InlineSupportLink
-									supportPostId={ 14411 }
-									supportLink="https://wordpress.com/support/delete-site/"
-									showIcon={ false }
-									text={ guideLinkText }
-								/>
-								<a href="/settings/delete-site">{ actionLinkText }</a>
-							</div>
-						</div>
-					</div>
+						) ) }
+					</>
 				) }
 			</Dialog>
 		);

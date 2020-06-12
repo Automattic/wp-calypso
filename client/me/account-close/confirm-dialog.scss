@@ -14,16 +14,23 @@ h1.account-close__confirm-dialog-header {
 }
 
 .account-close__confirm-dialog-alternative {
-	margin-bottom: 14px;
+	margin-bottom: 8px;
+	display: flex;
+	align-items: center;
 
-	p {
-		margin-bottom: 0;
+	.inline-support-link {
+		font-size: $font-body-small;
+		margin-left: 12px;
 	}
 }
 
-.account-close__confirm-dialog-alternative-actions a {
-	font-size: $font-body-small;
-	margin-right: 8px;
+.account-close__confirm-dialog-alternative-action {
+	flex: 1;
+	display: flex;
+
+	.gridicon {
+		margin-left: auto;
+	}
 }
 
 .account-close__confirm-dialog-label {
