@@ -28,7 +28,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 		productId: 1,
 		storeSlug: PLAN_FREE,
 		pathSlug: 'beginner',
-		features: [ '3 GB' ],
+		features: [ '3 GB storage space' ],
 		isFree: true,
 	},
 
@@ -37,7 +37,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 		productId: 1009,
 		storeSlug: PLAN_PERSONAL,
 		pathSlug: 'personal',
-		features: [ '6 GB', ...mainFeatures.slice( 0, 3 ) ],
+		features: [ '6 GB storage space', ...mainFeatures.slice( 0, 3 ) ],
 	},
 
 	[ PLAN_PREMIUM ]: {
@@ -45,7 +45,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 		productId: 1003,
 		storeSlug: PLAN_PREMIUM,
 		pathSlug: 'premium',
-		features: [ '13 GB', ...mainFeatures.slice( 0, 8 ) ],
+		features: [ '13 GB storage space', ...mainFeatures.slice( 0, 8 ) ],
 		isPopular: true,
 	},
 
@@ -54,7 +54,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 		productId: 1008,
 		storeSlug: PLAN_BUSINESS,
 		pathSlug: 'business',
-		features: [ '200 GB', ...mainFeatures.slice( 0, 9 ) ],
+		features: [ '200 GB storage space', ...mainFeatures.slice( 0, 9 ) ],
 	},
 
 	[ PLAN_ECOMMERCE ]: {
@@ -62,7 +62,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 		productId: 1011,
 		storeSlug: PLAN_ECOMMERCE,
 		pathSlug: 'ecommerce',
-		features: [ '200 GB', ...mainFeatures ],
+		features: [ '200 GB storage space', ...mainFeatures ],
 	},
 };
 
@@ -111,7 +111,13 @@ export const planDetails: PlanDetails = [
 			{
 				name: 'Storage',
 				type: 'text',
-				data: [ '3 GB', '6 GB', '13 GB', '200 GB', '200 GB' ],
+				data: [
+					'3 GB storage space',
+					'6 GB storage space',
+					'13 GB storage space',
+					'200 GB storage space',
+					'200 GB storage space',
+				],
 			},
 			{
 				name: 'Dozens of free designs',

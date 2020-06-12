@@ -3,8 +3,9 @@
  */
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
+import { sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, close, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 
 /**
@@ -12,7 +13,62 @@ import classNames from 'classnames';
  */
 import type { DomainSuggestions } from '@automattic/data-stores/dist/types';
 
-const TickIcon = <Icon icon={ check } size={ 16 } />;
+const TickIcon = <Icon icon={ check } size={ 17 } />;
+const CrossIcon = <Icon icon={ close } size={ 17 } />;
+const ChevronDown = <Icon icon={ chevronDown } size={ 17 } />;
+
+function domainMessageStateMachine(
+	isFreePlan: boolean,
+	__: Function,
+	domain?: DomainSuggestions.DomainSuggestion
+) {
+	const states = {
+		NO_DOMAIN: {
+			FREE_PLAN: {
+				className: 'plan-item__domain-summary is-free',
+				icon: null,
+				domainMessage: '',
+			},
+			PAID_PLAN: {
+				className: 'plan-item__domain-summary is-cta',
+				icon: ChevronDown,
+				// translators: %s is a domain name eg: example.com is included
+				domainMessage: __( 'Pick a free domain (1 year)' ),
+			},
+		},
+		FREE_DOMAIN: {
+			FREE_PLAN: {
+				className: 'plan-item__domain-summary is-free',
+				icon: null,
+				domainMessage: '',
+			},
+			PAID_PLAN: {
+				className: 'plan-item__domain-summary is-cta',
+				icon: ChevronDown,
+				// translators: %s is a domain name eg: example.com is included
+				domainMessage: __( 'Pick a free domain (1 year)' ),
+			},
+		},
+		PAID_DOMAIN: {
+			FREE_PLAN: {
+				className: 'plan-item__domain-summary is-free',
+				icon: CrossIcon,
+				// translators: %s is a domain name eg: example.com is not included
+				domainMessage: sprintf( __( '%s is not included' ), domain?.domain_name ),
+			},
+			PAID_PLAN: {
+				className: 'plan-item__domain-summary is-picked',
+				icon: TickIcon,
+				// translators: %s is a domain name eg: example.com is included
+				domainMessage: sprintf( __( '%s is included' ), domain?.domain_name ),
+			},
+		},
+	};
+	const domainKey = domain && ( domain.is_free ? 'FREE_DOMAIN' : 'PAID_DOMAIN' );
+	const planKey = isFreePlan ? 'FREE_PLAN' : 'PAID_PLAN';
+
+	return states[ domainKey || 'NO_DOMAIN' ][ planKey ];
+}
 
 export interface Props {
 	slug: string;
@@ -31,7 +87,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	name,
 	price,
 	isPopular = false,
-	isSelected = false,
 	isFree = false,
 	domain,
 	features,
@@ -39,12 +94,10 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const hasDomain = !! domain;
-
-	const domainName = domain?.domain_name;
-
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
+
+	const domainMessage = domainMessageStateMachine( isFree, __, domain );
 
 	return (
 		<div className={ classNames( 'plan-item', { 'is-popular': isPopular } ) }>
@@ -63,40 +116,27 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 				</div>
 				<div className="plan-item__actions">
 					<Button
-						className={ classNames( 'plan-item__select-button', { 'is-selected': isSelected } ) }
+						className="plan-item__select-button"
 						onClick={ () => {
 							onSelect( slug );
 						} }
+						isPrimary
 						isLarge
 					>
-						{ isSelected ? (
-							<>
-								{ TickIcon }
-								<span>{ __( 'Selected' ) }</span>
-							</>
-						) : (
-							<span>{ __( 'Select' ) }</span>
-						) }
+						<span>{ __( 'Select' ) }</span>
 					</Button>
 				</div>
 				<div className="plan-item__domain">
-					<div className={ classNames( 'plan-item__domain-summary', { 'is-paid': ! isFree } ) }>
-						{ isFree ? __( 'No custom domain' ) : __( 'Free domain for 1 year' ) }
+					<div className={ domainMessage.className }>
+						{ domainMessage.icon }
+						{ domainMessage.domainMessage }
 					</div>
-					{ hasDomain && ! isFree && ! domain?.is_free && (
-						<div className={ classNames( 'plan-item__domain-name', { 'is-paid': ! isFree } ) }>
-							{ domainName }
-						</div>
-					) }
-					{ hasDomain && isFree && (
-						<div className="plan-item__domain-name">{ __( 'Ads included on site' ) }</div>
-					) }
 				</div>
 				<div className="plan-item__features">
 					<ul className="plan-item__feature-item-group">
 						{ features.map( ( feature, i ) => (
 							<li key={ i } className="plan-item__feature-item">
-								{ feature }
+								{ TickIcon } { feature }
 							</li>
 						) ) }
 					</ul>
