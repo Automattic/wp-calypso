@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/gutenberg-custom-initial-block/init';
+
+/**
  * Returns the custom initial block of the selected site, if any.
  *
  * @param {object} state Global state tree.

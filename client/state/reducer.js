@@ -33,7 +33,6 @@ import experiments from './experiments/reducer';
 import exporter from './exporter/reducers';
 import googleMyBusiness from './google-my-business/reducer';
 import gsuiteUsers from './gsuite-users/reducer';
-import gutenbergCustomInitialBlock from './gutenberg-custom-initial-block/reducer';
 import gutenbergOptInOut from './gutenberg-opt-in-out/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
@@ -110,7 +109,6 @@ const reducers = {
 	exporter,
 	googleMyBusiness,
 	gsuiteUsers,
-	gutenbergCustomInitialBlock,
 	gutenbergOptInOut,
 	happinessEngineers,
 	happychat,
