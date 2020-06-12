@@ -29,7 +29,6 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 			onSuccess: ( action, apiResponse ) =>
 				receiveAddReaderListFeed( action.listOwner, action.listSlug, apiResponse.feed_id ),
 			onError: ( action, error ) => {
-				console.error( error );
 				return errorNotice( `Could not add feed to list: ${ error?.body?.message }` );
 			},
 		} ),
