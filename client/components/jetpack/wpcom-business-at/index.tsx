@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
-import Gridicon from 'components/gridicon';
+import MaterialIcon from 'components/material-icon';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCTA from 'components/promo-section/promo-card/cta';
 import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
@@ -29,37 +29,88 @@ import './style.scss';
  * Asset dependencies
  */
 import JetpackBackupSVG from 'assets/images/illustrations/jetpack-backup.svg';
-// import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
+import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
 
-export default function WPCOMBusinessAT(): ReactElement {
-	const activateAT = useTrackCallback( undefined, 'calypso_jetpack_backup_business_at' );
+interface Props {
+	product: 'backup' | 'scan';
+}
+
+const contentPerPrimaryProduct = {
+	backup: {
+		documentHeadTitle: 'Activate Jetpack Backup now',
+		header: translate( 'Jetpack Backup' ),
+		primaryPromo: {
+			title: translate( 'Get time travel for your site with Jetpack Backup.' ),
+			image: { path: JetpackBackupSVG },
+			content: translate(
+				'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+			),
+			promoCTA: {
+				text: translate( 'Activate Jetpack Backup now' ),
+			},
+		},
+		secondaryPromo: {
+			title: translate( 'Jetpack Scan' ),
+			icon: 'security',
+			content: translate(
+				'Automated scanning and one-click fixes to keep your site ahead of security threats.'
+			),
+		},
+	},
+
+	scan: {
+		documentHeadTitle: 'Activate Jetpack Scan now',
+		header: translate( 'Jetpack Scan' ),
+		primaryPromo: {
+			title: translate( 'We guard your site. You run your business.' ),
+			image: { path: JetpackScanSVG },
+			content: translate(
+				'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
+			),
+			promoCTA: {
+				text: translate( 'Activate Jetpack Scan now' ),
+			},
+		},
+		secondaryPromo: {
+			title: translate( 'Jetpack Backup' ),
+			icon: 'security',
+			content: translate(
+				'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+			),
+		},
+	},
+};
+
+export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
+	const eventName =
+		product === 'backup'
+			? 'calypso_jetpack_backup_business_at'
+			: 'calypso_jetpack_scan_business_at';
+	const activateAT = useTrackCallback( undefined, eventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 
 	return (
 		<Main className="wpcom-business-at">
-			<DocumentHead title="Activate Jetpack Backup now" />
+			<DocumentHead title={ content.documentHeadTitle } />
 			<SidebarNavigation />
-			<PageViewTracker path="/backup/:site" title="Business Plan Upsell" />
+			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Upsell" />
 
 			<FormattedHeader
 				id="wpcom-business-at-header"
 				className="wpcom-business-at__header"
-				headerText={ translate( 'Jetpack Backup' ) }
+				headerText={ content.header }
 				align="left"
 			/>
 			<PromoCard
-				title={ translate( 'Get time travel for your site with Jetpack Backup.' ) }
-				image={ { path: JetpackBackupSVG } }
+				title={ content.primaryPromo.title }
+				image={ content.primaryPromo.image }
 				isPrimary
 			>
-				<p>
-					{ translate(
-						'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
-					) }
-				</p>
+				<p>{ content.primaryPromo.content }</p>
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Activate Jetpack Backup now' ),
+						...content.primaryPromo.promoCTA,
 						action: { url: `/checkout/${ siteSlug }/premium`, onClick: activateAT },
 					} }
 				/>
@@ -73,12 +124,16 @@ export default function WPCOMBusinessAT(): ReactElement {
 				isSecondary
 			/>
 
-			<PromoCard title={ translate( 'Jetpack Scan' ) } image={ <Gridicon icon="security" /> }>
-				<p>
-					{ translate(
-						'Automated scanning and one-click fixes to keep your site ahead of security threats.'
-					) }
-				</p>
+			<PromoCard
+				title={ content.secondaryPromo.title }
+				image={
+					<MaterialIcon
+						icon={ content.secondaryPromo.icon }
+						className="wpcom-business-at__secondary-promo-icon"
+					/>
+				}
+			>
+				<p>{ content.secondaryPromo.content }</p>
 			</PromoCard>
 
 			<WhatIsJetpack className="wpcom-business-at__footer" />
