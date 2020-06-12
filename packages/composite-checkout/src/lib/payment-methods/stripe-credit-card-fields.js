@@ -199,14 +199,15 @@ function StripeCreditCardFields() {
 		},
 	};
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<StripeFields>
+		<StripeFields className="credit-card-form-fields">
 			{ ! isStripeFullyLoaded && <LoadingFields /> }
 
 			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
 				<Label>
 					<LabelText>{ __( 'Card number' ) }</LabelText>
-					<StripeFieldWrapper hasError={ cardNumberError }>
+					<StripeFieldWrapper className="number" hasError={ cardNumberError }>
 						<CardNumberElement
 							style={ cardNumberStyle }
 							onReady={ () => {
@@ -225,7 +226,7 @@ function StripeCreditCardFields() {
 					<LeftColumn>
 						<Label>
 							<LabelText>{ __( 'Expiry date' ) }</LabelText>
-							<StripeFieldWrapper hasError={ cardExpiryError }>
+							<StripeFieldWrapper className="expiration-date" hasError={ cardExpiryError }>
 								<CardExpiryElement
 									style={ cardNumberStyle }
 									onChange={ ( input ) => {
@@ -241,7 +242,7 @@ function StripeCreditCardFields() {
 							<LabelText>{ __( 'Security code' ) }</LabelText>
 							<GridRow gap="4%" columnWidths="67% 29%">
 								<LeftColumn>
-									<StripeFieldWrapper hasError={ cardCvcError }>
+									<StripeFieldWrapper className="cvv" hasError={ cardCvcError }>
 										<CardCvcElement
 											style={ cardNumberStyle }
 											onChange={ ( input ) => {
@@ -260,7 +261,7 @@ function StripeCreditCardFields() {
 				</FieldRow>
 
 				<CreditCardField
-					id="cardholderName"
+					id="cardholder-name"
 					type="Text"
 					autoComplete="cc-name"
 					label={ __( 'Cardholder name' ) }
