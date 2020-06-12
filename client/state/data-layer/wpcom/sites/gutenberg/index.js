@@ -9,6 +9,7 @@ import { isEnabled } from 'config';
  * Internal dependencies
  */
 import {
+	EDITOR_CUSTOM_INITIAL_BLOCK_SET,
 	EDITOR_TYPE_REQUEST,
 	EDITOR_TYPE_SET,
 	EDITOR_TYPE_UPDATE,
@@ -31,9 +32,10 @@ const fetchGutenbergOptInData = ( action ) =>
 
 const setGutenbergOptInData = (
 	{ siteId },
-	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
+	{ editor_web: editor, custom_initial_block: customInitialBlock, opt_in: optIn, opt_out: optOut }
 ) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
+	dispatch( { type: EDITOR_CUSTOM_INITIAL_BLOCK_SET, siteId, customInitialBlock } );
 	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
 };
 

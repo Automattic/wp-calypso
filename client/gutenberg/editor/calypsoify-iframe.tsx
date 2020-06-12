@@ -44,6 +44,7 @@ import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import getGutenbergCustomInitialBlock from 'state/selectors/get-gutenberg-custom-initial-block';
 
 /**
  * Types
@@ -668,6 +669,7 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
+	const customInitialBlock = getGutenbergCustomInitialBlock( state, siteId );
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -681,6 +683,7 @@ const mapStateToProps = (
 		origin: window.location.origin,
 		'environment-id': config( 'env_id' ),
 		'new-homepage': creatingNewHomepage,
+		'custom-initial-block': customInitialBlock,
 	} );
 
 	// needed for loading the editor in SU sessions
