@@ -9,6 +9,7 @@ import { filter, some, find, get, includes, keyBy, map, omit, union, reject } fr
  */
 import {
 	READER_LIST_CREATE,
+	READER_LIST_DELETE,
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
@@ -45,6 +46,11 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_LIST_REQUEST_SUCCESS:
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
+				return state;
+			}
+			return omit( state, action.listId );
 	}
 	return state;
 } );
@@ -85,6 +91,11 @@ export const listItems = ( state = {}, action ) => {
 			return removeItemBy( state, action, ( item ) => item.tag_ID === action.tagId );
 		case READER_LIST_ITEM_DELETE_SITE:
 			return removeItemBy( state, action, ( item ) => item.site_ID === action.siteId );
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
+				return state;
+			}
+			return omit( state, action.listId );
 	}
 	return state;
 };
@@ -112,6 +123,10 @@ export const subscribedLists = withSchemaValidation(
 				// Remove the unfollowed list ID from subscribedLists
 				return filter( state, ( listId ) => {
 					return listId !== action.data.list.ID;
+				} );
+			case READER_LIST_DELETE:
+				return filter( state, ( listId ) => {
+					return listId !== action.listId;
 				} );
 		}
 		return state;
