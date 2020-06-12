@@ -275,6 +275,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				By.css( '.checkout-steps__step-content .savings-list__item[data-savings-type="coupon"]' )
 			);
 		}
+		return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
 	async removeCoupon() {
@@ -308,14 +309,14 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				this.driver,
 				By.css( '.cart-body .cart__remove-link' )
 			);
-			return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
+			return this.waitForCouponToBeRemoved();
 		}
 		// Old checkout - mobile
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.payment-box__content .cart__remove-link' )
 		);
-		return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
+		return this.waitForCouponToBeRemoved();
 	}
 
 	async removeFromCart() {
