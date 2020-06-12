@@ -122,8 +122,8 @@ export function domainManagementRedirectSettings( siteName, domainName, relative
 	return domainManagementEditBase( siteName, domainName, 'redirect-settings', relativeTo );
 }
 
-export function domainManagementSecurity( siteName, domainName ) {
-	return domainManagementEditBase( siteName, domainName, 'security' );
+export function domainManagementSecurity( siteName, domainName, relativeTo = null ) {
+	return domainManagementEditBase( siteName, domainName, 'security', relativeTo );
 }
 
 export function domainManagementSiteRedirect( siteName, domainName, relativeTo = null ) {

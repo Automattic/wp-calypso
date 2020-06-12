@@ -83,12 +83,9 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		paths.domainManagementSecurity( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementSecurity,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementSecurity,
+		domainManagementController.domainManagementSecurity
 	);
 
 	registerStandardDomainManagementPages(
