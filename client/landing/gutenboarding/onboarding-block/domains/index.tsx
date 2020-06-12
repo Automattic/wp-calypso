@@ -70,7 +70,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			history.push( nextStepPath );
 		}
 	};
-	const handleSkip = () => history.push( nextStepPath );
+	const handleSkip = () => ( isModal ? history.goBack() : history.push( nextStepPath ) );
 
 	const header = (
 		<div className="domains__header">
