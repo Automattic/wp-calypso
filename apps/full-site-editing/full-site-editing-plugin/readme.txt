@@ -1,9 +1,9 @@
 === Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nrqsnchz, nosolosw, obenland, okenobi, owolski, themeshaper, vindl
+Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 1.6
+Stable tag: 1.9
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,22 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.9 =
+* Add Mailerlite subscriber widget.
+* When launching a site created via `/new`, save the post content.
+  Prevent lost content alert.
+* Update block pattern categories.
+* Fix text-domain of translated strings.
+
+= 1.8 =
+* Fix issue with Newspack blocks not loading assets.
+* Fix block-editor NUX issues.
+
+= 1.7 =
+* Save the post before navigation when launching a WordPress.com site.
+* Add handling for site launch on WordPress.com.
+* Performance improvements in the block editor.
 
 = 1.6 =
 * Remove the "Edit as HTML" options for the inner blocks of the Premium Content Block.

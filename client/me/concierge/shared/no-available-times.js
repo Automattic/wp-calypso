@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import PrimaryHeader from './primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
+import isSiteWhiteGlove from 'state/selectors/is-site-white-glove';
 
 class NoAvailableTimes extends Component {
 	componentDidMount() {
@@ -18,26 +19,38 @@ class NoAvailableTimes extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { isWhiteGlove, translate } = this.props;
+
 		return (
 			<div>
-				<PrimaryHeader />
+				<PrimaryHeader isWhiteGlove={ isWhiteGlove } />
 				<Card>
 					<h2 className="shared__no-available-times-heading">
 						{ translate( 'Sorry, there are no sessions available' ) }
 					</h2>
-					{ translate(
-						'We schedule Quick Start Sessions up to 24 hours in advance and all upcoming sessions are full. Please check back later or {{link}}contact us in Live Chat{{/link}}.',
-						{
-							components: {
-								link: <a href="https://wordpress.com/help/contact" />,
-							},
-						}
+					{ isWhiteGlove && (
+						<>
+							We schedule one-on-one sessions up to 24 hours in advance and all upcoming sessions
+							are full. Please check back later or{ ' ' }
+							<a href="https://wordpress.com/help/contact">contact us in Live Chat</a>.
+						</>
 					) }
+					{ ! isWhiteGlove &&
+						translate(
+							'We schedule Quick Start Sessions up to 24 hours in advance and all upcoming sessions are full. Please check back later or {{link}}contact us in Live Chat{{/link}}.',
+							{
+								components: {
+									link: <a href="https://wordpress.com/help/contact" />,
+								},
+							}
+						) }
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( NoAvailableTimes ) );
+export default connect(
+	( state, ownProps ) => ( { isWhiteGlove: isSiteWhiteGlove( state, ownProps.site.ID ) } ),
+	{ recordTracksEvent }
+)( localize( NoAvailableTimes ) );

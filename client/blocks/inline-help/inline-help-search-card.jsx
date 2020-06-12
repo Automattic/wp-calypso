@@ -69,9 +69,17 @@ class InlineHelpSearchCard extends Component {
 		}
 	};
 
-	onSearch = ( searchQuery ) => {
+	searchHelperHandler = ( searchQuery ) => {
+		const query = searchQuery.trim();
+		if ( ! query || ! query.length ) {
+			return debug( 'empty query. Skip recording tracks-event.' );
+		}
+
 		debug( 'search query received: ', searchQuery );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_search', { search_query: searchQuery } );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
+			search_query: searchQuery,
+			location: 'inline-help-popover',
+		} );
 
 		// Make a search
 		this.props.requestInlineHelpSearchResults( searchQuery );
@@ -86,7 +94,7 @@ class InlineHelpSearchCard extends Component {
 			<SearchCard
 				searching={ this.props.isSearching }
 				initialValue={ this.props.query }
-				onSearch={ this.onSearch }
+				onSearch={ this.searchHelperHandler }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
 				delaySearch={ true }

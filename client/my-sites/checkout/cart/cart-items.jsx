@@ -60,7 +60,7 @@ export class CartItems extends React.Component {
 	}
 
 	render() {
-		const { cart } = this.props;
+		const { cart, isWhiteGloveOffer } = this.props;
 
 		if ( ! getAllCartItems( cart ) ) {
 			return;
@@ -73,6 +73,7 @@ export class CartItems extends React.Component {
 					cartItem={ cartItem }
 					selectedSite={ this.props.selectedSite }
 					key={ `${ cartItem.product_id }-${ cartItem.meta }-${ index }` }
+					isWhiteGloveOffer={ isWhiteGloveOffer }
 				/>
 			);
 		} );

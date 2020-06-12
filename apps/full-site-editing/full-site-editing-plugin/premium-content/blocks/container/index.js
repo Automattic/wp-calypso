@@ -53,13 +53,13 @@ const settings = {
 	 * This is the display title for your block, which can be translated with `i18n` functions.
 	 * The block inserter will show this name.
 	 */
-	title: __( 'Premium Content', 'premium-content' ),
+	title: __( 'Premium Content', 'full-site-editing' ),
 
 	/**
 	 * This is a short description for your block, can be translated with `i18n` functions.
 	 * It will be shown in the Block Tab in the Settings Sidebar.
 	 */
-	description: __( 'Restrict access to your content for paying subscribers.', 'premium-content' ),
+	description: __( 'Restrict access to your content for paying subscribers.', 'full-site-editing' ),
 
 	/**
 	 * Blocks are grouped into categories to help users browse and discover them.
@@ -97,9 +97,9 @@ const settings = {
 	keywords: [
 		'premium-content',
 		/* translators: block keyword */
-		__( 'premium', 'premium-content' ),
+		__( 'premium', 'full-site-editing' ),
 		/* translators: block keyword */
-		__( 'paywall', 'premium-content' ),
+		__( 'paywall', 'full-site-editing' ),
 	],
 	edit,
 	save,

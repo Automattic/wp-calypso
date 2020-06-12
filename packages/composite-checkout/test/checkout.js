@@ -45,7 +45,6 @@ describe( 'Checkout', () => {
 			beforeEach( () => {
 				MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -111,7 +110,6 @@ describe( 'Checkout', () => {
 				const registry = createRegistry();
 				MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -177,7 +175,6 @@ describe( 'Checkout', () => {
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -195,7 +192,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the review step active', () => {
-				const activeSteps = container.querySelectorAll( '.checkout-step--is-active' );
+				const activeSteps = container.querySelectorAll( '.checkout-step.is-active' );
 				expect( activeSteps ).toHaveLength( 1 );
 				expect( activeSteps[ 0 ] ).toHaveTextContent( 'Review your order' );
 			} );
@@ -222,7 +219,6 @@ describe( 'Checkout', () => {
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -267,7 +263,6 @@ describe( 'Checkout', () => {
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
-							locale="en-us"
 							items={ items }
 							total={ total }
 							onPaymentComplete={ noop }
@@ -681,7 +676,6 @@ function createStepObjectConverter( paymentData ) {
 				isStepActive={ false }
 				isStepComplete={ true }
 				stepNumber={ 1 }
-				totalSteps={ 1 }
 				stepId={ stepObject.id }
 				key={ stepObject.id }
 				activeStepContent={ stepObject.activeStepContent }

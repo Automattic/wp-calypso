@@ -22,7 +22,7 @@
 .disconnect-jetpack__feature {
 	padding: 14px 24px 14px 44px;
 	text-align: left;
-	font-size: 13px;
+	font-size: $font-body-small;
 	border-bottom: 1px solid var( --color-neutral-5 );
 
 	&:first-of-type {
@@ -57,7 +57,7 @@
 }
 
 .disconnect-jetpack__more-info-link {
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 // Dialog

@@ -254,7 +254,7 @@
 
 .reader-post-card__byline {
 	display: flex;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .reader-post-card__author::after {
@@ -503,7 +503,7 @@
 
 // Action buttons in post card
 .reader-post-card.card .reader-post-actions__item {
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 22px;
 
 	&.reader-post-actions__visit .gridicon {

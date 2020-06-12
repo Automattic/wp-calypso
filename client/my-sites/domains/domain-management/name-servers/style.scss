@@ -13,7 +13,7 @@
 	.name-servers__explanation {
 		animation: appear 0.5s ease-in-out;
 		color: var( --color-text-subtle );
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-style: italic;
 		margin-bottom: 0;
 	}
@@ -59,7 +59,7 @@
 .name-servers__custom-nameservers-form-explanation {
 	display: block;
 	margin-top: 5px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 	color: var( --color-text-subtle );
 }

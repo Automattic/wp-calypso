@@ -15,7 +15,7 @@ import { registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
 const name = 'premium-content/logged-out-view';
 const category = 'common';
 /**
- * @typedef {Object} Attributes
+ * @typedef {object} Attributes
  * @property {string} subscribeButtonText
  * @property {string} loginButtonText
  * @property {string} buttonClasses
@@ -62,9 +62,9 @@ const settings = {
 	},
 
 	/* translators: block name */
-	title: __( 'Logged Out View', 'premium-content' ),
+	title: __( 'Logged Out View', 'full-site-editing' ),
 	/* translators: block description */
-	description: __( 'Logged Out View.', 'premium-content' ),
+	description: __( 'Logged Out View.', 'full-site-editing' ),
 	parent: [ 'premium-content/container' ],
 	supports: {
 		// Hide this block from the inserter.

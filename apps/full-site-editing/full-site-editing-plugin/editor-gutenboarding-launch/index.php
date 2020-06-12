@@ -15,12 +15,6 @@ namespace A8C\FSE\EditorGutenboardingLaunchButton;
  * Enqueue assets
  */
 function enqueue_script_and_style() {
-	// @TODO: Remove this block to enable in production
-	// Constant to disable the feature for development.
-	if ( ! ( defined( 'A8C_FSE_DOMAIN_PICKER_ENABLE' ) && A8C_FSE_DOMAIN_PICKER_ENABLE ) ) {
-		return;
-	}
-
 	// Avoid loading assets if possible.
 	if ( ! \A8C\FSE\Common\is_block_editor_screen() ) {
 		return;
@@ -43,7 +37,7 @@ function enqueue_script_and_style() {
 		'a8c-fse-editor-gutenboarding-launch-style',
 		plugins_url( 'dist/editor-gutenboarding-launch.css', __FILE__ ),
 		array(),
-		$style_version,
+		$style_version
 	);
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );

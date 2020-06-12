@@ -1,6 +1,6 @@
 .editor-visibility {
 	display: flex;
-	font-size: 13px;
+	font-size: $font-body-small;
 	justify-content: space-between;
 	align-items: center;
 	margin: 8px 0;
@@ -26,7 +26,7 @@
 	}
 
 	.form-text-input {
-		font-size: 13px;
+		font-size: $font-body-small;
 		margin-top: 8px;
 	}
 
@@ -86,7 +86,7 @@
 	padding: 20px;
 
 	.form-text-input {
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 
 	.form-input-validation {

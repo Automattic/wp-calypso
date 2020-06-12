@@ -8,6 +8,7 @@ import { start } from '@automattic/browser-data-collector';
  */
 import config from 'config';
 import { performanceTrackerStart } from '../performance-tracker-start';
+import { abtest } from 'lib/abtest';
 
 jest.mock( 'config', () => ( {
 	isEnabled: jest.fn(),
@@ -15,15 +16,24 @@ jest.mock( 'config', () => ( {
 jest.mock( '@automattic/browser-data-collector', () => ( {
 	start: jest.fn(),
 } ) );
+jest.mock( 'lib/abtest', () => ( {
+	abtest: jest.fn(),
+} ) );
 
 const withFeatureEnabled = () =>
 	config.isEnabled.mockImplementation( ( key ) => key === 'rum-tracking/logstash' );
 const withFeatureDisabled = () =>
 	config.isEnabled.mockImplementation( ( key ) => key !== 'rum-tracking/logstash' );
+const withABTestEnabled = () =>
+	abtest.mockImplementation( ( test ) =>
+		test === 'rumDataCollection' ? 'collectData' : 'noData'
+	);
+const withABTestDisabled = () => abtest.mockImplementation( () => 'noData' );
 
 describe( 'performance-tracker-start', () => {
 	beforeEach( () => {
 		withFeatureEnabled();
+		withABTestEnabled();
 	} );
 
 	afterEach( () => {
@@ -47,6 +57,14 @@ describe( 'performance-tracker-start', () => {
 
 	it( 'do not start measuring when the config flag is off', () => {
 		withFeatureDisabled();
+
+		performanceTrackerStart( 'pageName' )( {}, jest.fn() );
+
+		expect( start ).not.toHaveBeenCalled();
+	} );
+
+	it( 'do not start measuring when the abtest is disabled', () => {
+		withABTestDisabled();
 
 		performanceTrackerStart( 'pageName' )( {}, jest.fn() );
 

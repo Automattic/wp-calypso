@@ -366,7 +366,6 @@ function MyCheckout() {
 
 	return (
 		<CheckoutProvider
-			locale={ 'en' }
 			items={ items }
 			total={ total }
 			onEvent={ onEvent }
@@ -401,7 +400,6 @@ function MyCheckoutBody() {
 					isStepActive={ false }
 					isStepComplete={ true }
 					stepNumber={ 1 }
-					totalSteps={ 1 }
 					stepId={ 'order-summary' }
 				/>
 				<CheckoutSteps>

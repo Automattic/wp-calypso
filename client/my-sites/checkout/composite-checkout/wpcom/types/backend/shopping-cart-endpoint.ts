@@ -109,7 +109,7 @@ export const emptyResponseCart = {
 	is_coupon_applied: false,
 	coupon_discounts_integer: [],
 	locale: 'en-us',
-	tax: { location: [], display_taxes: false },
+	tax: { location: {}, display_taxes: false },
 	is_signup: false,
 } as ResponseCart;
 
@@ -123,13 +123,18 @@ export interface ResponseCartProduct {
 	currency: string;
 	product_cost_integer: number;
 	product_cost_display: string;
-	item_original_cost_integer: number;
-	item_original_cost_display: string;
+	item_original_cost_integer: number; // without discounts or volume
+	item_original_cost_display: string; // without discounts or volume
+	item_subtotal_monthly_cost_display: string;
+	item_subtotal_monthly_cost_integer: number;
+	item_original_subtotal_integer: number; // without discounts, with volume
+	item_original_subtotal_display: string; // without discounts, with volume
 	item_subtotal_integer: number;
 	item_subtotal_display: string;
 	is_domain_registration: boolean;
 	is_bundled: boolean;
 	meta: string;
+	months_per_bill_period: number | null;
 	volume: number;
 	extra: object;
 	uuid: string;
@@ -153,10 +158,15 @@ export interface TempResponseCartProduct {
 	product_cost_display: null;
 	item_subtotal_integer: null;
 	item_subtotal_display: null;
+	item_subtotal_monthly_cost_display: null;
+	item_subtotal_monthly_cost_integer: null;
 	item_original_cost_display: null;
 	item_original_cost_integer: null;
+	item_original_subtotal_display: null;
+	item_original_subtotal_integer: null;
 	is_domain_registration: boolean | null;
 	is_bundled: boolean | null;
+	months_per_bill_period: number | null;
 	meta: string;
 	volume: number;
 	extra: object;
@@ -251,13 +261,14 @@ export function doesCartLocationDifferFromResponseCartLocation(
 	location: CartLocation
 ): boolean {
 	const { countryCode, postalCode, subdivisionCode } = location;
-	if ( countryCode && cart.tax.location.country_code !== countryCode ) {
+	const isMissing = ( value: null | undefined | string ) => value === null || value === undefined;
+	if ( ! isMissing( countryCode ) && cart.tax.location.country_code !== countryCode ) {
 		return true;
 	}
-	if ( postalCode && cart.tax.location.postal_code !== postalCode ) {
+	if ( ! isMissing( postalCode ) && cart.tax.location.postal_code !== postalCode ) {
 		return true;
 	}
-	if ( subdivisionCode && cart.tax.location.subdivision_code !== subdivisionCode ) {
+	if ( ! isMissing( subdivisionCode ) && cart.tax.location.subdivision_code !== subdivisionCode ) {
 		return true;
 	}
 	return false;
@@ -328,12 +339,17 @@ function convertRequestCartProductToResponseCartProduct(
 		currency: null,
 		item_original_cost_display: null,
 		item_original_cost_integer: null,
+		item_subtotal_monthly_cost_display: null,
+		item_subtotal_monthly_cost_integer: null,
+		item_original_subtotal_display: null,
+		item_original_subtotal_integer: null,
 		product_cost_integer: null,
 		product_cost_display: null,
 		item_subtotal_integer: null,
 		item_subtotal_display: null,
 		is_domain_registration: null,
 		is_bundled: null,
+		months_per_bill_period: null,
 		meta,
 		volume: 1,
 		extra,

@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import Button from './components/button';
 import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
 import {
 	Checkout,
@@ -12,6 +13,7 @@ import {
 	CheckoutSummaryCard,
 	useIsStepActive,
 	useIsStepComplete,
+	useSetStepComplete,
 } from './components/checkout-steps';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
@@ -58,6 +60,7 @@ import { usePaymentProcessor } from './lib/payment-processors';
 
 // Re-export the public API
 export {
+	Button,
 	Checkout,
 	CheckoutCheckIcon,
 	CheckoutModal,
@@ -105,6 +108,7 @@ export {
 	useRegisterStore,
 	useRegistry,
 	useSelect,
+	useSetStepComplete,
 	useTotal,
 	useTransactionStatus,
 };

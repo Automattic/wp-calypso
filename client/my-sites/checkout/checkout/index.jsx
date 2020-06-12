@@ -206,6 +206,7 @@ export class Checkout extends React.Component {
 			saved_cards: props.cards.length,
 			is_renewal: hasRenewalItem( props.cart ),
 			apple_pay_available: isApplePayAvailable(),
+			product_slug: props.product,
 		} );
 
 		recordViewCheckout( props.cart );
@@ -607,6 +608,10 @@ export class Checkout extends React.Component {
 			displayModeParam = { d: 'concierge' };
 		}
 
+		if ( this.props.isWhiteGloveOffer ) {
+			displayModeParam = { d: 'white-glove' };
+		}
+
 		if ( this.props.isEligibleForSignupDestination ) {
 			return this.getUrlWithQueryParam( signupDestination, displayModeParam );
 		}
@@ -754,6 +759,7 @@ export class Checkout extends React.Component {
 			productsList,
 			setHeaderText,
 			userCountryCode,
+			isWhiteGloveOffer,
 		} = this.props;
 
 		if ( this.isLoading() ) {
@@ -786,6 +792,7 @@ export class Checkout extends React.Component {
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
+				isWhiteGloveOffer={ isWhiteGloveOffer }
 			>
 				{ this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>

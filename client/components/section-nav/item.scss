@@ -33,7 +33,7 @@
 	box-sizing: border-box;
 	padding: 15px;
 	width: 100%;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 18px;
 	color: var( --color-neutral-70 );
@@ -136,7 +136,7 @@
 	box-sizing: border-box;
 	padding: 15px;
 	width: 100%;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 18px;
 	color: var( --color-neutral-70 );
 }

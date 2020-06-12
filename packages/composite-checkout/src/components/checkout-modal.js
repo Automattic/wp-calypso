@@ -5,13 +5,13 @@ import React, { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
 import Button from './button';
-import { useLocalize } from '../lib/localize';
 
 export default function CheckoutModal( {
 	className,
@@ -24,7 +24,7 @@ export default function CheckoutModal( {
 	buttonCTA,
 	cancelButtonCTA,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	useModalScreen( isVisible, closeModal );
 
 	if ( ! isVisible ) {
@@ -41,19 +41,16 @@ export default function CheckoutModal( {
 				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
 
 				<CheckoutModalActions>
-					<Button
-						buttonState="default"
-						onClick={ () => handleCancelAction( cancelAction, closeModal ) }
-					>
-						{ cancelButtonCTA || localize( 'Cancel' ) }
+					<Button onClick={ () => handleCancelAction( cancelAction, closeModal ) }>
+						{ cancelButtonCTA || __( 'Cancel' ) }
 					</Button>
 					<Button
-						buttonState="primary"
+						buttonType="primary"
 						onClick={ () => {
 							handlePrimaryAction( primaryAction, closeModal );
 						} }
 					>
-						{ buttonCTA || localize( 'Continue' ) }
+						{ buttonCTA || __( 'Continue' ) }
 					</Button>
 				</CheckoutModalActions>
 			</CheckoutModalContent>

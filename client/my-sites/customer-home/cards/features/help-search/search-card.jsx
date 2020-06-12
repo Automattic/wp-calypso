@@ -6,12 +6,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics, composeAnalytics } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
 import {
 	getInlineHelpCurrentlySelectedLink,
@@ -24,11 +23,6 @@ import {
 	selectNextResult,
 	selectPreviousResult,
 } from 'state/inline-help/actions';
-
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:customer-home-help' );
 
 class HelpSearchCard extends Component {
 	static propTypes = {
@@ -69,18 +63,8 @@ class HelpSearchCard extends Component {
 		}
 	};
 
-	onSearch = ( searchQuery ) => {
-		debug( 'search query received: ', searchQuery );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
-			search_query: searchQuery,
-		} );
-
-		// Make a search
-		this.props.requestInlineHelpSearchResults( searchQuery );
-	};
-
 	componentDidMount() {
-		this.props.requestInlineHelpSearchResults();
+		this.props.requestInlineSearchResultsAndTrack();
 	}
 
 	render() {
@@ -88,7 +72,7 @@ class HelpSearchCard extends Component {
 			<SearchCard
 				searching={ this.props.isSearching }
 				initialValue={ this.props.query }
-				onSearch={ this.onSearch }
+				onSearch={ this.props.requestInlineSearchResultsAndTrack }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search support articles' ) }
 				delaySearch={ true }
@@ -103,9 +87,23 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	selectedResultIndex: getSelectedResultIndex( state ),
 	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 } );
+
+const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
+	! searchQuery || ! searchQuery.trim().length
+		? requestInlineHelpSearchResults()
+		: withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_inlinehelp_search', {
+						search_query: searchQuery,
+						location: 'customer-home',
+					} )
+				),
+				requestInlineHelpSearchResults( searchQuery )
+		  );
+
 const mapDispatchToProps = {
 	recordTracksEvent,
-	requestInlineHelpSearchResults,
+	requestInlineSearchResultsAndTrack,
 	selectNextResult,
 	selectPreviousResult,
 };

@@ -57,7 +57,7 @@ registerPlugin( 'page-templates-sidebar', {
 		return (
 			<PluginDocumentSettingPanel
 				name="Template Modal Opener"
-				title={ __( 'Page Layout' ) }
+				title={ __( 'Page Layout', 'full-site-editing' ) }
 				className="page-template-modal__sidebar" // eslint-disable-line wpcalypso/jsx-classname-namespace
 				icon="none"
 			>

@@ -15,7 +15,7 @@ import Context from '../container/context';
 /**
  * Block edit function
  *
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { string } clientId
  * @property { string } containerClientId
  * @property { () => void } selectBlock
@@ -43,7 +43,7 @@ function Edit( props ) {
 								{
 									placeholder: __(
 										'Insert the piece of content you want your visitors to see after they subscribe.',
-										'premium-content'
+										'full-site-editing'
 									),
 								},
 							],

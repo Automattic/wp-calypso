@@ -141,9 +141,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const blockID = await this.addBlock( 'Form' );
 
 		const contactFormBlock = await ContactFormBlockComponent.Expect( this.driver, blockID );
+		await contactFormBlock.openEditSettings();
 		await contactFormBlock.insertEmail( email );
-		await contactFormBlock.insertSubject( subject );
-		return await contactFormBlock.submitForm();
+		return await contactFormBlock.insertSubject( subject );
 	}
 
 	async contactFormDisplayedInEditor() {

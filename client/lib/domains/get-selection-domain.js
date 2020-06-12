@@ -8,16 +8,21 @@ import { find } from 'lodash';
  */
 import { type as domainTypes } from './constants';
 
-export function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
+export function getSelectedDomain( { domains, selectedDomainName, isTransfer, isSiteRedirect } ) {
 	return find( domains, ( domain ) => {
+		const isType = ( type ) => domain.type === type;
+
 		if ( domain.name !== selectedDomainName ) {
 			return false;
 		}
 
-		if ( isTransfer && domain.type === domainTypes.TRANSFER ) {
+		if (
+			( isTransfer && isType( domainTypes.TRANSFER ) ) ||
+			( isSiteRedirect && isType( domainTypes.SITE_REDIRECT ) )
+		) {
 			return true;
 		}
 
-		return domain.type !== domainTypes.TRANSFER;
+		return ! ( isType( domainTypes.TRANSFER ) || isType( domainTypes.SITE_REDIRECT ) );
 	} );
 }

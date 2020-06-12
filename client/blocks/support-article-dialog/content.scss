@@ -166,7 +166,7 @@
 	.wp-caption .wp-media-credit {
 		padding: 12px;
 		margin: 0;
-		font-size: 13px;
+		font-size: $font-body-small;
 		text-align: center;
 		color: var( --color-neutral-40 );
 	}
@@ -179,7 +179,7 @@
 		border-radius: 1px;
 		background: var( --color-neutral-0 );
 		box-sizing: border-box;
-		font-size: 14px;
+		font-size: $font-body-small;
 		line-height: 1.4285;
 		animation: appear 0.3s ease-in-out;
 

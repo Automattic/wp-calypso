@@ -63,7 +63,7 @@
 
 .people-profile__login {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		font-size: $font-body;

@@ -62,6 +62,14 @@ class CheckoutContainer extends React.Component {
 		);
 	}
 
+	handleBack = () => {
+		if ( this.props.isGutenboardingCreate ) {
+			window.history.go( -1 );
+		} else {
+			window.location.href = `/home/${ this.props.selectedSite.slug }`;
+		}
+	};
+
 	render() {
 		const {
 			product,
@@ -77,6 +85,7 @@ class CheckoutContainer extends React.Component {
 			clearTransaction,
 			isComingFromGutenboarding,
 			isGutenboardingCreate,
+			isWhiteGloveOffer,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -87,7 +96,7 @@ class CheckoutContainer extends React.Component {
 					<Button
 						borderless
 						className="navigation-link back" // eslint-disable-line wpcalypso/jsx-classname-namespace
-						onClick={ () => window.history.go( this.props.isGutenboardingCreate ? -1 : -2 ) } // going back to signup flow and skipping '/launch' step
+						onClick={ this.handleBack }
 					>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ this.props.translate( 'Back' ) }
@@ -113,6 +122,7 @@ class CheckoutContainer extends React.Component {
 							upgradeIntent={ upgradeIntent }
 							hideNudge={ isComingFromGutenboarding }
 							returnToBlockEditor={ isComingFromGutenboarding || isGutenboardingCreate }
+							isWhiteGloveOffer={ isWhiteGloveOffer }
 						>
 							{ this.props.children }
 						</Checkout>
@@ -120,7 +130,10 @@ class CheckoutContainer extends React.Component {
 
 					{ shouldShowCart && (
 						<CartData>
-							<SecondaryCart selectedSite={ selectedSite } />
+							<SecondaryCart
+								selectedSite={ selectedSite }
+								isWhiteGloveOffer={ isWhiteGloveOffer }
+							/>
 						</CartData>
 					) }
 				</div>

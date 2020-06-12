@@ -15,7 +15,7 @@ import NewPlan from './new-plan';
 /**
  * @typedef { import('./plans').Plan } Plan
  *
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { number } selectedPlanId
  * @property { (plan: Plan) => void } onSelected
  * @property { (plan: Plan) => string } formatPrice
@@ -42,7 +42,7 @@ export default function Controls( props ) {
 							{ planDescription && <Fragment>{ planDescription }</Fragment> }
 						</Fragment>
 					}
-					label={ __( 'Select a plan', 'premium-content' ) }
+					label={ __( 'Select a plan', 'full-site-editing' ) }
 					className={ 'premium-content-toolbar-button' }
 				>
 					{ ( { onClose } ) => (

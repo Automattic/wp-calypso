@@ -33,11 +33,6 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
 		const contextualResults = getContextualHelpResults( getState() );
 
-		dispatch( {
-			type: INLINE_HELP_SEARCH_REQUEST,
-			searchQuery,
-		} );
-
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();
 
@@ -57,6 +52,11 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 			// Exit early
 			return;
 		}
+
+		dispatch( {
+			type: INLINE_HELP_SEARCH_REQUEST,
+			searchQuery,
+		} );
 
 		wpcom
 			.undocumented()

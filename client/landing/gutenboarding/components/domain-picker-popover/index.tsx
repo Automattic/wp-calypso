@@ -9,7 +9,6 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
 import { recordEnterModal, recordCloseModal } from '../../lib/analytics';
 import { STORE_KEY } from '../../stores/onboard';
 
@@ -18,11 +17,13 @@ import { STORE_KEY } from '../../stores/onboard';
  */
 import './style.scss';
 
-interface Props extends DomainPickerProps {
+interface Props {
+	onClose: Function;
 	isOpen: boolean;
+	children: any;
 }
 
-const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClose, ...props } ) => {
+const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClose, children } ) => {
 	// Popover expands at medium viewport width
 	const isMobile = useViewportMatch( 'medium', '<' );
 
@@ -59,7 +60,7 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClos
 				position={ 'bottom center' }
 				expandOnMobile={ true }
 			>
-				<DomainPicker onClose={ handleClose } { ...props } />
+				{ children }
 			</Popover>
 		</div>
 	);

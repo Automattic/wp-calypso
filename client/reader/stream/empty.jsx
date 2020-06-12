@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Image dependencies
@@ -54,4 +55,4 @@ class FollowingEmptyContent extends React.Component {
 	}
 }
 
-export default localize( FollowingEmptyContent );
+export default withPerformanceTrackerStop( localize( FollowingEmptyContent ) );

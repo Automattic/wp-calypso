@@ -63,7 +63,7 @@ const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
  * @property { string } slug
  *
  * @typedef { import('./').Attributes } Attributes
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { Color } backgroundButtonColor
  * @property { Color } textButtonColor
  * @property { string } fallbackBackgroundColor
@@ -139,7 +139,7 @@ function SubmitButtons( props ) {
 		<div>
 			<div className="wp-block-button premium-content-logged-out-view-button">
 				<RichText
-					placeholder={ __( 'Add text…', 'premium-content' ) }
+					placeholder={ __( 'Add text…', 'full-site-editing' ) }
 					value={ attributes.subscribeButtonText }
 					onChange={ ( nextValue ) => setAttributes( { subscribeButtonText: nextValue } ) }
 					className={ buttonClasses }
@@ -147,7 +147,7 @@ function SubmitButtons( props ) {
 					keepPlaceholderOnFocus
 				/>
 				<RichText
-					placeholder={ __( 'Add text…', 'premium-content' ) }
+					placeholder={ __( 'Add text…', 'full-site-editing' ) }
 					value={ attributes.loginButtonText }
 					onChange={ ( nextValue ) => setAttributes( { loginButtonText: nextValue } ) }
 					className={ buttonClasses }
@@ -157,17 +157,17 @@ function SubmitButtons( props ) {
 			</div>
 			<InspectorControls>
 				<PanelColorSettings
-					title={ __( 'Button Color Settings', 'premium-content' ) }
+					title={ __( 'Button Color Settings', 'full-site-editing' ) }
 					colorSettings={ [
 						{
 							value: backgroundButtonColor || undefined,
 							onChange: setBackgroundButtonColor,
-							label: __( 'Background Color', 'premium-content' ),
+							label: __( 'Background Color', 'full-site-editing' ),
 						},
 						{
 							value: textButtonColor || undefined,
 							onChange: setTextButtonColor,
-							label: __( 'Text Color', 'premium-content' ),
+							label: __( 'Text Color', 'full-site-editing' ),
 						},
 					] }
 				/>

@@ -5,11 +5,11 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
 import joinClasses from '../lib/join-classes';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useFormStatus } from '../lib/form-status';
@@ -96,7 +96,6 @@ function DefaultCheckoutSteps() {
 					isStepActive={ false }
 					isStepComplete={ true }
 					stepNumber={ 1 }
-					totalSteps={ 1 }
 					stepId={ 'order-summary-step' }
 					className={ orderSummaryStep.className }
 				/>
@@ -145,7 +144,7 @@ export const CheckoutSummaryCard = styled.div`
 `;
 
 export function CheckoutStepArea( { children, className } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const { formStatus } = useFormStatus();
 
@@ -164,7 +163,7 @@ export function CheckoutStepArea( { children, className } ) {
 
 			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
 				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with the submit button.' ) }
+					errorMessage={ __( 'There was a problem with the submit button.' ) }
 					onError={ onSubmitButtonLoadError }
 				>
 					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
@@ -174,7 +173,7 @@ export function CheckoutStepArea( { children, className } ) {
 	);
 }
 
-export function CheckoutSteps( { children } ) {
+export function CheckoutSteps( { children, areStepsActive = true } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
 
@@ -200,7 +199,7 @@ export function CheckoutSteps( { children } ) {
 	return steps.map( ( child ) => {
 		stepNumber = nextStepNumber;
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
-		const isStepActive = activeStepNumber === stepNumber;
+		const isStepActive = areStepsActive && activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 		return (
 			<CheckoutSingleStepDataContext.Provider
@@ -210,6 +209,7 @@ export function CheckoutSteps( { children } ) {
 					nextStepNumber,
 					isStepActive,
 					isStepComplete,
+					areStepsActive,
 				} }
 			>
 				{ child }
@@ -217,6 +217,10 @@ export function CheckoutSteps( { children } ) {
 		);
 	} );
 }
+
+CheckoutSteps.propTypes = {
+	areStepsActive: PropTypes.bool,
+};
 
 export function CheckoutStep( {
 	activeStepContent,
@@ -232,11 +236,11 @@ export function CheckoutStep( {
 	validatingButtonText,
 	validatingButtonAriaLabel,
 } ) {
-	const localize = useLocalize();
-	const { totalSteps, setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
+	const { __ } = useI18n();
+	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
 	);
-	const { stepNumber, nextStepNumber, isStepActive, isStepComplete } = useContext(
+	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
@@ -274,8 +278,8 @@ export function CheckoutStep( {
 
 	const classNames = [
 		'checkout-step',
-		...( isStepActive ? [ 'checkout-step--is-active' ] : [] ),
-		...( isStepComplete ? [ 'checkout-step--is-complete' ] : [] ),
+		...( isStepActive ? [ 'is-active' ] : [] ),
+		...( isStepComplete ? [ 'is-complete' ] : [] ),
 		...( className ? [ className ] : [] ),
 	];
 
@@ -294,28 +298,30 @@ export function CheckoutStep( {
 	return (
 		<CheckoutStepBody
 			onError={ onError }
-			editButtonText={ editButtonText || localize( 'Edit' ) }
-			editButtonAriaLabel={ editButtonAriaLabel || localize( 'Edit this step' ) }
-			nextStepButtonText={ nextStepButtonText || localize( 'Continue' ) }
-			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || localize( 'Continue to the next step' ) }
-			validatingButtonText={ validatingButtonText || localize( 'Please wait…' ) }
-			validatingButtonAriaLabel={ validatingButtonAriaLabel || localize( 'Please wait…' ) }
+			editButtonText={ editButtonText || __( 'Edit' ) }
+			editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
+			nextStepButtonText={ nextStepButtonText || __( 'Continue' ) }
+			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || __( 'Continue to the next step' ) }
+			validatingButtonText={ validatingButtonText || __( 'Please wait…' ) }
+			validatingButtonAriaLabel={ validatingButtonAriaLabel || __( 'Please wait…' ) }
 			isStepActive={ isStepActive }
 			isStepComplete={ isStepComplete }
 			stepNumber={ stepNumber }
-			totalSteps={ totalSteps }
 			stepId={ stepId }
 			titleContent={ titleContent }
-			goToThisStep={ goToThisStep }
-			goToNextStep={ goToNextStep }
+			goToThisStep={ areStepsActive ? goToThisStep : undefined }
+			goToNextStep={ nextStepNumber > 0 ? goToNextStep : undefined }
 			activeStepContent={ activeStepContent }
-			nextStepNumber={ nextStepNumber }
 			formStatus={ formStatus }
 			completeStepContent={ completeStepContent }
 			className={ joinClasses( classNames ) }
 		/>
 	);
 }
+
+CheckoutStep.propTypes = {
+	nextStepNumber: PropTypes.number,
+};
 
 export function CheckoutStepBody( {
 	errorMessage,
@@ -329,28 +335,25 @@ export function CheckoutStepBody( {
 	isStepComplete,
 	className,
 	stepNumber,
-	totalSteps,
 	stepId,
 	titleContent,
 	goToThisStep,
 	goToNextStep,
 	activeStepContent,
-	nextStepNumber,
 	formStatus,
 	completeStepContent,
 	onError,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	return (
 		<CheckoutErrorBoundary
-			errorMessage={ errorMessage || localize( 'There was an error with this step.' ) }
+			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
 			onError={ onError }
 		>
 			<StepWrapperUI
 				isActive={ isStepActive }
 				isComplete={ isStepComplete }
 				className={ className }
-				isFinalStep={ stepNumber === totalSteps }
 			>
 				<CheckoutStepHeader
 					id={ stepId }
@@ -368,7 +371,7 @@ export function CheckoutStepBody( {
 				/>
 				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
 					{ activeStepContent }
-					{ nextStepNumber > 0 && goToNextStep && isStepActive && (
+					{ goToNextStep && isStepActive && (
 						<CheckoutNextStepButton
 							onClick={ goToNextStep }
 							value={
@@ -381,7 +384,7 @@ export function CheckoutStepBody( {
 									? validatingButtonAriaLabel || 'Please wait…'
 									: nextStepButtonAriaLabel || 'Continue to next step'
 							}
-							buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
+							buttonType="primary"
 							disabled={ formStatus !== 'ready' }
 							isBusy={ formStatus === 'validating' }
 						/>
@@ -409,14 +412,12 @@ CheckoutStepBody.propTypes = {
 	isStepActive: PropTypes.bool.isRequired,
 	isStepComplete: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	stepNumber: PropTypes.number.isRequired,
-	totalSteps: PropTypes.number.isRequired,
+	stepNumber: PropTypes.number,
 	stepId: PropTypes.string.isRequired,
 	titleContent: PropTypes.node.isRequired,
 	goToThisStep: PropTypes.func,
 	goToNextStep: PropTypes.func,
 	activeStepContent: PropTypes.node,
-	nextStepNumber: PropTypes.number,
 	formStatus: PropTypes.string,
 	completeStepContent: PropTypes.node,
 };
@@ -521,11 +522,32 @@ export function useIsStepComplete() {
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
+export function useSetStepComplete() {
+	const { setStepCompleteStatus } = useContext( CheckoutStepDataContext );
+	const setTargetStepCompleteStatus = useCallback(
+		( stepNumber, newStatus ) =>
+			setStepCompleteStatus( ( stepCompleteStatus ) => ( {
+				...stepCompleteStatus,
+				[ stepNumber ]: newStatus,
+			} ) ),
+		[ setStepCompleteStatus ]
+	);
+	return setTargetStepCompleteStatus;
+}
+
 const StepWrapperUI = styled.div`
-	padding-bottom: ${ ( props ) => ( props.isFinalStep ? '0' : '32px' ) };
 	position: relative;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
+
+	&.checkout-step {
+		background: ${ ( props ) => props.theme.colors.background };
+	}
+
+	&.checkout-step.is-active,
+	&.checkout-step.is-complete {
+		background: ${ ( props ) => props.theme.colors.surface };
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 24px;
@@ -543,7 +565,7 @@ function CheckoutStepHeader( {
 	editButtonText,
 	editButtonAriaLabel,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const shouldShowEditButton = !! onEdit;
 
 	return (
@@ -559,9 +581,13 @@ function CheckoutStepHeader( {
 				{ title }
 			</StepTitle>
 			{ shouldShowEditButton && (
-				<Button buttonState="text-button" onClick={ onEdit } aria-label={ editButtonAriaLabel }>
-					{ editButtonText || localize( 'Edit' ) }
-				</Button>
+				<HeaderEditButton
+					buttonType="text-button"
+					onClick={ onEdit }
+					aria-label={ editButtonAriaLabel }
+				>
+					{ editButtonText || __( 'Edit' ) }
+				</HeaderEditButton>
 			) }
 		</StepHeader>
 	);
@@ -668,6 +694,11 @@ const StepNumberCompleted = styled( StepNumber )`
 	svg {
 		margin-top: 4px;
 	}
+`;
+
+const HeaderEditButton = styled( Button )`
+	font-size: 14px;
+	padding-top: 1px;
 `;
 
 function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {

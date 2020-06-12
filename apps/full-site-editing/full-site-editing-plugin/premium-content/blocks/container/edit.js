@@ -39,12 +39,12 @@ import { isPriceValid, minimumTransactionAmountForCurrency } from '.';
 const tabs = [
 	{
 		id: 'premium',
-		label: <span>{ __( 'Subscriber View', 'premium-content' ) }</span>,
+		label: <span>{ __( 'Subscriber View', 'full-site-editing' ) }</span>,
 		className: 'wp-premium-content-subscriber-view',
 	},
 	{
 		id: 'wall',
-		label: <span>{ __( 'Non-subscriber View', 'premium-content' ) }</span>,
+		label: <span>{ __( 'Non-subscriber View', 'full-site-editing' ) }</span>,
 		className: 'wp-premium-content-logged-out-view',
 	},
 ];
@@ -73,7 +73,7 @@ const defaultString = null;
  *
  * @typedef { import('@wordpress/components').withNotices.Props } NoticeProps
  * @typedef { import('./').Attributes } Attributes
- * @typedef { Object } OwnProps
+ * @typedef {object} OwnProps
  * @property { boolean } isSelected
  * @property { string } className
  * @property { string } clientId
@@ -111,7 +111,7 @@ function Edit( props ) {
 		const path = '/wpcom/v2/memberships/product';
 		const method = 'POST';
 		if ( ! attributes.newPlanName || attributes.newPlanName.length === 0 ) {
-			onError( props, __( 'Plan requires a name', 'premium-content' ) );
+			onError( props, __( 'Plan requires a name', 'full-site-editing' ) );
 			callback( false );
 			return;
 		}
@@ -119,7 +119,7 @@ function Edit( props ) {
 		const newPrice = parseFloat( attributes.newPlanPrice );
 		const minPrice = minimumTransactionAmountForCurrency( attributes.newPlanCurrency );
 		const minimumPriceNote = sprintf(
-			__( 'Minimum allowed price is %s.', 'premium-content' ),
+			__( 'Minimum allowed price is %s.', 'full-site-editing' ),
 			formatCurrency( minPrice, attributes.newPlanCurrency )
 		);
 
@@ -130,7 +130,7 @@ function Edit( props ) {
 		}
 
 		if ( ! isPriceValid( attributes.newPlanCurrency, newPrice ) ) {
-			onError( props, __( 'Plan requires a valid price', 'premium-content' ) );
+			onError( props, __( 'Plan requires a valid price', 'full-site-editing' ) );
 			callback( false );
 			return;
 		}
@@ -145,7 +145,7 @@ function Edit( props ) {
 		apiFetch( fetch ).then(
 			/**
 			 * @param { any } result
-			 * @return { void }
+			 * @returns { void }
 			 */
 			( result ) => {
 				/**
@@ -161,17 +161,17 @@ function Edit( props ) {
 				setProducts( products.concat( [ newProduct ] ) );
 				// After successful adding of product, we want to select it. Presumably that is the product user wants.
 				selectPlan( newProduct );
-				onSuccess( props, __( 'Successfully created plan', 'premium-content' ) );
+				onSuccess( props, __( 'Successfully created plan', 'full-site-editing' ) );
 				if ( callback ) {
 					callback( true );
 				}
 			},
 			/**
 			 * @param { Error } error
-			 * @return { void }
+			 * @returns { void }
 			 */
 			() => {
-				onError( props, __( 'There was an error when adding the plan.' ) );
+				onError( props, __( 'There was an error when adding the plan.', 'full-site-editing' ) );
 				if ( callback ) {
 					callback( false );
 				}
@@ -185,15 +185,15 @@ function Edit( props ) {
 	function getPlanDescription( plan ) {
 		const amount = formatCurrency( parseFloat( plan.price ), plan.currency );
 		if ( plan.interval === '1 month' ) {
-			return sprintf( __( '%s / month', 'premium-content' ), amount );
+			return sprintf( __( '%s / month', 'full-site-editing' ), amount );
 		}
 		if ( plan.interval === '1 year' ) {
-			return sprintf( __( '%s / year', 'premium-content' ), amount );
+			return sprintf( __( '%s / year', 'full-site-editing' ), amount );
 		}
 		if ( plan.interval === 'one-time' ) {
 			return amount;
 		}
-		return sprintf( __( '%s / %s', 'premium-content' ), amount, plan.interval );
+		return sprintf( __( '%s / %s', 'full-site-editing' ), amount, plan.interval );
 	}
 
 	/**
@@ -249,7 +249,7 @@ function Edit( props ) {
 						{
 							newPlanCurrency: 'USD',
 							newPlanPrice: 5,
-							newPlanName: __( 'Monthly Subscription' ),
+							newPlanName: __( 'Monthly Subscription', 'full-site-editing' ),
 							newPlanInterval: '1 month',
 						},
 						() => {
@@ -285,8 +285,8 @@ function Edit( props ) {
 				{ props.noticeUI }
 				<Placeholder
 					icon="lock"
-					label={ __( 'Premium Content', 'premium-content' ) }
-					instructions={ __( 'Loading data...', 'premium-content' ) }
+					label={ __( 'Premium Content', 'full-site-editing' ) }
+					instructions={ __( 'Loading data…', 'full-site-editing' ) }
 				>
 					<Spinner />
 				</Placeholder>
@@ -300,10 +300,10 @@ function Edit( props ) {
 				{ props.noticeUI }
 				<Placeholder
 					icon="lock"
-					label={ __( 'Premium Content', 'premium-content' ) }
+					label={ __( 'Premium Content', 'full-site-editing' ) }
 					instructions={ __(
 						"You'll need to upgrade your plan to use the Premium Content block.",
-						'premium-content'
+						'full-site-editing'
 					) }
 				>
 					<Button
@@ -317,11 +317,11 @@ function Edit( props ) {
 						target="_blank"
 						className="premium-content-block-nudge__button plan-nudge__button"
 					>
-						{ __( 'Upgrade Your Plan', 'premium-content' ) }
+						{ __( 'Upgrade Your Plan', 'full-site-editing' ) }
 					</Button>
 					<div className="membership-button__disclaimer">
 						<ExternalLink href="https://wordpress.com/support/premium-content-block/">
-							{ __( 'Read more about Premium Content and related fees.', 'premium-content' ) }
+							{ __( 'Read more about Premium Content and related fees.', 'full-site-editing' ) }
 						</ExternalLink>
 					</div>
 				</Placeholder>
@@ -404,7 +404,7 @@ function useOutsideAlerter( ref, callback ) {
 /**
  * @param { Props } props
  * @param { string } message
- * @return { void }
+ * @returns { void }
  */
 function onError( props, message ) {
 	const { noticeOperations } = props;
@@ -415,7 +415,7 @@ function onError( props, message ) {
 /**
  * @param { Props } props
  * @param { string } message
- * @return { void }
+ * @returns { void }
  */
 function onSuccess( props, message ) {
 	const { noticeOperations } = props;
@@ -426,7 +426,7 @@ function onSuccess( props, message ) {
 /**
  * @param { Props } props
  * @param { string } connectURL
- * @return { null | string } URL
+ * @returns { null | string } URL
  */
 function getConnectUrl( props, connectURL ) {
 	const { postId } = props;

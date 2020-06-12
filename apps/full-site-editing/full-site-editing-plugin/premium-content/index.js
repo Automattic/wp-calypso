@@ -60,7 +60,7 @@ const addPaidBlockFlags = async () => {
 		const paidFlag = _x(
 			'paid',
 			'Short label appearing near a block requiring a paid plan',
-			'premium-content'
+			'full-site-editing'
 		);
 
 		unregisterBlockType( container.name );

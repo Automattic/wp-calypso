@@ -7,6 +7,8 @@ import { listMembershipsConnectedAccounts } from '../actions';
 import { MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_AUTHORIZE_REQUEST } from 'state/action-types';
 import { change } from 'redux-form';
 
+import 'state/form/init';
+
 export function authorizeStripeAccount() {
 	return ( dispatch ) => {
 		dispatch( { type: MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_AUTHORIZE_REQUEST } );

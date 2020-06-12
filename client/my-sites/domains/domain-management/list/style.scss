@@ -37,7 +37,7 @@
 .domain-management-list-item__title {
 	display: block;
 	color: var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	white-space: pre;
 	font-family: $serif;

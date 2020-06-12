@@ -16,7 +16,7 @@
 .popover.info-popover__tooltip {
 	.popover__inner {
 		color: var( --color-neutral-50 );
-		font-size: 13px;
+		font-size: $font-body-small;
 		max-width: 220px;
 		padding: 16px;
 		text-align: left;

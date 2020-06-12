@@ -23,9 +23,10 @@ import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import SectionHeader from 'components/section-header';
-import { requestMarkAllAsSeen, requestMarkAllAsUnseen } from 'state/reader/seen-posts/actions';
-import { sectionHasUnseen } from 'state/reader/seen-posts/selectors';
+import { requestMarkAllAsSeenSection } from 'state/reader/seen-posts/actions';
 import { SECTION_FOLLOWING } from 'state/reader/seen-posts/constants';
+import { getReaderOrganizationFeedsInfo } from 'state/reader/organizations/selectors';
+import { NO_ORG_ID } from 'state/reader/organizations/constants';
 
 /**
  * Style dependencies
@@ -59,12 +60,9 @@ const FollowingStream = ( props ) => {
 	const { translate } = props;
 	const dispatch = useDispatch();
 
-	const markAllAsSeen = () => {
-		dispatch( requestMarkAllAsSeen( { section: SECTION_FOLLOWING } ) );
-	};
-
-	const markAllAsUnSeen = () => {
-		dispatch( requestMarkAllAsUnseen( { section: SECTION_FOLLOWING } ) );
+	const markAllAsSeen = ( feedsInfo ) => {
+		const { feedIds, feedUrls } = feedsInfo;
+		dispatch( requestMarkAllAsSeenSection( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -94,13 +92,12 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
-				{ config.isEnabled( 'reader/seen-posts' ) && ! props.hasUnseen && (
-					<Button compact onClick={ markAllAsUnSeen }>
-						{ translate( 'Mark all as unseen' ) }
-					</Button>
-				) }
-				{ config.isEnabled( 'reader/seen-posts' ) && props.hasUnseen && (
-					<Button compact onClick={ markAllAsSeen }>
+				{ config.isEnabled( 'reader/seen-posts' ) && (
+					<Button
+						compact
+						onClick={ () => markAllAsSeen( props.feedsInfo ) }
+						disabled={ ! props.feedsInfo.unseenCount }
+					>
 						{ translate( 'Mark all as seen' ) }
 					</Button>
 				) }
@@ -115,5 +112,5 @@ const FollowingStream = ( props ) => {
 
 export default connect( ( state ) => ( {
 	userInUSA: getCurrentUserCountryCode( state ) === 'US',
-	hasUnseen: sectionHasUnseen( state, SECTION_FOLLOWING ),
+	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );

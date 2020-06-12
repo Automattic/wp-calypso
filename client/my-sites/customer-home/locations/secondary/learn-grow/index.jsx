@@ -11,11 +11,13 @@ import { Card } from '@automattic/components';
  */
 import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-library';
 import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
+import EducationEarn from 'my-sites/customer-home/cards/education/earn';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 import {
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_GUTENBERG,
+	EDUCATION_EARN,
 } from 'my-sites/customer-home/cards/constants';
 
 /**
@@ -26,6 +28,7 @@ import './style.scss';
 const cardComponents = {
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
 	[ EDUCATION_GUTENBERG ]: MasteringGutenberg,
+	[ EDUCATION_EARN ]: EducationEarn,
 };
 
 const LearnGrow = ( { cards } ) => {

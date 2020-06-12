@@ -136,8 +136,9 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) {
+export async function payPalProcessor( submitData, getThankYouUrl, couponItem, isWhiteGloveOffer ) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
+	const query = isWhiteGloveOffer ? { type: 'white-glove' } : {};
 	const successUrl = formatUrl( {
 		protocol,
 		hostname,
@@ -149,6 +150,7 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) 
 		hostname,
 		port,
 		pathname,
+		query,
 	} );
 
 	const pending = submitPayPalExpressRequest(

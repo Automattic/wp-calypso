@@ -9,7 +9,6 @@ import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 export function login( {
 	isJetpack,
 	isGutenboarding,
-	isWoo,
 	isNative,
 	locale,
 	redirectTo,
@@ -21,6 +20,7 @@ export function login( {
 	wccomFrom,
 	site,
 	useMagicLink,
+	from,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -70,12 +70,12 @@ export function login( {
 		url = addQueryArgs( { client_id: oauth2ClientId }, url );
 	}
 
-	if ( isWoo ) {
-		url = addQueryArgs( { from: 'woocommerce-onboarding' }, url );
-	}
-
 	if ( wccomFrom ) {
 		url = addQueryArgs( { 'wccom-from': wccomFrom }, url );
+	}
+
+	if ( from ) {
+		url = addQueryArgs( { from }, url );
 	}
 
 	return url;

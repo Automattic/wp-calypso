@@ -1,3 +1,14 @@
+/**
+ * Note: this file is imported by `client` and `test/e2e` tests. `test/e2e` do not have the config
+ * required to make aliased imports work (e.g. `import * from 'lib/'). As such, we must use relative
+ * paths here (e.g. `import * from '../../lib/`)
+ */
+
+/**
+ * Internal dependencies
+ */
+import * as RUM_DATA_COLLECTION from '../../lib/performance-tracking/const';
+
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -27,10 +38,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	showCompositeCheckout: {
-		datestamp: '20200508',
+		datestamp: '20200611',
 		variations: {
-			composite: 50,
-			regular: 50,
+			composite: 100,
+			regular: 0,
 		},
 		defaultVariation: 'regular',
 		allowExistingUsers: true,
@@ -109,14 +120,14 @@ export default {
 	domainStepPlanStepSwap: {
 		datestamp: '20200513',
 		variations: {
-			variantShowSwapped: 50,
-			control: 50,
+			variantShowSwapped: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 	newSiteGutenbergOnboarding: {
-		datestamp: '20200520',
+		datestamp: '20200605',
 		variations: {
 			gutenberg: 10,
 			control: 90,
@@ -135,5 +146,25 @@ export default {
 		defaultVariation: 'control',
 		localeTargets: 'any',
 		countryCodeTargets: [ 'JP' ],
+	},
+	[ RUM_DATA_COLLECTION.AB_NAME ]: {
+		datestamp: '20200602',
+		variations: {
+			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 50,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 50,
+		},
+		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
+		localeTargets: 'any',
+		allowExistingUsers: true,
+	},
+	whiteGloveUpsell: {
+		datestamp: '20200608',
+		variations: {
+			variantShowOffer: 10,
+			control: 90,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		countryCodeTargets: [ 'US' ],
 	},
 };

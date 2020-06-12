@@ -125,6 +125,19 @@
 	}
 }
 
+.reader-full-post__seen-button {
+	margin-right: 25px;
+	align-items: center;
+	box-sizing: border-box;
+	color: #646970;
+	cursor: pointer;
+	display: inline-flex;
+	list-style-type: none;
+	padding: 4px;
+	position: relative;
+	user-select: none;
+}
+
 .reader-full-post__story {
 	max-width: 720px;
 
@@ -361,7 +374,7 @@
 
 .reader-full-post__sidebar .comment-button__label,
 .reader-full-post__sidebar .like-button__label {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .reader-full-post__sidebar .comment-button {

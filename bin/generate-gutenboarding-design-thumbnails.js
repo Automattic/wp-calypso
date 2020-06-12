@@ -5,26 +5,28 @@
  * https://github.com/Automattic/mShots/issues/16
  * https://github.com/Automattic/wp-calypso/issues/40564
  *
+ * SETUP:
  *
- * Ensure browser is installed by removing `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true` in `package.json` and run `npm ci`
- * (maybe there's easier way?)
+ * Ensure browser is installed by running `node ./bin/install-gutenboarding-design-thumbnails-dependencies.js`
+ * Warning: this will remove your dist and node modules directories, and reinstall packages including the Chromium browser
  *
+ * GENERATE THUMBNAILS:
  *
- * Then convert this file to json:
- * client/landing/gutenboarding/available-designs.ts
- * - Rename to .json
- * - Remove some JS to make it look more like json
- * - run `npx prettier client/landing/gutenboarding/available-designs.json --write` to fix the rest
+ * `node ./bin/generate-gutenboarding-design-thumbnails.js`
+ *
+ * To check the results, take a look at http://calypso.localhost:3000/new/design and the output folder static/images
+ *
  */
 
 const captureWebsite = require( 'capture-website' );
-const designs = require( '../client/landing/gutenboarding/available-designs.json' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
-
+const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
 const screenshotsPath = './static/page-templates/design-screenshots'; // Folder to store output images
+
+// image output variables
 const captureMaxHeight = 2200; // Cap long pages to  this pixel height when capturing
-const outputWidth = 600; // Outputted file width
+const outputWidth = 900; // Outputted file width
 const viewportHeight = 800; // Browser height for capturing the screenshot
 const viewportScaleFactor = 2; // Browser pixel density for capturing the screenshot
 const viewportWidth = 1280; // Browser width for capturing the screenshot
@@ -38,6 +40,17 @@ const getDesignUrl = ( design ) => {
 };
 
 async function run() {
+	if (
+		( typeof designs === 'object' && ! Array.isArray( designs.featured ) ) ||
+		! designs.featured
+	) {
+		console.error(
+			'Could not find any featured designs. Check the regex or the available-designs.ts file'
+		);
+		return;
+	}
+	console.log( `Processing ${ designs.featured.length } designs...` );
+
 	await Promise.all(
 		designs.featured.map( async ( design ) => {
 			const url = getDesignUrl( design );
@@ -72,7 +85,7 @@ async function run() {
 						width: metadata.width,
 					} )
 					.resize( outputWidth )
-					.jpeg( { quality: 90 } )
+					.jpeg( { quality: 72 } )
 					.toFile( file );
 			} );
 		} )

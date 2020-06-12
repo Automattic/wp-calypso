@@ -10,6 +10,8 @@ import { Field } from 'redux-form';
  */
 import FormSelect from 'components/forms/form-select';
 
+import 'state/form/init';
+
 const SelectRenderer = ( { input, meta, ...props } ) => <FormSelect { ...input } { ...props } />;
 
 const ReduxFormSelect = ( props ) => <Field component={ SelectRenderer } { ...props } />;

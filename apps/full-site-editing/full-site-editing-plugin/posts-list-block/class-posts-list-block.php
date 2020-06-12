@@ -52,6 +52,10 @@ class Posts_List_Block {
 	 * Enqueue block editor scripts.
 	 */
 	public function enqueue_scripts() {
+		if ( ! has_block( 'a8c/posts-list' ) ) {
+			return;
+		}
+
 		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.asset.php';
 		$script_dependencies = $asset_file['dependencies'];
 		wp_enqueue_script(
@@ -69,6 +73,10 @@ class Posts_List_Block {
 	 * Enqueue block styles.
 	 */
 	public function enqueue_styles() {
+		if ( ! has_block( 'a8c/posts-list' ) ) {
+			return;
+		}
+
 		$style_file = is_rtl()
 			? 'posts-list-block.rtl.css'
 			: 'posts-list-block.css';
@@ -119,7 +127,7 @@ class Posts_List_Block {
 		add_filter( 'excerpt_more', array( $this, 'custom_excerpt_read_more' ) );
 
 		// Prevent situations when the block attempts rendering another a8c/posts-list block.
-		if ( $this->rendering_block !== true ) {
+		if ( true !== $this->rendering_block ) {
 			$this->rendering_block = true;
 
 			$content = render_template(

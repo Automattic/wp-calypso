@@ -418,6 +418,46 @@ export function hasDomainRegistration( cart ) {
 	return some( getAllCartItems( cart ), isDomainRegistration );
 }
 
+/**
+ * Determines whether there is at least one new domain registration item in the specified shopping cart.
+ *
+ * @param {CartValue} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one new domain registration item, false otherwise
+ */
+export function hasNewDomainRegistration( cart ) {
+	return some( getAllCartItems( cart ), isNewDomainRegistration );
+}
+
+/**
+ * Determines whether there is at least one domain registration renewal item in the specified shopping cart.
+ *
+ * @param {CartValue} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one domain registration renewal item, false otherwise
+ */
+export function hasDomainRenewal( cart ) {
+	return some( getAllCartItems( cart ), isDomainRenewal );
+}
+
+/**
+ * Determines whether the supplied cart item is a new domain registration (i.e. not a renewal).
+ *
+ * @param {CartItemValue} cartItem - cart item as `CartItemValue` object
+ * @returns {boolean} true if the cart item is a new domain registration, false otherwise.
+ */
+function isNewDomainRegistration( cartItem ) {
+	return isDomainRegistration( cartItem ) && ! isRenewal( cartItem );
+}
+
+/**
+ * Determines whether the supplied cart item is a domain renewal.
+ *
+ * @param {CartItemValue} cartItem - cart item as `CartItemValue` object
+ * @returns {boolean} true if the cart item is a domain renewal, false otherwise.
+ */
+function isDomainRenewal( cartItem ) {
+	return isRenewal( cartItem ) && isDomainRegistration( cartItem );
+}
+
 export function hasAllDomainProductsWithPrivacySupport( cart ) {
 	return every(
 		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),

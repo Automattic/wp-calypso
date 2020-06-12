@@ -83,7 +83,7 @@
 	border: 0;
 	outline: 0;
 	color: var( --color-masterbar-text );
-	font-size: 14px;
+	font-size: $font-body-small;
 	cursor: pointer;
 	transition: all 200ms ease-in;
 
@@ -124,7 +124,7 @@
 		width: 100px;
 		height: 62px;
 		margin: 0 10px 10px 0;
-		font-size: 13px;
+		font-size: $font-body-small;
 		text-align: center;
 		border-radius: 5px;
 	}

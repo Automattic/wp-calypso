@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	PREFERENCES_SET,
@@ -14,6 +13,8 @@ import {
 	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './constants';
+
+import 'state/preferences/init';
 
 /**
  * Returns an action object signalling the remote preferences have been

@@ -14,7 +14,12 @@
 		margin-right: 5px;
 		width: 18px;
 		position: relative;
-		color: var( --color-text-subtle );
+		color: var( --color-neutral-20 );
+	}
+
+	&:disabled {
+		cursor: text;
+		opacity: 0.5;
 	}
 }
 
@@ -101,7 +106,7 @@
 
 	.reader-feed-header__follow-count {
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin-right: 15px;
 
 		@include breakpoint-deprecated( '<960px' ) {
@@ -142,7 +147,7 @@
 
 	.reader-feed-header__details {
 		align-self: stretch;
-		font-size: 14px;
+		font-size: $font-body-small;
 		overflow: hidden;
 		text-align: center;
 		position: relative;

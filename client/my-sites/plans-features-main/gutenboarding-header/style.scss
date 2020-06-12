@@ -8,7 +8,7 @@
 		color: var( --color-neutral );
 		text-decoration: underline;
 		cursor: pointer;
-		font-size: 14px !important;
+		font-size: $font-body-small !important;
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {

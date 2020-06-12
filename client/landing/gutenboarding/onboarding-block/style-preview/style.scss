@@ -346,6 +346,13 @@
 	width: 100%;
 	margin: 0 auto;
 	height: 100%;
+	@include break-small {
+		min-height: 400px;
+	}
+
+	@include break-wide {
+		min-height: 600px;
+	}
 
 	.is-viewport-mobile &,
 	.is-viewport-tablet & {

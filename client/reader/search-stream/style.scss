@@ -185,7 +185,7 @@
 .search-stream__headers {
 	color: var( --color-text-subtle );
 	display: flex;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	list-style-type: none;
 	margin: 17px 0 0;
@@ -260,7 +260,7 @@
 
 	.section-nav-tab__text {
 		font-weight: 600;
-		font-size: 13px;
+		font-size: $font-body-small;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
 		width: 100%;

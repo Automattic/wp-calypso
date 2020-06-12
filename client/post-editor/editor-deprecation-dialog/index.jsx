@@ -79,12 +79,12 @@ class EditorDeprecationDialog extends Component {
 
 				<p className="editor-deprecation-dialog__subhead">
 					{ translate(
-						'Get a head start before we activate it for everyone on {{date/}}. {{support}}Read more{{/support}}.',
+						'Get a head start before we activate it for everyone in the near future. {{support}}Read more{{/support}}.',
 						{
 							components: {
 								date: (
 									<strong>
-										<FormattedDate date="2020-06-01" format={ dateFormat } />
+										<FormattedDate date="2020-07-01" format={ dateFormat } />
 									</strong>
 								),
 								support: (

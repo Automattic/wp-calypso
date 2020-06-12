@@ -7,7 +7,7 @@ import { dispatch, select } from '@wordpress/data';
 
 /**
  * @typedef { import('./tab').Tab } Tab
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { string } className
  * @property { Tab } selectedTab
  * @property { Tab[] } tabs
@@ -43,7 +43,7 @@ export default function Tabs( props ) {
 				/>
 			) ) }
 			<button onClick={ focusBlock } className="edit components-button is-button is-secondary">
-				{ __( 'Edit', 'premium-content' ) }
+				{ __( 'Edit', 'full-site-editing' ) }
 			</button>
 		</div>
 	);

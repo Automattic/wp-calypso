@@ -24,6 +24,7 @@ export type PayPalExpressEndpointRequestPayload = {
 	domainDetails: WPCOMTransactionEndpointDomainDetails;
 	country: string;
 	postalCode: string;
+	isWhiteGloveOffer: boolean;
 };
 
 export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
@@ -47,6 +48,9 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	domainDetails: WPCOMTransactionEndpointDomainDetails;
 	items: WPCOMCartItem[];
 } ): PayPalExpressEndpointRequestPayload {
+	const urlParams = new URLSearchParams( window.location.search );
+	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
+
 	return {
 		successUrl,
 		cancelUrl,
@@ -61,6 +65,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		country,
 		postalCode,
 		domainDetails,
+		isWhiteGloveOffer: isWhiteGlove,
 	};
 }
 

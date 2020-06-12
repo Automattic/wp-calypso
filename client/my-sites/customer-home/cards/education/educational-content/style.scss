@@ -24,7 +24,7 @@
 			margin-bottom: 0;
 		}
 
-		&:not( .is-external-link ) .gridicon {
+		.gridicon {
 			vertical-align: text-bottom;
 			margin-right: 0.5rem;
 			fill: var( --color-neutral );

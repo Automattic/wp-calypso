@@ -18,7 +18,7 @@ import SubmitButtons from './submit-buttons';
  * Block edit function
  *
  * @typedef { import('./').Attributes } Attributes
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { boolean } isSelected
  * @property { string } className
  * @property { string } clientId
@@ -62,14 +62,14 @@ function Edit( props ) {
 						template={ [
 							[
 								'core/heading',
-								{ content: __( 'Subscribe to get access', 'premium-content' ), level: 3 },
+								{ content: __( 'Subscribe to get access', 'full-site-editing' ), level: 3 },
 							],
 							[
 								'core/paragraph',
 								{
 									content: __(
 										'Read more of this content when you subscribe today.',
-										'premium-content'
+										'full-site-editing'
 									),
 								},
 							],

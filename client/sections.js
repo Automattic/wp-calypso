@@ -161,6 +161,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-jetpack',
+		paths: [ '/settings/jetpack' ],
+		module: 'my-sites/site-settings/settings-jetpack',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',
@@ -298,6 +305,7 @@ const sections = [
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -305,6 +313,7 @@ const sections = [
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -312,6 +321,7 @@ const sections = [
 		module: 'reader/full-post',
 		secondary: false,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -319,6 +329,7 @@ const sections = [
 		module: 'reader/discover',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -333,6 +344,7 @@ const sections = [
 		module: 'reader/tag-stream',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -340,6 +352,7 @@ const sections = [
 		module: 'reader/liked-stream',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -347,6 +360,7 @@ const sections = [
 		module: 'reader/search',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
@@ -361,6 +375,7 @@ const sections = [
 		module: 'reader/conversations',
 		secondary: true,
 		group: 'reader',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'help',
@@ -469,25 +484,25 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'jetpack-cloud',
-		paths: [ '/', '/settings' ],
-		module: 'landing/jetpack-cloud',
+		name: 'backup',
+		paths: [ '/backup' ],
+		module: 'my-sites/backup',
 		secondary: true,
-		group: 'jetpack-cloud',
+		group: 'sites',
 		enableLoggedOut: true,
 	},
 	{
 		name: 'scan',
 		paths: [ '/scan' ],
-		module: 'landing/jetpack-cloud/sections/scan',
+		module: 'my-sites/scan',
 		secondary: true,
-		group: 'jetpack-cloud',
+		group: 'sites',
 		enableLoggedOut: true,
 	},
 	{
-		name: 'backups',
-		paths: [ '/backup' ],
-		module: 'landing/jetpack-cloud/sections/backups',
+		name: 'jetpack-cloud',
+		paths: [ '/', '/settings' ],
+		module: 'landing/jetpack-cloud',
 		secondary: true,
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,

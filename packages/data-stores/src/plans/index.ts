@@ -13,7 +13,12 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import * as resolvers from './resolvers';
-import { plansPaths } from './plans-data';
+
+export type { State };
+export type { Plan, PlanSlug } from './types';
+
+// used to construct the route that accepts plan slugs like (/beginner, /business, etc..)
+export { plansPaths } from './plans-data';
 
 let isRegistered = false;
 
@@ -36,8 +41,3 @@ declare module '@wordpress/data' {
 	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
 	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }
-
-export type { Plan, PlanSlug } from './types';
-
-// used to construct the route that accepts plan slugs like (/beginner, /business, etc..)
-export { plansPaths, State };

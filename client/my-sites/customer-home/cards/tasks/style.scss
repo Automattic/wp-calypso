@@ -32,7 +32,7 @@
 		margin-bottom: 10px;
 		align-items: center;
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: $font-body-small;
 
 		.gridicon {
 			margin-right: 4px;
@@ -75,7 +75,7 @@
 		display: flex;
 		padding-top: 0;
 		margin-top: auto;
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.task__skip {

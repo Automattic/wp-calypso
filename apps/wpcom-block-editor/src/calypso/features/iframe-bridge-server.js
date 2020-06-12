@@ -726,6 +726,7 @@ function getGutenboardingStatus( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const { isGutenboarding, frankenflowUrl } = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
+		calypsoifyGutenberg.isFseGutenboarding = isGutenboarding;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
 		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
@@ -762,7 +763,8 @@ function initPort( message ) {
 
 	class MediaUpload extends Component {
 		openModal = () => {
-			const mediaChannel = new MessageChannel();
+			const mediaSelectChannel = new MessageChannel();
+			const mediaCancelChannel = new MessageChannel();
 
 			calypsoPort.postMessage(
 				{
@@ -774,16 +776,25 @@ function initPort( message ) {
 						value: this.props.value,
 					},
 				},
-				[ mediaChannel.port2 ]
+				[ mediaSelectChannel.port2, mediaCancelChannel.port2 ]
 			);
 
-			mediaChannel.port1.onmessage = ( { data } ) => {
+			mediaSelectChannel.port1.onmessage = ( { data } ) => {
 				this.props.onSelect( data );
 
 				// this is a once-only port
 				// to send more messages we have to re-open the
 				// modal and create a new channel
-				mediaChannel.port1.close();
+				mediaSelectChannel.port1.close();
+			};
+
+			mediaCancelChannel.port1.onmessage = () => {
+				this.props.onClose();
+
+				// this is a once-only port
+				// to send more messages we have to re-open the
+				// modal and create a new channel
+				mediaCancelChannel.port1.close();
 			};
 		};
 

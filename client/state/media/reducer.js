@@ -84,13 +84,13 @@ export const errors = ( state = {}, action ) => {
 				switch ( error.error ) {
 					case 'http_404':
 						return MediaValidationErrors.UPLOAD_VIA_URL_404;
+					case 'rest_upload_limited_space':
+						return MediaValidationErrors.NOT_ENOUGH_SPACE;
+					case 'rest_upload_file_too_big':
+						return MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE;
+					case 'rest_upload_user_quota_exceeded':
+						return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
 					case 'upload_error':
-						if ( error.message.startsWith( 'Not enough space to upload' ) ) {
-							return MediaValidationErrors.NOT_ENOUGH_SPACE;
-						}
-						if ( error.message.startsWith( 'You have used your space quota' ) ) {
-							return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
-						}
 						return MediaValidationErrors.SERVER_ERROR;
 					case 'keyring_token_error':
 						return MediaValidationErrors.SERVICE_AUTH_FAILED;

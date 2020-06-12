@@ -25,6 +25,8 @@ export default function WPCheckoutOrderReview( {
 	getItemVariants,
 	onChangePlanLength,
 	siteUrl,
+	isSummary,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -40,7 +42,9 @@ export default function WPCheckoutOrderReview( {
 	};
 
 	return (
-		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
+		<div
+			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
+		>
 			{ domainUrl && <DomainURL>{ translate( 'Site: %s', { args: domainUrl } ) }</DomainURL> }
 
 			<WPOrderReviewSection>
@@ -52,6 +56,8 @@ export default function WPCheckoutOrderReview( {
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					couponStatus={ couponStatus }
+					isSummary={ isSummary }
+					isWhiteGloveOffer={ isWhiteGloveOffer }
 				/>
 			</WPOrderReviewSection>
 
@@ -67,15 +73,15 @@ export default function WPCheckoutOrderReview( {
 }
 
 WPCheckoutOrderReview.propTypes = {
-	summary: PropTypes.bool,
+	isSummary: PropTypes.bool,
 	className: PropTypes.string,
-	removeItem: PropTypes.func.isRequired,
-	removeCoupon: PropTypes.func.isRequired,
+	removeItem: PropTypes.func,
+	removeCoupon: PropTypes.func,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	siteUrl: PropTypes.string,
 	couponStatus: PropTypes.string,
-	couponFieldStateProps: PropTypes.object,
+	couponFieldStateProps: PropTypes.object.isRequired,
 	variantSelectOverride: PropTypes.array,
 };
 
@@ -89,7 +95,7 @@ function CouponFieldArea( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
-	if ( isPurchaseFree ) {
+	if ( isPurchaseFree || couponStatus === 'applied' ) {
 		return null;
 	}
 
@@ -119,15 +125,27 @@ const DomainURL = styled.div`
 	font-size: 14px;
 	margin-top: -10px;
 	word-break: break-word;
+
+	.is-summary & {
+		margin-bottom: 10px;
+	}
 `;
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
+	margin: 10px 0 20px;
+
+	.is-summary & {
+		margin-bottom: 0;
+	}
 `;
 
 const CouponField = styled( Coupon )`
-	margin: 20px 30px 0 0;
-	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	margin: 20px 30px 20px 0;
+
+	.is-summary & {
+		margin: 10px 0 0;
+	}
 `;
 
 const CouponEnableButton = styled.button`

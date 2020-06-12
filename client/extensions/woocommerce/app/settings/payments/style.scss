@@ -78,7 +78,7 @@
 	justify-content: flex-start;
 	background: var( --color-neutral-0 );
 	font-weight: 600;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	.list-item-field {
 		padding-top: 12px;
@@ -103,7 +103,7 @@
 	}
 
 	p.payments__method-information p.payments__method-name {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.payments__method-name-paypal,
@@ -131,7 +131,7 @@
 	}
 
 	.payments__method-information {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.payments__method-method-suggested-container,

@@ -40,7 +40,11 @@ export async function lazyLoadDependencies() {
 		const lasagnaMiddleware = await import(
 			/* webpackChunkName: "lasagnaMiddleware" */ 'state/lasagna/middleware.js'
 		);
+		const seenPostsMiddleware = await import(
+			/* webpackChunkName: "seenPostsMiddleware" */ 'state/reader/seen-posts/middleware.js'
+		);
 		addMiddleware( lasagnaMiddleware.default );
+		addMiddleware( seenPostsMiddleware.default );
 	}
 }
 

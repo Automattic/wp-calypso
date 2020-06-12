@@ -40,9 +40,9 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Numbers', 'full-site-editing' ),
-	'content' => sprintf(
+	'title'      => esc_html__( 'Numbers', 'full-site-editing' ),
+	'categories' => array( 'text' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( '1,652', 'full-site-editing' ),
 		esc_html__( 'Volunteers available', 'full-site-editing' ),

@@ -4,12 +4,12 @@
 
 	&.is-single-line,
 	&.is-single-line .comments__comment-content {
-		max-height: 15px * 1.6;
+		max-height: $font-body * 1.6;
 	}
 
 	&.is-excerpt,
 	&.is-excerpt .comments__comment-content {
-		max-height: 16px * 1.4375 * 3; // Needs to be exactly 69px so a 3-liner only and 3-liner excerpt align
+		max-height: $font-body * 1.6 * 3; // 3 lines
 	}
 
 	&.is-single-line .comments__comment-content,

@@ -97,12 +97,18 @@ export class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
+			let productName = primaryPurchase.productName;
+
+			if ( 'white-glove' === displayMode ) {
+				productName = `${ productName } (with Expert guidance)`;
+			}
+
 			return preventWidows(
 				translate(
 					'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
 						"It's doing somersaults in excitement!",
 					{
-						args: { productName: primaryPurchase.productName },
+						args: { productName: productName },
 						components: { strong: <strong /> },
 					}
 				)
