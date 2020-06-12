@@ -482,10 +482,10 @@ function SavingsList( { item } ) {
 		return null;
 	}
 	return (
-		<React.Fragment>
+		<LineItemMeta className="savings-list">
 			{ savingsItems.map( ( savingsItem ) => (
 				<LineItemMeta key={ savingsItem }>{ savingsItem }</LineItemMeta>
 			) ) }
-		</React.Fragment>
+		</LineItemMeta>
 	);
 }
