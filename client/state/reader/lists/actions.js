@@ -6,6 +6,9 @@ import {
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
+	READER_LIST_ITEM_DELETE_FEED,
+	READER_LIST_ITEM_DELETE_SITE,
+	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
@@ -27,6 +30,8 @@ import {
 } from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/read/lists/items';
+import 'state/data-layer/wpcom/read/lists/feeds/delete';
+import 'state/data-layer/wpcom/read/lists/tags/delete';
 import 'state/reader/init';
 
 /**
@@ -296,6 +301,31 @@ export const receiveReaderListItems = ( listId, listItems ) => ( {
 	type: READER_LIST_ITEMS_RECEIVE,
 	listId,
 	listItems,
+} );
+
+export const deleteReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
+	type: READER_LIST_ITEM_DELETE_FEED,
+	listId,
+	listOwner,
+	listSlug,
+	feedId,
+} );
+
+export const deleteReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
+	type: READER_LIST_ITEM_DELETE_SITE,
+	listId,
+	listOwner,
+	listSlug,
+	siteId,
+} );
+
+export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug ) => ( {
+	type: READER_LIST_ITEM_DELETE_TAG,
+	listId,
+	listOwner,
+	listSlug,
+	tagId,
+	tagSlug,
 } );
 
 function createQuery( owner, slug ) {
