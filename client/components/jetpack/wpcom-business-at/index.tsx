@@ -40,7 +40,7 @@ const contentPerPrimaryProduct = {
 		documentHeadTitle: 'Activate Jetpack Backup now',
 		header: translate( 'Jetpack Backup' ),
 		primaryPromo: {
-			title: translate( 'Get time travel for your site with Jetpack Backup.' ),
+			title: translate( 'Get time travel for your site with Jetpack Backup' ),
 			image: { path: JetpackBackupSVG },
 			content: translate(
 				'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
