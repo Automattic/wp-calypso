@@ -2,85 +2,127 @@
  * External dependencies
  */
 import * as React from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import {
-	getListByOwnerAndSlug,
-	getListItems,
-	isCreatingList as isCreatingListSelector,
-	isUpdatingList as isUpdatingListSelector,
-} from 'calypso/state/reader/lists/selectors';
-import FormattedHeader from 'calypso/components/formatted-header';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import FormButton from 'calypso/components/forms/form-button';
-import QueryReaderList from 'calypso/components/data/query-reader-list';
-import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
-import Main from 'calypso/components/main';
-import {
-	addReaderListFeedByUrl,
-	createReaderList,
-	updateReaderList,
-} from 'calypso/state/reader/lists/actions';
-import ReaderExportButton from 'calypso/blocks/reader-export-button';
-import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
+import { getListByOwnerAndSlug, getListItems } from 'state/reader/lists/selectors';
+import FormattedHeader from 'components/formatted-header';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormRadio from 'components/forms/form-radio';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
+import QueryReaderList from 'components/data/query-reader-list';
+import QueryReaderListItems from 'components/data/query-reader-list-items';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Main from 'components/main';
+import ReaderExportButton from 'blocks/reader-export-button';
 import ListItem from './list-item';
-import ListForm from './list-form';
+import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function ReaderListCreate() {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const isCreatingList = useSelector( isCreatingListSelector );
+function Details( { list } ) {
 	return (
-		<Main>
-			<FormattedHeader headerText={ translate( 'Create List' ) } />
-			<ListForm
-				isCreateForm
-				isSubmissionDisabled={ isCreatingList }
-				onSubmit={ ( list ) => dispatch( createReaderList( list ) ) }
-			/>
-		</Main>
+		<>
+			<Card>
+				<FormSectionHeading>List Details</FormSectionHeading>
+
+				<FormFieldset>
+					<FormLabel htmlFor="list-name">Name</FormLabel>
+					<FormTextInput id="list-name" name="list-name" value={ list.title } />
+					<FormSettingExplanation>The name of the list.</FormSettingExplanation>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="list-slug">Slug</FormLabel>
+					<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
+					<FormSettingExplanation>
+						The slug for the list. This is used to build the URL to the list.
+					</FormSettingExplanation>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLegend>Visibility</FormLegend>
+					<FormLabel>
+						<FormRadio value="public" checked={ list.is_public } />
+						<span>Everyone can view this list</span>
+					</FormLabel>
+
+					<FormLabel>
+						<FormRadio value="private" checked={ ! list.is_public } />
+						<span>Only I can view this list</span>
+					</FormLabel>
+					<FormSettingExplanation>
+						Don't worry, posts from private sites will only appear to those with access. Adding a
+						private site to a public list will not make posts from that site accessible to everyone.
+					</FormSettingExplanation>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="list-description">Description</FormLabel>
+					<FormTextarea
+						name="list-description"
+						id="list-description"
+						placeholder="What's your list about?"
+						value={ list.description }
+					/>
+				</FormFieldset>
+				<FormButtonsBar>
+					<FormButton primary>Save</FormButton>
+				</FormButtonsBar>
+			</Card>
+
+			<Card>
+				<FormSectionHeading>DANGER!!</FormSectionHeading>
+				<Button scary primary>
+					DELETE LIST FOREVER
+				</Button>
+			</Card>
+		</>
+	);
+}
+
+function Items( { list, listItems, owner } ) {
+	if ( ! listItems ) {
+		return <Card>Loading...</Card>;
+	}
+	return listItems.map( ( item ) => (
+		<ListItem key={ item.ID } owner={ owner } list={ list } item={ item } />
+	) );
+}
+
+function Export( { list } ) {
+	return (
+		<Card>
+			<p>You can export this list to use on other services. The file will be in OPML format.</p>
+			<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
+		</Card>
 	);
 }
 
 function ReaderListEdit( props ) {
-	const { selectedSection } = props;
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const isUpdatingList = useSelector( isUpdatingListSelector );
-	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
-	const listItems = useSelector( ( state ) =>
-		list ? getListItems( state, list.ID ) : undefined
-	);
-	const addFeedText = React.useRef( null );
-
+	const { list, listItems, selectedSection, translate } = props;
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<Main>
-				<FormattedHeader
-					headerText={ translate( 'Manage %(listName)s', {
-						args: { listName: list?.title || props.slug },
-					} ) }
-				/>
+				<FormattedHeader headerText={ `Manage ${ list?.title || props.slug }` } />
 				{ ! list && <Card>Loading...</Card> }
 				{ list && (
 					<>
@@ -110,84 +152,14 @@ function ReaderListEdit( props ) {
 								) }
 							</NavTabs>
 						</SectionNav>
-						{ selectedSection === 'details' && (
-							<>
-								<ListForm
-									list={ list }
-									isSubmissionDisabled={ isUpdatingList }
-									onSubmit={ ( formList ) => dispatch( updateReaderList( formList ) ) }
-								/>
-
-								<Card>
-									<FormSectionHeading>DANGER!!</FormSectionHeading>
-									<Button scary primary>
-										DELETE LIST FOREVER
-									</Button>
-								</Card>
-							</>
-						) }
-						{ selectedSection === 'items' && (
-							<>
-								<Card>
-									<FormSectionHeading>Add a feed</FormSectionHeading>
-									<FormFieldset>
-										<FormLabel htmlFor="new-feed-url">URL</FormLabel>
-										<FormTextInput id="new-feed-url" name="new-feed-url" inputRef={ addFeedText } />
-										<FormSettingExplanation>
-											The address of a site or RSS feed
-										</FormSettingExplanation>
-									</FormFieldset>
-									<FormButtonsBar>
-										<FormButton
-											primary
-											onClick={ () => {
-												if ( addFeedText.current?.value ) {
-													dispatch(
-														addReaderListFeedByUrl(
-															list.ID,
-															list.owner,
-															list.slug,
-															addFeedText.current.value
-														)
-													);
-												}
-											} }
-										>
-											Add
-										</FormButton>
-									</FormButtonsBar>
-								</Card>
-								{ props.listItems?.map( ( item ) => (
-									<ListItem key={ item.ID } owner={ props.owner } list={ list } item={ item } />
-								) ) }
-							</>
-						) }
-
-						{ selectedSection === 'export' && (
-							<Card>
-								<p>
-									{ translate(
-										'You can export this list to use on other services. The file will be in OPML format.'
-									) }
-								</p>
-								<ReaderExportButton
-									exportType={ READER_EXPORT_TYPE_LIST }
-									listId={ list.ID }
-									filename={ `reader-list-${ props.slug
-										.replace( /[^a-z0-9]/gi, '-' )
-										.toLowerCase() }.opml` }
-								/>
-							</Card>
-						) }
+						{ selectedSection === 'details' && <Details { ...props } /> }
+						{ selectedSection === 'items' && <Items { ...props } /> }
+						{ selectedSection === 'export' && <Export { ...props } /> }
 					</>
 				) }
 			</Main>
 		</>
 	);
-}
-
-function ReaderListManage( props ) {
-	return props.isCreateForm ? ReaderListCreate() : ReaderListEdit( props );
 }
 
 export default connect( ( state, ownProps ) => {
@@ -197,4 +169,4 @@ export default connect( ( state, ownProps ) => {
 		list,
 		listItems,
 	};
-} )( ReaderListManage );
+} )( localize( ReaderListEdit ) );
