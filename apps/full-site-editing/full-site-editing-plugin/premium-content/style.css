@@ -5,35 +5,30 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-.wp-block-premium-content-container {
-	padding: 2px;
+/** Notices close button **/
+.wp-block-premium-content-container .components-notice-list .components-notice__content {
+	margin: 0;
 }
 
-.premium-content-logged-out-view-button {
-	margin: 5px;
+/* Login button */
+
+.wp-block-premium-content-login-button {
+	margin-bottom: 8px;
 }
+
+/* Legacy Subscribe/Login buttons */
 
 .wp-block-premium-content-logged-out-view__buttons {
 	display: flex;
-	margin: 5px;
+	margin-top: 20px;
 }
 
-.premium-content-logged-out-view-button.wp-block-button .wp-block-button__link,
-.wp-block-premium-content-logged-out-view__buttons .wp-block-button .wp-block-button__link {
+.wp-block-premium-content-logged-out-view__buttons .wp-block-button__link {
 	margin-right: 20px;
 }
 
-@media (min-width: 660px) {
-	.premium-content-logged-out-view-button.wp-block-button .wp-block-button__link,
-	.wp-block-premium-content-logged-out-view__buttons .wp-block-button .wp-block-button__link {
+@media ( min-width: 660px ) {
+	.wp-block-premium-content-logged-out-view__buttons .wp-block-button__link {
 		min-width: 200px;
 	}
 }
-
-.wp-block-premium-content-logged-out-view p:last-child,
-.wp-block-premium-content-logged-out-view h3 {
-	margin-bottom: 20px;
-}
-
-/** Notices close button **/
-.wp-block-premium-content-container .components-notice-list .components-notice__content { margin: 0; }

@@ -6,49 +6,31 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Context from '../container/context';
-import SubmitButtons from './submit-buttons';
 
 /**
  * Block edit function
  *
  * @typedef { import('./').Attributes } Attributes
- * @typedef {object} Props
+ * @typedef { object } Props
  * @property { boolean } isSelected
  * @property { string } className
  * @property { string } clientId
  * @property { string } containerClientId
  * @property { Attributes } attributes
- * @property { (attributes: Partial<Attributes>) => void } setAttributes
- * @property { () => void } selectBlock
+ * @property { Function } setAttributes
+ * @property { Function } selectBlock
  *
- * @param { Props } props
+ * @param { Props } props Properties
  */
-function Edit( props ) {
+function Edit( { selectBlock } ) {
 	useEffect( () => {
-		props.selectBlock();
+		selectBlock();
 	}, [] );
-
-	const buttons = (
-		<SubmitButtons
-			{ ...{
-				attributes: pick( props.attributes, [
-					'subscribeButtonText',
-					'loginButtonText',
-					'backgroundButtonColor',
-					'textButtonColor',
-					'customBackgroundButtonColor',
-					'customTextButtonColor',
-				] ),
-				setAttributes: props.setAttributes,
-			} }
-		/>
-	);
 
 	return (
 		<Context.Consumer>
@@ -73,9 +55,9 @@ function Edit( props ) {
 									),
 								},
 							],
+							[ 'premium-content/buttons' ],
 						] }
 					/>
-					{ buttons }
 				</div>
 			) }
 		</Context.Consumer>
@@ -84,19 +66,18 @@ function Edit( props ) {
 
 export default compose( [
 	withSelect( ( select, props ) => {
+		const { getBlockHierarchyRootClientId } = select( 'core/block-editor' );
 		return {
 			// @ts-ignore difficult to type with JSDoc
-			containerClientId: select( 'core/block-editor' ).getBlockHierarchyRootClientId(
-				props.clientId
-			),
+			containerClientId: getBlockHierarchyRootClientId( props.clientId ),
 		};
 	} ),
 	withDispatch( ( dispatch, props ) => {
-		const blockEditor = dispatch( 'core/block-editor' );
+		const { selectBlock } = dispatch( 'core/block-editor' );
 		return {
 			selectBlock() {
 				// @ts-ignore difficult to type with JSDoc
-				blockEditor.selectBlock( props.containerClientId );
+				selectBlock( props.containerClientId );
 			},
 		};
 	} ),
