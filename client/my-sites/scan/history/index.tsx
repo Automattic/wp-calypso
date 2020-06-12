@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -14,6 +15,7 @@ import FormattedHeader from 'components/formatted-header';
 import ThreatHistoryList from 'components/jetpack/threat-history-list';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import ScanNavigation from '../navigation';
@@ -30,14 +32,19 @@ interface Props {
 export default function ScanHistoryPage( { filter }: Props ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const isJetpackPlatform = isJetpackCloud();
 
 	return (
-		<Main className="history">
+		<Main
+			className={ classNames( 'history', {
+				is_jetpackcom: isJetpackPlatform,
+			} ) }
+		>
 			<DocumentHead title={ translate( 'Scan' ) } />
 			<SidebarNavigation />
 			<QueryJetpackScanHistory siteId={ siteId } />
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
-			<FormattedHeader headerText={ 'Jetpack Scan' } align="left" />
+			{ ! isJetpackPlatform && <FormattedHeader headerText={ 'Jetpack Scan' } align="left" /> }
 			<ScanNavigation section={ 'history' } />
 			<section className="history__body">
 				<p className="history__description">

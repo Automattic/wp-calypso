@@ -235,6 +235,7 @@ class ScanPage extends Component< Props > {
 
 	render() {
 		const { siteId } = this.props;
+		const isJetpackPlatform = isJetpackCloud();
 
 		if ( ! siteId ) {
 			return;
@@ -242,16 +243,15 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<Main
-				classNames={ classNames( {
-					scan__main: true,
-					is_jetpackcom: isJetpackCloud(),
+				className={ classNames( 'scan', {
+					is_jetpackcom: isJetpackPlatform,
 				} ) }
 			>
 				<DocumentHead title="Scan" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				<FormattedHeader headerText={ 'Jetpack Scan' } align="left" />
+				{ ! isJetpackPlatform && <FormattedHeader headerText={ 'Jetpack Scan' } align="left" /> }
 				<ScanNavigation section={ 'scanner' } />
 				<Card>
 					<div className="scan__content">{ this.renderScanState() }</div>
