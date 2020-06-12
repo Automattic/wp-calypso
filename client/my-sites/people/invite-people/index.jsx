@@ -83,8 +83,16 @@ class InvitePeople extends React.Component {
 		InvitesSentStore.off( 'change', this.refreshFormState );
 	}
 
-	UNSAFE_componentWillReceiveProps() {
-		this.setState( this.resetState() );
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		if (
+			this.props.siteId !== nextProps.siteId ||
+			this.props.needsVerification !== nextProps.needsVerification ||
+			this.props.showSSONotice !== nextProps.showSSONotice ||
+			this.props.isJetpack !== nextProps.isJetpack ||
+			this.props.isSiteAutomatedTransfer !== nextProps.isSiteAutomatedTransfer
+		) {
+			this.setState( this.resetState() );
+		}
 	}
 
 	resetState = () => {
