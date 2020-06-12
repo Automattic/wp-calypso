@@ -50,9 +50,10 @@ $markup = '
 ';
 
 return array(
-   '__file'  => 'wp_block',
-   'title'   => esc_html__( 'Call to Action', 'full-site-editing' ),
-   'content' => sprintf(
+   '__file'     => 'wp_block',
+   'title'      => esc_html__( 'Call to Action', 'full-site-editing' ),
+   'categories' => array( 'call-to-action' ),
+   'content'    => sprintf(
       $markup,
       esc_html__( 'Want to volunteer?', 'full-site-editing' ),
       esc_html__( 'We’ve had an incredible response so far, and are doing everything we can to respond to everyone who wants to volunteer in one of our community programmes.', 'full-site-editing' ),

@@ -74,9 +74,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Portraits and Text', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Portraits and Text', 'full-site-editing' ),
+	'categories' => array( 'images' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Natsuho Kishi', 'full-site-editing' ),
 		esc_html__( 'Design Director at EJ Solutions focusing on raising the standard of communication online. She has been leading several award-winning branding projects. including Strn.', 'full-site-editing' ),

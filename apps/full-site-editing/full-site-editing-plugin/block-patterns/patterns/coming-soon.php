@@ -30,9 +30,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Coming Soon', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'Coming Soon', 'full-site-editing' ),
+	'categories' => array( 'contact', 'text' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Coming Soon', 'full-site-editing' ),
 		esc_html__( 'Come back here when our journey begins.', 'full-site-editing' ),

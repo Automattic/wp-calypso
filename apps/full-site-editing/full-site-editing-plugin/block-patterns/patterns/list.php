@@ -26,9 +26,10 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'List', 'full-site-editing' ),
-	'content' => sprintf(
+	'__file'     => 'wp_block',
+	'title'      => esc_html__( 'List', 'full-site-editing' ),
+	'categories' => array( 'text' ),
+	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Beth Silva', 'full-site-editing' ),
 		esc_html__( 'Christine Russell', 'full-site-editing' ),

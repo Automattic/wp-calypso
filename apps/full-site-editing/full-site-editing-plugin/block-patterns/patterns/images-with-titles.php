@@ -60,9 +60,10 @@ $markup = '
 ';
 
 return array(
-   '__file'  => 'wp_block',
-   'title'   => esc_html__( 'Image with Titles', 'full-site-editing' ),
-   'content' => sprintf(
+   '__file'     => 'wp_block',
+   'title'      => esc_html__( 'Image with Titles', 'full-site-editing' ),
+   'categories' => array( 'gallery' ),
+   'content'    => sprintf(
       $markup,
       esc_html__( 'Brice - 2020', 'full-site-editing' ),
       esc_html__( 'Vesta Magazine - 2019', 'full-site-editing' ),
