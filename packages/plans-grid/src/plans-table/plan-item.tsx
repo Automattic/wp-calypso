@@ -96,8 +96,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const hasDomain = !! domain;
-
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
 
@@ -131,20 +129,10 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</Button>
 				</div>
 				<div className="plan-item__domain">
-					{ domain && ! domain.is_free ? (
-						<div className={ domainMessage.className }>
-							{ domainMessage.icon }
-							{ domainMessage.domainMessage }
-						</div>
-					) : (
-						<Button isLink className={ domainMessage.className } onClick={ onPickDomainClick }>
-							{ domainMessage.icon }
-							{ domainMessage.domainMessage }
-						</Button>
-					) }
-					{ hasDomain && isFree && (
-						<div className="plan-item__domain-name">{ __( 'Ads included on site' ) }</div>
-					) }
+					<Button className={ domainMessage.className } onClick={ onPickDomainClick }>
+						{ domainMessage.icon }
+						{ domainMessage.domainMessage }
+					</Button>
 				</div>
 				<div className="plan-item__features">
 					<ul className="plan-item__feature-item-group">
