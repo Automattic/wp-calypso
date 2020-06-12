@@ -120,8 +120,8 @@ export function domainManagementEmailForwarding( siteName, domainName ) {
 	return domainManagementEditBase( siteName, domainName, 'email-forwarding' );
 }
 
-export function domainManagementChangeSiteAddress( siteName, domainName ) {
-	return domainManagementEditBase( siteName, domainName, 'change-site-address' );
+export function domainManagementChangeSiteAddress( siteName, domainName, relativeTo = null ) {
+	return domainManagementEditBase( siteName, domainName, 'change-site-address', relativeTo );
 }
 
 export function domainManagementNameServers( siteName, domainName, relativeTo = null ) {

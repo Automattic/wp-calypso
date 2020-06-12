@@ -75,12 +75,9 @@ export default function () {
 		domainManagementController.domainManagementEmailForwardingRedirect
 	);
 
-	page(
-		paths.domainManagementChangeSiteAddress( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementChangeSiteAddress,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementChangeSiteAddress,
+		domainManagementController.domainManagementChangeSiteAddress
 	);
 
 	registerStandardDomainManagementPages(

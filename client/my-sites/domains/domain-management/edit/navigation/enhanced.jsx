@@ -389,7 +389,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getSiteAddressChange() {
-		const { domain, selectedSite, translate } = this.props;
+		const { domain, selectedSite, translate, currentRoute } = this.props;
 		const { isWpcomStagingDomain } = domain;
 
 		if ( isWpcomStagingDomain ) {
@@ -398,7 +398,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name ) }
+				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
 				text={ translate( 'Change site address' ) }
