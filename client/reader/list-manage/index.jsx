@@ -36,6 +36,85 @@ import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
  */
 import './style.scss';
 
+function Details( { list } ) {
+	return (
+		<>
+			<Card>
+				<FormSectionHeading>List Details</FormSectionHeading>
+
+				<FormFieldset>
+					<FormLabel htmlFor="list-name">Name</FormLabel>
+					<FormTextInput id="list-name" name="list-name" value={ list.title } />
+					<FormSettingExplanation>The name of the list.</FormSettingExplanation>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="list-slug">Slug</FormLabel>
+					<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
+					<FormSettingExplanation>
+						The slug for the list. This is used to build the URL to the list.
+					</FormSettingExplanation>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLegend>Visibility</FormLegend>
+					<FormLabel>
+						<FormRadio value="public" checked={ list.is_public } />
+						<span>Everyone can view this list</span>
+					</FormLabel>
+
+					<FormLabel>
+						<FormRadio value="private" checked={ ! list.is_public } />
+						<span>Only I can view this list</span>
+					</FormLabel>
+					<FormSettingExplanation>
+						Don't worry, posts from private sites will only appear to those with access. Adding a
+						private site to a public list will not make posts from that site accessible to everyone.
+					</FormSettingExplanation>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="list-description">Description</FormLabel>
+					<FormTextarea
+						name="list-description"
+						id="list-description"
+						placeholder="What's your list about?"
+						value={ list.description }
+					/>
+				</FormFieldset>
+				<FormButtonsBar>
+					<FormButton primary>Save</FormButton>
+				</FormButtonsBar>
+			</Card>
+
+			<Card>
+				<FormSectionHeading>DANGER!!</FormSectionHeading>
+				<Button scary primary>
+					DELETE LIST FOREVER
+				</Button>
+			</Card>
+		</>
+	);
+}
+
+function Items( { list, listItems, owner } ) {
+	if ( ! listItems ) {
+		return <Card>Loading...</Card>;
+	}
+	return listItems.map( ( item ) => (
+		<ListItem key={ item.ID } owner={ owner } list={ list } item={ item } />
+	) );
+}
+
+function Export( { list } ) {
+	return (
+		<Card>
+			<p>You can export this list to use on other services. The file will be in OPML format.</p>
+			<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
+		</Card>
+	);
+}
+
 function ReaderListEdit( props ) {
 	const { list, listItems, selectedSection, translate } = props;
 	return (
@@ -73,78 +152,9 @@ function ReaderListEdit( props ) {
 								) }
 							</NavTabs>
 						</SectionNav>
-						{ selectedSection === 'details' && (
-							<>
-								<Card>
-									<FormSectionHeading>List Details</FormSectionHeading>
-
-									<FormFieldset>
-										<FormLabel htmlFor="list-name">Name</FormLabel>
-										<FormTextInput id="list-name" name="list-name" value={ list.title } />
-										<FormSettingExplanation>The name of the list.</FormSettingExplanation>
-									</FormFieldset>
-
-									<FormFieldset>
-										<FormLabel htmlFor="list-slug">Slug</FormLabel>
-										<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
-										<FormSettingExplanation>
-											The slug for the list. This is used to build the URL to the list.
-										</FormSettingExplanation>
-									</FormFieldset>
-
-									<FormFieldset>
-										<FormLegend>Visibility</FormLegend>
-										<FormLabel>
-											<FormRadio value="public" checked={ list.is_public } />
-											<span>Everyone can view this list</span>
-										</FormLabel>
-
-										<FormLabel>
-											<FormRadio value="private" checked={ ! list.is_public } />
-											<span>Only I can view this list</span>
-										</FormLabel>
-										<FormSettingExplanation>
-											Don't worry, posts from private sites will only appear to those with access.
-											Adding a private site to a public list will not make posts from that site
-											accessible to everyone.
-										</FormSettingExplanation>
-									</FormFieldset>
-
-									<FormFieldset>
-										<FormLabel htmlFor="list-description">Description</FormLabel>
-										<FormTextarea
-											name="list-description"
-											id="list-description"
-											placeholder="What's your list about?"
-											value={ list.description }
-										/>
-									</FormFieldset>
-									<FormButtonsBar>
-										<FormButton primary>Save</FormButton>
-									</FormButtonsBar>
-								</Card>
-
-								<Card>
-									<FormSectionHeading>DANGER!!</FormSectionHeading>
-									<Button scary primary>
-										DELETE LIST FOREVER
-									</Button>
-								</Card>
-							</>
-						) }
-						{ selectedSection === 'items' &&
-							props.listItems?.map( ( item ) => (
-								<ListItem key={ item.ID } owner={ props.owner } list={ list } item={ item } />
-							) ) }
-						{ selectedSection === 'export' && (
-							<Card>
-								<p>
-									You can export this list to use on other services. The file will be in OPML
-									format.
-								</p>
-								<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
-							</Card>
-						) }
+						{ selectedSection === 'details' && <Details { ...props } /> }
+						{ selectedSection === 'items' && <Items { ...props } /> }
+						{ selectedSection === 'export' && <Export { ...props } /> }
 					</>
 				) }
 			</Main>
