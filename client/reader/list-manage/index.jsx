@@ -2,13 +2,14 @@
  * External dependencies
  */
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Dialog } from '@automattic/components';
+import { deleteReaderList } from 'state/reader/lists/actions';
 import { getListByOwnerAndSlug, getListItems } from 'state/reader/lists/selectors';
 import FormattedHeader from 'components/formatted-header';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
@@ -36,63 +37,94 @@ import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
  */
 import './style.scss';
 
-function Details( { list } ) {
+function Details( { deleteState, setDeleteState, list } ) {
+	const dispatch = useDispatch();
+
 	return (
 		<>
-			<Card>
-				<FormSectionHeading>List Details</FormSectionHeading>
+			{ deleteState === '' && (
+				<>
+					<Card>
+						<FormSectionHeading>List Details</FormSectionHeading>
 
-				<FormFieldset>
-					<FormLabel htmlFor="list-name">Name</FormLabel>
-					<FormTextInput id="list-name" name="list-name" value={ list.title } />
-					<FormSettingExplanation>The name of the list.</FormSettingExplanation>
-				</FormFieldset>
+						<FormFieldset>
+							<FormLabel htmlFor="list-name">Name</FormLabel>
+							<FormTextInput id="list-name" name="list-name" value={ list.title } />
+							<FormSettingExplanation>The name of the list.</FormSettingExplanation>
+						</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel htmlFor="list-slug">Slug</FormLabel>
-					<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
-					<FormSettingExplanation>
-						The slug for the list. This is used to build the URL to the list.
-					</FormSettingExplanation>
-				</FormFieldset>
+						<FormFieldset>
+							<FormLabel htmlFor="list-slug">Slug</FormLabel>
+							<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
+							<FormSettingExplanation>
+								The slug for the list. This is used to build the URL to the list.
+							</FormSettingExplanation>
+						</FormFieldset>
 
-				<FormFieldset>
-					<FormLegend>Visibility</FormLegend>
-					<FormLabel>
-						<FormRadio value="public" checked={ list.is_public } />
-						<span>Everyone can view this list</span>
-					</FormLabel>
+						<FormFieldset>
+							<FormLegend>Visibility</FormLegend>
+							<FormLabel>
+								<FormRadio value="public" checked={ list.is_public } />
+								<span>Everyone can view this list</span>
+							</FormLabel>
 
-					<FormLabel>
-						<FormRadio value="private" checked={ ! list.is_public } />
-						<span>Only I can view this list</span>
-					</FormLabel>
-					<FormSettingExplanation>
-						Don't worry, posts from private sites will only appear to those with access. Adding a
-						private site to a public list will not make posts from that site accessible to everyone.
-					</FormSettingExplanation>
-				</FormFieldset>
+							<FormLabel>
+								<FormRadio value="private" checked={ ! list.is_public } />
+								<span>Only I can view this list</span>
+							</FormLabel>
+							<FormSettingExplanation>
+								Don't worry, posts from private sites will only appear to those with access. Adding
+								a private site to a public list will not make posts from that site accessible to
+								everyone.
+							</FormSettingExplanation>
+						</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel htmlFor="list-description">Description</FormLabel>
-					<FormTextarea
-						name="list-description"
-						id="list-description"
-						placeholder="What's your list about?"
-						value={ list.description }
-					/>
-				</FormFieldset>
-				<FormButtonsBar>
-					<FormButton primary>Save</FormButton>
-				</FormButtonsBar>
-			</Card>
+						<FormFieldset>
+							<FormLabel htmlFor="list-description">Description</FormLabel>
+							<FormTextarea
+								name="list-description"
+								id="list-description"
+								placeholder="What's your list about?"
+								value={ list.description }
+							/>
+						</FormFieldset>
+						<FormButtonsBar>
+							<FormButton primary>Save</FormButton>
+						</FormButtonsBar>
+					</Card>
 
-			<Card>
-				<FormSectionHeading>DANGER!!</FormSectionHeading>
-				<Button scary primary>
-					DELETE LIST FOREVER
-				</Button>
-			</Card>
+					<Card>
+						<FormSectionHeading>DANGER!!</FormSectionHeading>
+						<Button scary primary onClick={ () => setDeleteState( 'confirming' ) }>
+							DELETE LIST FOREVER
+						</Button>
+					</Card>
+				</>
+			) }
+			{ deleteState === 'confirming' && (
+				<Dialog
+					isVisible={ true }
+					buttons={ [
+						{ action: 'cancel', label: 'Keep it!' },
+						{ action: 'delete', label: 'Delete List', isPrimary: true },
+					] }
+					onClose={ ( action ) => {
+						if ( action === 'delete' ) {
+							dispatch( deleteReaderList( list.ID, list.owner, list.slug ) );
+							// redirect to /read
+						}
+						setDeleteState( 'deleted' );
+					} }
+				>
+					<h1>Are you sure you want to delete this list?</h1>
+					<p>This action cannot be undone.</p>
+				</Dialog>
+			) }
+			{ deleteState === 'deleted' && (
+				<Card>
+					<FormSectionHeading>This list has been deleted</FormSectionHeading>
+				</Card>
+			) }
 		</>
 	);
 }
@@ -121,6 +153,7 @@ function Export( { list, listItems } ) {
 
 function ReaderListEdit( props ) {
 	const { list, listItems, selectedSection, translate } = props;
+	const [ deleteState, setDeleteState ] = React.useState( '' );
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
@@ -154,7 +187,9 @@ function ReaderListEdit( props ) {
 								</NavItem>
 							</NavTabs>
 						</SectionNav>
-						{ selectedSection === 'details' && <Details { ...props } /> }
+						{ selectedSection === 'details' && (
+							<Details deleteState={ deleteState } setDeleteState={ setDeleteState } { ...props } />
+						) }
 						{ selectedSection === 'items' && <Items { ...props } /> }
 						{ selectedSection === 'export' && <Export { ...props } /> }
 					</>

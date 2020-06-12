@@ -22,6 +22,7 @@ import {
 	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_FOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_SUCCESS,
+	READER_LIST_DELETE,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_DELETE_FEED,
 	READER_LIST_ITEM_DELETE_SITE,
@@ -58,6 +59,11 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			}
 			listForDescriptionChange.description = action.description;
 			return Object.assign( {}, state, keyBy( [ listForDescriptionChange ], 'ID' ) );
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
+				return state;
+			}
+			return omit( state, action.listId );
 	}
 	return state;
 } );
@@ -88,6 +94,11 @@ export const listItems = ( state = {}, action ) => {
 			return removeItemBy( state, action, ( item ) => item.tag_ID === action.tagId );
 		case READER_LIST_ITEM_DELETE_SITE:
 			return removeItemBy( state, action, ( item ) => item.site_ID === action.siteId );
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
+				return state;
+			}
+			return omit( state, action.listId );
 	}
 	return state;
 };
@@ -115,6 +126,10 @@ export const subscribedLists = withSchemaValidation(
 				// Remove the unfollowed list ID from subscribedLists
 				return filter( state, ( listId ) => {
 					return listId !== action.data.list.ID;
+				} );
+			case READER_LIST_DELETE:
+				return filter( state, ( listId ) => {
+					return listId !== action.listId;
 				} );
 		}
 		return state;

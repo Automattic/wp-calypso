@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import {
+	READER_LIST_DELETE,
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
@@ -29,6 +30,7 @@ import {
 	READER_LISTS_UNFOLLOW_FAILURE,
 } from 'state/reader/action-types';
 
+import 'state/data-layer/wpcom/read/lists/delete';
 import 'state/data-layer/wpcom/read/lists/items';
 import 'state/data-layer/wpcom/read/lists/feeds/delete';
 import 'state/data-layer/wpcom/read/lists/tags/delete';
@@ -326,6 +328,13 @@ export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug
 	listSlug,
 	tagId,
 	tagSlug,
+} );
+
+export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
+	type: READER_LIST_DELETE,
+	listId,
+	listOwner,
+	listSlug,
 } );
 
 function createQuery( owner, slug ) {
