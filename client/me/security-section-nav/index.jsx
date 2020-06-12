@@ -49,12 +49,6 @@ export default class extends React.Component {
 				title: i18n.translate( 'Account Recovery' ),
 				path: '/me/security/account-recovery',
 			},
-			config.isEnabled( 'security/security-checkup' )
-				? {
-						title: i18n.translate( 'Security Checkup' ),
-						path: '/me/security/security-checkup',
-				  }
-				: null,
 		].filter( ( tab ) => tab !== null );
 
 		return tabs;

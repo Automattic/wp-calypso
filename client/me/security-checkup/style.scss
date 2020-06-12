@@ -1,6 +1,6 @@
 .security-checkup__title-card {
-	h2 {
-		font-size: $font-title-medium;
+	h4 {
+		font-size: $font-title-small;
 	}
 }
 
@@ -21,5 +21,18 @@
 				font-size: $font-body-small;
 			}
 		}
+	}
+}
+
+.security-checkup {
+
+	.security-checkup__info {
+		margin-top: 15px;
+		h3: {
+			font-size: $font-title-small;
+		}
+	}
+	.vertical-nav {
+		margin-top: 0;
 	}
 }
