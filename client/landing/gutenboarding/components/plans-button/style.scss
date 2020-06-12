@@ -2,9 +2,6 @@
 
 .plans-button {
 	white-space: nowrap;
-	&[disabled]:hover {
-		color: $dark-gray-primary;
-	}
 
 	&.is-highlighted {
 		color: var( --studio-blue-40 );

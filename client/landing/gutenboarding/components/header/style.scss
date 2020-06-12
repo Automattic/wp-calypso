@@ -56,6 +56,13 @@ $padding--gutenboarding__header: $grid-unit-10;
 	width: 100%;
 	align-items: center;
 	font-size: $font-body-small;
+
+	&--compact {
+		.gutenboarding__header-domain-section,
+		.gutenboarding__header-plan-section {
+			visibility: hidden;
+		}
+	}
 }
 
 .gutenboarding__header-section-item {
@@ -89,22 +96,11 @@ $padding--gutenboarding__header: $grid-unit-10;
 	min-width: 0;
 }
 
-.gutenboarding__header-domain-picker-button-container {
-	max-width: 0;
-	opacity: 0;
-
-	&.has-content {
-		animation-duration: 5s;
-		animation-name: gutenboarding_domain-slide-in;
-		max-width: 1500px;
-		opacity: 1;
-		@include reduce-motion( 'animation' );
-	}
-
-	&.has-placeholder .gutenboarding__header-domain-picker-button-domain {
-		animation: loading-fade 1.6s ease-in-out infinite;
-		@include reduce-motion( 'animation' );
-	}
+.gutenboarding__header-domain-picker-button-container.no-domain {
+	animation-duration: 5s;
+	animation-name: gutenboarding_domain-slide-in;
+	max-width: 1500px;
+	@include reduce-motion( 'animation' );
 }
 
 .gutenboarding__header-site-title-section {

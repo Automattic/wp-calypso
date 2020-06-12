@@ -18,29 +18,6 @@
 	@include onboarding-heading-padding;
 }
 
-.style-preview__actions-mobile {
-	clear: both;
-	padding-top: 32px;
-
-	a.is-link {
-		@include onboarding-medium-text;
-		display: block;
-		text-align: center;
-		margin: 1em 0;
-		color: var( --studio-gray-40 );
-	}
-
-	&-continue-button.is-primary.is-large {
-		display: block;
-		width: 100%;
-		padding: 0 40px;
-	}
-
-	@include break-small {
-		display: none;
-	}
-}
-
 .style-preview__viewport-select {
 	@include break-small {
 		display: block;
@@ -51,69 +28,12 @@
 	}
 }
 
-.style-preview__actions {
-	display: none;
-	@include break-small {
-		display: block;
-	}
-}
-
-.style-preview__actions {
-	position: absolute;
-	top: 50%;
-	right: 0;
-	transform: translateY( -50% );
-
-	@include break-small {
-		display: flex;
-		flex-flow: column;
-	}
-
-	a.is-link {
-		@include onboarding-medium-text;
-		margin: 1em 0 0;
-		color: var( --studio-gray-40 );
-		order: 2;
-
-		@include break-xlarge {
-			margin: 0 1em;
-			order: 1;
-		}
-	}
-
-	&-continue-button.is-primary.is-large {
-		height: auto;
-		padding: 13px 29px;
-		display: block;
-		width: 100%;
-		order: 1;
-
-		@include break-xlarge {
-			display: inline-block;
-			width: auto;
-			order: 2;
-		}
-	}
-
-	@include break-xlarge {
-		display: block;
-	}
-}
-
 @supports ( display: grid ) {
 	.style-preview__header {
-		display: grid;
-		grid-template-areas: 'title viewport-select actions';
-		column-gap: 1em;
+		display: flex; // IE11 fix
+		justify-content: space-between;
 		align-items: center;
 		@include onboarding-heading-padding;
-
-		@include break-small {
-			grid-template-columns: auto auto 180px;
-		}
-		@include break-xlarge {
-			grid-template-columns: auto auto auto;
-		}
 	}
 
 	.style-preview__titles {
@@ -130,10 +50,6 @@
 
 	.style-preview__actions {
 		grid-area: actions;
-		position: initial;
-		top: 0;
-		left: 0;
-		transform: none;
 		justify-self: end;
 	}
 }
@@ -195,6 +111,12 @@
 }
 
 @supports ( display: grid ) {
+	.style-preview__header {
+		display: grid;
+		grid-template-areas: 'title viewport-select actions';
+		column-gap: 1em;
+	}
+
 	.style-preview__content {
 		display: grid;
 		width: 100%;
@@ -264,25 +186,6 @@
 		left: 50%;
 		transform: translate( -50%, -50% );
 		width: 100%;
-	}
-
-	// Extra specificity to override core style
-	// This is effectively a more-specific synonmy of the same selector
-	&.components-button {
-		color: var( --studio-gray-90 );
-		height: auto;
-		border-radius: 2px;
-
-		&.is-open {
-			border-radius: 2px 2px 0 0;
-		}
-
-		&:hover,
-		&:focus,
-		&:focus:not( :disabled ) {
-			color: var( --studio-gray-90 );
-			box-shadow: inset 0 0 0 1px var( --studio-gray-90 );
-		}
 	}
 
 	&.is-selected {

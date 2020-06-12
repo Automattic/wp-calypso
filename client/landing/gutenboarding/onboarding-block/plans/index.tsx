@@ -1,59 +1,56 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
+import { useHistory } from 'react-router-dom';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
 import PlansGrid from '@automattic/plans-grid';
 
 /**
  * Internal dependencies
  */
-import SignupForm from '../../components/signup-form';
-import Link from '../../components/link';
-import {
-	useSelectedPlan,
-	useShouldSiteBePublicOnSelectedPlan,
-} from '../../hooks/use-selected-plan';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
-import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import { USER_STORE } from '../../stores/user';
+import useStepNavigation from '../../hooks/use-step-navigation';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { usePath, Step } from '../../path';
-import ActionButtons from '../../components/action-buttons';
+import ActionButtons, { BackButton } from '../../components/action-buttons';
 import { Title, SubTitle } from '../../components/titles';
 
-export default function PlansStep() {
+interface Props {
+	isModal?: boolean;
+}
+
+const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __ } = useI18n();
-	const makePath = usePath();
+	const history = useHistory();
+	const { goBack, goNext } = useStepNavigation();
 
-	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-
-	const { createSite } = useDispatch( ONBOARD_STORE );
-	const { setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	const plan = useSelectedPlan();
-	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
 
-	const freeDomainSuggestion = useFreeDomainSuggestion();
-
-	useEffect( () => {
-		setHasUsedPlansStep( true );
+	//@TODO: do the same for domains step
+	const { setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
+	React.useEffect( () => {
+		! isModal && setHasUsedPlansStep( true );
 	}, [] );
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
-	const selectedPlanRef = useRef< string | undefined >();
-	useEffect( () => {
+	const selectedPlanRef = React.useRef< string | undefined >();
+	React.useEffect( () => {
 		selectedPlanRef.current = plan?.storeSlug;
 	}, [ plan ] );
 
-	useTrackStep( 'Plans', () => ( {
+	useTrackStep( isModal ? 'PlansModal' : 'Plans', () => ( {
 		selected_plan: selectedPlanRef.current,
 	} ) );
 
-	const handleCreateSite = ( username: string, bearerToken?: string ) => {
-		createSite( username, freeDomainSuggestion, bearerToken, shouldSiteBePublic );
+	const handleBack = () => ( isModal ? history.goBack() : goBack() );
+	const handlePlanSelect = () => {
+		if ( isModal ) {
+			history.goBack();
+		} else {
+			goNext();
+		}
 	};
 
 	const header = (
@@ -66,31 +63,17 @@ export default function PlansStep() {
 					) }
 				</SubTitle>
 			</div>
-			<ActionButtons
-				primaryButton={
-					<Button
-						isPrimary
-						disabled={ ! plan }
-						onClick={ () => {
-							currentUser ? handleCreateSite( currentUser.username ) : setShowSignupDialog( true );
-						} }
-					>
-						{ __( 'Continue' ) }
-					</Button>
-				}
-				secondaryButton={
-					<Link className="plans__back-link" isLink to={ makePath( Step.Style ) }>
-						{ __( 'Go back' ) }
-					</Link>
-				}
-			/>
+			<ActionButtons>
+				<BackButton onClick={ handleBack } />
+			</ActionButtons>
 		</>
 	);
 
 	return (
 		<div className="gutenboarding-page plans">
-			<PlansGrid header={ header } currentPlan={ plan } />
-			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
+			<PlansGrid header={ header } onPlanSelect={ handlePlanSelect } />
 		</div>
 	);
-}
+};
+
+export default PlansStep;

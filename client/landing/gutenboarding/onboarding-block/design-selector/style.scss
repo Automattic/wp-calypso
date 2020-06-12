@@ -6,39 +6,22 @@
 .design-selector {
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
+	padding-bottom: $gutenboarding-footer-height;
+
+	&.gutenboarding-page {
+		max-width: none;
+	}
 
 	.design-selector__header {
-		display: block;
 		@include onboarding-heading-padding;
 
-		@include break-large {
-			display: flex;
-			align-items: center;
-		}
-
-		@include onboarding-break-gigantic {
-			display: flex;
-			align-items: center;
-		}
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	.design-selector__heading {
 		flex-grow: 1;
-	}
-
-	.design-selector__start-over-button {
-		&.is-link {
-			color: var( --color-text-subtle );
-			padding-top: 1em;
-
-			@include break-large {
-				padding-top: 0;
-			}
-
-			@include onboarding-break-gigantic {
-				padding-top: 0;
-			}
-		}
 	}
 
 	.design-selector__grid {

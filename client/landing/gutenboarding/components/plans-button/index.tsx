@@ -2,37 +2,30 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button } from '@wordpress/components';
+import classnames from 'classnames';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
-import PlansModal from '../plans-modal';
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
-import { useCurrentStep, Step } from '../../path';
+import { usePath, Step } from '../../path';
+import Link from '../link';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...buttonProps } ) => {
+const PlansButton: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const currentStep = useCurrentStep();
+	const makePath = usePath();
 
 	// mobile first to match SCSS media query https://github.com/Automattic/wp-calypso/pull/41471#discussion_r415678275
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
-
-	const [ isPlansModalVisible, setIsPlanModalVisible ] = React.useState( false );
-
-	const handleButtonClick = () => {
-		setIsPlanModalVisible( ( isVisible ) => ! isVisible );
-	};
 
 	// This hook is different from `getSelectedPlan` in the store.
 	// This accounts for plans that may come from e.g. selecting a domain or adding a plan via URL
@@ -45,17 +38,14 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 
 	return (
 		<>
-			<Button
-				onClick={ handleButtonClick }
+			<Link
+				to={ makePath( Step.PlansModal ) }
 				label={ __( planLabel ) }
-				disabled={ Step[ currentStep ] === 'plans' }
 				className={ classnames( 'plans-button', { 'is-highlighted': !! plan } ) }
-				{ ...buttonProps }
 			>
 				{ isDesktop && planLabel }
 				<JetpackLogo className="plans-button__jetpack-logo" size={ 16 } monochrome />
-			</Button>
-			{ isPlansModalVisible && <PlansModal onClose={ () => setIsPlanModalVisible( false ) } /> }
+			</Link>
 		</>
 	);
 };

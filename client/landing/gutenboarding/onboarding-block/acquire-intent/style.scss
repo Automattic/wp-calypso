@@ -7,17 +7,12 @@
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
 	tab-size: 4;
-	position: fixed;
-	min-height: calc( 100% - #{$gutenboarding-header-height} );
+	min-height: calc( 100vh - 2 * #{$gutenboarding-header-height} );
 	width: 100%;
 	display: flex;
 	flex-direction: column;
 	margin: 0 -20px;
 	padding: 25px 20px 20px;
-	transition: color $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm,
-		background-color $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm;
 
 	@include break-small {
 		@include onboarding-heading-text;
@@ -55,21 +50,11 @@
 	height: 42px;
 	margin-top: 10px;
 
-	.acquire-intent__skip-site-title {
-		visibility: hidden;
-		opacity: 0;
-		display: none;
-	}
-
 	@include break-small {
 		margin-top: 0;
 		min-width: 300px;
 		max-width: 400px;
 		height: 57px;
-
-		.acquire-intent__skip-site-title {
-			display: block;
-		}
 	}
 
 	@include break-medium {
@@ -79,31 +64,18 @@
 }
 
 .acquire-intent__footer {
-	display: flex;
-	justify-content: space-between;
 	margin-top: 25px;
+	display: flex;
+	justify-content: flex-end;
 
 	@include break-small {
-		.acquire-intent__skip-site-title {
-			display: none;
-		}
+		justify-content: flex-start;
 	}
 }
 
 .acquire-intent--with-skip {
 	.site-title__input::after {
 		background-image: linear-gradient( to right, $light-gray-700, $light-gray-200 );
-	}
-	.acquire-intent__footer {
-		.acquire-intent__next {
-			// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
-			opacity: 0;
-			visibility: hidden;
-		}
-	}
-	.site-title__input-wrapper .acquire-intent__skip-site-title {
-		visibility: visible;
-		opacity: 1;
 	}
 }
 
@@ -119,7 +91,6 @@
 		bottom: 1px;
 		height: 2px;
 		background: var( --mainColor );
-		transition: background $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
 		@include break-small {
 			bottom: 4px;
@@ -144,6 +115,10 @@
 			outline: none;
 		}
 
+		&::-ms-clear {
+			display: none;
+		}
+
 		@include break-small {
 			@include onboarding-heading-text;
 		}
@@ -153,52 +128,5 @@
 			line-height: 80px;
 		}
 
-		// TODO focus for accessibility?
-		// .accessible-focus &:focus {
-		// 	outline: 2px solid var( --highlightColor );
-		// }
-
-		&::-ms-clear {
-			display: none;
-		}
-	}
-}
-
-// Themed core button component
-.components-button.is-primary.acquire-intent__next:not( :disabled ):not( [aria-disabled='true'] ) {
-	background: var( --mainColor );
-	border-color: var( --mainColor );
-	border-radius: 4px;
-	box-shadow: none;
-	color: var( --contrastColor );
-	@include onboarding-medium-text;
-	font-weight: 600;
-	letter-spacing: 0;
-	padding: 20px 32px;
-	// @TODO: work out hover-state animations
-	transition: background, border-color, color, opacity $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm;
-
-	&:active,
-	&:hover,
-	&:focus {
-		background: var( --highlightColor );
-		border-color: var( --highlightColor );
-		color: var( --contrastColor );
-		outline-color: transparent;
-		box-shadow: none;
-	}
-}
-
-.components-button.is-link.acquire-intent__skip-site-title {
-	@include onboarding-medium-text;
-	color: var( --studio-gray-40 );
-	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
-
-	@include break-small {
-		position: absolute;
-		bottom: -20px;
-		left: 0;
-		transform: translate( 0, 100% );
 	}
 }

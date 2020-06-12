@@ -13,11 +13,10 @@ import { STORE_KEY } from '../../stores/onboard';
 import { recordSiteTitleSelection } from '../../lib/analytics';
 
 interface Props {
-	skipButton: React.ReactNode;
 	onSubmit: () => void;
 }
 
-const SiteTitle: React.FunctionComponent< Props > = ( { skipButton, onSubmit } ) => {
+const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { __ } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
@@ -53,7 +52,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { skipButton, onSubmit } )
 					autoCorrect="off"
 					data-hj-whitelist
 				/>
-				{ skipButton }
+				{ /* @TODO: add info tip here */ }
 			</div>
 		</form>
 	);

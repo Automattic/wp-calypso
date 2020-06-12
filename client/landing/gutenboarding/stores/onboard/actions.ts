@@ -87,6 +87,11 @@ export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
 	hasUsedPlansStep,
 } );
 
+export const setShowSignupDialog = ( showSignup: boolean ) => ( {
+	type: 'SET_SHOW_SIGNUP_DIALOG' as const,
+	showSignup,
+} );
+
 export function* createSite(
 	username: string,
 	freeDomainSuggestion?: DomainSuggestion,
@@ -148,4 +153,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteTitle
 	| typeof setSiteVertical
 	| typeof togglePageLayout
+	| typeof setShowSignupDialog
 >;

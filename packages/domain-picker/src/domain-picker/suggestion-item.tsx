@@ -86,7 +86,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					__( 'Free' )
 				) : (
 					<>
-						<span className="domain-picker__free-text"> { __( 'Free' ) } </span>
+						<span className="domain-picker__free-text"> { __( 'Included in plans' ) } </span>
 						<span className="domain-picker__price-is-paid">
 							{
 								/* translators: %s is the price with currency. Eg: $15/year. */

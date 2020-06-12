@@ -16,20 +16,25 @@ import React, { useRef, useEffect } from 'react';
  * Internal dependencies
  */
 import Header from './components/header';
+import SignupForm from './components/signup-form';
 import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
 import { recordOnboardingStart } from './lib/analytics';
 import useOnSiteCreation from './hooks/use-on-site-creation';
 import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
+import useSignup from './hooks/use-signup';
+import useOnLogin from './hooks/use-on-login';
 
 registerBlockType( name, settings );
 
 export function Gutenboard() {
 	const { __ } = useI18n();
 
+	useOnLogin();
 	useOnSiteCreation();
 	usePageViewTracksEvents();
+	const { showSignupDialog, onSignupDialogClose } = useSignup();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
@@ -73,6 +78,7 @@ export function Gutenboard() {
 			<DropZoneProvider>
 				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
+					{ showSignupDialog && <SignupForm onRequestClose={ onSignupDialogClose } /> }
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }

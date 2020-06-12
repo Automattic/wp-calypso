@@ -3,72 +3,6 @@
 
 $domain-picker__suggestion-item-height: 24px;
 
-.domain-picker.components-panel {
-	border: none;
-
-	.components-panel__body {
-		display: flex;
-		flex-direction: column;
-		padding: 0;
-		width: 100%;
-		height: 100%;
-		border-top: unset;
-		border-bottom: unset;
-	}
-
-	.components-panel__row {
-		flex-direction: column;
-		align-items: stretch;
-		justify-content: flex-start;
-		margin: 0;
-
-		label {
-			max-width: 100%;
-		}
-	}
-
-	@include break-small {
-		min-width: 520px;
-	}
-}
-
-.domain-picker__panel-row-main {
-	flex-grow: 1;
-	padding: 36px;
-}
-
-.domain-picker__panel-row-footer {
-	padding: 10px 20px;
-	border-top: 1px solid #f0f0f0;
-
-	@include break-small {
-		padding: 24px 36px;
-	}
-}
-
-.domain-picker__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	margin-bottom: 27px;
-}
-
-.domain-picker__header-group {
-	flex-grow: 1;
-}
-
-.domain-picker__header-buttons {
-	display: flex;
-	align-items: center;
-}
-
-.domain-picker__header-title {
-	@include domain-picker-package--font-recoleta;
-	font-size: 26px;
-	line-height: 35px;
-	margin-bottom: 3px;
-}
-
 .domain-picker__search {
 	position: relative;
 	margin-bottom: 20px;
@@ -100,11 +34,6 @@ $domain-picker__suggestion-item-height: 24px;
 	color: var( --studio-green-40 );
 }
 
-.domain-picker__footer {
-	display: flex;
-	justify-content: space-between;
-}
-
 .domain-picker__suggestion-item-group {
 	flex-grow: 1;
 }
@@ -127,6 +56,14 @@ $domain-picker__suggestion-item-height: 24px;
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
 	@extend .domain-picker__suggestion-none;
+
+	border: 1px solid var( --studio-gray-5 );
+	padding: 14px;
+	margin-bottom: 0;
+
+	+ .domain-picker__suggestion-item {
+		margin-top: -1px;
+	}
 
 	&.components-button {
 		&.is-tertiary {
@@ -223,8 +160,13 @@ $domain-picker__suggestion-item-height: 24px;
 
 .domain-picker__price {
 	color: var( --studio-gray-40 );
-	white-space: nowrap;
+	text-align: right;
 	min-height: $domain-picker__suggestion-item-height;
+	flex-basis: 0;
+
+	@include break-small {
+		flex-basis: auto;
+	}
 
 	&.placeholder {
 		@include placeholder();
@@ -254,25 +196,4 @@ $domain-picker__suggestion-item-height: 24px;
 .domain-picker__aside {
 	width: 220px;
 	padding-right: 30px;
-}
-
-.domain-picker__more-button {
-	&.components-button.is-tertiary {
-		@include domain-picker-package-medium-text;
-		color: var( --color-neutral-100 );
-		align-items: center;
-	}
-}
-
-.domain-picker__confirm-button {
-	&.components-button {
-		padding: 0 40px;
-	}
-}
-
-.domain-picker__cancel-button {
-	&.components-button.is-link {
-		margin: 0 1em;
-		color: var( --studio-gray-40 );
-	}
 }
