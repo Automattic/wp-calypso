@@ -52,6 +52,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 import TextControl from 'extensions/woocommerce/components/text-control';
 import { sendEmailLogin } from 'state/auth/actions';
 import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -289,7 +290,7 @@ export class LoginForm extends Component {
 		this.loginUser();
 	};
 
-	renderWooCommerce() {
+	renderWooCommerce( showSocialLogin = true ) {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
 
@@ -391,7 +392,7 @@ export class LoginForm extends Component {
 							</Button>
 						</div>
 
-						{ config.isEnabled( 'signup/social' ) && (
+						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
 							<div className="login__form-social">
 								<div className="login__form-social-divider">
 									<span>{ this.props.translate( 'or' ) }</span>
@@ -417,12 +418,14 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
 		const {
+			accountType,
 			oauth2Client,
 			redirectTo,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			isGutenboarding,
+			isJetpackWooDnaFlow,
 			wccomFrom,
 			currentRoute,
 			currentQuery,
@@ -478,6 +481,10 @@ export class LoginForm extends Component {
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
+		}
+
+		if ( isJetpackWooDnaFlow ) {
+			return this.renderWooCommerce( !! accountType ); // Only show the social buttons after the user entered an email.
 		}
 
 		if (
@@ -667,6 +674,7 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+			isJetpackWooDnaFlow: !! wooDnaConfig[ get( getCurrentQueryArguments( state ), 'from' ) ],
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
