@@ -12,6 +12,8 @@ import { Card } from '@automattic/components';
 import PrimaryHeader from './primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteWhiteGlove from 'state/selectors/is-site-white-glove';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
+import { stubFalse } from 'lodash';
 
 class NoAvailableTimes extends Component {
 	componentDidMount() {
@@ -26,24 +28,58 @@ class NoAvailableTimes extends Component {
 				<PrimaryHeader isWhiteGlove={ isWhiteGlove } />
 				<Card>
 					<h2 className="shared__no-available-times-heading">
-						{ translate( 'Sorry, there are no sessions available' ) }
+						{ translate( 'Sorry, all upcoming sessions are full' ) }
 					</h2>
 					{ isWhiteGlove && (
 						<>
-							We schedule one-on-one sessions up to 24 hours in advance and all upcoming sessions
-							are full. Please check back later or{ ' ' }
-							<a href="https://wordpress.com/help/contact">contact us in Live Chat</a>.
+							We add new sessions daily, so please check back soon for more options. In the
+							meantime, consider attending one of our expert webinars on a wide variety of topics
+							designed to help you build and grow your site.{ ' ' }
+							<ExternalLinkWithTracking
+								icon={ false }
+								href="https://wordpress.com/webinars/"
+								onClick={ () => {} }
+								tracksEventName="calypso_concierge_book_view_webinars"
+							>
+								{ translate( 'View webinars.' ) }
+							</ExternalLinkWithTracking>
+							or
+							<ExternalLinkWithTracking
+								icon={ false }
+								href="https://wordpress.com/help/contact"
+								onClick={ () => {} }
+								tracksEventName="calypso_concierge_book_view_contact_us"
+							>
+								contact us in Live Chat
+							</ExternalLinkWithTracking>
+							.
 						</>
 					) }
-					{ ! isWhiteGlove &&
-						translate(
-							'We schedule Quick Start Sessions up to 24 hours in advance and all upcoming sessions are full. Please check back later or {{link}}contact us in Live Chat{{/link}}.',
-							{
-								components: {
-									link: <a href="https://wordpress.com/help/contact" />,
-								},
-							}
-						) }
+					{ ! isWhiteGlove && (
+						<>
+							{ translate(
+								'We add new sessions daily, so please check back soon for more options. In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site.'
+							) }{ ' ' }
+							<ExternalLinkWithTracking
+								icon={ false }
+								href="https://wordpress.com/webinars/"
+								onClick={ () => {} }
+								tracksEventName="calypso_concierge_book_view_webinars"
+							>
+								{ translate( 'View webinars.' ) }
+							</ExternalLinkWithTracking>
+							{ translate( ' or ' ) }
+							<ExternalLinkWithTracking
+								icon={ false }
+								href="https://wordpress.com/help/contact"
+								onClick={ () => {} }
+								tracksEventName="calypso_concierge_book_contact_us"
+							>
+								{ translate( 'contact us in Live Chat' ) }
+							</ExternalLinkWithTracking>
+							.
+						</>
+					) }
 				</Card>
 			</div>
 		);
