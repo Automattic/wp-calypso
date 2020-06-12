@@ -17,18 +17,18 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super(
 			driver,
-			By.css( '.checkout__secure-payment-form,.secure-payment-form' ),
+			By.css( '.checkout__secure-payment-form,.secure-payment-form,.composite-checkout' ),
 			null,
 			2 * config.get( 'explicitWaitMS' )
 		);
 		this.paymentButtonSelector = By.css(
-			'.credit-card-payment-box button.is-primary:not([disabled])'
+			'.credit-card-payment-box button.is-primary:not([disabled]), .composite-checkout .checkout-button'
 		);
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
 		this.businessPlanSlug = getJetpackHost() === 'WPCOM' ? 'business-bundle' : 'jetpack_business';
 		this.dotLiveDomainSlug = 'dotlive_domain';
-		this.cartTotalSelector = By.css( '.cart__total-amount,.cart-total-amount' );
+		this.cartTotalSelector = By.css( '.cart__total-amount,.cart-total-amount,.order-review-total' );
 	}
 
 	async _postInit() {
@@ -122,7 +122,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async numberOfProductsInCart() {
-		const elements = await this.driver.findElements( By.css( '.product-name' ) );
+		const elements = await this.driver.findElements(
+			By.css(
+				'.product-name,.checkout-steps__step-complete-content .checkout-line-item:not([data-e2e-product-slug=""])'
+			)
+		);
 		return elements.length;
 	}
 
@@ -256,9 +260,14 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async _cartContainsProduct( productSlug, expectedQuantity = 1 ) {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.product-name' ) );
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.product-name,.checkout-line-item' )
+		);
 		const elements = await this.driver.findElements(
-			By.css( `.product-name[data-e2e-product-slug="${ productSlug }"]` )
+			By.css(
+				`.product-name[data-e2e-product-slug="${ productSlug }"],.checkout-steps__step-complete-content .checkout-line-item[data-e2e-product-slug="${ productSlug }"]`
+			)
 		);
 		return elements.length === expectedQuantity;
 	}
