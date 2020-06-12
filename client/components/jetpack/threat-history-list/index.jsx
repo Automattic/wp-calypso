@@ -19,7 +19,6 @@ import getSiteScanHistory from 'state/selectors/get-site-scan-history';
 import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { useThreats } from 'lib/jetpack/use-threats';
-import config from 'config';
 
 /**
  * Style dependencies
@@ -55,7 +54,6 @@ const ThreatHistoryList = ( {
 } ) => {
 	const { selectedThreat, setSelectedThreat, updateThreat, updatingThreats } = useThreats( siteId );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
-	const isJetpackCom = !! config( 'env_id' ).includes( 'jetpack-cloud' );
 	const dispatch = useDispatch();
 	const handleOnFilterChange = React.useCallback(
 		( filterEntry ) => {
@@ -67,11 +65,7 @@ const ThreatHistoryList = ( {
 				site_id: siteId,
 				filter: filterValue,
 			} );
-			if ( isJetpackCom ) {
-				page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
-			} else {
-				page.show( `/scan/${ siteSlug }/${ filterValue }` );
-			}
+			page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
 		},
 		[ dispatchRecordTracksEvent, siteId, siteSlug ]
 	);
