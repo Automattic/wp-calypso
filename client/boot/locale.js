@@ -47,7 +47,7 @@ const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET ).then(
+		return getTranslationChunkFile( chunkId, i18n.getLocaleSlug(), window.BUILD_TARGET ).then(
 			( translations ) => {
 				i18n.addTranslations( { ...translations, ...userTranslations } );
 				loadedTranslationChunks[ chunkId ] = true;
