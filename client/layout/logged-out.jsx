@@ -23,6 +23,7 @@ import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import GdprBanner from 'blocks/gdpr-banner';
 import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 /**
  * Style dependencies
@@ -45,6 +46,7 @@ const LayoutLoggedOut = ( {
 	isGutenboardingLogin,
 	isPopup,
 	isJetpackWooCommerceFlow,
+	isJetpackWooDnaFlow,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -69,6 +71,7 @@ const LayoutLoggedOut = ( {
 		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow':
 			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
+		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow':
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 			isWooOAuth2Client( oauth2Client ) &&
@@ -153,6 +156,9 @@ export default connect( ( state ) => {
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
+	const isJetpackWooDnaFlow = Boolean(
+		wooDnaConfig[ get( getCurrentQueryArguments( state ), 'from' ) ]
+	);
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 
 	return {
@@ -161,6 +167,7 @@ export default connect( ( state ) => {
 		isGutenboardingLogin,
 		isPopup,
 		isJetpackWooCommerceFlow,
+		isJetpackWooDnaFlow,
 		wccomFrom,
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,

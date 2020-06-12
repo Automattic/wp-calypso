@@ -3,7 +3,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 	/**
 	 *
-	 * @param {event} eventFromIframe - message event that gets emitted in the checkout iframe.
+	 * @param {globalThis.Event} eventFromIframe - message event that gets emitted in the checkout iframe.
 	 * @listens message
 	 */
 	function handleIframeResult( eventFromIframe ) {

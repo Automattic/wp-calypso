@@ -30,6 +30,9 @@
 		"tannin": "^1.1.1",
 		"use-subscription": "^1.2.0"
 	},
+	"devDependencies": {
+		"react-dom": "^16.12.0"
+	},
 	"peerDependencies": {
 		"react": "^16.8"
 	},

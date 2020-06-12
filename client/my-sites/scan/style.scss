@@ -2,14 +2,12 @@
 	margin-left: auto;
 }
 
-.scan__main {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-}
+.scan.is_jetpackcom .section-nav {
+	margin-top: 16px;
 
-.scan__main.is_jetpackcom {
-	min-height: calc( 100vh - 111px ); // Padding of .layout__content: 79px + 32px;
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 0;
+	}
 }
 
 .scan__content p {
@@ -36,7 +34,6 @@
 }
 
 .scan__content {
-	padding-top: 40px;
 	flex: 1 0 auto;
 
 	.progress-bar {
@@ -89,4 +86,8 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		margin: 16px 0 16px 20px;
 	}
+}
+
+.scan__upsell-icon {
+	color: var( --color-accent-20 );
 }

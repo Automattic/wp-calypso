@@ -127,13 +127,20 @@ const Account = createReactClass( {
 	},
 
 	updateLanguage( event ) {
-		const { value } = event.target;
+		const { value, empathyMode } = event.target;
 		this.updateUserSetting( 'language', value );
-		const redirect =
+
+		if ( typeof empathyMode !== 'undefined' ) {
+			this.updateUserSetting( 'i18n_empathy_mode', empathyMode );
+		}
+
+		const shouldRedirect =
 			value !== this.getUserOriginalSetting( 'language' ) ||
-			value !== this.getUserOriginalSetting( 'locale_variant' )
-				? '/me/account'
-				: false;
+			value !== this.getUserOriginalSetting( 'locale_variant' ) ||
+			( typeof empathyMode !== 'undefined' &&
+				empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' ) );
+
+		const redirect = shouldRedirect ? '/me/account' : false;
 		// store any selected locale variant so we can test it against those with no GP translation sets
 		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 		this.setState( { redirect, localeVariantSelected } );
@@ -604,6 +611,7 @@ const Account = createReactClass( {
 						value={
 							this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
 						}
+						empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
 						onChange={ this.updateLanguage }
 					/>
 					<FormSettingExplanation>

@@ -1,55 +1,58 @@
 /**
- * External dependencies
- */
-import classNames from 'classnames';
-
-/**
  * WordPress dependencies
  */
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
+import DonationsTabs from './donations-tabs';
+import LoadingError from './loading-error';
+import LoadingStatus from './loading-status';
+import UpgradePlan from './upgrade-plan';
+import fetchStatus from './fetch-status';
 
 const Edit = () => {
-	const [ activeTab, setActiveTab ] = useState( 'one-time' );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const [ loadingError, setLoadingError ] = useState( '' );
+	const [ shouldUpgrade, setShouldUpgrade ] = useState( false );
+	const [ upgradeUrl, setUpgradeUrl ] = useState( '' );
 
-	const isActive = ( button ) => ( activeTab === button ? 'active' : null );
+	const mapStatusToState = ( result ) => {
+		if ( ( ! result && typeof result !== 'object' ) || result.errors ) {
+			setLoadingError( __( 'Could not load data from WordPress.com.', 'full-site-editing' ) );
+		} else {
+			setShouldUpgrade( result.should_upgrade_to_access_memberships );
+			setUpgradeUrl( result.upgrade_url );
+		}
 
-	return (
-		<div className="donations__container">
-			<Button className={ isActive( 'one-time' ) } onClick={ () => setActiveTab( 'one-time' ) }>
-				{ __( 'One-Time', 'full-site-editing' ) }
-			</Button>
-			<Button className={ isActive( 'monthly' ) } onClick={ () => setActiveTab( 'monthly' ) }>
-				{ __( 'Monthly', 'full-site-editing' ) }
-			</Button>
-			<Button className={ isActive( 'annually' ) } onClick={ () => setActiveTab( 'annually' ) }>
-				{ __( 'Annually', 'full-site-editing' ) }
-			</Button>
-			<div
-				id="donations__tab-one-time"
-				className={ classNames( 'donations__tab', { active: isActive( 'one-time' ) } ) }
-			>
-				{ __( 'One time', 'full-site-editing' ) }
-			</div>
-			<div
-				id="donations__tab-monthly"
-				className={ classNames( 'donations__tab', { active: isActive( 'monthly' ) } ) }
-			>
-				{ __( 'Monthly', 'full-site-editing' ) }
-			</div>
-			<div
-				id="donations__tab-annually"
-				className={ classNames( 'donations__tab', { active: isActive( 'annually' ) } ) }
-			>
-				{ __( 'Annually', 'full-site-editing' ) }
-			</div>
-		</div>
-	);
+		setIsLoading( false );
+	};
+
+	const apiError = ( message ) => {
+		setLoadingError( message );
+		setIsLoading( false );
+	};
+
+	useEffect( () => {
+		const updateData = () => fetchStatus().then( mapStatusToState, apiError );
+		updateData();
+	}, [] );
+
+	if ( isLoading ) {
+		return <LoadingStatus />;
+	}
+
+	if ( loadingError ) {
+		return <LoadingError error={ loadingError } />;
+	}
+
+	if ( shouldUpgrade ) {
+		return <UpgradePlan upgradeUrl={ upgradeUrl } />;
+	}
+
+	return <DonationsTabs />;
 };
 
 export default Edit;

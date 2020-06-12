@@ -11,14 +11,25 @@
 			margin: 32px 0 24px;
 		}
 	}
+}
 
-	p {
-		font-size: 18px;
-		margin-bottom: 16px;
-		line-height: 24px;
+.history.is_jetpackcom .section-nav {
+	margin-top: 16px;
 
-		@include breakpoint-deprecated( '>660px' ) {
-			margin-bottom: 24px;
-		}
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 0;
 	}
+}
+
+.history__body {
+	@include breakpoint-deprecated( '<660px' ) {
+		padding: 0 16px;
+	}
+}
+
+.history__description {
+	margin: 22px 0 24px;
+
+	color: var( --color-text-subtle );
+	font-size: $font-body;
 }

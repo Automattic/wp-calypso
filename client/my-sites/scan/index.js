@@ -10,6 +10,7 @@ import config from 'config';
 
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import wrapInSiteOffsetProvider from 'lib/jetpack/wrap-in-site-offset';
 import wpcomUpsellController from 'lib/jetpack/wpcom-upsell-controller';
 import {
@@ -18,10 +19,10 @@ import {
 	scan,
 	scanHistory,
 } from 'my-sites/scan/controller';
-import WPCOMUpsell from 'landing/jetpack-cloud/sections/wpcom-upsell';
+import WPCOMScanUpsellPage from 'my-sites/scan/wpcom-upsell';
 
 export default function () {
-	if ( config.isEnabled( 'jetpack-cloud' ) || config.isEnabled( 'jetpack/features-section' ) ) {
+	if ( isJetpackCloud() || config.isEnabled( 'jetpack/features-section' ) ) {
 		page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
 		page(
 			'/scan/:site',
@@ -30,7 +31,7 @@ export default function () {
 			scan,
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoScan,
-			wpcomUpsellController( WPCOMUpsell ),
+			wpcomUpsellController( WPCOMScanUpsellPage ),
 			makeLayout,
 			clientRender
 		);
@@ -42,7 +43,7 @@ export default function () {
 			scanHistory,
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoScanHistory,
-			wpcomUpsellController( WPCOMUpsell ),
+			wpcomUpsellController( WPCOMScanUpsellPage ),
 			makeLayout,
 			clientRender
 		);
@@ -54,7 +55,7 @@ export default function () {
 			scan,
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoScan,
-			wpcomUpsellController( WPCOMUpsell ),
+			wpcomUpsellController( WPCOMScanUpsellPage ),
 			makeLayout,
 			clientRender
 		);

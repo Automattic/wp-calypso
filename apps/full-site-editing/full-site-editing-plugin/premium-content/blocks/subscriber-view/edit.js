@@ -15,12 +15,12 @@ import Context from '../container/context';
 /**
  * Block edit function
  *
- * @typedef {object} Props
+ * @typedef { object } Props
  * @property { string } clientId
  * @property { string } containerClientId
- * @property { () => void } selectBlock
+ * @property { Function } selectBlock
  *
- * @param { Props } props
+ * @param { Props } props Properties
  */
 function Edit( props ) {
 	useEffect( () => {

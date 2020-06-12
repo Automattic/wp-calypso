@@ -220,7 +220,10 @@ function ReaderListEdit( props ) {
 							</>
 						) }
 						{ selectedSection === 'items' &&
-							listItems?.map( ( item ) => <ListItem key={ item.ID } item={ item } /> ) }
+							listItems?.map( ( item ) => (
+								<ListItem key={ item.ID } owner={ props.owner } list={ list } item={ item } />
+							) ) }
+
 						{ selectedSection === 'export' && (
 							<Card>
 								<p>

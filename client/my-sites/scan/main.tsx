@@ -3,10 +3,10 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, ProgressBar } from '@automattic/components';
+import { Button, Card, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import config, { isEnabled } from 'config';
+import { isEnabled } from 'config';
 import classNames from 'classnames';
 
 /**
@@ -14,6 +14,7 @@ import classNames from 'classnames';
  */
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
+import FormattedHeader from 'components/formatted-header';
 import SecurityIcon from 'components/jetpack/security-icon';
 import ScanPlaceholder from 'components/jetpack/scan-placeholder';
 import ScanThreats from 'components/jetpack/scan-threats';
@@ -29,10 +30,11 @@ import getSiteScanIsInitial from 'state/selectors/get-site-scan-is-initial';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'lib/jetpack/contact-support-url';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { triggerScanRun } from 'lib/jetpack/trigger-scan-run';
 import { withApplySiteOffset, applySiteOffsetType } from 'components/jetpack/site-offset';
-import ThreatHistoryList from 'components/jetpack/threat-history-list';
+import ScanNavigation from './navigation';
 
 /**
  * Style dependencies
@@ -231,40 +233,30 @@ class ScanPage extends Component< Props > {
 		return this.renderScanOkay();
 	}
 
-	maybeRenderHistory() {
-		const { filter } = this.props;
-
-		const isJetpackCom = !! config( 'env_id' ).includes( 'jetpack-cloud' );
-
-		return (
-			! isJetpackCom && (
-				<div className="scan__history">
-					{ this.renderHeader( 'History' ) }
-					<ThreatHistoryList { ...{ filter } } />
-				</div>
-			)
-		);
-	}
-
 	render() {
 		const { siteId } = this.props;
+		const isJetpackPlatform = isJetpackCloud();
+
 		if ( ! siteId ) {
 			return;
 		}
-		const isJetpackCom = !! config( 'env_id' ).includes( 'jetpack-cloud' );
+
 		return (
 			<Main
-				classNames={ classNames( {
-					scan__main: true,
-					is_jetpackcom: isJetpackCom,
+				className={ classNames( 'scan', {
+					is_jetpackcom: isJetpackPlatform,
 				} ) }
+				wideLayout={ ! isJetpackPlatform }
 			>
-				<DocumentHead title="Scanner" />
+				<DocumentHead title="Scan" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				<div className="scan__content">{ this.renderScanState() }</div>
-				{ this.maybeRenderHistory() }
+				{ ! isJetpackPlatform && <FormattedHeader headerText={ 'Jetpack Scan' } align="left" /> }
+				<ScanNavigation section={ 'scanner' } />
+				<Card>
+					<div className="scan__content">{ this.renderScanState() }</div>
+				</Card>
 			</Main>
 		);
 	}

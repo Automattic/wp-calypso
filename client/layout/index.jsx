@@ -50,6 +50,7 @@ import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import LayoutLoader from './loader';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 /**
  * Style dependencies
@@ -147,6 +148,7 @@ class Layout extends Component {
 				'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 				'is-jetpack-woocommerce-flow':
 					config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+				'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 				'is-wccom-oauth-flow':
 					config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 					isWooOAuth2Client( this.props.oauth2Client ) &&
@@ -265,6 +267,9 @@ export default connect( ( state ) => {
 	const isJetpackWooCommerceFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
+	const isJetpackWooDnaFlow =
+		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
+		wooDnaConfig[ get( getCurrentQueryArguments( state ), 'from' ) ];
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
@@ -276,6 +281,7 @@ export default connect( ( state ) => {
 		isJetpack,
 		isJetpackLogin,
 		isJetpackWooCommerceFlow,
+		isJetpackWooDnaFlow,
 		isJetpackMobileFlow,
 		isEligibleForJITM,
 		oauth2Client,

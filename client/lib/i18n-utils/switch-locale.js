@@ -226,7 +226,10 @@ export function getTranslationChunkFileUrl( {
  * @returns {Promise} Translation chunk json content
  */
 export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'evergreen' ) {
-	if ( window?.i18nTranslationChunks?.[ chunkId ] ) {
+	if (
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
+		window?.i18nTranslationChunks?.[ chunkId ]
+	) {
 		return Promise.resolve( window.i18nTranslationChunks[ chunkId ] );
 	}
 
