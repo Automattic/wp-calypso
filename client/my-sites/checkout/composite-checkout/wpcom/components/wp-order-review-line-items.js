@@ -80,6 +80,7 @@ function WPLineItem( {
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
 			data-e2e-product-slug={ productSlug }
+			data-product-type={ item.type }
 		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ productName }
@@ -476,7 +477,10 @@ function SavingsList( { item } ) {
 	const translate = useTranslate();
 	const savingsItems = [];
 	if ( item.wpcom_meta?.couponCode ) {
-		savingsItems.push( translate( 'Coupon: %s', { args: item.wpcom_meta?.couponCode } ) );
+		savingsItems.push( {
+			type: 'coupon',
+			label: translate( 'Coupon: %s', { args: item.wpcom_meta?.couponCode } ),
+		} );
 	}
 	if ( savingsItems.length < 1 ) {
 		return null;
@@ -484,7 +488,13 @@ function SavingsList( { item } ) {
 	return (
 		<LineItemMeta className="savings-list">
 			{ savingsItems.map( ( savingsItem ) => (
-				<LineItemMeta key={ savingsItem }>{ savingsItem }</LineItemMeta>
+				<LineItemMeta
+					className="savings-list__item"
+					key={ savingsItem.label }
+					data-savings-type={ savingsItem.type }
+				>
+					{ savingsItem.label }
+				</LineItemMeta>
 			) ) }
 		</LineItemMeta>
 	);
