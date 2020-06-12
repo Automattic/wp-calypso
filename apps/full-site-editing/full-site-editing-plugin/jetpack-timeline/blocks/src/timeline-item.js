@@ -10,6 +10,7 @@ import {
 import { registerBlockType } from '@wordpress/blocks';
 import { ToolbarButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { positionLeft, positionRight } from '@wordpress/icons';
 import classnames from 'classnames';
 
 /**
@@ -33,7 +34,10 @@ export function registerTimelineItemBlock() {
 				borderColor: attributes.background,
 			};
 
-			const setAlignment = ( alignment ) => setAttributes( { alignment } );
+			const toggleAlignment = ( alignment ) => {
+				const newAlignment = alignment === attributes.alignment ? 'auto' : alignment;
+				setAttributes( { alignment: newAlignment } );
+			};
 
 			const classes = classnames( 'wp-block-jetpack-timeline-item', {
 				'is-left': attributes.alignment === 'left',
@@ -43,9 +47,18 @@ export function registerTimelineItemBlock() {
 			return (
 				<>
 					<BlockControls>
-						<ToolbarButton onClick={ () => setAlignment( 'left' ) }>Left</ToolbarButton>
-						<ToolbarButton onClick={ () => setAlignment( 'auto' ) }>Auto</ToolbarButton>
-						<ToolbarButton onClick={ () => setAlignment( 'right' ) }>Right</ToolbarButton>
+						<ToolbarButton
+							onClick={ () => toggleAlignment( 'left' ) }
+							isActive={ attributes.alignment === 'left' }
+							icon={ positionLeft }
+							title={ __( 'Left', 'full-site-editing' ) }
+						/>
+						<ToolbarButton
+							onClick={ () => toggleAlignment( 'right' ) }
+							isActive={ attributes.alignment === 'right' }
+							icon={ positionRight }
+							title={ __( 'Right', 'full-site-editing' ) }
+						/>
 					</BlockControls>
 					<li style={ style } className={ classes }>
 						<InspectorControls>
