@@ -10,6 +10,7 @@ import {
 	inlineStart,
 	pageVisibilityStart,
 	pageVisibilityStop,
+	blockingResources,
 } from './collectors';
 
 export class ReportImpl implements Report {
@@ -42,6 +43,7 @@ export class ReportImpl implements Report {
 				environment,
 				pageVisibilityStop,
 				networkInformation,
+				blockingResources,
 			];
 		} else {
 			this.startCollectors = [ inlineStart, pageVisibilityStart ];
