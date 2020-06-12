@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  */
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
-import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
 import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
 
@@ -24,7 +23,6 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
 	wpcomInserterInlineSearchTerm(),
-	wpcomBlockDonationsPlanUpgrade(),
 	wpcomBlockPremiumContentPlanUpgrade(),
 	wpcomBlockPremiumContentStripeConnect(),
 ];
