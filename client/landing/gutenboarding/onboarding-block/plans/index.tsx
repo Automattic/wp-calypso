@@ -30,7 +30,7 @@ interface Props {
 const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __ } = useI18n();
 	const history = useHistory();
-	const { previousStepPath } = useStepNavigation();
+	const { goBack } = useStepNavigation();
 
 	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -56,7 +56,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		selected_plan: selectedPlanRef.current,
 	} ) );
 
-	const handleBack = () => ( isModal ? history.goBack() : history.push( previousStepPath ) );
+	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handlePlanSelect = () => {
 		if ( isModal ) {
 			history.goBack();

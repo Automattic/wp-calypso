@@ -37,7 +37,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __ } = useI18n();
 
 	const history = useHistory();
-	const { previousStepPath, nextStepPath } = useStepNavigation();
+	const { goBack, goNext } = useStepNavigation();
 
 	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
@@ -59,7 +59,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		setDomain( suggestion );
 	};
 
-	const handleBack = () => ( isModal ? history.goBack() : history.push( previousStepPath ) );
+	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handleNext = () => {
 		trackEventWithFlow( 'calypso_newsite_domain_select', {
 			domain_name: domain?.domain_name,
@@ -67,10 +67,10 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		if ( isModal ) {
 			history.goBack();
 		} else {
-			history.push( nextStepPath );
+			goNext();
 		}
 	};
-	const handleSkip = () => ( isModal ? history.goBack() : history.push( nextStepPath ) );
+	const handleSkip = () => ( isModal ? history.goBack() : goNext() );
 
 	const header = (
 		<div className="domains__header">

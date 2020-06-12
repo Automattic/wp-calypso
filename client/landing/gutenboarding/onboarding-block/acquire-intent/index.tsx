@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import classnames from 'classnames';
-import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
@@ -26,8 +25,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const { getSelectedSiteTitle } = useSelect( ( select ) => select( STORE_KEY ) );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 
-	const history = useHistory();
-	const { nextStepPath } = useStepNavigation();
+	const { goNext } = useStepNavigation();
 
 	useTrackStep( 'IntentGathering', () => ( {
 		has_selected_site_title: !! getSelectedSiteTitle(),
@@ -37,14 +35,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	React.useEffect( prefetchDesignThumbs, [] );
 
-	const handleContinue = () => {
-		history.push( nextStepPath );
-	};
-
 	const handleSkip = () => {
 		setSiteTitle( '' ); // reset site title if there is no valid entry
 		recordSiteTitleSkip();
-		handleContinue();
+		goNext();
 	};
 
 	return (
@@ -53,13 +47,9 @@ const AcquireIntent: React.FunctionComponent = () => {
 				'acquire-intent--with-skip': ! hasSiteTitle,
 			} ) }
 		>
-			<SiteTitle onSubmit={ handleContinue } />
+			<SiteTitle onSubmit={ goNext } />
 			<div className="acquire-intent__footer">
-				{ hasSiteTitle ? (
-					<NextButton onClick={ handleContinue } />
-				) : (
-					<SkipButton onClick={ handleSkip } />
-				) }
+				{ hasSiteTitle ? <NextButton onClick={ goNext } /> : <SkipButton onClick={ handleSkip } /> }
 			</div>
 		</div>
 	);

@@ -4,7 +4,6 @@
 import React, { useCallback, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -44,8 +43,7 @@ const StylePreview: React.FunctionComponent = () => {
 	const hasSelectedDesign = !! selectedDesign;
 
 	const { __ } = useI18n();
-	const history = useHistory();
-	const { previousStepPath, nextStepPath } = useStepNavigation();
+	const { goBack, goNext } = useStepNavigation();
 
 	const [ selectedViewport, setSelectedViewport ] = React.useState< Viewport >( 'desktop' );
 
@@ -80,15 +78,11 @@ const StylePreview: React.FunctionComponent = () => {
 		// If a user has already used the plans step and then gone back, show them the plans step again
 		// to avoid confusion
 		if ( ! selectedPlan || hasUsedPlansStep ) {
-			history.push( nextStepPath );
+			goNext();
 			return;
 		}
 
 		currentUser ? handleCreateSite( currentUser.username ) : handleSignup();
-	};
-
-	const handleBack = () => {
-		history.push( previousStepPath );
 	};
 
 	return (
@@ -103,7 +97,7 @@ const StylePreview: React.FunctionComponent = () => {
 					</div>
 					<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
 					<ActionButtons className="style-preview__actions">
-						<BackButton onClick={ handleBack } />
+						<BackButton onClick={ goBack } />
 						{ hasSelectedDesign && <NextButton onClick={ handleContinue } /> }
 					</ActionButtons>
 				</div>

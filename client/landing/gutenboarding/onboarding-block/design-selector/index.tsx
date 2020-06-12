@@ -3,7 +3,6 @@
  */
 import { Tooltip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useHistory } from 'react-router-dom';
 import { useI18n } from '@automattic/react-i18n';
 import React from 'react';
 
@@ -30,8 +29,7 @@ const makeOptionId = ( { slug }: Design ): string => `design-selector__option-na
 
 const DesignSelector: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { push } = useHistory();
-	const { previousStepPath, nextStepPath } = useStepNavigation();
+	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
 	const { getSelectedDesign, hasPaidDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
@@ -40,8 +38,6 @@ const DesignSelector: React.FunctionComponent = () => {
 		selected_design: getSelectedDesign()?.slug,
 		is_selected_design_premium: hasPaidDesign(),
 	} ) );
-
-	const handleBack = () => push( previousStepPath );
 
 	return (
 		<div className="gutenboarding-page design-selector">
@@ -53,7 +49,7 @@ const DesignSelector: React.FunctionComponent = () => {
 					</SubTitle>
 				</div>
 				<ActionButtons>
-					<BackButton onClick={ handleBack } />
+					<BackButton onClick={ goBack } />
 				</ActionButtons>
 			</div>
 			<div className="design-selector__design-grid">
@@ -69,7 +65,7 @@ const DesignSelector: React.FunctionComponent = () => {
 								// Update fonts to the design defaults
 								setFonts( design.fonts );
 
-								push( nextStepPath );
+								goNext();
 							} }
 						>
 							<span className="design-selector__image-frame">
