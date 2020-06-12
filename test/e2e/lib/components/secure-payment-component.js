@@ -234,17 +234,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		await noticesComponent.dismissNotice();
-		const isCompositeCheckout = await this.isCompositeCheckout();
-		if ( isCompositeCheckout ) {
-			await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.savings-list' ) );
-			const savingsListElement = await this.driver.findElement( By.css( '.savings-list' ) );
-			const savingsListText = await savingsListElement.getText();
-			return savingsListText.includes( 'Coupon:' );
-		}
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.cart__remove-link' )
-		);
+		return this.waitForCouponToBeApplied();
 	}
 
 	async enterCouponCode( couponCode ) {
@@ -261,6 +251,20 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async hasCouponApplied() {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.cart__remove-link' ) );
+	}
+
+	async waitForCouponToBeApplied() {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.savings-list' ) );
+			const savingsListElement = await this.driver.findElement( By.css( '.savings-list' ) );
+			const savingsListText = await savingsListElement.getText();
+			return savingsListText.includes( 'Coupon:' );
+		}
+		return await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.cart__remove-link' )
+		);
 	}
 
 	async waitForCouponToBeRemoved() {
@@ -313,6 +317,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 		return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
 	}
+
 	async removeFromCart() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
