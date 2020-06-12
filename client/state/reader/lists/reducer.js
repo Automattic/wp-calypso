@@ -153,6 +153,7 @@ export function isCreatingList( state = false, action ) {
 	switch ( action.type ) {
 		case READER_LIST_CREATE:
 		case READER_LIST_REQUEST_SUCCESS:
+		case READER_LIST_REQUEST_FAILURE:
 			return READER_LIST_CREATE === action.type;
 	}
 

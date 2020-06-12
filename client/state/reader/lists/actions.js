@@ -112,14 +112,7 @@ export function requestList( owner, slug ) {
 			.then( ( data ) => {
 				dispatch( receiveReaderList( data ) );
 			} )
-			.catch( ( errorInfo ) => {
-				dispatch( {
-					type: READER_LIST_REQUEST_FAILURE,
-					error: errorInfo.error,
-					owner: errorInfo.owner,
-					slug: errorInfo.slug,
-				} );
-			} );
+			.catch( ( errorInfo ) => dispatch( handleReaderListRequestFailure( errorInfo ) ) );
 	};
 }
 
@@ -127,6 +120,15 @@ export function receiveReaderList( data ) {
 	return {
 		type: READER_LIST_REQUEST_SUCCESS,
 		data,
+	};
+}
+
+export function handleReaderListRequestFailure( errorInfo ) {
+	return {
+		type: READER_LIST_REQUEST_FAILURE,
+		error: errorInfo.error,
+		owner: errorInfo.owner,
+		slug: errorInfo.slug,
 	};
 }
 
