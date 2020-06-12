@@ -6,11 +6,17 @@ import {
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_REQUEST,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
-	READER_SEEN_MARK_ALL_AS_SEEN_SECTION_REQUEST,
-	READER_SEEN_MARK_ALL_AS_SEEN_SECTION_RECEIVE,
-	READER_SEEN_MARK_ALL_AS_SEEN_FEED_REQUEST,
-	READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_REQUEST,
+	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'state/reader/action-types';
+import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
+
+/**
+ * Load data layer dependencies
+ */
+import 'state/data-layer/wpcom/seen-posts/seen/new/index';
+import 'state/data-layer/wpcom/seen-posts/seen/delete/index';
+import 'state/data-layer/wpcom/seen-posts/seen/all/new/index';
 
 /**
  * Request mark as seen for given seenIds
@@ -28,6 +34,7 @@ export const requestMarkAsSeen = ( { feedId, feedUrl, feedItemIds, globalIds } )
 	feedId,
 	feedUrl,
 	feedItemIds,
+	source: SOURCE_READER_WEB,
 	globalIds,
 } );
 
@@ -85,19 +92,21 @@ export const receiveMarkAsUnseen = ( { feedId, feedUrl, globalIds } ) => ( {
 } );
 
 /**
- * Request mark all as seen for given section
+ * Request mark all as seen
  *
  * @param {object} payload method
- * @param payload.section given Reader section
+ * @param payload.identifier given Reader section
  * @param payload.feedIds list of feed identifiers
+ * @param payload.feedUrls list of feed urls
  *
  * @returns {{section: string, type: string}} redux action
  */
-export const requestMarkAllAsSeenSection = ( { identifier, feedIds, feedUrls } ) => ( {
-	type: READER_SEEN_MARK_ALL_AS_SEEN_SECTION_REQUEST,
+export const requestMarkAllAsSeen = ( { identifier, feedIds, feedUrls } ) => ( {
+	type: READER_SEEN_MARK_ALL_AS_SEEN_REQUEST,
 	identifier,
 	feedIds,
 	feedUrls,
+	source: SOURCE_READER_WEB,
 } );
 
 /**
@@ -109,41 +118,9 @@ export const requestMarkAllAsSeenSection = ( { identifier, feedIds, feedUrls } )
  *
  * @returns {{section: string, globalIds: *, type: string}} redux action
  */
-export const receiveMarkAllAsSeenSection = ( { feedIds, feedUrls, globalIds } ) => ( {
-	type: READER_SEEN_MARK_ALL_AS_SEEN_SECTION_RECEIVE,
+export const receiveMarkAllAsSeen = ( { feedIds, feedUrls, globalIds } ) => ( {
+	type: READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 	feedIds,
 	feedUrls,
-	globalIds,
-} );
-
-/**
- * Request mark all as seen for given section
- *
- * @param {object} payload method
- * @param payload.section given Reader section
- * @param payload.feedIds list of feed identifiers
- *
- * @returns {{section: string, type: string}} redux action
- */
-export const requestMarkAllAsSeenFeed = ( { identifier, feedId, feedUrl } ) => ( {
-	type: READER_SEEN_MARK_ALL_AS_SEEN_FEED_REQUEST,
-	identifier,
-	feedId,
-	feedUrl,
-} );
-
-/**
- * Receive mark all as seen for successful requests
- *
- * @param {object} payload method
- * @param payload.section given Reader section
- * @param payload.globalIds list of Calypso Reader specific global ids
- *
- * @returns {{section: string, globalIds: *, type: string}} redux action
- */
-export const receiveMarkAllAsSeenFeed = ( { feedId, feedUrl, globalIds } ) => ( {
-	type: READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE,
-	feedId,
-	feedUrl,
 	globalIds,
 } );
