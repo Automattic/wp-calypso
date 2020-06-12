@@ -12,8 +12,18 @@
 	width: $plan-item-width;
 	min-width: $plan-item-min-width;
 
+	// to collapse double borders into one
 	+ .plan-item {
-		margin-left: $plan-item-gutter;
+		margin-left: -1px;
+	}
+
+	// we need to push all items down so the popular badge
+	// doesn't get truncated from top
+	margin-top: 10px;
+
+	&.is-popular {
+		margin-top: 10px;
+		transform: translateY( -20px );
 	}
 }
 
@@ -23,11 +33,11 @@
 
 	// Only mobile & tablets has borders (and paddings)
 	border: 1px solid $light-gray-500;
-	padding: 20px;
+	padding: 40px 20px;
 
-	@include break-large {
-		border: 0;
-		padding: 0;
+	&.is-popular {
+		border-top: none;
+		padding-top: 40px; // to make up for the transform
 	}
 }
 
@@ -45,8 +55,19 @@
 	display: inline-block;
 }
 
+.plan-item__domain-name {
+	font-size: $font-body-small;
+}
+
 .plan-item__badge {
-	margin-left: 8px;
+	margin: 0;
+	display: block;
+	background: black;
+	text-align: center;
+	text-transform: uppercase;
+	color: white;
+	padding: 2.5px;
+	font-size: $font-body-extra-small;
 }
 
 .plan-item__price-amount {
@@ -76,29 +97,60 @@
 	margin-bottom: 16px;
 }
 
-.plan-item__domain {
-	margin-bottom: 20px;
-}
-
 .plan-item__domain-summary {
 	font-size: $font-body-small;
 	line-height: 22px;
-	min-height: 44px; // temporary until domain picker is in
+
+	svg {
+		// we use a margin because there is a space,
+		// the strike-through will look dirty over it
+		margin-right: 5px;
+		vertical-align: middle;
+	}
+	// the tick
+	svg path {
+		fill: rgb( 74, 161, 80 );
+
+		// to make the tick thicker
+		stroke: rgb( 74, 161, 80 );
+	}
+}
+
+.plan-item__domain-summary.is-picked {
+	color: block;
+	font-weight: bold;
+}
+
+.plan-item__domain-summary.is-cta {
+	font-weight: bold;
+
+	// overwrite button styles
+	&.components-button.is-link {
+		text-decoration: none;
+		font-size: 14px;
+		display: inline;
+		color: var( --studio-blue-40 );
+	}
+
+	// the chevron
+	svg path {
+		fill: currentColor;
+		stroke: currentColor;
+	}
+}
+
+.plan-item__domain-summary.is-free {
+	color: rgb( 206, 134, 61 );
+	text-decoration: line-through; // the tick
+	svg path {
+		fill: rgb( 206, 134, 61 );
+		stroke: rgb( 206, 134, 61 );
+	}
 }
 
 .plan-item__select-button.components-button {
-	border: 1px solid var( --studio-blue-40 );
-	border-radius: 4px;
-	color: var( --studio-blue-40 );
 	padding: 0 24px;
 	height: 40px;
-
-	&.is-selected,
-	&.is-selected:active {
-		background: var( --studio-black );
-		color: var( --studio-white );
-		border: 0;
-	}
 
 	svg {
 		margin-left: -8px;
@@ -122,23 +174,19 @@
 	}
 }
 
-.plan-item__features {
-	&::before {
-		display: block;
-		content: '';
-		border-top: 1px solid var( --studio-gray-5 );
-		width: 40px;
-		height: 1px;
-		position: relative;
-		top: 0;
-		left: 0;
-		margin: 16px 0;
-	}
-}
-
 .plan-item__feature-item {
 	font-size: $font-body-small;
-	line-height: 22px;
+	line-height: 20px;
 	letter-spacing: 0.2px;
 	margin: 4px 0;
+	vertical-align: middle;
+
+	svg {
+		vertical-align: middle;
+	}
+	// the tick
+	svg path {
+		fill: rgb( 74, 161, 80 );
+		stroke: rgb( 74, 161, 80 );
+	}
 }

@@ -2,12 +2,12 @@
  * External dependencies
  */
 import * as React from 'react';
+import classNames from 'classnames';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import { Plans } from '@automattic/data-stores';
-import classNames from 'classnames';
+import { Plans, DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -31,9 +31,17 @@ export interface Props {
 	header: React.ReactElement;
 	currentPlan?: Plans.Plan;
 	onPlanSelect?: () => void;
+	onPickDomainClick?: () => void;
+	currentDomain?: DomainSuggestions.DomainSuggestion;
 }
 
-const PlansGrid: React.FunctionComponent< Props > = ( { header, currentPlan, onPlanSelect } ) => {
+const PlansGrid: React.FunctionComponent< Props > = ( {
+	header,
+	currentPlan,
+	currentDomain,
+	onPlanSelect,
+	onPickDomainClick,
+} ) => {
 	const { __ } = useI18n();
 
 	const { setPlan } = useDispatch( PLANS_STORE );
@@ -63,6 +71,8 @@ const PlansGrid: React.FunctionComponent< Props > = ( { header, currentPlan, onP
 					<PlansTable
 						selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
 						onPlanSelect={ handlePlanSelect }
+						currentDomain={ currentDomain }
+						onPickDomainClick={ onPickDomainClick }
 					></PlansTable>
 				</div>
 			</div>
