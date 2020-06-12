@@ -7,12 +7,12 @@ import { I18nProvider } from '@automattic/react-i18n';
 import i18n from 'i18n-calypso';
 
 const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
-	const [ localeData, setLocaleData ] = React.useState( i18n.state.locale );
+	const [ localeData, setLocaleData ] = React.useState( i18n.getLocale() );
 
 	useEffect( () => {
 		const onChange = () => {
 			// Create a new object to ensure the provider sees the data has changed
-			const nextLocaleData = Object.assign( {}, i18n.state.locale );
+			const nextLocaleData = Object.assign( {}, i18n.getLocale() );
 
 			setWpI18nLocaleData( nextLocaleData );
 			setLocaleData( nextLocaleData );
