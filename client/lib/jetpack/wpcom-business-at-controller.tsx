@@ -30,7 +30,7 @@ export default function wpcomBusinessATController(
 		const currentPlan = getSitePlan( getState(), siteId );
 
 		if ( ! isJetpack && ! isAtomic && isBusinessPlan( currentPlan.product_slug ) ) {
-			const sourceProduct = context.path.includes( '/scan/' ) ? 'backup' : 'scan';
+			const sourceProduct = context.path.includes( '/backup/' ) ? 'backup' : 'scan';
 			context.primary = <BusinessATComponent product={ sourceProduct } />;
 		}
 
