@@ -75,6 +75,7 @@ function WPLineItem( {
 			? `${ item.label } (with Expert guidance)`
 			: item.label;
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -83,7 +84,7 @@ function WPLineItem( {
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ productName }
 			</LineItemTitle>
-			<span aria-labelledby={ itemSpanId }>
+			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
