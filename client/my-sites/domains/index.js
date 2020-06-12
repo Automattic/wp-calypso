@@ -123,36 +123,24 @@ export default function () {
 		domainManagementController.domainManagementNameServers
 	);
 
-	page(
-		paths.domainManagementTransfer( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransfer,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransfer,
+		domainManagementController.domainManagementTransfer
 	);
 
-	page(
-		paths.domainManagementTransferOut( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferOut,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransferOut,
+		domainManagementController.domainManagementTransferOut
 	);
 
-	page(
-		paths.domainManagementTransferToAnotherUser( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferToOtherUser,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransferToAnotherUser,
+		domainManagementController.domainManagementTransferToOtherUser
 	);
 
-	page(
-		paths.domainManagementTransferToOtherSite( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferToOtherSite,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransferToOtherSite,
+		domainManagementController.domainManagementTransferToOtherSite
 	);
 
 	if ( config.isEnabled( 'manage/all-domains' ) ) {

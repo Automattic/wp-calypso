@@ -31,6 +31,20 @@ function domainManagementEditBase( siteName, domainName, slug, relativeTo = null
 	return resolveRootPath( relativeTo ) + '/' + domainName + '/' + slug + '/' + siteName;
 }
 
+function domainManagementTransferBase(
+	siteName,
+	domainName,
+	transferType = '',
+	relativeTo = null
+) {
+	return domainManagementEditBase(
+		siteName,
+		domainName,
+		filter( [ 'transfer', transferType ] ).join( '/' ),
+		relativeTo
+	);
+}
+
 export function isUnderDomainManagementAll( path ) {
 	return path.startsWith( domainManagementAllRoot() + '/' );
 }
@@ -130,38 +144,28 @@ export function domainManagementSiteRedirect( siteName, domainName, relativeTo =
 	return domainManagementEditBase( siteName, domainName, 'redirect', relativeTo );
 }
 
-export function domainManagementTransfer(
-	siteName,
-	domainName,
-	transferType = '',
-	relativeTo = null
-) {
-	return domainManagementEditBase(
-		siteName,
-		domainName,
-		filter( [ 'transfer', transferType ] ).join( '/' ),
-		relativeTo
-	);
+export function domainManagementTransfer( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, '', relativeTo );
 }
 
-export function domainManagementTransferIn( siteName, domainName, relativeTo = null ) {
-	return domainManagementTransfer( siteName, domainName, 'in', relativeTo );
+export function domainManagementTransferIn( siteName, domainName ) {
+	return domainManagementTransferBase( siteName, domainName, 'in' );
 }
 
 export function domainManagementTransferInPrecheck( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'precheck' );
+	return domainManagementTransferBase( siteName, domainName, 'precheck' );
 }
 
-export function domainManagementTransferOut( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'out' );
+export function domainManagementTransferOut( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'out', relativeTo );
 }
 
-export function domainManagementTransferToAnotherUser( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'other-user' );
+export function domainManagementTransferToAnotherUser( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'other-user', relativeTo );
 }
 
-export function domainManagementTransferToOtherSite( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'other-site' );
+export function domainManagementTransferToOtherSite( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'other-site', relativeTo );
 }
 
 export function domainMapping( siteName, domain = '' ) {

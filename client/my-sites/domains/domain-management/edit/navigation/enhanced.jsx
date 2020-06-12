@@ -231,7 +231,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferDomain() {
-		const { moment, selectedSite, translate, domain } = this.props;
+		const { moment, selectedSite, translate, domain, currentRoute } = this.props;
 		const { expired, isLocked, transferAwayEligibleAt } = domain;
 
 		if ( expired && ! this.isDomainInGracePeriod() ) {
@@ -255,7 +255,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementTransfer( selectedSite.slug, domain.name ) }
+				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="sync_alt"
 				text={ translate( 'Transfer domain' ) }
 				description={ description }
