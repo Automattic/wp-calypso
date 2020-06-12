@@ -34,6 +34,7 @@ const allowedKeys = [
 	'social_login_connections',
 	'abtests',
 	'lasagna_jwt',
+	'i18n_empathy_mode',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];
