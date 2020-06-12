@@ -209,7 +209,7 @@ export default function WPCheckout( {
 						{ translate( 'Purchase Details' ) }
 						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
 					</CheckoutSummaryTitle>
-					<CheckoutSummaryTitlePrice>
+					<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
 						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
 					</CheckoutSummaryTitlePrice>
 				</CheckoutSummaryTitleLink>
