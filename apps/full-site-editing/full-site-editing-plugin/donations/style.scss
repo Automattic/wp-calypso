@@ -1,27 +1,27 @@
-.donations__container {
+.donations__tabs {
   border: 1px solid #ddd;
   display: grid;
   grid-template-columns: repeat( 3, 1fr );
 }
 
-.donations__container .components-button {
+.donations__tabs .components-button {
   border-bottom: 1px solid #ddd;
 }
 
-.donations__container .components-button:first-child.active {
+.donations__tabs .components-button:first-child.active {
   border-right: 1px solid #ddd;
 }
 
-.donations__container .components-button:nth-child( 2 ).active {
+.donations__tabs .components-button:nth-child( 2 ).active {
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
 }
 
-.donations__container .components-button:nth-child( 3 ).active {
+.donations__tabs .components-button:nth-child( 3 ).active {
   border-left: 1px solid #ddd;
 }
 
-.donations__container .components-button.active {
+.donations__tabs .components-button.active {
   border-bottom: none;
 }
 
@@ -34,3 +34,6 @@
   visibility: visible;
 }
 
+.donations__nudge {
+  margin-bottom: 32px;
+}

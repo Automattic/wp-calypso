@@ -4,8 +4,8 @@
 /**
  * WordPress dependencies
  */
-import { Button } from '@wordpress/components';
-import { Dashicon } from '@wordpress/icons';
+// eslint-disable-next-line no-restricted-imports
+import { Button, Dashicon } from '@wordpress/components';
 import { Warning } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -32,15 +32,15 @@ const StripeNudge = ( { autosaveAndRedirect, stripeConnectUrl } ) => (
 				</Button>,
 			]
 		}
-		className="premium-content-block-nudge"
+		className="donations__nudge premium-content-block-nudge"
 	>
-		<span className="premium-content-block-nudge__info">
-			{ <Dashicon icon="star-filled" /> }
-			<span className="premium-content-block-nudge__text-container">
-				<span className="premium-content-block-nudge__title">
+		<span className="donations__nudge-info premium-content-block-nudge__info">
+			<Dashicon icon="star-filled" />
+			<span className="donations__nudge-text-container premium-content-block-nudge__text-container">
+				<span className="donations__nudge-title premium-content-block-nudge__title">
 					{ __( 'Connect to Stripe to use this block on your site', 'full-site-editing' ) }
 				</span>
-				<span className="premium-content-block-nudge__message">
+				<span className="donations__nudge-message premium-content-block-nudge__message">
 					{ __(
 						'This block will be hidden from your visitors until you connect to Stripe.',
 						'full-site-editing'
