@@ -5,7 +5,7 @@
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { partialRight } from 'lodash';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ interface CtaAction {
 }
 
 export interface CtaButton {
-	text: string;
+	text: string | TranslateResult;
 	action: URL | ClickCallback | CtaAction;
 	component?: JSX.Element;
 }

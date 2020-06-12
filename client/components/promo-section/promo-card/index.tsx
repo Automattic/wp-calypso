@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, ReactElement } from 'react';
+import { TranslateResult } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { TranslateResult } from 'i18n-calypso';
 import ActionPanel from 'components/action-panel';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelTitle from 'components/action-panel/title';
@@ -27,11 +27,13 @@ export interface Image {
 }
 
 export interface Props {
-	image?: Image;
+	image?: Image | ReactElement;
 	title: string | TranslateResult;
 	isPrimary?: boolean;
 	badge?: string;
 }
+
+const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnProperty( 'path' );
 
 const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children, badge } ) => {
 	const classes = classNames( {
@@ -41,8 +43,8 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 	return (
 		<ActionPanel className={ classes }>
 			{ image && (
-				<ActionPanelFigure inlineBodyText={ false } align={ image.align || 'left' }>
-					<img src={ image.path } alt={ image.alt } />
+				<ActionPanelFigure inlineBodyText={ false } align={ image?.align || 'left' }>
+					{ isImage( image ) ? <img src={ image.path } alt={ image.alt } /> : image }
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>
