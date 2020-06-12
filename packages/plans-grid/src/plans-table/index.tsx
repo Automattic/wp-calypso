@@ -20,12 +20,14 @@ const PLANS_STORE = Plans.register();
 export interface Props {
 	selectedPlanSlug: string;
 	onPlanSelect: ( planSlug: string ) => void;
+	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
 	selectedPlanSlug,
 	onPlanSelect,
+	onPickDomainClick,
 	currentDomain,
 } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
@@ -47,6 +49,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							name={ plan?.title.toString() }
 							isSelected={ plan.storeSlug === selectedPlanSlug }
 							onSelect={ onPlanSelect }
+							onPickDomainClick={ onPickDomainClick }
 						></PlanItem>
 					)
 			) }

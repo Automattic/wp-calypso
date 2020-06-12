@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import PlansGrid from '@automattic/plans-grid';
 
@@ -16,6 +16,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import ActionButtons, { BackButton } from '../../components/action-buttons';
 import { Title, SubTitle } from '../../components/titles';
+import { Step, usePath } from '../../path';
 
 interface Props {
 	isModal?: boolean;
@@ -24,9 +25,11 @@ interface Props {
 const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __ } = useI18n();
 	const history = useHistory();
+	const makePath = usePath();
 	const { goBack, goNext } = useStepNavigation();
 
 	const plan = useSelectedPlan();
+	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 
 	//@TODO: do the same for domains step
 	const { setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
@@ -52,6 +55,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			goNext();
 		}
 	};
+	const handlePickDomain = () => history.push( makePath( Step.DomainsModal ) );
 
 	const header = (
 		<>
@@ -71,7 +75,12 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	return (
 		<div className="gutenboarding-page plans">
-			<PlansGrid header={ header } onPlanSelect={ handlePlanSelect } />
+			<PlansGrid
+				header={ header }
+				currentDomain={ domain }
+				onPlanSelect={ handlePlanSelect }
+				onPickDomainClick={ handlePickDomain }
+			/>
 		</div>
 	);
 };

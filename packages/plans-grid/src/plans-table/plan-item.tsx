@@ -80,6 +80,7 @@ export interface Props {
 	isFree?: boolean;
 	isSelected?: boolean;
 	onSelect: ( slug: string ) => void;
+	onPickDomainClick?: () => void;
 }
 
 const PlanItem: React.FunctionComponent< Props > = ( {
@@ -91,6 +92,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	domain,
 	features,
 	onSelect,
+	onPickDomainClick,
 } ) => {
 	const { __ } = useI18n();
 
@@ -127,10 +129,17 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</Button>
 				</div>
 				<div className="plan-item__domain">
-					<div className={ domainMessage.className }>
-						{ domainMessage.icon }
-						{ domainMessage.domainMessage }
-					</div>
+					{ domain && ! domain.is_free ? (
+						<div className={ domainMessage.className }>
+							{ domainMessage.icon }
+							{ domainMessage.domainMessage }
+						</div>
+					) : (
+						<Button isLink className={ domainMessage.className } onClick={ onPickDomainClick }>
+							{ domainMessage.icon }
+							{ domainMessage.domainMessage }
+						</Button>
+					) }
 				</div>
 				<div className="plan-item__features">
 					<ul className="plan-item__feature-item-group">

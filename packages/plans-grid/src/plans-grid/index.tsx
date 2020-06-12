@@ -31,6 +31,7 @@ export interface Props {
 	header: React.ReactElement;
 	currentPlan?: Plans.Plan;
 	onPlanSelect?: () => void;
+	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 }
 
@@ -39,6 +40,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	currentPlan,
 	currentDomain,
 	onPlanSelect,
+	onPickDomainClick,
 } ) => {
 	const { __ } = useI18n();
 
@@ -70,6 +72,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
 						onPlanSelect={ handlePlanSelect }
 						currentDomain={ currentDomain }
+						onPickDomainClick={ onPickDomainClick }
 					></PlansTable>
 				</div>
 			</div>

@@ -122,8 +122,15 @@
 }
 
 .plan-item__domain-summary.is-cta {
-	color: var( --studio-blue-40 );
 	font-weight: bold;
+
+	// overwrite button styles
+	&.components-button.is-link {
+		text-decoration: none;
+		font-size: 14px;
+		display: inline;
+		color: var( --studio-blue-40 );
+	}
 
 	// the chevron
 	svg path {
