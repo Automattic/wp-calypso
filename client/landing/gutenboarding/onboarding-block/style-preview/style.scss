@@ -30,9 +30,8 @@
 
 @supports ( display: grid ) {
 	.style-preview__header {
-		display: grid;
-		grid-template-areas: 'title viewport-select actions';
-		column-gap: 1em;
+		display: flex; // IE11 fix
+		justify-content: space-between;
 		align-items: center;
 		@include onboarding-heading-padding;
 	}
@@ -112,6 +111,12 @@
 }
 
 @supports ( display: grid ) {
+	.style-preview__header {
+		display: grid;
+		grid-template-areas: 'title viewport-select actions';
+		column-gap: 1em;
+	}
+
 	.style-preview__content {
 		display: grid;
 		width: 100%;
