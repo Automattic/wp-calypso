@@ -27,6 +27,7 @@
 		"interpolate-components": "^1.1.1",
 		"lodash": "^4.17.11",
 		"lru": "^3.1.0",
+		"react-dom": "^16.12.0",
 		"tannin": "^1.1.1",
 		"use-subscription": "^1.2.0"
 	},
