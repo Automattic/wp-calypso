@@ -76,7 +76,10 @@ function WPLineItem( {
 			: item.label;
 
 	return (
-		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
+		<div
+			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
+			data-e2e-product-slug={ productSlug }
+		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ productName }
 			</LineItemTitle>
