@@ -6,6 +6,7 @@ import React from 'react';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -41,7 +42,7 @@ class ReaderExportButton extends React.Component {
 
 	onClick = () => {
 		// Don't kick off a new export request if there's one in progress
-		if ( this.state.disabled ) {
+		if ( this.props.disabled || this.state.disabled ) {
 			return;
 		}
 
@@ -75,7 +76,10 @@ class ReaderExportButton extends React.Component {
 	render() {
 		return (
 			<button
-				className="reader-export-button"
+				className={ classnames( {
+					'reader-export-button': true,
+					'is-disabled': this.props.disabled || this.state.disabled,
+				} ) }
 				onClick={ this.onClick }
 				disabled={ this.props.disabled || this.state.disabled }
 			>
