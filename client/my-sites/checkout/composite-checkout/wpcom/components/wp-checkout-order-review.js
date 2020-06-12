@@ -113,7 +113,10 @@ function CouponFieldArea( {
 	return (
 		<CouponLinkWrapper>
 			{ translate( 'Have a coupon? ' ) }
-			<CouponEnableButton onClick={ () => setCouponFieldVisible( true ) }>
+			<CouponEnableButton
+				className="wp-checkout-order-review__show-coupon-field-button"
+				onClick={ () => setCouponFieldVisible( true ) }
+			>
 				{ translate( 'Add a coupon code' ) }
 			</CouponEnableButton>
 		</CouponLinkWrapper>

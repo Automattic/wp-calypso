@@ -75,12 +75,17 @@ function WPLineItem( {
 			? `${ item.label } (with Expert guidance)`
 			: item.label;
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
+		<div
+			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
+			data-e2e-product-slug={ productSlug }
+			data-product-type={ item.type }
+		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ productName }
 			</LineItemTitle>
-			<span aria-labelledby={ itemSpanId }>
+			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
@@ -472,16 +477,25 @@ function SavingsList( { item } ) {
 	const translate = useTranslate();
 	const savingsItems = [];
 	if ( item.wpcom_meta?.couponCode ) {
-		savingsItems.push( translate( 'Coupon: %s', { args: item.wpcom_meta?.couponCode } ) );
+		savingsItems.push( {
+			type: 'coupon',
+			label: translate( 'Coupon: %s', { args: item.wpcom_meta?.couponCode } ),
+		} );
 	}
 	if ( savingsItems.length < 1 ) {
 		return null;
 	}
 	return (
-		<React.Fragment>
+		<LineItemMeta className="savings-list">
 			{ savingsItems.map( ( savingsItem ) => (
-				<LineItemMeta key={ savingsItem }>{ savingsItem }</LineItemMeta>
+				<LineItemMeta
+					className="savings-list__item"
+					key={ savingsItem.label }
+					data-savings-type={ savingsItem.type }
+				>
+					{ savingsItem.label }
+				</LineItemMeta>
 			) ) }
-		</React.Fragment>
+		</LineItemMeta>
 	);
 }

@@ -554,6 +554,7 @@ const StepWrapperUI = styled.div`
 	}
 `;
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 function CheckoutStepHeader( {
 	id,
 	className,
@@ -582,6 +583,7 @@ function CheckoutStepHeader( {
 			</StepTitle>
 			{ shouldShowEditButton && (
 				<HeaderEditButton
+					className="checkout-step__edit-button"
 					buttonType="text-button"
 					onClick={ onEdit }
 					aria-label={ editButtonAriaLabel }
