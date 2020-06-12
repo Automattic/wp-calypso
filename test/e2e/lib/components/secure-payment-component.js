@@ -69,9 +69,16 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		//   https://github.com/Automattic/wp-calypso/pull/22239
 		const pauseBetweenKeysMS = 1;
 
-		await driverHelper.setWhenSettable( this.driver, By.id( 'name' ), cardHolder, {
-			pauseBetweenKeysMS: pauseBetweenKeysMS,
-		} );
+		await this.completeContactDetails( { cardPostCode, cardCountryCode, pauseBetweenKeysMS } );
+
+		await driverHelper.setWhenSettable(
+			this.driver,
+			By.css( '#name,#cardholder-name' ),
+			cardHolder,
+			{
+				pauseBetweenKeysMS: pauseBetweenKeysMS,
+			}
+		);
 
 		await this.setInElementsIframe(
 			'.credit-card-form-fields .number iframe',
@@ -84,7 +91,28 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			'exp-date',
 			cardExpiry
 		);
+	}
 
+	async completeContactDetails( { cardPostCode, cardCountryCode, pauseBetweenKeysMS } ) {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			await driverHelper.setWhenSettable(
+				this.driver,
+				By.css( '#contact-postal-code' ),
+				cardPostCode,
+				{
+					pauseBetweenKeysMS: pauseBetweenKeysMS,
+				}
+			);
+			driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( `#country-selector option[value="${ cardCountryCode }"]` )
+			);
+			return driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Continue with the entered contact details"]' )
+			);
+		}
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( `div.country select option[value="${ cardCountryCode }"]` )
