@@ -37,15 +37,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	showCompositeCheckout: {
-		datestamp: '20200611',
-		variations: {
-			composite: 100,
-			regular: 0,
-		},
-		defaultVariation: 'regular',
-		allowExistingUsers: true,
-	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
