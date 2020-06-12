@@ -29,14 +29,9 @@ export default function wpcomBusinessATController(
 		const isJetpack = isJetpackSite( getState(), siteId );
 		const currentPlan = getSitePlan( getState(), siteId );
 
-		// console.group( 'Site info' );
-		// 		console.log( 'isAtomic', isAtomic );
-		// 		console.log( 'isJetpack', isJetpack );
-		// 		console.log( 'currentPlan', currentPlan.product_slug );
-		// 		console.groupEnd();
-
 		if ( ! isJetpack && ! isAtomic && isBusinessPlan( currentPlan.product_slug ) ) {
-			context.primary = <BusinessATComponent />;
+			const sourceProduct = context.path.includes( '/scan/' ) ? 'backup' : 'scan';
+			context.primary = <BusinessATComponent product={ sourceProduct } />;
 		}
 
 		next();

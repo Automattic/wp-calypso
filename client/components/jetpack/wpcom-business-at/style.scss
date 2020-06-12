@@ -1,7 +1,11 @@
 .wpcom-business-at {
 	.wpcom-business-at {
-		&__subheader {
+		&__subheader.formatted-header {
 			margin-top: 40px;
+		}
+
+		&__secondary-promo-icon {
+			fill: #7bb1cd;
 		}
 
 		&__footer {
