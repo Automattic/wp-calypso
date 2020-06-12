@@ -28,7 +28,7 @@ export default function () {
 		clientRender
 	);
 
-	page( '/read/list/', updateLastRoute, sidebar, createList, makeLayout, clientRender );
+	page( '/read/list/new', updateLastRoute, sidebar, createList, makeLayout, clientRender );
 
 	page(
 		'/read/list/:user/:list/export',

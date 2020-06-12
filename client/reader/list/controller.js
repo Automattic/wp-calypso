@@ -13,7 +13,7 @@ import AsyncLoad from 'components/async-load';
 const analyticsPageTitle = 'Reader';
 
 export const createList = ( context, next ) => {
-	const basePath = '/read/list/';
+	const basePath = '/read/list/new';
 	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > Create`;
 	const mcKey = 'list';
 
