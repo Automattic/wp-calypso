@@ -246,6 +246,7 @@ class ScanPage extends Component< Props > {
 				className={ classNames( 'scan', {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
+				wideLayout={ ! isJetpackPlatform }
 			>
 				<DocumentHead title="Scan" />
 				<SidebarNavigation />
