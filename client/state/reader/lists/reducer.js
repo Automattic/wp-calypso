@@ -8,6 +8,7 @@ import { filter, find, get, includes, keyBy, map, omit, union, reject } from 'lo
  * Internal dependencies
  */
 import {
+	READER_LIST_CREATE,
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
@@ -164,6 +165,24 @@ export function isRequestingList( state = false, action ) {
 }
 
 /**
+ * Records if there is a pending list creation request.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function isCreatingList( state = false, action ) {
+	switch ( action.type ) {
+		case READER_LIST_CREATE:
+		case READER_LIST_REQUEST_SUCCESS:
+		case READER_LIST_REQUEST_FAILURE:
+			return READER_LIST_CREATE === action.type;
+	}
+
+	return state;
+}
+
+/**
  * Returns the updated requests state after an action has been dispatched.
  *
  * @param  {object} state  Current state
@@ -238,6 +257,7 @@ export default combineReducers( {
 	listItems,
 	subscribedLists,
 	updatedLists,
+	isCreatingList,
 	isRequestingList,
 	isRequestingLists,
 	errors,

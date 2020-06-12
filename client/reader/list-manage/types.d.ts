@@ -1,3 +1,12 @@
+export type List = {
+	ID: number;
+	description: string;
+	is_public: boolean;
+	is_owner: boolean;
+	slug: string;
+	title: string;
+};
+
 export type Item = {
 	id: string;
 	feed_ID: number | null;

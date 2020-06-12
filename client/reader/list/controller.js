@@ -12,6 +12,18 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
+export const createList = ( context, next ) => {
+	const basePath = '/read/list/new';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > Create`;
+	const mcKey = 'list';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_create_loaded' );
+
+	context.primary = <AsyncLoad require="reader/list-manage" key="list-manage" isCreateForm />;
+	next();
+};
+
 export const listListing = ( context, next ) => {
 	const basePath = '/read/list/:owner/:slug';
 	const fullAnalyticsPageTitle =
