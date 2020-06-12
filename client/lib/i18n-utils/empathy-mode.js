@@ -20,10 +20,16 @@ function encodeUntranslatedString( originalString, placeholder = defaultUntransl
 	return output.substr( 0, originalString.length );
 }
 
-let isActive = true;
+let isActive = false;
+let isInitialized = false;
 
-export function toggleLanguageEmpathyMode() {
-	isActive = ! isActive;
+export function toggleLanguageEmpathyMode( state ) {
+	isActive = typeof state === 'boolean' ? state : ! isActive;
+
+	if ( ! isInitialized && isActive ) {
+		initLanguageEmpathyMode();
+	}
+
 	i18n.reRenderTranslations();
 }
 
@@ -55,4 +61,7 @@ export function initLanguageEmpathyMode() {
 		}
 		return '👉 ' + encodeUntranslatedString( options.original );
 	} );
+
+	isInitialized = true;
+	isActive = true;
 }
