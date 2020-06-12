@@ -15,11 +15,7 @@ export default class StylePreviewPage extends AsyncBaseContainer {
 	}
 
 	async continue() {
-		const continueButton = By.css(
-			this.screenSize === 'MOBILE'
-				? '.bottom-bar-mobile__continue-button'
-				: '.style-preview__actions-continue-button'
-		);
+		const continueButton = By.css( '.action-buttons__next' );
 		await driverHelper.clickWhenClickable( this.driver, continueButton );
 	}
 }
