@@ -263,8 +263,42 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
+	async waitForCouponToBeRemoved() {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			return await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( '.checkout-steps__step-content .savings-list__item[data-savings-type="coupon"]' )
+			);
+		}
+	}
+
 	async removeCoupon() {
-		// Desktop
+		const isCompositeCheckout = await this.isCompositeCheckout();
+
+		if ( isCompositeCheckout ) {
+			// Open review step for editing
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
+			);
+			// Click delete button on coupon line item
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css(
+					'.checkout-steps__step-content .checkout-line-item[data-product-type="coupon"] button'
+				)
+			);
+			// Dismiss confirmation modal
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.checkout-modal .checkout-button.is-status-primary' )
+			);
+			// Make sure the coupon item in savings list is removed
+			return this.waitForCouponToBeRemoved();
+		}
+
+		// Old checkout - desktop
 		if ( currentScreenSize() !== 'mobile' ) {
 			await driverHelper.clickWhenClickable(
 				this.driver,
@@ -272,8 +306,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			);
 			return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
 		}
-
-		// Mobile
+		// Old checkout - mobile
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.payment-box__content .cart__remove-link' )
