@@ -106,11 +106,15 @@ function Items( { list, listItems, owner } ) {
 	) );
 }
 
-function Export( { list } ) {
+function Export( { list, listItems } ) {
 	return (
 		<Card>
 			<p>You can export this list to use on other services. The file will be in OPML format.</p>
-			<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
+			<ReaderExportButton
+				exportType={ READER_EXPORT_TYPE_LIST }
+				listId={ list.ID }
+				disabled={ ! listItems }
+			/>
 		</Card>
 	);
 }
@@ -142,14 +146,12 @@ function ReaderListEdit( props ) {
 									{ translate( 'Sites' ) }
 								</NavItem>
 
-								{ listItems && (
-									<NavItem
-										selected={ selectedSection === 'export' }
-										path={ `/read/list/${ props.owner }/${ props.slug }/export` }
-									>
-										{ translate( 'Export' ) }
-									</NavItem>
-								) }
+								<NavItem
+									selected={ selectedSection === 'export' }
+									path={ `/read/list/${ props.owner }/${ props.slug }/export` }
+								>
+									{ translate( 'Export' ) }
+								</NavItem>
 							</NavTabs>
 						</SectionNav>
 						{ selectedSection === 'details' && <Details { ...props } /> }
