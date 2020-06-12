@@ -28,7 +28,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
 		this.businessPlanSlug = getJetpackHost() === 'WPCOM' ? 'business-bundle' : 'jetpack_business';
 		this.dotLiveDomainSlug = 'dotlive_domain';
-		this.cartTotalSelector = By.css( '.cart__total-amount,.cart-total-amount,.order-review-total' );
+	}
+
+	async isCompositeCheckout() {
+		return driverHelper.isElementPresent( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async _postInit() {
@@ -158,6 +161,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async toggleCartSummary() {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			return;
+		}
+
 		// Mobile
 		if ( currentScreenSize() === 'mobile' ) {
 			return await driverHelper.clickWhenClickable(
@@ -168,6 +176,16 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async clickCouponButton() {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			return await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css(
+					'.checkout-steps__step-complete-content .wp-checkout-order-review__show-coupon-field-button'
+				)
+			);
+		}
+
 		// If we're on desktop
 		if ( currentScreenSize() !== 'mobile' ) {
 			return await driverHelper.clickWhenClickable(
@@ -182,28 +200,47 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async cartTotalAmount() {
-		const cartElement = await this.driver.findElement( this.cartTotalSelector );
-
+	getCartTotalSelector() {
 		if ( currentScreenSize() === 'mobile' ) {
-			await driverHelper.scrollIntoView( this.driver, this.cartTotalSelector );
+			return By.css( '.cart__total-amount,.cart-total-amount,.wp-checkout__total-price' );
 		}
+		return By.css(
+			'.cart__total-amount,.cart-total-amount,.wp-checkout-order-summary__total-price'
+		);
+	}
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.cartTotalSelector );
+	async cartTotalAmount() {
+		if ( currentScreenSize() === 'mobile' ) {
+			await driverHelper.scrollIntoView( this.driver, this.getCartTotalSelector() );
+		}
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.getCartTotalSelector() );
+
+		const cartElement = await this.driver.findElement( this.getCartTotalSelector() );
+
 		const cartText = await cartElement.getText();
 
 		// We need to remove the comma separator first, e.g. 1,024 or 2,048, so `match()` can parse out the whole number properly.
 		const amountMatches = cartText.replace( /,/g, '' ).match( /\d+\.?\d*/g );
-		return await parseFloat( amountMatches[ 0 ] );
+		const amountString = amountMatches[ 0 ];
+		return await parseFloat( amountString );
 	}
 
 	async applyCoupon() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'button[data-e2e-type="apply-coupon"]' )
+			By.css(
+				'button[data-e2e-type="apply-coupon"],.checkout-steps__step-complete-content .coupon button'
+			)
 		);
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		await noticesComponent.dismissNotice();
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.savings-list' ) );
+			const savingsListElement = await this.driver.findElement( By.css( '.savings-list' ) );
+			const savingsListText = await savingsListElement.getText();
+			return savingsListText.includes( 'Coupon:' );
+		}
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
 			By.css( '.cart__remove-link' )
@@ -214,7 +251,9 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		await this.clickCouponButton();
 		await driverHelper.setWhenSettable(
 			this.driver,
-			By.css( 'input[data-e2e-type="coupon-code"]' ),
+			By.css(
+				'input[data-e2e-type="coupon-code"],.checkout-steps__step-complete-content .coupon input'
+			),
 			couponCode
 		);
 		return await this.applyCoupon();
@@ -249,8 +288,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async cartTotalDisplayed() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.cartTotalSelector );
-		return await this.driver.findElement( this.cartTotalSelector ).getText();
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.getCartTotalSelector() );
+		return await this.driver.findElement( this.getCartTotalSelector() ).getText();
 	}
 
 	async paymentButtonText() {
