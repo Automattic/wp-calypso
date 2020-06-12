@@ -460,7 +460,7 @@ export class List extends React.Component {
 				break;
 
 			default:
-				path = domainManagementEdit( selectedSite.slug, domain.name, null, currentRoute );
+				path = domainManagementEdit( selectedSite.slug, domain.name, currentRoute );
 				break;
 		}
 

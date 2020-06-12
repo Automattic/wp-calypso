@@ -233,7 +233,6 @@ class NameServers extends React.Component {
 			domainManagementEdit(
 				this.props.selectedSite.slug,
 				this.props.selectedDomainName,
-				null,
 				this.props.currentRoute
 			)
 		);

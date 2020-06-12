@@ -120,7 +120,7 @@ class Dns extends React.Component {
 		if ( isRegisteredDomain( getSelectedDomain( this.props ) ) ) {
 			path = domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute );
 		} else {
-			path = domainManagementEdit( selectedSite.slug, selectedDomainName, null, currentRoute );
+			path = domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute );
 		}
 
 		page( path );
