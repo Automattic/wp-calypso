@@ -65,9 +65,13 @@
 }
 
 .acquire-intent__footer {
-	display: flex;
-	justify-content: space-between;
 	margin-top: 25px;
+	display: flex;
+	justify-content: flex-end;
+
+	@include break-small {
+		justify-content: flex-start;
+	}
 }
 
 .acquire-intent--with-skip {
