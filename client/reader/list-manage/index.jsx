@@ -2,14 +2,19 @@
  * External dependencies
  */
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import { getListByOwnerAndSlug, getListItems } from 'state/reader/lists/selectors';
+import {
+	getListByOwnerAndSlug,
+	getListItems,
+	isCreatingList as isCreatingListSelector,
+	isMissingByOwnerAndSlug,
+} from 'state/reader/lists/selectors';
 import FormattedHeader from 'components/formatted-header';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
@@ -27,70 +32,116 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
+import { createReaderList } from 'state/reader/lists/actions';
 import ReaderExportButton from 'blocks/reader-export-button';
-import ListItem from './list-item';
 import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
+import ListItem from './list-item';
+import Missing from 'reader/list-stream/missing';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmit } ) {
+	const translate = useTranslate();
+	const isNameValid = typeof list.title === 'string' && list.title.length > 0;
+	const isSlugValid = isCreateForm || ( typeof list.slug === 'string' && list.slug.length > 0 );
+	return (
+		<Card>
+			<FormFieldset>
+				<FormLabel htmlFor="list-name">{ translate( 'Name (Required)' ) }</FormLabel>
+				<FormTextInput
+					data-key="title"
+					id="list-name"
+					isValid={ isNameValid }
+					name="list-name"
+					onChange={ onChange }
+					value={ list.title }
+				/>
+				<FormSettingExplanation>{ translate( 'The name of the list.' ) }</FormSettingExplanation>
+			</FormFieldset>
+
+			{ ! isCreateForm && (
+				<FormFieldset>
+					<FormLabel htmlFor="list-slug">{ translate( 'Slug (Required)' ) }</FormLabel>
+					<FormTextInput
+						data-key="slug"
+						id="list-slug"
+						isValid={ isSlugValid }
+						name="list-slug"
+						onChange={ onChange }
+						value={ list.slug }
+					/>
+					<FormSettingExplanation>
+						{ translate( 'The slug for the list. This is used to build the URL to the list.' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
+			) }
+
+			<FormFieldset>
+				<FormLegend>{ translate( 'Visibility' ) }</FormLegend>
+				<FormLabel>
+					<FormRadio
+						checked={ list.is_public }
+						data-key="is_public"
+						onChange={ onChange }
+						value="public"
+					/>
+					<span>{ translate( 'Everyone can view this list' ) }</span>
+				</FormLabel>
+
+				<FormLabel>
+					<FormRadio
+						checked={ ! list.is_public }
+						data-key="is_public"
+						onChange={ onChange }
+						value="private"
+					/>
+					<span>{ translate( 'Only I can view this list' ) }</span>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ translate(
+						"Don't worry, posts from private sites will only appear to those with access. " +
+							'Adding a private site to a public list will not make posts from that site accessible to everyone.'
+					) }
+				</FormSettingExplanation>
+			</FormFieldset>
+
+			<FormFieldset>
+				<FormLabel htmlFor="list-description">{ translate( 'Description' ) }</FormLabel>
+				<FormTextarea
+					data-key="description"
+					id="list-description"
+					name="list-description"
+					onChange={ onChange }
+					placeholder={ translate( "What's your list about?" ) }
+					value={ list.description }
+				/>
+			</FormFieldset>
+			<FormButtonsBar>
+				<FormButton
+					primary
+					disabled={ isSubmissionDisabled || ! isNameValid || ! isSlugValid }
+					onClick={ onSubmit }
+				>
+					{ translate( 'Save' ) }
+				</FormButton>
+			</FormButtonsBar>
+		</Card>
+	);
+}
+
 function Details( { list } ) {
+	const translate = useTranslate();
 	return (
 		<>
-			<Card>
-				<FormSectionHeading>List Details</FormSectionHeading>
-
-				<FormFieldset>
-					<FormLabel htmlFor="list-name">Name</FormLabel>
-					<FormTextInput id="list-name" name="list-name" value={ list.title } />
-					<FormSettingExplanation>The name of the list.</FormSettingExplanation>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLabel htmlFor="list-slug">Slug</FormLabel>
-					<FormTextInput id="list-slug" name="list-slug" value={ list.slug } />
-					<FormSettingExplanation>
-						The slug for the list. This is used to build the URL to the list.
-					</FormSettingExplanation>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLegend>Visibility</FormLegend>
-					<FormLabel>
-						<FormRadio value="public" checked={ list.is_public } />
-						<span>Everyone can view this list</span>
-					</FormLabel>
-
-					<FormLabel>
-						<FormRadio value="private" checked={ ! list.is_public } />
-						<span>Only I can view this list</span>
-					</FormLabel>
-					<FormSettingExplanation>
-						Don't worry, posts from private sites will only appear to those with access. Adding a
-						private site to a public list will not make posts from that site accessible to everyone.
-					</FormSettingExplanation>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLabel htmlFor="list-description">Description</FormLabel>
-					<FormTextarea
-						name="list-description"
-						id="list-description"
-						placeholder="What's your list about?"
-						value={ list.description }
-					/>
-				</FormFieldset>
-				<FormButtonsBar>
-					<FormButton primary>Save</FormButton>
-				</FormButtonsBar>
-			</Card>
+			<ListForm list={ list } />
 
 			<Card>
-				<FormSectionHeading>DANGER!!</FormSectionHeading>
+				<FormSectionHeading>{ translate( 'DANGER!!' ) }</FormSectionHeading>
 				<Button scary primary>
-					DELETE LIST FOREVER
+					{ translate( 'DELETE LIST FOREVER' ) }
 				</Button>
 			</Card>
 		</>
@@ -98,8 +149,9 @@ function Details( { list } ) {
 }
 
 function Items( { list, listItems, owner } ) {
+	const translate = useTranslate();
 	if ( ! listItems ) {
-		return <Card>Loading...</Card>;
+		return <Card>{ translate( 'Loading…' ) }</Card>;
 	}
 	return listItems.map( ( item ) => (
 		<ListItem key={ item.ID } owner={ owner } list={ list } item={ item } />
@@ -107,27 +159,73 @@ function Items( { list, listItems, owner } ) {
 }
 
 function Export( { list, listItems } ) {
+	const translate = useTranslate();
 	return (
 		<Card>
 			<p>You can export this list to use on other services. The file will be in OPML format.</p>
-			<ReaderExportButton
-				exportType={ READER_EXPORT_TYPE_LIST }
-				listId={ list.ID }
-				disabled={ ! listItems || listItems.length === 0 }
-			/>
+			{ ! listItems && <span>{ translate( 'Loading…' ) }</span> }
+			{ listItems && (
+				<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
+			) }
 		</Card>
 	);
 }
 
+function ReaderListCreate() {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const isCreatingList = useSelector( isCreatingListSelector );
+	const [ list, updateList ] = React.useState( {
+		description: '',
+		is_public: true,
+		slug: '',
+		title: '',
+	} );
+	const onChange = ( event ) => {
+		const update = { [ event.target.dataset.key ]: event.target.value };
+		if ( 'is_public' in update ) {
+			update.is_public = update.is_public === 'public';
+		}
+		updateList( { ...list, ...update } );
+	};
+	return (
+		<Main>
+			<FormattedHeader headerText={ translate( 'Create List' ) } />
+			<ListForm
+				isCreateForm
+				isSubmissionDisabled={ isCreatingList }
+				list={ list }
+				onChange={ onChange }
+				onSubmit={ () => dispatch( createReaderList( list ) ) }
+			/>
+		</Main>
+	);
+}
+
 function ReaderListEdit( props ) {
-	const { list, listItems, selectedSection, translate } = props;
+	const { selectedSection } = props;
+	const translate = useTranslate();
+	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
+	const isMissing = useSelector( ( state ) =>
+		isMissingByOwnerAndSlug( state, props.owner, props.slug )
+	);
+	const listItems = useSelector( ( state ) =>
+		list ? getListItems( state, list.ID ) : undefined
+	);
+
+	const sectionProps = { ...props, list, listItems };
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<Main>
-				<FormattedHeader headerText={ `Manage ${ list?.title || props.slug }` } />
-				{ ! list && <Card>Loading...</Card> }
+				<FormattedHeader
+					headerText={ translate( 'Manage %(listName)s', {
+						args: { listName: list?.title || props.slug },
+					} ) }
+				/>
+				{ ! list && ! isMissing && <Card>{ translate( 'Loading…' ) }</Card> }
+				{ isMissing && <Missing /> }
 				{ list && (
 					<>
 						<SectionNav>
@@ -154,9 +252,9 @@ function ReaderListEdit( props ) {
 								</NavItem>
 							</NavTabs>
 						</SectionNav>
-						{ selectedSection === 'details' && <Details { ...props } /> }
-						{ selectedSection === 'items' && <Items { ...props } /> }
-						{ selectedSection === 'export' && <Export { ...props } /> }
+						{ selectedSection === 'details' && <Details { ...sectionProps } /> }
+						{ selectedSection === 'items' && <Items { ...sectionProps } /> }
+						{ selectedSection === 'export' && <Export { ...sectionProps } /> }
 					</>
 				) }
 			</Main>
@@ -164,11 +262,6 @@ function ReaderListEdit( props ) {
 	);
 }
 
-export default connect( ( state, ownProps ) => {
-	const list = getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug );
-	const listItems = list ? getListItems( state, list.ID ) : undefined;
-	return {
-		list,
-		listItems,
-	};
-} )( localize( ReaderListEdit ) );
+export default function ReaderListManage( props ) {
+	return props.isCreateForm ? ReaderListCreate() : ReaderListEdit( props );
+}
