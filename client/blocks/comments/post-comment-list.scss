@@ -10,7 +10,6 @@
 	}
 
 	.comments__conversation-follow-button {
-		float: right;
 		margin-top: 4px;
 		margin-left: 14px;
 		text-align: right;
@@ -39,8 +38,12 @@
 }
 
 .comments__info-bar {
-	margin: 0 8px -8px 0;
+	margin: 0 36px -36px 0;
 	width: 100%;
+
+	.comments__comment-list.has-double-actions & {
+		margin: 0 8px -8px 0; // move to a separate line to prevent an overlap
+	}
 
 	&.is-no-comments {
 		display: none;
