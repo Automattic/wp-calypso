@@ -5,8 +5,10 @@ import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { Icon, check, close, chevronDown } from '@wordpress/icons';
+import { Icon, check, close } from '@wordpress/icons';
 import classNames from 'classnames';
+import '../types-patch';
+import { useViewportMatch } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -15,38 +17,52 @@ import type { DomainSuggestions } from '@automattic/data-stores';
 
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 const CrossIcon = <Icon icon={ close } size={ 17 } />;
-const ChevronDown = <Icon icon={ chevronDown } size={ 17 } />;
+const ChevronDown = (
+	<svg width="8" viewBox="0 0 8 4">
+		<path d="M0 0 L8 0 L4 4 L0 0" fill="currentColor" />
+	</svg>
+);
+
+/**
+ * There are 6 possible cases of the domain message (the combinations of [hasDomain, isFreeDomain, isFreePlan]
+ * Ifs and elses grew unclear. This is a simple state machine that covers all the states. To maintain it,
+ * please look for the state you need (e.g: free_domain => paid_plan) and edit that branch.
+ *
+ * @param isFreePlan boolean determining whether the plan is free
+ * @param domain the domain (can be undefined => NO_DOMAIN)
+ * @param __ translate function
+ */
 
 function domainMessageStateMachine(
 	isFreePlan: boolean,
-	__: Function,
-	domain?: DomainSuggestions.DomainSuggestion
+	domain: DomainSuggestions.DomainSuggestion | undefined,
+	__: Function
 ) {
 	const states = {
 		NO_DOMAIN: {
-			FREE_PLAN: {
-				className: 'plan-item__domain-summary is-free',
-				icon: null,
-				domainMessage: '',
-			},
+			FREE_PLAN: null,
 			PAID_PLAN: {
 				className: 'plan-item__domain-summary is-cta',
-				icon: ChevronDown,
+				icon: TickIcon,
 				// translators: %s is a domain name eg: example.com is included
-				domainMessage: __( 'Pick a free domain (1 year)' ),
+				domainMessage: (
+					<>
+						{ __( 'Pick a free domain (1 year)' ) } { ChevronDown }
+					</>
+				),
 			},
 		},
 		FREE_DOMAIN: {
-			FREE_PLAN: {
-				className: 'plan-item__domain-summary is-free',
-				icon: null,
-				domainMessage: '',
-			},
+			FREE_PLAN: null,
 			PAID_PLAN: {
 				className: 'plan-item__domain-summary is-cta',
-				icon: ChevronDown,
+				icon: TickIcon,
 				// translators: %s is a domain name eg: example.com is included
-				domainMessage: __( 'Pick a free domain (1 year)' ),
+				domainMessage: (
+					<>
+						{ __( 'Pick a free domain (1 year)' ) } { ChevronDown }
+					</>
+				),
 			},
 		},
 		PAID_DOMAIN: {
@@ -96,53 +112,65 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const isDesktop = useViewportMatch( 'mobile', '>=' );
+
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
 
-	const domainMessage = domainMessageStateMachine( isFree, __, domain );
+	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
+
+	const isOpen = isDesktop || isPopular;
 
 	return (
 		<div className={ classNames( 'plan-item', { 'is-popular': isPopular } ) }>
 			{ isPopular && <span className="plan-item__badge">{ __( 'Popular' ) }</span> }
 			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
-				<div className="plan-item__heading">
-					<div className="plan-item__name">{ name }</div>
-				</div>
-				<div className="plan-item__price">
-					<div className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }>
-						{ price || nbsp }
-					</div>
+				<details className="plan-item__details" open={ isOpen }>
+					<summary className="plan-item__summary">
+						<div className="plan-item__heading">
+							<div className="plan-item__name">{ name }</div>
+						</div>
+						<div className="plan-item__price">
+							<div className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }>
+								{ price || nbsp }
+							</div>
+						</div>
+						{ ! isOpen && <div className="plan-item__dropdown-chevron">{ ChevronDown }</div> }
+					</summary>
 					<div className="plan-item__price-note">
 						{ isFree ? __( 'free forever' ) : __( 'per month, billed yearly' ) }
 					</div>
-				</div>
-				<div className="plan-item__actions">
-					<Button
-						className="plan-item__select-button"
-						onClick={ () => {
-							onSelect( slug );
-						} }
-						isPrimary
-						isLarge
-					>
-						<span>{ __( 'Select' ) }</span>
-					</Button>
-				</div>
-				<div className="plan-item__domain">
-					<Button className={ domainMessage.className } onClick={ onPickDomainClick }>
-						{ domainMessage.icon }
-						{ domainMessage.domainMessage }
-					</Button>
-				</div>
-				<div className="plan-item__features">
-					<ul className="plan-item__feature-item-group">
-						{ features.map( ( feature, i ) => (
-							<li key={ i } className="plan-item__feature-item">
-								{ TickIcon } { feature }
-							</li>
-						) ) }
-					</ul>
-				</div>
+
+					<div className="plan-item__actions">
+						<Button
+							className="plan-item__select-button"
+							onClick={ () => {
+								onSelect( slug );
+							} }
+							isPrimary
+							isLarge
+						>
+							<span>{ __( 'Choose' ) }</span>
+						</Button>
+					</div>
+					<div className="plan-item__domain">
+						{ domainMessage && (
+							<Button className={ domainMessage.className } onClick={ onPickDomainClick } isLink>
+								{ domainMessage.icon }
+								{ domainMessage.domainMessage }
+							</Button>
+						) }
+					</div>
+					<div className="plan-item__features">
+						<ul className="plan-item__feature-item-group">
+							{ features.map( ( feature, i ) => (
+								<li key={ i } className="plan-item__feature-item">
+									{ TickIcon } { feature }
+								</li>
+							) ) }
+						</ul>
+					</div>
+				</details>
 			</div>
 		</div>
 	);
