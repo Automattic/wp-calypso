@@ -27,6 +27,7 @@ import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/p
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SectionHeader from 'components/section-header';
+import MaterialIcon from 'components/material-icon';
 import QueryMembershipProducts from 'components/data/query-memberships';
 import Gridicon from 'components/gridicon';
 import { userCan } from 'lib/site/utils';
@@ -287,34 +288,40 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	renderSettings() {
+	renderPlans() {
+		const { products, siteSlug, translate } = this.props;
 		return (
-			<div>
-				<SectionHeader label={ this.props.translate( 'Settings' ) } />
-				<CompactCard href={ '/earn/payments-plans/' + this.props.siteSlug }>
-					<QueryMembershipProducts siteId={ this.props.siteId } />
+			<>
+				<SectionHeader label={ translate( 'Manage plans' ) } />
+				<CompactCard href={ '/earn/payments-plans/' + siteSlug }>
 					<div className="memberships__module-products-title">
-						{ this.props.translate( 'Recurring Payments plans' ) }
+						{ translate( 'Recurring Payments plans' ) }
 					</div>
 					<div className="memberships__module-products-list">
 						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />
-						{ this.props.products
-							.map( ( product ) => formatCurrency( product.price, product.currency ) )
-							.join( ', ' ) }
+						{ products &&
+							products
+								.map( ( product ) => formatCurrency( product.price, product.currency ) )
+								.join( ', ' ) }
 					</div>
 				</CompactCard>
+			</>
+		);
+	}
+
+	renderSettings() {
+		const { connectedAccountId, translate } = this.props;
+		return (
+			<>
+				<SectionHeader label={ translate( 'Settings' ) } />
 				<CompactCard
-					onClick={ () =>
-						this.setState( { disconnectedConnectedAccountId: this.props.connectedAccountId } )
-					}
+					onClick={ () => this.setState( { disconnectedConnectedAccountId: connectedAccountId } ) }
 					className="memberships__settings-link"
 				>
 					<div className="memberships__settings-content">
-						<p className="memberships__settings-section-title is-warning">
-							{ this.props.translate( 'Disconnect Stripe Account' ) }
-						</p>
+						<MaterialIcon icon="power_off" />
 						<p className="memberships__settings-section-desc">
-							{ this.props.translate( 'Disconnect Recurring Payments from your Stripe account' ) }
+							{ translate( 'Disconnect Recurring Payments from your Stripe account' ) }
 						</p>
 					</div>
 				</CompactCard>
@@ -322,25 +329,25 @@ class MembershipsSection extends Component {
 					isVisible={ !! this.state.disconnectedConnectedAccountId }
 					buttons={ [
 						{
-							label: this.props.translate( 'Cancel' ),
+							label: translate( 'Cancel' ),
 							action: 'cancel',
 						},
 						{
-							label: this.props.translate( 'Disconnect Recurring Payments from Stripe' ),
+							label: translate( 'Disconnect Recurring Payments from Stripe' ),
 							isPrimary: true,
 							action: 'disconnect',
 						},
 					] }
 					onClose={ this.onCloseDisconnectStripeAccount }
 				>
-					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
+					<h1>{ translate( 'Confirmation' ) }</h1>
 					<p>
-						{ this.props.translate(
+						{ translate(
 							'Do you want to disconnect Recurring Payments from your Stripe account?'
 						) }
 					</p>
 					<Notice
-						text={ this.props.translate(
+						text={ translate(
 							'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
 							{
 								components: {
@@ -352,7 +359,7 @@ class MembershipsSection extends Component {
 						showDismiss={ false }
 					/>
 				</Dialog>
-			</div>
+			</>
 		);
 	}
 
@@ -431,6 +438,7 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
+				<QueryMembershipProducts siteId={ this.props.siteId } />
 				{ this.props.query.stripe_connect_success === 'earn' && (
 					<Notice
 						status="is-success"
@@ -464,6 +472,7 @@ class MembershipsSection extends Component {
 				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
+				{ this.renderPlans() }
 				{ this.renderSettings() }
 			</div>
 		);
