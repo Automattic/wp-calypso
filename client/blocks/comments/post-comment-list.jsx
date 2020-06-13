@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { get, size, takeRight, delay } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -417,7 +418,11 @@ class PostCommentList extends React.Component {
 		const showManageCommentsButton = this.props.canUserModerateComments && commentCount > 0;
 
 		return (
-			<div className="comments__comment-list">
+			<div
+				className={ classnames( 'comments__comment-list', {
+					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
+				} ) }
+			>
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
@@ -434,6 +439,7 @@ class PostCommentList extends React.Component {
 					</div>
 				) }
 				<div className="comments__actions-wrapper">
+					{ showManageCommentsButton && this.renderCommentManageLink() }
 					{ showConversationFollowButton && (
 						<ConversationFollowButton
 							className="comments__conversation-follow-button"
@@ -443,7 +449,6 @@ class PostCommentList extends React.Component {
 							followSource={ followSource }
 						/>
 					) }
-					{ showManageCommentsButton && this.renderCommentManageLink() }
 				</div>
 				{ showFilters && (
 					<SegmentedControl compact primary>
