@@ -57,6 +57,7 @@ The [Checkout](#checkout) component creates a wrapper for Checkout. Within the c
  - [CheckoutSteps](#CheckoutSteps) (with [CheckoutStep](#CheckoutStep) children) can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
  - [CheckoutStep](#CheckoutStep) (optional) children of `CheckoutSteps` can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
  - [Button](#Button) (optional) a generic button component that can be used to match the button styles of those buttons used inside the package (like the continue button on each step).
+ - [CheckoutErrorBoundary](#CheckoutErrorBoundary) (optional) a [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like.
 
 Each `CheckoutStep` has an `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
 
@@ -141,6 +142,14 @@ The main wrapper component for Checkout. It has the following props.
 
 - `className?: string`. The className for the component.
 
+### CheckoutErrorBoundary
+
+A [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like. There are several layers of these already built-in to `CheckoutProvider` and its children, but you may use this to manually wrap components. It has the following props.
+
+
+- `errorMessage: React.ReactNode`. The error message to display to the user if there is a problem; typically a string but can also be a component.
+- `onError?: (Error) => void`. A function to be called when there is an error. Can be used for logging.
+
 ### CheckoutProvider
 
 Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this.
@@ -155,8 +164,8 @@ It has the following props.
 - `showInfoMessage: (string) => null`. A function that will display a message with an "info" type.
 - `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.
 - `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
-- `paymentMethods: object[]`: An array of [Payment Method objects](#payment-methods).
-- `paymentProcessors: object`: A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
+- `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods).
+- `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
 - `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, the default registry will be used.
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to 'loading' (see [useFormStatus](#useFormStatus)).
 - `isValidating?: boolean`. If set and true, the form status will be set to 'validating' (see [useFormStatus](#useFormStatus)).
