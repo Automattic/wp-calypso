@@ -135,6 +135,11 @@ export class JetpackSignup extends Component {
 		return wooDnaConfig[ authQuery.from ];
 	}
 
+	getFlowName() {
+		const { from } = this.props.authQuery;
+		return wooDnaConfig[ from ] ? 'woodna:' + from : 'jetpack-connect';
+	}
+
 	getLoginRoute() {
 		const emailAddress = this.props.authQuery.userEmail;
 		return login( {
@@ -151,7 +156,14 @@ export class JetpackSignup extends Component {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
-				.createAccount( { ...userData, extra: { ...userData.extra, jpc: true } } )
+				.createAccount( {
+					...userData,
+					signup_flow_name: this.getFlowName(),
+					extra: {
+						...userData.extra,
+						jpc: true,
+					},
+				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
 				.finally( afterSubmit )
 		);
@@ -171,7 +183,7 @@ export class JetpackSignup extends Component {
 		debug( 'submitting new social account' );
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
-				.createSocialAccount( { service, access_token, id_token } )
+				.createSocialAccount( { service, access_token, id_token }, this.getFlowName() )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
 		);
 	};
@@ -365,6 +377,7 @@ export class JetpackSignup extends Component {
 					submitForm={ this.handleSubmitSignup }
 					submitting={ isCreatingAccount }
 					suggestedUsername={ includes( email, '@' ) ? '' : email }
+					flowName={ this.getFlowName() }
 				/>
 			);
 		}
