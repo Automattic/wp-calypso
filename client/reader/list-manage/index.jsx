@@ -27,7 +27,7 @@ import { createReaderList, updateReaderList } from 'state/reader/lists/actions';
 import ReaderExportButton from 'blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
 import ListItem from './list-item';
-import ListForm from './list-form.jsx';
+import ListForm from './list-form';
 
 /**
  * Style dependencies
