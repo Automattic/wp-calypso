@@ -32,7 +32,7 @@ $markup = '
 return array(
 	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Coming Soon', 'full-site-editing' ),
-	'categories' => array( 'contact', 'text' ),
+	'categories' => array( 'call-to-action' ),
 	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Coming Soon', 'full-site-editing' ),

@@ -76,7 +76,7 @@ $markup = '
 return array(
 	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Portraits and Text', 'full-site-editing' ),
-	'categories' => array( 'images' ),
+	'categories' => array( 'gallery', 'list' ),
 	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Natsuho Kishi', 'full-site-editing' ),

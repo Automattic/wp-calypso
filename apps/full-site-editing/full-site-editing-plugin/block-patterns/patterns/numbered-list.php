@@ -84,7 +84,7 @@ $markup = '
 return array(
 	'__file'     => 'wp_block',
 	'title'      => esc_html__( 'Numbered List', 'full-site-editing' ),
-	'categories' => array( 'text' ),
+	'categories' => array( 'list' ),
 	'content'    => sprintf(
 		$markup,
 		esc_html__( '01', 'full-site-editing' ),
