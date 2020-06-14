@@ -279,7 +279,7 @@ export class JetpackAuthorize extends Component {
 					'woocommerce-onboarding',
 				],
 				from
-			) || Boolean( this.getWooDnaConfig( props ) )
+			) || this.getWooDnaConfig( props ).isWooDnaFlow()
 		);
 	};
 
@@ -289,7 +289,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getWooDnaConfig( props = this.props ) {
-		return wooDnaConfig[ props.authQuery.from ];
+		return wooDnaConfig( props.authQuery );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
@@ -662,13 +662,13 @@ export class JetpackAuthorize extends Component {
 	renderWooDnaFooterLinks() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
-		if ( ! wooDna ) {
+		if ( ! wooDna.isWooDnaFlow() ) {
 			return null;
 		}
 		/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
 		const helpButtonLabel = translate( 'Get help setting up %(pluginName)s', {
 			args: {
-				pluginName: wooDna.name( translate ),
+				pluginName: wooDna.getServiceName(),
 			},
 		} );
 
@@ -681,7 +681,7 @@ export class JetpackAuthorize extends Component {
 					eventName="calypso_jpc_authorize_chat_initiated"
 					label={ helpButtonLabel }
 				>
-					<HelpButton label={ helpButtonLabel } url={ wooDna.helpUrl } />
+					<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
 				</JetpackConnectHappychatButton>
 				{ this.renderBackToWpAdminLink() }
 			</LoggedOutFormLinks>
@@ -751,7 +751,9 @@ export class JetpackAuthorize extends Component {
 			<MainWrapper
 				isWoo={ this.isWooOnboarding() }
 				wooDnaConfig={ wooDna }
-				pageTitle={ wooDna && wooDna.name( translate ) + ' — ' + translate( 'Connect' ) }
+				pageTitle={
+					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
+				}
 			>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">

@@ -81,7 +81,6 @@
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/mobile-app-flow": true,
-		"jetpack/connect/woo-dna": true,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jetpack/search-product": true,
