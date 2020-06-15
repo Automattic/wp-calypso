@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { ReactElement } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,14 +11,17 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
+import SpinnerButton from 'components/spinner-button';
 import MaterialIcon from 'components/material-icon';
 import PromoCard from 'components/promo-section/promo-card';
-import PromoCardCTA from 'components/promo-section/promo-card/cta';
 import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { initiateThemeTransfer } from 'state/themes/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { transferStates } from 'state/automated-transfer/constants';
 
 /**
  * Style dependencies
@@ -47,6 +50,7 @@ const contentPerPrimaryProduct = {
 			),
 			promoCTA: {
 				text: translate( 'Activate Jetpack Backup now' ),
+				loadingText: translate( 'Activating Jetpack Backup' ),
 			},
 		},
 		secondaryPromo: {
@@ -69,6 +73,7 @@ const contentPerPrimaryProduct = {
 			),
 			promoCTA: {
 				text: translate( 'Activate Jetpack Scan now' ),
+				loadingText: translate( 'Activating Jetpack Scan' ),
 			},
 		},
 		secondaryPromo: {
@@ -82,13 +87,21 @@ const contentPerPrimaryProduct = {
 };
 
 export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
+	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
+	const siteId = useSelector( getSelectedSiteId );
+	const dispatch = useDispatch();
+	const initiateAT = React.useCallback( () => {
+		dispatch( initiateThemeTransfer( siteId, null, null ) );
+	}, [ dispatch, siteId ] );
 	const eventName =
 		product === 'backup'
 			? 'calypso_jetpack_backup_business_at'
 			: 'calypso_jetpack_scan_business_at';
-	const activateAT = useTrackCallback( undefined, eventName );
-	const siteSlug = useSelector( getSelectedSiteSlug );
-	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
+	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
+
+	const automatedTransferStatus = useSelector( ( state ) =>
+		getAutomatedTransferStatus( state, siteId )
+	);
 
 	return (
 		<Main className="wpcom-business-at">
@@ -108,12 +121,14 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				isPrimary
 			>
 				<p>{ content.primaryPromo.content }</p>
-				<PromoCardCTA
-					cta={ {
-						...content.primaryPromo.promoCTA,
-						action: { url: `/checkout/${ siteSlug }/premium`, onClick: activateAT },
-					} }
-				/>
+				<div className="wpcom-business-at__cta">
+					<SpinnerButton
+						text={ content.primaryPromo.promoCTA.text }
+						loadingText={ content.primaryPromo.promoCTA.loadingText }
+						loading={ automatedTransferStatus === transferStates.START }
+						onClick={ trackInitiateAT }
+					/>
+				</div>
 			</PromoCard>
 
 			<FormattedHeader
