@@ -43,8 +43,10 @@ export const collector: Collector = ( report ) => {
 	);
 
 	// Hit ratio from 0 to 1 with two decimals (0=nothing was cached, 1=everything comes from the cache)
+	// resourcesTransferred includes the headers, but resourcesCompressed does not. So the division is a
+	// bit off and can return values higher than 1. We capped it to 1 to avoid sending negative numbers.
 	const resourcesCacheRatio =
-		1 - Math.round( ( resourcesTransferred / resourcesCompressed ) * 100 ) / 100;
+		1 - Math.max( 1, Math.round( ( resourcesTransferred / resourcesCompressed ) * 100 ) / 100 );
 
 	report.data.set( 'resourcesCount', resourcesCount );
 	report.data.set( 'resourcesStart', resourcesStart );
