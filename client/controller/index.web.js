@@ -11,6 +11,7 @@ import page from 'page';
 import config from 'config';
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
+import CalypsoI18nProvider from 'components/calypso-i18n-provider';
 import { MomentProvider } from 'components/localized-moment/context';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
@@ -25,7 +26,7 @@ import { hydrate } from './web-util.js';
 export { setSection, setUpLocale } from './shared.js';
 export { render, hydrate, redirectLoggedIn } from './web-util.js';
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+export const ProviderWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
@@ -36,13 +37,15 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 	);
 
 	return (
-		<ReduxProvider store={ store }>
-			<MomentProvider>{ layout }</MomentProvider>
-		</ReduxProvider>
+		<CalypsoI18nProvider>
+			<ReduxProvider store={ store }>
+				<MomentProvider>{ layout }</MomentProvider>
+			</ReduxProvider>
+		</CalypsoI18nProvider>
 	);
 };
 
-export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
+export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
 
 /**
  * Isomorphic routing helper, client side
