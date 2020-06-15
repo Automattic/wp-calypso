@@ -1,3 +1,10 @@
+// @ts-check
+
+/**
+ * External dependencies
+ */
+import { flatten } from 'lodash';
+
 /**
  * @typedef RawPurchase
  * @type {object}
@@ -57,9 +64,19 @@
  * @type {object}
  * @property {string} receipt_id
  * @property {string} display_price
- * @property {RawPurchase[]} purchases
- * @property {RawFailedPurchase[]} failed_purchases
+ * @property {RawPurchases|string[]} purchases - will only be an array if it is empty
+ * @property {RawFailedPurchases|string[]} failed_purchases - will only be an array if it is empty
  */
+
+/* eslint-disable jsdoc/no-undefined-types */
+/**
+ * @typedef {Record<string, RawFailedPurchase[]>} RawFailedPurchases
+ */
+
+/**
+ * @typedef {Record<string, RawPurchase[]>} RawPurchases
+ */
+/* eslint-enable jsdoc/no-undefined-types */
 
 /**
  * @typedef ReceiptData
@@ -80,7 +97,7 @@ export function createReceiptObject( data ) {
 	return {
 		receiptId: data.receipt_id,
 		displayPrice: data.display_price,
-		purchases: data.purchases.map( ( purchase ) => {
+		purchases: flattenPurchases( data.purchases || {} ).map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
 				freeTrial: purchase.free_trial,
@@ -96,7 +113,7 @@ export function createReceiptObject( data ) {
 				isRootDomainWithUs: Boolean( purchase.is_root_domain_with_us ),
 			};
 		} ),
-		failedPurchases: ( data.failed_purchases || [] ).map( ( purchase ) => {
+		failedPurchases: flattenFailedPurchases( data.failed_purchases || {} ).map( ( purchase ) => {
 			return {
 				meta: purchase.product_meta,
 				productId: purchase.product_id,
@@ -106,4 +123,26 @@ export function createReceiptObject( data ) {
 			};
 		} ),
 	};
+}
+
+/**
+ * Purchases are of the format { [siteId]: [ { productId: ... } ] }
+ * so we need to flatten them to get a list of purchases
+ *
+ * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+ * @returns {Array<RawPurchase>} of product objects [ { productId: ... }, ... ]
+ */
+function flattenPurchases( purchases ) {
+	return flatten( Object.values( purchases ) );
+}
+
+/**
+ * Purchases are of the format { [siteId]: [ { productId: ... } ] }
+ * so we need to flatten them to get a list of purchases
+ *
+ * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+ * @returns {Array<RawFailedPurchase>} of product objects [ { productId: ... }, ... ]
+ */
+function flattenFailedPurchases( purchases ) {
+	return flatten( Object.values( purchases ) );
 }
