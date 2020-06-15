@@ -22,6 +22,7 @@ type ClickCallback = () => void;
 interface CtaAction {
 	url: URL;
 	onClick: ClickCallback;
+	selfTarget?: boolean;
 }
 
 export interface CtaButton {
@@ -62,11 +63,12 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 		? {
 				href: button.action.url,
 				onClick: button.action.onClick,
+				selfTarget: button.action.selfTarget,
 		  }
 		: {
 				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
 		  };
-	if ( undefined !== actionProps.href ) {
+	if ( undefined !== actionProps.href && ! actionProps.selfTarget ) {
 		actionProps.target = '_blank';
 	}
 	return {
