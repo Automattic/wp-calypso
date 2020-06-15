@@ -42,6 +42,13 @@
 		border: none;
 		color: var( --p2-color-text-white );
 	}
+
+	&[disabled] {
+		opacity: 0.5;
+		color: var( --p2-color-text-white );
+		background-color: var( --p2-color-link );
+		border: none;
+	}
 }
 
 .p2-site__form .form-label {
