@@ -7,7 +7,6 @@ import { filter, find, has, includes, sortBy } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-
 import 'state/reader/init';
 
 /**
