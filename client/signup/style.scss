@@ -30,6 +30,10 @@ body.is-section-signup {
 		.layout__content {
 			padding: 0;
 		}
+
+		.layout:not( .dops ) .step-wrapper {
+			margin: 0;
+		}
 	}
 
 	// Adjust the padding as we no longer

@@ -262,6 +262,7 @@ class P2Site extends React.Component {
 						type="text"
 						name="site-title"
 						value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
+						isError={ formState.isFieldInvalid( this.state.form, 'siteTitle' ) }
 						isValid={ formState.isFieldValid( this.state.form, 'siteTitle' ) }
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent }
@@ -298,10 +299,6 @@ class P2Site extends React.Component {
 			return this.props.translate( 'Site created - Go to next step' );
 		}
 
-		if ( this.state.submitting ) {
-			return this.props.translate( 'Creating your site…' );
-		}
-
 		return this.props.translate( 'Continue' );
 	};
 
@@ -318,7 +315,9 @@ class P2Site extends React.Component {
 				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }
 					<div className="p2-site__form-footer">
-						<FormButton className="p2-site__form-submit-btn">{ this.buttonText() }</FormButton>
+						<FormButton disabled={ this.state.submitting } className="p2-site__form-submit-btn">
+							{ this.buttonText() }
+						</FormButton>
 					</div>
 				</form>
 
