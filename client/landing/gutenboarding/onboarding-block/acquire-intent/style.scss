@@ -37,6 +37,8 @@
 }
 
 .site-title__input-label {
+	line-height: 1.4em;
+	
 	@include break-small {
 		// stylelint-disable-next-line unit-whitelist
 		margin-right: 0.4ch;
@@ -150,6 +152,11 @@
 
 		@include break-medium {
 			font-size: 64px;
+		}
+
+		&::placeholder {
+			color: $light-gray-700;
+			line-height: normal;
 		}
 	}
 }

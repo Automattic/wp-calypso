@@ -5,30 +5,23 @@ import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { TextControl } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
-<<<<<<< HEAD
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
-=======
 import { _x } from '@wordpress/i18n';
->>>>>>> Add placeholder to site title input
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { recordSiteTitleSelection } from '../../lib/analytics';
-<<<<<<< HEAD
 import tip from './tip';
 
-=======
 import useTyper from '../../hooks/use-typer';
->>>>>>> Add placeholder to site title input
 interface Props {
-	skipButton: React.ReactNode;
 	onSubmit: () => void;
 }
 
-const SiteTitle: React.FunctionComponent< Props > = ( { skipButton, onSubmit } ) => {
+const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { __ } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
