@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
@@ -22,6 +22,8 @@ const ChevronDown = (
 		<path d="M0 0 L8 0 L4 4 L0 0" fill="currentColor" />
 	</svg>
 );
+
+const SPACE_BAR_KEYCODE = 32;
 
 /**
  * There are 6 possible cases of the domain message (the combinations of [hasDomain, isFreeDomain, isFreePlan]
@@ -98,7 +100,7 @@ export interface Props {
 	onSelect: ( slug: string ) => void;
 	onPickDomainClick?: () => void;
 	onToggleExpandAll?: () => void;
-	isExpanded: boolean;
+	allPlansExpanded: boolean;
 }
 
 const PlanItem: React.FunctionComponent< Props > = ( {
@@ -112,9 +114,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	onSelect,
 	onPickDomainClick,
 	onToggleExpandAll,
-	isExpanded,
+	allPlansExpanded,
 } ) => {
 	const { __ } = useI18n();
+
+	const [ isOpenInternalState, setIsOpenInternalState ] = useState( false );
 
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
@@ -123,14 +127,26 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
-	const isOpen = isExpanded || isDesktop || isPopular;
+	useEffect( () => {
+		setIsOpenInternalState( allPlansExpanded );
+	}, [ allPlansExpanded ] );
+
+	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
 
 	return (
 		<div className={ classNames( 'plan-item', { 'is-popular': isPopular, 'is-open': isOpen } ) }>
 			{ isPopular && <span className="plan-item__badge">{ __( 'Popular' ) }</span> }
 			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
-				<details className="plan-item__details" open={ isOpen }>
-					<summary className="plan-item__summary">
+				<div className="plan-item__details">
+					<div
+						tabIndex={ 0 }
+						role="button"
+						onClick={ () => setIsOpenInternalState( ( open ) => ! open ) }
+						onKeyDown={ ( e ) =>
+							e.keyCode === SPACE_BAR_KEYCODE && setIsOpenInternalState( ( open ) => ! open )
+						}
+						className="plan-item__summary"
+					>
 						<div className="plan-item__heading">
 							<div className="plan-item__name">{ name }</div>
 						</div>
@@ -140,46 +156,48 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							</div>
 						</div>
 						{ ! isOpen && <div className="plan-item__dropdown-chevron">{ ChevronDown }</div> }
-					</summary>
-					<div className="plan-item__price-note">
-						{ isFree ? __( 'free forever' ) : __( 'per month, billed yearly' ) }
 					</div>
+					<div hidden={ ! isOpen }>
+						<div className="plan-item__price-note">
+							{ isFree ? __( 'free forever' ) : __( 'per month, billed yearly' ) }
+						</div>
 
-					<div className="plan-item__actions">
-						<Button
-							className="plan-item__select-button"
-							onClick={ () => {
-								onSelect( slug );
-							} }
-							isPrimary
-							isLarge
-						>
-							<span>{ __( 'Choose' ) }</span>
-						</Button>
-					</div>
-					<div className="plan-item__domain">
-						{ domainMessage && (
-							<Button className={ domainMessage.className } onClick={ onPickDomainClick } isLink>
-								{ domainMessage.icon }
-								{ domainMessage.domainMessage }
+						<div className="plan-item__actions">
+							<Button
+								className="plan-item__select-button"
+								onClick={ () => {
+									onSelect( slug );
+								} }
+								isPrimary
+								isLarge
+							>
+								<span>{ __( 'Choose' ) }</span>
 							</Button>
-						) }
+						</div>
+						<div className="plan-item__domain">
+							{ domainMessage && (
+								<Button className={ domainMessage.className } onClick={ onPickDomainClick } isLink>
+									{ domainMessage.icon }
+									{ domainMessage.domainMessage }
+								</Button>
+							) }
+						</div>
+						<div className="plan-item__features">
+							<ul className="plan-item__feature-item-group">
+								{ features.map( ( feature, i ) => (
+									<li key={ i } className="plan-item__feature-item">
+										{ TickIcon } { feature }
+									</li>
+								) ) }
+							</ul>
+						</div>
 					</div>
-					<div className="plan-item__features">
-						<ul className="plan-item__feature-item-group">
-							{ features.map( ( feature, i ) => (
-								<li key={ i } className="plan-item__feature-item">
-									{ TickIcon } { feature }
-								</li>
-							) ) }
-						</ul>
-					</div>
-				</details>
+				</div>
 			</div>
 
 			{ isPopular && ! isDesktop && (
 				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
-					{ isExpanded ? __( 'Collapse all plans' ) : __( 'Expand all plans' ) }
+					{ allPlansExpanded ? __( 'Collapse all plans' ) : __( 'Expand all plans' ) }
 				</Button>
 			) }
 		</div>
