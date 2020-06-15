@@ -13,13 +13,16 @@ import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
 import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
+import { notifyDesktopViewPostClicked } from 'state/desktop/actions';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
+const isDesktop = config.isEnabled( 'desktop' );
 
 /**
  *
@@ -604,10 +607,15 @@ function openLinksInParentFrame() {
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
+		// '.components-snackbar .components-snackbar__content a.components-button', // .components-snackbar__action.is-tertiary
 	].join( ',' );
 	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
-		window.open( e.target.href, '_top' );
+		if ( isDesktop ) {
+			dispatch( notifyDesktopViewPostClicked( e.target.href ) );
+		} else {
+			window.open( e.target.href, '_top' );
+		}
 	} );
 
 	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
