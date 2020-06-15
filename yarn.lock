@@ -4597,19 +4597,6 @@
     mousetrap "^1.6.2"
     react-resize-aware "^3.0.0"
 
-"@wordpress/compose@^3.16.0":
-  version "3.16.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/compose/-/compose-3.16.0.tgz#e6e6081b5eacee81d17cd6c97fcf22ce4b81d038"
-  integrity sha512-441spdHY6fBqDq3/MWFnhY8Q2MJTNTNK74mR06X1PXvVoQxuhW8SHJbb7+uHL9JiHAF5MRpqMTrslHC/iBD81A==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    "@wordpress/element" "^2.14.0"
-    "@wordpress/is-shallow-equal" "^2.0.0"
-    clipboard "^2.0.1"
-    lodash "^4.17.15"
-    mousetrap "^1.6.2"
-    react-resize-aware "^3.0.0"
-
 "@wordpress/core-data@^2.16.0":
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/@wordpress/core-data/-/core-data-2.16.0.tgz#5a1577de46f9312e3cb8e227f0ea74be4afb6232"
