@@ -20,7 +20,8 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 
 	async chooseCloseAccount() {
 		const buttonSelector = by.css( '.account-close button.is-scary' );
-		const confirmDialogSelector = by.css( '.account-close__confirm-dialog-confirm-input' );
+		const confirmButtonSelector = by.css( '.dialog__action-buttons button.is-primary');
+		const confirmDialogSelector = by.css( '.account-close__confirm-dialog' );
 		const pauseBetweenClickAttemptsMS = 100;
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, buttonSelector );
@@ -30,6 +31,7 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 		for ( let i = 0; i < explicitWaitMS / pauseBetweenClickAttemptsMS; i++ ) {
 			await driverHelper.clickWhenClickable( this.driver, buttonSelector );
 			if ( await driverHelper.isElementPresent( this.driver, confirmDialogSelector ) ) {
+				await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
 				return true;
 			}
 			await this.driver.sleep( pauseBetweenClickAttemptsMS );
