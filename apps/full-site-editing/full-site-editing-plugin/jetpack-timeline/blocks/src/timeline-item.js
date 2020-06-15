@@ -8,7 +8,7 @@ import {
 	BlockControls,
 } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
-import { ToolbarButton } from '@wordpress/components';
+import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { positionLeft, positionRight } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -47,18 +47,20 @@ export function registerTimelineItemBlock() {
 			return (
 				<>
 					<BlockControls>
-						<ToolbarButton
-							onClick={ () => toggleAlignment( 'left' ) }
-							isActive={ attributes.alignment === 'left' }
-							icon={ positionLeft }
-							title={ __( 'Left', 'full-site-editing' ) }
-						/>
-						<ToolbarButton
-							onClick={ () => toggleAlignment( 'right' ) }
-							isActive={ attributes.alignment === 'right' }
-							icon={ positionRight }
-							title={ __( 'Right', 'full-site-editing' ) }
-						/>
+						<ToolbarGroup>
+							<ToolbarButton
+								onClick={ () => toggleAlignment( 'left' ) }
+								isActive={ attributes.alignment === 'left' }
+								icon={ positionLeft }
+								title={ __( 'Left', 'full-site-editing' ) }
+							/>
+							<ToolbarButton
+								onClick={ () => toggleAlignment( 'right' ) }
+								isActive={ attributes.alignment === 'right' }
+								icon={ positionRight }
+								title={ __( 'Right', 'full-site-editing' ) }
+							/>
+						</ToolbarGroup>
 					</BlockControls>
 					<li style={ style } className={ classes }>
 						<InspectorControls>
@@ -83,6 +85,11 @@ export function registerTimelineItemBlock() {
 			);
 		},
 		save: ( { attributes } ) => {
+			const classes = classnames( {
+				'is-left': attributes.alignment === 'left',
+				'is-right': attributes.alignment === 'right',
+			} );
+
 			const style = {
 				backgroundColor: attributes.background,
 			};
@@ -92,7 +99,7 @@ export function registerTimelineItemBlock() {
 			};
 
 			return (
-				<li style={ style }>
+				<li style={ style } className={ classes }>
 					<div className="timeline-item">
 						<div className="timeline-item__bubble" style={ bubbleStyle } />
 						<div className="timeline-item__dot" style={ style } />
