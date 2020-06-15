@@ -2,7 +2,7 @@
 	border-radius: 3px;
 	--color-log-item: var( --color-text );
 
-	$highlights: ( 'info': 'primary-20', 'success': 'success-20', 'error': 'error-20', 'warning': 'warning-20' );
+	$highlights: ( 'info': 'primary-20', 'success': 'success-20', 'error': 'error-50', 'warning': 'warning-20' );
 	@each $type, $color in $highlights {
 		&.is-#{$type} {
 			--color-log-item: var( --color-#{$color} );
