@@ -18,14 +18,14 @@ jobs:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+          key: v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
-            v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
+            v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+            v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
         env:
           CHROMEDRIVER_FORCE_DOWNLOAD: true
-        run: yarn install --frozen-lockfile
+        run: CHROMEDRIVER_VERSION=$(<test/e2e/.chromedriver_version) yarn install --frozen-lockfile
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
