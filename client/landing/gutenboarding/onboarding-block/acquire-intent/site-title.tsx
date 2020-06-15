@@ -28,9 +28,6 @@ interface Props {
 	onSubmit: () => void;
 }
 
-const translationContext =
-	'This is an example of a site name, feel free to create your own but please keep it under 22 characters';
-
 const SiteTitle: React.FunctionComponent< Props > = ( { skipButton, onSubmit } ) => {
 	const { __ } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
@@ -57,11 +54,26 @@ const SiteTitle: React.FunctionComponent< Props > = ( { skipButton, onSubmit } )
 
 	const placeHolder = useTyper(
 		[
-			_x( 'In Focus Photographers', translationContext ),
-			_x( 'Cortado Coffee SF', 'This is an example of a site name', translationContext ),
-			_x( 'Leah Rand', 'This is an example of a site name', translationContext ),
-			_x( 'Ava Young', 'This is an example of a site name', translationContext ),
-			_x( 'Mighty Leaf Tea Room', 'This is an example of a site name', translationContext ),
+			_x(
+				'In Focus Photographers',
+				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
+			),
+			_x(
+				'Cortado Coffee SF',
+				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
+			),
+			_x(
+				'Leah Rand',
+				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
+			),
+			_x(
+				'Ava Young',
+				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
+			),
+			_x(
+				'Mighty Leaf Tea Room',
+				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
+			),
 		],
 		! siteTitle,
 		{
