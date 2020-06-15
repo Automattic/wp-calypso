@@ -7,6 +7,7 @@
 		"wordpress"
 	],
 	"author": "Automattic Inc.",
+	"private": true,
 	"contributors": [],
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -19,7 +20,6 @@
 		"access": "private"
 	},
 	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues",
-		"private": true
+		"url": "https://github.com/Automattic/wp-calypso/issues"
 	}
 }
