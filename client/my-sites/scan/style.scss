@@ -46,7 +46,7 @@
 	}
 }
 
-.scan__header {
+header.scan__header.is-left-align {
 	color: var( --studio-black );
 	font-size: 28px;
 	line-height: 1;
@@ -55,7 +55,7 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 36px;
 		font-weight: 600;
-		margin: 32px 0 24px;
+		margin: 40px 0 18px;
 	}
 	&.is-placeholder {
 		display: block;
@@ -89,5 +89,11 @@
 }
 
 .scan__upsell-icon {
-	color: var( --color-accent-20 );
+	color: #7bb1cd;
+}
+
+.scan__wpcom-upsell {
+	.what-is-jetpack {
+		margin-top: 64px;
+	}
 }
