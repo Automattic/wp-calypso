@@ -59,10 +59,10 @@
 .style-preview__content {
 	padding-bottom: $gutenboarding-footer-height + 28px;
 	display: flex; // needed for IE
-	height: 100%; // needed for IE
 
 	@include break-small {
 		padding-bottom: 0;
+		height: 100%; // needed for IE
 	}
 }
 
