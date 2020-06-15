@@ -440,7 +440,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getSecurity() {
-		const { selectedSite, domain, translate } = this.props;
+		const { selectedSite, domain, currentRoute, translate } = this.props;
 
 		const shouldRenderDomainSecurity = config.isEnabled(
 			'domains/new-status-design/security-option'
@@ -477,7 +477,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementSecurity( selectedSite.slug, domain.name ) }
+				path={ domainManagementSecurity( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleDomainSecurityClick }
 				materialIcon="security"
 				text={ translate( 'Review your domain security' ) }
