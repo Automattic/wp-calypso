@@ -196,7 +196,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							onChange={ setEmailVal }
 							placeholder={ __( 'Email address' ) }
 							required
-							autoFocus={ isMobile ? false : true } // eslint-disable-line jsx-a11y/no-autofocus
+							autoFocus={ ! isMobile } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 
 						<TextControl
