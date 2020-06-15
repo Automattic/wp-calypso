@@ -18,7 +18,11 @@ interface Props {
 }
 
 export default function CreatePage( { postType }: Props ) {
-	const defaultLabel = get( postType, [ 'labels', 'add_new_item' ], __( 'Create' ) );
+	const defaultLabel = get(
+		postType,
+		[ 'labels', 'add_new_item' ],
+		__( 'Create', 'full-site-editing' )
+	);
 	const label = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.createPostLabel',
 		defaultLabel,

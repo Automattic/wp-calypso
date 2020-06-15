@@ -22,7 +22,11 @@ const Button = ( { children, ...rest }: OriginalButton.Props & { isSecondary?: b
 );
 
 export default function ViewAllPosts( { postType }: Props ) {
-	const defaultLabel = get( postType, [ 'labels', 'view_items' ], __( 'Back' ) );
+	const defaultLabel = get(
+		postType,
+		[ 'labels', 'view_items' ],
+		__( 'Back', 'full-site-editing' )
+	);
 	const label = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.allPostsLabel',
 		defaultLabel,
