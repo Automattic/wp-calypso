@@ -9,10 +9,7 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies
  */
 import { STORE_KEY } from './constants';
-import WpcomBlockEditorNavSidebar, {
-	selectNavItems,
-	selectPostStatusLabels,
-} from './components/nav-sidebar';
+import WpcomBlockEditorNavSidebar, { selectNavItems } from './components/nav-sidebar';
 
 async function findElement( selector: string, timeoutMs = 5000 ) {
 	let pendingQuery;
@@ -95,7 +92,6 @@ async function attachSidebar() {
 	render( <WpcomBlockEditorNavSidebar />, sidebarContainer );
 
 	// Start pre-loading sidebar content
-	selectPostStatusLabels( select );
 	selectNavItems( select );
 }
 
