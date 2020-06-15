@@ -25,6 +25,7 @@ import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
 // To be removed after jetpack/features-section flags are permanently enabled
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import QueryEligibility from 'components/data/query-atat-eligibility';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
@@ -84,9 +85,12 @@ class JetpackCloudSidebar extends Component {
 	sidebarItems() {
 		if ( this.props.shouldShowJetpackSection ) {
 			return (
-				<SidebarMenu>
-					<JetpackCloudSidebarMenuItems path={ this.props.path } />
-				</SidebarMenu>
+				<>
+					<QueryEligibility siteId={ this.props.siteId } />
+					<SidebarMenu>
+						<JetpackCloudSidebarMenuItems path={ this.props.path } />
+					</SidebarMenu>
+				</>
 			);
 		}
 
