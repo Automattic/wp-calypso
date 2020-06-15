@@ -14,7 +14,6 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import Button from 'components/forms/form-button';
 import DateRangeSelector from 'my-sites/activity/filterbar/date-range-selector';
 import Gridicon from 'components/gridicon';
-import { backupActivityPath } from 'my-sites/backup/paths';
 
 /**
  * Style dependencies
@@ -90,7 +89,7 @@ class BackupDatePicker extends Component {
 	};
 
 	goToActivityLog = () => {
-		page.redirect( backupActivityPath( this.props.siteSlug ) );
+		page.redirect( `/activity-log/${ this.props.siteSlug }` );
 	};
 
 	onSpace = ( evt, fn ) => {
@@ -167,7 +166,7 @@ class BackupDatePicker extends Component {
 						</div>
 						<a
 							className="backup-date-picker__search-link"
-							href={ backupActivityPath( siteSlug ) }
+							href={ `/activity-log/${ siteSlug }` }
 							onClick={ () => {
 								dispatchRecordTracksEvent( 'calypso_jetpack_backup_search' );
 							} }

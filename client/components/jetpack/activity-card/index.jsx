@@ -14,7 +14,7 @@ import { backupDownloadPath, backupRestorePath } from 'my-sites/backup/paths';
 import { settingsPath } from 'lib/jetpack/paths';
 import { Card } from '@automattic/components';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { withApplySiteOffset } from 'components/jetpack/site-offset';
+import { withApplySiteOffset } from 'components/site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
 import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
 import ActivityDescription from './activity-description';

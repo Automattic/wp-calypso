@@ -33,7 +33,7 @@ import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { triggerScanRun } from 'lib/jetpack/trigger-scan-run';
-import { withApplySiteOffset, applySiteOffsetType } from 'components/jetpack/site-offset';
+import { withApplySiteOffset, applySiteOffsetType } from 'components/site-offset';
 import ScanNavigation from './navigation';
 
 /**

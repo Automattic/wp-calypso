@@ -26,20 +26,16 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import './style.scss';
 
 interface Props {
-	after?: string;
-	before?: string;
-	group?: string;
-	page?: string;
+	// after?: string;
+	// before?: string;
+	// group?: string;
+	// page?: string;
 }
 
-const BackupActivityLogPage: FunctionComponent< Props > = ( {
-	after,
-	before,
-	group,
-	page = 1,
-} ) => {
+// const ActivityLogV2: FunctionComponent< Props > = ( { after, before, group, page = 1 } ) => {
+const ActivityLogV2: FunctionComponent< Props > = () => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+	// const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
@@ -50,27 +46,27 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 	 * ( the filterbar makes modifications to the filter in state THEN navigates to the new page. )
 	 * Since we are loading this page fresh we want to "reset" the filter to what the query args tell us
 	 */
-	useEffect( () => {
-		const processedGroup = group ? group.split( ',' ) : undefined;
-		if (
-			! isEqual( filter.group, processedGroup ) ||
-			filter.after !== after ||
-			filter.before !== before ||
-			filter.page !== page
-		)
-			dispatch( setFilter( siteId, { page: page, after, before, group: processedGroup } ) );
-	}, [
-		after,
-		before,
-		dispatch,
-		filter.after,
-		filter.before,
-		filter.group,
-		filter.page,
-		group,
-		page,
-		siteId,
-	] );
+	// useEffect( () => {
+	// 	const processedGroup = group ? group.split( ',' ) : undefined;
+	// 	if (
+	// 		! isEqual( filter.group, processedGroup ) ||
+	// 		filter.after !== after ||
+	// 		filter.before !== before ||
+	// 		filter.page !== page
+	// 	)
+	// 		dispatch( setFilter( siteId, { page: page, after, before, group: processedGroup } ) );
+	// }, [
+	// 	after,
+	// 	before,
+	// 	dispatch,
+	// 	filter.after,
+	// 	filter.before,
+	// 	filter.group,
+	// 	filter.page,
+	// 	group,
+	// 	page,
+	// 	siteId,
+	// ] );
 
 	// when the filter changes, re-request the logs
 	useEffect( () => {
@@ -78,12 +74,12 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 	}, [ filter, siteId ] );
 
 	return (
-		<Main className="backup-activity-log">
+		<Main className="activity-log-v2">
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
 			<PageViewTracker path="/backup/activity/:site" title="Activity log" />
-			<div className="backup-activity-log__content">
-				<div className="backup-activity-log__header">
+			<div className="activity-log-v2__content">
+				<div className="activity-log-v2__header">
 					<h2>{ translate( 'Find a backup or restore point' ) }</h2>
 					<p>
 						{ translate(
@@ -97,4 +93,4 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 	);
 };
 
-export default BackupActivityLogPage;
+export default ActivityLogV2;

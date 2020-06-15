@@ -1,13 +1,13 @@
-.backup-activity-log .filterbar .filterbar__wrap.card {
+.activity-log-v2 .filterbar .filterbar__wrap.card {
 	display: flex;
 }
 
-.backup-activity-log__content {
+.activity-log-v2__content {
 	margin-top: 32px;
 	margin-bottom: 32px;
 }
 
-.backup-activity-log__header {
+.activity-log-v2__header {
 	& > * {
 		&:not( :first-child ) {
 			margin-top: 16px;

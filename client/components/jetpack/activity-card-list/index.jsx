@@ -12,7 +12,7 @@ import React, { Component } from 'react';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isActivityBackup } from 'lib/jetpack/backup-utils';
 import { updateFilter } from 'state/activity-log/actions';
-import { withApplySiteOffset } from '../site-offset';
+import { withApplySiteOffset } from 'components/site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import ActivityCard from 'components/jetpack/activity-card';

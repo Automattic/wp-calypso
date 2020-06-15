@@ -6,9 +6,6 @@ import { addQueryArgs } from 'lib/url';
 export const backupMainPath = ( siteName?: string | null, query = {} ) =>
 	siteName ? addQueryArgs( query, `/backup/${ siteName }` ) : '/backup';
 
-export const backupActivityPath = ( siteName?: string | null ) =>
-	siteName ? `/backup/activity/${ siteName }` : '/backup/activity';
-
 const backupSubSectionPath = (
 	siteName: string,
 	subSection: string,
