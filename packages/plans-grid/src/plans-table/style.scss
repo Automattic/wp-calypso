@@ -15,9 +15,11 @@
 	flex-basis: 0;
 	flex-direction: column;
 
-	// to collapse double borders into one
-	+ .plan-item {
-		margin-left: -1px;
+	@media ( min-width: $break-mobile ) {
+		// to collapse double borders into one
+		+ .plan-item {
+			margin-left: -1px;
+		}
 	}
 
 	// we need to push all items down so the popular badge
@@ -92,9 +94,9 @@
 	text-align: center;
 	text-transform: uppercase;
 	color: white;
-	padding: 2.5px;
+	padding: 4.5px;
 	font-size: $font-body-extra-small;
-	margin-top: -20px;
+	margin-top: -24px;
 }
 
 .plan-item__price-amount {
@@ -148,7 +150,7 @@
 
 .plan-item__details .plan-item__summary .plan-item__price {
 	margin-top: 16px;
-	margin-bottom: 16px;
+	margin-bottom: 8px;
 }
 
 .plan-item:not( .is-open ) .plan-item__summary .plan-item__price {
@@ -182,6 +184,7 @@
 		// the strike-through will look dirty over it
 		margin-right: 5px;
 		vertical-align: middle;
+		margin-top: 3px;
 	}
 
 	svg:first-child path {
