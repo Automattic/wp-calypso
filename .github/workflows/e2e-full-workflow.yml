@@ -23,6 +23,8 @@ jobs:
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
             v1-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
+        env:
+          CHROMEDRIVER_FORCE_DOWNLOAD: true
         run: yarn install --frozen-lockfile
       - name: Check external author
         run: |
