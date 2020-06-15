@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import wp from 'lib/wp';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -55,6 +57,7 @@ export default function CheckoutSystemDecider( {
 		isJetpack,
 		isAtomic
 	);
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( product ) {
@@ -86,7 +89,23 @@ export default function CheckoutSystemDecider( {
 		}
 	}, [ reduxDispatch, checkoutVariant, product ] );
 
-	// TODO: fetch the current cart, ideally without using CartData, and use that to pass to shouldShowCompositeCheckout
+	const logCheckoutError = useCallback(
+		( error ) => {
+			reduxDispatch(
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'composite checkout load error',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'checkout_system_decider',
+						message: String( error.message ),
+					},
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
 
 	if ( ! cart || ! cart.currency ) {
 		debug( 'not deciding yet; cart has not loaded' );
@@ -95,20 +114,25 @@ export default function CheckoutSystemDecider( {
 
 	if ( 'composite-checkout' === checkoutVariant ) {
 		return (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-				<CompositeCheckout
-					siteSlug={ selectedSite?.slug }
-					siteId={ selectedSite?.ID }
-					product={ product }
-					purchaseId={ purchaseId }
-					couponCode={ couponCode }
-					redirectTo={ redirectTo }
-					feature={ selectedFeature }
-					plan={ plan }
-					cart={ cart }
-					isWhiteGloveOffer={ isWhiteGloveOffer }
-				/>
-			</StripeHookProvider>
+			<CheckoutErrorBoundary
+				errorMessage={ translate( 'Sorry. there was an error loading this page' ) }
+				onError={ logCheckoutError }
+			>
+				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+					<CompositeCheckout
+						siteSlug={ selectedSite?.slug }
+						siteId={ selectedSite?.ID }
+						product={ product }
+						purchaseId={ purchaseId }
+						couponCode={ couponCode }
+						redirectTo={ redirectTo }
+						feature={ selectedFeature }
+						plan={ plan }
+						cart={ cart }
+						isWhiteGloveOffer={ isWhiteGloveOffer }
+					/>
+				</StripeHookProvider>
+			</CheckoutErrorBoundary>
 		);
 	}
 
