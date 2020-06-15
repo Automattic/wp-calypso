@@ -3,6 +3,8 @@
  */
 import * as React from 'react';
 import classNames from 'classnames';
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { Plans, DomainSuggestions } from '@automattic/data-stores';
@@ -44,6 +46,12 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 	const { setPlan } = useDispatch( PLANS_STORE );
 
+	const [ showDetails, setShowDetails ] = React.useState( false );
+
+	const handleDetailsToggleButtonClick = () => {
+		setShowDetails( ( show ) => ! show );
+	};
+
 	const handlePlanSelect = ( plan: PlansSlug ) => {
 		setPlan( plan );
 		onPlanSelect?.();
@@ -53,6 +61,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 		<div
 			className={ classNames( 'plans-grid', {
 				'is-mobile': isMobile,
+				'show-details': showDetails,
 			} ) }
 		>
 			<div className="plans-grid__header">{ header }</div>
@@ -73,7 +82,20 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 					<Title>{ __( 'Detailed comparison' ) }</Title>
 				</div>
 				<div className="plans-grid__details-container">
-					<PlansDetails onSelect={ handlePlanSelect } />
+					<PlansDetails>
+						<div className="plans-grid__details-actions">
+							<Button
+								className={ classNames( 'plans-grid__details-toggle-button', {
+									'is-collapsed': ! showDetails,
+								} ) }
+								isLarge
+								onClick={ handleDetailsToggleButtonClick }
+							>
+								<span>{ showDetails ? __( 'Hide details' ) : __( 'Show details' ) }</span>
+								<Icon icon={ chevronDown } size={ 20 } />
+							</Button>
+						</div>
+					</PlansDetails>
 				</div>
 			</div>
 		</div>
