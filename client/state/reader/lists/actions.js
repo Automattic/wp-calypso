@@ -309,43 +309,49 @@ export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug
 	tagSlug,
 } );
 
-export const addReaderListFeed = ( listOwner, listSlug, feedId ) => ( {
+export const addReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
+	listId,
 	listOwner,
 	listSlug,
 	feedId,
 } );
 
-export const addReaderListFeedByUrl = ( listOwner, listSlug, feedUrl ) => ( {
+export const addReaderListFeedByUrl = ( listId, listOwner, listSlug, feedUrl ) => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
+	listId,
 	listOwner,
 	listSlug,
 	feedUrl,
 } );
 
-export const addReaderListSite = ( listOwner, listSlug, siteId ) => ( {
+export const addReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
+	listId,
 	listOwner,
 	listSlug,
 	siteId,
 } );
 
-export const addReaderListTag = ( listOwner, listSlug, tagSlug ) => ( {
+export const addReaderListTag = ( listId, listOwner, listSlug, tagSlug ) => ( {
 	type: READER_LIST_ITEM_ADD_TAG,
+	listId,
 	listOwner,
 	listSlug,
 	tagSlug,
 } );
 
-export const receiveAddReaderListFeed = ( listOwner, listSlug, feedId ) => ( {
+export const receiveAddReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
 	type: READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	listId,
 	listOwner,
 	listSlug,
 	feedId,
 } );
 
-export const receiveAddReaderListTag = ( listOwner, listSlug, tagSlug, tagId ) => ( {
+export const receiveAddReaderListTag = ( listId, listOwner, listSlug, tagSlug, tagId ) => ( {
 	type: READER_LIST_ITEM_ADD_TAG_RECEIVE,
+	listId,
 	listOwner,
 	listSlug,
 	tagSlug,

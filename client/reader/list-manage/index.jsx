@@ -144,6 +144,7 @@ function ReaderListEdit( props ) {
 												if ( addFeedText.current?.value ) {
 													dispatch(
 														addReaderListFeedByUrl(
+															list.ID,
 															list.owner,
 															list.slug,
 															addFeedText.current.value

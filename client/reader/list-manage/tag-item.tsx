@@ -13,7 +13,7 @@ import { Item, Tag } from './types';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function TagItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
-	const tag: Tag = props.item.meta.data?.tag?.tag as Tag;
+	const tag: Tag = props.item.meta?.data?.tag?.tag as Tag;
 
 	return ! tag ? (
 		// TODO: Add support for removing invalid tag list item
