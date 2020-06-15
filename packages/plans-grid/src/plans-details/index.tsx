@@ -36,7 +36,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
 					<tr className="plans-details__header-row">
 						<th>{ __( 'Feature' ) }</th>
 						{ supportedPlans.map( ( plan ) => (
-							<th>{ plan.title }</th>
+							<th key={ plan.storeSlug }>{ plan.title }</th>
 						) ) }
 					</tr>
 				</thead>

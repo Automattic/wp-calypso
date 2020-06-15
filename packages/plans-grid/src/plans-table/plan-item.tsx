@@ -97,6 +97,8 @@ export interface Props {
 	isSelected?: boolean;
 	onSelect: ( slug: string ) => void;
 	onPickDomainClick?: () => void;
+	onToggleExpandAll?: () => void;
+	isExpanded: boolean;
 }
 
 const PlanItem: React.FunctionComponent< Props > = ( {
@@ -109,6 +111,8 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	features,
 	onSelect,
 	onPickDomainClick,
+	onToggleExpandAll,
+	isExpanded,
 } ) => {
 	const { __ } = useI18n();
 
@@ -119,10 +123,10 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
-	const isOpen = isDesktop || isPopular;
+	const isOpen = isExpanded || isDesktop || isPopular;
 
 	return (
-		<div className={ classNames( 'plan-item', { 'is-popular': isPopular } ) }>
+		<div className={ classNames( 'plan-item', { 'is-popular': isPopular, 'is-open': isOpen } ) }>
 			{ isPopular && <span className="plan-item__badge">{ __( 'Popular' ) }</span> }
 			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
 				<details className="plan-item__details" open={ isOpen }>
@@ -172,6 +176,12 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 				</details>
 			</div>
+
+			{ isPopular && ! isDesktop && (
+				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
+					{ isExpanded ? __( 'Collapse all plans' ) : __( 'Expand all plans' ) }
+				</Button>
+			) }
 		</div>
 	);
 };

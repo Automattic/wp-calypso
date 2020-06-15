@@ -23,6 +23,14 @@
 	// we need to push all items down so the popular badge
 	// doesn't get truncated from top
 	margin-top: 30px;
+
+	@media ( max-width: $break-mobile ) {
+		// on mobile, we have the plans stacked on top of each other
+		// the -1 is to collapse shared borders
+		&:not( .is-popular ) {
+			margin-top: -1px;
+		}
+	}
 }
 
 .plan-item__viewport {
@@ -58,6 +66,14 @@
 
 .plan-item__domain-name {
 	font-size: $font-body-small;
+}
+
+.plan-item__mobile-expand-all-plans {
+	// increase specificity
+	&.components-button.is-link {
+		margin: 20px auto;
+		color: $dark-gray-500;
+	}
 }
 
 .plan-item__badge {
