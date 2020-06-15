@@ -56,6 +56,7 @@ import {
 	isCalypsoStartedConnection,
 	isSsoApproved,
 	retrieveMobileRedirect,
+	retrievePlan,
 } from './persistence-utils';
 import {
 	authorize as authorizeAction,
@@ -615,6 +616,13 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
+		// If the redirect is part of the Jetpack Search purchase flow
+		const isSearch = this.props.selectedPlanSlug === 'jetpack_search';
+
+		if ( isSearch ) {
+			return '/checkout/' + urlToSlug( homeUrl ) + '/' + this.props.selectedPlanSlug;
+		}
+
 		return addQueryArgs(
 			{ redirect: redirectAfterAuth },
 			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
@@ -784,6 +792,7 @@ const connectComponent = connect(
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
+		const selectedPlanSlug = retrievePlan();
 
 		return {
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
@@ -801,6 +810,7 @@ const connectComponent = connect(
 			mobileAppRedirect,
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),
+			selectedPlanSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
