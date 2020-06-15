@@ -12,14 +12,14 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { getFreeDomainSuggestions } from '../utils/domain-suggestions';
-import { useDomainSuggestions } from './use-domain-suggestions';
+import { useDomainSuggestions } from './use-domain-suggestions'; // @TODO: get this from packages and remove hook from Gutenboarding
 import { useShouldSiteBePublicOnSelectedPlan } from './use-selected-plan';
 
 /**
  * After signup or login a site is automatically created using the username and bearerToken
  **/
 
-export default function useSignup() {
+export default function useOnLogin() {
 	const { i18nLocale } = useI18n();
 
 	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
