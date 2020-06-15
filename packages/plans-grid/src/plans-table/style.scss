@@ -60,6 +60,10 @@
 	font-size: 18px;
 	line-height: 24px;
 	display: inline-block;
+
+	@media ( max-width: $break-mobile ) {
+		font-size: 14px;
+	}
 }
 
 .plan-item:not( .is-popular ) .plan-item__name {
