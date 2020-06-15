@@ -12,7 +12,6 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import wrapInSiteOffsetProvider from 'lib/jetpack/wrap-in-site-offset';
 import wpcomUpsellController from 'lib/jetpack/wpcom-upsell-controller';
-import wpcomBusinessAtController from 'lib/jetpack/wpcom-business-at-controller';
 import {
 	backupActivity,
 	backupDownload,
@@ -21,7 +20,6 @@ import {
 	showUpsellIfNoBackup,
 } from 'my-sites/backup/controller';
 import WPCOMUpsell from 'landing/jetpack-cloud/sections/wpcom-upsell';
-import WPCOMBusinessAT from 'components/jetpack/wpcom-business-at';
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {
@@ -38,7 +36,6 @@ export default function () {
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoBackup,
 			wpcomUpsellController( WPCOMUpsell ),
-			wpcomBusinessAtController( WPCOMBusinessAT ),
 			makeLayout,
 			clientRender
 		);
@@ -51,7 +48,6 @@ export default function () {
 			backupDownload,
 			wrapInSiteOffsetProvider,
 			wpcomUpsellController( WPCOMUpsell ),
-			wpcomBusinessAtController( WPCOMBusinessAT ),
 			makeLayout,
 			clientRender
 		);
@@ -65,7 +61,6 @@ export default function () {
 				backupRestore,
 				wrapInSiteOffsetProvider,
 				wpcomUpsellController( WPCOMUpsell ),
-				wpcomBusinessAtController( WPCOMBusinessAT ),
 				makeLayout,
 				clientRender
 			);
@@ -80,7 +75,6 @@ export default function () {
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoBackup,
 			wpcomUpsellController( WPCOMUpsell ),
-			wpcomBusinessAtController( WPCOMBusinessAT ),
 			makeLayout,
 			clientRender
 		);
