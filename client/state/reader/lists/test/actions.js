@@ -13,7 +13,6 @@ import {
 	requestSubscribedLists,
 	followList,
 	unfollowList,
-	updateListDetails,
 	dismissListNotice,
 	updateTitle,
 	updateDescription,
@@ -21,7 +20,6 @@ import {
 import {
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
-	READER_LIST_UPDATE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_FOLLOW,
@@ -142,26 +140,6 @@ describe( 'actions', () => {
 				type: READER_LISTS_UNFOLLOW,
 				owner: 'restapitests',
 				slug: 'testlist',
-			} );
-		} );
-	} );
-
-	describe( '#updateListDetails()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.2/read/lists/restapitests/testlist/update' )
-				.reply( 200, {
-					following: false,
-				} );
-		} );
-
-		test( 'should dispatch fetch action when thunk triggered', () => {
-			const list = { owner: 'restapitests', slug: 'testlist', title: 'Banana' };
-			updateListDetails( list )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_UPDATE,
-				list,
 			} );
 		} );
 	} );

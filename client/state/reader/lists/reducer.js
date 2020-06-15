@@ -13,6 +13,7 @@ import {
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
 	READER_LIST_UPDATE_TITLE,
@@ -183,6 +184,24 @@ export function isCreatingList( state = false, action ) {
 }
 
 /**
+ * Records if there is a pending list update request.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function isUpdatingList( state = false, action ) {
+	switch ( action.type ) {
+		case READER_LIST_UPDATE:
+		case READER_LIST_UPDATE_SUCCESS:
+		case READER_LIST_UPDATE_FAILURE:
+			return READER_LIST_UPDATE === action.type;
+	}
+
+	return state;
+}
+
+/**
  * Returns the updated requests state after an action has been dispatched.
  *
  * @param  {object} state  Current state
@@ -260,6 +279,7 @@ export default combineReducers( {
 	isCreatingList,
 	isRequestingList,
 	isRequestingLists,
+	isUpdatingList,
 	errors,
 	missingLists,
 } );

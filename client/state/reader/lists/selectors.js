@@ -43,6 +43,16 @@ export function isCreatingList( state ) {
 }
 
 /**
+ * Returns true if currently updating a Reader list.
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {boolean}        Whether lists are being requested
+ */
+export function isUpdatingList( state ) {
+	return !! state.reader.lists.isUpdatingList;
+}
+
+/**
  * Returns the user's subscribed Reader lists.
  *
  * @param  {object}  state  Global state tree
