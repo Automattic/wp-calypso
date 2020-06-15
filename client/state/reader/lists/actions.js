@@ -16,8 +16,6 @@ import {
 	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
-	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_REQUEST_SUCCESS,
@@ -265,40 +263,6 @@ export function dismissListNotice( listId ) {
 		dispatch( {
 			type: READER_LIST_DISMISS_NOTICE,
 			listId,
-		} );
-	};
-}
-
-/**
- * Trigger an action to update a list title.
- *
- * @param  {number}  listId List ID
- * @param  {string}  newTitle List title
- * @returns {Function} Action thunk
- */
-export function updateTitle( listId, newTitle ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_UPDATE_TITLE,
-			listId,
-			title: newTitle,
-		} );
-	};
-}
-
-/**
- * Trigger an action to update a list description.
- *
- * @param  {number}  listId List ID
- * @param  {string}  newDescription List description
- * @returns {Function} Action thunk
- */
-export function updateDescription( listId, newDescription ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_UPDATE_DESCRIPTION,
-			listId,
-			description: newDescription,
 		} );
 	};
 }
