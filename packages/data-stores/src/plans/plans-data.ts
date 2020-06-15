@@ -111,13 +111,7 @@ export const planDetails: PlanDetails = [
 			{
 				name: 'Storage',
 				type: 'text',
-				data: [
-					'3 GB storage space',
-					'6 GB storage space',
-					'13 GB storage space',
-					'200 GB storage space',
-					'200 GB storage space',
-				],
+				data: [ '3 GB', '6 GB', '13 GB', '200 GB', '200 GB' ],
 			},
 			{
 				name: 'Dozens of free designs',
