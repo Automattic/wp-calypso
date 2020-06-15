@@ -170,7 +170,9 @@ function NavItem( { item, selected, statusLabel }: NavItemProps ) {
 }
 
 export function selectNavItems( select: typeof import('@wordpress/data').select ): Post[] {
-	const currentPostType = select( 'core/editor' ).getCurrentPostType();
+	const { isEditedPostNew, getCurrentPostId, getCurrentPostType, getEditedPostAttribute } = select(
+		'core/editor'
+	);
 
 	const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
 	if ( ! statuses ) {
@@ -182,14 +184,26 @@ export function selectNavItems( select: typeof import('@wordpress/data').select 
 		.map( ( { slug } ) => slug )
 		.join( ',' );
 
-	const items = select( 'core' ).getEntityRecords( 'postType', currentPostType, {
-		_fields: 'id,slug,status,title',
-		orderby: 'modified',
-		per_page: 10,
-		status: statusFilter,
-	} );
+	const currentPostId = getCurrentPostId();
+	const currentPostType = getCurrentPostType();
 
-	return ( items as any ) || [];
+	const items =
+		select( 'core' ).getEntityRecords( 'postType', currentPostType, {
+			_fields: 'id,slug,status,title',
+			exclude: [ currentPostId ],
+			orderby: 'modified',
+			per_page: 10,
+			status: statusFilter,
+		} ) || [];
+
+	const currentPost = {
+		id: currentPostId,
+		slug: getEditedPostAttribute( 'slug' ),
+		status: isEditedPostNew() ? 'draft' : getEditedPostAttribute( 'status' ),
+		title: { raw: getEditedPostAttribute( 'title' ), rendered: '' },
+	};
+
+	return [ currentPost, ...items ] as any;
 }
 
 export function selectPostStatusLabels(
