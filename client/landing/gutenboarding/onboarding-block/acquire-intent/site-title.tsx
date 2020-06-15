@@ -47,26 +47,21 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	const placeHolder = useTyper(
 		[
-			_x(
-				'In Focus Photographers',
-				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
-			),
-			_x(
-				'Cortado Coffee SF',
-				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
-			),
-			_x(
-				'Leah Rand',
-				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
-			),
-			_x(
-				'Ava Young',
-				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
-			),
-			_x(
-				'Mighty Leaf Tea Room',
-				'This is an example of a site name, feel free to create your own but please keep it under 22 characters'
-			),
+			/* translators: This is an example of a site name,
+			   feel free to create your own but please keep it under 22 characters */
+			_x( 'In Focus Photographers', 'sample site title' ),
+			/* translators: This is an example of a site name,
+			   feel free to create your own but please keep it under 22 characters */
+			_x( 'Cortado Coffee SF', 'sample site title' ),
+			/* translators: This is an example of a site name,
+			   feel free to create your own but please keep it under 22 characters */
+			_x( 'Leah Rand', 'sample site title' ),
+			/* translators: This is an example of a site name,
+			   feel free to create your own but please keep it under 22 characters */
+			_x( 'Ava Young', 'sample site title' ),
+			/* translators: This is an example of a site name,
+			   feel free to create your own but please keep it under 22 characters */
+			_x( 'Mighty Leaf Tea Room', 'sample site title' ),
 		],
 		! siteTitle,
 		{
