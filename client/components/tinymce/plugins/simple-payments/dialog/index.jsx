@@ -13,6 +13,7 @@ import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
@@ -479,9 +480,15 @@ class SimplePaymentsDialog extends Component {
 						<UpsellNudge
 							className="editor-simple-payments-modal__nudge-nudge"
 							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
-							description={ translate(
-								'Get Pay with PayPal button, advanced social media tools, your own domain, and more.'
-							) }
+							description={
+								isEnabled( 'earn/pay-with-paypal' )
+									? translate(
+											'Get Pay with PayPal button, advanced social media tools, your own domain, and more.'
+									  )
+									: translate(
+											'Get simple payments, advanced social media tools, your own domain, and more.'
+									  )
+							}
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							event="editor_simple_payments_modal_nudge"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
@@ -492,9 +499,15 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' ) }
+							href={
+								isEnabled( 'earn/pay-with-paypal' )
+									? localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' )
+									: localizeUrl( 'https://wordpress.com/support/simple-payments/' )
+							}
 						>
-							{ translate( 'Learn more about Pay with PayPal buttons' ) }
+							{ isEnabled( 'earn/pay-with-paypal' )
+								? translate( 'Learn more about Pay with PayPal buttons' )
+								: translate( 'Learn more about Simple Payments' ) }
 						</a>
 					}
 				/>,
