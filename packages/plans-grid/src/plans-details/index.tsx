@@ -3,10 +3,13 @@
  */
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import { Path, SVG } from '@wordpress/primitives';
-import { Icon } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { Plans } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
+
+import { Icon, check } from '@wordpress/icons';
+
+const TickIcon = <Icon icon={ check } size={ 25 } />;
 
 /**
  * Style dependencies
@@ -15,16 +18,16 @@ import './style.scss';
 
 const PLANS_STORE = Plans.register();
 
-const PlansDetails: React.FunctionComponent = ( props ) => {
+type Props = {
+	onSelect: Function;
+};
+
+const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
 	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );
+	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 
 	const { __ } = useI18n();
-
-	const checkIcon = (
-		<SVG width="20" height="20" viewBox="0 0 20 20">
-			<Path d="M10 2c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm-.615 12.66h-1.34l-3.24-4.54 1.34-1.25 2.57 2.4 5.14-5.93 1.34.94-5.81 8.38z" />
-		</SVG>
-	);
 
 	return (
 		<div className="plans-details">
@@ -32,11 +35,9 @@ const PlansDetails: React.FunctionComponent = ( props ) => {
 				<thead>
 					<tr className="plans-details__header-row">
 						<th>{ __( 'Feature' ) }</th>
-						<th>{ __( 'Free' ) }</th>
-						<th>{ __( 'Personal' ) }</th>
-						<th>{ __( 'Premium' ) }</th>
-						<th>{ __( 'Business' ) }</th>
-						<th>{ __( 'eCommerce' ) }</th>
+						{ supportedPlans.map( ( plan ) => (
+							<th key={ plan.storeSlug }>{ plan.title }</th>
+						) ) }
 					</tr>
 				</thead>
 				{ plansDetails.map( ( detail ) => (
@@ -56,7 +57,7 @@ const PlansDetails: React.FunctionComponent = ( props ) => {
 												<>
 													{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 													<span className="hidden">{ __( 'Available' ) }</span>
-													<Icon icon={ checkIcon } size={ 20 } />
+													{ TickIcon }
 												</>
 											) : (
 												<>
@@ -71,8 +72,36 @@ const PlansDetails: React.FunctionComponent = ( props ) => {
 						) ) }
 					</tbody>
 				) ) }
+
+				<tbody>
+					<tr className="plans-details__header-row">
+						<th colSpan={ 6 }>{ __( 'Sign up' ) }</th>
+					</tr>
+					<tr className="plans-details__feature-row" key="price">
+						<th>{ __( 'Monthly subscription (billed yearly)' ) }</th>
+						{ supportedPlans.map( ( plan ) => (
+							<td key={ plan.storeSlug }>{ prices[ plan.storeSlug ] }</td>
+						) ) }
+					</tr>
+
+					<tr className="plans-details__feature-row" key="cta">
+						<th></th>
+						{ supportedPlans.map( ( plan ) => (
+							<td key={ plan.storeSlug }>
+								<Button
+									onClick={ () => {
+										onSelect( plan.storeSlug );
+									} }
+									isPrimary
+									isLarge
+								>
+									<span>{ __( 'Choose' ) }</span>
+								</Button>
+							</td>
+						) ) }
+					</tr>
+				</tbody>
 			</table>
-			{ props.children }
 		</div>
 	);
 };
