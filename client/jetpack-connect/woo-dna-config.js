@@ -11,7 +11,7 @@ export default ( query ) => ( {
 	/**
 	 * @returns {boolean} Whether the current flow is "Woo DNA" or not.
 	 */
-	isWooDnaFlow: () => Boolean( query.woodna_service_name ),
+	isWooDnaFlow: () => Boolean( query && query.woodna_service_name ),
 
 	/**
 	 * @returns {string} Flow name to send to the WP.com server to store in the newly created user metadata.
