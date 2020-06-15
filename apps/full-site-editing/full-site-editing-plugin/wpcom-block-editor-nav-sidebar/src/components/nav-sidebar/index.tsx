@@ -147,7 +147,7 @@ function NavItem( { item, selected, statusLabel }: NavItemProps ) {
 	} );
 
 	const titleClasses = classNames( 'wpcom-block-editor-nav-sidebar__title', {
-		'is-untitled': ! item.title?.rendered,
+		'is-untitled': ! item.title?.raw,
 	} );
 
 	return (
@@ -155,7 +155,7 @@ function NavItem( { item, selected, statusLabel }: NavItemProps ) {
 			<Button className={ buttonClasses }>
 				<div className="wpcom-block-editor-nav-sidebar__title-container">
 					<div className={ titleClasses }>
-						{ item.title?.rendered || __( 'Untitled', 'full-site-editing' ) }
+						{ item.title?.raw || __( 'Untitled', 'full-site-editing' ) }
 					</div>
 					{ item.slug && (
 						<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
