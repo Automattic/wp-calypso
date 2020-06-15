@@ -30,7 +30,9 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QueryScanState from 'components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
+import isCurrentPlanPaid from 'state/sites/selectors/is-current-plan-paid';
+import { siteHasJetpackProductPurchase } from 'state/purchases/selectors';
+import { isFreeTrial, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
@@ -516,6 +518,8 @@ export class MySitesSidebar extends Component {
 	plan() {
 		const {
 			canUserManageOptions,
+			hasPaidJetpackPlan,
+			hasPurchasedJetpackProduct,
 			isAtomicSite,
 			isJetpack,
 			isVip,
@@ -538,15 +542,8 @@ export class MySitesSidebar extends Component {
 
 		let planLink = '/plans' + this.props.siteSuffix;
 
-		const isUpgraded =
-			site &&
-			( isPersonal( site.plan ) ||
-				isPremium( site.plan ) ||
-				isBusiness( site.plan ) ||
-				isEcommerce( site.plan ) );
-
 		// Show plan details for upgraded sites
-		if ( isUpgraded ) {
+		if ( hasPaidJetpackPlan || hasPurchasedJetpackProduct ) {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
@@ -565,13 +562,13 @@ export class MySitesSidebar extends Component {
 		}
 
 		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
-		const displayPlanName = ! ( isJetpack && ! isAtomicSite && ! isVip );
+		const displayPlanName = ! isJetpack || isAtomicSite || isVip;
 
 		let icon = <JetpackLogo size={ 24 } className="sidebar__menu-icon" />;
 		if ( isEnabled( 'jetpack/features-section' ) ) {
 			icon = (
 				<Gridicon
-					icon={ isUpgraded ? 'star' : 'star-outline' }
+					icon={ hasPaidJetpackPlan || hasPurchasedJetpackProduct ? 'star' : 'star-outline' }
 					className="sidebar__menu-icon"
 					size={ 24 }
 				/>
@@ -990,6 +987,8 @@ function mapStateToProps( state ) {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
+		hasPaidJetpackPlan: isCurrentPlanPaid( state, siteId ),
+		hasPurchasedJetpackProduct: siteHasJetpackProductPurchase( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		isSiteSectionOpen,
