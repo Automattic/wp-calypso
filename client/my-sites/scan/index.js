@@ -10,7 +10,6 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { notFound, makeLayout, render as clientRender } from 'controller';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import wrapInSiteOffsetProvider from 'lib/jetpack/wrap-in-site-offset';
-import wpcomBusinessAtController from 'lib/jetpack/wpcom-business-at-controller';
 import wpcomUpsellController from 'lib/jetpack/wpcom-upsell-controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
@@ -44,8 +43,7 @@ export default function () {
 		scan,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
-		wpcomBusinessAtController( WPCOMBusinessAT ),
+		wpcomUpsellController( WPCOMScanUpsellPage, WPCOMBusinessAT ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -58,8 +56,7 @@ export default function () {
 		scanHistory,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScanHistory,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
-		wpcomBusinessAtController( WPCOMBusinessAT ),
+		wpcomUpsellController( WPCOMScanUpsellPage, WPCOMBusinessAT ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -72,8 +69,7 @@ export default function () {
 		scan,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
-		wpcomBusinessAtController( WPCOMBusinessAT ),
+		wpcomUpsellController( WPCOMScanUpsellPage, WPCOMBusinessAT ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
