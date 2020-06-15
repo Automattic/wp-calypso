@@ -40,12 +40,12 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
-			ui: {
-				route: {
-					path: {
-						previous: '/route-with-no-match',
-					},
+			route: {
+				path: {
+					previous: '/route-with-no-match',
 				},
+			},
+			ui: {
 				selectedSiteId: siteId,
 				actionLog: [],
 			},
@@ -98,12 +98,12 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
-			ui: {
-				route: {
-					path: {
-						previous: customerHomeUrl,
-					},
+			route: {
+				path: {
+					previous: customerHomeUrl,
 				},
+			},
+			ui: {
 				selectedSiteId: siteId,
 				actionLog: [],
 			},
@@ -135,12 +135,12 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
-			ui: {
-				route: {
-					path: {
-						previous: '/route-with-no-match',
-					},
+			route: {
+				path: {
+					previous: '/route-with-no-match',
 				},
+			},
+			ui: {
 				selectedSiteId: siteId,
 				actionLog: [],
 			},
@@ -158,12 +158,12 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
-			ui: {
-				route: {
-					path: {
-						previous: themesUrl,
-					},
+			route: {
+				path: {
+					previous: themesUrl,
 				},
+			},
+			ui: {
 				selectedSiteId: siteId,
 				actionLog: [],
 			},
