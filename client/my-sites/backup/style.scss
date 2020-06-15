@@ -88,3 +88,37 @@
 		}
 	}
 }
+
+.backup__upsell-icon {
+	fill: #7bb1cd;
+}
+
+.backup__wpcom-upsell {
+	.what-is-jetpack {
+		margin-top: 64px;
+	}
+}
+
+.backup__main {
+	.action-panel__body {
+		margin-left: 30px;
+	}
+}
+
+header.backup__header.is-left-align {
+	color: var( --studio-black );
+	font-size: 28px;
+	line-height: 1;
+	margin: 32px 0 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: 36px;
+		font-weight: 600;
+		margin: 40px 0 18px;
+	}
+	&.is-placeholder {
+		display: block;
+		max-width: 60%;
+		@include placeholder( --color-neutral-10 );
+	}
+}

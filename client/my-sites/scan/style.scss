@@ -89,11 +89,17 @@ header.scan__header.is-left-align {
 }
 
 .scan__upsell-icon {
-	color: #7bb1cd;
+	fill: #7bb1cd;
 }
 
 .scan__wpcom-upsell {
 	.what-is-jetpack {
 		margin-top: 64px;
+	}
+}
+
+.scan__main {
+	.action-panel__body {
+		margin-left: 30px;
 	}
 }
