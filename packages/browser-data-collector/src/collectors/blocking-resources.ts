@@ -20,10 +20,15 @@ export const collector: Collector = ( report ) => {
 	);
 
 	const resourcesCount = blockingResources.length;
-	const resourcesStart = blockingResources.sort( ( a, b ) => a.requestStart - b.requestStart )[ 0 ]
-		.requestStart;
-	const resourcesEnd = blockingResources.sort( ( a, b ) => b.requestStart - a.requestStart )[ 0 ]
-		.responseEnd;
+
+	// Gets when the first resource starts, and when the last resource ends
+	const { start: resourcesStart, end: resourcesEnd } = blockingResources.reduce(
+		( { start, end }, resource ) => ( {
+			start: Math.min( start, resource.requestStart ),
+			end: Math.max( end, resource.responseEnd ),
+		} ),
+		{ start: Infinity, end: -Infinity }
+	);
 
 	const {
 		resourcesCompressed,
@@ -44,13 +49,15 @@ export const collector: Collector = ( report ) => {
 
 	// Hit ratio from 0 to 1 with two decimals (0=nothing was cached, 1=everything comes from the cache)
 	// resourcesTransferred includes the headers, but resourcesCompressed does not. So the division is a
-	// bit off and can return values higher than 1. We capped it to 1 to avoid sending negative numbers.
-	const resourcesCacheRatio =
-		1 - Math.max( 1, Math.round( ( resourcesTransferred / resourcesCompressed ) * 100 ) / 100 );
+	// bit off and can return values higher than 1. We cap it to 1 to avoid sending negative numbers
+	// and round the final result to 2 decimals.
+	const resourcesCacheRatio = Number(
+		( 1 - Math.min( 1, resourcesTransferred / resourcesCompressed ) ).toFixed( 2 )
+	);
 
 	report.data.set( 'resourcesCount', resourcesCount );
-	report.data.set( 'resourcesStart', resourcesStart );
-	report.data.set( 'resourcesEnd', resourcesEnd );
+	report.data.set( 'resourcesStart', Math.round( resourcesStart ) );
+	report.data.set( 'resourcesEnd', Math.round( resourcesEnd ) );
 	report.data.set( 'resourcesCompressed', resourcesCompressed );
 	report.data.set( 'resourcesUncompressed', resourcesUncompressed );
 	report.data.set( 'resourcesTransferred', resourcesTransferred );
