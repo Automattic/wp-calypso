@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
+import { isEnabled } from '../../config';
 
 /**
  * Internal dependencies
@@ -124,7 +125,9 @@ export default function useOnSiteCreation() {
 			resetOnboardStore();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = `/block-editor/page/${ newSite.site_slug }/home`;
+			window.location.href = isEnabled( 'gutenboarding/site-editor' )
+				? `/site-editor/${ newSite.site_slug }/`
+				: `/block-editor/page/${ newSite.site_slug }/home`;
 		}
 	}, [
 		domain,
