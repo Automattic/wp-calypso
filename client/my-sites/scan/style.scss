@@ -103,11 +103,3 @@ header.scan__header.is-left-align {
 		}
 	}
 }
-
-.scan__main {
-	@include breakpoint-deprecated( '>660px' ) {
-		.action-panel__body {
-			margin-left: 30px;
-		}
-	}
-}
