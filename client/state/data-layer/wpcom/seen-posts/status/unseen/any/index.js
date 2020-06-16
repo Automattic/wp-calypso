@@ -4,7 +4,7 @@
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
-import { receiveUnseenStatusAny } from 'state/ui/reader/seen-posts/actions';
+import { receiveUnseenStatusAny } from 'state/reader-ui/seen-posts/actions';
 import { READER_UNSEEN_STATUS_ANY_REQUEST } from 'state/action-types';
 
 export function fetch( action ) {

@@ -11,6 +11,8 @@ import {
  */
 import 'state/data-layer/wpcom/seen-posts/status/unseen/any/index';
 
+import 'state/reader-ui/init';
+
 /**
  * Request unseen status for any section
  *

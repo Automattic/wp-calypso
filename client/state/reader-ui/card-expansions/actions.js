@@ -7,6 +7,8 @@ import { reduxDispatch } from 'lib/redux-bridge';
 import DISPLAY_TYPES from 'state/reader/posts/display-types';
 import * as stats from 'reader/stats';
 
+import 'state/reader-ui/init';
+
 export const expandCard = ( { postKey, post, site } ) => {
 	if ( post.display_type & DISPLAY_TYPES.PHOTO_ONLY ) {
 		stats.recordTrackForPost( 'calypso_reader_photo_expanded', post );
