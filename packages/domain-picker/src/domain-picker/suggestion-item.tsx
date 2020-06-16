@@ -7,13 +7,14 @@ import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import { Icon, arrowRight } from '@wordpress/icons';
+import { createInterpolateElement } from '@wordpress/element';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 interface Props {
 	suggestion: DomainSuggestion;
 	railcarId: string | undefined;
-	isSelected?: boolean;
 	isRecommended?: boolean;
 	onRender: () => void;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
@@ -22,7 +23,6 @@ interface Props {
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	suggestion,
 	railcarId,
-	isSelected = false,
 	isRecommended = false,
 	onSelect,
 	onRender,
@@ -61,16 +61,13 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<label className="domain-picker__suggestion-item">
-			<input
-				aria-labelledby={ labelId }
-				className="domain-picker__suggestion-radio-button"
-				type="radio"
-				name="domain-picker-suggestion-option"
-				onChange={ onDomainSelect }
-				checked={ isSelected }
-			/>
-			<div className="domain-picker__suggestion-item-name" id={ labelId }>
+		<button
+			type="button"
+			className="domain-picker__suggestion-item"
+			onClick={ onDomainSelect }
+			id={ labelId }
+		>
+			<div className="domain-picker__suggestion-item-name">
 				<span className="domain-picker__domain-name">{ domainName }</span>
 				<span className="domain-picker__domain-tld">{ domainTld }</span>
 				{ isRecommended && (
@@ -82,21 +79,29 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					'is-paid': ! suggestion.is_free,
 				} ) }
 			>
-				{ suggestion.is_free ? (
-					__( 'Free' )
-				) : (
-					<>
-						<span className="domain-picker__free-text"> { __( 'Included in plans' ) } </span>
-						<span className="domain-picker__price-is-paid">
+				{ suggestion.is_free
+					? __( 'Free' )
+					: createInterpolateElement(
+							/* translators: An example would be "Included in paid plan, $15/year", where in mobile view it will only be "$15/year". */
+							__( '<price_text>Included in paid plan,</price_text> <price_cost></price_cost>' ),
 							{
-								/* translators: %s is the price with currency. Eg: $15/year. */
-								sprintf( __( '%s/year' ), suggestion.cost )
-							}{ ' ' }
-						</span>
-					</>
-				) }
+								price_text: <span className="domain-picker__price-text"></span>,
+								price_cost: (
+									<span className="domain-picker__price-cost">
+										{
+											/* translators: %s is the price with currency. Eg: $15/year. */
+											sprintf( __( '%s/year' ), suggestion.cost )
+										}{ ' ' }
+									</span>
+								),
+							}
+					  ) }
 			</div>
-		</label>
+			<div className="domain-picker__suggestion-item-select-button">
+				<span>{ __( 'Select' ) }</span>
+				<Icon icon={ arrowRight } size={ 18 } />
+			</div>
+		</button>
 	);
 };
 

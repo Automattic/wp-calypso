@@ -17,7 +17,7 @@ import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { FLOW_ID } from '../../constants';
-import ActionButtons, { BackButton, NextButton, SkipButton } from '../../components/action-buttons';
+import ActionButtons, { BackButton } from '../../components/action-buttons';
 import { Title, SubTitle } from '../../components/titles';
 
 /**
@@ -53,10 +53,6 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		selected_domain: selectedDomainRef.current,
 	} ) );
 
-	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
-		setDomain( suggestion );
-	};
-
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handleNext = () => {
 		trackEventWithFlow( 'calypso_newsite_domain_select', {
@@ -68,7 +64,11 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			goNext();
 		}
 	};
-	const handleSkip = () => ( isModal ? history.goBack() : goNext() );
+
+	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
+		setDomain( suggestion );
+		handleNext();
+	};
 
 	const header = (
 		<div className="domains__header">
@@ -78,7 +78,6 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			</div>
 			<ActionButtons>
 				<BackButton onClick={ handleBack } />
-				{ domain ? <NextButton onClick={ handleNext } /> : <SkipButton onClick={ handleSkip } /> }
 			</ActionButtons>
 		</div>
 	);
