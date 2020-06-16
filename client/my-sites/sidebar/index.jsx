@@ -26,6 +26,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QueryScanState from 'components/data/query-jetpack-scan';
@@ -864,6 +865,8 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<div className="sidebar__menu-wrapper">
+				<QuerySitePurchases siteId={ this.props.siteId } />
+
 				<SidebarMenu>
 					<ul>
 						{ this.customerHome() }
