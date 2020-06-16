@@ -14,7 +14,6 @@ import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useIsSelectedPlanEcommerce } from './use-selected-plan';
-import { isEnabled } from '../../../config';
 
 const wpcom = wp.undocumented();
 
@@ -125,9 +124,7 @@ export default function useOnSiteCreation() {
 			resetOnboardStore();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = isEnabled( 'gutenboarding/site-editor' )
-				? `/site-editor/${ newSite.site_slug }/`
-				: `/block-editor/page/${ newSite.site_slug }/home`;
+			window.location.href = `/block-editor/page/${ newSite.site_slug }/home`;
 		}
 	}, [
 		domain,
