@@ -57,19 +57,6 @@ function WPLineItem( {
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
 	const isSavings = item.type === 'coupon';
 
-	let domainDiscountCallout = null;
-	if ( item.wpcom_meta?.is_bundled && item.amount.value === 0 ) {
-		// Bundled domain registrations
-		domainDiscountCallout = (
-			<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
-		);
-	} else if ( item.wpcom_meta?.product_slug === 'domain_map' && item.amount.value === 0 ) {
-		// Free domain mappings
-		domainDiscountCallout = (
-			<DiscountCalloutUI>{ translate( 'Free with your plan' ) }</DiscountCalloutUI>
-		);
-	}
-
 	let gsuiteDiscountCallout = null;
 	if (
 		isGSuite &&
@@ -104,7 +91,7 @@ function WPLineItem( {
 			{ item.sublabel && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice item={ item } />
-					{ domainDiscountCallout }
+					<DomainDiscountCallout item={ item } />
 				</LineItemMeta>
 			) }
 			{ isSavings && <SavingsList item={ item } /> }
@@ -509,4 +496,19 @@ function SavingsList( { item } ) {
 			) ) }
 		</LineItemMeta>
 	);
+}
+
+function DomainDiscountCallout( { item } ) {
+	const translate = useTranslate();
+
+	const isFreeBundledDomainRegistration = item.wpcom_meta?.is_bundled && item.amount.value === 0;
+	if ( isFreeBundledDomainRegistration ) {
+		return <DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>;
+	}
+
+	const isFreeDomainMapping =
+		item.wpcom_meta?.product_slug === 'domain_map' && item.amount.value === 0;
+	if ( isFreeDomainMapping ) {
+		return <DiscountCalloutUI>{ translate( 'Free with your plan' ) }</DiscountCalloutUI>;
+	}
 }
