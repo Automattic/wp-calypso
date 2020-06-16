@@ -249,7 +249,7 @@
 			"theme": "coutoire",
 			"src": "https://public-api.wordpress.com/rest/v1/template/demo/coutoire/coutoire/",
 			"fonts": {
-				"headings": "Playfair display",
+				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "portfolio" ],
