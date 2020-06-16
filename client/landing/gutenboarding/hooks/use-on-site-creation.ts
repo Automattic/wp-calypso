@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
-import { isEnabled } from '../../../config';
 
 /**
  * Internal dependencies
@@ -15,6 +14,7 @@ import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useIsSelectedPlanEcommerce } from './use-selected-plan';
+import { isEnabled } from '../../../config';
 
 const wpcom = wp.undocumented();
 
