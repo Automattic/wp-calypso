@@ -1,7 +1,7 @@
 .reader-combined-card__header {
 	font-size: $font-body-small;
 	display: flex;
-	max-height: 32px;
+	max-height: 34px;
 	margin-bottom: 20px;
 }
 
@@ -14,7 +14,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	max-height: 32px;
+	max-height: 34px;
 }
 
 .reader-combined-card__site-link {
@@ -173,7 +173,7 @@
 	color: var( --color-text-subtle );
 	font-family: $sans;
 	overflow: hidden;
-	max-height: 13px * 1.4 * 1;
+	max-height: 14px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
 	margin-top: 3px;
