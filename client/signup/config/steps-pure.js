@@ -153,8 +153,8 @@ export function generateSteps( {
 			},
 		},
 
-		'user-plans-passwordless': {
-			stepName: 'user-plans-passwordless',
+		'user-passwordless': {
+			stepName: 'user-passwordless',
 			apiRequestFunction: createAccount,
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'username' ],

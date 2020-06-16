@@ -996,7 +996,7 @@ class SignupForm extends Component {
 
 			We are testing whether a having a passwordless account creation after domain and plans, improves signup rate in the `onboarding` flow
 		*/
-		const isPasswordlessAfterPlans = 'onboarding-plans-passwordless' === this.props.flowName;
+		const isPasswordlessAfterPlans = 'onboarding-passwordless' === this.props.flowName;
 
 		if ( isPasswordlessSignup || isPasswordlessAfterPlans ) {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )

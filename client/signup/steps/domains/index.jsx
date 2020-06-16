@@ -662,7 +662,7 @@ class DomainsStep extends React.Component {
 		const showSkip = isDomainStepSkippable( flowName );
 
 		let hideBack;
-		if ( 'onboarding-plans-passwordless' === flowName && ! this.props.stepSectionName ) {
+		if ( 'onboarding-passwordless' === flowName && ! this.props.stepSectionName ) {
 			hideBack = true;
 		}
 		return (

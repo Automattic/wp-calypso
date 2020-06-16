@@ -84,6 +84,7 @@ export default {
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
+			context.pathname.indexOf( 'onboarding-passwordless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.params.flowName === 'user' ||
@@ -116,7 +117,7 @@ export default {
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
 						const urlWithoutLocale = getStepUrl(
-							'onboarding-plans-passwordless',
+							'onboarding-passwordless',
 							stepName,
 							stepSectionName
 						);
