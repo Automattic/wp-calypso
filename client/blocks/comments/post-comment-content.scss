@@ -59,5 +59,12 @@
 	pre {
 		white-space: pre-wrap;
 	}
-}
 
+	figure figcaption {
+		padding: 12px;
+		margin: 0;
+		font-size: $font-body-small;
+		text-align: center;
+		color: var( --color-neutral-40 );
+	}
+}
