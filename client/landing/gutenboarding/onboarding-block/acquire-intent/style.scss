@@ -63,8 +63,28 @@
 	}
 }
 
+.site-title__input-hint {
+	display: flex;
+	color: var( --studio-gray-20 );
+	font-family: $default-font;
+	font-size: $default-font-size;
+	line-height: 14px;
+	transition: opacity 200ms $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	svg {
+		align-self: center;
+		fill: var( --studio-yellow-30 );
+		flex-shrink: 0;
+		margin-right: $grid-unit-10;
+	}
+
+	&.has-site-title {
+		opacity: 0;
+	}
+}
+
 .acquire-intent__footer {
-	margin-top: 25px;
+	margin-top: 40px;
 	display: flex;
 	justify-content: flex-end;
 
@@ -127,6 +147,5 @@
 			font-size: 64px;
 			line-height: 80px;
 		}
-
 	}
 }

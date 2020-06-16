@@ -5,12 +5,15 @@ import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { TextControl } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
+import { Icon } from '@wordpress/icons';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { recordSiteTitleSelection } from '../../lib/analytics';
+import tip from './tip';
 
 interface Props {
 	onSubmit: () => void;
@@ -52,7 +55,10 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 					autoCorrect="off"
 					data-hj-whitelist
 				/>
-				{ /* @TODO: add info tip here */ }
+				<p className={ classnames( 'site-title__input-hint', { 'has-site-title': !! siteTitle } ) }>
+					<Icon icon={ tip } size={ 14 } />
+					<span>{ __( "Don't worry, you can change it later." ) }</span>
+				</p>
 			</div>
 		</form>
 	);
