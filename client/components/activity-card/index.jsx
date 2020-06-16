@@ -11,14 +11,16 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { backupDownloadPath, backupRestorePath } from 'my-sites/backup/paths';
-import { settingsPath } from 'lib/jetpack/paths';
 import { Card } from '@automattic/components';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { settingsPath } from 'lib/jetpack/paths';
 import { withApplySiteOffset } from 'components/site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
-import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
-import ActivityDescription from './activity-description';
-import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
+import ActivityActor from 'components/activity-card/activity-actor';
+import ActivityDescription from 'components/activity-card/activity-description';
+import ActivityMedia from 'components/activity-card/activity-media';
 import Button from 'components/forms/form-button';
 import ExternalLink from 'components/external-link';
 import getAllowRestore from 'state/selectors/get-allow-restore';
@@ -27,8 +29,6 @@ import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import QueryRewindState from 'components/data/query-rewind-state';
 import StreamsMediaPreview from './activity-card-streams-media-preview';
-import { isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -273,10 +273,8 @@ class ActivityCard extends Component {
 		} else if ( activityMedia?.available ) {
 			return (
 				<ActivityMedia
-					className="activity-card__activity-media"
 					name={ activityMedia.name }
 					thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
-					fullImage={ false }
 				/>
 			);
 		}
@@ -303,12 +301,10 @@ class ActivityCard extends Component {
 				) }
 				<Card>
 					<ActivityActor
-						{ ...{
-							actorAvatarUrl: activity.actorAvatarUrl,
-							actorName: activity.actorName,
-							actorRole: activity.actorRole,
-							actorType: activity.actorType,
-						} }
+						actorAvatarUrl={ activity.actorAvatarUrl }
+						actorName={ activity.actorName }
+						actorRole={ activity.actorRole }
+						actorType={ activity.actorType }
 					/>
 					<div className="activity-card__activity-description">
 						{ this.renderMediaPreview() }
