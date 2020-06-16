@@ -73,7 +73,7 @@ class ThemesUpsellComponent extends Component {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const { price } = this.props;
-		const simplePaymentsName = isEnabled( 'earn/pay-with-paypal' ) ? 'Simple Payments' : 'Pay with PayPal';
+		const simplePaymentsName = isEnabled( 'earn/pay-with-paypal' ) ? 'Pay with PayPal' : 'Simple Payments';
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell__main is-themes">
 				{ ! price && (
@@ -148,7 +148,7 @@ class ThemesUpsellComponent extends Component {
 					<div className="feature-upsell__features-list-item">
 						<Feature
 							icon={ <Gridicon icon="money" size={ 48 } /> }
-							title={ 'Easily Accept Credit Card Payments with a ' + simplePaymentsName + ' button' }
+							title={ 'Easily Accept Credit Card Payments with ' + simplePaymentsName }
 							description={
 								<span>
 									The <i>{ simplePaymentsName }</i> button lets you accept credit card payments right on

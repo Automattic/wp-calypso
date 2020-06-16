@@ -9,6 +9,11 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 } from 'lib/plans/constants';
+import { isEnabled } from 'config';
+
+const simplePaymentsNoticeText = isEnabled( 'earn/pay-with-paypal' ) ?
+	'Upgrade to a Premium or Business plan today and start collecting payments with Pay with PayPal!' :
+	'Upgrade to a Premium or Business plan today and start collecting payments with Simple Payments!';
 
 /**
  * No translate() used on some of these since we're launching those promotions just for the EN audience
@@ -18,8 +23,7 @@ export default [
 		name: 'simple_payments_wpcom',
 		startsAt: new Date( 2018, 6, 9, 0, 0, 0 ),
 		endsAt: new Date( 2018, 8, 9, 23, 59, 59 ),
-		plansPageNoticeText:
-			'Upgrade to a Premium or Business plan today and start collecting payments with the Pay with PayPal button!',
+		plansPageNoticeText: simplePaymentsNoticeText,
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_WPCOM },
 			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
@@ -29,8 +33,7 @@ export default [
 		name: 'simple_payments_jetpack',
 		startsAt: new Date( 2018, 6, 9, 0, 0, 0 ),
 		endsAt: new Date( 2018, 8, 9, 23, 59, 59 ),
-		plansPageNoticeText:
-			'Upgrade to a Premium or Professional plan today and start collecting payments with the Pay with PayPal button!',
+		plansPageNoticeText: simplePaymentsNoticeText,
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_JETPACK },
 			{ type: TYPE_PERSONAL, group: GROUP_JETPACK },

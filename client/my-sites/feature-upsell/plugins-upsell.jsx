@@ -29,6 +29,7 @@ import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
 import { hasFeature } from 'state/sites/plans/selectors';
 import redirectIf from './redirect-if';
+import { isEnabled } from 'config';
 
 /*
  * This is just for english audience and is not translated on purpose, remember to add
@@ -72,6 +73,7 @@ class PluginsUpsellComponent extends Component {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const { price } = this.props;
+		const simplePaymentsName = isEnabled( 'earn/pay-with-paypal' ) ? 'Pay with PayPal' : 'Simple Payments';
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell__main is-plugins">
 				{ ! price && (
@@ -146,10 +148,10 @@ class PluginsUpsellComponent extends Component {
 					<div className="feature-upsell__features-list-item">
 						<Feature
 							icon={ <Gridicon icon="money" size={ 48 } /> }
-							title="Easily Accept Credit Card Payments with a Pay with PayPal button"
+							title={ 'Easily Accept Credit Card Payments with ' + simplePaymentsName }
 							description={
 								<span>
-									The <i>Pay with PayPal</i> button lets you accept credit card payments right on
+									The <i>{ simplePaymentsName }</i> button lets you accept credit card payments right on
 									your site. Whether you’re selling products or services, collecting membership
 									fees, or receiving donations, you’ll have a secure checkout process that you can
 									turn on with the click of a button.

@@ -538,9 +538,15 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' ) }
+							href={
+								isEnabled( 'earn/pay-with-paypal' )
+									? localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' )
+									: localizeUrl( 'https://wordpress.com/support/simple-payments/' )
+							}
 						>
-							{ translate( 'Learn more about Pay with PayPal buttons' ) }
+							{ isEnabled( 'earn/pay-with-paypal' )
+								? translate( 'Learn more about Pay with PayPal buttons' )
+								: translate( 'Learn more about Simple Payments' ) }
 						</a>
 					}
 				/>,

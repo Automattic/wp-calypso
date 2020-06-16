@@ -22,6 +22,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryMedia from 'components/data/query-media';
 import { getCurrentPlan, hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { isEnabled } from 'config';
 
 class SimplePaymentsView extends Component {
 	render() {
@@ -51,7 +52,9 @@ class SimplePaymentsView extends Component {
 						<Gridicon icon="cross" />
 					</div>
 					<p className="wpview-type-simple-payments__unsupported-message">
-						{ translate( "Your plan doesn't include Pay with PayPal buttons." ) }
+						{ isEnabled( 'earn/pay-with-paypal' )
+							? translate( "Your plan doesn't include Pay with PayPal" )
+							: translate( "Your plan doesn't include Simple Payments" ) }
 					</p>
 				</div>
 			);
