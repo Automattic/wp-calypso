@@ -635,7 +635,7 @@ class SignupForm extends Component {
 
 	handleWooCommerceSocialConnect = ( ...args ) => {
 		this.recordWooCommerceSignupTracks( 'social' );
-		this.props.handleSocialResponse( args );
+		this.props.handleSocialResponse( ...args );
 	};
 
 	handleWooCommerceSubmit = ( event ) => {
