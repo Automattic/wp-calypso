@@ -150,7 +150,7 @@ class FeaturesComponent extends Component {
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
 						icon={ <img alt="" src={ wordAdsImage } /> }
-						title={ 'Pay with PayPal button' }
+						title={ 'Pay with PayPal' }
 						description={
 							'Accept credit card payments on your site with the click of a button! Sell products, take donations, ' +
 							'sell tickets - add payment buttons to any page right from the WordPress editor'

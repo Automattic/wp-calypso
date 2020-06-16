@@ -149,7 +149,7 @@ class ThemesUpsellComponent extends Component {
 							title="Easily Accept Credit Card Payments with a Pay with PayPal button"
 							description={
 								<span>
-									The <i>Pay with PayPall</i> button lets you accept credit card payments right on
+									The <i>Pay with PayPal</i> button lets you accept credit card payments right on
 									your site. Whether you’re selling products or services, collecting membership
 									fees, or receiving donations, you’ll have a secure checkout process that you can
 									turn on with the click of a button.

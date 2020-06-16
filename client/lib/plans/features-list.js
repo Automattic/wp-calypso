@@ -478,7 +478,7 @@ export const FEATURES_LIST = {
 	},
 	[ constants.FEATURE_SIMPLE_PAYMENTS ]: {
 		getSlug: () => constants.FEATURE_SIMPLE_PAYMENTS,
-		getTitle: () => i18n.translate( 'Pay with PayPal Button' ),
+		getTitle: () => i18n.translate( 'Pay with PayPal' ),
 		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
 	[ constants.FEATURE_NO_BRANDING ]: {
