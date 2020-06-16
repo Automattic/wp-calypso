@@ -3,6 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
@@ -42,6 +43,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
+	const isMobile = useViewportMatch( 'small', '<' );
 
 	const closeModal = () => {
 		clearErrors();
@@ -194,7 +196,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							onChange={ setEmailVal }
 							placeholder={ __( 'Email address' ) }
 							required
-							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+							autoFocus={ ! isMobile } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 
 						<TextControl
