@@ -40,12 +40,13 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Two images and quote', 'full-site-editing' ),
-	'categories' => array( 'images' ),
-	'content'    => sprintf(
+	'title'         => esc_html__( 'Two images and quote', 'full-site-editing' ),
+	'categories'    => array( 'images' ),
+	'content'       => sprintf(
 		$markup,
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/bianca-berg-l4-sra8ii80-unsplash-2.jpg' ),
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/bianca-berg-pyvtnjcwc-g-unsplash.jpg' ),
 		esc_html__( '&#8220;The artist is the creator of beautiful things. To reveal art and conceal the artist is art&#8217;s aim. The critic is he who can translate into another manner or a new material his impression of beautiful things.&#8221;', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

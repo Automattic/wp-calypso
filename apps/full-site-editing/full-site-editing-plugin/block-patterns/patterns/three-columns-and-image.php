@@ -66,9 +66,9 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Three columns', 'full-site-editing' ),
-	'categories' => array( 'images' ),
-	'content'    => sprintf(
+	'title'         => esc_html__( 'Three columns', 'full-site-editing' ),
+	'categories'    => array( 'images' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Salainis', 'full-site-editing' ),
 		esc_html__( 'I had learned already many of the Outland methods of communicating by forest notes rather than trust to the betraying, high-pitched human voice.', 'full-site-editing' ),
@@ -76,4 +76,5 @@ return array(
 		esc_html__( 'Then whoever was on his way from that placed hurried, and whoever was coming toward it stayed where he was until he had permission to move on.', 'full-site-editing' ),
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/kristaps-ungurs-trgv9atxume-unsplash-1.jpg' )
 	),
+	'viewportWidth' => 1280,
 );

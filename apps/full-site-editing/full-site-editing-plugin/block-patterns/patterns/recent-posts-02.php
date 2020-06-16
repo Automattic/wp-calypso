@@ -20,10 +20,11 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Recent Posts', 'full-site-editing' ),
-	'categories' => array( 'blog' ),
-	'content'    => sprintf(
+	'title'         => esc_html__( 'Recent Posts', 'full-site-editing' ),
+	'categories'    => array( 'blog' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Latest Posts', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

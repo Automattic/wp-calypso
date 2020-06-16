@@ -50,13 +50,14 @@ $markup = '
 // phpcs:enable WordPress.WP.CapitalPDangit.Misspelled
 
 return array(
-	'title'      => esc_html__( 'Contact', 'full-site-editing' ),
-	'categories' => array( 'contact' ),
-	'content'    => sprintf(
+	'title'         => esc_html__( 'Contact', 'full-site-editing' ),
+	'categories'    => array( 'contact' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Jennifer Dolan Photography', 'full-site-editing' ),
 		esc_html__( 'San Francisco, California', 'full-site-editing' ),
 		esc_html__( '123-456-7890', 'full-site-editing' ),
 		esc_html__( 'hello@example.com', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

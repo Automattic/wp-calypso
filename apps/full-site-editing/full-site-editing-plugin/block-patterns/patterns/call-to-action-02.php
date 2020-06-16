@@ -37,7 +37,8 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Call to Action', 'full-site-editing' ),
-	'categories' => array( 'call-to-action' ),
-	'content'    => $markup,
+	'title'         => esc_html__( 'Call to Action', 'full-site-editing' ),
+	'categories'    => array( 'call-to-action' ),
+	'content'       => $markup,
+	'viewportWidth' => 1280,
 );
