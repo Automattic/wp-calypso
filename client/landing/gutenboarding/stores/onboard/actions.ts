@@ -109,7 +109,7 @@ export function* createSite(
 
 	const shouldUseFse = isEnabled( 'gutenboarding/site-editor' );
 
-	const themeSlug = shouldUseFse ? 'seedlet-blocks' : selectedDesign?.theme || 'twentytwenty';
+	const defaultTheme = shouldUseFse ? 'seedlet-blocks' : 'twentytwenty';
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
@@ -127,7 +127,7 @@ export function* createSite(
 				title: siteTitle,
 			},
 			site_creation_flow: shouldUseFse ? 'gutenboarding-site-editor' : 'gutenboarding',
-			theme: `pub/${ themeSlug }`,
+			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {

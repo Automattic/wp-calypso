@@ -1,0 +1,134 @@
+{
+	"featured": [
+		{
+			"title": "Cassel",
+			"slug": "cassel",
+			"template": "cassel",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/cassel/",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "blog" ],
+			"is_premium": false
+		},
+		{
+			"title": "Edison",
+			"slug": "edison",
+			"template": "edison",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/edison/",
+			"fonts": {
+				"headings": "Chivo",
+				"base": "Open Sans"
+			},
+			"categories": [ "featured", "blog" ],
+			"is_premium": true
+		},
+		{
+			"title": "Vesta",
+			"slug": "vesta",
+			"template": "vesta",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/vesta/",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Raleway"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Doyle",
+			"slug": "doyle",
+			"template": "doyle",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/doyle/",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "business" ],
+			"is_premium": true
+		},
+		{
+			"title": "Bowen",
+			"slug": "bowen",
+			"template": "bowen",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/bowen/",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "blog" ],
+			"is_premium": false
+		},
+		{
+			"title": "Easley",
+			"slug": "easley",
+			"template": "easley",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/easley/",
+			"fonts": {
+				"headings": "Space Mono",
+				"base": "Roboto"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Camdem",
+			"slug": "Camdem",
+			"template": "camdem",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/camdem/",
+			"fonts": {
+				"headings": "Space Mono",
+				"base": "Roboto"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Reynolds",
+			"slug": "reynolds",
+			"template": "reynolds",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/reynolds/",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Overton",
+			"slug": "overton",
+			"template": "overton",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/overton/",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Raleway"
+			},
+			"categories": [ "featured", "business" ],
+			"is_premium": false
+		},
+		{
+			"title": "Brice",
+			"slug": "brice",
+			"template": "brice",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/brice/",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "charity", "non-profit" ],
+			"is_premium": false
+		}
+	]
+}

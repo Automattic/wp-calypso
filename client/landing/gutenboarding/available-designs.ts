@@ -9,12 +9,15 @@ import { addQueryArgs } from '@wordpress/url';
 import { isEnabled } from '../../config';
 import type { Design } from './stores/onboard/types';
 const availableDesignsConfig = require( './available-designs-config.json' );
+const availableFSEDesignsConfig = require( './available-fse-designs-config.json' );
 
 interface AvailableDesigns {
 	featured: Design[];
 }
 
-const availableDesigns: Readonly< AvailableDesigns > = availableDesignsConfig;
+const availableDesigns: Readonly< AvailableDesigns > = isEnabled( 'gutenboarding/site-editor' )
+	? availableFSEDesignsConfig
+	: availableDesignsConfig;
 
 export const getDesignImageUrl = ( design: Design ) => {
 	// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
