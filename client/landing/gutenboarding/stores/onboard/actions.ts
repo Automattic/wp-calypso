@@ -96,8 +96,7 @@ export function* createSite(
 	username: string,
 	freeDomainSuggestion?: DomainSuggestion,
 	bearerToken?: string,
-	isPublicSite = false,
-	options: CreateSiteParams[ 'options' ] = {}
+	isPublicSite = false
 ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
@@ -130,7 +129,6 @@ export function* createSite(
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
 			} ),
-			...options,
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
