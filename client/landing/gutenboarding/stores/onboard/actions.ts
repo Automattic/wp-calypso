@@ -4,6 +4,7 @@
 import type { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
+import { getLanguage } from 'lib/i18n-utils';
 
 /**
  * Internal dependencies
@@ -18,6 +19,9 @@ import type { FontPair } from '../../constants';
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
+type Language = {
+	value: number;
+};
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
@@ -51,6 +55,11 @@ export const resetSiteVertical = () => ( {
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: 'SET_SITE_TITLE' as const,
 	siteTitle,
+} );
+
+export const setSiteLanguage = ( siteLanguage: string ) => ( {
+	type: 'SET_SITE_LANGUAGE' as const,
+	siteLanguage,
 } );
 
 export const togglePageLayout = ( pageLayout: Template ) => ( {
@@ -103,7 +112,7 @@ export function* updatePlan( planSlug: Plans.PlanSlug ) {
 	yield setPlan( plan );
 }
 
-export function* createSite( username: string, bearerToken?: string, isPublicSite = false ) {
+export function* createSite( username: string, locale: string, bearerToken?: string, isPublicSite = false ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
 		'getState'
@@ -112,6 +121,7 @@ export function* createSite( username: string, bearerToken?: string, isPublicSit
 	const shouldEnableFse = !! selectedDesign?.is_fse;
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
+	const lang_id = ( getLanguage( locale ) as Language )?.value;
 
 	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
 
@@ -130,6 +140,7 @@ export function* createSite( username: string, bearerToken?: string, isPublicSit
 			site_information: {
 				title: siteTitle,
 			},
+			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',
 			enable_fse: shouldEnableFse,
 			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
@@ -162,6 +173,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setSiteTitle
 	| typeof setSiteVertical
+	| typeof setSiteLanguage
 	| typeof togglePageLayout
 	| typeof setShowSignupDialog
 	| typeof setPlan

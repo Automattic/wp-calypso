@@ -27,6 +27,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const history = useHistory();
 	const currentStep = useCurrentStep();
 	const siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
+	const siteLanguage = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteLanguage() );
 
 	// If the user enters a site title on Intent Capture step we are showing Domains step next.
 	// Else, we're showing Domains step before Plans step.
@@ -41,7 +42,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, undefined, shouldSiteBePublic )
+			? createSite( currentUser.username, siteLanguage, shouldSiteBePublic )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps

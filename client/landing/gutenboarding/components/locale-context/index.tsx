@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { getLanguageFile } from '../../../../lib/i18n-utils/switch-locale';
 import { I18nProvider } from '@automattic/react-i18n';
-import { setLocaleData } from '@wordpress/i18n';
+import { setLocaleData, LocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies

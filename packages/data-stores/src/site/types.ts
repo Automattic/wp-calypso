@@ -41,6 +41,7 @@ export interface CreateSiteParams {
 		site_information?: {
 			title?: string;
 		};
+		lang_id?: number;
 		site_creation_flow?: string;
 		enable_fse?: boolean;
 		theme?: string;
