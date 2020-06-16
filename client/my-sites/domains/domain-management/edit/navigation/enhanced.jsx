@@ -374,6 +374,15 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		} );
 	};
 
+	handleDomainDeleteClick = () => {
+		const { domain, purchase } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_domain_management_delete_click', {
+			section: domain.type,
+			is_cancelable: purchase && isCancelable( purchase ),
+		} );
+	};
+
 	getPickCustomDomain() {
 		const { selectedSite, translate } = this.props;
 
@@ -529,7 +538,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		if ( isCancelable( purchase ) ) {
 			const link = cancelPurchase( selectedSite.slug, purchase.id );
 
-			return <DomainManagementNavigationItem path={ link } materialIcon="delete" text={ title } />;
+			return (
+				<DomainManagementNavigationItem
+					path={ link }
+					onClick={ this.handleDomainDeleteClick }
+					materialIcon="delete"
+					text={ title }
+				/>
+			);
 		}
 
 		return (
@@ -540,6 +556,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				purchase={ purchase }
 				useVerticalNavItem={ true }
 				className="navigation__nav-item is-clickable"
+				onClickTracks={ this.handleDomainDeleteClick }
 			>
 				<span>
 					<DomainManagementNavigationItemContents materialIcon="delete" text={ title } />
