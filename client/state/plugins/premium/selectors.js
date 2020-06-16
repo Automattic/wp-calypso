@@ -30,7 +30,7 @@ export const hasRequested = function ( state, siteId ) {
  *
  * @param {object} state The current state.
  * @param {number} siteId The site ID.
- * @param {false|string} forPlugin Name of a specific plugin to filter for, `false` otherwise to return the full list.
+ * @param {string?} forPlugin Name of a specific plugin to filter for, `false` otherwise to return the full list.
  * @returns {Array<object>} The list of plugins.
  */
 export const getPluginsForSite = function ( state, siteId, forPlugin = false ) {

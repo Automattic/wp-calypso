@@ -50,6 +50,7 @@ function filterNoticesBy( site, pluginSlug, log ) {
 	return false;
 }
 
+// @todo(saramarcondes) Is this safe to rename? Would plugins potentially depend on this function's current name?
 export function whiteListPluginData( plugin ) {
 	return pick(
 		plugin,

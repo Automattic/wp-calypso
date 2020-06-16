@@ -513,7 +513,7 @@ class SiteSettingsFormDiscussion extends Component {
 		);
 	}
 
-	commentBlacklistSettings() {
+	commentBlocklistSettings() {
 		const {
 			eventTracker,
 			fields,
@@ -525,16 +525,16 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Comment blacklist' ) }</FormLegend>
-				<FormLabel htmlFor="blacklist_keys">
+				<FormLegend>{ translate( 'Comment blocklist' ) }</FormLegend>
+				<FormLabel htmlFor="blocklist_keys">
 					{ translate(
 						'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be put in the trash. ' +
 							'One word or IP per line. It will match inside words, so "press" will match "WordPress".'
 					) }
 				</FormLabel>
 				<FormTextarea
-					name="blacklist_keys"
-					id="blacklist_keys"
+					name="blocklist_keys"
+					id="blocklist_keys"
 					value={ fields.blacklist_keys }
 					onChange={ onChangeField( 'blacklist_keys' ) }
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -608,7 +608,7 @@ class SiteSettingsFormDiscussion extends Component {
 					<hr />
 					{ this.commentModerationSettings() }
 					<hr />
-					{ this.commentBlacklistSettings() }
+					{ this.commentBlocklistSettings() }
 				</Card>
 
 				{ isJetpack && (

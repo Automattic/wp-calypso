@@ -59,6 +59,7 @@ class Protect extends Component {
 		return null;
 	}
 
+	// @todo(saramarcondes) Rename
 	getProtectWhitelist() {
 		const { jetpack_protect_global_whitelist } = this.props.fields;
 		return jetpack_protect_global_whitelist || '';

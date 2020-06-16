@@ -11,12 +11,12 @@ import { getAuthorizationData } from 'state/jetpack-connect/selectors/get-author
 import 'state/jetpack-connect/init';
 
 /**
- * Returns true if the authorization error indicates that site has been blacklisted.
+ * Returns true if the authorization error indicates that site has been blocklisted.
  *
  * @param  {object}  state Global state tree
- * @returns {boolean}       True if there's a blacklisted site error, false otherwise
+ * @returns {boolean}       True if there's a blocklisted site error, false otherwise
  */
-export const isSiteBlacklistedError = function ( state ) {
+export const isSiteBlocklistedError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return get( authorizeData, [ 'authorizeError', 'error' ] ) === 'site_blacklisted';

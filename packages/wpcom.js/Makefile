@@ -13,6 +13,7 @@ SOURCE_FILES = $(shell find $(ROOT) -name "*.js")
 COMPILED_FILES = $(addprefix $(BUILDDIR)/, $(SOURCE_FILES))
 
 JS_FILES := $(SOURCE_FILES) $(wildcard test/*.js)
+# @todo(saramarcondes) Findout what `test-whitelist` means
 JS_TESTING_FILES := $(wildcard test/test*.js test-whitelist/test*.js)
 
 all: build build/wpcom.js

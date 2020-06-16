@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isEmailBlacklisted from 'state/selectors/is-email-blacklisted';
+import isEmailBlocklisted from 'state/selectors/is-email-blocklisted';
 
 const email = 'foo@bar.baz';
 
@@ -28,23 +28,23 @@ const state = {
 
 const noSiteSettingsState = { siteSettings: {} };
 
-describe( 'isEmailBlacklisted()', () => {
-	test( 'should return true if email is blacklisted', () => {
-		expect( isEmailBlacklisted( state, 123, email ) ).to.be.true;
+describe( 'isEmailBlocklisted()', () => {
+	test( 'should return true if email is blocklisted', () => {
+		expect( isEmailBlocklisted( state, 123, email ) ).to.be.true;
 	} );
-	test( 'should return false if email is not blacklisted', () => {
-		expect( isEmailBlacklisted( state, 456, email ) ).to.be.false;
+	test( 'should return false if email is not blocklisted', () => {
+		expect( isEmailBlocklisted( state, 456, email ) ).to.be.false;
 	} );
-	test( 'should return false if blacklist is empty', () => {
-		expect( isEmailBlacklisted( state, 789, email ) ).to.be.false;
+	test( 'should return false if blocklist is empty', () => {
+		expect( isEmailBlocklisted( state, 789, email ) ).to.be.false;
 	} );
 	test( 'should return false if there are no site settings in state', () => {
-		expect( isEmailBlacklisted( noSiteSettingsState, 123, email ) ).to.be.false;
+		expect( isEmailBlocklisted( noSiteSettingsState, 123, email ) ).to.be.false;
 	} );
 	test( 'should return false if no email is provided', () => {
-		expect( isEmailBlacklisted( state, 123 ) ).to.be.false;
+		expect( isEmailBlocklisted( state, 123 ) ).to.be.false;
 	} );
 	test( 'should return false if email is empty', () => {
-		expect( isEmailBlacklisted( state, 123, '' ) ).to.be.false;
+		expect( isEmailBlocklisted( state, 123, '' ) ).to.be.false;
 	} );
 } );
