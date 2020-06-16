@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
-import { isEnabled } from '../../config';
+import { isEnabled } from '../../../config';
 
 /**
  * Internal dependencies
