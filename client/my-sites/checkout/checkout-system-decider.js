@@ -115,7 +115,7 @@ export default function CheckoutSystemDecider( {
 	if ( 'composite-checkout' === checkoutVariant ) {
 		return (
 			<CheckoutErrorBoundary
-				errorMessage={ translate( 'Sorry. there was an error loading this page' ) }
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
