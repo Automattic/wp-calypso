@@ -9,7 +9,7 @@ import page from 'page';
 import { isEnabled } from 'config';
 
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { makeLayout, render as clientRender, renderNotFound } from 'controller';
+import { notFound, makeLayout, render as clientRender } from 'controller';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import wrapInSiteOffsetProvider from 'lib/jetpack/wrap-in-site-offset';
 import wpcomUpsellController from 'lib/jetpack/wpcom-upsell-controller';
@@ -26,13 +26,13 @@ import WPCOMUpsellPage from 'my-sites/backup/wpcom-upsell';
 
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
-const renderNotFoundIfNotEnabled = ( context, next ) => {
+const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const showJetpackSection = isJetpackSectionEnabledForSite( state, siteId );
 
 	if ( ! isJetpackCloud() && ! showJetpackSection ) {
-		return renderNotFound( context, next );
+		return notFound( context, next );
 	}
 
 	next();
@@ -51,7 +51,7 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
 		wpcomUpsellController( WPCOMUpsellPage ),
-		renderNotFoundIfNotEnabled,
+		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);
@@ -64,7 +64,7 @@ export default function () {
 		backupDownload,
 		wrapInSiteOffsetProvider,
 		wpcomUpsellController( WPCOMUpsellPage ),
-		renderNotFoundIfNotEnabled,
+		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);
@@ -78,7 +78,7 @@ export default function () {
 			backupRestore,
 			wrapInSiteOffsetProvider,
 			wpcomUpsellController( WPCOMUpsellPage ),
-			renderNotFoundIfNotEnabled,
+			notFoundIfNotEnabled,
 			makeLayout,
 			clientRender
 		);
@@ -93,7 +93,7 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
 		wpcomUpsellController( WPCOMUpsellPage ),
-		renderNotFoundIfNotEnabled,
+		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);

@@ -100,7 +100,7 @@ export function redirectLoggedOut( context, next ) {
 	next();
 }
 
-export const renderNotFound = ( context, next ) => {
+export const notFound = ( context, next ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	context.primary = (
 		<EmptyContent
