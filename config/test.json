@@ -36,6 +36,7 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"earn/rename-payment-blocks": false,
 		"editor/before-deprecation": true,
 		"gdpr-banner": false,
 		"google-my-business": false,
