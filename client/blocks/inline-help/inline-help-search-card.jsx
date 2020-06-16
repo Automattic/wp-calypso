@@ -11,7 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics, composeAnalytics } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
 import {
 	getInlineHelpCurrentlySelectedLink,
@@ -70,21 +70,18 @@ class InlineHelpSearchCard extends Component {
 		}
 	};
 
-	searchHelperHandler = ( searchQuery ) => {
-		const query = searchQuery.trim();
-		if ( ! query || ! query.length ) {
-			return debug( 'empty query. Skip recording tracks-event.' );
-		}
-
-		debug( 'search query received: ', searchQuery );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
-			search_query: searchQuery,
-			location: 'inline-help-popover',
-		} );
-
-		// Make a search
-		this.props.requestInlineHelpSearchResults( searchQuery );
-	};
+	requestInlineSearchResultsAndTrack = ( searchQuery ) =>
+		! searchQuery || ! searchQuery.trim().length
+			? this.props.requestInlineHelpSearchResults()
+			: withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_inlinehelp_search', {
+							search_query: searchQuery,
+							location: 'inline-help-popover',
+						} )
+					),
+					this.props.requestInlineHelpSearchResults( searchQuery )
+			  );
 
 	componentDidMount() {
 		this.props.requestInlineHelpSearchResults();
@@ -95,7 +92,7 @@ class InlineHelpSearchCard extends Component {
 			<SearchCard
 				searching={ this.props.isSearching }
 				initialValue={ this.props.query }
-				onSearch={ this.searchHelperHandler }
+				onSearch={ this.requestInlineSearchResultsAndTrack }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
 				delaySearch={ true }
