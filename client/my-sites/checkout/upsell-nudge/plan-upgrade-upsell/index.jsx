@@ -62,7 +62,6 @@ export class PlanUpgradeUpsell extends PureComponent {
 
 	body() {
 		const { translate, planRawPrice, planDiscountedRawPrice, currencyCode } = this.props;
-		const bundleValue = planRawPrice * 14.33;
 		return (
 			<>
 				<h2 className="plan-upgrade-upsell__header">
@@ -201,7 +200,6 @@ export class PlanUpgradeUpsell extends PureComponent {
 										b: <b />,
 									},
 									args: {
-										bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
 										fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
 										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
 											stripZeros: true,
