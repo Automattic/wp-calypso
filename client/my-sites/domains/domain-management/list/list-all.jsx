@@ -16,10 +16,25 @@ import getVisibleSites from 'state/selectors/get-visible-sites';
 import Main from 'components/main';
 import QueryAllDomains from 'components/data/query-all-domains';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import { getAllDomains, getAllRequestingSiteDomains } from 'state/sites/domains/selectors';
+import {
+	getAllDomains,
+	getDomainsAcrossSites,
+	getAllRequestingSiteDomains,
+} from 'state/sites/domains/selectors';
 import FormattedHeader from 'components/formatted-header';
 
 class ListAll extends Component {
+	renderDomainsAcrossSites() {
+		return (
+			<div className="list-all__domains">
+				<QueryAllDomains />
+				<div className="list-all__domain-items">
+					<DomainManagement.ListAcrossSites domains={ this.props.domainsAcrossSites } />
+				</div>
+			</div>
+		);
+	}
+
 	renderSiteDomains( site ) {
 		return (
 			<DomainManagement.List
@@ -48,8 +63,9 @@ class ListAll extends Component {
 			<Main wideLayout>
 				<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
 				<div className="list-all__container">
-					{ config.isEnabled( 'manage/all-domains' ) && <QueryAllDomains /> }
-					{ this.props.sites.map( ( site, index ) => this.renderSingleSite( site, index ) ) }
+					{ config.isEnabled( 'manage/all-domains2' )
+						? this.renderDomainsAcrossSites()
+						: this.props.sites.map( this.renderSingleSite, this ) }
 				</div>
 			</Main>
 		);
@@ -61,6 +77,7 @@ export default connect( ( state ) => {
 		user: getCurrentUser( state ),
 		sites: getVisibleSites( state ),
 		domains: getAllDomains( state ),
+		domainsAcrossSites: getDomainsAcrossSites( state ),
 		requestingDomains: getAllRequestingSiteDomains( state ),
 	};
 } )( localize( ListAll ) );
