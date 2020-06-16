@@ -23,6 +23,7 @@ import {
 	requestInlineHelpSearchResults,
 	selectNextResult,
 	selectPreviousResult,
+	resetSearchResults,
 } from 'state/inline-help/actions';
 
 /**
@@ -98,6 +99,7 @@ class InlineHelpSearchCard extends Component {
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
 				delaySearch={ true }
+				onSearchClose={ this.props.resetSearchResults }
 			/>
 		);
 	}
@@ -114,6 +116,7 @@ const mapDispatchToProps = {
 	requestInlineHelpSearchResults,
 	selectNextResult,
 	selectPreviousResult,
+	resetSearchResults,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );
