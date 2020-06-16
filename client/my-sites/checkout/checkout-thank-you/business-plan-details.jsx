@@ -40,7 +40,7 @@ const BusinessPlanDetails = ( {
 	purchases,
 	displayMode,
 } ) => {
-	const shouldUpsellJetpack = useSelector( ( state ) =>
+	const shouldPromoteJetpack = useSelector( ( state ) =>
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
 	);
 
@@ -57,7 +57,7 @@ const BusinessPlanDetails = ( {
 		<div>
 			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 
-			{ shouldUpsellJetpack && (
+			{ shouldPromoteJetpack && (
 				<>
 					<PurchaseDetail
 						icon={ <img alt="" src={ jetpackBackupImage } /> }
