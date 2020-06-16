@@ -66,18 +66,12 @@ export class JetpackSignup extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static initialState = Object.freeze( {
+	state = {
 		isCreatingAccount: false,
 		newUsername: null,
 		bearerToken: null,
 		wooDnaFormType: 'login',
-	} );
-
-	state = this.constructor.initialState;
-
-	resetState() {
-		this.setState( this.constructor.initialState );
-	}
+	};
 
 	UNSAFE_componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
@@ -114,6 +108,7 @@ export class JetpackSignup extends Component {
 	showWooDnaSignupView = () => {
 		this.setState( {
 			wooDnaFormType: 'signup',
+			signUpUsernameOrEmail: null,
 		} );
 		this.props.resetAuthAccountType();
 	};
@@ -202,7 +197,11 @@ export class JetpackSignup extends Component {
 	handleUserCreationError = ( error ) => {
 		const { errorNotice, translate, warningNotice } = this.props;
 		debug( 'Signup error: %o', error );
-		this.resetState();
+		this.setState( {
+			newUsername: null,
+			bearerToken: null,
+			isCreatingAccount: false,
+		} );
 		if ( error && 'user_exists' === error.code ) {
 			const text =
 				error.data && error.data.email
