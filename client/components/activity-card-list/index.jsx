@@ -15,7 +15,7 @@ import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from 'components/site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import ActivityCard from 'components/jetpack/activity-card';
+import ActivityCard from 'components/activity-card';
 import Filterbar from 'my-sites/activity/filterbar';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Pagination from 'components/pagination';

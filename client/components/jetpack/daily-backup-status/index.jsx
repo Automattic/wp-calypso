@@ -18,7 +18,7 @@ import {
 } from 'lib/jetpack/backup-utils';
 import { settingsPath } from 'lib/jetpack/paths';
 import { withLocalizedMoment } from 'components/localized-moment';
-import ActivityCard from 'components/jetpack/activity-card';
+import ActivityCard from 'components/activity-card';
 import BackupChanges from './backup-changes';
 import Button from 'components/forms/form-button';
 import ExternalLink from 'components/external-link';

@@ -11,7 +11,7 @@ import React, { FunctionComponent, useEffect } from 'react';
 import { getHttpData } from 'state/data-layer/http-data';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
-import ActivityCardList from 'components/jetpack/activity-card-list';
+import ActivityCardList from 'components/activity-card-list';
 import DocumentHead from 'components/data/document-head';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Main from 'components/main';

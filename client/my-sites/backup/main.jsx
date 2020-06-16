@@ -38,7 +38,7 @@ import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import ActivityCardList from 'components/jetpack/activity-card-list';
+import ActivityCardList from 'components/activity-card-list';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
