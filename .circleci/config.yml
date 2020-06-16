@@ -4,12 +4,16 @@ orbs:
   slack: circleci/slack@3.4.2
 
 references:
-  shared-environment: &shared-environment
-    CIRCLE_ARTIFACTS: /tmp/artifacts
-    CIRCLE_TEST_REPORTS: /tmp/test_results
-
-  docker-image: &docker-image
-    - image: circleci/node:12.16.2-browsers
+  defaults: &defaults
+    working_directory: ~/wp-calypso
+    docker:
+      - image: circleci/node:12.16.2-browsers
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/artifacts
+      CIRCLE_TEST_REPORTS: /tmp/test_results
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -118,10 +122,6 @@ references:
 
   yarn-install: &yarn-install
     environment:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
-      # circleci images already provide a valid chromedriver binary, no need to install it again here
-      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
-      CHROMEDRIVER_FILEPATH: '/usr/local/bin/chromedriver'
     name: Install dependencies
     command: yarn install --frozen-lockfile
 
@@ -166,11 +166,6 @@ references:
     command: |
       cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
-
-  defaults: &defaults
-    working_directory: ~/wp-calypso
-    docker: *docker-image
-    environment: *shared-environment
 
 commands:
   prepare:
