@@ -28,7 +28,7 @@
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"activity-log": true,
+		"activity": true,
 		"backup": true,
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-settings": true,
