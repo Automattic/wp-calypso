@@ -539,7 +539,7 @@ class SiteSettingsFormDiscussion extends Component {
 					onChange={ onChangeField( 'blacklist_keys' ) }
 					disabled={ isRequestingSettings || isSavingSettings }
 					autoCapitalize="none"
-					onClick={ eventTracker( 'Clicked Blacklist Field' ) }
+					onClick={ eventTracker( 'Clicked Blacklist Field' ) } // @todo(saramarcondes) Is it safe to change this event name?
 					onKeyPress={ uniqueEventTracker( 'Typed in Blacklist Field' ) }
 				/>
 			</FormFieldset>
