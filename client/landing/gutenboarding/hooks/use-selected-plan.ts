@@ -15,12 +15,20 @@ export function useSelectedPlan() {
 
 	const planPath = usePlanRouteParam();
 	const planFromPath = useSelect( ( select ) => select( PLANS_STORE ).getPlanByPath( planPath ) );
+	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
 
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const hasPaidDesign = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDesign() );
 	const defaultPlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getDefaultPlan( hasPaidDomain, hasPaidDesign )
 	);
+
+	// If the selected plan is not a paid plan
+	// and the user selects a premium domain
+	// return the default paid plan.
+	if ( hasPaidDomain && isPlanFree( selectedPlan?.storeSlug ) ) {
+		return defaultPlan;
+	}
 
 	/**
 	 * Plan is decided in this order
