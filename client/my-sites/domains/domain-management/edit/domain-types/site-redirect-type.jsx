@@ -132,11 +132,17 @@ class SiteRedirectType extends React.Component {
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<div>
-						{ this.props.translate( 'Expires: %(expiry_date)s', {
-							args: {
-								expiry_date: moment( domain.expiry ).format( 'LL' ),
-							},
-						} ) }
+						{ domain.isAutoRenewing && domain.autoRenewalDate
+							? this.props.translate( 'Renews: %(renewal_date)s', {
+									args: {
+										renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
+									},
+							  } )
+							: this.props.translate( 'Expires: %(expiry_date)s', {
+									args: {
+										expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
+									},
+							  } ) }
 					</div>
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (

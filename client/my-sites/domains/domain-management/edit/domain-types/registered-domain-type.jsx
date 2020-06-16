@@ -345,6 +345,28 @@ class RegisteredDomainType extends React.Component {
 			'domains/new-status-design/new-options'
 		);
 
+		let expiresText;
+
+		if ( domain.expired ) {
+			expiresText = this.props.translate( 'Expired: %(expiry_date)s', {
+				args: {
+					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
+				},
+			} );
+		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
+			expiresText = this.props.translate( 'Renews: %(renewal_date)s', {
+				args: {
+					renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
+				},
+			} );
+		} else {
+			expiresText = this.props.translate( 'Expires: %(expiry_date)s', {
+				args: {
+					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
+				},
+			} );
+		}
+
 		return (
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -380,19 +402,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderOutboundTransferInProgress() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<div>
-						{ domain.expired
-							? this.props.translate( 'Expired: %(expiry_date)s', {
-									args: {
-										expiry_date: moment( domain.expiry ).format( 'LL' ),
-									},
-							  } )
-							: this.props.translate( 'Expires: %(expiry_date)s', {
-									args: {
-										expiry_date: moment( domain.expiry ).format( 'LL' ),
-									},
-							  } ) }
-					</div>
+					<div>{ expiresText }</div>
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
 						<WrapDomainStatusButtons>

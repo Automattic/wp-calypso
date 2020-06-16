@@ -254,6 +254,12 @@ class MappedDomainType extends React.Component {
 					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
 				},
 			} );
+		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
+			expiresText = translate( 'Renews: %(renewal_date)s', {
+				args: {
+					renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
+				},
+			} );
 		} else {
 			expiresText = translate( 'Expires: %(expiry_date)s', {
 				args: {
