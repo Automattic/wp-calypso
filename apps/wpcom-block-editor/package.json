@@ -26,6 +26,7 @@
 		"wpcom-sync": "check-npm-client && ./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
+		"@wordpress/interface": "^0.6.0",
 		"debug": "^4.1.1"
 	}
 }
