@@ -13,7 +13,6 @@ import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import { isEnabled } from '../../../../config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -122,9 +121,7 @@ export function* createSite(
 			site_information: {
 				title: siteTitle,
 			},
-			site_creation_flow: isEnabled( 'gutenboarding/site-editor' )
-				? 'gutenboarding-site-editor'
-				: 'gutenboarding',
+			site_creation_flow: 'gutenboarding',
 			theme: `pub/${ selectedDesign?.theme || 'twentytwenty' }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
