@@ -13,10 +13,9 @@ import {
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
-	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_REQUEST_SUCCESS,
@@ -45,20 +44,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_LIST_REQUEST_SUCCESS:
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
-		case READER_LIST_UPDATE_TITLE:
-			const listForTitleChange = Object.assign( {}, state[ action.listId ] );
-			if ( ! listForTitleChange ) {
-				return state;
-			}
-			listForTitleChange.title = action.title;
-			return Object.assign( {}, state, keyBy( [ listForTitleChange ], 'ID' ) );
-		case READER_LIST_UPDATE_DESCRIPTION:
-			const listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
-			if ( ! listForDescriptionChange ) {
-				return state;
-			}
-			listForDescriptionChange.description = action.description;
-			return Object.assign( {}, state, keyBy( [ listForDescriptionChange ], 'ID' ) );
 	}
 	return state;
 } );
@@ -183,6 +168,24 @@ export function isCreatingList( state = false, action ) {
 }
 
 /**
+ * Records if there is a pending list update request.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function isUpdatingList( state = false, action ) {
+	switch ( action.type ) {
+		case READER_LIST_UPDATE:
+		case READER_LIST_UPDATE_SUCCESS:
+		case READER_LIST_UPDATE_FAILURE:
+			return READER_LIST_UPDATE === action.type;
+	}
+
+	return state;
+}
+
+/**
  * Returns the updated requests state after an action has been dispatched.
  *
  * @param  {object} state  Current state
@@ -260,6 +263,7 @@ export default combineReducers( {
 	isCreatingList,
 	isRequestingList,
 	isRequestingLists,
+	isUpdatingList,
 	errors,
 	missingLists,
 } );

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -372,17 +372,6 @@ export class Checkout extends React.Component {
 		return true;
 	}
 
-	/**
-	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
-	 * so we need to flatten them to get a list of purchases
-	 *
-	 * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
-	 * @returns {Array} of product objects [ { productId: ... }, ... ]
-	 */
-	flattenPurchases( purchases ) {
-		return flatten( Object.values( purchases ) );
-	}
-
 	getUrlWithQueryParam( url, queryParams ) {
 		const { protocol, hostname, port, pathname, query } = parseUrl( url, true );
 
@@ -715,8 +704,8 @@ export class Checkout extends React.Component {
 
 			this.props.fetchReceiptCompleted( receiptId, {
 				...receipt,
-				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
-				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases ),
+				purchases: this.props.transaction.step.data.purchases,
+				failed_purchases: this.props.transaction.step.data.failed_purchases,
 			} );
 		}
 

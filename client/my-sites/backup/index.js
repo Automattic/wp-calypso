@@ -19,7 +19,8 @@ import {
 	backups,
 	showUpsellIfNoBackup,
 } from 'my-sites/backup/controller';
-import WPCOMUpsell from 'landing/jetpack-cloud/sections/wpcom-upsell';
+import WPCOMUpsellPage from 'my-sites/backup/wpcom-upsell';
+
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {
@@ -35,7 +36,7 @@ export default function () {
 			backupActivity,
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoBackup,
-			wpcomUpsellController( WPCOMUpsell ),
+			wpcomUpsellController( WPCOMUpsellPage ),
 			makeLayout,
 			clientRender
 		);
@@ -47,7 +48,7 @@ export default function () {
 			navigation,
 			backupDownload,
 			wrapInSiteOffsetProvider,
-			wpcomUpsellController( WPCOMUpsell ),
+			wpcomUpsellController( WPCOMUpsellPage ),
 			makeLayout,
 			clientRender
 		);
@@ -60,7 +61,7 @@ export default function () {
 				navigation,
 				backupRestore,
 				wrapInSiteOffsetProvider,
-				wpcomUpsellController( WPCOMUpsell ),
+				wpcomUpsellController( WPCOMUpsellPage ),
 				makeLayout,
 				clientRender
 			);
@@ -74,7 +75,7 @@ export default function () {
 			backups,
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoBackup,
-			wpcomUpsellController( WPCOMUpsell ),
+			wpcomUpsellController( WPCOMUpsellPage ),
 			makeLayout,
 			clientRender
 		);

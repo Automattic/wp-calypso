@@ -264,13 +264,13 @@ function CheckoutSummaryHelp() {
 				supportVariationDetermined && (
 					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
 						{ isSupportChatUser
-							? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
+							? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
 									components: {
 										underline: <span />,
 									},
 							  } )
 							: translate(
-									'Questions? {{underline}}Read more about plans and purchases.{{/underline}}',
+									'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
 									{
 										components: {
 											underline: <span />,
@@ -338,6 +338,10 @@ const CheckoutSummaryHelpButton = styled.button`
 	span {
 		cursor: pointer;
 		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
 	}
 `;
 

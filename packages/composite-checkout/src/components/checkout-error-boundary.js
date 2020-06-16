@@ -34,7 +34,7 @@ export default class CheckoutErrorBoundary extends React.Component {
 }
 
 CheckoutErrorBoundary.propTypes = {
-	errorMessage: PropTypes.string.isRequired,
+	errorMessage: PropTypes.node.isRequired,
 	onError: PropTypes.func,
 };
 

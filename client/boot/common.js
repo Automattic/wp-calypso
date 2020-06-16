@@ -14,7 +14,7 @@ import store from 'store';
  */
 import { setupLocale } from './locale';
 import config from 'config';
-import { ReduxWrappedLayout } from 'controller';
+import { ProviderWrappedLayout } from 'controller';
 import notices from 'notices';
 import { getToken } from 'lib/oauth-token';
 import emailVerification from 'components/email-verification';
@@ -41,7 +41,7 @@ import { initConnection as initHappychatConnection } from 'state/happychat/conne
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import { setRoute as setRouteAction } from 'state/ui/actions';
+import { setRoute as setRouteAction } from 'state/route/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
@@ -402,7 +402,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 };
 
 function renderLayout( reduxStore ) {
-	const layoutElement = React.createElement( ReduxWrappedLayout, {
+	const layoutElement = React.createElement( ProviderWrappedLayout, {
 		store: reduxStore,
 	} );
 

@@ -19,6 +19,7 @@ import PromoCardCTA from 'components/promo-section/promo-card/cta';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
 import Gridicon from 'components/gridicon';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 
 /**
  * Asset dependencies
@@ -51,7 +52,7 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	return (
-		<Main className="scan__main scan__wpcom-upsell">
+		<Main className="scan__main scan__wpcom-upsell is-wide-layout">
 			<DocumentHead title="Scanner" />
 			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
@@ -77,7 +78,11 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 				<PromoCardCTA
 					cta={ {
 						text: translate( 'Upgrade to Business Plan' ),
-						action: { url: `/checkout/${ siteSlug }/premium`, onClick: onUpgradeClick },
+						action: {
+							url: `/checkout/${ siteSlug }/business`,
+							onClick: onUpgradeClick,
+							selfTarget: true,
+						},
 					} }
 				/>
 			</PromoCard>
@@ -91,6 +96,8 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 			/>
 
 			<PromoSection { ...promos } />
+
+			<WhatIsJetpack />
 		</Main>
 	);
 }

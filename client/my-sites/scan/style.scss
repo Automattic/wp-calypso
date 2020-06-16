@@ -46,16 +46,18 @@
 	}
 }
 
-.scan__header {
+header.scan__header.is-left-align {
 	color: var( --studio-black );
 	font-size: 28px;
 	line-height: 1;
-	margin: 32px 0 16px;
+	margin-top: 32px;
+	margin-bottom: 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 36px;
 		font-weight: 600;
-		margin: 32px 0 24px;
+		margin-top: 40px;
+		margin-bottom: 18px;
 	}
 	&.is-placeholder {
 		display: block;
@@ -89,5 +91,23 @@
 }
 
 .scan__upsell-icon {
-	color: var( --color-accent-20 );
+	fill: #7bb1cd;
+}
+
+.scan__wpcom-upsell {
+	.what-is-jetpack {
+		margin-top: 32px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-top: 64px;
+		}
+	}
+}
+
+.scan__main {
+	@include breakpoint-deprecated( '>660px' ) {
+		.action-panel__body {
+			margin-left: 30px;
+		}
+	}
 }

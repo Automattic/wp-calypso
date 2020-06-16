@@ -447,25 +447,20 @@ export class List extends React.Component {
 	}
 
 	goToEditDomainRoot = ( domain ) => {
-		const { selectedSite } = this.props;
+		const { selectedSite, currentRoute } = this.props;
 		let path;
 
 		switch ( domain.type ) {
 			case type.TRANSFER:
-				path = domainManagementTransferIn( selectedSite.slug, domain.name );
+				path = domainManagementTransferIn( selectedSite.slug, domain.name, currentRoute );
 				break;
 
 			case type.SITE_REDIRECT:
-				path = domainManagementSiteRedirect( selectedSite.slug, domain.name );
+				path = domainManagementSiteRedirect( selectedSite.slug, domain.name, currentRoute );
 				break;
 
 			default:
-				path = domainManagementEdit(
-					selectedSite.slug,
-					domain.name,
-					null,
-					this.props.currentRoute
-				);
+				path = domainManagementEdit( selectedSite.slug, domain.name, currentRoute );
 				break;
 		}
 

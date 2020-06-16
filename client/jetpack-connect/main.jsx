@@ -30,7 +30,7 @@ import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { persistSession, retrieveMobileRedirect } from './persistence-utils';
+import { persistSession, retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
 
@@ -114,13 +114,20 @@ export class JetpackConnectMain extends Component {
 			! forceRemoteInstall &&
 			! this.state.redirecting
 		) {
-			return this.goToRemoteAuth( this.props.siteHomeUrl );
+			this.goToRemoteAuth( this.props.siteHomeUrl );
 		}
 		if ( this.getStatus() === ALREADY_OWNED && ! this.state.redirecting ) {
 			if ( isMobileAppFlow ) {
-				return this.redirectToMobileApp( 'already-connected' );
+				this.redirectToMobileApp( 'already-connected' );
 			}
-			return this.goToPlans( this.state.currentUrl );
+
+			if ( this.props.selectedPlanSlug === 'jetpack_search' ) {
+				page.redirect(
+					`/checkout/` + urlToSlug( this.state.currentUrl ) + `/` + this.props.selectedPlanSlug
+				);
+			} else {
+				this.goToPlans( this.state.currentUrl );
+			}
 		}
 
 		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
@@ -407,6 +414,7 @@ const connectComponent = connect(
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
 		const skipRemoteInstall = siteData.skipRemoteInstall;
+		const selectedPlanSlug = retrievePlan();
 
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
@@ -416,6 +424,7 @@ const connectComponent = connect(
 			isRequestingSites: isRequestingSites( state ),
 			jetpackConnectSite,
 			mobileAppRedirect,
+			selectedPlanSlug,
 			skipRemoteInstall,
 			siteHomeUrl: siteData.urlAfterRedirects || jetpackConnectSite.url,
 		};

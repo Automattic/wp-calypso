@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import DonationsTabs from './donations-tabs';
+import Donations from './donations';
 import LoadingError from './loading-error';
 import LoadingStatus from './loading-status';
 import UpgradePlan from './upgrade-plan';
@@ -17,6 +17,7 @@ const Edit = () => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ loadingError, setLoadingError ] = useState( '' );
 	const [ shouldUpgrade, setShouldUpgrade ] = useState( false );
+	const [ stripeConnectUrl, setStripeConnectUrl ] = useState( false );
 	const [ upgradeUrl, setUpgradeUrl ] = useState( '' );
 
 	const mapStatusToState = ( result ) => {
@@ -25,6 +26,7 @@ const Edit = () => {
 		} else {
 			setShouldUpgrade( result.should_upgrade_to_access_memberships );
 			setUpgradeUrl( result.upgrade_url );
+			setStripeConnectUrl( result.connect_url );
 		}
 
 		setIsLoading( false );
@@ -52,7 +54,7 @@ const Edit = () => {
 		return <UpgradePlan upgradeUrl={ upgradeUrl } />;
 	}
 
-	return <DonationsTabs />;
+	return <Donations stripeConnectUrl={ stripeConnectUrl } />;
 };
 
 export default Edit;

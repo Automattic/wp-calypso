@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import ExternalLink from 'components/external-link';
 import InlineSupportLink from 'components/inline-support-link';
 import Gridicon from 'components/gridicon';
+import MaterialIcon from 'components/material-icon';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -41,9 +42,10 @@ const EducationalContent = ( {
 					{ description }
 				</p>
 				<div className="educational-content__links">
-					{ links.map( ( { postId, url, calypsoLink, externalLink, text, icon } ) => (
+					{ links.map( ( { postId, url, calypsoLink, externalLink, text, icon, materialIcon } ) => (
 						<div className="educational-content__link" key={ url }>
 							{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+							{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
 							{ postId && (
 								<InlineSupportLink
 									supportPostId={ postId }

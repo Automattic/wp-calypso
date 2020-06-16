@@ -20,7 +20,6 @@ import {
 	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
-import { flatten } from 'lodash';
 
 /**
  * Internal dependencies
@@ -260,13 +259,7 @@ export default function CompositeCheckout( {
 
 			if ( receiptId && transactionResult?.purchases && transactionResult?.failed_purchases ) {
 				debug( 'fetching receipt' );
-				reduxDispatch(
-					fetchReceiptCompleted( receiptId, {
-						...transactionResult,
-						purchases: flattenPurchases( transactionResult.purchases ),
-						failedPurchases: flattenPurchases( transactionResult.failed_purchases ),
-					} )
-				);
+				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
 			}
 
 			if ( siteId ) {
@@ -809,15 +802,4 @@ function displayRenewalSuccessNotice( responseCart, purchases, translate, moment
 		),
 		{ persistent: true }
 	);
-}
-
-/**
- * Purchases are of the format { [siteId]: [ { productId: ... } ] }
- * so we need to flatten them to get a list of purchases
- *
- * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
- * @returns {Array} of product objects [ { productId: ... }, ... ]
- */
-function flattenPurchases( purchases ) {
-	return flatten( Object.values( purchases ) );
 }

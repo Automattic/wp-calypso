@@ -13,7 +13,7 @@ import middleware, {
 } from '../middleware-calypso';
 import getSkills from 'state/happychat/selectors/get-skills';
 import { selectSiteId } from 'state/help/actions';
-import { setRoute } from 'state/ui/actions';
+import { setRoute } from 'state/route/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import getGroups from 'state/happychat/selectors/get-groups';
 import { receiveStatus, sendPreferences } from 'state/happychat/connection/actions';
@@ -104,7 +104,7 @@ describe( 'middleware', () => {
 					happychat: {
 						chat: { status: HAPPYCHAT_CHAT_STATUS_DEFAULT },
 					},
-					ui: { route: { path: { current: '/happychat' } } },
+					route: { path: { current: '/happychat' } },
 				};
 
 				store.getState.mockReturnValue( state );

@@ -11,3 +11,4 @@ export {
 	collectorStart as pageVisibilityStart,
 	collectorStop as pageVisibilityStop,
 } from './page-visibility';
+export { collector as blockingResources } from './blocking-resources';

@@ -18,6 +18,6 @@ const scanBasePath = () => '/scan';
 export const scanPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ scanBasePath() }/${ siteSlug }` : scanBasePath();
 
-const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : '/settings/security' );
+const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : '/settings/jetpack' );
 export const settingsPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ settingsBasePath() }/${ siteSlug }` : settingsBasePath();

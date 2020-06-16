@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import Button from './components/button';
+import CheckoutErrorBoundary from './components/checkout-error-boundary';
 import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
 import {
 	Checkout,
@@ -63,6 +64,7 @@ export {
 	Button,
 	Checkout,
 	CheckoutCheckIcon,
+	CheckoutErrorBoundary,
 	CheckoutModal,
 	CheckoutOrderSummary,
 	CheckoutOrderSummaryStep,

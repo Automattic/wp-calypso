@@ -1015,7 +1015,8 @@ function mapStateToProps( state ) {
 		hideChecklistProgress:
 			isSiteChecklistComplete( state, siteId ) ||
 			! getSiteChecklist( state, siteId ) ||
-			! isEligibleForDotcomChecklist( state, siteId ),
+			! isEligibleForDotcomChecklist( state, siteId ) ||
+			isEnabled( 'desktop' ),
 		scanState: getScanState( state, siteId ),
 		rewindState: getRewindState( state, siteId ),
 		isCloudEligible: isJetpackCloudEligible( state, siteId ),

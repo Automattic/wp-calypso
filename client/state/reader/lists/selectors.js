@@ -7,7 +7,6 @@ import { filter, find, has, includes, sortBy } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-
 import 'state/reader/init';
 
 /**
@@ -40,6 +39,16 @@ export function isRequestingSubscribedLists( state ) {
  */
 export function isCreatingList( state ) {
 	return !! state.reader.lists.isCreatingList;
+}
+
+/**
+ * Returns true if currently updating a Reader list.
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {boolean}        Whether lists are being requested
+ */
+export function isUpdatingList( state ) {
+	return !! state.reader.lists.isUpdatingList;
 }
 
 /**

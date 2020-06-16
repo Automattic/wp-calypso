@@ -153,8 +153,8 @@ export class DomainWarnings extends React.PureComponent {
 		debug( 'Rendering wrongNSMappedDomains' );
 
 		if (
-			get( this.props, 'selectedSite.jetpack' ) ||
-			get( this.props, 'selectedSite.options.is_automated_transfer' )
+			get( this.props, 'selectedSite.jetpack' ) &&
+			! get( this.props, 'selectedSite.options.is_automated_transfer' )
 		) {
 			return null;
 		}

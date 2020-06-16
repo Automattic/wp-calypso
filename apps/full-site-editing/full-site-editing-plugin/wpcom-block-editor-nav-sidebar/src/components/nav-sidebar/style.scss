@@ -40,7 +40,7 @@ $transition-period: 200ms;
 	}
 }
 
-.wpcom-block-editor-nav-sidebar__container {
+.wpcom-block-editor-nav-sidebar-nav-sidebar__container {
 	box-sizing: border-box;
 	position: fixed;
 	top: 0;
@@ -52,11 +52,11 @@ $transition-period: 200ms;
 	@include reduce-motion( 'transition' );
 }
 
-.wpcom-block-editor-nav-sidebar__container:not( [aria-hidden=true] ) {
+.wpcom-block-editor-nav-sidebar-nav-sidebar__container:not( [aria-hidden=true] ) {
 	left: 0;
 }
 
-.wpcom-block-editor-nav-sidebar__header {
+.wpcom-block-editor-nav-sidebar-nav-sidebar__header {
 	top: 0;
 	left: 0;
 	position: fixed;
@@ -73,27 +73,27 @@ $transition-period: 200ms;
 		color: #fff !important;
 		box-shadow: none !important;
 
-		&.wpcom-block-editor-nav-sidebar__is-shrinking {
+		&.is-shrinking {
 			animation: wpcom-block-editor-nav-sidebar__shrink $transition-period normal forwards;
 			@include reduce-motion( 'animation' );
 		}
-		&.wpcom-block-editor-nav-sidebar__is-growing {
+		&.is-growing {
 			animation: wpcom-block-editor-nav-sidebar__grow $transition-period normal forwards;
 			@include reduce-motion( 'animation' );
 		}
 	}
 }
 
-.wpcom-block-editor-nav-sidebar__header-space {
+.wpcom-block-editor-nav-sidebar-nav-sidebar__header-space {
 	height: $header-height;
 	border-bottom: $border;
 }
 
-.wpcom-block-editor-nav-sidebar__home-button-container {
+.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container {
 	border-bottom: $border;
 }
 
-.wpcom-block-editor-nav-sidebar__home-button {
+.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
 	height: 46px;
 	width: 100%;
 	font-weight: 600;
@@ -101,15 +101,15 @@ $transition-period: 200ms;
 	box-shadow: none !important;
 }
 
-.wpcom-block-editor-nav-sidebar__home-button:hover {
+.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button:hover {
 	text-decoration: underline;
 }
 
-.wpcom-block-editor-nav-sidebar__page-list {
-	margin: 10px;
+.wpcom-block-editor-nav-sidebar-nav-sidebar__controls {
+	padding: 10px;
 }
 
-.wpcom-block-editor-nav-sidebar__page-list li:hover {
+.wpcom-block-editor-nav-sidebar-nav-sidebar__page-list li:hover {
 	background: black;
 	color: white;
 }

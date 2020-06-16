@@ -170,7 +170,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getNameServers() {
-		const { translate, domain, selectedSite } = this.props;
+		const { translate, domain, currentRoute, selectedSite } = this.props;
 
 		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
 			return null;
@@ -180,7 +180,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementNameServers( selectedSite.slug, domain.name ) }
+				path={ domainManagementNameServers( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
 				description={ description }
@@ -189,13 +189,13 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getDnsRecords() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, translate, currentRoute, domain } = this.props;
 
 		const description = this.getDestinationText();
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementDns( selectedSite.slug, domain.name ) }
+				path={ domainManagementDns( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Update your DNS records' ) }
 				description={ description }
@@ -204,7 +204,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getContactsAndPrivacy() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { privateDomain, privacyAvailable } = domain;
 
 		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
@@ -222,7 +222,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementContactsPrivacy( selectedSite.slug, domain.name ) }
+				path={ domainManagementContactsPrivacy( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="chrome_reader_mode"
 				text={ translate( 'Update your contact information' ) }
 				description={ description }
@@ -231,7 +231,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferDomain() {
-		const { moment, selectedSite, translate, domain } = this.props;
+		const { moment, selectedSite, translate, domain, currentRoute } = this.props;
 		const { expired, isLocked, transferAwayEligibleAt } = domain;
 
 		if ( expired && ! this.isDomainInGracePeriod() ) {
@@ -255,7 +255,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementTransfer( selectedSite.slug, domain.name ) }
+				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="sync_alt"
 				text={ translate( 'Transfer domain' ) }
 				description={ description }
@@ -389,7 +389,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getSiteAddressChange() {
-		const { domain, selectedSite, translate } = this.props;
+		const { domain, selectedSite, translate, currentRoute } = this.props;
 		const { isWpcomStagingDomain } = domain;
 
 		if ( isWpcomStagingDomain ) {
@@ -398,7 +398,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name ) }
+				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
 				text={ translate( 'Change site address' ) }
@@ -440,7 +440,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getSecurity() {
-		const { selectedSite, domain, translate } = this.props;
+		const { selectedSite, domain, currentRoute, translate } = this.props;
 
 		const shouldRenderDomainSecurity = config.isEnabled(
 			'domains/new-status-design/security-option'
@@ -477,7 +477,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementSecurity( selectedSite.slug, domain.name ) }
+				path={ domainManagementSecurity( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleDomainSecurityClick }
 				materialIcon="security"
 				text={ translate( 'Review your domain security' ) }
@@ -549,11 +549,11 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getRedirectSettings() {
-		const { domain, selectedSite, translate } = this.props;
+		const { domain, selectedSite, currentRoute, translate } = this.props;
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name ) }
+				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Redirect settings' ) }
 				description={ translate( 'Update your site redirect' ) }
@@ -638,8 +638,10 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 export default connect(
 	( state ) => {
+		const currentRoute = getCurrentRoute( state );
 		return {
-			isManagingAllSites: isUnderDomainManagementAll( getCurrentRoute( state ) ),
+			currentRoute,
+			isManagingAllSites: isUnderDomainManagementAll( currentRoute ),
 		};
 	},
 	{ recordTracksEvent, recordGoogleEvent }

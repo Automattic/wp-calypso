@@ -16,8 +16,6 @@ import {
 	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
-	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_REQUEST_SUCCESS,
@@ -214,43 +212,43 @@ export function unfollowList( owner, slug ) {
 /**
  * Triggers a network request to update a list's details.
  *
- * @param  {object}  list List details to save
- * @returns {Function} Action promise
+ * @param   {object} list List details to save
+ * @returns {object} Action object
  */
-export function updateListDetails( list ) {
+export function updateReaderList( list ) {
 	if ( ! list || ! list.owner || ! list.slug || ! list.title ) {
 		throw new Error( 'List owner, slug and title are required' );
 	}
 
-	const preparedOwner = decodeURIComponent( list.owner );
-	const preparedSlug = decodeURIComponent( list.slug );
-	const preparedList = Object.assign( {}, list, { owner: preparedOwner, slug: preparedSlug } );
+	return {
+		type: READER_LIST_UPDATE,
+		list,
+	};
+}
 
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_UPDATE,
-			list,
-		} );
+/**
+ * Handle updated list object from the API.
+ *
+ * @param   {object} data List to save
+ * @returns {object} Action object
+ */
+export function receiveUpdatedListDetails( data ) {
+	return {
+		type: READER_LIST_UPDATE_SUCCESS,
+		data,
+	};
+}
 
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().readListsUpdate( preparedList, ( error, data ) => {
-				if ( error ) {
-					dispatch( {
-						type: READER_LIST_UPDATE_FAILURE,
-						list,
-						error,
-					} );
-					reject( error );
-				} else {
-					dispatch( {
-						type: READER_LIST_UPDATE_SUCCESS,
-						list,
-						data,
-					} );
-					resolve();
-				}
-			} );
-		} );
+/**
+ * Handle an error from the list update API.
+ *
+ * @param   {Error}  error Error during the list update process
+ * @returns {object} Action object
+ */
+export function handleUpdateListDetailsError( error ) {
+	return {
+		type: READER_LIST_UPDATE_FAILURE,
+		error,
 	};
 }
 
@@ -265,40 +263,6 @@ export function dismissListNotice( listId ) {
 		dispatch( {
 			type: READER_LIST_DISMISS_NOTICE,
 			listId,
-		} );
-	};
-}
-
-/**
- * Trigger an action to update a list title.
- *
- * @param  {number}  listId List ID
- * @param  {string}  newTitle List title
- * @returns {Function} Action thunk
- */
-export function updateTitle( listId, newTitle ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_UPDATE_TITLE,
-			listId,
-			title: newTitle,
-		} );
-	};
-}
-
-/**
- * Trigger an action to update a list description.
- *
- * @param  {number}  listId List ID
- * @param  {string}  newDescription List description
- * @returns {Function} Action thunk
- */
-export function updateDescription( listId, newDescription ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_UPDATE_DESCRIPTION,
-			listId,
-			description: newDescription,
 		} );
 	};
 }

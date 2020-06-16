@@ -39,6 +39,7 @@ const ThreatStatusFilter = ( { isPlaceholder, onSelect } ) => {
 			className="threat-history-list__filters"
 			options={ filterOptions }
 			onSelect={ onSelect }
+			primary
 		/>
 	);
 };

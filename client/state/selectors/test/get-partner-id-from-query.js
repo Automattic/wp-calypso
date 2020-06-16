@@ -10,12 +10,10 @@ describe( '#getPartnerIdFromQuery', () => {
 
 	test( 'should return null if no partner_id query present', () => {
 		const state = {
-			ui: {
-				route: {
-					query: {
-						current: {
-							email_address: 'user@wordpress.com',
-						},
+			route: {
+				query: {
+					current: {
+						email_address: 'user@wordpress.com',
 					},
 				},
 			},
@@ -25,13 +23,11 @@ describe( '#getPartnerIdFromQuery', () => {
 
 	test( 'should return null when partner_id present but not integer', () => {
 		const state = {
-			ui: {
-				route: {
-					query: {
-						current: {
-							email_address: 'user@wordpress.com',
-							partner_id: 'meh',
-						},
+			route: {
+				query: {
+					current: {
+						email_address: 'user@wordpress.com',
+						partner_id: 'meh',
 					},
 				},
 			},
@@ -42,13 +38,11 @@ describe( '#getPartnerIdFromQuery', () => {
 
 	test( 'should return partner ID as integer when partner_id query present', () => {
 		const state = {
-			ui: {
-				route: {
-					query: {
-						current: {
-							email_address: 'user@wordpress.com',
-							partner_id: '49640',
-						},
+			route: {
+				query: {
+					current: {
+						email_address: 'user@wordpress.com',
+						partner_id: '49640',
 					},
 				},
 			},

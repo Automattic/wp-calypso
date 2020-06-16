@@ -9,7 +9,7 @@ import { stringify } from 'qs';
  */
 import { serverRender, setShouldServerSideRender } from 'server/render';
 import { setSection as setSectionMiddlewareFactory } from 'controller';
-import { setRoute as setRouteAction } from 'state/ui/actions';
+import { setRoute as setRouteAction } from 'state/route/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function ( route, ...middlewares ) {

@@ -434,7 +434,7 @@ const MainContentUI = styled.div`
 	width: 100%;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		margin: 32px auto;
+		margin: 0 auto 32px;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
