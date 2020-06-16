@@ -1057,7 +1057,7 @@ export default connect(
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		isJetpackWooDnaFlow: !! wooDnaConfig[ get( getCurrentQueryArguments( state ), 'from' ) ],
+		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),

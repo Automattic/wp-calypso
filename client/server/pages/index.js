@@ -58,6 +58,7 @@ import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -316,6 +317,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		isRTL: config( 'rtl' ),
 		requestFrom: request.query.from,
 		isWCComConnect,
+		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang,
 		entrypoint: getFilesForEntrypoint( target, entrypoint ),
