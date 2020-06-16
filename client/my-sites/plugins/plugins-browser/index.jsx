@@ -568,6 +568,7 @@ export class PluginsBrowser extends Component {
 				<DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="plugins-browser__page-heading"
 					headerText={ this.props.translate( 'Plugin Browser' ) }
 					align="left"

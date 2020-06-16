@@ -90,6 +90,7 @@ export const Sharing = ( {
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="marketing__page-heading"
 				headerText={ translate( 'Marketing and Integrations' ) }
 				align="left"

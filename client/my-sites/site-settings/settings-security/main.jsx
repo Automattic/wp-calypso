@@ -68,6 +68,7 @@ const SiteSettingsSecurity = ( {
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="settings-security__page-heading"
 				headerText={ translate( 'Settings' ) }
 				align="left"

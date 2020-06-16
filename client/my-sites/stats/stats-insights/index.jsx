@@ -57,6 +57,7 @@ const StatsInsights = ( props ) => {
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="stats__section-header"
 				headerText={ translate( 'Stats and Insights' ) }
 				align="left"

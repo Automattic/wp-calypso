@@ -48,7 +48,7 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>
-				<ActionPanelTitle className={ classNames( 'wp-brand-font', { 'is-primary': isPrimary } ) }>
+				<ActionPanelTitle className={ classNames( { 'is-primary, wp-brand-font': isPrimary } ) }>
 					{ title }
 					{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
 				</ActionPanelTitle>

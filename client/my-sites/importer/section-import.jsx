@@ -348,6 +348,7 @@ class SectionImport extends Component {
 				<DocumentHead title={ translate( 'Import Content' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="importer__page-heading"
 					headerText={ translate( 'Import Content' ) }
 					align="left"

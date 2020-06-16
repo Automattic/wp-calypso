@@ -60,6 +60,7 @@ const Home = ( {
 	const header = (
 		<div className="customer-home__heading">
 			<FormattedHeader
+				brandFont
 				headerText={ translate( 'My Home' ) }
 				subHeaderText={ translate( 'Your home base for posting, editing, and growing your site.' ) }
 				align="left"

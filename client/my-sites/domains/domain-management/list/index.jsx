@@ -195,6 +195,7 @@ export class List extends React.Component {
 				<SidebarNavigation />
 				{ ! this.props.renderAllSites && (
 					<FormattedHeader
+						brandFont
 						className="domain-management__page-heading"
 						headerText={ this.props.translate( 'Domains' ) }
 						align="left"
