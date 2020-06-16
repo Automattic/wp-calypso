@@ -3,6 +3,7 @@
  */
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import classNames from 'classnames';
 import React, { FunctionComponent, useEffect } from 'react';
 
 /**
@@ -13,7 +14,9 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
 import ActivityCardList from 'components/activity-card-list';
 import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -36,11 +39,11 @@ const ActivityLogV2: FunctionComponent = () => {
 	}, [ filter, siteId ] );
 
 	return (
-		<Main className="activity-log-v2">
+		<Main className="activity-log-v2" wideLayout={ ! isJetpackCloud() }>
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
-			<div className="activity-log-v2__content">
+			{ isJetpackCloud() ? (
 				<div className="activity-log-v2__header">
 					<h2>{ translate( 'Find a backup or restore point' ) }</h2>
 					<p>
@@ -49,6 +52,20 @@ const ActivityLogV2: FunctionComponent = () => {
 						) }
 					</p>
 				</div>
+			) : (
+				<FormattedHeader
+					headerText="Activity"
+					subHeaderText={ translate(
+						'This is the complete event history for your site. Filter by date range and/or activity type.'
+					) }
+					align="left"
+				/>
+			) }
+			<div
+				className={ classNames( 'activity-log-v2__content', {
+					wordpressdotcom: ! isJetpackCloud(),
+				} ) }
+			>
 				{ logs && <ActivityCardList logs={ logs } pageSize={ 10 } /> }
 			</div>
 		</Main>
