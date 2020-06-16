@@ -35,7 +35,7 @@ const promos: PromoSectionProps = {
 		{
 			title: translate( 'Jetpack Scan' ),
 			body: translate(
-				'Automated scanning and one-click fixes to keep your site ahead of security threats.'
+				'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
 			),
 			image: <MaterialIcon icon="security" className="backup__upsell-icon" />,
 		},

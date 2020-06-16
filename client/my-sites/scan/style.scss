@@ -50,12 +50,14 @@ header.scan__header.is-left-align {
 	color: var( --studio-black );
 	font-size: 28px;
 	line-height: 1;
-	margin: 32px 0 16px;
+	margin-top: 32px;
+	margin-bottom: 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 36px;
 		font-weight: 600;
-		margin: 40px 0 18px;
+		margin-top: 40px;
+		margin-bottom: 18px;
 	}
 	&.is-placeholder {
 		display: block;
@@ -94,12 +96,18 @@ header.scan__header.is-left-align {
 
 .scan__wpcom-upsell {
 	.what-is-jetpack {
-		margin-top: 64px;
+		margin-top: 32px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-top: 64px;
+		}
 	}
 }
 
 .scan__main {
-	.action-panel__body {
-		margin-left: 30px;
+	@include breakpoint-deprecated( '>660px' ) {
+		.action-panel__body {
+			margin-left: 30px;
+		}
 	}
 }
