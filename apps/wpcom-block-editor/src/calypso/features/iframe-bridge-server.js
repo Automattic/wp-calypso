@@ -13,16 +13,13 @@ import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
 import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
-import { notifyDesktopViewPostClicked } from 'state/desktop/actions';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
-const isDesktop = config.isEnabled( 'desktop' );
 
 /**
  *
@@ -600,22 +597,22 @@ function handleCloseEditor( calypsoPort ) {
 
 /**
  * Modify links in order to open them in parent window and not in a child iframe.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function openLinksInParentFrame() {
+function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinkSelectors = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
-		// '.components-snackbar .components-snackbar__content a.components-button', // .components-snackbar__action.is-tertiary
 	].join( ',' );
 	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
-		if ( isDesktop ) {
-			dispatch( notifyDesktopViewPostClicked( e.target.href ) );
-		} else {
-			window.open( e.target.href, '_top' );
-		}
+		calypsoPort.postMessage( {
+			action: 'viewPost',
+			payload: e.target.href,
+		} );
 	} );
 
 	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
@@ -839,7 +836,7 @@ function initPort( message ) {
 
 		handleCloseEditor( calypsoPort );
 
-		openLinksInParentFrame();
+		openLinksInParentFrame( calypsoPort );
 
 		openCustomizer( calypsoPort );
 

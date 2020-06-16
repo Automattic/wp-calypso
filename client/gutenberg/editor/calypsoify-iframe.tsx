@@ -34,6 +34,7 @@ import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
+import { notifyDesktopViewPostClicked } from 'state/desktop/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { editPost, trashPost } from 'state/posts/actions';
@@ -94,6 +95,7 @@ enum EditorActions {
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
+	ViewPost = 'viewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
@@ -273,6 +275,13 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( EditorActions.PreviewPost === action ) {
 			const { postUrl } = payload;
 			this.openPreviewModal( postUrl, ports[ 0 ] );
+		}
+
+		if ( EditorActions.ViewPost === action ) {
+			const { postUrl } = payload;
+			config.isEnabled( 'desktop' )
+				? this.props.notifyDesktopViewPostClicked( postUrl )
+				: ( window.location.href = postUrl );
 		}
 
 		if ( EditorActions.OpenCustomizer === action ) {
@@ -736,6 +745,7 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	setEditorIframeLoaded,
 	startEditingPost,
+	notifyDesktopViewPostClicked,
 	editPost,
 	trashPost,
 	updateSiteFrontPage,
