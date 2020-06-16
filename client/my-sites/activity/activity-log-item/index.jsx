@@ -13,6 +13,7 @@ import { flowRight as compose } from 'lodash';
  * Internal dependencies
  */
 import scrollTo from 'lib/scroll-to';
+import { settingsPath } from 'lib/jetpack/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import ActivityActor from './activity-actor';
 import ActivityDescription from './activity-description';
@@ -265,7 +266,7 @@ class ActivityLogItem extends Component {
 							href={
 								canAutoconfigure
 									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-									: `/settings/security/${ siteSlug }#credentials`
+									: `${ settingsPath( siteSlug ) }#credentials`
 							}
 							onClick={ trackAddCreds }
 						>
