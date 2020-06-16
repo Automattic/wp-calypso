@@ -7,6 +7,7 @@ import React from 'react';
 import page from 'page';
 import { get } from 'lodash';
 import { parse } from 'qs';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
 import wp from 'lib/wp';
 import { externalRedirect } from 'lib/route';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 const wpcom = wp.undocumented();
 
@@ -212,8 +214,16 @@ class DomainConnectMapping extends React.Component {
 	};
 
 	goToDomainManagementEdit = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			domainManagementEdit(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 }
 
-export default localize( DomainConnectMapping );
+export default connect( ( state ) => ( {
+	currentRoute: getCurrentRoute( state ),
+} ) )( localize( DomainConnectMapping ) );

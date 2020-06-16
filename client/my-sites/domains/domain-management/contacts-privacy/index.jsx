@@ -24,6 +24,7 @@ import {
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import isRequestingWhois from 'state/selectors/is-requesting-whois';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -75,7 +76,8 @@ class ContactsPrivacy extends React.PureComponent {
 					<VerticalNavItem
 						path={ domainManagementEditContactInfo(
 							this.props.selectedSite.slug,
-							this.props.selectedDomainName
+							this.props.selectedDomainName,
+							this.props.currentRoute
 						) }
 					>
 						{ translate( 'Edit contact info' ) }
@@ -85,7 +87,8 @@ class ContactsPrivacy extends React.PureComponent {
 						<VerticalNavItem
 							path={ domainManagementManageConsent(
 								this.props.selectedSite.slug,
-								this.props.selectedDomainName
+								this.props.selectedDomainName,
+								this.props.currentRoute
 							) }
 						>
 							{ translate( 'Manage Consent for Personal Data Use' ) }
@@ -101,12 +104,19 @@ class ContactsPrivacy extends React.PureComponent {
 	}
 
 	goToEdit = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			domainManagementEdit(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 }
 
 export default connect( ( state, ownProps ) => {
 	return {
+		currentRoute: getCurrentRoute( state ),
 		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
 	};
 } )( localize( ContactsPrivacy ) );
