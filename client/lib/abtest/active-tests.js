@@ -166,7 +166,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-		localeTargets: [ 'en' ],
 		countryCodeTargets: [ 'US' ],
 	},
 };
