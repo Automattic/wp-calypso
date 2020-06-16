@@ -177,6 +177,15 @@
 	font-size: $font-body-small;
 	line-height: 22px;
 	margin-top: 10px;
+	
+	// overwrite button styles
+	&.components-button.is-link {
+		text-decoration: none;
+		font-size: 14px;
+		color: var( --studio-blue-40 );
+		display: flex;
+		align-items: flex-start;
+	}
 
 	// the tick
 	svg:first-child {
@@ -184,7 +193,8 @@
 		// the strike-through will look dirty over it
 		margin-right: 5px;
 		vertical-align: middle;
-		margin-top: 3px;
+		margin-top: 4px;
+		flex: none;
 	}
 
 	svg:first-child path {
@@ -211,11 +221,7 @@
 
 	// overwrite button styles
 	&.components-button.is-link {
-		text-decoration: none;
-		font-size: 14px;
 		color: var( --studio-blue-40 );
-		display: flex;
-		align-items: flex-start;
 	}
 
 	// the tick
