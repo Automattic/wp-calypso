@@ -49,19 +49,19 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		[
 			/* translators: This is an example of a site name,
 			   feel free to create your own but please keep it under 22 characters */
-			_x( 'In Focus Photographers', 'sample site title' ),
+			_x( 'Paul’s Tennis Blog', 'sample site title' ),
 			/* translators: This is an example of a site name,
 			   feel free to create your own but please keep it under 22 characters */
-			_x( 'Cortado Coffee SF', 'sample site title' ),
+			_x( 'Colorado Consulting', 'sample site title' ),
 			/* translators: This is an example of a site name,
 			   feel free to create your own but please keep it under 22 characters */
-			_x( 'Leah Rand', 'sample site title' ),
+			_x( 'Mumbai Bites', 'sample site title' ),
 			/* translators: This is an example of a site name,
 			   feel free to create your own but please keep it under 22 characters */
-			_x( 'Ava Young', 'sample site title' ),
+			_x( 'Ava’s Photography', 'sample site title' ),
 			/* translators: This is an example of a site name,
 			   feel free to create your own but please keep it under 22 characters */
-			_x( 'Mighty Leaf Tea Room', 'sample site title' ),
+			_x( 'Ray’s Top Toy Store', 'sample site title' ),
 		],
 		! siteTitle,
 		{
