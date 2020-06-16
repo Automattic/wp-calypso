@@ -50,25 +50,28 @@ export interface Props {
 	isPrimary?: boolean;
 }
 
-function isCtaButton( cta: Cta ): cta is CtaButton {
+function isCtaButton( cta: Cta ): boolean {
 	return undefined !== ( cta as CtaButton ).text;
 }
 
-function isCtaAction( action: any ): action is CtaAction {
+function isCtaAction( action: any ): boolean {
 	return undefined !== ( action as CtaAction ).onClick;
 }
 
 function buttonProps( button: CtaButton, isPrimary: boolean ) {
-	const actionProps = isCtaAction( button.action )
+	const { action } = button;
+	const hasClickListener = isCtaAction( action );
+	const isBlankTarget = hasClickListener ? ! action.selfTarget : true;
+	const actionProps = hasClickListener
 		? {
-				href: button.action.url,
-				onClick: button.action.onClick,
-				selfTarget: button.action.selfTarget,
+				href: action.url,
+				onClick: action.onClick,
 		  }
 		: {
-				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
+				[ typeof action === 'string' ? 'href' : 'onClick' ]: action,
 		  };
-	if ( undefined !== actionProps.href && ! actionProps.selfTarget ) {
+
+	if ( isBlankTarget && undefined !== actionProps.href ) {
 		actionProps.target = '_blank';
 	}
 	return {
@@ -77,6 +80,7 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 		...actionProps,
 	};
 }
+
 const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	cta,
 	learnMoreLink,
