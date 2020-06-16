@@ -82,3 +82,15 @@
 	}
 }
 
+
+@mixin plans-grid-edge2edge-padding {
+	padding: 0 $gutenboarding-block-margin-mobile;
+
+	@include break-small {
+		padding: 0 $gutenboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		padding: 0 $gutenboarding-block-margin-medium;
+	}
+}

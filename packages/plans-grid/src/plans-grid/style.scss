@@ -2,19 +2,6 @@
 @import '../mixins.scss';
 @import '../variables.scss';
 
-
-@mixin onboarding-block-margin {
-	padding: 0 $gutenboarding-block-margin-mobile;
-
-	@include break-small {
-		padding: 0 $gutenboarding-block-margin-small;
-	}
-
-	@include break-medium {
-		padding: 0 $gutenboarding-block-margin-medium;
-	}
-}
-
 .plans-grid {
 	// Space to accomadate sticky footer
 	margin-bottom: 85px; // @TODO: replace with a variable
@@ -38,12 +25,14 @@
 }
 
 .plans-grid__details-container {
-	overflow-x: auto;
-	width: 100vw;
-	position: absolute;
-	left: 0;
-	
-	@include onboarding-block-margin;
+	@media ( max-width: $plans-grid-max-page-width ) {
+		overflow-x: auto;
+		width: 100vw;
+		position: absolute;
+		left: 0;
+
+		@include plans-grid-edge2edge-padding;
+	}
 }
 
 .plans-grid__details-heading {
