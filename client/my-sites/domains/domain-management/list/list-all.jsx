@@ -63,7 +63,7 @@ class ListAll extends Component {
 			<Main wideLayout>
 				<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
 				<div className="list-all__container">
-					{ config.isEnabled( 'manage/all-domains2' )
+					{ config.isEnabled( 'manage/all-domains' )
 						? this.renderDomainsAcrossSites()
 						: this.props.sites.map( this.renderSingleSite, this ) }
 				</div>
