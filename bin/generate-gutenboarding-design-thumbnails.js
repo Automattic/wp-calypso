@@ -22,6 +22,8 @@ const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
 const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
+const fseDesigns = require( '../client/landing/gutenboarding/available-fse-designs-config.json' );
+
 const screenshotsPath = './static/page-templates/design-screenshots'; // Folder to store output images
 
 // image output variables
@@ -39,7 +41,7 @@ const getDesignUrl = ( design ) => {
 	} );
 };
 
-async function run() {
+function getConfigDesigns( config ) {
 	if (
 		( typeof designs === 'object' && ! Array.isArray( designs.featured ) ) ||
 		! designs.featured
@@ -47,12 +49,18 @@ async function run() {
 		console.error(
 			'Could not find any featured designs. Check the regex or the available-designs.ts file'
 		);
-		return;
+		process.exit( 1 );
 	}
-	console.log( `Processing ${ designs.featured.length } designs...` );
+	return config.featured;
+}
+
+async function run() {
+	const allDesigns = [ ...getConfigDesigns( designs ), ...getConfigDesigns( fseDesigns ) ];
+
+	console.log( `Processing ${ allDesigns.length } designs...` );
 
 	await Promise.all(
-		designs.featured.map( async ( design ) => {
+		allDesigns.map( async ( design ) => {
 			const url = getDesignUrl( design );
 			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
 
