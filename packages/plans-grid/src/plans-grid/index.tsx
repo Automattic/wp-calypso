@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import classNames from 'classnames';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { Plans, DomainSuggestions } from '@automattic/data-stores';
@@ -21,9 +20,6 @@ import './style.scss';
 
 const PLANS_STORE = Plans.register();
 type PlansSlug = Plans.PlanSlug;
-
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-const isMobile = window.navigator.userAgent.indexOf( 'Mobi' ) > -1;
 
 export interface Props {
 	header: React.ReactElement;
@@ -50,13 +46,8 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div
-			className={ classNames( 'plans-grid', {
-				'is-mobile': isMobile,
-			} ) }
-		>
+		<div className="plans-grid">
 			<div className="plans-grid__header">{ header }</div>
-
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
 					<PlansTable
