@@ -30,6 +30,7 @@
 
 	.task__timing {
 		margin-bottom: 10px;
+
 		align-items: center;
 		color: var( --color-text-subtle );
 		font-size: $font-body-small;
@@ -47,7 +48,6 @@
 	}
 
 	.task__title {
-		font-family: 'Recoleta', serif;
 		font-size: 28px;
 		line-height: 36px;
 		margin-bottom: 4px;

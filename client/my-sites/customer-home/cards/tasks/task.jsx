@@ -113,7 +113,7 @@ const Task = ( {
 						{ badgeText }
 					</Badge>
 				) }
-				<h2 className="task__title">{ title }</h2>
+				<h2 className="task__title wp-brand-font">{ title }</h2>
 				<p className="task__description">{ description }</p>
 				<div className="task__actions">
 					{ actionButton ? (

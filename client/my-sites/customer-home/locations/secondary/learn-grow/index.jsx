@@ -40,7 +40,7 @@ const LearnGrow = ( { cards } ) => {
 
 	return (
 		<>
-			<h2 className="learn-grow__heading customer-home__section-heading">
+			<h2 className="learn-grow__heading customer-home__section-heading wp-brand-font">
 				{ translate( 'Learn and grow' ) }
 			</h2>
 			<Card className="learn-grow__content">
