@@ -121,6 +121,7 @@ references:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       # circleci images already provide a valid chromedriver binary, no need to install it again here
       CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      CHROMEDRIVER_FILEPATH: '/usr/local/bin/chromedriver'
     name: Install dependencies
     command: yarn install --frozen-lockfile
 
