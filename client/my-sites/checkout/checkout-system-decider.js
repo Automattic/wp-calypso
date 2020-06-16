@@ -164,6 +164,11 @@ function getCheckoutVariant(
 	isJetpack,
 	isAtomic
 ) {
+	if ( config.isEnabled( 'old-checkout-force' ) ) {
+		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
+		return 'old-checkout';
+	}
+
 	if ( config.isEnabled( 'composite-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
 		return 'composite-checkout';
