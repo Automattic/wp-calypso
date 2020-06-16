@@ -147,6 +147,16 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			await navBarComponent.clickMySites();
 			return await NoSitesComponent.Expect( driver );
 		} );
+
+		after( async function () {
+			await new LoginFlow( driver ).loginAndSelectPeople();
+			const peoplePage = await PeoplePage.Expect( driver );
+			await peoplePage.selectInvites();
+			await peoplePage.goToClearAcceptedInvitePage( newUserName );
+
+			const revokePage = await RevokePage.Expect( driver );
+			await revokePage.revokeUser();
+		} );
 	} );
 
 	describe( 'Inviting new user as an Editor and revoke invite: @parallel @jetpack', function () {
@@ -225,7 +235,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			return await peoplePage.inviteUser();
 		} );
 
-		step( 'Can invite a new user as an editor and see its pending', async function () {
+		step( 'Can invite a new user as a viewer and see its pending', async function () {
 			const invitePeoplePage = await InvitePeoplePage.Expect( driver );
 			await invitePeoplePage.inviteNewUser(
 				newInviteEmailAddress,
@@ -301,6 +311,19 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 				false,
 				`The username of '${ newUserName }' was still displayed as a site viewer`
 			);
+		} );
+
+		step( 'Can clear accepted invite', async function () {
+			await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
+			const peoplePage = await PeoplePage.Expect( driver );
+			await peoplePage.selectInvites();
+			await peoplePage.goToClearAcceptedInvitePage( newUserName );
+
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			const revokePage = await RevokePage.Expect( driver );
+			await revokePage.revokeUser();
+			const sent = await noticesComponent.isSuccessNoticeDisplayed();
+			return assert( sent, 'The Invite deleted confirmation message was not displayed' );
 		} );
 
 		step( 'Can not see the site - see the private site log in page', async function () {
