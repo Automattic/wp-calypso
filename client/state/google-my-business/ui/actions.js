@@ -3,6 +3,8 @@
  */
 import { GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL } from 'state/action-types';
 
+import 'state/google-my-business/init';
+
 /**
  * Returns an action object to be used in signalling that the interval of the
  * Google My Business stats chart should change
