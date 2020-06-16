@@ -5,7 +5,6 @@ import type { BlockEditProps } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback } from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -76,11 +75,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 			shouldTriggerCreate &&
 			canUseStyleStep()
 		) {
-			createSite( currentUser.username, freeDomainSuggestion, undefined, undefined, {
-				site_creation_flow: isEnabled( 'gutenboarding/site-editor' )
-					? 'gutenboarding-site-editor'
-					: 'gutenboarding',
-			} );
+			createSite( currentUser.username, freeDomainSuggestion );
 		}
 	}, [
 		createSite,

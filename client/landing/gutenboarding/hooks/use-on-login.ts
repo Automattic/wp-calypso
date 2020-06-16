@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -35,11 +34,7 @@ export default function useSignup() {
 
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string, isPublicSite?: boolean ) => {
-			createSite( username, freeDomainSuggestion, bearerToken, isPublicSite, {
-				site_creation_flow: isEnabled( 'gutenboarding/site-editor' )
-					? 'gutenboarding-site-editor'
-					: 'gutenboarding',
-			} );
+			createSite( username, freeDomainSuggestion, bearerToken, isPublicSite );
 		},
 		[ createSite, freeDomainSuggestion ]
 	);

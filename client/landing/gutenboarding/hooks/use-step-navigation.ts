@@ -3,7 +3,6 @@
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -46,11 +45,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, freeDomainSuggestion, undefined, shouldSiteBePublic, {
-					site_creation_flow: isEnabled( 'gutenboarding/site-editor' )
-						? 'gutenboarding-site-editor'
-						: 'gutenboarding',
-			  } )
+			? createSite( currentUser.username, freeDomainSuggestion, undefined, shouldSiteBePublic )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps
