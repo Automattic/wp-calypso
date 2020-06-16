@@ -161,20 +161,17 @@ export function generateSteps( {
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				// Flow is to be use on English locale only, no need to translate labels
-				fallbackHeaderText: "Let's get started",
+				fallbackHeaderText: "Let's do this",
 				fallbackSubHeaderText: "You're one step away to get going with your site",
 				submittingButtonText: 'Go to Checkout »',
 				defaultButtonText: 'Go to Checkout »',
+				freeSubmittingButtonText: 'Continue »',
+				freeDefaultButtonText: 'Continue »',
 				emailInputLabel: 'Your email address',
 
 				// Used translations to insert html
-				explanationText: i18n.translate(
-					"You'll be able to log in to your account using this address.{{br/}}" +
-						'You can also set a password later.',
-					{
-						components: { br: <br /> },
-					}
-				),
+				explanationText:
+					"You'll be able to log in to your account using this address. You can also set a password later.",
 				socialAlternativeText: 'Or continue using:',
 
 				// Used translations to insert html
@@ -188,8 +185,6 @@ export function generateSteps( {
 				),
 				socialGoogleLabel: 'Google',
 				socialAppleLabel: 'Apple',
-				footerText: 'Do you already have a WordPress.com account?',
-				footerLoginText: 'Log in here',
 			},
 		},
 

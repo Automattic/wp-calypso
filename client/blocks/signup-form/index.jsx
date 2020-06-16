@@ -1010,6 +1010,14 @@ class SignupForm extends Component {
 				'emailInputLabel',
 			] );
 
+			const isFreePlan = this.props.signupDependencies && ! this.props.signupDependencies.cartItem;
+			if ( isFreePlan ) {
+				textProps.submittingButtonText =
+					this.props.freeSubmittingButtonText || textProps.submittingButtonText;
+				textProps.defaultButtonText =
+					this.props.freeDefaultButtonText || textProps.defaultButtonText;
+			}
+
 			const socialTextProps = pick( this.props, [
 				'socialAlternativeText',
 				'socialTosText',
