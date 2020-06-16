@@ -19,7 +19,7 @@ import './style.scss';
 
 interface Props {
 	children?: ReactNode;
-	domains: any[];
+	domains?: string[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
 	onUsersChange: ( users: NewUser[] ) => void;
@@ -39,7 +39,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 
 	const onUserValueChange = ( uuid: string ) => ( fieldName: string, fieldValue: string ) => {
-		const modifiedUserList = users.map( user => {
+		const modifiedUserList = users.map( ( user ) => {
 			if ( user.uuid !== uuid ) {
 				return user;
 			}

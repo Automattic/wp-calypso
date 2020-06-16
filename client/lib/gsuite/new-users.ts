@@ -34,19 +34,24 @@ export interface GSuiteProductUser {
 
 /**
  * Retrieves all fields from the specified user.
+ *
+ * @param {object} user - user with a list of fields
  */
-const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] => (
-	Object.keys( user ).filter( key => 'uuid' !== key ).map( key => user[ key ] )
-);
+const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
+	Object.keys( user )
+		.filter( ( key ) => 'uuid' !== key )
+		.map( ( key ) => user[ key ] );
 
 /**
  * Retrieves the specified user after applying a callback to all of its fields.
+ *
+ * @param {object} user - user with a list of fields
+ * @param {Function} callback - function to call for each field
  */
-const mapFieldValues = ( user: GSuiteNewUser, callback: Function ): GSuiteNewUser => (
-	mapValues( user, ( fieldValue, fieldName ) => (
+const mapFieldValues = ( user: GSuiteNewUser, callback: Function ): GSuiteNewUser =>
+	mapValues( user, ( fieldValue, fieldName ) =>
 		'uuid' === fieldName ? fieldValue : callback( fieldValue, fieldName, user )
-	) )
-);
+	);
 
 /*
  * Clear all previous errors from a field
@@ -127,7 +132,9 @@ const validateOverallEmailAgainstExistingEmails = (
  * Clears all previous errors from all fields for the specfied user.
  */
 const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
-	return users.map( ( user ) => mapFieldValues( user, ( field ) => removePreviousErrors( field ) ) );
+	return users.map( ( user ) =>
+		mapFieldValues( user, ( field ) => removePreviousErrors( field ) )
+	);
 };
 
 /*
@@ -210,12 +217,12 @@ const validateAgainstExistingUsers = (
 	mailBox: validateOverallEmailAgainstExistingEmails( mailBox, domain, existingGSuiteUsers ),
 } );
 
-const newField = ( value: string = '' ): GSuiteNewUserField => ( {
+const newField = ( value = '' ): GSuiteNewUserField => ( {
 	value,
 	error: null,
 } );
 
-const newUser = ( domain: string = '' ): GSuiteNewUser => {
+const newUser = ( domain = '' ): GSuiteNewUser => {
 	return {
 		uuid: uuidv4(),
 		firstName: newField(),
@@ -239,6 +246,7 @@ const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 
 /**
  * Returns if a user is ready to be added as a new email aka valid
+ *
  * @param user user to check
  * @returns boolean if the user is valid or not
  */

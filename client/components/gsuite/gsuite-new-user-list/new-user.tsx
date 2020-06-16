@@ -17,7 +17,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import { GSuiteNewUser as NewUser } from 'lib/gsuite/new-users';
 
 interface Props {
-	domains: any[];
+	domains: string[];
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
