@@ -66,14 +66,12 @@ export class JetpackSignup extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static initialState = Object.freeze( {
+	state = {
 		isCreatingAccount: false,
 		newUsername: null,
 		bearerToken: null,
 		wooDnaFormType: 'login',
-	} );
-
-	state = this.constructor.initialState;
+	};
 
 	UNSAFE_componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
