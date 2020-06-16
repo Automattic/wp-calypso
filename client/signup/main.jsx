@@ -76,11 +76,13 @@ import {
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
+import P2SignupProcessingScreen from 'signup/p2-processing-screen';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { addP2SignupClassName } from './controller';
 
 const debug = debugModule( 'calypso:signup' );
 
@@ -89,6 +91,26 @@ function dependenciesContainCartItem( dependencies ) {
 		dependencies &&
 		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
 	);
+}
+
+function addLoadingScreenClassNamesToBody() {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'has-loading-screen-signup' );
+}
+
+function removeLoadingScreenClassNamesFromBody() {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'has-loading-screen-signup' );
+}
+
+function isWPForTeamsFlow( flowName ) {
+	return flowName === 'wp-for-teams' || flowName === 'p2';
 }
 
 class Signup extends React.Component {
@@ -254,10 +276,21 @@ class Signup extends React.Component {
 
 		if ( startLoadingScreen ) {
 			this.setState( { shouldShowLoadingScreen: true } );
+
+			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+				addLoadingScreenClassNamesToBody();
+
+				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
+				addP2SignupClassName();
+			}
 		}
 
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
+
+			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+				removeLoadingScreenClassNamesFromBody();
+			}
 		}
 	};
 
@@ -492,6 +525,10 @@ class Signup extends React.Component {
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
+		const ProcessingScreen = isWPForTeamsFlow( this.props.flowName )
+			? P2SignupProcessingScreen
+			: SignupProcessingScreen;
+
 		return (
 			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
@@ -499,7 +536,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen />
+						<ProcessingScreen />
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
@@ -565,13 +602,15 @@ class Signup extends React.Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
-				<SignupHeader
-					positionInFlow={ this.getPositionInFlow() }
-					flowLength={ this.getFlowLength() }
-					flowName={ this.props.flowName }
-					showProgressIndicator={ showProgressIndicator }
-					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-				/>
+				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+					<SignupHeader
+						positionInFlow={ this.getPositionInFlow() }
+						flowLength={ this.getFlowLength() }
+						flowName={ this.props.flowName }
+						showProgressIndicator={ showProgressIndicator }
+						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+					/>
+				) }
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
 				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
 					<SiteMockups stepName={ this.props.stepName } />

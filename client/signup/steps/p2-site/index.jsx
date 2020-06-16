@@ -19,9 +19,7 @@ import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
-import StepWrapper from 'signup/step-wrapper';
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import P2StepWrapper from 'signup/p2-step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -253,7 +251,7 @@ class P2Site extends React.Component {
 					className="p2-site__validation-site-title"
 				>
 					<FormLabel htmlFor="site-title-input">
-						{ this.props.translate( "What's the name of your team or project?" ) }
+						{ this.props.translate( 'Name your team or project' ) }
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
@@ -264,6 +262,7 @@ class P2Site extends React.Component {
 						type="text"
 						name="site-title"
 						value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
+						isError={ formState.isFieldInvalid( this.state.form, 'siteTitle' ) }
 						isValid={ formState.isFieldValid( this.state.form, 'siteTitle' ) }
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent }
@@ -300,37 +299,34 @@ class P2Site extends React.Component {
 			return this.props.translate( 'Site created - Go to next step' );
 		}
 
-		if ( this.state.submitting ) {
-			return this.props.translate( 'Creating your site…' );
-		}
-
 		return this.props.translate( 'Continue' );
-	};
-
-	formFooter = () => {
-		return <FormButton>{ this.buttonText() }</FormButton>;
-	};
-
-	renderSiteForm = () => {
-		return (
-			<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
-				{ this.formFields() }
-
-				<LoggedOutFormFooter>{ this.formFooter() }</LoggedOutFormFooter>
-			</LoggedOutForm>
-		);
 	};
 
 	render() {
 		return (
-			<StepWrapper
+			<P2StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				subHeaderText=""
-				fallbackHeaderText={ this.props.translate( "Let's get started" ) }
-				stepContent={ this.renderSiteForm() }
-			/>
+				headerText={ this.props.translate(
+					'Share, discuss, review, and collaborate across time zones, without interruptions.'
+				) }
+			>
+				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
+					{ this.formFields() }
+					<div className="p2-site__form-footer">
+						<FormButton disabled={ this.state.submitting } className="p2-site__form-submit-btn">
+							{ this.buttonText() }
+						</FormButton>
+					</div>
+				</form>
+
+				<div className="p2-site__learn-more">
+					<a href="https://wordpress.com/support" className="p2-site__learn-more-link">
+						Learn more about P2
+					</a>
+				</div>
+			</P2StepWrapper>
 		);
 	}
 }

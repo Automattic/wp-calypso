@@ -54,7 +54,27 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let initialContext;
 
 const removeWhiteBackground = function () {
-	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-white-signup' );
+};
+
+export const addP2SignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'is-p2-signup' );
+};
+
+export const removeP2SignupClassName = function () {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-p2-signup' );
 };
 
 export default {
@@ -71,6 +91,18 @@ export default {
 			context.params.flowName === 'crowdsignal'
 		) {
 			removeWhiteBackground();
+			next();
+		} else if ( context.pathname.includes( 'p2' ) ) {
+			// We still want to keep the original styling for the new user creation step
+			// so people know they are creating an account at WP.com.
+			if ( context.pathname.includes( 'user' ) ) {
+				removeP2SignupClassName();
+			} else {
+				addP2SignupClassName();
+			}
+
+			removeWhiteBackground();
+
 			next();
 		} else {
 			waitForData( {
