@@ -107,6 +107,10 @@ export function* createSite(
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
 
+	const shouldUseFse = isEnabled( 'gutenboarding/site-editor' );
+
+	const themeSlug = shouldUseFse ? 'seedlet-blocks' : selectedDesign?.theme || 'twentytwenty';
+
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
@@ -122,10 +126,8 @@ export function* createSite(
 			site_information: {
 				title: siteTitle,
 			},
-			site_creation_flow: isEnabled( 'gutenboarding/site-editor' )
-				? 'gutenboarding-site-editor'
-				: 'gutenboarding',
-			theme: `pub/${ selectedDesign?.theme || 'twentytwenty' }`,
+			site_creation_flow: shouldUseFse ? 'gutenboarding-site-editor' : 'gutenboarding',
+			theme: `pub/${ themeSlug }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {
