@@ -39,7 +39,12 @@ const ActivityLogV2: FunctionComponent = () => {
 	}, [ filter, siteId ] );
 
 	return (
-		<Main className="activity-log-v2" wideLayout={ ! isJetpackCloud() }>
+		<Main
+			className={ classNames( 'activity-log-v2', {
+				wordpressdotcom: ! isJetpackCloud(),
+			} ) }
+			wideLayout={ ! isJetpackCloud() }
+		>
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
@@ -61,11 +66,7 @@ const ActivityLogV2: FunctionComponent = () => {
 					align="left"
 				/>
 			) }
-			<div
-				className={ classNames( 'activity-log-v2__content', {
-					wordpressdotcom: ! isJetpackCloud(),
-				} ) }
-			>
+			<div className="activity-log-v2__content">
 				{ logs && <ActivityCardList logs={ logs } pageSize={ 10 } /> }
 			</div>
 		</Main>

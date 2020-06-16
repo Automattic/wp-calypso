@@ -1,15 +1,12 @@
-.activity-log-v2 .filterbar .filterbar__wrap.card {
-	display: flex;
-}
+main.activity-log-v2 {
+	&:not( .wordpressdotcom ) {
+		margin-top: 32px;
+		margin-bottom: 32px;
+	}
 
-.wordpressdotcom.activity-log-v2__content {
-	margin-top: 0;
-	margin-bottom: 0;
-}
-
-.activity-log-v2__content {
-	margin-top: 32px;
-	margin-bottom: 32px;
+	.filterbar .filterbar__wrap.card {
+		display: flex;
+	}
 }
 
 .activity-log-v2__header {
