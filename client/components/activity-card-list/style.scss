@@ -4,6 +4,7 @@
 	}
 
 	.pagination__list-item {
+		.pagination__list-item:last-child .pagination__list-button.button.is-borderless,
 		.button.pagination__list-button.is-borderless,
 		&.pagination__ellipsis > span {
 			color: var( --color-text );
