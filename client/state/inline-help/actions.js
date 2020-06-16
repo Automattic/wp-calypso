@@ -178,6 +178,21 @@ export function setSearchResults( searchQuery, searchResults ) {
 	};
 }
 
+/**
+ * Fully resets the search results state to empty
+ */
+export function resetSearchResults() {
+	const emptySearch = '';
+	const emptyResults = [];
+	return ( dispatch ) => {
+		dispatch( {
+			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+			emptySearch,
+			emptyResults,
+		} );
+	};
+}
+
 export function showInlineHelpPopover() {
 	return ( dispatch ) => {
 		dispatch( {

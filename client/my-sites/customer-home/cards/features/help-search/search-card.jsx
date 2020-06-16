@@ -22,7 +22,7 @@ import {
 	requestInlineHelpSearchResults,
 	selectNextResult,
 	selectPreviousResult,
-	setSearchResults,
+	resetSearchResults,
 } from 'state/inline-help/actions';
 
 class HelpSearchCard extends Component {
@@ -77,7 +77,7 @@ class HelpSearchCard extends Component {
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search support articles' ) }
 				delaySearch={ true }
-				onSearchClose={ () => this.props.setSearchResults( '', [] ) }
+				onSearchClose={ this.props.resetSearchResults }
 			/>
 		);
 	}
@@ -108,7 +108,7 @@ const mapDispatchToProps = {
 	requestInlineSearchResultsAndTrack,
 	selectNextResult,
 	selectPreviousResult,
-	setSearchResults,
+	resetSearchResults,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpSearchCard ) );
