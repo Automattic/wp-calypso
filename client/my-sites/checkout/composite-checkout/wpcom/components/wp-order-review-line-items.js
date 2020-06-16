@@ -511,4 +511,6 @@ function DomainDiscountCallout( { item } ) {
 	if ( isFreeDomainMapping ) {
 		return <DiscountCalloutUI>{ translate( 'Free with your plan' ) }</DiscountCalloutUI>;
 	}
+
+	return null;
 }
