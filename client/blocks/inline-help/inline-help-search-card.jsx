@@ -26,11 +26,6 @@ import {
 	resetSearchResults,
 } from 'state/inline-help/actions';
 
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:inline-help' );
-
 class InlineHelpSearchCard extends Component {
 	static propTypes = {
 		openResult: PropTypes.func.isRequired,
@@ -70,21 +65,8 @@ class InlineHelpSearchCard extends Component {
 		}
 	};
 
-	requestInlineSearchResultsAndTrack = ( searchQuery ) =>
-		! searchQuery || ! searchQuery.trim().length
-			? this.props.requestInlineHelpSearchResults()
-			: withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_inlinehelp_search', {
-							search_query: searchQuery,
-							location: 'inline-help-popover',
-						} )
-					),
-					this.props.requestInlineHelpSearchResults( searchQuery )
-			  );
-
 	componentDidMount() {
-		this.props.requestInlineHelpSearchResults();
+		this.props.requestInlineSearchResultsAndTrack();
 	}
 
 	render() {
@@ -92,7 +74,7 @@ class InlineHelpSearchCard extends Component {
 			<SearchCard
 				searching={ this.props.isSearching }
 				initialValue={ this.props.query }
-				onSearch={ this.requestInlineSearchResultsAndTrack }
+				onSearch={ this.props.requestInlineSearchResultsAndTrack }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
 				delaySearch={ true }
@@ -102,6 +84,20 @@ class InlineHelpSearchCard extends Component {
 	}
 }
 
+const requestInlineSearchResultsAndTrack = ( searchQuery ) => (
+	! searchQuery || ! ( searchQuery.trim() ).length
+		? requestInlineHelpSearchResults()
+		: withAnalytics(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_inlinehelp_search', {
+					search_query: searchQuery,
+					location: 'inline-help-popover',
+				} )
+			),
+			requestInlineHelpSearchResults( searchQuery )
+		)
+);
+
 const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
 	selectedLink: getInlineHelpCurrentlySelectedLink( state ),
@@ -110,7 +106,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,
-	requestInlineHelpSearchResults,
+	requestInlineSearchResultsAndTrack,
 	selectNextResult,
 	selectPreviousResult,
 	resetSearchResults,
