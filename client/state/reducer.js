@@ -8,7 +8,6 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { combineReducers } from 'state/utils';
 import { reducer as httpData } from 'state/data-layer/http-data';
 
@@ -49,7 +48,6 @@ import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
-import mailchimp from './mailchimp/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import notificationSettings from './notification-settings/reducer';
@@ -157,9 +155,5 @@ const reducers = {
 	users,
 	wordads,
 };
-
-if ( config.isEnabled( 'mailchimp' ) ) {
-	reducers.mailchimp = mailchimp;
-}
 
 export default combineReducers( reducers );
