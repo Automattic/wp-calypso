@@ -79,6 +79,7 @@ export const search = withoutPersistence(
 				return {
 					...state,
 					selectedResult: -1,
+					searchQuery: action.searchQuery,
 					items: {
 						...state.items,
 						[ action.searchQuery ]: action.searchResults,
