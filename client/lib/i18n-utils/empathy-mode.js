@@ -41,7 +41,7 @@ export function initLanguageEmpathyMode() {
 	const i18nEmpathy = new I18N();
 	const i18nEmpathyTranslate = i18nEmpathy.translate.bind( i18nEmpathy );
 	const i18nEmpathyRegisterHook = i18nEmpathy.registerTranslateHook.bind( i18nEmpathy );
-	const translationsWhitelist = [ defaultUntranslatedPlacehoder ];
+	const availableEmpathyTranslations = [ defaultUntranslatedPlacehoder ];
 
 	i18n.translateHooks.forEach( i18nEmpathyRegisterHook );
 
@@ -51,7 +51,7 @@ export function initLanguageEmpathyMode() {
 		if (
 			! isActive ||
 			locale === i18n.defaultLocaleSlug ||
-			translationsWhitelist.includes( options.original )
+			availableEmpathyTranslations.includes( options.original )
 		) {
 			return translation;
 		}

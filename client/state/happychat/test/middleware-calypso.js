@@ -214,7 +214,7 @@ describe( 'middleware', () => {
 			expect( store.dispatch.mock.calls[ 1 ][ 0 ].payload.text ).toBe( 'def' );
 		} );
 
-		test( 'should only send a timeline event for whitelisted tracks events', () => {
+		test( 'should only send a timeline event for allowed tracks events', () => {
 			const analyticsMeta = [
 				{
 					type: ANALYTICS_EVENT_RECORD,
@@ -326,7 +326,7 @@ describe( 'middleware', () => {
 			sendActionLogsAndEvents( store, action );
 
 			// All 4 analytics records will be sent to the "firehose" log
-			// The two whitelisted analytics events and the SITE_SETTINGS_SAVE_SUCCESS itself
+			// The two allowed analytics events and the SITE_SETTINGS_SAVE_SUCCESS itself
 			// will be sent as customer events
 			expect( store.dispatch ).toHaveBeenCalledTimes( 7 );
 			expect( store.dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( HAPPYCHAT_IO_SEND_MESSAGE_EVENT );

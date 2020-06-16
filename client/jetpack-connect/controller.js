@@ -27,7 +27,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import { hideMasterbar, showMasterbar, hideSidebar } from 'state/ui/actions';
-import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
+import { JPC_PATH_PLANS, ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from './constants';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
@@ -116,7 +116,7 @@ export function persistMobileAppFlow( context, next ) {
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
-			some( MOBILE_APP_REDIRECT_URL_WHITELIST, ( pattern ) =>
+			some( ALLOWED_MOBILE_APP_REDIRECT_URL_LIST, ( pattern ) =>
 				pattern.test( query.mobile_redirect )
 			)
 		) {

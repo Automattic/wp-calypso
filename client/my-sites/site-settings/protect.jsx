@@ -40,7 +40,7 @@ class Protect extends Component {
 		fields: {},
 	};
 
-	handleAddToWhitelist = () => {
+	handleAddToAllowedList = () => {
 		const { setFieldValue } = this.props;
 		let whitelist = trimEnd( this.getProtectWhitelist() );
 
@@ -64,7 +64,7 @@ class Protect extends Component {
 		return jetpack_protect_global_whitelist || '';
 	}
 
-	isIpAddressWhitelisted() {
+	isIpAddressAllowed() {
 		const ipAddress = this.getIpAddress();
 		if ( ! ipAddress ) {
 			return false;
@@ -97,7 +97,7 @@ class Protect extends Component {
 		} = this.props;
 
 		const ipAddress = this.getIpAddress();
-		const isIpWhitelisted = this.isIpAddressWhitelisted();
+		const isIpWhitelisted = this.isIpAddressAllowed();
 		const disabled =
 			isRequestingSettings || isSavingSettings || protectModuleUnavailable || ! protectModuleActive;
 		const protectToggle = (
@@ -138,7 +138,7 @@ class Protect extends Component {
 							{ ipAddress && (
 								<Button
 									className="protect__add-to-whitelist site-settings__add-to-whitelist"
-									onClick={ this.handleAddToWhitelist }
+									onClick={ this.handleAddToAllowedList }
 									disabled={ disabled || isIpWhitelisted }
 									compact
 								>

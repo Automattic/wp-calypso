@@ -8,7 +8,7 @@ import getEmbedMetadata from 'get-video-id';
 /**
  * Internal Dependencies
  */
-import { iframeIsWhitelisted, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
+import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
 import { READER_CONTENT_WIDTH } from 'state/reader/posts/sizes';
 
 /** Checks whether or not an image is a tracking pixel
@@ -107,7 +107,7 @@ const getEmbedType = ( iframe ) => {
  * @returns {metadata} metadata - metadata for an embed
  */
 const detectEmbed = ( iframe ) => {
-	if ( ! iframeIsWhitelisted( iframe ) ) {
+	if ( ! iframeIsAllowed( iframe ) ) {
 		return false;
 	}
 

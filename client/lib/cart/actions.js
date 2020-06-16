@@ -126,7 +126,7 @@ export function getRememberedCoupon() {
 		debug( 'No coupons found in localStorage: ', coupons );
 		return null;
 	}
-	const COUPON_CODE_WHITELIST = [
+	const ALLOWED_COUPON_CODE_LIST = [
 		'ALT',
 		'FBSAVE15',
 		'FIVERR',
@@ -160,7 +160,7 @@ export function getRememberedCoupon() {
 	debug( 'Storing coupons in localStorage: ', coupons );
 	window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
 	if (
-		COUPON_CODE_WHITELIST.includes(
+		ALLOWED_COUPON_CODE_LIST.includes(
 			-1 !== mostRecentCouponCode.indexOf( '_' )
 				? mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
 				: mostRecentCouponCode

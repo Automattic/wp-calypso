@@ -118,7 +118,7 @@ function renderProvisionPlugins( context ) {
 	context.store.dispatch( hideSidebar() );
 
 	context.primary = React.createElement( PlanSetup, {
-		whitelist: context.query.only || false,
+		forSpecificPlugin: context.query.only || false,
 	} );
 }
 

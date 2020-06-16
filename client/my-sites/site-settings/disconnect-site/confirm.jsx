@@ -33,7 +33,7 @@ class ConfirmDisconnection extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	static reasonWhitelist = [
+	static allowedReasons = [
 		'troubleshooting',
 		'cannot-work',
 		'slow',
@@ -48,7 +48,7 @@ class ConfirmDisconnection extends PureComponent {
 
 		const surveyData = {
 			'why-cancel': {
-				response: find( this.constructor.reasonWhitelist, ( r ) => r === reason ),
+				response: find( this.constructor.allowedReasons, ( r ) => r === reason ),
 				text: isArray( text ) ? text.join() : text,
 			},
 			source: {

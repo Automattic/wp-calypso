@@ -154,7 +154,7 @@ class AcceptedFilenames extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel>{ translate( 'Whitelisted filenames:' ) }</FormLabel>
+							<FormLabel>{ translate( 'Allowed filenames:' ) }</FormLabel>
 							<FormTextarea
 								disabled={ isDisabled }
 								onChange={ handleChange( 'cache_acceptable_files' ) }

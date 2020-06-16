@@ -39,14 +39,14 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => ( dispatch ) => 
 			postAttributes.featured_image = getFeaturedImageId( postToCopy );
 
 			/**
-			 * A post metadata whitelist for the `updatePostMetadata()` action.
+			 * A list of allowed post metadata for the `updatePostMetadata()` action.
 			 *
 			 * This is needed because blindly passing all post metadata to `editPost()`
 			 * causes unforeseeable issues, such as Publicize not triggering on the copied post.
 			 *
 			 * @see https://github.com/Automattic/wp-calypso/issues/14840
 			 */
-			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude', 'geo_address', 'geo_public' ];
+			const allowedMetadata = [ 'geo_latitude', 'geo_longitude', 'geo_address', 'geo_public' ];
 
 			// Filter the post metadata to include only the ones we want to copy,
 			// use only the `key` and `value` properties (and, most importantly exclude `id`),
@@ -54,7 +54,7 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => ( dispatch ) => 
 			const copiedMetadata = reduce(
 				postToCopy.metadata,
 				( copiedMeta, { key, value } ) => {
-					if ( includes( metadataWhitelist, key ) ) {
+					if ( includes( allowedMetadata, key ) ) {
 						copiedMeta.push( { key, value, operation: 'update' } );
 					}
 					return copiedMeta;
