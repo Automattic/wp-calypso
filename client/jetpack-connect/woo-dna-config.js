@@ -7,24 +7,25 @@
  * @param query {Object} Map with the querystring parameters of the current page.
  * @returns An object with helper functions that are documented below.
  */
-export default ( query ) => ( {
-	/**
-	 * @returns {boolean} Whether the current flow is "Woo DNA" or not.
-	 */
-	isWooDnaFlow: () => Boolean( query && query.woodna_service_name ),
+export default ( query ) =>
+	Object.freeze( {
+		/**
+		 * @returns {boolean} Whether the current flow is "Woo DNA" or not.
+		 */
+		isWooDnaFlow: () => Boolean( query && query.woodna_service_name ),
 
-	/**
-	 * @returns {string} Flow name to send to the WP.com server to store in the newly created user metadata.
-	 */
-	getFlowName: () => 'woodna:' + query.from,
+		/**
+		 * @returns {string} Flow name to send to the WP.com server to store in the newly created user metadata.
+		 */
+		getFlowName: () => 'woodna:' + query.from,
 
-	/**
-	 * @returns {string} Name of the service/plugin the user is signing up for. For example, "WooCommerce Payments".
-	 */
-	getServiceName: () => query.woodna_service_name,
+		/**
+		 * @returns {string} Name of the service/plugin the user is signing up for. For example, "WooCommerce Payments".
+		 */
+		getServiceName: () => query.woodna_service_name,
 
-	/**
-	 * @returns {string} URL with help about connecting Jetpack.
-	 */
-	getServiceHelpUrl: () => query.woodna_help_url,
-} );
+		/**
+		 * @returns {string} URL with help about connecting Jetpack.
+		 */
+		getServiceHelpUrl: () => query.woodna_help_url,
+	} );
