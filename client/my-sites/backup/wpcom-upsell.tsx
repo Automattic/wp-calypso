@@ -12,13 +12,15 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { isPersonalPlan, isPremiumPlan } from 'lib/plans';
 import FormattedHeader from 'components/formatted-header';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCTA from 'components/promo-section/promo-card/cta';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
 import Gridicon from 'components/gridicon';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSitePlan } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import MaterialIcon from 'components/material-icon';
 import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 
@@ -30,28 +32,36 @@ import './style.scss';
 
 const trackEventName = 'calypso_jetpack_backup_business_upsell';
 
-const promos: PromoSectionProps = {
-	promos: [
-		{
-			title: translate( 'Jetpack Scan' ),
-			body: translate(
-				'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
-			),
-			image: <MaterialIcon icon="security" className="backup__upsell-icon" />,
-		},
-		{
-			title: translate( 'Activity Log' ),
-			body: translate(
-				'A complete record of everything that happens on your site, with history that spans over 30 days.'
-			),
-			image: <Gridicon icon="history" className="backup__upsell-icon" />,
-		},
-	],
-};
+const promos = [
+	{
+		title: translate( 'Jetpack Scan' ),
+		body: translate(
+			'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
+		),
+		image: <MaterialIcon icon="security" className="backup__upsell-icon" />,
+	},
+	{
+		title: translate( 'Activity Log' ),
+		body: translate(
+			'A complete record of everything that happens on your site, with history that spans over 30 days.'
+		),
+		image: <Gridicon icon="history" className="backup__upsell-icon" />,
+	},
+];
 
 export default function WPCOMUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, trackEventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
+
+	// Don't show the Activity Log promo for Personal or Premium plan owners.
+	const filteredPromos: PromoSectionProps = React.useMemo( () => {
+		if ( isPersonalPlan( planSlug ) || isPremiumPlan( planSlug ) ) {
+			return { promos: [ promos[ 0 ] ] };
+		}
+		return { promos };
+	}, [ planSlug ] );
 
 	return (
 		<Main className="backup__main backup__wpcom-upsell is-wide-layout">
@@ -96,7 +106,7 @@ export default function WPCOMUpsellPage(): ReactElement {
 				isSecondary
 			/>
 
-			<PromoSection { ...promos } />
+			<PromoSection { ...filteredPromos } />
 
 			<WhatIsJetpack />
 		</Main>
