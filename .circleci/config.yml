@@ -12,7 +12,7 @@ references:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
-      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      DETECT_CHROMEDRIVER_VERSION: 'false'
       CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
 
   setup-results-and-artifacts: &setup-results-and-artifacts
