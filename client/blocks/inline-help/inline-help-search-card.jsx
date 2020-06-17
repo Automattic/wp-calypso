@@ -84,19 +84,18 @@ class InlineHelpSearchCard extends Component {
 	}
 }
 
-const requestInlineSearchResultsAndTrack = ( searchQuery ) => (
-	! searchQuery || ! ( searchQuery.trim() ).length
-		? requestInlineHelpSearchResults()
-		: withAnalytics(
-			composeAnalytics(
-				recordTracksEvent( 'calypso_inlinehelp_search', {
-					search_query: searchQuery,
-					location: 'inline-help-popover',
-				} )
-			),
-			requestInlineHelpSearchResults( searchQuery )
-		)
-);
+const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
+	searchQuery && searchQuery.trim().length
+		? withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_inlinehelp_search', {
+						search_query: searchQuery,
+						location: 'inline-help-popover',
+					} )
+				),
+				requestInlineHelpSearchResults( searchQuery )
+		  )
+		: requestInlineHelpSearchResults();
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),

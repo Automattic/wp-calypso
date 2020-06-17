@@ -91,9 +91,8 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 
 const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
-	! searchQuery || ! searchQuery.trim().length
-		? requestInlineHelpSearchResults()
-		: withAnalytics(
+	searchQuery && searchQuery.trim().length
+		? withAnalytics(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_inlinehelp_search', {
 						search_query: searchQuery,
@@ -101,7 +100,8 @@ const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
 					} )
 				),
 				requestInlineHelpSearchResults( searchQuery )
-		  );
+		  )
+		: requestInlineHelpSearchResults();
 
 const mapDispatchToProps = {
 	recordTracksEvent,
