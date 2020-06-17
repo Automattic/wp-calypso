@@ -52,6 +52,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		const newUserName = 'e2eflowtestingeditora' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
+		let inviteCreated = false;
 
 		step( 'Can log in and navigate to Invite People page', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
@@ -68,6 +69,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
 			await noticesComponent.isSuccessNoticeDisplayed();
+			inviteCreated = true;
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -149,13 +151,15 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		} );
 
 		after( async function () {
-			await new LoginFlow( driver ).loginAndSelectPeople();
-			const peoplePage = await PeoplePage.Expect( driver );
-			await peoplePage.selectInvites();
-			await peoplePage.goToClearAcceptedInvitePage( newUserName );
+			if ( inviteCreated ) {
+				await new LoginFlow( driver ).loginAndSelectPeople();
+				const peoplePage = await PeoplePage.Expect( driver );
+				await peoplePage.selectInvites();
+				await peoplePage.goToClearAcceptedInvitePage( newUserName );
 
-			const revokePage = await RevokePage.Expect( driver );
-			await revokePage.revokeUser();
+				const clearInvitePage = await RevokePage.Expect( driver );
+				await clearInvitePage.revokeUser();
+			}
 		} );
 	} );
 
@@ -224,6 +228,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		const siteUrl = `https://${ siteName }/`;
 		let removedViewerFlag = true;
 		let acceptInviteURL = '';
+		let inviteCreated = false;
 
 		step( 'As an anonymous user I can not see a private site', async function () {
 			return await PrivateSiteLoginPage.Visit( driver, siteUrl );
@@ -244,6 +249,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
 			await noticesComponent.isSuccessNoticeDisplayed();
+			inviteCreated = true;
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -313,19 +319,6 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			);
 		} );
 
-		step( 'Can clear accepted invite', async function () {
-			await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
-			const peoplePage = await PeoplePage.Expect( driver );
-			await peoplePage.selectInvites();
-			await peoplePage.goToClearAcceptedInvitePage( newUserName );
-
-			const noticesComponent = await NoticesComponent.Expect( driver );
-			const revokePage = await RevokePage.Expect( driver );
-			await revokePage.revokeUser();
-			const sent = await noticesComponent.isSuccessNoticeDisplayed();
-			return assert( sent, 'The Invite deleted confirmation message was not displayed' );
-		} );
-
 		step( 'Can not see the site - see the private site log in page', async function () {
 			const loginPage = await LoginPage.Visit( driver );
 			await loginPage.login( newUserName, password );
@@ -335,6 +328,16 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		} );
 
 		after( async function () {
+			if ( inviteCreated ) {
+				await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
+				const peoplePageCleanup = await PeoplePage.Expect( driver );
+				await peoplePageCleanup.selectInvites();
+				await peoplePageCleanup.goToClearAcceptedInvitePage( newUserName );
+
+				const clearInvitePage = await RevokePage.Expect( driver );
+				await clearInvitePage.revokeUser();
+			}
+
 			if ( ! removedViewerFlag ) {
 				await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
 				const peoplePage = await PeoplePage.Expect( driver );
