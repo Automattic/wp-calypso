@@ -327,3 +327,13 @@ export function filterLanguageRevisions( languageRevisions ) {
 		return true;
 	} );
 }
+
+/**
+ * Checks if provided locale is one of the magnificenet non-english locales.
+ *
+ * @param   {string}  locale Locale slug
+ * @returns {boolean} true when provided magnificent non-english locale.
+ */
+export function isMagnificentLocale( locale ) {
+	return config( 'magnificent_non_en_locales' ).includes( locale );
+}

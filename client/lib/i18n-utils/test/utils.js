@@ -17,6 +17,7 @@ import {
 	getPathParts,
 	filterLanguageRevisions,
 	translationExists,
+	isMagnificentLocale,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => ( key ) => {
@@ -49,6 +50,7 @@ jest.mock( 'config', () => ( key ) => {
 			'zh-tw',
 			'ko',
 			'ar',
+			'sv',
 		];
 	}
 
@@ -633,6 +635,40 @@ describe( 'utils', () => {
 					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
 				)
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'isMagnificentLocale()', function () {
+		it( 'should return true for magnificent locales', function () {
+			[
+				'es',
+				'pt-br',
+				'de',
+				'fr',
+				'he',
+				'ja',
+				'it',
+				'nl',
+				'ru',
+				'tr',
+				'id',
+				'zh-cn',
+				'zh-tw',
+				'ko',
+				'ar',
+				'sv',
+			].forEach( ( locale ) => {
+				expect( isMagnificentLocale( locale ) ).toBe( true );
+			} );
+		} );
+
+		it( 'should return false for non-magnificent locales', function () {
+			expect( isMagnificentLocale( 'bg' ) ).toBe( false );
+			expect( isMagnificentLocale( 'ro' ) ).toBe( false );
+		} );
+
+		it( 'should return false for english locale', function () {
+			expect( isMagnificentLocale( 'en' ) ).toBe( false );
 		} );
 	} );
 } );
