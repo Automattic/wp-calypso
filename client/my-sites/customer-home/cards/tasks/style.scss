@@ -48,6 +48,7 @@
 	}
 
 	.task__title {
+		@extend .wp-brand-font;
 		font-size: 28px;
 		line-height: 36px;
 		margin-bottom: 4px;
