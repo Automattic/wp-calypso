@@ -60,6 +60,11 @@ class InlineHelpComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async getSearchResultsCount() {
+		const results = await this.getSearchResults();
+		return results.length;
+	}
+
 	async searchFor( query = '' ) {
 		await driverHelper.setWhenSettable( this.driver, searchInputSelector, query );
 		const val = await this.getSearchInputValue();

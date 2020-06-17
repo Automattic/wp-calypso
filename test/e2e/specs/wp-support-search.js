@@ -44,25 +44,24 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 
 		step( 'Displays contextual search results by default', async function () {
 			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
-			const results = await inlineHelpComponent.getSearchResults();
-			assert.equal( results.length, 5, 'There are no contextual results displayed' );
+			const resultsCount = await inlineHelpComponent.getSearchResultsCount();
+			assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
 		} );
 
 		step( 'Returns search results for valid search query', async function () {
 			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 			await inlineHelpComponent.searchFor( 'Podcast' );
-			const results = await inlineHelpComponent.getSearchResults();
-			const resultsLength = results.length;
+			const resultsCount = await inlineHelpComponent.getSearchResultsCount();
 
 			assert.equal(
-				resultsLength <= 5,
+				resultsCount <= 5,
 				true,
-				`Too many search results displayed. Should be less than or equal to 5 (was ${ resultsLength }).`
+				`Too many search results displayed. Should be less than or equal to 5 (was ${ resultsCount }).`
 			);
 			assert.equal(
-				resultsLength >= 1,
+				resultsCount >= 1,
 				true,
-				`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsLength }).`
+				`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsCount }).`
 			);
 		} );
 
@@ -81,14 +80,13 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 				const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				await inlineHelpComponent.searchFor( invalidSearchQueryReturningNoResults );
-				const results = await inlineHelpComponent.getSearchResults();
-				const resultsLength = results.length;
+				const resultsCount = await inlineHelpComponent.getSearchResultsCount();
 
 				const hasNoResultsMessage = await inlineHelpComponent.hasNoResultsMessage();
 
 				assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
-				assert.equal( resultsLength, 5, 'There are no contextual results displayed.' );
+				assert.equal( resultsCount, 5, 'There are no contextual results displayed.' );
 			}
 		);
 
