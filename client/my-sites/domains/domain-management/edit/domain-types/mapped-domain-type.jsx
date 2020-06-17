@@ -34,6 +34,7 @@ import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { WrapDomainStatusButtons } from './helpers';
+import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 
 class MappedDomainType extends React.Component {
 	resolveStatus() {
@@ -254,7 +255,11 @@ class MappedDomainType extends React.Component {
 					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
 				},
 			} );
-		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
+		} else if (
+			domain.isAutoRenewing &&
+			domain.autoRenewalDate &&
+			! shouldRenderExpiringCreditCard( purchase )
+		) {
 			expiresText = translate( 'Renews: %(renewal_date)s', {
 				args: {
 					renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
