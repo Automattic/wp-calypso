@@ -34,11 +34,11 @@ class InlineHelpComponent extends AsyncBaseContainer {
 	}
 
 	async isToggleVisible() {
-		return await this.driver.findElement( By.css( '.inline-help__button' ) );
+		return await driverHelper.isElementPresent( this.driver, By.css( '.inline-help__button' ) );
 	}
 
 	async isPopoverVisible() {
-		return await this.driver.findElement( By.css( '.inline-help__popover' ) );
+		return await driverHelper.isElementPresent( this.driver, By.css( '.inline-help__popover' ) );
 	}
 
 	async isRequestingSearchResults() {
@@ -51,7 +51,12 @@ class InlineHelpComponent extends AsyncBaseContainer {
 	async toggleOpen() {
 		await this.isToggleVisible();
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.inline-help__button' ) );
-		return await this.isPopoverVisible();
+	}
+
+	async toggleClosed() {
+		await this.isPopoverVisible();
+		await this.isToggleVisible();
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.inline-help__button' ) );
 	}
 
 	async getSearchResults() {

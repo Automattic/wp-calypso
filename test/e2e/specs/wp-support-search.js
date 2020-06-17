@@ -32,79 +32,97 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 			const loginFlow = new LoginFlow( driver );
 			await loginFlow.loginAndSelectThemes();
 		} );
-		step( 'Check help toggle is visible', async function () {
-			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
-			await inlineHelpComponent.isToggleVisible();
-		} );
 
-		step( 'Open Inline Help popover', async function () {
-			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
-			await inlineHelpComponent.toggleOpen();
-		} );
-
-		step( 'Displays contextual search results by default', async function () {
-			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
-			const resultsCount = await inlineHelpComponent.getSearchResultsCount();
-			assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
-		} );
-
-		step( 'Returns search results for valid search query', async function () {
-			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
-			await inlineHelpComponent.searchFor( 'Podcast' );
-			const resultsCount = await inlineHelpComponent.getSearchResultsCount();
-
-			assert.equal(
-				resultsCount <= 5,
-				true,
-				`Too many search results displayed. Should be less than or equal to 5 (was ${ resultsCount }).`
-			);
-			assert.equal(
-				resultsCount >= 1,
-				true,
-				`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsCount }).`
-			);
-		} );
-
-		step( 'Resets search UI to default state when search input is cleared ', async function () {
-			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
-			await inlineHelpComponent.clearSearchField();
-
-			// Once https://github.com/Automattic/wp-calypso/pull/43323 is merged this will work again
-			// const results = await inlineHelpComponent.getSearchResults();
-			// assert.strictEqual( results.length, 5, 'There are no contextual results displayed' );
-		} );
-
-		step(
-			'Shows "No results" indicator and re-displays contextual results for search queries which return no results',
-			async function () {
-				const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
+		describe( 'Popover UI visibility and interactions', function () {
+			step( 'Check help toggle is visible', async function () {
 				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
-				await inlineHelpComponent.searchFor( invalidSearchQueryReturningNoResults );
+				await inlineHelpComponent.isToggleVisible();
+			} );
+
+			step( 'Open Inline Help popover', async function () {
+				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+				await inlineHelpComponent.toggleOpen();
+				return await inlineHelpComponent.isPopoverVisible();
+			} );
+
+			step( 'Close Inline Help popover', async function () {
+				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+				await inlineHelpComponent.toggleClosed();
+				const isPopoverVisible = await inlineHelpComponent.isPopoverVisible();
+				assert.equal( isPopoverVisible, false, 'Popover was not closed correctly.' );
+			} );
+		} );
+
+		describe( 'Performing searches', function () {
+			step( 'Re-open Inline Help popover', async function () {
+				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+				await inlineHelpComponent.toggleOpen();
+			} );
+
+			step( 'Displays contextual search results by default', async function () {
+				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+				const resultsCount = await inlineHelpComponent.getSearchResultsCount();
+				assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
+			} );
+
+			step( 'Returns search results for valid search query', async function () {
+				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+				await inlineHelpComponent.searchFor( 'Podcast' );
 				const resultsCount = await inlineHelpComponent.getSearchResultsCount();
 
-				const hasNoResultsMessage = await inlineHelpComponent.hasNoResultsMessage();
+				assert.equal(
+					resultsCount <= 5,
+					true,
+					`Too many search results displayed. Should be less than or equal to 5 (was ${ resultsCount }).`
+				);
+				assert.equal(
+					resultsCount >= 1,
+					true,
+					`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsCount }).`
+				);
+			} );
 
-				assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
+			step( 'Resets search UI to default state when search input is cleared ', async function () {
+				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+				await inlineHelpComponent.clearSearchField();
 
-				assert.equal( resultsCount, 5, 'There are no contextual results displayed.' );
-			}
-		);
+				// Once https://github.com/Automattic/wp-calypso/pull/43323 is merged this will work again
+				// const results = await inlineHelpComponent.getSearchResults();
+				// assert.strictEqual( results.length, 5, 'There are no contextual results displayed' );
+			} );
 
-		step( 'Does not request search results for empty search queries', async function () {
-			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
-			await inlineHelpComponent.clearSearchField();
+			step(
+				'Shows "No results" indicator and re-displays contextual results for search queries which return no results',
+				async function () {
+					const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
+					const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+					await inlineHelpComponent.searchFor( invalidSearchQueryReturningNoResults );
+					const resultsCount = await inlineHelpComponent.getSearchResultsCount();
 
-			const emptyWhitespaceQuery = '         ';
+					const hasNoResultsMessage = await inlineHelpComponent.hasNoResultsMessage();
 
-			await inlineHelpComponent.searchFor( emptyWhitespaceQuery );
+					assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
-			const searchPerformed = await inlineHelpComponent.isRequestingSearchResults();
-
-			assert.equal(
-				searchPerformed,
-				false,
-				'A search was unexpectedly performed for an empty search query.'
+					assert.equal( resultsCount, 5, 'There are no contextual results displayed.' );
+				}
 			);
+
+			step( 'Does not request search results for empty search queries', async function () {
+				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+				await inlineHelpComponent.clearSearchField();
+
+				const emptyWhitespaceQuery = '         ';
+
+				await inlineHelpComponent.searchFor( emptyWhitespaceQuery );
+
+				const searchPerformed = await inlineHelpComponent.isRequestingSearchResults();
+
+				assert.equal(
+					searchPerformed,
+					false,
+					'A search was unexpectedly performed for an empty search query.'
+				);
+			} );
 		} );
 	} );
 } );
