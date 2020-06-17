@@ -109,6 +109,23 @@ describe( 'media - actions - async', () => {
 				} );
 				expect( setMediaItemErrors ).toHaveBeenCalledWith( siteId, transientId, errors );
 			} );
+
+			it.each( [ [], undefined, null ] )(
+				'should not set media item errors or throw if validation returns %s',
+				async ( nonError ) => {
+					validateMediaItem.mockReturnValueOnce( nonError );
+
+					const setMediaItemErrors = jest.spyOn( syncActions, 'setMediaItemErrors' );
+
+					await addMedia( site, file, transientDate );
+
+					expect( validateMediaItem ).toHaveBeenCalledWith( site, {
+						date: transientDate,
+						...file,
+					} );
+					expect( setMediaItemErrors ).not.toHaveBeenCalled();
+				}
+			);
 		} );
 
 		describe( 'when upload succeeds', () => {

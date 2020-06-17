@@ -52,8 +52,7 @@ export const addMedia = ( site, file, transientDate = getTransientDate() ) => as
 	dispatchFluxCreateMediaItem( transientMedia, site );
 
 	const errors = validateMediaItem( site, transientMedia );
-	// I'm unclear when these errors would be possible, but the current logic does this check
-	if ( errors ) {
+	if ( errors?.length ) {
 		dispatch( setMediaItemErrors( siteId, transientMedia.ID, errors ) );
 		// throw rather than silently escape so consumers know the upload failed based on Promise resolution rather than state having to re-derive the failure themselves from state
 		throw errors;
@@ -83,7 +82,7 @@ export const addMedia = ( site, file, transientDate = getTransientDate() ) => as
 
 		dispatchFluxFetchMediaLimits( siteId );
 
-		return uploadedMedia.ID;
+		return uploadedMedia;
 	} catch ( error ) {
 		dispatchFluxReceiveMediaItemError( transientMedia.ID, siteId, error );
 
