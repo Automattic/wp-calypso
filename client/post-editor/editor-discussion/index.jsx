@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get, identity, noop, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -18,7 +17,7 @@ import ExternalLink from 'components/external-link';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/editor/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 

@@ -14,7 +14,7 @@ import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
 import { getReduxStore } from 'lib/redux-bridge';
 import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
-import { isEditorIframeLoaded } from 'state/ui/editor/selectors';
+import { isEditorIframeLoaded } from 'state/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
 import {

@@ -14,7 +14,7 @@ import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id'
 import { isJetpackSite } from 'state/sites/selectors';
 import { recordEditorEvent } from 'state/posts/stats/record-editor-event';
 import { recordEditorStat } from 'state/posts/stats/record-editor-stat';
-import { getEditorPostId, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
+import { getEditorPostId, isConfirmationSidebarEnabled } from 'state/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**

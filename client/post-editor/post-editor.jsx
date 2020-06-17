@@ -37,8 +37,8 @@ import {
 	editorEditRawContent,
 	editorResetRawContent,
 	setEditorIframeLoaded,
-} from 'state/ui/editor/actions';
-import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
+} from 'state/editor/actions';
+import { closeEditorSidebar, openEditorSidebar } from 'state/editor/sidebar/actions';
 import {
 	getEditorPostId,
 	isConfirmationSidebarEnabled,
@@ -48,7 +48,7 @@ import {
 	isEditorSaveBlocked,
 	getEditorPostPreviewUrl,
 	getEditorLoadingError,
-} from 'state/ui/editor/selectors';
+} from 'state/editor/selectors';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import {
 	getSitePost,

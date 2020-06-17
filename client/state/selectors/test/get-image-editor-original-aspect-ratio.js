@@ -11,11 +11,9 @@ import getImageEditorOriginalAspectRatio from 'state/selectors/get-image-editor-
 describe( 'getImageEditorOriginalAspectRatio()', () => {
 	test( 'should return null if the image has not loaded yet', () => {
 		const originalAspectRatio = getImageEditorOriginalAspectRatio( {
-			ui: {
-				editor: {
-					imageEditor: {
-						originalAspectRatio: null,
-					},
+			editor: {
+				imageEditor: {
+					originalAspectRatio: null,
 				},
 			},
 		} );
@@ -25,11 +23,9 @@ describe( 'getImageEditorOriginalAspectRatio()', () => {
 
 	test( 'should return the original aspect ratio', () => {
 		const originalAspectRatio = getImageEditorOriginalAspectRatio( {
-			ui: {
-				editor: {
-					imageEditor: {
-						originalAspectRatio: { width: 100, height: 200 },
-					},
+			editor: {
+				imageEditor: {
+					originalAspectRatio: { width: 100, height: 200 },
 				},
 			},
 		} );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -19,7 +18,7 @@ import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { setEditorMediaModalView } from 'state/editor/actions';
 import { isModuleActive } from 'lib/site/utils';
 
 /**

@@ -10,7 +10,7 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import getPostRevisions from 'state/selectors/get-post-revisions';
 import getPostRevisionsAuthorsId from 'state/selectors/get-post-revisions-authors-id';
 import getPostRevisionsComparisons from 'state/selectors/get-post-revisions-comparisons';

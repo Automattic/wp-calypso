@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-
 import { some, trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getEditedPost } from 'state/posts/selectors';
-import { getEditorRawContent } from 'state/ui/editor/selectors';
+import { getEditorRawContent } from 'state/editor/selectors';
 
 import 'state/posts/init';
 

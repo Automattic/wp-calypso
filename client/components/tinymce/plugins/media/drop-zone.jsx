@@ -17,7 +17,7 @@ import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite } from 'state/ui/selectors';
-import { blockSave } from 'state/ui/editor/save-blockers/actions';
+import { blockSave } from 'state/editor/save-blockers/actions';
 
 class TinyMCEDropZone extends React.Component {
 	static propTypes = {

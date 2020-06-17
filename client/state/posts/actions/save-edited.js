@@ -23,14 +23,14 @@ import {
 	editorInitRawContent,
 	editorLoadingErrorReset,
 	editorSave,
-} from 'state/ui/editor/actions';
+} from 'state/editor/actions';
 import {
 	getEditorInitialRawContent,
 	getEditorPostId,
 	getEditorRawContent,
 	isEditorSaveBlocked,
-} from 'state/ui/editor/selectors';
-import { resetEditorLastDraft, setEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+} from 'state/editor/selectors';
+import { resetEditorLastDraft, setEditorLastDraft } from 'state/editor/last-draft/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPreference } from 'state/preferences/selectors';
 

@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+import { resetEditorLastDraft } from 'state/editor/last-draft/actions';
 import {
 	getEditorLastDraftPost,
 	getEditorLastDraftSiteId,
 	getEditorLastDraftPostId,
-} from 'state/ui/editor/last-draft/selectors';
+} from 'state/editor/last-draft/selectors';
 import { isRequestingSitePost } from 'state/posts/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
+import { getEditorPath } from 'state/editor/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { gaRecordEvent } from 'lib/analytics/ga';

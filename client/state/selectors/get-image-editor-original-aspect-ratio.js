@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/editor/init';
 
 /**
  * Returns the original aspect ratio of the image loaded in the image editor.
@@ -12,5 +16,5 @@ import { get } from 'lodash';
  * @returns {?object}         Original image dimensions, if known
  */
 export default function getImageEditorOriginalAspectRatio( state ) {
-	return get( state, 'ui.editor.imageEditor.originalAspectRatio', null );
+	return get( state, 'editor.imageEditor.originalAspectRatio', null );
 }

@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import GlobalNoticesContainer from 'components/global-notices/container';
 import Notice from 'components/notice';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';

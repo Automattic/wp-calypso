@@ -9,11 +9,7 @@ import { includes, pick, reduce } from 'lodash';
 import { decodeEntities } from 'lib/formatting';
 import wpcom from 'lib/wp';
 import { getFeaturedImageId } from 'state/posts/utils';
-import {
-	editorSetLoadingError,
-	startEditingNewPost,
-	startEditingPost,
-} from 'state/ui/editor/actions';
+import { editorSetLoadingError, startEditingNewPost, startEditingPost } from 'state/editor/actions';
 
 import 'state/posts/init';
 

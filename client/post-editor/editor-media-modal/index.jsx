@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,7 +14,7 @@ import { generateGalleryShortcode } from 'lib/media/utils';
 import markup from 'post-editor/media-modal/markup';
 import { bumpStat } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-import { blockSave } from 'state/ui/editor/save-blockers/actions';
+import { blockSave } from 'state/editor/save-blockers/actions';
 
 class EditorMediaModal extends Component {
 	static propTypes = {

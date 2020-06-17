@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -21,7 +20,7 @@ import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
 import { isBusiness, isEnterprise, isJetpackPremium, isEcommerce } from 'lib/products-values';
 import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { getSeoTitle } from 'state/sites/selectors';
 import { getSectionName, getSelectedSite } from 'state/ui/selectors';
