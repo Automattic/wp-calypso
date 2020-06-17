@@ -142,6 +142,10 @@
 			outline: none;
 		}
 
+		&::-ms-clear {
+			display: none;
+		}
+
 		@include break-small {
 			@include onboarding-heading-text;
 		}
