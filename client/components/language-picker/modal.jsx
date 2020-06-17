@@ -51,6 +51,7 @@ export class LanguagePickerModal extends PureComponent {
 		languages: PropTypes.array.isRequired,
 		selected: PropTypes.string,
 		countryCode: PropTypes.string,
+		showEmpathyModeControl: PropTypes.bool,
 		empathyMode: PropTypes.bool,
 	};
 
@@ -61,6 +62,7 @@ export class LanguagePickerModal extends PureComponent {
 		isVisible: false,
 		selected: 'en',
 		countryCode: '',
+		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
 		empathyMode: false,
 	};
 
@@ -459,7 +461,9 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	renderEmpathyModeCheckbox() {
-		if ( ! config.isEnabled( 'i18n/empathy-mode' ) ) {
+		const { showEmpathyModeControl } = this.props;
+
+		if ( ! showEmpathyModeControl ) {
 			return null;
 		}
 
