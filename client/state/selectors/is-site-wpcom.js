@@ -16,5 +16,8 @@ import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 export default createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) =>
 		! isJetpackSite( state, siteId ) || isAtomicSite( state, siteId ),
-	[ isAtomicSite, isJetpackSite ]
+	( state, siteId = getSelectedSiteId( state ) ) => [
+		isJetpackSite( state, siteId ),
+		isAtomicSite( state, siteId ),
+	]
 );
