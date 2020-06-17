@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -37,31 +37,6 @@ class SecurityCheckupComponent extends React.Component {
 		userSettings: PropTypes.object,
 	};
 
-	renderInfoCard() {
-		const { translate } = this.props;
-		return (
-			<Card compact={ true } className="security-checkup__title-card security-checkup__info">
-				<div className="security-checkup__title-text">
-					<h3>{ translate( "Here are some more ways you're using your account" ) }</h3>
-				</div>
-			</Card>
-		);
-	}
-
-	renderTitleCard() {
-		const { translate } = this.props;
-		return (
-			<Card compact={ true } className="security-checkup__title-card">
-				<h4>{ translate( 'How secure is your account?' ) }</h4>
-				<div className="security-checkup__title-text">
-					{ translate(
-						'Review these important settings to keep your information accurate and to make your account more secure.'
-					) }
-				</div>
-			</Card>
-		);
-	}
-
 	render() {
 		const { path, translate } = this.props;
 
@@ -73,8 +48,10 @@ class SecurityCheckupComponent extends React.Component {
 
 				<DocumentHead title={ translate( 'Security' ) } />
 
-				<SectionHeader label={ translate( 'Security' ) } />
-				{ this.renderTitleCard() }
+				<FormattedHeader headerText={ translate( 'Security' ) } align="left" />
+
+				<SectionHeader label={ translate( 'Security Checklist' ) } />
+
 				<VerticalNav>
 					<SecurityCheckupAccountEmail />
 					<SecurityCheckupTwoFactorAuthentication />
@@ -83,7 +60,7 @@ class SecurityCheckupComponent extends React.Component {
 					<SecurityCheckupAccountRecoveryPhone />
 				</VerticalNav>
 
-				{ this.renderInfoCard() }
+				<SectionHeader label={ translate( 'Connections' ) } className="security-checkup__info" />
 				<VerticalNav className="security-checkup__info-nav">
 					<SecurityCheckupSocialLogins />
 					<SecurityCheckupConnectedApplications />
