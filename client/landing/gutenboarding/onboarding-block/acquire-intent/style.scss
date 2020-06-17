@@ -69,17 +69,34 @@
 	font-family: $default-font;
 	font-size: $default-font-size;
 	line-height: 14px;
-	transition: opacity 200ms $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	opacity: 0;
+	animation: site-title-input-hint-fade-in $acquire-intent-transition-duration
+		$acquire-intent-transition-algorithm forwards;
+	animation-delay: 3s;
+
+	&.has-site-title {
+		opacity: 1;
+		animation-name: site-title-input-hint-fade-out;
+		animation-delay: 1s;
+	}
+
+	@keyframes site-title-input-hint-fade-in {
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes site-title-input-hint-fade-out {
+		to {
+			opacity: 0;
+		}
+	}
 
 	svg {
 		align-self: center;
 		fill: var( --studio-yellow-30 );
 		flex-shrink: 0;
 		margin-right: $grid-unit-10;
-	}
-
-	&.has-site-title {
-		opacity: 0;
 	}
 }
 
