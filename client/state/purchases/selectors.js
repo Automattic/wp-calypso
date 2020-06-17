@@ -14,6 +14,7 @@ import {
 	isDomainRegistration,
 	isDomainMapping,
 	isJetpackBackup,
+	isJetpackProduct,
 } from 'lib/products-values';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { TYPE_PERSONAL } from 'lib/plans/constants';
@@ -85,6 +86,20 @@ export const getRenewableSitePurchases = createSelector(
 	( state, siteId ) => getSitePurchases( state, siteId ).filter( needsToRenewSoon ),
 	( state, siteId ) => [ state.purchases.data, siteId ]
 );
+
+/**
+ * Returns whether or not a Site has an active purchase of a Jetpack product.
+ *
+ * @param {object} state global state
+ * @param {number} siteId the site id
+ * @returns {boolean} True if the site has an active Jetpack purchase, false otherwise.
+ */
+export const siteHasJetpackProductPurchase = ( state, siteId ) => {
+	return some(
+		getSitePurchases( state, siteId ),
+		( purchase ) => purchase.active && isJetpackProduct( purchase )
+	);
+};
 
 /**
  * Whether a site has an active Jetpack backup purchase.
