@@ -18,7 +18,7 @@ import {
 	INLINE_HELP_HIDE,
 } from 'state/action-types';
 
-import { getContextualHelpResults } from 'state/inline-help/selectors';
+import getContextualHelpResults from 'state/selectors/get-contextual-help-results';
 
 /**
  * Fetches search results for a given query string.

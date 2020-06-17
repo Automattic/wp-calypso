@@ -15,12 +15,9 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
-import {
-	getInlineHelpSearchResultsForQuery,
-	getSelectedResultIndex,
-	isRequestingInlineHelpSearchResultsForQuery,
-} from 'state/inline-help/selectors';
-
+import getInlineHelpSearchResultsForQuery from 'state/selectors/get-inline-help-search-results-for-query';
+import getSelectedResultIndex from 'state/selectors/get-selected-result-index';
+import isRequestingInlineHelpSearchResultsForQuery from 'state/selectors/is-requesting-inline-help-search-results-for-query';
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
 
 import { setSearchResults, selectResult } from 'state/inline-help/actions';

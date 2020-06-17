@@ -21,7 +21,7 @@ import { localize } from 'i18n-calypso';
 import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import isInlineHelpPopoverVisible from 'state/selectors/is-inline-help-popover-visible';
 import { parse as parseUrl } from 'url';
 import { getSelectedSite } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
