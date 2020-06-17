@@ -13,6 +13,7 @@
 	"site_name": "Jetpack.com",
 	"oauth_client_id": 68663,
 	"features": {
+		"activity-log/v2": true,
 		"always_use_logout_url": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
@@ -31,6 +32,7 @@
 	},
 	"enable_all_sections": false,
 	"sections": {
+		"activity": true,
 		"backup": true,
 		"jetpack-cloud-auth": true,
 		"jetpack-cloud-settings": true,

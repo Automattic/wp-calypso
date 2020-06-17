@@ -4,26 +4,12 @@
 		padding: 16px;
 	}
 
-	.activity-log-item__actor {
+	.activity-card__actor {
 		margin-left: 0;
 		display: flex;
 		align-items: center;
-	}
 
-	.activity-log-item__actor-info .activity-log-item__actor-name,
-	.activity-log-item__actor-info .activity-log-item__actor-role,
-	.activity-card__activity-title {
-		font-size: 0.8rem;
-		color: rgb( 100, 105, 112 );
-	}
-
-	.activity-card__activity-title {
-		margin: 8px 0;
-		font-style: italic;
-	}
-
-	.activity-log-item__actor {
-		.activity-log-item__actor-info {
+		.activity-card__actor-info {
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
@@ -37,6 +23,18 @@
 			max-height: 24px;
 			max-width: 24px;
 		}
+	}
+
+	.activity-card__actor-info,
+	.activity-card__actor-role,
+	.activity-card__activity-title {
+		font-size: 0.8rem;
+		color: rgb( 100, 105, 112 );
+	}
+
+	.activity-card__activity-title {
+		margin: 8px 0;
+		font-style: italic;
 	}
 }
 

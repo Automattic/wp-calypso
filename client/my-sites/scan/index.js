@@ -9,7 +9,7 @@ import page from 'page';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { notFound, makeLayout, render as clientRender } from 'controller';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import wrapInSiteOffsetProvider from 'lib/jetpack/wrap-in-site-offset';
+import wrapInSiteOffsetProvider from 'lib/wrap-in-site-offset';
 import wpcomUpsellController from 'lib/jetpack/wpcom-upsell-controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';

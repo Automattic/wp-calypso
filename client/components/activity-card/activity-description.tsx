@@ -7,6 +7,7 @@ import React, { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import FormattedBlock from 'components/notes-formatted-block';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 // FUTURE WORK: move this to a shared location
 interface Activity {
@@ -33,7 +34,7 @@ const ActivityDescription: FunctionComponent< Props > = ( {
 			const { intent, section, type, url } = description;
 
 			const content =
-				type === 'link' && url?.startsWith( 'https://wordpress.com/' )
+				isJetpackCloud() && type === 'link' && url?.startsWith( 'https://wordpress.com/' )
 					? { ...description, type: undefined, url: undefined }
 					: description;
 

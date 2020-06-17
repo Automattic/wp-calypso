@@ -26,7 +26,7 @@ import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
-import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
+import { backupMainPath } from 'my-sites/backup/paths';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
 import { settingsPath } from 'lib/jetpack/paths';
 import {
@@ -119,19 +119,16 @@ class JetpackCloudSidebar extends Component {
 							} ) }
 							link={ backupMainPath( selectedSiteSlug ) }
 							onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Latest backups' ) }
-							selected={
-								itemLinkMatches( backupMainPath(), this.props.path ) &&
-								! itemLinkMatches( backupActivityPath(), this.props.path )
-							}
+							selected={ itemLinkMatches( backupMainPath(), this.props.path ) }
 						/>
 						<SidebarItem
 							expandSection={ this.expandBackupSection }
 							label={ translate( 'Activity log', {
 								comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
 							} ) }
-							link={ backupActivityPath( selectedSiteSlug ) }
+							link={ `/activity-log/${ selectedSiteSlug }` }
 							onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Activity Log' ) }
-							selected={ itemLinkMatches( backupActivityPath(), this.props.path ) }
+							selected={ itemLinkMatches( `/activity-log`, this.props.path ) }
 						/>
 					</ul>
 				</ExpandableSidebarMenu>
