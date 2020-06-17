@@ -77,5 +77,5 @@ export function emailManagementEdit( siteName, domainName, slug, relativeTo = nu
 }
 
 export function isUnderEmailManagementAll( path ) {
-	return path && path.startsWith( emailManagementAllSitesPrefix + '/' );
+	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }

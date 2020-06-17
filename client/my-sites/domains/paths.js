@@ -47,7 +47,7 @@ function domainManagementTransferBase(
 }
 
 export function isUnderDomainManagementAll( path ) {
-	return path && path.startsWith( domainManagementAllRoot() + '/' );
+	return path?.startsWith( domainManagementAllRoot() + '/' );
 }
 
 export function domainAddNew( siteName, searchTerm ) {
