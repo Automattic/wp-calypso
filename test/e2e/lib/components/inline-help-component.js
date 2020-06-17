@@ -72,6 +72,13 @@ class InlineHelpComponent extends AsyncBaseContainer {
 		const val = await this.getSearchInputValue();
 		assert.equal( val, '', `Failed to correctly clear search input using clear UI` );
 	}
+
+	async hasNoResultsMessage() {
+		return await driverHelper.isElementPresent(
+			this.driver,
+			By.css( '.inline-help__popover .inline-help__empty-results' )
+		);
+	}
 }
 
 export default InlineHelpComponent;

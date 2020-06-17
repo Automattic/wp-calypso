@@ -45,7 +45,7 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 		step( 'Displays contextual search results by default', async function () {
 			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 			const results = await inlineHelpComponent.getSearchResults();
-			assert.strictEqual( results.length, 5, 'There are no contextual results displayed' );
+			assert.equal( results.length, 5, 'There are no contextual results displayed' );
 		} );
 
 		step( 'Returns search results for valid search query', async function () {
@@ -74,5 +74,22 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 			// const results = await inlineHelpComponent.getSearchResults();
 			// assert.strictEqual( results.length, 5, 'There are no contextual results displayed' );
 		} );
+
+		step(
+			'Shows "No results" indicator and re-displays contextual results for search queries which return no results',
+			async function () {
+				const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
+				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+				await inlineHelpComponent.searchFor( invalidSearchQueryReturningNoResults );
+				const results = await inlineHelpComponent.getSearchResults();
+				const resultsLength = results.length;
+
+				const hasNoResultsMessage = await inlineHelpComponent.hasNoResultsMessage();
+
+				assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
+
+				assert.equal( resultsLength, 5, 'There are no contextual results displayed.' );
+			}
+		);
 	} );
 } );
