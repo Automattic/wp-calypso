@@ -142,10 +142,6 @@
 			outline: none;
 		}
 
-		&::-ms-clear {
-			display: none;
-		}
-
 		@include break-small {
 			@include onboarding-heading-text;
 		}
@@ -157,6 +153,10 @@
 		&::placeholder {
 			color: $light-gray-700;
 			line-height: normal;
+		}
+
+		&::-ms-clear {
+			display: none;
 		}
 	}
 }
