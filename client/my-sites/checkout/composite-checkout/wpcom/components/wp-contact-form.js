@@ -41,7 +41,7 @@ export default function WPContactForm( {
 	const translate = useTranslate();
 	const [ items ] = useLineItems();
 	const isDomainFieldsVisible = useHasDomainsInCart();
-	const isGSuiteInCart = items.find(
+	const isGSuiteInCart = items.some(
 		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
 	);
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );

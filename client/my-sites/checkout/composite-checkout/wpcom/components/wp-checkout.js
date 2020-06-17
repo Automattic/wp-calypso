@@ -52,7 +52,7 @@ const ContactFormTitle = () => {
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
 	const [ items ] = useLineItems();
-	const isGSuiteInCart = items.find(
+	const isGSuiteInCart = items.some(
 		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
 	);
 
@@ -110,7 +110,7 @@ export default function WPCheckout( {
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
 	const isDomainFieldsVisible = !! firstDomainItem;
-	const isGSuiteInCart = items.find(
+	const isGSuiteInCart = items.some(
 		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
 	);
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
