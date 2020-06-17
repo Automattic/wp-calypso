@@ -109,6 +109,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	);
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
+	const paidSuggestionsWithoutRecommended = paidSuggestions?.filter(
+		( suggestion ) => suggestion !== recommendedSuggestion
+	);
+
 	// We're not using auto-selection right now.
 	// useEffect( () => {
 	// 	// Auto-select one of the domains when the search results change. If the currently
@@ -194,34 +198,47 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</div>
 					) }
 					<div className="domain-picker__suggestion-item-group">
+						{ recommendedSuggestion && (
+							<SuggestionItem
+								key={ recommendedSuggestion?.domain_name }
+								suggestion={ recommendedSuggestion }
+								railcarId={ baseRailcarId ? `${ baseRailcarId }0` : undefined }
+								isSelected={ currentDomain?.domain_name === recommendedSuggestion?.domain_name }
+								isRecommended={ true }
+								onRender={ () =>
+									handleItemRender( recommendedSuggestion, `${ baseRailcarId }0`, 0 )
+								}
+								onSelect={ onDomainSelect }
+							/>
+						) }
 						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
 						{ freeSuggestions &&
 							( freeSuggestions.length ? (
 								<SuggestionItem
 									suggestion={ freeSuggestions[ 0 ] }
-									railcarId={ baseRailcarId ? `${ baseRailcarId }0` : undefined }
+									railcarId={ baseRailcarId ? `${ baseRailcarId }1` : undefined }
 									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
 									onRender={ () =>
-										handleItemRender( freeSuggestions[ 0 ], `${ baseRailcarId }0`, 0 )
+										handleItemRender( freeSuggestions[ 0 ], `${ baseRailcarId }1`, 1 )
 									}
 									onSelect={ onDomainSelect }
 								/>
 							) : (
 								<SuggestionNone />
 							) ) }
-						{ ! paidSuggestions &&
+						{ ! paidSuggestionsWithoutRecommended &&
 							times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
-						{ paidSuggestions &&
-							( paidSuggestions?.length ? (
-								paidSuggestions.map( ( suggestion, i ) => (
+						{ paidSuggestionsWithoutRecommended &&
+							( paidSuggestionsWithoutRecommended?.length ? (
+								paidSuggestionsWithoutRecommended.map( ( suggestion, i ) => (
 									<SuggestionItem
 										key={ suggestion.domain_name }
 										suggestion={ suggestion }
-										railcarId={ baseRailcarId ? `${ baseRailcarId }${ i + 1 }` : undefined }
+										railcarId={ baseRailcarId ? `${ baseRailcarId }${ i + 2 }` : undefined }
 										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
 										isRecommended={ isRecommended( suggestion ) }
 										onRender={ () =>
-											handleItemRender( suggestion, `${ baseRailcarId }${ i + 1 }`, i + 1 )
+											handleItemRender( suggestion, `${ baseRailcarId }${ i + 2 }`, i + 2 )
 										}
 										onSelect={ onDomainSelect }
 									/>
