@@ -552,7 +552,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	const themeSlugWithRepo = 'pub/p2020';
 
 	const data = {
-		blog_name: site,
+		blog_name: `${ site }.p2.blog`,
 		blog_title: siteTitle,
 		public: -1, // wp for teams sites are not supposed to be public
 		options: {
