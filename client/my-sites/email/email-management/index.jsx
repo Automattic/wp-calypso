@@ -43,6 +43,7 @@ import QueryEmailAccounts from 'components/data/query-email-accounts';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { localizeUrl } from 'lib/i18n-utils';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -53,7 +54,6 @@ import './style.scss';
  * Image dependencies
  */
 import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
-import getCurrentRoute from '../../../state/selectors/get-current-route';
 
 class EmailManagement extends React.Component {
 	static propTypes = {
