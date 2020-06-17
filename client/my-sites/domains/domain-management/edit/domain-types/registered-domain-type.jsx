@@ -330,12 +330,39 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	getExpiresOrRenewsText() {
+		const { domain, moment, purchase, translate } = this.props;
+		if ( domain.expired ) {
+			return translate( 'Expired: %(expiry_date)s', {
+				args: {
+					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
+				},
+			} );
+		} else if (
+			domain.isAutoRenewing &&
+			domain.autoRenewalDate &&
+			! shouldRenderExpiringCreditCard( purchase )
+		) {
+			return translate( 'Renews: %(renewal_date)s', {
+				args: {
+					renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
+				},
+			} );
+		}
+
+		return translate( 'Expires: %(expiry_date)s', {
+			args: {
+				expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
+			},
+		} );
+	}
+
 	handlePaymentSettingsClick = () => {
 		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase, moment } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -344,28 +371,6 @@ class RegisteredDomainType extends React.Component {
 		const newDomainManagementNavigation = config.isEnabled(
 			'domains/new-status-design/new-options'
 		);
-
-		let expiresText;
-
-		if ( domain.expired ) {
-			expiresText = this.props.translate( 'Expired: %(expiry_date)s', {
-				args: {
-					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-				},
-			} );
-		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
-			expiresText = this.props.translate( 'Renews: %(renewal_date)s', {
-				args: {
-					renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
-				},
-			} );
-		} else {
-			expiresText = this.props.translate( 'Expires: %(expiry_date)s', {
-				args: {
-					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-				},
-			} );
-		}
 
 		return (
 			<div className="domain-types__container">
@@ -402,7 +407,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderOutboundTransferInProgress() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<div>{ expiresText }</div>
+					<div>{ this.getExpiresOrRenewsText() }</div>
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
 						<WrapDomainStatusButtons>
