@@ -1,6 +1,20 @@
 {
 	"featured": [
 		{
+			"title": "FSE Test Design",
+			"slug": "cassel",
+			"template": "cassel",
+			"theme": "seedlet-blocks",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/cassel/",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "blog" ],
+			"is_premium": false,
+			"is_fse": true
+		},
+		{
 			"title": "Cassel",
 			"slug": "cassel",
 			"template": "cassel",

@@ -13,7 +13,6 @@ import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import { isEnabled } from '../../../../config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -104,10 +103,10 @@ export function* createSite(
 		'getState'
 	);
 
+	const shouldUseFse = yield select( ONBOARD_STORE, 'getIsFseSite' );
+
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
-
-	const shouldUseFse = isEnabled( 'gutenboarding/site-editor' );
 
 	const defaultTheme = shouldUseFse ? 'seedlet-blocks' : 'twentytwenty';
 

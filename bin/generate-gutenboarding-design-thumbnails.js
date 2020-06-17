@@ -22,7 +22,6 @@ const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
 const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
-const fseDesigns = require( '../client/landing/gutenboarding/available-fse-designs-config.json' );
 
 const screenshotsPath = './static/page-templates/design-screenshots'; // Folder to store output images
 
@@ -55,7 +54,7 @@ function getConfigDesigns( config ) {
 }
 
 async function run() {
-	const allDesigns = [ ...getConfigDesigns( designs ), ...getConfigDesigns( fseDesigns ) ];
+	const allDesigns = getConfigDesigns( designs );
 
 	console.log( `Processing ${ allDesigns.length } designs...` );
 

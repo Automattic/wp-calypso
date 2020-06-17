@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import type { State } from './reducer';
+import { isEnabled } from '../../../../config';
 
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getState = ( state: State ) => state;
@@ -25,3 +26,7 @@ export const getSelectedDomain = ( state: State ) => state.domain;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch || getSelectedSiteTitle( state );
+export const getIsFseSite = ( state: State ): boolean => {
+	const design = getSelectedDesign( state );
+	return isEnabled( 'gutenboarding/site-editor' ) || !! design?.is_fse;
+};
