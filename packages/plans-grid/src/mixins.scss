@@ -82,75 +82,15 @@
 	}
 }
 
-/* (1920x1080) Full HD Display */
-@mixin onboarding-break-gigantic() {
-	@media ( min-width: 1920px ) {
-		@content;
-	}
-}
 
-@mixin onboarding-break-mobile-tall() {
-	@media ( min-height: 750px ) {
-		@content;
-	}
-}
-
-@mixin onboarding-block-edge2edge-container {
-	width: calc( 100% + #{$gutenboarding-block-margin-mobile * 2} );
-	margin-left: #{$gutenboarding-block-margin-mobile * -1};
-	margin-right: #{$gutenboarding-block-margin-mobile * -1};
+@mixin plans-grid-edge2edge-padding {
+	padding: 0 $gutenboarding-block-margin-mobile;
 
 	@include break-small {
-		width: calc( 100% + #{$gutenboarding-block-margin-small * 2} );
-		margin-left: #{$gutenboarding-block-margin-small * -1};
-		margin-right: #{$gutenboarding-block-margin-small * -1};
+		padding: 0 $gutenboarding-block-margin-small;
 	}
 
 	@include break-medium {
-		width: calc( 100% + #{$gutenboarding-block-margin-medium * 2} );
-		margin-left: #{$gutenboarding-block-margin-medium * -1};
-		margin-right: #{$gutenboarding-block-margin-medium * -1};
-	}
-}
-
-@mixin onboarding-block-edge2edge-content {
-	border-left: $gutenboarding-block-margin-mobile solid transparent;
-	border-right: $gutenboarding-block-margin-mobile solid transparent;
-
-	@include break-small {
-		border-left: $gutenboarding-block-margin-small solid transparent;
-		border-right: $gutenboarding-block-margin-small solid transparent;
-	}
-
-	@include break-medium {
-		border-left: $gutenboarding-block-margin-medium solid transparent;
-		border-right: $gutenboarding-block-margin-medium solid transparent;
-	}
-}
-
-@mixin onboarding-block-edge2edge-columns {
-	&:first-child {
-		border-left: $gutenboarding-block-margin-mobile solid transparent;
-	}
-	&:last-child {
-		border-right: $gutenboarding-block-margin-mobile solid transparent;
-	}
-
-	@include break-small {
-		&:first-child {
-			border-left: $gutenboarding-block-margin-small solid transparent;
-		}
-		&:last-child {
-			border-right: $gutenboarding-block-margin-small solid transparent;
-		}
-	}
-
-	@include break-medium {
-		&:first-child {
-			border-left: $gutenboarding-block-margin-medium solid transparent;
-		}
-		&:last-child {
-			border-right: $gutenboarding-block-margin-medium solid transparent;
-		}
+		padding: 0 $gutenboarding-block-margin-medium;
 	}
 }
