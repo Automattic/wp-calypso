@@ -112,6 +112,8 @@ enum EditorActions {
 	TrackPerformance = 'trackPerformance',
 }
 
+let waitForIframeToInit, waitForIframeToLoad;
+
 class CalypsoifyIframe extends Component<
 	Props & ConnectedProps & ProtectedFormProps & LocalizeProps & PerformanceTrackProps,
 	State
@@ -136,6 +138,14 @@ class CalypsoifyIframe extends Component<
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
+		waitForIframeToInit = setInterval( () => {
+			if ( this.props.shouldLoadIframe ) {
+				clearInterval( waitForIframeToInit );
+				waitForIframeToLoad = setTimeout( () => {
+					window.location.replace( this.props.iframeUrl );
+				}, 6000 ); // One second longer than we give the iframe to load
+			}
+		}, 1000 );
 	}
 
 	componentWillUnmount() {
@@ -594,6 +604,7 @@ class CalypsoifyIframe extends Component<
 	};
 
 	onIframeLoaded = async ( iframeUrl: string ) => {
+		clearTimeout( waitForIframeToLoad );
 		if ( ! this.successfulIframeLoad ) {
 			// Sometimes (like in IE) the WindowActions.Loaded message arrives after
 			// the onLoad event is fired. To deal with this case we'll poll
@@ -738,6 +749,7 @@ const mapStateToProps = (
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
+	// Set the iframe to a URL which has an infinite loop
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
