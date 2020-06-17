@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Button from 'components/forms/form-button';
 import DateRangeSelector from 'my-sites/activity/filterbar/date-range-selector';
@@ -135,11 +136,13 @@ class BackupDatePicker extends Component {
 						</span>
 					</div>
 
-					<DateRangeSelector
-						siteId={ siteId }
-						enabled={ true }
-						customLabel={ <Gridicon icon="calendar" /> }
-					/>
+					{ isEnabled( 'jetpack/backups-date-picker' ) && (
+						<DateRangeSelector
+							siteId={ siteId }
+							enabled={ true }
+							customLabel={ <Gridicon icon="calendar" /> }
+						/>
+					) }
 
 					<div
 						className="backup-date-picker__select-date--next"
@@ -164,15 +167,17 @@ class BackupDatePicker extends Component {
 								/>
 							</Button>
 						</div>
-						<a
-							className="backup-date-picker__search-link"
-							href={ `/activity-log/${ siteSlug }` }
-							onClick={ () => {
-								dispatchRecordTracksEvent( 'calypso_jetpack_backup_search' );
-							} }
-						>
-							<Gridicon icon="search" className="backup-date-picker__search-icon" />
-						</a>
+						{ isEnabled( 'jetpack/backups-date-picker' ) && (
+							<a
+								className="backup-date-picker__search-link"
+								href={ `/activity-log/${ siteSlug }` }
+								onClick={ () => {
+									dispatchRecordTracksEvent( 'calypso_jetpack_backup_search' );
+								} }
+							>
+								<Gridicon icon="search" className="backup-date-picker__search-icon" />
+							</a>
+						) }
 					</div>
 				</div>
 			</div>
