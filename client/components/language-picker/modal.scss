@@ -62,6 +62,13 @@
 	}
 }
 
+.language-picker__modal-tooltip {
+	display: inline;
+	vertical-align: middle;
+	margin-left: 4px;
+	opacity: 0.5;
+}
+
 .language-picker__modal-list {
 	box-sizing: border-box;
 	width: 100%;
