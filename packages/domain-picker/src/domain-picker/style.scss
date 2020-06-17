@@ -206,7 +206,7 @@
 	@include break-small {
 		// We're mocking the look of a button,
 		// this is not an actual button.
-		background: #007cba;
+		background: $blue-medium-focus;
 		color: var( --studio-white );
 		border-radius: 2px;
 		padding: 0 12px;
@@ -218,7 +218,7 @@
 		right: 14px;
 
 		&:hover {
-			background: #0070a7;
+			background: mix( black, $blue-medium-focus, 10% );
 		}
 
 		span {
