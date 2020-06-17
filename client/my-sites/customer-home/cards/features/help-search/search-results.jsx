@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -20,38 +20,38 @@ import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-res
 import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
 
-import { setSearchResults, selectResult } from 'state/inline-help/actions';
+import { selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 
-function HelpSearchResults( props ) {
-	const {
-		translate = identity,
-		searchQuery = '',
-		hasAPIResults = false,
-		searchResults = [],
-		selectedResultIndex = -1,
-		isSearching = false,
-	} = props;
-
-	const onHelpLinkClick = ( selectionIndex ) => ( event ) => {
+function HelpSearchResults( {
+	hasAPIResults = false,
+	isSearching = false,
+	openResult,
+	searchQuery = '',
+	searchResults = [],
+	selectedResultIndex = -1,
+	selectSearchResult,
+	translate = identity,
+} ) {
+	const selectResultHandler = useCallback( ( selectionIndex ) => ( event ) => {
 		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
-		props.selectResult( selectionIndex );
-		props.openResult( event, selectedResult );
-	};
+		selectSearchResult( selectionIndex );
+		openResult( event, selectedResult );
+	} );
 
-	const renderHelpLink = ( link, index ) => {
-		const classes = { 'is-selected': selectedResultIndex === index };
+	const renderHelpLink = ( { link, key, description, title }, index ) => {
+		const classes = classNames( 'help-search__results-item', {
+			'is-selected': selectedResultIndex === index
+		} );
+
 		return (
-			<li
-				key={ link.link ? link.link : link.key }
-				className={ classNames( 'help-search__results-item', classes ) }
-			>
+			<li key={ link ?? key } className={ classes }>
 				<a
-					href={ localizeUrl( link.link ) }
-					onClick={ onHelpLinkClick( index ) }
-					title={ decodeEntities( link.description ) }
+					href={ localizeUrl( link ) }
+					onClick={ selectResultHandler( index ) }
+					title={ decodeEntities( description ) }
 				>
-					{ preventWidows( decodeEntities( link.title ) ) }
+					{ preventWidows( decodeEntities( title ) ) }
 				</a>
 			</li>
 		);
@@ -63,22 +63,19 @@ function HelpSearchResults( props ) {
 			return <PlaceholderLines />;
 		}
 
-		// found something
-		const links = searchResults;
-
 		return (
 			<>
 				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
 					<p className="help-search__empty-results">{ translate( 'No results.' ) }</p>
 				) }
-				<ul className="help-search__results-list">{ links && links.map( renderHelpLink ) }</ul>
+				<ul className="help-search__results-list">{ searchResults.map( renderHelpLink ) }</ul>
 			</>
 		);
 	};
 
 	return (
 		<div>
-			<QueryInlineHelpSearch query={ searchQuery } requesting={ props.isSearching } />
+			<QueryInlineHelpSearch query={ searchQuery } requesting={ isSearching } />
 			{ renderSearchResults() }
 		</div>
 	);
@@ -102,8 +99,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,
-	setSearchResults,
-	selectResult,
+	selectSearchResult: selectResult,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpSearchResults ) );
