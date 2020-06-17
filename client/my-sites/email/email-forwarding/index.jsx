@@ -26,6 +26,7 @@ import getEmailForwardingType from 'state/selectors/get-email-forwarding-type';
 import { getEmailForwards } from 'state/selectors/get-email-forwards';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryEmailForwards from 'components/data/query-email-forwards';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -103,7 +104,9 @@ class EmailForwarding extends Component {
 	}
 
 	goToEditEmail = () => {
-		page( emailManagement( this.props.siteSlug, this.props.selectedDomainName ) );
+		page(
+			emailManagement( this.props.siteSlug, this.props.selectedDomainName, this.props.currentRoute )
+		);
 	};
 }
 
@@ -111,6 +114,7 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const { selectedDomainName } = ownProps;
 	return {
+		currentRoute: getCurrentRoute( state ),
 		emailForwards: getEmailForwards( state, selectedDomainName ),
 		emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
 		emailForwardingType: getEmailForwardingType( state, selectedDomainName ),

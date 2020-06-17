@@ -31,6 +31,11 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementAddGSuiteUsers(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
 			paths.emailManagementAddGSuiteUsers( ':site', ':domain' ),
 			paths.emailManagementAddGSuiteUsers( ':site' ),
 		],
@@ -58,11 +63,11 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		paths.emailManagementForwarding( ':site', ':domain' ),
-		...commonHandlers,
-		controller.emailManagementForwarding,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementForwarding( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.emailManagementForwarding( ':site', ':domain' ),
+		],
+		handlers: [ ...commonHandlers, controller.emailManagementForwarding, makeLayout, clientRender ],
+	} );
 }

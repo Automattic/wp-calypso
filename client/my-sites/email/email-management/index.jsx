@@ -249,11 +249,13 @@ class EmailManagement extends React.Component {
 	}
 
 	addEmailForwardingCard( domain ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { selectedSiteSlug, currentRoute, translate } = this.props;
 
 		return (
 			<VerticalNav>
-				<VerticalNavItem path={ emailManagementForwarding( selectedSiteSlug, domain ) }>
+				<VerticalNavItem
+					path={ emailManagementForwarding( selectedSiteSlug, domain, currentRoute ) }
+				>
 					{ translate( 'Email Forwarding' ) }
 				</VerticalNavItem>
 			</VerticalNav>

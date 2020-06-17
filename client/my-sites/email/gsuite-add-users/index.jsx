@@ -47,6 +47,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
  * Style dependencies
  */
 import './style.scss';
+import getCurrentRoute from '../../../state/selectors/get-current-route';
 
 class GSuiteAddUsers extends React.Component {
 	state = {
@@ -152,7 +153,13 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	goToEmail = () => {
-		page( emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			emailManagement(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 
 	renderAddGSuite() {
@@ -272,6 +279,7 @@ export default connect(
 		const siteId = get( selectedSite, 'ID', null );
 		const domains = getDomainsBySiteId( state, siteId );
 		return {
+			currentRoute: getCurrentRoute( state ),
 			domains,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gsuiteUsers: getGSuiteUsers( state, siteId ),
