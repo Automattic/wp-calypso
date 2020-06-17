@@ -42,12 +42,12 @@ import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import getCurrentRoute from '../../../state/selectors/get-current-route';
 
 class GSuiteAddUsers extends React.Component {
 	state = {
