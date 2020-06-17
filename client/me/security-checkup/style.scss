@@ -9,10 +9,16 @@
 		display: flex;
 		align-items: center;
 		> .security-checkup__nav-item-icon {
-			fill: var( --color-neutral-60 );
-			width: 32px;
+			fill: var( --color-neutral-90 );
 			height: 32px;
 			margin-right: 16px;
+			width: 32px;
+			&.material-icon-check_circle {
+				fill: var( --color-success );
+			}
+			&.material-icon-info {
+				fill: var( --color-warning-30 );
+			}
 		}
 		div {
 			color: var( --color-neutral-90 );
