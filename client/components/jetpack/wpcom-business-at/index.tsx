@@ -107,7 +107,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 		<Main className="wpcom-business-at">
 			<DocumentHead title={ content.documentHeadTitle } />
 			<SidebarNavigation />
-			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Upsell" />
+			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Automated Transfer" />
 
 			<FormattedHeader
 				id="wpcom-business-at-header"

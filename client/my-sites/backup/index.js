@@ -19,7 +19,6 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { notFound, makeLayout, render as clientRender } from 'controller';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
-import WPCOMBusinessAT from 'components/jetpack/wpcom-business-at';
 import wpcomUpsellController from 'lib/jetpack/wpcom-upsell-controller';
 import WPCOMUpsellPage from 'my-sites/backup/wpcom-upsell';
 import wrapInSiteOffsetProvider from 'lib/wrap-in-site-offset';
@@ -44,7 +43,7 @@ export default function () {
 		navigation,
 		backupDownload,
 		wrapInSiteOffsetProvider,
-		wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
+		wpcomUpsellController( WPCOMUpsellPage ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -58,7 +57,7 @@ export default function () {
 			navigation,
 			backupRestore,
 			wrapInSiteOffsetProvider,
-			wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
+			wpcomUpsellController( WPCOMUpsellPage ),
 			notFoundIfNotEnabled,
 			makeLayout,
 			clientRender
@@ -73,7 +72,7 @@ export default function () {
 		backups,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
-		wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
+		wpcomUpsellController( WPCOMUpsellPage ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
