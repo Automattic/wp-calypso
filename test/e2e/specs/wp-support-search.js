@@ -65,5 +65,14 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 				`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsLength }).`
 			);
 		} );
+
+		step( 'Resets search UI to default state when search input is cleared ', async function () {
+			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+			await inlineHelpComponent.clearSearchField();
+
+			// Once https://github.com/Automattic/wp-calypso/pull/43323 is merged this will work again
+			// const results = await inlineHelpComponent.getSearchResults();
+			// assert.strictEqual( results.length, 5, 'There are no contextual results displayed' );
+		} );
 	} );
 } );

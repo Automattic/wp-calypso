@@ -63,6 +63,15 @@ class InlineHelpComponent extends AsyncBaseContainer {
 	async getSearchInputValue() {
 		return await this.driver.findElement( searchInputSelector ).getAttribute( 'value' );
 	}
+
+	async clearSearchField() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.inline-help__popover [role="search"] [aria-label="Close Search"]' )
+		);
+		const val = await this.getSearchInputValue();
+		assert.equal( val, '', `Failed to correctly clear search input using clear UI` );
+	}
 }
 
 export default InlineHelpComponent;
