@@ -2,14 +2,20 @@
  * Internal dependencies
  */
 import { createTransientMedia, getFileUploader, validateMediaItem } from 'lib/media/utils';
-import { getTransientDate } from './utils';
+import {
+	getTransientDate,
+	dispatchFluxCreateMediaItem,
+	dispatchFluxFetchMediaLimits,
+	dispatchFluxReceiveMediaItemError,
+	dispatchFluxReceiveMediaItemSuccess,
+} from 'state/media/actions/utils';
 import {
 	createMediaItem,
 	receiveMedia,
 	successMediaItemRequest,
 	failMediaItemRequest,
 	setMediaItemErrors,
-} from './sync';
+} from 'state/media/actions/sync';
 
 /**
  * Add a single media item. Allow passing in the transient date so
@@ -17,6 +23,9 @@ import {
  * only a single item is being uploaded.
  *
  * Restrict this function to purely a single media item.
+ *
+ * Note: Temporarily this action will dispatch to the flux store, until
+ * the flux store is removed.
  *
  * @param {object} site The site to add the media to
  * @param {object} file The file to upload
@@ -40,6 +49,8 @@ export const addMedia = ( site, file, transientDate = getTransientDate() ) => as
 
 	const { ID: siteId } = site;
 
+	dispatchFluxCreateMediaItem( transientMedia, site );
+
 	const errors = validateMediaItem( site, transientMedia );
 	// I'm unclear when these errors would be possible, but the current logic does this check
 	if ( errors ) {
@@ -55,6 +66,9 @@ export const addMedia = ( site, file, transientDate = getTransientDate() ) => as
 			media: [ uploadedMedia ],
 			found,
 		} = await uploader( file, siteId );
+
+		dispatchFluxReceiveMediaItemSuccess( transientMedia.ID, siteId, uploadedMedia );
+
 		dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 		dispatch(
 			receiveMedia(
@@ -67,8 +81,12 @@ export const addMedia = ( site, file, transientDate = getTransientDate() ) => as
 			)
 		);
 
+		dispatchFluxFetchMediaLimits( siteId );
+
 		return uploadedMedia.ID;
 	} catch ( error ) {
+		dispatchFluxReceiveMediaItemError( transientMedia.ID, siteId, error );
+
 		dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
 		// no need to dispatch `deleteMedia` as `createMediaItem` won't have added it to the MediaQueryManager which tracks instances.
 		// rethrow so consumers know the upload failed

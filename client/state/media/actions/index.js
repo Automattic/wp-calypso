@@ -1,2 +1,2 @@
-export * from './sync';
-export * from './async';
+export * from 'state/media/actions/sync';
+export * from 'state/media/actions/async';

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { addMedia as addMediaThunk } from '../async';
+import { addMedia as addMediaThunk } from 'state/media/actions/async';
 import { getFileUploader, createTransientMedia, validateMediaItem } from 'lib/media/utils';
-
-import * as syncActions from '../sync';
+import * as utils from 'state/media/actions/utils';
+import * as syncActions from 'state/media/actions/sync';
 
 jest.mock( 'lib/media/utils', () => ( {
 	getFileUploader: jest.fn(),
@@ -78,6 +78,22 @@ describe( 'media - actions - async', () => {
 			} );
 		} );
 
+		describe( 'transient date', () => {
+			it( 'should automatically generate one when one is not provided', async () => {
+				const getTransientDate = jest.spyOn( utils, 'getTransientDate' );
+				const generatedTransientDate = Symbol( 'generated transient date' );
+				getTransientDate.mockReturnValueOnce( generatedTransientDate );
+				const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
+
+				await addMedia( site, file );
+
+				expect( createMediaItem ).toHaveBeenCalledWith( site, {
+					...file,
+					date: generatedTransientDate,
+				} );
+			} );
+		} );
+
 		describe( 'validation', () => {
 			it( 'should set media item errors and throw if validation returns errors', async () => {
 				const errors = [ 'an error' ];
@@ -117,6 +133,29 @@ describe( 'media - actions - async', () => {
 				);
 				expect( failMediaItemRequest ).not.toHaveBeenCalled();
 			} );
+
+			describe( 'flux adaptation', () => {
+				it( 'should dispatch flux create, receive, and media limits actions', async () => {
+					const fluxCreateMediaItem = jest.spyOn( utils, 'dispatchFluxCreateMediaItem' );
+					const fluxReceiveMediaItemSuccess = jest.spyOn(
+						utils,
+						'dispatchFluxReceiveMediaItemSuccess'
+					);
+					const fluxFetchMediaLimits = jest.spyOn( utils, 'dispatchFluxFetchMediaLimits' );
+
+					await addMedia( site, file, transientDate );
+
+					expect( fluxCreateMediaItem ).toHaveBeenCalledWith(
+						{ ...file, date: transientDate },
+						site
+					);
+					expect( fluxReceiveMediaItemSuccess ).toHaveBeenCalledWith( transientId, siteId, {
+						...file,
+						ID: savedId,
+					} );
+					expect( fluxFetchMediaLimits ).toHaveBeenCalledWith( siteId );
+				} );
+			} );
 		} );
 
 		describe( 'when upload fails', () => {
@@ -134,6 +173,27 @@ describe( 'media - actions - async', () => {
 				expect( successMediaItemRequest ).not.toHaveBeenCalled();
 				expect( receiveMedia ).not.toHaveBeenCalled();
 				expect( failMediaItemRequest ).toHaveBeenCalledWith( siteId, transientId, error );
+			} );
+
+			describe( 'flux adaptation', () => {
+				it( 'should dispatch flux create and error actions', async () => {
+					const error = new Error( 'mock error' );
+					fileUploader.mockRejectedValueOnce( error );
+
+					const fluxCreateMediaItem = jest.spyOn( utils, 'dispatchFluxCreateMediaItem' );
+					const fluxReceiveMediaItemError = jest.spyOn(
+						utils,
+						'dispatchFluxReceiveMediaItemError'
+					);
+
+					await expect( addMedia( site, file, transientDate ) ).rejects.toBe( error );
+
+					expect( fluxCreateMediaItem ).toHaveBeenCalledWith(
+						{ ...file, date: transientDate },
+						site
+					);
+					expect( fluxReceiveMediaItemError ).toHaveBeenCalledWith( transientId, siteId, error );
+				} );
 			} );
 		} );
 	} );
