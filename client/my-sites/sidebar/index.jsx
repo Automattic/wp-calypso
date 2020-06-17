@@ -34,6 +34,7 @@ import ToolsMenu from './tools-menu';
 import isCurrentPlanPaid from 'state/sites/selectors/is-current-plan-paid';
 import { siteHasJetpackProductPurchase } from 'state/purchases/selectors';
 import { isFreeTrial, isEcommerce } from 'lib/products-values';
+import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
@@ -276,7 +277,14 @@ export class MySitesSidebar extends Component {
 	};
 
 	activity() {
-		const { siteId, canUserViewActivity, path, translate, siteSuffix } = this.props;
+		const {
+			siteId,
+			canUserViewActivity,
+			shouldRenderJetpackSection,
+			path,
+			translate,
+			siteSuffix,
+		} = this.props;
 
 		if ( ! siteId ) {
 			return null;
@@ -292,7 +300,7 @@ export class MySitesSidebar extends Component {
 
 		// When the new Jetpack section is active,
 		// Activity Log goes there instead of here
-		if ( isEnabled( 'jetpack/features-section' ) ) {
+		if ( shouldRenderJetpackSection ) {
 			return null;
 		}
 
@@ -524,6 +532,7 @@ export class MySitesSidebar extends Component {
 			isAtomicSite,
 			isJetpack,
 			isVip,
+			shouldRenderJetpackSection,
 			path,
 			site,
 			translate,
@@ -566,7 +575,7 @@ export class MySitesSidebar extends Component {
 		const displayPlanName = ! isJetpack || isAtomicSite || isVip;
 
 		let icon = <JetpackLogo size={ 24 } className="sidebar__menu-icon" />;
-		if ( isEnabled( 'jetpack/features-section' ) ) {
+		if ( shouldRenderJetpackSection ) {
 			icon = (
 				<Gridicon
 					icon={ hasPaidJetpackPlan || hasPurchasedJetpackProduct ? 'star' : 'star-outline' }
@@ -876,7 +885,7 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
-				{ isEnabled( 'jetpack/features-section' ) && this.jetpack() }
+				{ this.props.shouldRenderJetpackSection && this.jetpack() }
 
 				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
 
@@ -994,6 +1003,7 @@ function mapStateToProps( state ) {
 		hasPurchasedJetpackProduct: siteHasJetpackProductPurchase( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
+		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),
 		isSiteSectionOpen,
 		isDesignSectionOpen,
 		isToolsSectionOpen,

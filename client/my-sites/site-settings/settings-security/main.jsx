@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import FormSecurity from 'my-sites/site-settings/form-security';
@@ -34,6 +34,7 @@ const SiteSettingsSecurity = ( {
 	site,
 	siteId,
 	siteIsJetpack,
+	shouldLinkJetpackSettings,
 	translate,
 } ) => {
 	if ( ! siteIsJetpack ) {
@@ -57,8 +58,7 @@ const SiteSettingsSecurity = ( {
 
 	// If Jetpack section is enabled, we no longer display the credentials here, instead we
 	// display a Banner with a CTA that points to their new location (Settings > Jetpack).
-	const isJetpackSectionEnabled = config.isEnabled( 'jetpack/features-section' );
-	const showCredentials = ( isRewindActive || hasScanProduct ) && ! isJetpackSectionEnabled;
+	const showCredentials = ( isRewindActive || hasScanProduct ) && ! shouldLinkJetpackSettings;
 
 	return (
 		<Main className="settings-security site-settings">
@@ -74,7 +74,7 @@ const SiteSettingsSecurity = ( {
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
-			{ isJetpackSectionEnabled && (
+			{ shouldLinkJetpackSettings && (
 				<Banner
 					callToAction="Take me there!"
 					title={ translate( 'Looking for Jetpack backups and security scans settings?' ) }
@@ -100,6 +100,7 @@ SiteSettingsSecurity.propTypes = {
 	site: PropTypes.object,
 	siteId: PropTypes.number,
 	siteIsJetpack: PropTypes.bool,
+	shouldLinkJetpackSettings: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
@@ -114,5 +115,6 @@ export default connect( ( state ) => {
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),
+		shouldLinkJetpackSettings: isJetpackSectionEnabledForSite( state, siteId ),
 	};
 } )( localize( SiteSettingsSecurity ) );

@@ -5,6 +5,7 @@
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -16,6 +17,7 @@ import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
 import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
+import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 
 /**
  * Image dependencies
@@ -38,6 +40,10 @@ const BusinessPlanDetails = ( {
 	purchases,
 	displayMode,
 } ) => {
+	const shouldPromoteJetpack = useSelector( ( state ) =>
+		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
+	);
+
 	const plan = find( sitePlans.data, isBusiness );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 	const whiteGloveQuickStartDescription =
@@ -51,7 +57,7 @@ const BusinessPlanDetails = ( {
 		<div>
 			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 
-			{ isEnabled( 'jetpack/features-section' ) && (
+			{ shouldPromoteJetpack && (
 				<>
 					<PurchaseDetail
 						icon={ <img alt="" src={ jetpackBackupImage } /> }

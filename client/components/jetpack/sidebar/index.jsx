@@ -22,8 +22,8 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
 
-// To be removed after jetpack/features-section flag is permanently enabled
-import { isEnabled } from 'config';
+// To be removed after jetpack/features-section flags are permanently enabled
+import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import { backupMainPath, backupActivityPath } from 'my-sites/backup/paths';
@@ -66,7 +66,7 @@ class JetpackCloudSidebar extends Component {
 		window.scrollTo( 0, 0 );
 	} );
 
-	// To be removed after jetpack/features-section flag is permanently enabled
+	// To be removed after jetpack/features-section flags are permanently enabled
 	/**
 	 * Check if a menu item is selected.
 	 *
@@ -82,7 +82,7 @@ class JetpackCloudSidebar extends Component {
 	// End to-be-removed
 
 	sidebarItems() {
-		if ( isEnabled( 'jetpack/features-section' ) ) {
+		if ( this.props.shouldShowJetpackSection ) {
 			return (
 				<SidebarMenu>
 					<JetpackCloudSidebarMenuItems path={ this.props.path } />
@@ -90,8 +90,8 @@ class JetpackCloudSidebar extends Component {
 			);
 		}
 
-		// To be removed after jetpack/features-section flag
-		// is permanently enabled: here thru end of method
+		// To be removed after jetpack/features-section flags
+		// are permanently enabled: here thru end of method
 		const { selectedSiteSlug, translate, threats, siteId, scanProgress } = this.props;
 		const numberOfThreatsFound = threats.length;
 
@@ -239,7 +239,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const jetpackAdminUrl = getJetpackAdminUrl( state, siteId );
 
-		// To be removed after jetpack/features-section flag is permanently enabled
+		// To be removed after jetpack/features-section flags are permanently enabled
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
 		const threats = getSiteScanThreats( state, siteId );
@@ -250,18 +250,19 @@ export default connect(
 			jetpackAdminUrl,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 
-			// To be removed after jetpack/features-section flag is permanently enabled
+			// To be removed after jetpack/features-section flags are permanently enabled
 			siteId,
 			isBackupSectionOpen,
 			isScanSectionOpen,
 			threats,
 			scanProgress,
+			shouldShowJetpackSection: isJetpackSectionEnabledForSite( state, siteId ),
 		};
 	},
 	{
 		dispatchRecordTracksEvent: recordTracksEvent,
 
-		// To be removed after jetpack/features-section flag is permanently enabled
+		// To be removed after jetpack/features-section flags are permanently enabled
 		expandSection,
 		toggleSection,
 	}
