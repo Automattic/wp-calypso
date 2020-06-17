@@ -55,11 +55,13 @@ export const desktopMiddleware = () => {
 			case EDITOR_VIEW_POST_CLICKED: {
 				debug( 'Dispatching window event for action type: ', action.type );
 				const { url } = action;
-				window.dispatchEvent.CustomEvent( NOTIFY_DESKTOP_VIEW_POST_CLICKED, {
-					detail: {
-						url,
-					},
-				} );
+				window.dispatchEvent(
+					new window.CustomEvent( NOTIFY_DESKTOP_VIEW_POST_CLICKED, {
+						detail: {
+							url,
+						},
+					} )
+				);
 				return next( action );
 			}
 
