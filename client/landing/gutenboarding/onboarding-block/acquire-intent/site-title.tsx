@@ -44,7 +44,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	return (
 		<form
-			className={ classnames( 'site-title', { 'is-touched': isTouched, 'is-empty': ! siteTitle } ) }
+			className={ classnames( 'site-title', { 'is-touched': isTouched } ) }
 			onSubmit={ handleFormSubmit }
 		>
 			<label htmlFor="site-title__input" className="site-title__input-label">

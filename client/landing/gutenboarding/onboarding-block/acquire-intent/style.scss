@@ -72,14 +72,9 @@
 	opacity: 0;
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
-	.site-title.is-touched.is-empty & {
+	.site-title.is-touched & {
 		opacity: 1;
 		transition-delay: 3s;
-	}
-
-	.site-title:not( .is-empty ) & {
-		opacity: 0;
-		transition-delay: 1s;
 	}
 
 	svg {
