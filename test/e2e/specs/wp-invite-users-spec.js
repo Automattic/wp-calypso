@@ -49,7 +49,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Inviting new user as an Editor: @parallel @jetpack', function () {
-		const newUserName = 'e2eflowtestingeditor' + new Date().getTime().toString();
+		const newUserName = 'e2eflowtestingeditora' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 
@@ -160,7 +160,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 	} );
 
 	describe( 'Inviting new user as an Editor and revoke invite: @parallel @jetpack', function () {
-		const newUserName = 'e2eflowtestingeditor' + new Date().getTime().toString();
+		const newUserName = 'e2eflowtestingeditorb' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 
