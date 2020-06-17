@@ -21,13 +21,15 @@ import {
 } from 'my-sites/scan/controller';
 import WPCOMScanUpsellPage from 'my-sites/scan/wpcom-upsell';
 import WPCOMBusinessAT from 'components/jetpack/wpcom-business-at';
+import getIsSiteWPCOM from 'state/selectors/is-site-wpcom';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const showJetpackSection = isJetpackSectionEnabledForSite( state, siteId );
+	const isWPCOMSite = getIsSiteWPCOM( state, siteId );
 
-	if ( ! isJetpackCloud() && ! showJetpackSection ) {
+	if ( isWPCOMSite || ( ! isJetpackCloud() && ! showJetpackSection ) ) {
 		return notFound( context, next );
 	}
 

@@ -16,8 +16,7 @@ import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
 import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
-import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
-import isWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import getIsSiteWPCOM from 'state/selectors/is-site-wpcom';
 import QueryScanState from 'components/data/query-jetpack-scan';
 import ScanBadge from 'components/jetpack/scan-badge';
 import SidebarItem from 'layout/sidebar/item';
@@ -28,12 +27,9 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 
-	const isAtomic = useSelector( ( state ) => isWpcomAtomic( state, siteId ) );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
 	const scanThreats = useSelector( ( state ) => getSiteScanThreats( state, siteId ) );
-
-	const isWPCOM = ! isJetpack || isAtomic;
 
 	const onNavigate = ( event ) => () => {
 		dispatch( recordTracksEvent( event ) );
