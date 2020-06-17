@@ -18,10 +18,18 @@ import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
-import { EligibilityData, getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import {
+	getAutomatedTransferStatus,
+	isEligibleForAutomatedTransfer,
+	getEligibility,
+	EligibilityData,
+} from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
+import QueryAutomatedTransferEligibility from 'components/data/query-atat-eligibility';
+import HoldList from 'blocks/eligibility-warnings/hold-list';
+import WarningList from 'blocks/eligibility-warnings/warning-list';
 
 /**
  * Style dependencies
@@ -96,7 +104,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 	const initiateAT = React.useCallback( () => {
-		dispatch( initiateThemeTransfer( siteId, null, null ) );
+		siteId && dispatch( initiateThemeTransfer( siteId, null, '' ) );
 	}, [ dispatch, siteId ] );
 	const eventName =
 		product === 'backup'
@@ -104,12 +112,18 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
 
+	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
+	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
+		getEligibility( state, siteId )
+	);
+	const cannotTransfer = ( eligibilityHolds && !! eligibilityHolds.length ) || ! isEligible;
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
 
 	return (
 		<Main className="wpcom-business-at">
+			<QueryAutomatedTransferEligibility siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
 			<SidebarNavigation />
 			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Automated Transfer" />
@@ -120,18 +134,29 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				headerText={ content.header }
 				align="left"
 			/>
+			{ cannotTransfer && (
+				<HoldList
+					context=""
+					holds={ eligibilityHolds || [] }
+					isPlaceholder={ null === eligibilityHolds }
+				/>
+			) }
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }
 				isPrimary
 			>
 				<p>{ content.primaryPromo.content }</p>
+				{ eligibilityWarnings && eligibilityWarnings.length && (
+					<WarningList context="" warnings={ eligibilityWarnings } />
+				) }
 				<div className="wpcom-business-at__cta">
 					<SpinnerButton
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
 						loading={ automatedTransferStatus === transferStates.START }
 						onClick={ trackInitiateAT }
+						disabled={ cannotTransfer }
 					/>
 				</div>
 			</PromoCard>
