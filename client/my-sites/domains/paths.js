@@ -3,6 +3,7 @@
  */
 import { filter, startsWith } from 'lodash';
 import { stringify } from 'qs';
+import { isUnderEmailManagementAll } from 'my-sites/email/paths';
 
 function resolveRootPath( relativeTo = null ) {
 	if ( relativeTo ) {
@@ -10,7 +11,7 @@ function resolveRootPath( relativeTo = null ) {
 			return domainManagementAllRoot();
 		}
 
-		if ( relativeTo.startsWith( domainManagementAllRoot() + '/' ) ) {
+		if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
 			return domainManagementAllRoot();
 		}
 	}
@@ -46,7 +47,7 @@ function domainManagementTransferBase(
 }
 
 export function isUnderDomainManagementAll( path ) {
-	return path.startsWith( domainManagementAllRoot() + '/' );
+	return path && path.startsWith( domainManagementAllRoot() + '/' );
 }
 
 export function domainAddNew( siteName, searchTerm ) {

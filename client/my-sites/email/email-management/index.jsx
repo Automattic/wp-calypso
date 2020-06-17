@@ -53,6 +53,7 @@ import './style.scss';
  * Image dependencies
  */
 import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
+import getCurrentRoute from '../../../state/selectors/get-current-route';
 
 class EmailManagement extends React.Component {
 	static propTypes = {
@@ -260,10 +261,10 @@ class EmailManagement extends React.Component {
 	}
 
 	goToEditOrList = () => {
-		const { selectedDomainName, selectedSiteSlug } = this.props;
+		const { selectedDomainName, selectedSiteSlug, currentRoute } = this.props;
 
 		if ( selectedDomainName ) {
-			page( domainManagementEdit( selectedSiteSlug, selectedDomainName ) );
+			page( domainManagementEdit( selectedSiteSlug, selectedDomainName, currentRoute ) );
 		} else {
 			page( domainManagementList( selectedSiteSlug ) );
 		}
@@ -273,6 +274,7 @@ class EmailManagement extends React.Component {
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
+		currentRoute: getCurrentRoute( state ),
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
