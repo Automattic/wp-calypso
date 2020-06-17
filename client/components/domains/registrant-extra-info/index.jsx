@@ -26,7 +26,7 @@ const tldSpecificForms = {
 	uk,
 };
 
-export const getApplicableAdditionalDetailsForms = ( tlds ) => {
+export const getApplicableTldsWithAdditionalDetailsForms = ( tlds ) => {
 	const topLevelTlds = tlds.map( getTopLevelOfTld );
 	return filter( keys( tldSpecificForms ), ( tldFormName ) => {
 		return (

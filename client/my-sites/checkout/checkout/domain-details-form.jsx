@@ -21,7 +21,7 @@ import wp from 'lib/wp';
 import config from 'config';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 import ExtraInfoForm, {
-	getApplicableAdditionalDetailsForms,
+	getApplicableTldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
 import { setDomainDetails } from 'lib/transaction/actions';
 import { addGoogleAppsRegistrationData } from 'lib/cart/actions';
@@ -156,7 +156,7 @@ export class DomainDetailsForm extends PureComponent {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
-		return getApplicableAdditionalDetailsForms( getTlds( this.props.cart ) );
+		return getApplicableTldsWithAdditionalDetailsForms( getTlds( this.props.cart ) );
 	}
 
 	needsFax() {
@@ -237,7 +237,7 @@ export class DomainDetailsForm extends PureComponent {
 
 	renderCurrentForm() {
 		const { currentStep } = this.state;
-		return ! isEmpty( getApplicableAdditionalDetailsForms( [ currentStep ] ) )
+		return ! isEmpty( getApplicableTldsWithAdditionalDetailsForms( [ currentStep ] ) )
 			? this.renderExtraDetailsForm( this.state.currentStep )
 			: this.renderDetailsForm();
 	}
