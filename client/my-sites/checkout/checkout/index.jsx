@@ -463,6 +463,8 @@ export class Checkout extends React.Component {
 			if ( 'variantShowPlanBump' === abtest( 'showBusinessPlanBump' ) ) {
 				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/business/${ receiptId }`;
 			}
+
+			return `/checkout/offer-quickstart-session/${ receiptId }/${ selectedSiteSlug }`;
 		}
 
 		return;
