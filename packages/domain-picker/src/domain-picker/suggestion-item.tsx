@@ -83,11 +83,10 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				) : (
 					<>
 						<span className="domain-picker__price-long">
-							Included in paid plan,{ ' ' }
 							<span className="domain-picker__price-cost">
 								{
 									/* translators: %s is the price with currency. Eg: $15/year. */
-									sprintf( __( '%s/year' ), suggestion.cost )
+									sprintf( __( 'Included in paid plan, %s/year' ), suggestion.cost )
 								}
 							</span>
 						</span>
