@@ -315,3 +315,11 @@ function load_donations() {
 	require_once __DIR__ . '/donations/donations.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_donations' );
+
+/**
+ * Load welcome tour
+ */
+function load_welcome_tour() {
+	require_once __DIR__ . '/welcome-tour/class-welcome-tour.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_welcome_tour' );

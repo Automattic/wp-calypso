@@ -23037,6 +23037,15 @@ shellwords@^0.1.1:
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
+shepherd.js@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/shepherd.js/-/shepherd.js-8.0.1.tgz#b105d80414c7018e527beedf6bb7629bf77a613d"
+  integrity sha512-sTVFHuf6cf7NXYzF3PFyrIKvpetItSTdVcjOQcnjMiWBL/+sjeBZb/YXrpCa9QxubERm8qyZLCgs800TmDhjeQ==
+  dependencies:
+    "@popperjs/core" "^2.4.0"
+    deepmerge "^4.2.2"
+    smoothscroll-polyfill "^0.4.4"
+
 showdown@^1.9.1:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/showdown/-/showdown-1.9.1.tgz#134e148e75cd4623e09c21b0511977d79b5ad0ef"
@@ -23186,6 +23195,11 @@ smart-buffer@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/smart-buffer/-/smart-buffer-4.1.0.tgz#91605c25d91652f4661ea69ccf45f1b331ca21ba"
   integrity sha512-iVICrxOzCynf/SNaBQCw34eM9jROU/s5rzIhpOvzhzuYHfJR/DhZfDkXiZSgKXfgv26HT3Yni3AV/DGw0cGnnw==
+
+smoothscroll-polyfill@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/smoothscroll-polyfill/-/smoothscroll-polyfill-0.4.4.tgz#3a259131dc6930e6ca80003e1cb03b603b69abf8"
+  integrity sha512-TK5ZA9U5RqCwMpfoMq/l1mrH0JAR7y7KRvOBx0n2869aLxch+gT9GhN3yUfjiw+d/DiF1mKo14+hd62JyMmoBg==
 
 snake-case@^2.1.0:
   version "2.1.0"
