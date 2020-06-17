@@ -183,6 +183,7 @@ export function generateSteps( {
 						},
 					}
 				),
+				footerLoginText: 'Already have an account? Log in',
 				socialGoogleLabel: 'Google',
 				socialAppleLabel: 'Apple',
 			},
