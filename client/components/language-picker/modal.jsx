@@ -32,12 +32,11 @@ import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
-import Gridicon from 'components/gridicon';
+import LanguagePickerItemTooltip from './tooltip';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { isDefaultLocale, isMagnificentLocale } from 'lib/i18n-utils/utils';
 
 /**
  * Style dependencies
@@ -436,21 +435,10 @@ export class LanguagePickerModal extends PureComponent {
 			>
 				<span className={ classes } lang={ language.langSlug }>
 					{ language.name }
-					{ this.renderLanguageItemDetails( language.langSlug ) }
+
+					<LanguagePickerItemTooltip langSlug={ language.langSlug } />
 				</span>
 			</div>
-		);
-	};
-
-	renderLanguageItemDetails = ( langSlug ) => {
-		if ( isDefaultLocale( langSlug ) || isMagnificentLocale( langSlug ) ) {
-			return null;
-		}
-
-		return (
-			<i className="language-picker__modal-tooltip">
-				<Gridicon icon="notice-outline" size={ 12 } />
-			</i>
 		);
 	};
 

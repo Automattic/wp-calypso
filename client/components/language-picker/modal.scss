@@ -62,11 +62,24 @@
 	}
 }
 
-.language-picker__modal-tooltip {
+.language-picker__modal-notice {
 	display: inline;
 	vertical-align: middle;
-	margin-left: 4px;
-	opacity: 0.5;
+	margin: -4px 0 -4px 4px;
+	color: var( --color-warning );
+	line-height: 1;
+	visibility: hidden;
+
+	.language-picker__modal-item:hover &,
+	.language-picker__modal-item:focus &,
+	.is-selected & {
+		color: var( --color-warning-light );
+		visibility: visible;
+	}
+}
+
+.language-picker__modal-tooltip {
+	z-index: z-index( 'root', 'popover.is-dialog-visible' );
 }
 
 .language-picker__modal-list {
