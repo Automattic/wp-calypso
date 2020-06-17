@@ -609,7 +609,6 @@ function openLinksInParentFrame( calypsoPort ) {
 	].join( ',' );
 	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
-		debug( 'View Post clicked, posting message over Calypso port...' );
 		calypsoPort.postMessage( {
 			action: 'viewPost',
 			payload: { postUrl: e.target.href },

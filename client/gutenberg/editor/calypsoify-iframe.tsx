@@ -278,7 +278,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		}
 
 		if ( EditorActions.ViewPost === action ) {
-			debugger; // eslint-disable-line no-debugger
 			const { postUrl } = payload;
 			config.isEnabled( 'desktop' )
 				? this.props.notifyDesktopViewPostClicked( postUrl )
