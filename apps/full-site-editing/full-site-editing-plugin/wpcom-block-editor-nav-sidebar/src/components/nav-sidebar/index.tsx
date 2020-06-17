@@ -35,13 +35,15 @@ const Button = ( {
 );
 
 export default function WpcomBlockEditorNavSidebar() {
-	const [ items, isOpen, postType ] = useSelect( ( select ) => {
+	const [ items, isOpen, postType, selectedItemId, statusLabels ] = useSelect( ( select ) => {
 		const { getPostType } = select( 'core' ) as any;
 
 		return [
 			selectNavItems( select ),
 			select( STORE_KEY ).isSidebarOpened(),
 			getPostType( select( 'core/editor' ).getCurrentPostType() ),
+			select( 'core/editor' ).getCurrentPostId(),
+			selectPostStatusLabels( select ),
 		];
 	} );
 
@@ -118,7 +120,12 @@ export default function WpcomBlockEditorNavSidebar() {
 			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__controls">
 				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
 					{ items.map( ( item ) => (
-						<NavItem key={ item.id } item={ item } />
+						<NavItem
+							key={ item.id }
+							item={ item }
+							selected={ item.id === selectedItemId }
+							statusLabel={ statusLabels[ item.status ] }
+						/>
 					) ) }
 				</ul>
 				<CreatePage postType={ postType } />
@@ -130,23 +137,81 @@ export default function WpcomBlockEditorNavSidebar() {
 
 interface NavItemProps {
 	item: Post;
+	selected: boolean;
+	statusLabel?: string;
 }
 
-function NavItem( { item }: NavItemProps ) {
+function NavItem( { item, selected, statusLabel }: NavItemProps ) {
+	const buttonClasses = classNames( 'wpcom-block-editor-nav-sidebar__item-button', {
+		'is-selected': selected,
+	} );
+
+	const titleClasses = classNames( 'wpcom-block-editor-nav-sidebar__title', {
+		'is-untitled': ! item.title?.raw,
+	} );
+
 	return (
 		<li>
-			<div>{ item.title.rendered }</div>
-			<pre>{ `/${ item.slug }/` }</pre>
+			<Button className={ buttonClasses }>
+				<div className="wpcom-block-editor-nav-sidebar__title-container">
+					<div className={ titleClasses }>
+						{ item.title?.raw || __( 'Untitled', 'full-site-editing' ) }
+					</div>
+					{ item.slug && (
+						<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
+					) }
+				</div>
+				{ statusLabel && (
+					<div className="wpcom-block-editor-nav-sidebar__label">{ statusLabel }</div>
+				) }
+			</Button>
 		</li>
 	);
 }
 
 export function selectNavItems( select: typeof import('@wordpress/data').select ): Post[] {
-	const currentPostType = select( 'core/editor' ).getCurrentPostType();
+	const { isEditedPostNew, getCurrentPostId, getCurrentPostType, getEditedPostAttribute } = select(
+		'core/editor'
+	);
 
-	const items = select( 'core' ).getEntityRecords( 'postType', currentPostType, {
-		_fields: 'id,slug,status,title',
-	} );
+	const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
+	if ( ! statuses ) {
+		return [];
+	}
 
-	return ( items as any ) || [];
+	const statusFilter = statuses
+		.filter( ( { show_in_list } ) => show_in_list )
+		.map( ( { slug } ) => slug )
+		.join( ',' );
+
+	const currentPostId = getCurrentPostId();
+	const currentPostType = getCurrentPostType();
+
+	const items =
+		select( 'core' ).getEntityRecords( 'postType', currentPostType, {
+			_fields: 'id,slug,status,title',
+			exclude: [ currentPostId ],
+			orderby: 'modified',
+			per_page: 10,
+			status: statusFilter,
+		} ) || [];
+
+	const currentPost = {
+		id: currentPostId,
+		slug: getEditedPostAttribute( 'slug' ),
+		status: isEditedPostNew() ? 'draft' : getEditedPostAttribute( 'status' ),
+		title: { raw: getEditedPostAttribute( 'title' ), rendered: '' },
+	};
+
+	return [ currentPost, ...items ] as any;
+}
+
+export function selectPostStatusLabels(
+	select: typeof import('@wordpress/data').select
+): Record< string, string > {
+	const items = select( 'core' ).getEntityRecords( 'root', 'status' );
+	return ( items || [] ).reduce(
+		( acc, { name, slug } ) => ( slug === 'publish' ? acc : { ...acc, [ slug ]: name } ),
+		{}
+	);
 }
