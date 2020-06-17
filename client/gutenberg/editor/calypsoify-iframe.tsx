@@ -142,7 +142,6 @@ class CalypsoifyIframe extends Component<
 			if ( this.props.shouldLoadIframe ) {
 				clearInterval( this.waitForIframeToInit );
 				this.waitForIframeToLoad = setTimeout( () => {
-					console.log('I am so sick of waiting dude!');
 					window.location.replace( this.props.iframeUrl );
 				}, 6000 ); // One second longer than we give the iframe to load
 			}
