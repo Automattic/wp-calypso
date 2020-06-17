@@ -23,6 +23,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { __ } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
+	const [ isFocused, setIsFocused ] = React.useState( false );
 
 	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		// hitting 'Enter' when focused on the input field should direct to next step.
@@ -32,13 +33,21 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	const handleBlur = () => {
 		recordSiteTitleSelection( !! siteTitle );
+		setIsFocused( false );
+	};
+
+	const handleFocus = () => {
+		setIsFocused( true );
 	};
 
 	// translators: label for site title input in Gutenboarding
 	const inputLabel = __( 'My site is called' );
 
 	return (
-		<form className="site-title" onSubmit={ handleFormSubmit }>
+		<form
+			className={ classnames( 'site-title', { 'is-focused': isFocused, 'is-empty': ! siteTitle } ) }
+			onSubmit={ handleFormSubmit }
+		>
 			<label htmlFor="site-title__input" className="site-title__input-label">
 				{ inputLabel }
 			</label>
@@ -47,6 +56,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 					id="site-title__input"
 					className="site-title__input"
 					onChange={ setSiteTitle }
+					onFocus={ handleFocus }
 					onBlur={ handleBlur }
 					value={ siteTitle }
 					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
@@ -54,8 +64,8 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 					autoComplete="off"
 					autoCorrect="off"
 					data-hj-whitelist
-				/>
-				<p className={ classnames( 'site-title__input-hint', { 'has-site-title': !! siteTitle } ) }>
+				></TextControl>
+				<p className="site-title__input-hint">
 					<Icon icon={ tip } size={ 14 } />
 					{ /* translators: The "it" here refers to the site title. */ }
 					<span>{ __( "Don't worry, you can change it later." ) }</span>
