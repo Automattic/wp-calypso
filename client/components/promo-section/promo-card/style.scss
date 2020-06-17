@@ -35,6 +35,7 @@
 		align-items: center;
 
 		.action-panel__title {
+			@extend .wp-brand-font;
 			font-size: 20px;
 			line-height: 28px;
 			margin-bottom: 0;
