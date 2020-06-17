@@ -10,7 +10,6 @@ import {
 import { combineReducers, withoutPersistence } from 'state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
-import comments from './comments/reducer';
 import guidedTour from './guided-tours/reducer';
 import editorDeprecationDialog from './editor-deprecation-dialog/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
@@ -94,7 +93,6 @@ export const isNotificationsOpen = function ( state = false, { type } ) {
 const reducer = combineReducers( {
 	actionLog,
 	checkout,
-	comments,
 	editorDeprecationDialog,
 	guidedTour,
 	gutenbergOptInDialog,

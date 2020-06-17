@@ -4,8 +4,8 @@
 import { includes } from 'lodash';
 
 /**
- * Creates a filters key to be used in the `ui.comments.queries` state.
- * E.g. `ui.comments.queries.${ siteId }.${ postId }.${ 'approved?s=foo' }.${ page }`
+ * Creates a filters key to be used in the `comments.ui.queries` state.
+ * E.g. `comments.ui.queries.${ siteId }.${ postId }.${ 'approved?s=foo' }.${ page }`
  *
  * @param {object} query Filter parameters.
  * @param {string} [query.order] Query order ('ASC' or 'DESC').
@@ -18,6 +18,6 @@ export const getFiltersKey = ( { order = 'DESC', search, status = 'all' } ) => {
 	const orderFilter = includes( [ 'ASC', 'DESC' ], caseInsensitiveOrder )
 		? caseInsensitiveOrder
 		: 'DESC';
-	const searchFilter = !! search ? `&s=${ search }` : '';
+	const searchFilter = search ? `&s=${ search }` : '';
 	return `${ status }?order=${ orderFilter }${ searchFilter }`;
 };

@@ -31,7 +31,7 @@ import {
 	requestComment as requestCommentAction,
 	requestCommentsList,
 } from 'state/comments/actions';
-import { updateCommentsQuery } from 'state/ui/comments/actions';
+import { updateCommentsQuery } from 'state/comments/ui/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
