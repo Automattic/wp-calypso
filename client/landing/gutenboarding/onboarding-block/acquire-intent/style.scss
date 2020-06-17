@@ -65,14 +65,14 @@
 
 .site-title__input-hint {
 	display: flex;
-	color: var( --studio-gray-20 );
+	color: var( --studio-gray-50 );
 	font-family: $default-font;
-	font-size: $default-font-size;
+	font-size: 14px;
 	line-height: 14px;
 	opacity: 0;
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
-	.site-title.is-focused.is-empty & {
+	.site-title.is-touched.is-empty & {
 		opacity: 1;
 		transition-delay: 3s;
 	}
@@ -83,10 +83,9 @@
 	}
 
 	svg {
-		align-self: center;
 		fill: var( --studio-yellow-30 );
-		flex-shrink: 0;
 		margin-right: $grid-unit-10;
+		margin-top: -2px;
 	}
 }
 

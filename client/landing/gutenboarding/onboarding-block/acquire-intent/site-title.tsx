@@ -23,7 +23,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { __ } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
-	const [ isFocused, setIsFocused ] = React.useState( false );
+	const [ isTouched, setIsTouched ] = React.useState( false );
 
 	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		// hitting 'Enter' when focused on the input field should direct to next step.
@@ -33,11 +33,10 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	const handleBlur = () => {
 		recordSiteTitleSelection( !! siteTitle );
-		setIsFocused( false );
 	};
 
 	const handleFocus = () => {
-		setIsFocused( true );
+		setIsTouched( true );
 	};
 
 	// translators: label for site title input in Gutenboarding
@@ -45,7 +44,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	return (
 		<form
-			className={ classnames( 'site-title', { 'is-focused': isFocused, 'is-empty': ! siteTitle } ) }
+			className={ classnames( 'site-title', { 'is-touched': isTouched, 'is-empty': ! siteTitle } ) }
 			onSubmit={ handleFormSubmit }
 		>
 			<label htmlFor="site-title__input" className="site-title__input-label">
@@ -66,7 +65,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 					data-hj-whitelist
 				></TextControl>
 				<p className="site-title__input-hint">
-					<Icon icon={ tip } size={ 14 } />
+					<Icon icon={ tip } size={ 18 } />
 					{ /* translators: The "it" here refers to the site title. */ }
 					<span>{ __( "Don't worry, you can change it later." ) }</span>
 				</p>
