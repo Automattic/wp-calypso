@@ -23,7 +23,7 @@ import {
 	showUpsellIfNoBackup,
 } from 'my-sites/backup/controller';
 import WPCOMUpsellPage from 'my-sites/backup/wpcom-upsell';
-
+import WPCOMBusinessAT from 'components/jetpack/wpcom-business-at';
 import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 const notFoundIfNotEnabled = ( context, next ) => {
@@ -50,7 +50,6 @@ export default function () {
 		backupActivity,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
-		wpcomUpsellController( WPCOMUpsellPage ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -63,7 +62,7 @@ export default function () {
 		navigation,
 		backupDownload,
 		wrapInSiteOffsetProvider,
-		wpcomUpsellController( WPCOMUpsellPage ),
+		wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -77,7 +76,7 @@ export default function () {
 			navigation,
 			backupRestore,
 			wrapInSiteOffsetProvider,
-			wpcomUpsellController( WPCOMUpsellPage ),
+			wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
 			notFoundIfNotEnabled,
 			makeLayout,
 			clientRender
@@ -92,7 +91,7 @@ export default function () {
 		backups,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
-		wpcomUpsellController( WPCOMUpsellPage ),
+		wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender

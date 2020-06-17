@@ -20,6 +20,7 @@ import {
 	scanHistory,
 } from 'my-sites/scan/controller';
 import WPCOMScanUpsellPage from 'my-sites/scan/wpcom-upsell';
+import WPCOMBusinessAT from 'components/jetpack/wpcom-business-at';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
@@ -42,7 +43,7 @@ export default function () {
 		scan,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
+		wpcomUpsellController( WPCOMScanUpsellPage, WPCOMBusinessAT ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -55,7 +56,7 @@ export default function () {
 		scanHistory,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScanHistory,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
+		wpcomUpsellController( WPCOMScanUpsellPage, WPCOMBusinessAT ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -68,7 +69,7 @@ export default function () {
 		scan,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
+		wpcomUpsellController( WPCOMScanUpsellPage, WPCOMBusinessAT ),
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
