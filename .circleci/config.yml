@@ -183,7 +183,7 @@ commands:
       - run: *setup-results-and-artifacts
       - attach_workspace:
           at: '~'
-      - run: *yarn-install
+      - run: *update-node
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -203,12 +203,11 @@ jobs:
       - checkout
       - run: *update-git-master
       - save_cache: *save-git-cache
-      - run: *yarn-install
+      - run: *update-node
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
       - save_cache: *save-yarn-cache
-      - run: yarn run build-packages
       - persist_to_workspace:
           root: '~'
           paths:
