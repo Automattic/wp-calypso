@@ -41,6 +41,13 @@ class InlineHelpComponent extends AsyncBaseContainer {
 		return await this.driver.findElement( By.css( '.inline-help__popover' ) );
 	}
 
+	async isRequestingSearchResults() {
+		return await driverHelper.isElementPresent(
+			this.driver,
+			By.css( '.inline-help__results-placeholder' )
+		);
+	}
+
 	async toggleOpen() {
 		await this.isToggleVisible();
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.inline-help__button' ) );

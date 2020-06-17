@@ -91,5 +91,22 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 				assert.equal( resultsLength, 5, 'There are no contextual results displayed.' );
 			}
 		);
+
+		step( 'Does not request search results for empty search queries', async function () {
+			const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+			await inlineHelpComponent.clearSearchField();
+
+			const emptyWhitespaceQuery = '         ';
+
+			await inlineHelpComponent.searchFor( emptyWhitespaceQuery );
+
+			const searchPerformed = await inlineHelpComponent.isRequestingSearchResults();
+
+			assert.equal(
+				searchPerformed,
+				false,
+				'A search was unexpectedly performed for an empty search query.'
+			);
+		} );
 	} );
 } );
