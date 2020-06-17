@@ -37,49 +37,47 @@ const notFoundIfNotEnabled = ( context, next ) => {
 };
 
 export default function () {
-	if ( isJetpackCloud() || isEnabled( 'jetpack/features-section' ) ) {
-		/* handles /backup/:site/download/:rewindId, see `backupDownloadPath` */
+	/* handles /backup/:site/download/:rewindId, see `backupDownloadPath` */
+	page(
+		backupDownloadPath( ':site', ':rewindId' ),
+		siteSelection,
+		navigation,
+		backupDownload,
+		wrapInSiteOffsetProvider,
+		wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
+		notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
+
+	if ( isEnabled( 'jetpack/backups-restore' ) ) {
+		/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
 		page(
-			backupDownloadPath( ':site', ':rewindId' ),
+			backupRestorePath( ':site', ':rewindId' ),
 			siteSelection,
 			navigation,
-			backupDownload,
+			backupRestore,
 			wrapInSiteOffsetProvider,
 			wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
 			notFoundIfNotEnabled,
 			makeLayout,
 			clientRender
 		);
-
-		if ( isEnabled( 'jetpack/backups-restore' ) ) {
-			/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
-			page(
-				backupRestorePath( ':site', ':rewindId' ),
-				siteSelection,
-				navigation,
-				backupRestore,
-				wrapInSiteOffsetProvider,
-				wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
-				notFoundIfNotEnabled,
-				makeLayout,
-				clientRender
-			);
-		}
-
-		/* handles /backup/:site, see `backupMainPath` */
-		page(
-			backupMainPath( ':site' ),
-			siteSelection,
-			navigation,
-			backups,
-			wrapInSiteOffsetProvider,
-			showUpsellIfNoBackup,
-			wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
-			notFoundIfNotEnabled,
-			makeLayout,
-			clientRender
-		);
-		/* handles /backups, see `backupMainPath` */
-		page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
 	}
+
+	/* handles /backup/:site, see `backupMainPath` */
+	page(
+		backupMainPath( ':site' ),
+		siteSelection,
+		navigation,
+		backups,
+		wrapInSiteOffsetProvider,
+		showUpsellIfNoBackup,
+		wpcomUpsellController( WPCOMUpsellPage, WPCOMBusinessAT ),
+		notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
+	/* handles /backups, see `backupMainPath` */
+	page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
 }
