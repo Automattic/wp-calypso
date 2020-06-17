@@ -52,7 +52,7 @@ import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
-import { requestUnseenStatusAny } from 'state/ui/reader/seen-posts/actions';
+import { requestUnseenStatusAny } from 'state/reader-ui/seen-posts/actions';
 
 const debug = debugFactory( 'calypso' );
 

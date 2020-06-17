@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	READER_SIDEBAR_LISTS_TOGGLE,
 	READER_SIDEBAR_TAGS_TOGGLE,
@@ -9,6 +8,8 @@ import {
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
 } from 'state/reader/action-types';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+
+import 'state/reader-ui/init';
 
 export function toggleReaderSidebarLists() {
 	recordAction( 'sidebar_toggle_lists_menu' );

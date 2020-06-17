@@ -27,7 +27,6 @@ import oauth2Clients from './oauth2-clients/reducer';
 import payment from './payment/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
-import reader from './reader/reducer';
 import section from './section/reducer';
 import themeSetup from './theme-setup/reducers';
 
@@ -121,7 +120,6 @@ const reducer = combineReducers( {
 	payment,
 	postTypeList,
 	preview,
-	reader,
 	section,
 	selectedSiteId,
 	siteSelectionInitialized,

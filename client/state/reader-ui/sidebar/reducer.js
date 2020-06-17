@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { xor } from 'lodash';
+
 /**
  * Internal dependencies
  */

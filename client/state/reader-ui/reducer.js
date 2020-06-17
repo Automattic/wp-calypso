@@ -1,10 +1,9 @@
 /**
  * Internal dependencies
  */
-
 import { READER_VIEW_STREAM } from 'state/reader/action-types';
 import sidebar from './sidebar/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 import cardExpansions from './card-expansions/reducer';
 import hasUnseenPosts from './seen-posts/reducer';
 
@@ -14,9 +13,11 @@ import hasUnseenPosts from './seen-posts/reducer';
 export const currentStream = ( state = null, action ) =>
 	action && action.type === READER_VIEW_STREAM ? action.streamKey : state;
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	sidebar,
 	cardExpansions,
 	currentStream,
 	hasUnseenPosts,
 } );
+
+export default withStorageKey( 'readerUi', combinedReducer );
