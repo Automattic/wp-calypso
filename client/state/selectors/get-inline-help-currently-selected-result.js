@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { get} from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import getContextualHelpResults from 'state/selectors/get-contextual-help-result
  * Returns the selected search result item
  *
  * @param  {object}  state  Global state tree
- * @returns {object}         The selected search result
+ * @returns {object}        The selected search result
  */
 export default function getInlineHelpCurrentlySelectedResult( state ) {
 	const query = getSearchQuery( state );
