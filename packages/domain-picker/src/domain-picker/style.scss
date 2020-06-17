@@ -113,7 +113,6 @@
 	flex-grow: 1;
 	margin-right: 24px;
 	letter-spacing: 0.4px;
-	// min-height: $domain-picker__suggestion-item-height;
 
 	.domain-picker__domain-name {
 		word-break: break-word; // use hyphens if any to break domain name
@@ -177,11 +176,17 @@
 	}
 }
 
-.domain-picker__price-text {
+.domain-picker__price-long {
 	display: none;
-
 	@include break-small {
 		display: inline;
+	}
+}
+
+.domain-picker__price-short {
+	display: inline;
+	@include break-small {
+		display: none;
 	}
 }
 
