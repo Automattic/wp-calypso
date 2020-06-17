@@ -24,7 +24,7 @@ type PlansSlug = Plans.PlanSlug;
 export interface Props {
 	header: React.ReactElement;
 	currentPlan?: Plans.Plan;
-	onPlanSelect?: () => void;
+	onPlanSelect?: ( plan: PlansSlug ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 }
@@ -42,7 +42,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 	const handlePlanSelect = ( plan: PlansSlug ) => {
 		setPlan( plan );
-		onPlanSelect?.();
+		onPlanSelect?.( plan );
 	};
 
 	return (
