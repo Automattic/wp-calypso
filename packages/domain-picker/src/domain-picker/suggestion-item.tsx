@@ -79,23 +79,32 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					'is-paid': ! suggestion.is_free,
 				} ) }
 			>
-				{ suggestion.is_free
-					? __( 'Free' )
-					: createInterpolateElement(
-							/* translators: An example would be "Included in paid plan, $15/year", where in mobile view it will only be "$15/year". */
-							__( '<price_text>Included in paid plan,</price_text> <price_cost></price_cost>' ),
+				{ suggestion.is_free ? (
+					__( 'Free' )
+				) : (
+					<>
+						<span className="domain-picker__price-long">
 							{
-								price_text: <span className="domain-picker__price-text"></span>,
-								price_cost: (
-									<span className="domain-picker__price-cost">
-										{
-											/* translators: %s is the price with currency. Eg: $15/year. */
-											sprintf( __( '%s/year' ), suggestion.cost )
-										}{ ' ' }
-									</span>
-								),
+								/* translators: %s is the price with currency. Eg: $15/year. */
+								createInterpolateElement(
+									sprintf(
+										__( 'Included in paid plan, <strikethrough>%s/year</strikethrough>' ),
+										suggestion.cost
+									),
+									{
+										strikethrough: <span className="domain-picker__price-cost"></span>,
+									}
+								)
 							}
-					  ) }
+						</span>
+						<span className="domain-picker__price-short domain-picker__price-cost">
+							{
+								/* translators: %s is the price with currency. Eg: $15/year. */
+								sprintf( __( '%s/year' ), suggestion.cost )
+							}
+						</span>
+					</>
+				) }
 			</div>
 			<div className="domain-picker__suggestion-item-select-button">
 				<span>{ __( 'Select' ) }</span>

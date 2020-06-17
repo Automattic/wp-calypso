@@ -176,11 +176,17 @@
 	}
 }
 
-.domain-picker__price-text {
+.domain-picker__price-long {
 	display: none;
-
 	@include break-small {
 		display: inline;
+	}
+}
+
+.domain-picker__price-short {
+	display: inline;
+	@include break-small {
+		display: none;
 	}
 }
 
