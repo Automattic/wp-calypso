@@ -69,7 +69,7 @@ export function domainManagementRoot() {
 }
 
 export function domainManagementList( siteName, relativeTo = null ) {
-	if ( relativeTo && relativeTo.startsWith( domainManagementAllRoot() + '/' ) ) {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
 		return domainManagementRoot();
 	}
 	return domainManagementRoot() + '/' + siteName;
