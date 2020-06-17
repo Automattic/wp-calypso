@@ -57,6 +57,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 				/>
 				<p className={ classnames( 'site-title__input-hint', { 'has-site-title': !! siteTitle } ) }>
 					<Icon icon={ tip } size={ 14 } />
+					{ /* translators: The "it" here refers to the site title. */ }
 					<span>{ __( "Don't worry, you can change it later." ) }</span>
 				</p>
 			</div>
