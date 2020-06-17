@@ -38,6 +38,7 @@ function Types( {
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="types__page-heading"
 				headerText={ get( postType, 'label' ) }
 				align="left"
