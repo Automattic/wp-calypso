@@ -46,7 +46,7 @@ button.action_buttons__button.components-button {
 	}
 
 	&.action-buttons__back {
-		color: var( --studio-gray-40 );
+		color: var( --studio-gray-50 );
 		white-space: nowrap;
 		min-width: 0;
 		height: auto;
@@ -56,15 +56,16 @@ button.action_buttons__button.components-button {
 		color: var( --studio-white );
 		box-shadow: 0 0 0 1px var( --studio-blue-40 );
 	}
+
 	&.action-buttons__skip {
-		color: var( --studio-gray-20 );
-		box-shadow: inset 0 0 0 1px var( --studio-gray-20 );
+		color: var( --studio-gray-50 );
+		box-shadow: inset 0 0 0 1px var( --studio-gray-50 );
 
 		&:active,
 		&:hover,
 		&:focus {
-			color: var( --studio-gray-30 );
-			box-shadow: inset 0 0 0 1px var( --studio-gray-30 );
+			color: var( --studio-gray-60 );
+			box-shadow: inset 0 0 0 1px var( --studio-gray-60 );
 		}
 	}
 
