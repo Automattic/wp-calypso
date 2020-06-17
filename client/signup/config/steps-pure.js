@@ -157,7 +157,7 @@ export function generateSteps( {
 			stepName: 'user-passwordless',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				// Flow is to be use on English locale only, no need to translate labels

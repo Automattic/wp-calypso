@@ -155,6 +155,7 @@ class PasswordlessSignupForm extends Component {
 		this.submitStep( {
 			username,
 			bearer_token: response.bearer_token,
+			marketing_price_group: response?.marketing_price_group ?? '',
 		} );
 	};
 
