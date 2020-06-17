@@ -62,7 +62,7 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 	}, [ planSlug ] );
 
 	return (
-		<Main className="scan__main scan__wpcom-upsell is-wide-layout">
+		<Main className="scan__main scan__wpcom-upsell">
 			<DocumentHead title="Scanner" />
 			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner" />

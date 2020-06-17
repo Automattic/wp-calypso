@@ -64,7 +64,7 @@ export default function WPCOMUpsellPage(): ReactElement {
 	}, [ planSlug ] );
 
 	return (
-		<Main className="backup__main backup__wpcom-upsell is-wide-layout">
+		<Main className="backup__main backup__wpcom-upsell">
 			<DocumentHead title="Jetpack Backup" />
 			<SidebarNavigation />
 			<PageViewTracker path="/backup/:site" title="Backup" />
