@@ -18,35 +18,40 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 let driver;
+let inlineHelpComponent;
 
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Accessing support search: (${ screenSize })`, function () {
+describe( `[${ host }] Accessing support search: (${ screenSize })`, async function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Inline Help FAB popover', function () {
 		step( 'Login and select a non My Home page', async function () {
 			const loginFlow = new LoginFlow( driver );
+
+			// The "inline help" FAB sholuld not appear on the My Home
+			// because there is already a support search "Card" on that
+			// page. Therefore we select the "Themes" page for our tests.
 			await loginFlow.loginAndSelectThemes();
+
+			// Initialize the helper component
+			inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 		} );
 
 		describe( 'Popover UI visibility and interactions', function () {
 			step( 'Check help toggle is visible', async function () {
-				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				await inlineHelpComponent.isToggleVisible();
 			} );
 
 			step( 'Open Inline Help popover', async function () {
-				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				await inlineHelpComponent.toggleOpen();
 				return await inlineHelpComponent.isPopoverVisible();
 			} );
 
 			step( 'Close Inline Help popover', async function () {
-				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				await inlineHelpComponent.toggleClosed();
 				const isPopoverVisible = await inlineHelpComponent.isPopoverVisible();
 				assert.equal( isPopoverVisible, false, 'Popover was not closed correctly.' );
@@ -55,18 +60,15 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 
 		describe( 'Performing searches', function () {
 			step( 'Re-open Inline Help popover', async function () {
-				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				await inlineHelpComponent.toggleOpen();
 			} );
 
 			step( 'Displays contextual search results by default', async function () {
-				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				const resultsCount = await inlineHelpComponent.getSearchResultsCount();
 				assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
 			} );
 
 			step( 'Returns search results for valid search query', async function () {
-				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				await inlineHelpComponent.searchFor( 'Podcast' );
 				const resultsCount = await inlineHelpComponent.getSearchResultsCount();
 
@@ -83,7 +85,6 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 			} );
 
 			step( 'Resets search UI to default state when search input is cleared ', async function () {
-				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				await inlineHelpComponent.clearSearchField();
 
 				// Once https://github.com/Automattic/wp-calypso/pull/43323 is merged this will work again
@@ -95,7 +96,7 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 				'Shows "No results" indicator and re-displays contextual results for search queries which return no results',
 				async function () {
 					const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
-					const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+
 					await inlineHelpComponent.searchFor( invalidSearchQueryReturningNoResults );
 					const resultsCount = await inlineHelpComponent.getSearchResultsCount();
 
@@ -108,7 +109,6 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, function ()
 			);
 
 			step( 'Does not request search results for empty search queries', async function () {
-				const inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 				await inlineHelpComponent.clearSearchField();
 
 				const emptyWhitespaceQuery = '         ';
