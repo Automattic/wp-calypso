@@ -16,6 +16,7 @@ import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
 import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
+import getIsSiteWPCOM from 'state/selectors/is-site-wpcom';
 import QueryScanState from 'components/data/query-jetpack-scan';
 import ScanBadge from 'components/jetpack/scan-badge';
 import SidebarItem from 'layout/sidebar/item';
@@ -26,6 +27,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 
+	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
 	const scanThreats = useSelector( ( state ) => getSiteScanThreats( state, siteId ) );
 
@@ -59,17 +61,19 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				selected={ currentPathMatches( backupPath( siteSlug ) ) }
 				expandSection={ expandSection }
 			/>
-			<SidebarItem
-				materialIcon={ showIcons ? 'security' : undefined }
-				materialIconStyle="filled"
-				label="Scan"
-				link={ scanPath( siteSlug ) }
-				onNavigate={ onNavigate( tracksEventNames.scanClicked ) }
-				selected={ currentPathMatches( scanPath( siteSlug ) ) }
-				expandSection={ expandSection }
-			>
-				<ScanBadge progress={ scanProgress } numberOfThreatsFound={ scanThreats?.length ?? 0 } />
-			</SidebarItem>
+			{ ! isWPCOM && (
+				<SidebarItem
+					materialIcon={ showIcons ? 'security' : undefined }
+					materialIconStyle="filled"
+					label="Scan"
+					link={ scanPath( siteSlug ) }
+					onNavigate={ onNavigate( tracksEventNames.scanClicked ) }
+					selected={ currentPathMatches( scanPath( siteSlug ) ) }
+					expandSection={ expandSection }
+				>
+					<ScanBadge progress={ scanProgress } numberOfThreatsFound={ scanThreats?.length ?? 0 } />
+				</SidebarItem>
+			) }
 		</>
 	);
 };
