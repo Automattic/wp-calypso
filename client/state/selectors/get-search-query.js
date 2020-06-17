@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { get} from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Returns the current search query.

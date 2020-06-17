@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { get} from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Returns an array of all search results for a given search query or `null`
