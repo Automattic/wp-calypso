@@ -125,7 +125,7 @@ class DomainsStep extends React.Component {
 		this.showTestCopy = false;
 
 		const isEligibleFlowForDomainTest = includes(
-			[ 'onboarding', 'onboarding-plan-first' ],
+			[ 'onboarding', 'onboarding-plan-first', 'onboarding-passwordless' ],
 			props.flowName
 		);
 

@@ -128,8 +128,9 @@ export function generateFlows( {
 		'onboarding-passwordless': {
 			steps: [ 'domains', 'plans', 'user-passwordless' ],
 			destination: getSignupDestination,
-			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pbxNRc-m0',
-			lastModified: '2020-03-03',
+			description:
+				'Simplify the User step (account creation step) and move it right before the Checkout, after Plans/Domains steps. Read more in https://wp.me/pbxNRc-m0',
+			lastModified: '2020-06-17',
 			showRecaptcha: true,
 		},
 
