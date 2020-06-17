@@ -14,6 +14,7 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 import { initConnection, sendEvent } from 'state/happychat/connection/actions';
+import notices from 'notices';
 import { openChat } from 'state/happychat/ui/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -24,7 +25,7 @@ import {
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
 } from 'state/action-types';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice } from 'state/notices/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -129,8 +130,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 	const baseOptions = { id: action.noticeId };
 
-	const announce = ( children, options = {} ) =>
-		dispatch( errorNotice( null, { ...baseOptions, children, ...options } ) );
+	const announce = ( text, options = {} ) => notices.error( text, { ...baseOptions, ...options } );
 
 	const spreadHappiness = ( message ) => {
 		const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_failure', {
