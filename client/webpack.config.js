@@ -306,10 +306,6 @@ const webpackConfig = {
 		! config.isEnabled( 'desktop' ) &&
 			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
 		/*
-		 * Replace `lodash` with `lodash-es`
-		 */
-		new ExtensiveLodashReplacementPlugin(),
-		/*
 		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
 		 */
 		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
@@ -333,6 +329,10 @@ const webpackConfig = {
 				/^lib[/\\]local-storage-polyfill$/,
 				'lodash-es/noop'
 			),
+		/*
+		 * Replace `lodash` with `lodash-es`
+		 */
+		new ExtensiveLodashReplacementPlugin(),
 	].filter( Boolean ),
 	externals: [ 'electron' ],
 };
