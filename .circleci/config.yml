@@ -128,8 +128,12 @@ references:
     name: Update node
     command: |
       set +e
-      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
-      . "${HOME}/.nvm/nvm.sh"
+      set +x
+      export NVM_DIR="$HOME/.nvm" && (
+        git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+        cd "$NVM_DIR"
+        git checkout v0.35.3
+      ) && \. "$NVM_DIR/nvm.sh" --no-use
       nvm install
       nvm use
 
