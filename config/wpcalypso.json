@@ -53,6 +53,7 @@
 		"gutenboarding/mshot-preview": false,
 		"gutenboarding/style-preview-verticals": false,
 		"gutenboarding/alpha-templates": true,
+		"gutenboarding/language-picker": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
