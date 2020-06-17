@@ -27,7 +27,6 @@ import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import QueryEligibility from 'components/data/query-atat-eligibility';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QueryScanState from 'components/data/query-jetpack-scan';
@@ -887,13 +886,6 @@ export class MySitesSidebar extends Component {
 				</SidebarMenu>
 
 				{ this.props.shouldRenderJetpackSection && this.jetpack() }
-				{
-					// Since we offer a path to trigger an Automated Transfer for Business plan
-					// owners, we need to verify if the current site is eligible for that.
-					isEnabled( 'jetpack/features-section' ) && (
-						<QueryEligibility siteId={ this.props.siteId } />
-					)
-				}
 
 				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
 				<ExpandableSidebarMenu
