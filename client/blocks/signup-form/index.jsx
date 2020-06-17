@@ -860,18 +860,14 @@ class SignupForm extends Component {
 			? this.getLoginLink()
 			: localizeUrl( config( 'login_url' ), this.props.locale );
 
-		const loginTextByFlowName =
+		const footerLoginText =
 			flowName === 'onboarding'
 				? translate( 'Log in to create a site for your existing account.' )
 				: translate( 'Already have a WordPress.com account?' );
 
-		const footerLoginText = this.props.footerLoginText || loginTextByFlowName;
 		return (
 			<>
 				<LoggedOutFormLinks>
-					{ this.props.footerText && (
-						<div className="signup-form__footer-text">{ this.props.footerText }</div>
-					) }
 					<LoggedOutFormLinkItem href={ logInUrl }>{ footerLoginText }</LoggedOutFormLinkItem>
 					{ this.props.oauth2Client && (
 						<LoggedOutFormBackLink
