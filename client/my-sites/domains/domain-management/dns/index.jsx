@@ -68,11 +68,17 @@ class Dns extends React.Component {
 		const { dns, selectedDomainName, selectedSite, translate } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const hasWpcomNameservers = domain?.hasWpcomNameservers ?? false;
-		const domainConnectEnabled = some( dns.records, {
-			name: domainConnect.DISCOVERY_TXT_RECORD_NAME,
-			data: domainConnect.API_URL,
-			type: 'TXT',
-		} );
+		const domainConnectEnabled =
+			some( dns.records, {
+				name: domainConnect.DISCOVERY_TXT_RECORD_NAME,
+				data: domainConnect.API_URL,
+				type: 'TXT',
+			} ) ||
+			some( dns.records, {
+				name: domainConnect.DISCOVERY_TXT_RECORD_NAME,
+				data: '"' + domainConnect.API_URL + '"',
+				type: 'TXT',
+			} );
 
 		return (
 			<Main className="dns">

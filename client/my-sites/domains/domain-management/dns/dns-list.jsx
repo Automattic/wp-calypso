@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -106,7 +107,7 @@ class DnsList extends React.Component {
 	isDomainConnectRecord( dnsRecord ) {
 		return (
 			domainConnect.DISCOVERY_TXT_RECORD_NAME === dnsRecord.name &&
-			domainConnect.API_URL === dnsRecord.data &&
+			domainConnect.API_URL === trim( dnsRecord.data, '"' ) &&
 			'TXT' === dnsRecord.type
 		);
 	}
