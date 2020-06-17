@@ -38,4 +38,7 @@ export interface Design {
 	fonts: FontPair;
 	categories: Array< string >;
 	is_premium: boolean;
+	site_options?: {
+		[ option: string ]: string | number | boolean;
+	};
 }
