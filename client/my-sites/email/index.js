@@ -21,7 +21,11 @@ export default function () {
 	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
 
 	registerMultiPage( {
-		paths: [ paths.emailManagement( ':site', ':domain' ), paths.emailManagement( ':site' ) ],
+		paths: [
+			paths.emailManagement( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.emailManagement( ':site', ':domain' ),
+			paths.emailManagement( ':site' ),
+		],
 		handlers: [ ...commonHandlers, controller.emailManagement, makeLayout, clientRender ],
 	} );
 
