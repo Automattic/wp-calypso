@@ -12,6 +12,7 @@
 			},
 			"categories": [ "featured", "blog" ],
 			"is_premium": false,
+			"is_alpha": true,
 			"is_fse": true
 		},
 		{
