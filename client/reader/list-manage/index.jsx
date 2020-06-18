@@ -130,7 +130,7 @@ function ReaderListEdit( props ) {
 									exportType={ READER_EXPORT_TYPE_LIST }
 									listId={ list.ID }
 									filename={ `reader-list-${ props.slug
-										.replace( /[^a-z0-9]/gi, '_' )
+										.replace( /[^a-z0-9]/gi, '-' )
 										.toLowerCase() }.opml` }
 								/>
 							</Card>
