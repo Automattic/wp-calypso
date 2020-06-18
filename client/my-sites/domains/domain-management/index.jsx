@@ -19,7 +19,6 @@ import TransferOut from './transfer/transfer-out';
 import TransferToOtherSite from './transfer/transfer-to-other-site';
 import TransferToOtherUser from './transfer/transfer-to-other-user';
 import ListAll from './list/list-all';
-import ListAcrossSites from './list/all/list';
 
 export default {
 	ChangeSiteAddress,
@@ -31,7 +30,6 @@ export default {
 	ManageConsent,
 	List,
 	ListAll,
-	ListAcrossSites,
 	NameServers,
 	Security,
 	SiteRedirect,

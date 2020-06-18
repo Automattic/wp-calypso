@@ -8,16 +8,16 @@ import React, { PureComponent } from 'react';
  */
 import { CompactCard } from '@automattic/components';
 
-class ListItem extends PureComponent {
+class DomainItem extends PureComponent {
 	render() {
 		return (
 			<CompactCard>
-				<div className="all__item-link">
-					<div className="all__item-title">{ this.props.domain.domain }</div>
+				<div className="domain-item__link">
+					<div className="domain-item__title">{ this.props.domain.domain }</div>
 				</div>
 			</CompactCard>
 		);
 	}
 }
 
-export default ListItem;
+export default DomainItem;

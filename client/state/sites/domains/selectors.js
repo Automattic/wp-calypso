@@ -21,7 +21,7 @@ export const getAllDomains = ( state ) => {
 	return state.sites.domains.items;
 };
 
-export const getDomainsAcrossSites = ( state ) => {
+export const getFlatDomainsList = ( state ) => {
 	return state.allDomains.domains ?? [];
 };
 
