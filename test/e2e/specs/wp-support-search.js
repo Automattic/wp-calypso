@@ -14,6 +14,7 @@ import * as driverHelper from '../lib/driver-helper.js';
 import LoginFlow from '../lib/flows/login-flow.js';
 import * as dataHelper from '../lib/data-helper';
 import InlineHelpComponent from '../lib/components/inline-help-component';
+import SupportSearchComponent from '../lib/components/support-search-component';
 import SidebarComponent from '../lib/components/sidebar-component.js';
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -21,6 +22,7 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 let driver;
+let supportSearchComponent;
 let inlineHelpComponent;
 
 before( async function () {
@@ -41,6 +43,7 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 			await loginFlow.loginAndSelectThemes();
 
 			// Initialize the helper component
+
 			inlineHelpComponent = await InlineHelpComponent.Expect( driver );
 		} );
 
@@ -64,16 +67,17 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 		describe( 'Performing searches', function () {
 			step( 'Re-open Inline Help popover', async function () {
 				await inlineHelpComponent.toggleOpen();
+				supportSearchComponent = await SupportSearchComponent.Expect( driver );
 			} );
 
 			step( 'Displays contextual search results by default', async function () {
-				const resultsCount = await inlineHelpComponent.getSearchResultsCount();
+				const resultsCount = await supportSearchComponent.getSearchResultsCount();
 				assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
 			} );
 
 			step( 'Returns search results for valid search query', async function () {
-				await inlineHelpComponent.searchFor( 'Podcast' );
-				const resultsCount = await inlineHelpComponent.getSearchResultsCount();
+				await supportSearchComponent.searchFor( 'Podcast' );
+				const resultsCount = await supportSearchComponent.getSearchResultsCount();
 
 				assert.equal(
 					resultsCount <= 5,
@@ -88,10 +92,10 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 			} );
 
 			step( 'Resets search UI to default state when search input is cleared ', async function () {
-				await inlineHelpComponent.clearSearchField();
+				await supportSearchComponent.clearSearchField();
 
 				// Once https://github.com/Automattic/wp-calypso/pull/43323 is merged this will work again
-				// const results = await inlineHelpComponent.getSearchResults();
+				// const results = await supportSearchComponent.getSearchResults();
 				// assert.strictEqual( results.length, 5, 'There are no contextual results displayed' );
 			} );
 
@@ -100,10 +104,10 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 				async function () {
 					const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 
-					await inlineHelpComponent.searchFor( invalidSearchQueryReturningNoResults );
-					const resultsCount = await inlineHelpComponent.getSearchResultsCount();
+					await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
+					const resultsCount = await supportSearchComponent.getSearchResultsCount();
 
-					const hasNoResultsMessage = await inlineHelpComponent.hasNoResultsMessage();
+					const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
 
 					assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
@@ -112,13 +116,13 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 			);
 
 			step( 'Does not request search results for empty search queries', async function () {
-				await inlineHelpComponent.clearSearchField();
+				await supportSearchComponent.clearSearchField();
 
 				const emptyWhitespaceQuery = '         ';
 
-				await inlineHelpComponent.searchFor( emptyWhitespaceQuery );
+				await supportSearchComponent.searchFor( emptyWhitespaceQuery );
 
-				const searchPerformed = await inlineHelpComponent.isRequestingSearchResults();
+				const searchPerformed = await supportSearchComponent.isRequestingSearchResults();
 
 				assert.equal(
 					searchPerformed,
@@ -129,21 +133,21 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 		} );
 	} );
 
-	describe( 'My Home support search card', function () {
-		// before( async function () {
-		// 	return await driverManager.ensureNotLoggedIn( driver );
-		// } );
-		step( 'Select the My Home page', async function () {
-			// const loginFlow = new LoginFlow( driver );
+	// describe( 'My Home support search card', function () {
+	// 	// before( async function () {
+	// 	// 	return await driverManager.ensureNotLoggedIn( driver );
+	// 	// } );
+	// 	step( 'Select the My Home page', async function () {
+	// 		// const loginFlow = new LoginFlow( driver );
 
-			const sidebarComponent = await SidebarComponent.Expect( driver );
-			// The "inline help" FAB sholuld not appear on the My Home
-			// because there is already a support search "Card" on that
-			// page. Therefore we select the "Themes" page for our tests.
-			// await loginFlow.loginAndSelectMySite();
-			await sidebarComponent.selectMyHome();
+	// 		const sidebarComponent = await SidebarComponent.Expect( driver );
+	// 		// The "inline help" FAB sholuld not appear on the My Home
+	// 		// because there is already a support search "Card" on that
+	// 		// page. Therefore we select the "Themes" page for our tests.
+	// 		// await loginFlow.loginAndSelectMySite();
+	// 		await sidebarComponent.selectMyHome();
 
-			return await driverHelper.isElementPresent( driver, By.css( '.card help-search' ) );
-		} );
-	} );
+	// 		return await driverHelper.isElementPresent( driver, By.css( '.card help-search' ) );
+	// 	} );
+	// } );
 } );
