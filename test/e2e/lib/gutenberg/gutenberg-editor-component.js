@@ -180,7 +180,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 			// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
 			// See https://github.com/Automattic/wp-calypso/issues/43179
-			if ( ! ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) ) {
+			if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
 				await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 			}
 
