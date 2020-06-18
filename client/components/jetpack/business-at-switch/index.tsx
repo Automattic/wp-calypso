@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FC, ReactNode, ReactElement, useState, useEffect } from 'react';
+import React, { FC, ReactElement, ReactNode, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 
@@ -17,6 +17,7 @@ import {
 	getAutomatedTransfer,
 	isEligibleForAutomatedTransfer,
 } from 'state/automated-transfer/selectors';
+import { transferStates } from 'state/automated-transfer/constants';
 
 /**
  * Style dependencies
@@ -48,7 +49,7 @@ const Placeholder = () => (
  * Once we have an answer, we either display the Automated Transfer view or
  * we display whatever comes next in the middleware stack.
  */
-const BusinessATSwitch: FC< Props > = ( { fallbackDisplay, path } ): ReactElement => {
+const BusinessATSwitch: FC< Props > = ( { fallbackDisplay, path } ): ReactElement | ReactNode => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isEligibleForAT = useSelector( ( state ) =>
 		isEligibleForAutomatedTransfer( state, siteId )
@@ -66,7 +67,7 @@ const BusinessATSwitch: FC< Props > = ( { fallbackDisplay, path } ): ReactElemen
 				showATComponent: true,
 			} );
 		}
-		if ( isEligibleForAT ) {
+		if ( isEligibleForAT && automatedTransferStatus?.status !== transferStates.COMPLETE ) {
 			return setState( {
 				isLoading: false,
 				showATComponent: true,
