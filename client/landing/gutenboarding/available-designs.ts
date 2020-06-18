@@ -58,7 +58,7 @@ export function getAvailableDesigns(
 
 	return {
 		...availableDesigns,
-		featured: availableDesigns.featured.filter( ( design ) => ! design.is_edge ),
+		featured: availableDesigns.featured.filter( ( design ) => ! design.is_alpha ),
 	};
 }
 

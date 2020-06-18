@@ -142,7 +142,7 @@
 			},
 			"categories": [ "featured", "business" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Alves",
@@ -156,7 +156,7 @@
 			},
 			"categories": [ "featured", "non-profit", "charity" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Mayland",
@@ -170,7 +170,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Rivington",
@@ -184,7 +184,7 @@
 			},
 			"categories": [ "featured", "real estate listing" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Maywood",
@@ -198,7 +198,7 @@
 			},
 			"categories": [ "featured", "restaurant, small business" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Balasana",
@@ -212,7 +212,7 @@
 			},
 			"categories": [ "featured", "restaurant, small business" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Stratford",
@@ -226,7 +226,7 @@
 			},
 			"categories": [ "featured", "school" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Rockfield",
@@ -240,7 +240,7 @@
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Coutoire",
@@ -254,7 +254,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Leven",
@@ -268,7 +268,7 @@
 			},
 			"categories": [ "featured", "portfolio", "small business" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		},
 		{
 			"title": "Gibbs",
@@ -282,7 +282,7 @@
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
 			"is_premium": false,
-			"is_edge": true
+			"is_alpha": true
 		}
 	]
 }
