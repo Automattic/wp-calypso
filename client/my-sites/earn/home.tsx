@@ -181,7 +181,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  );
 		const noConnectionBody = isPayments
 			? translate(
-					'Collect payments / Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
+					'Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
