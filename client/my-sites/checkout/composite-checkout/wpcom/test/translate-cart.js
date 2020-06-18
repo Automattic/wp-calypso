@@ -96,7 +96,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected credits', function () {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
-			expect( clientCart.credits.amount.displayValue ).toBe( 'R$100' );
+			expect( clientCart.credits.amount.displayValue ).toBe( '- R$100' );
 		} );
 		it( 'has the expected coupon', function () {
 			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
@@ -695,7 +695,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected credits', function () {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'USD' );
-			expect( clientCart.credits.amount.displayValue ).toBe( '$100' );
+			expect( clientCart.credits.amount.displayValue ).toBe( '- $100' );
 		} );
 		it( 'has the expected coupon', function () {
 			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
@@ -763,7 +763,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.coupon.id ).toBeDefined();
 			} );
 			it( 'has the expected label', function () {
-				expect( clientCart.coupon.label ).toBe( 'Total savings' );
+				expect( clientCart.coupon.label ).toBe( 'Coupon: fakecoupon' );
 			} );
 			it( 'has the expected type', function () {
 				expect( clientCart.coupon.type ).toBe( 'coupon' );
@@ -775,7 +775,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.coupon.amount.value ).toBe( -1700 );
 			} );
 			it( 'has the expected display value', function () {
-				expect( clientCart.coupon.amount.displayValue ).toBe( '-$17' );
+				expect( clientCart.coupon.amount.displayValue ).toBe( '- $17' );
 			} );
 		} );
 
@@ -915,7 +915,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected credits', function () {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
-			expect( clientCart.credits.amount.displayValue ).toBe( 'R$100' );
+			expect( clientCart.credits.amount.displayValue ).toBe( '- R$100' );
 		} );
 		it( 'does not show an original price for the credits item', function () {
 			const creditsItem = clientCart.items.find( ( item ) => {
