@@ -103,12 +103,12 @@ export function* createSite(
 		'getState'
 	);
 
-	const shouldUseFse = yield select( ONBOARD_STORE, 'getIsFseSite' );
+	const shouldEnableFse = yield select( ONBOARD_STORE, 'getIsFseSite' );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
 
-	const defaultTheme = shouldUseFse ? 'seedlet-blocks' : 'twentytwenty';
+	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
@@ -125,7 +125,8 @@ export function* createSite(
 			site_information: {
 				title: siteTitle,
 			},
-			site_creation_flow: shouldUseFse ? 'gutenboarding-site-editor' : 'gutenboarding',
+			site_creation_flow: 'gutenboarding',
+			enable_fse: shouldEnableFse,
 			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
