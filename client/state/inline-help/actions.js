@@ -42,7 +42,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 		if ( ! searchQuery ) {
 			dispatch( {
 				type: INLINE_HELP_SEARCH_RESET,
-				searchResults: getContextualHelpResults( getState() ),
+				searchResults: contextualResults,
 			} );
 
 			// Exit early
