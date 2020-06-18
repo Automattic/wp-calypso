@@ -131,7 +131,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Displaying changed files
-      run: echo ${{ join( steps.changes.outputs.all, ' ' ) }}
+      run: echo ${{ join( fromJson( steps.changes.outputs.all ), ' ' ) }}
 
     - name: Execute phpcs on changed files
       run: ./vendor/bin/phpcs --standard=apps/phpcs.xml $( echo '${{ steps.changes.outputs.all }}' | jq -r 'join(" ")')
