@@ -850,7 +850,15 @@ function handleUncaughtErrors( calypsoPort ) {
 
 function handleEditorLoaded( calypsoPort ) {
 	const unsubscribe = subscribe( () => {
-		const isReady = select( 'core/editor' ).__unstableIsEditorReady();
+		const store = select( 'core/editor' );
+
+		if ( typeof store.__unstableIsEditorReady !== 'function' ) {
+			// This is probably a very old veresion of the plugin, bail out.
+			unsubscribe();
+			return;
+		}
+
+		const isReady = store.__unstableIsEditorReady();
 		if ( isReady ) {
 			requestAnimationFrame( () => {
 				calypsoPort.postMessage( {
