@@ -95,15 +95,15 @@ export function PaypalSubmitButton( { disabled } ) {
 function PayPalButtonContents( { formStatus, transactionStatus } ) {
 	const { __ } = useI18n();
 	if ( transactionStatus === 'redirecting' ) {
-		return __( 'Redirecting to PayPal…' );
+		return <span>{ __( 'Redirecting to PayPal…' ) }</span>;
 	}
 	if ( formStatus === 'submitting' ) {
-		return __( 'Processing…' );
+		return <span>{ __( 'Processing…' ) }</span>;
 	}
 	if ( formStatus === 'ready' ) {
 		return <ButtonPayPalIcon />;
 	}
-	return __( 'Please wait…' );
+	return <span>{ __( 'Please wait…' ) }</span>;
 }
 
 const ButtonPayPalIcon = styled( PaypalLogo )`
