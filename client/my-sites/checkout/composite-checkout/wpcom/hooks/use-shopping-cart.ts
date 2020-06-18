@@ -492,6 +492,7 @@ export function useShoppingCart(
 		items: cart.items,
 		tax: cart.tax,
 		couponItem: cart.coupon,
+		savings: cart.savings,
 		total: cart.total,
 		subtotal: cart.subtotal,
 		credits: cart.credits,
