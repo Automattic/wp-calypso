@@ -581,23 +581,29 @@ function handleCloseEditor( calypsoPort ) {
 		);
 	} );
 
-	const dispatchAction = () => {
+	const dispatchAction = ( e ) => {
 		if ( ! applyFilters( 'a8c.wpcom-block-editor.shouldCloseEditor', true ) ) {
 			return;
 		}
+
+		e.preventDefault();
 
 		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
 	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
 		render: function CloseWpcomBlockEditor() {
+			const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
 			const [ label, setLabel ] = useState( calypsoifyGutenberg.closeButtonLabel );
 
 			useEffect( () => {
 				addAction(
 					'updateCloseButtonOverrides',
 					'a8c/wpcom-block-editor/CloseWpcomBlockEditor',
-					( data ) => setLabel( data.label )
+					( data ) => {
+						setCloseUrl( data.closeUrl );
+						setLabel( data.label );
+					}
 				);
 				return () =>
 					removeAction(
@@ -611,10 +617,11 @@ function handleCloseEditor( calypsoPort ) {
 					<Button
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className="edit-post-fullscreen-mode-close wpcom-block-editor__close-button"
+						href={ closeUrl }
 						icon={ wordpress }
 						iconSize={ 36 }
-						onClick={ dispatchAction }
 						label={ label }
+						onClick={ dispatchAction }
 					/>
 				</MainDashboardButton>
 			);
