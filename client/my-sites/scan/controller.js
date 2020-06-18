@@ -10,10 +10,12 @@ import UpsellSwitch from 'components/jetpack/upsell-switch';
 import ScanPage from './main';
 import ScanHistoryPage from './history';
 import ScanUpsellPage from './upsell';
+import WPCOMScanUpsellPage from './wpcom-scan-upsell';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import ScanPlaceholder from 'components/jetpack/scan-placeholder';
 import ScanHistoryPlaceholder from 'components/jetpack/scan-history-placeholder';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 export function showUpsellIfNoScan( context, next ) {
 	context.primary = scanUpsellSwitcher( <ScanPlaceholder />, context.primary );
@@ -38,9 +40,10 @@ export function scanHistory( context, next ) {
 }
 
 function scanUpsellSwitcher( placeholder, primary ) {
+	const UpsellComponent = isJetpackCloud() ? ScanUpsellPage : WPCOMScanUpsellPage;
 	return (
 		<UpsellSwitch
-			UpsellComponent={ ScanUpsellPage }
+			UpsellComponent={ UpsellComponent }
 			display={ primary }
 			getStateForSite={ getSiteScanState }
 			QueryComponent={ QueryJetpackScan }
