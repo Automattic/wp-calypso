@@ -12,14 +12,8 @@ import type { DomainSuggestions } from '@automattic/data-stores';
  * Internal dependencies
  */
 import SuggestionItem from './suggestion-item';
-import SuggestionNone from './suggestion-none';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
 import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
-import {
-	getFreeDomainSuggestions,
-	getPaidDomainSuggestions,
-	getRecommendedDomainSuggestion,
-} from '../utils/domain-suggestions';
 import DomainCategories from '../domain-categories';
 import { PAID_DOMAINS_TO_SHOW, PAID_DOMAINS_TO_SHOW_EXPANDED } from '../constants';
 import { DomainNameExplanationImage } from '../domain-name-explanation/';
@@ -89,65 +83,48 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
 	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
 
-	const domainSuggestions = useDomainSuggestions(
+	const allDomainSuggestions = useDomainSuggestions(
 		domainSearch.trim(),
 		quantityExpanded,
 		domainCategory,
 		useI18n().i18nLocale
+	) as DomainSuggestion[] | undefined;
+
+	const domainSuggestions = allDomainSuggestions?.slice(
+		0,
+		isExpanded ? quantityExpanded : quantity
 	);
+
+	// Put the free domain at the second place and things will be sorted properly
+	if ( domainSuggestions && domainSuggestions.length > 1 ) {
+		const freeDomainIndex = domainSuggestions.findIndex( ( domain ) => domain.is_free );
+		if ( freeDomainIndex > -1 ) {
+			const swap = domainSuggestions[ 1 ];
+			domainSuggestions[ 1 ] = domainSuggestions[ freeDomainIndex ];
+			domainSuggestions[ freeDomainIndex ] = swap;
+		}
+	}
 
 	// Reset expansion state after every search
 	useEffect( () => {
 		setIsExpanded( false );
 	}, [ domainSearch ] );
 
-	const allSuggestions = domainSuggestions;
-	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
-		0,
-		isExpanded ? quantityExpanded : quantity
-	);
-	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
-
-	// We're not using auto-selection right now.
-	// useEffect( () => {
-	// 	// Auto-select one of the domains when the search results change. If the currently
-	// 	// confirmed domain is in the search results then select it. The user probably
-	// 	// re-ran their previous query. Otherwise select the free domain suggestion.
-
-	// 	if (
-	// 		allSuggestions?.find(
-	// 			( suggestion ) => currentDomain?.domain_name === suggestion.domain_name
-	// 		)
-	// 	) {
-	// 		setCurrentSelection( currentDomain );
-	// 		return;
-	// 	}
-
-	// 	// Recalculate free-domain suggestions inside the closure. `getFreeDomainSuggestions()`
-	// 	// always returns a new object so it shouldn't be used in `useEffects()` dependencies list.
-	// 	const latestFreeSuggestion = getFreeDomainSuggestions( allSuggestions );
-
-	// 	if ( latestFreeSuggestion ) {
-	// 		setCurrentSelection( latestFreeSuggestion[ 0 ] );
-	// 	}
-	// }, [ allSuggestions, currentDomain ] );
-
 	/** The train track ID for analytics. See https://wp.me/PCYsg-bor */
 	const [ baseRailcarId, setBaseRailcarId ] = useState< string | undefined >();
+
 	useEffect( () => {
 		// Only generate a railcarId when the domain suggestions change and are not empty.
-		if ( domainSuggestions ) {
+		if ( allDomainSuggestions ) {
 			setBaseRailcarId( getNewRailcarId( 'suggestion' ) );
 		}
-	}, [ domainSuggestions, setBaseRailcarId ] );
-
-	const isRecommended = ( suggestion: DomainSuggestion ) => suggestion === recommendedSuggestion;
+	}, [ allDomainSuggestions, setBaseRailcarId ] );
 
 	const handleItemRender = (
 		suggestion: DomainSuggestion,
 		railcarId: string,
-		uiPosition: number
+		uiPosition: number,
+		isRecommended: boolean
 	) => {
 		const fetchAlgo = `/domains/search/${ domainSuggestionVendor }/${ analyticsFlowId }${
 			domainCategory ? '/' + domainCategory : ''
@@ -160,7 +137,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			fetchAlgo,
 			query: domainSearch,
 			railcarId,
-			result: isRecommended( suggestion ) ? domain + '#recommended' : domain,
+			result: isRecommended ? domain + '#recommended' : domain,
 			uiPosition,
 		} );
 	};
@@ -194,48 +171,28 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</div>
 					) }
 					<div className="domain-picker__suggestion-item-group">
-						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
-						{ freeSuggestions &&
-							( freeSuggestions.length ? (
-								<SuggestionItem
-									suggestion={ freeSuggestions[ 0 ] }
-									railcarId={ baseRailcarId ? `${ baseRailcarId }0` : undefined }
-									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
-									onRender={ () =>
-										handleItemRender( freeSuggestions[ 0 ], `${ baseRailcarId }0`, 0 )
-									}
-									onSelect={ onDomainSelect }
-								/>
-							) : (
-								<SuggestionNone />
-							) ) }
-						{ ! paidSuggestions &&
-							times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
-						{ paidSuggestions &&
-							( paidSuggestions?.length ? (
-								paidSuggestions.map( ( suggestion, i ) => (
-									<SuggestionItem
-										key={ suggestion.domain_name }
-										suggestion={ suggestion }
-										railcarId={ baseRailcarId ? `${ baseRailcarId }${ i + 1 }` : undefined }
-										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
-										isRecommended={ isRecommended( suggestion ) }
-										onRender={ () =>
-											handleItemRender( suggestion, `${ baseRailcarId }${ i + 1 }`, i + 1 )
-										}
-										onSelect={ onDomainSelect }
-									/>
-								) )
-							) : (
-								<SuggestionNone />
-							) ) }
-						{ ! isExpanded && (
-							<div className="domain-picker__show-more">
-								<Button onClick={ () => setIsExpanded( true ) }>
-									{ __( 'View more results' ) }
-								</Button>
-							</div>
-						) }
+						{ domainSuggestions?.map( ( suggestion, i ) => (
+							<SuggestionItem
+								key={ suggestion.domain_name }
+								suggestion={ suggestion }
+								railcarId={ baseRailcarId ? `${ baseRailcarId }${ i }` : undefined }
+								isSelected={ currentDomain?.domain_name === suggestion.domain_name }
+								isRecommended={ i === 0 }
+								onRender={ () =>
+									handleItemRender( suggestion, `${ baseRailcarId }${ i }`, i, i === 0 )
+								}
+								onSelect={ onDomainSelect }
+							/>
+						) ) ?? times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+						{ ! isExpanded &&
+							allDomainSuggestions?.length &&
+							allDomainSuggestions?.length > quantity && (
+								<div className="domain-picker__show-more">
+									<Button onClick={ () => setIsExpanded( true ) }>
+										{ __( 'View more results' ) }
+									</Button>
+								</div>
+							) }
 					</div>
 				</div>
 			) : (
