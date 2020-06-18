@@ -53,6 +53,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 		let inviteCreated = false;
+		let inviteAccepted = false;
 
 		step( 'Can log in and navigate to Invite People page', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
@@ -107,6 +108,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		step( 'User has been added as Editor', async function () {
 			await PostsPage.Expect( driver );
 
+			inviteAccepted = true;
 			const noticesComponent = await NoticesComponent.Expect( driver );
 			const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
 			return assert(
@@ -155,10 +157,17 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 				await new LoginFlow( driver ).loginAndSelectPeople();
 				const peoplePage = await PeoplePage.Expect( driver );
 				await peoplePage.selectInvites();
-				await peoplePage.goToClearAcceptedInvitePage( newUserName );
 
-				const clearInvitePage = await RevokePage.Expect( driver );
-				await clearInvitePage.revokeUser();
+				// Sometimes, the 'accept invite' step fails. In these cases, we perform cleanup
+				//    by revoking, instead of clearing accepted invite.
+				if ( inviteAccepted ) {
+					await peoplePage.goToClearAcceptedInvitePage( newUserName );
+				} else {
+					await peoplePage.goToRevokeInvitePage( newInviteEmailAddress );
+				}
+
+				const clearOrRevokeInvitePage = await RevokePage.Expect( driver );
+				await clearOrRevokeInvitePage.revokeUser();
 			}
 		} );
 	} );
@@ -229,6 +238,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		let removedViewerFlag = true;
 		let acceptInviteURL = '';
 		let inviteCreated = false;
+		let inviteAccepted = false;
 
 		step( 'As an anonymous user I can not see a private site', async function () {
 			return await PrivateSiteLoginPage.Visit( driver, siteUrl );
@@ -286,6 +296,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		} );
 
 		step( 'Can see user has been added as a Viewer', async function () {
+			inviteAccepted = false;
 			const noticesComponent = await NoticesComponent.Expect( driver );
 			const followMessageDisplayed = await noticesComponent.getNoticeContent();
 			assert.strictEqual(
@@ -332,10 +343,17 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 				await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
 				const peoplePageCleanup = await PeoplePage.Expect( driver );
 				await peoplePageCleanup.selectInvites();
-				await peoplePageCleanup.goToClearAcceptedInvitePage( newUserName );
 
-				const clearInvitePage = await RevokePage.Expect( driver );
-				await clearInvitePage.revokeUser();
+				// Sometimes, the 'accept invite' step fails. In these cases, we perform cleanup
+				//    by revoking, instead of clearing accepted invite.
+				if ( inviteAccepted ) {
+					await peoplePageCleanup.goToClearAcceptedInvitePage( newUserName );
+				} else {
+					await peoplePageCleanup.goToRevokeInvitePage( newInviteEmailAddress );
+				}
+
+				const clearOrRevokeInvitePage = await RevokePage.Expect( driver );
+				await clearOrRevokeInvitePage.revokeUser();
 			}
 
 			if ( ! removedViewerFlag ) {
