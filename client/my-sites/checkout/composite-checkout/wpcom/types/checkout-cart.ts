@@ -63,11 +63,11 @@ export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem | null;
 	total: CheckoutCartItem;
-	savings: CheckoutCartItem;
+	savings: CheckoutCartItem | null;
 	subtotal: CheckoutCartItem;
 	coupon: WPCOMCartCouponItem | null;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
-	credits: CheckoutCartItem;
+	credits: CheckoutCartItem | null;
 	couponCode: string | null;
 }
 
