@@ -229,6 +229,7 @@ function maybeShowPlanBumpOfferConcierge( {
 		if ( 'variantShowPlanBump' === abtest( 'showBusinessPlanBump' ) ) {
 			return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
 		}
+		return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
 	}
 
 	return;
