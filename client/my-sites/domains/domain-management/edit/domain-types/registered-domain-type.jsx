@@ -248,9 +248,17 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderPendingGSuiteTosNotice() {
-		const { domain, selectedSite } = this.props;
+		const { domain, purchase, selectedSite } = this.props;
 
-		if ( ! hasPendingGSuiteUsers( domain ) ) {
+		if (
+			! hasPendingGSuiteUsers( domain ) ||
+			domain.pendingTransfer ||
+			domain.expired ||
+			domain.isPendingIcannVerification ||
+			isExpiringSoon( domain, 30 ) ||
+			isRecentlyRegistered( domain ) ||
+			( purchase && shouldRenderExpiringCreditCard( purchase ) )
+		) {
 			return null;
 		}
 
