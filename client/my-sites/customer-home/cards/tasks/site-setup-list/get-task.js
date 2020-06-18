@@ -28,18 +28,6 @@ const getTaskDescription = ( task, { isDomainUnverified } ) => {
 					</>
 				);
 			}
-			/*
-			if ( isEmailUnverified ) {
-				return (
-					<>
-						{ task.description }
-						<br />
-						<br />
-						{ translate( 'Confirm your email address before launching your site.' ) }
-					</>
-				);
-			}
-			*/
 			return task.description;
 		default:
 			return task.description;
