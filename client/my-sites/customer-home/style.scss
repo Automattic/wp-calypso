@@ -38,13 +38,17 @@
 		margin: 0;
 	}
 
-	.customer-home__view-site-button {
+	.customer-home__heading-actions {
 		margin: auto;
 		margin-right: 0;
 
 		.button {
 			text-align: center;
 			white-space: nowrap;
+
+			+ .button {
+				margin-left: 8px;
+			}
 		}
 	}
 }

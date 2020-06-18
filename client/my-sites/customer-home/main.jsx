@@ -16,8 +16,12 @@ import Main from 'components/main';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUserUseCustomerHome, getSiteOption } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSiteOption,
+	getSiteFrontPage,
+} from 'state/sites/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
@@ -39,11 +43,14 @@ import './style.scss';
 const Home = ( {
 	canUserUseCustomerHome,
 	isDev,
+	isStaticHomePage,
 	forcedView,
 	layout,
 	site,
 	siteId,
 	trackViewSiteAction,
+	trackEditSiteAction,
+	editHomePageUrl,
 } ) => {
 	const translate = useTranslate();
 
@@ -64,8 +71,21 @@ const Home = ( {
 				subHeaderText={ translate( 'Your home base for posting, editing, and growing your site.' ) }
 				align="left"
 			/>
-			<div className="customer-home__view-site-button">
-				<Button href={ site.URL } onClick={ trackViewSiteAction }>
+			<div className="customer-home__heading-actions">
+				{ isStaticHomePage && (
+					<Button
+						className="customer-home__edit-site-button"
+						href={ editHomePageUrl }
+						onClick={ trackEditSiteAction }
+					>
+						{ translate( 'Edit site' ) }
+					</Button>
+				) }
+				<Button
+					className="customer-home__view-site-button"
+					href={ site.URL }
+					onClick={ trackViewSiteAction }
+				>
 					{ translate( 'View site' ) }
 				</Button>
 			</div>
@@ -117,19 +137,27 @@ Home.propTypes = {
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
+	trackEditSiteAction: PropTypes.func.isRequired,
+	editHomePageUrl: PropTypes.string,
 };
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
+	const isStaticHomePage =
+		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	const siteSlug = getSelectedSiteSlug( state );
+	const staticHomePageId = getSiteFrontPage( state, siteId );
+	const editHomePageUrl =
+		isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
 	const layout = getHomeLayout( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
 		siteId,
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		isStaticHomePage:
-			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+		isStaticHomePage,
+		editHomePageUrl,
 		layout,
 	};
 };
@@ -142,8 +170,17 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
+const trackEditSiteAction = ( isStaticHomePage ) =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_edit_homepage_click', {
+			is_static_home_page: isStaticHomePage,
+		} ),
+		bumpStat( 'calypso_customer_home', 'my_site_edit_homepage' )
+	);
+
 const mapDispatchToProps = {
 	trackViewSiteAction,
+	trackEditSiteAction,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
@@ -152,6 +189,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...ownProps,
 		...stateProps,
 		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
+		trackEditSiteAction: () => dispatchProps.trackEditSiteAction( isStaticHomePage ),
 	};
 };
 
