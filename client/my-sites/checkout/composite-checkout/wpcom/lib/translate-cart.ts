@@ -127,9 +127,9 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		tax: tax.display_taxes ? taxLineItem : null,
 		coupon: coupon ? couponLineItem : null,
 		total: totalItem,
-		savings: savingsLineItem,
+		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
-		credits: creditsLineItem,
+		credits: credits_integer > 0 ? creditsLineItem : null,
 		allowedPaymentMethods: allowed_payment_methods
 			.filter( ( slug ) => {
 				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
