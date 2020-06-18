@@ -131,7 +131,7 @@ jobs:
 
 
     - name: View output
-      run: echo "${{ steps.changes.outputs.all }}" | jq -r 'join(" ")'
+      run: echo '${{ steps.changes.outputs.all }}' | jq -r 'join(" ")'
 
     - name: Execute phpcs
       run: ./vendor/bin/phpcs --standard=apps/phpcs.xml $( echo '${{ steps.changes.outputs.all }}' | jq -r 'join(" ")')
