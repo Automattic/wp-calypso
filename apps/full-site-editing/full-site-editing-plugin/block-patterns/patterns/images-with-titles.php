@@ -68,6 +68,6 @@ return array(
 		esc_html__( 'Brice - 2020', 'full-site-editing' ),
 		esc_html__( 'Vesta Magazine - 2019', 'full-site-editing' ),
 		esc_html__( 'Easley Magazine - 2019', 'full-site-editing' ),
-		esc_html__( 'Overton - 2018', 'full-site-editing' ),
-),
+		esc_html__( 'Overton - 2018', 'full-site-editing' )
+	),
 );

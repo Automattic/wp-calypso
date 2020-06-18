@@ -48,6 +48,6 @@ return array(
 	'content'    => sprintf(
 		$markup,
 		esc_html__( 'Some still say its organic shapes were a reflection of the constant movement of thoughts on his never-ending ideas. It was remarkable but prudent, complex but minimal, and it&rsquo;s geometrical lines contrasted beautifully with the curly waves that defined it.', 'full-site-editing' ),
-		esc_html__( 'It was his sanctuary, the place where he would go to rest, but also to celebrate. Those that were once there always highlight the Peace they felt around the building. Was it the endless organic shapes? Was it the assurance they felt from the precision of its geometrical lines? Or was it him?', 'full-site-editing' ),
-),
+		esc_html__( 'It was his sanctuary, the place where he would go to rest, but also to celebrate. Those that were once there always highlight the Peace they felt around the building. Was it the endless organic shapes? Was it the assurance they felt from the precision of its geometrical lines? Or was it him?', 'full-site-editing' )
+	),
 );

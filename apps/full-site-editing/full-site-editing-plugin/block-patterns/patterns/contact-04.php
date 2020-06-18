@@ -40,7 +40,7 @@ $markup = '
 
 <!-- wp:group {"align":"full","style":{"color":{"background":"#000000"}}} -->
 <div class="wp-block-group alignfull has-background" style="background-color:#000000"><div class="wp-block-group__inner-container"><!-- wp:social-links {"align":"center"} -->
-<ul class="wp-block-social-links aligncenter"><!-- wp:social-link {"url":"","service":"wordpress"} /-->
+<ul class="wp-block-social-links aligncenter"><!-- wp:social-link {"url":"","service":"WordPress"} /-->
 
 <!-- wp:social-link {"url":"https://facebook.com","service":"facebook"} /-->
 
@@ -73,6 +73,6 @@ return array(
 		esc_html__( 'Friday:', 'full-site-editing' ),
 		esc_html__( 'Saturday:', 'full-site-editing' ),
 		esc_html__( 'Sunday:', 'full-site-editing' ),
-		esc_html__( 'Closed', 'full-site-editing' ),
+		esc_html__( 'Closed', 'full-site-editing' )
 	),
 );
