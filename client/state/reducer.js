@@ -19,7 +19,6 @@ import activityLog from './activity-log/reducer';
 import applicationPasswords from './application-passwords/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
-import checklist from './checklist/reducer';
 import connectedApplications from './connected-applications/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
@@ -91,7 +90,6 @@ const reducers = {
 	applicationPasswords,
 	atomicTransfer,
 	billingTransactions,
-	checklist,
 	connectedApplications,
 	currentUser,
 	dataRequests,
