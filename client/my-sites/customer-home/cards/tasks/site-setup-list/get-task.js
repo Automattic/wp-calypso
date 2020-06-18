@@ -15,7 +15,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 
-const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) => {
+const getTaskDescription = ( task, { isDomainUnverified } ) => {
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			if ( isDomainUnverified ) {
@@ -28,6 +28,7 @@ const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) =
 					</>
 				);
 			}
+			/*
 			if ( isEmailUnverified ) {
 				return (
 					<>
@@ -38,6 +39,7 @@ const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) =
 					</>
 				);
 			}
+			*/
 			return task.description;
 		default:
 			return task.description;
@@ -52,7 +54,7 @@ const isTaskDisabled = (
 		case CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			return 'requesting' === emailVerificationStatus || ! isEmailUnverified;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
-			return isDomainUnverified || isEmailUnverified;
+			return isDomainUnverified;
 		default:
 			return false;
 	}
