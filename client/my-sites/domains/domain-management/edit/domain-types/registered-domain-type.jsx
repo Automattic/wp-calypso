@@ -39,7 +39,7 @@ import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { WrapDomainStatusButtons } from './helpers';
+import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
 
 class RegisteredDomainType extends React.Component {
@@ -330,33 +330,6 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
-	getExpiresOrRenewsText() {
-		const { domain, moment, purchase, translate } = this.props;
-		if ( domain.expired ) {
-			return translate( 'Expired: %(expiry_date)s', {
-				args: {
-					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-				},
-			} );
-		} else if (
-			domain.isAutoRenewing &&
-			domain.autoRenewalDate &&
-			! shouldRenderExpiringCreditCard( purchase )
-		) {
-			return translate( 'Renews: %(renewal_date)s', {
-				args: {
-					renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
-				},
-			} );
-		}
-
-		return translate( 'Expires: %(expiry_date)s', {
-			args: {
-				expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-			},
-		} );
-	}
-
 	handlePaymentSettingsClick = () => {
 		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
@@ -407,7 +380,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderOutboundTransferInProgress() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<div>{ this.getExpiresOrRenewsText() }</div>
+					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
 						<WrapDomainStatusButtons>
@@ -453,7 +426,7 @@ export default connect(
 		return {
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			isLoadingPurchase:
-				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},
