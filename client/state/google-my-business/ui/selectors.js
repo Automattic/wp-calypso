@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/google-my-business/init';
+
+/**
  * Returns the current interval of a Google My Business stats chart or the
  * default value, 'week'
  *
@@ -13,5 +18,5 @@ import { get } from 'lodash';
  * @returns {string} interval 'week' | 'month' | 'quarter'
  */
 export function getStatsInterval( state, siteId, statType ) {
-	return get( state.ui.googleMyBusiness, [ siteId, 'statsInterval', statType ], 'week' );
+	return get( state.googleMyBusiness, [ siteId, 'statsInterval', statType ], 'week' );
 }
