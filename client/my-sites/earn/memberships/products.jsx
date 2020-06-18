@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,6 +11,7 @@ import formatCurrency from '@automattic/format-currency';
  */
 import './style.scss';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getProductsForSiteId } from 'state/memberships/product-list/selectors';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import { Button, CompactCard } from '@automattic/components';
@@ -111,6 +111,6 @@ export default connect( ( state ) => {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
-		products: state?.memberships?.productList?.items?.[ siteId ],
+		products: getProductsForSiteId( state, siteId ),
 	};
 } )( localize( MembershipsProductsSection ) );

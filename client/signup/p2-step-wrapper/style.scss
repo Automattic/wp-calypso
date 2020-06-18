@@ -1,0 +1,62 @@
+@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap' );
+
+.p2-step-wrapper {
+	box-sizing: border-box;
+	margin: 0 auto;
+	max-width: 376px;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	padding: 80px 20px 0;
+	font-family: var( --p2-font-inter );
+
+	input,
+	button {
+		font-family: var( --p2-font-inter );
+	}
+
+	a {
+		color: var( --p2-color-link );
+		transition: color 0.2s ease;
+		text-decoration: none;
+		border-bottom: 1px solid var( --p2-color-link );
+
+		&:hover {
+			color: var( --p2-color-link-dark );
+			border-color: currentColor;
+		}
+	}
+}
+
+.p2-step-wrapper__header {
+	margin-bottom: 110px;
+}
+
+.p2-step-wrapper__header-text {
+	font-size: 16px;
+	line-height: 28px;
+}
+
+.p2-step-wrapper__header-logo {
+	margin-bottom: 40px;
+}
+
+.p2-step-wrapper__footer {
+	text-align: center;
+	margin-top: auto;
+	margin-bottom: 35px;
+}
+
+.p2-step-wrapper__w-logo {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin-bottom: 3px;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.p2-step-wrapper__footer-text {
+	font-size: 14px;
+	line-height: 17px;
+}

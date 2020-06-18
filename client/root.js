@@ -10,7 +10,8 @@ import config from 'config';
 import userFactory from 'lib/user';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export default function () {
 	const user = userFactory();
@@ -51,6 +52,10 @@ function setupLoggedIn() {
 		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
 		const siteSlug = getSiteSlug( state, primarySiteId );
 		let redirectPath = siteSlug && isCustomerHomeEnabled ? `/home/${ siteSlug }` : '/read';
+
+		if ( isJetpackSite( state, primarySiteId ) && ! isAtomicSite( state, primarySiteId ) ) {
+			redirectPath = `/stats/${ siteSlug }`;
+		}
 
 		if ( context.querystring ) {
 			redirectPath += `?${ context.querystring }`;

@@ -54,7 +54,27 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let initialContext;
 
 const removeWhiteBackground = function () {
-	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-white-signup' );
+};
+
+export const addP2SignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'is-p2-signup' );
+};
+
+export const removeP2SignupClassName = function () {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-p2-signup' );
 };
 
 export default {
@@ -64,6 +84,7 @@ export default {
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
+			context.pathname.indexOf( 'onboarding-passwordless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.params.flowName === 'user' ||
@@ -71,6 +92,18 @@ export default {
 			context.params.flowName === 'crowdsignal'
 		) {
 			removeWhiteBackground();
+			next();
+		} else if ( context.pathname.includes( 'p2' ) ) {
+			// We still want to keep the original styling for the new user creation step
+			// so people know they are creating an account at WP.com.
+			if ( context.pathname.includes( 'user' ) ) {
+				removeP2SignupClassName();
+			} else {
+				addP2SignupClassName();
+			}
+
+			removeWhiteBackground();
+
 			next();
 		} else {
 			waitForData( {
@@ -80,6 +113,22 @@ export default {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
 						window.location.replace( window.location.origin + '/new' + window.location.search );
+					} else if (
+						-1 === context.pathname.indexOf( 'free' ) &&
+						-1 === context.pathname.indexOf( 'personal' ) &&
+						-1 === context.pathname.indexOf( 'premium' ) &&
+						-1 === context.pathname.indexOf( 'business' ) &&
+						-1 === context.pathname.indexOf( 'ecommerce' ) &&
+						'variantPasswordless' === abtest( 'passwordlessAfterPlans', countryCode )
+					) {
+						const stepName = getStepName( context.params );
+						const stepSectionName = getStepSectionName( context.params );
+						const urlWithoutLocale = getStepUrl(
+							'onboarding-passwordless',
+							stepName,
+							stepSectionName
+						);
+						window.location = urlWithoutLocale;
 					} else {
 						removeWhiteBackground();
 						next();

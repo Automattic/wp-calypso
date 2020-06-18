@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { settingsPath } from 'lib/jetpack/paths';
 import Banner from 'components/banner';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -44,7 +45,7 @@ class JetpackBackupCredsBanner extends Component {
 						href={
 							rewindState.canAutoconfigure
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-								: `/settings/security/${ siteSlug }#credentials`
+								: `${ settingsPath( siteSlug ) }#credentials`
 						}
 						title={ translate( 'Add your server credentials' ) }
 						description={ translate(

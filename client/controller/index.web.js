@@ -9,8 +9,10 @@ import page from 'page';
  * Internal Dependencies
  */
 import config from 'config';
+import { translate } from 'i18n-calypso';
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
+import EmptyContent from 'components/empty-content';
 import CalypsoI18nProvider from 'components/calypso-i18n-provider';
 import { MomentProvider } from 'components/localized-moment/context';
 import { login } from 'lib/paths';
@@ -97,3 +99,18 @@ export function redirectLoggedOut( context, next ) {
 	}
 	next();
 }
+
+export const notFound = ( context, next ) => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	context.primary = (
+		<EmptyContent
+			className="content-404"
+			illustration="/calypso/images/illustrations/illustration-404.svg"
+			title={ translate( 'Uh oh. Page not found.' ) }
+			line={ translate( "Sorry, the page you were looking for doesn't exist or has been moved." ) }
+		/>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+
+	next();
+};

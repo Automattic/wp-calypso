@@ -19,7 +19,6 @@ import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { abtest } from 'lib/abtest';
 import { logToLogstash } from 'state/logstash/actions';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -115,7 +114,7 @@ export default function CheckoutSystemDecider( {
 	if ( 'composite-checkout' === checkoutVariant ) {
 		return (
 			<CheckoutErrorBoundary
-				errorMessage={ translate( 'Sorry. there was an error loading this page' ) }
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
@@ -165,6 +164,11 @@ function getCheckoutVariant(
 	isJetpack,
 	isAtomic
 ) {
+	if ( config.isEnabled( 'old-checkout-force' ) ) {
+		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
+		return 'old-checkout';
+	}
+
 	if ( config.isEnabled( 'composite-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
 		return 'composite-checkout';
@@ -228,18 +232,8 @@ function getCheckoutVariant(
 		return 'disallowed-product';
 	}
 
-	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
-		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
-		return 'composite-checkout';
-	}
-
-	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
-		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
-		return 'composite-checkout';
-	}
-
-	debug( 'shouldShowCompositeCheckout false because test not enabled' );
-	return 'test-not-enabled';
+	debug( 'shouldShowCompositeCheckout true' );
+	return 'composite-checkout';
 }
 
 function fetchStripeConfigurationWpcom( args ) {

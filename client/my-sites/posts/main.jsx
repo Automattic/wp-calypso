@@ -85,6 +85,7 @@ class PostsMain extends React.Component {
 				<DocumentHead title={ translate( 'Posts' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="posts__page-heading"
 					headerText={ translate( 'Posts' ) }
 					align="left"

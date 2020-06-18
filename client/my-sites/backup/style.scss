@@ -24,6 +24,16 @@
 		overflow-y: visible;
 	}
 }
+
+.backup__main .formatted-header.is-left-align {
+	margin-top: 20px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 4px;
+		margin-bottom: 18px;
+	}
+}
+
 .backup__main-wrap {
 	display: flex;
 	flex-direction: column;
@@ -60,6 +70,17 @@
 	@include placeholder( --color-neutral-10 );
 }
 
+.backup__subheader {
+	margin: 20px 16px 8px;
+
+	font-family: 'Recoleta', Georgia, 'Times New Roman', Times, serif;
+	font-size: rem( 21px );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 36px 0 4px;
+	}
+}
+
 /* WordPress.com-only styles */
 .wordpressdotcom.backup__page {
 	.backup__is-loading {
@@ -85,6 +106,20 @@
 
 		&[disabled] {
 			color: var( --color-neutral-20 );
+		}
+	}
+}
+
+.backup__upsell-icon {
+	fill: #7bb1cd;
+}
+
+.backup__wpcom-upsell {
+	.what-is-jetpack {
+		margin-top: 32px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-top: 64px;
 		}
 	}
 }

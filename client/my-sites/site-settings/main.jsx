@@ -36,6 +36,7 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="site-settings__page-heading"
 				headerText={ translate( 'Settings' ) }
 				align="left"

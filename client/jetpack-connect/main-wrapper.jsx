@@ -45,15 +45,16 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		} = this.props;
 
 		const isWoo = config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isWoo;
+		const isWooDna = wooDnaConfig && wooDnaConfig.isWooDnaFlow();
 
 		const wrapperClassName = classNames( 'jetpack-connect__main', {
 			'is-wide': isWide,
-			'is-woocommerce': isWoo || wooDnaConfig,
+			'is-woocommerce': isWoo || isWooDna,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 		} );
 
-		const width = isWoo || wooDnaConfig ? 200 : undefined;
-		const darkColorScheme = isWoo || wooDnaConfig ? false : true;
+		const width = isWoo || isWooDna ? 200 : undefined;
+		const darkColorScheme = isWoo || isWooDna ? false : true;
 
 		return (
 			<Main className={ classNames( className, wrapperClassName ) }>
@@ -65,7 +66,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					<JetpackHeader
 						partnerSlug={ partnerSlug }
 						isWoo={ isWoo }
-						isWooDna={ !! wooDnaConfig }
+						isWooDna={ isWooDna }
 						width={ width }
 						darkColorScheme={ darkColorScheme }
 					/>

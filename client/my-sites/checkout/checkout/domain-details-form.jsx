@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { first, includes, indexOf, intersection, isEqual, last, map, merge } from 'lodash';
+import { first, indexOf, isEmpty, isEqual, last, map, merge } from 'lodash';
 import emailValidator from 'email-validator';
 
 /**
@@ -21,7 +21,7 @@ import wp from 'lib/wp';
 import config from 'config';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 import ExtraInfoForm, {
-	tldsWithAdditionalDetailsForms,
+	getApplicableTldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
 import { setDomainDetails } from 'lib/transaction/actions';
 import { addGoogleAppsRegistrationData } from 'lib/cart/actions';
@@ -156,7 +156,7 @@ export class DomainDetailsForm extends PureComponent {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
-		return intersection( getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
+		return getApplicableTldsWithAdditionalDetailsForms( getTlds( this.props.cart ) );
 	}
 
 	needsFax() {
@@ -237,7 +237,7 @@ export class DomainDetailsForm extends PureComponent {
 
 	renderCurrentForm() {
 		const { currentStep } = this.state;
-		return includes( tldsWithAdditionalDetailsForms, currentStep )
+		return ! isEmpty( getApplicableTldsWithAdditionalDetailsForms( [ currentStep ] ) )
 			? this.renderExtraDetailsForm( this.state.currentStep )
 			: this.renderDetailsForm();
 	}

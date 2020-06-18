@@ -66,18 +66,12 @@ export class JetpackSignup extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static initialState = Object.freeze( {
+	state = {
 		isCreatingAccount: false,
 		newUsername: null,
 		bearerToken: null,
 		wooDnaFormType: 'login',
-	} );
-
-	state = this.constructor.initialState;
-
-	resetState() {
-		this.setState( this.constructor.initialState );
-	}
+	};
 
 	UNSAFE_componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
@@ -103,7 +97,7 @@ export class JetpackSignup extends Component {
 		}
 
 		if (
-			this.getWooDnaConfig() &&
+			this.getWooDnaConfig().isWooDnaFlow() &&
 			'usernameOrEmail' === loginRequestError.field &&
 			'unknown_user' === loginRequestError.code
 		) {
@@ -114,6 +108,7 @@ export class JetpackSignup extends Component {
 	showWooDnaSignupView = () => {
 		this.setState( {
 			wooDnaFormType: 'signup',
+			signUpUsernameOrEmail: null,
 		} );
 		this.props.resetAuthAccountType();
 	};
@@ -135,7 +130,12 @@ export class JetpackSignup extends Component {
 
 	getWooDnaConfig() {
 		const { authQuery } = this.props;
-		return wooDnaConfig[ authQuery.from ];
+		return wooDnaConfig( authQuery );
+	}
+
+	getFlowName() {
+		const wooDna = this.getWooDnaConfig();
+		return wooDna.isWooDnaFlow() ? wooDna.getFlowName() : 'jetpack-connect';
 	}
 
 	getLoginRoute() {
@@ -154,7 +154,14 @@ export class JetpackSignup extends Component {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
-				.createAccount( { ...userData, extra: { ...userData.extra, jpc: true } } )
+				.createAccount( {
+					...userData,
+					signup_flow_name: this.getFlowName(),
+					extra: {
+						...userData.extra,
+						jpc: true,
+					},
+				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
 				.finally( afterSubmit )
 		);
@@ -174,7 +181,7 @@ export class JetpackSignup extends Component {
 		debug( 'submitting new social account' );
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
-				.createSocialAccount( { service, access_token, id_token } )
+				.createSocialAccount( { service, access_token, id_token }, this.getFlowName() )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
 		);
 	};
@@ -202,7 +209,11 @@ export class JetpackSignup extends Component {
 	handleUserCreationError = ( error ) => {
 		const { errorNotice, translate, warningNotice } = this.props;
 		debug( 'Signup error: %o', error );
-		this.resetState();
+		this.setState( {
+			newUsername: null,
+			bearerToken: null,
+			isCreatingAccount: false,
+		} );
 		if ( error && 'user_exists' === error.code ) {
 			const text =
 				error.data && error.data.email
@@ -301,7 +312,7 @@ export class JetpackSignup extends Component {
 					'Your account will enable you to start using the features and benefits offered by %(pluginName)s',
 					{
 						args: {
-							pluginName: wooDna.name( translate ),
+							pluginName: wooDna.getServiceName(),
 						},
 					}
 				);
@@ -323,7 +334,7 @@ export class JetpackSignup extends Component {
 					</LoggedOutFormLinkItem>
 				);
 			} else {
-				header = wooDna.name( translate );
+				header = wooDna.getServiceName();
 				subHeader = translate( 'Enter your email address to get started' );
 				pageTitle = translate( 'Connect' );
 			}
@@ -342,7 +353,7 @@ export class JetpackSignup extends Component {
 			);
 		} else {
 			// Woo DNA sign-up form
-			header = wooDna.name( translate );
+			header = wooDna.getServiceName();
 			subHeader = translate( 'Create an account' );
 			pageTitle = translate( 'Create a WordPress.com account' );
 			footerLinks.push(
@@ -364,6 +375,7 @@ export class JetpackSignup extends Component {
 					submitForm={ this.handleSubmitSignup }
 					submitting={ isCreatingAccount }
 					suggestedUsername={ includes( email, '@' ) ? '' : email }
+					flowName={ this.getFlowName() }
 				/>
 			);
 		}
@@ -371,7 +383,7 @@ export class JetpackSignup extends Component {
 		return (
 			<MainWrapper
 				wooDnaConfig={ wooDna }
-				pageTitle={ wooDna.name( translate ) + ' — ' + pageTitle }
+				pageTitle={ wooDna.getServiceName() + ' — ' + pageTitle }
 			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
@@ -384,7 +396,7 @@ export class JetpackSignup extends Component {
 	}
 
 	render() {
-		if ( this.getWooDnaConfig() ) {
+		if ( this.getWooDnaConfig().isWooDnaFlow() ) {
 			return this.renderWooDna();
 		}
 		const { isCreatingAccount } = this.state;

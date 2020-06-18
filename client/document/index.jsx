@@ -21,7 +21,6 @@ import { chunkCssLinks } from './utils';
 import JetpackLogo from 'components/jetpack-logo';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from 'server/sanitize';
-import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 class Document extends React.Component {
 	render() {
@@ -57,6 +56,7 @@ class Document extends React.Component {
 			inlineScriptNonce,
 			isSupportSession,
 			isWCComConnect,
+			isWooDna,
 			addEvergreenCheck,
 			requestFrom,
 			useTranslationChunks,
@@ -88,7 +88,7 @@ class Document extends React.Component {
 			'jetpack-connect' === sectionName &&
 			'woocommerce-onboarding' === requestFrom;
 
-		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && wooDnaConfig[ requestFrom ];
+		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
 		const theme = config( 'theme' );
 

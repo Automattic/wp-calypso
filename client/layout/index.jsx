@@ -269,7 +269,7 @@ export default connect( ( state ) => {
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const isJetpackWooDnaFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
-		wooDnaConfig[ get( getCurrentQueryArguments( state ), 'from' ) ];
+		wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow();
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;

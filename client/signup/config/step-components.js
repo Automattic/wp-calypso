@@ -52,6 +52,7 @@ const stepNameToModuleName = {
 	'template-first-themes': 'theme-selection',
 	'fse-themes': 'theme-selection',
 	user: 'user',
+	'user-passwordless': 'user',
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
 	displayname: 'user',

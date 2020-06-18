@@ -31,6 +31,7 @@ import VerticalNav from 'components/vertical-nav';
 import { ECOMMERCE, FORMS } from 'lib/url/support';
 import { showInlineHelpPopover } from 'state/inline-help/actions';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 import './style.scss';
 
@@ -44,7 +45,13 @@ class Security extends React.Component {
 	}
 
 	back = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			domainManagementEdit(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 
 	getSSLStatusIcon( domain ) {
@@ -195,6 +202,7 @@ export default connect(
 		const { subscriptionId } = domain || {};
 
 		return {
+			currentRoute: getCurrentRoute( state ),
 			domain,
 			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
 			isLoadingPurchase:

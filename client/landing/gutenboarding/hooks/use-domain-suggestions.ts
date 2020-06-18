@@ -3,45 +3,29 @@
  */
 import { useDebounce } from 'use-debounce';
 import { useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { USER_STORE } from '../stores/user';
 import { PAID_DOMAINS_TO_SHOW, selectorDebounce } from '../constants';
-import { useCurrentStep } from '../path';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
 
+// @TODO: remove this once use-on-login hook is using the hook from packages
 export function useDomainSuggestions( {
 	searchOverride = '',
 	locale = 'en',
 	quantity = PAID_DOMAINS_TO_SHOW,
 } ) {
-	const { __ } = useI18n();
-	const { siteTitle, siteVertical, domainSearch, domainCategory } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
-	);
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const currentStep = useCurrentStep();
-	const prioritisedSearch = searchOverride.trim() || domainSearch.trim() || siteTitle;
-	let searchVal;
+	const { domainCategory } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
 
-	if ( currentStep !== 'IntentGathering' ) {
-		searchVal =
-			prioritisedSearch ||
-			siteVertical?.label.trim() ||
-			currentUser?.username ||
-			__( 'My new site' );
-	} else {
-		searchVal = prioritisedSearch || '';
-	}
+	const prioritisedSearch = searchOverride.trim() || domainSearch;
 
-	const [ searchTerm ] = useDebounce( searchVal, selectorDebounce );
+	const [ searchTerm ] = useDebounce( prioritisedSearch, selectorDebounce );
 
 	return useSelect(
 		( select ) => {
@@ -58,6 +42,6 @@ export function useDomainSuggestions( {
 				category_slug: domainCategory,
 			} );
 		},
-		[ searchTerm, siteVertical, domainCategory, quantity ]
+		[ searchTerm, domainCategory, quantity ]
 	);
 }

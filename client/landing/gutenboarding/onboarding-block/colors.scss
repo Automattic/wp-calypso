@@ -7,7 +7,9 @@
 	.design-selector,
 	.style-preview,
 	.plans,
-	.domains {
+	.domains,
+	.create-site,
+	.create-site-error {
 		--contrastColor: var( --studio-white );
 		// TODO: This should be Gutenberg's main color
 		--mainColor: var( --studio-gray-100 );

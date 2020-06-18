@@ -55,6 +55,56 @@
 			"title": "coutoire",
 			"defaults": "coutoire",
 			"vertical-whitelist": []
+		},
+		{
+			"title": "barnsbury",
+			"defaults": "barnsbury",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "alves",
+			"defaults": "alves",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "mayland",
+			"defaults": "mayland",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "rivington",
+			"defaults": "rivington",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "maywood",
+			"defaults": "maywood",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "balasana",
+			"defaults": "balasana",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "stratford",
+			"defaults": "stratford",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "rockfield",
+			"defaults": "rockfield",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "leven",
+			"defaults": "leven",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "gibbs",
+			"defaults": "gibbs",
+			"vertical-whitelist": []
 		}
 	],
 	"themes": [
@@ -89,6 +139,30 @@
 		{
 			"title": "maywood",
 			"demo": "https://maywooddemo.wordpress.com/"
+		},
+		{
+			"title": "barnsbury",
+			"demo": "https://barnsburydemo.wordpress.com/"
+		},
+		{
+			"title": "alves",
+			"demo": "https://alvesdemo.wordpress.com/"
+		},
+		{
+			"title": "mayland",
+			"demo": "https://maylanddemo.wordpress.com/"
+		},
+		{
+			"title": "rivington",
+			"demo": "https://rivingtondemo.wordpress.com/"
+		},
+		{
+			"title": "balasana",
+			"demo": "https://balasanademo.wordpress.com/"
+		},
+		{
+			"title": "rockfield",
+			"demo": "https://rockfielddemo.wordpress.com/"
 		}
 	]
 }

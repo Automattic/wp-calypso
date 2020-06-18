@@ -69,9 +69,9 @@ See [the Modularized State documentation](./modularized-state.md) for more detai
 __Identifying characteristics:__
 
 - Modularized reducers are not imported in the root reducer (`client/state/reducer`)
-- Modularized reducers use `withStorageKey` to store their state separately
+- Modularized reducers use `withStorageKey` to persist their state separately
 - Modularized portions of state include an `init` module that registers the reducer as a side effect
-- Action creators and selectors for a modularized portion of state import from the `init` module
+- Action creators and selectors for a modularized portion of state import the `init` module
 
 __Advantages:__
 
@@ -82,7 +82,7 @@ __Advantages:__
 
 ## Current Recommendations
 
-All new data requirements should be implemented as part of the global Redux state tree. The `client/state` directory contains all of the behavior describing the global application state. The folder structure of the `state` directory should directly mirror the sub-trees within the global state tree. Each sub-tree can include their own reducer and actions.
+All new data requirements should be implemented as part of the global, modularized Redux state tree. The `client/state` directory contains all of the behavior describing the global application state. The folder structure of the `state` directory should directly mirror the sub-trees within the global state tree. Each sub-tree should include its own reducer, and preferably also its action creators and selectors.
 
 ### Terminology
 
@@ -97,23 +97,36 @@ The Redux documentation includes a [detailed glossary of terms](https://redux.js
 
 ### Folder Structure
 
-The root module of the `state` directory exports a single reducer function. We leverage [Redux's `combineReducers` function](https://redux.js.org/api/combinereducers) to separate data concerns into their own piece of the overall state. These pieces are reflected by the folder structure of the `state` directory, as shown in the hierarchy below:
+The root module of the `state` directory exports a single reducer function. As the ongoing state modularization work isn't yet completed, it starts off with some legacy sub-reducers always being loaded, through a wrapped version of [Redux's `combineReducers` function](https://redux.js.org/api/combinereducers). Modularized sub-reducers are instead dynamically added to the single reducer as they're needed, rather than unconditionally added at boot.
+
+Separating state into sub-reducers, whether legacy or modularized, allows us to separate data concerns into their own piece of the overall state. These pieces are reflected by the folder structure of the `state` directory, as shown in the hierarchy below:
 
 ```text
 client/state/
 ├── index.js
 ├── action-types.js
 └── { subject }/
-    ├── actions.js
+    ├── actions/
+    |   ├── index.js
+    |   ├── action1.js
+    |   └── action2.js
+    ├── init.js          (for modularized state)
+    ├── package.json     (for modularized state)
     ├── reducer.js
     ├── schema.js
-    ├── selectors.js
+    ├── selectors/
+    |    ├── index.js
+    |    ├── selector1.js
+    |    └── selector2.js
     └── test/
-        ├── actions.js
-        └── reducer.js
+        ├── actions.js   (or actions/)
+        ├── reducer.js
+        └── selectors.js (or selectors/)
 ```
 
 For example, the reducer responsible for maintaining the `state.sites` key within the global state can be found in `client/state/sites/reducer.js`. It's quite common that the subject reducer is itself a combined reducer. Just as it helps to split the global state into subdirectories responsible for their own part of the tree, as a subject grows, you may find that it's easier to maintain pieces as nested subdirectories. This ease of composability is one of Redux's strengths.
+
+Do bear in mind that state is always modularized at the top level, though. Even if a top-level reducer is composed of multiple smaller reducers, the top-level reducer is always loaded as a single atomic unit.
 
 ### Actions
 
@@ -298,7 +311,7 @@ By now, you're hopefully convinced that a global application state can enable us
 
 We recommend that you only use the state tree to store user interface state when you know that the data being stored should be persisted between page views, or when it's to be used by distinct areas of the application on the same page. As an example, consider the currently selected site. When navigating between pages in the [_My Sites_](https://wordpress.com/stats) section, I'd expect that the selected site should not change. Additionally, many parts of the rendered application make use of selected site. For these reasons, it makes sense that the currently selected site be saved in the global state. By contrast, when I navigate to the Sharing page and expand one of the available sharing services, I don't have the same expectation that this interaction be preserved when I later leave and return to the page. In these cases, it might be more appropriate to use React state to track the expanded status of the component, local only to the current rendering context. Use your best judgment when considering whether to add to the global state, but don't feel compelled to avoid React state altogether.
 
-Files related to user-interface state can be found in the [`client/state/ui` directory](../client/state/ui).
+Files related to global application user-interface state (such as sections and masterbar visibility) can be found in the [`client/state/ui` directory](../client/state/ui), whereas feature-specific UI state should be kept together with the rest of that feature's state sub-tree or as a separate top-level entry.
 
 ### Data Persistence
 

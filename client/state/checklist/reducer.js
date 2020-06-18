@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -57,4 +57,6 @@ const reducer = combineReducers( {
 	items,
 } );
 
-export default keyedReducer( 'siteId', reducer );
+const checklistReducer = keyedReducer( 'siteId', reducer );
+
+export default withStorageKey( 'checklist', checklistReducer );

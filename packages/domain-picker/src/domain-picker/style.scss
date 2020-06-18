@@ -3,6 +3,24 @@
 
 $domain-picker__suggestion-item-height: 24px;
 
+.domain-picker__empty-state {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&--text {
+		max-width: 320px;
+		font-size: 0.9em;
+		margin: 0 10px;
+		color: $dark-gray-500;
+	}
+}
+
+.domain-picker__show-more {
+	padding: 10px;
+	text-align: center;
+}
+
 .domain-picker__search {
 	position: relative;
 	margin-bottom: 20px;
@@ -63,6 +81,23 @@ $domain-picker__suggestion-item-height: 24px;
 
 	+ .domain-picker__suggestion-item {
 		margin-top: -1px;
+	}
+
+	// animate the added domains after you click expand
+	@for $i from 7 through 14 {
+		&:nth-child( #{$i} ) {
+			transform: translateY( 20px );
+			opacity: 0;
+			animation: domain-picker-item-slide-up 0.1s ease-in forwards;
+			animation-delay: #{( $i - 7 ) * 40ms};
+		}
+	}
+
+	@keyframes domain-picker-item-slide-up {
+		100% {
+			transform: translateY( 0 );
+			opacity: 1;
+		}
 	}
 
 	&.components-button {

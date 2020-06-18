@@ -49,13 +49,13 @@ function add_site_editor_menu_item() {
 /**
  * Used to filter corresponding Site Editor experiment options.
  *
- * These need to be toggled on for the Site Editor to work properly.
- * Furthermore, it's not enough to set them just on a given site.
+ * This needs to be toggled on for the Site Editor to work properly.
+ * Furthermore, it's not enough to set it just on a given site.
  * In WP.com context this needs to be enabled in API context too,
  * and since we want to have it selectively enabled for some subset of
  * sites initially, we can't set this option for the whole API.
- * Instead we'll intercept it with it options filter (option_gutenberg-experiments)
- * and override its values for certain sites.
+ * Instead we'll intercept it with its options filter (pre_option_gutenberg-experiments)
+ * and override its values for eligible sites.
  *
  * @param array $experiments_option Default experiments option array.
  *
@@ -68,10 +68,6 @@ function enable_site_editor_experiment( $experiments_option ) {
 
 	if ( empty( $experiments_option['gutenberg-full-site-editing'] ) ) {
 		$experiments_option['gutenberg-full-site-editing'] = 1;
-	}
-
-	if ( empty( $experiments_option['gutenberg-full-site-editing-demo'] ) ) {
-		$experiments_option['gutenberg-full-site-editing-demo'] = 1;
 	}
 
 	return $experiments_option;

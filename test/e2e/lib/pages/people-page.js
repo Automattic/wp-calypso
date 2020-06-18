@@ -152,6 +152,13 @@ export default class PeoplePage extends AsyncBaseContainer {
 		);
 	}
 
+	async goToClearAcceptedInvitePage( username ) {
+		return await DriverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `.people-invites__accepted .people-profile__login[data-e2e-login="${ username }"]` )
+		);
+	}
+
 	async removeOnlyEmailFollowerDisplayed() {
 		await DriverHelper.clickWhenClickable(
 			this.driver,

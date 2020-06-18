@@ -30,10 +30,6 @@
 		margin-right: 12px;
 	}
 
-	.formatted-header__title {
-		font-family: 'Recoleta', $serif;
-	}
-
 	.formatted-header__subtitle {
 		margin: 0;
 	}
@@ -83,7 +79,7 @@
 }
 
 .customer-home__section-heading {
-	font-family: 'Recoleta', serif;
+	@extend .wp-brand-font;
 	font-size: 1.25rem;
 	margin: 32px 0 16px;
 

@@ -4,12 +4,16 @@ orbs:
   slack: circleci/slack@3.4.2
 
 references:
-  shared-environment: &shared-environment
-    CIRCLE_ARTIFACTS: /tmp/artifacts
-    CIRCLE_TEST_REPORTS: /tmp/test_results
-
-  docker-image: &docker-image
-    - image: circleci/node:12.16.2-browsers
+  defaults: &defaults
+    working_directory: ~/wp-calypso
+    docker:
+      - image: circleci/node:12.18.0-browsers
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/artifacts
+      CIRCLE_TEST_REPORTS: /tmp/test_results
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      DETECT_CHROMEDRIVER_VERSION: 'false'
+      CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -117,10 +121,28 @@ references:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
 
   yarn-install: &yarn-install
-    environment:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
-    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
+    command: yarn install --frozen-lockfile
+
+  update-node: &update-node
+    name: Update node
+    command: |
+      set +e
+      set +x
+      export NVM_DIR="$HOME/.nvm" && (
+        git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+        cd "$NVM_DIR"
+        git checkout v0.35.3
+      ) && \. "$NVM_DIR/nvm.sh" --no-use
+      nvm install
+      nvm use
+
+  # This is used later to send a custom UA string. `google-chrome` is in the PATH in all circleci-browser images
+  save-chrome-version: &save-chrome-version
+    name: Save chrome version
+    command: |
+      google-chrome --version > .chromedriver_version
+      echo -n "Google Chrome version: " && cat .chromedriver_version
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
@@ -157,11 +179,6 @@ references:
       cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
-  defaults: &defaults
-    working_directory: ~/wp-calypso
-    docker: *docker-image
-    environment: *shared-environment
-
 commands:
   prepare:
     description: 'Prepare Job'
@@ -170,6 +187,7 @@ commands:
       - run: *setup-results-and-artifacts
       - attach_workspace:
           at: '~'
+      - run: *update-node
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -189,11 +207,11 @@ jobs:
       - checkout
       - run: *update-git-master
       - save_cache: *save-git-cache
+      - run: *update-node
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
       - save_cache: *save-yarn-cache
-      - run: yarn run build-packages
       - persist_to_workspace:
           root: '~'
           paths:
@@ -480,6 +498,7 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *save-chrome-version
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
@@ -507,6 +526,7 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *save-chrome-version
       - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed

@@ -94,8 +94,8 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( wooDnaConfig ) {
-			return wooDnaConfig.name( translate );
+		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
+			return wooDnaConfig.getServiceName();
 		}
 
 		switch ( currentState ) {
@@ -124,7 +124,7 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( wooDnaConfig ) {
+		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
 			switch ( currentState ) {
 				case 'logged-in-success':
 				case 'auth-in-progress':

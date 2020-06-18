@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { times } from 'lodash';
-import { TextControl } from '@wordpress/components';
+import { Button, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
@@ -21,11 +21,8 @@ import {
 	getRecommendedDomainSuggestion,
 } from '../utils/domain-suggestions';
 import DomainCategories from '../domain-categories';
-import {
-	PAID_DOMAINS_TO_SHOW_WITH_CATEGORIES_MODE,
-	PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
-} from '../constants';
-
+import { PAID_DOMAINS_TO_SHOW, PAID_DOMAINS_TO_SHOW_EXPANDED } from '../constants';
+import { DomainNameExplanationImage } from '../domain-name-explanation/';
 /**
  * Style dependencies
  */
@@ -45,7 +42,11 @@ export interface Props {
 	 */
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 
+	/** Paid omain suggestions to show when the picker isn't expanded */
 	quantity?: number;
+
+	/** Domain suggestions to show when the picker is expanded */
+	quantityExpanded?: number;
 
 	currentDomain?: DomainSuggestion;
 
@@ -68,9 +69,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	header,
 	showDomainCategories,
 	onDomainSelect,
-	quantity = showDomainCategories
-		? PAID_DOMAINS_TO_SHOW_WITH_CATEGORIES_MODE
-		: PAID_DOMAINS_TO_SHOW_WITHOUT_CATEGORIES_MODE,
+	quantity = PAID_DOMAINS_TO_SHOW,
+	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
 	currentDomain,
 	analyticsFlowId,
 	analyticsUiAlgo,
@@ -83,6 +83,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	// We're not keeping the current selection in local state at the moment
 	//const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
+	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	// keep domain query in local state to allow free editing of the input value while the modal is open
 	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
@@ -90,14 +91,22 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const domainSuggestions = useDomainSuggestions(
 		domainSearch.trim(),
+		quantityExpanded,
 		domainCategory,
-		useI18n().i18nLocale,
-		quantity
+		useI18n().i18nLocale
 	);
+
+	// Reset expansion state after every search
+	useEffect( () => {
+		setIsExpanded( false );
+	}, [ domainSearch ] );
 
 	const allSuggestions = domainSuggestions;
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
+		0,
+		isExpanded ? quantityExpanded : quantity
+	);
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
 	// We're not using auto-selection right now.
@@ -177,50 +186,70 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					value={ domainSearch }
 				/>
 			</div>
-			<div className="domain-picker__body">
-				{ showDomainCategories && (
-					<div className="domain-picker__aside">
-						<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
-					</div>
-				) }
-				<div className="domain-picker__suggestion-item-group">
-					{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
-					{ freeSuggestions &&
-						( freeSuggestions.length ? (
-							<SuggestionItem
-								suggestion={ freeSuggestions[ 0 ] }
-								railcarId={ baseRailcarId ? `${ baseRailcarId }0` : undefined }
-								isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
-								onRender={ () =>
-									handleItemRender( freeSuggestions[ 0 ], `${ baseRailcarId }0`, 0 )
-								}
-								onSelect={ onDomainSelect }
-							/>
-						) : (
-							<SuggestionNone />
-						) ) }
-					{ ! paidSuggestions &&
-						times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
-					{ paidSuggestions &&
-						( paidSuggestions?.length ? (
-							paidSuggestions.map( ( suggestion, i ) => (
+			{ domainSearch.trim() ? (
+				<div className="domain-picker__body">
+					{ showDomainCategories && (
+						<div className="domain-picker__aside">
+							<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
+						</div>
+					) }
+					<div className="domain-picker__suggestion-item-group">
+						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
+						{ freeSuggestions &&
+							( freeSuggestions.length ? (
 								<SuggestionItem
-									key={ suggestion.domain_name }
-									suggestion={ suggestion }
-									railcarId={ baseRailcarId ? `${ baseRailcarId }${ i + 1 }` : undefined }
-									isSelected={ currentDomain?.domain_name === suggestion.domain_name }
-									isRecommended={ isRecommended( suggestion ) }
+									suggestion={ freeSuggestions[ 0 ] }
+									railcarId={ baseRailcarId ? `${ baseRailcarId }0` : undefined }
+									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
 									onRender={ () =>
-										handleItemRender( suggestion, `${ baseRailcarId }${ i + 1 }`, i + 1 )
+										handleItemRender( freeSuggestions[ 0 ], `${ baseRailcarId }0`, 0 )
 									}
 									onSelect={ onDomainSelect }
 								/>
-							) )
-						) : (
-							<SuggestionNone />
-						) ) }
+							) : (
+								<SuggestionNone />
+							) ) }
+						{ ! paidSuggestions &&
+							times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+						{ paidSuggestions &&
+							( paidSuggestions?.length ? (
+								paidSuggestions.map( ( suggestion, i ) => (
+									<SuggestionItem
+										key={ suggestion.domain_name }
+										suggestion={ suggestion }
+										railcarId={ baseRailcarId ? `${ baseRailcarId }${ i + 1 }` : undefined }
+										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
+										isRecommended={ isRecommended( suggestion ) }
+										onRender={ () =>
+											handleItemRender( suggestion, `${ baseRailcarId }${ i + 1 }`, i + 1 )
+										}
+										onSelect={ onDomainSelect }
+									/>
+								) )
+							) : (
+								<SuggestionNone />
+							) ) }
+						{ ! isExpanded && (
+							<div className="domain-picker__show-more">
+								<Button onClick={ () => setIsExpanded( true ) }>
+									{ __( 'View more results' ) }
+								</Button>
+							</div>
+						) }
+					</div>
 				</div>
-			</div>
+			) : (
+				<div className="domain-picker__empty-state">
+					<p className="domain-picker__empty-state--text">
+						{ __(
+							'A domain name is the site address people type in their browser to visit your site.'
+						) }
+					</p>
+					<div>
+						<DomainNameExplanationImage />
+					</div>
+				</div>
+			) }
 		</div>
 	);
 };

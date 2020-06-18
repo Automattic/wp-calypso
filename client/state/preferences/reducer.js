@@ -99,5 +99,5 @@ const combinedReducer = combineReducers( {
 	fetching,
 	lastFetchedTimestamp,
 } );
-const preferencesReducer = withStorageKey( 'reader', combinedReducer );
+const preferencesReducer = withStorageKey( 'preferences', combinedReducer );
 export default preferencesReducer;

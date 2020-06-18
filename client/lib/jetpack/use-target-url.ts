@@ -6,8 +6,8 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import isJetpackCloudEligible from 'state/selectors/is-jetpack-cloud-eligible';
+import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
@@ -37,6 +37,9 @@ export function useTargetUrl( siteId: number | null ) {
 		isJetpackCloudEligible( state, siteId as number )
 	);
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId as number ) );
+	const shouldUseJetpackPath = useSelector( ( state ) =>
+		isJetpackSectionEnabledForSite( state, siteId )
+	);
 
 	const sourceToUrl = ( source: string ): string | null => {
 		if ( ! siteId ) {
@@ -46,10 +49,9 @@ export function useTargetUrl( siteId: number | null ) {
 			return `https://jetpack.com/redirect/?source=${ source }&site=${ siteId }`;
 		}
 
-		let paths = SOURCE_TO_CALYPSO_PATH as SourceToPath;
-		if ( config( 'jetpack/features-section' ) ) {
-			paths = SOURCE_TO_JETPACK_PATH as SourceToPath;
-		}
+		const paths = shouldUseJetpackPath
+			? ( SOURCE_TO_JETPACK_PATH as SourceToPath )
+			: ( SOURCE_TO_CALYPSO_PATH as SourceToPath );
 
 		if ( ! paths[ source ] ) {
 			return source;

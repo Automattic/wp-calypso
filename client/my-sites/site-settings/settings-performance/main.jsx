@@ -57,6 +57,7 @@ class SiteSettingsPerformance extends Component {
 				<JetpackDevModeNotice />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="settings-performance__page-heading"
 					headerText={ translate( 'Settings' ) }
 					align="left"

@@ -25,8 +25,8 @@ import { preload } from 'sections-helper';
 import { requestFeedDiscovery } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
-import { isFollowingOpen } from 'state/ui/reader/sidebar/selectors';
-import { toggleReaderSidebarFollowing } from 'state/ui/reader/sidebar/actions';
+import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
+import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
 
 const analyticsPageTitle = 'Reader';
 

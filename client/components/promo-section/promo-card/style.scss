@@ -35,7 +35,7 @@
 		align-items: center;
 
 		.action-panel__title {
-			font-family: 'Recoleta', $serif;
+			@extend .wp-brand-font;
 			font-size: 20px;
 			line-height: 28px;
 			margin-bottom: 0;

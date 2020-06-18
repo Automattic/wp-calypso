@@ -11,6 +11,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { preventWidows } from 'lib/formatting';
+import { settingsPath } from 'lib/jetpack/paths';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { Button } from '@automattic/components';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -126,7 +127,7 @@ export class ThankYouCard extends Component {
 					) }
 					{ showScanCTAs && (
 						<p className="current-plan-thank-you__followup">
-							<Button href={ `/settings/security/${ selectedSiteSlug }#credentials` } primary>
+							<Button href={ `${ settingsPath( selectedSiteSlug ) }#credentials` } primary>
 								{ translate( 'Add server credentials now' ) }
 							</Button>
 							<Button href={ dismissUrl } onClick={ this.startChecklistTour }>

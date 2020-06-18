@@ -37,15 +37,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	showCompositeCheckout: {
-		datestamp: '20200611',
-		variations: {
-			composite: 100,
-			regular: 0,
-		},
-		defaultVariation: 'regular',
-		allowExistingUsers: true,
-	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
@@ -127,7 +118,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	newSiteGutenbergOnboarding: {
-		datestamp: '20200612',
+		datestamp: '20200617',
 		variations: {
 			gutenberg: 10,
 			control: 90,
@@ -165,6 +156,16 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
+		countryCodeTargets: [ 'US' ],
+	},
+	passwordlessAfterPlans: {
+		datestamp: '20200618',
+		variations: {
+			variantPasswordless: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 		countryCodeTargets: [ 'US' ],
 	},
 };

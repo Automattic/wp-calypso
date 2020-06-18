@@ -49,9 +49,10 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Inviting new user as an Editor: @parallel @jetpack', function () {
-		const newUserName = 'e2eflowtestingeditor' + new Date().getTime().toString();
+		const newUserName = 'e2eflowtestingeditora' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
+		let inviteCreated = false;
 
 		step( 'Can log in and navigate to Invite People page', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
@@ -68,6 +69,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
 			await noticesComponent.isSuccessNoticeDisplayed();
+			inviteCreated = true;
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -147,10 +149,22 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			await navBarComponent.clickMySites();
 			return await NoSitesComponent.Expect( driver );
 		} );
+
+		after( async function () {
+			if ( inviteCreated ) {
+				await new LoginFlow( driver ).loginAndSelectPeople();
+				const peoplePage = await PeoplePage.Expect( driver );
+				await peoplePage.selectInvites();
+				await peoplePage.goToClearAcceptedInvitePage( newUserName );
+
+				const clearInvitePage = await RevokePage.Expect( driver );
+				await clearInvitePage.revokeUser();
+			}
+		} );
 	} );
 
 	describe( 'Inviting new user as an Editor and revoke invite: @parallel @jetpack', function () {
-		const newUserName = 'e2eflowtestingeditor' + new Date().getTime().toString();
+		const newUserName = 'e2eflowtestingeditorb' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 
@@ -214,6 +228,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		const siteUrl = `https://${ siteName }/`;
 		let removedViewerFlag = true;
 		let acceptInviteURL = '';
+		let inviteCreated = false;
 
 		step( 'As an anonymous user I can not see a private site', async function () {
 			return await PrivateSiteLoginPage.Visit( driver, siteUrl );
@@ -225,7 +240,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			return await peoplePage.inviteUser();
 		} );
 
-		step( 'Can invite a new user as an editor and see its pending', async function () {
+		step( 'Can invite a new user as a viewer and see its pending', async function () {
 			const invitePeoplePage = await InvitePeoplePage.Expect( driver );
 			await invitePeoplePage.inviteNewUser(
 				newInviteEmailAddress,
@@ -234,6 +249,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
 			await noticesComponent.isSuccessNoticeDisplayed();
+			inviteCreated = true;
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -312,6 +328,16 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		} );
 
 		after( async function () {
+			if ( inviteCreated ) {
+				await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
+				const peoplePageCleanup = await PeoplePage.Expect( driver );
+				await peoplePageCleanup.selectInvites();
+				await peoplePageCleanup.goToClearAcceptedInvitePage( newUserName );
+
+				const clearInvitePage = await RevokePage.Expect( driver );
+				await clearInvitePage.revokeUser();
+			}
+
 			if ( ! removedViewerFlag ) {
 				await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
 				const peoplePage = await PeoplePage.Expect( driver );

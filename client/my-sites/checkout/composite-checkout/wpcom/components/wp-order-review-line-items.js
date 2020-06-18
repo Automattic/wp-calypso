@@ -91,9 +91,7 @@ function WPLineItem( {
 			{ item.sublabel && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice item={ item } />
-					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
-						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
-					) }
+					<DomainDiscountCallout item={ item } />
 				</LineItemMeta>
 			) }
 			{ isSavings && <SavingsList item={ item } /> }
@@ -498,4 +496,21 @@ function SavingsList( { item } ) {
 			) ) }
 		</LineItemMeta>
 	);
+}
+
+function DomainDiscountCallout( { item } ) {
+	const translate = useTranslate();
+
+	const isFreeBundledDomainRegistration = item.wpcom_meta?.is_bundled && item.amount.value === 0;
+	if ( isFreeBundledDomainRegistration ) {
+		return <DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>;
+	}
+
+	const isFreeDomainMapping =
+		item.wpcom_meta?.product_slug === 'domain_map' && item.amount.value === 0;
+	if ( isFreeDomainMapping ) {
+		return <DiscountCalloutUI>{ translate( 'Free with your plan' ) }</DiscountCalloutUI>;
+	}
+
+	return null;
 }

@@ -92,6 +92,7 @@ class EmailManagement extends React.Component {
 				<SidebarNavigation />
 				{ ! selectedDomainName && (
 					<FormattedHeader
+						brandFont
 						className="email-management__page-heading"
 						headerText={ this.props.translate( 'Email' ) }
 						align="left"

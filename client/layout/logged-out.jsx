@@ -156,9 +156,7 @@ export default connect( ( state ) => {
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
-	const isJetpackWooDnaFlow = Boolean(
-		wooDnaConfig[ get( getCurrentQueryArguments( state ), 'from' ) ]
-	);
+	const isJetpackWooDnaFlow = wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow();
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 
 	return {

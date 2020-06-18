@@ -30,6 +30,7 @@ export const newSiteError: Reducer< NewSiteErrorResponse | undefined, Action > =
 		case 'FETCH_NEW_SITE':
 		case 'RECEIVE_NEW_SITE':
 		case 'RESET_SITE_STORE':
+		case 'RESET_RECEIVE_NEW_SITE_FAILED':
 			return undefined;
 		case 'RECEIVE_NEW_SITE_FAILED':
 			return {
@@ -50,6 +51,7 @@ export const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = 
 		case 'RECEIVE_NEW_SITE':
 		case 'RECEIVE_NEW_SITE_FAILED':
 		case 'RESET_SITE_STORE':
+		case 'RESET_RECEIVE_NEW_SITE_FAILED':
 			return false;
 	}
 	return state;

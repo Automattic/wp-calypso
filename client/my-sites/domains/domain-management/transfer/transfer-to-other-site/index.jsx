@@ -28,6 +28,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
 import { isWpComFreePlan } from 'lib/plans';
 import { requestSites } from 'state/sites/actions';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 const wpcom = wp.undocumented();
 
@@ -119,14 +120,14 @@ export class TransferToOtherSite extends React.Component {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { selectedSite, selectedDomainName } = this.props;
+		const { selectedSite, selectedDomainName, currentRoute } = this.props;
 		const { slug } = selectedSite;
 
 		return (
 			<Main className="transfer-to-other-site">
 				<Header
 					selectedDomainName={ selectedDomainName }
-					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
+					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				>
 					{ this.props.translate( 'Transfer Domain To Another Site' ) }
 				</Header>
@@ -187,6 +188,7 @@ export default connect(
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		isDomainOnly: isDomainOnlySite( state, get( ownProps, 'selectedSite.ID', null ) ),
 		sites: getSites( state ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	{
 		errorNotice,

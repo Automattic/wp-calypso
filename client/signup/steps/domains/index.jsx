@@ -125,7 +125,7 @@ class DomainsStep extends React.Component {
 		this.showTestCopy = false;
 
 		const isEligibleFlowForDomainTest = includes(
-			[ 'onboarding', 'onboarding-plan-first' ],
+			[ 'onboarding', 'onboarding-plan-first', 'onboarding-passwordless' ],
 			props.flowName
 		);
 
@@ -661,6 +661,10 @@ class DomainsStep extends React.Component {
 		const fallbackSubHeaderText = this.getSubHeaderText();
 		const showSkip = isDomainStepSkippable( flowName );
 
+		let hideBack;
+		if ( 'onboarding-passwordless' === flowName && ! this.props.stepSectionName ) {
+			hideBack = true;
+		}
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -681,6 +685,7 @@ class DomainsStep extends React.Component {
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
+				hideBack={ hideBack }
 				isTopButtons={ showSkip }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }

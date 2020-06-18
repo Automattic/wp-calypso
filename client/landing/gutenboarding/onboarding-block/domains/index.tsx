@@ -88,7 +88,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			<DomainPicker
 				header={ header }
 				analyticsFlowId={ FLOW_ID }
-				initialDomainSearch={ domainSearch || __( 'My new site' ) }
+				initialDomainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
 				currentDomain={ domain }
 				onDomainSelect={ onDomainSelect }

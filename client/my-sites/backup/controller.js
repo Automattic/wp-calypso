@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import BackupActivityLogPage from './backup-activity-log';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
 import UpsellSwitch from 'components/jetpack/upsell-switch';
@@ -31,19 +30,6 @@ export function backups( context, next ) {
 	const { date } = context.query;
 
 	context.primary = <BackupsPage queryDate={ date } />;
-	next();
-}
-
-/* handles /backup/activity/:site, see `backupActivityPath` */
-export function backupActivity( context, next ) {
-	context.primary = (
-		<BackupActivityLogPage
-			after={ context.query.after }
-			before={ context.query.before }
-			group={ context.query.group }
-			page={ context.query.page }
-		/>
-	);
 	next();
 }
 

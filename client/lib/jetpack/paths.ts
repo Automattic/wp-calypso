@@ -3,10 +3,7 @@
  */
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'lib/url';
-
-const activityLogBasePath = () => ( isJetpackCloud() ? '/backup/activity' : '/activity-log' );
-export const activityLogPath = ( siteSlug?: string ) =>
-	siteSlug ? `${ activityLogBasePath() }/${ siteSlug }` : activityLogBasePath();
+import { isEnabled } from 'config';
 
 const backupBasePath = () => '/backup';
 export const backupPath = ( siteSlug?: string, query = {} ) => {
@@ -18,6 +15,8 @@ const scanBasePath = () => '/scan';
 export const scanPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ scanBasePath() }/${ siteSlug }` : scanBasePath();
 
-const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : '/settings/jetpack' );
+const calypsoBasePath = () =>
+	isEnabled( 'jetpack/features-section' ) ? '/settings/jetpack' : '/settings/security';
+const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : calypsoBasePath() );
 export const settingsPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ settingsBasePath() }/${ siteSlug }` : settingsBasePath();

@@ -251,10 +251,12 @@ class Search extends Component {
 		} );
 
 		this.searchInput.value = ''; // will not trigger onChange
-		this.searchInput.blur();
 
 		if ( this.props.pinned ) {
+			this.searchInput.blur();
 			this.openIcon.focus();
+		} else {
+			this.searchInput.focus();
 		}
 
 		this.props.onSearchClose( event );

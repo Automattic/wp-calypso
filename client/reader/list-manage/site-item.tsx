@@ -57,7 +57,7 @@ function renderSiteError( err: SiteError ) {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function SiteItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
-	const site: Site | SiteError = props.item.meta.data?.site as Site | SiteError;
+	const site: Site | SiteError = props.item.meta?.data?.site as Site | SiteError;
 
 	if ( ! site ) {
 		// TODO: Add support for removing invalid site list item

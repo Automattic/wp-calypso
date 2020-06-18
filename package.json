@@ -47,8 +47,8 @@
 		]
 	},
 	"engines": {
-		"node": "^12.16.1",
-		"yarn": "^1.22.0"
+		"node": "^v12.18.0",
+		"yarn": "^1.22.4"
 	},
 	"scripts": {
 		"analyze-bundles": "check-npm-client && yarn run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
@@ -366,7 +366,7 @@
 		"wp-e2e-tests": "^0.0.1",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",
-		"yargs": "^15.3.0"
+		"yargs": "^15.3.1"
 	},
 	"optionalDependencies": {
 		"fsevents": "^2.1.2"
