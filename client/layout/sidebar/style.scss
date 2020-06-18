@@ -107,9 +107,9 @@
 // various sections of Calypso.
 .sidebar__menu-link {
 	font-size: $font-body;
-	line-height: 1.5;
+	line-height: 1.2;
 	position: relative;
-	padding: 7px 16px 7px 20px;
+	padding: 10px 16px 10px 20px;
 	box-sizing: border-box;
 	overflow: hidden;
 	display: flex;
@@ -183,6 +183,8 @@
 
 .sidebar__menu.is-togglable .sidebar__menu-link {
 	font-size: $font-body-small;
+	line-height: 1.5;
+	padding: 7px 16px 7px 20px;
 }
 
 .sidebar__menu-link-text {
