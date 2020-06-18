@@ -65,7 +65,11 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		amount: {
 			currency: currency,
 			value: coupon_savings_total_integer,
-			displayValue: coupon_savings_total_display,
+			displayValue: String(
+				translate( '- %(discountAmount)s', {
+					args: { discountAmount: coupon_savings_total_display },
+				} )
+			),
 		},
 		wpcom_meta: {
 			couponCode: coupon,
@@ -79,7 +83,9 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		amount: {
 			currency: currency,
 			value: credits_integer,
-			displayValue: credits_display,
+			displayValue: String(
+				translate( '- %(discountAmount)s', { args: { discountAmount: credits_display } } )
+			),
 		},
 	};
 
