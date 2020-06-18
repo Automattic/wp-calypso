@@ -23,7 +23,7 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 	const dispatch = useDispatch();
 	return (
 		<Card className="list-manage__site-card">
-			{ item.feed_ID !== null && (
+			{ item.feed_ID && (
 				<FeedItem
 					item={ item }
 					onRemove={ () =>
@@ -31,7 +31,7 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 					}
 				/>
 			) }
-			{ item.site_ID !== null && (
+			{ item.site_ID && (
 				<SiteItem
 					item={ item }
 					onRemove={ () =>
@@ -39,7 +39,7 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 					}
 				/>
 			) }
-			{ item.tag_ID !== null && (
+			{ item.tag_ID && (
 				<TagItem
 					item={ item }
 					onRemove={ () =>
@@ -49,7 +49,7 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 								owner,
 								list.slug,
 								item.tag_ID,
-								item.meta.data?.tag?.tag.slug
+								item.meta?.data?.tag?.tag.slug
 							)
 						)
 					}

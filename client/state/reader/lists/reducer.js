@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { filter, find, get, includes, keyBy, map, omit, union, reject } from 'lodash';
+import { filter, some, find, get, includes, keyBy, map, omit, union, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ import {
 	READER_LIST_ITEM_DELETE_FEED,
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
+	READER_LIST_ITEM_ADD_FEED_RECEIVE,
 } from 'state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
@@ -68,6 +69,16 @@ export const listItems = ( state = {}, action ) => {
 				...state,
 				[ action.listId ]: action.listItems,
 			};
+		case READER_LIST_ITEM_ADD_FEED_RECEIVE: {
+			const currentItems = state[ action.listId ] || [];
+			if ( some( currentItems, { feed_ID: action.feedId } ) ) {
+				return state;
+			}
+			return {
+				...state,
+				[ action.listId ]: [ ...currentItems, { feed_ID: action.feedId } ],
+			};
+		}
 		case READER_LIST_ITEM_DELETE_FEED:
 			return removeItemBy( state, action, ( item ) => item.feed_ID === action.feedId );
 		case READER_LIST_ITEM_DELETE_TAG:

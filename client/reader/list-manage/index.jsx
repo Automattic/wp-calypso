@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -16,14 +16,24 @@ import {
 	isUpdatingList as isUpdatingListSelector,
 } from 'state/reader/lists/selectors';
 import FormattedHeader from 'components/formatted-header';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormButton from 'components/forms/form-button';
 import QueryReaderList from 'components/data/query-reader-list';
 import QueryReaderListItems from 'components/data/query-reader-list-items';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
-import { createReaderList, updateReaderList } from 'state/reader/lists/actions';
+import {
+	addReaderListFeedByUrl,
+	createReaderList,
+	updateReaderList,
+} from 'state/reader/lists/actions';
 import ReaderExportButton from 'blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
 import ListItem from './list-item';
@@ -59,6 +69,8 @@ function ReaderListEdit( props ) {
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
 	);
+	const addFeedText = React.useRef( null );
+
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
@@ -114,10 +126,42 @@ function ReaderListEdit( props ) {
 								</Card>
 							</>
 						) }
-						{ selectedSection === 'items' &&
-							listItems?.map( ( item ) => (
-								<ListItem key={ item.ID } owner={ props.owner } list={ list } item={ item } />
-							) ) }
+						{ selectedSection === 'items' && (
+							<>
+								<Card>
+									<FormSectionHeading>Add a feed</FormSectionHeading>
+									<FormFieldset>
+										<FormLabel htmlFor="new-feed-url">URL</FormLabel>
+										<FormTextInput id="new-feed-url" name="new-feed-url" inputRef={ addFeedText } />
+										<FormSettingExplanation>
+											The address of a site or RSS feed
+										</FormSettingExplanation>
+									</FormFieldset>
+									<FormButtonsBar>
+										<FormButton
+											primary
+											onClick={ () => {
+												if ( addFeedText.current?.value ) {
+													dispatch(
+														addReaderListFeedByUrl(
+															list.ID,
+															list.owner,
+															list.slug,
+															addFeedText.current.value
+														)
+													);
+												}
+											} }
+										>
+											Add
+										</FormButton>
+									</FormButtonsBar>
+								</Card>
+								{ props.listItems?.map( ( item ) => (
+									<ListItem key={ item.ID } owner={ props.owner } list={ list } item={ item } />
+								) ) }
+							</>
+						) }
 
 						{ selectedSection === 'export' && (
 							<Card>
@@ -136,6 +180,15 @@ function ReaderListEdit( props ) {
 	);
 }
 
-export default function ReaderListManage( props ) {
+function ReaderListManage( props ) {
 	return props.isCreateForm ? ReaderListCreate() : ReaderListEdit( props );
 }
+
+export default connect( ( state, ownProps ) => {
+	const list = getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug );
+	const listItems = list ? getListItems( state, list.ID ) : undefined;
+	return {
+		list,
+		listItems,
+	};
+} )( ReaderListManage );
