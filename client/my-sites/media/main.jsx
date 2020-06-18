@@ -367,6 +367,7 @@ class Media extends Component {
 				<DocumentHead title={ translate( 'Media' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
 					align="left"

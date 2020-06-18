@@ -25,6 +25,7 @@ export default function DomainManagementHeader( props ) {
 	return (
 		<React.Fragment>
 			<FormattedHeader
+				brandFont
 				className="stats__section-header"
 				headerText={ translate( 'Domains' ) }
 				align="left"

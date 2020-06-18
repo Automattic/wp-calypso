@@ -156,6 +156,7 @@ class StatsSite extends Component {
 				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="stats__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
 					align="left"

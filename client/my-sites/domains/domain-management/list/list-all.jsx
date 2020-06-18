@@ -46,7 +46,7 @@ class ListAll extends Component {
 		const { translate } = this.props;
 		return (
 			<Main wideLayout>
-				<FormattedHeader headerText={ translate( 'All Domains' ) } align="left" />
+				<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
 				<div className="list-all__container">
 					{ config.isEnabled( 'manage/all-domains' ) && <QueryAllDomains /> }
 					{ this.props.sites.map( ( site, index ) => this.renderSingleSite( site, index ) ) }
