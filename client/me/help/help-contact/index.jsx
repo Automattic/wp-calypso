@@ -18,7 +18,6 @@ import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
 import ActiveTicketsNotice from 'me/help/active-tickets-notice';
-import LimitedChatAvailabilityNotice from 'me/help/contact-form-notice/limited-chat-availability';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -577,8 +576,8 @@ class HelpContact extends React.Component {
 		);
 
 		// Customers sent to Directly and Forum are not affected by live chat closures
-		const isUserAffectedByLiveChatClosure =
-			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
+		// const isUserAffectedByLiveChatClosure =
+		// 	supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
 		const activeTicketCount = activeSupportTickets.length;
 
@@ -586,16 +585,6 @@ class HelpContact extends React.Component {
 			<div>
 				{ activeTicketCount > 0 && (
 					<ActiveTicketsNotice count={ activeTicketCount } compact={ compact } />
-				) }
-
-				{ isUserAffectedByLiveChatClosure && (
-					<>
-						<LimitedChatAvailabilityNotice
-							compact={ compact }
-							showAt="2020-03-27 00:00Z"
-							hideAt="2050-01-01 00:00Z"
-						/>
-					</>
 				) }
 
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
