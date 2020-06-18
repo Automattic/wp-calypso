@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FC, ReactElement, useState, useEffect } from 'react';
+import React, { FC, ReactNode, ReactElement, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 
@@ -24,7 +24,7 @@ import {
 import './style.scss';
 
 type Props = {
-	fallbackDisplay: ReactElement;
+	fallbackDisplay: ReactNode;
 	path: string;
 };
 

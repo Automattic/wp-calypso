@@ -39,7 +39,7 @@ interface Props {
 	automatedTransferStatus: {
 		eligibility: EligibilityData;
 		fetchingStatus: boolean;
-		status: string;
+		status: typeof transferStates[ keyof typeof transferStates ];
 	};
 }
 

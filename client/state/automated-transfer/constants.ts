@@ -10,7 +10,7 @@ export const transferStates = {
 	BACKFILLING: 'backfilling',
 	COMPLETE: 'complete',
 	ERROR: 'error',
-};
+} as const;
 
 export const eligibilityHolds = {
 	BLOCKED_ATOMIC_TRANSFER: 'BLOCKED_ATOMIC_TRANSFER',
