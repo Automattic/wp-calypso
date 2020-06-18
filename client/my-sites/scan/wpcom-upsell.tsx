@@ -67,7 +67,12 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
-			<FormattedHeader headerText={ translate( 'Jetpack Scan' ) } id="scan-header" align="left" />
+			<FormattedHeader
+				headerText={ translate( 'Jetpack Scan' ) }
+				id="scan-header"
+				align="left"
+				brandFont
+			/>
 
 			<PromoCard
 				title={ translate( 'We guard your site. You run your business.' ) }

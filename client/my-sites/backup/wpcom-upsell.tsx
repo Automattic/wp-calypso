@@ -73,6 +73,7 @@ export default function WPCOMUpsellPage(): ReactElement {
 				headerText={ translate( 'Jetpack Backup' ) }
 				id="backup-header"
 				align="left"
+				brandFont
 			/>
 
 			<PromoCard

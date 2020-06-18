@@ -263,7 +263,9 @@ class BackupsPage extends Component {
 			>
 				<Main wideLayout={ ! isJetpackCloud() }>
 					<SidebarNavigation />
-					{ ! isJetpackCloud() && <FormattedHeader headerText="Jetpack Backup" align="left" /> }
+					{ ! isJetpackCloud() && (
+						<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
+					) }
 
 					{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
 				</Main>
