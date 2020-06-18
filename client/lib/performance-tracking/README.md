@@ -5,22 +5,31 @@ This lib provides wrappers around `@automattic/browser-data-collector`
 
 ### Start
 
-It provides a middleware expected to be used with Page router.
+#### Generic function
 
+It provides a function `startPerformanceTracking()` that accepts the name of the page being tracked and a flag for full page loads. It is a simple
+wrapper around the `start` method in `@automattic/browser-data-collector` with an additional check to validate that the performance tracking is
+enabled for this environment (by checking the feature flag `rum-tracking/logstash`) and user (by checking the abtest `rumDataCollection`).
+
+Unless there is a specialized wrapper (eg: middleware `performanceTrackerStart`), using this function is the recommended approach to track performance
+of loading pages in Calypso.
+
+#### Middleware
+It provides a middleware expected to be used with Page router.
 
 Example:
 ```jsx
 page('/my-page/*', performanceTrackerStart('my-page'), /*...*/);
 ```
 
-The id provided to `performanceTrackerStart` must match the id provided by the hook `usePerformanceTrackerStop`, which equals to the name of the section loaded.
-
-This middleware function will check the status of the feature flag `rum-tracking/logstash`. If disabled, it is a noop.
-
-It will also pass the option `{fullPageLoad: true}` to `@automattic/browser-data-collector` if the route hit comes from a full page load.
-
+The id provided to `performanceTrackerStart` must match the id provided by the hook `usePerformanceTrackerStop`, which equals to the name of the section
+loaded. It will also pass the option `{fullPageLoad: true}` to `@automattic/browser-data-collector` if the route hit comes from a full page load.
 
 ### Stop
+
+#### Generic function
+
+The counterpart of the generic start function.
 
 #### Hook
 
@@ -35,8 +44,6 @@ function MyComponent() {
 	);
 }
 ```
-
-This hook will check the status of the feature flag `rum-tracking/logstash`. If disabled, it is a noop.
 
 It will also get the current section name from the Redux store and use it as the `id` of the performance tracker report to stop.
 
