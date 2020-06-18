@@ -17,8 +17,7 @@ import getSearchQuery from 'state/inline-help/selectors/get-search-query';
 import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import HelpSearchCard from 'blocks/inline-help/inline-help-search-card';
-import HelpSearchResults from './search-results';
-
+import HelpSearchResults from 'blocks/inline-help/inline-help-search-results';
 import { RESULT_POST_ID, RESULT_LINK } from 'blocks/inline-help/constants';
 
 /**
@@ -66,7 +65,7 @@ const HelpSearch = ( props ) => {
 				<div className="help-search__inner">
 					<CardHeading>{ translate( 'Get help' ) }</CardHeading>
 					<div className="help-search__content">
-						<div className="help-search__search">
+						<div className="inline-help__search">
 							<HelpSearchCard
 								openResult={ openResultView }
 								query={ searchQuery }
