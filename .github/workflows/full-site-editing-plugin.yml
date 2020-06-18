@@ -123,7 +123,6 @@ jobs:
       with:
         action: 'install'
 
-
     - name: Get changed files
       id: changes
       uses: lots0logs/gh-action-get-changed-files@2.1.4
@@ -131,7 +130,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Displaying changed files
-      run: echo ${{ join( fromJson( steps.changes.outputs.all ), '\\n' ) }}
+      run: echo -e ${{ join( fromJson( steps.changes.outputs.all ), '\n' ) }}
 
     - name: Execute phpcs on changed files
       run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.all ), ' ' ) }}
