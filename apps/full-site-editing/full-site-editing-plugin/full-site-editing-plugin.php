@@ -107,7 +107,7 @@ function load_starter_page_templates() {
 	 *
 	 * @param bool true if Starter Page Templates should be disabled, false otherwise.
 	 */
-	if ( apply_filters( 'a8c_disable_starter_page_templates', false, ) ) {
+	if ( apply_filters( 'a8c_disable_starter_page_templates', false ) ) {
 		return;
 	}
 
