@@ -87,7 +87,6 @@ export class JetpackConnectMain extends Component {
 			currentUrl: cleanUrl( url ),
 			shownUrl: url,
 		} );
-		url;
 	};
 
 	checkUrl( url ) {
