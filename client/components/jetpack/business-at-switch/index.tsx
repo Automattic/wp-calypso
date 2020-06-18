@@ -90,7 +90,12 @@ const BusinessATSwitch: FC< Props > = ( { context } ): ReactElement => {
 	// but the Jetpack sync process hasn't finish.
 	if ( showATComponent ) {
 		const primaryProduct = context.path.includes( '/backup/' ) ? 'backup' : 'scan';
-		return <WPCOMBusinessAT product={ primaryProduct } />;
+		return (
+			<WPCOMBusinessAT
+				automatedTransferStatus={ automatedTransferStatus }
+				product={ primaryProduct }
+			/>
+		);
 	}
 
 	return context.primary;
