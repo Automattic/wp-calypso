@@ -109,3 +109,27 @@ jobs:
     - name: Run phpunit command
       run: yarn test:php
       working-directory: apps/full-site-editing
+
+  phpcs:
+    name: Run phpcs
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@master
+
+    - name: Run composer
+      uses: nick-zh/composer-php@master
+      with:
+        action: 'install'
+
+    - name: Get changed files
+      id: changes
+      uses: lots0logs/gh-action-get-changed-files@2.1.4
+      with:
+        token: GITHUB_TOKEN
+
+    - name: View output
+      run: echo "${{ steps.changes.all }}"
+
+    - name: Execute phpcs
+      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml "${{ steps.changes.all }}"
