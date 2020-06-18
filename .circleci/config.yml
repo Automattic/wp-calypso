@@ -121,9 +121,21 @@ references:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
 
   yarn-install: &yarn-install
-    environment:
     name: Install dependencies
     command: yarn install --frozen-lockfile
+
+  update-node: &update-node
+    name: Update node
+    command: |
+      set +e
+      set +x
+      export NVM_DIR="$HOME/.nvm" && (
+        git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+        cd "$NVM_DIR"
+        git checkout v0.35.3
+      ) && \. "$NVM_DIR/nvm.sh" --no-use
+      nvm install
+      nvm use
 
   # This is used later to send a custom UA string. `google-chrome` is in the PATH in all circleci-browser images
   save-chrome-version: &save-chrome-version
@@ -175,6 +187,7 @@ commands:
       - run: *setup-results-and-artifacts
       - attach_workspace:
           at: '~'
+      - run: *update-node
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -194,11 +207,11 @@ jobs:
       - checkout
       - run: *update-git-master
       - save_cache: *save-git-cache
+      - run: *update-node
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
       - save_cache: *save-yarn-cache
-      - run: yarn run build-packages
       - persist_to_workspace:
           root: '~'
           paths:
