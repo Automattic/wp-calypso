@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import type { State } from './reducer';
-import { isEnabled } from '../../../../config';
 
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getState = ( state: State ) => state;
