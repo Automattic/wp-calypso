@@ -351,7 +351,6 @@ export function useGetThankYouUrl( {
 	const isEligibleForSignupDestinationResult = useSelector( ( state ) =>
 		isEligibleForSignupDestination( state, siteId, cart )
 	);
-	const previousRoute = useSelector( ( state ) => getPreviousPath( state ) );
 
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
