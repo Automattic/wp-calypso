@@ -9,6 +9,7 @@ import { connect, DefaultRootState } from 'react-redux';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 type QueryComponentProps = {
 	siteId: number | null;
@@ -33,16 +34,23 @@ type Props = {
 	getStateForSite: QueryFunction;
 	siteId: number | null;
 	siteState: SiteState | null;
+	isAtomic: boolean;
 };
 
 function UpsellSwitch( props: Props ): React.ReactElement {
-	const { UpsellComponent, display, children, QueryComponent, siteId, siteState } = props;
+	const { UpsellComponent, display, children, QueryComponent, siteId, siteState, isAtomic } = props;
 
 	const [ { showUpsell, isLoading }, setState ] = useState( {
 		showUpsell: true,
 		isLoading: true,
 	} );
 	useEffect( () => {
+		if ( isAtomic ) {
+			return setState( {
+				isLoading: false,
+				showUpsell: false,
+			} );
+		}
 		if ( ! siteState || siteState?.state === 'uninitialized' ) {
 			return setState( {
 				isLoading: true,
@@ -79,9 +87,11 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 export default connect( ( state, ownProps: Props ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteState = ownProps.getStateForSite( state, siteId );
+	const isAtomic = isAtomicSite( state, siteId );
 
 	return {
 		siteId,
 		siteState,
+		isAtomic,
 	};
 } )( UpsellSwitch );
