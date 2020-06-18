@@ -2,7 +2,7 @@ on:
   pull_request:
     # only trigger this workflow if FSE plugin files have been modified
     paths:
-    - 'apps/full-site-editing/full-site-editing-plugin/**'
+    - 'apps/full-site-editing/**'
 
 name: FSE plugin
 
@@ -122,14 +122,5 @@ jobs:
       with:
         action: 'install'
 
-    - name: Get changed files
-      id: changes
-      uses: lots0logs/gh-action-get-changed-files@2.1.4
-      with:
-        token: GITHUB_TOKEN
-
-    - name: View output
-      run: echo "${{ steps.changes.all }}"
-
     - name: Execute phpcs
-      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml "${{ steps.changes.all }}"
+      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ./apps/full-site-editing
