@@ -25,7 +25,6 @@
 		margin: 0 -88px; // override block margins
 		padding: 12px 170px 0;
 		font-size: 64px;
-		line-height: 80px;
 	}
 }
 
@@ -38,6 +37,8 @@
 }
 
 .site-title__input-label {
+	line-height: 1.4em;
+
 	@include break-small {
 		// stylelint-disable-next-line unit-whitelist
 		margin-right: 0.4ch;
@@ -59,7 +60,7 @@
 
 	@include break-medium {
 		height: 80px;
-		max-width: 500px;
+		max-width: 750px;
 	}
 }
 
@@ -124,7 +125,6 @@
 
 	input[type='text'].components-text-control__input {
 		@include onboarding-heading-text-mobile;
-		line-height: 1em;
 		height: auto;
 		background: transparent;
 		border: none;
@@ -146,7 +146,15 @@
 
 		@include break-medium {
 			font-size: 64px;
-			line-height: 80px;
+		}
+
+		&::placeholder {
+			color: $light-gray-700;
+			line-height: normal;
+		}
+
+		&::-ms-clear {
+			display: none;
 		}
 	}
 }
