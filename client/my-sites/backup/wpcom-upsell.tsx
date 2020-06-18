@@ -71,7 +71,6 @@ export default function WPCOMUpsellPage(): ReactElement {
 
 			<FormattedHeader
 				headerText={ translate( 'Jetpack Backup' ) }
-				className="backup__header"
 				id="backup-header"
 				align="left"
 			/>
@@ -98,13 +97,7 @@ export default function WPCOMUpsellPage(): ReactElement {
 				/>
 			</PromoCard>
 
-			<FormattedHeader
-				headerText={ translate( 'Also included in the Business Plan' ) }
-				className="backup__header"
-				id="backup-subheader"
-				align="left"
-				isSecondary
-			/>
+			<h2 className="backup__subheader">{ translate( 'Also included in the Business Plan' ) }</h2>
 
 			<PromoSection { ...filteredPromos } />
 

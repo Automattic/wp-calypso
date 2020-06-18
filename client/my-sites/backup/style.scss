@@ -24,6 +24,16 @@
 		overflow-y: visible;
 	}
 }
+
+.backup__main .formatted-header.is-left-align {
+	margin-top: 20px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 4px;
+		margin-bottom: 18px;
+	}
+}
+
 .backup__main-wrap {
 	display: flex;
 	flex-direction: column;
@@ -58,6 +68,17 @@
 	margin: 2rem 1rem;
 	height: 245px;
 	@include placeholder( --color-neutral-10 );
+}
+
+.backup__subheader {
+	margin: 20px 16px 8px;
+
+	font-family: 'Recoleta', Georgia, 'Times New Roman', Times, serif;
+	font-size: rem( 21px );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 36px 0 4px;
+	}
 }
 
 /* WordPress.com-only styles */
@@ -100,25 +121,5 @@
 		@include breakpoint-deprecated( '>660px' ) {
 			margin-top: 64px;
 		}
-	}
-}
-
-header.backup__header.is-left-align {
-	color: var( --studio-black );
-	font-size: 28px;
-	line-height: 1;
-	margin-top: 32px;
-	margin-bottom: 16px;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 36px;
-		font-weight: 600;
-		margin-top: 40px;
-		margin-bottom: 18px;
-	}
-	&.is-placeholder {
-		display: block;
-		max-width: 60%;
-		@include placeholder( --color-neutral-10 );
 	}
 }
