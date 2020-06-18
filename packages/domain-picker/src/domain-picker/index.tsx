@@ -88,16 +88,21 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		quantityExpanded,
 		domainCategory,
 		useI18n().i18nLocale
-	);
+	) as DomainSuggestion[] | undefined;
 
 	const domainSuggestions = allDomainSuggestions?.slice(
 		0,
 		isExpanded ? quantityExpanded : quantity
 	);
 
-	// the API puts the subdomain on top, push it to second place
+	// Put the free domain at the second place and things will be sorted properly
 	if ( domainSuggestions && domainSuggestions.length > 1 ) {
-		domainSuggestions?.splice( 0, 2, domainSuggestions[ 1 ], domainSuggestions[ 0 ] );
+		const freeDomainIndex = domainSuggestions.findIndex( ( domain ) => domain.is_free );
+		if ( freeDomainIndex > -1 ) {
+			const swap = domainSuggestions[ 1 ];
+			domainSuggestions[ 1 ] = domainSuggestions[ freeDomainIndex ];
+			domainSuggestions[ freeDomainIndex ] = swap;
+		}
 	}
 
 	// Reset expansion state after every search
