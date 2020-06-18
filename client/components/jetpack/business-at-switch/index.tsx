@@ -3,6 +3,7 @@
  */
 import React, { ReactElement, Component } from 'react';
 import { useSelector } from 'react-redux';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -29,7 +30,7 @@ const Placeholder = () => (
 		<FormattedHeader
 			id="business-at-switch"
 			className="business-at-switch placeholder__header"
-			headerText="Loading..."
+			headerText={ translate( 'Loading…' ) }
 			align="left"
 		/>
 
