@@ -49,7 +49,7 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 				</p>
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Get daily scans' ),
+						text: translate( 'Get daily scanning' ),
 						action: {
 							url: `/checkout/${ siteSlug }/jetpack_scan`,
 							onClick: onUpgradeClick,
