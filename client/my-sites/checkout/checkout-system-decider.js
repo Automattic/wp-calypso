@@ -33,7 +33,6 @@ export default function CheckoutSystemDecider( {
 	isComingFromSignup,
 	isComingFromGutenboarding,
 	isGutenboardingCreate,
-	isComingFromUpsell,
 	plan,
 	selectedSite,
 	reduxStore,
@@ -130,7 +129,6 @@ export default function CheckoutSystemDecider( {
 						plan={ plan }
 						cart={ cart }
 						isWhiteGloveOffer={ isWhiteGloveOffer }
-						isComingFromUpsell={ isComingFromUpsell }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>
@@ -146,7 +144,6 @@ export default function CheckoutSystemDecider( {
 			isComingFromSignup={ isComingFromSignup }
 			isComingFromGutenboarding={ isComingFromGutenboarding }
 			isGutenboardingCreate={ isGutenboardingCreate }
-			isComingFromUpsell={ isComingFromUpsell }
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ reduxStore }

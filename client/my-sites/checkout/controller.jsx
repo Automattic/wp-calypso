@@ -64,7 +64,6 @@ export function checkout( context, next ) {
 				isComingFromSignup={ !! context.query.signup }
 				isComingFromGutenboarding={ !! context.query.preLaunch }
 				isGutenboardingCreate={ !! context.query.isGutenboardingCreate }
-				isComingFromUpsell={ !! context.query.upgrade }
 				plan={ plan }
 				selectedSite={ selectedSite }
 				reduxStore={ context.store }

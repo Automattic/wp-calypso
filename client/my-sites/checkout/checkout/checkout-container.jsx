@@ -86,7 +86,6 @@ class CheckoutContainer extends React.Component {
 			isComingFromGutenboarding,
 			isGutenboardingCreate,
 			isWhiteGloveOffer,
-			isComingFromUpsell,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -121,7 +120,7 @@ class CheckoutContainer extends React.Component {
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
 							upgradeIntent={ upgradeIntent }
-							hideNudge={ isComingFromGutenboarding || isComingFromUpsell }
+							hideNudge={ isComingFromGutenboarding }
 							returnToBlockEditor={ isComingFromGutenboarding || isGutenboardingCreate }
 							isWhiteGloveOffer={ isWhiteGloveOffer }
 						>
