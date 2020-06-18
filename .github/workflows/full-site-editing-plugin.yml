@@ -122,5 +122,16 @@ jobs:
       with:
         action: 'install'
 
+
+    - name: Get changed files
+      id: changes
+      uses: lots0logs/gh-action-get-changed-files@2.1.4
+      with:
+        token: GITHUB_TOKEN
+
+
+    - name: View output
+      run: echo "${{ steps.changes.output.all }}"
+
     - name: Execute phpcs
-      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ./apps/full-site-editing
+      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml "${{ steps.changes.output.all }}"
