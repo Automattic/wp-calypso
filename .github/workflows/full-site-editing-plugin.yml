@@ -1,8 +1,9 @@
 on:
   pull_request:
-    # only trigger this workflow if FSE plugin files have been modified
+    # only trigger this workflow if FSE plugin files have been modified, or if packages have been updated.
     paths:
     - 'apps/full-site-editing/**'
+    - 'yarn.lock'
 
 name: FSE plugin
 
@@ -130,8 +131,8 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Displaying changed files
-      run: echo $( echo '${{ steps.changes.outputs.all }}' | jq -r 'join(" ")' )
+      run: echo ${{ join( steps.changes.outputs.all, " " ) }}
 
     - name: Execute phpcs on changed files
       run: ./vendor/bin/phpcs --standard=apps/phpcs.xml $( echo '${{ steps.changes.outputs.all }}' | jq -r 'join(" ")')
-      if: ${{ steps.changes.outputs.all != "" }}
+      if: ${{ steps.changes.outputs.all != 0 }}
