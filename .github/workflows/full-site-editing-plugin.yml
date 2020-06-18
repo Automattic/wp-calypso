@@ -131,7 +131,7 @@ jobs:
 
 
     - name: View output
-      run: echo "${{ steps.changes.output.all }}"
+      run: echo "${{ steps.changes.outputs.all }}"
 
     - name: Execute phpcs
-      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml "${{ steps.changes.output.all }}"
+      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml "${{ steps.changes.outputs.all }}"
