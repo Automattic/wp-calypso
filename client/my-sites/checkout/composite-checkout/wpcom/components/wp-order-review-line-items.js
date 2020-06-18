@@ -429,7 +429,7 @@ function canItemBeDeleted( item ) {
 }
 
 function shouldLineItemBeShownWhenStepInactive( item ) {
-	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	const itemTypesToIgnore = [ 'tax', 'wordpress-com-credits' ];
 	return ! itemTypesToIgnore.includes( item.type );
 }
 
