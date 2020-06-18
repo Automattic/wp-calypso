@@ -127,7 +127,7 @@ jobs:
       id: changes
       uses: lots0logs/gh-action-get-changed-files@2.1.4
       with:
-        token: GITHUB_TOKEN
+        token: ${{ secrets.GITHUB_TOKEN }}
 
 
     - name: View output
