@@ -22,7 +22,6 @@ import {
 	getAutomatedTransferStatus,
 	isEligibleForAutomatedTransfer,
 	getEligibility,
-	EligibilityData,
 } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -47,11 +46,6 @@ import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
 
 interface Props {
 	product: 'backup' | 'scan';
-	automatedTransferStatus: {
-		eligibility: EligibilityData;
-		fetchingStatus: boolean;
-		status: typeof transferStates[ keyof typeof transferStates ];
-	};
 }
 
 const contentPerPrimaryProduct = {
