@@ -220,7 +220,13 @@ class MembershipsSection extends Component {
 		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		return (
 			<div>
-				<SectionHeader label={ this.props.translate( 'Customers and Subscribers' ) } />
+				<SectionHeader
+					label={
+						isPayments
+							? this.props.translate( 'Customers and Subscribers' )
+							: this.props.translate( 'Subscribers' )
+					}
+				/>
 				{ Object.values( this.props.subscribers ).length === 0 && (
 					<Card>
 						{ isPayments
