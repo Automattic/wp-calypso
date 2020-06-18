@@ -8,7 +8,7 @@ import { receiveMarkAllAsSeen } from 'state/reader/seen-posts/actions';
 import { READER_SEEN_MARK_ALL_AS_SEEN_REQUEST } from 'state/reader/action-types';
 import { getStream } from 'state/reader/streams/selectors';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
-import { requestUnseenStatus } from 'state/ui/reader/seen-posts/actions';
+import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
 import { requestFollows } from 'state/reader/follows/actions';
 
 const toApi = ( action ) => {

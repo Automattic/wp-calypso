@@ -6,7 +6,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { receiveMarkAsSeen } from 'state/reader/seen-posts/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
-import { requestUnseenStatus } from 'state/ui/reader/seen-posts/actions';
+import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
 import { requestFollows } from 'state/reader/follows/actions';
 
 const toApi = ( action ) => {
