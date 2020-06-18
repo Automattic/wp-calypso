@@ -309,7 +309,7 @@ export function filterAppropriatePaymentMethods( {
 		} )
 		.filter( ( methodObject ) => {
 			if ( methodObject.id === 'full-credits' ) {
-				return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+				return credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 			}
 			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 				return isPaymentMethodEnabled(
