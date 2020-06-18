@@ -231,5 +231,5 @@ function translateReponseCartProductToWPCOMCartItem(
 }
 
 export function getNonProductWPCOMCartItemTypes(): string[] {
-	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits' ];
+	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits', 'savings' ];
 }
