@@ -41,7 +41,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 1.10 =
-* Turned off site editor demo templates
+* Improvements to the premium blocks.
 * Add 10 new block patterns.
 * Post List Block: Fix deprecation note update button layout.
 
