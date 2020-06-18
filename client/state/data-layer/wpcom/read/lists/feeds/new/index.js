@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -34,7 +39,11 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 					apiResponse.feed_id
 				),
 			onError: ( action, error ) => {
-				return errorNotice( `Could not add feed to list: ${ error?.body?.message }` );
+				return errorNotice(
+					translate( 'Could not add feed to list: %(message)s', {
+						args: { message: error?.message },
+					} )
+				);
 			},
 		} ),
 	],
