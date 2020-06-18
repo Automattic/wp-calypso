@@ -16,7 +16,6 @@ import { reducer as httpData } from 'state/data-layer/http-data';
  */
 import accountRecovery from './account-recovery/reducer';
 import activityLog from './activity-log/reducer';
-import applicationPasswords from './application-passwords/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import connectedApplications from './connected-applications/reducer';
@@ -85,7 +84,6 @@ import wordads from './wordads/reducer';
 const reducers = {
 	accountRecovery,
 	activityLog,
-	applicationPasswords,
 	atomicTransfer,
 	billingTransactions,
 	connectedApplications,
