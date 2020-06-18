@@ -584,6 +584,8 @@ class MembershipsSection extends Component {
 	}
 }
 
+const emptyArray = [];
+
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
@@ -599,12 +601,12 @@ const mapStateToProps = ( state ) => {
 		currency: earnings.currency,
 		commission: earnings.commission,
 		totalSubscribers: getTotalSubscribersForSiteId( state, siteId ),
-		subscribers: getOwnershipsForSiteId( state, siteId ) ?? {},
+		subscribers: getOwnershipsForSiteId( state, siteId ),
 		connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
 		connectUrl: getConnectUrlForSiteId( state, siteId ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
-		products: getProductsForSiteId( state, siteId ) ?? [],
+		products: getProductsForSiteId( state, siteId ) ?? emptyArray,
 	};
 };
 
