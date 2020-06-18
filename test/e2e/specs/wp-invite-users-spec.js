@@ -296,7 +296,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		} );
 
 		step( 'Can see user has been added as a Viewer', async function () {
-			inviteAccepted = false;
+			inviteAccepted = true;
 			const noticesComponent = await NoticesComponent.Expect( driver );
 			const followMessageDisplayed = await noticesComponent.getNoticeContent();
 			assert.strictEqual(
