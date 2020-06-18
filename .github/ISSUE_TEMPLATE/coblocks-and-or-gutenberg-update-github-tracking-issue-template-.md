@@ -1,5 +1,5 @@
 ---
-name: 'CoBlocks and or Gutenberg update GitHub Tracking Issue template '
+name: 'CoBlocks and or Gutenberg update GitHub Tracking Issue template'
 about: 'Template for Gutenberg/Coblocks plugin update process'' GitHub tracking issue,
   more: '
 title: Update Gutenberg to v<version> and CoBlocks to v<version>
