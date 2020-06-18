@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { ReactElement } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { translate } from 'i18n-calypso';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { localize, translate } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -22,6 +23,10 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
+import { successNotice } from 'state/notices/actions';
+import { requestSite } from 'state/sites/actions';
+import { getSiteSlug } from 'state/sites/selectors';
+import QuerySiteSettings from 'components/data/query-site-settings';
 
 /**
  * Style dependencies
@@ -86,7 +91,9 @@ const contentPerPrimaryProduct = {
 	},
 };
 
-export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
+function WPCOMBusinessAT( { product }: Props ): ReactElement {
+	//todo: do we need the SiteSettings before this page load?
+
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
@@ -98,13 +105,31 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			? 'calypso_jetpack_backup_business_at'
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
+	const { COMPLETE, START } = transferStates;
 
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
 
+	if ( automatedTransferStatus === COMPLETE ) {
+		dispatch(
+			successNotice( translate( 'Jetpack features are now activated.' ), {
+				id: 'jetpack-features-on',
+				duration: 5000,
+				displayOnNextPage: true,
+			} )
+		);
+
+		dispatch( requestSite( siteId ) ).then( () => {
+			// todo: Reload the section with the new siteSlug
+			// page( `/${product}/${siteSlug}`);
+			page.redirect( '/' );
+		} );
+	}
+
 	return (
 		<Main className="wpcom-business-at">
+			<QuerySiteSettings siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
 			<SidebarNavigation />
 			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Upsell" />
@@ -125,7 +150,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 					<SpinnerButton
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
-						loading={ automatedTransferStatus === transferStates.START }
+						loading={ automatedTransferStatus === START }
 						onClick={ trackInitiateAT }
 					/>
 				</div>
@@ -155,3 +180,9 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 		</Main>
 	);
 }
+
+const mapStateToProps = ( state ) => ( {
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
+} );
+
+export default connect( mapStateToProps )( localize( WPCOMBusinessAT ) );
