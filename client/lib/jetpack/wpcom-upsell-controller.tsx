@@ -37,7 +37,9 @@ export default function upsellSwitch( UpsellComponent: typeof React.Component ):
 		// Show the Automated Transfer for sites with a Business plan that are not
 		// Atomic sites.
 		if ( isBusiness && ! isAtomic ) {
-			context.primary = <BusinessATSwitch context={ context } />;
+			context.primary = (
+				<BusinessATSwitch fallbackDisplay={ context.primary } path={ context.path } />
+			);
 		}
 
 		next();

@@ -24,7 +24,8 @@ import {
 import './style.scss';
 
 type Props = {
-	context: PageJS.Context;
+	fallbackDisplay: ReactElement;
+	path: string;
 };
 
 const Placeholder = () => (
@@ -47,7 +48,7 @@ const Placeholder = () => (
  * Once we have an answer, we either display the Automated Transfer view or
  * we display whatever comes next in the middleware stack.
  */
-const BusinessATSwitch: FC< Props > = ( { context } ): ReactElement => {
+const BusinessATSwitch: FC< Props > = ( { fallbackDisplay, path } ): ReactElement => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isEligibleForAT = useSelector( ( state ) =>
 		isEligibleForAutomatedTransfer( state, siteId )
@@ -89,7 +90,7 @@ const BusinessATSwitch: FC< Props > = ( { context } ): ReactElement => {
 	// In the future, we could add another view for the case in which the AT was done
 	// but the Jetpack sync process hasn't finish.
 	if ( showATComponent ) {
-		const primaryProduct = context.path.includes( '/backup/' ) ? 'backup' : 'scan';
+		const primaryProduct = path.includes( '/backup/' ) ? 'backup' : 'scan';
 		return (
 			<WPCOMBusinessAT
 				automatedTransferStatus={ automatedTransferStatus }
@@ -98,7 +99,7 @@ const BusinessATSwitch: FC< Props > = ( { context } ): ReactElement => {
 		);
 	}
 
-	return context.primary;
+	return fallbackDisplay;
 };
 
 export default BusinessATSwitch;
