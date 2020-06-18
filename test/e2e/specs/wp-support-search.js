@@ -3,15 +3,18 @@
  */
 import config from 'config';
 import assert from 'assert';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
  */
 import * as driverManager from '../lib/driver-manager.js';
+import * as driverHelper from '../lib/driver-helper.js';
 
 import LoginFlow from '../lib/flows/login-flow.js';
 import * as dataHelper from '../lib/data-helper';
 import InlineHelpComponent from '../lib/components/inline-help-component';
+import SidebarComponent from '../lib/components/sidebar-component.js';
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
@@ -123,6 +126,24 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 					'A search was unexpectedly performed for an empty search query.'
 				);
 			} );
+		} );
+	} );
+
+	describe( 'My Home support search card', function () {
+		// before( async function () {
+		// 	return await driverManager.ensureNotLoggedIn( driver );
+		// } );
+		step( 'Select the My Home page', async function () {
+			// const loginFlow = new LoginFlow( driver );
+
+			const sidebarComponent = await SidebarComponent.Expect( driver );
+			// The "inline help" FAB sholuld not appear on the My Home
+			// because there is already a support search "Card" on that
+			// page. Therefore we select the "Themes" page for our tests.
+			// await loginFlow.loginAndSelectMySite();
+			await sidebarComponent.selectMyHome();
+
+			return await driverHelper.isElementPresent( driver, By.css( '.card help-search' ) );
 		} );
 	} );
 } );
