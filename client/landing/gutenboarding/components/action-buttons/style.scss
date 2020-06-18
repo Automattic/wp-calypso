@@ -62,10 +62,14 @@ button.action_buttons__button.components-button {
 		box-shadow: inset 0 0 0 1px var( --studio-gray-50 );
 
 		&:active,
-		&:hover,
-		&:focus {
+		&:hover {
 			color: var( --studio-gray-60 );
 			box-shadow: inset 0 0 0 1px var( --studio-gray-60 );
+		}
+
+		&:focus {
+			color: var( --studio-gray-60 );
+			box-shadow: inset 0 0 0 1px #fff, 0 0 0 1.5px var( --highlightColor );
 		}
 	}
 
