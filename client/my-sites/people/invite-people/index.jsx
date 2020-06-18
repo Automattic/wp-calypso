@@ -95,8 +95,8 @@ class InvitePeople extends React.Component {
 		}
 	}
 
-	resetState = ( nextProps = {} ) => {
-		const { isWPForTeamsSite } = nextProps;
+	resetState = ( props = this.props ) => {
+		const { isWPForTeamsSite } = props;
 
 		const defaultRole = isWPForTeamsSite ? 'editor' : 'follower';
 
