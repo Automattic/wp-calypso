@@ -9,14 +9,17 @@ import React from 'react';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
 import UpsellSwitch from 'components/jetpack/upsell-switch';
-import BackupsUpsell from './backup-upsell';
+import BackupUpsell from './backup-upsell';
+import WPCOMBackupUpsell from './wpcom-backup-upsell';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 export function showUpsellIfNoBackup( context, next ) {
+	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
 	context.primary = (
 		<UpsellSwitch
-			UpsellComponent={ BackupsUpsell }
+			UpsellComponent={ UpsellComponent }
 			display={ context.primary }
 			getStateForSite={ getRewindState }
 			QueryComponent={ QueryRewindState }
