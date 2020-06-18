@@ -50,30 +50,33 @@ export interface Props {
 	isPrimary?: boolean;
 }
 
-function isCtaButton( cta: Cta ): boolean {
+function isCtaButton( cta: Cta ): cta is CtaButton {
 	return undefined !== ( cta as CtaButton ).text;
 }
 
-function isCtaAction( action: any ): boolean {
+function isCtaAction( action: any ): action is CtaAction {
 	return undefined !== ( action as CtaAction ).onClick;
 }
 
 function buttonProps( button: CtaButton, isPrimary: boolean ) {
-	const { action } = button;
-	const hasClickListener = isCtaAction( action );
-	const isBlankTarget = hasClickListener ? ! action.selfTarget : true;
-	const actionProps = hasClickListener
+	const actionProps = isCtaAction( button.action )
 		? {
-				href: action.url,
-				onClick: action.onClick,
+				href: button.action.url,
+				onClick: button.action.onClick,
+				selfTarget: button.action.selfTarget,
 		  }
 		: {
-				[ typeof action === 'string' ? 'href' : 'onClick' ]: action,
+				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
 		  };
 
-	if ( isBlankTarget && undefined !== actionProps.href ) {
+	if ( undefined !== actionProps.href && ! actionProps.selfTarget ) {
 		actionProps.target = '_blank';
 	}
+	// Prevent invalid prop to be passed to a DOM element
+	if ( 'selfTarget' in actionProps ) {
+		delete actionProps.selfTarget;
+	}
+
 	return {
 		className: 'promo-card__cta-button',
 		primary: isPrimary,
