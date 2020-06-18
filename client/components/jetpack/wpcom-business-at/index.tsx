@@ -132,6 +132,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
+	// Gets the site eligibility data.
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
 	const {
 		eligibilityHolds: holds,
@@ -141,15 +142,17 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 		getAutomatedTransferStatus( state, siteId )
 	);
 
-	const hasBlockingHold = holds && hasBlockingHoldFunc( holds );
-	const cannotTransfer: boolean = hasBlockingHold || ! isEligible;
+	// Check if there's a blocking hold.
+	const hasBlockingHold = ! isEligible || ( holds && hasBlockingHoldFunc( holds ) );
 
+	// Gets state to control dialog and continue button.
 	const [ showDialog, setShowDialog ] = useState( false );
 	const [ approvedTransfer, setApproveTransfer ] = useState(
 		0 === warnings?.length && 0 === holds?.length
 	);
 	const onClose = () => setShowDialog( false );
 
+	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
 	const initiateAT = React.useCallback( () => {
 		if ( approvedTransfer ) {
@@ -194,7 +197,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
 						loading={ automatedTransferStatus === transferStates.START }
 						onClick={ trackInitiateAT }
-						disabled={ cannotTransfer }
+						disabled={ hasBlockingHold }
 					/>
 				</div>
 			</PromoCard>
