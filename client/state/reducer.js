@@ -45,7 +45,6 @@ import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import media from './media/reducer';
-import memberships from './memberships/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import notificationSettings from './notification-settings/reducer';
@@ -116,7 +115,6 @@ const reducers = {
 	jetpackSync,
 	jitm,
 	media,
-	memberships,
 	mySites,
 	notices,
 	notificationSettings,
