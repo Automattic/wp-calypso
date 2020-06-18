@@ -106,7 +106,7 @@ function normalize_theme_slug( $theme_slug ) {
  * Whether or not the site is eligible for FSE. This is essentially a feature
  * gate to disable FSE on some sites which could theoretically otherwise use it.
  *
- * By default, sites should not be eligible. 
+ * By default, sites should not be eligible.
  *
  * @return bool True if current site is eligible for FSE, false otherwise.
  */

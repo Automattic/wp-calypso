@@ -29,39 +29,39 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base,
-			[
-				[
+			array(
+				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
-					'callback'            => [ $this, 'create_item' ],
-					'permission_callback' => [ $this, 'create_item_permissions_check' ],
+					'callback'            => array( $this, 'create_item' ),
+					'permission_callback' => array( $this, 'create_item_permissions_check' ),
 					'show_in_index'       => false,
 					'args'                => $this->get_collection_params(),
-				],
-				'schema' => [ $this, 'get_item_schema' ],
-			]
+				),
+				'schema' => array( $this, 'get_item_schema' ),
+			)
 		);
 
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base . '/batch',
-			[
-				[
+			array(
+				array(
 					'methods'       => \WP_REST_Server::CREATABLE,
-					'callback'      => [ $this, 'create_items' ],
+					'callback'      => array( $this, 'create_items' ),
 					'show_in_index' => false,
-					'args'          => [
-						'resources' => [
+					'args'          => array(
+						'resources' => array(
 							'description' => 'URL to the image to be side-loaded.',
 							'type'        => 'array',
 							'required'    => true,
-							'items'       => [
+							'items'       => array(
 								'type'       => 'object',
 								'properties' => $this->get_collection_params(),
-							],
-						],
-					],
-				],
-			]
+							),
+						),
+					),
+				),
+			)
 		);
 	}
 
@@ -72,8 +72,8 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 	 * @return \WP_Error|\WP_REST_Response Response object on success, WP_Error object on failure.
 	 */
 	public function create_item( $request ) {
-		if ( ! empty( $request['post_id'] ) && in_array( get_post_type( $request['post_id'] ), [ 'revision', 'attachment' ], true ) ) {
-			return new \WP_Error( 'rest_invalid_param', __( 'Invalid parent type.' ), [ 'status' => 400 ] );
+		if ( ! empty( $request['post_id'] ) && in_array( get_post_type( $request['post_id'] ), array( 'revision', 'attachment' ), true ) ) {
+			return new \WP_Error( 'rest_invalid_param', __( 'Invalid parent type.', 'full-site-editing' ), array( 'status' => 400 ) );
 		}
 
 		$inserted   = false;
@@ -94,9 +94,9 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 
 			if ( is_wp_error( $id ) ) {
 				if ( 'db_update_error' === $id->get_error_code() ) {
-					$id->add_data( [ 'status' => 500 ] );
+					$id->add_data( array( 'status' => 500 ) );
 				} else {
-					$id->add_data( [ 'status' => 400 ] );
+					$id->add_data( array( 'status' => 400 ) );
 				}
 
 				return rest_ensure_response( $id ); // Return error.
@@ -156,7 +156,7 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 	 * @return \WP_Error|\WP_REST_Response Response object on success, WP_Error object on failure.
 	 */
 	public function create_items( $request ) {
-		$data = [];
+		$data = array();
 
 		// Foreach request specified in the requests param, run the endpoint.
 		foreach ( $request['resources'] as $resource ) {
@@ -189,9 +189,9 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 		$server = rest_get_server();
 
 		if ( method_exists( $server, 'get_compact_response_links' ) ) {
-			$links = call_user_func( [ $server, 'get_compact_response_links' ], $response );
+			$links = call_user_func( array( $server, 'get_compact_response_links' ), $response );
 		} else {
-			$links = call_user_func( [ $server, 'get_response_links' ], $response );
+			$links = call_user_func( array( $server, 'get_response_links' ), $response );
 		}
 
 		if ( ! empty( $links ) ) {
@@ -212,7 +212,7 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 		$response = parent::prepare_item_for_response( $post, $request );
 		$base     = 'wp/v2/media';
 
-		foreach ( [ 'self', 'collection', 'about' ] as $link ) {
+		foreach ( array( 'self', 'collection', 'about' ) as $link ) {
 			$response->remove_link( $link );
 
 		}
@@ -236,19 +236,19 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 
 		if ( false === $attachment ) {
 			$attachments = new \WP_Query(
-				[
+				array(
 					'no_found_rows'  => true,
 					'posts_per_page' => 1,
 					'post_status'    => 'inherit',
 					'post_type'      => 'attachment',
 					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					'meta_query'     => [
-						[
+					'meta_query'     => array(
+						array(
 							'key'   => '_sideloaded_url',
 							'value' => $url,
-						],
-					],
-				]
+						),
+					),
+				)
 			);
 
 			if ( $attachments->have_posts() ) {
@@ -265,8 +265,8 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 	 * @return array Request parameters.
 	 */
 	public function get_collection_params() {
-		return [
-			'url'     => [
+		return array(
+			'url'     => array(
 				'description'       => 'URL to the image to be side-loaded.',
 				'type'              => 'string',
 				'required'          => true,
@@ -274,13 +274,13 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 				'sanitize_callback' => function( $url ) {
 					return esc_url_raw( strtok( $url, '?' ) );
 				},
-			],
-			'post_id' => [
+			),
+			'post_id' => array(
 				'description' => 'ID of the post to associate the image with',
 				'type'        => 'integer',
 				'default'     => 0,
-			],
-		];
+			),
+		);
 	}
 
 	/**

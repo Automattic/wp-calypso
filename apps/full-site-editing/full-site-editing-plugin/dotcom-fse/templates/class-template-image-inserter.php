@@ -21,14 +21,14 @@ class Template_Image_Inserter {
 	 * @param array $img_urls URLs of images which should be uploaded.
 	 * @param array $post_ids An array of posts IDs which should be updated with newly uploaded image URLs.
 	 */
-	public function copy_images_and_update_posts( $img_urls = [], $post_ids = [] ) {
+	public function copy_images_and_update_posts( $img_urls = array(), $post_ids = array() ) {
 		do_action(
 			'a8c_fse_log',
 			'template_image_sideload_begin',
-			[
+			array(
 				'context'    => 'Template_Image_Inserter->copy_images_and_update_posts',
 				'image_urls' => $img_urls,
-			]
+			)
 		);
 
 		if ( empty( $img_urls ) || empty( $post_ids ) ) {
@@ -69,22 +69,22 @@ class Template_Image_Inserter {
 					do_action(
 						'a8c_fse_log',
 						'image_sideload_failure',
-						[
+						array(
 							'context'          => 'Template_Image_Inserter->upload_images',
 							'error'            => $error_msg,
 							'remote_image_url' => $url,
-						]
+						)
 					);
 				} else {
 					// 4. Otherwise, save the url.
-					$accumulator[] = [
+					$accumulator[] = array(
 						'old_url' => $url,
 						'new_url' => $local_url,
-					];
+					);
 				}
 				return $accumulator;
 			},
-			[]
+			array()
 		);
 	}
 
@@ -110,10 +110,10 @@ class Template_Image_Inserter {
 		// 2. Create a file object.
 		$file_name  = basename( wp_parse_url( $image_url, PHP_URL_PATH ) );
 		$desc       = 'Template Part Image';
-		$file_array = [
+		$file_array = array(
 			'name'     => $file_name,
 			'tmp_name' => $local_file,
-		];
+		);
 
 		// 3. Sideload, remove tmp file, and return the local URL.
 		$id = media_handle_sideload( $file_array, 0, $desc );
@@ -139,11 +139,11 @@ class Template_Image_Inserter {
 			do_action(
 				'a8c_fse_log',
 				'update_post_with_new_images_get_post_failure',
-				[
+				array(
 					'context' => 'Template_Image_Inserter->update_post_images',
 					'error'   => 'Could not retrieve post content.',
 					'post_id' => $post_id,
-				]
+				)
 			);
 			return;
 		}
@@ -153,21 +153,21 @@ class Template_Image_Inserter {
 			$content = str_replace( $image['old_url'], $image['new_url'], $content );
 		}
 		$res = wp_update_post(
-			[
+			array(
 				'ID'           => $post_id,
 				'post_content' => $content,
-			]
+			)
 		);
 
 		if ( ! $res ) {
 			do_action(
 				'a8c_fse_log',
 				'update_post_with_new_images_update_post_failure',
-				[
+				array(
 					'context'    => 'Template_Image_Inserter->update_post_images',
 					'error'      => 'Issue updating the post with the new image URLs.',
 					'image_urls' => $images,
-				]
+				)
 			);
 		}
 	}

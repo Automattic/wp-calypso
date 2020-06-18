@@ -262,7 +262,7 @@ class Full_Site_Editing {
 
 		// See https://github.com/Automattic/wp-calypso/issues/38075#issuecomment-559900054.
 		if ( 'page' === $parent_post_type ) {
-			return __( 'Page Layout' );
+			return __( 'Page Layout', 'full-site-editing' );
 		}
 
 		$parent_post_type_object = get_post_type_object( $parent_post_type );
@@ -520,7 +520,7 @@ class Full_Site_Editing {
 	 */
 	public function restrict_template_deletion( $post_id ) {
 		if ( $this->is_template_post_type( get_post( $post_id ) ) ) {
-			wp_die( esc_html__( 'Templates cannot be deleted.' ) );
+			wp_die( esc_html__( 'Templates cannot be deleted.', 'full-site-editing' ) );
 		}
 	}
 
@@ -534,7 +534,7 @@ class Full_Site_Editing {
 	 */
 	public function restrict_template_drafting( $new_status, $old_status, $post ) {
 		if ( 'draft' === $new_status && $this->is_template_post_type( $post ) ) {
-			wp_die( esc_html__( 'Templates cannot be moved to drafts.' ) );
+			wp_die( esc_html__( 'Templates cannot be moved to drafts.', 'full-site-editing' ) );
 		}
 	}
 	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
@@ -572,7 +572,7 @@ class Full_Site_Editing {
 	 */
 	public function restrict_template_taxonomy_deletion( $term, $taxonomy ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 		if ( 'wp_template_part_type' === $taxonomy ) {
-			wp_die( esc_html__( 'Template Types cannon be deleted.' ) );
+			wp_die( esc_html__( 'Template Types cannon be deleted.', 'full-site-editing' ) );
 		}
 	}
 
@@ -621,7 +621,7 @@ class Full_Site_Editing {
 					'name' => 'footer_credit',
 				),
 				'type'         => 'string',
-				'description'  => __( 'WordPress Footer Credit' ),
+				'description'  => __( 'WordPress Footer Credit', 'full-site-editing' ),
 			)
 		);
 	}
