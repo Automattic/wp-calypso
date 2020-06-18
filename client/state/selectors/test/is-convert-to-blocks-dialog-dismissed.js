@@ -24,7 +24,7 @@ describe( 'isConvertToBlocksDialogDismissed()', () => {
 		expect( isDismissed ).toBe( false );
 	} );
 
-	test( 'should return false if the site and is not in state', () => {
+	test( 'should return false if the site is not in state', () => {
 		const isDismissed = isConvertToBlocksDialogDismissed( state, 87654321, 1 );
 		expect( isDismissed ).toBe( false );
 	} );
