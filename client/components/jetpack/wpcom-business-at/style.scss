@@ -29,4 +29,19 @@
 			margin-top: 40px;
 		}
 	}
+
+	&.placeholder__header {
+		display: block;
+		@include placeholder( --color-neutral-10 );
+	}
+
+	&.placeholder__primary-promo {
+		display: block;
+		height: 400px;
+		@include placeholder( --color-neutral-10 );
+
+		@include breakpoint-deprecated( '>480px' ) {
+			height: 250px;
+		}
+	}
 }

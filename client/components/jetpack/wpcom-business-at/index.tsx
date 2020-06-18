@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
+import { Dialog } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -22,6 +24,7 @@ import {
 	getAutomatedTransferStatus,
 	isEligibleForAutomatedTransfer,
 	getEligibility,
+	EligibilityData,
 } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -31,12 +34,15 @@ import {
 	hasBlockingHold as hasBlockingHoldFunc,
 	getBlockingMessages,
 	HardBlockingNotice,
+	default as HoldList,
 } from 'blocks/eligibility-warnings/hold-list';
+import WarningList from 'blocks/eligibility-warnings/warning-list';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import 'blocks/eligibility-warnings/style.scss';
 
 /**
  * Asset dependencies
@@ -125,24 +131,42 @@ function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): Rea
 export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 	const siteId = useSelector( getSelectedSiteId ) as number;
+
+	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
+	const {
+		eligibilityHolds: holds,
+		eligibilityWarnings: warnings,
+	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
+	const automatedTransferStatus = useSelector( ( state ) =>
+		getAutomatedTransferStatus( state, siteId )
+	);
+
+	const hasBlockingHold = holds && hasBlockingHoldFunc( holds );
+	const cannotTransfer: boolean = hasBlockingHold || ! isEligible;
+
+	const [ showDialog, setShowDialog ] = useState( false );
+	const [ approvedTransfer, setApproveTransfer ] = useState(
+		0 === warnings?.length && 0 === holds?.length
+	);
+	const onClose = () => setShowDialog( false );
+
 	const dispatch = useDispatch();
 	const initiateAT = React.useCallback( () => {
-		siteId && dispatch( initiateThemeTransfer( siteId, null, '' ) );
-	}, [ dispatch, siteId ] );
+		if ( approvedTransfer ) {
+			dispatch( initiateThemeTransfer( siteId, null, '' ) );
+		} else {
+			setShowDialog( true );
+		}
+	}, [ dispatch, siteId, approvedTransfer ] );
 	const eventName =
 		product === 'backup'
 			? 'calypso_jetpack_backup_business_at'
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
-
-	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
-	const { eligibilityHolds } = useSelector( ( state ) => getEligibility( state, siteId ) );
-	const automatedTransferStatus = useSelector( ( state ) =>
-		getAutomatedTransferStatus( state, siteId )
-	);
-
-	const hasBlockingHold = eligibilityHolds && hasBlockingHoldFunc( eligibilityHolds );
-	const cannotTransfer: boolean = hasBlockingHold || ! isEligible;
+	const approveAndInitiateAt = () => {
+		setApproveTransfer( true );
+		trackInitiateAT();
+	};
 
 	return (
 		<Main className="wpcom-business-at">
@@ -196,6 +220,28 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			</PromoCard>
 
 			<WhatIsJetpack className="wpcom-business-at__footer" />
+
+			<Dialog
+				isVisible={ showDialog }
+				onClose={ onClose }
+				buttons={ [
+					{ action: 'cancel', label: translate( 'Cancel' ) },
+					{
+						action: 'continue',
+						label: translate( 'Continue' ),
+						onClick: approveAndInitiateAt,
+						isPrimary: true,
+					},
+				] }
+				className={ classNames( 'wpcom-business-at__dialog', 'eligibility-warnings', {
+					'eligibility-warnings--with-indent': warnings?.length,
+				} ) }
+			>
+				{ !! holds?.length && (
+					<HoldList holds={ holds } context={ product } isPlaceholder={ false } />
+				) }
+				{ !! warnings?.length && <WarningList warnings={ warnings } context={ product } /> }
+			</Dialog>
 		</Main>
 	);
 }
