@@ -85,7 +85,7 @@ const Task = ( {
 					} ),
 					bumpStat( 'calypso_customer_home', 'task_skip' )
 				),
-				dispatch( skipCurrentViewHomeLayout( siteId, reminder ) )
+				skipCurrentViewHomeLayout( siteId, reminder )
 			)
 		);
 	};
@@ -132,9 +132,7 @@ const Task = ( {
 					<Button
 						className="task__skip is-link"
 						ref={ skipButtonRef }
-						onClick={ () =>
-							enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask( 'never' )
-						}
+						onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
 					>
 						{ enableSkipOptions ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
 						{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
