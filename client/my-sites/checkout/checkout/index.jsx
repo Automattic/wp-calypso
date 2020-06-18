@@ -371,17 +371,6 @@ export class Checkout extends React.Component {
 		return true;
 	}
 
-	/**
-	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
-	 * so we need to flatten them to get a list of purchases
-	 *
-	 * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
-	 * @returns {Array} of product objects [ { productId: ... }, ... ]
-	 */
-	flattenPurchases( purchases ) {
-		return flatten( Object.values( purchases ) );
-	}
-
 	getUrlWithQueryParam( url, queryParams ) {
 		const { protocol, hostname, port, pathname, query } = parseUrl( url, true );
 
