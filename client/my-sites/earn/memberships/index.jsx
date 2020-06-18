@@ -487,7 +487,6 @@ class MembershipsSection extends Component {
 	}
 
 	renderStripeConnected() {
-		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		return (
 			<div>
 				{ this.props.query.stripe_connect_success === 'earn' && (
@@ -507,15 +506,9 @@ class MembershipsSection extends Component {
 					<Notice
 						status="is-success"
 						showDismiss={ false }
-						text={
-							isPayments
-								? this.props.translate(
-										'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first product.'
-								  )
-								: this.props.translate(
-										'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
-								  )
-						}
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
+						) }
 					>
 						<NoticeAction
 							href={ localizeUrl(
