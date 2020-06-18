@@ -125,6 +125,7 @@
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": false,
 		"signup/wpcc": true,
+		"signup/wpforteams": true,
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,

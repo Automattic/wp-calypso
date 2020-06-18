@@ -100,6 +100,7 @@
 		"signup/social": false,
 		"signup/social-management": true,
 		"signup/wpcc": true,
+		"signup/wpforteams": true,
 		"site-indicator": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,

@@ -133,6 +133,7 @@
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
 		"signup/wpcc": true,
+		"signup/wpforteams": true,
 		"site-indicator": true,
 		"memberships": true,
 		"ssr/sample-log-cache-misses": true,
