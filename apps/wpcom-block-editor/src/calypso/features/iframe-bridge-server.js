@@ -8,13 +8,13 @@ import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
-import { addAction, addFilter, applyFilters, doAction } from '@wordpress/hooks';
+import { addAction, addFilter, applyFilters, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { registerPlugin } from '@wordpress/plugins';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
 import { Button } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
-import { Component } from 'react';
+import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
 
@@ -590,7 +590,22 @@ function handleCloseEditor( calypsoPort ) {
 	};
 
 	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
-		render() {
+		render: function CloseWpcomBlockEditor() {
+			const [ label, setLabel ] = useState( calypsoifyGutenberg.closeButtonLabel );
+
+			useEffect( () => {
+				addAction(
+					'updateCloseButtonOverrides',
+					'a8c/wpcom-block-editor/CloseWpcomBlockEditor',
+					( data ) => setLabel( data.label )
+				);
+				return () =>
+					removeAction(
+						'updateCloseButtonOverrides',
+						'a8c/wpcom-block-editor/CloseWpcomBlockEditor'
+					);
+			} );
+
 			return (
 				<MainDashboardButton>
 					<Button
@@ -599,7 +614,7 @@ function handleCloseEditor( calypsoPort ) {
 						icon={ wordpress }
 						iconSize={ 36 }
 						onClick={ dispatchAction }
-						label={ calypsoifyGutenberg.closeButtonLabel }
+						label={ label }
 					/>
 				</MainDashboardButton>
 			);
