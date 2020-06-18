@@ -134,3 +134,4 @@ jobs:
 
     - name: Execute phpcs on changed files
       run: ./vendor/bin/phpcs --standard=apps/phpcs.xml $( echo '${{ steps.changes.outputs.all }}' | jq -r 'join(" ")')
+      if: ${{ steps.changes.outputs.all != "" }}
