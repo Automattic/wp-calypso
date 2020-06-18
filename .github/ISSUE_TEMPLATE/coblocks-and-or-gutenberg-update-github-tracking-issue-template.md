@@ -16,24 +16,24 @@ Testing post: p7DVsv-8Oh-p2
 
 ### Process
 
-* [x] Install version 8.3.0-rc.1. (D44703-code)
-* [x] Activate version 8.3.0-rc.1. on edge sites (D44704-code)
-* [x] Install version 8.3.0. (D44796-code)
-* [x] Activate version 8.3.0 on edge sites. (D44797-code)
-* [x] Activate 8.3.0 in production for all sites
-     - [x] Prepare diff (@pingwhoeverisresponsible) (D45045-code)
-     - [x] Commit/Deploy 
-* [x] Atomic (p9o2xV-UC-p2)
-* [x] Announce
-     - [x] public (https://wordpress.com/blog/2020/06/18/block-editor-updates/)
-     - [x] internal (p7DVsv-8Rd-p2)
+* [ ] Install version 8.3.0-rc.1. (D44703-code)
+* [ ] Activate version 8.3.0-rc.1. on edge sites (D44704-code)
+* [ ] Install version 8.3.0. (D44796-code)
+* [ ] Activate version 8.3.0 on edge sites. (D44797-code)
+* [ ] Activate 8.3.0 in production for all sites
+     - [ ] Prepare diff (@pingwhoeverisresponsible) (D45045-code)
+     - [ ] Commit/Deploy 
+* [ ] Atomic (p9o2xV-UC-p2)
+* [ ] Announce
+     - [ ] public (https://wordpress.com/blog/2020/06/18/block-editor-updates/)
+     - [ ] internal (p7DVsv-8Rd-p2)
 
 ### Testing
 
-* Calypso E2E tests #43137
-* [x] Teamcity tests (D44704-code)
+* [ ] Calypso E2E tests #43137
+* [ ] Teamcity tests (D44704-code)
 
 ### Bugs 🐛
 
-* [x] E2E: Block inserter menu not opening on openBlockInserterAndSearch(). https://github.com/Automattic/wp-calypso/issues/43179
+* [ ] E2E: Block inserter menu not opening on openBlockInserterAndSearch(). https://github.com/Automattic/wp-calypso/issues/43179
 * (Not necessary for launch) Update default block categories for Automattic blocks. https://github.com/Automattic/wp-calypso/issues/43198
