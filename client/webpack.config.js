@@ -56,10 +56,9 @@ const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
-const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
-const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
+const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 
@@ -254,21 +253,20 @@ const webpackConfig = {
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-		isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,
 			minify: ! isDevelopment,
 		} ),
-		isCalypsoClient &&
-			new AssetsWriter( {
-				filename:
-					browserslistEnv === 'defaults'
-						? 'assets-fallback.json'
-						: `assets-${ browserslistEnv }.json`,
-				path: path.join( __dirname, 'server', 'bundler' ),
-				assetExtraPath: extraPath,
-			} ),
+		new AssetsWriter( {
+			filename:
+				browserslistEnv === 'defaults'
+					? 'assets-fallback.json'
+					: `assets-${ browserslistEnv }.json`,
+			path: path.join( __dirname, 'server', 'bundler' ),
+			assetExtraPath: extraPath,
+		} ),
 		new DuplicatePackageCheckerPlugin(),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {
@@ -298,55 +296,45 @@ const webpackConfig = {
 		new ConfigFlagPlugin( {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
-		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
-		isCalypsoClient && new RequireChunkCallbackPlugin(),
+		new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-	].filter( Boolean ),
-	externals: [ 'electron' ],
-};
-
-if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' )
-	);
-}
-
-// Replace `lodash` with `lodash-es`.
-if ( isCalypsoClient ) {
-	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
-}
-
-// Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
-if ( isCalypsoClient ) {
-	webpackConfig.plugins.push(
+		! config.isEnabled( 'desktop' ) &&
+			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
+		/*
+		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
+		 */
 		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
 			if ( res.context.includes( '@wordpress/components/' ) ) {
 				res.request = 'components/empty-component';
 			}
-		} )
-	);
-}
-
-if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {
-	// Use "evergreen" polyfill config, rather than fallback.
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin(
-			/^@automattic\/calypso-polyfills$/,
-			'@automattic/calypso-polyfills/browser-evergreen'
-		)
-	);
-
-	// Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin(
-			/^lib[/\\]local-storage-polyfill$/,
-			'lodash-es/noop'
-		)
-	);
-}
+		} ),
+		/*
+		 * Use "evergreen" polyfill config, rather than fallback.
+		 */
+		browserslistEnv === 'evergreen' &&
+			new webpack.NormalModuleReplacementPlugin(
+				/^@automattic\/calypso-polyfills$/,
+				'@automattic/calypso-polyfills/browser-evergreen'
+			),
+		/*
+		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
+		 */
+		browserslistEnv === 'evergreen' &&
+			new webpack.NormalModuleReplacementPlugin(
+				/^lib[/\\]local-storage-polyfill$/,
+				'lodash-es/noop'
+			),
+		/*
+		 * Replace `lodash` with `lodash-es`
+		 */
+		new ExtensiveLodashReplacementPlugin(),
+	].filter( Boolean ),
+	externals: [ 'electron' ],
+};
 
 module.exports = webpackConfig;
