@@ -46,7 +46,7 @@ import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-
+import { stopPerformanceTracking } from 'lib/performance-tracking';
 /**
  * Types
  */
@@ -107,6 +107,7 @@ enum EditorActions {
 	GetGutenboardingStatus = 'getGutenboardingStatus',
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
+	TrackPerformance = 'trackPerformance',
 }
 
 class CalypsoifyIframe extends Component<
@@ -347,6 +348,13 @@ class CalypsoifyIframe extends Component<
 		if ( EditorActions.PostStatusChange === action ) {
 			const { status } = payload;
 			this.handlePostStatusChange( status );
+		}
+
+		if ( EditorActions.TrackPerformance === action ) {
+			if ( payload.mark === 'editor.ready' ) {
+				// This name must match the section name
+				stopPerformanceTracking( 'gutenberg-editor' );
+			}
 		}
 	};
 
