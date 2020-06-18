@@ -174,6 +174,37 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
+export const HardBlockingNotice = ( {
+	holds,
+	translate,
+	blockingMessages,
+}: {
+	holds: string[];
+	translate: LocalizeProps[ 'translate' ];
+	blockingMessages: ReturnType< typeof getBlockingMessages >;
+} ) => {
+	const blockingHold = holds.find( ( h ): h is keyof ReturnType< typeof getBlockingMessages > =>
+		isHardBlockingHoldType( h, blockingMessages )
+	);
+	if ( ! blockingHold ) {
+		return null;
+	}
+
+	return (
+		<Notice
+			status={ blockingMessages[ blockingHold ].status }
+			text={ blockingMessages[ blockingHold ].message }
+			showDismiss={ false }
+		>
+			{ blockingMessages[ blockingHold ].contactUrl && (
+				<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
+					{ translate( 'Contact us' ) }
+				</NoticeAction>
+			) }
+		</Notice>
+	);
+};
+
 export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
 	const holdMessages = getHoldMessages( context, translate );
 	const blockingMessages = getBlockingMessages( translate );
@@ -182,21 +213,13 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 
 	return (
 		<>
-			{ ! isPlaceholder &&
-				blockingHold &&
-				isHardBlockingHoldType( blockingHold, blockingMessages ) && (
-					<Notice
-						status={ blockingMessages[ blockingHold ].status }
-						text={ blockingMessages[ blockingHold ].message }
-						showDismiss={ false }
-					>
-						{ blockingMessages[ blockingHold ].contactUrl && (
-							<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
-								{ translate( 'Contact us' ) }
-							</NoticeAction>
-						) }
-					</Notice>
-				) }
+			{ ! isPlaceholder && (
+				<HardBlockingNotice
+					holds={ holds }
+					translate={ translate }
+					blockingMessages={ blockingMessages }
+				/>
+			) }
 			<div
 				className={ classNames( {
 					'eligibility-warnings__hold-list-dim': blockingHold,
@@ -294,7 +317,7 @@ function isKnownHoldType(
  * @param {object} blockingMessages List of all holds we consider blocking
  * @returns {boolean} Is {hold} blocking or not
  */
-export function isHardBlockingHoldType(
+function isHardBlockingHoldType(
 	hold: string,
 	blockingMessages: ReturnType< typeof getBlockingMessages >
 ): hold is keyof ReturnType< typeof getBlockingMessages > {

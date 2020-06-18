@@ -31,10 +31,8 @@ import QueryAutomatedTransferEligibility from 'components/data/query-atat-eligib
 import {
 	hasBlockingHold as hasBlockingHoldFunc,
 	getBlockingMessages,
-	isHardBlockingHoldType,
+	HardBlockingNotice,
 } from 'blocks/eligibility-warnings/hold-list';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 
 /**
  * Style dependencies
@@ -110,8 +108,8 @@ interface BlockingHoldNoticeProps extends Props {
 
 function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): ReactElement | null {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
-	const { eligibilityHolds } = useSelector( ( state ) => getEligibility( state, siteId ) );
-	if ( ! eligibilityHolds ) {
+	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
+	if ( ! holds ) {
 		return null;
 	}
 
@@ -120,25 +118,13 @@ function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): Rea
 		'This site is currently not eligible for %s. Please contact our support team for help.',
 		{ args: [ content.header ] }
 	);
-	const blockingHold = eligibilityHolds.find( ( hold ): hold is keyof ReturnType<
-		typeof getBlockingMessages
-	> => isHardBlockingHoldType( hold, blockingMessages ) );
-	if ( ! blockingHold ) {
-		return null;
-	}
 
 	return (
-		<Notice
-			status={ blockingMessages[ blockingHold ].status }
-			text={ blockingMessages[ blockingHold ].message }
-			showDismiss={ false }
-		>
-			{ blockingMessages[ blockingHold ].contactUrl && (
-				<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
-					{ translate( 'Contact us' ) }
-				</NoticeAction>
-			) }
-		</Notice>
+		<HardBlockingNotice
+			translate={ translate }
+			holds={ holds }
+			blockingMessages={ blockingMessages }
+		/>
 	);
 }
 
