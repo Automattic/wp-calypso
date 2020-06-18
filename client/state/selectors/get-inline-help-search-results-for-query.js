@@ -15,4 +15,3 @@ export default function getInlineHelpSearchResultsForQuery( state, searchQuery )
 	const allResults = get( state, 'inlineHelp.searchResults.search.items' );
 	return get( allResults, [ searchQuery ], null );
 }
-
