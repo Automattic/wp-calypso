@@ -77,7 +77,6 @@ class InlineHelpSearchCard extends Component {
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
 				delaySearch={ true }
-				onSearchClose={ this.props.resetSearchResults }
 			/>
 		);
 	}
@@ -94,7 +93,7 @@ const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
 				),
 				requestInlineHelpSearchResults( searchQuery )
 		  )
-		: requestInlineHelpSearchResults();
+		: requestInlineHelpSearchResults( searchQuery );
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
