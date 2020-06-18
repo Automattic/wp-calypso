@@ -28,8 +28,13 @@ import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import QueryAutomatedTransferEligibility from 'components/data/query-atat-eligibility';
-import HoldList from 'blocks/eligibility-warnings/hold-list';
-import WarningList from 'blocks/eligibility-warnings/warning-list';
+import {
+	hasBlockingHold as hasBlockingHoldFunc,
+	getBlockingMessages,
+	isHardBlockingHoldType,
+} from 'blocks/eligibility-warnings/hold-list';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 /**
  * Style dependencies
@@ -99,9 +104,47 @@ const contentPerPrimaryProduct = {
 	},
 };
 
+interface BlockingHoldNoticeProps extends Props {
+	siteId: number;
+}
+
+function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): ReactElement | null {
+	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
+	const { eligibilityHolds } = useSelector( ( state ) => getEligibility( state, siteId ) );
+	if ( ! eligibilityHolds ) {
+		return null;
+	}
+
+	const blockingMessages = getBlockingMessages( translate );
+	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = translate(
+		'This site is currently not eligible for %s. Please contact our support team for help.',
+		{ args: [ content.header ] }
+	);
+	const blockingHold = eligibilityHolds.find( ( hold ): hold is keyof ReturnType<
+		typeof getBlockingMessages
+	> => isHardBlockingHoldType( hold, blockingMessages ) );
+	if ( ! blockingHold ) {
+		return null;
+	}
+
+	return (
+		<Notice
+			status={ blockingMessages[ blockingHold ].status }
+			text={ blockingMessages[ blockingHold ].message }
+			showDismiss={ false }
+		>
+			{ blockingMessages[ blockingHold ].contactUrl && (
+				<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
+					{ translate( 'Contact us' ) }
+				</NoticeAction>
+			) }
+		</Notice>
+	);
+}
+
 export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const dispatch = useDispatch();
 	const initiateAT = React.useCallback( () => {
 		siteId && dispatch( initiateThemeTransfer( siteId, null, '' ) );
@@ -113,13 +156,13 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
 
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
-	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
-		getEligibility( state, siteId )
-	);
-	const cannotTransfer = ( eligibilityHolds && !! eligibilityHolds.length ) || ! isEligible;
+	const { eligibilityHolds } = useSelector( ( state ) => getEligibility( state, siteId ) );
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
+
+	const hasBlockingHold = eligibilityHolds && hasBlockingHoldFunc( eligibilityHolds );
+	const cannotTransfer: boolean = hasBlockingHold || ! isEligible;
 
 	return (
 		<Main className="wpcom-business-at">
@@ -134,22 +177,13 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				headerText={ content.header }
 				align="left"
 			/>
-			{ cannotTransfer && (
-				<HoldList
-					context=""
-					holds={ eligibilityHolds || [] }
-					isPlaceholder={ null === eligibilityHolds }
-				/>
-			) }
+			<BlockingHoldNotice siteId={ siteId } product={ product } />
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }
 				isPrimary
 			>
 				<p>{ content.primaryPromo.content }</p>
-				{ eligibilityWarnings && eligibilityWarnings.length && (
-					<WarningList context="" warnings={ eligibilityWarnings } />
-				) }
 				<div className="wpcom-business-at__cta">
 					<SpinnerButton
 						text={ content.primaryPromo.promoCTA.text }

@@ -107,7 +107,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
  * @param {Function} translate Translate fn
  * @returns {object} Dictionary of blocking holds and their corresponding messages
  */
-function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
+export function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
 			message: hasLocalizedText(
@@ -294,7 +294,7 @@ function isKnownHoldType(
  * @param {object} blockingMessages List of all holds we consider blocking
  * @returns {boolean} Is {hold} blocking or not
  */
-function isHardBlockingHoldType(
+export function isHardBlockingHoldType(
 	hold: string,
 	blockingMessages: ReturnType< typeof getBlockingMessages >
 ): hold is keyof ReturnType< typeof getBlockingMessages > {
