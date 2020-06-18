@@ -50,16 +50,26 @@ export function prefetchDesignThumbs() {
 }
 
 export function getAvailableDesigns(
-	includeEdgeDesigns: boolean = isEnabled( 'gutenboarding/edge-templates' )
+	includeEdgeDesigns: boolean = isEnabled( 'gutenboarding/edge-templates' ),
+	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ) {
-	if ( includeEdgeDesigns ) {
-		return availableDesigns;
+	let designs = availableDesigns;
+
+	if ( ! includeEdgeDesigns ) {
+		designs = {
+			...designs,
+			featured: designs.featured.filter( ( design ) => ! design.is_alpha ),
+		};
 	}
 
-	return {
-		...availableDesigns,
-		featured: availableDesigns.featured.filter( ( design ) => ! design.is_alpha ),
-	};
+	if ( useFseDesigns ) {
+		designs = {
+			...designs,
+			featured: designs.featured.filter( ( design ) => design.is_fse ),
+		};
+	}
+
+	return designs;
 }
 
 export default getAvailableDesigns();
