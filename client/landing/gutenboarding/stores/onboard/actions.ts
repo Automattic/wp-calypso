@@ -103,7 +103,7 @@ export function* createSite(
 		'getState'
 	);
 
-	const shouldEnableFse = yield select( ONBOARD_STORE, 'getIsFseSite' );
+	const shouldEnableFse = !! selectedDesign?.is_fse;
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;

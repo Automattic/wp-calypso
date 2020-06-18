@@ -26,7 +26,3 @@ export const getSelectedDomain = ( state: State ) => state.domain;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch || getSelectedSiteTitle( state );
-export const getIsFseSite = ( state: State ): boolean => {
-	const design = getSelectedDesign( state );
-	return isEnabled( 'gutenboarding/site-editor' ) || !! design?.is_fse;
-};

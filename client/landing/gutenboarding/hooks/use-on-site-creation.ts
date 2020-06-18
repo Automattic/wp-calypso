@@ -59,11 +59,11 @@ export default function useOnSiteCreation() {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
-	const isFseSite = useSelect( ( select ) => select( ONBOARD_STORE ).getIsFseSite() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const selectedPlan = useSelectedPlan();
 	const isEcommercePlan = useIsSelectedPlanEcommerce();
+	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { resetPlan } = useDispatch( PLANS_STORE );
@@ -107,7 +107,7 @@ export default function useOnSiteCreation() {
 					resetOnboardStore();
 					setSelectedSite( newSite.blogid );
 
-					const editorUrl = isFseSite
+					const editorUrl = design?.is_fse
 						? `site-editor%2F${ newSite.site_slug }`
 						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 
@@ -129,7 +129,7 @@ export default function useOnSiteCreation() {
 			resetOnboardStore();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = isFseSite
+			window.location.href = design?.is_fse
 				? `/site-editor/${ newSite.site_slug }/`
 				: `/block-editor/page/${ newSite.site_slug }/home`;
 		}
@@ -146,6 +146,6 @@ export default function useOnSiteCreation() {
 		setSelectedSite,
 		flowCompleteTrackingParams,
 		isEcommercePlan,
-		isFseSite,
+		design,
 	] );
 }
