@@ -64,6 +64,7 @@ class SecurityCheckupComponent extends React.Component {
 				<VerticalNav className="security-checkup__info-nav">
 					<SecurityCheckupSocialLogins />
 					<SecurityCheckupConnectedApplications />
+					<SecurityCheckupSocialLogins />
 				</VerticalNav>
 			</Main>
 		);
