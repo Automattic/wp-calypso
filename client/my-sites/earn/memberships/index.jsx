@@ -45,6 +45,7 @@ import {
 	getConnectUrlForSiteId,
 } from 'state/memberships/settings/selectors';
 import { getProductsForSiteId } from 'state/memberships/product-list/selectors';
+import { isEnabled } from 'config';
 
 /**
  * Style dependencies
@@ -216,27 +217,51 @@ class MembershipsSection extends Component {
 	}
 
 	renderSubscriberList() {
+		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		return (
 			<div>
-				<SectionHeader label={ this.props.translate( 'Subscribers' ) } />
+				<SectionHeader
+					label={
+						isPayments
+							? this.props.translate( 'Customers and Subscribers' )
+							: this.props.translate( 'Subscribers' )
+					}
+				/>
 				{ Object.values( this.props.subscribers ).length === 0 && (
 					<Card>
-						{ this.props.translate(
-							"You haven't added any subscribers. {{a}}Learn more{{/a}} about recurring payments.",
-							{
-								components: {
-									a: (
-										<a
-											href={ localizeUrl(
-												'https://wordpress.com/support/recurring-payments-button/'
-											) }
-											target="_blank"
-											rel="noreferrer noopener"
-										/>
-									),
-								},
-							}
-						) }
+						{ isPayments
+							? this.props.translate(
+									"You haven't added any customers. {{a}}Learn more{{/a}} about payments.",
+									{
+										components: {
+											a: (
+												<a
+													href={ localizeUrl(
+														'https://wordpress.com/support/recurring-payments-button/'
+													) }
+													target="_blank"
+													rel="noreferrer noopener"
+												/>
+											),
+										},
+									}
+							  )
+							: this.props.translate(
+									"You haven't added any subscribers. {{a}}Learn more{{/a}} about recurring payments.",
+									{
+										components: {
+											a: (
+												<a
+													href={ localizeUrl(
+														'https://wordpress.com/support/recurring-payments-button/'
+													) }
+													target="_blank"
+													rel="noreferrer noopener"
+												/>
+											),
+										},
+									}
+							  ) }
 					</Card>
 				) }
 				{ Object.values( this.props.subscribers ).length > 0 && (
@@ -298,13 +323,16 @@ class MembershipsSection extends Component {
 	}
 
 	renderSettings() {
+		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Settings' ) } />
 				<CompactCard href={ '/earn/payments-plans/' + this.props.siteSlug }>
 					<QueryMembershipProducts siteId={ this.props.siteId } />
 					<div className="memberships__module-products-title">
-						{ this.props.translate( 'Recurring Payments plans' ) }
+						{ isPayments
+							? this.props.translate( 'Payment plans' )
+							: this.props.translate( 'Recurring Payments plans' ) }
 					</div>
 					<div className="memberships__module-products-list">
 						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />
@@ -324,7 +352,9 @@ class MembershipsSection extends Component {
 							{ this.props.translate( 'Disconnect Stripe Account' ) }
 						</p>
 						<p className="memberships__settings-section-desc">
-							{ this.props.translate( 'Disconnect Recurring Payments from your Stripe account' ) }
+							{ isPayments
+								? this.props.translate( 'Disconnect Payments from your Stripe account' )
+								: this.props.translate( 'Disconnect Recurring Payments from your Stripe account' ) }
 						</p>
 					</div>
 				</CompactCard>
@@ -336,7 +366,9 @@ class MembershipsSection extends Component {
 							action: 'cancel',
 						},
 						{
-							label: this.props.translate( 'Disconnect Recurring Payments from Stripe' ),
+							label: isPayments
+								? this.props.translate( 'Disconnect Payments from Stripe' )
+								: this.props.translate( 'Disconnect Recurring Payments from Stripe' ),
 							isPrimary: true,
 							action: 'disconnect',
 						},
@@ -345,20 +377,36 @@ class MembershipsSection extends Component {
 				>
 					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
 					<p>
-						{ this.props.translate(
-							'Do you want to disconnect Recurring Payments from your Stripe account?'
-						) }
+						{ isPayments
+							? this.props.translate(
+									'Do you want to disconnect Payments from your Stripe account?'
+							  )
+							: this.props.translate(
+									'Do you want to disconnect Recurring Payments from your Stripe account?'
+							  ) }
 					</p>
 					<Notice
-						text={ this.props.translate(
-							'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
-							{
-								components: {
-									br: <br />,
-									strong: <strong />,
-								},
-							}
-						) }
+						text={
+							isPayments
+								? this.props.translate(
+										'Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
+										{
+											components: {
+												br: <br />,
+												strong: <strong />,
+											},
+										}
+								  )
+								: this.props.translate(
+										'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
+										{
+											components: {
+												br: <br />,
+												strong: <strong />,
+											},
+										}
+								  )
+						}
 						showDismiss={ false }
 					/>
 				</Dialog>
@@ -450,7 +498,7 @@ class MembershipsSection extends Component {
 						) }
 					>
 						<NoticeAction href={ `/earn/payments-plans/${ this.props.siteSlug }` } icon="create">
-							{ this.props.translate( 'Add a Payment Plan' ) }
+							{ this.props.translate( 'Add a payment plan' ) }
 						</NoticeAction>
 					</Notice>
 				) }
@@ -480,16 +528,23 @@ class MembershipsSection extends Component {
 	}
 
 	renderOnboarding( cta ) {
+		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		return (
 			<div className="memberships__onboarding-wrapper">
 				<div className="memberships__onboarding-column-info">
 					<div className="memberships__onboarding-header">
-						{ this.props.translate( 'Introducing Recurring Payments.' ) }
+						{ isPayments
+							? this.props.translate( 'Introducing Payments.' )
+							: this.props.translate( 'Introducing Recurring Payments.' ) }
 					</div>
 					<p className="memberships__onboarding-paragraph">
-						{ this.props.translate(
-							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
-						) }{ ' ' }
+						{ isPayments
+							? this.props.translate(
+									'Start selling and collecting subscription payments! Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to sell products or collect paying subscribers.'
+							  )
+							: this.props.translate(
+									'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
+							  ) }{ ' ' }
 						<ExternalLink
 							href="https://wordpress.com/support/recurring-payments-button/"
 							icon={ true }
@@ -501,7 +556,13 @@ class MembershipsSection extends Component {
 					<div className="memberships__onboarding-benefits">
 						<div>
 							<Gridicon size={ 18 } icon="checkmark" />
-							{ this.props.translate( 'Add multiple subscription options' ) }
+							{ isPayments
+								? this.props.translate( 'Add multiple payment plans' )
+								: this.props.translate( 'Add multiple subscription options' ) }
+						</div>
+						<div>
+							<Gridicon size={ 18 } icon="checkmark" />
+							{ this.props.translate( 'Collect recurring revenue' ) }
 						</div>
 						<div>
 							<Gridicon size={ 18 } icon="checkmark" />
@@ -553,7 +614,11 @@ class MembershipsSection extends Component {
 					shouldDisplay={ () => true }
 					feature={ FEATURE_MEMBERSHIPS }
 					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-					description={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
+					description={
+						isEnabled( 'earn/rename-payment-blocks' )
+							? this.props.translate( 'Upgrade to start selling.' )
+							: this.props.translate( 'Upgrade to start earning recurring revenue.' )
+					}
 					showIcon={ true }
 					event="calypso_memberships_upsell_nudge"
 					tracksImpressionName="calypso_upgrade_nudge_impression"
@@ -566,9 +631,13 @@ class MembershipsSection extends Component {
 			return this.renderOnboarding(
 				<Notice
 					status="is-warning"
-					text={ this.props.translate(
-						'Only site administrators can edit Recurring Payments settings.'
-					) }
+					text={
+						isEnabled( 'earn/rename-payment-blocks' )
+							? this.props.translate( 'Only site administrators can edit Payments settings.' )
+							: this.props.translate(
+									'Only site administrators can edit Recurring Payments settings.'
+							  )
+					}
 					showDismiss={ false }
 				/>
 			);
@@ -583,7 +652,7 @@ class MembershipsSection extends Component {
 		);
 	}
 }
-
+//Used to avoid re-renders. Do not mutate!
 const emptyArray = [];
 
 const mapStateToProps = ( state ) => {
