@@ -158,4 +158,14 @@ export default {
 		allowExistingUsers: false,
 		countryCodeTargets: [ 'US' ],
 	},
+	passwordlessAfterPlans: {
+		datestamp: '20200618',
+		variations: {
+			variantPasswordless: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		countryCodeTargets: [ 'US' ],
+	},
 };
