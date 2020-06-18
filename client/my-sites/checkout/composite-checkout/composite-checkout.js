@@ -325,7 +325,9 @@ export default function CompositeCheckout( {
 
 	useDisplayErrors( errors, showErrorMessage );
 
-	const itemsForCheckout = ( items.length ? [ ...items, tax, couponItem ] : [] ).filter( Boolean );
+	const itemsForCheckout = ( items.length ? [ ...items, tax, couponItem, credits ] : [] ).filter(
+		Boolean
+	);
 	debug( 'items for checkout', itemsForCheckout );
 
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart );
