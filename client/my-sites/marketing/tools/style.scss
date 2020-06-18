@@ -99,6 +99,8 @@
 	width: 100%;
 
 	> p {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
 		margin-bottom: 0;
 	}
 
@@ -129,6 +131,7 @@
 
 	.button {
 		margin: 0;
+		margin-left: calc( 15% + 20px );
 		text-align: center;
 		width: auto;
 	}
@@ -152,24 +155,18 @@
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
-		justify-content: flex-end;
+		justify-content: flex-start;
 
 		.google-voucher__initial-step {
 			display: block;
 		}
 
 		.button {
-			margin: 0 1em 0 0;
 			width: auto;
 		}
 	}
 
 	@include breakpoint-deprecated( '>1040px' ) {
-
-		.button {
-			margin: 0 0 0 1em;
-		}
-
 		.purchase-detail__button {
 			float: right;
 		}
