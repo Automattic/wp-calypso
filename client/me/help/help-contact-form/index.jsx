@@ -55,8 +55,28 @@ const trackSibylClick = ( event, helpLink ) =>
 		} )
 	);
 
+const trackSibylFirstClick = ( event, helpLink ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_first_question_click', {
+			question_id: helpLink.id,
+		} )
+	);
+
 const trackSupportAfterSibylClick = () =>
 	composeAnalytics( recordTracksEventAction( 'calypso_sibyl_support_after_question_click' ) );
+
+const trackSupportWithSibylSuggestions = ( query, suggestions ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_support_with_suggestions_showing', {
+			query,
+			suggestions,
+		} )
+	);
+
+const trackSupportWithoutSibylSuggestions = ( query ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_support_without_suggestions_showing', { query } )
+	);
 
 export class HelpContactForm extends React.PureComponent {
 	static propTypes = {
@@ -153,8 +173,10 @@ export class HelpContactForm extends React.PureComponent {
 		}
 	};
 
+	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
+
 	doQandASearch = () => {
-		const query = ( this.state.subject + ' ' + this.state.message ).trim();
+		const query = this.getSibylQuery();
 
 		if ( '' === query ) {
 			this.setState( { qanda: [] } );
@@ -187,6 +209,9 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	trackSibylClick = ( event, helpLink ) => {
+		if ( ! this.state.sibylClicked ) {
+			this.props.trackSibylFirstClick( event, helpLink );
+		}
 		this.props.trackSibylClick( event, helpLink );
 		this.setState( { sibylClicked: true } );
 	};
@@ -282,6 +307,15 @@ export class HelpContactForm extends React.PureComponent {
 			// track that the user had clicked a Sibyl result, but still contacted support
 			this.props.trackSupportAfterSibylClick();
 			this.setState( { sibylClicked: false } );
+		}
+
+		if ( isEmpty( this.state.qanda ) ) {
+			this.props.trackSupportWithoutSibylSuggestions( this.getSibylQuery() );
+		} else {
+			this.props.trackSupportWithSibylSuggestions(
+				this.getSibylQuery(),
+				this.state.qanda.map( ( { id, title } ) => `${ id } - ${ title }` ).join( ' / ' )
+			);
 		}
 
 		this.props.onSubmit( {
@@ -486,7 +520,10 @@ const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
 	recordTracksEventAction,
 	trackSibylClick,
+	trackSibylFirstClick,
 	trackSupportAfterSibylClick,
+	trackSupportWithSibylSuggestions,
+	trackSupportWithoutSibylSuggestions,
 	showQandAOnInlineHelpContactForm,
 };
 
