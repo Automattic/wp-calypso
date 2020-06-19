@@ -117,6 +117,7 @@ export default function WpcomBlockEditorNavSidebar() {
 						<NavItem
 							key={ item.id }
 							item={ item }
+							postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
 							selected={ item.id === selectedItemId }
 							statusLabel={ statusLabels[ item.status ] }
 						/>
