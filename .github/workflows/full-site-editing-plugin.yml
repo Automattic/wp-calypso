@@ -3,7 +3,6 @@ on:
     # only trigger this workflow if FSE plugin files have been modified, or if packages have been updated.
     paths:
     - 'apps/full-site-editing/**'
-    - 'yarn.lock'
 
 name: FSE plugin
 
