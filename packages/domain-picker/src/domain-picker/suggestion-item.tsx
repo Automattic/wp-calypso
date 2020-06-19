@@ -84,18 +84,16 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				) : (
 					<>
 						<span className="domain-picker__price-long">
-							{
-								/* translators: %s is the price with currency. Eg: $15/year. */
-								createInterpolateElement(
-									sprintf(
-										__( 'Included in paid plan, <strikethrough>%s/year</strikethrough>' ),
-										suggestion.cost
-									),
-									{
-										strikethrough: <span className="domain-picker__price-cost"></span>,
-									}
-								)
-							}
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: %s is the price with currency. Eg: $15/year. */
+									__( 'Included in paid plan, <strikethrough>%s/year</strikethrough>' ),
+									suggestion.cost
+								),
+								{
+									strikethrough: <span className="domain-picker__price-cost"></span>,
+								}
+							) }
 						</span>
 						<span className="domain-picker__price-short domain-picker__price-cost">
 							{
