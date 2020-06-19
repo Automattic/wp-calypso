@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { _x } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { applyFilters } from '@wordpress/hooks';
 
@@ -46,7 +46,8 @@ export default function NavItem( { item, postType, selected, statusLabel }: NavI
 			>
 				<div className="wpcom-block-editor-nav-item__title-container">
 					<div className={ titleClasses }>
-						{ item.title?.raw || __( 'Untitled', 'full-site-editing' ) }
+						{ item.title?.raw ||
+							_x( 'Untitled', 'post title for posts with no title', 'full-site-editing' ) }
 					</div>
 					{ item.slug && (
 						<div className="wpcom-block-editor-nav-item__slug">{ `/${ item.slug }/` }</div>
