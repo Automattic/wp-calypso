@@ -21,6 +21,7 @@ import {
 	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
+	NOTIFY_DESKTOP_SEND_TO_PRINTER,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 } from 'state/desktop/window-events';
 import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
@@ -60,6 +61,8 @@ const Desktop = {
 			NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 			this.onViewPostClicked.bind( this )
 		);
+
+		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
 		this.store = await getReduxStore();
 
@@ -266,6 +269,11 @@ const Desktop = {
 		if ( url ) {
 			this.navigate( url );
 		}
+	},
+
+	onSendToPrinter: function ( event ) {
+		const { title, contents } = event.detail;
+		this.print( title, contents );
 	},
 
 	print: function ( title, html ) {
