@@ -28,7 +28,7 @@ import {
 	EligibilityData,
 } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import QueryAutomatedTransferEligibility from 'components/data/query-atat-eligibility';
 import {
@@ -166,6 +166,7 @@ function TransferFailureNotice( {
 export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 
 	// Gets the site eligibility data.
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
@@ -214,16 +215,16 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 					displayOnNextPage: true,
 				} )
 			);
-			// Redirect/reload the page to take the new site slug
-			page( '/' );
-
 			// Need to refresh the site data.
 			dispatch( requestSite( siteId ) );
-
-			// todo: Ideally, reload the section with the new siteSlug, but we don't have the new slug yet
-			// page( `/${product}/${siteSlug}`);
 		}
-	}, [ automatedTransferStatus ] );
+	}, [ automatedTransferStatus, COMPLETE, dispatch, siteId ] );
+
+	useEffect( () => {
+		if ( automatedTransferStatus === COMPLETE && ! siteSlug.includes( 'wordpress.com' ) ) {
+			page( `/${ product }/${ siteSlug }` );
+		}
+	}, [ automatedTransferStatus, COMPLETE, product, siteSlug ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
