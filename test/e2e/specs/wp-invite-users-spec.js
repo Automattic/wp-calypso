@@ -154,20 +154,25 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 
 		after( async function () {
 			if ( inviteCreated ) {
-				await new LoginFlow( driver ).loginAndSelectPeople();
-				const peoplePage = await PeoplePage.Expect( driver );
-				await peoplePage.selectInvites();
+				try {
+					await new LoginFlow( driver ).loginAndSelectPeople();
+					const peoplePage = await PeoplePage.Expect( driver );
+					await peoplePage.selectInvites();
 
-				// Sometimes, the 'accept invite' step fails. In these cases, we perform cleanup
-				//    by revoking, instead of clearing accepted invite.
-				if ( inviteAccepted ) {
-					await peoplePage.goToClearAcceptedInvitePage( newUserName );
-				} else {
-					await peoplePage.goToRevokeInvitePage( newInviteEmailAddress );
+					// Sometimes, the 'accept invite' step fails. In these cases, we perform cleanup
+					//    by revoking, instead of clearing accepted invite.
+					if ( inviteAccepted ) {
+						await peoplePage.goToClearAcceptedInvitePage( newUserName );
+					} else {
+						await peoplePage.goToRevokeInvitePage( newInviteEmailAddress );
+					}
+
+					const clearOrRevokeInvitePage = await RevokePage.Expect( driver );
+					await clearOrRevokeInvitePage.revokeUser();
+				} catch {
+					console.log( 'Invites cleanup failed for (Inviting new user as an Editor)' );
+					return;
 				}
-
-				const clearOrRevokeInvitePage = await RevokePage.Expect( driver );
-				await clearOrRevokeInvitePage.revokeUser();
 			}
 		} );
 	} );
@@ -340,20 +345,27 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 
 		after( async function () {
 			if ( inviteCreated ) {
-				await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
-				const peoplePageCleanup = await PeoplePage.Expect( driver );
-				await peoplePageCleanup.selectInvites();
+				try {
+					await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
+					const peoplePageCleanup = await PeoplePage.Expect( driver );
+					await peoplePageCleanup.selectInvites();
 
-				// Sometimes, the 'accept invite' step fails. In these cases, we perform cleanup
-				//    by revoking, instead of clearing accepted invite.
-				if ( inviteAccepted ) {
-					await peoplePageCleanup.goToClearAcceptedInvitePage( newUserName );
-				} else {
-					await peoplePageCleanup.goToRevokeInvitePage( newInviteEmailAddress );
+					// Sometimes, the 'accept invite' step fails. In these cases, we perform cleanup
+					//    by revoking, instead of clearing accepted invite.
+					if ( inviteAccepted ) {
+						await peoplePageCleanup.goToClearAcceptedInvitePage( newUserName );
+					} else {
+						await peoplePageCleanup.goToRevokeInvitePage( newInviteEmailAddress );
+					}
+
+					const clearOrRevokeInvitePage = await RevokePage.Expect( driver );
+					await clearOrRevokeInvitePage.revokeUser();
+				} catch {
+					console.log(
+						'Invites cleanup failed for (Inviting New User as a Viewer of a WordPress.com Private Site)'
+					);
+					return;
 				}
-
-				const clearOrRevokeInvitePage = await RevokePage.Expect( driver );
-				await clearOrRevokeInvitePage.revokeUser();
 			}
 
 			if ( ! removedViewerFlag ) {
