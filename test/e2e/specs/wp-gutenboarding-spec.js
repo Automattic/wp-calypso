@@ -34,7 +34,7 @@ const ua = ( navigator && navigator.userAgent ) || 'unknown UA';
 
 describe( 'Gutenboarding: (' + screenSize + ', ' + ua + ')', function () {
 	this.timeout( mochaTimeOut );
-	describe( 'Visit Gutenboarding page as a new user (' + ua + ') @parallel @canary', function () {
+	describe( 'Visit Gutenboarding page as a new user @parallel @canary', function () {
 		const siteTitle = dataHelper.randomPhrase();
 
 		before( async function () {
