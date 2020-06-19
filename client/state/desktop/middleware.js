@@ -8,6 +8,7 @@ import debugFactory from 'debug';
  */
 import {
 	CANNOT_USE_EDITOR,
+	EDITOR_VIEW_POST_CLICKED,
 	SITE_REQUEST_SUCCESS,
 	SITE_REQUEST_FAILURE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -18,6 +19,7 @@ import {
 	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
+	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 } from '../../state/desktop/window-events';
 
 /**
@@ -44,6 +46,19 @@ export const desktopMiddleware = () => {
 							reason,
 							editorUrl,
 							wpAdminLoginUrl,
+						},
+					} )
+				);
+				return next( action );
+			}
+
+			case EDITOR_VIEW_POST_CLICKED: {
+				debug( 'Dispatching window event for action type: ', action.type );
+				const { url } = action;
+				window.dispatchEvent(
+					new window.CustomEvent( NOTIFY_DESKTOP_VIEW_POST_CLICKED, {
+						detail: {
+							url,
 						},
 					} )
 				);

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { CANNOT_USE_EDITOR } from 'state/action-types';
+import { CANNOT_USE_EDITOR, EDITOR_VIEW_POST_CLICKED } from 'state/action-types';
 
 /**
  * Notify the desktop that the editor cannot be opened.
@@ -18,5 +18,17 @@ export const notifyDesktopCannotOpenEditor = ( site, reason, editorUrl, wpAdminL
 		reason,
 		editorUrl,
 		wpAdminLoginUrl,
+	};
+};
+
+/**
+ * Notify the desktop that the "View Post" button has been clicked.
+ *
+ * @param {string} url The URL being navigated to.
+ */
+export const notifyDesktopViewPostClicked = ( url ) => {
+	return {
+		type: EDITOR_VIEW_POST_CLICKED,
+		url,
 	};
 };

@@ -597,8 +597,10 @@ function handleCloseEditor( calypsoPort ) {
 
 /**
  * Modify links in order to open them in parent window and not in a child iframe.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function openLinksInParentFrame() {
+function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinkSelectors = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
@@ -607,7 +609,10 @@ function openLinksInParentFrame() {
 	].join( ',' );
 	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
-		window.open( e.target.href, '_top' );
+		calypsoPort.postMessage( {
+			action: 'viewPost',
+			payload: { postUrl: e.target.href },
+		} );
 	} );
 
 	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
@@ -935,7 +940,7 @@ function initPort( message ) {
 
 		handleCloseEditor( calypsoPort );
 
-		openLinksInParentFrame();
+		openLinksInParentFrame( calypsoPort );
 
 		openCustomizer( calypsoPort );
 
