@@ -20,13 +20,7 @@ import DomainOnly from './domain-only';
 import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
-import {
-	domainManagementRoot,
-	domainManagementEdit,
-	domainManagementList,
-	domainManagementSiteRedirect,
-	domainManagementTransferIn,
-} from 'my-sites/domains/paths';
+import { domainManagementRoot, domainManagementList } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
 import { Button, CompactCard } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
