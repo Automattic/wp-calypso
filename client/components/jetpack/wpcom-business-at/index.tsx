@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useState, useCallback } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -138,7 +138,6 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 		eligibilityHolds: holds,
 		eligibilityWarnings: warnings,
 	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
-
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
@@ -148,36 +147,28 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 
 	// Gets state to control dialog and continue button.
 	const [ showDialog, setShowDialog ] = useState( false );
-	// const [ approvedTransfer, setApproveTransfer ] = useState(
-	// 	0 === warnings?.length && 0 === holds?.length
-	// );
-	const onCloseDialog = () => setShowDialog( false );
-	const onShowDialog = () => setShowDialog( true );
+	const [ approvedTransfer, setApproveTransfer ] = useState(
+		0 === warnings?.length && 0 === holds?.length
+	);
+	const onClose = () => setShowDialog( false );
 
 	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
-	// const initiateAT = React.useCallback( () => {
-	// 	if ( approvedTransfer ) {
-	// 		dispatch( initiateThemeTransfer( siteId, null, '' ) );
-	// 	} else {
-	// 		setShowDialog( true );
-	// 	}
-	// }, [ dispatch, siteId, approvedTransfer ] );
-
-	const initiateAT = useCallback( () => {
-		dispatch( initiateThemeTransfer( siteId, null, '' ) );
-	}, [ dispatch, siteId ] );
-
+	const initiateAT = React.useCallback( () => {
+		if ( approvedTransfer ) {
+			dispatch( initiateThemeTransfer( siteId, null, '' ) );
+		} else {
+			setShowDialog( true );
+		}
+	}, [ dispatch, siteId, approvedTransfer ] );
 	const eventName =
 		product === 'backup'
 			? 'calypso_jetpack_backup_business_at'
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
-
 	const approveAndInitiateAt = () => {
-		// setApproveTransfer( true );
+		setApproveTransfer( true );
 		trackInitiateAT();
-		setShowDialog( false );
 	};
 
 	return (
@@ -205,7 +196,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
 						loading={ automatedTransferStatus === transferStates.START }
-						onClick={ onShowDialog }
+						onClick={ trackInitiateAT }
 						disabled={ hasBlockingHold }
 					/>
 				</div>
@@ -235,7 +226,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 
 			<Dialog
 				isVisible={ showDialog }
-				onClose={ onCloseDialog }
+				onClose={ onClose }
 				buttons={ [
 					{ action: 'cancel', label: translate( 'Cancel' ) },
 					{
