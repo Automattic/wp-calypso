@@ -143,14 +143,9 @@
 	align-items: center;
 	font-size: 10px;
 	text-transform: uppercase;
-
+	vertical-align: middle;
 	background-color: var( --studio-blue-50 );
 	color: var( --color-text-inverted );
-
-	&.is-selected {
-		color: var( --color-text-inverted );
-		background-color: var( --color-success );
-	}
 }
 
 .domain-picker__price {
