@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 1.9
+Stable tag: 1.10
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,11 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.10 =
+* Improvements to the premium blocks.
+* Add 10 new block patterns.
+* Post List Block: Fix deprecation note update button layout.
 
 = 1.9 =
 * Add Mailerlite subscriber widget.

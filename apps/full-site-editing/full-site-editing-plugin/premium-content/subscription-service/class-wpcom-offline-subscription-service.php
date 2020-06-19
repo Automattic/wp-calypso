@@ -23,7 +23,7 @@ class WPCOM_Offline_Subscription_Service extends WPCOM_Token_Subscription_Servic
 		return (
 			( defined( 'WPCOM_JOBS' ) && WPCOM_JOBS ) ||
 			( defined( 'IS_WPCOM' ) && IS_WPCOM === true && ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST ) )
-		       ) && is_user_logged_in();
+			   ) && is_user_logged_in();
 	}
 
 	/**
@@ -36,19 +36,20 @@ class WPCOM_Offline_Subscription_Service extends WPCOM_Token_Subscription_Servic
 		if ( empty( $subscriptions ) ) {
 			return false;
 		}
-		//format the subscriptions so that they can be validated
+		// format the subscriptions so that they can be validated
 		$subscriptions = self::abbreviate_subscriptions( $subscriptions );
 		return $this->validate_subscriptions( $valid_plan_ids, $subscriptions );
 	}
 
 	/**
 	 * Report the subscriptions as an ID => [ 'end_date' => ]. mapping
+	 *
 	 * @param array $subscriptions_from_bd
 	 *
 	 * @return array<int, array>
 	 */
 	static function abbreviate_subscriptions( $subscriptions_from_bd ) {
-		$subscriptions = [];
+		$subscriptions = array();
 		foreach ( $subscriptions_from_bd as $subscription ) {
 			// We are picking the expiry date that is the most in the future.
 			if (
@@ -58,7 +59,7 @@ class WPCOM_Offline_Subscription_Service extends WPCOM_Token_Subscription_Servic
 					strtotime( $subscription['end_date'] ) > strtotime( (string) $subscriptions[ $subscription['product_id'] ]['end_date'] )
 				)
 			) {
-				$subscriptions[ $subscription['product_id'] ] = new \stdClass();
+				$subscriptions[ $subscription['product_id'] ]           = new \stdClass();
 				$subscriptions[ $subscription['product_id'] ]->end_date = empty( $subscription['end_date'] ) ? ( time() + 365 * 24 * 3600 ) : $subscription['end_date'];
 			}
 		}

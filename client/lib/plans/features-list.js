@@ -11,6 +11,7 @@ import { invoke } from 'lodash';
 import * as constants from './constants';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
+import { isEnabled } from 'config';
 
 export const FEATURES_LIST = {
 	[ constants.FEATURE_BLANK ]: {
@@ -532,9 +533,13 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_WORDADS_INSTANT,
 		getTitle: () => i18n.translate( 'Site monetization' ),
 		getDescription: () =>
-			i18n.translate(
-				'Earn money on your site by displaying ads and collecting recurring payments or donations.'
-			),
+			isEnabled( 'earn/rename-payment-blocks' )
+				? i18n.translate(
+						'Earn money on your site by displaying ads and collecting payments or donations.'
+				  )
+				: i18n.translate(
+						'Earn money on your site by displaying ads and collecting recurring payments or donations.'
+				  ),
 	},
 
 	[ constants.FEATURE_WP_SUBDOMAIN ]: {

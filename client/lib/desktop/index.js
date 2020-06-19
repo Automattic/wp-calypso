@@ -21,6 +21,7 @@ import {
 	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
+	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 } from 'state/desktop/window-events';
 import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
@@ -53,6 +54,11 @@ const Desktop = {
 		window.addEventListener(
 			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 			this.onCannotOpenEditor.bind( this )
+		);
+
+		window.addEventListener(
+			NOTIFY_DESKTOP_VIEW_POST_CLICKED,
+			this.onViewPostClicked.bind( this )
 		);
 
 		this.store = await getReduxStore();
@@ -201,6 +207,13 @@ const Desktop = {
 		};
 
 		ipc.send( 'cannot-use-editor', payload );
+	},
+
+	onViewPostClicked: function ( event ) {
+		const { url } = event.detail;
+		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
+
+		ipc.send( 'view-post-clicked', url );
 	},
 
 	onActivateJetpackSiteModule: function ( event, info ) {

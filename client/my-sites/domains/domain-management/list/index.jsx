@@ -441,7 +441,7 @@ export class List extends React.Component {
 
 		return [
 			...domainListItems,
-			<CompactCard href={ domainManagementRoot() }>
+			<CompactCard key="manage-all-domains" href={ domainManagementRoot() }>
 				{ translate( 'Manage all your domains' ) }
 			</CompactCard>,
 		];

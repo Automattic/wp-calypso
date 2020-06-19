@@ -63,6 +63,7 @@ class RemovePurchase extends Component {
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
 		useVerticalNavItem: PropTypes.bool,
+		onClickTracks: PropTypes.func,
 	};
 
 	state = {
@@ -89,6 +90,9 @@ class RemovePurchase extends Component {
 	openDialog = ( event ) => {
 		event.preventDefault();
 
+		if ( this.props.onClickTracks ) {
+			this.props.onClickTracks( event );
+		}
 		if (
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning

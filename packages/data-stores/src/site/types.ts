@@ -42,6 +42,7 @@ export interface CreateSiteParams {
 			title?: string;
 		};
 		site_creation_flow?: string;
+		enable_fse?: boolean;
 		theme?: string;
 		template?: string;
 		timezone_string?: string;

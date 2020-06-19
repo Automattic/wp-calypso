@@ -41,6 +41,6 @@ return array(
 		esc_html__( 'Veronica England', 'full-site-editing' ),
 		esc_html__( 'Mason Decker', 'full-site-editing' ),
 		esc_html__( 'Emily Fry', 'full-site-editing' ),
-		esc_html__( 'Lucie Avila', 'full-site-editing' ),
+		esc_html__( 'Lucie Avila', 'full-site-editing' )
 	),
 );

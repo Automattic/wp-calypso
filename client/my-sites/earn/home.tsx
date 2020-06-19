@@ -30,6 +30,7 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/a
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
 import { localizeUrl } from 'lib/i18n-utils';
+import { isEnabled } from 'config';
 
 /**
  * Image dependencies
@@ -145,6 +146,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
+		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		const cta = isFreePlan
 			? {
 					text: translate( 'Unlock this feature' ),
@@ -154,18 +156,37 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Collect recurring payments' ),
+					text: isPayments
+						? translate( 'Collect payments' )
+						: translate( 'Collect recurring payments' ),
 					action: () => {
 						trackCtaButton( 'recurring-payments' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
-		const title = hasConnectedAccount
-			? translate( 'Manage recurring payments' )
+		const hasConnectionTitle = isPayments
+			? translate( 'Manage payments' )
+			: translate( 'Manage recurring payments' );
+		const noConnectionTitle = isPayments
+			? translate( 'Collect payments' )
 			: translate( 'Collect recurring payments' );
-		const body = hasConnectedAccount
+		const title = hasConnectedAccount ? hasConnectionTitle : noConnectionTitle;
+
+		const hasConnectionBody = isPayments
 			? translate(
+					"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
+			  )
+			: translate(
 					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
+			  );
+		const noConnectionBody = isPayments
+			? translate(
+					'Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
 			  )
 			: translate(
 					'Accept ongoing and automated credit card payments for subscriptions, memberships, services, and donations. {{em}}Available with any paid plan{{/em}}.',
@@ -175,6 +196,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  );
+
+		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
 		const learnMoreLink = isFreePlan
 			? {

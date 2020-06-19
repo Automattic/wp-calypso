@@ -18,7 +18,7 @@ import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { EligibilityData, getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
@@ -36,6 +36,11 @@ import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
 
 interface Props {
 	product: 'backup' | 'scan';
+	automatedTransferStatus: {
+		eligibility: EligibilityData;
+		fetchingStatus: boolean;
+		status: typeof transferStates[ keyof typeof transferStates ];
+	};
 }
 
 const contentPerPrimaryProduct = {
@@ -107,7 +112,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 		<Main className="wpcom-business-at">
 			<DocumentHead title={ content.documentHeadTitle } />
 			<SidebarNavigation />
-			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Upsell" />
+			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Automated Transfer" />
 
 			<FormattedHeader
 				id="wpcom-business-at-header"

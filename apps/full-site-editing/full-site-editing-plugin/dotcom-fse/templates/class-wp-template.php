@@ -37,7 +37,7 @@ class WP_Template {
 	 *
 	 * @var array $supported_template_types Array of strings containing supported template types.
 	 */
-	public $supported_template_types = [ self::HEADER, self::FOOTER ];
+	public $supported_template_types = array( self::HEADER, self::FOOTER );
 
 	/**
 	 * A8C_WP_Template constructor.
@@ -83,7 +83,7 @@ class WP_Template {
 			return null;
 		}
 
-		$template_ids = get_objects_in_term( $term['term_id'], $term['taxonomy'], [ 'order' => 'DESC' ] );
+		$template_ids = get_objects_in_term( $term['term_id'], $term['taxonomy'], array( 'order' => 'DESC' ) );
 
 		// Bail if we haven't found any post instances for this template type.
 		if ( empty( $template_ids ) ) {
@@ -157,7 +157,7 @@ class WP_Template {
 	public function get_template_blocks() {
 		$template_content = $this->get_page_template_content();
 		$template_blocks  = parse_blocks( $template_content );
-		return is_array( $template_blocks ) ? $template_blocks : [];
+		return is_array( $template_blocks ) ? $template_blocks : array();
 	}
 
 	/**

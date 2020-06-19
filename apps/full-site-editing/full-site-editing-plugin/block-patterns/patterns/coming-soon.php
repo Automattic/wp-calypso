@@ -39,6 +39,6 @@ return array(
 		esc_html__( 'Come back here when our journey begins.', 'full-site-editing' ),
 		esc_html__( '123 Example St, San Francisco,', 'full-site-editing' ),
 		esc_html__( 'CA 12345-6789', 'full-site-editing' ),
-		esc_html__( 'hello@example.com', 'full-site-editing' ),
+		esc_html__( 'hello@example.com', 'full-site-editing' )
 	),
 );
