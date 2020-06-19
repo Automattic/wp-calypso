@@ -1,3 +1,5 @@
+/* eslint import/no-extraneous-dependencies: [ "error", { packageDir: __dirname/.. } ] */
+
 /**
  * External Dependencies
  */
@@ -71,9 +73,7 @@ module.exports = {
 		__dirname: true,
 	},
 	externals: [
-		'express',
 		'webpack',
-		'superagent',
 		'electron',
 
 		// These are Calypso server modules we don't need, so let's not bundle them
@@ -88,6 +88,9 @@ module.exports = {
 		},
 	},
 	plugins: [
+		// The `formidable` package (used by `superagent`) contains conditional code that hijacks
+		// the `require` function. That breaks webpack.
+		new webpack.DefinePlugin( { 'global.GENTLY': false } ),
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
