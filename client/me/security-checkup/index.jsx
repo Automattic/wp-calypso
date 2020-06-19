@@ -64,7 +64,6 @@ class SecurityCheckupComponent extends React.Component {
 
 				<SectionHeader label={ translate( 'Connections' ) } className="security-checkup__info" />
 				<VerticalNav className="security-checkup__info-nav">
-					<SecurityCheckupSocialLogins />
 					<SecurityCheckupConnectedApplications />
 					<SecurityCheckupSocialLogins />
 				</VerticalNav>
