@@ -167,6 +167,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
 	const approveAndInitiateAt = () => {
+		setShowDialog( false );
 		setApproveTransfer( true );
 		trackInitiateAT();
 	};
