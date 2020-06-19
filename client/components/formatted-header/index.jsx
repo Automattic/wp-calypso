@@ -47,6 +47,7 @@ function FormattedHeader( {
 }
 
 FormattedHeader.propTypes = {
+	brandFont: PropTypes.bool,
 	headerText: PropTypes.node,
 	subHeaderText: PropTypes.node,
 	compactOnMobile: PropTypes.bool,

@@ -252,7 +252,9 @@ class ScanPage extends Component< Props > {
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				{ ! isJetpackPlatform && <FormattedHeader headerText={ 'Jetpack Scan' } align="left" /> }
+				{ ! isJetpackPlatform && (
+					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
+				) }
 				<ScanNavigation section={ 'scanner' } />
 				<Card>
 					<div className="scan__content">{ this.renderScanState() }</div>
