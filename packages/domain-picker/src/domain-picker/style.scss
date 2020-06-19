@@ -59,6 +59,7 @@
 	min-height: 36px + ( 10px * 2 ) + ( 1px * 2 ); // button height + padding height + border height
 	border: 1px solid var( --studio-gray-5 );
 	padding: 10px 14px;
+	margin: 0;
 	position: relative;
 	z-index: 1;
 	text-align: left;
