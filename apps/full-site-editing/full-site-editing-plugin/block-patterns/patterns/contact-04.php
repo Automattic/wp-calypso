@@ -5,6 +5,7 @@
  * @package A8C\FSE
  */
 
+// phpcs:disable WordPress.WP.CapitalPDangit.Misspelled
 $markup = '
 <!-- wp:group {"align":"full","style":{"color":{"text":"#ffffff","background":"#242424"}}} -->
 <div class="wp-block-group alignfull has-text-color has-background" style="background-color:#242424;color:#ffffff"><div class="wp-block-group__inner-container"><!-- wp:spacer {"height":60} -->
@@ -54,6 +55,7 @@ $markup = '
 <!-- /wp:social-links --></div></div>
 <!-- /wp:group -->
 ';
+// phpcs:enable WordPress.WP.CapitalPDangit.Misspelled
 
 return array(
 	'__file'     => 'wp_block',
@@ -73,6 +75,6 @@ return array(
 		esc_html__( 'Friday:', 'full-site-editing' ),
 		esc_html__( 'Saturday:', 'full-site-editing' ),
 		esc_html__( 'Sunday:', 'full-site-editing' ),
-		esc_html__( 'Closed', 'full-site-editing' ),
+		esc_html__( 'Closed', 'full-site-editing' )
 	),
 );

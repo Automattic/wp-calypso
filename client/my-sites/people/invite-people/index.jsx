@@ -91,15 +91,19 @@ class InvitePeople extends React.Component {
 			this.props.isJetpack !== nextProps.isJetpack ||
 			this.props.isSiteAutomatedTransfer !== nextProps.isSiteAutomatedTransfer
 		) {
-			this.setState( this.resetState() );
+			this.setState( this.resetState( nextProps ) );
 		}
 	}
 
-	resetState = () => {
+	resetState = ( props = this.props ) => {
+		const { isWPForTeamsSite } = props;
+
+		const defaultRole = isWPForTeamsSite ? 'editor' : 'follower';
+
 		return {
 			isExternal: false,
 			usernamesOrEmails: [],
-			role: 'follower',
+			role: defaultRole,
 			message: '',
 			sendingInvites: false,
 			getTokenStatus: () => {},

@@ -13,7 +13,6 @@ import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import { isEnabled } from '../../../../config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -104,8 +103,12 @@ export function* createSite(
 		'getState'
 	);
 
+	const shouldEnableFse = !! selectedDesign?.is_fse;
+
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
+
+	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
@@ -122,10 +125,9 @@ export function* createSite(
 			site_information: {
 				title: siteTitle,
 			},
-			site_creation_flow: isEnabled( 'gutenboarding/site-editor' )
-				? 'gutenboarding-site-editor'
-				: 'gutenboarding',
-			theme: `pub/${ selectedDesign?.theme || 'twentytwenty' }`,
+			site_creation_flow: 'gutenboarding',
+			enable_fse: shouldEnableFse,
+			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {

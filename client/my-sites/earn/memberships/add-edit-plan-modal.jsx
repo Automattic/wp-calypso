@@ -28,6 +28,7 @@ import { requestAddProduct, requestUpdateProduct } from 'state/memberships/produ
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
+import { isEnabled } from 'config';
 
 /**
  * @typedef {[string, number] CurrencyMinimum
@@ -189,7 +190,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
 				},
-				translate( 'Added "%s" product.', { args: editedProductName } )
+				isEnabled( 'earn/rename-payment-blocks' )
+					? translate( 'Added "%s" payment plan.', { args: editedProductName } )
+					: translate( 'Added "%s" product.', { args: editedProductName } )
 			);
 		} else if ( reason === 'submit' && product ) {
 			updateProduct(
@@ -205,29 +208,42 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
 				},
-				translate( 'Updated "%s" product.', { args: editedProductName } )
+				isEnabled( 'earn/rename-payment-blocks' )
+					? translate( 'Updated "%s" payment plan.', { args: editedProductName } )
+					: translate( 'Updated "%s" product.', { args: editedProductName } )
 			);
 		}
 		closeDialog();
 	};
 
 	const renderGeneralTab = () => {
+		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
+		const editProduct = isPayments
+			? translate( 'Edit your existing payment plan.' )
+			: translate( 'Edit your existing Recurring Payments plan.' );
+		const noProduct = isPayments
+			? translate(
+					'Each amount you add will create a separate payment plan. You can create many of them.'
+			  )
+			: translate(
+					'Each amount you add will create a separate Recurring Payments plan. You can create multiple plans.'
+			  );
 		return (
 			<>
-				<p>
-					{ product
-						? translate( 'Edit your existing Recurring Payments plan.' )
-						: translate(
-								'Each amount you add will create a separate Recurring Payments plan. You can create multiple plans.'
-						  ) }
-				</p>
+				<p>{ product ? editProduct : noProduct }</p>
 				<FormFieldset>
 					<FormLabel htmlFor="currency">{ translate( 'Select price' ) }</FormLabel>
 					{ product && (
 						<Notice
-							text={ translate(
-								'Updating the price will not affect existing subscribers, who will pay what they were originally charged.'
-							) }
+							text={
+								isPayments
+									? translate(
+											'Updating the price will not affect existing subscribers, who will pay what they were originally charged on renewal.'
+									  )
+									: translate(
+											'Updating the price will not affect existing subscribers, who will pay what they were originally charged.'
+									  )
+							}
 							showDismiss={ false }
 						/>
 					) }
@@ -257,16 +273,24 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="renewal_schedule">
-						{ translate( 'Select renewal schedule' ) }
+						{ isPayments
+							? translate( 'Select renewal frequency' )
+							: translate( 'Select renewal schedule' ) }
 					</FormLabel>
 					<FormSelect id="renewal_schedule" value={ editedSchedule } onChange={ onSelectSchedule }>
-						<option value="1 month">{ translate( 'Monthly' ) }</option>
-						<option value="1 year">{ translate( 'Yearly' ) }</option>
+						<option value="1 month">
+							{ isPayments ? translate( 'Renew monthly' ) : translate( 'Monthly' ) }
+						</option>
+						<option value="1 year">
+							{ isPayments ? translate( 'Renew yearly' ) : translate( 'Yearly' ) }
+						</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="title">
-						{ translate( 'Please describe your subscription' ) }
+						{ isPayments
+							? translate( 'Please describe your payment plan' )
+							: translate( 'Please describe your subscription' ) }
 					</FormLabel>
 					<FormTextInput
 						id="title"
@@ -285,7 +309,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormToggle onChange={ handleMultiplePerUser } checked={ editedMultiplePerUser }>
-						{ translate( 'Allow the same customer to sign up multiple times to the same plan.' ) }
+						{ isPayments
+							? translate(
+									'Allow the same customer to purchase or sign up to this plan multiple times.'
+							  )
+							: translate( 'Allow the same customer to sign up multiple times to the same plan.' ) }
 					</FormToggle>
 				</FormFieldset>
 			</>
@@ -293,14 +321,19 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 
 	const renderEmailTab = () => {
+		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		return (
 			<>
 				<FormFieldset>
 					<h6 className="memberships__dialog-form-header">{ translate( 'Posts via email' ) }</h6>
 					<p>
-						{ translate(
-							'Allow members of this recurring payment plan to opt into receiving new posts via email.'
-						) }{ ' ' }
+						{ isPayments
+							? translate(
+									'Allow members of this payment plan to opt into receiving new posts via email.'
+							  )
+							: translate(
+									'Allow members of this recurring payment plan to opt into receiving new posts via email.'
+							  ) }{ ' ' }
 						<InlineSupportLink
 							supportPostId={ 154624 }
 							supportLink="https://wordpress.com/support/wordpress-editor/blocks/recurring-payments-button/" // TODO: Link to specific section once article is update
@@ -312,9 +345,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
 						checked={ editedPostsEmail }
 					>
-						{ translate(
-							'Email newly published posts to members of this recurring payment plan who have opted in.'
-						) }
+						{ isPayments
+							? translate( 'Email newly published posts to your customers.' )
+							: translate(
+									'Email newly published posts to members of this recurring payment plan who have opted in.'
+							  ) }
 					</FormToggle>
 				</FormFieldset>
 				<FormFieldset>
@@ -322,9 +357,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						{ translate( 'Custom confirmation message' ) }
 					</h6>
 					<p>
-						{ translate(
-							'Add a custom message to the confirmation email that is sent out for this recurring payment plan.'
-						) }
+						{ isPayments
+							? translate(
+									'Add a custom message to the confirmation email that is sent after purchase. For example, you can thank your customers.'
+							  )
+							: translate(
+									'Add a custom message to the confirmation email that is sent out for this recurring payment plan.'
+							  ) }
 					</p>
 					<CountedTextArea
 						value={ editedCustomConfirmationMessage }
@@ -338,6 +377,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		);
 	};
 
+	const isPayments = isEnabled( 'earn/rename-payment-blocks' );
+	const editPlan = isPayments
+		? translate( 'Edit a payment plan' )
+		: translate( 'Edit Recurring Payment plan' );
+	const addPlan = isPayments
+		? translate( 'Add a new payment plan' )
+		: translate( 'Add new Recurring Payment plan' );
 	return (
 		<Dialog
 			isVisible={ true }
@@ -355,11 +401,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				},
 			] }
 		>
-			<FormSectionHeading>
-				{ product
-					? translate( 'Edit Recurring Payment plan' )
-					: translate( 'Add new Recurring Payment plan' ) }
-			</FormSectionHeading>
+			<FormSectionHeading>{ product ? editPlan : addPlan }</FormSectionHeading>
 			<SectionNav
 				className="memberships__dialog-nav"
 				selectedText={ getTabName( currentDialogTab ) }

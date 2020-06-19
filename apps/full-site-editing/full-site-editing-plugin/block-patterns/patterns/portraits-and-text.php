@@ -86,6 +86,6 @@ return array(
 		esc_html__( 'Miguel Ángel', 'full-site-editing' ),
 		esc_html__( 'UX Manager at Clockwork. He formerly pioneered the Design System at Blue Sun, and led the Moonlight at Wonders and Co.. Previously Mason was at Sigma and led the product evolution.', 'full-site-editing' ),
 		esc_html__( 'Elise Pratt', 'full-site-editing' ),
-		esc_html__( 'Senior Product Designer at Idea. Previously Senior Design Director at Minova, UX Design Manager at Ryman. Elise’s work has been featured as pioneer in CX as best practice.', 'full-site-editing' ),
+		esc_html__( 'Senior Product Designer at Idea. Previously Senior Design Director at Minova, UX Design Manager at Ryman. Elise’s work has been featured as pioneer in CX as best practice.', 'full-site-editing' )
 	),
 );

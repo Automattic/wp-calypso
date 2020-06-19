@@ -98,6 +98,6 @@ return array(
 		esc_html__( 'We don’t see them, we will never see them. To be successful you’ve got to work hard, to make history, simple, you’ve got to make it.', 'full-site-editing' ),
 		esc_html__( '04', 'full-site-editing' ),
 		esc_html__( 'Grow', 'full-site-editing' ),
-		esc_html__( 'Look at the sunset. Surround yourself with angels, positive energy, beautiful people, beautiful souls, clean heart, angel.', 'full-site-editing' ),
+		esc_html__( 'Look at the sunset. Surround yourself with angels, positive energy, beautiful people, beautiful souls, clean heart, angel.', 'full-site-editing' )
 	),
 );

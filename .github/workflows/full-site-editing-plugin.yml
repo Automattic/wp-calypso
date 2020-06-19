@@ -1,8 +1,9 @@
 on:
   pull_request:
-    # only trigger this workflow if FSE plugin files have been modified
+    # only trigger this workflow if FSE plugin files have been modified, or if packages have been updated.
     paths:
-    - 'apps/full-site-editing/full-site-editing-plugin/**'
+    - 'apps/full-site-editing/**'
+    - 'yarn.lock'
 
 name: FSE plugin
 
@@ -109,3 +110,32 @@ jobs:
     - name: Run phpunit command
       run: yarn test:php
       working-directory: apps/full-site-editing
+
+  phpcs:
+    name: Run phpcs
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@master
+
+    - name: Run composer
+      uses: nick-zh/composer-php@master
+      with:
+        action: 'install'
+
+    - name: Get changed files
+      id: changes
+      uses: lots0logs/gh-action-get-changed-files@2.1.4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Displaying changed files
+      run: echo ${{ join( fromJson( steps.changes.outputs.all ) ) }}
+
+    - name: Execute phpcs on changed files
+      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.all ), ' ' ) }}
+      if: ${{ steps.changes.outputs.all != '' }}
+    
+    - name: No changes found
+      run: echo "No changes found to check!"
+      if: ${{ steps.changes.outputs.all == '' }}

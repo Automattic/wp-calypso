@@ -559,28 +559,6 @@
 	margin: 28px 0 26px;
 }
 
-.reader-full-post .embed-youtube,
-.reader-full-post .embed-vimeo {
-	display: block;
-	margin-bottom: 25px;
-	position: relative;
-	padding: 25px 0 56.25%;
-	// We currently have to use !important here to override the inline style on the Youtube embed
-	// - see https://github.com/Automattic/wp-calypso/issues/9615
-	text-align: initial !important;
-
-	iframe {
-		height: 100%;
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
-}
-
-.reader-full-post .embed-vimeo {
-	margin-bottom: 0;
-}
-
 .reader-full-post__unavailable-body {
 	margin-top: 2em;
 }
