@@ -19,7 +19,7 @@ jobs:
         with:
           path: |
               node_modules
-              */*/node_modules
+              **/node_modules
           key: v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
@@ -64,7 +64,7 @@ jobs:
         with:
           path: |
             node_modules
-            */*/node_modules
+            **/node_modules
           key: v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
