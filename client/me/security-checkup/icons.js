@@ -3,5 +3,5 @@ export function getOKIcon() {
 }
 
 export function getWarningIcon() {
-	return 'info';
+	return 'error';
 }
