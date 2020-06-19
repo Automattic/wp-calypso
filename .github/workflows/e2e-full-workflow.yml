@@ -4,9 +4,6 @@ jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
     runs-on: ubuntu-latest
-    env:
-      DETECT_CHROMEDRIVER_VERSION: false
-      CHROMEDRIVER_FILEPATH: $CHROMEWEBDRIVER/chromedriver
     if: contains(github.event.pull_request.labels.*.name, '[Status] Needs Review') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing Gutenberg Edge') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing horizon')
     steps:
       - uses: actions/checkout@v2
@@ -26,7 +23,9 @@ jobs:
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
-        run: yarn install --frozen-lockfile
+        env:
+          DETECT_CHROMEDRIVER_VERSION: false
+        run: CHROMEDRIVER_FILEPATH=$CHROMEWEBDRIVER/chromedriver yarn install --frozen-lockfile
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
@@ -67,7 +66,9 @@ jobs:
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
-        run: yarn install --frozen-lockfile --ignore-scripts
+        env:
+          DETECT_CHROMEDRIVER_VERSION: false
+        run: CHROMEDRIVER_FILEPATH=$CHROMEWEBDRIVER/chromedriver yarn install --frozen-lockfile --ignore-scripts
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
