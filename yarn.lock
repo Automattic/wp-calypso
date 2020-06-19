@@ -4106,6 +4106,15 @@
     "@types/react" "*"
     "@types/wordpress__data" "*"
 
+"@types/wordpress__plugins@^2.3.6":
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__plugins/-/wordpress__plugins-2.3.6.tgz#414c8adc8873261c54e35a87ff2a625624cddfca"
+  integrity sha512-eovTsXat8dx7JhksTJ0QnQ4iJD3qz81Hxk9/mb+hAF0+aJ2qTpIrVJ5/V08PaHaX3wbnr0O/KHZiA2an+OsSHw==
+  dependencies:
+    "@types/react" "*"
+    "@types/wordpress__components" "*"
+    "@wordpress/element" "^2.14.0"
+
 "@types/wordpress__rich-text@*":
   version "3.4.4"
   resolved "https://registry.yarnpkg.com/@types/wordpress__rich-text/-/wordpress__rich-text-3.4.4.tgz#81e2778099eeb6c5466d78eda261535f54a214ac"
