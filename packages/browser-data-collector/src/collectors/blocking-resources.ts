@@ -47,13 +47,11 @@ export const collector: Collector = ( report ) => {
 		}
 	);
 
-	// Hit ratio from 0 to 1 with two decimals (0=nothing was cached, 1=everything comes from the cache)
-	// resourcesTransferred includes the headers, but resourcesCompressed does not. So the division is a
+	// Hit ratio from 0 to 100 (0=nothing was cached, 100=everything comes from the cache).
+	// resourcesTransferred includes the headers, but resourcesCompressed does not, so the division is a
 	// bit off and can return values higher than 1. We cap it to 1 to avoid sending negative numbers
-	// and round the final result to 2 decimals.
-	const resourcesCacheRatio = Number(
-		( 1 - Math.min( 1, resourcesTransferred / resourcesCompressed ) ).toFixed( 2 )
-	);
+	const resourcesCacheRatio =
+		100 - Math.round( Math.min( 1, resourcesTransferred / resourcesCompressed ) * 100 );
 
 	report.data.set( 'resourcesCount', resourcesCount );
 	report.data.set( 'resourcesStart', Math.round( resourcesStart ) );
