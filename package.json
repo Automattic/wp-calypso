@@ -67,7 +67,7 @@
 		"build-desktop:config": "check-npm-client && node desktop/bin/build-desktop-config.js",
 		"build-desktop:server": "check-npm-client && BROWSERSLIST_ENV=server CALYPSO_ENV=desktop webpack --config client/webpack.config.desktop.js --display errors-only",
 		"build-desktop:client": "check-npm-client && CALYPSO_ENV=desktop yarn run build-client-evergreen",
-		"build-desktop:app": "check-npm-client && cd desktop && electron-builder build",
+		"build-desktop:app": "check-npm-client && cd desktop && electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
 		"build-docker": "check-npm-client && node bin/build-docker.js",
 		"build-static": "check-npm-client && npx ncp static public",
 		"prebuild-server": "check-npm-client && mkdirp build",
