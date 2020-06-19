@@ -17,7 +17,6 @@ module.exports = {
 	},
 	target: 'electron-main',
 	mode: isDevelopment ? 'development' : 'production',
-	optimization: { minimize: false },
 	module: {
 		rules: [
 			{
