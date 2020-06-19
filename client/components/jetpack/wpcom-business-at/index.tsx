@@ -113,6 +113,7 @@ function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): Rea
 		return null;
 	}
 
+	// Get messages and override for the Jetpack product name.
 	const blockingMessages = getBlockingMessages( translate );
 	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = translate(
 		'This site is currently not eligible for %s. Please contact our support team for help.',
@@ -147,29 +148,28 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 
 	// Gets state to control dialog and continue button.
 	const [ showDialog, setShowDialog ] = useState( false );
-	const [ approvedTransfer, setApproveTransfer ] = useState(
-		0 === warnings?.length && 0 === holds?.length
-	);
 	const onClose = () => setShowDialog( false );
 
 	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
 	const initiateAT = React.useCallback( () => {
-		if ( approvedTransfer ) {
-			dispatch( initiateThemeTransfer( siteId, null, '' ) );
-		} else {
-			setShowDialog( true );
-		}
-	}, [ dispatch, siteId, approvedTransfer ] );
+		setShowDialog( false );
+		dispatch( initiateThemeTransfer( siteId, null, '' ) );
+	}, [ dispatch, siteId ] );
 	const eventName =
 		product === 'backup'
 			? 'calypso_jetpack_backup_business_at'
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
-	const approveAndInitiateAt = () => {
-		setShowDialog( false );
-		setApproveTransfer( true );
-		trackInitiateAT();
+
+	// If there are any issues, show a dialog.
+	// Otherwise, kick off the transfer!
+	const initiateATOrShowWarnings = () => {
+		if ( 0 === warnings?.length && 0 === holds?.length ) {
+			trackInitiateAT();
+		} else {
+			setShowDialog( true );
+		}
 	};
 
 	return (
@@ -197,7 +197,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
 						loading={ automatedTransferStatus === transferStates.START }
-						onClick={ trackInitiateAT }
+						onClick={ initiateATOrShowWarnings }
 						disabled={ hasBlockingHold }
 					/>
 				</div>
@@ -233,7 +233,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 					{
 						action: 'continue',
 						label: translate( 'Continue' ),
-						onClick: approveAndInitiateAt,
+						onClick: trackInitiateAT,
 						isPrimary: true,
 					},
 				] }
