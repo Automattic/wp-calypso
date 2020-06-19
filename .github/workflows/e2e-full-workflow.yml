@@ -38,7 +38,7 @@ jobs:
         run: ./test/e2e/scripts/wait-for-running-branch.sh
   e2e-full-suite:
     name: e2e Full Suite
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     needs: wait-for-calypso-live
     env:
       DETECT_CHROMEDRIVER_VERSION: false
