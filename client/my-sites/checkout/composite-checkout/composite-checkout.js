@@ -118,6 +118,7 @@ export default function CompositeCheckout( {
 	cart,
 	couponCode: couponCodeFromUrl,
 	isWhiteGloveOffer,
+	isComingFromUpsell,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -126,7 +127,7 @@ export default function CompositeCheckout( {
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
-
+	const hideNudge = isComingFromUpsell;
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
 
@@ -223,6 +224,7 @@ export default function CompositeCheckout( {
 		product,
 		siteId,
 		isWhiteGloveOffer,
+		hideNudge,
 	} );
 
 	const moment = useLocalizedMoment();
