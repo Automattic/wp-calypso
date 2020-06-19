@@ -673,7 +673,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			savings_total_display: '$17',
 			savings_total_integer: 1700,
 			coupon_savings_total: 17,
-			coupon_savings_total_display: '- $17',
+			coupon_savings_total_display: '$17',
 			coupon_savings_total_integer: 1700,
 			sub_total: '127',
 			sub_total_display: '$127',
@@ -801,7 +801,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.coupon.amount.currency ).toBe( 'USD' );
 			} );
 			it( 'has the expected value', function () {
-				expect( clientCart.coupon.amount.value ).toBe( -1700 );
+				expect( clientCart.coupon.amount.value ).toBe( 1700 );
 			} );
 			it( 'has the expected display value', function () {
 				expect( clientCart.coupon.amount.displayValue ).toBe( '- $17' );
