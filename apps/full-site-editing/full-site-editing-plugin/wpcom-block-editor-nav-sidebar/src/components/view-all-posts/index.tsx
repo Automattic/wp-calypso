@@ -3,7 +3,6 @@
  */
 import { get } from 'lodash';
 import { Button as OriginalButton } from '@wordpress/components';
-import React from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
