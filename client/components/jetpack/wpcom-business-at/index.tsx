@@ -37,6 +37,9 @@ import {
 	default as HoldList,
 } from 'blocks/eligibility-warnings/hold-list';
 import WarningList from 'blocks/eligibility-warnings/warning-list';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -52,6 +55,15 @@ import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
 
 interface Props {
 	product: 'backup' | 'scan';
+}
+
+interface BlockingHoldNoticeProps extends Props {
+	siteId: number;
+}
+
+interface TransferFailureNoticeProps extends Props {
+	// This gets the values of the object transferStates.
+	transferStatus: typeof transferStates[ keyof typeof transferStates ];
 }
 
 const contentPerPrimaryProduct = {
@@ -102,10 +114,6 @@ const contentPerPrimaryProduct = {
 	},
 };
 
-interface BlockingHoldNoticeProps extends Props {
-	siteId: number;
-}
-
 function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): ReactElement | null {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
@@ -129,6 +137,29 @@ function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): Rea
 	);
 }
 
+function TransferFailureNotice( {
+	transferStatus,
+	product,
+}: TransferFailureNoticeProps ): ReactElement | null {
+	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
+	if ( transferStatus !== transferStates.FAILURE && transferStatus !== transferStates.ERROR ) {
+		return null;
+	}
+
+	const errorMessage = translate(
+		'There is an issue activating %s. Please contact our support team for help.',
+		{ args: [ content.header ] }
+	);
+
+	return (
+		<Notice text={ errorMessage } showDismiss={ false } status="is-error">
+			<NoticeAction href={ localizeUrl( 'https://wordpress.com/help/contact' ) } external>
+				{ translate( 'Contact us' ) }
+			</NoticeAction>
+		</Notice>
+	);
+}
+
 export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -144,7 +175,11 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	);
 
 	// Check if there's a blocking hold.
-	const hasBlockingHold = ! isEligible || ( holds && hasBlockingHoldFunc( holds ) );
+	const cannotInitiateTransfer =
+		! isEligible ||
+		( holds && hasBlockingHoldFunc( holds ) ) ||
+		automatedTransferStatus === transferStates.FAILURE ||
+		automatedTransferStatus === transferStates.ERROR;
 
 	// Gets state to control dialog and continue button.
 	const [ showDialog, setShowDialog ] = useState( false );
@@ -186,6 +221,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				align="left"
 			/>
 			<BlockingHoldNotice siteId={ siteId } product={ product } />
+			<TransferFailureNotice product={ product } transferStatus={ automatedTransferStatus } />
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }
@@ -198,7 +234,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
 						loading={ automatedTransferStatus === transferStates.START }
 						onClick={ initiateATOrShowWarnings }
-						disabled={ hasBlockingHold }
+						disabled={ cannotInitiateTransfer }
 					/>
 				</div>
 			</PromoCard>
