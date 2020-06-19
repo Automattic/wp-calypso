@@ -2,7 +2,7 @@ name: e2e full suite
 on: pull_request
 env:
   DETECT_CHROMEDRIVER_VERSION: false
-  CHROMEDRIVER_FILEPATH: $CHROMEWEBDRIVER/chromedriver
+  CHROMEDRIVER_FILEPATH: "${{ env.CHROMEWEBDRIVER }}/chromedriver"
 jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
