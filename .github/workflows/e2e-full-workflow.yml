@@ -1,12 +1,12 @@
 name: e2e full suite
 on: pull_request
-env:
-  DETECT_CHROMEDRIVER_VERSION: false
-  CHROMEDRIVER_FILEPATH: "${CHROMEWEBDRIVER}/chromedriver"
 jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
     runs-on: ubuntu-latest
+    env:
+      DETECT_CHROMEDRIVER_VERSION: false
+      CHROMEDRIVER_FILEPATH: "${{ env.CHROMEWEBDRIVER }}/chromedriver"
     if: contains(github.event.pull_request.labels.*.name, '[Status] Needs Review') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing Gutenberg Edge') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing horizon')
     steps:
       - uses: actions/checkout@v2
@@ -42,6 +42,9 @@ jobs:
     name: e2e Full Suite
     runs-on: ubuntu-latest
     needs: wait-for-calypso-live
+    env:
+      DETECT_CHROMEDRIVER_VERSION: false
+      CHROMEDRIVER_FILEPATH: "${{ env.CHROMEWEBDRIVER }}/chromedriver"
     strategy:
       fail-fast: false
       matrix:
@@ -64,8 +67,6 @@ jobs:
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
-        env:
-          CHROMEDRIVER_FORCE_DOWNLOAD: true
         run: yarn install --frozen-lockfile --ignore-scripts
       - name: Decrypt Config
         env:
