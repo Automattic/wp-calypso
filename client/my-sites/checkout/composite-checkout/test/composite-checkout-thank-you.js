@@ -25,8 +25,12 @@ jest.mock( 'config', () => {
 
 // Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
 jest.mock( 'lib/abtest', () => ( {
-	abtest: jest.fn( () => {
-		return 'offer';
+	abtest: jest.fn( ( name ) => {
+		if ( 'conciergeUpsellDial' === name ) {
+			return 'offer';
+		} else if ( 'showBusinessPlanBump' === name ) {
+			return 'variantShowPlanBump';
+		}
 	} ),
 } ) );
 
@@ -445,12 +449,12 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
 	} );
 
-	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, premium is in the cart, and the previous route is not the nudge', () => {
+	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
 		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
-					product_slug: 'value_bundle',
+					product_slug: 'personal-bundle',
 				},
 			],
 		};
