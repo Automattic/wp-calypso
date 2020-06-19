@@ -2,6 +2,7 @@
  * External dependencies
  */
 import assert from 'assert';
+import config from 'config';
 import { By } from 'selenium-webdriver';
 
 /**
@@ -13,7 +14,7 @@ import PaymentButtonFrontEndComponent from '../components/payment-button-front-e
 
 export default class ViewPostPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.type-post' ) );
+		super( driver, By.css( '.type-post' ), null, config.get( 'explicitWaitMS' ) * 2 );
 	}
 
 	async postTitle() {
