@@ -41,7 +41,8 @@ class SecurityCheckupConnectedApplications extends React.Component {
 		return (
 			<SecurityCheckupNavigationItem
 				path={ '/me/security/connected-applications' }
-				materialIcon="sync_alt"
+				materialIcon="power"
+				materialIconStyle="filled"
 				text={ translate( 'Connected Apps' ) }
 				description={ connectedAppsDescription }
 			/>
