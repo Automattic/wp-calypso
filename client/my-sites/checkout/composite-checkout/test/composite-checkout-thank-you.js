@@ -409,13 +409,12 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	// We are temporarily disabling the premium bump offer, so skipping this test for now. Check pNEWy-cIg-p2.
-	it.skip( 'redirects to premium upgrade nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
+	it( 'redirects to premium upgrade nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
 		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
-					product_slug: 'personal-bundle',
+					product_slug: 'value-bundle',
 				},
 			],
 		};
@@ -425,7 +424,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: '1234abcd',
 		} );
-		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/premium/1234abcd' );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
 	} );
 
 	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
@@ -520,7 +519,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but hideNudge is true', () => {
-		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{

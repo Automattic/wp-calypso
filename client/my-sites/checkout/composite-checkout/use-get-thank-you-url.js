@@ -406,6 +406,7 @@ export function useGetThankYouUrl( {
 		feature,
 		purchaseId,
 		cart,
+		isWhiteGloveOffer,
 		hideNudge,
 	] );
 	return getThankYouUrl;
