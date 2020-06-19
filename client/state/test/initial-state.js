@@ -17,10 +17,10 @@ import userFactory from 'lib/user';
 import { isSupportSession } from 'lib/user/support-user-interop';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { createReduxStore } from 'state';
-import initialReducer from 'state/reducer';
 import signupReducer from 'state/signup/reducer';
 import {
 	getInitialState,
+	getStateFromCache,
 	persistOnChange,
 	loadAllState,
 	MAX_AGE,
@@ -28,6 +28,16 @@ import {
 } from 'state/initial-state';
 import { combineReducers, withStorageKey } from 'state/utils';
 import { addReducerToStore } from 'state/add-reducer';
+
+import currentUser from 'state/current-user/reducer';
+import postTypes from 'state/post-types/reducer';
+import reader from 'state/reader/reducer';
+
+// Create a legacy initial reducer, with no modularization.
+const initialReducer = combineReducers( {
+	currentUser,
+	postTypes,
+} );
 
 jest.mock( 'config', () => {
 	let persistReduxEnabled = false;
@@ -527,6 +537,185 @@ describe( 'initial-state', () => {
 				test( 'does not add timestamp to initial state', () => {
 					expect( state._timestamp ).toBeUndefined();
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'getStateFromCache', () => {
+		describe( 'with persisted data and no initial server data', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const savedState = {
+				'redux-state-123456789:reader': {
+					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					_timestamp: Date.now(),
+				},
+			};
+
+			const serverState = null;
+
+			beforeAll( async () => {
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( savedState );
+				await loadAllState();
+				state = getStateFromCache( reader, 'reader' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+
+			test( 'builds initial state using saved state', () => {
+				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
+			} );
+		} );
+
+		describe( 'with initial server data and no persisted data', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const savedState = null;
+
+			const serverState = {
+				reader: {
+					organizations: { items: [ { id: 2, slug: 'server' } ] },
+				},
+			};
+
+			beforeAll( async () => {
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( savedState );
+				await loadAllState();
+				state = getStateFromCache( reader, 'reader' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+
+			test( 'builds initial state using server state', () => {
+				expect( state.organizations.items ).toEqual( [ { id: 2, slug: 'server' } ] );
+			} );
+		} );
+
+		describe( 'with fresher server data than persisted data', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const oldDate = new Date();
+			oldDate.setDate( oldDate.getDate() - 1 );
+
+			const savedState = {
+				'redux-state-123456789:reader': {
+					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					_timestamp: oldDate.getTime(),
+				},
+			};
+
+			const serverState = {
+				reader: {
+					organizations: { items: [ { id: 2, slug: 'server' } ] },
+				},
+			};
+
+			beforeAll( async () => {
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( savedState );
+				await loadAllState();
+				state = getStateFromCache( reader, 'reader' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+
+			test( 'builds initial state using server state', () => {
+				expect( state.organizations.items ).toEqual( [ { id: 2, slug: 'server' } ] );
+			} );
+		} );
+
+		describe( 'with fresher persisted data than server data', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const newerDate = new Date();
+			newerDate.setDate( newerDate.getDate() + 1 );
+
+			const savedState = {
+				'redux-state-123456789:reader': {
+					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					_timestamp: newerDate.getTime(),
+				},
+			};
+
+			const serverState = {
+				reader: {
+					organizations: { items: [ { id: 2, slug: 'server' } ] },
+				},
+			};
+
+			beforeAll( async () => {
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( savedState );
+				await loadAllState();
+				state = getStateFromCache( reader, 'reader' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+
+			test( 'builds initial state using saved state', () => {
+				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
 			} );
 		} );
 	} );
