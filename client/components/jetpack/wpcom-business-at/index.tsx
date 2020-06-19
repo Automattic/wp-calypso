@@ -179,7 +179,6 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	);
 
 	const { COMPLETE, START } = transferStates;
-	// const [ isOnTransfer, setOnTransfer ] = useState( false );
 
 	// Check if there's a blocking hold.
 	const cannotInitiateTransfer =
