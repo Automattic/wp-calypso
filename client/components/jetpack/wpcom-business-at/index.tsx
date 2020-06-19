@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
+import { Dialog } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -18,15 +20,29 @@ import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
-import { EligibilityData, getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import {
+	getAutomatedTransferStatus,
+	isEligibleForAutomatedTransfer,
+	getEligibility,
+	EligibilityData,
+} from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
+import QueryAutomatedTransferEligibility from 'components/data/query-atat-eligibility';
+import {
+	hasBlockingHold as hasBlockingHoldFunc,
+	getBlockingMessages,
+	HardBlockingNotice,
+	default as HoldList,
+} from 'blocks/eligibility-warnings/hold-list';
+import WarningList from 'blocks/eligibility-warnings/warning-list';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import 'blocks/eligibility-warnings/style.scss';
 
 /**
  * Asset dependencies
@@ -36,11 +52,6 @@ import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
 
 interface Props {
 	product: 'backup' | 'scan';
-	automatedTransferStatus: {
-		eligibility: EligibilityData;
-		fetchingStatus: boolean;
-		status: typeof transferStates[ keyof typeof transferStates ];
-	};
 }
 
 const contentPerPrimaryProduct = {
@@ -91,12 +102,59 @@ const contentPerPrimaryProduct = {
 	},
 };
 
+interface BlockingHoldNoticeProps extends Props {
+	siteId: number;
+}
+
+function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): ReactElement | null {
+	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
+	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
+	if ( ! holds ) {
+		return null;
+	}
+
+	// Get messages and override for the Jetpack product name.
+	const blockingMessages = getBlockingMessages( translate );
+	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = translate(
+		'This site is currently not eligible for %s. Please contact our support team for help.',
+		{ args: [ content.header ] }
+	);
+
+	return (
+		<HardBlockingNotice
+			translate={ translate }
+			holds={ holds }
+			blockingMessages={ blockingMessages }
+		/>
+	);
+}
+
 export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as number;
+
+	// Gets the site eligibility data.
+	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
+	const {
+		eligibilityHolds: holds,
+		eligibilityWarnings: warnings,
+	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
+	const automatedTransferStatus = useSelector( ( state ) =>
+		getAutomatedTransferStatus( state, siteId )
+	);
+
+	// Check if there's a blocking hold.
+	const hasBlockingHold = ! isEligible || ( holds && hasBlockingHoldFunc( holds ) );
+
+	// Gets state to control dialog and continue button.
+	const [ showDialog, setShowDialog ] = useState( false );
+	const onClose = () => setShowDialog( false );
+
+	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
 	const initiateAT = React.useCallback( () => {
-		dispatch( initiateThemeTransfer( siteId, null, null ) );
+		setShowDialog( false );
+		dispatch( initiateThemeTransfer( siteId, null, '' ) );
 	}, [ dispatch, siteId ] );
 	const eventName =
 		product === 'backup'
@@ -104,12 +162,19 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
 
-	const automatedTransferStatus = useSelector( ( state ) =>
-		getAutomatedTransferStatus( state, siteId )
-	);
+	// If there are any issues, show a dialog.
+	// Otherwise, kick off the transfer!
+	const initiateATOrShowWarnings = () => {
+		if ( 0 === warnings?.length && 0 === holds?.length ) {
+			trackInitiateAT();
+		} else {
+			setShowDialog( true );
+		}
+	};
 
 	return (
 		<Main className="wpcom-business-at">
+			<QueryAutomatedTransferEligibility siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
 			<SidebarNavigation />
 			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Automated Transfer" />
@@ -120,6 +185,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				headerText={ content.header }
 				align="left"
 			/>
+			<BlockingHoldNotice siteId={ siteId } product={ product } />
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }
@@ -131,7 +197,8 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
 						loading={ automatedTransferStatus === transferStates.START }
-						onClick={ trackInitiateAT }
+						onClick={ initiateATOrShowWarnings }
+						disabled={ hasBlockingHold }
 					/>
 				</div>
 			</PromoCard>
@@ -157,6 +224,28 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			</PromoCard>
 
 			<WhatIsJetpack className="wpcom-business-at__footer" />
+
+			<Dialog
+				isVisible={ showDialog }
+				onClose={ onClose }
+				buttons={ [
+					{ action: 'cancel', label: translate( 'Cancel' ) },
+					{
+						action: 'continue',
+						label: translate( 'Continue' ),
+						onClick: trackInitiateAT,
+						isPrimary: true,
+					},
+				] }
+				className={ classNames( 'wpcom-business-at__dialog', 'eligibility-warnings', {
+					'eligibility-warnings--with-indent': warnings?.length,
+				} ) }
+			>
+				{ !! holds?.length && (
+					<HoldList holds={ holds } context={ product } isPlaceholder={ false } />
+				) }
+				{ !! warnings?.length && <WarningList warnings={ warnings } context={ product } /> }
+			</Dialog>
 		</Main>
 	);
 }

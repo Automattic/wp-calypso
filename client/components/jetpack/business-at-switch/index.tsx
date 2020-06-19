@@ -1,23 +1,20 @@
 /**
  * External dependencies
  */
-import React, { FC, ReactElement, ReactNode, useState, useEffect } from 'react';
+import React, { ReactElement, Component } from 'react';
 import { useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
-import QueryEligibility from 'components/data/query-atat-eligibility';
 import WPCOMBusinessAT from 'components/jetpack/wpcom-business-at';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getAutomatedTransfer,
-	isEligibleForAutomatedTransfer,
-} from 'state/automated-transfer/selectors';
-import { transferStates } from 'state/automated-transfer/constants';
+import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
+import QuerySitePlans from 'components/data/query-site-plans';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 
 /**
  * Style dependencies
@@ -25,8 +22,7 @@ import { transferStates } from 'state/automated-transfer/constants';
 import './style.scss';
 
 type Props = {
-	fallbackDisplay: ReactNode;
-	path: string;
+	UpsellComponent: typeof Component;
 };
 
 const Placeholder = () => (
@@ -34,7 +30,7 @@ const Placeholder = () => (
 		<FormattedHeader
 			id="business-at-switch"
 			className="business-at-switch placeholder__header"
-			headerText="Loading..."
+			headerText={ translate( 'Loading…' ) }
 			align="left"
 		/>
 
@@ -43,64 +39,34 @@ const Placeholder = () => (
 );
 
 /**
- * This component selects the right view for Business plan sites that
- * are not Atomic. If we don't know if the site is eligible for Automated
- * Transfer, it renders a placeholder and an instance of <QueryEligibility />.
- * Once we have an answer, we either display the Automated Transfer view or
- * we display whatever comes next in the middleware stack.
+ * This component selects the right view for non-Jetpack plans.
+ * If the plan is an Atomic plan, we show a component to activate the
+ * automated transfer process. If it's not, we show the upsell component.
  */
-const BusinessATSwitch: FC< Props > = ( { fallbackDisplay, path } ): ReactElement | ReactNode => {
-	const siteId = useSelector( getSelectedSiteId );
-	const isEligibleForAT = useSelector( ( state ) =>
-		isEligibleForAutomatedTransfer( state, siteId )
-	);
-	const automatedTransferStatus = useSelector( ( state ) => getAutomatedTransfer( state, siteId ) );
-	const [ { showATComponent, isLoading }, setState ] = useState( {
-		showATComponent: true,
-		isLoading: true,
-	} );
+const BusinessATSwitch = ( { UpsellComponent }: Props ): ReactElement => {
+	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	useEffect( () => {
-		if ( isEmpty( automatedTransferStatus ) ) {
-			return setState( {
-				isLoading: true,
-				showATComponent: true,
-			} );
-		}
-		if ( isEligibleForAT && automatedTransferStatus?.status !== transferStates.COMPLETE ) {
-			return setState( {
-				isLoading: false,
-				showATComponent: true,
-			} );
-		}
-		return setState( {
-			isLoading: false,
-			showATComponent: false,
-		} );
-	}, [ automatedTransferStatus, isEligibleForAT ] );
+	const currentPlan: object | null = useSelector( ( state ) => getCurrentPlan( state, siteId ) );
+	const isATPlan = useSelector( ( state ) => isSiteOnAtomicPlan( state, siteId ) );
 
-	if ( isLoading ) {
+	// If we're not sure, show a loading screen.
+	if ( ! currentPlan ) {
 		return (
 			<Main className="business-at-switch__loading">
-				<QueryEligibility siteId={ siteId } />
+				<QuerySitePlans siteId={ siteId } />
 				<Placeholder />
 			</Main>
 		);
 	}
 
-	// In the future, we could add another view for the case in which the AT was done
-	// but the Jetpack sync process hasn't finish.
-	if ( showATComponent ) {
-		const primaryProduct = path.includes( '/backup/' ) ? 'backup' : 'scan';
-		return (
-			<WPCOMBusinessAT
-				automatedTransferStatus={ automatedTransferStatus }
-				product={ primaryProduct }
-			/>
-		);
+	// We know the site is not AT as it's not Jetpack,
+	// so show the activation for Atomic plans.
+	if ( isATPlan ) {
+		return <WPCOMBusinessAT product="backup" />;
 	}
 
-	return fallbackDisplay;
+	// Show the upsell if it's not an Atomic plan.
+	return <UpsellComponent />;
 };
 
 export default BusinessATSwitch;

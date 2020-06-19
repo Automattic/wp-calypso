@@ -52,6 +52,7 @@ FormattedHeader.propTypes = {
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
 	align: PropTypes.string,
+	brandFont: PropTypes.bool,
 };
 
 export default FormattedHeader;
