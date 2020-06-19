@@ -5,7 +5,7 @@ const https = require( 'https' );
 const fs = require( 'fs' );
 
 const LANGUAGES_META_URL = 'https://widgets.wp.com/languages/calypso/languages.json';
-const FILE_PATH = 'client/languages-meta.json';
+const FILE_PATH = 'client/languages/languages-meta.json';
 const LANGUAGES_FALLBACK_DATA = [
 	{
 		value: 2,

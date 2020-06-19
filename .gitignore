@@ -50,7 +50,7 @@ yarn-error.log
 /client/server/devdocs/components-usage-stats.json
 /client/server/devdocs/proptypes-index.json
 /client/server/bundler/assets*.json
-/client/languages-meta.json
+/client/languages/languages-meta.json
 
 *.rdb
 *.db
