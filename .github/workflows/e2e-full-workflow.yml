@@ -4,6 +4,9 @@ jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
     runs-on: ubuntu-latest
+    env:
+      DETECT_CHROMEDRIVER_VERSION: false
+      CHROMEDRIVER_FILEPATH: '${CHROMEWEBDRIVER}/chromedriver'
     if: contains(github.event.pull_request.labels.*.name, '[Status] Needs Review') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing Gutenberg Edge') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing horizon')
     steps:
       - uses: actions/checkout@v2
@@ -12,21 +15,18 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - run: echo $CHROMEWEBDRIVER
       - name: Cache yarn modules
         uses: actions/cache@v2
         env:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+          key: v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
-            v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}
+            v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+            v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
-        env:
-          CHROMEDRIVER_FORCE_DOWNLOAD: true
-        run: CHROMEDRIVER_VERSION=$(<test/e2e/.chromedriver_version) yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
@@ -41,6 +41,9 @@ jobs:
   e2e-full-suite:
     name: e2e Full Suite
     runs-on: ubuntu-latest
+    env:
+      DETECT_CHROMEDRIVER_VERSION: false
+      CHROMEDRIVER_FILEPATH: '${CHROMEWEBDRIVER}/chromedriver'
     needs: wait-for-calypso-live
     strategy:
       fail-fast: false
@@ -59,10 +62,10 @@ jobs:
           cache-name: cache-yarn-modules
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+          key: v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
-            v2-yarn-modules-{{ hashFiles('**/.nvmrc') }}
+            v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
+            v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
         env:
           CHROMEDRIVER_FORCE_DOWNLOAD: true
@@ -82,7 +85,6 @@ jobs:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-          CHROMEDRIVER_FILEPATH: $CHROMEWEBDRIVER/chromedriver
         run: cd test/e2e && ./run.sh -R -g -s ${{ matrix.screensize }} -S ${{ github.event.pull_request.head.sha }} -f ${{ steps.split-test-files.outputs.files }}
       - uses: actions/upload-artifact@master
         if: always()
