@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DETECT_CHROMEDRIVER_VERSION: false
-      CHROMEDRIVER_FILEPATH: "${{ env.CHROMEWEBDRIVER }}/chromedriver"
+      CHROMEDRIVER_FILEPATH: $CHROMEWEBDRIVER/chromedriver
     if: contains(github.event.pull_request.labels.*.name, '[Status] Needs Review') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing Gutenberg Edge') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing horizon')
     steps:
       - uses: actions/checkout@v2
@@ -44,7 +44,7 @@ jobs:
     needs: wait-for-calypso-live
     env:
       DETECT_CHROMEDRIVER_VERSION: false
-      CHROMEDRIVER_FILEPATH: "${{ env.CHROMEWEBDRIVER }}/chromedriver"
+      CHROMEDRIVER_FILEPATH: $CHROMEWEBDRIVER/chromedriver
     strategy:
       fail-fast: false
       matrix:
