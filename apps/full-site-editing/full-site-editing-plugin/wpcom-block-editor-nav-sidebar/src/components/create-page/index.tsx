@@ -13,7 +13,7 @@ import { addQueryArgs } from '@wordpress/url';
 import './style.scss';
 
 interface Props {
-	postType: any;
+	postType: { slug: string };
 }
 
 export default function CreatePage( { postType }: Props ) {
