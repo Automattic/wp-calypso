@@ -1,12 +1,12 @@
 name: e2e full suite
 on: pull_request
+env:
+  DETECT_CHROMEDRIVER_VERSION: false
+  CHROMEDRIVER_FILEPATH: $CHROMEWEBDRIVER/chromedriver
 jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
     runs-on: ubuntu-latest
-    env:
-      DETECT_CHROMEDRIVER_VERSION: false
-      CHROMEDRIVER_FILEPATH: '${CHROMEWEBDRIVER}/chromedriver'
     if: contains(github.event.pull_request.labels.*.name, '[Status] Needs Review') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing Gutenberg Edge') || contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing horizon')
     steps:
       - uses: actions/checkout@v2
@@ -41,9 +41,6 @@ jobs:
   e2e-full-suite:
     name: e2e Full Suite
     runs-on: ubuntu-latest
-    env:
-      DETECT_CHROMEDRIVER_VERSION: false
-      CHROMEDRIVER_FILEPATH: '${CHROMEWEBDRIVER}/chromedriver'
     needs: wait-for-calypso-live
     strategy:
       fail-fast: false
