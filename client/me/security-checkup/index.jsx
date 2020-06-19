@@ -19,6 +19,7 @@ import SecurityCheckupAccountEmail from './account-email';
 import SecurityCheckupAccountRecoveryEmail from './account-recovery-email';
 import SecurityCheckupAccountRecoveryPhone from './account-recovery-phone';
 import SecurityCheckupConnectedApplications from './connected-applications';
+import SecurityCheckupPassword from './password';
 import SecurityCheckupSocialLogins from './social-logins';
 import SecurityCheckupTwoFactorAuthentication from './two-factor-authentication';
 import SecurityCheckupTwoFactorBackupCodes from './two-factor-backup-codes';
@@ -53,6 +54,7 @@ class SecurityCheckupComponent extends React.Component {
 				<SectionHeader label={ translate( 'Security Checklist' ) } />
 
 				<VerticalNav>
+					<SecurityCheckupPassword />
 					<SecurityCheckupAccountEmail />
 					<SecurityCheckupTwoFactorAuthentication />
 					<SecurityCheckupTwoFactorBackupCodes />
