@@ -62,12 +62,14 @@ export function getAvailableDesigns(
 		};
 	}
 
-	if ( useFseDesigns ) {
-		designs = {
-			...designs,
-			featured: designs.featured.filter( ( design ) => design.is_fse ),
-		};
-	}
+	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
+	// the FSE designs.
+	designs = {
+		...designs,
+		featured: designs.featured.filter( ( design ) =>
+			useFseDesigns ? design.is_fse : ! design.is_fse
+		),
+	};
 
 	return designs;
 }
