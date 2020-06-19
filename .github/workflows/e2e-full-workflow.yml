@@ -65,6 +65,10 @@ jobs:
           restore-keys: |
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}-{{ hashFiles('**/yarn.lock') }}
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}
+      - name: Install yarn deps
+        env:
+          DETECT_CHROMEDRIVER_VERSION: false
+        run: CHROMEDRIVER_FILEPATH=$CHROMEWEBDRIVER/chromedriver cd test/e2e && yarn install --frozen-lockfile --focus
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
