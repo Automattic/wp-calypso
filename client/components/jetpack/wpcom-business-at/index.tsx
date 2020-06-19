@@ -148,21 +148,12 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 
 	// Gets state to control dialog and continue button.
 	const [ showDialog, setShowDialog ] = useState( false );
-	// const [ approvedTransfer, setApproveTransfer ] = useState(
-	// 	0 === warnings?.length && 0 === holds?.length
-	// );
+
 	const onCloseDialog = () => setShowDialog( false );
 	const onShowDialog = () => setShowDialog( true );
 
 	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
-	// const initiateAT = React.useCallback( () => {
-	// 	if ( approvedTransfer ) {
-	// 		dispatch( initiateThemeTransfer( siteId, null, '' ) );
-	// 	} else {
-	// 		setShowDialog( true );
-	// 	}
-	// }, [ dispatch, siteId, approvedTransfer ] );
 
 	const initiateAT = useCallback( () => {
 		dispatch( initiateThemeTransfer( siteId, null, '' ) );
@@ -175,7 +166,6 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
 
 	const approveAndInitiateAt = () => {
-		// setApproveTransfer( true );
 		trackInitiateAT();
 		setShowDialog( false );
 	};
