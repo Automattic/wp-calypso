@@ -70,7 +70,6 @@ export const SkipButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	return (
 		<Button
 			className={ classnames( 'action_buttons__button action-buttons__skip', className ) }
-			isDefault
 			isLarge
 			{ ...buttonProps }
 		>
