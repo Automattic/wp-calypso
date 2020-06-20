@@ -151,7 +151,7 @@ export class JetpackConnectMain extends Component {
 				<div className="jetpack-connect__site-url-entry-container">
 					<MainHeader type={ type } />
 					{ this.renderSiteInput( status ) }
-					{ renderFooter() };
+					{ renderFooter() }
 				</div>
 			</MainWrapper>
 		);
