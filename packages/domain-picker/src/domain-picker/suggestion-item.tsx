@@ -63,7 +63,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	return (
 		<button
 			type="button"
-			className="domain-picker__suggestion-item"
+			className={ classnames( 'domain-picker__suggestion-item', {
+				'is-free': suggestion.is_free,
+			} ) }
 			onClick={ onDomainSelect }
 			id={ labelId }
 		>
