@@ -33,7 +33,7 @@ import searchSites from 'components/search-sites';
 import jetpackConnection from './jetpack-connection';
 
 import { JPC_PATH_REMOTE_INSTALL } from './constants';
-import { ALREADY_CONNECTED, IS_DOT_COM } from './connection-notice-types';
+import { ALREADY_CONNECTED } from './connection-notice-types';
 
 export class SearchPurchase extends Component {
 	static propTypes = {
@@ -92,29 +92,15 @@ export class SearchPurchase extends Component {
 	componentDidUpdate() {
 		const { status, processJpSite } = this.props;
 		const { currentUrl } = this.state;
-		//	const { isMobileAppFlow, skipRemoteInstall, forceRemoteInstall } = this.props;
 
-		if ( status === IS_DOT_COM || status === ALREADY_CONNECTED ) {
-			const product = window.location.href.split( '/' )[ 5 ];
-
-			let redirectTo = '/checkout/' + urlToSlug( this.state.currentUrl );
-			if ( product ) {
-				redirectTo += '/' + product;
-			}
-			page.redirect( redirectTo );
+		// here we will add status === IS_DOT_COM_SEARCH to the condition once
+		// we enable WP.com sites
+		if ( status === ALREADY_CONNECTED ) {
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + 'jetpack_search' );
 		}
 
 		processJpSite( currentUrl );
 	}
-
-	// goToCheckout = this.makeSafeRedirectionFunction( ( url ) => {
-	// 	this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
-	// 		url: url,
-	// 		type: 'search_checkout',
-	// 	} );
-	//
-	// 	page.redirect( `checkout/${ urlToSlug( url ) }/jetpack_search` );
-	// } );
 
 	handleUrlChange = ( url ) => {
 		this.setState( {

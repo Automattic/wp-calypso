@@ -5,7 +5,7 @@ import debugModule from 'debug';
 import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes } from 'lodash';
+import { flowRight, get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -32,6 +32,7 @@ import {
 	ALREADY_CONNECTED,
 	ALREADY_OWNED,
 	IS_DOT_COM,
+	IS_DOT_COM_GET_SEARCH,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
 	NOT_EXISTS,
@@ -220,6 +221,11 @@ const jetpackConnection = ( WrappedComponent ) => {
 			}
 
 			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+				const product = window.location.href.split( '/' )[ 5 ];
+
+				if ( startsWith( product, 'jetpack_search' ) ) {
+					return IS_DOT_COM_GET_SEARCH;
+				}
 				return IS_DOT_COM;
 			}
 			if ( ! this.checkProperty( 'exists' ) ) {
