@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { By } from 'selenium-webdriver';
-import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -10,7 +9,7 @@ import assert from 'assert';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
-class InlineHelpComponent extends AsyncBaseContainer {
+class InlineHelpPopoverComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.inline-help' ) );
 	}
@@ -35,4 +34,4 @@ class InlineHelpComponent extends AsyncBaseContainer {
 	}
 }
 
-export default InlineHelpComponent;
+export default InlineHelpPopoverComponent;

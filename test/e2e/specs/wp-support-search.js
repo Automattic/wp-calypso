@@ -11,7 +11,7 @@ import * as driverManager from '../lib/driver-manager.js';
 
 import LoginFlow from '../lib/flows/login-flow.js';
 import * as dataHelper from '../lib/data-helper';
-import InlineHelpComponent from '../lib/components/inline-help-component';
+import InlineHelpPopoverComponent from '../lib/components/inline-help-popover-component';
 import SupportSearchComponent from '../lib/components/support-search-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
@@ -21,7 +21,7 @@ const host = dataHelper.getJetpackHost();
 
 let driver;
 let supportSearchComponent;
-let inlineHelpComponent;
+let inlineHelpPopoverComponent;
 
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
@@ -42,29 +42,29 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 
 			// Initialize the helper component
 
-			inlineHelpComponent = await InlineHelpComponent.Expect( driver );
+			inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
 		} );
 
 		describe( 'Popover UI visibility and interactions', function () {
 			step( 'Check help toggle is visible', async function () {
-				await inlineHelpComponent.isToggleVisible();
+				await inlineHelpPopoverComponent.isToggleVisible();
 			} );
 
 			step( 'Open Inline Help popover', async function () {
-				await inlineHelpComponent.toggleOpen();
-				return await inlineHelpComponent.isPopoverVisible();
+				await inlineHelpPopoverComponent.toggleOpen();
+				return await inlineHelpPopoverComponent.isPopoverVisible();
 			} );
 
 			step( 'Close Inline Help popover', async function () {
-				await inlineHelpComponent.toggleClosed();
-				const isPopoverVisible = await inlineHelpComponent.isPopoverVisible();
+				await inlineHelpPopoverComponent.toggleClosed();
+				const isPopoverVisible = await inlineHelpPopoverComponent.isPopoverVisible();
 				assert.equal( isPopoverVisible, false, 'Popover was not closed correctly.' );
 			} );
 		} );
 
 		describe( 'Performing searches', function () {
 			step( 'Re-open Inline Help popover', async function () {
-				await inlineHelpComponent.toggleOpen();
+				await inlineHelpPopoverComponent.toggleOpen();
 				supportSearchComponent = await SupportSearchComponent.Expect( driver );
 			} );
 
