@@ -57,7 +57,7 @@ export class ReportImpl implements Report {
 				try {
 					collector( this );
 				} catch {
-					// Swallow the errore to make sure a single collector doesn't break the whole report
+					// Swallow the error to make sure a single collector doesn't break the whole report
 				}
 			} )
 		);
