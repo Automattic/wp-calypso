@@ -17,7 +17,7 @@ import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
  * These reporters are added to _all_ performance tracking metrics.
  * Be sure to add only reporters that make sense for all metrics and are always present.
  *
- * @param state the state
+ * @param state redux state
  */
 const getDefaultCollector = ( state ) => {
 	const siteId = getSelectedSiteId( state );
