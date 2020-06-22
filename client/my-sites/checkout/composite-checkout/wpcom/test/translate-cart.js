@@ -942,7 +942,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			expect( clientCart.items ).toBeDefined();
 		} );
 		it( 'has the expected number of line items', function () {
-			expect( clientCart.items.length ).toBe( 2 );
+			expect( clientCart.items.length ).toBe( 1 );
 		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
