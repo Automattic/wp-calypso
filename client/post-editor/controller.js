@@ -160,21 +160,6 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-function waitForEditorSelection( context, siteId, newEditor ) {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			const editor = getSelectedEditor( state, siteId );
-			if ( editor.indexOf( newEditor ) === -1 ) {
-				return;
-			}
-			unsubscribe();
-			resolve();
-		} );
-		context.store.dispatch( setSelectedEditor( siteId, newEditor ) );
-	} );
-}
-
 async function redirectIfBlockEditor( context, next ) {
 	const tmpState = context.store.getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
@@ -182,7 +167,7 @@ async function redirectIfBlockEditor( context, next ) {
 		await waitForSiteIdAndSelectedEditor( context );
 	}
 
-	let state = context.store.getState();
+	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
 	// URLs with a set-editor=<editorName> param are used for indicating that the user wants to use always the given
@@ -191,8 +176,7 @@ async function redirectIfBlockEditor( context, next ) {
 	const allowedEditors = [ 'classic', 'gutenberg' ];
 
 	if ( allowedEditors.indexOf( newEditorChoice ) > -1 ) {
-		await waitForEditorSelection( context, siteId, newEditorChoice );
-		state = context.store.getState();
+		context.store.dispatch( setSelectedEditor( siteId, newEditorChoice ) );
 	}
 
 	// If the new editor is classic, we bypass the selected editor check.
