@@ -27,57 +27,28 @@ class NoAvailableTimes extends Component {
 				<PrimaryHeader isWhiteGlove={ isWhiteGlove } />
 				<Card>
 					<h2 className="shared__no-available-times-heading">
-						{ translate( 'Sorry, all upcoming sessions are full' ) }
+						{ translate( 'Sorry, all upcoming sessions are full.' ) }
 					</h2>
-					{ isWhiteGlove && (
-						<>
-							We add new sessions daily, so please check back soon for more options. In the
-							meantime, consider attending one of our expert webinars on a wide variety of topics
-							designed to help you build and grow your site.{ ' ' }
-							<ExternalLinkWithTracking
-								icon={ false }
-								href="https://wordpress.com/webinars/"
-								onClick={ () => {} }
-								tracksEventName="calypso_concierge_book_view_webinars"
-							>
-								{ translate( 'View webinars.' ) }
-							</ExternalLinkWithTracking>
-							or
-							<ExternalLinkWithTracking
-								icon={ false }
-								href="https://wordpress.com/help/contact"
-								onClick={ () => {} }
-								tracksEventName="calypso_concierge_book_view_contact_us"
-							>
-								contact us in Live Chat
-							</ExternalLinkWithTracking>
-							.
-						</>
-					) }
-					{ ! isWhiteGlove && (
-						<>
-							{ translate(
-								'We add new sessions daily, so please check back soon for more options. In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site.'
-							) }{ ' ' }
-							<ExternalLinkWithTracking
-								icon={ false }
-								href="https://wordpress.com/webinars/"
-								onClick={ () => {} }
-								tracksEventName="calypso_concierge_book_view_webinars"
-							>
-								{ translate( 'View webinars.' ) }
-							</ExternalLinkWithTracking>
-							{ translate( ' or ' ) }
-							<ExternalLinkWithTracking
-								icon={ false }
-								href="https://wordpress.com/help/contact"
-								onClick={ () => {} }
-								tracksEventName="calypso_concierge_book_contact_us"
-							>
-								{ translate( 'contact us in Live Chat' ) }
-							</ExternalLinkWithTracking>
-							.
-						</>
+					{ translate(
+						'We add new sessions daily, so please check back soon for more options. In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{externalLink1}}View webinars{{/externalLink1}} or {{externalLink2}}contact us in Live Chat{{/externalLink2}}.',
+						{
+							components: {
+								externalLink1: (
+									<ExternalLinkWithTracking
+										icon={ false }
+										href="https://wordpress.com/webinars/"
+										tracksEventName="calypso_concierge_book_view_webinars"
+									/>
+								),
+								externalLink2: (
+									<ExternalLinkWithTracking
+										icon={ false }
+										href="https://wordpress.com/help/contact"
+										tracksEventName="calypso_concierge_book_contact_us"
+									/>
+								),
+							},
+						}
 					) }
 				</Card>
 			</div>
