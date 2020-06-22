@@ -13,7 +13,7 @@ import { get } from 'lodash';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
 
-import { getSearchQuery } from 'state/inline-help/selectors';
+import getSearchQuery from 'state/selectors/get-search-query';
 import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import HelpSearchCard from './search-card';
