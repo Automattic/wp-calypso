@@ -1081,7 +1081,7 @@ const assertSection = ( { url, entry, sectionName, secondaryContent, sectionGrou
 		} );
 	} );
 
-	describe( 'default contenxt', () => {
+	describe( 'default context', () => {
 		assertDefaultContext( { url, entry } );
 	} );
 };
@@ -1314,7 +1314,7 @@ describe( 'main app', () => {
 			expect( response.send ).toHaveBeenCalledWith( '<div>page</div>' );
 		} );
 
-		describe( 'default contenxt', () => {
+		describe( 'default context', () => {
 			assertDefaultContext( {
 				url: '/domain-services/renovate',
 				entry: 'entry-domains-landing',
