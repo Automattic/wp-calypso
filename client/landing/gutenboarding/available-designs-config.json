@@ -5,7 +5,6 @@
 			"slug": "reynolds-fse",
 			"template": "reynolds",
 			"theme": "seedlet-blocks",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/reynolds/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -20,7 +19,6 @@
 			"slug": "vesta-fse",
 			"template": "vesta",
 			"theme": "seedlet-blocks",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/seedlet-blocks/vesta/",
 			"fonts": {
 				"headings": "Cabin",
 				"base": "Raleway"
@@ -35,7 +33,6 @@
 			"slug": "cassel",
 			"template": "cassel",
 			"theme": "mayland",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/mayland/cassel/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -48,7 +45,6 @@
 			"slug": "edison",
 			"template": "edison",
 			"theme": "stratford",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/stratford/edison/",
 			"fonts": {
 				"headings": "Chivo",
 				"base": "Open Sans"
@@ -61,7 +57,6 @@
 			"slug": "vesta",
 			"template": "vesta",
 			"theme": "mayland",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/mayland/vesta/",
 			"fonts": {
 				"headings": "Cabin",
 				"base": "Raleway"
@@ -74,7 +69,6 @@
 			"slug": "doyle",
 			"template": "doyle",
 			"theme": "alves",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/alves/doyle/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -87,7 +81,6 @@
 			"slug": "bowen",
 			"template": "bowen",
 			"theme": "coutoire",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/coutoire/bowen/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -100,7 +93,6 @@
 			"slug": "easley",
 			"template": "easley",
 			"theme": "maywood",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/maywood/easley/",
 			"fonts": {
 				"headings": "Space Mono",
 				"base": "Roboto"
@@ -113,7 +105,6 @@
 			"slug": "Camdem",
 			"template": "camdem",
 			"theme": "maywood",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/maywood/camdem/",
 			"fonts": {
 				"headings": "Space Mono",
 				"base": "Roboto"
@@ -126,7 +117,6 @@
 			"slug": "reynolds",
 			"template": "reynolds",
 			"theme": "rockfield",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rockfield/reynolds/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -139,7 +129,6 @@
 			"slug": "overton",
 			"template": "overton",
 			"theme": "alves",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/alves/overton/",
 			"fonts": {
 				"headings": "Cabin",
 				"base": "Raleway"
@@ -152,7 +141,6 @@
 			"slug": "brice",
 			"template": "brice",
 			"theme": "mayland",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/mayland/brice/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -165,7 +153,6 @@
 			"slug": "barnsbury",
 			"template": "barnsbury",
 			"theme": "barnsbury",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/barnsbury/barnsbury/",
 			"fonts": {
 				"headings": "Open Sans",
 				"base": "Chivo"
@@ -179,7 +166,6 @@
 			"slug": "alves",
 			"template": "alves",
 			"theme": "alves",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/alves/alves/",
 			"fonts": {
 				"headings": "Arvo",
 				"base": "Montserrat"
@@ -193,7 +179,6 @@
 			"slug": "mayland",
 			"template": "mayland",
 			"theme": "mayland",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/mayland/mayland/",
 			"fonts": {
 				"headings": "Raleway",
 				"base": "Cabin"
@@ -207,7 +192,6 @@
 			"slug": "rivington",
 			"template": "rivington",
 			"theme": "rivington",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rivington/rivington/",
 			"fonts": {
 				"headings": "Arvo",
 				"base": "Montserrat"
@@ -221,7 +205,6 @@
 			"slug": "maywood",
 			"template": "maywood",
 			"theme": "maywood",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/maywood/maywood/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -235,7 +218,6 @@
 			"slug": "balasana",
 			"template": "balasana",
 			"theme": "balasana",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/balasana/balasana/",
 			"fonts": {
 				"headings": "Open Sans",
 				"base": "Chivo"
@@ -249,7 +231,6 @@
 			"slug": "stratford",
 			"template": "stratford",
 			"theme": "stratford",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/stratford/stratford/",
 			"fonts": {
 				"headings": "Chivo",
 				"base": "Open Sans"
@@ -263,7 +244,6 @@
 			"slug": "rockfield",
 			"template": "rockfield",
 			"theme": "rockfield",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rockfield/rockfield/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -277,7 +257,6 @@
 			"slug": "coutoire",
 			"template": "coutoire",
 			"theme": "coutoire",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/coutoire/coutoire/",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -291,7 +270,6 @@
 			"slug": "leven",
 			"template": "leven",
 			"theme": "leven",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/leven/leven/",
 			"fonts": {
 				"headings": "Chivo",
 				"base": "Open Sans"
@@ -305,7 +283,6 @@
 			"slug": "gibbs",
 			"template": "gibbs",
 			"theme": "rockfield",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rockfield/gibbs/",
 			"fonts": {
 				"headings": "Fira Sans",
 				"base": "Fira Sans"
