@@ -228,7 +228,7 @@ function load_blog_posts_block() {
 		/* phpcs:ignore WordPress.Security.NonceVerification */
 		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && $slug === $_GET['plugin'] ) ||
 		preg_grep( $slug_regex, (array) get_option( 'active_plugins' ) ) ||
-		preg_grep( $slug_regex, (array) get_option( 'active_sitewide_plugins' ) )
+		preg_grep( $slug_regex, (array) get_site_option( 'active_sitewide_plugins' ) )
 	);
 
 	/**
