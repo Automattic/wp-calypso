@@ -11,10 +11,14 @@ import MaterialIcon from 'components/material-icon';
 import VerticalNavItem from 'components/vertical-nav/item';
 
 const SecurityCheckupNavigationItemContents = function ( props ) {
-	const { materialIcon, text, description } = props;
+	const { materialIcon, materialIconStyle, text, description } = props;
 	return (
 		<React.Fragment>
-			<MaterialIcon icon={ materialIcon } className="security-checkup__nav-item-icon" />
+			<MaterialIcon
+				icon={ materialIcon }
+				style={ materialIconStyle }
+				className="security-checkup__nav-item-icon"
+			/>
 			<div>
 				<div>{ text }</div>
 				<small>{ description }</small>
@@ -29,6 +33,7 @@ class SecurityCheckupNavigationItem extends React.Component {
 		external: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		materialIcon: PropTypes.string,
+		materialIconStyle: PropTypes.string,
 		onClick: PropTypes.func,
 		path: PropTypes.string,
 		text: PropTypes.string,
@@ -48,6 +53,7 @@ class SecurityCheckupNavigationItem extends React.Component {
 			>
 				<SecurityCheckupNavigationItemContents
 					materialIcon={ this.props.materialIcon }
+					materialIconStyle={ this.props.materialIconStyle ?? 'outline' }
 					text={ this.props.text }
 					description={ this.props.description }
 				/>

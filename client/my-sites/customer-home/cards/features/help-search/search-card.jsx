@@ -12,12 +12,10 @@ import { identity, includes } from 'lodash';
  */
 import { recordTracksEvent, withAnalytics, composeAnalytics } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
-import {
-	getInlineHelpCurrentlySelectedLink,
-	getSelectedResultIndex,
-	isRequestingInlineHelpSearchResultsForQuery,
-	getInlineHelpCurrentlySelectedResult,
-} from 'state/inline-help/selectors';
+import getInlineHelpCurrentlySelectedLink from 'state/selectors/get-inline-help-currently-selected-link';
+import getSelectedResultIndex from 'state/selectors/get-selected-result-index';
+import isRequestingInlineHelpSearchResultsForQuery from 'state/selectors/is-requesting-inline-help-search-results-for-query';
+import getInlineHelpCurrentlySelectedResult from 'state/selectors/get-inline-help-currently-selected-result';
 import {
 	requestInlineHelpSearchResults,
 	selectNextResult,

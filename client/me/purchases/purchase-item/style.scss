@@ -99,7 +99,7 @@
 .purchase-item__term-label,
 .purchase-item__purchase-type, {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 0 0 4px;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -107,5 +107,5 @@
 
 .purchase-item__purchase-date {
 	color: var( --color-neutral-70 );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

@@ -81,7 +81,7 @@
 
 	small {
 		margin-left: 5px;
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		color: var( --color-neutral-light );
 		font-weight: 600;
 		text-transform: uppercase;
@@ -162,7 +162,7 @@
 	display: none;
 	margin-bottom: 8px;
 	padding: 0 15px;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 	font-weight: 600;
 	text-transform: uppercase;

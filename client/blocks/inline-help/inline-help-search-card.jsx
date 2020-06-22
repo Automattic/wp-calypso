@@ -13,12 +13,10 @@ import debugFactory from 'debug';
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
-import {
-	getInlineHelpCurrentlySelectedLink,
-	getSelectedResultIndex,
-	isRequestingInlineHelpSearchResultsForQuery,
-	getInlineHelpCurrentlySelectedResult,
-} from 'state/inline-help/selectors';
+import getInlineHelpCurrentlySelectedLink from 'state/selectors/get-inline-help-currently-selected-link';
+import getSelectedResultIndex from 'state/selectors/get-selected-result-index';
+import isRequestingInlineHelpSearchResultsForQuery from 'state/selectors/is-requesting-inline-help-search-results-for-query';
+import getInlineHelpCurrentlySelectedResult from 'state/selectors/get-inline-help-currently-selected-result';
 import {
 	requestInlineHelpSearchResults,
 	selectNextResult,
@@ -71,15 +69,14 @@ class InlineHelpSearchCard extends Component {
 
 	searchHelperHandler = ( searchQuery ) => {
 		const query = searchQuery.trim();
-		if ( ! query || ! query.length ) {
-			return debug( 'empty query. Skip recording tracks-event.' );
-		}
 
-		debug( 'search query received: ', searchQuery );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
-			search_query: searchQuery,
-			location: 'inline-help-popover',
-		} );
+		if ( query?.length ) {
+			debug( 'search query received: ', searchQuery );
+			this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
+				search_query: searchQuery,
+				location: 'inline-help-popover',
+			} );
+		}
 
 		// Make a search
 		this.props.requestInlineHelpSearchResults( searchQuery );

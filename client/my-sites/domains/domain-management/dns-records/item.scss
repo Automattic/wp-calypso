@@ -14,7 +14,7 @@
 			border-radius: 2px;
 			color: var( --color-text-inverted );
 			display: block;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			margin: 0 10px 0 0;
 			padding: 10px 5px;
 			text-align: center;
@@ -33,7 +33,7 @@
 		em {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 		}
 	}
 

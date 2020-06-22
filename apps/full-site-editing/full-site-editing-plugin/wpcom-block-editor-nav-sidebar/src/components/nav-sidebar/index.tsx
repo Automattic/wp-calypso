@@ -1,8 +1,7 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useRef } from '@wordpress/element';
+import { useState, useEffect, useRef, WPSyntheticEvent } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button as OriginalButton } from '@wordpress/components';
 import { chevronLeft, wordpress } from '@wordpress/icons';
@@ -18,14 +17,9 @@ import classNames from 'classnames';
 import { STORE_KEY } from '../../constants';
 import CreatePage from '../create-page';
 import ViewAllPosts from '../view-all-posts';
+import NavItem from '../nav-item';
+import { Post } from '../../types';
 import './style.scss';
-
-interface Post {
-	id: number;
-	slug: string;
-	status: string;
-	title: { raw: string; rendered: string };
-}
 
 const Button = ( {
 	children,
@@ -69,7 +63,7 @@ export default function WpcomBlockEditorNavSidebar() {
 	let closeLabel = get( postType, [ 'labels', 'all_items' ], __( 'Back', 'full-site-editing' ) );
 	closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', closeLabel );
 
-	const handleClose = ( e: React.WPSyntheticEvent ) => {
+	const handleClose = ( e: WPSyntheticEvent ) => {
 		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
 			e.preventDefault();
 			doAction( 'a8c.wpcom-block-editor.closeEditor' );
@@ -123,6 +117,7 @@ export default function WpcomBlockEditorNavSidebar() {
 						<NavItem
 							key={ item.id }
 							item={ item }
+							postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
 							selected={ item.id === selectedItemId }
 							statusLabel={ statusLabels[ item.status ] }
 						/>
@@ -132,40 +127,6 @@ export default function WpcomBlockEditorNavSidebar() {
 				<ViewAllPosts postType={ postType } />
 			</div>
 		</div>
-	);
-}
-
-interface NavItemProps {
-	item: Post;
-	selected: boolean;
-	statusLabel?: string;
-}
-
-function NavItem( { item, selected, statusLabel }: NavItemProps ) {
-	const buttonClasses = classNames( 'wpcom-block-editor-nav-sidebar__item-button', {
-		'is-selected': selected,
-	} );
-
-	const titleClasses = classNames( 'wpcom-block-editor-nav-sidebar__title', {
-		'is-untitled': ! item.title?.raw,
-	} );
-
-	return (
-		<li>
-			<Button className={ buttonClasses }>
-				<div className="wpcom-block-editor-nav-sidebar__title-container">
-					<div className={ titleClasses }>
-						{ item.title?.raw || __( 'Untitled', 'full-site-editing' ) }
-					</div>
-					{ item.slug && (
-						<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
-					) }
-				</div>
-				{ statusLabel && (
-					<div className="wpcom-block-editor-nav-sidebar__label">{ statusLabel }</div>
-				) }
-			</Button>
-		</li>
 	);
 }
 

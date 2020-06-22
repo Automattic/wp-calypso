@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import { getCurrentUser } from 'state/current-user/selectors';
 import SecurityCheckupNavigationItem from './navigation-item';
-import { getOKIcon, getWarningIcon } from './icons.js';
 
 class SecurityCheckupSocialLogins extends React.Component {
 	static propTypes = {
@@ -22,13 +21,11 @@ class SecurityCheckupSocialLogins extends React.Component {
 	render() {
 		const { socialConnectionCount, translate } = this.props;
 
-		let description, icon;
+		let description;
 
 		if ( socialConnectionCount === 0 ) {
-			icon = getOKIcon();
 			description = translate( 'You do not have any social logins enabled.' );
 		} else {
-			icon = getWarningIcon();
 			description = translate(
 				'You have {{strong}}%(socialLoginCount)d social login enabled{{/strong}}.',
 				'You have {{strong}}%(socialLoginCount)d social logins enabled{{/strong}}.',
@@ -47,7 +44,7 @@ class SecurityCheckupSocialLogins extends React.Component {
 		return (
 			<SecurityCheckupNavigationItem
 				description={ description }
-				materialIcon={ icon }
+				materialIcon="person"
 				path="/me/security/social-login"
 				text={ translate( 'Social Logins' ) }
 			/>

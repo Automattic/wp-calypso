@@ -43,7 +43,7 @@
 
 .annual-site-stats__stat-title {
 	color: var( --color-neutral-light );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 
 	@include breakpoint-deprecated( '<480px' ) {

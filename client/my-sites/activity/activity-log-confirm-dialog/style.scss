@@ -138,7 +138,7 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		margin-bottom: 4px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	.gridicon {

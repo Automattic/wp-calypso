@@ -16,9 +16,10 @@ import {
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_SHOW,
 	INLINE_HELP_HIDE,
+	INLINE_HELP_SEARCH_RESET,
 } from 'state/action-types';
 
-import { getContextualHelpResults } from 'state/inline-help/selectors';
+import getContextualHelpResults from 'state/selectors/get-contextual-help-results';
 
 /**
  * Fetches search results for a given query string.
@@ -40,12 +41,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 		// early to avoid unwanted network requests.
 		if ( ! searchQuery ) {
 			dispatch( {
-				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-				hasAPIResults: false,
-			} );
-			dispatch( {
-				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-				searchQuery,
+				type: INLINE_HELP_SEARCH_RESET,
 				searchResults: contextualResults,
 			} );
 

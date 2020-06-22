@@ -32,6 +32,7 @@ describe( 'reducer', () => {
 			'items',
 			'sendingReceiptEmail',
 			'individualTransactions',
+			'ui',
 		] );
 	} );
 

@@ -10,7 +10,7 @@
 		text-align: left;
 
 		&.shipping-label__item-tracking {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 
 			a:focus {
 				outline: none;
@@ -34,7 +34,7 @@
 
 		a {
 			display: inline-block;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 
 		span svg,

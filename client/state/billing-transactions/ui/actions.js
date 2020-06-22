@@ -8,6 +8,8 @@ import {
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
 
+import 'state/billing-transactions/init';
+
 /**
  * Sets the app filter on the given transactionType table
  *

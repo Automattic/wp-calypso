@@ -18,7 +18,7 @@ import TransactionsHeader from './transactions-header';
 import { groupDomainProducts, renderTransactionAmount } from './utils';
 import SearchCard from 'components/search-card';
 import { withLocalizedMoment } from 'components/localized-moment';
-import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
+import { setPage, setQuery } from 'state/billing-transactions/ui/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
 import { getPlanTermLabel } from 'lib/plans';

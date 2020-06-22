@@ -13,6 +13,8 @@ import getBillingTransactionsByType from 'state/selectors/get-billing-transactio
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
+import 'state/billing-transactions/init';
+
 const PAGE_SIZE = 5;
 
 /**

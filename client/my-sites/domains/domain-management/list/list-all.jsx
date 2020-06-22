@@ -1,55 +1,73 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { keyBy, keys, times } from 'lodash';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import DomainManagement from 'my-sites/domains/domain-management';
+import canCurrentUserForSites from 'state/selectors/can-current-user-for-sites';
+import DocumentHead from 'components/data/document-head';
+import DomainItem from './domain-item';
+import FormattedHeader from 'components/formatted-header';
+import { getAllDomains, getFlatDomainsList } from 'state/sites/domains/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
+import { getDomainManagementPath } from './utils';
 import getVisibleSites from 'state/selectors/get-visible-sites';
+import isRequestingAllDomains from 'state/selectors/is-requesting-all-domains';
 import Main from 'components/main';
 import QueryAllDomains from 'components/data/query-all-domains';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import { getAllDomains, getAllRequestingSiteDomains } from 'state/sites/domains/selectors';
-import FormattedHeader from 'components/formatted-header';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ListItemPlaceholder from './item-placeholder';
 
 class ListAll extends Component {
-	renderSiteDomains( site ) {
-		return (
-			<DomainManagement.List
-				selectedSite={ site }
-				domains={ get( this.props.domains, site.ID, [] ) }
-				isRequestingSiteDomains={ get( this.props.requestingDomains, site.ID, false ) }
-				renderAllSites={ true }
-			/>
-		);
+	handleDomainItemClick = ( domain ) => {
+		const { sites, currentRoute } = this.props;
+		const site = sites[ domain.blogId ];
+		page( getDomainManagementPath( domain.domain, domain.type, site.slug, currentRoute ) );
+	};
+
+	isLoading() {
+		const { domainsList, requestingDomains } = this.props;
+		return requestingDomains && domainsList.length === 0;
 	}
 
-	renderSingleSite( site, siteIndex ) {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div key={ siteIndex } className="list-all__site">
-				<QuerySiteDomains siteId={ site.ID } />
-				<div className="domain-management-list__items">{ this.renderSiteDomains( site ) }</div>
-			</div>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	renderDomainsList() {
+		if ( this.isLoading() ) {
+			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
+		}
+
+		const { domainsList, canManageSitesMap } = this.props;
+
+		return domainsList
+			.filter( ( domain ) => canManageSitesMap[ domain.blogId ] ) // filter on sites we can manage
+			.map( ( domain, index ) => (
+				<DomainItem
+					key={ `${ index }-${ domain.name }` }
+					domain={ domain }
+					onClick={ this.handleDomainItemClick }
+				/>
+			) );
 	}
 
 	render() {
 		const { translate } = this.props;
+
 		return (
 			<Main wideLayout>
 				<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
 				<div className="list-all__container">
-					{ config.isEnabled( 'manage/all-domains' ) && <QueryAllDomains /> }
-					{ this.props.sites.map( ( site, index ) => this.renderSingleSite( site, index ) ) }
+					<QueryAllDomains />
+					<Main wideLayout>
+						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
+						<SidebarNavigation />
+						<div className="list-all__items">{ this.renderDomainsList() }</div>
+					</Main>
 				</div>
 			</Main>
 		);
@@ -57,10 +75,14 @@ class ListAll extends Component {
 }
 
 export default connect( ( state ) => {
+	const sites = keyBy( getVisibleSites( state ), 'ID' );
 	return {
-		user: getCurrentUser( state ),
-		sites: getVisibleSites( state ),
+		canManageSitesMap: canCurrentUserForSites( state, keys( sites ), 'manage_options' ),
+		currentRoute: getCurrentRoute( state ),
 		domains: getAllDomains( state ),
-		requestingDomains: getAllRequestingSiteDomains( state ),
+		domainsList: getFlatDomainsList( state ),
+		requestingDomains: isRequestingAllDomains( state ),
+		sites,
+		user: getCurrentUser( state ),
 	};
 } )( localize( ListAll ) );

@@ -33,7 +33,7 @@
 .order-customer__shipping-details {
 	margin-bottom: 16px;
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 	font-weight: 600;
 	display: flex;

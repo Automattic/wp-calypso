@@ -53,7 +53,7 @@ ul.email-forwarding__list {
 			line-height: 40px;
 
 			@include breakpoint-deprecated( '<660px' ) {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				line-height: 150%;
 			}
 

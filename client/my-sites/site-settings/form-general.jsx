@@ -265,6 +265,7 @@ export class SiteSettingsFormGeneral extends Component {
 					onChange={ onChangeField( 'lang_id' ) }
 					disabled={ isRequestingSettings || ( siteIsJetpack && errorNotice ) }
 					onClick={ eventTracker( 'Clicked Language Field' ) }
+					showEmpathyModeControl={ false }
 				/>
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }

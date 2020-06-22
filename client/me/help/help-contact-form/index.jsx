@@ -32,7 +32,7 @@ import {
 	composeAnalytics,
 } from 'state/analytics/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
+import isShowingQandAInlineHelpContactForm from 'state/selectors/is-showing-q-and-a-inline-help-contact-form';
 import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
 import { getNpsSurveyFeedback } from 'state/nps-survey/selectors';
 import { generateSubjectFromMessage } from './utils';

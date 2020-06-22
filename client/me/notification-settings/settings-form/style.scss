@@ -53,7 +53,7 @@
 	text-transform: uppercase;
 	justify-content: center;
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	padding: 10px;
 
 	.form-select {

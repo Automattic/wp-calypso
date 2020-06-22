@@ -145,7 +145,7 @@ button.foldable-card__action {
 .foldable-card__summary-expanded {
 	margin-right: 40px;
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	transition: opacity 0.2s linear;
 	display: inline-block;
 

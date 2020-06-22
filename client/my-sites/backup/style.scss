@@ -134,4 +134,12 @@
 	.backup__wpcom-realtime-cta {
 		margin-right: 16px;
 	}
+
+	.promo-section__promos {
+		.promo-card {
+			@include breakpoint-deprecated( '>1280px' ) {
+				flex: 1 1 calc( 50% - 1em );
+			}
+		}
+	}
 }

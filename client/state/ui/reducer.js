@@ -9,7 +9,6 @@ import {
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 import actionLog from './action-log/reducer';
-import billingTransactions from './billing-transactions/reducer';
 import checkout from './checkout/reducer';
 import comments from './comments/reducer';
 import dropZone from './drop-zone/reducer';
@@ -97,7 +96,6 @@ export const isNotificationsOpen = function ( state = false, { type } ) {
 
 const reducer = combineReducers( {
 	actionLog,
-	billingTransactions,
 	checkout,
 	comments,
 	dropZone,
