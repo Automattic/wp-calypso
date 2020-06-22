@@ -7,12 +7,15 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { popover, ui } from '../reducer';
+import { popover, ui, requesting } from '../reducer';
 import {
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_SHOW,
 	INLINE_HELP_HIDE,
+	INLINE_HELP_SEARCH_REQUEST,
+	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -57,6 +60,46 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				isVisible: false,
+			} );
+		} );
+	} );
+
+	describe( '#requesting()', () => {
+		test( 'should correctly set boolean flag to true for query key', () => {
+			const testQuery = 'testQueryKey';
+			const state = requesting( null, {
+				type: INLINE_HELP_SEARCH_REQUEST,
+				searchQuery: testQuery,
+			} );
+
+			expect( state ).to.eql( {
+				[ testQuery ]: true,
+			} );
+		} );
+
+		test( 'should correctly set boolean flag to false for query key on success', () => {
+			const testQuery = 'testQueryKey';
+			const original = deepFreeze( { [ testQuery ]: true } );
+			const state = requesting( original, {
+				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+				searchQuery: testQuery,
+			} );
+
+			expect( state ).to.eql( {
+				[ testQuery ]: false,
+			} );
+		} );
+
+		test( 'should correctly set boolean flag to false for query key on failure', () => {
+			const testQuery = 'testQueryKey';
+			const original = deepFreeze( { [ testQuery ]: true } );
+			const state = requesting( original, {
+				type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
+				searchQuery: testQuery,
+			} );
+
+			expect( state ).to.eql( {
+				[ testQuery ]: false,
 			} );
 		} );
 	} );
