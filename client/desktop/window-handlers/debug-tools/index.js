@@ -1,5 +1,3 @@
-'use strict';
-
 const { ipcMain: ipc } = require( 'electron' );
 
 module.exports = function ( mainWindow ) {

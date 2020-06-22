@@ -1,4 +1,3 @@
-'use strict';
 // Note: This is used by env.js and so do not require( 'debug' ) in the global context otherwise it prevents env.js setting debug up
 
 /**

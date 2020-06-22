@@ -1,5 +1,3 @@
-'use strict';
-
 const ipcHandler = require( './ipc-handler' );
 
 module.exports = function () {
