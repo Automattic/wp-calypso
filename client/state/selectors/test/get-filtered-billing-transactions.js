@@ -163,16 +163,14 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 					},
 				],
 			},
-		},
-		ui: {
-			billingTransactions: {},
+			ui: {},
 		},
 	};
 
 	describe( 'date filter', () => {
 		test( 'returns a page from all transactions when filtering by newest', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				date: { month: null, operator: null },
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
@@ -185,7 +183,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'returns transactions filtered by month', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				date: { month: '2018-03', operator: 'equal' },
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
@@ -198,7 +196,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'returns transactions before the month set in the filter', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				date: { month: '2017-12', operator: 'before' },
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
@@ -221,7 +219,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'returns transactions filtered by app name', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				app: 'Store Services',
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
@@ -245,7 +243,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'query matches a field in the root transaction object', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				query: 'mastercard',
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
@@ -258,7 +256,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'query matches date of a transaction', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				query: 'may 1',
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
@@ -271,7 +269,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'query matches a field in the transaction items array', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				query: '$3.50',
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
@@ -289,7 +287,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 	describe( 'filter combinations', () => {
 		test( 'date and app filters', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				date: { month: '2018-03', operator: 'equal' },
 				app: 'Store Services',
 			};
@@ -304,7 +302,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'app and query filters', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				app: 'Store Services',
 				query: '$3.50',
 			};
@@ -320,7 +318,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'date and query filters', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				date: { month: '2018-05', operator: 'equal' },
 				query: '$3.50',
 			};
@@ -333,7 +331,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 		test( 'app, date and query filters', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				date: { month: '2018-03', operator: 'equal' },
 				query: 'visa',
 				app: 'WordPress.com',
@@ -350,7 +348,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 	describe( 'no results', () => {
 		test( 'should return all expected meta fields including an empty transactions array', () => {
 			const testState = cloneDeep( state );
-			testState.ui.billingTransactions.past = {
+			testState.billingTransactions.ui.past = {
 				date: { month: '2019-01', operator: 'equal' },
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );

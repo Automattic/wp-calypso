@@ -17,7 +17,6 @@ import { reducer as httpData } from 'state/data-layer/http-data';
 import accountRecovery from './account-recovery/reducer';
 import activityLog from './activity-log/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
-import billingTransactions from './billing-transactions/reducer';
 import connectedApplications from './connected-applications/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
@@ -85,7 +84,6 @@ const reducers = {
 	accountRecovery,
 	activityLog,
 	atomicTransfer,
-	billingTransactions,
 	connectedApplications,
 	currentUser,
 	dataRequests,

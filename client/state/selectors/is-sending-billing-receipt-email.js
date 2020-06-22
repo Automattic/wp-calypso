@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/billing-transactions/init';
 
 /**
  * Returns true if we are currently making a request to send a certain receipt email. False otherwise.
