@@ -21,12 +21,13 @@ export default function () {
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
-		page( '/purchase-product/:type(jetpack_search)/:interval(yearly|monthly)?', ( { path } ) =>
-			page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
+		page(
+			'/purchase-product/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
+			( { path } ) => page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
 		);
 	} else {
 		page(
-			'/purchase-product/:type(jetpack_search)/:interval(yearly|monthly)?',
+			'/purchase-product/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
 			controller.persistMobileAppFlow,
 			controller.setMasterbar,
 			controller.purchase,
