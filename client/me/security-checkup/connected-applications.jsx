@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import getConnectedApplications from 'state/selectors/get-connected-applications';
-import { getOKIcon, getWarningIcon } from './icons.js';
 import QueryConnectedApplications from 'components/data/query-connected-applications';
 import SecurityCheckupNavigationItem from './navigation-item';
 
@@ -22,11 +21,10 @@ class SecurityCheckupConnectedApplications extends React.Component {
 
 	renderConnectedApplications() {
 		const { connectedApps, translate } = this.props;
-		let connectedAppsDescription, icon;
+		let connectedAppsDescription;
 
 		if ( ! connectedApps.length ) {
 			connectedAppsDescription = translate( 'You do not have any connected applications.' );
-			icon = getOKIcon();
 		} else {
 			connectedAppsDescription = translate(
 				'You currently have %(numberOfApps)d connected application.',
@@ -38,13 +36,13 @@ class SecurityCheckupConnectedApplications extends React.Component {
 					},
 				}
 			);
-			icon = getWarningIcon();
 		}
 
 		return (
 			<SecurityCheckupNavigationItem
 				path={ '/me/security/connected-applications' }
-				materialIcon={ icon }
+				materialIcon="power"
+				materialIconStyle="filled"
 				text={ translate( 'Connected Apps' ) }
 				description={ connectedAppsDescription }
 			/>

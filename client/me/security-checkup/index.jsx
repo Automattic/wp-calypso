@@ -8,20 +8,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ReauthRequired from 'me/reauth-required';
+import SectionHeader from 'components/section-header';
 import SecurityCheckupAccountEmail from './account-email';
 import SecurityCheckupAccountRecoveryEmail from './account-recovery-email';
 import SecurityCheckupAccountRecoveryPhone from './account-recovery-phone';
 import SecurityCheckupConnectedApplications from './connected-applications';
+import SecurityCheckupPassword from './password';
 import SecurityCheckupSocialLogins from './social-logins';
 import SecurityCheckupTwoFactorAuthentication from './two-factor-authentication';
 import SecurityCheckupTwoFactorBackupCodes from './two-factor-backup-codes';
-import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import VerticalNav from 'components/vertical-nav';
 
@@ -37,42 +38,34 @@ class SecurityCheckupComponent extends React.Component {
 		userSettings: PropTypes.object,
 	};
 
-	renderTitleCard() {
-		const { translate } = this.props;
-		return (
-			<Card compact={ true } className="security-checkup__title-card">
-				<h2>{ translate( 'Security Checkup' ) }</h2>
-				<div className="security-checkup__title-text">
-					{ translate(
-						'Please review this summary of your account security and recovery settings'
-					) }
-				</div>
-			</Card>
-		);
-	}
-
 	render() {
 		const { path, translate } = this.props;
 
 		return (
 			<Main className="security security-checkup">
-				<PageViewTracker path="/me/security/security-checkup" title="Me > Security Checkup" />
+				<PageViewTracker path={ path } title="Me > Security Checkup" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
 
-				<DocumentHead title={ translate( 'Security Checkup' ) } />
+				<DocumentHead title={ translate( 'Security' ) } />
 
-				<SecuritySectionNav path={ path } />
+				<FormattedHeader headerText={ translate( 'Security' ) } align="left" />
 
-				{ this.renderTitleCard() }
+				<SectionHeader label={ translate( 'Security Checklist' ) } />
+
 				<VerticalNav>
+					<SecurityCheckupPassword />
 					<SecurityCheckupAccountEmail />
 					<SecurityCheckupTwoFactorAuthentication />
 					<SecurityCheckupTwoFactorBackupCodes />
 					<SecurityCheckupAccountRecoveryEmail />
 					<SecurityCheckupAccountRecoveryPhone />
-					<SecurityCheckupSocialLogins />
+				</VerticalNav>
+
+				<SectionHeader label={ translate( 'Connections' ) } className="security-checkup__info" />
+				<VerticalNav className="security-checkup__info-nav">
 					<SecurityCheckupConnectedApplications />
+					<SecurityCheckupSocialLogins />
 				</VerticalNav>
 			</Main>
 		);

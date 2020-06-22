@@ -79,6 +79,7 @@ class MeSidebar extends React.Component {
 			'/me': 'profile',
 			'/me/security/account-recovery': 'security',
 			'/me/security/connected-applications': 'security',
+			'/me/security/password': 'security',
 			'/me/security/social-login': 'security',
 			'/me/security/two-step': 'security',
 			'me/privacy': 'privacy',

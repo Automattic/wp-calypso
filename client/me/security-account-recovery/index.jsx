@@ -10,7 +10,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
+import config from 'config';
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
@@ -58,7 +60,14 @@ const SecurityAccountRecovery = ( props ) => (
 
 		<MeSidebarNavigation />
 
-		<SecuritySectionNav path={ props.path } />
+		{ ! config.isEnabled( 'security/security-checkup' ) && (
+			<SecuritySectionNav path={ props.path } />
+		) }
+		{ config.isEnabled( 'security/security-checkup' ) && (
+			<HeaderCake backText={ props.translate( 'Back' ) } backHref="/me/security">
+				{ props.translate( 'Account Recovery' ) }
+			</HeaderCake>
+		) }
 
 		<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
