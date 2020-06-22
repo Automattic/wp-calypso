@@ -57,6 +57,7 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 
 const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -116,7 +117,7 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
-const outputDir = path.resolve( isDesktop ? './desktop' : '.' );
+const outputDir = path.resolve( isDesktopMonorepo ? './desktop' : '.' );
 
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware serves assets from a hard-coded publicPath.
@@ -264,7 +265,7 @@ const webpackConfig = {
 		} ),
 		new AssetsWriter( {
 			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
-			path: outputDir,
+			path: path.join( outputDir, 'client', 'server', 'bundler' ),
 			assetExtraPath: extraPath,
 		} ),
 		new DuplicatePackageCheckerPlugin(),

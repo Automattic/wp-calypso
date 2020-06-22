@@ -128,7 +128,7 @@ function getBuildTargetFromRequest( request ) {
 	return target === 'fallback' ? null : target;
 }
 
-const ASSETS_PATH = path.resolve( __dirname, '../../..' );
+const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );
 function getAssetsPath( target ) {
 	const result = path.join(
 		ASSETS_PATH,
