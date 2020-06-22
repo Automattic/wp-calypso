@@ -27,7 +27,7 @@ export const getDesignImageUrl = ( design: Design ) => {
 
 	const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
 	const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
-	const previewUrl = addQueryArgs( `${ designsEndpoint }${ design.theme }/${ design.template }`, {
+	const previewUrl = addQueryArgs( `${ designsEndpoint }${ encodeURIComponent(design.theme) }/${ encodeURIComponent(design.template) }`, {
 		font_headings: design.fonts.headings,
 		font_base: design.fonts.base,
 	} );
