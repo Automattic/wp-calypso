@@ -1,11 +1,21 @@
 /**
+ * External dependencies
+ */
+import { toPairs } from 'lodash';
+
+/**
  * Internal dependencies
  */
 
 import debug from 'debug';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST, MEDIA_ITEM_UPDATE } from 'state/action-types';
+import {
+	MEDIA_REQUEST,
+	MEDIA_ITEM_REQUEST,
+	MEDIA_ITEM_UPDATE,
+	MEDIA_ITEM_EDIT,
+} from 'state/action-types';
 import {
 	failMediaRequest,
 	failMediaItemRequest,
@@ -50,6 +60,23 @@ export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 
 export const updateMediaError = ( { siteId }, error ) => (/* dispatch, getState */) => {
 	dispatchFluxUpdateMediaItemError( siteId, error );
+};
+
+export const editMedia = ( action ) => {
+	const { siteId, item } = action;
+	const { ID: mediaId, ...rest } = item;
+
+	return [
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/media/${ mediaId }/edit`,
+				apiVersion: '1.1',
+				formData: toPairs( rest ),
+			},
+			action
+		),
+	];
 };
 
 export function requestMedia( action ) {
@@ -122,6 +149,14 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 	[ MEDIA_ITEM_UPDATE ]: [
 		dispatchRequest( {
 			fetch: updateMedia,
+			onSuccess: updateMediaSuccess,
+			onError: updateMediaError,
+		} ),
+	],
+
+	[ MEDIA_ITEM_EDIT ]: [
+		dispatchRequest( {
+			fetch: editMedia,
 			onSuccess: updateMediaSuccess,
 			onError: updateMediaError,
 		} ),

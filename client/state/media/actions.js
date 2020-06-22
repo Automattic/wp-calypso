@@ -25,10 +25,12 @@ import {
 	MEDIA_REQUESTING,
 	MEDIA_SOURCE_CHANGE,
 	MEDIA_ITEM_UPDATE,
+	MEDIA_ITEM_EDIT,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/media';
 import getMediaItem from 'state/selectors/get-media-item';
+import { createTransientMedia } from 'lib/media/utils';
 import { dispatchFluxUpdateMediaItem } from './actions/utils';
 
 /**
@@ -202,27 +204,50 @@ export function createMediaItem( site, transientMedia ) {
 	};
 }
 
-export function updateMedia( action ) {
-	return ( dispatch, getState ) => {
-		const { siteId, item } = action;
-		const mediaId = item.ID;
+export const editMediaItem = ( siteId, item ) => ( {
+	type: MEDIA_ITEM_EDIT,
+	siteId,
+	item,
+} );
 
-		const originalMediaItem = getMediaItem( getState(), siteId, mediaId );
-		const updatedMediaItem = assign( {}, originalMediaItem, item );
+export const editMedia = ( action ) => ( dispatch, getState ) => {
+	const { siteId, item } = action;
 
-		dispatchFluxUpdateMediaItem( siteId, updatedMediaItem );
+	const transientMediaItem = createTransientMedia( item.media || item.media_url );
 
-		dispatch( updateMediaItem( action.siteId, updatedMediaItem ) );
-	};
-}
+	if ( ! transientMediaItem ) {
+		return;
+	}
 
-export function updateMediaItem( siteId, item ) {
-	return {
-		type: MEDIA_ITEM_UPDATE,
-		siteId,
-		item,
-	};
-}
+	const mediaId = item.ID;
+	const originalMediaItem = getMediaItem( getState(), siteId, mediaId );
+	const editedMediaItem = assign( {}, originalMediaItem, transientMediaItem, {
+		ID: mediaId,
+		isDirty: true,
+	} );
+
+	dispatchFluxUpdateMediaItem( siteId, editedMediaItem );
+
+	dispatch( editMediaItem( action.siteId, item ) );
+};
+
+export const updateMediaItem = ( siteId, item ) => ( {
+	type: MEDIA_ITEM_UPDATE,
+	siteId,
+	item,
+} );
+
+export const updateMedia = ( action ) => ( dispatch, getState ) => {
+	const { siteId, item } = action;
+	const mediaId = item.ID;
+
+	const originalMediaItem = getMediaItem( getState(), siteId, mediaId );
+	const updatedMediaItem = assign( {}, originalMediaItem, item );
+
+	dispatchFluxUpdateMediaItem( siteId, updatedMediaItem );
+
+	dispatch( updateMediaItem( action.siteId, updatedMediaItem ) );
+};
 
 /**
  * Returns an action object used in signalling that media item(s) for the site
