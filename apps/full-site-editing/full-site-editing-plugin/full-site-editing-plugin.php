@@ -221,13 +221,14 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scr
  * Load Blog Posts block.
  */
 function load_blog_posts_block() {
-	$slug          = 'newspack-blocks/newspack-blocks.php';
+	// Use regex instead of static slug in order to match plugin installation also from github, where slug may contain (HASH|branch-name).
+	$slug_regex    = '/newspack-blocks(-[A-Za-z0-9-]+)?\/newspack-blocks\.php/';
 	$disable_block = (
 		( defined( 'WP_CLI' ) && WP_CLI ) ||
 		/* phpcs:ignore WordPress.Security.NonceVerification */
 		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && $slug === $_GET['plugin'] ) ||
-		in_array( $slug, (array) get_option( 'active_plugins', array() ), true ) ||
-		in_array( $slug, (array) get_site_option( 'active_sitewide_plugins', array() ), true )
+		preg_grep( $slug_regex, (array) get_option( 'active_plugins' ) ) ||
+		preg_grep( $slug_regex, (array) get_option( 'active_sitewide_plugins' ) )
 	);
 
 	/**
