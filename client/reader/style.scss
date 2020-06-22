@@ -295,7 +295,7 @@
 }
 
 .tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 }
 
 /* Hide galleries in widgets until they've been resized to fit.

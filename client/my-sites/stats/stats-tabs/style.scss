@@ -107,7 +107,7 @@
 			letter-spacing: 0.1em;
 
 			@include breakpoint-deprecated( '>480px' ) {
-				font-size: 11px;
+				font-size: $font-body-extra-small;
 				line-height: inherit;
 				float: none;
 			}

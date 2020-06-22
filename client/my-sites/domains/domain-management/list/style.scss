@@ -53,7 +53,7 @@
 }
 
 .domain-management-list-item__meta {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 	min-height: 20px;
 	text-overflow: ellipsis;
@@ -126,7 +126,7 @@ input[type='radio'].domain-management-list-item__radio {
 	text-transform: uppercase;
 	color: var( --color-neutral-50 );
 	font-weight: 600;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	margin-top: 5px;

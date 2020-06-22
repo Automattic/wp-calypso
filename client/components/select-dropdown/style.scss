@@ -90,7 +90,7 @@ $compact-header-height: 35;
 		height: #{$compact-header-height}px;
 		line-height: #{$compact-header-height - 3}px;
 		padding-right: #{$side-margin / 2}px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		.count {
 			border-width: 0;
@@ -279,7 +279,7 @@ $compact-header-height: 35;
 	line-height: 20px;
 
 	label {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 0 #{$side-margin}px;
 	}
 }

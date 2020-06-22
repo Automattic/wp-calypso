@@ -48,7 +48,7 @@
 
 .ads__earnings-breakdown-label {
 	color: var( --color-neutral-60 );
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 	letter-spacing: 0.1em;
 	line-height: 1.6;
 	text-transform: uppercase;
@@ -108,7 +108,7 @@
 	border: 1px solid var( --color-neutral-0 );
 	border-left: none;
 	border-right: none;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 50px;
 	justify-content: center;
 	text-transform: uppercase;
@@ -121,7 +121,7 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		&:first-child, &:last-child {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 }

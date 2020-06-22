@@ -26,7 +26,7 @@
 	// List item height shorter on 2-column modules
 	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			line-height: 28px;
 		}
 	}
@@ -94,7 +94,7 @@
 			line-height: 28px;
 
 			span {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				// Always let child elements inherit line heights
 				line-height: inherit;
 			}

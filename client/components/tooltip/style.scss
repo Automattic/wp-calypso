@@ -124,7 +124,7 @@
 		border-radius: 2px;
 		color: var( --color-text-inverted );
 		background: var( --color-neutral-60 );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 6px 10px;
 		text-align: left;
 	}
@@ -153,8 +153,8 @@
 		padding: 0;
 
 		li {
-			font-size: 11px;
-			font-weight: 100;
+			font-size: $font-body-extra-small;
+			font-weight: 400;
 			border: 0;
 			padding: 2px 0;
 		}

@@ -280,7 +280,7 @@ $image-height: 47px;
 	.login__form-terms a:hover {
 		text-align: left;
 		color: var( --color-neutral-60 );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	.login__social {
@@ -314,7 +314,7 @@ $image-height: 47px;
 		.text-control__label,
 		.components-base-control__label {
 			color: var( --color-neutral-50 );
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: normal;
 		}
 

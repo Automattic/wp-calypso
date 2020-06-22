@@ -81,7 +81,7 @@
 
 .billing-history__transaction-tax-amount {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	white-space: nowrap;
 }
 
@@ -122,7 +122,7 @@
 	small {
 		color: var( --color-text-subtle );
 		display: block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		font-style: italic;
 
 		@include breakpoint-deprecated( '660px-800px' ) {
@@ -138,7 +138,7 @@
 }
 
 .billing-history__transaction-links {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 4px 0 0;
 
 	a {
@@ -237,7 +237,7 @@ textarea.billing-history__billing-details-editable {
 		strong {
 			color: var( --color-neutral-50 );
 			display: block;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: 600;
 			margin: 0 5px 0 0;
 			text-transform: uppercase;
@@ -273,7 +273,7 @@ textarea.billing-history__billing-details-editable {
 		th {
 			border-bottom: 2px solid var( --color-border-subtle );
 			color: var( --color-text-subtle );
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: 400;
 			text-transform: uppercase;
 			width: auto;

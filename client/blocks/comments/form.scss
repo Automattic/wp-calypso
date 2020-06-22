@@ -62,7 +62,7 @@
 		top: 4px;
 		right: 16px;
 		padding: 4px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		font-weight: 600;
 		text-transform: uppercase;
 	color: var( --color-text-subtle );
@@ -84,7 +84,7 @@
 	}
 
 	.comments__cancel-reply {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		cursor: pointer;
 	}
 }

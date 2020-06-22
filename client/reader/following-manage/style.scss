@@ -33,7 +33,7 @@
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	padding: 2px 9px 6px 11px;
 	position: relative;
 	top: -1px;
@@ -100,7 +100,7 @@
 
 	.following-manage__subscriptions-sort .following-manage__sort-controls {
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		font-weight: normal;
 		padding-top: 8px;
 		width: 100%;

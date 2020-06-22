@@ -123,7 +123,7 @@
 }
 
 input.editor-media-modal-gallery__caption[type='text'] {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 
 	&:focus {
 		box-shadow: none;

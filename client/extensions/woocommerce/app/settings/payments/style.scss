@@ -89,7 +89,7 @@
 // PAYMENT-METHOD-ROW
 .payments__type-container {
 	p.payments__method-suggested {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		text-transform: uppercase;
 		color: var( --color-text-subtle );
 		display: none;
@@ -180,7 +180,7 @@
 		.payments__method-enable .form-label {
 			display: inline-block;
 			color: var( --color-neutral-light );
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 			font-weight: 400;
 			line-height: 16px;
 			margin-top: 6px;

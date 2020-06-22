@@ -209,7 +209,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		.text-control__label,
 		.components-base-control__label {
 			color: var( --color-neutral-50 );
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: normal;
 		}
 
@@ -301,7 +301,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		padding-bottom: 0;
 		margin-top: 16px;
 		p {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			color: var( --studio-gray-60 );
 		}
 
