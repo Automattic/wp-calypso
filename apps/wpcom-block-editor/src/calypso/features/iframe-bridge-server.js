@@ -824,6 +824,18 @@ function getCalypsoUrlInfo( calypsoPort ) {
 		}
 	);
 
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.editPostUrl',
+		'wpcom-block-editor/getSiteSlug',
+		( url, postId, postType ) => {
+			if ( origin && siteSlug && ( postType === 'page' || postType === 'post' ) ) {
+				return `${ origin }/block-editor/${ postType }/${ siteSlug }/${ postId }`;
+			}
+
+			return url;
+		}
+	);
+
 	// All links should open outside the iframe
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.linkTarget',

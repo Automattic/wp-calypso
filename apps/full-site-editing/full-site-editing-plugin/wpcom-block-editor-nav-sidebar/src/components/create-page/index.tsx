@@ -3,7 +3,6 @@
  */
 import { get } from 'lodash';
 import { Button } from '@wordpress/components';
-import React from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,7 +13,7 @@ import { addQueryArgs } from '@wordpress/url';
 import './style.scss';
 
 interface Props {
-	postType: any;
+	postType: { slug: string };
 }
 
 export default function CreatePage( { postType }: Props ) {
