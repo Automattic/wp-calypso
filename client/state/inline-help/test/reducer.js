@@ -17,7 +17,36 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+	INLINE_HELP_SELECT_RESULT,
+	INLINE_HELP_SELECT_NEXT_RESULT,
 } from 'state/action-types';
+
+const API_RESULT_FIXTURE = [
+	{
+		id: 1,
+		title: 'Some result',
+	},
+	{
+		id: 2,
+		title: 'Some other result',
+	},
+	{
+		id: 3,
+		title: 'Another result',
+	},
+	{
+		id: 4,
+		title: 'Yet another result',
+	},
+	{
+		id: 5,
+		title: 'Can you imagine more results?',
+	},
+	{
+		id: 6,
+		title: 'Surely, not another result?',
+	},
+];
 
 describe( 'reducer', () => {
 	describe( '#popover()', () => {
@@ -123,46 +152,20 @@ describe( 'reducer', () => {
 		test( 'should correctly set search results keyed by search term', () => {
 			const firstQuery = 'testQuery';
 			const secondQuery = 'anotherQuery';
-			const results = [
-				{
-					id: 1,
-					title: 'Some result',
-				},
-				{
-					id: 2,
-					title: 'Some other result',
-				},
-				{
-					id: 3,
-					title: 'Another result',
-				},
-				{
-					id: 4,
-					title: 'Yet another result',
-				},
-				{
-					id: 5,
-					title: 'Can you imagine more results?',
-				},
-				{
-					id: 6,
-					title: 'Surely, not another result?',
-				},
-			];
 
 			let state = search(
 				{},
 				{
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery: firstQuery,
-					searchResults: results,
+					searchResults: API_RESULT_FIXTURE,
 				}
 			);
 
 			expect( state ).to.eql( {
 				selectedResult: -1,
 				items: {
-					[ firstQuery ]: results,
+					[ firstQuery ]: API_RESULT_FIXTURE,
 				},
 			} );
 
@@ -171,14 +174,14 @@ describe( 'reducer', () => {
 			state = search( state, {
 				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 				searchQuery: secondQuery,
-				searchResults: results,
+				searchResults: API_RESULT_FIXTURE,
 			} );
 
 			expect( state ).to.eql( {
 				selectedResult: -1,
 				items: {
-					[ firstQuery ]: results,
-					[ secondQuery ]: results,
+					[ firstQuery ]: API_RESULT_FIXTURE,
+					[ secondQuery ]: API_RESULT_FIXTURE,
 				},
 			} );
 		} );
@@ -200,6 +203,88 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				hasAPIResults: false,
+			} );
+		} );
+
+		describe( 'Search result selection', () => {
+			test( 'should correctly set index of selected result', () => {
+				let state = search( null, {
+					type: INLINE_HELP_SELECT_RESULT,
+					resultIndex: 2,
+				} );
+
+				expect( state ).to.eql( {
+					selectedResult: 2,
+				} );
+
+				state = search(
+					{},
+					{
+						type: INLINE_HELP_SELECT_RESULT,
+						resultIndex: 4,
+					}
+				);
+
+				expect( state ).to.eql( {
+					selectedResult: 4,
+				} );
+			} );
+
+			test( 'should correctly move between selected result indices of the current search query', () => {
+				const initialState = {
+					searchQuery: 'testResultSet',
+					selectedResult: -1,
+					items: {
+						testResultSet: API_RESULT_FIXTURE,
+					},
+				};
+				let state;
+
+				state = search( initialState, {
+					type: INLINE_HELP_SELECT_NEXT_RESULT,
+				} );
+
+				expect( state ).to.eql( {
+					searchQuery: 'testResultSet',
+					selectedResult: 0,
+					items: {
+						testResultSet: API_RESULT_FIXTURE,
+					},
+				} );
+
+				state = search( state, {
+					type: INLINE_HELP_SELECT_NEXT_RESULT,
+				} );
+
+				expect( state ).to.eql( {
+					searchQuery: 'testResultSet',
+					selectedResult: 1,
+					items: {
+						testResultSet: API_RESULT_FIXTURE,
+					},
+				} );
+			} );
+
+			test( 'should correctly reset the selected result index to 0 when end of search result items is reached', () => {
+				const initialState = {
+					searchQuery: 'testResultSet',
+					selectedResult: 5,
+					items: {
+						testResultSet: API_RESULT_FIXTURE,
+					},
+				};
+
+				const state = search( initialState, {
+					type: INLINE_HELP_SELECT_NEXT_RESULT,
+				} );
+
+				expect( state ).to.eql( {
+					searchQuery: 'testResultSet',
+					selectedResult: 0,
+					items: {
+						testResultSet: API_RESULT_FIXTURE,
+					},
+				} );
 			} );
 		} );
 	} );
