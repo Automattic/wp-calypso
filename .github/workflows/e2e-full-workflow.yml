@@ -23,8 +23,8 @@ jobs:
             v3-yarn-modules-{{ hashFiles('**/.nvmrc') }}
       - name: Install yarn deps
         env:
-          DETECT_CHROMEDRIVER_VERSION: true
-        run: yarn install --frozen-lockfile
+          DETECT_CHROMEDRIVER_VERSION: false
+        run: CHROMEDRIVER_FILEPATH=$CHROMEWEBDRIVER/chromedriver yarn install --frozen-lockfile
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
@@ -38,11 +38,11 @@ jobs:
         run: ./test/e2e/scripts/wait-for-running-branch.sh
   e2e-full-suite:
     name: e2e Full Suite
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     needs: wait-for-calypso-live
-    container: circleci/node:12.18.0-browsers
     env:
-      DETECT_CHROMEDRIVER_VERSION: true
+      DETECT_CHROMEDRIVER_VERSION: false
+      CHROMEDRIVER_FILEPATH: $CHROMEWEBDRIVER/chromedriver
     strategy:
       fail-fast: false
       matrix:
