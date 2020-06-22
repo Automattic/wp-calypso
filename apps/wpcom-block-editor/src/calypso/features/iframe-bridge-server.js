@@ -17,6 +17,7 @@ import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
+import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editing/full-site-editing-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 
 /**
  * Internal dependencies
@@ -586,6 +587,10 @@ function handleCloseEditor( calypsoPort ) {
 		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
+	if ( isNavSidebarPresent() ) {
+		return;
+	}
+
 	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
 		render: function CloseWpcomBlockEditor() {
 			const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
@@ -622,6 +627,16 @@ function handleCloseEditor( calypsoPort ) {
 			);
 		},
 	} );
+}
+
+/**
+ * Uses presence of data store to detect whether the nav sidebar has been loaded.
+ * Could run into timing issues, but the nav sidebar's data store is currently
+ * loaded early enough that this works for our needs.
+ */
+function isNavSidebarPresent() {
+	const selectors = select( NAV_SIDEBAR_STORE_KEY );
+	return !! selectors;
 }
 
 /**
