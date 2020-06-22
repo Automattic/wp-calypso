@@ -59,6 +59,13 @@ export type WPCOMCartCouponItem = CheckoutCartItem & {
 	};
 };
 
+export type WPCOMCartCreditsItem = CheckoutCartItem & {
+	wpcom_meta: {
+		credits_integer: number;
+		credits_display: string;
+	};
+};
+
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem | null;

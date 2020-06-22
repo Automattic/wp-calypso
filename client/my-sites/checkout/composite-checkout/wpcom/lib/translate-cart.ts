@@ -13,6 +13,7 @@ import {
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
+	WPCOMCartCreditsItem,
 	CheckoutCartItem,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
@@ -76,7 +77,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const creditsLineItem: CheckoutCartItem = {
+	const creditsLineItem: WPCOMCartCreditsItem = {
 		id: 'credits',
 		label: String( translate( 'Credits' ) ),
 		type: 'credits',
@@ -86,6 +87,10 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 			displayValue: String(
 				translate( '- %(discountAmount)s', { args: { discountAmount: credits_display } } )
 			),
+		},
+		wpcom_meta: {
+			credits_integer,
+			credits_display,
 		},
 	};
 

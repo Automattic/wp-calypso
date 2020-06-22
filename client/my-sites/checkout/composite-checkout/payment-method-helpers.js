@@ -165,7 +165,7 @@ export function WordPressCreditsLabel( { credits } ) {
 		<React.Fragment>
 			<div>
 				{ translate( 'WordPress.com Credits: %(amount)s available', {
-					args: { amount: credits.amount.displayValue },
+					args: { amount: credits.wpcom_meta.credits_display },
 					comment: "The total value of credits on the user's account",
 				} ) }
 			</div>
