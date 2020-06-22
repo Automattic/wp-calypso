@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useLayoutEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useStore } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ jest.mock( 'react', () => ( {
 } ) );
 jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn(),
+	useStore: jest.fn(),
 } ) );
 jest.mock( '../lib', () => ( {
 	stopPerformanceTracking: jest.fn(),
@@ -32,6 +33,9 @@ describe( 'usePerfomranceTrackerStop hook', () => {
 		global.requestAnimationFrame = jest.fn( ( fn ) => fn() );
 		useLayoutEffect.mockImplementation( ( fn ) => fn() );
 		useSelector.mockImplementation( ( selector ) => selector() );
+		useStore.mockImplementation( () => ( {
+			getState: jest.fn( () => ( {} ) ),
+		} ) );
 	} );
 
 	afterEach( () => {
@@ -44,7 +48,7 @@ describe( 'usePerfomranceTrackerStop hook', () => {
 
 		usePerformanceTrackerStop();
 
-		expect( stopPerformanceTracking ).toHaveBeenCalledWith( 'pageName' );
+		expect( stopPerformanceTracking ).toHaveBeenCalledWith( 'pageName', expect.anything() );
 	} );
 
 	it( 'calls stop using useLayoutEffect and requestAnimationFrame', () => {

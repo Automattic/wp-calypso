@@ -15,24 +15,31 @@ const inFlightReporters: Map< string, Promise< ReportImpl > > = new Map();
  */
 export const start = async (
 	id: string,
-	{ fullPageLoad = true }: { fullPageLoad?: boolean } = {}
+	{
+		fullPageLoad = true,
+		collectors = [],
+	}: { fullPageLoad?: boolean; collectors?: Collector[] } = {}
 ) => {
 	// There is a report in progress for this key, ignore this second call.
 	if ( inFlightReporters.has( id ) ) return;
 
-	inFlightReporters.set(
-		id,
-		fullPageLoad ? ReportImpl.fromPageStart( id ) : ReportImpl.fromNow( id )
-	);
+	const report = fullPageLoad
+		? ReportImpl.fromPageStart( id, collectors )
+		: ReportImpl.fromNow( id, collectors );
+	inFlightReporters.set( id, report );
 };
 
 /**
  * Stops a report and sends it to the transporter.
  *
  * @param id id of the report to send, comes from `start()`
+ * @param collectors list of collectors to run
  * @returns `true` if the report was sent successfully, `false` otherwise
  */
-export const stop = async ( id: string ): Promise< boolean > => {
+export const stop = async (
+	id: string,
+	{ collectors = [] }: { collectors?: Collector[] } = {}
+): Promise< boolean > => {
 	const existingReport = inFlightReporters.get( id );
 
 	// There is no in progress report with the key, fail silently to avoid messing with the rendering
@@ -43,7 +50,7 @@ export const stop = async ( id: string ): Promise< boolean > => {
 	// The report may be still starting, wait for it.
 	const startedReport = await existingReport;
 
-	const payload = await startedReport.stop();
+	const payload = await startedReport.stop( collectors );
 
 	return send( payload );
 };

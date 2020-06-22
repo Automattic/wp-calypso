@@ -31,12 +31,16 @@ describe( 'performance-tracker-start', () => {
 	it( 'measures fullPageLoad if the page is an initial navigation', () => {
 		performanceTrackerStart( 'pageName' )( { init: true }, jest.fn() );
 
-		expect( startPerformanceTracking ).toHaveBeenCalledWith( expect.anything(), true );
+		expect( startPerformanceTracking ).toHaveBeenCalledWith( expect.anything(), {
+			fullPageLoad: true,
+		} );
 	} );
 
 	it( 'does not measure fullPageLoad if the page is not an initial navigation', () => {
 		performanceTrackerStart( 'pageName' )( { init: false }, jest.fn() );
 
-		expect( startPerformanceTracking ).toHaveBeenCalledWith( expect.anything(), false );
+		expect( startPerformanceTracking ).toHaveBeenCalledWith( expect.anything(), {
+			fullPageLoad: false,
+		} );
 	} );
 } );
