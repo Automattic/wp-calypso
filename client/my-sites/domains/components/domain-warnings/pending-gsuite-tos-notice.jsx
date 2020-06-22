@@ -28,10 +28,12 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 		domains: PropTypes.array.isRequired,
 		section: PropTypes.string.isRequired,
 		isCompact: PropTypes.bool,
+		showDomainStatusNotice: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isCompact: false,
+		showDomainStatusNotice: false,
 	};
 
 	componentDidMount() {
@@ -106,6 +108,64 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 					{ this.props.translate( 'Finish Setup' ) }
 				</NoticeAction>
 			</Notice>
+		);
+	}
+
+	domainStatusNotice() {
+		const { domains, translate } = this.props;
+		const domainName = domains[ 0 ].name;
+		const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+		const emails = users.join( ', ' );
+
+		const button = (
+			<PendingGSuiteTosNoticeAction
+				domainName={ domainName }
+				isMultipleDomains={ false }
+				section={ this.props.section }
+				severity={ null }
+				siteSlug={ this.props.siteSlug }
+				user={ users[ 0 ] }
+				isCompact={ false }
+				cta={ translate( 'Get started' ) }
+			/>
+		);
+
+		if ( users.length === 1 ) {
+			return (
+				<>
+					<p>
+						{ translate(
+							'%(email)s is almost ready! Complete the setup to activate your new email address.',
+							{
+								args: {
+									email: emails,
+									comment: '%(email)s will be an email address',
+								},
+							}
+						) }
+					</p>
+					{ button }
+				</>
+			);
+		}
+
+		return (
+			<>
+				<p>
+					{ translate(
+						'%(emails)s are almost ready! Complete the setup to activate your new email addresses.',
+						{
+							args: {
+								emails: emails,
+							},
+							comment:
+								'%(emails)s will be a list of email addresses separated by a comma, ' +
+								'e.g. test@example.com, test2@example.com',
+						}
+					) }
+				</p>
+				{ button }
+			</>
 		);
 	}
 
@@ -188,6 +248,10 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 	}
 
 	render() {
+		if ( this.props.showDomainStatusNotice ) {
+			return this.domainStatusNotice();
+		}
+
 		if ( this.props.isCompact ) {
 			return this.compactNotice();
 		}

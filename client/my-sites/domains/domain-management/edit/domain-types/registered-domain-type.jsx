@@ -41,6 +41,8 @@ import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { WrapDomainStatusButtons } from './helpers';
 import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
+import { hasPendingGSuiteUsers } from 'lib/gsuite';
+import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 
 class RegisteredDomainType extends React.Component {
 	resolveStatus() {
@@ -106,6 +108,14 @@ class RegisteredDomainType extends React.Component {
 				statusText: translate( 'Activating' ),
 				statusClass: 'status-pending',
 				icon: 'cloud_upload',
+			};
+		}
+
+		if ( hasPendingGSuiteUsers( domain ) ) {
+			return {
+				statusText: translate( 'Action required' ),
+				statusClass: 'status-warning',
+				icon: 'info',
 			};
 		}
 
@@ -237,6 +247,31 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	renderPendingGSuiteTosNotice() {
+		const { domain, purchase, selectedSite } = this.props;
+
+		if (
+			! hasPendingGSuiteUsers( domain ) ||
+			domain.pendingTransfer ||
+			domain.expired ||
+			domain.isPendingIcannVerification ||
+			isExpiringSoon( domain, 30 ) ||
+			isRecentlyRegistered( domain ) ||
+			( purchase && shouldRenderExpiringCreditCard( purchase ) )
+		) {
+			return null;
+		}
+
+		return (
+			<PendingGSuiteTosNotice
+				siteSlug={ selectedSite.slug }
+				domains={ [ domain ] }
+				section="domain-management"
+				showDomainStatusNotice
+			/>
+		);
+	}
+
 	renderOutboundTransferInProgress() {
 		const { domain, selectedSite } = this.props;
 		return <OutboundTransferConfirmation domain={ domain } siteId={ selectedSite.ID } />;
@@ -321,11 +356,7 @@ class RegisteredDomainType extends React.Component {
 				domain={ this.props.domain }
 				position="registered-domain"
 				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [
-					'pendingGSuiteTosAcceptanceDomains',
-					'newTransfersWrongNS',
-					'pendingConsent',
-				] }
+				ruleWhiteList={ [ 'newTransfersWrongNS', 'pendingConsent' ] }
 			/>
 		);
 	}
@@ -378,6 +409,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 					{ this.renderOutboundTransferInProgress() }
+					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<div>

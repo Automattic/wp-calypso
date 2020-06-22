@@ -34,6 +34,8 @@ import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { WrapDomainStatusButtons } from './helpers';
+import { hasPendingGSuiteUsers } from 'lib/gsuite';
+import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 
 class MappedDomainType extends React.Component {
 	resolveStatus() {
@@ -67,6 +69,14 @@ class MappedDomainType extends React.Component {
 			return {
 				statusText: translate( 'Action required' ),
 				statusClass: 'status-error',
+				icon: 'info',
+			};
+		}
+
+		if ( hasPendingGSuiteUsers( domain ) ) {
+			return {
+				statusText: translate( 'Action required' ),
+				statusClass: 'status-warning',
 				icon: 'info',
 			};
 		}
@@ -142,6 +152,28 @@ class MappedDomainType extends React.Component {
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</React.Fragment>
+		);
+	}
+
+	renderPendingGSuiteTosNotice() {
+		const { domain, selectedSite } = this.props;
+
+		if (
+			! hasPendingGSuiteUsers( domain ) ||
+			( ( ! this.props.isJetpackSite || this.props.isSiteAutomatedTransfer ) &&
+				! domain.pointsToWpcom ) ||
+			isExpiringSoon( domain, 30 )
+		) {
+			return null;
+		}
+
+		return (
+			<PendingGSuiteTosNotice
+				siteSlug={ selectedSite.slug }
+				domains={ [ domain ] }
+				section="domain-management"
+				showDomainStatusNotice
+			/>
 		);
 	}
 
@@ -277,6 +309,7 @@ class MappedDomainType extends React.Component {
 						domain={ domain }
 					/>
 					{ this.renderSettingUpNameservers() }
+					{ this.renderPendingGSuiteTosNotice() }
 					<ExpiringSoon
 						selectedSite={ selectedSite }
 						purchase={ purchase }
