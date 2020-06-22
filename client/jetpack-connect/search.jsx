@@ -33,7 +33,7 @@ import searchSites from 'components/search-sites';
 import jetpackConnection from './jetpack-connection';
 
 import { JPC_PATH_REMOTE_INSTALL } from './constants';
-import { ALREADY_CONNECTED } from './connection-notice-types';
+import { ALREADY_CONNECTED, IS_DOT_COM_SEARCH } from './connection-notice-types';
 
 export class SearchPurchase extends Component {
 	static propTypes = {
@@ -93,9 +93,8 @@ export class SearchPurchase extends Component {
 		const { status, processJpSite } = this.props;
 		const { currentUrl } = this.state;
 
-		// here we will add status === IS_DOT_COM_SEARCH to the condition once
 		// we enable WP.com sites
-		if ( status === ALREADY_CONNECTED ) {
+		if ( status === IS_DOT_COM_SEARCH || status === ALREADY_CONNECTED ) {
 			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + 'jetpack_search' );
 		}
 
