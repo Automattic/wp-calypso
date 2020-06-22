@@ -219,6 +219,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				className="wpcom-business-at__header"
 				headerText={ content.header }
 				align="left"
+				brandFont
 			/>
 			<BlockingHoldNotice siteId={ siteId } product={ product } />
 			<TransferFailureNotice product={ product } transferStatus={ automatedTransferStatus } />
@@ -245,6 +246,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				headerText={ translate( 'Also included in the Business Plan' ) }
 				align="left"
 				isSecondary
+				brandFont
 			/>
 
 			<PromoCard
