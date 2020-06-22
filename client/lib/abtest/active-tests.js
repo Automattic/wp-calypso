@@ -177,10 +177,10 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	showJetpackSidebarSection: {
+	jetpackSidebarSection: {
 		datestamp: '20200622',
 		variations: {
-			variantShowJetpackSidebarSection: 0,
+			showJetpackSidebarSection: 0,
 			control: 100,
 		},
 		defaultVariation: 'control',
