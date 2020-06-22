@@ -952,11 +952,10 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
 			expect( clientCart.credits.amount.displayValue ).toBe( '- R$100' );
 		} );
-		it( 'does not show an original price for the credits item', function () {
-			const creditsItem = clientCart.items.find( ( item ) => {
-				return 'wordpress-com-credits' === item.type;
-			} );
-			expect( creditsItem.wpcom_meta.item_original_cost_display ).toBe( '' );
+		it( 'does not include the credits pseudo-line-item', function () {
+			expect(
+				clientCart.items.some( ( item ) => item.type === 'wordpress-com-credits' )
+			).toBeFalsy();
 		} );
 		it( 'has the expected coupon', function () {
 			expect( clientCart.couponCode ).toBe( 'fakecoupon' );

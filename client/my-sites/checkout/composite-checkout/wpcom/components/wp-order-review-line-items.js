@@ -419,17 +419,12 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [
-		'domain_redemption',
-		'tax',
-		'credits',
-		'wordpress-com-credits',
-	];
+	const itemTypesThatCannotBeDeleted = [ 'domain_redemption', 'tax', 'credits' ];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }
 
 function shouldLineItemBeShownWhenStepInactive( item ) {
-	const itemTypesToIgnore = [ 'tax', 'wordpress-com-credits' ];
+	const itemTypesToIgnore = [ 'tax' ];
 	return ! itemTypesToIgnore.includes( item.type );
 }
 

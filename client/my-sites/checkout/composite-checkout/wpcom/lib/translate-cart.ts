@@ -128,9 +128,9 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 	};
 
 	return {
-		items: products.map( translateReponseCartProductToWPCOMCartItem ),
+		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
-		coupon: coupon ? couponLineItem : null,
+		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
 		total: totalItem,
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
@@ -144,6 +144,14 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 			.filter( Boolean ),
 		couponCode: coupon,
 	};
+}
+
+function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartProduct ): boolean {
+	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.
+	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
+		return false;
+	}
+	return true;
 }
 
 // Convert a backend cart item to a checkout cart item
@@ -192,15 +200,9 @@ function translateReponseCartProductToWPCOMCartItem(
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
 
 	// for displaying crossed-out original price
-	let itemOriginalCostDisplay = item_original_cost_display || '';
-	let itemOriginalSubtotalDisplay = item_original_subtotal_display || '';
-	let itemSubtotalMonthlyCostDisplay = item_subtotal_monthly_cost_display || '';
-	// but for the credits item this is confusing and unnecessary
-	if ( 'wordpress-com-credits' === product_slug ) {
-		itemOriginalCostDisplay = '';
-		itemOriginalSubtotalDisplay = '';
-		itemSubtotalMonthlyCostDisplay = '';
-	}
+	const itemOriginalCostDisplay = item_original_cost_display || '';
+	const itemOriginalSubtotalDisplay = item_original_subtotal_display || '';
+	const itemSubtotalMonthlyCostDisplay = item_subtotal_monthly_cost_display || '';
 
 	return {
 		id: uuid,
