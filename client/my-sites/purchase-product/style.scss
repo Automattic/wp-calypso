@@ -1,0 +1,45 @@
+.purchase-product__site-url-entry-container {
+	margin: 0 auto;
+	max-width: 400px;
+
+	.formatted-header {
+		text-align: center;
+	}
+}
+
+.purchase-product__site-url-input-container,
+.example-components__site-url-input-container {
+	.jetpack-connect__site-address-container,
+	.example-components__site-address-container {
+		position: relative;
+
+		.gridicons-user,
+		.gridicons-globe {
+			position: absolute;
+			top: 8px;
+			left: 8px;
+			color: var( --color-neutral-10 );
+		}
+
+		.form-text-input {
+			padding-left: 40px;
+		}
+
+		.spinner {
+			position: absolute;
+			right: 8px;
+			top: 10px;
+		}
+
+		.sites-dropdown__wrapper {
+			width: 100%;
+      margin-top: 20px;
+		}
+	}
+
+	.button {
+		width: 100%;
+		margin-top: 16px;
+		word-wrap: nowrap;
+	}
+}
