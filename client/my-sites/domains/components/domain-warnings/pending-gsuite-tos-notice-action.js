@@ -52,7 +52,7 @@ PendingGSuiteTosNoticeAction.propTypes = {
 };
 
 PendingGSuiteTosNoticeAction.defaultProps = {
-	compact: true,
+	isCompact: true,
 };
 
 export default PendingGSuiteTosNoticeAction;
