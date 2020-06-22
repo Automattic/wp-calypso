@@ -11,6 +11,7 @@ import BackupsPage from './main';
 import UpsellSwitch from 'components/jetpack/upsell-switch';
 import BackupUpsell from './backup-upsell';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
+import BackupPlaceholder from 'components/jetpack/backup-placeholder';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
@@ -23,7 +24,9 @@ export function showUpsellIfNoBackup( context, next ) {
 			display={ context.primary }
 			getStateForSite={ getRewindState }
 			QueryComponent={ QueryRewindState }
-		/>
+		>
+			<BackupPlaceholder />
+		</UpsellSwitch>
 	);
 	next();
 }
