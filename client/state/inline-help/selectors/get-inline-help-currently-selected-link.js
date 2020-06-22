@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getInlineHelpCurrentlySelectedResult from 'state/selectors/get-inline-help-currently-selected-result';
+import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
 
 /**
  * Returns the link / href of the selected search result item

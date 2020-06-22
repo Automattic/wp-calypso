@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSearchQuery from 'state/selectors/get-search-query';
-import getInlineHelpSearchResultsForQuery from 'state/selectors/get-inline-help-search-results-for-query';
-import getSelectedResultIndex from 'state/selectors/get-selected-result-index';
+import getSearchQuery from 'state/inline-help/selectors/get-search-query';
+import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
+import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
 import getContextualHelpResults from 'state/selectors/get-contextual-help-results';
 
 /**
