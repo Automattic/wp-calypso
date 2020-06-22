@@ -218,13 +218,13 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			// Need to refresh the site data.
 			dispatch( requestSite( siteId ) );
 		}
-	}, [ automatedTransferStatus, COMPLETE, dispatch, siteId ] );
+	}, [ automatedTransferStatus ] );
 
 	useEffect( () => {
 		if ( automatedTransferStatus === COMPLETE && ! siteSlug.includes( 'wordpress.com' ) ) {
 			page( `/${ product }/${ siteSlug }` );
 		}
-	}, [ automatedTransferStatus, COMPLETE, product, siteSlug ] );
+	}, [ automatedTransferStatus, siteSlug ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
