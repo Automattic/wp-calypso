@@ -16,6 +16,7 @@ import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
+	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -179,6 +180,26 @@ describe( 'reducer', () => {
 					[ firstQuery ]: results,
 					[ secondQuery ]: results,
 				},
+			} );
+		} );
+
+		test( 'should correctly set the boolean to indicate presence of results that are from the API', () => {
+			let state = search( null, {
+				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+				hasAPIResults: true,
+			} );
+
+			expect( state ).to.eql( {
+				hasAPIResults: true,
+			} );
+
+			state = search( state, {
+				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+				hasAPIResults: false,
+			} );
+
+			expect( state ).to.eql( {
+				hasAPIResults: false,
 			} );
 		} );
 	} );
