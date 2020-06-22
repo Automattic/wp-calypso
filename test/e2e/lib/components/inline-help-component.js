@@ -10,9 +10,6 @@ import assert from 'assert';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
-const searchInputSelector = By.css( '.inline-help__popover input[type="search"]' );
-
-
 class InlineHelpComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.inline-help' ) );
