@@ -7,25 +7,25 @@ import { keyframes } from '@emotion/core';
 import { useI18n } from '@automattic/react-i18n';
 
 export default function LoadingContent() {
-	const { __ } = useI18n();
+	const { __, isRTL } = useI18n();
 
 	return (
 		<LoadingContentWrapperUI>
 			<LoadingCard>
-				<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
-				<LoadingCopy />
-				<LoadingCopy />
+				<LoadingTitle isRTL={ isRTL }>{ __( 'Loading checkout' ) }</LoadingTitle>
+				<LoadingCopy isRTL={ isRTL } />
+				<LoadingCopy isRTL={ isRTL } />
 			</LoadingCard>
 			<LoadingCard>
-				<LoadingTitle />
-				<LoadingCopy />
-				<LoadingCopy />
+				<LoadingTitle isRTL={ isRTL } />
+				<LoadingCopy isRTL={ isRTL } />
+				<LoadingCopy isRTL={ isRTL } />
 			</LoadingCard>
 			<LoadingCard>
-				<LoadingTitle />
+				<LoadingTitle isRTL={ isRTL } />
 			</LoadingCard>
 			<LoadingCard>
-				<LoadingTitle />
+				<LoadingTitle isRTL={ isRTL } />
 			</LoadingCard>
 			<LoadingFooter />
 		</LoadingContentWrapperUI>
@@ -76,7 +76,7 @@ const LoadingTitle = styled.h1`
 	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	color: ${ ( props ) => props.theme.colors.borderColorLight };
 	width: 40%;
-	margin: 3px 0 0 35px;
+	margin: ${ ( props ) => ( props.isRTL ? '3px 35px 0 0' : '3px 0 0 35px' ) };
 	padding: 0;
 	position: relative;
 	animation: ${ pulse } 2s ease-in-out infinite;
@@ -86,7 +86,7 @@ const LoadingTitle = styled.h1`
 		content: '';
 		display: block;
 		position: absolute;
-		left: -35px;
+		${ ( props ) => ( props.isRTL ? 'right: -35px;' : 'left: -35px;' ) }
 		top: -3px;
 		width: 27px;
 		height: 27px;
@@ -100,7 +100,7 @@ const LoadingCopy = styled.p`
 	content: '';
 	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	margin: 8px 0 0 35px;
+	margin: ${ ( props ) => ( props.isRTL ? '8px 35px 0 0' : '8px 0 0 35px' ) };
 	padding: 0;
 	animation: ${ pulse } 2s ease-in-out infinite;
 `;

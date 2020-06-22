@@ -122,8 +122,12 @@ function DefaultCheckoutSteps() {
 }
 
 export function CheckoutSummaryArea( { children, className } ) {
+	const { isRTL } = useI18n();
 	return (
-		<CheckoutSummaryUI className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
+		<CheckoutSummaryUI
+			className={ joinClasses( [ className, 'checkout__summary-area' ] ) }
+			isRTL={ isRTL }
+		>
 			{ children }
 		</CheckoutSummaryUI>
 	);
@@ -156,12 +160,13 @@ export function CheckoutStepArea( { children, className } ) {
 		( error ) => onEvent( { type: 'SUBMIT_BUTTON_LOAD_ERROR', payload: error } ),
 		[ onEvent ]
 	);
+	const { isRTL } = useI18n();
 
 	return (
 		<CheckoutStepAreaUI className={ joinClasses( [ className, 'checkout__step-wrapper' ] ) }>
 			{ children }
 
-			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep } isRTL={ isRTL }>
 				<CheckoutErrorBoundary
 					errorMessage={ __( 'There was a problem with the submit button.' ) }
 					onError={ onSubmitButtonLoadError }
@@ -344,7 +349,7 @@ export function CheckoutStepBody( {
 	completeStepContent,
 	onError,
 } ) {
-	const { __ } = useI18n();
+	const { __, isRTL } = useI18n();
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
@@ -369,7 +374,11 @@ export function CheckoutStepBody( {
 					editButtonText={ editButtonText || __( 'Edit' ) }
 					editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 				/>
-				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
+				<StepContentUI
+					isVisible={ isStepActive }
+					className="checkout-steps__step-content"
+					isRTL={ isRTL }
+				>
 					{ activeStepContent }
 					{ goToNextStep && isStepActive && (
 						<CheckoutNextStepButton
@@ -394,6 +403,7 @@ export function CheckoutStepBody( {
 					<StepSummaryUI
 						isVisible={ ! isStepActive }
 						className="checkout-steps__step-complete-content"
+						isRTL={ isRTL }
 					>
 						{ completeStepContent }
 					</StepSummaryUI>
@@ -456,8 +466,8 @@ const CheckoutSummaryUI = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		margin-left: 24px;
-		margin-right: 0;
+		${ ( props ) => ( props.isRTL ? 'margin-left: 0;' : 'margin-left: 24px;' ) }
+		${ ( props ) => ( props.isRTL ? 'margin-right: 24px;' : 'margin-right: 0;' ) }
 		order: 2;
 		width: 328px;
 	}
@@ -489,7 +499,7 @@ const SubmitButtonWrapperUI = styled.div`
 	padding: 24px;
 	position: ${ ( props ) => ( props.isLastStepActive ? 'fixed' : 'relative' ) };
 	bottom: 0;
-	left: 0;
+	${ ( props ) => ( props.isRTL ? 'right: 0;' : 'left: 0;' ) }
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;
@@ -569,6 +579,7 @@ function CheckoutStepHeader( {
 } ) {
 	const { __ } = useI18n();
 	const shouldShowEditButton = !! onEdit;
+	const { isRTL } = useI18n();
 
 	return (
 		<StepHeader
@@ -579,7 +590,7 @@ function CheckoutStepHeader( {
 			<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
 				{ stepNumber || null }
 			</Stepper>
-			<StepTitle fullWidth={ ! shouldShowEditButton } isActive={ isActive }>
+			<StepTitle fullWidth={ ! shouldShowEditButton } isActive={ isActive } isRTL={ isRTL }>
 				{ title }
 			</StepTitle>
 			{ shouldShowEditButton && (
@@ -610,13 +621,17 @@ CheckoutStepHeader.propTypes = {
 function Stepper( { isComplete, isActive, className, children, id } ) {
 	// Prevent showing complete stepper when active
 	const isCompleteAndInactive = isActive ? false : isComplete;
+	const { isRTL } = useI18n();
 	return (
-		<StepNumberOuterWrapper className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }>
+		<StepNumberOuterWrapper
+			className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }
+			isRTL={ isRTL }
+		>
 			<StepNumberInnerWrapper isComplete={ isCompleteAndInactive }>
-				<StepNumber isComplete={ isCompleteAndInactive } isActive={ isActive }>
+				<StepNumber isComplete={ isCompleteAndInactive } isActive={ isActive } isRTL={ isRTL }>
 					{ children }
 				</StepNumber>
-				<StepNumberCompleted>
+				<StepNumberCompleted isRTL={ isRTL }>
 					<CheckIcon id={ id } />
 				</StepNumberCompleted>
 			</StepNumberInnerWrapper>
@@ -636,7 +651,10 @@ const StepTitle = styled.span`
 		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor };
 	font-weight: ${ ( props ) =>
 		props.isActive ? props.theme.weights.bold : props.theme.weights.normal };
-	margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
+	${ ( props ) =>
+		props.isRTL
+			? `margin-left: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };`
+			: `margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };` }
 	flex: ${ ( props ) => ( props.fullWidth ? '1' : 'inherit' ) };
 `;
 
@@ -652,7 +670,7 @@ const StepNumberOuterWrapper = styled.div`
 	position: relative;
 	width: 27px;
 	height: 27px;
-	margin-right: 8px;
+	${ ( props ) => ( props.isRTL ? 'margin-left: 8px;' : 'margin-right: 8px;' ) }
 `;
 
 const StepNumberInnerWrapper = styled.div`
@@ -675,7 +693,7 @@ const StepNumber = styled.div`
 	color: ${ getStepNumberForegroundColor };
 	position: absolute;
 	top: 0;
-	left: 0;
+	${ ( props ) => ( props.isRTL ? 'right: 0;' : 'left: 0;' ) }
 	backface-visibility: hidden;
 	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
@@ -724,14 +742,14 @@ function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
 const StepContentUI = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
-	padding-left: 35px;
+	${ ( props ) => ( props.isRTL ? 'padding-right: 35px;' : 'padding-left: 35px;' ) }
 `;
 
 const StepSummaryUI = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
-	padding-left: 35px;
+	${ ( props ) => ( props.isRTL ? 'padding-right: 35px;' : 'padding-left: 35px;' ) }
 `;
 
 function saveStepNumberToUrl( stepNumber ) {

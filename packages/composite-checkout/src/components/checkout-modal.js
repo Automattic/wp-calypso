@@ -24,7 +24,7 @@ export default function CheckoutModal( {
 	buttonCTA,
 	cancelButtonCTA,
 } ) {
-	const { __ } = useI18n();
+	const { __, isRTL } = useI18n();
 	useModalScreen( isVisible, closeModal );
 
 	if ( ! isVisible ) {
@@ -35,6 +35,7 @@ export default function CheckoutModal( {
 		<CheckoutModalWrapper
 			className={ joinClasses( [ className, 'checkout-modal' ] ) }
 			onClick={ () => handleCancelAction( cancelAction, closeModal ) }
+			isRTL={ isRTL }
 		>
 			<CheckoutModalContent className="checkout-modal__content" onClick={ preventClose }>
 				<CheckoutModalTitle className="checkout-modal__title">{ title }</CheckoutModalTitle>
@@ -95,7 +96,7 @@ const animateIn = keyframes`
 const CheckoutModalWrapper = styled.div`
 	position: fixed;
 	top: 0;
-	left: 0;
+	${ ( props ) => ( props.isRTL ? 'right: 0;' : 'left: 0;' ) }
 	background: ${ ( props ) => props.theme.colors.modalBackground };
 	width: 100%;
 	height: 100vh;

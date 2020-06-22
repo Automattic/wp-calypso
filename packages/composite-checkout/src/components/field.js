@@ -4,6 +4,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ export default function Field( {
 	autoComplete,
 	disabled,
 } ) {
+	const { isRTL } = useI18n();
 	const fieldOnChange = ( event ) => {
 		if ( onChange ) {
 			onChange( event.target.value );
@@ -61,6 +63,7 @@ export default function Field( {
 					isError={ isError }
 					autoComplete={ autoComplete }
 					disabled={ disabled }
+					isRTL={ isRTL }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -116,7 +119,10 @@ const Input = styled.input`
 		border: 1px solid
 			${ ( props ) =>
 				props.isError ? props.theme.colors.error : props.theme.colors.borderColor };
-		padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 11px 10px;
+		${ ( props ) =>
+			props.isRTL
+				? `padding: 13px 10px 11px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };`
+				: `padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 11px 10px;` }
 		line-height: 1.2;
 	}
 
