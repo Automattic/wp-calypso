@@ -5,12 +5,13 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
+import { updateMedia } from 'state/media/actions';
 
 class EditorMediaModalGalleryCaption extends React.Component {
 	static displayName = 'EditorMediaModalGalleryCaption';
@@ -52,7 +53,7 @@ class EditorMediaModalGalleryCaption extends React.Component {
 			return;
 		}
 
-		MediaActions.update( siteId, Object.assign( {}, item, { caption } ) );
+		this.props.updateMedia( { siteId, item: Object.assign( {}, item, { caption } ) } );
 	};
 
 	render() {
@@ -69,4 +70,4 @@ class EditorMediaModalGalleryCaption extends React.Component {
 	}
 }
 
-export default localize( EditorMediaModalGalleryCaption );
+export default localize( connect( null, { updateMedia } )( EditorMediaModalGalleryCaption ) );

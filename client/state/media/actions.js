@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { castArray } from 'lodash';
+import { castArray, assign } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,9 +24,12 @@ import {
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
 	MEDIA_SOURCE_CHANGE,
+	MEDIA_ITEM_UPDATE,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/media';
+import getMediaItem from 'state/selectors/get-media-item';
+import { dispatchFluxUpdateMediaItem } from './actions/utils';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site
@@ -196,6 +199,28 @@ export function createMediaItem( site, transientMedia ) {
 		type: MEDIA_ITEM_CREATE,
 		site,
 		transientMedia,
+	};
+}
+
+export function updateMedia( action ) {
+	return ( dispatch, getState ) => {
+		const { siteId, item } = action;
+		const mediaId = item.ID;
+
+		const originalMediaItem = getMediaItem( getState(), siteId, mediaId );
+		const updatedMediaItem = assign( {}, originalMediaItem, item );
+
+		dispatchFluxUpdateMediaItem( siteId, updatedMediaItem );
+
+		dispatch( updateMediaItem( action.siteId, updatedMediaItem ) );
+	};
+}
+
+export function updateMediaItem( siteId, item ) {
+	return {
+		type: MEDIA_ITEM_UPDATE,
+		siteId,
+		item,
 	};
 }
 

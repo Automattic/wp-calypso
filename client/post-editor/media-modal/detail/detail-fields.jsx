@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { debounce, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,12 +14,12 @@ import { localize } from 'i18n-calypso';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { bumpStat } from 'lib/analytics/mc';
 import { getMimePrefix, url } from 'lib/media/utils';
-import MediaActions from 'lib/media/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import TrackInputChanges from 'components/track-input-changes';
 import EditorMediaModalFieldset from '../fieldset';
+import { updateMedia } from 'state/media/actions';
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -67,7 +68,7 @@ class EditorMediaModalDetailFields extends Component {
 			return;
 		}
 
-		MediaActions.update( this.props.site.ID, this.state.modifiedItem );
+		this.props.updateMedia( { siteId: this.props.site.ID, item: this.state.modifiedItem } );
 	}
 
 	setFieldValue = ( { target } ) => {
@@ -162,4 +163,4 @@ class EditorMediaModalDetailFields extends Component {
 	}
 }
 
-export default localize( EditorMediaModalDetailFields );
+export default localize( connect( null, { updateMedia } )( EditorMediaModalDetailFields ) );
