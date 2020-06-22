@@ -132,22 +132,4 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 			} );
 		} );
 	} );
-
-	// describe( 'My Home support search card', function () {
-	// 	// before( async function () {
-	// 	// 	return await driverManager.ensureNotLoggedIn( driver );
-	// 	// } );
-	// 	step( 'Select the My Home page', async function () {
-	// 		// const loginFlow = new LoginFlow( driver );
-
-	// 		const sidebarComponent = await SidebarComponent.Expect( driver );
-	// 		// The "inline help" FAB sholuld not appear on the My Home
-	// 		// because there is already a support search "Card" on that
-	// 		// page. Therefore we select the "Themes" page for our tests.
-	// 		// await loginFlow.loginAndSelectMySite();
-	// 		await sidebarComponent.selectMyHome();
-
-	// 		return await driverHelper.isElementPresent( driver, By.css( '.card help-search' ) );
-	// 	} );
-	// } );
 } );
