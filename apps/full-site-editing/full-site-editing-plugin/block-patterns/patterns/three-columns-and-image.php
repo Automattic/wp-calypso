@@ -10,7 +10,7 @@ $markup = '
 <div class="wp-block-jetpack-layout-grid alignfull column1-desktop-grid__span-9 column1-desktop-grid__start-4 column1-desktop-grid__row-1 column1-tablet-grid__span-8 column1-tablet-grid__row-1 column1-mobile-grid__span-4 column1-mobile-grid__row-1">
 	<!-- wp:jetpack/layout-grid-column -->
 	<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
-		<!-- wp:paragraph {"customFontSize":50} -->
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":50}}} -->
 		<p style="font-size:50px"><strong>%1$s</strong></p>
 		<!-- /wp:paragraph -->
 	</div>
@@ -22,7 +22,7 @@ $markup = '
 <div class="wp-block-jetpack-layout-grid alignfull column1-desktop-grid__span-3 column1-desktop-grid__start-4 column1-desktop-grid__row-1 column2-desktop-grid__span-3 column2-desktop-grid__start-7 column2-desktop-grid__row-1 column3-desktop-grid__span-3 column3-desktop-grid__start-10 column3-desktop-grid__row-1 column1-tablet-grid__span-4 column1-tablet-grid__row-1 column2-tablet-grid__span-4 column2-tablet-grid__start-5 column2-tablet-grid__row-1 column3-tablet-grid__span-4 column3-tablet-grid__row-2 column1-mobile-grid__span-4 column1-mobile-grid__row-1 column2-mobile-grid__span-4 column2-mobile-grid__row-2 column3-mobile-grid__span-4 column3-mobile-grid__row-3">
 	<!-- wp:jetpack/layout-grid-column -->
 	<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
-		<!-- wp:paragraph {"customFontSize":14} -->
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":14}}} -->
 		<p style="font-size:14px">%2$s</p>
 		<!-- /wp:paragraph -->
 	</div>
@@ -30,7 +30,7 @@ $markup = '
 
 	<!-- wp:jetpack/layout-grid-column -->
 	<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
-		<!-- wp:paragraph {"customFontSize":14} -->
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":14}}} -->
 		<p style="font-size:14px">%3$s</p>
 		<!-- /wp:paragraph -->
 	</div>
@@ -38,7 +38,7 @@ $markup = '
 
 	<!-- wp:jetpack/layout-grid-column -->
 	<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
-		<!-- wp:paragraph {"customFontSize":14} -->
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":14}}} -->
 		<p style="font-size:14px">%4$s</p>
 		<!-- /wp:paragraph -->
 	</div>
