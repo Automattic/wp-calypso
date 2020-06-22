@@ -12,9 +12,7 @@ describe( 'isDropZoneVisible()', () => {
 	test( 'should return false as a default state', () => {
 		expect(
 			isDropZoneVisible( {
-				ui: {
-					dropZone: undefined,
-				},
+				dropZone: undefined,
 			} )
 		).to.be.false;
 	} );
@@ -23,11 +21,9 @@ describe( 'isDropZoneVisible()', () => {
 		expect(
 			isDropZoneVisible(
 				{
-					ui: {
-						dropZone: {
-							isVisible: {
-								myTestZone: 'myTest',
-							},
+					dropZone: {
+						isVisible: {
+							myTestZone: 'myTest',
 						},
 					},
 				},

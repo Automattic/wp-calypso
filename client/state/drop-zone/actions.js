@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-
 import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
+
+import 'state/drop-zone/init';
 
 /**
  * Fired when a DropZone gets shown
