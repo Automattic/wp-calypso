@@ -11,6 +11,11 @@ import PropTypes from 'prop-types';
 import P2StepWrapper from 'signup/p2-step-wrapper';
 import { Button } from '@automattic/components';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function P2LoginSignup( { flowName, stepName, positionInFlow } ) {
 	const translate = useTranslate();
 
@@ -25,7 +30,9 @@ function P2LoginSignup( { flowName, stepName, positionInFlow } ) {
 				<div className="p2-login-signup__site-part">
 					<h3 className="p2-login-signup__site-title">Automattic</h3>
 					<div className="p2-login-signup__blog-name">automatticwork.p2.blog</div>
-					<a href="#">Change details</a>
+					<a href="#" className="p2-login-signup__change-details-link">
+						{ translate( 'Change details' ) }
+					</a>
 				</div>
 				<div className="p2-login-signup__description">
 					{ translate(
@@ -34,7 +41,9 @@ function P2LoginSignup( { flowName, stepName, positionInFlow } ) {
 					) }
 				</div>
 				<div className="p2-login-signup__actions">
-					<Button primary>Log in with WordPress.com</Button>
+					<Button primary className="p2-login-signup__login-btn">
+						Log in with WordPress.com
+					</Button>
 					<Button>Sign up to WordPress.com</Button>
 				</div>
 			</div>
