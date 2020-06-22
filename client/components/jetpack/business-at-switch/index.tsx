@@ -62,7 +62,7 @@ const BusinessATSwitch = ( { UpsellComponent }: Props ): ReactElement => {
 	// We know the site is not AT as it's not Jetpack,
 	// so show the activation for Atomic plans.
 	if ( isATPlan ) {
-		return <WPCOMBusinessAT product="backup" />;
+		return <WPCOMBusinessAT />;
 	}
 
 	// Show the upsell if it's not an Atomic plan.
