@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import { abtest } from 'lib/abtest';
 import { addQueryArgs } from 'lib/url';
-import { isEnabled } from 'config';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 const backupBasePath = () => '/backup';
 export const backupPath = ( siteSlug?: string, query = {} ) => {
@@ -16,7 +16,10 @@ export const scanPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ scanBasePath() }/${ siteSlug }` : scanBasePath();
 
 const calypsoBasePath = () =>
-	isEnabled( 'jetpack/features-section' ) ? '/settings/jetpack' : '/settings/security';
+	abtest( 'jetpackSidebarSection' ) !== 'showJetpackSidebarSection'
+		? '/settings/jetpack'
+		: '/settings/security';
+
 const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : calypsoBasePath() );
 export const settingsPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ settingsBasePath() }/${ siteSlug }` : settingsBasePath();
