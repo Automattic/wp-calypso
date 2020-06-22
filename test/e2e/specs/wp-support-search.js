@@ -3,19 +3,17 @@
  */
 import config from 'config';
 import assert from 'assert';
-import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
  */
 import * as driverManager from '../lib/driver-manager.js';
-import * as driverHelper from '../lib/driver-helper.js';
 
 import LoginFlow from '../lib/flows/login-flow.js';
 import * as dataHelper from '../lib/data-helper';
 import InlineHelpComponent from '../lib/components/inline-help-component';
 import SupportSearchComponent from '../lib/components/support-search-component';
-import SidebarComponent from '../lib/components/sidebar-component.js';
+
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
