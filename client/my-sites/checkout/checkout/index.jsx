@@ -305,10 +305,11 @@ export class Checkout extends React.Component {
 		}
 
 		if (
-			( startsWith( this.props.product, 'jetpack_backup' ) ||
-				startsWith( this.props.product, 'jetpack_search' ) ||
+			( ( startsWith( this.props.product, 'jetpack_backup' ) ||
 				startsWith( this.props.product, 'jetpack_scan' ) ) &&
-			isJetpackNotAtomic
+				isJetpackNotAtomic ) ||
+			startsWith( this.props.product, 'jetpack_search' ) ||
+			startsWith( this.props.product, 'wpcom_search' )
 		) {
 			cartItem = jetpackProductItem( this.props.product );
 		}
