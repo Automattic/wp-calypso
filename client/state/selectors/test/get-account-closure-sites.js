@@ -27,7 +27,7 @@ describe( 'getAccountClosureSites()', () => {
 						name: 'WordPress.com Example Blog',
 						URL: 'http://example.com',
 						capabilities: {
-							manage_options: true,
+							activate_wordads: true,
 						},
 					},
 				},
@@ -51,7 +51,7 @@ describe( 'getAccountClosureSites()', () => {
 						name: 'WordPress.com Example Blog',
 						URL: 'http://example.com',
 						capabilities: {
-							manage_options: false,
+							activate_wordads: false,
 							publish_posts: true,
 						},
 					},
@@ -76,7 +76,7 @@ describe( 'getAccountClosureSites()', () => {
 						name: 'WordPress.com Example Blog',
 						URL: 'http://example.com',
 						capabilities: {
-							manage_options: true,
+							activate_wordads: true,
 						},
 					},
 				},
