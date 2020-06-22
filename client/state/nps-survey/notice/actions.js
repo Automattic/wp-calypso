@@ -8,6 +8,8 @@ import {
 	setNpsConciergeSessionAvailaibility,
 } from 'state/nps-survey/actions';
 
+import 'state/nps-survey/init';
+
 export function setNpsSurveyDialogShowing( isShowing ) {
 	return {
 		type: NPS_SURVEY_DIALOG_IS_SHOWING,
