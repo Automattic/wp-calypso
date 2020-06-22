@@ -73,7 +73,9 @@ class ThemesUpsellComponent extends Component {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const { price } = this.props;
-		const simplePaymentsName = isEnabled( 'earn/pay-with-paypal' ) ? 'Pay with PayPal' : 'Simple Payments';
+		const simplePaymentsName = isEnabled( 'earn/rename-payment-blocks' )
+			? 'Pay with PayPal'
+			: 'Simple Payments';
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell__main is-themes">
 				{ ! price && (
@@ -151,7 +153,7 @@ class ThemesUpsellComponent extends Component {
 							title={ 'Easily Accept Credit Card Payments with ' + simplePaymentsName }
 							description={
 								<span>
-									The <i>{ simplePaymentsName }</i> button lets you accept credit card payments right on
+									The <i>{ simplePaymentsName }</i> button lets you accept credit card payments your
 									your site. Whether you’re selling products or services, collecting membership
 									fees, or receiving donations, you’ll have a secure checkout process that you can
 									turn on with the click of a button.

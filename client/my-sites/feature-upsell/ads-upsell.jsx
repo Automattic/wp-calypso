@@ -195,7 +195,9 @@ class WordAdsUpsellComponent extends Component {
 					<div className="feature-upsell__features-list-item">
 						<Feature
 							icon={ <Gridicon icon="money" size={ 48 } /> }
-							title={ isEnabled( 'earn/pay-with-paypal' ) ? 'Pay with PayPal' : 'Simple Payments' }
+							title={
+								isEnabled( 'earn/rename-payment-blocks' ) ? 'Pay with PayPal' : 'Simple Payments'
+							}
 							description={
 								'Accept credit card payments on your site with the click of a button! Sell products, take donations, ' +
 								'sell tickets - add payment buttons to any page right from the WordPress editor'

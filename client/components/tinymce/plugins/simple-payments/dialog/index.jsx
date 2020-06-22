@@ -481,9 +481,9 @@ class SimplePaymentsDialog extends Component {
 							className="editor-simple-payments-modal__nudge-nudge"
 							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
 							description={
-								isEnabled( 'earn/pay-with-paypal' )
+								isEnabled( 'earn/rename-payment-blocks' )
 									? translate(
-											'Get Pay with PayPal button, advanced social media tools, your own domain, and more.'
+											'Get Pay with PayPal buttons, advanced social media tools, your own domain, and more.'
 									  )
 									: translate(
 											'Get simple payments, advanced social media tools, your own domain, and more.'
@@ -500,13 +500,13 @@ class SimplePaymentsDialog extends Component {
 						<a
 							className="empty-content__action button"
 							href={
-								isEnabled( 'earn/pay-with-paypal' )
-									? localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' )
+								isEnabled( 'earn/rename-payment-blocks' )
+									? localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' )
 									: localizeUrl( 'https://wordpress.com/support/simple-payments/' )
 							}
 						>
-							{ isEnabled( 'earn/pay-with-paypal' )
-								? translate( 'Learn more about Pay with PayPal buttons' )
+							{ isEnabled( 'earn/rename-payment-blocks' )
+								? translate( 'Learn more about Pay with PayPal' )
 								: translate( 'Learn more about Simple Payments' ) }
 						</a>
 					}
@@ -539,13 +539,13 @@ class SimplePaymentsDialog extends Component {
 						<a
 							className="empty-content__action button"
 							href={
-								isEnabled( 'earn/pay-with-paypal' )
-									? localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' )
+								isEnabled( 'earn/rename-payment-blocks' )
+									? localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' )
 									: localizeUrl( 'https://wordpress.com/support/simple-payments/' )
 							}
 						>
-							{ isEnabled( 'earn/pay-with-paypal' )
-								? translate( 'Learn more about Pay with PayPal buttons' )
+							{ isEnabled( 'earn/rename-payment-blocks' )
+								? translate( 'Learn more about Pay with PayPal' )
 								: translate( 'Learn more about Simple Payments' ) }
 						</a>
 					}

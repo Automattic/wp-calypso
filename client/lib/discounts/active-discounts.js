@@ -11,13 +11,13 @@ import {
 } from 'lib/plans/constants';
 import { isEnabled } from 'config';
 
-const simplePaymentsNoticeTextWPCOM = isEnabled( 'earn/pay-with-paypal' ) ?
-	'Upgrade to a Premium or Business plan today and start collecting payments with the Pay with PayPal button!' :
-	'Upgrade to a Premium or Business plan today and start collecting payments with the Simple Payments button!';
+const simplePaymentsNoticeTextWPCOM = isEnabled( 'earn/rename-payment-blocks' )
+	? 'Upgrade to a Premium or Business plan today and start collecting payments with the Pay with PayPal button!'
+	: 'Upgrade to a Premium or Business plan today and start collecting payments with the Simple Payments button!';
 
-const simplePaymentsNoticeTextJetpack = isEnabled( 'earn/pay-with-paypal' ) ?
-	'Upgrade to a Premium or Professional plan today and start collecting payments with the Pay with PayPal button!' :
-	'Upgrade to a Premium or Professional plan today and start collecting payments with the Simple Payments button!';
+const simplePaymentsNoticeTextJetpack = isEnabled( 'earn/rename-payment-blocks' )
+	? 'Upgrade to a Premium or Professional plan today and start collecting payments with the Pay with PayPal button!'
+	: 'Upgrade to a Premium or Professional plan today and start collecting payments with the Simple Payments button!';
 
 /**
  * No translate() used on some of these since we're launching those promotions just for the EN audience

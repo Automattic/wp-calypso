@@ -1208,8 +1208,8 @@ const getVideosForSection = () => ( {
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/V8UToJoSf4Q',
-			title: isEnabled( 'earn/pay-with-paypal' )
-				? translate( 'Add a Pay with PayPal Button' )
+			title: isEnabled( 'earn/rename-payment-blocks' )
+				? translate( 'Add a Pay with PayPal button' )
 				: translate( 'Add a Simple Payment Button' ),
 			description: translate(
 				'Find out how to add a payment button to your WordPress.com website.'
