@@ -93,7 +93,6 @@ class CalendarStep extends Component {
 						<ExternalLinkWithTracking
 							icon={ true }
 							href="https://wordpress.com/webinars/"
-							onClick={ () => {} }
 							tracksEventName="calypso_concierge_book_view_webinars"
 						>
 							{ translate( 'View webinars.' ) }
