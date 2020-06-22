@@ -16,7 +16,15 @@ import { Button } from '@automattic/components';
  */
 import './style.scss';
 
-function P2LoginSignup( { flowName, stepName, positionInFlow } ) {
+function P2LoginSignup( {
+	flowName,
+	stepName,
+	positionInFlow,
+	goToStep,
+	progress: {
+		'p2-site': { siteTitle, site },
+	},
+} ) {
 	const translate = useTranslate();
 
 	return (
@@ -28,8 +36,8 @@ function P2LoginSignup( { flowName, stepName, positionInFlow } ) {
 		>
 			<div className="p2-login-signup">
 				<div className="p2-login-signup__site-part">
-					<h3 className="p2-login-signup__site-title">Automattic</h3>
-					<div className="p2-login-signup__blog-name">automatticwork.p2.blog</div>
+					<h3 className="p2-login-signup__site-title">{ siteTitle }</h3>
+					<div className="p2-login-signup__blog-name">{ `${ site }.p2.blog` }</div>
 					<a href="#" className="p2-login-signup__change-details-link">
 						{ translate( 'Change details' ) }
 					</a>
