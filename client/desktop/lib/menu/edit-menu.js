@@ -4,34 +4,34 @@ module.exports = [
 	{
 		label: 'Undo',
 		accelerator: 'CmdOrCtrl+Z',
-		role: 'undo'
+		role: 'undo',
 	},
 	{
 		label: 'Redo',
 		accelerator: 'Shift+CmdOrCtrl+Z',
-		role: 'redo'
+		role: 'redo',
 	},
 	{
-		type: 'separator'
+		type: 'separator',
 	},
 	{
 		label: 'Cut',
 		accelerator: 'CmdOrCtrl+X',
-		role: 'cut'
+		role: 'cut',
 	},
 	{
 		label: 'Copy',
 		accelerator: 'CmdOrCtrl+C',
-		role: 'copy'
+		role: 'copy',
 	},
 	{
 		label: 'Paste',
 		accelerator: 'CmdOrCtrl+V',
-		role: 'paste'
+		role: 'paste',
 	},
 	{
 		label: 'Select All',
 		accelerator: 'CmdOrCtrl+A',
-		role: 'selectall'
-	}
+		role: 'selectall',
+	},
 ];

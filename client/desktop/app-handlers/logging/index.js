@@ -2,6 +2,6 @@
 
 const ipcHandler = require( './ipc-handler' );
 
-module.exports = function() {
+module.exports = function () {
 	ipcHandler.listen();
-}
+};

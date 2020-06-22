@@ -16,7 +16,9 @@ const config = require( './lib/config' );
 const appData = path.join( app.getPath( 'appData' ), config.appPathName );
 
 // Initialize log path prior to requiring any modules that log
-const logPath = process.env.WP_DEBUG_LOG ? process.env.WP_DEBUG_LOG : path.join( appData, 'logs', 'wpdesktop-main.log' );
+const logPath = process.env.WP_DEBUG_LOG
+	? process.env.WP_DEBUG_LOG
+	: path.join( appData, 'logs', 'wpdesktop-main.log' );
 makeDir.sync( path.dirname( logPath ) );
 state.setLogPath( logPath );
 
@@ -58,8 +60,13 @@ if ( Settings.getSetting( 'proxy-type' ) === '' ) {
 	log.info( 'Proxy: none' );
 	app.commandLine.appendSwitch( 'no-proxy-server' );
 } else if ( Settings.getSetting( 'proxy-type' ) === 'custom' ) {
-	log.info( 'Proxy: ' + Settings.getSetting( 'proxy-url' ) + ':' + Settings.getSetting( 'proxy-port' ) );
-	app.commandLine.appendSwitch( 'proxy-server', Settings.getSetting( 'proxy-url' ) + ':' + Settings.getSetting( 'proxy-port' ) );
+	log.info(
+		'Proxy: ' + Settings.getSetting( 'proxy-url' ) + ':' + Settings.getSetting( 'proxy-port' )
+	);
+	app.commandLine.appendSwitch(
+		'proxy-server',
+		Settings.getSetting( 'proxy-url' ) + ':' + Settings.getSetting( 'proxy-port' )
+	);
 
 	if ( Settings.getSetting( 'proxy-pac' ) !== '' ) {
 		log.info( 'Proxy PAC: ' + Settings.getSetting( 'proxy-pac' ) );

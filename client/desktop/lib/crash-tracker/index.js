@@ -32,16 +32,16 @@ function gatherData( errorType, errorData ) {
 	return Object.assign( {}, system.getVersionData(), {
 		time: parseInt( new Date().getTime() / 1000, 10 ),
 		type: errorType,
-		data: errorData
+		data: errorData,
 	} );
 }
 
 module.exports = {
-	isEnabled: function() {
+	isEnabled: function () {
 		return config.crash_reporter.tracker;
 	},
 
-	track: function( errorType, errorData, cb ) {
+	track: function ( errorType, errorData, cb ) {
 		if ( config.crash_reporter.tracker ) {
 			// Send to crash tracker
 			log.info( 'Sending crash report to ' + config.crash_reporter.url );
@@ -49,13 +49,13 @@ module.exports = {
 			request
 				.post( config.crash_reporter.url )
 				.send( gatherData( errorType, errorData ) )
-				.end( function( error, response ) {
+				.end( function ( error, response ) {
 					finished( error, response, cb );
 				} );
 		}
 	},
 
-	trackLog: function( cb ) {
+	trackLog: function ( cb ) {
 		const logFile = path.join( app.getPath( 'userData' ), config.debug.log_file );
 
 		log.info( 'Uploading log file: ' + logFile );
@@ -64,8 +64,8 @@ module.exports = {
 			.post( config.crash_reporter.url )
 			.send( gatherData( 'logfile', logFile ) )
 			.attach( 'log', logFile )
-			.end( function( error, response ) {
+			.end( function ( error, response ) {
 				finished( error, response, cb );
 			} );
-	}
+	},
 };

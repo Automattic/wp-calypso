@@ -41,12 +41,13 @@ function showErrorAndExit( error ) {
 	dialog.showErrorBox(
 		'WordPress.com ran into an error',
 		'Please restart the app and try again.' +
-		'\n\n' +
-		'If you continue to have issues, please contact us at help@wordpress.com and mention the error details below:' +
-		'\n\n' +
-		error.stack +
-		'\n\n' +
-		'System info: ' + JSON.stringify( system.getVersionData() )
+			'\n\n' +
+			'If you continue to have issues, please contact us at help@wordpress.com and mention the error details below:' +
+			'\n\n' +
+			error.stack +
+			'\n\n' +
+			'System info: ' +
+			JSON.stringify( system.getVersionData() )
 	);
 
 	exit();
@@ -70,16 +71,20 @@ function exceptionHandler( error ) {
 	log.error( error );
 
 	if ( crashTracker.isEnabled() ) {
-		crashTracker.track( 'exception', { name: error.name, message: error.message, stack: error.stack }, function() {
-			showErrorAndExit( error );
-		} );
+		crashTracker.track(
+			'exception',
+			{ name: error.name, message: error.message, stack: error.stack },
+			function () {
+				showErrorAndExit( error );
+			}
+		);
 	} else {
 		showErrorAndExit( error );
 	}
 }
 
-module.exports = function() {
-	app.on( 'ready', function() {
+module.exports = function () {
+	app.on( 'ready', function () {
 		isReady = true;
 	} );
 

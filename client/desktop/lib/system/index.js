@@ -44,23 +44,23 @@ function isFirstRun() {
 }
 
 module.exports = {
-	getDetails: function() {
+	getDetails: function () {
 		let details = {
 			pinned: isPinned(),
 			platform: Platform.getPlatformString(),
 			installed: isInstalled(),
-			firstRun: isFirstRun()
-		}
+			firstRun: isFirstRun(),
+		};
 
 		log.info( 'System details: ', details );
 		return details;
 	},
-	getVersionData: function() {
+	getVersionData: function () {
 		return {
 			platform: process.platform,
 			release: os.release(),
 			version: config.version,
 			build: config.build,
 		};
-	}
+	},
 };

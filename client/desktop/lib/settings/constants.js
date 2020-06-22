@@ -1,3 +1,3 @@
 module.exports = {
-	LAST_LOCATION: 'last-location'
-}
+	LAST_LOCATION: 'last-location',
+};

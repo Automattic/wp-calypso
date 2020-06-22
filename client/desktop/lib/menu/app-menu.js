@@ -21,105 +21,107 @@ const debugMenu = require( './debug-menu' );
  */
 const debugEnabled = Settings.getSettingGroup( Config.debug.enabled_by_default, 'debug' );
 
-module.exports = function( app, mainWindow ) {
+module.exports = function ( app, mainWindow ) {
 	let menuItems = [
 		{
 			label: 'Preferences...',
 			accelerator: 'CmdOrCtrl+,',
-			click: function() {
+			click: function () {
 				WindowManager.openPreferences();
-			}
+			},
 		},
 		{
-			type: 'separator'
+			type: 'separator',
 		},
 		{
 			label: 'Sign Out',
 			requiresUser: true,
 			enabled: false,
 			id: 'loggedin',
-			click: function() {
+			click: function () {
 				mainWindow.show();
 				ipc.signOut( mainWindow );
-			}
+			},
 		},
 		{
-			type: 'separator'
+			type: 'separator',
 		},
 		{
 			label: 'Quit',
 			accelerator: 'CmdOrCtrl+Q',
-			click: function() {
+			click: function () {
 				AppQuit.allowQuit();
 				app.quit();
-			}
-		}
+			},
+		},
 	];
 
 	if ( Config.debug ) {
-		menuItems.splice( 1, 0,
-			{
-				label: 'Debug Mode',
-				type: 'checkbox',
-				checked: debugEnabled,
-				click: function( menu ) {
-					Settings.saveSetting( 'debug', menu.checked );
+		menuItems.splice( 1, 0, {
+			label: 'Debug Mode',
+			type: 'checkbox',
+			checked: debugEnabled,
+			click: function ( menu ) {
+				Settings.saveSetting( 'debug', menu.checked );
 
-					dialog.showMessageBox( {
-						buttons: [ 'OK' ],
-						title: 'Restart',
-						message: 'Please restart the app for the change to have effect',
-						detail: "Sorry, we're unable to restart it for you right now"
-					} );
-				}
-			}
-		);
+				dialog.showMessageBox( {
+					buttons: [ 'OK' ],
+					title: 'Restart',
+					message: 'Please restart the app for the change to have effect',
+					detail: "Sorry, we're unable to restart it for you right now",
+				} );
+			},
+		} );
 
 		if ( platform.isOSX() === false ) {
-			menuItems.splice( 1, 0, debugMenu[0], debugMenu[1] );
+			menuItems.splice( 1, 0, debugMenu[ 0 ], debugMenu[ 1 ] );
 		}
 	}
 
 	if ( platform.isOSX() ) {
 		// Add an 'about' item to the start of the menu, as per OS X standards
-		menuItems.splice( 0, 0,
+		menuItems.splice(
+			0,
+			0,
 			{
 				label: 'About WordPress.com',
-				click: function() {
+				click: function () {
 					WindowManager.openAbout();
-				}
+				},
 			},
 			{
-				type: 'separator'
+				type: 'separator',
 			}
 		);
 
 		// Add the standard OS X app items just before the quit
-		menuItems.splice( menuItems.length - 1, 0,
+		menuItems.splice(
+			menuItems.length - 1,
+			0,
 			{
 				label: 'Services',
 				role: 'services',
-				submenu: []
+				submenu: [],
 			},
 			{
-				type: 'separator'
+				type: 'separator',
 			},
 			{
 				label: 'Hide WordPress.com',
 				accelerator: 'Command+H',
-				role: 'hide'
+				role: 'hide',
 			},
 			{
 				label: 'Hide Others',
 				accelerator: 'Command+Shift+H',
-				role: 'hideothers'
+				role: 'hideothers',
 			},
 			{
 				label: 'Show All',
-				role: 'unhide'
+				role: 'unhide',
 			},
 			{
-				type: 'separator'
+				type: 'separator',
 			}
 		);
 	}

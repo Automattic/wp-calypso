@@ -26,16 +26,15 @@ const ALWAYS_OPEN_IN_APP = [
 	'http://localhost',
 	'http://calypso.localhost:3000/*',
 	'https:/public-api.wordpress.com',
-	'https://wordpress\.com\/wp-login\.php',
+	'https://wordpress.com/wp-login.php',
 	'http://127.0.0.1:41050/*',
 ];
 
-const DONT_OPEN_IN_BROWSER = [
-	Config.server_url,
-	'https://public-api.wordpress.com/connect/'
-];
+const DONT_OPEN_IN_BROWSER = [ Config.server_url, 'https://public-api.wordpress.com/connect/' ];
 
-const domainAndPathSame = ( first, second ) => first.hostname === second.hostname && ( first.pathname === second.pathname || second.pathname === '/*' );
+const domainAndPathSame = ( first, second ) =>
+	first.hostname === second.hostname &&
+	( first.pathname === second.pathname || second.pathname === '/*' );
 
 function replaceInternalCalypsoUrl( url ) {
 	if ( url.hostname === Config.server_host ) {
@@ -48,10 +47,10 @@ function replaceInternalCalypsoUrl( url ) {
 	return url;
 }
 
-module.exports = function( mainWindow ) {
+module.exports = function ( mainWindow ) {
 	const webContents = mainWindow.webContents;
 
-	webContents.on( 'will-navigate', function( event, url ) {
+	webContents.on( 'will-navigate', function ( event, url ) {
 		const parsedUrl = new URL( url );
 
 		for ( let x = 0; x < ALWAYS_OPEN_IN_APP.length; x++ ) {
@@ -65,7 +64,7 @@ module.exports = function( mainWindow ) {
 		openInBrowser( event, url );
 	} );
 
-	webContents.on( 'new-window', function( event, url, frameName, disposition, options ) {
+	webContents.on( 'new-window', function ( event, url, frameName, disposition, options ) {
 		let parsedUrl = new URL( url );
 
 		for ( let x = 0; x < DONT_OPEN_IN_BROWSER.length; x++ ) {
@@ -92,7 +91,7 @@ module.exports = function( mainWindow ) {
 	} );
 
 	ipc.on( 'cannot-use-editor', ( _, info ) => {
-		log.info( 'Cannot open editor for site: ', info )
+		log.info( 'Cannot open editor for site: ', info );
 		const { reason } = info;
 		switch ( reason ) {
 			case 'REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO':

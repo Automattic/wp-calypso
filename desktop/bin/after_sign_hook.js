@@ -8,7 +8,7 @@ const NOTARIZATION_ASC_PROVIDER = 'AutomatticInc';
 const NOTARIZATION_ID = process.env.NOTARIZATION_ID;
 const NOTARIZATION_PWD = process.env.NOTARIZATION_PWD;
 
-const shouldNotarize = process.platform === 'darwin' && !!process.env.CIRCLE_TAG;
+const shouldNotarize = process.platform === 'darwin' && !! process.env.CIRCLE_TAG;
 
 function elapsed( start ) {
 	const now = new Date();
@@ -19,7 +19,7 @@ function elapsed( start ) {
 	return `${ diff.getMinutes() } minutes, ${ diff.getSeconds() } seconds`;
 }
 
-module.exports = async function( context ) {
+module.exports = async function ( context ) {
 	if ( ! shouldNotarize ) {
 		return;
 	}
@@ -35,6 +35,6 @@ module.exports = async function( context ) {
 		appleId: NOTARIZATION_ID,
 		appleIdPassword: NOTARIZATION_PWD,
 		ascProvider: NOTARIZATION_ASC_PROVIDER,
-	} )
+	} );
 	console.log( `  • done notarizing ${ appName }, took ${ elapsed( start ) }` );
-}
+};

@@ -4,7 +4,7 @@
  * External Dependencies
  */
 const { app } = require( 'electron' );
-const { autoUpdater } = require( 'electron-updater' )
+const { autoUpdater } = require( 'electron-updater' );
 
 /**
  * Internal dependencies
@@ -16,10 +16,11 @@ const { bumpStat, sanitizeVersion, getPlatform } = require( 'desktop/lib/desktop
 const Updater = require( 'desktop/lib/updater' );
 const log = require( 'desktop/lib/logger' )( 'desktop:updater:auto' );
 
-const statsPlatform = getPlatform( process.platform )
+const statsPlatform = getPlatform( process.platform );
 const sanitizedVersion = sanitizeVersion( app.getVersion() );
 
-const getStatsString = ( isBeta ) => `${statsPlatform}${isBeta ? '-b' : ''}-${sanitizedVersion}`;
+const getStatsString = ( isBeta ) =>
+	`${ statsPlatform }${ isBeta ? '-b' : '' }-${ sanitizedVersion }`;
 
 function dialogDebug( message ) {
 	log.info( message );
@@ -60,13 +61,13 @@ class AutoUpdater extends Updater {
 	}
 
 	onAvailable( info ) {
-		log.info( 'New update is available: ', info.version )
-		bumpStat( 'wpcom-desktop-update-check', `${getStatsString( this.beta )}-needs-update` );
+		log.info( 'New update is available: ', info.version );
+		bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-needs-update` );
 	}
 
 	onNotAvailable() {
-		log.info( 'No update is available' )
-		bumpStat( 'wpcom-desktop-update-check', `${getStatsString( this.beta )}-no-update` );
+		log.info( 'No update is available' );
+		bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-no-update` );
 	}
 
 	onDownloaded( info ) {
@@ -76,11 +77,11 @@ class AutoUpdater extends Updater {
 		this.notify();
 
 		const stats = {
-			'wpcom-desktop-download': `${statsPlatform}-app`,
-			'wpcom-desktop-download-by-ver': `${statsPlatform}-app-${sanitizedVersion}`,
-			'wpcom-desktop-download-ref': `update-${statsPlatform}-app`,
+			'wpcom-desktop-download': `${ statsPlatform }-app`,
+			'wpcom-desktop-download-by-ver': `${ statsPlatform }-app-${ sanitizedVersion }`,
+			'wpcom-desktop-download-ref': `update-${ statsPlatform }-app`,
 			'wpcom-desktop-download-ref-only': 'update',
-		}
+		};
 		bumpStat( stats );
 	}
 
@@ -88,17 +89,17 @@ class AutoUpdater extends Updater {
 		AppQuit.allowQuit();
 		autoUpdater.quitAndInstall();
 
-		bumpStat( 'wpcom-desktop-update', `${getStatsString( this.beta )}-confirm` );
+		bumpStat( 'wpcom-desktop-update', `${ getStatsString( this.beta ) }-confirm` );
 	}
 
 	onCancel() {
-		bumpStat( 'wpcom-desktop-update', `${getStatsString( this.beta )}-update-cancel` );
+		bumpStat( 'wpcom-desktop-update', `${ getStatsString( this.beta ) }-update-cancel` );
 	}
 
 	onError( event ) {
 		log.error( 'Update error: ', event );
 
-		bumpStat( 'wpcom-desktop-update', `${getStatsString( this.beta )}-update-error` );
+		bumpStat( 'wpcom-desktop-update', `${ getStatsString( this.beta ) }-update-error` );
 	}
 }
 

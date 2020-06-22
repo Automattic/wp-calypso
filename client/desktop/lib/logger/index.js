@@ -31,30 +31,31 @@ const maxFiles = 3;
 const maxsize = 15000000;
 
 module.exports = ( namespace, options ) => {
-	if ( !options || typeof options !== 'object' ) options = {}
+	if ( ! options || typeof options !== 'object' ) options = {};
 
 	const formatMessageWithMeta = ( info, opts ) => {
-		const args = info[Symbol.for( 'splat' )];
+		const args = info[ Symbol.for( 'splat' ) ];
 		if ( args ) {
-			if ( args instanceof Array && args.length && ! args[0] ) {
+			if ( args instanceof Array && args.length && ! args[ 0 ] ) {
 				return info;
 			}
 			info.message = info.message + JSON.stringify( ...args );
 		}
 		return info;
-	}
+	};
 
 	const baseformat = format.combine(
 		format.timestamp( {
-			format: 'YYYY-MM-DD HH:mm:ss.SSS'
+			format: 'YYYY-MM-DD HH:mm:ss.SSS',
 		} ),
 		format.errors( { stack: true } ),
 		format( ( info, opts ) => formatMessageWithMeta( info, opts ) )(),
 		format.printf( ( info ) => {
 			const { timestamp, level, message } = info;
-			const stack = info.stack ? `\n${ info.stack }` : ''
-			return `[${timestamp}] [${namespace}] [${level}] ${message}` + stack;
-		} ) );
+			const stack = info.stack ? `\n${ info.stack }` : '';
+			return `[${ timestamp }] [${ namespace }] [${ level }] ${ message }` + stack;
+		} )
+	);
 
 	const baseOptions = {
 		level: process.env.LOG_LEVEL || 'silly',
@@ -64,24 +65,30 @@ module.exports = ( namespace, options ) => {
 				filename: path.basename( state.getLogPath() ),
 				maxFiles,
 				maxsize,
-				format: baseformat
-			} )
-		]
+				format: baseformat,
+			} ),
+		],
 	};
 
-	const enabled = namespaces.check( namespace )
+	const enabled = namespaces.check( namespace );
 	let logger = createLogger( { ...baseOptions, ...options } );
 	if ( process.env.DEBUG ) {
-		logger.add( new transports.Console( {
-			format: baseformat
-		} ) );
+		logger.add(
+			new transports.Console( {
+				format: baseformat,
+			} )
+		);
 	}
 
 	return {
 		error: ( message, meta ) => logger.error( message, meta ),
 		warn: ( message, meta ) => logger.warn( message, meta ),
 		info: ( message, meta ) => logger.info( message, meta ),
-		debug: ( message, meta ) => { if ( enabled ) logger.debug( message, meta ) }, // eslint-disable-line brace-style
-		silly: ( message, meta ) => { if ( enabled ) logger.silly( message, meta ) }  // eslint-disable-line brace-style
-	}
-}
+		debug: ( message, meta ) => {
+			if ( enabled ) logger.debug( message, meta );
+		}, // eslint-disable-line brace-style
+		silly: ( message, meta ) => {
+			if ( enabled ) logger.silly( message, meta );
+		}, // eslint-disable-line brace-style
+	};
+};

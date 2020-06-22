@@ -5,22 +5,24 @@
  */
 const { Menu, MenuItem } = require( 'electron' );
 
-module.exports = function( mainWindow ) {
+module.exports = function ( mainWindow ) {
 	mainWindow.webContents.on( 'context-menu', ( event, params ) => {
 		const menu = new Menu();
 
 		const copy = new MenuItem( { label: 'Copy', role: 'copy' } );
 
-		if ( !params.isEditable ) {
+		if ( ! params.isEditable ) {
 			// If text is not editable, only permit the `Copy` action
 			menu.append( copy );
 		} else {
 			// Add each spelling suggestion
 			for ( const suggestion of params.dictionarySuggestions ) {
-				menu.append( new MenuItem( {
-					label: suggestion,
-					click: () => mainWindow.webContents.replaceMisspelling( suggestion )
-				} ) );
+				menu.append(
+					new MenuItem( {
+						label: suggestion,
+						click: () => mainWindow.webContents.replaceMisspelling( suggestion ),
+					} )
+				);
 			}
 
 			// Allow users to add the misspelled word to the dictionary
@@ -29,7 +31,10 @@ module.exports = function( mainWindow ) {
 				menu.append(
 					new MenuItem( {
 						label: 'Add to Dictionary',
-						click: () => mainWindow.webContents.session.addWordToSpellCheckerDictionary( params.misspelledWord ),
+						click: () =>
+							mainWindow.webContents.session.addWordToSpellCheckerDictionary(
+								params.misspelledWord
+							),
 					} )
 				);
 			}
@@ -51,5 +56,5 @@ module.exports = function( mainWindow ) {
 		}
 
 		menu.popup();
-	} )
-}
+	} );
+};

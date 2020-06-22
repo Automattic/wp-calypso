@@ -15,8 +15,8 @@ const path = require( 'path' );
 // something to do with Electron's common/reset-search-paths.js. For now this
 // is a temporary workaround that will enable us to utilize the latest version of
 // electron.
-let screen
-app.on( 'ready', ( ) => {
+let screen;
+app.on( 'ready', () => {
 	screen = electron.screen;
 } );
 
@@ -32,44 +32,42 @@ const windows = {
 	about: {
 		file: 'about.html',
 		config: 'aboutWindow',
-		handle: null
+		handle: null,
 	},
 	preferences: {
 		file: 'preferences.html',
 		config: 'preferencesWindow',
-		handle: null
+		handle: null,
 	},
 	secret: {
 		file: 'secret.html',
 		config: 'secretWindow',
-		handle: null
+		handle: null,
 	},
 	wapuu: {
 		file: 'wapuu.html',
 		config: 'secretWindow',
 		full: true,
-		handle: null
-	}
+		handle: null,
+	},
 };
 
 function setDimensions( config ) {
 	let full = screen.getPrimaryDisplay();
 
-	if ( config.width === 'full' )
-		config.width = full.bounds.width;
+	if ( config.width === 'full' ) config.width = full.bounds.width;
 
-	if ( config.height === 'full' )
-		config.height = full.bounds.height;
+	if ( config.height === 'full' ) config.height = full.bounds.height;
 
 	return config;
 }
 
 async function openWindow( windowName ) {
-	if ( windows[windowName] ) {
-		let settings = windows[windowName];
+	if ( windows[ windowName ] ) {
+		let settings = windows[ windowName ];
 
 		if ( settings.handle === null ) {
-			let config = Config[settings.config];
+			let config = Config[ settings.config ];
 			config = setDimensions( config );
 
 			// nodeIntegration is necessary to support usage of `require` in preload and HTML scripts.
@@ -81,19 +79,23 @@ async function openWindow( windowName ) {
 			} );
 			config.webPreferences = webPreferences;
 
-			windows[windowName].handle = new BrowserWindow( config );
-			windows[windowName].handle.setMenuBarVisibility( false );
-			await windows[windowName].handle.webContents.session.setProxy( { proxyRules: 'direct://' } );
-			windows[windowName].handle.loadURL( Config.server_url + ':' + Config.server_port + '/desktop/' + settings.file );
+			windows[ windowName ].handle = new BrowserWindow( config );
+			windows[ windowName ].handle.setMenuBarVisibility( false );
+			await windows[ windowName ].handle.webContents.session.setProxy( {
+				proxyRules: 'direct://',
+			} );
+			windows[ windowName ].handle.loadURL(
+				Config.server_url + ':' + Config.server_port + '/desktop/' + settings.file
+			);
 
-			windows[windowName].handle.on( 'closed', function() {
-				windows[windowName].handle = null;
+			windows[ windowName ].handle.on( 'closed', function () {
+				windows[ windowName ].handle = null;
 			} );
 
 			// TODO: add a check to disable navigation events only for drag & drop
 			// https://github.com/Automattic/wp-desktop/pull/464#discussion_r198071749
 			if ( config.wpDragAndDropDisabled ) {
-				windows[windowName].handle.webContents.on( 'will-navigate', function( event ) {
+				windows[ windowName ].handle.webContents.on( 'will-navigate', function ( event ) {
 					event.preventDefault();
 					return false;
 				} );
@@ -105,16 +107,16 @@ async function openWindow( windowName ) {
 }
 
 module.exports = {
-	openPreferences: function() {
+	openPreferences: function () {
 		openWindow( 'preferences' );
 	},
-	openAbout: function() {
+	openAbout: function () {
 		openWindow( 'about' );
 	},
-	openSecret: function() {
+	openSecret: function () {
 		openWindow( 'secret' );
 	},
-	openWapuu: function() {
+	openWapuu: function () {
 		openWindow( 'wapuu' );
-	}
+	},
 };

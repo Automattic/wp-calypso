@@ -10,23 +10,23 @@ function State() {
 	this.loggedIn = false;
 }
 
-State.prototype.isLoggedIn = function( ) {
+State.prototype.isLoggedIn = function () {
 	return this.loggedIn;
 };
 
-State.prototype.login = function( ) {
+State.prototype.login = function () {
 	this.loggedIn = true;
 };
 
-State.prototype.logout = function( ) {
+State.prototype.logout = function () {
 	this.loggedIn = false;
 };
 
-State.prototype.setLogPath = function( path ) {
+State.prototype.setLogPath = function ( path ) {
 	this.logPath = path;
 };
 
-State.prototype.getLogPath = function( ) {
+State.prototype.getLogPath = function () {
 	return this.logPath;
 };
 

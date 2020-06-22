@@ -23,7 +23,7 @@ function showFailure( app ) {
 			detail: 'Sorry but we failed to start the app. Are you running another copy of it?',
 			buttons: [ 'Quit' ],
 		},
-		function() {
+		function () {
 			app.quit();
 		}
 	);
@@ -39,7 +39,7 @@ function startServer( running_cb ) {
 			port: Config.server_port,
 			host: Config.server_host,
 		},
-		function() {
+		function () {
 			log.info( 'Server started, passing back to app' );
 			running_cb();
 		}
@@ -49,7 +49,7 @@ function startServer( running_cb ) {
 export function start( app, running_cb ) {
 	log.info( 'Checking server port: ' + Config.server_port + ' on host ' + Config.server_host );
 
-	portscanner.checkPortStatus( Config.server_port, Config.server_host, function( error, status ) {
+	portscanner.checkPortStatus( Config.server_port, Config.server_host, function ( error, status ) {
 		if ( error || status === 'open' ) {
 			log.info( 'Port check failed - ' + status, error );
 			showFailure( app );

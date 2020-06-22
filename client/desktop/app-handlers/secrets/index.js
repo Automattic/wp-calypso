@@ -10,7 +10,7 @@ const ipc = require( 'electron' ).ipcMain;
  */
 const WindowManager = require( 'desktop/lib/window-manager' );
 
-ipc.on( 'secrets', function( ev, which ) {
+ipc.on( 'secrets', function ( ev, which ) {
 	which = parseInt( which, 10 );
 
 	if ( which === 0 ) {
@@ -20,5 +20,4 @@ ipc.on( 'secrets', function( ev, which ) {
 	}
 } );
 
-module.exports = function() {
-};
+module.exports = function () {};

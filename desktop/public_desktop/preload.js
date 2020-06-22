@@ -9,16 +9,16 @@ const logger = ( namespace, options ) => {
 	// discouraged. Instead, we post log messages to the main process via ipc.
 	const send = ( level, message, meta ) => {
 		ipcRenderer.send( 'log', level, namespace, options, message, meta );
-	}
+	};
 
 	return {
 		error: ( message, meta ) => send( 'error', namespace, options, message, meta ),
 		warn: ( message, meta ) => send( 'warn', namespace, options, message, meta ),
 		info: ( message, meta ) => send( 'info', namespace, options, message, meta ),
 		debug: ( message, meta ) => send( 'debug', namespace, options, message, meta ),
-		silly: ( message, meta ) => send( 'silly', namespace, options, message, meta )
-	}
-}
+		silly: ( message, meta ) => send( 'silly', namespace, options, message, meta ),
+	};
+};
 window.logger = logger; // expose logger interface to other renderer processes
 
 const desktop = remote.getGlobal( 'desktop' );

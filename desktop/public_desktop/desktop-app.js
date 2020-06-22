@@ -1,7 +1,7 @@
 'use strict';
 /* global electron */
 
-let startApp = function() {
+let startApp = function () {
 	document.location.replace( '/desktop/hey.html' );
 };
 
@@ -26,11 +26,15 @@ function startDesktopApp() {
 	}
 
 	function showNoConnection() {
-		showWarning( 'You have no connection to the Internet. WordPress.com will start once your connection has resumed.' );
+		showWarning(
+			'You have no connection to the Internet. WordPress.com will start once your connection has resumed.'
+		);
 	}
 
 	function showNoCalypso() {
-		showWarning( 'Unable to connect to WordPress.com. <button onclick="document.location.reload()">Try again?</button>' );
+		showWarning(
+			'Unable to connect to WordPress.com. <button onclick="document.location.reload()">Try again?</button>'
+		);
 	}
 
 	function postCalypso() {
@@ -39,7 +43,7 @@ function startDesktopApp() {
 		var notIcon = document.querySelector( '#header li.notifications a' );
 
 		if ( notIcon ) {
-			notIcon.addEventListener( 'click', function() {
+			notIcon.addEventListener( 'click', function () {
 				electron.ipcRenderer.send( 'unread-notices-count', 0 );
 			} );
 		}
@@ -50,7 +54,7 @@ function startDesktopApp() {
 	}
 
 	function checkForCalypso() {
-		setTimeout( function() {
+		setTimeout( function () {
 			if ( ! calysoHasLoaded() ) {
 				showNoCalypso();
 				checkForCalypso();
@@ -61,8 +65,13 @@ function startDesktopApp() {
 	}
 
 	function keyboardHandler( ev ) {
-		if ( ev.keyCode === 8 && document.location.pathname.indexOf( '/read' ) === 0 && ev.target.tagName !== 'INPUT' && ev.target.tagName !== 'TEXTAREA' ) {
-			window.history.back()
+		if (
+			ev.keyCode === 8 &&
+			document.location.pathname.indexOf( '/read' ) === 0 &&
+			ev.target.tagName !== 'INPUT' &&
+			ev.target.tagName !== 'TEXTAREA'
+		) {
+			window.history.back();
 		} else if ( ev.keyCode === 73 && ev.shiftKey === true && ev.ctrlKey === true ) {
 			electron.ipcRenderer.send( 'toggle-dev-tools' );
 		}
@@ -90,20 +99,20 @@ function startDesktopApp() {
 	}
 
 	// This is called by Calypso
-	startApp = function() {
-		document.addEventListener( 'dragover', ev => {
-			if ( [ ... event.dataTransfer.types ].includes( 'text/uri-list' ) ) {
+	startApp = function () {
+		document.addEventListener( 'dragover', ( ev ) => {
+			if ( [ ...event.dataTransfer.types ].includes( 'text/uri-list' ) ) {
 				ev.preventDefault();
 			}
 		} );
 
-		document.addEventListener( 'drop', ev => {
+		document.addEventListener( 'drop', ( ev ) => {
 			if ( ev.dataTransfer.dropEffect === 'none' ) {
 				ev.preventDefault();
 			}
 		} );
 
-		window.addEventListener( 'online', function() {
+		window.addEventListener( 'online', function () {
 			if ( booted === false ) {
 				document.location.reload();
 			}
@@ -122,17 +131,17 @@ function startDesktopApp() {
 		} else {
 			showNoConnection();
 		}
-	}
+	};
 }
 
 // Wrap this in an exception handler. If it fails then it means Electron is not present, and we are in a browser
 // This will then cause the browser to redirect to hey.html
 try {
-	electron.ipcRenderer.on( 'is-calypso', function() {
+	electron.ipcRenderer.on( 'is-calypso', function () {
 		electron.ipcRenderer.send( 'is-calypso-response', document.getElementById( 'wpcom' ) !== null );
 	} );
 
-	electron.ipcRenderer.on( 'app-config', function( event, config, debug, details ) {
+	electron.ipcRenderer.on( 'app-config', function ( event, config, debug, details ) {
 		// if this is the first run, and on the login page, show Windows and Mac users a pin app reminder
 		if ( details.firstRun && document.querySelectorAll( '.logged-out-auth' ).length > 0 ) {
 			if ( details.platform === 'windows' || details.platform === 'darwin' ) {
@@ -146,24 +155,27 @@ try {
 					pinApp = container.querySelector( '.pin-app' );
 				}
 
-				var closeButton = '<a href="#" class="pin-app-close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.705,7.705l-1.41-1.41L12,10.59L7.705,6.295l-1.41,1.41L10.59,12l-4.295,4.295l1.41,1.41L12,13.41 l4.295,4.295l1.41-1.41L13.41,12L17.705,7.705z"/></svg></a>';
+				var closeButton =
+					'<a href="#" class="pin-app-close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.705,7.705l-1.41-1.41L12,10.59L7.705,6.295l-1.41,1.41L10.59,12l-4.295,4.295l1.41,1.41L12,13.41 l4.295,4.295l1.41-1.41L13.41,12L17.705,7.705z"/></svg></a>';
 				var pinAppMsg = '';
 
 				if ( details.platform === 'windows' ) {
-					pinAppMsg = '<h2>Keep WordPress.com in your taskbar</h2>' +
-					'<p>Drag the icon from your desktop to your taskbar</p>' +
-					'<img src="/desktop/pin-app-taskbar.png" alt="" width="143" height="27" />';
-				} else if ( details.platform === 'darwin' && !details.pinned ) {
-					pinAppMsg = '<h2>Keep WordPress.com in your dock</h2>' +
-					'<p>Right-click the WordPress.com icon in your dock, select Options > Keep in Dock</p>' +
-					'<img src="/desktop/pin-app-dock.png" alt="" width="128" height="30" />';
+					pinAppMsg =
+						'<h2>Keep WordPress.com in your taskbar</h2>' +
+						'<p>Drag the icon from your desktop to your taskbar</p>' +
+						'<img src="/desktop/pin-app-taskbar.png" alt="" width="143" height="27" />';
+				} else if ( details.platform === 'darwin' && ! details.pinned ) {
+					pinAppMsg =
+						'<h2>Keep WordPress.com in your dock</h2>' +
+						'<p>Right-click the WordPress.com icon in your dock, select Options > Keep in Dock</p>' +
+						'<img src="/desktop/pin-app-dock.png" alt="" width="128" height="30" />';
 				}
 
 				pinApp.innerHTML = closeButton + pinAppMsg;
 
 				// close button
 				var pinAppClose = container.querySelector( '.pin-app-close' );
-				pinAppClose.onclick = function() {
+				pinAppClose.onclick = function () {
 					pinApp.style.display = 'none';
 				};
 			}

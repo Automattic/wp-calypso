@@ -13,7 +13,7 @@ const events = require( 'events' );
 /**
  * Module variables
  */
-const noop = function() {};
+const noop = function () {};
 
 function authorize( username, token ) {
 	var responder = new events.EventEmitter();
@@ -27,19 +27,19 @@ function authorize( username, token ) {
 	options.headers = {
 		Authorization: 'Bearer ' + token,
 		'Content-Type': 'application/x-www-form-urlencoded',
-		'Content-Length': body.length
+		'Content-Length': body.length,
 	};
 
-	req = https.request( options, function( res ) {
+	req = https.request( options, function ( res ) {
 		var responseBody = '';
 
 		responder.emit( 'response', res );
 
-		res.on( 'data', function( data ) {
+		res.on( 'data', function ( data ) {
 			responseBody += data;
 		} );
 
-		res.on( 'end', function() {
+		res.on( 'end', function () {
 			responder.emit( 'body', responseBody );
 		} );
 	} );
@@ -50,7 +50,7 @@ function authorize( username, token ) {
 function parseCookie( cookieStr ) {
 	var cookie = {};
 	// split, the first is key/value, the rest are settings
-	var parts = cookieStr.split( '; ' ).map( function( v ) {
+	var parts = cookieStr.split( '; ' ).map( function ( v ) {
 		return v.split( '=' );
 	} );
 	var value;
@@ -62,39 +62,39 @@ function parseCookie( cookieStr ) {
 	value = parts.shift();
 
 	if ( value.length === 2 ) {
-		cookie.name = value[0];
-		cookie.value = value[1];
+		cookie.name = value[ 0 ];
+		cookie.value = value[ 1 ];
 	} else {
 		parts.unshift( value );
 	}
 
-	return parts.reduce( function( collect, pair ) {
+	return parts.reduce( function ( collect, pair ) {
 		var val = true;
 		if ( pair.length === 2 ) {
-			val = pair[1];
+			val = pair[ 1 ];
 		}
-		collect[pair[0]] = val;
+		collect[ pair[ 0 ] ] = val;
 		return cookie;
 	}, cookie );
 }
 
 function setSessionCookies( window, onComplete ) {
-	return function( response ) {
-		var cookieHeaders = response.headers['set-cookie'];
+	return function ( response ) {
+		var cookieHeaders = response.headers[ 'set-cookie' ];
 		var count = 0;
-		if ( !Array.isArray( cookieHeaders ) ) {
-			cookieHeaders = [cookieHeaders];
+		if ( ! Array.isArray( cookieHeaders ) ) {
+			cookieHeaders = [ cookieHeaders ];
 		}
 
 		count = cookieHeaders.length;
 
-		cookieHeaders.map( parseCookie ).forEach( function( cookie ) {
-			cookie.url = 'https://wordpress.com/'
+		cookieHeaders.map( parseCookie ).forEach( function ( cookie ) {
+			cookie.url = 'https://wordpress.com/';
 			if ( cookie.httponly ) {
 				cookie.session = true;
 			}
-			window.webContents.session.cookies.set( cookie, function() {
-				count --;
+			window.webContents.session.cookies.set( cookie, function () {
+				count--;
 				if ( count === 0 ) {
 					if ( onComplete ) onComplete();
 				}
@@ -106,24 +106,28 @@ function setSessionCookies( window, onComplete ) {
 function auth( window, onAuthorized ) {
 	var userData, currentRequest;
 
-	ipc.on( 'user-auth', function( event, user, token ) {
+	ipc.on( 'user-auth', function ( event, user, token ) {
 		if ( user && user.data ) {
 			userData = user.data;
 			if ( currentRequest && currentRequest.username === userData.username ) {
 				// already authing
 				return;
 			}
-			currentRequest = authorize( userData.username, token ).on( 'response', setSessionCookies( window, onAuthorized ) );
+			currentRequest = authorize( userData.username, token ).on(
+				'response',
+				setSessionCookies( window, onAuthorized )
+			);
 		} else {
 			// retrieve all cookies
-			window.webContents.session.cookies.get( {}, function( e, cookies ) {
+			window.webContents.session.cookies.get( {}, function ( e, cookies ) {
 				if ( e ) {
 					return;
 				}
 
-				cookies.forEach( function( cookie ) {
+				cookies.forEach( function ( cookie ) {
 					var domain = cookie.domain;
-					var cookieUrl = 'https://' + ( domain.indexOf( '.' ) === 0 ? domain.slice( 1 ) : domain ) + cookie.path;
+					var cookieUrl =
+						'https://' + ( domain.indexOf( '.' ) === 0 ? domain.slice( 1 ) : domain ) + cookie.path;
 
 					window.webContents.session.cookies.remove( cookieUrl, cookie.name, noop );
 				} );

@@ -28,7 +28,9 @@ const log = require( 'desktop/lib/logger' )( 'desktop:runapp' );
 var mainWindow = null;
 
 function showAppWindow() {
-	const preloadFile = path.resolve( path.join( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' ) );
+	const preloadFile = path.resolve(
+		path.join( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' )
+	);
 	let appUrl = Config.server_url + ':' + Config.server_port;
 	let lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
 
@@ -38,46 +40,57 @@ function showAppWindow() {
 
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
-	let config = Settings.getSettingGroup( Config.mainWindow, 'window', [ 'x', 'y', 'width', 'height' ] );
+	let config = Settings.getSettingGroup( Config.mainWindow, 'window', [
+		'x',
+		'y',
+		'width',
+		'height',
+	] );
 	config.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
 	config.webPreferences.preload = preloadFile;
 
 	mainWindow = new BrowserWindow( config );
 
-	cookieAuth( mainWindow, function() {
+	cookieAuth( mainWindow, function () {
 		mainWindow.webContents.send( 'cookie-auth-complete' );
 	} );
 
-	mainWindow.webContents.on( 'did-finish-load', function() {
+	mainWindow.webContents.on( 'did-finish-load', function () {
 		mainWindow.webContents.send( 'app-config', Config, Settings.isDebug(), System.getDetails() );
 
 		const ipc = electron.ipcMain;
-		ipc.on( 'mce-contextmenu', function( ev ) {
+		ipc.on( 'mce-contextmenu', function ( ev ) {
 			mainWindow.send( 'mce-contextmenu', ev );
 		} );
 	} );
 
-	mainWindow.webContents.session.webRequest.onBeforeRequest( function( details, callback ) {
-		if ( details.resourceType === 'script' && details.url.startsWith( 'http://' ) && ! details.url.startsWith( Config.server_url + ':' + Config.server_port + '/' ) ) {
-			log.info( 'Redirecting http request ' + details.url + ' to ' + details.url.replace( 'http', 'https' ) );
+	mainWindow.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
+		if (
+			details.resourceType === 'script' &&
+			details.url.startsWith( 'http://' ) &&
+			! details.url.startsWith( Config.server_url + ':' + Config.server_port + '/' )
+		) {
+			log.info(
+				'Redirecting http request ' + details.url + ' to ' + details.url.replace( 'http', 'https' )
+			);
 			callback( { redirectURL: details.url.replace( 'http', 'https' ) } );
 		} else {
 			callback( {} );
 		}
 	} );
 
-	mainWindow.webContents.session.webRequest.onHeadersReceived( function( details, callback ) {
+	mainWindow.webContents.session.webRequest.onHeadersReceived( function ( details, callback ) {
 		// always allow previews to be loaded in iframes
 		if ( details.resourceType === 'subFrame' ) {
 			const headers = Object.assign( {}, details.responseHeaders );
-			Object.keys( headers ).forEach( function( name ) {
+			Object.keys( headers ).forEach( function ( name ) {
 				if ( name.toLowerCase() === 'x-frame-options' ) {
 					delete headers[ name ];
 				}
 			} );
 			callback( {
 				cancel: false,
-				responseHeaders: headers
+				responseHeaders: headers,
 			} );
 			return;
 		}
@@ -87,7 +100,7 @@ function showAppWindow() {
 	mainWindow.loadURL( appUrl );
 	// mainWindow.openDevTools();
 
-	mainWindow.on( 'close', function() {
+	mainWindow.on( 'close', function () {
 		let currentURL = mainWindow.webContents.getURL();
 		let parsedURL = url.parse( currentURL );
 		if ( isValidLastLocation( parsedURL.pathname ) ) {
@@ -95,7 +108,7 @@ function showAppWindow() {
 		}
 	} );
 
-	mainWindow.on( 'closed', function() {
+	mainWindow.on( 'closed', function () {
 		log.info( 'Window closed' );
 		mainWindow = null;
 	} );
@@ -108,15 +121,15 @@ function showAppWindow() {
 function startServer( started_cb ) {
 	log.info( 'App is ready, starting server' );
 
-	start( app, function() {
+	start( app, function () {
 		started_cb( showAppWindow() );
 	} );
 }
 
 function isValidLastLocation( loc ) {
 	const invalids = [
-		'/desktop/',     // Page shown when no Electron
-		'/start'         // Don't attempt to resume the signup flow
+		'/desktop/', // Page shown when no Electron
+		'/start', // Don't attempt to resume the signup flow
 	];
 
 	if ( typeof loc !== 'string' ) {
@@ -132,7 +145,7 @@ function isValidLastLocation( loc ) {
 	return true;
 }
 
-module.exports = function( started_cb ) {
+module.exports = function ( started_cb ) {
 	log.info( 'Checking for other instances' );
 	let boot;
 

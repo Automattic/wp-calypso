@@ -31,7 +31,7 @@ const delay = promisify( setTimeout );
 // 2. Refresh site info (set/clean up handler on response channel)
 // 3. Navigate to the editor
 function selectedEnableSSOandContinue( mainWindow, info ) {
-	log.info( 'User selected \'Enable SSO and Continue\'...' );
+	log.info( "User selected 'Enable SSO and Continue'..." );
 
 	const channelDidEnableSiteOption = 'enable-site-option-response';
 	const channelDidRequestSite = 'request-site-response';
@@ -45,37 +45,40 @@ function selectedEnableSSOandContinue( mainWindow, info ) {
 		}
 		log.info( `Refreshed info for site: '${ origin }', navigating to URL: '${ editorUrl }'` );
 		mainWindow.webContents.send( 'navigate', editorUrl );
-	}
+	};
 
 	const handleDidEnableSiteOption = ( _, { error } ) => {
 		ipc.removeAllListeners( channelDidEnableSiteOption );
 		if ( error ) {
 			throw error;
 		}
-		log.info( `SSO enabled for site: '${ origin }', requesting site refresh...`, );
+		log.info( `SSO enabled for site: '${ origin }', requesting site refresh...` );
 		ipc.on( channelDidRequestSite, handleDidRequestSite );
 		mainWindow.webContents.send( 'request-site', siteId );
-	}
+	};
 
 	ipc.on( channelDidEnableSiteOption, handleDidEnableSiteOption );
 	mainWindow.webContents.send( 'enable-site-option', { siteId, option: 'sso' } );
 }
 
 function selectedProceedInBrowser( mainWindow, { origin, wpAdminLoginUrl } ) {
-	log.info( 'User selected \'Proceed in Browser\'...' )
+	log.info( "User selected 'Proceed in Browser'..." );
 	openInBrowser( null, wpAdminLoginUrl );
 	navigateToShowMySites( mainWindow, origin );
 }
 
 function selectedCancel( mainWindow, { origin } ) {
-	log.info( 'User selected \'Cancel\' with origin ...', origin );
+	log.info( "User selected 'Cancel' with origin ...", origin );
 	navigateToShowMySites( mainWindow, origin );
 }
 
 function navigateToShowMySites( mainWindow, domain ) {
 	showMySites( mainWindow );
 	// Update last location so a redirect isn't automatically triggered on app relaunch.
-	Settings.saveSetting( settingConstants.LAST_LOCATION, `/stats/day/${ ( new URL( domain ) ).hostname }` );
+	Settings.saveSetting(
+		settingConstants.LAST_LOCATION,
+		`/stats/day/${ new URL( domain ).hostname }`
+	);
 }
 
 /**
@@ -112,14 +115,14 @@ async function handleJetpackEnableSSO( mainWindow, info ) {
 		// sidebars disappear.
 		await delay( 300 );
 
-		let message = 'This feature requires that Secure Sign-On is enabled in the Jetpack settings of the site:' +
-					'\n\n' +
-					`${ origin }`;
+		let message =
+			'This feature requires that Secure Sign-On is enabled in the Jetpack settings of the site:' +
+			'\n\n' +
+			`${ origin }`;
 		if ( ! canUserManageOptions ) {
 			// If the user cannot manage site options,
 			// prompt them to contact the site admin.
-			message += '\n\n' +
-					'Please contact the site admin.'
+			message += '\n\n' + 'Please contact the site admin.';
 		}
 
 		const selected = dialog.showMessageBox( mainWindow, {
@@ -127,8 +130,9 @@ async function handleJetpackEnableSSO( mainWindow, info ) {
 			buttons: buttons,
 			title: 'Jetpack Authorization Required',
 			message,
-			detail: 'You may proceed after changing the site\'s Jetpack settings ' +
-					'or you can proceed in an external browser.'
+			detail:
+				"You may proceed after changing the site's Jetpack settings " +
+				'or you can proceed in an external browser.',
 		} );
 
 		switch ( selected ) {
@@ -163,8 +167,7 @@ function handleUndefined( mainWindow, info ) {
 		type: 'info',
 		buttons: [ 'OK' ],
 		title: 'Unable to Use the Editor',
-		message: 'An unhnadled error occurred. ' +
-			+ 'Please contact help@wordpress.com for help.',
+		message: 'An unhnadled error occurred. ' + +'Please contact help@wordpress.com for help.',
 	} );
 
 	const { origin } = info;
@@ -174,4 +177,4 @@ function handleUndefined( mainWindow, info ) {
 module.exports = {
 	handleJetpackEnableSSO,
 	handleUndefined,
-}
+};

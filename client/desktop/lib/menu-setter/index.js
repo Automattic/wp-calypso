@@ -1,7 +1,7 @@
 'use strict';
 
 function setMenuAttribute( menu, attr, enabled ) {
-	if ( typeof menu[attr] !== 'undefined' && menu[attr] ) {
+	if ( typeof menu[ attr ] !== 'undefined' && menu[ attr ] ) {
 		menu.enabled = enabled;
 	}
 }
@@ -9,13 +9,13 @@ function setMenuAttribute( menu, attr, enabled ) {
 function setMenuItems( menu, attr, enabled ) {
 	// Go through each menu item and if the attr is set then toggle the `enabled` flag
 	for ( let main = 0; main < menu.items.length; main++ ) {
-		let item = menu.items[main];
+		let item = menu.items[ main ];
 
 		setMenuAttribute( item, attr, enabled );
 
 		if ( item.submenu ) {
 			for ( let sub = 0; sub < item.submenu.items.length; sub++ ) {
-				let subItem = item.submenu.items[sub];
+				let subItem = item.submenu.items[ sub ];
 
 				setMenuAttribute( subItem, attr, enabled );
 			}
@@ -24,11 +24,11 @@ function setMenuItems( menu, attr, enabled ) {
 }
 
 module.exports = {
-	setRequiresUser: function( menu, enabled ) {
+	setRequiresUser: function ( menu, enabled ) {
 		setMenuItems( menu, 'requiresUser', enabled );
 	},
 
-	setToggleFullScreen: function( menu, enabled ) {
+	setToggleFullScreen: function ( menu, enabled ) {
 		setMenuItems( menu, 'fullscreen', enabled );
-	}
-}
+	},
+};

@@ -14,7 +14,7 @@ function Platform() {
 	this.platform = false;
 }
 
-Platform.prototype.setMainWindow = function( mainWindow ) {
+Platform.prototype.setMainWindow = function ( mainWindow ) {
 	let PlatformHandler = false;
 
 	if ( this.isOSX() ) {
@@ -34,47 +34,47 @@ Platform.prototype.setMainWindow = function( mainWindow ) {
 	}
 };
 
-Platform.prototype.restore = function() {
+Platform.prototype.restore = function () {
 	if ( this.platform ) {
 		this.platform.restore();
 	}
 };
 
-Platform.prototype.showNotificationsBadge = function( count, bounceEnabled ) {
+Platform.prototype.showNotificationsBadge = function ( count, bounceEnabled ) {
 	if ( this.platform ) {
 		this.platform.showNotificationsBadge( count, bounceEnabled );
 	}
 };
 
-Platform.prototype.clearNotificationsBadge = function() {
+Platform.prototype.clearNotificationsBadge = function () {
 	if ( this.platform ) {
 		this.platform.clearNotificationsBadge();
 	}
 };
 
-Platform.prototype.setDockMenu = function( enabled ) {
+Platform.prototype.setDockMenu = function ( enabled ) {
 	if ( this.platform ) {
 		this.platform.setDockMenu( enabled );
 	}
 };
 
-Platform.prototype.isOSX = function() {
+Platform.prototype.isOSX = function () {
 	return process.platform === 'darwin';
 };
 
-Platform.prototype.isWindows = function() {
+Platform.prototype.isWindows = function () {
 	return process.platform === 'win32';
 };
 
-Platform.prototype.isWindows10 = function() {
+Platform.prototype.isWindows10 = function () {
 	return parseInt( os.release(), 10 ) >= 10;
 };
 
-Platform.prototype.isLinux = function() {
+Platform.prototype.isLinux = function () {
 	return process.platform === 'linux';
 };
 
-Platform.prototype.getPlatformString = function() {
+Platform.prototype.getPlatformString = function () {
 	return process.platform;
 };
 

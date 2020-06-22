@@ -25,7 +25,7 @@ function createSettingsFile( settingsFile ) {
 }
 
 module.exports = {
-	load: function() {
+	load: function () {
 		const settingsFile = getSettingsFile();
 
 		if ( fs.existsSync( settingsFile ) ) {
@@ -45,12 +45,12 @@ module.exports = {
 		return {};
 	},
 
-	save: function( group, groupData ) {
+	save: function ( group, groupData ) {
 		const settingsFile = getSettingsFile();
 		let data = {};
 
 		try {
-			if ( !fs.existsSync( settingsFile ) ) {
+			if ( ! fs.existsSync( settingsFile ) ) {
 				createSettingsFile( settingsFile );
 			}
 
@@ -60,7 +60,7 @@ module.exports = {
 			log.info( `Read settings from '${ settingsFile }': ${ data.toString( 'utf-8' ) }` );
 
 			data = JSON.parse( data );
-			data[group] = groupData;
+			data[ group ] = groupData;
 
 			log.info( `Updating settings: '${ group }': `, groupData );
 			fs.writeFileSync( settingsFile, JSON.stringify( data ) );
@@ -71,7 +71,7 @@ module.exports = {
 		return data;
 	},
 
-	isFirstRun: function() {
+	isFirstRun: function () {
 		return firstRun;
-	}
-}
+	},
+};

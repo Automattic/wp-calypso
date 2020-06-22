@@ -16,11 +16,10 @@ class Updater extends EventEmitter {
 		super();
 
 		this.confirmLabel = options.confirmLabel || 'Update & Restart';
-		this.dialogTitle =
-		options.dialogTitle || 'A new version of {name} is available!';
+		this.dialogTitle = options.dialogTitle || 'A new version of {name} is available!';
 		this.dialogMessage =
-		options.dialogMessage ||
-		'{name} {newVersion} is now available — you have {currentVersion}. Would you like to update now?';
+			options.dialogMessage ||
+			'{name} {newVersion} is now available — you have {currentVersion}. Would you like to update now?';
 		this.beta = options.beta || false;
 
 		this._version = '';
@@ -57,10 +56,10 @@ class Updater extends EventEmitter {
 			detail: this.expandMacros( this.dialogMessage ),
 		};
 
-		if ( !this._hasPrompted ) {
+		if ( ! this._hasPrompted ) {
 			this._hasPrompted = true;
 
-			dialog.showMessageBox( updateDialogOptions, button => {
+			dialog.showMessageBox( updateDialogOptions, ( button ) => {
 				this._hasPrompted = false;
 
 				if ( button === 0 ) {
@@ -90,7 +89,7 @@ class Updater extends EventEmitter {
 
 		for ( const key in macros ) {
 			if ( macros.hasOwnProperty( key ) ) {
-				text = text.replace( new RegExp( `{${key}}`, 'ig' ), macros[key] );
+				text = text.replace( new RegExp( `{${ key }}`, 'ig' ), macros[ key ] );
 			}
 		}
 

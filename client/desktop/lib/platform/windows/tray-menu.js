@@ -11,21 +11,21 @@ const app = electron.app;
  */
 const AppQuit = require( 'desktop/lib/app-quit' );
 
-module.exports = function( restoreApp ) {
+module.exports = function ( restoreApp ) {
 	return [
 		{
 			label: 'Show WordPress.com',
-			click: restoreApp
+			click: restoreApp,
 		},
 		{
-			type: 'separator'
+			type: 'separator',
 		},
 		{
 			label: 'Quit',
-			click: function() {
+			click: function () {
 				AppQuit.allowQuit();
 				app.quit();
-			}
-		}
+			},
+		},
 	];
 };

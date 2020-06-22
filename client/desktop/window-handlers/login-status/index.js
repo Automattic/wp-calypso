@@ -14,10 +14,10 @@ const menu = require( 'desktop/lib/menu' );
 const platform = require( 'desktop/lib/platform' );
 const state = require( 'desktop/lib/state' );
 
-module.exports = function( mainWindow ) {
+module.exports = function ( mainWindow ) {
 	menu.set( app, mainWindow );
 
-	ipc.on( 'user-login-status', function( event, loggedIn ) {
+	ipc.on( 'user-login-status', function ( event, loggedIn ) {
 		if ( loggedIn ) {
 			menu.enableLoggedInItems( app, mainWindow );
 			platform.setDockMenu( true );
@@ -28,4 +28,4 @@ module.exports = function( mainWindow ) {
 			state.logout();
 		}
 	} );
-}
+};

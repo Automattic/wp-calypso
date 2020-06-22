@@ -9,15 +9,15 @@ config.description = 'WordPress Desktop';
 config.version = pkg.version;
 config.author = pkg.author;
 
-config.isRelease = function() {
+config.isRelease = function () {
 	return this.build === 'release';
 };
 
-config.isUpdater = function() {
+config.isUpdater = function () {
 	return this.build === 'updater';
 };
 
-config.isBeta = function() {
+config.isBeta = function () {
 	return this.build === 'beta';
 };
 

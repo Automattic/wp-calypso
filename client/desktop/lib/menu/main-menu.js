@@ -10,33 +10,33 @@ const windowMenu = require( './window-menu' );
 const helpMenu = require( './help-menu' );
 const platform = require( 'desktop/lib/platform' );
 
-module.exports = function( app, mainWindow ) {
+module.exports = function ( app, mainWindow ) {
 	let menu = [
 		{
 			label: platform.isOSX() ? 'WordPress.com' : 'File',
-			submenu: appMenu( app, mainWindow )
+			submenu: appMenu( app, mainWindow ),
 		},
 		{
 			label: 'Edit',
-			submenu: editMenu
+			submenu: editMenu,
 		},
 		{
 			label: 'Window',
 			role: 'window',
-			submenu: windowMenu( mainWindow )
+			submenu: windowMenu( mainWindow ),
 		},
 		{
 			label: 'Help',
 			role: 'help',
-			submenu: helpMenu( mainWindow )
-		}
+			submenu: helpMenu( mainWindow ),
+		},
 	];
 
 	if ( platform.isOSX() ) {
 		// OS X needs a view menu for 'enter full screen' - insert just after the edit menu
 		menu.splice( 2, 0, {
 			label: 'View',
-			submenu: viewMenu
+			submenu: viewMenu,
 		} );
 	}
 

@@ -10,18 +10,18 @@ const ipc = require( 'desktop/lib/calypso-commands' );
  */
 const calypsoMenu = require( 'desktop/lib/menu/calypso-menu' );
 
-module.exports = function( app, mainWindow ) {
+module.exports = function ( app, mainWindow ) {
 	return calypsoMenu( mainWindow ).concat(
 		{
-			type: 'separator'
+			type: 'separator',
 		},
 		{
 			label: 'Sign out',
 			requiresUser: true,
 			enabled: false,
-			click: function() {
+			click: function () {
 				ipc.signOut( mainWindow );
-			}
+			},
 		}
 	);
 };

@@ -20,25 +20,25 @@ function MacPlatform( mainWindow ) {
 
 	app.dock.setMenu( this.dockMenu );
 
-	app.on( 'activate', function() {
+	app.on( 'activate', function () {
 		log.info( 'Window activated' );
 
 		mainWindow.show();
 		mainWindow.focus();
 	} );
 
-	app.on( 'window-all-closed', function() {
+	app.on( 'window-all-closed', function () {
 		log.info( 'All windows closed, shutting down' );
 		app.quit();
 	} );
 
-	app.on( 'before-quit', function() {
+	app.on( 'before-quit', function () {
 		log.info( 'Application quit triggered' );
 
 		appQuit.allowQuit();
 	} );
 
-	mainWindow.on( 'close', function( ev ) {
+	mainWindow.on( 'close', function ( ev ) {
 		if ( appQuit.shouldQuitToBackground() ) {
 			log.info( 'Window close puts app into background' );
 			ev.preventDefault();
@@ -47,15 +47,15 @@ function MacPlatform( mainWindow ) {
 	} );
 }
 
-MacPlatform.prototype.restore = function() {
+MacPlatform.prototype.restore = function () {
 	if ( this.window.isMinimized() ) {
 		this.window.restore();
 	}
 
 	this.window.show();
-}
+};
 
-MacPlatform.prototype.showNotificationsBadge = function( count, bounceEnabled ) {
+MacPlatform.prototype.showNotificationsBadge = function ( count, bounceEnabled ) {
 	app.dock.setBadge( ' ' );
 
 	if ( bounceEnabled ) {
@@ -63,11 +63,11 @@ MacPlatform.prototype.showNotificationsBadge = function( count, bounceEnabled ) 
 	}
 };
 
-MacPlatform.prototype.clearNotificationsBadge = function() {
+MacPlatform.prototype.clearNotificationsBadge = function () {
 	app.dock.setBadge( '' );
 };
 
-MacPlatform.prototype.setDockMenu = function( enabled ) {
+MacPlatform.prototype.setDockMenu = function ( enabled ) {
 	menuSetter.setRequiresUser( this.dockMenu, enabled );
 };
 

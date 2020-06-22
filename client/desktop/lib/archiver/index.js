@@ -13,7 +13,6 @@ const archiver = require( 'archiver' );
 const log = require( 'desktop/lib/logger' )( 'desktop:lib:archiver' );
 
 module.exports = {
-
 	/**
 	 * Compresses `contents` to the archive at `dst`.
 	 *
@@ -24,10 +23,10 @@ module.exports = {
 	zipContents: ( contents, dst, onZipped ) => {
 		let output = fs.createWriteStream( dst );
 		let archive = archiver( 'zip', {
-			zlib: { level: 9 }
+			zlib: { level: 9 },
 		} );
 
-		output.on( 'close', function() {
+		output.on( 'close', function () {
 			log.debug( 'Archive finalized: %s bytes written', archive.pointer() );
 			if ( typeof onZipped === 'function' ) {
 				onZipped();
@@ -35,18 +34,18 @@ module.exports = {
 		} );
 
 		// Catch warnings (e.g. stat failures and other non-blocking errors)
-		archive.on( 'warning', function( err ) {
+		archive.on( 'warning', function ( err ) {
 			log.warn( 'Unexpected error: ', err );
 		} );
 
-		archive.on( 'error', function( err ) {
+		archive.on( 'error', function ( err ) {
 			throw err;
 		} );
 
 		archive.pipe( output );
 
 		for ( let i = 0; i < contents.length; i++ ) {
-			const src = contents[i];
+			const src = contents[ i ];
 			const zipSubdir = path.basename( dst ).replace( '.zip', '' );
 			const dstInZipSubdir = path.join( zipSubdir, path.basename( src ) );
 
@@ -59,5 +58,5 @@ module.exports = {
 		}
 
 		archive.finalize();
-	}
-}
+	},
+};
