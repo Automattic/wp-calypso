@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isInlineHelpPopoverVisible from '../selectors/is-inline-help-popover-visible';
+import isInlineHelpPopoverVisible from 'state/inline-help/selectors/is-inline-help-popover-visible';
 
 describe( '#isInlineHelpPopoverVisible()', () => {
 	test( 'should return if the popover is visible', () => {
