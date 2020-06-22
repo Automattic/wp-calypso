@@ -177,4 +177,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	showJetpackSidebarSection: {
+		datestamp: '20200622',
+		variations: {
+			variantShowJetpackSidebarSection: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
