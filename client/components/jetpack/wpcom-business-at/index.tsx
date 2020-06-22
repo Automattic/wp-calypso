@@ -55,6 +55,7 @@ import 'blocks/eligibility-warnings/style.scss';
  */
 import JetpackBackupSVG from 'assets/images/illustrations/jetpack-backup.svg';
 import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
+import isJetpackSite from '../../../state/sites/selectors/is-jetpack-site';
 
 interface Props {
 	product: 'backup' | 'scan';
@@ -205,9 +206,18 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
 
-	// Detect when the transfer is complete to refresh the site data
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
 	useEffect( () => {
+		// Detect when the transfer is complete to refresh the site data
 		if ( automatedTransferStatus === COMPLETE ) {
+			// Need to refresh the site data.
+			dispatch( requestSite( siteId ) );
+		}
+	}, [ automatedTransferStatus ] );
+
+	useEffect( () => {
+		if ( automatedTransferStatus === COMPLETE && isJetpack ) {
 			dispatch(
 				successNotice( translate( 'Jetpack features are now activated.' ), {
 					id: 'jetpack-features-on',
@@ -215,16 +225,10 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 					displayOnNextPage: true,
 				} )
 			);
-			// Need to refresh the site data.
-			dispatch( requestSite( siteId ) );
-		}
-	}, [ automatedTransferStatus ] );
-
-	useEffect( () => {
-		if ( automatedTransferStatus === COMPLETE && ! siteSlug.includes( 'wordpress.com' ) ) {
+			// Reload the page, whatever siteSlug is
 			page( `/${ product }/${ siteSlug }` );
 		}
-	}, [ automatedTransferStatus, siteSlug ] );
+	}, [ automatedTransferStatus, isJetpack ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
