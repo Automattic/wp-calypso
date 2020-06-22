@@ -142,7 +142,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 				driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);
-		}, this.explicitWaitMS * 2 );
+		}, this.explicitWaitMS * 4 );
 	}
 
 	async goToRevokeInvitePage( emailAddress ) {
