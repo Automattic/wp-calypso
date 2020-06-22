@@ -64,12 +64,6 @@
 	margin-bottom: 2rem;
 }
 
-.backup__is-loading {
-	margin: 2rem 1rem;
-	height: 245px;
-	@include placeholder( --color-neutral-10 );
-}
-
 .backup__subheader {
 	margin: 20px 16px 8px;
 
@@ -83,10 +77,6 @@
 
 /* WordPress.com-only styles */
 .wordpressdotcom.backup__page {
-	.backup__is-loading {
-		margin: 1rem 0;
-	}
-
 	.backup__main-wrap {
 		margin-left: initial;
 		margin-right: initial;
