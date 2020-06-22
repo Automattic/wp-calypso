@@ -61,6 +61,7 @@ import {
 	fullCreditsProcessor,
 	existingCardProcessor,
 	payPalProcessor,
+	idealProcessor,
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
@@ -470,6 +471,8 @@ export default function CompositeCheckout( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
+			ideal: ( transactionData ) =>
+				idealProcessor( transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>

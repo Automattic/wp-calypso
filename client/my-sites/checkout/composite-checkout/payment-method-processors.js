@@ -13,6 +13,7 @@ import {
 	wpcomPayPalExpress,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
+	submitStripeIdealTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
 	submitExistingCardPayment,
@@ -21,6 +22,43 @@ import {
 import { createStripePaymentMethod } from 'lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
+
+export function idealProcessor( submitData, getThankYouUrl, isWhiteGloveOffer ) {
+	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
+	const query = isWhiteGloveOffer ? { type: 'white-glove' } : {};
+	const successUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname: getThankYouUrl(),
+	} );
+	const cancelUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname,
+		query,
+	} );
+	const pending = submitStripeIdealTransaction(
+		{
+			...submitData,
+			successUrl,
+			cancelUrl,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+			siteId: select( 'wpcom' )?.getSiteId?.(),
+			domainDetails: getDomainDetails( select ),
+		},
+		wpcomTransaction
+	);
+	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+	pending.then( ( result ) => {
+		// TODO: do this automatically when calling setTransactionComplete
+		dispatch( 'wpcom' ).setTransactionResponse( result );
+	} );
+	return pending;
+}
 
 export function applePayProcessor( submitData ) {
 	const pending = submitApplePayPayment(
