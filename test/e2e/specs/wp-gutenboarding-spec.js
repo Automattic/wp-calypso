@@ -50,6 +50,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await acquireIntentPage.goToNextStep();
 		} );
 
+		// This is just a test comment.
 		step( 'Can see Domains Page and select free suggestion item', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
 			await domainsPage.clickFreeSuggestionItem();
