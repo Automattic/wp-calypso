@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-import { useState, useEffect, useRef, WPSyntheticEvent } from '@wordpress/element';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { WPSyntheticEvent } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 import { Button as OriginalButton } from '@wordpress/components';
-import { chevronLeft, wordpress } from '@wordpress/icons';
+import { chevronLeft } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -42,22 +41,6 @@ export default function WpcomBlockEditorNavSidebar() {
 	const items = useNavItems();
 	const statusLabels = usePostStatusLabels();
 
-	const prevIsOpen = useRef( isOpen );
-	const [ isClosing, setIsClosing ] = useState( false );
-
-	useEffect( () => {
-		if ( isOpen ) {
-			document.body.classList.add( 'is-wpcom-block-editor-nav-sidebar-close-hidden' );
-		} else if ( prevIsOpen.current ) {
-			// Check previous isOpen value so we don't set isClosing on first mount
-			setIsClosing( true );
-		}
-
-		prevIsOpen.current = isOpen;
-	}, [ isOpen, prevIsOpen, setIsClosing ] );
-
-	const { toggleSidebar } = useDispatch( STORE_KEY );
-
 	if ( ! postType ) {
 		// Still loading
 		return null;
@@ -77,62 +60,43 @@ export default function WpcomBlockEditorNavSidebar() {
 	};
 
 	return (
-		<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__container" aria-hidden={ ! isOpen }>
-			{ ( isOpen || isClosing ) && (
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
+		<>
+			<div
+				className="wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard"
+				aria-hidden={ ! isOpen }
+			/>
+			<div
+				className="wpcom-block-editor-nav-sidebar-nav-sidebar__container"
+				aria-hidden={ ! isOpen }
+			>
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header" />
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container">
 					<Button
-						icon={ wordpress }
-						iconSize={ 36 }
-						className={ classNames( {
-							'is-shrinking': isOpen,
-							'is-growing': isClosing,
-						} ) }
-						onClick={ () => {
-							if ( isOpen ) {
-								// The `useEffect` above already takes care of setting isClose to true,
-								// but there's a flicker where isOpen and isClosing are both false for
-								// a brief moment in time. Setting isClose to true here too to avoid
-								// the flicker.
-								setIsClosing( true );
-							}
-							toggleSidebar();
-						} }
-						onAnimationEnd={ ( ev: any ) => {
-							if ( ev.animationName === 'wpcom-block-editor-nav-sidebar__grow' ) {
-								setIsClosing( false );
-								document.body.classList.remove( 'is-wpcom-block-editor-nav-sidebar-close-hidden' );
-							}
-						} }
-					/>
+						href={ closeUrl }
+						className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
+						icon={ chevronLeft }
+						onClick={ handleClose }
+					>
+						{ closeLabel }
+					</Button>
 				</div>
-			) }
-			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header-space" />
-			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container">
-				<Button
-					href={ closeUrl }
-					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
-					icon={ chevronLeft }
-					onClick={ handleClose }
-				>
-					{ closeLabel }
-				</Button>
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__controls">
+					<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
+						{ items.map( ( item ) => (
+							<NavItem
+								key={ item.id }
+								item={ item }
+								postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
+								selected={ item.id === selectedItemId }
+								statusLabel={ statusLabels[ item.status ] }
+							/>
+						) ) }
+					</ul>
+					<CreatePage postType={ postType } />
+					<ViewAllPosts postType={ postType } />
+				</div>
 			</div>
-			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__controls">
-				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-					{ items.map( ( item ) => (
-						<NavItem
-							key={ item.id }
-							item={ item }
-							postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
-							selected={ item.id === selectedItemId }
-							statusLabel={ statusLabels[ item.status ] }
-						/>
-					) ) }
-				</ul>
-				<CreatePage postType={ postType } />
-				<ViewAllPosts postType={ postType } />
-			</div>
-		</div>
+		</>
 	);
 }
 
