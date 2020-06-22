@@ -55,7 +55,6 @@ import { abtest } from 'lib/abtest';
  * Style dependencies
  */
 import './style.scss';
-import { requestGeoLocation } from '../../../state/data-getters';
 
 class DomainsStep extends React.Component {
 	static propTypes = {
@@ -72,7 +71,6 @@ class DomainsStep extends React.Component {
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
-		userGeoCountryCode: PropTypes.string,
 		vertical: PropTypes.string,
 	};
 
@@ -742,7 +740,6 @@ export default connect(
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-			userGeoCountryCode: requestGeoLocation().data,
 		};
 	},
 	{
