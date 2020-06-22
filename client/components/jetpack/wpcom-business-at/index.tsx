@@ -219,7 +219,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	useEffect( () => {
 		if ( automatedTransferStatus === COMPLETE && isJetpack ) {
 			dispatch(
-				successNotice( translate( 'Jetpack features are now activated.' ), {
+				successNotice( translate( 'Jetpack Backup is now active' ), {
 					id: 'jetpack-features-on',
 					duration: 5000,
 					displayOnNextPage: true,
@@ -266,7 +266,10 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 					<SpinnerButton
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
-						loading={ automatedTransferStatus === START }
+						loading={
+							automatedTransferStatus === START ||
+							( automatedTransferStatus === COMPLETE && ! isJetpack )
+						}
 						onClick={ initiateATOrShowWarnings }
 						disabled={ cannotInitiateTransfer }
 					/>
