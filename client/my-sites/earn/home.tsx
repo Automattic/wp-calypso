@@ -97,8 +97,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		const supportLink =
-			'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/';
+		const supportLink = isEnabled( 'earn/rename-payment-blocks' )
+			? localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/' )
+			: localizeUrl(
+					'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/'
+			  );
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Add one-time payments' ),
@@ -116,9 +119,24 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const learnMoreLink = hasSimplePayments
 			? null
 			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
-		return {
-			title: translate( 'Collect one-time payments' ),
-			body: hasSimplePayments
+		let title, body;
+		if ( isEnabled( 'earn/rename-payment-blocks' ) ) {
+			title = translate( 'Collect PayPal payments' );
+			body = hasSimplePayments
+				? translate(
+						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
+				  )
+				: translate(
+						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+				  );
+		} else {
+			title = translate( 'Collect one-time payments' );
+			body = hasSimplePayments
 				? translate(
 						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work.'
 				  )
@@ -129,7 +147,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 								em: <em />,
 							},
 						}
-				  ),
+				  );
+		}
+		return {
+			title,
+			body,
 			image: {
 				path: simplePaymentsImage,
 			},
