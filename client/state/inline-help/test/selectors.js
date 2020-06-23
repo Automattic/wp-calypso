@@ -44,7 +44,7 @@ describe( '#getSearhQuery()', () => {
 			inlineHelp: {},
 		};
 
-		expect( getSearhQuery( state ) ).to.be.empty;
+		expect( getSearhQuery( state ) ).to.be.string;
 	} );
 } );
 
@@ -120,5 +120,21 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 		};
 
 		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.be.null;
+	} );
+
+
+	test( 'should return null when no items', () => {
+		const state = {
+			inlineHelp: {
+				searchResults: {
+					search: {
+						searchQuery: '',
+						items: {},
+					},
+				},
+			},
+		};
+
+		expect( getInlineHelpSearchResultsForQuery( state, 'ada' ) ).to.be.null;
 	} );
 } );
