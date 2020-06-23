@@ -70,15 +70,6 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 
 								},
 							],
-
-							'bar': [
-								{
-									title: 'Bar Item 0 title',
-									description: 'Bar Item 0 description',
-									link: 'http://bar.item-0.link',
-
-								},
-							],
 						},
 					},
 				},
@@ -99,5 +90,35 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 
 			},
 		] );
+	} );
+
+	test( 'should return null when no items for given query', () => {
+		const state = {
+			inlineHelp: {
+				searchResults: {
+					search: {
+						searchQuery: 'foo',
+						items: {
+							'foo': [
+								{
+									title: 'Foo Item 0 title',
+									description: 'Foo Item 0 description',
+									link: 'http://foo.item-0.link',
+
+								},
+								{
+									title: 'Foo Item 1 title',
+									description: 'Foo Item 1 description',
+									link: 'http://foo.item-1.link',
+
+								},
+							],
+						},
+					},
+				},
+			},
+		};
+
+		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.be.null;
 	} );
 } );
