@@ -149,7 +149,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	whiteGloveUpsell: {
-		datestamp: '20200608',
+		datestamp: '20200623',
 		variations: {
 			variantShowOffer: 50,
 			control: 50,
