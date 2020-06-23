@@ -259,7 +259,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__header-title {
-	font-size: 22px;
+	font-size: $font-title-small;
 	color: var( --color-primary );
 	line-height: 0.7;
 

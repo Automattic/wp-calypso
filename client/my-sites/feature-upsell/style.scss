@@ -162,7 +162,7 @@ $feature-upsell-break-at: '1040px';
 			font-size: 26px;
 			padding-right: 30px;
 			@include breakpoint-deprecated( '<1280px' ) {
-				font-size: 22px;
+				font-size: $font-title-small;
 			}
 		}
 		.feature-upsell__cta-button {

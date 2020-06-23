@@ -70,7 +70,7 @@
 	line-height: 24px;
 
 	@include breakpoint-deprecated( '>960px' ) {
-		font-size: 22px;
+		font-size: $font-title-small;
 	}
 
 	em,
