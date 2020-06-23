@@ -885,8 +885,6 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
-				{ this.props.shouldRenderJetpackSection && this.jetpack() }
-
 				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
 				<ExpandableSidebarMenu
 					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
@@ -896,6 +894,8 @@ export class MySitesSidebar extends Component {
 				>
 					{ this.site() }
 				</ExpandableSidebarMenu>
+
+				{ this.props.shouldRenderJetpackSection && this.jetpack() }
 
 				{ ! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) && this.design() ? (
 					<ExpandableSidebarMenu
