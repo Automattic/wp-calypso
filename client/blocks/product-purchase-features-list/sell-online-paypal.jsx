@@ -35,7 +35,11 @@ export default localize( ( { isJetpack, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				buttonText={ translate( 'Collect PayPal payments' ) }
+				buttonText={
+					isEnabled( 'earn/rename-payment-blocks' )
+						? translate( 'Collect PayPal payments' )
+						: translate( 'Collect payments' )
+				}
 				description={
 					isEnabled( 'earn/rename-payment-blocks' )
 						? translate(
