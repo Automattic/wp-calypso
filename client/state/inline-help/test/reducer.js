@@ -186,16 +186,16 @@ describe( 'reducer', () => {
 			const firstQuery = 'testQuery';
 			const secondQuery = 'anotherQuery';
 
-			let state = search(
-				{},
-				{
-					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-					searchQuery: firstQuery,
-					searchResults: API_RESULT_FIXTURE,
-				}
-			);
+			let state = search( undefined, {
+				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+				searchQuery: firstQuery,
+				searchResults: API_RESULT_FIXTURE,
+			} );
 
 			expect( state ).to.eql( {
+				searchQuery: '',
+				hasAPIResults: false,
+				shouldOpenSelectedResult: false,
 				selectedResult: -1,
 				items: {
 					[ firstQuery ]: API_RESULT_FIXTURE,
@@ -204,13 +204,16 @@ describe( 'reducer', () => {
 
 			// Also test results are appended to existing
 			// keyed by search term
-			state = search( state, {
+			state = search( deepFreeze( state ), {
 				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 				searchQuery: secondQuery,
 				searchResults: API_RESULT_FIXTURE,
 			} );
 
 			expect( state ).to.eql( {
+				searchQuery: '',
+				hasAPIResults: false,
+				shouldOpenSelectedResult: false,
 				selectedResult: -1,
 				items: {
 					[ firstQuery ]: API_RESULT_FIXTURE,
@@ -233,7 +236,7 @@ describe( 'reducer', () => {
 				hasAPIResults: true,
 			} );
 
-			state = search( state, {
+			state = search( deepFreeze( state ), {
 				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 				hasAPIResults: false,
 			} );
@@ -262,7 +265,7 @@ describe( 'reducer', () => {
 					selectedResult: 2,
 				} );
 
-				state = search( state, {
+				state = search( deepFreeze( state ), {
 					type: INLINE_HELP_SELECT_RESULT,
 					resultIndex: 4,
 				} );
@@ -287,7 +290,7 @@ describe( 'reducer', () => {
 					};
 					let state;
 
-					state = search( initialState, {
+					state = search( deepFreeze( initialState ), {
 						type: INLINE_HELP_SELECT_NEXT_RESULT,
 					} );
 
@@ -299,7 +302,7 @@ describe( 'reducer', () => {
 						},
 					} );
 
-					state = search( state, {
+					state = search( deepFreeze( state ), {
 						type: INLINE_HELP_SELECT_NEXT_RESULT,
 					} );
 
@@ -321,7 +324,7 @@ describe( 'reducer', () => {
 						},
 					};
 
-					const state = search( initialState, {
+					const state = search( deepFreeze( initialState ), {
 						type: INLINE_HELP_SELECT_NEXT_RESULT,
 					} );
 
@@ -346,7 +349,7 @@ describe( 'reducer', () => {
 					};
 					let state;
 
-					state = search( initialState, {
+					state = search( deepFreeze( initialState ), {
 						type: INLINE_HELP_SELECT_PREVIOUS_RESULT,
 					} );
 
@@ -358,7 +361,7 @@ describe( 'reducer', () => {
 						},
 					} );
 
-					state = search( state, {
+					state = search( deepFreeze( state ), {
 						type: INLINE_HELP_SELECT_PREVIOUS_RESULT,
 					} );
 
@@ -380,7 +383,7 @@ describe( 'reducer', () => {
 						},
 					};
 
-					const state = search( initialState, {
+					const state = search( deepFreeze( initialState ), {
 						type: INLINE_HELP_SELECT_PREVIOUS_RESULT,
 					} );
 
@@ -406,7 +409,7 @@ describe( 'reducer', () => {
 							},
 						};
 
-						const state = search( initialState, {
+						const state = search( deepFreeze( initialState ), {
 							type: actionType,
 						} );
 
@@ -431,7 +434,7 @@ describe( 'reducer', () => {
 							},
 						};
 
-						const state = search( initialState, {
+						const state = search( deepFreeze( initialState ), {
 							type: actionType,
 						} );
 
