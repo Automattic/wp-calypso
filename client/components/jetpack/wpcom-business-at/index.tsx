@@ -43,6 +43,7 @@ import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
 import { successNotice } from 'state/notices/actions';
 import { requestSite } from 'state/sites/actions';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 
 /**
  * Style dependencies
@@ -55,7 +56,6 @@ import 'blocks/eligibility-warnings/style.scss';
  */
 import JetpackBackupSVG from 'assets/images/illustrations/jetpack-backup.svg';
 import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
-import isJetpackSite from '../../../state/sites/selectors/is-jetpack-site';
 
 interface Props {
 	product: 'backup' | 'scan';
@@ -209,25 +209,33 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
 	useEffect( () => {
-		// Detect when the transfer is complete to refresh the site data
-		if ( automatedTransferStatus === COMPLETE ) {
+		if ( automatedTransferStatus !== COMPLETE ) {
+			return;
+		}
+		// Transfer is completed, check if it's already a Jetpack site
+		if ( ! isJetpack ) {
 			// Need to refresh the site data.
 			dispatch( requestSite( siteId ) );
+			return;
 		}
-	}, [ automatedTransferStatus ] );
 
-	useEffect( () => {
-		if ( automatedTransferStatus === COMPLETE && isJetpack ) {
-			dispatch(
-				successNotice( translate( 'Jetpack Backup is now active' ), {
+		// Okay, transfer is completed and it's a Jetpack site
+		dispatch(
+			successNotice(
+				translate( '%s is now active', {
+					args: content.documentHeadTitle,
+					comment:
+						'%s is a Jetpack product name like: Jetpack Backup, Jetpack Scan, Jetpack Anti-spam',
+				} ),
+				{
 					id: 'jetpack-features-on',
 					duration: 5000,
 					displayOnNextPage: true,
-				} )
-			);
-			// Reload the page, whatever siteSlug is
-			page( `/${ product }/${ siteSlug }` );
-		}
+				}
+			)
+		);
+		// Reload the page, whatever siteSlug is
+		page( `/${ product }/${ siteSlug }` );
 	}, [ automatedTransferStatus, isJetpack ] );
 
 	// If there are any issues, show a dialog.
