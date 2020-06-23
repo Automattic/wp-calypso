@@ -313,14 +313,14 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the paypal payment method option when full credits are available', async () => {
+	it( 'does not render the other payment method options when full credits are available', async () => {
 		let renderResult;
 		const cartChanges = { credits_integer: 15600, credits_display: 'R$156' };
 		await act( async () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
+		const { queryByText } = renderResult;
+		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
