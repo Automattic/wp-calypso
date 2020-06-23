@@ -15,7 +15,6 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
 import SpinnerButton from 'components/spinner-button';
-import MaterialIcon from 'components/material-icon';
 import PromoCard from 'components/promo-section/promo-card';
 import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -55,71 +54,33 @@ import 'blocks/eligibility-warnings/style.scss';
  * Asset dependencies
  */
 import JetpackBackupSVG from 'assets/images/illustrations/jetpack-backup.svg';
-import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
 
-interface Props {
-	product: 'backup' | 'scan';
-}
-
-interface BlockingHoldNoticeProps extends Props {
+interface BlockingHoldNoticeProps {
 	siteId: number;
 }
 
-interface TransferFailureNoticeProps extends Props {
+interface TransferFailureNoticeProps {
 	// This gets the values of the object transferStates.
 	transferStatus: typeof transferStates[ keyof typeof transferStates ];
 }
 
-const contentPerPrimaryProduct = {
-	backup: {
-		documentHeadTitle: 'Activate Jetpack Backup now',
-		header: translate( 'Jetpack Backup' ),
-		primaryPromo: {
-			title: translate( 'Get time travel for your site with Jetpack Backup' ),
-			image: { path: JetpackBackupSVG },
-			content: translate(
-				'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
-			),
-			promoCTA: {
-				text: translate( 'Activate Jetpack Backup now' ),
-				loadingText: translate( 'Activating Jetpack Backup' ),
-			},
-		},
-		secondaryPromo: {
-			title: translate( 'Jetpack Scan' ),
-			icon: 'security',
-			content: translate(
-				'Automated scanning and one-click fixes to keep your site ahead of security threats.'
-			),
-		},
-	},
-
-	scan: {
-		documentHeadTitle: 'Activate Jetpack Scan now',
-		header: translate( 'Jetpack Scan' ),
-		primaryPromo: {
-			title: translate( 'We guard your site. You run your business.' ),
-			image: { path: JetpackScanSVG },
-			content: translate(
-				'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
-			),
-			promoCTA: {
-				text: translate( 'Activate Jetpack Scan now' ),
-				loadingText: translate( 'Activating Jetpack Scan' ),
-			},
-		},
-		secondaryPromo: {
-			title: translate( 'Jetpack Backup' ),
-			icon: 'security',
-			content: translate(
-				'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
-			),
+const content = {
+	documentHeadTitle: 'Activate Jetpack Backup now',
+	header: translate( 'Jetpack Backup' ),
+	primaryPromo: {
+		title: translate( 'Get time travel for your site with Jetpack Backup' ),
+		image: { path: JetpackBackupSVG },
+		content: translate(
+			'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+		),
+		promoCTA: {
+			text: translate( 'Activate Jetpack Backup now' ),
+			loadingText: translate( 'Activating Jetpack Backup' ),
 		},
 	},
 };
 
-function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): ReactElement | null {
-	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
+function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ): ReactElement | null {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
 	if ( ! holds ) {
 		return null;
@@ -143,9 +104,7 @@ function BlockingHoldNotice( { siteId, product }: BlockingHoldNoticeProps ): Rea
 
 function TransferFailureNotice( {
 	transferStatus,
-	product,
 }: TransferFailureNoticeProps ): ReactElement | null {
-	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 	if ( transferStatus !== transferStates.FAILURE && transferStatus !== transferStates.ERROR ) {
 		return null;
 	}
@@ -167,8 +126,7 @@ function TransferFailureNotice( {
 	);
 }
 
-export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
-	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
+export default function WPCOMBusinessAT(): ReactElement {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 
@@ -202,12 +160,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 		setShowDialog( false );
 		dispatch( initiateThemeTransfer( siteId, null, '' ) );
 	}, [ dispatch, siteId ] );
-
-	const eventName =
-		product === 'backup'
-			? 'calypso_jetpack_backup_business_at'
-			: 'calypso_jetpack_scan_business_at';
-	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
+	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
@@ -238,7 +191,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			)
 		);
 		// Reload the page, whatever siteSlug is
-		page( `/${ product }/${ siteSlug }` );
+		page( `/backup/${ siteSlug }` );
 	}, [ automatedTransferStatus, isJetpack ] );
 
 	// If there are any issues, show a dialog.
@@ -256,7 +209,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 			<QueryAutomatedTransferEligibility siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
 			<SidebarNavigation />
-			<PageViewTracker path={ `/${ product }/:site` } title="Business Plan Automated Transfer" />
+			<PageViewTracker path={ `/backup/:site` } title="Business Plan Automated Transfer" />
 
 			<FormattedHeader
 				id="wpcom-business-at-header"
@@ -265,8 +218,8 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				align="left"
 				brandFont
 			/>
-			<BlockingHoldNotice siteId={ siteId } product={ product } />
-			<TransferFailureNotice product={ product } transferStatus={ automatedTransferStatus } />
+			<BlockingHoldNotice siteId={ siteId } />
+			<TransferFailureNotice transferStatus={ automatedTransferStatus } />
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }
@@ -285,27 +238,6 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 						disabled={ cannotInitiateTransfer }
 					/>
 				</div>
-			</PromoCard>
-
-			<FormattedHeader
-				id="wpcom-business-at-subheader"
-				className="wpcom-business-at__subheader"
-				headerText={ translate( 'Also included in the Business Plan' ) }
-				align="left"
-				isSecondary
-				brandFont
-			/>
-
-			<PromoCard
-				title={ content.secondaryPromo.title }
-				image={
-					<MaterialIcon
-						icon={ content.secondaryPromo.icon }
-						className="wpcom-business-at__secondary-promo-icon"
-					/>
-				}
-			>
-				<p>{ content.secondaryPromo.content }</p>
 			</PromoCard>
 
 			<WhatIsJetpack className="wpcom-business-at__footer" />
@@ -327,9 +259,9 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 				} ) }
 			>
 				{ !! holds?.length && (
-					<HoldList holds={ holds } context={ product } isPlaceholder={ false } />
+					<HoldList holds={ holds } context={ 'backup' } isPlaceholder={ false } />
 				) }
-				{ !! warnings?.length && <WarningList warnings={ warnings } context={ product } /> }
+				{ !! warnings?.length && <WarningList warnings={ warnings } context={ 'backup' } /> }
 			</Dialog>
 		</Main>
 	);
