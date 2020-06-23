@@ -734,11 +734,6 @@ const mapStateToProps = (
 		queryArgs = wpcom.addSupportParams( queryArgs );
 	}
 
-	// Needed to pass through feature flag to iframed editor.
-	if ( window.location.href.indexOf( 'editor/after-deprecation' ) > -1 ) {
-		queryArgs[ 'editor-after-deprecation' ] = 1;
-	}
-
 	const siteAdminUrl =
 		editorType === 'site'
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
