@@ -31,12 +31,19 @@ const viewportHeight = 800; // Browser height for capturing the screenshot
 const viewportScaleFactor = 2; // Browser pixel density for capturing the screenshot
 const viewportWidth = 1280; // Browser width for capturing the screenshot
 
+const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
+
 const getDesignUrl = ( design ) => {
-	return wpUrl.addQueryArgs( design.src, {
-		font_base: design.fonts.base,
-		font_headings: design.fonts.headings,
-		site_title: design.title,
-	} );
+	return wpUrl.addQueryArgs(
+		`${ designsEndpoint }${ encodeURIComponent( design.theme ) }/${ encodeURIComponent(
+			design.template
+		) }`,
+		{
+			font_base: design.fonts.base,
+			font_headings: design.fonts.headings,
+			site_title: design.title,
+		}
+	);
 };
 
 async function run() {
