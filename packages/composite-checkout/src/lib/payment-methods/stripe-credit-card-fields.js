@@ -294,13 +294,13 @@ const CreditCardFieldsWrapper = styled.div`
 		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		position: absolute;
 		top: 0;
-		left: 3px;
+		${ ( props ) => ( props.isRtl ? 'right: 3px;' : 'left: 3px' ) };
 	}
 `;
 
 const LoadingIndicator = styled( Spinner )`
 	position: absolute;
-	right: 15px;
+	${ ( props ) => ( props.isRTL ? 'left: 15px;' : 'right: 15px;' ) }
 	top: 10px;
 `;
 
@@ -367,9 +367,11 @@ const StripeErrorMessage = styled.span`
 `;
 
 function LoadingFields() {
+	const { isRTL } = useI18n();
+
 	return (
 		<React.Fragment>
-			<LoadingIndicator />
+			<LoadingIndicator isRTL={ isRTL } />
 			<CreditCardLoading />
 		</React.Fragment>
 	);
@@ -527,9 +529,10 @@ function CreditCardLabel() {
 
 function CreditCardLogos() {
 	//TODO: Determine which logos to show
+	const { isRTL } = useI18n();
 
 	return (
-		<PaymentMethodLogos>
+		<PaymentMethodLogos isRTL={ isRTL }>
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
@@ -538,10 +541,10 @@ function CreditCardLogos() {
 }
 
 function CreditCardLoading() {
-	const { __ } = useI18n();
+	const { __, isRTL } = useI18n();
 
 	return (
-		<CreditCardFieldsWrapper isLoaded={ true }>
+		<CreditCardFieldsWrapper isLoaded={ true } isRTL={ isRTL }>
 			<CreditCardField
 				id="credit-card-number"
 				type="Number"

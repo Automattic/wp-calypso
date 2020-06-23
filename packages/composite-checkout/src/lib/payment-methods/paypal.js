@@ -33,12 +33,12 @@ export function createPayPalMethod() {
 }
 
 export function PaypalLabel() {
-	const { __ } = useI18n();
+	const { __, isRTL } = useI18n();
 
 	return (
 		<React.Fragment>
 			<span>{ __( 'PayPal' ) }</span>
-			<PaymentMethodLogos className="paypal__logo payment-logos">
+			<PaymentMethodLogos className="paypal__logo payment-logos" isRTL={ isRTL }>
 				<PaypalLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
