@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,14 +12,16 @@ import HeaderCake from 'components/header-cake';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { useTranslate } from 'i18n-calypso';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export default function DomainManagementHeader( props ) {
-	const { onClick, backHref, children } = props;
+const DomainManagementHeader = ( props ) => {
+	const { isManagingAllDomains, onClick, backHref, children } = props;
 	const translate = useTranslate();
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -27,7 +30,9 @@ export default function DomainManagementHeader( props ) {
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"
-				headerText={ translate( 'Domains' ) }
+				headerText={
+					isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
+				}
 				align="left"
 			/>
 			<HeaderCake className="domain-management-header" onClick={ onClick } backHref={ backHref }>
@@ -39,4 +44,11 @@ export default function DomainManagementHeader( props ) {
 		</React.Fragment>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-}
+};
+
+export default connect( ( state ) => {
+	const path = getCurrentRoute( state );
+	return {
+		isManagingAllDomains: isUnderDomainManagementAll( path ),
+	};
+} )( DomainManagementHeader );
