@@ -94,9 +94,9 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 			step( 'Resets search UI to default state when search input is cleared ', async function () {
 				await supportSearchComponent.clearSearchField();
 
-				// Once https://github.com/Automattic/wp-calypso/pull/43323 is merged this will work again
-				// const results = await supportSearchComponent.getSearchResults();
-				// assert.strictEqual( results.length, 5, 'There are no contextual results displayed' );
+				const resultsCount = await supportSearchComponent.getSearchResultsCount();
+
+				assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
 			} );
 
 			step(
