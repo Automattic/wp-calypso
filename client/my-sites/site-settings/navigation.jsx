@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -13,8 +13,10 @@ import config from 'config';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import { getSelectedSite } from 'state/ui/selectors';
+import { siteHasScanProductPurchase } from 'state/purchases/selectors';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
+import isRewindActive from 'state/selectors/is-rewind-active';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 export class SiteSettingsNavigation extends Component {
 	static propTypes = {
@@ -108,10 +110,12 @@ export class SiteSettingsNavigation extends Component {
 
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
-	const shouldShowJetpackSettings = isJetpackSectionEnabledForSite( state, site.ID );
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		site,
-		shouldShowJetpackSettings,
+		shouldShowJetpackSettings:
+			isJetpackSectionEnabledForSite( state, site.ID ) &&
+			( siteHasScanProductPurchase( state, siteId ) || isRewindActive( state, siteId ) ),
 	};
 } )( localize( SiteSettingsNavigation ) );
