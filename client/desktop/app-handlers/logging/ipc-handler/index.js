@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' );
+const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = {
 	/**
@@ -14,9 +14,10 @@ module.exports = {
 	 * Gets the logging object for the provided `namespace` (and creates a logger
 	 * if one doesn't exist). Logger references are tracked in the `loggers`
 	 * object and keyed by `namespace`.
-	 * @param {String} namespace Namespace of the logger to be used or initialized.
-	 * @param {Any} options Logger configuration.
-	 * @returns {Object} Logger instance.
+	 *
+	 * @param {string} namespace Namespace of the logger to be used or initialized.
+	 * @param {object} options Logger configuration.
+	 * @returns {object} Logger instance.
 	 */
 	getLogger: function ( namespace, options ) {
 		let logger = this.loggers[ namespace ];

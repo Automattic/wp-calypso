@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const shell = require( 'electron' ).shell;
+const { shell } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 const ipc = require( 'desktop/lib/calypso-commands' );
 const zipLogs = require( '../../window-handlers/get-logs' );
 
@@ -13,7 +13,7 @@ const platform = require( 'desktop/lib/platform' );
 const WindowManager = require( 'desktop/lib/window-manager' );
 const log = require( 'desktop/lib/logger' )( 'desktop:menu:help' );
 
-let menuItems = [];
+const menuItems = [];
 
 if ( platform.isWindows() || platform.isLinux() ) {
 	menuItems.push( {

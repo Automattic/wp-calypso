@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-const dialog = require( 'electron' ).dialog;
-const app = require( 'electron' ).app;
+const { app, dialog } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies

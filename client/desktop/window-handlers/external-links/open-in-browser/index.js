@@ -2,7 +2,7 @@
  * External dependencies
  */
 const { URL } = require( 'url' );
-const shell = require( 'electron' ).shell;
+const { shell } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies

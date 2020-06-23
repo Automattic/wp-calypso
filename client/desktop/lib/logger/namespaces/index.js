@@ -11,10 +11,9 @@ module.exports = {
 	/**
 	 * Populates the private data 'namespaces' as an array with the different namespaces from the DEBUG
 	 * environment variable. It splits the data with ',' as separator.
-	 * @private
 	 */
 	populate: function () {
-		let envString = process.env.DEBUG;
+		const envString = process.env.DEBUG;
 		this.namespaces = envString ? envString.split( ',' ) : [];
 		this.populated = true;
 	},
@@ -22,6 +21,7 @@ module.exports = {
 	 * Checks if the namespace is available to debug. The namespace could be contained in wildcards.
 	 * Ex: 'server:api:controller' would pass the check (return true) if the 'server:api:controller' is in the
 	 * environment variable or if 'server:api:*' or 'server:*' is in the environment variable.
+	 *
 	 * @param namespace {String} - Namespace to check.
 	 * @returns {boolean} Whether or not the namespace is available.
 	 */
@@ -33,11 +33,10 @@ module.exports = {
 		if ( namespace.indexOf( ':' ) !== -1 ) {
 			/* Different levels of the namespace. Using the example of above: 'server' is level 0, 'api' is level 1 and
 			 * 'controller' is level 2. */
-			let levels = namespace.split( ':' );
-			let level;
+			const levels = namespace.split( ':' );
 			for ( let i = 1; i < levels.length; i++ ) {
-				level = levels.slice( 0, i ).join( ':' ) + ':*';
-				if ( this.namespaces.indexOf( level ) !== -1 ) return true;
+				const level = levels.slice( 0, i ).join( ':' ) + ':*';
+				if ( this.namespaces.includes( level ) ) return true;
 			}
 		}
 		return false;

@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const dialog = require( 'electron' ).dialog;
+const { dialog } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ const debugMenu = require( './debug-menu' );
 const debugEnabled = Settings.getSettingGroup( Config.debug.enabled_by_default, 'debug' );
 
 module.exports = function ( app, mainWindow ) {
-	let menuItems = [
+	const menuItems = [
 		{
 			label: 'Preferences...',
 			accelerator: 'CmdOrCtrl+,',

@@ -1,9 +1,8 @@
 /**
  * External Dependencies
  */
-const electron = require( 'electron' );
-const app = electron.app;
-const request = require( 'superagent' );
+const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const request = require( 'superagent' ); // eslint-disable-line no-restricted-modules
 const path = require( 'path' );
 
 /**

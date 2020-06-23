@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, shell } = require( 'electron' );
+const { app, shell } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 const fetch = require( 'electron-fetch' ).default;
 const yaml = require( 'js-yaml' );
 const semver = require( 'semver' );
@@ -66,9 +66,8 @@ class ManualUpdater extends Updater {
 			let latestReleaseVersion;
 
 			if ( this.beta && latestBetaRelease ) {
-				let latestBetaReleaseVersion;
 				const assetUrl = this.getConfigUrl( latestBetaRelease.assets );
-				latestBetaReleaseVersion = await this.getReleaseVersion( assetUrl );
+				const latestBetaReleaseVersion = await this.getReleaseVersion( assetUrl );
 
 				if (
 					semver.valid( latestStableReleaseVersion ) &&

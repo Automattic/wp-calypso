@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const electron = require( 'electron' );
+const electron = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
 const path = require( 'path' );
@@ -51,7 +51,7 @@ const windows = {
 };
 
 function setDimensions( config ) {
-	let full = screen.getPrimaryDisplay();
+	const full = screen.getPrimaryDisplay();
 
 	if ( config.width === 'full' ) config.width = full.bounds.width;
 
@@ -62,7 +62,7 @@ function setDimensions( config ) {
 
 async function openWindow( windowName ) {
 	if ( windows[ windowName ] ) {
-		let settings = windows[ windowName ];
+		const settings = windows[ windowName ];
 
 		if ( settings.handle === null ) {
 			let config = Config[ settings.config ];

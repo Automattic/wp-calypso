@@ -1,9 +1,7 @@
 /**
  * External Dependencies
  */
-const electron = require( 'electron' );
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 const url = require( 'url' );
 const path = require( 'path' );
 
@@ -23,14 +21,14 @@ const log = require( 'desktop/lib/logger' )( 'desktop:runapp' );
 /**
  * Module variables
  */
-var mainWindow = null;
+let mainWindow = null;
 
 function showAppWindow() {
 	const preloadFile = path.resolve(
 		path.join( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' )
 	);
 	let appUrl = Config.server_url + ':' + Config.server_port;
-	let lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
 
 	if ( lastLocation && isValidLastLocation( lastLocation ) ) {
 		appUrl += lastLocation;
@@ -38,7 +36,7 @@ function showAppWindow() {
 
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
-	let config = Settings.getSettingGroup( Config.mainWindow, 'window', [
+	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
 		'x',
 		'y',
 		'width',
@@ -56,7 +54,6 @@ function showAppWindow() {
 	mainWindow.webContents.on( 'did-finish-load', function () {
 		mainWindow.webContents.send( 'app-config', Config, Settings.isDebug(), System.getDetails() );
 
-		const ipc = electron.ipcMain;
 		ipc.on( 'mce-contextmenu', function ( ev ) {
 			mainWindow.send( 'mce-contextmenu', ev );
 		} );
@@ -99,8 +96,8 @@ function showAppWindow() {
 	// mainWindow.openDevTools();
 
 	mainWindow.on( 'close', function () {
-		let currentURL = mainWindow.webContents.getURL();
-		let parsedURL = url.parse( currentURL );
+		const currentURL = mainWindow.webContents.getURL();
+		const parsedURL = url.parse( currentURL );
 		if ( isValidLastLocation( parsedURL.pathname ) ) {
 			Settings.saveSetting( settingConstants.LAST_LOCATION, parsedURL.pathname );
 		}
@@ -134,7 +131,7 @@ function isValidLastLocation( loc ) {
 		return false;
 	}
 
-	for ( let s of invalids ) {
+	for ( const s of invalids ) {
 		if ( loc.startsWith( s ) ) {
 			return false;
 		}

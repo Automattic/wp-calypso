@@ -1,4 +1,4 @@
-const BrowserWindow = require( 'electron' ).BrowserWindow;
+const { BrowserWindow } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ menuItems.push( {
 		const focusedWindow = BrowserWindow.getFocusedWindow();
 
 		if ( focusedWindow ) {
-			let toggle = ! focusedWindow.isFullScreen();
+			const toggle = ! focusedWindow.isFullScreen();
 
 			focusedWindow.setFullScreen( toggle );
 		}

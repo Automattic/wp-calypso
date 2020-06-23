@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const debounce = require( 'lodash.debounce' );
+const { debounce } = require( 'lodash' );
 
 /**
  * Internal dependencies

@@ -1,8 +1,8 @@
 /**
  * External Dependencies
  */
-import { dialog } from 'electron';
-import http from 'http';
+import { dialog } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
+import http from 'http'; // eslint-disable-line import/no-nodejs-modules
 import portscanner from 'portscanner';
 
 /**
@@ -30,7 +30,7 @@ function showFailure( app ) {
 }
 
 function startServer( running_cb ) {
-	var server = http.createServer( boot() );
+	const server = http.createServer( boot() );
 
 	log.info( 'Server created, binding to ' + Config.server_port );
 

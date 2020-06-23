@@ -1,14 +1,13 @@
 /**
  * External Dependencies
  */
-
-const Platform = require( 'desktop/lib/platform' );
-const exec = require( 'child_process' ).execSync;
-const os = require( 'os' );
+const { execSync } = require( 'child_process' ); // eslint-disable-line import/no-nodejs-modules
+const os = require( 'os' ); // eslint-disable-line import/no-nodejs-modules
 
 /**
  * Internal dependencies
  */
+const Platform = require( 'desktop/lib/platform' );
 const config = require( 'desktop/lib/config' );
 const SettingsFile = require( 'desktop/lib/settings/settings-file' );
 const APPS_DIRECTORY = '/Applications';
@@ -17,9 +16,9 @@ const log = require( 'desktop/lib/logger' )( 'desktop:system' );
 function isPinned() {
 	if ( Platform.isOSX() ) {
 		try {
-			let cmd = "defaults read com.apple.dock persistent-apps | grep 'WordPress.com'";
+			const cmd = "defaults read com.apple.dock persistent-apps | grep 'WordPress.com'";
 
-			exec( cmd, {} );
+			execSync( cmd, {} );
 			return true;
 		} catch ( e ) {
 			return false;
@@ -43,7 +42,7 @@ function isFirstRun() {
 
 module.exports = {
 	getDetails: function () {
-		let details = {
+		const details = {
 			pinned: isPinned(),
 			platform: Platform.getPlatformString(),
 			installed: isInstalled(),

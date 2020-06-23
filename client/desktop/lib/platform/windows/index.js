@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { Tray, Menu, app } = require( 'electron' );
+const { Tray, Menu, app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ function WindowsPlatform( mainWindow ) {
 
 	mainWindow.on( 'close', this.onClosed.bind( this ) );
 
-	app.on( 'before-quit', function ( event ) {
+	app.on( 'before-quit', function () {
 		log.info( "Responding to app event 'before-quit', destroying tray" );
 		this.tray.destroy();
 	} );

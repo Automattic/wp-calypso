@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-const electron = require( 'electron' );
-const ipc = electron.ipcMain;
+const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies
@@ -14,10 +13,10 @@ const log = require( 'desktop/lib/logger' )( 'desktop:notifications' );
 /**
  * Module variables
  */
-var unreadNotificationCount = 0;
+let unreadNotificationCount = 0;
 
 function updateNotificationBadge( badgeEnabled ) {
-	var bounceEnabled = Settings.getSetting( 'notification-bounce' );
+	const bounceEnabled = Settings.getSetting( 'notification-bounce' );
 
 	log.info(
 		'Updating notification badge - badge enabled=' +

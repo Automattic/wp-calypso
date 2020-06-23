@@ -28,7 +28,7 @@ Settings.prototype.isDebug = function () {
 	return Config.debug.enabled_by_default;
 };
 
-/**
+/*
  * Get a single setting value
  * If no setting is present then fall back to the `default_settings`
  * If no default setting then fall back to false
@@ -51,7 +51,7 @@ Settings.prototype.getSetting = function ( setting ) {
 	return value;
 };
 
-/**
+/*
  * Get a group of settings
  */
 Settings.prototype.getSettingGroup = function ( existing, group, values ) {
@@ -61,9 +61,9 @@ Settings.prototype.getSettingGroup = function ( existing, group, values ) {
 
 	if ( typeof settingsGroup !== 'undefined' ) {
 		if ( values instanceof Array ) {
-			let updated = {};
+			const updated = {};
 			for ( let x = 0; x < values.length; x++ ) {
-				let value = values[ x ];
+				const value = values[ x ];
 				existing[ value ] = settingsGroup[ value ];
 				updated[ value ] = settingsGroup[ value ];
 			}

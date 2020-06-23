@@ -33,7 +33,7 @@ const maxsize = 15000000;
 module.exports = ( namespace, options ) => {
 	if ( ! options || typeof options !== 'object' ) options = {};
 
-	const formatMessageWithMeta = ( info, opts ) => {
+	const formatMessageWithMeta = ( info ) => {
 		const args = info[ Symbol.for( 'splat' ) ];
 		if ( args ) {
 			if ( args instanceof Array && args.length && ! args[ 0 ] ) {
@@ -71,7 +71,7 @@ module.exports = ( namespace, options ) => {
 	};
 
 	const enabled = namespaces.check( namespace );
-	let logger = createLogger( { ...baseOptions, ...options } );
+	const logger = createLogger( { ...baseOptions, ...options } );
 	if ( process.env.DEBUG ) {
 		logger.add(
 			new transports.Console( {

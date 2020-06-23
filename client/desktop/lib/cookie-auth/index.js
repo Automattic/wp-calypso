@@ -1,10 +1,8 @@
-/* eslint no-multi-spaces: [2, { exceptions: { "VariableDeclarator": true } }] */
-
 /**
  * External Dependencies
  */
-const ipc = require( 'electron' ).ipcMain;
-const https = require( 'https' );
+const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const https = require( 'https' ); // eslint-disable-line import/no-nodejs-modules
 const url = require( 'url' );
 const events = require( 'events' );
 
@@ -14,10 +12,9 @@ const events = require( 'events' );
 const noop = function () {};
 
 function authorize( username, token ) {
-	var responder = new events.EventEmitter();
-	var body = 'log=' + username;
-	var options = url.parse( 'https://wordpress.com/wp-login.php' );
-	var req;
+	const responder = new events.EventEmitter();
+	const body = 'log=' + username;
+	const options = url.parse( 'https://wordpress.com/wp-login.php' );
 
 	responder.username = username;
 
@@ -28,8 +25,8 @@ function authorize( username, token ) {
 		'Content-Length': body.length,
 	};
 
-	req = https.request( options, function ( res ) {
-		var responseBody = '';
+	const req = https.request( options, function ( res ) {
+		let responseBody = '';
 
 		responder.emit( 'response', res );
 
@@ -46,18 +43,15 @@ function authorize( username, token ) {
 }
 
 function parseCookie( cookieStr ) {
-	var cookie = {};
+	const cookie = {};
 	// split, the first is key/value, the rest are settings
-	var parts = cookieStr.split( '; ' ).map( function ( v ) {
-		return v.split( '=' );
-	} );
-	var value;
+	const parts = cookieStr.split( '; ' ).map( ( v ) => v.split( '=' ) );
 
 	if ( parts.length === 0 ) {
 		return cookie;
 	}
 
-	value = parts.shift();
+	const value = parts.shift();
 
 	if ( value.length === 2 ) {
 		cookie.name = value[ 0 ];
@@ -67,19 +61,19 @@ function parseCookie( cookieStr ) {
 	}
 
 	return parts.reduce( function ( collect, pair ) {
-		var val = true;
+		let val = true;
 		if ( pair.length === 2 ) {
 			val = pair[ 1 ];
 		}
 		collect[ pair[ 0 ] ] = val;
-		return cookie;
+		return collect;
 	}, cookie );
 }
 
 function setSessionCookies( window, onComplete ) {
 	return function ( response ) {
-		var cookieHeaders = response.headers[ 'set-cookie' ];
-		var count = 0;
+		let cookieHeaders = response.headers[ 'set-cookie' ];
+		let count = 0;
 		if ( ! Array.isArray( cookieHeaders ) ) {
 			cookieHeaders = [ cookieHeaders ];
 		}
@@ -102,11 +96,11 @@ function setSessionCookies( window, onComplete ) {
 }
 
 function auth( window, onAuthorized ) {
-	var userData, currentRequest;
+	let currentRequest;
 
 	ipc.on( 'user-auth', function ( event, user, token ) {
 		if ( user && user.data ) {
-			userData = user.data;
+			const userData = user.data;
 			if ( currentRequest && currentRequest.username === userData.username ) {
 				// already authing
 				return;
@@ -123,9 +117,9 @@ function auth( window, onAuthorized ) {
 				}
 
 				cookies.forEach( function ( cookie ) {
-					var domain = cookie.domain;
-					var cookieUrl =
-						'https://' + ( domain.indexOf( '.' ) === 0 ? domain.slice( 1 ) : domain ) + cookie.path;
+					const domain = cookie.domain;
+					const cookieUrl =
+						'https://' + ( domain.startsWith( '.' ) ? domain.slice( 1 ) : domain ) + cookie.path;
 
 					window.webContents.session.cookies.remove( cookieUrl, cookie.name, noop );
 				} );

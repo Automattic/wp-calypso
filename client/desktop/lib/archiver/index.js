@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
+const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
 const path = require( 'path' );
 const archiver = require( 'archiver' );
 
@@ -14,13 +14,13 @@ module.exports = {
 	/**
 	 * Compresses `contents` to the archive at `dst`.
 	 *
-	 * @param {String[]} contents Paths to be zipped
-	 * @param {String} dst Path to destination archive
+	 * @param {string[]} contents Paths to be zipped
+	 * @param {string} dst Path to destination archive
 	 * @param {function():void} onZipped Callback invoked when archive is complete
 	 */
 	zipContents: ( contents, dst, onZipped ) => {
-		let output = fs.createWriteStream( dst );
-		let archive = archiver( 'zip', {
+		const output = fs.createWriteStream( dst );
+		const archive = archiver( 'zip', {
 			zlib: { level: 9 },
 		} );
 

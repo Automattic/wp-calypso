@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, dialog } = require( 'electron' );
+const { app, dialog } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 const { EventEmitter } = require( 'events' );
 
 /**

@@ -1,9 +1,7 @@
 /**
  * External Dependencies
  */
-const electron = require( 'electron' );
-const app = electron.app;
-const Menu = electron.Menu;
+const { app, Menu } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies

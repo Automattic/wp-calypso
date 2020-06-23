@@ -2,7 +2,7 @@
  * External Dependencies
  */
 const path = require( 'path' );
-const app = require( 'electron' ).app;
+const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 const makeDir = require( 'make-dir' );
 
 /**
@@ -28,7 +28,7 @@ const Settings = require( './lib/settings' );
 require( './app-handlers/exceptions' )();
 
 // if app path set to asar, switch to the dir, not file
-var apppath = app.getAppPath();
+let apppath = app.getAppPath();
 if ( path.extname( apppath ) === '.asar' ) {
 	apppath = path.dirname( apppath );
 }

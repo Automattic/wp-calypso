@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const Menu = require( 'electron' ).Menu;
+const { Menu } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies

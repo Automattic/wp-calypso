@@ -1,9 +1,7 @@
 /**
  * External Dependencies
  */
-const electron = require( 'electron' );
-const ipc = electron.ipcMain;
-const dialog = electron.dialog;
+const { dialog, ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies
@@ -24,18 +22,16 @@ function promptForRestart( title, message ) {
 }
 
 module.exports = function () {
-	ipc.on( 'preferences-changed', function ( event, arg ) {
-		let name = arg.name;
-
+	ipc.on( 'preferences-changed', function ( event, { name, value } ) {
 		if ( 'proxy-type' === name ) {
 			promptForRestart( 'Proxy changed', 'You have changed the proxy settings.' );
 		} else if ( 'spellcheck-enabled' === name ) {
 			promptForRestart(
-				arg.value ? 'Spellchecker enabled' : 'Spellchecker disabled',
+				value ? 'Spellchecker enabled' : 'Spellchecker disabled',
 				'You have changed the spellchecker settings.'
 			);
 		}
 
-		Settings.saveSetting( name, arg.value );
+		Settings.saveSetting( name, value );
 	} );
 };

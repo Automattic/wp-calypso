@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const ipc = require( 'electron' ).ipcMain;
+const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies

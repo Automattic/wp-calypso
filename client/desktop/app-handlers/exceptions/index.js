@@ -1,9 +1,7 @@
 /**
  * External Dependencies
  */
-const electron = require( 'electron' );
-const app = electron.app;
-const dialog = electron.dialog;
+const { app, dialog } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies
@@ -25,7 +23,7 @@ function exit() {
 	if ( isReady ) {
 		app.quit();
 	} else {
-		process.exit( 1 );
+		process.exit( 1 ); // eslint-disable-line no-process-exit
 	}
 }
 
@@ -52,13 +50,7 @@ function showErrorAndExit( error ) {
 }
 
 function isFatalError( error ) {
-	if ( typeof error.code ) {
-		if ( NETWORK_ERRORS.indexOf( error.code ) !== -1 ) {
-			return false;
-		}
-	}
-
-	return true;
+	return ! NETWORK_ERRORS.includes( error.code );
 }
 
 function exceptionHandler( error ) {
