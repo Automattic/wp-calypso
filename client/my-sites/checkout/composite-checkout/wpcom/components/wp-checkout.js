@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, useRtl } from 'i18n-calypso';
 import styled from '@emotion/styled';
+import isPropValid from '@emotion/is-prop-valid';
 import {
 	Checkout,
 	CheckoutStep,
@@ -102,6 +103,7 @@ export default function WPCheckout( {
 	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
+	const isRTL = useRtl();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
@@ -215,11 +217,14 @@ export default function WPCheckout( {
 	return (
 		<Checkout>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
+				<CheckoutSummaryTitleLink
+					onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+					isRTL={ isRTL }
+				>
 					<CheckoutSummaryTitle>
 						<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
 						{ translate( 'Purchase Details' ) }
-						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" isRTL={ isRTL } />
 					</CheckoutSummaryTitle>
 					<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
 						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
@@ -353,7 +358,7 @@ const CheckoutSummaryTitleLink = styled.button`
 	font-size: 16px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	justify-content: space-between;
-	padding: 20px 23px 20px 14px;
+	padding: ${ ( props ) => ( props.isRTL ? '20px 14px 20px 23px' : '20px 23px 20px 14px;' ) }
 	width: 100%;
 
 	.is-visible & {
@@ -374,13 +379,13 @@ const CheckoutSummaryTitle = styled.span`
 	display: flex;
 `;
 
-const CheckoutSummaryTitleIcon = styled( Gridicon )`
-	margin-right: 4px;
+const CheckoutSummaryTitleIcon = styled( Gridicon, { shouldForwardProp: isPropValid } )`
+	${ ( props ) => ( props.isRTL ? 'margin-left: 4px;' : 'margin-right: 4px;' ) }
 `;
 
-const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
+const CheckoutSummaryTitleToggle = styled( MaterialIcon, { shouldForwardProp: isPropValid } )`
 	fill: ${ ( props ) => props.theme.colors.textColor };
-	margin-left: 4px;
+	${ ( props ) => ( props.isRTL ? 'margin-right: 4px;' : 'margin-left: 4px;' ) }
 	transition: transform 0.1s linear;
 	width: 18px;
 	height: 18px;
@@ -416,12 +421,13 @@ const CheckoutSummaryBody = styled.div`
 
 function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 	const [ items, total ] = useLineItems();
+	const isRTL = useRtl();
 	const taxes = items.filter( ( item ) => item.type === 'tax' );
 	return (
 		<>
 			{ paymentMethodStep.activeStepContent }
 
-			<CheckoutTermsUI>
+			<CheckoutTermsUI isRTL={ isRTL }>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsUI>
 
@@ -438,14 +444,14 @@ function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 
 const CheckoutTermsUI = styled.div`
 	& > * {
-		margin: 16px 0 16px -24px;
-		padding-left: 24px;
+		margin: ${ ( props ) => ( props.isRTL ? '16px -24px 16px 0;' : '16px 0 16px -24px;' ) }
+		${ ( props ) => ( props.isRTL ? 'padding-right: 24px;' : 'padding-left: 24px;' ) }
 		position: relative;
 	}
 
 	& div:first-of-type {
-		padding-left: 0;
-		margin-left: 0;
+		${ ( props ) => ( props.isRTL ? 'padding-right: 0;' : 'padding-left: 0;' ) }
+		${ ( props ) => ( props.isRTL ? 'margin-right: 0;' : 'margin-left: 0;' ) }
 		margin-top: 32px;
 	}
 
@@ -454,7 +460,7 @@ const CheckoutTermsUI = styled.div`
 		height: 16px;
 		position: absolute;
 		top: 0;
-		left: 0;
+		${ ( props ) => ( props.isRTL ? 'right: 0;' : 'left: 0;' ) }
 	}
 
 	p {

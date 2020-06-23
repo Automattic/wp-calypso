@@ -5,7 +5,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, useRtl } from 'i18n-calypso';
 import { Button } from '@automattic/composite-checkout';
 
 /**
@@ -16,6 +16,7 @@ import Field from './field';
 
 export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
+	const isRTL = useRtl();
 	const {
 		couponFieldValue,
 		setCouponFieldValue,
@@ -60,7 +61,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton disabled={ isPending } buttonType="secondary">
+				<ApplyButton disabled={ isPending } buttonType="secondary" isRTL={ isRTL }>
 					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
 				</ApplyButton>
 			) }
@@ -95,7 +96,7 @@ const CouponWrapper = styled.form`
 const ApplyButton = styled( Button )`
 	position: absolute;
 	top: 5px;
-	right: 4px;
+	${ ( props ) => ( props.isRTL ? 'left: 4px;' : 'right: 4px;' ) }
 	padding: 8px;
 	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;

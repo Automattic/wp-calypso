@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import { useRtl } from 'i18n-calypso';
 
 export default function RadioButton( {
 	checked,
@@ -16,10 +17,16 @@ export default function RadioButton( {
 	ariaLabel,
 	isDisabled,
 } ) {
+	const isRTL = useRtl();
 	const [ isFocused, changeFocus ] = useState( false );
 
 	return (
-		<RadioButtonWrapper isDisabled={ isDisabled } isFocused={ isFocused } checked={ checked }>
+		<RadioButtonWrapper
+			isDisabled={ isDisabled }
+			isFocused={ isFocused }
+			checked={ checked }
+			isRTL={ isRTL }
+		>
 			<Radio
 				type="radio"
 				name={ name }
@@ -36,7 +43,7 @@ export default function RadioButton( {
 				readOnly={ ! onChange }
 				aria-label={ ariaLabel }
 			/>
-			<Label checked={ checked } htmlFor={ id } isDisabled={ isDisabled }>
+			<Label checked={ checked } htmlFor={ id } isDisabled={ isDisabled } isRTL={ isRTL }>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -73,7 +80,7 @@ const RadioButtonWrapper = styled.div`
 		height: 100%;
 		position: absolute;
 		top: 0;
-		left: 0;
+		${ ( props ) => ( props.isRTL ? 'right: 0;' : 'left: 0;' ) }
 		content: '';
 		border: ${ getBorderWidth } solid ${ getBorderColor };
 		border-radius: 3px;
@@ -117,7 +124,7 @@ const Radio = styled.input`
 
 const Label = styled.label`
 	position: relative;
-	padding: 16px 14px 16px 40px;
+	padding: ${ ( props ) => ( props.isRTL ? '16px 40px 16px 14px;' : '16px 14px 16px 40px;' ) }
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
@@ -140,7 +147,7 @@ const Label = styled.label`
 		border-radius: 100%;
 		top: 50%;
 		transform: translateY( -50% );
-		left: 16px;
+		${ ( props ) => ( props.isRTL ? 'right: 16px;' : 'left: 16px;' ) }
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
 		box-sizing: border-box;
@@ -155,7 +162,7 @@ const Label = styled.label`
 		border-radius: 100%;
 		top: 50%;
 		transform: translateY( -50% );
-		left: 20px;
+		${ ( props ) => ( props.isRTL ? 'right: 20px;' : 'left: 20px;' ) }
 		position: absolute;
 		background: ${ getRadioColor };
 		box-sizing: border-box;
