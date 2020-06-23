@@ -140,19 +140,16 @@ $min_results_height: 175px;
 				margin-right: 1px;
 			}
 
-			.search__icon-navigation,
 			.spinner {
 				padding: 0 6px;
 				width: 24px;
 				height: 24px;
 			}
 
-			&.is-searching .search__icon-navigation {
-				display: none;
-			}
-
 			.search__icon-navigation .gridicon {
-				width: auto; // allow to scale to container
+				padding: 0 6px;
+				width: 24px;
+				height: 24px;
 			}
 		}
 	}
