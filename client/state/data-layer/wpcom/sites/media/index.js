@@ -30,7 +30,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import {
 	dispatchFluxUpdateMediaItemSuccess,
 	dispatchFluxUpdateMediaItemError,
-} from 'state/media/actions/utils';
+} from 'state/media/utils/flux-adapter';
 
 /**
  * Module variables

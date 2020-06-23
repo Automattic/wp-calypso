@@ -29,7 +29,7 @@ import { getMimeType } from 'lib/media/utils';
 import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
-import { editMedia } from 'state/media/actions';
+import { editMedia } from 'state/media/thunks';
 
 /**
  * Style dependencies
@@ -154,7 +154,7 @@ class Media extends Component {
 			},
 		};
 
-		this.props.editMedia( { siteId: site.ID, item } );
+		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
@@ -217,7 +217,7 @@ class Media extends Component {
 			return;
 		}
 
-		this.props.editMedia( { siteId, item: { ID: item.ID, media_url: item.guid } } );
+		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
 	};

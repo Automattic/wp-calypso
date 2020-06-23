@@ -19,7 +19,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import TrackInputChanges from 'components/track-input-changes';
 import EditorMediaModalFieldset from '../fieldset';
-import { updateMedia } from 'state/media/actions';
+import { updateMedia } from 'state/media/thunks';
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -68,7 +68,7 @@ class EditorMediaModalDetailFields extends Component {
 			return;
 		}
 
-		this.props.updateMedia( { siteId: this.props.site.ID, item: this.state.modifiedItem } );
+		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
 	}
 
 	setFieldValue = ( { target } ) => {
@@ -122,6 +122,7 @@ class EditorMediaModalDetailFields extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="editor-media-modal-detail__fields">
 				<EditorMediaModalFieldset legend={ translate( 'Title' ) }>
 					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
