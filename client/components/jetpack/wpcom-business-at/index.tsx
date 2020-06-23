@@ -223,7 +223,7 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 		dispatch(
 			successNotice(
 				translate( '%s is now active', {
-					args: content.documentHeadTitle,
+					args: content.header,
 					comment:
 						'%s is a Jetpack product name like: Jetpack Backup, Jetpack Scan, Jetpack Anti-spam',
 				} ),
