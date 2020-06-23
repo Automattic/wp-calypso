@@ -6,5 +6,5 @@
  * @returns string|null {lastPath} last feed path visited in the reader
  */
 export function getLastPath( state ) {
-	return state.ui.reader.lastPath;
+	return state.readerUi.lastPath;
 }
