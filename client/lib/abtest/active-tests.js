@@ -151,8 +151,8 @@ export default {
 	whiteGloveUpsell: {
 		datestamp: '20200608',
 		variations: {
-			variantShowOffer: 10,
-			control: 90,
+			variantShowOffer: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
