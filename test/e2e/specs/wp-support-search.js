@@ -35,7 +35,7 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 		step( 'Login and select a non My Home page', async function () {
 			const loginFlow = new LoginFlow( driver );
 
-			// The "inline help" FAB sholuld not appear on the My Home
+			// The "inline help" FAB should not appear on the My Home
 			// because there is already a support search "Card" on that
 			// page. Therefore we select the "Themes" page for our tests.
 			await loginFlow.loginAndSelectThemes();
