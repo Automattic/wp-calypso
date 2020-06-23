@@ -39,7 +39,7 @@ function HelpSearchResults( {
 			selectSearchResult( selectionIndex );
 			openResult( event, selectedResult );
 		},
-		[]
+		[ openResult, searchResults, selectSearchResult ]
 	);
 
 	const renderHelpLink = ( { link, key, description, title }, index ) => {
