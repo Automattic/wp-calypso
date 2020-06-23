@@ -62,8 +62,8 @@
 	}
 }
 
-.language-picker__modal-notice {
-	display: inline;
+.language-picker__modal-item-notice {
+	display: inline-block;
 	vertical-align: middle;
 	margin: -4px 0 -4px 4px;
 	color: var( --color-warning );
@@ -179,5 +179,18 @@
 		z-index: 1;
 		margin: 0;
 		padding: 4px 8px;
+	}
+}
+
+.language-picker__modal-locale-notice {
+	position: relative;
+	z-index: 1;
+	padding: 8px 16px;
+	text-align: right;
+
+	svg {
+		vertical-align: middle;
+		margin-left: 4px;
+		color: var( --color-warning-light );
 	}
 }

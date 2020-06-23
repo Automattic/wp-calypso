@@ -32,11 +32,13 @@ import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
+import Gridicon from 'components/gridicon';
 import LanguagePickerItemTooltip from './tooltip';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getLanguage, isDefaultLocale, isMagnificentLocale } from 'lib/i18n-utils/utils';
 
 /**
  * Style dependencies
@@ -223,6 +225,28 @@ export class LanguagePickerModal extends PureComponent {
 		}
 
 		return Math.floor( wrapperWidth / wrapperChildWidth );
+	}
+
+	getShouldRenderNoticeForNonMagnificentLocale( langSlug ) {
+		return ! isDefaultLocale( langSlug ) && ! isMagnificentLocale( langSlug );
+	}
+
+	getNonMagnificentLocaleNoticeMessage( langSlug ) {
+		const { translate } = this.props;
+		const language = getLanguage( langSlug );
+
+		return translate(
+			'%(language)s is only %(percentage)d% translated :(. You can help translate WordPress.com into your language. {{a}}Learn more.{{/a}}',
+			{
+				components: {
+					a: <a href="https://translate.wordpress.com/faq/" />,
+				},
+				args: {
+					language: language.name,
+					percentage: language.translationsCoverage,
+				},
+			}
+		);
 	}
 
 	selectLanguageFromSearch( search ) {
@@ -436,7 +460,11 @@ export class LanguagePickerModal extends PureComponent {
 				<span className={ classes } lang={ language.langSlug }>
 					{ language.name }
 
-					<LanguagePickerItemTooltip langSlug={ language.langSlug } />
+					{ this.getShouldRenderNoticeForNonMagnificentLocale( language.langSlug ) && (
+						<LanguagePickerItemTooltip langSlug={ language.langSlug }>
+							{ this.getNonMagnificentLocaleNoticeMessage( language.langSlug ) }
+						</LanguagePickerItemTooltip>
+					) }
 				</span>
 			</div>
 		);
@@ -491,6 +519,23 @@ export class LanguagePickerModal extends PureComponent {
 		);
 	}
 
+	renderNonMagnificentLocaleNotice() {
+		const { selectedLanguageSlug } = this.state;
+
+		if ( ! this.getShouldRenderNoticeForNonMagnificentLocale( selectedLanguageSlug ) ) {
+			return null;
+		}
+
+		return (
+			<div className="language-picker__modal-locale-notice">
+				<p>
+					{ this.getNonMagnificentLocaleNoticeMessage( selectedLanguageSlug ) }
+					<Gridicon icon="notice-outline" size={ 18 } />
+				</p>
+			</div>
+		);
+	}
+
 	render() {
 		const { isVisible, translate } = this.props;
 		const { filter, search, isSearchOpen } = this.state;
@@ -536,6 +581,7 @@ export class LanguagePickerModal extends PureComponent {
 				{ this.renderLanguageList() }
 				{ this.renderSuggestedLanguages() }
 				{ this.renderEmpathyModeCheckbox() }
+				{ this.renderNonMagnificentLocaleNotice() }
 			</Dialog>
 		);
 	}
