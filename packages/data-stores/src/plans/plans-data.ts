@@ -19,6 +19,8 @@ const mainFeatures = [
 	'Upload videos',
 	'Google Analytics support',
 	'Business features (incl. SEO)',
+	'Upload themes',
+	'Install plugins',
 	'Accept Payments in 60+ Countries',
 ];
 
@@ -54,7 +56,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 		productId: 1008,
 		storeSlug: PLAN_BUSINESS,
 		pathSlug: 'business',
-		features: [ '200 GB storage space', ...mainFeatures.slice( 0, 9 ) ],
+		features: [ '200 GB storage space', ...mainFeatures.slice( 0, 11 ) ],
 	},
 
 	[ PLAN_ECOMMERCE ]: {
