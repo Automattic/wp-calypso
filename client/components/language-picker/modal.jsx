@@ -56,6 +56,7 @@ export class LanguagePickerModal extends PureComponent {
 		countryCode: PropTypes.string,
 		showEmpathyModeControl: PropTypes.bool,
 		empathyMode: PropTypes.bool,
+		getNonMagnificentLocaleNoticeMessage: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -232,8 +233,12 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	getNonMagnificentLocaleNoticeMessage( langSlug ) {
-		const { translate } = this.props;
+		const { translate, getNonMagnificentLocaleNoticeMessage } = this.props;
 		const language = getLanguage( langSlug );
+
+		if ( typeof getNonMagnificentLocaleNoticeMessage === 'function' ) {
+			return getNonMagnificentLocaleNoticeMessage( language );
+		}
 
 		return translate(
 			'%(language)s is only %(percentage)d% translated :(. You can help translate WordPress.com into your language. {{a}}Learn more.{{/a}}',

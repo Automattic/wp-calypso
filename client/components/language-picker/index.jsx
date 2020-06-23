@@ -32,6 +32,7 @@ export class LanguagePicker extends PureComponent {
 		countryCode: PropTypes.string,
 		showEmpathyModeControl: PropTypes.bool,
 		empathyMode: PropTypes.bool,
+		getNonMagnificentLocaleNoticeMessage: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -134,7 +135,14 @@ export class LanguagePicker extends PureComponent {
 		if ( ! this.state.open ) {
 			return null;
 		}
-		const { countryCode, languages, showEmpathyModeControl } = this.props;
+
+		const {
+			countryCode,
+			languages,
+			showEmpathyModeControl,
+			getNonMagnificentLocaleNoticeMessage,
+		} = this.props;
+
 		return (
 			<LanguagePickerModal
 				isVisible
@@ -145,6 +153,7 @@ export class LanguagePicker extends PureComponent {
 				countryCode={ countryCode }
 				showEmpathyModeControl={ showEmpathyModeControl }
 				empathyMode={ this.state.empathyMode }
+				getNonMagnificentLocaleNoticeMessage={ getNonMagnificentLocaleNoticeMessage }
 			/>
 		);
 	}
