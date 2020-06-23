@@ -52,7 +52,9 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 
 			step( 'Open Inline Help popover', async function () {
 				await inlineHelpPopoverComponent.toggleOpen();
-				return await inlineHelpPopoverComponent.isPopoverVisible();
+
+				const isPopoverVisible = await inlineHelpPopoverComponent.isPopoverVisible();
+				assert.equal( isPopoverVisible, true, 'Popover was not opened correctly.' );
 			} );
 
 			step( 'Close Inline Help popover', async function () {
