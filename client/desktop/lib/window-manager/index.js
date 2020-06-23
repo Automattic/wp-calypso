@@ -23,7 +23,7 @@ app.on( 'ready', ( ) => {
 /**
  * Internal dependencies
  */
-const Config = require( 'lib/config' );
+const Config = require( 'desktop/lib/config' );
 
 /**
  * Module variables
@@ -77,7 +77,7 @@ async function openWindow( windowName ) {
 			const webPreferences = Object.assign( {}, config.webPreferences, {
 				contextIsolation: false,
 				nodeIntegration: true,
-				preload: path.resolve( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' ),
+				preload: path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop', 'preload.js' ),
 			} );
 			config.webPreferences = webPreferences;
 

@@ -10,9 +10,9 @@ const Menu = electron.Menu;
 /**
  * Internal dependencies
  */
-const appQuit = require( 'lib/app-quit' );
-const menuSetter = require( 'lib/menu-setter' );
-const log = require( 'lib/logger' )( 'platform:mac' );
+const appQuit = require( 'desktop/lib/app-quit' );
+const menuSetter = require( 'desktop/lib/menu-setter' );
+const log = require( 'desktop/lib/logger' )( 'platform:mac' );
 
 function MacPlatform( mainWindow ) {
 	this.window = mainWindow;

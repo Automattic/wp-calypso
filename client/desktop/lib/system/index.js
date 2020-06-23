@@ -4,17 +4,17 @@
  * External Dependencies
  */
 
-const Platform = require( 'lib/platform' );
+const Platform = require( 'desktop/lib/platform' );
 const exec = require( 'child_process' ).execSync;
 const os = require( 'os' );
 
 /**
  * Internal dependencies
  */
-const config = require( 'lib/config' );
-const SettingsFile = require( 'lib/settings/settings-file' );
+const config = require( 'desktop/lib/config' );
+const SettingsFile = require( 'desktop/lib/settings/settings-file' );
 const APPS_DIRECTORY = '/Applications';
-const log = require( 'lib/logger' )( 'desktop:system' );
+const log = require( 'desktop/lib/logger' )( 'desktop:system' );
 
 function isPinned() {
 	if ( Platform.isOSX() ) {

@@ -8,7 +8,7 @@ const debounce = require( 'lodash.debounce' );
 /**
  * Internal dependencies
  */
-const Settings = require( 'lib/settings' );
+const Settings = require( 'desktop/lib/settings' );
 
 /**
  * Module variables

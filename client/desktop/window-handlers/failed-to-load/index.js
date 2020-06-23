@@ -9,9 +9,9 @@ const app = require( 'electron' ).app;
 /**
  * Internal dependencies
  */
-const settings = require( 'lib/settings' );
-const assets = require( 'lib/assets' );
-const log = require( 'lib/logger' )( 'desktop:failed-to-load' );
+const settings = require( 'desktop/lib/settings' );
+const assets = require( 'desktop/lib/assets' );
+const log = require( 'desktop/lib/logger' )( 'desktop:failed-to-load' );
 
 /**
  * Module variables

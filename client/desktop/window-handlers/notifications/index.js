@@ -9,9 +9,9 @@ const ipc = electron.ipcMain;
 /**
  * Internal dependencies
  */
-const Settings = require( 'lib/settings' );
-const Platform = require( 'lib/platform' );
-const log = require( 'lib/logger' )( 'desktop:notifications' );
+const Settings = require( 'desktop/lib/settings' );
+const Platform = require( 'desktop/lib/platform' );
+const log = require( 'desktop/lib/logger' )( 'desktop:notifications' );
 
 /**
  * Module variables

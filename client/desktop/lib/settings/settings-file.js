@@ -11,7 +11,7 @@ const fs = require( 'fs' );
  * Internal dependencies
  */
 const Config = require( '../config' );
-const log = require( 'lib/logger' )( 'desktop:settings' );
+const log = require( 'desktop/lib/logger' )( 'desktop:settings' );
 
 let firstRun = false;
 

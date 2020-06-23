@@ -12,15 +12,15 @@ const path = require( 'path' );
 /**
  * Internal dependencies
  */
-const Config = require( 'lib/config' );
+const Config = require( 'desktop/lib/config' );
 const { start } = require( './server' );
-const Settings = require( 'lib/settings' );
-const settingConstants = require( 'lib/settings/constants' );
-const cookieAuth = require( 'lib/cookie-auth' );
-const appInstance = require( 'lib/app-instance' );
-const platform = require( 'lib/platform' );
-const System = require( 'lib/system' );
-const log = require( 'lib/logger' )( 'desktop:runapp' );
+const Settings = require( 'desktop/lib/settings' );
+const settingConstants = require( 'desktop/lib/settings/constants' );
+const cookieAuth = require( 'desktop/lib/cookie-auth' );
+const appInstance = require( 'desktop/lib/app-instance' );
+const platform = require( 'desktop/lib/platform' );
+const System = require( 'desktop/lib/system' );
+const log = require( 'desktop/lib/logger' )( 'desktop:runapp' );
 
 /**
  * Module variables
@@ -28,7 +28,7 @@ const log = require( 'lib/logger' )( 'desktop:runapp' );
 var mainWindow = null;
 
 function showAppWindow() {
-	const preloadFile = path.resolve( path.join( __dirname, '..', '..', 'public_desktop', 'preload.js' ) );
+	const preloadFile = path.resolve( path.join( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' ) );
 	let appUrl = Config.server_url + ':' + Config.server_port;
 	let lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
 

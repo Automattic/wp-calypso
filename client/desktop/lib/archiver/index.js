@@ -10,7 +10,7 @@ const archiver = require( 'archiver' );
 /**
  * Internal dependencies
  */
-const log = require( 'lib/logger' )( 'desktop:lib:archiver' );
+const log = require( 'desktop/lib/logger' )( 'desktop:lib:archiver' );
 
 module.exports = {
 

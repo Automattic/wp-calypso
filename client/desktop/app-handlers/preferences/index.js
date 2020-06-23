@@ -10,7 +10,7 @@ const dialog = electron.dialog;
 /**
  * Internal dependencies
  */
-const Settings = require( 'lib/settings' );
+const Settings = require( 'desktop/lib/settings' );
 
 function promptForRestart( title, message ) {
 	// Warn user they need to restart the app

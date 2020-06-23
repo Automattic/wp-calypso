@@ -9,7 +9,7 @@ const app = electron.app;
 /**
  * Internal dependencies
  */
-const log = require( 'lib/logger' )( 'platform:linux' );
+const log = require( 'desktop/lib/logger' )( 'platform:linux' );
 
 function LinuxPlatform( mainWindow ) {
 	this.window = mainWindow;

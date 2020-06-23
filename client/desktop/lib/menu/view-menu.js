@@ -5,9 +5,9 @@ const BrowserWindow = require( 'electron' ).BrowserWindow;
 /**
  * Internal dependencies
  */
-const Config = require( 'lib/config' );
+const Config = require( 'desktop/lib/config' );
 const debugMenu = require( './debug-menu' );
-const platform = require( 'lib/platform' );
+const platform = require( 'desktop/lib/platform' );
 
 /**
  * Module variables

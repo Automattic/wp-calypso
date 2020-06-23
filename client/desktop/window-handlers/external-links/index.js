@@ -9,10 +9,10 @@ const { URL, format } = require( 'url' );
 /**
  * Internal dependencies
  */
-const Config = require( 'lib/config' );
+const Config = require( 'desktop/lib/config' );
 const { handleJetpackEnableSSO, handleUndefined } = require( './editor' );
 const openInBrowser = require( './open-in-browser' );
-const log = require( 'lib/logger' )( 'desktop:external-links' );
+const log = require( 'desktop/lib/logger' )( 'desktop:external-links' );
 
 /**
  * Module variables

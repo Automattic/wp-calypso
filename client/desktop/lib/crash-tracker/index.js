@@ -11,9 +11,9 @@ const path = require( 'path' );
 /**
  * Internal dependencies
  */
-const config = require( 'lib/config' );
-const system = require( 'lib/system' );
-const log = require( 'lib/logger' )( 'desktop:crash-tracker' );
+const config = require( 'desktop/lib/config' );
+const system = require( 'desktop/lib/system' );
+const log = require( 'desktop/lib/logger' )( 'desktop:crash-tracker' );
 
 function finished( error, response, cb ) {
 	if ( error ) {

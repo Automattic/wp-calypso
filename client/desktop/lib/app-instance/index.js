@@ -8,9 +8,9 @@ const app = require( 'electron' ).app;
 /**
  * Internal dependencies
  */
-const config = require( 'lib/config' );
-const platform = require( 'lib/platform' );
-const log = require( 'lib/logger' )( 'desktop:app-instance' );
+const config = require( 'desktop/lib/config' );
+const platform = require( 'desktop/lib/platform' );
+const log = require( 'desktop/lib/logger' )( 'desktop:app-instance' );
 
 function AppInstance() {
 }

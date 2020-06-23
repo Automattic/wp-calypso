@@ -8,12 +8,12 @@ const { app } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const platform = require( 'lib/platform' );
-const Config = require( 'lib/config' );
-const settings = require( 'lib/settings' );
+const platform = require( 'desktop/lib/platform' );
+const Config = require( 'desktop/lib/config' );
+const settings = require( 'desktop/lib/settings' );
 const AutoUpdater = require( './auto-updater' );
 const ManualUpdater = require( './manual-updater' );
-const log = require( 'lib/logger' )( 'desktop:updater' );
+const log = require( 'desktop/lib/logger' )( 'desktop:updater' );
 
 let updater = false;
 

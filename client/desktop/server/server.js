@@ -8,8 +8,8 @@ import portscanner from 'portscanner';
 /**
  * Internal dependencies
  */
-import Config from 'lib/config';
-import logFactory from 'lib/logger';
+import Config from 'desktop/lib/config';
+import logFactory from 'desktop/lib/logger';
 import boot from 'server/boot';
 
 const log = logFactory( 'desktop:server' );

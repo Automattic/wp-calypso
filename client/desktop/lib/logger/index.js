@@ -21,7 +21,7 @@ const { createLogger, format, transports } = require( 'winston' );
 /**
  * Internal dependencies
  */
-const state = require( 'lib/state' );
+const state = require( 'desktop/lib/state' );
 const namespaces = require( './namespaces' );
 
 /**

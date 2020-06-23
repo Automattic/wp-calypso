@@ -1,4 +1,4 @@
-const log = require( 'lib/logger' )( 'desktop:analytics' );
+const log = require( 'desktop/lib/logger' )( 'desktop:analytics' );
 const fetch = require( 'electron-fetch' ).default
 
 function buildQuerystring( group, name ) {

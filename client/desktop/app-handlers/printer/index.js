@@ -10,7 +10,7 @@ const BrowserWindow = electron.BrowserWindow;
 /**
  * Internal dependencies
  */
-const log = require( 'lib/logger' )( 'desktop:printer' );
+const log = require( 'desktop/lib/logger' )( 'desktop:printer' );
 
 module.exports = function() {
 	ipc.on( 'print', function( event, title, html ) {

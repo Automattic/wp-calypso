@@ -9,7 +9,7 @@ const app = electron.app;
 /**
  * Internal dependencies
  */
-const AppQuit = require( 'lib/app-quit' );
+const AppQuit = require( 'desktop/lib/app-quit' );
 
 module.exports = function( restoreApp ) {
 	return [

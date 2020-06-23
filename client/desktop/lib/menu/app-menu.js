@@ -8,12 +8,12 @@ const dialog = require( 'electron' ).dialog;
 /**
  * Internal dependencies
  */
-const ipc = require( 'lib/calypso-commands' );
-const Config = require( 'lib/config' );
-const Settings = require( 'lib/settings' );
-const WindowManager = require( 'lib/window-manager' );
-const platform = require( 'lib/platform' );
-const AppQuit = require( 'lib/app-quit' );
+const ipc = require( 'desktop/lib/calypso-commands' );
+const Config = require( 'desktop/lib/config' );
+const Settings = require( 'desktop/lib/settings' );
+const WindowManager = require( 'desktop/lib/window-manager' );
+const platform = require( 'desktop/lib/platform' );
+const AppQuit = require( 'desktop/lib/app-quit' );
 const debugMenu = require( './debug-menu' );
 
 /**

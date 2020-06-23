@@ -9,7 +9,7 @@ const shell = require( 'electron' ).shell;
 /**
  * Internal dependencies
  */
-const log = require( 'lib/logger' )( 'desktop:external-links' );
+const log = require( 'desktop/lib/logger' )( 'desktop:external-links' );
 
 function isValidBrowserUrl( url ) {
 	const parsedUrl = new URL( url );

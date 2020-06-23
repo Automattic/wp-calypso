@@ -9,10 +9,10 @@ const { app, dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const state = require( 'lib/state' );
-const system = require( 'lib/system' );
-const { zipContents } = require( 'lib/archiver' );
-const log = require( 'lib/logger' )( 'desktop:get-logs' );
+const state = require( 'desktop/lib/state' );
+const system = require( 'desktop/lib/system' );
+const { zipContents } = require( 'desktop/lib/archiver' );
+const log = require( 'desktop/lib/logger' )( 'desktop:get-logs' );
 
 /**
  * Module variables
@@ -75,4 +75,3 @@ module.exports = async function( window ) {
 		onError( error );
 	}
 }
-

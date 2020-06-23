@@ -10,9 +10,9 @@ const app = electron.app;
 /**
  * Internal dependencies
  */
-const menu = require( 'lib/menu' );
-const platform = require( 'lib/platform' );
-const state = require( 'lib/state' );
+const menu = require( 'desktop/lib/menu' );
+const platform = require( 'desktop/lib/platform' );
+const state = require( 'desktop/lib/state' );
 
 module.exports = function( mainWindow ) {
 	menu.set( app, mainWindow );
