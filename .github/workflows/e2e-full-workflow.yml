@@ -70,7 +70,8 @@ jobs:
         run: cd test/e2e && npm run decryptconfig
       - name: Check for sign-up changes
         run: |
-          if [[ -n $(git diff --exit-code .. origin/master -- client/signup) || -n $(git diff --exit-code .. origin/master -- client/blocks/signup-form) || -n $(git diff --exit-code .. origin/master -- client/lib/signup) ]]; then
+          git fetch origin master:master
+          if [[ -n $(git diff --exit-code .. master -- client/signup) || -n $(git diff --exit-code .. master -- client/blocks/signup-form) || -n $(git diff --exit-code .. master -- client/lib/signup) ]]; then
             echo "Running All Signup Tests"
           else
             echo "Running Subset of Signup Tests"
