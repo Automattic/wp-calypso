@@ -2,6 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
+import classnames from 'classnames';
+import { Spinner } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -20,6 +22,7 @@ interface Props {
 const MshotsImage: React.FunctionComponent< Props > = ( { src, alt } ) => {
 	const [ resolvedUrl, setResolvedUrl ] = React.useState< string | undefined >();
 	const [ count, setCount ] = React.useState( 0 );
+	const [ isVisible, setIsVisible ] = React.useState( false );
 
 	const mShotsEndpointUrl = src;
 
@@ -28,16 +31,11 @@ const MshotsImage: React.FunctionComponent< Props > = ( { src, alt } ) => {
 			const response = await window.fetch( mShotsEndpointUrl, {
 				method: 'GET',
 				mode: 'cors',
-				cache: 'no-cache',
+				// cache: 'no-cache',
 			} );
 
 			if ( response.ok && response.headers.get( 'Content-Type' ) === 'image/jpeg' ) {
-				try {
-					const blob = await response.blob();
-					setResolvedUrl( window.URL.createObjectURL( blob ) );
-				} catch ( e ) {
-					setResolvedUrl( mShotsEndpointUrl );
-				}
+				setResolvedUrl( mShotsEndpointUrl );
 			}
 
 			if ( response.status === 307 ) {
@@ -49,9 +47,22 @@ const MshotsImage: React.FunctionComponent< Props > = ( { src, alt } ) => {
 	}, [ mShotsEndpointUrl, count ] );
 
 	return (
-		<div className="mshots-image">
-			{ ! resolvedUrl && <p>Loading...</p> }
-			{ resolvedUrl && <img src={ src } alt={ alt } /> }
+		<div className="mshots-image__container">
+			{ ( ! resolvedUrl || ! isVisible ) && (
+				<p className="mshots-image__loader">
+					<Spinner />
+				</p>
+			) }
+			{ resolvedUrl && (
+				<img
+					className={ classnames( 'mshots-image', {
+						'mshots-image-visible': isVisible,
+					} ) }
+					src={ src }
+					alt={ alt }
+					onLoad={ () => setIsVisible( true ) }
+				/>
+			) }
 		</div>
 	);
 };

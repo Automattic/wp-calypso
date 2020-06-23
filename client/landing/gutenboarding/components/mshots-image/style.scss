@@ -1,0 +1,15 @@
+.mshots-image {
+	opacity: 0;
+	transition: 0.3s opacity;
+}
+
+.mshots-image__loader {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+}
+
+.mshots-image-visible {
+	opacity: 1;
+}

@@ -41,7 +41,7 @@ export const getDesignImageUrl = ( design: Design ) => {
 		}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 	}
 
-	const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
+	const mshotsUrl = 'https://s0.wp.com/mshots/v1/';
 	const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
 	const previewUrl = addQueryArgs(
 		`${ designsEndpoint }${ encodeURIComponent( design.theme ) }/${ encodeURIComponent(
@@ -50,13 +50,15 @@ export const getDesignImageUrl = ( design: Design ) => {
 		{
 			font_headings: design.fonts.headings,
 			font_base: design.fonts.base,
+			viewport_height: 700,
 		}
 	);
 	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( previewUrl ), {
 		vpw: 1200,
 		vph: 3072,
-		w: 900,
+		w: 700,
 		h: 1800,
+		// requeue: true, // Uncomment this line to force the screenshots to be regenerated
 	} );
 	return mshotsRequest;
 };
