@@ -78,7 +78,7 @@ function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) 
 						align="left"
 						headerText={ translate( 'Troubleshoot Jetpack.' ) }
 						subHeaderText={ translate(
-							'If your site is working but you’re still seeing this error, let’s troubleshoot your Jetpack connection.'
+							'If your site is loading but you’re still seeing this error, this guide will help you troubleshoot the Jetpack connection.'
 						) }
 					/>
 				</CompactCard>
