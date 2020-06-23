@@ -1,0 +1,71 @@
+{
+	"productName": "WordPress.com",
+	"appId": "com.automattic.wordpress",
+	"asar": false,
+	"directories": {
+		"buildResources": "./resource/icons",
+		"output": "./release"
+	},
+	"files": [
+		"package.json",
+		"build/desktop.js",
+		"build/*.desktop.js",
+		"public_desktop",
+		"public/**/*",
+		"public/**/*.css.map",
+		"client/server/bundler/assets-*.json",
+		"config/*.json"
+	],
+	"mac": {
+		"category": "public.app-category.social-networking",
+		"entitlements": "./resource/macos/entitlements.mac.plist",
+		"entitlementsInherit": "./resource/macos/entitlements.mac.inherit.plist",
+		"hardenedRuntime": true,
+		"artifactName": "wordpress.com-macOS-app-${version}.${ext}"
+	},
+	"dmg": {
+		"title": "WordPress.com Installer",
+		"iconSize": 150,
+		"contents": [
+			{
+				"x": 486,
+				"y": 176,
+				"type": "link",
+				"path": "/Applications"
+			},
+			{
+				"x": 156,
+				"y": 179,
+				"type": "file"
+			}
+		],
+		"artifactName": "wordpress.com-macOS-dmg-${version}.${ext}"
+	},
+	"win": {
+		"target": {
+			"target": "nsis",
+			"arch": [ "x64", "ia32" ]
+		}
+	},
+	"nsis": {
+		"oneClick": false,
+		"artifactName": "wordpress.com-win32-setup-${version}.${ext}"
+	},
+	"linux": {
+		"target": [ "deb", "tar.gz" ],
+		"executableName": "wpcom",
+		"description": "WordPress.com Desktop Client",
+		"synopsis": "WordPress.com Desktop client",
+		"category": "Development",
+		"desktop": {
+			"StartupNotify": true
+		},
+		"artifactName": "wordpress.com-linux-x64-${version}.${ext}"
+	},
+	"deb": {
+		"fpm": [ "--name=wordpress.com" ],
+		"depends": [ "gconf2", "gconf-service", "libnotify4", "libxtst6", "libnss3" ],
+		"artifactName": "wordpress.com-linux-deb-${version}.${ext}"
+	},
+	"afterSign": "./bin/after_sign_hook.js"
+}

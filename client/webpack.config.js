@@ -116,6 +116,8 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+const outputDir = path.resolve( isDesktop ? './desktop' : '.' );
+
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware serves assets from a hard-coded publicPath.
 	// This is required so that running calypso via `yarn start` doesn't break.
@@ -147,7 +149,7 @@ const webpackConfig = {
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 	output: {
-		path: path.resolve( 'public', extraPath ),
+		path: path.join( outputDir, 'public', extraPath ),
 		pathinfo: false,
 		publicPath: `/calypso/${ extraPath }/`,
 		filename: outputFilename,
@@ -261,11 +263,8 @@ const webpackConfig = {
 			minify: ! isDevelopment,
 		} ),
 		new AssetsWriter( {
-			filename:
-				browserslistEnv === 'defaults'
-					? 'assets-fallback.json'
-					: `assets-${ browserslistEnv }.json`,
-			path: path.join( __dirname, 'server', 'bundler' ),
+			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
+			path: outputDir,
 			assetExtraPath: extraPath,
 		} ),
 		new DuplicatePackageCheckerPlugin(),
