@@ -406,8 +406,6 @@ export class FullPostView extends React.Component {
 							/>
 						) }
 						<div className="reader-full-post__sidebar-comment-like">
-							{ config.isEnabled( 'reader/seen-posts' ) && this.renderMarkAsSenButton() }
-
 							{ shouldShowComments( post ) && (
 								<CommentButton
 									key="comment-button"
@@ -416,6 +414,7 @@ export class FullPostView extends React.Component {
 									tagName="div"
 								/>
 							) }
+
 							{ shouldShowLikes( post ) && (
 								<LikeButton
 									siteId={ +post.site_ID }
@@ -425,6 +424,8 @@ export class FullPostView extends React.Component {
 									likeSource={ 'reader' }
 								/>
 							) }
+
+							{ config.isEnabled( 'reader/seen-posts' ) && this.renderMarkAsSenButton() }
 						</div>
 					</div>
 					<Emojify>
