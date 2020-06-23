@@ -19,7 +19,7 @@ import {
 	INLINE_HELP_SEARCH_RESET,
 } from 'state/action-types';
 
-import getContextualHelpResults from 'state/selectors/get-contextual-help-results';
+import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
 
 /**
  * Fetches search results for a given query string.
