@@ -3,7 +3,7 @@
 	align-items: center;
 	background: #fff;
 	padding-top: 0.5rem;
-	font-size: $font-body;
+	font-size: 0.875rem;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		background: transparent;
@@ -126,7 +126,7 @@
 /* WordPress.com-only styles */
 .wordpressdotcom .backup-date-picker {
 	margin-bottom: 1rem;
-	padding: 1rem;
+	padding: 0.5rem;
 	background: #fff;
 	box-shadow: 0 0 0 1px #dcdcde;
 
