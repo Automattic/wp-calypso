@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import getRewindState from 'state/selectors/get-rewind-state';
 import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -20,18 +19,12 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { siteHasScanProductPurchase } from 'state/purchases/selectors';
+import isRewindActive from 'state/selectors/is-rewind-active';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
-const SiteSettingsJetpack = ( {
-	rewindState,
-	sitePurchases,
-	site,
-	siteId,
-	siteIsJetpack,
-	translate,
-} ) => {
+const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, translate } ) => {
 	//todo: this check makes sense in Jetpack section?
 	if ( ! siteIsJetpack ) {
 		return (
@@ -46,13 +39,6 @@ const SiteSettingsJetpack = ( {
 			/>
 		);
 	}
-
-	const isRewindActive = [ 'awaitingCredentials', 'provisioning', 'active' ].includes(
-		rewindState.state
-	);
-	const hasScanProduct = sitePurchases.some( ( p ) => p.productSlug.includes( 'jetpack_scan' ) );
-
-	const showCredentials = isRewindActive || hasScanProduct;
 
 	return (
 		<Main className="settings-jetpack site-settings">
@@ -75,24 +61,20 @@ const SiteSettingsJetpack = ( {
 };
 
 SiteSettingsJetpack.propTypes = {
-	rewindState: PropTypes.bool,
-	sitePurchases: PropTypes.array,
 	site: PropTypes.object,
 	siteId: PropTypes.number,
 	siteIsJetpack: PropTypes.bool,
+	showCredentials: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const rewindState = getRewindState( state, siteId );
-	const sitePurchases = getSitePurchases( state, siteId );
 
 	return {
-		rewindState,
-		sitePurchases,
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),
+		showCredentials: isRewindActive( state, siteId ) || siteHasScanProductPurchase( state, siteId ),
 	};
 } )( localize( SiteSettingsJetpack ) );
