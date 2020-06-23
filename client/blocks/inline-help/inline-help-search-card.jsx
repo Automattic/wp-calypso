@@ -33,12 +33,21 @@ class InlineHelpSearchCard extends Component {
 		openResult: PropTypes.func.isRequired,
 		translate: PropTypes.func,
 		query: PropTypes.string,
+		placeholder: PropTypes.string,
+		location: PropTypes.string,
 	};
 
 	static defaultProps = {
 		translate: identity,
 		query: '',
+		location: 'inline-help-popover',
 	};
+
+	constructor() {
+		super( ...arguments );
+
+		this.searchHelperHandler = this.searchHelperHandler.bind( this );
+	}
 
 	onKeyDown = ( event ) => {
 		// ignore keyboard access when manipulating a text selection in input etc.
@@ -74,7 +83,7 @@ class InlineHelpSearchCard extends Component {
 			debug( 'search query received: ', searchQuery );
 			this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
 				search_query: searchQuery,
-				location: 'inline-help-popover',
+				location: this.props.location,
 			} );
 		}
 
@@ -93,7 +102,7 @@ class InlineHelpSearchCard extends Component {
 				initialValue={ this.props.query }
 				onSearch={ this.searchHelperHandler }
 				onKeyDown={ this.onKeyDown }
-				placeholder={ this.props.translate( 'Search for help…' ) }
+				placeholder={ this.props.placeholder || this.props.translate( 'Search for help…' ) }
 				delaySearch={ true }
 			/>
 		);

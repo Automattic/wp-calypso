@@ -16,7 +16,7 @@ import Gridicon from 'components/gridicon';
 import getSearchQuery from 'state/selectors/get-search-query';
 import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
-import HelpSearchCard from './search-card';
+import HelpSearchCard from 'blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from './search-results';
 
 import { RESULT_POST_ID, RESULT_LINK } from 'blocks/inline-help/constants';
@@ -67,7 +67,12 @@ const HelpSearch = ( props ) => {
 					<CardHeading>{ translate( 'Get help' ) }</CardHeading>
 					<div className="help-search__content">
 						<div className="help-search__search">
-							<HelpSearchCard openResult={ openResultView } query={ searchQuery } />
+							<HelpSearchCard
+								openResult={ openResultView }
+								query={ searchQuery }
+								location="customer-home"
+								placeholder={ translate( 'Search support articles' ) }
+							/>
 							<HelpSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
 						</div>
 					</div>
