@@ -72,7 +72,11 @@ const HelpSearch = ( props ) => {
 								location="customer-home"
 								placeholder={ translate( 'Search support articles' ) }
 							/>
-							<HelpSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
+							<HelpSearchResults
+								openResult={ openResultView }
+								searchQuery={ searchQuery }
+								placeholderLines={ 5 }
+							/>
 						</div>
 					</div>
 				</div>

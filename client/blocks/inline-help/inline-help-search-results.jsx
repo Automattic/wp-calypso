@@ -31,6 +31,7 @@ function HelpSearchResults( {
 	selectedResultIndex = -1,
 	selectSearchResult,
 	translate = identity,
+	placeholderLines,
 } ) {
 	const selectResultHandler = useCallback( ( selectionIndex ) => ( event ) => {
 		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
@@ -59,7 +60,7 @@ function HelpSearchResults( {
 	const renderSearchResults = () => {
 		if ( isSearching ) {
 			// search, but no results so far
-			return <PlaceholderLines />;
+			return <PlaceholderLines lines={ placeholderLines} />;
 		}
 
 		return (
