@@ -87,16 +87,20 @@ class CalendarStep extends Component {
 					<p>
 						<em>
 							{ translate(
-								'If you don’t see a day or time that works for you, please check back soon for more options! In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site.'
+								'If you don’t see a day or time that works for you, please check back soon for more options! In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{externalLink}}View webinars{{/externalLink}}.',
+								{
+									components: {
+										externalLink: (
+											<ExternalLinkWithTracking
+												icon={ false }
+												href="https://wordpress.com/webinars/"
+												tracksEventName="calypso_concierge_book_view_webinars"
+											/>
+										),
+									},
+								}
 							) }
-						</em>{ ' ' }
-						<ExternalLinkWithTracking
-							icon={ true }
-							href="https://wordpress.com/webinars/"
-							tracksEventName="calypso_concierge_book_view_webinars"
-						>
-							{ translate( 'View webinars.' ) }
-						</ExternalLinkWithTracking>
+						</em>
 					</p>
 				</CompactCard>
 
