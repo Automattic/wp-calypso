@@ -75,7 +75,7 @@ jobs:
             echo "Running All Signup Tests"
           else
             echo "Running Subset of Signup Tests"
-            echo "::set-env name=SUITE_TAG::parallel" >> $BASH_ENV
+            echo "::set-env name=SUITE_TAG::parallel"
           fi
       - name: Split Test files
         id: split-test-files
