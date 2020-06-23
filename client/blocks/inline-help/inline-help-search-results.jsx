@@ -41,7 +41,7 @@ function HelpSearchResults( {
 
 	const renderHelpLink = ( { link, key, description, title }, index ) => {
 		const classes = classNames( 'inline-help__results-item', {
-			'is-selected': selectedResultIndex === index
+			'is-selected': selectedResultIndex === index,
 		} );
 
 		return (
@@ -60,7 +60,7 @@ function HelpSearchResults( {
 	const renderSearchResults = () => {
 		if ( isSearching ) {
 			// search, but no results so far
-			return <PlaceholderLines lines={ placeholderLines} />;
+			return <PlaceholderLines lines={ placeholderLines } />;
 		}
 
 		return (
@@ -68,9 +68,7 @@ function HelpSearchResults( {
 				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
 					<p className="inline-help__empty-results">{ translate( 'No results.' ) }</p>
 				) }
-				<ul className="inline-help__results-list">{
-					searchResults.map( renderHelpLink )
-				}</ul>
+				<ul className="inline-help__results-list">{ searchResults.map( renderHelpLink ) }</ul>
 			</>
 		);
 	};
