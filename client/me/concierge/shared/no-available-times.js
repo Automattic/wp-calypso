@@ -36,14 +36,14 @@ class NoAvailableTimes extends Component {
 								externalLink1: (
 									<ExternalLinkWithTracking
 										icon={ false }
-										href="https://wordpress.com/webinars/"
+										href="/webinars"
 										tracksEventName="calypso_concierge_book_view_webinars"
 									/>
 								),
 								externalLink2: (
 									<ExternalLinkWithTracking
 										icon={ false }
-										href="https://wordpress.com/help/contact"
+										href="/help/contact"
 										tracksEventName="calypso_concierge_book_contact_us"
 									/>
 								),
