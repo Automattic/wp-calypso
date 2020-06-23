@@ -36,7 +36,7 @@ describe( '#getSearhQuery()', () => {
 			},
 		};
 
-		expect( getSearhQuery( state ) ).to.equal( 'foo bar');
+		expect( getSearhQuery( state ) ).to.equal( 'foo bar' );
 	} );
 
 	test( 'should return empty string when no state', () => {
@@ -56,18 +56,16 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 					search: {
 						searchQuery: 'foo',
 						items: {
-							'foo': [
+							foo: [
 								{
 									title: 'Foo Item 0 title',
 									description: 'Foo Item 0 description',
 									link: 'http://foo.item-0.link',
-
 								},
 								{
 									title: 'Foo Item 1 title',
 									description: 'Foo Item 1 description',
 									link: 'http://foo.item-1.link',
-
 								},
 							],
 						},
@@ -81,13 +79,11 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 				title: 'Foo Item 0 title',
 				description: 'Foo Item 0 description',
 				link: 'http://foo.item-0.link',
-
 			},
 			{
 				title: 'Foo Item 1 title',
 				description: 'Foo Item 1 description',
 				link: 'http://foo.item-1.link',
-
 			},
 		] );
 	} );
@@ -97,20 +93,18 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 			inlineHelp: {
 				searchResults: {
 					search: {
-						searchQuery: 'foo',
+						searchQuery: 'bar',
 						items: {
-							'foo': [
+							foo: [
 								{
 									title: 'Foo Item 0 title',
 									description: 'Foo Item 0 description',
 									link: 'http://foo.item-0.link',
-
 								},
 								{
 									title: 'Foo Item 1 title',
 									description: 'Foo Item 1 description',
 									link: 'http://foo.item-1.link',
-
 								},
 							],
 						},
@@ -121,7 +115,6 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 
 		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.be.null;
 	} );
-
 
 	test( 'should return null when no items', () => {
 		const state = {
