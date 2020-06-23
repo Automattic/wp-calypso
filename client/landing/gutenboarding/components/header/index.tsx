@@ -4,7 +4,7 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { Icon, wordpress } from '@wordpress/icons';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -26,14 +26,6 @@ const Header: React.FunctionComponent = () => {
 	const currentStep = useCurrentStep();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-
-	const { setDomain } = useDispatch( ONBOARD_STORE );
-
-	React.useEffect( () => {
-		if ( ! siteTitle ) {
-			setDomain( undefined );
-		}
-	}, [ siteTitle, setDomain ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
