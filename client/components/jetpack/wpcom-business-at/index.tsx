@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { Dialog } from '@automattic/components';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -27,7 +28,7 @@ import {
 	EligibilityData,
 } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import QueryAutomatedTransferEligibility from 'components/data/query-atat-eligibility';
 import {
@@ -40,6 +41,9 @@ import WarningList from 'blocks/eligibility-warnings/warning-list';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
+import { successNotice } from 'state/notices/actions';
+import { requestSite } from 'state/sites/actions';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 
 /**
  * Style dependencies
@@ -163,6 +167,7 @@ function TransferFailureNotice( {
 export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 	const content = React.useMemo( () => contentPerPrimaryProduct[ product ], [ product ] );
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 
 	// Gets the site eligibility data.
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
@@ -170,9 +175,12 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 		eligibilityHolds: holds,
 		eligibilityWarnings: warnings,
 	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
+
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
+
+	const { COMPLETE, START } = transferStates;
 
 	// Check if there's a blocking hold.
 	const cannotInitiateTransfer =
@@ -187,15 +195,48 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 
 	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
-	const initiateAT = React.useCallback( () => {
+	const initiateAT = useCallback( () => {
 		setShowDialog( false );
 		dispatch( initiateThemeTransfer( siteId, null, '' ) );
 	}, [ dispatch, siteId ] );
+
 	const eventName =
 		product === 'backup'
 			? 'calypso_jetpack_backup_business_at'
 			: 'calypso_jetpack_scan_business_at';
 	const trackInitiateAT = useTrackCallback( initiateAT, eventName );
+
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
+	useEffect( () => {
+		if ( automatedTransferStatus !== COMPLETE ) {
+			return;
+		}
+		// Transfer is completed, check if it's already a Jetpack site
+		if ( ! isJetpack ) {
+			// Need to refresh the site data.
+			dispatch( requestSite( siteId ) );
+			return;
+		}
+
+		// Okay, transfer is completed and it's a Jetpack site
+		dispatch(
+			successNotice(
+				translate( '%s is now active', {
+					args: content.header,
+					comment:
+						'%s is a Jetpack product name like: Jetpack Backup, Jetpack Scan, Jetpack Anti-spam',
+				} ),
+				{
+					id: 'jetpack-features-on',
+					duration: 5000,
+					displayOnNextPage: true,
+				}
+			)
+		);
+		// Reload the page, whatever siteSlug is
+		page( `/${ product }/${ siteSlug }` );
+	}, [ automatedTransferStatus, isJetpack ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
@@ -233,7 +274,10 @@ export default function WPCOMBusinessAT( { product }: Props ): ReactElement {
 					<SpinnerButton
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
-						loading={ automatedTransferStatus === transferStates.START }
+						loading={
+							automatedTransferStatus === START ||
+							( automatedTransferStatus === COMPLETE && ! isJetpack )
+						}
 						onClick={ initiateATOrShowWarnings }
 						disabled={ cannotInitiateTransfer }
 					/>
