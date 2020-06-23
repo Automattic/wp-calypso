@@ -21,7 +21,8 @@ export interface NewSiteErrorResponse {
 }
 
 export interface NewSiteErrorCreateBlog {
-	blog_id?: any; // This has to be `any` as sites/new will return whatever value is passed to it as `$blog_id` if create blog fails.
+	// This has to be `any` as sites/new will return whatever value is passed to it as `$blog_id` if create blog fails.
+	blog_id?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export type NewSiteResponse =

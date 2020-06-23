@@ -97,7 +97,7 @@ window.AppBoot = async () => {
 
 	let initialLocaleData;
 	try {
-		const [ userLocale, { translatedChunks, ...localeData } ]: [ string, any ] = await getLocale();
+		const [ userLocale, { translatedChunks, ...localeData } ] = await getLocale();
 		initialLocaleData = localeData;
 
 		if ( USE_TRANSLATION_CHUNKS ) {
