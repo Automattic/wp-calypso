@@ -10,7 +10,7 @@ $markup = '
 <div class="wp-block-jetpack-layout-grid alignfull column1-desktop-grid__span-10 column1-desktop-grid__start-2 column1-desktop-grid__row-1 column1-tablet-grid__span-8 column1-tablet-grid__row-1 column1-mobile-grid__span-4 column1-mobile-grid__row-1">
    <!-- wp:jetpack/layout-grid-column -->
    <div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
-      <!-- wp:paragraph {"customFontSize":71} -->
+      <!-- wp:paragraph {"style":{"typography":{"fontSize":71}}} -->
       <p style="font-size:71px"><strong>Menu</strong></p>
       <!-- /wp:paragraph -->
       <!-- wp:columns -->
