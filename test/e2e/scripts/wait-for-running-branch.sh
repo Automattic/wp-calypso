@@ -2,7 +2,11 @@
 
 if [ "" == "$sha" ]; then
   echo "sha envvar not set";
-  sha=$COMMIT_SHA
+  if [[ -z "${CIRCLE_SHA1}" ]]; then
+  	sha=$COMMIT_SHA
+  else
+  	sha="${CIRCLE_SHA1}"
+  fi
 fi
 
 if [[ "$calypsoSha" != "" ]] && [[ "$sha" != "$calypsoSha" ]]; then
