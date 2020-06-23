@@ -133,6 +133,7 @@ export interface ResponseCartProduct {
 	item_subtotal_display: string;
 	is_domain_registration: boolean;
 	is_bundled: boolean;
+	is_sale_coupon_applied: boolean;
 	meta: string;
 	months_per_bill_period: number | null;
 	volume: number;
@@ -166,6 +167,7 @@ export interface TempResponseCartProduct {
 	item_original_subtotal_integer: null;
 	is_domain_registration: boolean | null;
 	is_bundled: boolean | null;
+	is_sale_coupon_applied: boolean | null;
 	months_per_bill_period: number | null;
 	meta: string;
 	volume: number;

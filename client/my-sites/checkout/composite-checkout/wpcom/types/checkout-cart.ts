@@ -46,6 +46,7 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		months_per_bill_period: null | number;
 		is_bundled?: boolean;
 		is_domain_registration?: boolean;
+		is_sale_coupon_applied?: boolean;
 		couponCode?: string;
 		product_cost_integer?: number;
 		product_cost_display?: string;

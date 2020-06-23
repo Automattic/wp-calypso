@@ -37,7 +37,6 @@ function WPLineItem( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	couponStatus,
 	isSummary,
 	isWhiteGloveOffer,
 } ) {
@@ -61,7 +60,7 @@ function WPLineItem( {
 	if (
 		isGSuite &&
 		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer &&
-		couponStatus !== 'applied'
+		item.wpcom_meta?.is_sale_coupon_applied
 	) {
 		gsuiteDiscountCallout = (
 			<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
@@ -172,7 +171,6 @@ WPLineItem.propTypes = {
 	} ),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	couponStatus: PropTypes.string,
 };
 
 function LineItemPrice( { item, isSummary } ) {
@@ -303,7 +301,6 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	couponStatus,
 	isWhiteGloveOffer,
 } ) {
 	return (
@@ -324,7 +321,6 @@ export function WPOrderReviewLineItems( {
 								variantSelectOverride={ variantSelectOverride }
 								getItemVariants={ getItemVariants }
 								onChangePlanLength={ onChangePlanLength }
-								couponStatus={ couponStatus }
 								isSummary={ isSummary }
 								isWhiteGloveOffer={ isWhiteGloveOffer }
 							/>
@@ -350,7 +346,6 @@ WPOrderReviewLineItems.propTypes = {
 	),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	couponStatus: PropTypes.string,
 };
 
 const WPOrderReviewList = styled.ul`
