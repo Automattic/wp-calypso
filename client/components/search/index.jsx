@@ -338,7 +338,7 @@ class Search extends Component {
 				<Spinner />
 				<div
 					role="button"
-					className="search__icon-navigation"
+					className="search__icon-navigation search__icon-navigation--open"
 					ref={ this.setOpenIconRef }
 					onClick={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
@@ -394,7 +394,7 @@ class Search extends Component {
 			return (
 				<div
 					role="button"
-					className="search__icon-navigation"
+					className="search__icon-navigation search__icon-navigation--close search__icon-navigation--reset"
 					onClick={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
