@@ -37,7 +37,7 @@ function HelpSearchResults( {
 		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
 		selectSearchResult( selectionIndex );
 		openResult( event, selectedResult );
-	} );
+	}, [] );
 
 	const renderHelpLink = ( { link, key, description, title }, index ) => {
 		const classes = classNames( 'inline-help__results-item', {
