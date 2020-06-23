@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { getLanguageFile } from '../../../../lib/i18n-utils/switch-locale';
 import { I18nProvider } from '@automattic/react-i18n';
-import { setLocaleData, LocaleData } from '@wordpress/i18n';
+import type { LocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -40,13 +40,9 @@ export const LocaleContext: React.FunctionComponent< Props > = ( {
 		} catch {}
 	};
 
-	React.useEffect( () => {
-		setLocaleData( localeData );
-	}, [ localeData ] );
-
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
-			<I18nProvider initialLocaleData={ initialLocaleData }>{ children }</I18nProvider>
+			<I18nProvider localeData={ localeData }>{ children }</I18nProvider>
 		</ChangeLocaleContext.Provider>
 	);
 };
