@@ -41,8 +41,13 @@ export function emailManagementAddGSuiteUsersLegacy( siteName, domainName ) {
 	return path;
 }
 
-export function emailManagementNewGSuiteAccount( siteName, domainName, planType ) {
-	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType );
+export function emailManagementNewGSuiteAccount(
+	siteName,
+	domainName,
+	planType,
+	relativeTo = null
+) {
+	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType, relativeTo );
 }
 
 export function emailManagement( siteName, domainName, relativeTo = null ) {

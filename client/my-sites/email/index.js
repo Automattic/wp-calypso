@@ -55,13 +55,23 @@ export default function () {
 		handlers: [ controller.emailManagementAddGSuiteUsersLegacyRedirect ],
 	} );
 
-	page(
-		paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' ),
-		...commonHandlers,
-		controller.emailManagementNewGSuiteAccount,
-		makeLayout,
-		clientRender
-	);
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementNewGSuiteAccount(
+				':site',
+				':domain',
+				':planType',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementNewGSuiteAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
 
 	registerMultiPage( {
 		paths: [
