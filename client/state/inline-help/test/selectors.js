@@ -37,4 +37,12 @@ describe( '#getSearhQuery()', () => {
 
 		expect( getSearhQuery( state ) ).to.eql( 'foo bar');
 	} );
+
+	test( 'should return empty string when no state', () => {
+		const state = {
+			inlineHelp: {},
+		};
+
+		expect( getSearhQuery( state ) ).to.eql( '');
+	} );
 } );
