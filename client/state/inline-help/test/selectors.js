@@ -36,7 +36,7 @@ describe( '#getSearhQuery()', () => {
 			},
 		};
 
-		expect( getSearhQuery( state ) ).to.eql( 'foo bar');
+		expect( getSearhQuery( state ) ).to.equal( 'foo bar');
 	} );
 
 	test( 'should return empty string when no state', () => {
@@ -44,7 +44,7 @@ describe( '#getSearhQuery()', () => {
 			inlineHelp: {},
 		};
 
-		expect( getSearhQuery( state ) ).to.eql( '');
+		expect( getSearhQuery( state ) ).to.be.empty;
 	} );
 } );
 
