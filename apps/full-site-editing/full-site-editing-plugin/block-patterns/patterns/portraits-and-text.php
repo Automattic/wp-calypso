@@ -74,10 +74,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Portraits and Text', 'full-site-editing' ),
-	'categories' => array( 'gallery', 'list' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Portraits and Text', 'full-site-editing' ),
+	'categories'    => array( 'gallery', 'list' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Natsuho Kishi', 'full-site-editing' ),
 		esc_html__( 'Design Director at EJ Solutions focusing on raising the standard of communication online. She has been leading several award-winning branding projects. including Strn.', 'full-site-editing' ),
@@ -88,4 +88,5 @@ return array(
 		esc_html__( 'Elise Pratt', 'full-site-editing' ),
 		esc_html__( 'Senior Product Designer at Idea. Previously Senior Design Director at Minova, UX Design Manager at Ryman. Elise’s work has been featured as pioneer in CX as best practice.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

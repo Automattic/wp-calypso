@@ -26,10 +26,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'List', 'full-site-editing' ),
-	'categories' => array( 'list' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'List', 'full-site-editing' ),
+	'categories'    => array( 'list' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Beth Silva', 'full-site-editing' ),
 		esc_html__( 'Christine Russell', 'full-site-editing' ),
@@ -43,4 +43,5 @@ return array(
 		esc_html__( 'Emily Fry', 'full-site-editing' ),
 		esc_html__( 'Lucie Avila', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );
