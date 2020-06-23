@@ -78,7 +78,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&.is-h4 {
-		font-size: 20px;
+		font-size: $font-title-small;
 		@include breakpoint-deprecated( '<1280px' ) {
 			&.is-h4 {
 				font-size: 18px;
@@ -107,7 +107,7 @@ $feature-upsell-break-at: '1040px';
 		line-height: 1.2;
 
 		@include breakpoint-deprecated( '<1280px' ) {
-			font-size: 20px;
+			font-size: $font-title-small;
 		}
 
 		@include breakpoint-deprecated( '<660px' ) {
@@ -221,12 +221,12 @@ $feature-upsell-break-at: '1040px';
 		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
 		@include breakpoint-deprecated( '<1280px' ) {
-			font-size: 20px;
+			font-size: $font-title-small;
 		}
 	}
 
 	&-header.is-sub {
-		font-size: 21px;
+		font-size: $font-title-small;
 		font-weight: 400;
 		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
@@ -346,7 +346,7 @@ $feature-upsell-break-at: '1040px';
 		font-weight: 600;
 		color: var( --color-neutral-60 );
 		@include breakpoint-deprecated( '<1280px' ) {
-			font-size: 20px;
+			font-size: $font-title-small;
 		}
 	}
 
@@ -492,7 +492,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-title {
 		font-weight: 600;
-		font-size: 21px;
+		font-size: $font-title-small;
 		line-height: 1.5;
 		color: var( --color-neutral-60 );
 		clear: none;

@@ -132,7 +132,7 @@
 .purchase-detail__title {
 	clear: none;
 	color: var( --color-neutral-40 );
-	font-size: 21px;
+	font-size: $font-title-small;
 }
 
 .purchase-detail__description {

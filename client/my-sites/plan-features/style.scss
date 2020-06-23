@@ -264,7 +264,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: 0.7;
 
 	@include breakpoint-deprecated( '<960px' ) {
-		font-size: 20px;
+		font-size: $font-title-small;
 	}
 }
 

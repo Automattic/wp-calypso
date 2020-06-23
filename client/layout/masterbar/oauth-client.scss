@@ -250,7 +250,7 @@
 			span {
 				background-color: transparent;
 				color: var( --color-text );
-				font-size: 20px;
+				font-size: $font-title-small;
 				font-weight: 600;
 			}
 		}
@@ -260,7 +260,7 @@
 
 			@include breakpoint-deprecated( '>660px' ) {
 				display: block;
-				font-size: 20px;
+				font-size: $font-title-small;
 				font-weight: 600;
 				margin: 0 0 30px;
 				text-align: center;

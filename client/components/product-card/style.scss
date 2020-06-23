@@ -66,7 +66,7 @@
 }
 
 .product-card__title {
-	font-size: 20px;
+	font-size: $font-title-small;
 	line-height: 24px;
 
 	@include breakpoint-deprecated( '>960px' ) {

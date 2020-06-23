@@ -167,7 +167,7 @@
 	overflow: hidden;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 21px;
+		font-size: $font-title-small;
 	}
 
 	&::before {

@@ -433,7 +433,7 @@
 .reader-post-card__title-link:visited {
 	color: var( --color-neutral-70 );
 	cursor: pointer;
-	font-size: 19px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	display: block;
 
@@ -442,7 +442,7 @@
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 19px;
+		font-size: $font-title-small;
 	}
 }
 
