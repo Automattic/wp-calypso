@@ -152,7 +152,10 @@ function TransferFailureNotice( {
 
 	const errorMessage = translate(
 		'There is an issue activating %s. Please contact our support team for help.',
-		{ args: [ content.header ] }
+		{
+			args: [ content.header ],
+			comment: '%s is a Jetpack product name like: Jetpack Backup, Jetpack Scan, Jetpack Anti-spam',
+		}
 	);
 
 	return (
