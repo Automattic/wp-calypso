@@ -51,8 +51,15 @@ const API_RESULT_FIXTURE = [
 
 describe( 'reducer', () => {
 	describe( '#popover()', () => {
+		test( 'should return the initial state', () => {
+			const state = popover( undefined, {} );
+
+			expect( state ).to.eql( {
+				isVisible: false,
+			} );
+		} );
 		test( 'should generate isVisible boolean prop', () => {
-			const state = popover( null, {
+			const state = popover( undefined, {
 				type: INLINE_HELP_POPOVER_SHOW,
 			} );
 
@@ -73,8 +80,15 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#ui()', () => {
+		test( 'should return the initial state', () => {
+			const state = ui( undefined, {} );
+
+			expect( state ).to.eql( {
+				isVisible: true,
+			} );
+		} );
 		test( 'should correct set isVisible prop to true', () => {
-			const state = ui( null, {
+			const state = ui( undefined, {
 				type: INLINE_HELP_SHOW,
 			} );
 
@@ -96,9 +110,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
+		test( 'should return the initial state', () => {
+			const state = requesting( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
 		test( 'should correctly set boolean flag to true for query key', () => {
 			const testQuery = 'testQueryKey';
-			const state = requesting( null, {
+			const state = requesting( undefined, {
 				type: INLINE_HELP_SEARCH_REQUEST,
 				searchQuery: testQuery,
 			} );
@@ -136,16 +154,30 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#search()', () => {
+		test( 'should return the initial state', () => {
+			const state = search( undefined, {} );
+			expect( state ).to.eql( {
+				searchQuery: '',
+				items: {},
+				selectedResult: -1,
+				shouldOpenSelectedResult: false,
+				hasAPIResults: false,
+			} );
+		} );
 		test.each( [ 'testQueryKey', '' ] )(
 			'should correctly set the current search query text',
 			( testQuery ) => {
-				const state = search( null, {
+				const state = search( undefined, {
 					type: INLINE_HELP_SEARCH_REQUEST,
 					searchQuery: testQuery,
 				} );
 
 				expect( state ).to.eql( {
 					searchQuery: testQuery,
+					items: {},
+					selectedResult: -1,
+					shouldOpenSelectedResult: false,
+					hasAPIResults: false,
 				} );
 			}
 		);
@@ -188,12 +220,16 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should correctly set the boolean to indicate presence of results that are from the API', () => {
-			let state = search( null, {
+			let state = search( undefined, {
 				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 				hasAPIResults: true,
 			} );
 
 			expect( state ).to.eql( {
+				searchQuery: '',
+				items: {},
+				selectedResult: -1,
+				shouldOpenSelectedResult: false,
 				hasAPIResults: true,
 			} );
 
@@ -203,30 +239,39 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
+				searchQuery: '',
+				items: {},
+				selectedResult: -1,
+				shouldOpenSelectedResult: false,
 				hasAPIResults: false,
 			} );
 		} );
 
 		describe( 'Search result selection', () => {
 			test( 'should correctly set index of selected result', () => {
-				let state = search( null, {
+				let state = search( undefined, {
 					type: INLINE_HELP_SELECT_RESULT,
 					resultIndex: 2,
 				} );
 
 				expect( state ).to.eql( {
+					searchQuery: '',
+					items: {},
+					shouldOpenSelectedResult: false,
+					hasAPIResults: false,
 					selectedResult: 2,
 				} );
 
-				state = search(
-					{},
-					{
-						type: INLINE_HELP_SELECT_RESULT,
-						resultIndex: 4,
-					}
-				);
+				state = search( state, {
+					type: INLINE_HELP_SELECT_RESULT,
+					resultIndex: 4,
+				} );
 
 				expect( state ).to.eql( {
+					searchQuery: '',
+					items: {},
+					shouldOpenSelectedResult: false,
+					hasAPIResults: false,
 					selectedResult: 4,
 				} );
 			} );
