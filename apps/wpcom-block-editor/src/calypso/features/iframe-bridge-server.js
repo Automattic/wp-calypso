@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort */
+/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
 /**
  * External dependencies
@@ -865,6 +865,31 @@ function handleUncaughtErrors( calypsoPort ) {
 	};
 }
 
+function handleEditorLoaded( calypsoPort ) {
+	const unsubscribe = subscribe( () => {
+		const store = select( 'core/editor' );
+
+		if ( typeof store.__unstableIsEditorReady !== 'function' ) {
+			// This is probably a very old veresion of the plugin, bail out.
+			unsubscribe();
+			return;
+		}
+
+		const isReady = store.__unstableIsEditorReady();
+		if ( isReady ) {
+			requestAnimationFrame( () => {
+				calypsoPort.postMessage( {
+					action: 'trackPerformance',
+					payload: {
+						mark: 'editor.ready',
+					},
+				} );
+			} );
+			unsubscribe();
+		}
+	} );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -967,6 +992,8 @@ function initPort( message ) {
 		getCalypsoUrlInfo( calypsoPort );
 
 		handleUncaughtErrors( calypsoPort );
+
+		handleEditorLoaded( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
