@@ -176,16 +176,34 @@ export default function () {
 	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-		page(
-			'/domains/add',
-			siteSelection,
-			domainsController.domainsAddHeader,
-			domainsController.redirectToUseYourDomainIfVipSite(),
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+		if ( config.isEnabled( 'manage/all-domains' ) ) {
+			page(
+				'/domains/add',
+				...getCommonHandlers( { noSitePath: null } ),
+				domainsController.domainSearchAllSites,
+				makeLayout,
+				clientRender
+			);
+
+			page(
+				'/domains/add/usage',
+				...getCommonHandlers( { noSitePath: null } ),
+				domainsController.domainUsageSelector,
+				makeLayout,
+				clientRender
+			);
+		} else {
+			page(
+				'/domains/add',
+				siteSelection,
+				domainsController.domainsAddHeader,
+				domainsController.redirectToUseYourDomainIfVipSite(),
+				domainsController.jetpackNoDomainsWarning,
+				sites,
+				makeLayout,
+				clientRender
+			);
+		}
 
 		page(
 			'/domains/add/mapping',

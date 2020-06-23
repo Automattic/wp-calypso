@@ -17,6 +17,7 @@ import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/u
 import { getCurrentUser } from 'state/current-user/selectors';
 import CartData from 'components/data/cart';
 import DomainSearch from './domain-search';
+import DomainUsage from './domain-usage';
 import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
@@ -81,6 +82,45 @@ const domainSearch = ( context, next ) => {
 			</CartData>
 		</Main>
 	);
+	next();
+};
+
+const domainSearchAllSites = ( context, next ) => {
+	// Scroll to the top
+	if ( typeof window !== 'undefined' ) {
+		window.scrollTo( 0, 0 );
+	}
+
+	context.primary = (
+		<Main wideLayout>
+			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
+			<DocumentHead title={ translate( 'Domain Search' ) } />
+			<CartData>
+				<DomainSearch
+					basePath={ sectionify( context.path ) }
+					context={ context }
+					showDomainUsageScreen={ true }
+				/>
+			</CartData>
+		</Main>
+	);
+	next();
+};
+
+const domainUsageSelector = ( context, next ) => {
+	const selectedDomain = context.query.domain;
+	const purchaseType = context.query.purchaseType;
+
+	context.primary = (
+		<Main>
+			<PageViewTracker path="/domains/add/usage" title="Domain Search > Domain Usage" />
+			<DocumentHead title={ translate( 'Domain purchase' ) } />
+			<CartData>
+				<DomainUsage domain={ selectedDomain } purchaseType={ purchaseType } />
+			</CartData>
+		</Main>
+	);
+
 	next();
 };
 
@@ -274,6 +314,8 @@ export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
 	domainSearch,
+	domainSearchAllSites,
+	domainUsageSelector,
 	jetpackNoDomainsWarning,
 	siteRedirect,
 	mapDomain,

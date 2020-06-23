@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -15,7 +14,6 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import { getDomainTypeText, isSubdomain } from 'lib/domains';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import MaterialIcon from 'components/material-icon';
 import {
 	domainAddNew,
 	domainManagementNameServers,
@@ -39,42 +37,7 @@ import { withoutHttp } from 'lib/url';
 import RemovePurchase from 'me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import getCurrentRoute from 'state/selectors/get-current-route';
-
-import './style.scss';
-
-const DomainManagementNavigationItemContents = function ( props ) {
-	const { gridicon, materialIcon, text, description } = props;
-	return (
-		<React.Fragment>
-			{ gridicon && <Gridicon className="navigation__icon" icon={ gridicon } /> }
-			{ ! gridicon && <MaterialIcon icon={ materialIcon } className="navigation__icon" /> }
-			<div>
-				<div>{ text }</div>
-				<small>{ description }</small>
-			</div>
-		</React.Fragment>
-	);
-};
-
-const DomainManagementNavigationItem = function ( props ) {
-	const { path, onClick, external, gridicon, materialIcon, text, description } = props;
-
-	return (
-		<VerticalNavItem
-			path={ path }
-			onClick={ onClick }
-			external={ external }
-			className="navigation__nav-item"
-		>
-			<DomainManagementNavigationItemContents
-				materialIcon={ materialIcon }
-				gridicon={ gridicon }
-				text={ text }
-				description={ description }
-			/>
-		</VerticalNavItem>
-	);
-};
+import { DomainManagementNavigationItem, DomainManagementNavigationItemContents } from './navitem';
 
 class DomainManagementNavigationEnhanced extends React.Component {
 	isDomainInNormalState() {

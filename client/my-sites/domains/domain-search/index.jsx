@@ -56,6 +56,7 @@ class DomainSearch extends Component {
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
+		showDomainUsageScreen: PropTypes.bool,
 	};
 
 	state = {
@@ -112,6 +113,11 @@ class DomainSearch extends Component {
 		} = suggestion;
 
 		this.props.recordAddDomainButtonClick( domain, 'domains' );
+
+		if ( this.props.showDomainUsageScreen ) {
+			page( '/domains/add/usage' );
+			return;
+		}
 
 		let registration = domainRegistration( {
 			domain,
@@ -174,7 +180,7 @@ class DomainSearch extends Component {
 			);
 		} else {
 			const suggestion =
-				this.props.context.query.suggestion ?? selectedSite.domain.split( '.' )[ 0 ];
+				this.props.context.query.suggestion ?? selectedSite?.domain?.split( '.' )[ 0 ];
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -208,7 +214,7 @@ class DomainSearch extends Component {
 		return (
 			<Main className={ classes } wideLayout>
 				<QueryProductsList />
-				<QuerySiteDomains siteId={ this.props.selectedSiteId } />
+				{ this.props.selectedSiteId && <QuerySiteDomains siteId={ this.props.selectedSiteId } /> }
 				<SidebarNavigation />
 				{ content }
 			</Main>
