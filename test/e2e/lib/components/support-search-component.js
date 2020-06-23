@@ -20,16 +20,11 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	async waitForResults() {
 		const driver = this.driver;
 		const resultsLoadingSelector = By.css( '.inline-help__results-placeholder' );
-		return await driver.wait(
-			function () {
-				return driverHelper
-					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function ( present ) {
-						return ! present;
-					} );
-			},
-			this.explicitWaitMS * 2,
-			'The support search loading element was still present when it should have disappeared by now.'
+
+		return driverHelper.waitTillNotPresent(
+			driver,
+			resultsLoadingSelector,
+			this.explicitWaitMS * 2
 		);
 	}
 
