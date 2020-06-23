@@ -114,6 +114,16 @@ export async function submitStripeIdealTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
+export async function submitStripeGiropayTransaction( transactionData, submit ) {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_Stripe_Source_Giropay',
+		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+	} );
+	debug( 'sending stripe giropay transaction', formattedTransactionData );
+	return submit( formattedTransactionData );
+}
+
 export function submitCreditsTransaction( transactionData, submit ) {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
