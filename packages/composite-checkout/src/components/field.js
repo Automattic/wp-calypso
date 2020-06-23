@@ -121,8 +121,8 @@ const Input = styled.input`
 				props.isError ? props.theme.colors.error : props.theme.colors.borderColor };
 		${ ( props ) =>
 			props.isRTL
-				? `padding: 13px 10px 11px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };`
-				: `padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 11px 10px;` }
+				? `padding: 13px 10px 11px ${ props.icon ? '60px' : '10px' };`
+				: `padding: 13px ${ props.icon ? '60px' : '10px' } 11px 10px;` }
 		line-height: 1.2;
 	}
 

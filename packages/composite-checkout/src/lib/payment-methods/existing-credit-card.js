@@ -221,7 +221,7 @@ function ButtonContents( { formStatus, total } ) {
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
 	const { __, isRTL } = useI18n();
 
-	const maskedCardDetails = '****&nbsp;'.last4;
+	const maskedCardDetails = '****'.concat( last4 );
 
 	return (
 		<SummaryDetails>

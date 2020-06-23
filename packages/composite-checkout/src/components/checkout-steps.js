@@ -653,8 +653,8 @@ const StepTitle = styled.span`
 		props.isActive ? props.theme.weights.bold : props.theme.weights.normal };
 	${ ( props ) =>
 		props.isRTL
-			? `margin-left: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };`
-			: `margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };` }
+			? `margin-left: ${ props.fullWidth ? '0' : '8px' };`
+			: `margin-right: ${ props.fullWidth ? '0' : '8px' };` }
 	flex: ${ ( props ) => ( props.fullWidth ? '1' : 'inherit' ) };
 `;
 
