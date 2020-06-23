@@ -164,7 +164,6 @@
 
 		.search {
 			border-radius: 4px 4px 0 0;
-			height: auto;
 
 			&.is-open.has-focus {
 				box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 6px var( --color-primary-light );
@@ -380,7 +379,8 @@
 
 		a {
 			color: var( --color-text-inverted );
-			&:hover {
+			&:hover,
+			&:focus {
 				background: none;
 			}
 		}
@@ -421,8 +421,7 @@
 	border-radius: 16px;
 	background-color: var( --color-neutral-0 );
 	color: transparent;
-	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 )
-		infinite;
+	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ) infinite;
 	animation-delay: 0s;
 
 	&:nth-child( 1 ) {
