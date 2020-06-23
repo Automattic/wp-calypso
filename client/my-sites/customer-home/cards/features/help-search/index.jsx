@@ -65,7 +65,7 @@ const HelpSearch = ( props ) => {
 				<div className="help-search__inner">
 					<CardHeading>{ translate( 'Get help' ) }</CardHeading>
 					<div className="help-search__content">
-						<div className="inline-help__search">
+						<div className="help-search__search inline-help__search">
 							<HelpSearchCard
 								openResult={ openResultView }
 								query={ searchQuery }
