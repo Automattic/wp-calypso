@@ -37,7 +37,7 @@ import getSiteIconId from 'state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'state/selectors/get-site-icon-url';
 import isPrivateSite from 'state/selectors/is-private-site';
 import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
-import { uploadSiteIcon } from './actions';
+import { uploadSiteIcon } from 'state/media/thunks';
 
 /**
  * Style dependencies

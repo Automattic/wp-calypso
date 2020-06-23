@@ -13,7 +13,7 @@ import {
 	requestingMediaItem,
 	successMediaItemRequest,
 	failMediaItemRequest,
-} from '../sync';
+} from 'state/media/actions';
 import {
 	MEDIA_DELETE,
 	MEDIA_ITEM_REQUEST,

@@ -469,4 +469,5 @@ export default combineReducers( {
 	queryRequests,
 	mediaItemRequests,
 	selectedItems,
+	transientItems,
 } );

@@ -19,7 +19,7 @@ import FormLabel from 'components/forms/form-label';
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import Image from 'components/image';
 import MediaStore from 'lib/media/store';
-import { addMedia } from 'state/media/actions';
+import { addMedia } from 'state/media/thunks';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import {

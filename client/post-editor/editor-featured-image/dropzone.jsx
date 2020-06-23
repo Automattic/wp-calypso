@@ -15,7 +15,7 @@ import DropZone from 'components/drop-zone';
 import { filterItemsByMimePrefix } from 'lib/media/utils';
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 
-import { addMedia } from 'state/media/actions';
+import { addMedia } from 'state/media/thunks';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';

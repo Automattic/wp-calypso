@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-import { addMedia as addMediaThunk } from 'state/media/actions/async';
+import { addMedia as addMediaThunk } from 'state/media/thunks';
 import { getFileUploader, createTransientMedia, validateMediaItem } from 'lib/media/utils';
-import * as utils from 'state/media/actions/utils';
-import * as syncActions from 'state/media/actions/sync';
+import * as dateUtils from 'state/media/utils/transient-date';
+import * as fluxUtils from 'state/media/utils/flux-adapter';
+import * as syncActions from 'state/media/actions';
 
 jest.mock( 'lib/media/utils', () => ( {
 	getFileUploader: jest.fn(),
@@ -80,7 +81,7 @@ describe( 'media - actions - async', () => {
 
 		describe( 'transient date', () => {
 			it( 'should automatically generate one when one is not provided', async () => {
-				const getTransientDate = jest.spyOn( utils, 'getTransientDate' );
+				const getTransientDate = jest.spyOn( dateUtils, 'getTransientDate' );
 				const generatedTransientDate = Symbol( 'generated transient date' );
 				getTransientDate.mockReturnValueOnce( generatedTransientDate );
 				const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
@@ -153,12 +154,12 @@ describe( 'media - actions - async', () => {
 
 			describe( 'flux adaptation', () => {
 				it( 'should dispatch flux create, receive, and media limits actions', async () => {
-					const fluxCreateMediaItem = jest.spyOn( utils, 'dispatchFluxCreateMediaItem' );
+					const fluxCreateMediaItem = jest.spyOn( fluxUtils, 'dispatchFluxCreateMediaItem' );
 					const fluxReceiveMediaItemSuccess = jest.spyOn(
-						utils,
+						fluxUtils,
 						'dispatchFluxReceiveMediaItemSuccess'
 					);
-					const fluxFetchMediaLimits = jest.spyOn( utils, 'dispatchFluxFetchMediaLimits' );
+					const fluxFetchMediaLimits = jest.spyOn( fluxUtils, 'dispatchFluxFetchMediaLimits' );
 
 					await addMedia( site, file, transientDate );
 
@@ -197,9 +198,9 @@ describe( 'media - actions - async', () => {
 					const error = new Error( 'mock error' );
 					fileUploader.mockRejectedValueOnce( error );
 
-					const fluxCreateMediaItem = jest.spyOn( utils, 'dispatchFluxCreateMediaItem' );
+					const fluxCreateMediaItem = jest.spyOn( fluxUtils, 'dispatchFluxCreateMediaItem' );
 					const fluxReceiveMediaItemError = jest.spyOn(
-						utils,
+						fluxUtils,
 						'dispatchFluxReceiveMediaItemError'
 					);
 
