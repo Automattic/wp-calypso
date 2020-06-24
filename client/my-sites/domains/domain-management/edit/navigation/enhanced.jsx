@@ -207,6 +207,10 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { privateDomain, privacyAvailable } = domain;
 
+		if ( ! domain.currentUserCanManage ) {
+			return null;
+		}
+
 		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
 			return null;
 		}
@@ -233,6 +237,10 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getTransferDomain() {
 		const { moment, selectedSite, translate, domain, currentRoute } = this.props;
 		const { expired, isLocked, transferAwayEligibleAt } = domain;
+
+		if ( ! domain.currentUserCanManage ) {
+			return null;
+		}
 
 		if ( expired && ! this.isDomainInGracePeriod() ) {
 			return null;
