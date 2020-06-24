@@ -6,8 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { makeLayout, render as clientRender } from 'controller';
-import { navigation, siteSelection, notFound } from 'my-sites/controller';
+import { makeLayout, render as clientRender, notFound } from 'controller';
+import { navigation, siteSelection } from 'my-sites/controller';
 import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 import { siteHasScanProductPurchase } from 'state/purchases/selectors';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';

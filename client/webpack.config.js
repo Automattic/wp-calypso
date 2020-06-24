@@ -178,6 +178,7 @@ const webpackConfig = {
 		} ),
 	},
 	module: {
+		strictExportPresence: true,
 		rules: [
 			TranspileConfig.loader( {
 				workerCount,
