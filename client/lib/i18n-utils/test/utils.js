@@ -378,6 +378,15 @@ describe( 'utils', () => {
 			expect( localizeUrl( 'https://en.blog.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/blog/'
 			);
+			// Don't rewrite specific blog posts
+			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
+			expect( localizeUrl( 'https://en.blog.wordpress.com/2020/01/01/test/' ) ).toEqual(
+				'https://wordpress.com/blog/2020/01/01/test/'
+			);
+			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
+			expect( localizeUrl( 'https://wordpress.com/blog/2020/01/01/test/' ) ).toEqual(
+				'https://wordpress.com/blog/2020/01/01/test/'
+			);
 		} );
 
 		test( 'support url', () => {
