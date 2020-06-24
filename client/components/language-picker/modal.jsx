@@ -321,8 +321,10 @@ export class LanguagePickerModal extends PureComponent {
 			return;
 		}
 
+		const hasModifierKey = event.altKey || event.ctrlKey || event.metaKey;
+
 		// Handle character input
-		if ( isPrintableCharacter && ! isSearchOpen ) {
+		if ( ! hasModifierKey && isPrintableCharacter && ! isSearchOpen ) {
 			event.preventDefault();
 
 			this.handleSearch( event.key );
