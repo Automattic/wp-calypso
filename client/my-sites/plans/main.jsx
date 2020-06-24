@@ -32,10 +32,6 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { isPartnerPurchase, getPartnerName } from 'lib/purchases';
 import CartData from 'components/data/cart';
-import {
-	MARKETING_PRICE_GROUP_2020_Q2_TEST_2,
-	MARKETING_PRICE_GROUP_2020_Q2_TEST_3,
-} from 'state/current-user/constants';
 import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 class Plans extends React.Component {
@@ -130,10 +126,8 @@ class Plans extends React.Component {
 			displayJetpackPlans,
 			canAccessPlans,
 			purchase,
-			marketingPriceGroup,
+			customerType,
 		} = this.props;
-
-		let { customerType } = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
 			return this.renderPlaceholder();
@@ -141,17 +135,6 @@ class Plans extends React.Component {
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
 			return this.renderPlanWithPartner();
-		}
-
-		let hidePersonalPlan = false,
-			hidePremiumPlan = false;
-
-		if ( marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_2 ) {
-			hidePersonalPlan = true;
-			customerType = 'business';
-		} else if ( marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_3 ) {
-			hidePersonalPlan = true;
-			hidePremiumPlan = true;
 		}
 
 		return (
@@ -179,8 +162,6 @@ class Plans extends React.Component {
 								<PlansFeaturesMain
 									displayJetpackPlans={ displayJetpackPlans }
 									hideFreePlan={ true }
-									hidePersonalPlan={ hidePersonalPlan }
-									hidePremiumPlan={ hidePremiumPlan }
 									customerType={ customerType }
 									intervalType={ this.props.intervalType }
 									selectedFeature={ this.props.selectedFeature }
