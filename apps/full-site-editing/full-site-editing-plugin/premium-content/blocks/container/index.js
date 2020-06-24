@@ -4,6 +4,8 @@
 import { __ } from '@wordpress/i18n';
 import { getCurrencyDefaults } from '@automattic/format-currency';
 import { trimEnd } from 'lodash';
+import { createBlock } from '@wordpress/blocks';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -13,6 +15,20 @@ import save from './save';
 
 const name = 'premium-content/container';
 const category = 'common';
+
+const blockContainsPremiumBlock = ( block ) => {
+	if ( block.name.indexOf( 'premium-content/' ) === 0 ) {
+		return true;
+	}
+
+	return block.innerBlocks.some( blockContainsPremiumBlock );
+};
+
+const blockHasParentPremiumBlock = ( block ) => {
+	const { getBlocksByClientId, getBlockParents } = select( 'core/block-editor' );
+	const parents = getBlocksByClientId( getBlockParents( block.clientId ) );
+	return !! parents.find( ( parent ) => parent.name.indexOf( 'premium-content/' ) === 0 );
+};
 
 /**
  * @typedef {object} Attributes
@@ -93,6 +109,41 @@ const settings = {
 	supports: {
 		// Removes support for an HTML mode.
 		html: false,
+	},
+	transforms: {
+		from: [
+			{
+				type: 'block',
+				isMultiBlock: true,
+				blocks: [ '*' ],
+				__experimentalConvert( blocks ) {
+					// Avoid transforming any premium-content block.
+					if ( blocks.some( blockContainsPremiumBlock ) ) {
+						return;
+					}
+
+					// Avoid transforming if any parent is a premium-content block. Blocks share same parents since they
+					// are siblings, so checking the first one is enough.
+					if ( blockHasParentPremiumBlock( blocks[ 0 ] ) ) {
+						return;
+					}
+
+					// Clone the Blocks
+					// Failing to create new block references causes the original blocks
+					// to be replaced in the switchToBlockType call thereby meaning they
+					// are removed both from their original location and within the
+					// new premium content block.
+					const innerBlocksSubscribe = blocks.map( ( block ) => {
+						return createBlock( block.name, block.attributes, block.innerBlocks );
+					} );
+
+					return createBlock( 'premium-content/container', {}, [
+						createBlock( 'premium-content/subscriber-view', {}, innerBlocksSubscribe ),
+						createBlock( 'premium-content/logged-out-view' ),
+					] );
+				},
+			},
+		],
 	},
 	keywords: [
 		'premium-content',
