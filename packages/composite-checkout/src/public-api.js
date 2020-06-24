@@ -49,6 +49,10 @@ import {
 	createGiropayMethod,
 } from './lib/payment-methods/giropay';
 import {
+	createBancontactPaymentMethodStore,
+	createBancontactMethod,
+} from './lib/payment-methods/bancontact';
+import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 } from './lib/payment-methods/stripe-credit-card-fields';
@@ -96,6 +100,8 @@ export {
 	createApplePayMethod,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
+	createBancontactMethod,
+	createBancontactPaymentMethodStore,
 	createExistingCardMethod,
 	createFreePaymentMethod,
 	createFullCreditsMethod,
