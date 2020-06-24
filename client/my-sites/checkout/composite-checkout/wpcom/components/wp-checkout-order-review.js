@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
-import { useTranslate, useRtl } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -93,7 +93,6 @@ function CouponFieldArea( {
 } ) {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
-	const isRTL = useRtl();
 
 	if ( isPurchaseFree || couponStatus === 'applied' ) {
 		return null;
@@ -106,7 +105,6 @@ function CouponFieldArea( {
 				disabled={ formStatus !== 'ready' }
 				couponStatus={ couponStatus }
 				couponFieldStateProps={ couponFieldStateProps }
-				isRTL={ isRTL }
 			/>
 		);
 	}
@@ -145,7 +143,13 @@ const CouponLinkWrapper = styled.div`
 `;
 
 const CouponField = styled( Coupon )`
-	margin: ${ ( props ) => ( props.isRTL ? '20px 0 20px 30px' : '20px 30px 20px 0;' ) } .is-summary & {
+	margin: 20px 30px 20px 0;
+
+	.rtl & {
+		margin: 20px 0 20px 30px;
+	}
+
+	.is-summary & {
 		margin: 10px 0 0;
 	}
 `;

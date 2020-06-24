@@ -11,7 +11,7 @@ import {
 	useEvents,
 	Button,
 } from '@automattic/composite-checkout';
-import { useTranslate, useRtl } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -54,7 +54,6 @@ function WPLineItem( {
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
-	const isRTL = useRtl();
 
 	let gsuiteDiscountCallout = null;
 	if (
@@ -63,9 +62,7 @@ function WPLineItem( {
 		item.wpcom_meta?.is_sale_coupon_applied
 	) {
 		gsuiteDiscountCallout = (
-			<DiscountCalloutUI isRTL={ isRTL }>
-				{ translate( 'Discount for first year' ) }
-			</DiscountCalloutUI>
+			<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
 		);
 	}
 
@@ -115,7 +112,6 @@ function WPLineItem( {
 								},
 							} );
 						} }
-						isRTL={ isRTL }
 					>
 						<DeleteIcon uniqueID={ deleteButtonId } product={ item.label } />
 					</DeleteButton>
@@ -176,9 +172,8 @@ WPLineItem.propTypes = {
 };
 
 function LineItemPrice( { item, isSummary } ) {
-	const isRTL = useRtl();
 	return (
-		<LineItemPriceUI isSummary={ isSummary } isRTL={ isRTL }>
+		<LineItemPriceUI isSummary={ isSummary }>
 			{ item.amount.value < item.wpcom_meta?.item_original_subtotal_integer ? (
 				<>
 					<s>{ item.wpcom_meta?.item_original_subtotal_display }</s> { item.amount.displayValue }
@@ -219,7 +214,11 @@ const LineItemMeta = styled.div`
 
 const DiscountCalloutUI = styled.div`
 	color: ${ ( props ) => props.theme.colors.success };
-	text-align: ${ ( props ) => ( props.isRTL ? 'left;' : 'right;' ) };
+	text-align: right;
+
+	.rtl & {
+		text-align: left;
+	}
 `;
 
 const LineItemTitle = styled.div`
@@ -229,14 +228,19 @@ const LineItemTitle = styled.div`
 `;
 
 const LineItemPriceUI = styled.span`
-	${ ( props ) => ( props.isRTL ? 'margin-right: 12px;' : 'margin-left: 12px;' ) }
+	margin-left: 12px;
 	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+
+	.rtl & {
+		margin-right: 12px;
+		margin-left: 0;
+	}
 `;
 
 const DeleteButton = styled( Button )`
 	position: absolute;
 	padding: 10px;
-	${ ( props ) => ( props.isRTL ? 'left: 50px;' : 'right: -50px;' ) }
+	right: -50px;
 	top: 7px;
 
 	:hover rect {
@@ -245,6 +249,11 @@ const DeleteButton = styled( Button )`
 
 	svg {
 		opacity: 1;
+	}
+
+	.rtl & {
+		right: auto;
+		left: -50px;
 	}
 `;
 
@@ -306,12 +315,8 @@ export function WPOrderReviewLineItems( {
 	onChangePlanLength,
 	isWhiteGloveOffer,
 } ) {
-	const isRTL = useRtl();
 	return (
-		<WPOrderReviewList
-			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
-			isRTL={ isRTL }
-		>
+		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items
 				.filter( ( item ) => item.label ) // remove items without a label
 				.map( ( item ) => {
@@ -358,11 +363,15 @@ WPOrderReviewLineItems.propTypes = {
 const WPOrderReviewList = styled.ul`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	box-sizing: border-box;
-	margin: ${ ( props ) => ( props.isRTL ? '20px 0 20px 30px' : '20px 30px 20px 0' ) };
+	margin: 20px 30px 20px 0;
 
 	.is-summary & {
 		border-top: 0;
 		margin: 0;
+	}
+
+	.rtl & {
+		margin: 20px 0 20px 30px;
 	}
 `;
 
@@ -470,21 +479,16 @@ function LineItemSublabelAndPrice( { item } ) {
 
 function DomainDiscountCallout( { item } ) {
 	const translate = useTranslate();
-	const isRTL = useRtl();
 
 	const isFreeBundledDomainRegistration = item.wpcom_meta?.is_bundled && item.amount.value === 0;
 	if ( isFreeBundledDomainRegistration ) {
-		return (
-			<DiscountCalloutUI isRTL={ isRTL }>{ translate( 'First year free' ) }</DiscountCalloutUI>
-		);
+		return <DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>;
 	}
 
 	const isFreeDomainMapping =
 		item.wpcom_meta?.product_slug === 'domain_map' && item.amount.value === 0;
 	if ( isFreeDomainMapping ) {
-		return (
-			<DiscountCalloutUI isRTL={ isRTL }>{ translate( 'Free with your plan' ) }</DiscountCalloutUI>
-		);
+		return <DiscountCalloutUI>{ translate( 'Free with your plan' ) }</DiscountCalloutUI>;
 	}
 
 	return null;

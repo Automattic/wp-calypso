@@ -5,7 +5,6 @@ import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import { Button } from '@automattic/composite-checkout';
-import { useRtl } from 'i18n-calypso';
 
 export default function Field( {
 	type,
@@ -26,7 +25,6 @@ export default function Field( {
 	autoComplete,
 	disabled,
 } ) {
-	const isRTL = useRtl();
 	const fieldOnChange = ( event ) => {
 		if ( onChange ) {
 			onChange( event.target.value );
@@ -61,7 +59,6 @@ export default function Field( {
 					isError={ isError }
 					autoComplete={ autoComplete }
 					disabled={ disabled }
-					isRTL={ isRTL }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -113,13 +110,15 @@ const Input = styled.input`
 	font-size: 16px;
 	border: 1px solid
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
-	padding: ${ ( props ) =>
-		props.isRTL
-			? `13px 10px 12px ${ props.icon ? '60px' : '10px' };`
-			: `13px ${ props.icon ? '60px' : '10px' } 12px 10px;` }
+	padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 12px 10px;
+
+	.rtl & {
+		padding: 13px 10px 12px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
+	}
 
 	:focus {
-		outline: ${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.outline ) }
+		outline: ${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline }
 			solid 2px !important;
 	}
 
@@ -151,13 +150,23 @@ const FieldIcon = styled.div`
 	position: absolute;
 	top: 50%;
 	transform: translateY( -50% );
-	${ ( props ) => ( props.isRTL ? 'left: 10px;' : 'right: 10px;' ) }
+	right: 10px;
+
+	.rtl & {
+		right: auto;
+		left: 10px;
+	}
 `;
 
 const ButtonIconUI = styled.div`
 	position: absolute;
 	top: 0;
-	${ ( props ) => ( props.isRTL ? 'left: 0;' : 'right: 0;' ) }
+	right: 0;
+
+	.rtl & {
+		right: auto;
+		left: 0;
+	}
 
 	button {
 		border: 1px solid transparent;
@@ -183,21 +192,20 @@ const Description = styled.p`
 `;
 
 function RenderedIcon( { icon, iconAction, isIconVisible } ) {
-	const isRTL = useRtl();
 	if ( ! isIconVisible ) {
 		return null;
 	}
 
 	if ( iconAction ) {
 		return (
-			<ButtonIconUI isRTL={ isRTL }>
+			<ButtonIconUI>
 				<Button onClick={ iconAction }>{ icon }</Button>
 			</ButtonIconUI>
 		);
 	}
 
 	if ( icon ) {
-		return <FieldIcon isRTL={ isRTL }>{ icon }</FieldIcon>;
+		return <FieldIcon>{ icon }</FieldIcon>;
 	}
 
 	return null;

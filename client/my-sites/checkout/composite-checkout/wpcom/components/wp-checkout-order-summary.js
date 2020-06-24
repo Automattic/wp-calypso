@@ -14,7 +14,7 @@ import {
 	useLineItemsOfType,
 	useTotal,
 } from '@automattic/composite-checkout';
-import { useTranslate, useRtl } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -82,12 +82,11 @@ export default function WPCheckoutOrderSummary() {
 }
 
 function LoadingCheckoutSummaryFeaturesList() {
-	const isRTL = useRtl();
 	return (
 		<>
-			<LoadingCopy isRTL={ isRTL } />
-			<LoadingCopy isRTL={ isRTL } />
-			<LoadingCopy isRTL={ isRTL } />
+			<LoadingCopy />
+			<LoadingCopy />
+			<LoadingCopy />
 		</>
 	);
 }
@@ -97,7 +96,6 @@ function CheckoutSummaryFeaturesList() {
 	const domains = useDomainsInCart();
 	const hasPlanInCart = useHasPlanInCart();
 	const translate = useTranslate();
-	const isRTL = useRtl();
 
 	const supportText = hasPlanInCart
 		? translate( 'Email and live chat support' )
@@ -117,12 +115,12 @@ function CheckoutSummaryFeaturesList() {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.id } />;
 				} ) }
 			{ hasPlanInCart && <CheckoutSummaryPlanFeatures /> }
-			<CheckoutSummaryFeaturesListItem isRTL={ isRTL }>
-				<WPCheckoutCheckIcon isRTL={ isRTL } />
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon />
 				{ supportText }
 			</CheckoutSummaryFeaturesListItem>
-			<CheckoutSummaryFeaturesListItem isRTL={ isRTL }>
-				<WPCheckoutCheckIcon isRTL={ isRTL } />
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon />
 				{ refundText }
 			</CheckoutSummaryFeaturesListItem>
 		</CheckoutSummaryFeaturesListUI>
@@ -131,10 +129,9 @@ function CheckoutSummaryFeaturesList() {
 
 function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
 	const translate = useTranslate();
-	const isRTL = useRtl();
 	return (
-		<CheckoutSummaryFeaturesListItem isRTL={ isRTL }>
-			<WPCheckoutCheckIcon isRTL={ isRTL } />
+		<CheckoutSummaryFeaturesListItem>
+			<WPCheckoutCheckIcon />
 			{ domain.wpcom_meta.is_bundled ? (
 				translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
 					components: {
@@ -155,7 +152,6 @@ function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
 
 function CheckoutSummaryPlanFeatures() {
 	const translate = useTranslate();
-	const isRTL = useRtl();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const planInCart = usePlanInCart();
 	const hasRenewalInCart = useHasRenewalInCart();
@@ -166,8 +162,8 @@ function CheckoutSummaryPlanFeatures() {
 			{ planFeatures &&
 				planFeatures.map( ( feature, index ) => {
 					return (
-						<CheckoutSummaryFeaturesListItem key={ index } isRTL={ isRTL }>
-							<WPCheckoutCheckIcon isRTL={ isRTL } />
+						<CheckoutSummaryFeaturesListItem key={ index }>
+							<WPCheckoutCheckIcon />
 							{ feature }
 						</CheckoutSummaryFeaturesListItem>
 					);
@@ -229,7 +225,6 @@ function getPlanFeatures( plan, translate, hasDomainsInCart, hasRenewalInCart ) 
 function CheckoutSummaryHelp() {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const isRTL = useRtl();
 	const plans = useLineItemsOfType( 'plan' );
 
 	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
@@ -265,9 +260,7 @@ function CheckoutSummaryHelp() {
 	return (
 		<>
 			<QuerySupportTypes />
-			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && (
-				<LoadingButton isRTL={ isRTL } />
-			) }
+			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
 			{ shouldRenderPaymentChatButton ? (
 				<PaymentChatButton />
 			) : (
@@ -345,6 +338,10 @@ const CheckoutSummaryHelpButton = styled.button`
 	margin-top: 16px;
 	text-align: left;
 
+	.rtl & {
+		text-align: right;
+	}
+
 	span {
 		cursor: pointer;
 		text-decoration: underline;
@@ -357,16 +354,28 @@ const CheckoutSummaryHelpButton = styled.button`
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
 	fill: ${ ( props ) => props.theme.colors.success };
-	${ ( props ) => ( props.isRTL ? 'margin-left: 4px;' : 'margin-right: 4px;' ) }
+	margin-right: 4px;
 	position: absolute;
 	top: 0;
-	${ ( props ) => ( props.isRTL ? 'right: 0;' : 'left: 0;' ) }
+	left: 0;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 4px;
+		right: 0;
+		left: auto;
+	}
 `;
 
 const CheckoutSummaryFeaturesListItem = styled.li`
 	margin-bottom: 4px;
-	${ ( props ) => ( props.isRTL ? 'padding-right: 24px;' : 'padding-left: 24px;' ) }
+	padding-left: 24px;
 	position: relative;
+
+	.rtl & {
+		padding-right: 24px;
+		padding-left: 0;
+	}
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
@@ -400,7 +409,7 @@ const LoadingCopy = styled.p`
 	content: '';
 	font-size: 14px;
 	height: 18px;
-	margin: ${ ( props ) => ( props.isRTL ? '8px 26px 0 0;' : '8px 0 0 26px;' ) }
+	margin: 8px 0 0 26px;
 	padding: 0;
 	position: relative;
 
@@ -408,12 +417,21 @@ const LoadingCopy = styled.p`
 		content: '';
 		display: block;
 		position: absolute;
-		${ ( props ) => ( props.isRTL ? 'right: -26px;' : 'left: -26px;' ) }
+		left: -26px;
 		top: 0;
 		width: 18px;
 		height: 18px;
 		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		border-radius: 100%;
+	}
+
+	.rtl & {
+		margin: 8px 26px 0 0;
+
+		:before {
+			right: -26px;
+			left: 0;
+		}
 	}
 `;
 
