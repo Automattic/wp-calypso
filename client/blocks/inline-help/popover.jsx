@@ -41,7 +41,6 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
-import { isEnabled } from 'config';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
