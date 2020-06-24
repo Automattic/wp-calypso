@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import debug from './debug';
-import isUrlBlacklistedForPerformance from './is-url-blacklisted-for-performance';
+import isUrlExcludedForPerformance from './is-url-excluded-for-performance';
 import isPiiUrl from './is-pii-url';
 import mayWeTrackCurrentUserGdpr from './may-we-track-current-user-gdpr';
 import { getDoNotTrack } from '@automattic/calypso-analytics';
@@ -23,7 +23,7 @@ export default function isAdTrackingAllowed() {
 	const result =
 		config.isEnabled( 'ad-tracking' ) &&
 		! getDoNotTrack() &&
-		! isUrlBlacklistedForPerformance() &&
+		! isUrlExcludedForPerformance() &&
 		! isPiiUrl() &&
 		mayWeTrackCurrentUserGdpr();
 	debug( `isAdTrackingAllowed: ${ result }` );
