@@ -75,7 +75,7 @@ function HelpSearchResults( {
 
 	return (
 		<div>
-			<QueryInlineHelpSearch query={ searchQuery } requesting={ isSearching } />
+			<QueryInlineHelpSearch query={ searchQuery } />
 			{ renderSearchResults() }
 		</div>
 	);
