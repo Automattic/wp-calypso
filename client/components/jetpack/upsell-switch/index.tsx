@@ -99,7 +99,7 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 export default connect( ( state, ownProps: Props ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteState = ownProps.getStateForSite( state, siteId );
-	const atomicSite = siteId ? isAtomicSite( state, siteId ) : false;
+	const atomicSite = siteId && isAtomicSite( state, siteId );
 
 	return {
 		siteId,
