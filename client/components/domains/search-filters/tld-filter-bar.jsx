@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
-import { includes, isEqual, pick } from 'lodash';
+import { difference, includes, intersection, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -16,6 +16,7 @@ import { Button, CompactCard } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
 import TokenField from 'components/token-field';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { recordTldFilterSelected } from './analytics';
 
 const HANDLED_FILTER_KEYS = [ 'tlds' ];
@@ -94,6 +95,34 @@ export class TldFilterBar extends Component {
 		);
 	}
 
+	getGeoPromotedTlds() {
+		const { availableTlds, currentUserCountryCode } = this.props;
+		const geoPromotedTlds = {
+			CA: [ 'ca' ],
+			FR: [ 'fr' ],
+			ID: [ 'id' ],
+			IN: [ 'in', 'co.in', 'net.in' ],
+			JP: [ 'jp' ],
+			MX: [ 'com.mx', 'mx' ],
+			UK: [ 'co.uk', 'uk', 'me.uk' ],
+		};
+
+		const promotedTlds = geoPromotedTlds[ currentUserCountryCode ] ?? [];
+		if ( promotedTlds.length === 0 ) {
+			return promotedTlds;
+		}
+		return intersection( promotedTlds, availableTlds );
+	}
+
+	getAvailableTldsWithPromotions() {
+		const { availableTlds } = this.props;
+		const geoPromotedTlds = this.getGeoPromotedTlds();
+		if ( geoPromotedTlds.length === 0 ) {
+			return availableTlds;
+		}
+		return geoPromotedTlds.concat( difference( availableTlds, geoPromotedTlds ) );
+	}
+
 	render() {
 		const { showPlaceholder } = this.props;
 
@@ -118,7 +147,7 @@ export class TldFilterBar extends Component {
 		const {
 			lastFilters: { tlds: selectedTlds },
 		} = this.props;
-		return this.props.availableTlds
+		return this.getAvailableTldsWithPromotions()
 			.slice( 0, this.props.numberOfTldsShown )
 			.map( ( tld, index ) => (
 				<Button
@@ -204,6 +233,13 @@ export class TldFilterBar extends Component {
 		);
 	}
 }
-export default connect( null, {
-	recordTldFilterSelected,
-} )( localize( TldFilterBar ) );
+export default connect(
+	( state ) => {
+		return {
+			currentUserCountryCode: getCurrentUserCountryCode( state ),
+		};
+	},
+	{
+		recordTldFilterSelected,
+	}
+)( localize( TldFilterBar ) );
