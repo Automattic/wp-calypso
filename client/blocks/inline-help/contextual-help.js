@@ -33,8 +33,8 @@ const getFallbackLinks = () => [
 		),
 	},
 	{
-		link: localizeUrl( 'https://wordpress.com/support/all-about-domains/' ),
-		post_id: 41171,
+		link: localizeUrl( 'https://wordpress.com/support/domains/' ),
+		post_id: 1988,
 		title: translate( 'All About Domains' ),
 		description: translate(
 			'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
