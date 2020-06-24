@@ -52,13 +52,8 @@ const JetpackCredentialsBanner: React.FC< Props > = ( { siteSlug } ): React.Reac
 
 	return (
 		<>
-			<button
-				onClick={ () => dispatch( savePreference( JETPACK_CREDENTIALS_BANNER_PREFERENCE, {} ) ) }
-			>
-				Reset{ ' ' }
-			</button>
 			<Banner
-				callToAction="Take me there!"
+				callToAction={ translate( 'Take me there!' ) }
 				title={ translate( 'Looking for Jetpack backups and security scans settings?' ) }
 				description={ translate(
 					"In order to simplify your experience we've moved these to their dedicated section under the Jetpack settings tab."
