@@ -59,7 +59,7 @@ export function PaypalSubmitButton( { disabled } ) {
 	const { __ } = useI18n();
 
 	const onClick = () => {
-		onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', paymentMethodId: 'paypal' } );
+		onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'paypal' } } );
 		setTransactionPending();
 		submitTransaction( {
 			items,
