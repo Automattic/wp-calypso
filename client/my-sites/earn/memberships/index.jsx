@@ -37,6 +37,11 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
+ * Image dependencies
+ */
+import paymentsImage from 'assets/images/earn/payments-icon.svg';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -478,18 +483,17 @@ class MembershipsSection extends Component {
 					</div>
 					<p className="memberships__onboarding-paragraph">
 						{ this.props.translate(
-							'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build a subscription newsletter, and more.'
+							'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more. One-time, monthly, and yearly credit and debit card payment options are supported.'
 						) }
 					</p>
 					<p className="memberships__onboarding-paragraph">
-						{ this.props.translate(
-							'One-time, monthly, and yearly credit and debit card payment options are supported.'
-						) }{ ' ' }
 						<ExternalLink
-							href="https://wordpress.com/support/recurring-payments-button/"
+							href={ localizeUrl( 'https://wordpress.com/support/recurring-payments-button/' ) }
 							icon={ true }
 						>
-							{ this.props.translate( 'Learn more about payments.' ) }
+							{ this.props.translate(
+								'Learn more about payments and earning money on your website.'
+							) }
 						</ExternalLink>
 					</p>
 					<p className="memberships__onboarding-paragraph">
@@ -517,6 +521,10 @@ class MembershipsSection extends Component {
 						</div>
 						<div>
 							<Gridicon size={ 18 } icon="checkmark" />
+							{ this.props.translate( 'Send paid newsletters with premium content.' ) }
+						</div>
+						<div>
+							<Gridicon size={ 18 } icon="checkmark" />
 							{ this.props.translate( 'Collect payments in 135 countries.' ) }
 						</div>
 						<div>
@@ -526,11 +534,7 @@ class MembershipsSection extends Component {
 					</div>
 				</div>
 				<div className="memberships__onboarding-column-image">
-					<img
-						src="/calypso/images/recurring-payments/checkout-form-gradient.png"
-						aria-hidden="true"
-						alt=""
-					/>
+					<img src={ paymentsImage } aria-hidden="true" alt="" />
 				</div>
 			</div>
 		);

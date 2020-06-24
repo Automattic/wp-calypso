@@ -32,7 +32,6 @@
 	display: none;
 	@include breakpoint-deprecated( '>800px' ) {
 		display: block;
-		flex: 1;
 		padding-left: 10px;
 		padding-right: 10px;
 	}
