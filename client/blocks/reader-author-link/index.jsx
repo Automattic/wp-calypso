@@ -9,7 +9,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
+import { isAuthorNameDisallowed } from 'reader/lib/author-name-filter';
 import * as stats from 'reader/stats';
 import Emojify from 'components/emojify';
 
@@ -35,7 +35,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 	const authorName = get( author, 'name', null );
 
 	// If the author name is blocked, don't return anything
-	if ( ! authorName || isAuthorNameBlocked( authorName ) ) {
+	if ( ! authorName || isAuthorNameDisallowed( authorName ) ) {
 		return null;
 	}
 

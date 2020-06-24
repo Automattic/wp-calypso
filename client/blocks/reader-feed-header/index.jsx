@@ -13,7 +13,7 @@ import config from 'config';
  */
 import { Card } from '@automattic/components';
 import ReaderFollowButton from 'reader/follow-button';
-import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
+import { isAuthorNameDisallowed } from 'reader/lib/author-name-filter';
 import HeaderBack from 'reader/header-back';
 import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers';
 import SiteIcon from 'blocks/site-icon';
@@ -134,7 +134,7 @@ class FeedHeader extends Component {
 					</div>
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ description }</span>
-						{ ownerDisplayName && ! isAuthorNameBlocked( ownerDisplayName ) && (
+						{ ownerDisplayName && ! isAuthorNameDisallowed( ownerDisplayName ) && (
 							<span className="reader-feed-header__byline">
 								{ translate( 'by %(author)s', {
 									args: {
