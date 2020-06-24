@@ -27,7 +27,7 @@ const SpinnerWrapper = styled.div`
 	animation: ${ rotate } 3s linear infinite;
 	animation-fill-mode: backwards;
 
-	:after {
+	::after {
 		position: absolute;
 		top: 0;
 		left: -1px;

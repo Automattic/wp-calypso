@@ -169,7 +169,7 @@ const IdealFormWrapper = styled.div`
 	padding: 16px;
 	position: relative;
 
-	:after {
+	::after {
 		display: block;
 		width: calc( 100% - 6px );
 		height: 1px;

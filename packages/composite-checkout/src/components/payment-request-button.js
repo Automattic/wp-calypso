@@ -73,7 +73,7 @@ const ApplePayButton = styled.button`
 	width: 100%;
 	position: relative;
 
-	&:after {
+	&::after {
 		content: '';
 		position: ${ ( props ) => ( props.disabled ? 'absolute' : 'relative' ) };
 		top: 0;

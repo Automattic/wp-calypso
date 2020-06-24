@@ -286,7 +286,7 @@ const CreditCardFieldsWrapper = styled.div`
 	display: ${ ( props ) => ( props.isLoaded ? 'block' : 'none' ) };
 	position: relative;
 
-	:after {
+	::after {
 		display: block;
 		width: calc( 100% - 6px );
 		height: 1px;

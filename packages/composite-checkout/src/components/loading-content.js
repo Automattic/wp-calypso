@@ -86,7 +86,7 @@ const LoadingTitle = styled.h1`
 		margin: 3px 35px 0 0;
 	}
 
-	:before {
+	::before {
 		content: '';
 		display: block;
 		position: absolute;
@@ -124,7 +124,7 @@ const LoadingFooter = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 24px;
 
-	:before {
+	::before {
 		content: '';
 		display: block;
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };

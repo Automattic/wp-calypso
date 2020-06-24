@@ -413,7 +413,7 @@ const LoadingCopy = styled.p`
 	padding: 0;
 	position: relative;
 
-	:before {
+	::before {
 		content: '';
 		display: block;
 		position: absolute;
@@ -428,7 +428,7 @@ const LoadingCopy = styled.p`
 	.rtl & {
 		margin: 8px 26px 0 0;
 
-		:before {
+		::before {
 			right: -26px;
 			left: 0;
 		}
@@ -438,7 +438,7 @@ const LoadingCopy = styled.p`
 const LoadingButton = styled( LoadingCopy )`
 	margin: 16px 8px 0;
 
-	:before {
+	::before {
 		display: none;
 	}
 `;
