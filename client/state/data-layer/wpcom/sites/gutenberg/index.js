@@ -3,7 +3,6 @@
  */
 
 import { has, noop } from 'lodash';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -69,13 +68,6 @@ const setSelectedEditorAndRedirect = (
 		return;
 	}
 	if ( has( window, 'location.replace' ) && -1 !== redirectUrl.indexOf( 'calypsoify=1' ) ) {
-		return window.location.replace( redirectUrl );
-	}
-	if (
-		isEnabled( 'editor/after-deprecation' ) &&
-		has( window, 'location.replace' ) &&
-		'classic' === editor
-	) {
 		return window.location.replace( redirectUrl );
 	}
 
