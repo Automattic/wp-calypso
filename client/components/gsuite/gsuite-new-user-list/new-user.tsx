@@ -17,6 +17,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import { GSuiteNewUser as NewUser } from 'lib/gsuite/new-users';
 
 interface Props {
+	autoFocus: boolean;
 	domains: string[];
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
@@ -25,6 +26,7 @@ interface Props {
 }
 
 const GSuiteNewUser: FunctionComponent< Props > = ( {
+	autoFocus,
 	domains,
 	onUserRemove,
 	onUserValueChange,
@@ -66,7 +68,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				value={ mailBox }
 				isError={ hasMailBoxError }
 				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-					onUserValueChange( 'mailBox', event.target.value );
+					onUserValueChange( 'mailBox', event.target.value.toLowerCase() );
 				} }
 				onBlur={ () => {
 					setMailBoxFieldTouched( wasValidated );
@@ -85,13 +87,14 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					value={ mailBox }
 					isError={ hasMailBoxError }
 					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-						onUserValueChange( 'mailBox', event.target.value );
+						onUserValueChange( 'mailBox', event.target.value.toLowerCase() );
 					} }
 					onBlur={ () => {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 					onKeyUp={ onReturnKeyPress }
 				/>
+
 				<GSuiteDomainsSelect
 					domains={ domains }
 					onChange={ ( event ) => {
@@ -105,31 +108,27 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 	return (
 		<div>
-			<FormFieldset className="gsuite-new-user-list__new-user-email-fieldset">
-				<div className="gsuite-new-user-list__new-user-email">
-					{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
-				</div>
-				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
-			</FormFieldset>
-
 			<FormFieldset className="gsuite-new-user-list__new-user-name-fieldset">
 				<div className="gsuite-new-user-list__new-user-name">
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
+							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 							placeholder={ translate( 'First name' ) }
 							value={ firstName }
 							maxLength={ 60 }
 							isError={ hasFirstNameError }
 							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-								onUserValueChange( 'firstName', event.target.value );
+								onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
 							} }
 							onBlur={ () => {
 								setFirstNameFieldTouched( wasValidated );
 							} }
 							onKeyUp={ onReturnKeyPress }
 						/>
+
 						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
 					</div>
+
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
 							placeholder={ translate( 'Last name' ) }
@@ -144,8 +143,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							} }
 							onKeyUp={ onReturnKeyPress }
 						/>
+
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>
+
 					<div>
 						<Button
 							className="gsuite-new-user-list__new-user-remove-user-button"
@@ -156,6 +157,14 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						</Button>
 					</div>
 				</div>
+			</FormFieldset>
+
+			<FormFieldset className="gsuite-new-user-list__new-user-email-fieldset">
+				<div className="gsuite-new-user-list__new-user-email">
+					{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
+				</div>
+
+				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 			</FormFieldset>
 		</div>
 	);

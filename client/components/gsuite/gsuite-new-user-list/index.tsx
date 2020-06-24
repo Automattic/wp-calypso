@@ -10,7 +10,12 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import GSuiteNewUser from './new-user';
-import { newUser, GSuiteNewUser as NewUser, validateUsers } from 'lib/gsuite/new-users';
+import {
+	newUser,
+	GSuiteNewUser as NewUser,
+	sanitizeEmail,
+	validateUsers,
+} from 'lib/gsuite/new-users';
 
 /**
  * Style dependencies
@@ -18,6 +23,7 @@ import { newUser, GSuiteNewUser as NewUser, validateUsers } from 'lib/gsuite/new
 import './style.scss';
 
 interface Props {
+	autoFocus?: boolean;
 	children?: ReactNode;
 	domains?: string[];
 	extraValidation: ( user: NewUser ) => NewUser;
@@ -35,19 +41,30 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	onUsersChange,
 	users,
 	onReturnKeyPress,
+	autoFocus = false,
 } ) => {
 	const translate = useTranslate();
 
-	const onUserValueChange = ( uuid: string ) => ( fieldName: string, fieldValue: string ) => {
-		const modifiedUserList = users.map( ( user ) => {
+	const onUserValueChange = ( uuid: string ) => (
+		fieldName: string,
+		fieldValue: string,
+		mailBoxFieldTouched = false
+	) => {
+		const changedUsers = users.map( ( user ) => {
 			if ( user.uuid !== uuid ) {
 				return user;
 			}
 
-			return { ...user, [ fieldName ]: { value: fieldValue, error: null } };
+			const changedUser = { ...user, [ fieldName ]: { value: fieldValue, error: null } };
+
+			if ( 'firstName' === fieldName && ! mailBoxFieldTouched ) {
+				return { ...changedUser, mailBox: { value: sanitizeEmail( fieldValue ), error: null } };
+			}
+
+			return changedUser;
 		} );
 
-		onUsersChange( validateUsers( modifiedUserList, extraValidation ) );
+		onUsersChange( validateUsers( changedUsers, extraValidation ) );
 	};
 
 	const onUserAdd = () => {
@@ -65,6 +82,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			{ users.map( ( user ) => (
 				<Fragment key={ user.uuid }>
 					<GSuiteNewUser
+						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						domains={ domains ? domains.map( ( domain ) => domain.name ) : [ selectedDomainName ] }
 						user={ user }
 						onUserValueChange={ onUserValueChange( user.uuid ) }
