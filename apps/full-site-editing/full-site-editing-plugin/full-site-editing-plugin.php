@@ -225,7 +225,7 @@ function load_blog_posts_block() {
 	$slug_regex    = '/newspack-blocks(-[A-Za-z0-9-]+)?\/newspack-blocks\.php/';
 	$disable_block = (
 		( defined( 'WP_CLI' ) && WP_CLI ) ||
-		/* phpcs:ignore WordPress.Security.NonceVerification */
+		/* phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
 		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && preg_match( $slug_regex, $_GET['plugin'] ) ) ||
 		preg_grep( $slug_regex, (array) get_option( 'active_plugins' ) ) ||
 		preg_grep( $slug_regex, (array) get_site_option( 'active_sitewide_plugins' ) )
