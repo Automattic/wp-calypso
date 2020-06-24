@@ -70,7 +70,7 @@ class SecurityCheckupAccountRecoveryEmail extends React.Component {
 						recoveryEmailAddress: accountRecoveryEmail,
 					},
 					components: {
-						strong: '<strong>',
+						strong: <strong />,
 					},
 				}
 			);

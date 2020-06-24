@@ -67,7 +67,7 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 				'You have set {{strong}}%(recoveryPhoneNumber)s{{/strong}} as your recovery SMS number.',
 				{
 					args: {
-						recoveryPhoneNumber: accountRecoveryPhone,
+						recoveryPhoneNumber: accountRecoveryPhone.numberFull,
 					},
 					components: {
 						strong: <strong />,
