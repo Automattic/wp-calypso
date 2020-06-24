@@ -37,7 +37,7 @@ import {
 	NOT_JETPACK,
 	NOT_WORDPRESS,
 	OUTDATED_JETPACK,
-	SITE_BLACKLISTED,
+	SITE_BLOCKED,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
 
@@ -196,7 +196,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			}
 
 			if ( this.isError( 'site_blacklisted' ) ) {
-				return SITE_BLACKLISTED;
+				return SITE_BLOCKED;
 			}
 
 			if ( this.checkProperty( 'userOwnsSite' ) ) {
