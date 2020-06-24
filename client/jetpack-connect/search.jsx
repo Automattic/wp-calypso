@@ -32,8 +32,8 @@ import { urlToSlug } from 'lib/url';
 import searchSites from 'components/search-sites';
 import jetpackConnection from './jetpack-connection';
 
-import { JPC_PATH_REMOTE_INSTALL } from './constants';
-import { ALREADY_CONNECTED, IS_DOT_COM_SEARCH } from './connection-notice-types';
+import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from './constants';
+import { ALREADY_CONNECTED } from './connection-notice-types';
 
 export class SearchPurchase extends Component {
 	static propTypes = {
@@ -94,8 +94,10 @@ export class SearchPurchase extends Component {
 		const { currentUrl } = this.state;
 
 		// we enable WP.com sites
-		if ( status === IS_DOT_COM_SEARCH || status === ALREADY_CONNECTED ) {
-			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + 'jetpack_search' );
+		if ( status === IS_DOT_COM_GET_SEARCH || status === ALREADY_CONNECTED ) {
+			const product = window.location.pathname.split( '/' ).pop();
+
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + product );
 		}
 
 		processJpSite( currentUrl );
@@ -143,6 +145,8 @@ export class SearchPurchase extends Component {
 	}
 
 	renderSiteInput( status ) {
+		const product = window.location.pathname.split( '/' ).pop();
+
 		return (
 			<Card className="jetpack-connect__site-url-input-container">
 				{ this.props.renderNotices() }
@@ -157,7 +161,7 @@ export class SearchPurchase extends Component {
 						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
 					}
 					isInstall={ true }
-					product={ 'jetpack_search' }
+					product={ product }
 					candidateSites={ this.state.candidateSites }
 				/>
 			</Card>

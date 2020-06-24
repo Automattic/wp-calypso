@@ -64,7 +64,7 @@ class JetpackConnectSiteUrlInput extends Component {
 			if ( ! this.props.isInstall ) {
 				return translate( 'Continue' );
 			}
-			return product === 'jetpack_search'
+			return product === 'jetpack_search' || product === 'wpcom_search'
 				? translate( 'Get Search' )
 				: translate( 'Start Installation' );
 		}
@@ -131,12 +131,13 @@ class JetpackConnectSiteUrlInput extends Component {
 			autoFocus,
 		} = this.props;
 
+		const isSearch = product === 'jetpack_search' || product === 'wpcom_search';
 		return (
 			<div>
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="globe" />
-					{ product !== 'jetpack_search' && (
+					{ ! isSearch && (
 						<FormTextInput
 							ref={ this.refInput }
 							id="siteUrl"
@@ -149,7 +150,7 @@ class JetpackConnectSiteUrlInput extends Component {
 							value={ url }
 						/>
 					) }
-					{ product === 'jetpack_search' && (
+					{ isSearch && (
 						<SuggestionSearch
 							id="siteSelection"
 							placeholder={ 'Type your site' }
