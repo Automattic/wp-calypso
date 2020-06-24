@@ -47,7 +47,7 @@ import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { stopPerformanceTracking, withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
+import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
 
 /**
