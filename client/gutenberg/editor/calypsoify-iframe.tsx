@@ -21,6 +21,7 @@ import {
 	isRequestingSites,
 	isRequestingSite,
 	isJetpackSite,
+	getSite,
 } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
@@ -35,7 +36,7 @@ import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
-import { notifyDesktopViewPostClicked } from 'state/desktop/actions';
+import { notifyDesktopViewPostClicked, notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { editPost, trashPost } from 'state/posts/actions';
@@ -47,6 +48,7 @@ import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
+import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
 
 /**
  * Types
@@ -132,10 +134,26 @@ class CalypsoifyIframe extends Component<
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	successfulIframeLoad = false;
+	waitForIframeToInit: ReturnType< typeof setInterval > | undefined = undefined;
+	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
+		this.waitForIframeToInit = setInterval( () => {
+			if ( this.props.shouldLoadIframe ) {
+				clearInterval( this.waitForIframeToInit );
+				this.waitForIframeToLoad = setTimeout( () => {
+					config.isEnabled( 'desktop' )
+						? this.props.notifyDesktopCannotOpenEditor(
+								this.props.site,
+								REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE,
+								this.props.iframeUrl
+						  )
+						: window.location.replace( this.props.iframeUrl );
+				}, 6000 ); // One second longer than we give the iframe to load
+			}
+		}, 1000 );
 	}
 
 	componentWillUnmount() {
@@ -594,6 +612,7 @@ class CalypsoifyIframe extends Component<
 	};
 
 	onIframeLoaded = async ( iframeUrl: string ) => {
+		clearTimeout( this.waitForIframeToLoad );
 		if ( ! this.successfulIframeLoad ) {
 			// Sometimes (like in IE) the WindowActions.Loaded message arrives after
 			// the onLoad event is fired. To deal with this case we'll poll
@@ -774,6 +793,7 @@ const mapStateToProps = (
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+		site: getSite( state, siteId ),
 	};
 };
 
@@ -788,6 +808,7 @@ const mapDispatchToProps = {
 	editPost,
 	trashPost,
 	updateSiteFrontPage,
+	notifyDesktopCannotOpenEditor,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
