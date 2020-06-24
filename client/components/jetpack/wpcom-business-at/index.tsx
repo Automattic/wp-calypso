@@ -43,6 +43,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 import { successNotice } from 'state/notices/actions';
 import { requestSite } from 'state/sites/actions';
 import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 /**
  * Style dependencies
@@ -163,6 +164,14 @@ export default function WPCOMBusinessAT(): ReactElement {
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
+	useEffect( () => {
+		// Check if a reverted site still has the COMPLETE status
+		if ( automatedTransferStatus === COMPLETE ) {
+			// Try to refresh the transfer state
+			dispatch( fetchAutomatedTransferStatus( siteId ) );
+		}
+	}, [] );
 
 	useEffect( () => {
 		if ( automatedTransferStatus !== COMPLETE ) {
