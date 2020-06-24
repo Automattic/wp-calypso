@@ -17,9 +17,9 @@ import getSiteSetting from 'state/selectors/get-site-setting';
  * @param {string} email An email address.
  * @returns {boolean} If the email address is disallowed.
  */
-export const isEmailDisallowed = ( state, siteId, email = '' ) => {
+export const isAuthorsEmailBlocked = ( state, siteId, email = '' ) => {
 	const blocklist = getSiteSetting( state, siteId, 'blacklist_keys' ) || '';
 	return includes( blocklist.split( '\n' ), email );
 };
 
-export default isEmailDisallowed;
+export default isAuthorsEmailBlocked;

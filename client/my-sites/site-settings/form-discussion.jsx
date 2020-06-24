@@ -513,7 +513,7 @@ class SiteSettingsFormDiscussion extends Component {
 		);
 	}
 
-	commentBlocklistSettings() {
+	disallowedCommentsSettings() {
 		const {
 			eventTracker,
 			fields,
@@ -525,22 +525,22 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Comment blocklist' ) }</FormLegend>
-				<FormLabel htmlFor="blocklist_keys">
+				<FormLegend>{ translate( 'Disallowed comments' ) }</FormLegend>
+				<FormLabel htmlFor="disallowed_comment_keys">
 					{ translate(
 						'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be put in the trash. ' +
 							'One word or IP per line. It will match inside words, so "press" will match "WordPress".'
 					) }
 				</FormLabel>
 				<FormTextarea
-					name="blocklist_keys"
-					id="blocklist_keys"
+					name="disallowed_comment_keys"
+					id="disallowed_comment_keys"
 					value={ fields.blacklist_keys }
 					onChange={ onChangeField( 'blacklist_keys' ) }
 					disabled={ isRequestingSettings || isSavingSettings }
 					autoCapitalize="none"
-					onClick={ eventTracker( 'Clicked Blacklist Field' ) } // @todo(saramarcondes) Is it safe to change this event name?
-					onKeyPress={ uniqueEventTracker( 'Typed in Blacklist Field' ) }
+					onClick={ eventTracker( 'Clicked Disallowed Comments Field' ) }
+					onKeyPress={ uniqueEventTracker( 'Typed in Disallowed Comments Field' ) }
 				/>
 			</FormFieldset>
 		);
@@ -608,7 +608,7 @@ class SiteSettingsFormDiscussion extends Component {
 					<hr />
 					{ this.commentModerationSettings() }
 					<hr />
-					{ this.commentBlocklistSettings() }
+					{ this.disallowedCommentsSettings() }
 				</Card>
 
 				{ isJetpack && (

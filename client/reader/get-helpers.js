@@ -9,7 +9,7 @@ import { trim } from 'lodash';
  * Internal Dependencies
  */
 import { decodeEntities } from 'lib/formatting';
-import { isSiteDescriptionBlocked } from 'reader/lib/site-description-blocklist';
+import { isSiteDescriptionDisallowed } from 'reader/lib/site-description-filter';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.
@@ -77,7 +77,7 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 
 export const getSiteDescription = ( { site, feed } ) => {
 	const description = ( site && site.description ) || ( feed && feed.description );
-	if ( isSiteDescriptionBlocked( description ) ) {
+	if ( isSiteDescriptionDisallowed( description ) ) {
 		return null;
 	}
 	return description;

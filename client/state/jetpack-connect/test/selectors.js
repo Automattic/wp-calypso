@@ -403,8 +403,8 @@ describe( 'selectors', () => {
 			expect( hasError ).toBe( false );
 		} );
 
-		test( 'should be true if site has been blocklisted', () => {
-			const stateHasBeenBlocklistedError = {
+		test( 'should be true if site has been blocked', () => {
+			const stateHasBeenBlockedError = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
 						authorizeError: {
@@ -413,7 +413,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const hasError = isSiteBlockedError( stateHasBeenBlocklistedError );
+			const hasError = isSiteBlockedError( stateHasBeenBlockedError );
 			expect( hasError ).toBe( true );
 		} );
 	} );
