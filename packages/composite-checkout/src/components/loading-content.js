@@ -7,25 +7,25 @@ import { keyframes } from '@emotion/core';
 import { useI18n } from '@automattic/react-i18n';
 
 export default function LoadingContent() {
-	const { __, isRTL } = useI18n();
+	const { __ } = useI18n();
 
 	return (
 		<LoadingContentWrapperUI>
 			<LoadingCard>
-				<LoadingTitle isRTL={ isRTL }>{ __( 'Loading checkout' ) }</LoadingTitle>
-				<LoadingCopy isRTL={ isRTL } />
-				<LoadingCopy isRTL={ isRTL } />
+				<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
+				<LoadingCopy />
+				<LoadingCopy />
 			</LoadingCard>
 			<LoadingCard>
-				<LoadingTitle isRTL={ isRTL } />
-				<LoadingCopy isRTL={ isRTL } />
-				<LoadingCopy isRTL={ isRTL } />
+				<LoadingTitle />
+				<LoadingCopy />
+				<LoadingCopy />
 			</LoadingCard>
 			<LoadingCard>
-				<LoadingTitle isRTL={ isRTL } />
+				<LoadingTitle />
 			</LoadingCard>
 			<LoadingCard>
-				<LoadingTitle isRTL={ isRTL } />
+				<LoadingTitle />
 			</LoadingCard>
 			<LoadingFooter />
 		</LoadingContentWrapperUI>
@@ -76,22 +76,31 @@ const LoadingTitle = styled.h1`
 	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	color: ${ ( props ) => props.theme.colors.borderColorLight };
 	width: 40%;
-	margin: ${ ( props ) => ( props.isRTL ? '3px 35px 0 0' : '3px 0 0 35px' ) };
+	margin: 3px 0 0 35px;
 	padding: 0;
 	position: relative;
 	animation: ${ pulse } 2s ease-in-out infinite;
 	height: 20px;
 
+	.rtl & {
+		margin: 3px 35px 0 0;
+	}
+
 	:before {
 		content: '';
 		display: block;
 		position: absolute;
-		${ ( props ) => ( props.isRTL ? 'right: -35px;' : 'left: -35px;' ) }
+		left: -35px;
 		top: -3px;
 		width: 27px;
 		height: 27px;
 		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		border-radius: 100%;
+
+		.rtl & {
+			right: -35px;
+			left: auto;
+		}
 	}
 `;
 const LoadingCopy = styled.p`
@@ -100,9 +109,13 @@ const LoadingCopy = styled.p`
 	content: '';
 	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	margin: ${ ( props ) => ( props.isRTL ? '8px 35px 0 0' : '8px 0 0 35px' ) };
+	margin: 8px 0 0 35px;
 	padding: 0;
 	animation: ${ pulse } 2s ease-in-out infinite;
+
+	.rtl & {
+		margin: 8px 35px 0 0;
+	}
 `;
 
 const LoadingFooter = styled.div`

@@ -21,7 +21,7 @@ export default function PaymentRequestButton( {
 	disabled,
 	disabledReason,
 } ) {
-	const { __, isRTL } = useI18n();
+	const { __ } = useI18n();
 	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const onClick = ( event ) => {
 		event.persist();
@@ -50,7 +50,7 @@ export default function PaymentRequestButton( {
 	}
 
 	if ( paymentType === 'apple-pay' ) {
-		return <ApplePayButton disabled={ disabled } onClick={ onClick } isRTL={ isRTL } />;
+		return <ApplePayButton disabled={ disabled } onClick={ onClick } />;
 	}
 	return (
 		<Button disabled={ disabled } onClick={ onClick } fullWidth>
@@ -73,14 +73,19 @@ const ApplePayButton = styled.button`
 	width: 100%;
 	position: relative;
 
-	&::after {
+	&:after {
 		content: '';
 		position: ${ ( props ) => ( props.disabled ? 'absolute' : 'relative' ) };
 		top: 0;
-		${ ( props ) => ( props.isRTL ? 'right: 0;' : 'left: 0;' ) }
+		left: 0;
 		width: 100%;
 		height: 100%;
 		background-color: #ccc;
 		opacity: 0.7;
+
+		.rtl & {
+			right: 0;
+			left: auto;
+		}
 	}
 `;

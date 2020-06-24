@@ -4,11 +4,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
-import { useI18n } from '@automattic/react-i18n';
 
 export default function Spinner( { className } ) {
-	const { isRTL } = useI18n();
-	return <SpinnerWrapper className={ className } isRTL={ isRTL } />;
+	return <SpinnerWrapper className={ className } />;
 }
 
 const rotate = keyframes`
@@ -32,7 +30,7 @@ const SpinnerWrapper = styled.div`
 	:after {
 		position: absolute;
 		top: 0;
-		${ ( props ) => ( props.isRTL ? 'right: -1px;' : 'left: -1px;' ) }
+		left: -1px;
 		width: 17px;
 		height: 17px;
 		border: 3px solid transparent;
@@ -44,5 +42,10 @@ const SpinnerWrapper = styled.div`
 		border-radius: 100%;
 		animation: ${ rotate } 3s linear infinite;
 		animation-fill-mode: backwards;
+
+		.rtl & {
+			right: -1px;
+			left: auto;
+		}
 	}
 `;

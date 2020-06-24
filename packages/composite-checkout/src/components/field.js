@@ -4,7 +4,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -29,7 +28,6 @@ export default function Field( {
 	autoComplete,
 	disabled,
 } ) {
-	const { isRTL } = useI18n();
 	const fieldOnChange = ( event ) => {
 		if ( onChange ) {
 			onChange( event.target.value );
@@ -63,7 +61,6 @@ export default function Field( {
 					isError={ isError }
 					autoComplete={ autoComplete }
 					disabled={ disabled }
-					isRTL={ isRTL }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -119,11 +116,12 @@ const Input = styled.input`
 		border: 1px solid
 			${ ( props ) =>
 				props.isError ? props.theme.colors.error : props.theme.colors.borderColor };
-		${ ( props ) =>
-			props.isRTL
-				? `padding: 13px 10px 11px ${ props.icon ? '60px' : '10px' };`
-				: `padding: 13px ${ props.icon ? '60px' : '10px' } 11px 10px;` }
+		padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 11px 10px;
 		line-height: 1.2;
+
+		.rtl & {
+			padding: 13px 10px 11px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
+		}
 	}
 
 	:focus {
@@ -165,12 +163,22 @@ const FieldIcon = styled.div`
 	top: 50%;
 	transform: translateY( -50% );
 	right: 10px;
+
+	.rtl & {
+		right: auto;
+		left: 10px;
+	}
 `;
 
 const ButtonIconUI = styled.div`
 	position: absolute;
 	top: 0;
 	right: 0;
+
+	.rtl & {
+		right: auto;
+		left: 0;
+	}
 
 	button {
 		border: 1px solid transparent;
@@ -188,7 +196,7 @@ const ButtonIconUI = styled.div`
 `;
 
 const Description = styled.p`
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 	color: ${ ( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
 	font-style: italic;

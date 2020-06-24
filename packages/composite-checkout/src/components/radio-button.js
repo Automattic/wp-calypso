@@ -4,7 +4,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useI18n } from '@automattic/react-i18n';
 
 export default function RadioButton( {
 	checked,
@@ -18,15 +17,9 @@ export default function RadioButton( {
 	ariaLabel,
 } ) {
 	const [ isFocused, changeFocus ] = useState( false );
-	const { isRTL } = useI18n();
 
 	return (
-		<RadioButtonWrapper
-			disabled={ disabled }
-			isFocused={ isFocused }
-			checked={ checked }
-			isRTL={ isRTL }
-		>
+		<RadioButtonWrapper disabled={ disabled } isFocused={ isFocused } checked={ checked }>
 			<Radio
 				type="radio"
 				name={ name }
@@ -44,7 +37,7 @@ export default function RadioButton( {
 				readOnly={ ! onChange }
 				aria-label={ ariaLabel }
 			/>
-			<Label checked={ checked } htmlFor={ id } disabled={ disabled } isRTL={ isRTL }>
+			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -81,11 +74,16 @@ const RadioButtonWrapper = styled.div`
 		height: 100%;
 		position: absolute;
 		top: 0;
-		${ ( props ) => ( props.isRTL ? 'right: 0;' : 'left: 0;' ) }
+		left: 0;
 		content: '';
 		border: ${ getBorderWidth } solid ${ getBorderColor };
 		border-radius: 3px;
 		box-sizing: border-box;
+
+		.rtl & {
+			right: 0;
+			left: auto;
+		}
 	}
 
 	:hover:before {
@@ -144,7 +142,7 @@ const Radio = styled.input`
 
 const Label = styled.label`
 	position: relative;
-	padding: ${ ( props ) => ( props.isRTL ? '16px 40px 16px 14px;' : '16px 14px 16px 40px;' ) }
+	padding: 16px 14px 16px 40px;
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
@@ -153,6 +151,10 @@ const Label = styled.label`
 	justify-content: space-between;
 	align-items: flex-start;
 	font-size: 14px;
+
+	.rtl & {
+		padding: 16px 40px 16px 14px;
+	}
 
 	:hover {
 		cursor: pointer;
@@ -166,11 +168,16 @@ const Label = styled.label`
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
 		top: 19px;
-		${ ( props ) => ( props.isRTL ? 'right: 16px;' : 'left: 16px;' ) }
+		left: 16px;
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
 		box-sizing: border-box;
 		z-index: 2;
+
+		.rtl & {
+			right: 16px;
+			left: auto;
+		}
 	}
 
 	:after {
@@ -180,11 +187,16 @@ const Label = styled.label`
 		content: '';
 		border-radius: 100%;
 		top: 23px;
-		${ ( props ) => ( props.isRTL ? 'right: 20px;' : 'left: 20px;' ) }
+		left: 20px;
 		position: absolute;
 		background: ${ getRadioColor };
 		box-sizing: border-box;
 		z-index: 3;
+
+		.rtl & {
+			right: 20px;
+			left: auto;
+		}
 	}
 
 	${ handleLabelDisabled };
@@ -198,20 +210,20 @@ function handleLabelDisabled( { disabled } ) {
 	return `
 		color: lightgray;
 		font-style: italic;
-		
+
 		:hover {
 			cursor: default;
 		}
-		
+
 		:before {
 			border: 1px solid lightgray;
 			background: lightgray;
 		}
-		
+
 		:after {
 			background: white;
 		}
-		
+
 		span {
 			color: lightgray;
 		}
