@@ -32,12 +32,12 @@ export function createApplePayMethod( stripe, stripeConfiguration ) {
 }
 
 export function ApplePayLabel() {
-	const { __, isRTL } = useI18n();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
 			<span>{ __( 'Apple Pay' ) }</span>
-			<PaymentMethodLogos className="apple-pay__logo payment-logos" isRTL={ isRTL }>
+			<PaymentMethodLogos className="apple-pay__logo payment-logos">
 				<ApplePayIcon fill="black" />
 			</PaymentMethodLogos>
 		</React.Fragment>

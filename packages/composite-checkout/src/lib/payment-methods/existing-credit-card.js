@@ -87,7 +87,7 @@ function formatDate( cardExpiry ) {
 }
 
 export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } ) {
-	const { __, isRTL } = useI18n();
+	const { __ } = useI18n();
 
 	const maskedCardDetails = sprintf( __( '**** %s' ), last4 );
 
@@ -95,7 +95,7 @@ export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } 
 		<React.Fragment>
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
-				<CardDetails isRTL={ isRTL }>{ maskedCardDetails }</CardDetails>
+				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</div>
 			<div>
@@ -219,7 +219,7 @@ function ButtonContents( { formStatus, total } ) {
 }
 
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
-	const { __, isRTL } = useI18n();
+	const { __ } = useI18n();
 
 	const maskedCardDetails = '****'.concat( last4 );
 
@@ -228,7 +228,7 @@ function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
 				<PaymentLogo brand={ brand } isSummary={ true } />
-				<CardDetails isRTL={ isRTL }>{ maskedCardDetails }</CardDetails>
+				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</SummaryLine>
 		</SummaryDetails>
@@ -237,5 +237,10 @@ function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
 
 const CardDetails = styled.span`
 	display: inline-block;
-	${ ( props ) => ( props.isRTL ? 'margin-left: 8px;' : 'margin-right: 8px;' ) }
+	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;

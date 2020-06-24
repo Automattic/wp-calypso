@@ -87,7 +87,7 @@ export function createIdealMethod( { store, stripe, stripeConfiguration } ) {
 }
 
 function IdealFields() {
-	const { __, isRTL } = useI18n();
+	const { __ } = useI18n();
 
 	const customerName = useSelect( ( select ) => select( 'ideal' ).getCustomerName() );
 	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
@@ -96,7 +96,7 @@ function IdealFields() {
 	const isDisabled = formStatus !== 'ready';
 
 	return (
-		<IdealFormWrapper isRTL={ isRTL }>
+		<IdealFormWrapper>
 			<IdealField
 				id="cardholderName"
 				type="Text"
@@ -158,7 +158,7 @@ function ErrorMessage( { isError, errorMessage } ) {
 }
 
 const Description = styled.p`
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 	color: ${ ( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
 	font-style: italic;
@@ -177,7 +177,12 @@ const IdealFormWrapper = styled.div`
 		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		position: absolute;
 		top: 0;
-		${ ( props ) => ( props.isRTL ? 'right: 3px;' : 'left: 3px;' ) }
+		left: 3px;
+
+		.rtl & {
+			right: 3px;
+			left: auto;
+		}
 	}
 `;
 
@@ -295,11 +300,11 @@ function isFormValid( store ) {
 }
 
 function IdealLabel() {
-	const { __, isRTL } = useI18n();
+	const { __ } = useI18n();
 	return (
 		<React.Fragment>
 			<span>{ __( 'iDEAL' ) }</span>
-			<PaymentMethodLogos className="ideal__logo payment-logos" isRTL={ isRTL }>
+			<PaymentMethodLogos className="ideal__logo payment-logos">
 				<IdealLogoUI />
 			</PaymentMethodLogos>
 		</React.Fragment>
