@@ -1,9 +1,16 @@
 /**
+ * External dependencies
+ */
+import { DefaultRootState } from 'react-redux';
+
+/**
  * Internal dependencies
  */
 import { getPreference } from 'state/preferences/selectors';
 import { Preference } from 'my-sites/site-settings/jetpack-credentials-banner/types';
 
+const MAX_BANNER_VIEWS = 10;
+const NINETY_DAYS_IN_MILLISECONDS = 90 * 24 * 60 * 60 * 1000;
 export const JETPACK_CREDENTIALS_BANNER_PREFERENCE = 'backup-scan-security-settings-moved';
 
 /**
@@ -12,7 +19,7 @@ export const JETPACK_CREDENTIALS_BANNER_PREFERENCE = 'backup-scan-security-setti
  * @param  {object}  state  Global state tree
  * @returns {Preference[]}  Array of Preference objects
  */
-export function getJetpackCredentialsBannerPreference( state ): Preference[] {
+export function getJetpackCredentialsBannerPreference( state: DefaultRootState ): Preference[] {
 	let preference = getPreference( state, JETPACK_CREDENTIALS_BANNER_PREFERENCE );
 
 	if ( ! preference || ! Array.isArray( preference ) ) {
@@ -28,7 +35,7 @@ export function getJetpackCredentialsBannerPreference( state ): Preference[] {
  * @param  {object}  state  Global state tree
  * @returns {boolean}       Whether the banner was dismissed
  */
-function isJetpackCredentialsBannerDismissed( state ): boolean {
+function isJetpackCredentialsBannerDismissed( state: DefaultRootState ): boolean {
 	const preference = getJetpackCredentialsBannerPreference( state );
 	return preference.filter( ( { type } ) => type === 'dismiss' ).length > 0;
 }
@@ -39,12 +46,11 @@ function isJetpackCredentialsBannerDismissed( state ): boolean {
  * @param  {object}  state  Global state tree
  * @returns {number}        Number of times the banner was viewed
  */
-function getJetpackCredentialsBannerViewCount( state ): number {
+function getJetpackCredentialsBannerViewCount( state: DefaultRootState ): number {
 	const preference = getJetpackCredentialsBannerPreference( state );
 	return preference.filter( ( { type } ) => type === 'view' ).length;
 }
 
-const NINETY_DAYS_IN_MILLISECONDS = 90 * 24 * 60 * 60 * 1000;
 /**
  * Returns whether the banner was shown to the user, for the first time, more than 90
  * days ago.
@@ -52,7 +58,7 @@ const NINETY_DAYS_IN_MILLISECONDS = 90 * 24 * 60 * 60 * 1000;
  * @param  {object}  state  Global state tree
  * @returns {boolean}       Whether the limit was exceeded
  */
-function isJetpackCredentialsBannerTimeLimitExceeded( state ): boolean {
+function isJetpackCredentialsBannerTimeLimitExceeded( state: DefaultRootState ): boolean {
 	const preference = getJetpackCredentialsBannerPreference( state );
 	const firstView = preference.filter( ( { type } ) => type === 'view' )[ 0 ];
 
@@ -70,7 +76,6 @@ function isJetpackCredentialsBannerTimeLimitExceeded( state ): boolean {
 	return true;
 }
 
-const MAX_BANNER_VIEWS = 10;
 /**
  * Returns if the banner should be displayed to the user. The results depends on three
  * conditions:
@@ -81,7 +86,7 @@ const MAX_BANNER_VIEWS = 10;
  * @param  {object}  state  Global state tree
  * @returns {boolean}       Whether the banner should be displayed
  */
-export function shouldDisplayJetpackCredentialsBanner( state ): boolean {
+export function shouldDisplayJetpackCredentialsBanner( state: DefaultRootState ): boolean {
 	const viewCount = getJetpackCredentialsBannerViewCount( state );
 	const isBannerDismissed = isJetpackCredentialsBannerDismissed( state );
 	const isTimeLimitExceeded = isJetpackCredentialsBannerTimeLimitExceeded( state );
