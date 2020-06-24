@@ -477,68 +477,78 @@ class MembershipsSection extends Component {
 
 	renderOnboarding( cta ) {
 		return (
-			<div className="memberships__onboarding-wrapper">
-				<div className="memberships__onboarding-column-info">
-					<div className="memberships__onboarding-header">
-						{ this.props.translate( 'Accept payments on your website.' ) }
+			<Card>
+				<div className="memberships__onboarding-wrapper">
+					<div className="memberships__onboarding-column-info">
+						<div className="memberships__onboarding-header">
+							{ this.props.translate( 'Accept payments on your website.' ) }
+						</div>
+						<p className="memberships__onboarding-paragraph">
+							{ this.props.translate(
+								'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more. One-time, monthly, and yearly credit and debit card payment options are supported.'
+							) }
+						</p>
+						<p className="memberships__onboarding-paragraph">
+							<ExternalLinkWithTracking
+								href={ localizeUrl( 'https://wordpress.com/support/recurring-payments-button/' ) }
+								icon={ true }
+								tracksEventName="calypso_earn_payments_learn_more"
+							>
+								{ this.props.translate(
+									'Learn more about payments and earning money on your website.'
+								) }
+							</ExternalLinkWithTracking>
+						</p>
+						<p className="memberships__onboarding-paragraph">
+							{ this.props.translate(
+								'Payments are safely, securely, and seamlessly processed by Stripe, a payment partner for all credit and debit card payments. Stripe provides easy access to your money and takes just minutes to set up.'
+							) }
+						</p>
+						{ cta }
+						<div className="memberships__onboarding-benefits">
+							<div>
+								<Gridicon size={ 18 } icon="checkmark" />
+								<span>
+									{ this.props.translate(
+										'Add a high converting one-click payment button to your site.'
+									) }
+								</span>
+							</div>
+							<div>
+								<Gridicon size={ 18 } icon="checkmark" />
+								<span>
+									{ this.props.translate(
+										'Offer monthly, yearly, and lifetime subscription options.'
+									) }
+								</span>
+							</div>
+							<div>
+								<Gridicon size={ 18 } icon="checkmark" />
+								<span>
+									{ this.props.translate( 'You select which premium content requires payment.' ) }
+								</span>
+							</div>
+							<div>
+								<Gridicon size={ 18 } icon="checkmark" />
+								<span>
+									{ this.props.translate( 'Send paid newsletters with premium content.' ) }
+								</span>
+							</div>
+							<div>
+								<Gridicon size={ 18 } icon="checkmark" />
+								<span>{ this.props.translate( 'Collect payments in 135 countries.' ) }</span>
+							</div>
+							<div>
+								<Gridicon size={ 18 } icon="checkmark" />
+								<span>{ this.props.translate( 'Easily manage subscribers.' ) }</span>
+							</div>
+						</div>
 					</div>
-					<p className="memberships__onboarding-paragraph">
-						{ this.props.translate(
-							'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more. One-time, monthly, and yearly credit and debit card payment options are supported.'
-						) }
-					</p>
-					<p className="memberships__onboarding-paragraph">
-						<ExternalLinkWithTracking
-							href={ localizeUrl( 'https://wordpress.com/support/recurring-payments-button/' ) }
-							icon={ true }
-							tracksEventName="calypso_earn_payments_learn_more"
-						>
-							{ this.props.translate(
-								'Learn more about payments and earning money on your website.'
-							) }
-						</ExternalLinkWithTracking>
-					</p>
-					<p className="memberships__onboarding-paragraph">
-						{ this.props.translate(
-							'Payments are safely, securely, and seamlessly processed by Stripe, a payment partner for all credit and debit card payments. Stripe provides easy access to your money and takes just minutes to set up.'
-						) }
-					</p>
-					{ cta }
-					<div className="memberships__onboarding-benefits">
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ this.props.translate(
-								'Add a high converting one-click payment button to your site.'
-							) }
-						</div>
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ this.props.translate(
-								'Offer monthly, yearly, and lifetime subscription options.'
-							) }
-						</div>
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ this.props.translate( 'You select which premium content requires payment.' ) }
-						</div>
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ this.props.translate( 'Send paid newsletters with premium content.' ) }
-						</div>
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ this.props.translate( 'Collect payments in 135 countries.' ) }
-						</div>
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ this.props.translate( 'Easily manage subscribers.' ) }
-						</div>
+					<div className="memberships__onboarding-column-image">
+						<img src={ paymentsImage } aria-hidden="true" alt="" />
 					</div>
 				</div>
-				<div className="memberships__onboarding-column-image">
-					<img src={ paymentsImage } aria-hidden="true" alt="" />
-				</div>
-			</div>
+			</Card>
 		);
 	}
 

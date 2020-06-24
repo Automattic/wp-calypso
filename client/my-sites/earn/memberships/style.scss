@@ -24,14 +24,16 @@
 }
 
 .memberships__onboarding-column-info {
-	flex: 1;
+	flex: 3;
 	padding-left: 10px;
 	padding-right: 10px;
 }
 .memberships__onboarding-column-image {
 	display: none;
 	@include breakpoint-deprecated( '>800px' ) {
+		flex: 2;
 		display: block;
+		text-align: center;
 		padding-left: 10px;
 		padding-right: 10px;
 	}
@@ -52,9 +54,16 @@
 }
 .memberships__onboarding-benefits > div {
 	line-height: 24px;
+	margin-top: 10px;
 }
 .memberships__onboarding-benefits > div > svg {
-	margin-right: 12px;
+	margin-right: 10px;
+	float: left;
+}
+
+.memberships__onboarding-benefits > div > span {
+	display: block;
+	overflow: hidden;
 }
 
 .memberships__earnings-breakdown-list {
