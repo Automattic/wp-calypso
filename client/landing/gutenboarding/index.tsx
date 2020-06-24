@@ -59,7 +59,7 @@ const USE_TRANSLATION_CHUNKS: string =
 type User = UserStore.CurrentUser;
 type Site = SiteStore.SiteDetails;
 
-export interface AppWindow extends Window {
+interface AppWindow extends Window {
 	currentUser?: User;
 	i18nLocaleStrings?: string;
 	installedChunks?: string[];
