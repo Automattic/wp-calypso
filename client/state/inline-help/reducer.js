@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
@@ -165,9 +165,11 @@ export const contactForm = withoutPersistence(
 	}
 );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	ui,
 	popover,
 	contactForm,
 	searchResults,
 } );
+
+export default withStorageKey( 'inlineHelp', combinedReducer );

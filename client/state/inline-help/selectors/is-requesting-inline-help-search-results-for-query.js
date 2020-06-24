@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/inline-help/init';
+
+/**
  * Returns true if currently requesting search results for a given query; false
  * otherwise.
  *

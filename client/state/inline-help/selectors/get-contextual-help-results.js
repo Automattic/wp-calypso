@@ -11,6 +11,8 @@ import pathToSection from 'lib/path-to-section';
 // @TODO: getContextResults should perhaps be moved to /state or /lib
 import { getContextResults } from 'blocks/inline-help/contextual-help';
 
+import 'state/inline-help/init';
+
 /**
  * Returns an array of contextual results
  *

@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/inline-help/init';
+
+/**
  * Indicates whether the current search results came from the API or are
  * statically coded "contextual" results.
  * see: client/blocks/inline-help/contextual-help.js

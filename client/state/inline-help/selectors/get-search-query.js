@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/inline-help/init';
+
+/**
  * Returns the current search query.
  *
  * @param  {object}  state  Global state tree
