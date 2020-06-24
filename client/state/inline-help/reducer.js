@@ -10,6 +10,7 @@ import {
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
+	INLINE_HELP_SET_QUERY_SEARCH,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_HIDE,
@@ -81,6 +82,11 @@ export const search = withoutPersistence(
 					},
 					selectedResult: -1,
 					hasAPIResults: false,
+				};
+			case INLINE_HELP_SET_QUERY_SEARCH:
+				return {
+					...state,
+					searchQuery: action.searchQuery,
 				};
 			case INLINE_HELP_SEARCH_REQUEST:
 				return {
