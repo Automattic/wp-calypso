@@ -59,18 +59,14 @@ export function prefetchDesignThumbs() {
 export function getAvailableDesigns(
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ) {
-	let designs = availableDesigns;
-
 	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
 	// the FSE designs.
-	designs = {
-		...designs,
-		featured: designs.featured.filter( ( design ) =>
+	return {
+		...availableDesigns,
+		featured: availableDesigns.featured.filter( ( design ) =>
 			useFseDesigns ? design.is_fse : ! design.is_fse
 		),
 	};
-
-	return designs;
 }
 
 export default getAvailableDesigns();
