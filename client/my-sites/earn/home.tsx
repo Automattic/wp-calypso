@@ -104,7 +104,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  );
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Add one-time payments' ),
+					text: isEnabled( 'earn/rename-payment-blocks' )
+						? translate( 'Learn how to get started' )
+						: translate( 'Add one-time payments' ),
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
