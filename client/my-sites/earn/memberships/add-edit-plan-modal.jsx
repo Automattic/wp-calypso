@@ -284,6 +284,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						<option value="1 year">
 							{ isPayments ? translate( 'Renew yearly' ) : translate( 'Yearly' ) }
 						</option>
+						{ isEnabled( 'earn/rename-payment-blocks' ) && (
+							<option value="one-time">{ translate( 'One time sale' ) }</option>
+						) }
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
