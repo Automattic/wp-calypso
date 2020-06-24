@@ -20,7 +20,7 @@ import { urlToDomainAndPath } from 'lib/url';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteComment } from 'state/comments/selectors';
 import getSiteSetting from 'state/selectors/get-site-setting';
-import isEmailBlocklisted from 'state/selectors/is-email-blocklisted';
+import isEmailDisallowed from 'state/selectors/is-email-disallowed';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -216,7 +216,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorIp: get( comment, 'author.ip_address' ),
 		authorUsername: get( comment, 'author.nice_name' ),
 		authorUrl: get( comment, 'author.URL', '' ),
-		isAuthorBlocklisted: isEmailBlocklisted( state, siteId, authorEmail ),
+		isAuthorBlocklisted: isEmailDisallowed( state, siteId, authorEmail ),
 		showBlockUser,
 		siteBlocklist: getSiteSetting( state, siteId, 'blocklist_keys' ),
 		siteId,
