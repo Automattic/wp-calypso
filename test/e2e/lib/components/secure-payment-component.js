@@ -104,7 +104,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 					pauseBetweenKeysMS: pauseBetweenKeysMS,
 				}
 			);
-			driverHelper.clickWhenClickable(
+			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( `#country-selector option[value="${ cardCountryCode }"]` )
 			);
