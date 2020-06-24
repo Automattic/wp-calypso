@@ -29,7 +29,9 @@
 	font-size: 24px;
 }
 
-.card-heading-21 {
+/* 21px is deprecated, use .card-heading-20 */
+.card-heading-21,
+.card-heading-20 {
 	font-size: $font-title-small;
 }
 
@@ -41,6 +43,8 @@
 	font-size: $font-body-small;
 }
 
-.card-heading-11 {
+/* 11px is deprecated, use .card-heading-12 */
+.card-heading-11,
+.card-heading-12 {
 	font-size: $font-body-extra-small;
 }
