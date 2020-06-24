@@ -82,10 +82,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Numbered List', 'full-site-editing' ),
-	'categories' => array( 'list' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Numbered List', 'full-site-editing' ),
+	'categories'    => array( 'list' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( '01', 'full-site-editing' ),
 		esc_html__( 'Strategy', 'full-site-editing' ),
@@ -100,4 +100,5 @@ return array(
 		esc_html__( 'Grow', 'full-site-editing' ),
 		esc_html__( 'Look at the sunset. Surround yourself with angels, positive energy, beautiful people, beautiful souls, clean heart, angel.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

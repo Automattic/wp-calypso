@@ -12,8 +12,9 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Tiled Mosaic Gallery', 'full-site-editing' ),
-	'categories' => array( 'gallery' ),
-	'content'    => $markup,
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Tiled Mosaic Gallery', 'full-site-editing' ),
+	'categories'    => array( 'gallery' ),
+	'content'       => $markup,
+	'viewportWidth' => 1280,
 );

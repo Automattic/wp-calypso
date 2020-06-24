@@ -50,10 +50,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Call to Action', 'full-site-editing' ),
-	'categories' => array( 'call-to-action' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Call to Action', 'full-site-editing' ),
+	'categories'    => array( 'call-to-action' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Want to volunteer?', 'full-site-editing' ),
 		esc_html__( 'We’ve had an incredible response so far, and are doing everything we can to respond to everyone who wants to volunteer in one of our community programmes.', 'full-site-editing' ),
@@ -61,4 +61,5 @@ return array(
 		esc_html__( 'Are you a business?', 'full-site-editing' ),
 		esc_html__( 'We are uniting our resources around this challenge, and we are combining our resources and asks to make it easy for people to support their communities.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

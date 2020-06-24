@@ -12,7 +12,8 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Masonry gallery', 'full-site-editing' ),
-	'categories' => array( 'gallery' ),
-	'content'    => $markup,
+	'title'         => esc_html__( 'Masonry gallery', 'full-site-editing' ),
+	'categories'    => array( 'gallery' ),
+	'content'       => $markup,
+	'viewportWidth' => 1280,
 );

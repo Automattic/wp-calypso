@@ -40,13 +40,14 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Headline', 'full-site-editing' ),
-	'categories' => array( 'blog' ),
-	'content'    => sprintf(
+	'title'         => esc_html__( 'Headline', 'full-site-editing' ),
+	'categories'    => array( 'blog' ),
+	'content'       => sprintf(
 		$markup,
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/cayla1-w6ftfbpcs9i-unsplash.jpg' ),
 		esc_html__( 'Weekly Recipe', 'full-site-editing' ),
 		esc_html__( 'Stay Warm in Autumn: Roasted Pumpkin Soup', 'full-site-editing' ),
 		esc_html__( 'More Recipes', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

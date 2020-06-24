@@ -30,10 +30,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Coming Soon', 'full-site-editing' ),
-	'categories' => array( 'call-to-action' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Coming Soon', 'full-site-editing' ),
+	'categories'    => array( 'call-to-action' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Coming Soon', 'full-site-editing' ),
 		esc_html__( 'Come back here when our journey begins.', 'full-site-editing' ),
@@ -41,4 +41,5 @@ return array(
 		esc_html__( 'CA 12345-6789', 'full-site-editing' ),
 		esc_html__( 'hello@example.com', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

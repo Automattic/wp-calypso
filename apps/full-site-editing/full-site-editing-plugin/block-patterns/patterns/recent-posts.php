@@ -14,7 +14,8 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Recent Posts', 'full-site-editing' ),
-	'categories' => array( 'blog' ),
-	'content'    => $markup,
+	'title'         => esc_html__( 'Recent Posts', 'full-site-editing' ),
+	'categories'    => array( 'blog' ),
+	'content'       => $markup,
+	'viewportWidth' => 1280,
 );
