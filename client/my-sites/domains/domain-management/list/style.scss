@@ -143,3 +143,21 @@ input[type='radio'].domain-management-list-item__radio {
 		display: none;
 	}
 }
+
+.domain-item {
+	display: flex;
+	align-items: center;
+}
+
+.domain-item__link {
+	margin: 0 12px;
+}
+
+.domain-item__title {
+	font-size: 18px;
+}
+
+.domain-item__meta {
+	font-size: $font-body-small;
+	color: var( --color-text-subtle );
+}
