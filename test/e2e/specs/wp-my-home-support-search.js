@@ -3,11 +3,13 @@
  */
 import config from 'config';
 import assert from 'assert';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
  */
 import * as driverManager from '../lib/driver-manager.js';
+import * as driverHelper from '../lib/driver-helper.js';
 
 import LoginFlow from '../lib/flows/login-flow.js';
 import * as dataHelper from '../lib/data-helper';
@@ -59,6 +61,18 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 			await sidebarComponent.selectMyHome();
 		} );
 
+		step( 'Verify "Get help" support card is displayed', async function () {
+			const isGetHelpCardPresent = await driverHelper.isElementPresent(
+				driver,
+				By.css( '.card.help-search' )
+			);
+			assert.equal(
+				isGetHelpCardPresent,
+				true,
+				'"Get help" card was not displayed on the My Home page.'
+			);
+		} );
+
 		step( 'Verify Inline Help support search is not displayed on My Home', async function () {
 			// The toggle only hides once the "Get help" card is rendered so
 			// we need to give it a little time to be removed.
@@ -72,5 +86,12 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 				'Inline Help support search was not correctly hidden on Home page.'
 			);
 		} );
+
+		//supportSearchComponent = await SupportSearchComponent.Expect(driver);
+
+		// step('Displays contextual search results by default', async function () {
+		//     const resultsCount = await supportSearchComponent.getSearchResultsCount();
+		//     assert.equal(resultsCount, 5, 'There are no contextual results displayed');
+		// });
 	} );
 } );
