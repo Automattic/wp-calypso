@@ -25,6 +25,8 @@ let driver;
 let supportSearchComponent;
 let inlineHelpPopoverComponent;
 
+const helpCardSelector = By.css( '.help-search' );
+
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
@@ -62,10 +64,11 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 		} );
 
 		step( 'Verify "Get help" support card is displayed', async function () {
-			const isGetHelpCardPresent = await driverHelper.isElementPresent(
-				driver,
-				By.css( '.card.help-search' )
-			);
+			// Card can take a little while to display, so let's wait...
+			await driverHelper.waitTillPresentAndDisplayed( driver, helpCardSelector );
+
+			// Verify it is there.
+			const isGetHelpCardPresent = await driverHelper.isElementPresent( driver, helpCardSelector );
 			assert.equal(
 				isGetHelpCardPresent,
 				true,
@@ -86,12 +89,5 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 				'Inline Help support search was not correctly hidden on Home page.'
 			);
 		} );
-
-		//supportSearchComponent = await SupportSearchComponent.Expect(driver);
-
-		// step('Displays contextual search results by default', async function () {
-		//     const resultsCount = await supportSearchComponent.getSearchResultsCount();
-		//     assert.equal(resultsCount, 5, 'There are no contextual results displayed');
-		// });
 	} );
 } );
