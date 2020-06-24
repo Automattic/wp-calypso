@@ -28,8 +28,11 @@ import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
 import PropTypes from 'prop-types';
 import QueryAllDomains from 'components/data/query-all-domains';
-import SectionHeader from 'components/section-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+/**
+ * Style dependencies
+ */
+import './list-all.scss';
 
 class ListAll extends Component {
 	static propTypes = {
@@ -92,13 +95,15 @@ class ListAll extends Component {
 
 		return (
 			<Main wideLayout>
-				<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
+				<div className="list-all__heading">
+					<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
+					<div className="list-all__heading-buttons">{ this.headerButtons() }</div>
+				</div>
 				<div className="list-all__container">
 					<QueryAllDomains />
 					<Main wideLayout>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<SidebarNavigation />
-						<SectionHeader>{ this.headerButtons() }</SectionHeader>
 						<div className="list-all__items">{ this.renderDomainsList() }</div>
 					</Main>
 				</div>
