@@ -45,7 +45,7 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 
 const SharingServicesGroup = ( { isFetching, services, title, expandedService } ) => {
 	useEffect( () => {
-		if ( expandedService ) {
+		if ( expandedService && ! isFetching ) {
 			const serviceElement = document.querySelector(
 				'.sharing-service.' + expandedService.replace( /_/g, '-' )
 			);
