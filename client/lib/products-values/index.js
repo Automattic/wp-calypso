@@ -528,7 +528,7 @@ export function isUnlimitedThemes( product ) {
 	return 'unlimited_themes' === product.product_slug;
 }
 
-export function whitelistAttributes( product ) {
+export function allowedProductAttributes( product ) {
 	return pick( product, Object.keys( schema.properties ) );
 }
 
