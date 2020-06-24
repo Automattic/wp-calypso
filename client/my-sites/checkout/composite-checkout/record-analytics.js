@@ -286,22 +286,29 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 			}
 
-			case 'PAYPAL_TRANSACTION_BEGIN': {
+			case 'REDIRECT_TRANSACTION_BEGIN': {
 				reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_form_submit', {
 						credits: null,
-						payment_method: 'WPCOM_Billing_PayPal_Express',
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
+								?.name || '',
 					} )
 				);
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 						credits: null,
-						payment_method: 'WPCOM_Billing_PayPal_Express',
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
+								?.name || '',
 					} )
 				);
 				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_paypal_submit_clicked', {} )
+					recordTracksEvent(
+						`calypso_checkout_composite_${ action.payload.paymentMethodId }_submit_clicked`,
+						{}
+					)
 				);
 			}
 
