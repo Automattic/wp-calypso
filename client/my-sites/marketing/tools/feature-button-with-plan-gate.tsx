@@ -57,15 +57,11 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
 	};
 
 	if ( hasPlanFeature ) {
-		return (
-			<Button compact onClick={ onDefaultButtonClick }>
-				{ buttonText }
-			</Button>
-		);
+		return <Button onClick={ onDefaultButtonClick }>{ buttonText }</Button>;
 	}
 
 	return (
-		<Button compact onClick={ handleUpgradeClick }>
+		<Button onClick={ handleUpgradeClick }>
 			{ translate( 'Upgrade to %(plan)s', {
 				args: {
 					plan: planTitle,

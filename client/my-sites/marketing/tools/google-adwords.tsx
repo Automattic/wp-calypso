@@ -60,7 +60,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 			return <GoogleVoucherDetails />;
 		}
 		return (
-			<Button className="tools__upgrade-button" compact onClick={ handleUpgradeClick }>
+			<Button className="tools__upgrade-button" onClick={ handleUpgradeClick }>
 				{ translate( 'Upgrade to Premium' ) }
 			</Button>
 		);
