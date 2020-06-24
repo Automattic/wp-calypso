@@ -11,10 +11,13 @@ import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
 const searchInputSelector = By.css( '.inline-help__search input[type="search"]' );
+const searchResultsSelector = By.css(
+	'.inline-help__results-list .inline-help__results-item, .help-search__results-list .help-search__results-item'
+);
 
 class SupportSearchComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.inline-help__search' ) );
+		super( driver, By.css( '.inline-help__search, .help-search__search' ) );
 	}
 
 	async waitForResults() {
@@ -36,9 +39,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async getSearchResults() {
-		return await this.driver.findElements(
-			By.css( '.inline-help__results-list .inline-help__results-item' )
-		);
+		return await this.driver.findElements( searchResultsSelector );
 	}
 
 	async getSearchResultsCount() {
