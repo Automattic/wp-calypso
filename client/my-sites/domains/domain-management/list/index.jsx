@@ -192,7 +192,7 @@ export class List extends React.Component {
 					<FormattedHeader
 						brandFont
 						className="domain-management__page-heading"
-						headerText={ this.props.translate( 'Domains' ) }
+						headerText={ this.props.translate( 'Site Domains' ) }
 						align="left"
 					/>
 				) }
