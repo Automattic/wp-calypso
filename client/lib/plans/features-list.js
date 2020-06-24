@@ -103,10 +103,15 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_ALL_PREMIUM_FEATURES ]: {
 		getSlug: () => constants.FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
-		getDescription: () =>
-			i18n.translate(
-				'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.'
-			),
+		getDescription: () => {
+			isEnabled( 'earn/rename-payment-blocks' )
+				? i18n.translate(
+						'Including unlimited premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+				  )
+				: i18n.translate(
+						'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.'
+				  );
+		},
 	},
 
 	[ constants.FEATURE_ADVANCED_CUSTOMIZATION ]: {
@@ -478,7 +483,10 @@ export const FEATURES_LIST = {
 	},
 	[ constants.FEATURE_SIMPLE_PAYMENTS ]: {
 		getSlug: () => constants.FEATURE_SIMPLE_PAYMENTS,
-		getTitle: () => i18n.translate( 'Simple Payments' ),
+		getTitle: () =>
+			isEnabled( 'earn/rename-payment-blocks' )
+				? i18n.translate( 'Pay with PayPal' )
+				: i18n.translate( 'Simple Payments' ),
 		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
 	[ constants.FEATURE_NO_BRANDING ]: {

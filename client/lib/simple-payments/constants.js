@@ -5,7 +5,7 @@ export const NUMBER_OF_POSTS_BY_REQUEST = 100;
 export const DEFAULT_CURRENCY = 'USD';
 
 // https://developer.paypal.com/docs/integration/direct/rest/currency-codes/
-// If this list changes, Simple Payments in Jetpack must be updated as well.
+// If this list changes, Pay with PayPal in Jetpack must be updated as well.
 // See https://github.com/Automattic/jetpack/blob/master/modules/simple-payments/simple-payments.php
 
 /**

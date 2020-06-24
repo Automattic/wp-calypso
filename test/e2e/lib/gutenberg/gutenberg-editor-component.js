@@ -227,6 +227,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				blockClass = 'contact-form';
 				break;
 			case 'Simple Payments':
+			case 'Pay with PayPal':
 				prefix = 'jetpack-';
 				blockClass = 'simple-payments';
 				break;
