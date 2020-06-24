@@ -69,6 +69,7 @@
 	z-index: 1;
 
 	@include breakpoint-deprecated( '<480px' ) {
+		width: 40px;
 		margin: -2px 8px 0 0;
 	}
 
