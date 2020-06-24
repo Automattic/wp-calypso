@@ -95,7 +95,7 @@ class P2Site extends React.Component {
 	sanitize = ( fields, onComplete ) => {
 		const sanitizedSubdomain = this.sanitizeSubdomain( fields.site );
 		if ( fields.site !== sanitizedSubdomain ) {
-			onComplete( { site: sanitizedSubdomain } );
+			onComplete( { site: sanitizedSubdomain, siteTitle: fields.siteTitle } );
 		}
 	};
 
