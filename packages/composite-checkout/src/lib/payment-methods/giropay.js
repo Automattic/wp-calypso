@@ -146,7 +146,7 @@ function GiropayPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting giropay payment' );
 					setTransactionPending();
-					onEvent( { type: 'GIROPAY_TRANSACTION_BEGIN' } );
+					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', paymentMethodId: 'giropay' } );
 					submitTransaction( {
 						stripe,
 						name: customerName?.value,
