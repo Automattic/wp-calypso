@@ -53,11 +53,14 @@ export class ReportImpl implements Report {
 
 	private async runCollectors( collectors: Collector[] ) {
 		return Promise.all(
-			collectors.map( ( collector ) => {
+			collectors.map( ( collector, idx ) => {
 				try {
-					collector( this );
-				} catch {
+					return collector( this );
+				} catch ( err ) {
 					// Swallow the error to make sure a single collector doesn't break the whole report
+					// eslint-disable-next-line no-console
+					console.warn( `Collector #${ idx } for report ${ this.id } failed to run`, err );
+					return null;
 				}
 			} )
 		);
