@@ -37,14 +37,11 @@ import {
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
+	setMediaItemErrors,
 	setMediaLibrarySelectedItems,
 	successMediaItemRequest,
 } from '../actions';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
-
-jest.mock( 'lib/media/utils', () => ( {
-	validateMediaItem: () => [ 'some-error' ],
-} ) );
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -54,14 +51,12 @@ describe( 'reducer', () => {
 			'queryRequests',
 			'mediaItemRequests',
 			'selectedItems',
+			'transientItems',
 		] );
 	} );
 
 	describe( 'errors()', () => {
 		const siteId = 2916284;
-		const site = {
-			ID: siteId,
-		};
 		const mediaItem = {
 			ID: 42,
 		};
@@ -73,7 +68,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should store errors per site on media upload failure', () => {
-			const state = errors( {}, createMediaItem( site, mediaItem ) );
+			const state = errors( {}, setMediaItemErrors( siteId, mediaItem.ID, [ 'some-error' ] ) );
 
 			expect( state ).to.eql( {
 				[ siteId ]: {

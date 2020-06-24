@@ -12,12 +12,10 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import DropZone from 'components/drop-zone';
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import { filterItemsByMimePrefix, isItemBeingUploaded } from 'lib/media/utils';
+import { filterItemsByMimePrefix } from 'lib/media/utils';
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 
-import { receiveMedia, deleteMedia } from 'state/media/actions';
+import { addMedia } from 'state/media/thunks';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -25,7 +23,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { userCan } from 'lib/site/utils';
 
 class FeaturedImageDropZone extends Component {
-	onFilesDrop = ( files ) => {
+	onFilesDrop = async ( files ) => {
 		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
 			return false;
 		}
@@ -41,44 +39,29 @@ class FeaturedImageDropZone extends Component {
 			return false;
 		}
 
-		const transientMediaId = uniqueId( 'featured-image' );
-		const { siteId, site } = this.props;
+		const transientId = uniqueId( 'featured-image' );
 
-		const handleFeaturedImageUpload = () => {
-			const media = MediaStore.get( siteId, transientMediaId );
-			const isUploadInProgress = media && isItemBeingUploaded( media );
-			const isFailedUpload = ! media;
-
-			if ( isFailedUpload ) {
-				this.props.deleteMedia( siteId, transientMediaId );
-			} else {
-				this.props.receiveMedia( siteId, media );
-			}
-
-			/**
-			 * File upload finished. No need to listen for changes anymore.
-			 */
-			if ( ! isUploadInProgress ) {
-				MediaStore.off( 'change', handleFeaturedImageUpload );
-
-				// Successful image upload.
-				if ( media ) {
-					this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
-						source: 'dropzone',
-						type: 'dragdrop',
-					} );
-				}
-			}
-
-			this.props.editPost( siteId, this.props.postId, { featured_image: media.ID } );
-		};
-
-		MediaStore.on( 'change', handleFeaturedImageUpload );
-
-		MediaActions.add( site, {
-			ID: transientMediaId,
+		const promise = this.props.addMedia( this.props.site, {
+			ID: transientId,
 			fileContents: droppedImage,
 			fileName: droppedImage.name,
+		} );
+
+		// set the transient item as the featured image so that there isn't a delay while uploading
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			featured_image: transientId,
+		} );
+
+		const { ID: savedMediaId } = await promise;
+
+		this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
+			source: 'dropzone',
+			type: 'dragdrop',
+		} );
+
+		// update it again to the saved media ID
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			featured_image: savedMediaId,
 		} );
 	};
 
@@ -109,8 +92,7 @@ export default connect(
 	} ),
 	{
 		editPost,
-		deleteMedia,
-		receiveMedia,
+		addMedia,
 		recordTracksEvent,
 	}
 )( localize( FeaturedImageDropZone ) );

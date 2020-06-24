@@ -13,7 +13,7 @@ import {
 	requestingMediaItem,
 	successMediaItemRequest,
 	failMediaItemRequest,
-} from '../actions';
+} from 'state/media/actions';
 import {
 	MEDIA_DELETE,
 	MEDIA_ITEM_REQUEST,
@@ -23,7 +23,7 @@ import {
 	MEDIA_RECEIVE,
 } from 'state/action-types';
 
-describe( 'actions', () => {
+describe( 'media - actions - sync', () => {
 	describe( 'receiveMedia()', () => {
 		describe( 'single', () => {
 			test( 'should return an action object', () => {
