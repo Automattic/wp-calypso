@@ -7,7 +7,7 @@
 	&::after {
 		content: '';
 		position: absolute;
-		left: 33px;
+		left: 35px;
 		width: 2px;
 
 		@include breakpoint-deprecated( '<480px' ) {
