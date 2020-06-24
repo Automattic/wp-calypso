@@ -49,7 +49,7 @@ export function Checkout( { children, className } ) {
 	const classNames = joinClasses( [
 		'composite-checkout',
 		...( className ? [ className ] : [] ),
-		...( isRTL ? [ 'rtl' ] : [] ),
+		...( isRTL() ? [ 'rtl' ] : [] ),
 	] );
 
 	if ( formStatus === 'loading' ) {
