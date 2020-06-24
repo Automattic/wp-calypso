@@ -190,7 +190,7 @@ const setLocalizedWpComPath = ( prefix, validLocales = [], limitPathMatch = null
 	if (
 		typeof limitPathMatch === 'object' &&
 		limitPathMatch instanceof RegExp &&
-		! urlParts.pathname.match( limitPathMatch )
+		! limitPathMatch.test( urlParts.pathname )
 	) {
 		validLocales = []; // only rewrite to English.
 	}
@@ -215,7 +215,7 @@ const prefixLocalizedUrlPath = ( validLocales = [], limitPathMatch = null ) => (
 	}
 
 	if ( typeof limitPathMatch === 'object' && limitPathMatch instanceof RegExp ) {
-		if ( ! urlParts.pathname.match( limitPathMatch ) ) {
+		if ( ! limitPathMatch.test( urlParts.pathname ) ) {
 			return urlParts; // No rewriting if not matches the path.
 		}
 	}
