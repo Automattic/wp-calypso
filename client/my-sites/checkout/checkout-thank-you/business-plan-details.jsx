@@ -25,7 +25,6 @@ import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-e
 import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
 import jetpackBackupImage from 'assets/images/illustrations/jetpack-backup.svg';
-import jetpackScanImage from 'assets/images/illustrations/jetpack-scan.svg';
 import themeImage from 'assets/images/illustrations/themes.svg';
 import updatesImage from 'assets/images/illustrations/updates.svg';
 
@@ -58,29 +57,16 @@ const BusinessPlanDetails = ( {
 			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 
 			{ shouldPromoteJetpack && (
-				<>
-					<PurchaseDetail
-						icon={ <img alt="" src={ jetpackBackupImage } /> }
-						title={ i18n.translate( 'Check your backups' ) }
-						description={ i18n.translate(
-							'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
-						) }
-						buttonText={ i18n.translate( 'See the latest backup' ) }
-						href={ `/backup/${ selectedSite.slug }` }
-						onClick={ trackOnboardingButtonClick }
-					/>
-
-					<PurchaseDetail
-						icon={ <img alt="" src={ jetpackScanImage } /> }
-						title={ i18n.translate( 'Scan your site' ) }
-						description={ i18n.translate(
-							'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
-						) }
-						buttonText={ i18n.translate( 'See the latest scan' ) }
-						href={ `/scan/${ selectedSite.slug }` }
-						onClick={ trackOnboardingButtonClick }
-					/>
-				</>
+				<PurchaseDetail
+					icon={ <img alt="" src={ jetpackBackupImage } /> }
+					title={ i18n.translate( 'Check your backups' ) }
+					description={ i18n.translate(
+						'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+					) }
+					buttonText={ i18n.translate( 'See the latest backup' ) }
+					href={ `/backup/${ selectedSite.slug }` }
+					onClick={ trackOnboardingButtonClick }
+				/>
 			) }
 
 			<CustomDomainPurchaseDetail
