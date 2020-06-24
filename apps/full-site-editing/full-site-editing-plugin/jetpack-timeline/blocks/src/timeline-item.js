@@ -9,6 +9,7 @@ import {
 } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { positionLeft, positionRight } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -18,6 +19,37 @@ import classnames from 'classnames';
  */
 import { TimelineIcon } from './icon';
 
+function Controls( { alignment, clientId, toggleAlignment } ) {
+	const parentIsAlternating = useSelect( ( select ) => {
+		const parentIds = select( 'core/block-editor' ).getBlockParents( clientId );
+		const parent = select( 'core/block-editor' ).getBlock( parentIds[ 0 ] );
+		return parent?.attributes?.isAlternating;
+	} );
+
+	if ( parentIsAlternating === false ) {
+		return null;
+	}
+
+	return (
+		<BlockControls>
+			<ToolbarGroup>
+				<ToolbarButton
+					onClick={ () => toggleAlignment( 'left' ) }
+					isActive={ alignment === 'left' }
+					icon={ positionLeft }
+					title={ __( 'Left', 'full-site-editing' ) }
+				/>
+				<ToolbarButton
+					onClick={ () => toggleAlignment( 'right' ) }
+					isActive={ alignment === 'right' }
+					icon={ positionRight }
+					title={ __( 'Right', 'full-site-editing' ) }
+				/>
+			</ToolbarGroup>
+		</BlockControls>
+	);
+}
+
 export function registerTimelineItemBlock() {
 	registerBlockType( 'jetpack/timeline-item', {
 		title: __( 'Timeline Entry', 'full-site-editing' ),
@@ -25,7 +57,7 @@ export function registerTimelineItemBlock() {
 		icon: TimelineIcon,
 		category: 'widgets',
 		parent: [ 'jetpack/timeline' ],
-		edit: ( { attributes, setAttributes } ) => {
+		edit: ( { attributes, clientId, setAttributes } ) => {
 			const style = {
 				backgroundColor: attributes.background,
 			};
@@ -46,22 +78,11 @@ export function registerTimelineItemBlock() {
 
 			return (
 				<>
-					<BlockControls>
-						<ToolbarGroup>
-							<ToolbarButton
-								onClick={ () => toggleAlignment( 'left' ) }
-								isActive={ attributes.alignment === 'left' }
-								icon={ positionLeft }
-								title={ __( 'Left', 'full-site-editing' ) }
-							/>
-							<ToolbarButton
-								onClick={ () => toggleAlignment( 'right' ) }
-								isActive={ attributes.alignment === 'right' }
-								icon={ positionRight }
-								title={ __( 'Right', 'full-site-editing' ) }
-							/>
-						</ToolbarGroup>
-					</BlockControls>
+					<Controls
+						alignment={ attributes.alignment }
+						clientId={ clientId }
+						toggleAlignment={ toggleAlignment }
+					/>
 					<li style={ style } className={ classes }>
 						<InspectorControls>
 							<PanelColorSettings

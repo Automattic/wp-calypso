@@ -75,8 +75,9 @@ export function registerTimelineBlock() {
 		},
 		attributes: {
 			isAlternating: {
-				type: 'boolean',
-				default: false,
+				type: 'attribute',
+				selector: 'ul',
+				attribute: 'data-is-alternating',
 			},
 		},
 		edit: ( props ) => {
@@ -112,12 +113,16 @@ export function registerTimelineBlock() {
 
 		save: ( props ) => {
 			const { attributes } = props;
+			const { isAlternating } = attributes;
 			const classes = classnames( 'wp-block-jetpack-timeline', {
-				'is-alternating': attributes.isAlternating,
+				'is-alternating': isAlternating,
 			} );
 
+			const dataAttr =
+				typeof isAlternating === 'boolean' ? { 'data-is-alternating': isAlternating } : null;
+
 			return (
-				<ul className={ classes }>
+				<ul className={ classes } { ...dataAttr }>
 					<InnerBlocks.Content />
 				</ul>
 			);
