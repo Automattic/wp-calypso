@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import {
@@ -10,6 +6,7 @@ import {
 	THEME_SETUP_RESULT,
 	THEME_SETUP_TOGGLE_DIALOG,
 } from 'state/themes/action-types';
+import { withStorageKey } from 'state/utils';
 
 const initialState = {
 	active: false,
@@ -30,4 +27,4 @@ export const themeSetup = ( state = initialState, action ) => {
 	return state;
 };
 
-export default themeSetup;
+export default withStorageKey( 'themeSetup', themeSetup );

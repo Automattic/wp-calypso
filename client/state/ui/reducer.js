@@ -26,7 +26,6 @@ import payment from './payment/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import section from './section/reducer';
-import themeSetup from './theme-setup/reducers';
 
 /**
  * Tracks the currently selected site ID.
@@ -119,7 +118,6 @@ const reducer = combineReducers( {
 	section,
 	selectedSiteId,
 	siteSelectionInitialized,
-	themeSetup,
 } );
 
 export default reducer;
