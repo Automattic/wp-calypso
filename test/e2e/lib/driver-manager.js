@@ -80,6 +80,8 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	let driver;
 	let options;
 	let builder;
+	const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
+	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 	const pref = new webdriver.logging.Preferences();
 	pref.setLevel( 'browser', webdriver.logging.Level.SEVERE );
 	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
@@ -111,6 +113,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		if ( caps.browserName === 'chrome' ) {
 			options = new chrome.Options();
 			options.addArguments( '--app=https://www.wordpress.com' );
+			options.addArguments( userAgent );
 			builder.setChromeOptions( options );
 		}
 
@@ -141,8 +144,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				options.addArguments( '--no-first-run' );
 
 				if ( useCustomUA ) {
-					const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
-					const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 					options.addArguments( userAgent );
 				}
 				if (
