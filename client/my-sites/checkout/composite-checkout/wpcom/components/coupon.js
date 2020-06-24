@@ -86,8 +86,20 @@ const animateIn = keyframes`
   }
 `;
 
+const animateInRTL = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
 const CouponWrapper = styled.form`
-	margin: ${ ( props ) => props.marginTop } 0 0 0;
+	margin: ${ ( props ) => props.marginTop } 0 0;
 	padding-top: 0;
 	position: relative;
 `;
@@ -102,6 +114,7 @@ const ApplyButton = styled( Button )`
 	margin: 0;
 
 	.rtl & {
+		animation-name: ${ animateInRTL }
 		left: 4px;
 		right: auto;
 	}

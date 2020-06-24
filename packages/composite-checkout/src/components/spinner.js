@@ -44,6 +44,8 @@ const SpinnerWrapper = styled.div`
 		animation-fill-mode: backwards;
 
 		.rtl & {
+			border-right-color: transparent;
+			border-left-color: ${ ( props ) => props.theme.colors.highlight };
 			right: -1px;
 			left: auto;
 		}

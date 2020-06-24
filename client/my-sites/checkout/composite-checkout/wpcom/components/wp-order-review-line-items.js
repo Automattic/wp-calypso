@@ -365,13 +365,13 @@ const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
 	margin: 20px 30px 20px 0;
 
+	.rtl & {
+		margin: 20px 0 20px 30px;
+	}
+
 	.is-summary & {
 		border-top: 0;
 		margin: 0;
-	}
-
-	.rtl & {
-		margin: 20px 0 20px 30px;
 	}
 `;
 

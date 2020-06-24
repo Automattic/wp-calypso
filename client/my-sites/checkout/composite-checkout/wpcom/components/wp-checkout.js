@@ -477,11 +477,11 @@ const CheckoutTermsUI = styled.div`
 		position: absolute;
 		top: 0;
 		left: 0;
-	}
 
-	.rtl & svg {
-		left: auto;
-		right: 0;
+		.rtl & {
+			left: auto;
+			right: 0;
+		}
 	}
 
 	p {

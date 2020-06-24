@@ -78,11 +78,11 @@ const RadioButtonWrapper = styled.div`
 		border: ${ getBorderWidth } solid ${ getBorderColor };
 		border-radius: 3px;
 		box-sizing: border-box;
-	}
 
-	.rtl &:before {
-		left: auto;
-		right: 0;
+		.rtl & {
+			left: auto;
+			right: 0;
+		}
 	}
 
 	:hover:before {
