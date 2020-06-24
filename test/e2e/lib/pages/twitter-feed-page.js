@@ -26,6 +26,7 @@ export default class TwitterFeedPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		return await driver
 			.wait( async function () {
+				await driver.sleep( 4000 );
 				await driver.navigate().refresh();
 				return await isEventuallyPresentAndDisplayed(
 					driver,
