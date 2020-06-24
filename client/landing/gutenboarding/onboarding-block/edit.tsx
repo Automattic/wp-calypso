@@ -22,9 +22,12 @@ import StylePreview from './style-preview';
 import Plans from './plans';
 import Domains from './domains';
 import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
+import type { AppWindow } from '../index';
 
 import './colors.scss';
 import './style.scss';
+
+declare const window: AppWindow;
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const { selectedDesign, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
@@ -33,7 +36,12 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const currentUsername = useSelect( ( select ) => {
+		if ( window.currentUser?.username ) {
+			return window.currentUser.username;
+		}
+		return select( USER_STORE ).getCurrentUser()?.username;
+	} );
 	const shouldTriggerCreate = useNewQueryParam();
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
@@ -73,15 +81,15 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 		if (
 			! isCreatingSite &&
 			! newSite &&
-			currentUser &&
+			currentUsername &&
 			shouldTriggerCreate &&
 			canUseStyleStep()
 		) {
-			createSite( currentUser.username, freeDomainSuggestion );
+			createSite( currentUsername, freeDomainSuggestion );
 		}
 	}, [
 		createSite,
-		currentUser,
+		currentUsername,
 		freeDomainSuggestion,
 		isCreatingSite,
 		newSite,
