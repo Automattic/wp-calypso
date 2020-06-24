@@ -67,7 +67,7 @@ const Home = ( {
 			/>
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction }>
-					{ translate( 'View site' ) }
+					{ translate( 'Visit site' ) }
 				</Button>
 			</div>
 		</div>
