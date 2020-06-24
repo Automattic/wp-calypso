@@ -10,20 +10,11 @@ import { stopPerformanceTracking } from './lib';
 import { getSectionName } from 'state/ui/selectors';
 
 export const withStopPerformanceTrackingProp = ( () => {
-	let capuredState;
-	return connect(
-		( state ) => {
-			capuredState = state;
-			// No need to pass anything as props, avoid messing with existing props
-			return {};
+	return connect( null, {
+		stopPerformanceTracking: () => ( dispatch, getState ) => {
+			const state = getState();
+			const sectionName = getSectionName( state );
+			stopPerformanceTracking( sectionName, state );
 		},
-		() => {
-			return {
-				stopPerformanceTracking: () => {
-					const sectionName = getSectionName( capuredState );
-					stopPerformanceTracking( sectionName, capuredState );
-				},
-			};
-		}
-	);
+	} );
 } )();
