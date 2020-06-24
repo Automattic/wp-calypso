@@ -87,9 +87,9 @@ function formatDate( cardExpiry ) {
 }
 
 export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } ) {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 
-	const maskedCardDetails = sprintf( __( '**** %s' ), last4 );
+	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (
 		<React.Fragment>
@@ -219,9 +219,9 @@ function ButtonContents( { formStatus, total } ) {
 }
 
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 
-	const maskedCardDetails = '****'.concat( last4 );
+	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (
 		<SummaryDetails>
