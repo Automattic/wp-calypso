@@ -33,6 +33,7 @@ import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ExternalLink from 'components/external-link';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { localizeUrl } from 'lib/i18n-utils';
 
@@ -487,14 +488,15 @@ class MembershipsSection extends Component {
 						) }
 					</p>
 					<p className="memberships__onboarding-paragraph">
-						<ExternalLink
+						<ExternalLinkWithTracking
 							href={ localizeUrl( 'https://wordpress.com/support/recurring-payments-button/' ) }
 							icon={ true }
+							tracksEventName="calypso_earn_payments_learn_more"
 						>
 							{ this.props.translate(
 								'Learn more about payments and earning money on your website.'
 							) }
-						</ExternalLink>
+						</ExternalLinkWithTracking>
 					</p>
 					<p className="memberships__onboarding-paragraph">
 						{ this.props.translate(
