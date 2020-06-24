@@ -12,6 +12,10 @@ import { CONFIG_NAME, AB_NAME, AB_VARIATION_ON } from './const';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import {
+	getCurrentUserSiteCount,
+	getCurrentUserVisibleSiteCount,
+} from 'state/current-user/selectors';
 
 /**
  * These reporters are added to _all_ performance tracking metrics.
@@ -24,10 +28,15 @@ const getDefaultCollector = ( state ) => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteIsSingleUser = isSingleUserSite( state, siteId );
 	const siteIsAtomic = isSiteWpcomAtomic( state, siteId );
+	const sitesCount = getCurrentUserSiteCount( state );
+	const sitesVisibleCount = getCurrentUserVisibleSiteCount( state );
+
 	return ( report ) => {
 		report.data.set( 'siteIsJetpack', siteIsJetpack );
 		report.data.set( 'siteIsSingleUser', siteIsSingleUser );
 		report.data.set( 'siteIsAtomic', siteIsAtomic );
+		report.data.set( 'sitesCount', sitesCount );
+		report.data.set( 'sitesVisibleCount', sitesVisibleCount );
 	};
 };
 
