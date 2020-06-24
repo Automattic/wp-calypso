@@ -29,6 +29,7 @@ import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
 import { canAccessAds } from 'lib/ads/utils';
+import { isEnabled } from 'config';
 
 class EarningsMain extends Component {
 	static propTypes = {
@@ -124,7 +125,9 @@ class EarningsMain extends Component {
 
 		switch ( this.props.section ) {
 			case 'payments':
-				return translate( 'Recurring Payments' );
+				return isEnabled( 'earn/rename-payment-blocks' )
+					? translate( 'Payments' )
+					: translate( 'Recurring Payments' );
 
 			case 'ads-earnings':
 			case 'ads-settings':
@@ -196,6 +199,7 @@ class EarningsMain extends Component {
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
 					align="left"

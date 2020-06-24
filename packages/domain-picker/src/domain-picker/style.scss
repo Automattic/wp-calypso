@@ -1,8 +1,6 @@
 @import '../styles/placeholder.scss'; // Contains the placeholder mixin
 @import '../styles/mixins';
 
-$domain-picker__suggestion-item-height: 24px;
-
 .domain-picker__empty-state {
 	display: flex;
 	justify-content: center;
@@ -48,36 +46,47 @@ $domain-picker__suggestion-item-height: 24px;
 	}
 }
 
-.domain-picker__free-text {
-	color: var( --studio-green-40 );
-}
-
 .domain-picker__suggestion-item-group {
 	flex-grow: 1;
 }
 
-.domain-picker__suggestion-none {
+.domain-picker__suggestion-item {
 	@include domain-picker-package-medium-text;
-	line-height: 20px; // matching design
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 	width: 100%;
-	border-radius: 0;
-	padding: 10px 0;
-	margin-bottom: 7px;
-	cursor: pointer;
-}
-
-.domain-picker__suggestion-item {
-	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
-	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
-	// See https://github.com/WordPress/gutenberg/pull/19535
-	@extend .domain-picker__suggestion-none;
-
+	min-height: 36px + ( 10px * 2 ) + ( 1px * 2 ); // button height + padding height + border height
 	border: 1px solid var( --studio-gray-5 );
-	padding: 14px;
-	margin-bottom: 0;
+	padding: 10px 14px;
+	margin: 0;
+	position: relative;
+	z-index: 1;
+	text-align: left;
+	cursor: pointer;
+
+	&.placeholder {
+		cursor: default;
+	}
+
+	&:hover,
+	&:focus {
+		&:not( .placeholder ) {
+			background: var( --studio-blue-0 );
+			border-color: var( --studio-blue-40 );
+			z-index: 2;
+		}
+
+		// Fade between price and select button only happens on desktop view.
+		@include break-small {
+			.domain-picker__suggestion-item-select-button {
+				opacity: 1;
+			}
+			.domain-picker__price {
+				opacity: 0;
+			}
+		}
+	}
 
 	+ .domain-picker__suggestion-item {
 		margin-top: -1px;
@@ -99,61 +108,12 @@ $domain-picker__suggestion-item-height: 24px;
 			opacity: 1;
 		}
 	}
-
-	&.components-button {
-		&.is-tertiary {
-			color: var( --color-text );
-
-			&:not( :disabled ):not( [aria-disabled='true'] ):hover {
-				background: var( --color-surface-backdrop );
-				color: var( --color-text );
-			}
-		}
-	}
-
-	input[type='radio'].domain-picker__suggestion-radio-button {
-		width: 16px;
-		height: 16px;
-		margin: 3px 12px 0 0; // 3px cosmetic alignment
-		min-width: 16px; // prevents long domain from squishing the radio button
-		padding: 0;
-		vertical-align: middle;
-		position: relative;
-
-		&:checked {
-			border-color: var( --studio-blue-30 );
-			background-color: var( --studio-blue-30 );
-
-			&::before {
-				content: '';
-				width: 12px;
-				height: 12px;
-				border: 2px solid white;
-				border-radius: 50%;
-				position: absolute;
-				margin: 0;
-				background: transparent;
-			}
-
-			&:focus {
-				border-color: var( --studio-blue-30 );
-				box-shadow: 0 0 0 1px var( --studio-blue-30 );
-			}
-		}
-
-		&:not( :disabled ):focus,
-		&:not( :disabled ):hover {
-			border-color: var( --studio-blue-30 );
-			box-shadow: 0 0 0 1px var( --studio-blue-30 );
-		}
-	}
 }
 
 .domain-picker__suggestion-item-name {
 	flex-grow: 1;
 	margin-right: 24px;
 	letter-spacing: 0.4px;
-	min-height: $domain-picker__suggestion-item-height;
 
 	.domain-picker__domain-name {
 		word-break: break-word; // use hyphens if any to break domain name
@@ -183,24 +143,27 @@ $domain-picker__suggestion-item-height: 24px;
 	align-items: center;
 	font-size: 10px;
 	text-transform: uppercase;
-
+	vertical-align: middle;
 	background-color: var( --studio-blue-50 );
 	color: var( --color-text-inverted );
-
-	&.is-selected {
-		color: var( --color-text-inverted );
-		background-color: var( --color-success );
-	}
 }
 
 .domain-picker__price {
 	color: var( --studio-gray-40 );
 	text-align: right;
-	min-height: $domain-picker__suggestion-item-height;
 	flex-basis: 0;
+	transition: opacity 200ms ease-in-out;
+	// Don't show free text on mobile view
+	&:not( .is-paid ) {
+		display: none;
+	}
 
 	@include break-small {
 		flex-basis: auto;
+
+		&:not( .is-paid ) {
+			display: inline;
+		}
 	}
 
 	&.placeholder {
@@ -209,8 +172,65 @@ $domain-picker__suggestion-item-height: 24px;
 	}
 }
 
-.domain-picker__price-is-paid {
+.domain-picker__price-long {
+	display: none;
+	@include break-small {
+		display: inline;
+	}
+}
+
+.domain-picker__price-short {
+	display: inline;
+	@include break-small {
+		display: none;
+	}
+}
+
+.domain-picker__price-cost {
 	text-decoration: line-through;
+}
+
+.domain-picker__suggestion-item-select-button {
+	display: flex;
+	align-items: center;
+	height: 36px;
+
+	span {
+		display: none;
+	}
+
+	svg {
+		fill: var( --studio-blue-50 );
+		margin-left: 10px;
+		margin-right: -2px;
+	}
+
+	@include break-small {
+		// We're mocking the look of a button,
+		// this is not an actual button.
+		background: $blue-medium-focus;
+		color: var( --studio-white );
+		border-radius: 2px;
+		padding: 0 12px;
+		opacity: 0;
+		transition: opacity 200ms ease-in-out;
+
+		// Overlaps price for transition purpose
+		position: absolute;
+		right: 14px;
+
+		&:hover {
+			background: mix( black, $blue-medium-focus, 10% );
+		}
+
+		span {
+			display: inline-block;
+		}
+
+		svg {
+			display: none;
+		}
+	}
 }
 
 .domain-picker__body {

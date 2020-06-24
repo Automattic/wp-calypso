@@ -1,11 +1,17 @@
 /**
+ * External dependencies
+ */
+import requestExternalAccess from '@automattic/request-external-access';
+import { change } from 'redux-form';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import requestExternalAccess from '@automattic/request-external-access';
 import { listMembershipsConnectedAccounts } from '../actions';
 import { MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_AUTHORIZE_REQUEST } from 'state/action-types';
-import { change } from 'redux-form';
+
+import 'state/memberships/init';
 
 import 'state/form/init';
 

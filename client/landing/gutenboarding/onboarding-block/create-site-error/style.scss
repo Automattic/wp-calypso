@@ -1,0 +1,24 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins';
+
+.create-site-error {
+	max-width: 540px;
+
+	// Match margin of plans grid title
+	margin: 44px 0 50px;
+
+	// desktop: Match height alignment of CreateSite
+	@include break-mobile {
+		margin: 30vh auto auto 10vw;
+	}
+
+	// Match link to error text color, prevent purple links
+	.components-external-link {
+		color: var( --studio-gray-60 );
+	}
+
+	// Space between link and Subtitle
+	.create-site-error__links {
+		margin: 1em 0;
+	}
+}

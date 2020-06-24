@@ -47,7 +47,7 @@
 .reader-full-post__visit-site-container {
 	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-0 );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	height: 46px;
 	margin: 0;
@@ -557,28 +557,6 @@
 
 .reader-full-post__featured-image {
 	margin: 28px 0 26px;
-}
-
-.reader-full-post .embed-youtube,
-.reader-full-post .embed-vimeo {
-	display: block;
-	margin-bottom: 25px;
-	position: relative;
-	padding: 25px 0 56.25%;
-	// We currently have to use !important here to override the inline style on the Youtube embed
-	// - see https://github.com/Automattic/wp-calypso/issues/9615
-	text-align: initial !important;
-
-	iframe {
-		height: 100%;
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
-}
-
-.reader-full-post .embed-vimeo {
-	margin-bottom: 0;
 }
 
 .reader-full-post__unavailable-body {

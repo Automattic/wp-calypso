@@ -140,7 +140,7 @@
 	.shipping-zone__enable-container {
 		width: 30%;
 		color: var( --color-neutral-light );
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		font-weight: 400;
 		line-height: 16px;
 		vertical-align: top;
@@ -292,7 +292,7 @@
 	span {
 		margin-left: 6px;
 		color: var( --color-neutral-light );
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		line-height: 16px;
 		vertical-align: top;
 		text-transform: uppercase;

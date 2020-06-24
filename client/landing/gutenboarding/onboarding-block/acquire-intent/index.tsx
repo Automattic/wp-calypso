@@ -23,7 +23,7 @@ import { NextButton, SkipButton } from 'landing/gutenboarding/components/action-
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { getSelectedSiteTitle } = useSelect( ( select ) => select( STORE_KEY ) );
-	const { setSiteTitle } = useDispatch( STORE_KEY );
+	const { setSiteTitle, setDomainSearch } = useDispatch( STORE_KEY );
 
 	const { goNext } = useStepNavigation();
 
@@ -35,10 +35,15 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	React.useEffect( prefetchDesignThumbs, [] );
 
+	const handleContinue = () => {
+		hasSiteTitle && setDomainSearch( getSelectedSiteTitle() );
+		goNext();
+	};
+
 	const handleSkip = () => {
 		setSiteTitle( '' ); // reset site title if there is no valid entry
 		recordSiteTitleSkip();
-		goNext();
+		handleContinue();
 	};
 
 	return (
@@ -47,9 +52,13 @@ const AcquireIntent: React.FunctionComponent = () => {
 				'acquire-intent--with-skip': ! hasSiteTitle,
 			} ) }
 		>
-			<SiteTitle onSubmit={ goNext } />
+			<SiteTitle onSubmit={ handleContinue } />
 			<div className="acquire-intent__footer">
-				{ hasSiteTitle ? <NextButton onClick={ goNext } /> : <SkipButton onClick={ handleSkip } /> }
+				{ hasSiteTitle ? (
+					<NextButton onClick={ handleContinue } />
+				) : (
+					<SkipButton onClick={ handleSkip } />
+				) }
 			</div>
 		</div>
 	);

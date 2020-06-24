@@ -31,6 +31,7 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { Button, Card } from '@automattic/components';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 import { getTaskList } from 'lib/checklist';
+import { settingsPath } from 'lib/jetpack/paths';
 
 /**
  * Style dependencies
@@ -175,7 +176,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 							completedTitle={ translate( 'You turned on Backup and Scan.' ) }
 							duration={ this.getDuration( 3 ) }
 							completed={ isRewindActive }
-							href={ `/settings/security/${ siteSlug }` }
+							href={ settingsPath( siteSlug ) }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_backups',
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',

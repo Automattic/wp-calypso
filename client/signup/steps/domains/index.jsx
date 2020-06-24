@@ -55,7 +55,6 @@ import { abtest } from 'lib/abtest';
  * Style dependencies
  */
 import './style.scss';
-import { requestGeoLocation } from '../../../state/data-getters';
 
 class DomainsStep extends React.Component {
 	static propTypes = {
@@ -72,7 +71,6 @@ class DomainsStep extends React.Component {
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
-		userGeoCountryCode: PropTypes.string,
 		vertical: PropTypes.string,
 	};
 
@@ -125,7 +123,7 @@ class DomainsStep extends React.Component {
 		this.showTestCopy = false;
 
 		const isEligibleFlowForDomainTest = includes(
-			[ 'onboarding', 'onboarding-plan-first' ],
+			[ 'onboarding', 'onboarding-plan-first', 'onboarding-passwordless' ],
 			props.flowName
 		);
 
@@ -478,7 +476,7 @@ class DomainsStep extends React.Component {
 				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( true, this.props.userGeoCountryCode ) }
+				vendor={ getSuggestionsVendor( true ) }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
 				showSkipButton={ this.props.showSkipButton }
@@ -661,6 +659,10 @@ class DomainsStep extends React.Component {
 		const fallbackSubHeaderText = this.getSubHeaderText();
 		const showSkip = isDomainStepSkippable( flowName );
 
+		let hideBack;
+		if ( 'onboarding-passwordless' === flowName && ! this.props.stepSectionName ) {
+			hideBack = true;
+		}
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -681,6 +683,7 @@ class DomainsStep extends React.Component {
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
+				hideBack={ hideBack }
 				isTopButtons={ showSkip }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
@@ -737,7 +740,6 @@ export default connect(
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-			userGeoCountryCode: requestGeoLocation().data,
 		};
 	},
 	{

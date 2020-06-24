@@ -224,7 +224,7 @@
 	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '<660px' ) {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 	}
 }
 

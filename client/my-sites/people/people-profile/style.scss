@@ -78,7 +78,7 @@
 
 .people-profile__subscribed {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin-top: 4px;
 }
 
@@ -88,7 +88,7 @@
 	border: 1px solid var( --color-neutral-light );
 	border-radius: 2px;
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	margin-left: 8px;
 	padding: 2px 6px;
 	white-space: pre;

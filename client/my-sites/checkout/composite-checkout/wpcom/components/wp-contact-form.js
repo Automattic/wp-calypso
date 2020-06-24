@@ -41,7 +41,7 @@ export default function WPContactForm( {
 	const translate = useTranslate();
 	const [ items ] = useLineItems();
 	const isDomainFieldsVisible = useHasDomainsInCart();
-	const isGSuiteInCart = items.find(
+	const isGSuiteInCart = items.some(
 		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
 	);
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
@@ -226,11 +226,11 @@ function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 
-					{ ( isGSuiteInCart || showDomainContactSummary ) &&
-						contactInfo.alternateEmail.value?.length > 0 &&
-						contactInfo.alternateEmail.value !== contactInfo.email.value && (
-							<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
-						) }
+					<AlternateEmailSummary
+						contactInfo={ contactInfo }
+						showDomainContactSummary={ showDomainContactSummary }
+						isGSuiteInCart={ isGSuiteInCart }
+					/>
 
 					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
@@ -341,6 +341,19 @@ function RenderContactDetails( {
 			{ requiresVatId && <VatIdField /> }
 		</React.Fragment>
 	);
+}
+
+function AlternateEmailSummary( { contactInfo, showDomainContactSummary, isGSuiteInCart } ) {
+	if ( ! isGSuiteInCart && ! showDomainContactSummary ) {
+		return null;
+	}
+	if ( ! contactInfo.alternateEmail.value?.length ) {
+		return null;
+	}
+	if ( contactInfo.alternateEmail.value === contactInfo.email.value && showDomainContactSummary ) {
+		return null;
+	}
+	return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
 }
 
 const ContactDetailsFormDescription = styled.p`

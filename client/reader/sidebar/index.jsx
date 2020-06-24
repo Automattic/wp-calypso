@@ -31,7 +31,8 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
 import { getReaderTeams } from 'state/reader/teams/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
+import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/reader-ui/sidebar/actions';
+import { isListsOpen, isTagsOpen } from 'state/reader-ui/sidebar/selectors';
 import ReaderSidebarPromo from './promo';
 import QueryReaderOrganizations from 'components/data/query-reader-organizations';
 import { getReaderOrganizations } from 'state/reader/organizations/selectors';
@@ -344,8 +345,8 @@ ReaderSidebar.defaultProps = {
 export default connect(
 	( state ) => {
 		return {
-			isListsOpen: state.ui.reader.sidebar.isListsOpen,
-			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
+			isListsOpen: isListsOpen( state ),
+			isTagsOpen: isTagsOpen( state ),
 			subscribedLists: getSubscribedLists( state ),
 			teams: getReaderTeams( state ),
 			organizations: getReaderOrganizations( state ),

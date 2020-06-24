@@ -27,13 +27,16 @@ export type WPCOMTransactionEndpointRequestPayload = {
 
 export type WPCOMTransactionEndpointPaymentDetails = {
 	paymentMethod: string;
-	paymentKey: string;
+	paymentKey?: string;
 	paymentPartner: string;
-	storedDetailsId: string;
+	storedDetailsId?: string;
 	name: string;
 	zip: string;
 	postalCode: string;
 	country: string;
+	successUrl?: string;
+	cancelUrl?: string;
+	idealBank?: string;
 };
 
 export type WPCOMTransactionEndpointCart = {
@@ -140,6 +143,9 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	paymentPartnerProcessorId,
 	storedDetailsId,
 	name,
+	cancelUrl,
+	successUrl,
+	idealBank,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -149,10 +155,13 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	domainDetails?: WPCOMTransactionEndpointDomainDetails;
 	items: WPCOMCartItem[];
 	paymentMethodType: string;
-	paymentMethodToken: string;
+	paymentMethodToken?: string;
 	paymentPartnerProcessorId: string;
-	storedDetailsId: string;
+	storedDetailsId?: string;
 	name: string;
+	successUrl?: string;
+	cancelUrl?: string;
+	idealBank?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
 	const urlParams = new URLSearchParams( window.location.search );
 	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
@@ -176,6 +185,9 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			country,
 			postalCode,
 			zip: postalCode, // TODO: do we need this in addition to postalCode?
+			successUrl,
+			cancelUrl,
+			idealBank,
 		},
 		isWhiteGloveOffer: isWhiteGlove,
 	};

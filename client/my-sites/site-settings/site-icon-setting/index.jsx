@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId } from 'lodash';
+import { head, partial, partialRight, isEqual, flow, compact, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,11 +17,10 @@ import AsyncLoad from 'components/async-load';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import accept from 'lib/accept';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
+import { saveSiteSettings } from 'state/site-settings/actions';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
@@ -30,9 +29,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import InfoPopover from 'components/info-popover';
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import { isItemBeingUploaded } from 'lib/media/utils';
 import {
 	getImageEditorCrop,
 	getImageEditorTransform,
@@ -41,7 +37,7 @@ import getSiteIconId from 'state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'state/selectors/get-site-icon-url';
 import isPrivateSite from 'state/selectors/is-private-site';
 import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
-import { errorNotice } from 'state/notices/actions';
+import { uploadSiteIcon } from 'state/media/thunks';
 
 /**
  * Style dependencies
@@ -96,69 +92,12 @@ class SiteIconSetting extends Component {
 	};
 
 	saveSiteIconSetting( siteId, media ) {
-		this.props.receiveMedia( siteId, media );
 		this.props.saveSiteSettings( siteId, { site_icon: media.ID } );
 	}
 
 	uploadSiteIcon( blob, fileName ) {
 		const { siteId, translate, siteIconId, site } = this.props;
-
-		// Upload media using a manually generated ID so that we can continue
-		// to reference it within this function
-		const transientMediaId = uniqueId( 'site-icon' );
-
-		// Set into state without yet saving to show upload progress indicator
-		this.props.updateSiteIcon( siteId, transientMediaId );
-
-		const checkUploadComplete = () => {
-			// MediaStore tracks pointers from transient media to the persisted
-			// copy, so if our request is for a media which is not transient,
-			// we can assume the upload has finished.
-			const media = MediaStore.get( siteId, transientMediaId );
-			const isUploadInProgress = media && isItemBeingUploaded( media );
-			const isFailedUpload = ! media;
-
-			if ( isFailedUpload ) {
-				this.props.deleteMedia( siteId, transientMediaId );
-			} else {
-				this.props.receiveMedia( siteId, media );
-			}
-
-			if ( isUploadInProgress ) {
-				return;
-			}
-
-			MediaStore.off( 'change', checkUploadComplete );
-
-			if ( isFailedUpload ) {
-				this.props.errorNotice( translate( 'An error occurred while uploading the file.' ) );
-
-				// Revert back to previously assigned site icon
-				if ( siteIconId ) {
-					this.props.updateSiteIcon( siteId, siteIconId );
-
-					// If previous icon object is already available in legacy
-					// store, receive into state. Otherwise assume SiteIcon
-					// component will trigger request.
-					//
-					// TODO: Remove when media listing Redux-ified
-					const previousIcon = MediaStore.get( siteId, siteIconId );
-					if ( previousIcon ) {
-						this.props.receiveMedia( siteId, previousIcon );
-					}
-				}
-			} else {
-				this.saveSiteIconSetting( siteId, media );
-			}
-		};
-
-		MediaStore.on( 'change', checkUploadComplete );
-
-		MediaActions.add( site, {
-			ID: transientMediaId,
-			fileContents: blob,
-			fileName,
-		} );
+		this.props.uploadSiteIcon( blob, fileName, siteId, translate, siteIconId, site );
 	}
 
 	setSiteIcon = ( error, blob ) => {
@@ -366,10 +305,7 @@ export default connect(
 		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
 		resetAllImageEditorState,
 		saveSiteSettings,
-		updateSiteIcon: ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } ),
 		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
-		receiveMedia,
-		deleteMedia,
-		errorNotice,
+		uploadSiteIcon,
 	}
 )( localize( SiteIconSetting ) );

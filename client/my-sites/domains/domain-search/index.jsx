@@ -142,6 +142,18 @@ class DomainSearch extends Component {
 		);
 	}
 
+	getInitialSuggestion() {
+		const { context, selectedSite } = this.props;
+		if ( context.query.suggestion ) {
+			return context.query.suggestion;
+		}
+
+		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
+		const [ , strippedHostname ] =
+			selectedSite.domain.match( wpcomSubdomainWithRandomNumberSuffix ) || [];
+		return strippedHostname ?? selectedSite.domain.split( '.' )[ 0 ];
+	}
+
 	render() {
 		const { selectedSite, selectedSiteSlug, translate } = this.props;
 		const classes = classnames( 'main-column', {
@@ -173,8 +185,6 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
-			const suggestion =
-				this.props.context.query.suggestion ?? selectedSite.domain.split( '.' )[ 0 ];
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -186,7 +196,7 @@ class DomainSearch extends Component {
 						>
 							{ ! this.props.hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
 							<RegisterDomainStep
-								suggestion={ suggestion }
+								suggestion={ this.getInitialSuggestion() }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }

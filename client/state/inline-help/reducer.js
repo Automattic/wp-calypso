@@ -16,6 +16,7 @@ import {
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_SHOW,
 	INLINE_HELP_HIDE,
+	INLINE_HELP_SEARCH_RESET,
 } from 'state/action-types';
 
 export const ui = withoutPersistence( ( state = { isVisible: true }, action ) => {
@@ -49,6 +50,7 @@ export function requesting( state = {}, action ) {
 			};
 		case INLINE_HELP_SEARCH_REQUEST_SUCCESS:
 		case INLINE_HELP_SEARCH_REQUEST_FAILURE:
+		case INLINE_HELP_SEARCH_RESET:
 			return {
 				...state,
 				[ action.searchQuery ]: false,
@@ -70,6 +72,16 @@ export const search = withoutPersistence(
 		action
 	) => {
 		switch ( action.type ) {
+			case INLINE_HELP_SEARCH_RESET:
+				return {
+					searchQuery: '',
+					items: {
+						...state.items,
+						'': action.searchResults,
+					},
+					selectedResult: -1,
+					hasAPIResults: false,
+				};
 			case INLINE_HELP_SEARCH_REQUEST:
 				return {
 					...state,

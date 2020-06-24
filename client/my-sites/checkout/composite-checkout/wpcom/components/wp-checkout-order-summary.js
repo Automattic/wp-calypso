@@ -33,6 +33,7 @@ import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
+import { isEnabled } from 'config';
 
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
@@ -189,7 +190,9 @@ function getPlanFeatures( plan, translate, hasDomainsInCart, hasRenewalInCart ) 
 		return [
 			showFreeDomainFeature && translate( 'Free domain for one year' ),
 			translate( 'Unlimited access to our library of Premium Themes' ),
-			translate( 'Subscriber-only content and simple payment buttons' ),
+			isEnabled( 'earn/pay-with-paypal' )
+				? translate( 'Subscriber-only content and Pay with PayPal buttons' )
+				: translate( 'Subscriber-only content and payment buttons' ),
 			translate( 'Track your stats with Google Analytics' ),
 		];
 	} else if (

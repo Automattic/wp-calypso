@@ -3,7 +3,7 @@
  */
 import type { State } from './reducer';
 import { planDetails, PLANS_LIST } from './plans-data';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE } from './constants';
+import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE } from './constants';
 import type { PlanSlug } from './types';
 
 function getPlan( slug: PlanSlug ) {
@@ -30,4 +30,8 @@ export const getPrices = ( state: State ) => state.prices;
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ) => {
 	return planSlug === PLAN_ECOMMERCE;
+};
+
+export const isPlanFree = ( _: State, planSlug?: PlanSlug ) => {
+	return planSlug === PLAN_FREE;
 };

@@ -44,6 +44,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import { hasLocalizedText } from 'blocks/eligibility-warnings/has-localized-text';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -264,6 +265,7 @@ export class SiteSettingsFormGeneral extends Component {
 					onChange={ onChangeField( 'lang_id' ) }
 					disabled={ isRequestingSettings || ( siteIsJetpack && errorNotice ) }
 					onClick={ eventTracker( 'Clicked Language Field' ) }
+					showEmpathyModeControl={ false }
 				/>
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
@@ -550,6 +552,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsVip,
 			siteSlug,
 			translate,
+			isWPForTeamsSite,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -580,7 +583,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ this.privacySettingsWrapper() }
 
-				{ ! siteIsJetpack && (
+				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader title={ translate( 'Footer credit' ) } />
 						<CompactCard className="site-settings__footer-credit-explanation">
@@ -645,6 +648,7 @@ const connectComponent = connect(
 			selectedSite,
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			siteDomains: getDomainsBySiteId( state, siteId ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		};
 	},
 	mapDispatchToProps,

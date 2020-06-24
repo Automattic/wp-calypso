@@ -31,6 +31,7 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
 import redirectIf from './redirect-if';
+import { isEnabled } from 'config';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -194,7 +195,9 @@ class WordAdsUpsellComponent extends Component {
 					<div className="feature-upsell__features-list-item">
 						<Feature
 							icon={ <Gridicon icon="money" size={ 48 } /> }
-							title={ 'Simple Payments' }
+							title={
+								isEnabled( 'earn/rename-payment-blocks' ) ? 'Pay with PayPal' : 'Simple Payments'
+							}
 							description={
 								'Accept credit card payments on your site with the click of a button! Sell products, take donations, ' +
 								'sell tickets - add payment buttons to any page right from the WordPress editor'

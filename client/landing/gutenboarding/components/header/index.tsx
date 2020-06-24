@@ -4,7 +4,7 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { Icon, wordpress } from '@wordpress/icons';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -27,14 +27,6 @@ const Header: React.FunctionComponent = () => {
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
-	const { setDomain } = useDispatch( ONBOARD_STORE );
-
-	React.useEffect( () => {
-		if ( ! siteTitle ) {
-			setDomain( undefined );
-		}
-	}, [ siteTitle, setDomain ] );
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
 		domain.domain_name
@@ -50,7 +42,11 @@ const Header: React.FunctionComponent = () => {
 		'DomainsModal',
 		'Plans',
 		'PlansModal',
+		'CreateSite',
 	].includes( currentStep );
+
+	// CreateSite step clears state before redirecting, don't show the default text in this case
+	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
 
 	return (
 		<div
@@ -71,7 +67,7 @@ const Header: React.FunctionComponent = () => {
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">
-						{ siteTitle ? siteTitle : __( 'Start your website' ) }
+						{ siteTitle ? siteTitle : siteTitleDefault }
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">

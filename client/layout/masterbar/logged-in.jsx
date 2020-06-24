@@ -36,7 +36,7 @@ import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 import { updateSiteMigrationMeta } from 'state/sites/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { hasUnseen } from 'state/ui/reader/seen-posts/selectors';
+import { hasUnseen } from 'state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 
 class MasterbarLoggedIn extends React.Component {

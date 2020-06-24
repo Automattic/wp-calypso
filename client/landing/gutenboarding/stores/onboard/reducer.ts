@@ -29,9 +29,6 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
 	}
-	if ( action.type === 'SET_SITE_TITLE' ) {
-		return action.siteTitle;
-	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
 	}

@@ -101,7 +101,7 @@ $accordion-background-expanded: var( --color-surface );
 }
 
 .accordion__subtitle {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 	font-weight: 400;
 	white-space: nowrap;

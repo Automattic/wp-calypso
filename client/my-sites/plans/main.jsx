@@ -171,7 +171,7 @@ class Plans extends React.Component {
 					) }
 					{ canAccessPlans && (
 						<>
-							<FormattedHeader headerText={ translate( 'Plans' ) } align="left" />
+							<FormattedHeader brandFont headerText={ translate( 'Plans' ) } align="left" />
 							<div id="plans" className="plans plans__has-sidebar">
 								<CartData>
 									<PlansNavigation path={ this.props.context.path } />

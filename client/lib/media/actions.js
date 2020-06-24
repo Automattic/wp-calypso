@@ -11,8 +11,7 @@ const debug = debugFactory( 'calypso:media' );
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { createTransientMedia } from './utils';
+import { createTransientMedia, getFileUploader } from './utils';
 import getMediaItemErrors from 'state/selectors/get-media-item-errors';
 import MediaStore from './store';
 import MediaListStore from './list-store';
@@ -129,39 +128,6 @@ const getExternalUploader = ( service ) => ( file, siteId ) => {
 	return wpcom.undocumented().site( siteId ).uploadExternalMedia( service, [ file.guid ] );
 };
 
-const getFileUploader = () => ( file, siteId ) => {
-	// Determine upload mechanism by object type
-	const isUrl = 'string' === typeof file;
-
-	// Assign parent ID if currently editing post
-	const postId = getEditorPostId( reduxGetState() );
-	const title = file.title;
-	if ( postId ) {
-		file = {
-			parent_id: postId,
-			[ isUrl ? 'url' : 'file' ]: file,
-		};
-	} else if ( file.fileContents ) {
-		//if there's no parent_id, but the file object is wrapping a Blob
-		//(contains fileContents, fileName etc) still wrap it in a new object
-		file = {
-			file: file,
-		};
-	}
-
-	if ( title ) {
-		file.title = title;
-	}
-
-	debug( 'Uploading media to %d from %o', siteId, file );
-
-	if ( isUrl ) {
-		return wpcom.site( siteId ).addMediaUrls( {}, file );
-	}
-
-	return wpcom.site( siteId ).addMediaFiles( {}, file );
-};
-
 function uploadFiles( uploader, files, site ) {
 	// We offset the current time when generating a fake date for the transient
 	// media so that the first uploaded media doesn't suddenly become newest in
@@ -211,7 +177,13 @@ function uploadFiles( uploader, files, site ) {
 					);
 
 					reduxDispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
-					reduxDispatch( receiveMedia( siteId, data.media, data.found ) );
+					reduxDispatch(
+						receiveMedia(
+							siteId,
+							{ ...data.media[ 0 ], transientId: transientMedia.ID },
+							data.found
+						)
+					);
 
 					// also refetch media limits
 					Dispatcher.handleServerAction( {

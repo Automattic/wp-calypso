@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -20,7 +19,8 @@ import SectionHeader from 'components/section-header';
 import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import { withLocalizedMoment } from 'components/localized-moment';
-
+import { getAllSubscriptions } from 'state/memberships/subscriptions/selectors';
+import { isEnabled } from 'config';
 /**
  * Style dependencies
  */
@@ -84,7 +84,13 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 	if ( subscriptions && subscriptions.length ) {
 		content = (
 			<>
-				<SectionHeader label={ translate( 'Active Recurring Payments plans' ) } />
+				<SectionHeader
+					label={
+						isEnabled( 'earn/rename-payment-blocks' )
+							? translate( 'Active payments plans' )
+							: translate( 'Active Recurring Payments plans' )
+					}
+				/>
 				{ subscriptions.map(
 					( subscription ) => (
 						<MembershipItem
@@ -102,7 +108,11 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 		content = (
 			<CompactCard className="memberships__no-content">
 				<EmptyContent
-					title={ translate( 'No Recurring Payments found.' ) }
+					title={
+						isEnabled( 'earn/rename-payment-blocks' )
+							? translate( 'No payments found.' )
+							: translate( 'No Recurring Payments found.' )
+					}
 					illustration={ noMembershipsImage }
 				/>
 			</CompactCard>
@@ -122,5 +132,5 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 };
 
 export default connect( ( state ) => ( {
-	subscriptions: get( state, 'memberships.subscriptions.items', [] ),
+	subscriptions: getAllSubscriptions( state ),
 } ) )( localize( withLocalizedMoment( MembershipsHistory ) ) );

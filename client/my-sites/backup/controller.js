@@ -6,22 +6,35 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import BackupActivityLogPage from './backup-activity-log';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
 import UpsellSwitch from 'components/jetpack/upsell-switch';
-import BackupsUpsell from './backup-upsell';
+import BackupUpsell from './backup-upsell';
+import WPCOMBackupUpsell from './wpcom-backup-upsell';
+import BackupPlaceholder from 'components/jetpack/backup-placeholder';
+import FormattedHeader from 'components/formatted-header';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 export function showUpsellIfNoBackup( context, next ) {
+	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
 	context.primary = (
-		<UpsellSwitch
-			UpsellComponent={ BackupsUpsell }
-			display={ context.primary }
-			getStateForSite={ getRewindState }
-			QueryComponent={ QueryRewindState }
-		/>
+		<>
+			<UpsellSwitch
+				UpsellComponent={ UpsellComponent }
+				display={ context.primary }
+				getStateForSite={ getRewindState }
+				QueryComponent={ QueryRewindState }
+			>
+				<SidebarNavigation />
+				{ ! isJetpackCloud() && (
+					<FormattedHeader brandFont headerText="Jetpack Backup" align="left" />
+				) }
+				<BackupPlaceholder />
+			</UpsellSwitch>
+		</>
 	);
 	next();
 }
@@ -31,19 +44,6 @@ export function backups( context, next ) {
 	const { date } = context.query;
 
 	context.primary = <BackupsPage queryDate={ date } />;
-	next();
-}
-
-/* handles /backup/activity/:site, see `backupActivityPath` */
-export function backupActivity( context, next ) {
-	context.primary = (
-		<BackupActivityLogPage
-			after={ context.query.after }
-			before={ context.query.before }
-			group={ context.query.group }
-			page={ context.query.page }
-		/>
-	);
 	next();
 }
 

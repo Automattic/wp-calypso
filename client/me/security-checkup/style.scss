@@ -1,6 +1,6 @@
 .security-checkup__title-card {
-	h2 {
-		font-size: $font-title-medium;
+	h4 {
+		font-size: $font-title-small;
 	}
 }
 
@@ -9,10 +9,16 @@
 		display: flex;
 		align-items: center;
 		> .security-checkup__nav-item-icon {
-			fill: var( --color-neutral-60 );
-			width: 32px;
+			fill: var( --color-neutral-90 );
 			height: 32px;
 			margin-right: 16px;
+			width: 32px;
+			&.material-icon-check_circle {
+				fill: var( --color-success );
+			}
+			&.material-icon-error {
+				fill: var( --color-warning-30 );
+			}
 		}
 		div {
 			color: var( --color-neutral-90 );
@@ -21,5 +27,14 @@
 				font-size: $font-body-small;
 			}
 		}
+	}
+}
+
+.security-checkup {
+	.security-checkup__info {
+		margin-top: 16px;
+	}
+	.vertical-nav {
+		margin-top: 0;
 	}
 }

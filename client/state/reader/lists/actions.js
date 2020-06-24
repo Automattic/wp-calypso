@@ -16,6 +16,10 @@ import {
 	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
+	READER_LIST_ITEM_ADD_FEED,
+	READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	READER_LIST_ITEM_ADD_TAG,
+	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_REQUEST_SUCCESS,
@@ -32,6 +36,7 @@ import 'state/data-layer/wpcom/read/lists';
 import 'state/data-layer/wpcom/read/lists/items';
 import 'state/data-layer/wpcom/read/lists/feeds/delete';
 import 'state/data-layer/wpcom/read/lists/tags/delete';
+import 'state/data-layer/wpcom/read/lists/feeds/new';
 import 'state/reader/init';
 
 /**
@@ -302,6 +307,55 @@ export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug
 	listSlug,
 	tagId,
 	tagSlug,
+} );
+
+export const addReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
+	type: READER_LIST_ITEM_ADD_FEED,
+	listId,
+	listOwner,
+	listSlug,
+	feedId,
+} );
+
+export const addReaderListFeedByUrl = ( listId, listOwner, listSlug, feedUrl ) => ( {
+	type: READER_LIST_ITEM_ADD_FEED,
+	listId,
+	listOwner,
+	listSlug,
+	feedUrl,
+} );
+
+export const addReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
+	type: READER_LIST_ITEM_ADD_FEED,
+	listId,
+	listOwner,
+	listSlug,
+	siteId,
+} );
+
+export const addReaderListTag = ( listId, listOwner, listSlug, tagSlug ) => ( {
+	type: READER_LIST_ITEM_ADD_TAG,
+	listId,
+	listOwner,
+	listSlug,
+	tagSlug,
+} );
+
+export const receiveAddReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
+	type: READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	listId,
+	listOwner,
+	listSlug,
+	feedId,
+} );
+
+export const receiveAddReaderListTag = ( listId, listOwner, listSlug, tagSlug, tagId ) => ( {
+	type: READER_LIST_ITEM_ADD_TAG_RECEIVE,
+	listId,
+	listOwner,
+	listSlug,
+	tagSlug,
+	tagId,
 } );
 
 function createQuery( owner, slug ) {

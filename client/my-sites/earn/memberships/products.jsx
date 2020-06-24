@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,6 +11,7 @@ import formatCurrency from '@automattic/format-currency';
  */
 import './style.scss';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getProductsForSiteId } from 'state/memberships/product-list/selectors';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import { Button, CompactCard } from '@automattic/components';
@@ -21,6 +21,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
+import { isEnabled } from 'config';
 
 class MembershipsProductsSection extends Component {
 	state = {
@@ -67,12 +68,16 @@ class MembershipsProductsSection extends Component {
 			<div>
 				<QueryMembershipProducts siteId={ this.props.siteId } />
 				<HeaderCake backHref={ '/earn/payments/' + this.props.siteSlug }>
-					{ this.props.translate( 'Recurring Payments plans' ) }
+					{ isEnabled( 'earn/rename-payment-blocks' )
+						? this.props.translate( 'Payment plans' )
+						: this.props.translate( 'Recurring Payments plans' ) }
 				</HeaderCake>
 
 				<SectionHeader>
 					<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
-						{ this.props.translate( 'Add new plan' ) }
+						{ isEnabled( 'earn/rename-payment-blocks' )
+							? this.props.translate( 'Add a new payment plan' )
+							: this.props.translate( 'Add new plan' ) }
 					</Button>
 				</SectionHeader>
 				{ this.props.products.map( ( product ) => (
@@ -111,6 +116,6 @@ export default connect( ( state ) => {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
-		products: state?.memberships?.productList?.items?.[ siteId ],
+		products: getProductsForSiteId( state, siteId ),
 	};
 } )( localize( MembershipsProductsSection ) );

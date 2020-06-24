@@ -12,8 +12,8 @@ import { connect } from 'react-redux';
  */
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ReaderSidebarFollowingItem from './item';
-import { toggleReaderSidebarFollowing } from 'state/ui/reader/sidebar/actions';
-import { isFollowingOpen } from 'state/ui/reader/sidebar/selectors';
+import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
+import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
 import getReaderFollowedSites from 'state/reader/follows/selectors/get-reader-followed-sites';
 import ReaderSidebarHelper from 'reader/sidebar/helper';
 import SidebarItem from 'layout/sidebar/item';

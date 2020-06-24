@@ -7,7 +7,8 @@ const promiseExecFile = util.promisify( require( 'child_process' ).execFile );
 const debounce = require( 'lodash/debounce' );
 const debouncedProcessRebuildQueue = debounce( processRebuildQueue, 100 );
 
-const ignoredPaths = [ 'dist', 'test', 'tests' ];
+const ignoredPathPieces = [ 'dist', 'test', 'tests' ];
+const ignoredPathRegexps = [ /packages\/calypso-color-schemes\/js\/index\.js/ ];
 const ignoredExtensions = [ '.css', '.md', '.d.ts' ];
 
 const packagesDirectoryPath = path.join( '.', 'packages' );
@@ -43,10 +44,13 @@ function isPathIgnored( filePath ) {
 	if ( filePathPieces.length < 2 ) {
 		return true;
 	}
-	if ( ignoredPaths.find( ( ignored ) => filePathPieces.includes( ignored ) ) ) {
+	if ( ignoredPathPieces.find( ( ignored ) => filePathPieces.includes( ignored ) ) ) {
 		return true;
 	}
 	if ( ignoredExtensions.find( ( ignored ) => filePath.endsWith( ignored ) ) ) {
+		return true;
+	}
+	if ( ignoredPathRegexps.find( ( ignored ) => ignored.test( filePath ) ) ) {
 		return true;
 	}
 	return false;

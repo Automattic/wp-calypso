@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort */
+/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
 /**
  * External dependencies
@@ -597,8 +597,10 @@ function handleCloseEditor( calypsoPort ) {
 
 /**
  * Modify links in order to open them in parent window and not in a child iframe.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function openLinksInParentFrame() {
+function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinkSelectors = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
@@ -607,7 +609,10 @@ function openLinksInParentFrame() {
 	].join( ',' );
 	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
-		window.open( e.target.href, '_top' );
+		calypsoPort.postMessage( {
+			action: 'viewPost',
+			payload: { postUrl: e.target.href },
+		} );
 	} );
 
 	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
@@ -819,6 +824,18 @@ function getCalypsoUrlInfo( calypsoPort ) {
 		}
 	);
 
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.editPostUrl',
+		'wpcom-block-editor/getSiteSlug',
+		( url, postId, postType ) => {
+			if ( origin && siteSlug && ( postType === 'page' || postType === 'post' ) ) {
+				return `${ origin }/block-editor/${ postType }/${ siteSlug }/${ postId }`;
+			}
+
+			return url;
+		}
+	);
+
 	// All links should open outside the iframe
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.linkTarget',
@@ -846,6 +863,31 @@ function handleUncaughtErrors( calypsoPort ) {
 			payload: { error },
 		} );
 	};
+}
+
+function handleEditorLoaded( calypsoPort ) {
+	const unsubscribe = subscribe( () => {
+		const store = select( 'core/editor' );
+
+		if ( typeof store.__unstableIsEditorReady !== 'function' ) {
+			// This is probably a very old veresion of the plugin, bail out.
+			unsubscribe();
+			return;
+		}
+
+		const isReady = store.__unstableIsEditorReady();
+		if ( isReady ) {
+			requestAnimationFrame( () => {
+				calypsoPort.postMessage( {
+					action: 'trackPerformance',
+					payload: {
+						mark: 'editor.ready',
+					},
+				} );
+			} );
+			unsubscribe();
+		}
+	} );
 }
 
 function initPort( message ) {
@@ -935,7 +977,7 @@ function initPort( message ) {
 
 		handleCloseEditor( calypsoPort );
 
-		openLinksInParentFrame();
+		openLinksInParentFrame( calypsoPort );
 
 		openCustomizer( calypsoPort );
 
@@ -950,6 +992,8 @@ function initPort( message ) {
 		getCalypsoUrlInfo( calypsoPort );
 
 		handleUncaughtErrors( calypsoPort );
+
+		handleEditorLoaded( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

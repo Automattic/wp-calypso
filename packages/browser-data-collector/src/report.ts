@@ -21,15 +21,15 @@ export class ReportImpl implements Report {
 	startCollectors!: Collector[];
 	stopCollectors!: Collector[];
 
-	static async fromNow( id: string ) {
+	static async fromNow( id: string, collectors: Collector[] = [] ) {
 		const report = new ReportImpl( id, false );
-		await report.start();
+		await report.start( collectors );
 		return report;
 	}
 
-	static async fromPageStart( id: string ) {
+	static async fromPageStart( id: string, collectors: Collector[] = [] ) {
 		const report = new ReportImpl( id, true );
-		await report.start();
+		await report.start( collectors );
 		return report;
 	}
 
@@ -51,14 +51,29 @@ export class ReportImpl implements Report {
 		}
 	}
 
-	private async start() {
-		await Promise.all( this.startCollectors.map( ( collector ) => collector( this ) ) );
+	private async runCollectors( collectors: Collector[] ) {
+		return Promise.all(
+			collectors.map( ( collector, idx ) => {
+				try {
+					return collector( this );
+				} catch ( err ) {
+					// Swallow the error to make sure a single collector doesn't break the whole report
+					// eslint-disable-next-line no-console
+					console.warn( `Collector #${ idx } for report ${ this.id } failed to run`, err );
+					return null;
+				}
+			} )
+		);
+	}
+
+	private async start( collectors: Collector[] = [] ) {
+		await this.runCollectors( [ ...this.startCollectors, ...collectors ] );
 		return this;
 	}
 
-	async stop() {
+	async stop( collectors: Collector[] = [] ) {
 		this.end = Date.now();
-		await Promise.all( this.stopCollectors.map( ( collector ) => collector( this ) ) );
+		await this.runCollectors( [ ...this.stopCollectors, ...collectors ] );
 
 		// Transform this.data Map into a regular object
 		const data = Array.from( this.data.entries() ).reduce(

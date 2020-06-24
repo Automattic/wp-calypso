@@ -57,7 +57,7 @@ function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) 
 					<FormattedHeader
 						isSecondary
 						align="left"
-						headerText={ translate( 'Confirm that your site loads.' ) }
+						headerText={ translate( 'Confirm that your site loads' ) }
 						subHeaderText={ translate(
 							'Visit your site to make sure it loads properly. If there’s an issue, fix your site before worrying about Jetpack! That may resolve this error.'
 						) }
@@ -76,9 +76,9 @@ function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) 
 					<FormattedHeader
 						isSecondary
 						align="left"
-						headerText={ translate( 'Troubleshoot Jetpack.' ) }
+						headerText={ translate( 'Troubleshoot Jetpack' ) }
 						subHeaderText={ translate(
-							'If your site is working but you’re still seeing this error, let’s troubleshoot your Jetpack connection.'
+							'If your site is loading but you’re still seeing this error, this guide will help you troubleshoot the Jetpack connection.'
 						) }
 					/>
 				</CompactCard>
@@ -93,7 +93,7 @@ function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) 
 					<FormattedHeader
 						isSecondary
 						align="left"
-						headerText={ translate( 'Disconnect Jetpack.' ) }
+						headerText={ translate( 'Disconnect Jetpack' ) }
 						subHeaderText={ translate(
 							'If you’re no longer using Jetpack and/or WordPress for your site, or you’ve taken your site down, it’s time to disconnect Jetpack.'
 						) }

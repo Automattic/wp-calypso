@@ -38,7 +38,7 @@ class SecurityCheckupAccountRecoveryEmail extends React.Component {
 			return (
 				<React.Fragment>
 					<QueryAccountRecoverySettings />
-					<SecurityCheckupNavigationItem isPlaceholder={ true } />;
+					<SecurityCheckupNavigationItem isPlaceholder={ true } />
 				</React.Fragment>
 			);
 		}
@@ -70,7 +70,7 @@ class SecurityCheckupAccountRecoveryEmail extends React.Component {
 						recoveryEmailAddress: accountRecoveryEmail,
 					},
 					components: {
-						strong: '<strong>',
+						strong: <strong />,
 					},
 				}
 			);

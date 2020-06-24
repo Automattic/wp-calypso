@@ -111,6 +111,7 @@ class PagesMain extends React.Component {
 				<DocumentHead title={ translate( 'Pages' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="pages__page-heading"
 					headerText={ translate( 'Pages' ) }
 					align="left"

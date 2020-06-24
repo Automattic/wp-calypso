@@ -188,13 +188,17 @@ class GSuiteAddUsers extends React.Component {
 				) : (
 					''
 				) }
+
 				{ selectedDomainInfo.map( ( domain ) => {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
+
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
+
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
 						<GSuiteNewUserList
+							autoFocus
 							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
 							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
@@ -226,8 +230,10 @@ class GSuiteAddUsers extends React.Component {
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Domain Management > Add G Suite Users" />
+
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
+
 				<Main>
 					<DomainManagementHeader
 						onClick={ this.goToEmail }

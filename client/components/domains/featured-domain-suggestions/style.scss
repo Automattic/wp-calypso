@@ -104,7 +104,7 @@
 	.domain-registration-suggestion__progress-bar {
 		align-items: center;
 		display: flex;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 10px;
 		order: 2;
 
@@ -120,7 +120,7 @@
 
 	.domain-registration-suggestion__match-reason {
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 0.125em 0;
 		display: flex;
 		align-items: center;

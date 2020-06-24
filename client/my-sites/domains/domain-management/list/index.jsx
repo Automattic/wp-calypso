@@ -20,13 +20,7 @@ import DomainOnly from './domain-only';
 import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
-import {
-	domainManagementRoot,
-	domainManagementEdit,
-	domainManagementList,
-	domainManagementSiteRedirect,
-	domainManagementTransferIn,
-} from 'my-sites/domains/paths';
+import { domainManagementRoot, domainManagementList } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
 import { Button, CompactCard } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
@@ -51,6 +45,7 @@ import getSites from 'state/selectors/get-sites';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
+import { getDomainManagementPath } from './utils';
 /**
  * Style dependencies
  */
@@ -195,8 +190,9 @@ export class List extends React.Component {
 				<SidebarNavigation />
 				{ ! this.props.renderAllSites && (
 					<FormattedHeader
+						brandFont
 						className="domain-management__page-heading"
-						headerText={ this.props.translate( 'Domains' ) }
+						headerText={ this.props.translate( 'Site Domains' ) }
 						align="left"
 					/>
 				) }
@@ -440,7 +436,7 @@ export class List extends React.Component {
 
 		return [
 			...domainListItems,
-			<CompactCard href={ domainManagementRoot() }>
+			<CompactCard key="manage-all-domains" href={ domainManagementRoot() }>
 				{ translate( 'Manage all your domains' ) }
 			</CompactCard>,
 		];
@@ -448,23 +444,7 @@ export class List extends React.Component {
 
 	goToEditDomainRoot = ( domain ) => {
 		const { selectedSite, currentRoute } = this.props;
-		let path;
-
-		switch ( domain.type ) {
-			case type.TRANSFER:
-				path = domainManagementTransferIn( selectedSite.slug, domain.name, currentRoute );
-				break;
-
-			case type.SITE_REDIRECT:
-				path = domainManagementSiteRedirect( selectedSite.slug, domain.name, currentRoute );
-				break;
-
-			default:
-				path = domainManagementEdit( selectedSite.slug, domain.name, currentRoute );
-				break;
-		}
-
-		page( path );
+		page( getDomainManagementPath( domain.name, domain.type, selectedSite.slug, currentRoute ) );
 	};
 
 	goToPlans = () => {

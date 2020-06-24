@@ -18,6 +18,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import DocumentHead from 'components/data/document-head';
 import TipInfo from '../../components/purchase-detail/tip-info';
+import { isEnabled } from 'config';
 
 /**
  * Image dependencies
@@ -150,7 +151,9 @@ class FeaturesComponent extends Component {
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
 						icon={ <img alt="" src={ wordAdsImage } /> }
-						title={ 'Simple payments' }
+						title={
+							isEnabled( 'earn/rename-payment-blocks' ) ? 'Pay with PayPal' : 'Simple Payments'
+						}
 						description={
 							'Accept credit card payments on your site with the click of a button! Sell products, take donations, ' +
 							'sell tickets - add payment buttons to any page right from the WordPress editor'

@@ -33,7 +33,7 @@ import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { triggerScanRun } from 'lib/jetpack/trigger-scan-run';
-import { withApplySiteOffset, applySiteOffsetType } from 'components/jetpack/site-offset';
+import { withApplySiteOffset, applySiteOffsetType } from 'components/site-offset';
 import ScanNavigation from './navigation';
 
 /**
@@ -252,7 +252,9 @@ class ScanPage extends Component< Props > {
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				{ ! isJetpackPlatform && <FormattedHeader headerText={ 'Jetpack Scan' } align="left" /> }
+				{ ! isJetpackPlatform && (
+					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
+				) }
 				<ScanNavigation section={ 'scanner' } />
 				<Card>
 					<div className="scan__content">{ this.renderScanState() }</div>

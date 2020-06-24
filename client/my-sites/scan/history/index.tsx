@@ -45,7 +45,9 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			<SidebarNavigation />
 			<QueryJetpackScanHistory siteId={ siteId } />
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
-			{ ! isJetpackPlatform && <FormattedHeader headerText={ 'Jetpack Scan' } align="left" /> }
+			{ ! isJetpackPlatform && (
+				<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
+			) }
 			<ScanNavigation section={ 'history' } />
 			<section className="history__body">
 				<p className="history__description">

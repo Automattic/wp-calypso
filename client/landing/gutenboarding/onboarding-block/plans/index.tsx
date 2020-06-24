@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import PlansGrid from '@automattic/plans-grid';
+import type { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -14,9 +15,13 @@ import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { PLANS_STORE } from '../../stores/plans';
 import ActionButtons, { BackButton } from '../../components/action-buttons';
 import { Title, SubTitle } from '../../components/titles';
 import { Step, usePath } from '../../path';
+import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
+
+type PlanSlug = Plans.PlanSlug;
 
 interface Props {
 	isModal?: boolean;
@@ -30,9 +35,10 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const plan = useSelectedPlan();
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
 
 	//@TODO: do the same for domains step
-	const { setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
+	const { setDomain, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	React.useEffect( () => {
 		! isModal && setHasUsedPlansStep( true );
 	}, [] );
@@ -47,8 +53,14 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		selected_plan: selectedPlanRef.current,
 	} ) );
 
+	const freeDomainSuggestion = useFreeDomainSuggestion();
+
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
-	const handlePlanSelect = () => {
+	const handlePlanSelect = ( planSlug: PlanSlug ) => {
+		if ( isPlanFree( planSlug ) ) {
+			setDomain( freeDomainSuggestion );
+		}
+
 		if ( isModal ) {
 			history.goBack();
 		} else {

@@ -12,6 +12,7 @@ import { find, isString, noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import LanguagePickerModal from './modal';
 import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
@@ -29,6 +30,7 @@ export class LanguagePicker extends PureComponent {
 		onChange: PropTypes.func,
 		onClick: PropTypes.func,
 		countryCode: PropTypes.string,
+		showEmpathyModeControl: PropTypes.bool,
 		empathyMode: PropTypes.bool,
 	};
 
@@ -38,6 +40,7 @@ export class LanguagePicker extends PureComponent {
 		onChange: noop,
 		onClick: noop,
 		countryCode: '',
+		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
 		empathyMode: false,
 	};
 
@@ -131,7 +134,7 @@ export class LanguagePicker extends PureComponent {
 		if ( ! this.state.open ) {
 			return null;
 		}
-		const { countryCode, languages } = this.props;
+		const { countryCode, languages, showEmpathyModeControl } = this.props;
 		return (
 			<LanguagePickerModal
 				isVisible
@@ -140,6 +143,7 @@ export class LanguagePicker extends PureComponent {
 				onSelected={ this.selectLanguage }
 				selected={ selectedLanguageSlug }
 				countryCode={ countryCode }
+				showEmpathyModeControl={ showEmpathyModeControl }
 				empathyMode={ this.state.empathyMode }
 			/>
 		);

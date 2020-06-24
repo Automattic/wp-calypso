@@ -142,13 +142,20 @@ export default class PeoplePage extends AsyncBaseContainer {
 				driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);
-		}, this.explicitWaitMS * 2 );
+		}, this.explicitWaitMS * 4 );
 	}
 
 	async goToRevokeInvitePage( emailAddress ) {
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
+		);
+	}
+
+	async goToClearAcceptedInvitePage( username ) {
+		return await DriverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `.people-invites__accepted .people-profile__login[data-e2e-login="${ username }"]` )
 		);
 	}
 

@@ -14,7 +14,6 @@ import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useIsSelectedPlanEcommerce } from './use-selected-plan';
-import { isEnabled } from '../../../config';
 
 const wpcom = wp.undocumented();
 
@@ -64,6 +63,7 @@ export default function useOnSiteCreation() {
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const selectedPlan = useSelectedPlan();
 	const isEcommercePlan = useIsSelectedPlanEcommerce();
+	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { resetPlan } = useDispatch( PLANS_STORE );
@@ -107,9 +107,13 @@ export default function useOnSiteCreation() {
 					resetOnboardStore();
 					setSelectedSite( newSite.blogid );
 
+					const editorUrl = design?.is_fse
+						? `site-editor%2F${ newSite.site_slug }`
+						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+
 					const redirectionUrl = isEcommercePlan
 						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
-						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {
@@ -125,7 +129,7 @@ export default function useOnSiteCreation() {
 			resetOnboardStore();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = isEnabled( 'gutenboarding/site-editor' )
+			window.location.href = design?.is_fse
 				? `/site-editor/${ newSite.site_slug }/`
 				: `/block-editor/page/${ newSite.site_slug }/home`;
 		}
@@ -142,5 +146,6 @@ export default function useOnSiteCreation() {
 		setSelectedSite,
 		flowCompleteTrackingParams,
 		isEcommercePlan,
+		design,
 	] );
 }

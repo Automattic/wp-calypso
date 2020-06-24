@@ -37,15 +37,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	showCompositeCheckout: {
-		datestamp: '20200611',
-		variations: {
-			composite: 100,
-			regular: 0,
-		},
-		defaultVariation: 'regular',
-		allowExistingUsers: true,
-	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
@@ -127,7 +118,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	newSiteGutenbergOnboarding: {
-		datestamp: '20200612',
+		datestamp: '20200617',
 		variations: {
 			gutenberg: 10,
 			control: 90,
@@ -136,16 +127,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
 		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE', 'CA', 'AU' ],
-	},
-	domainShowJPResultsInJapan: {
-		datestamp: '20200506',
-		variations: {
-			variantShowJPResults: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		localeTargets: 'any',
-		countryCodeTargets: [ 'JP' ],
 	},
 	[ RUM_DATA_COLLECTION.AB_NAME ]: {
 		datestamp: '20200602',
@@ -158,13 +139,41 @@ export default {
 		allowExistingUsers: true,
 	},
 	whiteGloveUpsell: {
-		datestamp: '20200608',
+		datestamp: '20200623',
 		variations: {
-			variantShowOffer: 10,
-			control: 90,
+			variantShowOffer: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 		countryCodeTargets: [ 'US' ],
+	},
+	passwordlessAfterPlans: {
+		datestamp: '20200618',
+		variations: {
+			variantPasswordless: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		countryCodeTargets: [ 'US' ],
+	},
+	showBusinessPlanBump: {
+		datestamp: '20200619',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	jetpackSidebarSection: {
+		datestamp: '20200622',
+		variations: {
+			showJetpackSidebarSection: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

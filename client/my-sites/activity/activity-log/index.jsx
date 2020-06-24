@@ -433,6 +433,7 @@ class ActivityLog extends Component {
 				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
 
 				<FormattedHeader
+					brandFont
 					className="activity-log__page-heading"
 					headerText={ translate( 'Activity' ) }
 					subHeaderText={ translate(

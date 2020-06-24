@@ -18,7 +18,7 @@ const postKey3 = { postId: 2, feedId: 1 };
 const postKey4 = { postId: 1, feedId: 4, xPostMetadata: { blogId: 123, postId: 456 } };
 const postKey5 = { postId: 2, feedId: 4 };
 
-const currentStream = { ui: { reader: { currentStream: 'following' } } };
+const currentStream = { readerUi: { currentStream: 'following' } };
 
 describe( 'getOffsetItem', () => {
 	test( 'should return null when not given a currentItem', () => {

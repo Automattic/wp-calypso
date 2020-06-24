@@ -30,6 +30,7 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/a
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
 import { localizeUrl } from 'lib/i18n-utils';
+import { isEnabled } from 'config';
 
 /**
  * Image dependencies
@@ -96,11 +97,16 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		const supportLink =
-			'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/';
+		const supportLink = isEnabled( 'earn/rename-payment-blocks' )
+			? localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/' )
+			: localizeUrl(
+					'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/'
+			  );
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Add one-time payments' ),
+					text: isEnabled( 'earn/rename-payment-blocks' )
+						? translate( 'Learn how to get started' )
+						: translate( 'Add one-time payments' ),
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
@@ -115,9 +121,24 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const learnMoreLink = hasSimplePayments
 			? null
 			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
-		return {
-			title: translate( 'Collect one-time payments' ),
-			body: hasSimplePayments
+		let title, body;
+		if ( isEnabled( 'earn/rename-payment-blocks' ) ) {
+			title = translate( 'Collect PayPal payments' );
+			body = hasSimplePayments
+				? translate(
+						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
+				  )
+				: translate(
+						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+				  );
+		} else {
+			title = translate( 'Collect one-time payments' );
+			body = hasSimplePayments
 				? translate(
 						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work.'
 				  )
@@ -128,7 +149,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 								em: <em />,
 							},
 						}
-				  ),
+				  );
+		}
+		return {
+			title,
+			body,
 			image: {
 				path: simplePaymentsImage,
 			},
@@ -145,6 +170,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
+		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		const cta = isFreePlan
 			? {
 					text: translate( 'Unlock this feature' ),
@@ -154,18 +180,37 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Collect recurring payments' ),
+					text: isPayments
+						? translate( 'Collect payments' )
+						: translate( 'Collect recurring payments' ),
 					action: () => {
 						trackCtaButton( 'recurring-payments' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
-		const title = hasConnectedAccount
-			? translate( 'Manage recurring payments' )
+		const hasConnectionTitle = isPayments
+			? translate( 'Manage payments' )
+			: translate( 'Manage recurring payments' );
+		const noConnectionTitle = isPayments
+			? translate( 'Collect payments' )
 			: translate( 'Collect recurring payments' );
-		const body = hasConnectedAccount
+		const title = hasConnectedAccount ? hasConnectionTitle : noConnectionTitle;
+
+		const hasConnectionBody = isPayments
 			? translate(
+					"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
+			  )
+			: translate(
 					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
+			  );
+		const noConnectionBody = isPayments
+			? translate(
+					'Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
 			  )
 			: translate(
 					'Accept ongoing and automated credit card payments for subscriptions, memberships, services, and donations. {{em}}Available with any paid plan{{/em}}.',
@@ -175,6 +220,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  );
+
+		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
 		const learnMoreLink = isFreePlan
 			? {

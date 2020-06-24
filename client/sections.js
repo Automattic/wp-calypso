@@ -432,6 +432,7 @@ const sections = [
 		module: 'gutenberg/editor',
 		group: 'gutenberg',
 		secondary: false,
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'import',

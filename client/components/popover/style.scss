@@ -3,7 +3,7 @@
  */
 
 .popover {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	z-index: z-index( 'root', '.popover' );
 	position: absolute;
 	top: 0;

@@ -12,13 +12,15 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { isPersonalPlan, isPremiumPlan } from 'lib/plans';
 import FormattedHeader from 'components/formatted-header';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCTA from 'components/promo-section/promo-card/cta';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
 import Gridicon from 'components/gridicon';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSitePlan } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 
 /**
@@ -27,41 +29,49 @@ import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
 import './style.scss';
 
-const promos: PromoSectionProps = {
-	promos: [
-		{
-			title: translate( 'Jetpack Backup' ),
-			body: translate(
-				'Granular control over your site, with the ability ' +
-					'to restore it to any previous state, and export it at any time.'
-			),
-			image: <Gridicon icon="cloud-upload" className="scan__upsell-icon" />,
-		},
-		{
-			title: translate( 'Activity Log' ),
-			body: translate(
-				'A complete record of everything that happens on your site, with history that spans over 30 days.'
-			),
-			image: <Gridicon icon="history" className="scan__upsell-icon" />,
-		},
-	],
-};
+const promos = [
+	{
+		title: translate( 'Jetpack Backup' ),
+		body: translate(
+			'Granular control over your site, with the ability ' +
+				'to restore it to any previous state, and export it at any time.'
+		),
+		image: <Gridicon icon="cloud-upload" className="scan__upsell-icon" />,
+	},
+	{
+		title: translate( 'Activity Log' ),
+		body: translate(
+			'A complete record of everything that happens on your site, with history that spans over 30 days.'
+		),
+		image: <Gridicon icon="history" className="scan__upsell-icon" />,
+	},
+];
 
 export default function WPCOMScanUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_business_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
+
+	// Don't show the Activity Log promo for Personal or Premium plan owners.
+	const filteredPromos: PromoSectionProps = React.useMemo( () => {
+		if ( isPersonalPlan( planSlug ) || isPremiumPlan( planSlug ) ) {
+			return { promos: [ promos[ 0 ] ] };
+		}
+		return { promos };
+	}, [ planSlug ] );
 
 	return (
-		<Main className="scan__main scan__wpcom-upsell is-wide-layout">
+		<Main className="scan__main scan__wpcom-upsell">
 			<DocumentHead title="Scanner" />
 			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
 			<FormattedHeader
 				headerText={ translate( 'Jetpack Scan' ) }
-				className="scan__header"
 				id="scan-header"
 				align="left"
+				brandFont
 			/>
 
 			<PromoCard
@@ -87,15 +97,9 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 				/>
 			</PromoCard>
 
-			<FormattedHeader
-				headerText={ translate( 'Also included in the Business Plan' ) }
-				className="scan__header"
-				id="scan-subheader"
-				align="left"
-				isSecondary
-			/>
+			<h2 className="scan__subheader">{ translate( 'Also included in the Business Plan' ) }</h2>
 
-			<PromoSection { ...promos } />
+			<PromoSection { ...filteredPromos } />
 
 			<WhatIsJetpack />
 		</Main>

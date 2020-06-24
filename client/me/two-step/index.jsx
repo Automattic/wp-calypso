@@ -12,7 +12,9 @@ import { localize } from 'i18n-calypso';
  */
 import AppPasswords from 'me/application-passwords';
 import { Card } from '@automattic/components';
+import config from 'config';
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import ReauthRequired from 'me/reauth-required';
@@ -161,16 +163,24 @@ class TwoStep extends Component {
 	};
 
 	render() {
+		const { path, translate } = this.props;
+		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
+
 		return (
 			<Main className="security two-step">
 				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
 				<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
-
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<DocumentHead title={ this.props.translate( 'Two-Step Authentication' ) } />
+				<DocumentHead title={ translate( 'Two-Step Authentication' ) } />
+
+				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
+				{ useCheckupMenu && (
+					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
+						{ translate( 'Two-Step Authentication' ) }
+					</HeaderCake>
+				) }
 
 				<Card>{ this.renderTwoStepSection() }</Card>
 

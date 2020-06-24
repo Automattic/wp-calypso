@@ -1,12 +1,13 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence, withStorageKey } from 'state/utils';
 import {
 	GOOGLE_MY_BUSINESS_STATS_FAILURE,
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
+import { statsInterval } from 'state/google-my-business/ui/reducer';
 
 const stats = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
@@ -38,7 +39,7 @@ const statsError = withoutPersistence( ( state = null, action ) => {
 	return state;
 } );
 
-export default keyedReducer(
+const combinedReducer = keyedReducer(
 	'siteId',
 	combineReducers( {
 		stats: keyedReducer(
@@ -49,5 +50,8 @@ export default keyedReducer(
 			'statType',
 			keyedReducer( 'interval', keyedReducer( 'aggregation', statsError ) )
 		),
+		statsInterval: keyedReducer( 'statType', statsInterval ),
 	} )
 );
+
+export default withStorageKey( 'googleMyBusiness', combinedReducer );

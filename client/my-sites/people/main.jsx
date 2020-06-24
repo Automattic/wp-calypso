@@ -78,6 +78,7 @@ class People extends React.Component {
 				/>
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="people__page-heading"
 					headerText={ translate( 'People' ) }
 					align="left"

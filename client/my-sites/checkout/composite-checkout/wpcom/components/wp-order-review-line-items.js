@@ -37,7 +37,6 @@ function WPLineItem( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	couponStatus,
 	isSummary,
 	isWhiteGloveOffer,
 } ) {
@@ -61,7 +60,7 @@ function WPLineItem( {
 	if (
 		isGSuite &&
 		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer &&
-		couponStatus !== 'applied'
+		item.wpcom_meta?.is_sale_coupon_applied
 	) {
 		gsuiteDiscountCallout = (
 			<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
@@ -91,9 +90,7 @@ function WPLineItem( {
 			{ item.sublabel && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice item={ item } />
-					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
-						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
-					) }
+					<DomainDiscountCallout item={ item } />
 				</LineItemMeta>
 			) }
 			{ isSavings && <SavingsList item={ item } /> }
@@ -174,7 +171,6 @@ WPLineItem.propTypes = {
 	} ),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	couponStatus: PropTypes.string,
 };
 
 function LineItemPrice( { item, isSummary } ) {
@@ -305,7 +301,6 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	couponStatus,
 	isWhiteGloveOffer,
 } ) {
 	return (
@@ -326,7 +321,6 @@ export function WPOrderReviewLineItems( {
 								variantSelectOverride={ variantSelectOverride }
 								getItemVariants={ getItemVariants }
 								onChangePlanLength={ onChangePlanLength }
-								couponStatus={ couponStatus }
 								isSummary={ isSummary }
 								isWhiteGloveOffer={ isWhiteGloveOffer }
 							/>
@@ -352,7 +346,6 @@ WPOrderReviewLineItems.propTypes = {
 	),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	couponStatus: PropTypes.string,
 };
 
 const WPOrderReviewList = styled.ul`
@@ -498,4 +491,21 @@ function SavingsList( { item } ) {
 			) ) }
 		</LineItemMeta>
 	);
+}
+
+function DomainDiscountCallout( { item } ) {
+	const translate = useTranslate();
+
+	const isFreeBundledDomainRegistration = item.wpcom_meta?.is_bundled && item.amount.value === 0;
+	if ( isFreeBundledDomainRegistration ) {
+		return <DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>;
+	}
+
+	const isFreeDomainMapping =
+		item.wpcom_meta?.product_slug === 'domain_map' && item.amount.value === 0;
+	if ( isFreeDomainMapping ) {
+		return <DiscountCalloutUI>{ translate( 'Free with your plan' ) }</DiscountCalloutUI>;
+	}
+
+	return null;
 }

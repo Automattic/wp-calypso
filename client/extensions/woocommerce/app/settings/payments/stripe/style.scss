@@ -45,7 +45,7 @@
 			.stripe__connect-account-status {
 				border-radius: 3px;
 				color: var( --color-text-inverted );
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				margin-right: 8px;
 				padding: 3px 8px;
 
@@ -59,7 +59,7 @@
 			}
 
 			.stripe__connect-account-disconnect {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				padding-top: 3px;
 				padding-bottom: 0;
 			}

@@ -5,6 +5,7 @@
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -16,6 +17,7 @@ import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
 import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
+import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 
 /**
  * Image dependencies
@@ -23,7 +25,6 @@ import PurchaseDetail from 'components/purchase-detail';
 import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
 import jetpackBackupImage from 'assets/images/illustrations/jetpack-backup.svg';
-import jetpackScanImage from 'assets/images/illustrations/jetpack-scan.svg';
 import themeImage from 'assets/images/illustrations/themes.svg';
 import updatesImage from 'assets/images/illustrations/updates.svg';
 
@@ -38,6 +39,10 @@ const BusinessPlanDetails = ( {
 	purchases,
 	displayMode,
 } ) => {
+	const shouldPromoteJetpack = useSelector( ( state ) =>
+		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
+	);
+
 	const plan = find( sitePlans.data, isBusiness );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 	const whiteGloveQuickStartDescription =
@@ -51,30 +56,17 @@ const BusinessPlanDetails = ( {
 		<div>
 			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 
-			{ isEnabled( 'jetpack/features-section' ) && (
-				<>
-					<PurchaseDetail
-						icon={ <img alt="" src={ jetpackBackupImage } /> }
-						title={ i18n.translate( 'Check your backups' ) }
-						description={ i18n.translate(
-							'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
-						) }
-						buttonText={ i18n.translate( 'See the latest backup' ) }
-						href={ `/backup/${ selectedSite.slug }` }
-						onClick={ trackOnboardingButtonClick }
-					/>
-
-					<PurchaseDetail
-						icon={ <img alt="" src={ jetpackScanImage } /> }
-						title={ i18n.translate( 'Scan your site' ) }
-						description={ i18n.translate(
-							'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
-						) }
-						buttonText={ i18n.translate( 'See the latest scan' ) }
-						href={ `/scan/${ selectedSite.slug }` }
-						onClick={ trackOnboardingButtonClick }
-					/>
-				</>
+			{ shouldPromoteJetpack && (
+				<PurchaseDetail
+					icon={ <img alt="" src={ jetpackBackupImage } /> }
+					title={ i18n.translate( 'Check your backups' ) }
+					description={ i18n.translate(
+						'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+					) }
+					buttonText={ i18n.translate( 'See the latest backup' ) }
+					href={ `/backup/${ selectedSite.slug }` }
+					onClick={ trackOnboardingButtonClick }
+				/>
 			) }
 
 			<CustomDomainPurchaseDetail

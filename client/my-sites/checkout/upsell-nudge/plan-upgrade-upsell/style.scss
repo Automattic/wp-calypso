@@ -89,8 +89,8 @@ main.plan-upgrade-upsell.main {
 		font-weight: 600;
 		text-align: center;
 		line-height: 1.4;
-		margin-top: 0.5em;
-		margin-bottom: 0.4em;
+		margin-top: 0.7em;
+		margin-bottom: 1em;
 
 		@include breakpoint-deprecated( '<660px' ) {
 			font-size: 21px;

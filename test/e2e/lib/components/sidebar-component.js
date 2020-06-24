@@ -15,6 +15,9 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.sidebar' ) );
 		this.storeSelector = By.css( '.menu-link-text[data-e2e-sidebar="Store"]' );
 	}
+	async _postInit(){
+		return await this.ensureSidebarMenuVisible();
+	}
 
 	async expandDrawerItem( itemName ) {
 		const selector = await driverHelper.getElementByText(

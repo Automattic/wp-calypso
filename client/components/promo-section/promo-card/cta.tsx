@@ -68,9 +68,15 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 		: {
 				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
 		  };
+
 	if ( undefined !== actionProps.href && ! actionProps.selfTarget ) {
 		actionProps.target = '_blank';
 	}
+	// React doesn't recognize `selfTarget` as a valid prop of a DOM element. Removing it prevents a warning in the console.
+	if ( 'selfTarget' in actionProps ) {
+		delete actionProps.selfTarget;
+	}
+
 	return {
 		className: 'promo-card__cta-button',
 		primary: isPrimary,

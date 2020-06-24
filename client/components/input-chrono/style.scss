@@ -13,7 +13,7 @@
 	box-sizing: border-box;
 	background-color: rgba( var( --color-surface-rgb ), 0 );
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	text-align: left;
 	position: relative;
 	z-index: z-index( '.popover', '.input-chrono__input' );

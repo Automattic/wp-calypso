@@ -16,10 +16,7 @@ import { reducer as httpData } from 'state/data-layer/http-data';
  */
 import accountRecovery from './account-recovery/reducer';
 import activityLog from './activity-log/reducer';
-import applicationPasswords from './application-passwords/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
-import billingTransactions from './billing-transactions/reducer';
-import checklist from './checklist/reducer';
 import connectedApplications from './connected-applications/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
@@ -28,7 +25,6 @@ import emailForwarding from './email-forwarding/reducer';
 import embeds from './embeds/reducer';
 import experiments from './experiments/reducer';
 import exporter from './exporter/reducers';
-import googleMyBusiness from './google-my-business/reducer';
 import gsuiteUsers from './gsuite-users/reducer';
 import gutenbergOptInOut from './gutenberg-opt-in-out/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
@@ -47,7 +43,6 @@ import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import media from './media/reducer';
-import memberships from './memberships/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import notificationSettings from './notification-settings/reducer';
@@ -88,10 +83,7 @@ import wordads from './wordads/reducer';
 const reducers = {
 	accountRecovery,
 	activityLog,
-	applicationPasswords,
 	atomicTransfer,
-	billingTransactions,
-	checklist,
 	connectedApplications,
 	currentUser,
 	dataRequests,
@@ -100,7 +92,6 @@ const reducers = {
 	embeds,
 	experiments,
 	exporter,
-	googleMyBusiness,
 	gsuiteUsers,
 	gutenbergOptInOut,
 	happinessEngineers,
@@ -120,7 +111,6 @@ const reducers = {
 	jetpackSync,
 	jitm,
 	media,
-	memberships,
 	mySites,
 	notices,
 	notificationSettings,

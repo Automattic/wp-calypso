@@ -42,7 +42,7 @@ import PostLifecycle from './post-lifecycle';
 import { showSelectedPost, getStreamType } from 'reader/utils';
 import { getBlockedSites } from 'state/reader/site-blocks/selectors';
 import { keysAreEqual, keyToString, keyForPost } from 'reader/post-key';
-import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
+import { resetCardExpansions } from 'state/reader-ui/card-expansions/actions';
 import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { viewStream } from 'state/reader/watermarks/actions';

@@ -33,7 +33,7 @@
 }
 
 .community-translator__dialog-content {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .community-translator__string-container {
@@ -65,7 +65,7 @@
 		min-height: auto;
 		padding: 7px;
 		line-height: 1;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 	&.placeholder > span {
 		animation: pulse-light 800ms ease-in-out infinite;

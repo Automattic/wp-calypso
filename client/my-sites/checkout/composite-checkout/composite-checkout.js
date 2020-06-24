@@ -61,6 +61,7 @@ import {
 	fullCreditsProcessor,
 	existingCardProcessor,
 	payPalProcessor,
+	idealProcessor,
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
@@ -118,6 +119,7 @@ export default function CompositeCheckout( {
 	cart,
 	couponCode: couponCodeFromUrl,
 	isWhiteGloveOffer,
+	isComingFromUpsell,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -126,7 +128,7 @@ export default function CompositeCheckout( {
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
-
+	const hideNudge = isComingFromUpsell;
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
 
@@ -223,6 +225,7 @@ export default function CompositeCheckout( {
 		product,
 		siteId,
 		isWhiteGloveOffer,
+		hideNudge,
 	} );
 
 	const moment = useLocalizedMoment();
@@ -468,6 +471,8 @@ export default function CompositeCheckout( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
+			ideal: ( transactionData ) =>
+				idealProcessor( transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>

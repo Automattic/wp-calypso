@@ -75,7 +75,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					imagePath="/calypso/images/marketing/looka-logo.svg"
 				>
 					<Button
-						compact
 						onClick={ handleCreateALogoClick }
 						href="https://wp.me/logo-maker"
 						target="_blank"
@@ -91,9 +90,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					) }
 					imagePath="/calypso/images/marketing/social-media-logos.svg"
 				>
-					<Button compact onClick={ handleStartSharingClick }>
-						{ translate( 'Start sharing' ) }
-					</Button>
+					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsGoogleMyBusinessFeature />
@@ -108,7 +105,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					imagePath="/calypso/images/marketing/upwork-logo.png"
 				>
 					<Button
-						compact
 						onClick={ handleFindYourExpertClick }
 						href={ '/experts/upwork?source=marketingtools' }
 						target="_blank"

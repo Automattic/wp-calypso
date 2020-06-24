@@ -38,7 +38,7 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 			return (
 				<React.Fragment>
 					<QueryAccountRecoverySettings />
-					<SecurityCheckupNavigationItem isPlaceholder={ true } />;
+					<SecurityCheckupNavigationItem isPlaceholder={ true } />
 				</React.Fragment>
 			);
 		}
@@ -67,7 +67,7 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 				'You have set {{strong}}%(recoveryPhoneNumber)s{{/strong}} as your recovery SMS number.',
 				{
 					args: {
-						recoveryPhoneNumber: accountRecoveryPhone,
+						recoveryPhoneNumber: accountRecoveryPhone.numberFull,
 					},
 					components: {
 						strong: <strong />,

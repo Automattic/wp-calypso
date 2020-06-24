@@ -12,14 +12,15 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { isFreePlan } from 'lib/plans';
 import FormattedHeader from 'components/formatted-header';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCTA from 'components/promo-section/promo-card/cta';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
 import Gridicon from 'components/gridicon';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import MaterialIcon from 'components/material-icon';
+import { getSitePlan } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 
 /**
@@ -33,13 +34,6 @@ const trackEventName = 'calypso_jetpack_backup_business_upsell';
 const promos: PromoSectionProps = {
 	promos: [
 		{
-			title: translate( 'Jetpack Scan' ),
-			body: translate(
-				'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
-			),
-			image: <MaterialIcon icon="security" className="backup__upsell-icon" />,
-		},
-		{
 			title: translate( 'Activity Log' ),
 			body: translate(
 				'A complete record of everything that happens on your site, with history that spans over 30 days.'
@@ -52,18 +46,20 @@ const promos: PromoSectionProps = {
 export default function WPCOMUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, trackEventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
 
 	return (
-		<Main className="backup__main backup__wpcom-upsell is-wide-layout">
+		<Main className="backup__main backup__wpcom-upsell">
 			<DocumentHead title="Jetpack Backup" />
 			<SidebarNavigation />
 			<PageViewTracker path="/backup/:site" title="Backup" />
 
 			<FormattedHeader
 				headerText={ translate( 'Jetpack Backup' ) }
-				className="backup__header"
 				id="backup-header"
 				align="left"
+				brandFont
 			/>
 
 			<PromoCard
@@ -88,15 +84,15 @@ export default function WPCOMUpsellPage(): ReactElement {
 				/>
 			</PromoCard>
 
-			<FormattedHeader
-				headerText={ translate( 'Also included in the Business Plan' ) }
-				className="backup__header"
-				id="backup-subheader"
-				align="left"
-				isSecondary
-			/>
+			{ isFreePlan( planSlug ) && (
+				<>
+					<h2 className="backup__subheader">
+						{ translate( 'Also included in the Business Plan' ) }
+					</h2>
 
-			<PromoSection { ...promos } />
+					<PromoSection { ...promos } />
+				</>
+			) }
 
 			<WhatIsJetpack />
 		</Main>

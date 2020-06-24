@@ -113,7 +113,6 @@
 .daily-backup-status__failed.card {
 	background: transparent;
 	box-shadow: none;
-	padding: 0;
 }
 
 .daily-backup-status__realtime-details {
@@ -129,7 +128,6 @@
 
 .daily-backup-status__realtime-details-card .activity-card .card {
 	margin: 0;
-	padding: 0;
 	background: transparent;
 	box-shadow: none;
 }
@@ -359,8 +357,6 @@
 }
 
 .daily-backup-status__daily {
-	margin: 32px -16px 0;
-	padding: 0 16px;
 	text-align: left;
 }
 
@@ -382,7 +378,6 @@
 	.daily-backup-status__failed.card {
 		background: #fff;
 		box-shadow: 0 0 0 1px #dcdcde;
-		padding: 1.5rem;
 	}
 
 	.daily-backup-status {
@@ -456,8 +451,4 @@
 	padding-top: initial;
 	margin-bottom: 1rem;
 	box-shadow: 0 0 0 1px #dcdcde;
-
-	&__success, &__failed {
-		padding: 2rem;
-	}
 }

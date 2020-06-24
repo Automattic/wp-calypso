@@ -38,4 +38,6 @@ export interface Design {
 	fonts: FontPair;
 	categories: Array< string >;
 	is_premium: boolean;
+	is_alpha?: boolean;
+	is_fse?: boolean;
 }

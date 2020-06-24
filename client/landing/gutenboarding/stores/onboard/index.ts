@@ -26,6 +26,7 @@ registerStore< State >( STORE_KEY, {
 	selectors,
 	persist: [
 		'domain',
+		'domainSearch',
 		'siteTitle',
 		'siteVertical',
 		'hasUsedPlansStep',

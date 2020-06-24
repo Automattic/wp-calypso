@@ -25,6 +25,7 @@ import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
+import BackupPlaceholder from 'components/jetpack/backup-placeholder';
 import FormattedHeader from 'components/formatted-header';
 import BackupDelta from 'components/jetpack/backup-delta';
 import DailyBackupStatus from 'components/jetpack/daily-backup-status';
@@ -38,7 +39,7 @@ import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import ActivityCardList from 'components/jetpack/activity-card-list';
+import ActivityCardList from 'components/activity-card-list';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
@@ -174,60 +175,58 @@ class BackupsPage extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 
-				<div className="backup__main-wrap">
-					<div className="backup__last-backup-status">
-						<BackupDatePicker
-							{ ...{
-								onDateChange: this.onDateChange,
-								selectedDate: this.getSelectedDate(),
-								siteId,
-								oldestDateAvailable,
-								today,
-								siteSlug,
-								dispatchRecordTracksEvent,
-							} }
-						/>
+				{ isLoadingBackups && <BackupPlaceholder /> }
 
-						{ isLoadingBackups && <div className="backup__is-loading" /> }
+				{ ! isLoadingBackups && (
+					<div className="backup__main-wrap">
+						<div className="backup__last-backup-status">
+							<BackupDatePicker
+								{ ...{
+									onDateChange: this.onDateChange,
+									selectedDate: this.getSelectedDate(),
+									siteId,
+									oldestDateAvailable,
+									today,
+									siteSlug,
+									dispatchRecordTracksEvent,
+								} }
+							/>
 
-						{ ! isLoadingBackups && (
-							<>
-								<DailyBackupStatus
-									{ ...{
-										allowRestore,
-										siteUrl,
-										siteSlug,
-										backup: lastBackup,
-										lastDateAvailable,
-										selectedDate: this.getSelectedDate(),
-										timezone,
-										gmtOffset,
-										hasRealtimeBackups,
-										onDateChange: this.onDateChange,
-										deltas,
-										// metaDiff, todo: commented because the non-english account issue
-										doesRewindNeedCredentials,
-										dispatchRecordTracksEvent,
-									} }
-								/>
-							</>
+							<DailyBackupStatus
+								{ ...{
+									allowRestore,
+									siteUrl,
+									siteSlug,
+									backup: lastBackup,
+									lastDateAvailable,
+									selectedDate: this.getSelectedDate(),
+									timezone,
+									gmtOffset,
+									hasRealtimeBackups,
+									onDateChange: this.onDateChange,
+									deltas,
+									// metaDiff, todo: commented because the non-english account issue
+									doesRewindNeedCredentials,
+									dispatchRecordTracksEvent,
+								} }
+							/>
+						</div>
+
+						{ hasRealtimeBackups && lastBackup && (
+							<BackupDelta
+								{ ...{
+									deltas,
+									realtimeBackups,
+									doesRewindNeedCredentials,
+									allowRestore,
+									moment,
+									siteSlug,
+									isToday,
+								} }
+							/>
 						) }
 					</div>
-
-					{ ! isLoadingBackups && hasRealtimeBackups && lastBackup && (
-						<BackupDelta
-							{ ...{
-								deltas,
-								realtimeBackups,
-								doesRewindNeedCredentials,
-								allowRestore,
-								moment,
-								siteSlug,
-								isToday,
-							} }
-						/>
-					) }
-				</div>
+				) }
 			</>
 		);
 	}
@@ -261,9 +260,15 @@ class BackupsPage extends Component {
 					wordpressdotcom: ! isJetpackCloud(),
 				} ) }
 			>
-				<Main wideLayout={ ! isJetpackCloud() }>
+				<Main
+					className={ classNames( {
+						is_jetpackcom: isJetpackCloud(),
+					} ) }
+				>
 					<SidebarNavigation />
-					{ ! isJetpackCloud() && <FormattedHeader headerText="Jetpack Backup" align="left" /> }
+					{ ! isJetpackCloud() && (
+						<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
+					) }
 
 					{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
 				</Main>

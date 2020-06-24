@@ -129,6 +129,7 @@ class CurrentPlan extends Component {
 				<SidebarNavigation />
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				<FormattedHeader
+					brandFont
 					className="current-plan__page-heading"
 					headerText={ translate( 'Plans' ) }
 					align="left"

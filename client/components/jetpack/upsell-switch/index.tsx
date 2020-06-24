@@ -3,10 +3,12 @@
  */
 import React, { ReactElement, useState, ReactNode, useEffect, ComponentType } from 'react';
 import { connect, DefaultRootState } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 
@@ -64,7 +66,9 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 
 	if ( isLoading ) {
 		return (
-			<Main className="upsell-switch__loading">
+			<Main
+				className={ classNames( 'upsell-switch__loading', { is_jetpackcom: isJetpackCloud() } ) }
+			>
 				<QueryComponent siteId={ siteId } />
 				{ children }
 			</Main>

@@ -29,3 +29,5 @@ $plans-details-min-width-desktop-small: #{to-number( $plans-table-total-content-
 $plans-details-min-width-desktop-medium: #{to-number( $plans-table-total-content-width ) +
 	$gutenboarding-block-margin-medium * 2};
 $plans-details-min-width-mobile: 700px;
+
+$plans-grid-max-page-width: 1440px;

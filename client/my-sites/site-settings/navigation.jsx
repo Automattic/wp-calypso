@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -13,13 +13,17 @@ import config from 'config';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import { getSelectedSite } from 'state/ui/selectors';
+import { siteHasScanProductPurchase } from 'state/purchases/selectors';
+import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
+import isRewindActive from 'state/selectors/is-rewind-active';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 export class SiteSettingsNavigation extends Component {
 	static propTypes = {
 		section: PropTypes.string,
 		// Connected props
 		site: PropTypes.object,
+		shouldShowJetpackSettings: PropTypes.bool,
 	};
 
 	getStrings() {
@@ -35,7 +39,7 @@ export class SiteSettingsNavigation extends Component {
 	}
 
 	render() {
-		const { section, site } = this.props;
+		const { section, site, shouldShowJetpackSettings } = this.props;
 		const strings = this.getStrings();
 		const selectedText = strings[ section ];
 
@@ -89,7 +93,7 @@ export class SiteSettingsNavigation extends Component {
 						{ strings.discussion }
 					</NavItem>
 
-					{ config.isEnabled( 'jetpack/features-section' ) && site.jetpack && (
+					{ shouldShowJetpackSettings && site.jetpack && (
 						<NavItem
 							path={ `/settings/jetpack/${ site.slug }` }
 							preloadSectionName="settings-jetpack"
@@ -104,6 +108,14 @@ export class SiteSettingsNavigation extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	site: getSelectedSite( state ),
-} ) )( localize( SiteSettingsNavigation ) );
+export default connect( ( state ) => {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		site,
+		shouldShowJetpackSettings:
+			isJetpackSectionEnabledForSite( state, site.ID ) &&
+			( siteHasScanProductPurchase( state, siteId ) || isRewindActive( state, siteId ) ),
+	};
+} )( localize( SiteSettingsNavigation ) );

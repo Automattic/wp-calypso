@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/billing-transactions/init';
+
+/**
  * Returns filter for the billing transactions of the given type
  *
  * @param  {object}  state           Global state tree
@@ -11,7 +16,7 @@ import { get } from 'lodash';
  * @returns {object}                 Billing transaction filters
  */
 export default ( state, transactionType ) => {
-	const filters = get( state, [ 'ui', 'billingTransactions', transactionType ], {} );
+	const filters = get( state, [ 'billingTransactions', 'ui', transactionType ], {} );
 	return {
 		app: '',
 		date: { month: null, operator: null },

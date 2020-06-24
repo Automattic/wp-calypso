@@ -3,7 +3,7 @@
 	margin-bottom: 0;
 	padding-bottom: 0.5em;
 
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 
 	@include clear-fix;
