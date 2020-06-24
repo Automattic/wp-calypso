@@ -93,6 +93,8 @@
 
 .activity-log-item__activity-icon {
 	// General notice
+	width: 24px;
+	height: 24px;
 	background: var( --color-neutral-20 );
 	color: var( --color-text-inverted );
 	display: flex;
