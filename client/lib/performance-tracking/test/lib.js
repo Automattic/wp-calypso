@@ -106,16 +106,6 @@ describe( 'startPerformanceTracking', () => {
 			expect.objectContaining( { fullPageLoad: false } )
 		);
 	} );
-
-	it( 'passes the list of collectors', () => {
-		const collectors = [];
-		startPerformanceTracking( 'pageName', { collectors } );
-
-		expect( start ).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining( { collectors } )
-		);
-	} );
 } );
 
 describe( 'stopPerformanceTracking', () => {
@@ -156,16 +146,6 @@ describe( 'stopPerformanceTracking', () => {
 		expect( stop ).toHaveBeenCalledWith( 'pageName', expect.anything() );
 	} );
 
-	it( 'passes the list of collectors', () => {
-		const collector = () => {};
-		stopPerformanceTracking( 'pageName', {}, { collectors: [ collector ] } );
-
-		expect( stop ).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining( { collectors: expect.arrayContaining( [ collector ] ) } )
-		);
-	} );
-
 	it( 'uses the state to generate the default collector', () => {
 		const state = {};
 		const report = {
@@ -177,7 +157,7 @@ describe( 'stopPerformanceTracking', () => {
 		getSelectedSiteId.mockImplementation( () => 42 );
 
 		// Run the default collector
-		stopPerformanceTracking( 'pageName', state );
+		stopPerformanceTracking( 'pageName', { state } );
 		const defaultCollector = stop.mock.calls[ 0 ][ 1 ].collectors[ 0 ];
 		defaultCollector( report );
 
@@ -187,5 +167,23 @@ describe( 'stopPerformanceTracking', () => {
 		expect( report.data.get( 'siteIsJetpack' ) ).toBe( false );
 		expect( report.data.get( 'siteIsSingleUser' ) ).toBe( false );
 		expect( report.data.get( 'siteIsAtomic' ) ).toBe( false );
+	} );
+
+	it( 'uses metdata to generate a collector', () => {
+		const report = {
+			data: new Map(),
+		};
+
+		// Run the default collector
+		stopPerformanceTracking( 'pageName', {
+			state: {},
+			metadata: {
+				foo: 42,
+			},
+		} );
+		const metadataCollector = stop.mock.calls[ 0 ][ 1 ].collectors[ 1 ];
+		metadataCollector( report );
+
+		expect( report.data.get( 'foo' ) ).toBe( 42 );
 	} );
 } );
