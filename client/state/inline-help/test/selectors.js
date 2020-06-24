@@ -113,10 +113,12 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 			},
 		};
 
-		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.be.null;
+		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.be.a( 'array' );
+		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.have.length( 0 );
+		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.deep.equal( [] );
 	} );
 
-	test( 'should return null when no items', () => {
+	test( 'should return empty string when no items', () => {
 		const state = {
 			inlineHelp: {
 				searchResults: {
@@ -128,6 +130,8 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 			},
 		};
 
-		expect( getInlineHelpSearchResultsForQuery( state, 'ada' ) ).to.be.null;
+		expect( getInlineHelpSearchResultsForQuery( state, 'foo' ) ).to.be.a( 'array' );
+		expect( getInlineHelpSearchResultsForQuery( state, 'foo' ) ).to.have.length( 0 );
+		expect( getInlineHelpSearchResultsForQuery( state, 'foo' ) ).to.deep.equal( [] );
 	} );
 } );

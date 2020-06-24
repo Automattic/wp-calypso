@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -19,92 +19,87 @@ import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-
 import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
 import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
-import { getLastRouteAction } from 'state/ui/action-log/selectors';
-import { setSearchResults, selectResult } from 'state/inline-help/actions';
+import { selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 
-class InlineHelpSearchResults extends Component {
-	static propTypes = {
-		openResult: PropTypes.func.isRequired,
-		translate: PropTypes.func,
-		searchQuery: PropTypes.string,
+function HelpSearchResults( {
+	hasAPIResults = false,
+	isSearching = false,
+	openResult,
+	searchQuery = '',
+	searchResults,
+	selectedResultIndex = -1,
+	selectSearchResult,
+	translate = identity,
+	placeholderLines,
+} ) {
+	const selectResultHandler = ( selectionIndex ) => ( event ) => {
+		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
+		selectSearchResult( selectionIndex );
+		openResult( event, selectedResult );
 	};
 
-	static defaultProps = {
-		translate: identity,
-		searchQuery: '',
-	};
-
-	renderSearchResults() {
-		if ( this.props.isSearching ) {
-			// search, but no results so far
-			return <PlaceholderLines />;
-		}
-
-		// found something
-		const links = this.props.searchResults;
+	const renderHelpLink = ( { link, key, description, title }, index ) => {
+		const classes = classNames( 'inline-help__results-item', {
+			'is-selected': selectedResultIndex === index,
+		} );
 
 		return (
-			<>
-				{ ! isEmpty( this.props.searchQuery ) && ! this.props.hasAPIResults && (
-					<p className="inline-help__empty-results">{ this.props.translate( 'No results.' ) }</p>
-				) }
-				<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-			</>
-		);
-	}
-
-	onHelpLinkClick = ( selectionIndex ) => ( event ) => {
-		const selectedResult = this.props?.searchResults?.[ selectionIndex ] ?? null;
-		this.props.selectResult( selectionIndex );
-		this.props.openResult( event, selectedResult );
-	};
-
-	renderHelpLink = ( link, index ) => {
-		const classes = { 'is-selected': this.props.selectedResultIndex === index };
-		return (
-			<li
-				key={ link.link ? link.link : link.key }
-				className={ classNames( 'inline-help__results-item', classes ) }
-			>
+			<li key={ link ?? key } className={ classes }>
 				<a
-					href={ localizeUrl( link.link ) }
-					onClick={ this.onHelpLinkClick( index ) }
-					title={ decodeEntities( link.description ) }
+					href={ localizeUrl( link ) }
+					onClick={ selectResultHandler( index ) }
+					title={ decodeEntities( description ) }
 				>
-					{ preventWidows( decodeEntities( link.title ) ) }
+					{ preventWidows( decodeEntities( title ) ) }
 				</a>
 			</li>
 		);
 	};
 
-	render() {
+	const renderSearchResults = () => {
+		if ( isSearching ) {
+			// search, but no results so far
+			return <PlaceholderLines lines={ placeholderLines } />;
+		}
+
 		return (
-			<div>
-				<QueryInlineHelpSearch
-					query={ this.props.searchQuery }
-					requesting={ this.props.isSearching }
-				/>
-				{ this.renderSearchResults() }
-			</div>
+			<>
+				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
+					<p className="inline-help__empty-results">{ translate( 'No results.' ) }</p>
+				) }
+				<ul className="inline-help__results-list">{ searchResults.map( renderHelpLink ) }</ul>
+			</>
 		);
-	}
+	};
+
+	return (
+		<div>
+			<QueryInlineHelpSearch query={ searchQuery } requesting={ isSearching } />
+			{ renderSearchResults() }
+		</div>
+	);
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	lastRoute: getLastRouteAction( state ),
-	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	selectedResultIndex: getSelectedResultIndex( state ),
-	hasAPIResults: hasInlineHelpAPIResults( state ),
-} );
-const mapDispatchToProps = {
-	recordTracksEvent,
-	setSearchResults,
-	selectResult,
+HelpSearchResults.propTypes = {
+	translate: PropTypes.func,
+	searchQuery: PropTypes.string,
+	openResult: PropTypes.func.isRequired,
+	hasAPIResults: PropTypes.bool,
+	searchResults: PropTypes.array,
+	selectedResultIndex: PropTypes.number,
+	isSearching: PropTypes.bool,
 };
 
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpSearchResults ) );
+	( state, ownProps ) => ( {
+		searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
+		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
+		selectedResultIndex: getSelectedResultIndex( state ),
+		hasAPIResults: hasInlineHelpAPIResults( state ),
+	} ),
+	{
+		recordTracksEvent,
+		selectSearchResult: selectResult,
+	}
+)( localize( HelpSearchResults ) );
