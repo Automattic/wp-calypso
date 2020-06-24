@@ -89,5 +89,11 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 				'Inline Help support search was not correctly hidden on Home page.'
 			);
 		} );
+
+		step( 'Displays contextual search results by default', async function () {
+			supportSearchComponent = await SupportSearchComponent.Expect( driver );
+			const resultsCount = await supportSearchComponent.getSearchResultsCount();
+			assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
+		} );
 	} );
 } );
