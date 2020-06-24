@@ -440,10 +440,6 @@
 	&:hover {
 		color: var( --color-neutral-70 );
 	}
-
-	@include breakpoint-deprecated( '>480px' ) {
-		font-size: $font-title-small;
-	}
 }
 
 .reader-post-card .reader-excerpt {
