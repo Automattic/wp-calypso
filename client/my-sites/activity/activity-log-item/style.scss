@@ -58,6 +58,9 @@
 }
 
 .activity-log-item__type {
+	display: flex;
+	flex-direction: column;
+	align-content: center;
 	align-self: flex-start;
 	background: var( --color-surface-backdrop );
 	text-align: center;
