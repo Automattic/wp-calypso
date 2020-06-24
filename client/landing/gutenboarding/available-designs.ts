@@ -57,17 +57,9 @@ export function prefetchDesignThumbs() {
 }
 
 export function getAvailableDesigns(
-	includeEdgeDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ) {
 	let designs = availableDesigns;
-
-	if ( ! includeEdgeDesigns ) {
-		designs = {
-			...designs,
-			featured: designs.featured.filter( ( design ) => ! design.is_alpha ),
-		};
-	}
 
 	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
 	// the FSE designs.
