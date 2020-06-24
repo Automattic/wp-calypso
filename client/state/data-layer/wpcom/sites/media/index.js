@@ -25,6 +25,7 @@ import {
 	successMediaItemRequest,
 	deleteMedia,
 } from 'state/media/actions';
+import { requestMediaStorage } from 'state/sites/media-storage/actions';
 import {
 	dispatchFluxUpdateMediaItemSuccess,
 	dispatchFluxUpdateMediaItemError,
@@ -144,6 +145,8 @@ export const requestDeleteMedia = ( action ) => {
 
 export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 	dispatch( deleteMedia( siteId, mediaItem.ID ) );
+	dispatch( requestMediaStorage( siteId ) );
+
 	dispatchFluxRemoveMediaItemSuccess( siteId, mediaItem );
 };
 

@@ -29,7 +29,7 @@ import { getMimeType } from 'lib/media/utils';
 import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
-import { editMedia } from 'state/media/thunks';
+import { editMedia, deleteMedia } from 'state/media/thunks';
 
 /**
  * Style dependencies
@@ -300,7 +300,7 @@ class Media extends Component {
 		const selected =
 			selectedItems && selectedItems.length ? selectedItems : this.props.selectedItems;
 
-		MediaActions.delete( site.ID, selected );
+		this.props.deleteMedia( site.ID, selected );
 	};
 
 	getAnalyticsPath = () => {
@@ -445,4 +445,4 @@ const mapStateToProps = ( state, { mediaId, site } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { editMedia } )( localize( Media ) );
+export default connect( mapStateToProps, { editMedia, deleteMedia } )( localize( Media ) );
