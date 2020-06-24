@@ -356,7 +356,7 @@ class RegisteredDomainType extends React.Component {
 				domain={ this.props.domain }
 				position="registered-domain"
 				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [ 'newTransfersWrongNS', 'pendingConsent' ] }
+				allowedRules={ [ 'newTransfersWrongNS', 'pendingConsent' ] }
 			/>
 		);
 	}

@@ -233,7 +233,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
-		case domainAvailability.BLACKLISTED:
+		case domainAvailability.DISALLOWED:
 			if ( domain && domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
@@ -254,7 +254,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				);
 			} else {
 				message = translate(
-					'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.'
+					'Domain cannot be mapped to a WordPress.com blog because of disallowed term.'
 				);
 			}
 			break;

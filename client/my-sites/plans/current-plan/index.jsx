@@ -153,7 +153,7 @@ class CurrentPlan extends Component {
 						domains={ domains }
 						position="current-plan"
 						selectedSite={ selectedSite }
-						ruleWhiteList={ [
+						allowedRules={ [
 							'newDomainsWithPrimary',
 							'newDomains',
 							'unverifiedDomainsCanManage',
