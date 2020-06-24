@@ -214,7 +214,7 @@ function GiropayLabel() {
 }
 
 const GiropayLogoUI = styled( GiropayLogo )`
-	width: 28px;
+	width: 64px;
 `;
 
 function GiropayLogo( { className } ) {
