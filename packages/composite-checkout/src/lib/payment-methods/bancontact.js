@@ -148,7 +148,10 @@ function BancontactPayButton( { disabled, store, stripe, stripeConfiguration } )
 				if ( isFormValid( store ) ) {
 					debug( 'submitting bancontact payment' );
 					setTransactionPending();
-					onEvent( { type: 'BANCONTACT_TRANSACTION_BEGIN' } );
+					onEvent( {
+						type: 'REDIRECT_TRANSACTION_BEGIN',
+						payload: { paymentMethodId: 'bancontact' },
+					} );
 					submitTransaction( {
 						stripe,
 						name: customerName?.value,
