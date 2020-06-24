@@ -2,6 +2,9 @@ export { performanceTrackerStart } from './performance-tracker-start';
 
 export { usePerformanceTrackerStop } from './use-performance-tracker-stop';
 export { withPerformanceTrackerStop } from './with-performance-tracker-stop';
+export { withStopPerformanceTrackingProp } from './with-stop-performance-tracking-prop';
 export { default as PerformanceTrackerStop } from './performance-tracker-stop';
 
-export { startPerformanceTracking, stopPerformanceTracking } from './lib';
+export type PerformanceTrackProps = {
+	stopPerformanceTracking: () => void;
+};

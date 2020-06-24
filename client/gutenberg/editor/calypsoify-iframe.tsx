@@ -4,10 +4,9 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith, isArray } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
-
 /**
  * Internal dependencies
  */
@@ -47,7 +46,8 @@ import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { stopPerformanceTracking } from 'lib/performance-tracking';
+import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
+
 /**
  * Types
  */
@@ -113,7 +113,7 @@ enum EditorActions {
 }
 
 class CalypsoifyIframe extends Component<
-	Props & ConnectedProps & ProtectedFormProps & LocalizeProps,
+	Props & ConnectedProps & ProtectedFormProps & LocalizeProps & PerformanceTrackProps,
 	State
 > {
 	state: State = {
@@ -361,8 +361,7 @@ class CalypsoifyIframe extends Component<
 
 		if ( EditorActions.TrackPerformance === action ) {
 			if ( payload.mark === 'editor.ready' ) {
-				// This name must match the section name
-				stopPerformanceTracking( 'gutenberg-editor' );
+				this.props.stopPerformanceTracking();
 			}
 		}
 	};
@@ -793,7 +792,9 @@ const mapDispatchToProps = {
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( protectForm( CalypsoifyIframe ) ) );
+export default flowRight(
+	withStopPerformanceTrackingProp,
+	connect( mapStateToProps, mapDispatchToProps ),
+	localize,
+	protectForm
+)( CalypsoifyIframe );
