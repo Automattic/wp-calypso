@@ -30,7 +30,7 @@ const JetpackCredentialsBanner: React.FC< Props > = ( { siteSlug } ): React.Reac
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const preference: Preference[] =
-		useSelector( ( state ) => getPreference( state, JETPACK_CREDENTIALS_BANNER_PREFERENCE ) ) || {};
+		useSelector( ( state ) => getPreference( state, JETPACK_CREDENTIALS_BANNER_PREFERENCE ) ) || [];
 
 	const savePreferenceType = React.useCallback(
 		( type: PreferenceType ) => {
