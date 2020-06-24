@@ -4,10 +4,14 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 
-const fetchStatus = async () => {
+const fetchStatus = async ( type = null ) => {
+	let path = '/wpcom/v2/memberships/status';
+	if ( type ) {
+		path += `?type=${ type }`;
+	}
 	try {
 		const result = await apiFetch( {
-			path: '/wpcom/v2/memberships/status',
+			path,
 			method: 'GET',
 		} );
 		return result;

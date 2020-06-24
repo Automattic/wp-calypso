@@ -38,7 +38,7 @@ const Edit = () => {
 	};
 
 	useEffect( () => {
-		const updateData = () => fetchStatus().then( mapStatusToState, apiError );
+		const updateData = () => fetchStatus( 'donation' ).then( mapStatusToState, apiError );
 		updateData();
 	}, [] );
 
