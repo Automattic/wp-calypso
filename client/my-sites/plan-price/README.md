@@ -2,7 +2,7 @@ PlanPrice Component
 =============
 
 PlanPrice component is a React component used to display plan's price with a currency and a discount, if any.
-It can be used anywhere where a plan's price is required.
+It can be used anywhere where a plan's price is required. The price will be displayed in the current user's currency.
 
 If you want to emphasize that a plan's price is discounted, use two `<PlanPrice>` components as below and wrap them in a
 flexbox container.
