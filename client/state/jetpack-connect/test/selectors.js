@@ -11,7 +11,7 @@ import {
 	hasExpiredSecretError,
 	hasXmlrpcError,
 	isRemoteSiteOnSitesList,
-	isSiteBlocklistedError,
+	isSiteBlockedError,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -371,9 +371,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isSiteBlocklistedError', () => {
+	describe( '#isSiteBlockedError', () => {
 		test( 'should be false when there is an empty state', () => {
-			const hasError = isSiteBlocklistedError( { jetpackConnect: {} } );
+			const hasError = isSiteBlockedError( { jetpackConnect: {} } );
 			expect( hasError ).toBe( false );
 		} );
 
@@ -385,7 +385,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const hasError = isSiteBlocklistedError( stateHasNoError );
+			const hasError = isSiteBlockedError( stateHasNoError );
 			expect( hasError ).toBe( false );
 		} );
 
@@ -399,7 +399,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const hasError = isSiteBlocklistedError( stateHasOtherError );
+			const hasError = isSiteBlockedError( stateHasOtherError );
 			expect( hasError ).toBe( false );
 		} );
 
@@ -413,7 +413,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const hasError = isSiteBlocklistedError( stateHasBeenBlocklistedError );
+			const hasError = isSiteBlockedError( stateHasBeenBlocklistedError );
 			expect( hasError ).toBe( true );
 		} );
 	} );

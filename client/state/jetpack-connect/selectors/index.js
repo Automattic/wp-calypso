@@ -7,4 +7,4 @@ export { getUserAlreadyConnected } from 'state/jetpack-connect/selectors/get-use
 export { hasExpiredSecretError } from 'state/jetpack-connect/selectors/has-expired-secret-error';
 export { hasXmlrpcError } from 'state/jetpack-connect/selectors/has-xmlrpc-error';
 export { isRemoteSiteOnSitesList } from 'state/jetpack-connect/selectors/is-remote-site-on-sites-list';
-export { isSiteBlocklistedError } from 'state/jetpack-connect/selectors/is-site-blocklisted-error';
+export { isSiteBlockedError } from 'state/jetpack-connect/selectors/is-site-blocked-error';

@@ -69,7 +69,7 @@ import {
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
-	isSiteBlocklistedError as isSiteBlocklistedSelector,
+	isSiteBlockedError as isSiteBlocklistedSelector,
 } from 'state/jetpack-connect/selectors';
 import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
