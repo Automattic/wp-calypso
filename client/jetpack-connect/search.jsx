@@ -4,28 +4,38 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { concat, flowRight, includes } from 'lodash';
+import { concat, flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import HelpButton from './help-button';
 import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
+import page from 'page';
 import SiteUrlInput from './site-url-input';
 import { cleanUrl } from './utils';
-import { checkUrl } from 'state/jetpack-connect/actions';
+import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
-import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import getSites from 'state/selectors/get-sites';
 import { isRequestingSites } from 'state/sites/selectors';
-import { persistSession } from './persistence-utils';
+import { persistSession, retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { urlToSlug } from 'lib/url';
+import searchSites from 'components/search-sites';
 import jetpackConnection from './jetpack-connection';
 
-export class JetpackConnectMain extends Component {
+import { JPC_PATH_REMOTE_INSTALL } from './constants';
+import { ALREADY_CONNECTED } from './connection-notice-types';
+
+export class SearchPurchase extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string,
@@ -39,54 +49,66 @@ export class JetpackConnectMain extends Component {
 				currentUrl: cleanUrl( this.props.url ),
 				shownUrl: this.props.url,
 				waitingForSites: false,
+				candidateSites: this.props.searchSites( this.props.url ),
 		  }
 		: {
 				currentUrl: '',
 				shownUrl: '',
 				waitingForSites: false,
+				candidateSites: [],
 		  };
+
+	getCandidateSites( url ) {
+		this.props.searchSites( url );
+		let candidateSites = [];
+
+		if ( this.props.sitesFound ) {
+			candidateSites = this.props.sitesFound.map( ( site ) => ( {
+				label: site.URL,
+				category: this.props.translate( 'Choose site' ),
+			} ) );
+		}
+
+		this.setState( { candidateSites } );
+	}
 
 	UNSAFE_componentWillMount() {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ) );
 		}
+		if ( ! this.props.isLoggedIn ) {
+			this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
+		}
 	}
 
 	componentDidMount() {
-		let from = 'direct';
-		if ( this.props.type === 'install' ) {
-			from = 'jpdotcom';
-		}
-		if ( this.props.type === 'pro' ) {
-			from = 'ad';
-		}
-		if ( this.props.type === 'premium' ) {
-			from = 'ad';
-		}
-		if ( this.props.type === 'personal' ) {
-			from = 'ad';
-		}
-
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
-			jpc_from: from,
+			jpc_from: 'jp_lp',
 			cta_id: this.props.ctaId,
 			cta_from: this.props.ctaFrom,
 		} );
 	}
 
 	componentDidUpdate() {
-		const { processJpSite } = this.props;
+		const { status, processJpSite } = this.props;
 		const { currentUrl } = this.state;
+
+		// here we will add status === IS_DOT_COM_SEARCH to the condition once
+		// we enable WP.com sites
+		if ( status === ALREADY_CONNECTED ) {
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + 'jetpack_search' );
+		}
 
 		processJpSite( currentUrl );
 	}
 
-	handleUrlChange = ( event ) => {
-		const url = event.target.value;
+	handleUrlChange = ( url ) => {
 		this.setState( {
 			currentUrl: cleanUrl( url ),
 			shownUrl: url,
 		} );
+
+		this.getCandidateSites( url );
 	};
 
 	checkUrl( url ) {
@@ -109,8 +131,16 @@ export class JetpackConnectMain extends Component {
 
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
-	isInstall() {
-		return includes( FLOW_TYPES, this.props.type );
+	renderFooter() {
+		const { translate } = this.props;
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
+					{ translate( 'Install Jetpack manually' ) }
+				</LoggedOutFormLinkItem>
+				<HelpButton />
+			</LoggedOutFormLinks>
+		);
 	}
 
 	renderSiteInput( status ) {
@@ -127,7 +157,9 @@ export class JetpackConnectMain extends Component {
 					isFetching={
 						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
 					}
-					isInstall={ this.isInstall() }
+					isInstall={ true }
+					product={ 'jetpack_search' }
+					candidateSites={ this.state.candidateSites }
 				/>
 			</Card>
 		);
@@ -142,13 +174,14 @@ export class JetpackConnectMain extends Component {
 	}
 
 	render() {
-		const { renderFooter, status, type } = this.props;
+		const { renderFooter, status } = this.props;
 
 		return (
 			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
-					<MainHeader type={ type } />
+					<MainHeader type={ 'jetpack_search' } />
+
 					{ this.renderSiteInput( status ) }
 					{ renderFooter() }
 				</div>
@@ -159,17 +192,39 @@ export class JetpackConnectMain extends Component {
 
 const connectComponent = connect(
 	( state ) => {
+		// Note: reading from a cookie here rather than redux state,
+		// so any change in value will not execute connect().
+		const mobileAppRedirect = retrieveMobileRedirect();
+		const isMobileAppFlow = !! mobileAppRedirect;
+		const jetpackConnectSite = getConnectingSite( state );
+		const siteData = jetpackConnectSite.data || {};
+		const sites = getSites( state );
+
+		const skipRemoteInstall = siteData.skipRemoteInstall;
+
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
 			isLoggedIn: !! getCurrentUserId( state ),
+			isMobileAppFlow,
 			isRequestingSites: isRequestingSites( state ),
+			jetpackConnectSite,
+			mobileAppRedirect,
+			skipRemoteInstall,
+			siteHomeUrl: siteData.urlAfterRedirects || jetpackConnectSite.url,
+			sites,
 		};
 	},
 	{
 		checkUrl,
+		dismissUrl,
 		recordTracksEvent,
 	}
 );
 
-export default flowRight( jetpackConnection, connectComponent, localize )( JetpackConnectMain );
+export default flowRight(
+	jetpackConnection,
+	connectComponent,
+	searchSites,
+	localize
+)( SearchPurchase );
