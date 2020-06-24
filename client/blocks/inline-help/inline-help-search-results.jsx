@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
@@ -33,14 +33,11 @@ function HelpSearchResults( {
 	translate = identity,
 	placeholderLines,
 } ) {
-	const selectResultHandler = useCallback(
-		( selectionIndex ) => ( event ) => {
-			const selectedResult = searchResults?.[ selectionIndex ] ?? null;
-			selectSearchResult( selectionIndex );
-			openResult( event, selectedResult );
-		},
-		[ openResult, searchResults, selectSearchResult ]
-	);
+	const selectResultHandler = ( selectionIndex ) => ( event ) => {
+		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
+		selectSearchResult( selectionIndex );
+		openResult( event, selectedResult );
+	};
 
 	const renderHelpLink = ( { link, key, description, title }, index ) => {
 		const classes = classNames( 'inline-help__results-item', {
