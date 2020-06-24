@@ -15,6 +15,7 @@ import {
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_UPDATE,
 	MEDIA_ITEM_EDIT,
+	MEDIA_ITEM_DELETE,
 } from 'state/action-types';
 import {
 	failMediaRequest,
@@ -22,13 +23,16 @@ import {
 	receiveMedia,
 	successMediaRequest,
 	successMediaItemRequest,
+	deleteMedia,
 } from 'state/media/actions';
-
-import { registerHandlers } from 'state/data-layer/handler-registry';
 import {
 	dispatchFluxUpdateMediaItemSuccess,
 	dispatchFluxUpdateMediaItemError,
+	dispatchFluxRemoveMediaItemSuccess,
+	dispatchFluxRemoveMediaItemError,
 } from 'state/media/utils/flux-adapter';
+
+import { registerHandlers } from 'state/data-layer/handler-registry';
 
 /**
  * Module variables
@@ -125,6 +129,28 @@ export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
 export const receiveMediaItemError = ( { mediaId, siteId } ) =>
 	failMediaItemRequest( siteId, mediaId );
 
+export const requestDeleteMedia = ( action ) => {
+	return [
+		http(
+			{
+				apiVersion: '1.1',
+				method: 'POST',
+				path: `/sites/${ action.siteId }/media/${ action.mediaId }/delete`,
+			},
+			action
+		),
+	];
+};
+
+export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
+	dispatch( deleteMedia( siteId, mediaItem.ID ) );
+	dispatchFluxRemoveMediaItemSuccess( siteId, mediaItem );
+};
+
+export const deleteMediaError = ( { siteId }, error ) => () => {
+	dispatchFluxRemoveMediaItemError( siteId, error );
+};
+
 registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 	[ MEDIA_REQUEST ]: [
 		dispatchRequest( {
@@ -155,6 +181,14 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 			fetch: editMedia,
 			onSuccess: updateMediaSuccess,
 			onError: updateMediaError,
+		} ),
+	],
+
+	[ MEDIA_ITEM_DELETE ]: [
+		dispatchRequest( {
+			fetch: requestDeleteMedia,
+			onSuccess: deleteMediaSuccess,
+			onError: deleteMediaError,
 		} ),
 	],
 } );
