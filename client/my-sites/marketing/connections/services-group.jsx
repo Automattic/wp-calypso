@@ -53,7 +53,7 @@ const SharingServicesGroup = ( { isFetching, services, title, expandedService } 
 				serviceElement.scrollIntoView();
 			}
 		}
-	}, [ expandedService, services ] );
+	}, [ expandedService, isFetching ] );
 
 	if ( ! services.length && ! isFetching ) {
 		return null;
