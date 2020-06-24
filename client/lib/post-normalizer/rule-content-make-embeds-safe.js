@@ -3,7 +3,7 @@
  */
 
 import { some, forEach, startsWith, endsWith } from 'lodash';
-import { iframeIsWhitelisted } from './utils';
+import { iframeIsAllowed } from './utils';
 import url from 'url';
 
 /**
@@ -47,7 +47,7 @@ export default function makeEmbedsSafe( post, dom ) {
 
 		if ( doesNotNeedSandbox( iframe ) ) {
 			iframe.removeAttribute( 'sandbox' );
-		} else if ( iframeIsWhitelisted( iframe ) ) {
+		} else if ( iframeIsAllowed( iframe ) ) {
 			iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
 		} else {
 			iframe.setAttribute( 'sandbox', '' );
