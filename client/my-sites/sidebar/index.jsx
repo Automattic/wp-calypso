@@ -132,13 +132,21 @@ export class MySitesSidebar extends Component {
 	}
 
 	cloud() {
-		const { scanState, rewindState, isCloudEligible, site } = this.props;
+		const {
+			scanState,
+			rewindState,
+			isCloudEligible,
+			site,
+			shouldRenderJetpackSection,
+		} = this.props;
 		if (
 			! site ||
 			! isCloudEligible ||
 			! scanState ||
 			! rewindState ||
-			'uninitialized' === rewindState.state
+			'uninitialized' === rewindState.state ||
+			// Sections are already present in the Jetpack menu
+			shouldRenderJetpackSection
 		) {
 			return null;
 		}
