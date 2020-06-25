@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { isEmpty, mapValues, omit, pickBy, without, isNil } from 'lodash';
+import { isEmpty, mapValues, omit, pickBy, without, isNil, merge } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -12,11 +12,13 @@ import {
 	MEDIA_ITEM_ERRORS_CLEAR,
 	MEDIA_ITEM_ERRORS_SET,
 	MEDIA_ITEM_CREATE,
+	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_ITEM_REQUESTING,
 	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
+	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
@@ -463,6 +465,58 @@ export const transientItems = withoutPersistence(
 	}
 );
 
+export const fetching = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MEDIA_REQUEST: {
+			const siteId = action.siteId;
+
+			return {
+				...state,
+				[ siteId ]: Object.assign( {}, state[ siteId ], {
+					nextPage: true,
+				} ),
+			};
+		}
+
+		case MEDIA_REQUEST_SUCCESS:
+		case MEDIA_REQUEST_FAILURE: {
+			const siteId = action.siteId;
+
+			return {
+				...state,
+				[ siteId ]: Object.assign( {}, state[ siteId ], {
+					nextPage: false,
+				} ),
+			};
+		}
+
+		case MEDIA_ITEM_REQUEST: {
+			const { siteId, mediaId } = action;
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, state[ siteId ], {
+					items: {
+						[ mediaId ]: true,
+					},
+				} ),
+			};
+		}
+
+		case MEDIA_ITEM_REQUEST_SUCCESS:
+		case MEDIA_ITEM_REQUEST_FAILURE: {
+			const { siteId, mediaId } = action;
+
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], [ `items[${ mediaId }]` ] ),
+			};
+		}
+	}
+
+	return state;
+} );
+
 export default combineReducers( {
 	errors,
 	queries,
@@ -470,4 +524,5 @@ export default combineReducers( {
 	mediaItemRequests,
 	selectedItems,
 	transientItems,
+	fetching,
 } );

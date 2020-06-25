@@ -14,6 +14,7 @@ import reducer, {
 	mediaItemRequests,
 	selectedItems,
 	transientItems,
+	fetching,
 } from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
 import {
@@ -21,8 +22,10 @@ import {
 	MEDIA_DELETE,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
+	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUESTING,
 	MEDIA_RECEIVE,
+	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
@@ -52,6 +55,7 @@ describe( 'reducer', () => {
 			'mediaItemRequests',
 			'selectedItems',
 			'transientItems',
+			'fetching',
 		] );
 	} );
 
@@ -941,6 +945,122 @@ describe( 'reducer', () => {
 					},
 				} );
 			} );
+		} );
+	} );
+
+	describe( 'fetching()', () => {
+		const state1 = {
+			2916284: {
+				items: {
+					[ 10 ]: true,
+				},
+			},
+		};
+
+		const state2 = {
+			2916284: {
+				items: {
+					...state1[ 2916284 ].items,
+					[ 20 ]: true,
+				},
+			},
+		};
+
+		const state3 = {
+			2916284: {
+				nextPage: false,
+			},
+		};
+
+		const state4 = {
+			2916284: {
+				nextPage: true,
+			},
+		};
+
+		test( 'should default to an empty object', () => {
+			const state = fetching( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should track media item requesting', () => {
+			const state = fetching( deepFreeze( {} ), {
+				type: MEDIA_ITEM_REQUEST,
+				siteId: 2916284,
+				mediaId: 10,
+			} );
+
+			expect( state ).to.deep.eql( state1 );
+		} );
+
+		test( 'should accumulate requests', () => {
+			const state = fetching( deepFreeze( state1 ), {
+				type: MEDIA_ITEM_REQUEST,
+				siteId: 2916284,
+				mediaId: 20,
+			} );
+
+			expect( state ).to.deep.eql( state2 );
+		} );
+
+		test( 'should track media item request success', () => {
+			const state = fetching( deepFreeze( state2 ), {
+				type: MEDIA_ITEM_REQUEST_SUCCESS,
+				siteId: 2916284,
+				mediaId: 20,
+			} );
+
+			expect( state ).to.deep.eql( state1 );
+		} );
+
+		test( 'should track media item request failures', () => {
+			const state = fetching( deepFreeze( state2 ), {
+				type: MEDIA_ITEM_REQUEST_FAILURE,
+				siteId: 2916284,
+				mediaId: 20,
+			} );
+
+			expect( state ).to.deep.eql( state1 );
+		} );
+
+		test( 'should track media request', () => {
+			const state = fetching( deepFreeze( state3 ), {
+				type: MEDIA_REQUEST,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.deep.eql( state4 );
+		} );
+
+		test( 'should track media request success', () => {
+			const state = fetching( deepFreeze( state4 ), {
+				type: MEDIA_REQUEST_SUCCESS,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.deep.eql( state3 );
+		} );
+
+		test( 'should track media request failures', () => {
+			const state = fetching( deepFreeze( state4 ), {
+				type: MEDIA_REQUEST_FAILURE,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.deep.eql( state3 );
+		} );
+
+		test( 'should never persist state', () => {
+			const state = fetching( deepFreeze( state1 ), { type: SERIALIZE } );
+
+			expect( state ).to.be.undefined;
+		} );
+
+		test( 'should never load persisted state', () => {
+			const state = fetching( deepFreeze( state1 ), { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );
