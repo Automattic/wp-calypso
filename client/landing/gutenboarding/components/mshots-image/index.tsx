@@ -31,7 +31,7 @@ const MshotsImage: React.FunctionComponent< Props > = ( { src, alt } ) => {
 			const response = await window.fetch( mShotsEndpointUrl, {
 				method: 'GET',
 				mode: 'cors',
-				// cache: 'no-cache',
+				cache: 'no-cache',
 			} );
 
 			if ( response.ok && response.headers.get( 'Content-Type' ) === 'image/jpeg' ) {
