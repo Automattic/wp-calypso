@@ -20,7 +20,6 @@ import {
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING,
 	MEDIA_SOURCE_CHANGE,
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
@@ -183,7 +182,7 @@ export const queries = ( () => {
 
 export const queryRequests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
-		case MEDIA_REQUESTING: {
+		case MEDIA_REQUEST: {
 			const { siteId, query } = action;
 			return {
 				...state,

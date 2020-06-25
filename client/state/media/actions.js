@@ -21,7 +21,6 @@ import {
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING,
 	MEDIA_SOURCE_CHANGE,
 } from 'state/action-types';
 
@@ -61,22 +60,6 @@ export function receiveMedia( siteId, media, found, query ) {
 export function requestMedia( siteId, query ) {
 	return {
 		type: MEDIA_REQUEST,
-		siteId,
-		query,
-	};
-}
-
-/**
- * Returns an action object used in signalling that media item(s) for the site
- * are being requested.
- *
- * @param  {number} siteId Site ID
- * @param  {object} query  Query object
- * @returns {object}        Action object
- */
-export function requestingMedia( siteId, query ) {
-	return {
-		type: MEDIA_REQUESTING,
 		siteId,
 		query,
 	};

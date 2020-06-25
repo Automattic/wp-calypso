@@ -15,19 +15,11 @@ import {
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
-	requestingMedia,
-	requestingMediaItem,
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'state/media/actions';
 
 describe( 'media request', () => {
-	test( 'should dispatch REQUESTING action when request triggers', () => {
-		expect( requestMedia( { siteId: 2916284, query: 'a=b' } ) ).toEqual(
-			expect.arrayContaining( [ requestingMedia( 2916284, 'a=b' ) ] )
-		);
-	} );
-
 	test( 'should dispatch SUCCESS action when request completes', () => {
 		expect(
 			requestMediaSuccess(
@@ -75,7 +67,6 @@ describe( 'handleMediaItemRequest', () => {
 		};
 		expect( handleMediaItemRequest( action ) ).toEqual(
 			expect.arrayContaining( [
-				requestingMediaItem( siteId ),
 				http(
 					{
 						apiVersion: '1.2',

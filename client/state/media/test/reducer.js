@@ -26,7 +26,6 @@ import {
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING,
 	SERIALIZE,
 } from 'state/action-types';
 import {
@@ -473,7 +472,7 @@ describe( 'reducer', () => {
 
 		test( 'should track media requesting', () => {
 			const state = queryRequests( deepFreeze( {} ), {
-				type: MEDIA_REQUESTING,
+				type: MEDIA_REQUEST,
 				siteId: 2916284,
 				query: query1,
 			} );
@@ -483,7 +482,7 @@ describe( 'reducer', () => {
 
 		test( 'should accumulate queries', () => {
 			const state = queryRequests( deepFreeze( state1 ), {
-				type: MEDIA_REQUESTING,
+				type: MEDIA_REQUEST,
 				siteId: 2916284,
 				query: query2,
 			} );
