@@ -42,6 +42,7 @@ import { waitForData } from 'state/data-layer/http-data';
 import { requestGeoLocation } from 'state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
+import Experiment, { DefaultVariation, Variation, LoadingVariations } from 'components/experiment';
 
 /**
  * Constants
@@ -261,6 +262,44 @@ export default {
 
 		if ( flowName !== 'launch-site' ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
+		}
+
+		if ( flowName === 'onboarding' ) {
+			context.primary = (
+				<Experiment name="domainStepPlanStepSwap">
+					<DefaultVariation>
+						<SignupComponent
+							store={ context.store }
+							path={ context.path }
+							initialContext={ initialContext }
+							locale={ context.params.lang }
+							flowName={ flowName }
+							queryObject={ query }
+							refParameter={ query && query.ref }
+							stepName={ stepName }
+							stepSectionName={ stepSectionName }
+							stepComponent={ stepComponent }
+							pageTitle={ getFlowPageTitle( flowName ) }
+						/>
+					</DefaultVariation>
+					<Variation name="variantShowSwapped">
+						<SignupComponent
+							store={ context.store }
+							path={ context.path }
+							initialContext={ initialContext }
+							locale={ context.params.lang }
+							flowName="onboarding-plan-first"
+							queryObject={ query }
+							refParameter={ query && query.ref }
+							stepName={ stepName }
+							stepSectionName={ stepSectionName }
+							stepComponent={ stepComponent }
+							pageTitle={ getFlowPageTitle( flowName ) }
+						/>
+					</Variation>
+				</Experiment>
+			);
+			next();
 		}
 
 		context.primary = React.createElement( SignupComponent, {
