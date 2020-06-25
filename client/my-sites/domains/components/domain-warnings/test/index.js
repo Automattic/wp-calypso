@@ -417,11 +417,11 @@ describe( 'index', () => {
 	} );
 
 	describe( 'Ruleset filtering', () => {
-		test( 'should only process whitelisted renderers', () => {
+		test( 'should only process allowed renderers', () => {
 			const props = {
 				translate: identity,
 				domain: { name: 'example.com' },
-				ruleWhiteList: [],
+				allowedRules: [],
 				selectedSite: {},
 				moment,
 			};
@@ -435,7 +435,7 @@ describe( 'index', () => {
 			const props = {
 				translate: identity,
 				domain: { name: 'example.com' },
-				ruleWhiteList: [ 'getDomains' ],
+				allowedRules: [ 'getDomains' ],
 				selectedSite: {},
 				moment,
 			};
