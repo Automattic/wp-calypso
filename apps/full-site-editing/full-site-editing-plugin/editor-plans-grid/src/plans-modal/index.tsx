@@ -23,11 +23,11 @@ const PlansModal: React.FunctionComponent< Props > = ( { isOpen, onClose, ...pro
 
 	const header = (
 		<div>
-			<h1 className="wp-brand-font">{ __( 'Choose a plan', 'full-site-editing' ) }</h1>
+			{ /* eslint-disable @wordpress/i18n-text-domain */ }
+			<h1 className="wp-brand-font">{ __( 'Choose a plan' ) }</h1>
 			<p>
 				{ __(
-					'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.',
-					'full-site-editing'
+					'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
 				) }
 			</p>
 		</div>
