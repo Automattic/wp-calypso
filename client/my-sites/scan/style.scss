@@ -72,7 +72,7 @@
 .scan__subheader {
 	margin: 20px 16px 8px;
 
-	font-family: 'Recoleta', Georgia, 'Times New Roman', Times, serif;
+	font-family: $brand-serif;
 	font-size: $font-title-small;
 
 	@include breakpoint-deprecated( '>660px' ) {
