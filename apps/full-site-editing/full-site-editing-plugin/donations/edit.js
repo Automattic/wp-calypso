@@ -27,6 +27,25 @@ const Edit = () => {
 		setIsLoading( false );
 	};
 
+	const hasRequiredProducts = ( resultProducts ) => {
+		const USDDonations = resultProducts.filter(
+			( product ) => product.currency === 'USD' && product.type === 'donation'
+		);
+
+		if ( ! USDDonations.length ) {
+			return;
+		}
+
+		const intervals = [];
+		USDDonations.forEach( ( donation ) => intervals.push( donation.interval ) );
+
+		return (
+			intervals.includes( 'one-time' ) &&
+			intervals.includes( '1 month' ) &&
+			intervals.includes( '1 year' )
+		);
+	};
+
 	const mapStatusToState = ( result ) => {
 		if ( ( ! result && typeof result !== 'object' ) || result.errors ) {
 			setLoadingError( __( 'Could not load data from WordPress.com.', 'full-site-editing' ) );
@@ -35,7 +54,7 @@ const Edit = () => {
 			setUpgradeUrl( result.upgrade_url );
 			setStripeConnectUrl( result.connect_url );
 
-			if ( result.products.length ) {
+			if ( result.products.length && hasRequiredProducts( result.products ) ) {
 				setProducts( result.products );
 			} else {
 				fetchDefaultProducts( 'USD' ).then(
