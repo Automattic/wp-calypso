@@ -5,8 +5,8 @@
 
 	&__error, &__rerun {
 		text-align: center;
-		font-size: $font-body;
-		line-height: 24px;
+		font-size: $font-body-small;
+		line-height: 20px;
 		color: var( --studio-gray-40 );
 		margin-top: 24px;
 	}
@@ -16,7 +16,6 @@
 		border: initial;
 		font-weight: normal;
 		vertical-align: initial;
-		font-size: initial;
 		color: var( --color-link );
 		background: inherit;
 
