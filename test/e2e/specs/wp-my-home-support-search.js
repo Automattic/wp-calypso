@@ -35,7 +35,7 @@ before( async function () {
 describe( `[${ host }] Accessing support search: (${ screenSize })`, async function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'My Home "Get help" support search card', function () {
+	describe( 'My Home "Get help" support search card @parallel', function () {
 		step( 'Login and select a non My Home page', async function () {
 			const loginFlow = new LoginFlow( driver );
 
@@ -94,6 +94,22 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 			supportSearchComponent = await SupportSearchComponent.Expect( driver );
 			const resultsCount = await supportSearchComponent.getSearchResultsCount();
 			assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
+		} );
+
+		step( 'Returns search results for valid search query', async function () {
+			await supportSearchComponent.searchFor( 'Podcast' );
+			const resultsCount = await supportSearchComponent.getSearchResultsCount();
+
+			assert.equal(
+				resultsCount <= 5,
+				true,
+				`Too many search results displayed. Should be less than or equal to 5 (was ${ resultsCount }).`
+			);
+			assert.equal(
+				resultsCount >= 1,
+				true,
+				`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsCount }).`
+			);
 		} );
 	} );
 } );

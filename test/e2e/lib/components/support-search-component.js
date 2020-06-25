@@ -10,8 +10,10 @@ import assert from 'assert';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
-const searchInputSelector = By.css( '.inline-help__search input[type="search"]' );
-const searchResultsSelector = By.css(
+const searchInputSelectors = By.css(
+	'.inline-help__search input[type="search"], .help-search__search input[type="search"]'
+);
+const searchResultsSelectors = By.css(
 	'.inline-help__results-list .inline-help__results-item, .help-search__results-list .help-search__results-item'
 );
 
@@ -39,7 +41,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async getSearchResults() {
-		return await this.driver.findElements( searchResultsSelector );
+		return await this.driver.findElements( searchResultsSelectors );
 	}
 
 	async getSearchResultsCount() {
@@ -48,14 +50,14 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async searchFor( query = '' ) {
-		await driverHelper.setWhenSettable( this.driver, searchInputSelector, query );
+		await driverHelper.setWhenSettable( this.driver, searchInputSelectors, query );
 		const val = await this.getSearchInputValue();
 		assert.strictEqual( val, query, `Failed to correctly set search input value to ${ query }` );
 		return await this.waitForResults();
 	}
 
 	async getSearchInputValue() {
-		return await this.driver.findElement( searchInputSelector ).getAttribute( 'value' );
+		return await this.driver.findElement( searchInputSelectors ).getAttribute( 'value' );
 	}
 
 	async clearSearchField() {
