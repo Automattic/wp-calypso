@@ -428,7 +428,6 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
 				/>
-
 				<div id="g-recaptcha"></div>
 			</>
 		);
