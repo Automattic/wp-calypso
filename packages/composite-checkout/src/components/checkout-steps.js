@@ -153,7 +153,7 @@ export function CheckoutStepArea( { children, className } ) {
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
 	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
 	const onSubmitButtonLoadError = useCallback(
-		( error ) => onEvent( { type: 'SUBMIT_BUTTON_LOAD_ERROR', payload: error.message } ),
+		( error ) => onEvent( { type: 'SUBMIT_BUTTON_LOAD_ERROR', payload: error } ),
 		[ onEvent ]
 	);
 
@@ -288,7 +288,7 @@ export function CheckoutStep( {
 			onEvent( {
 				type: 'STEP_LOAD_ERROR',
 				payload: {
-					message: error.message,
+					message: error,
 					stepId,
 				},
 			} ),

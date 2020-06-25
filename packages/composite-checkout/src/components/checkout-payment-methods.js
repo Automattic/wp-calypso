@@ -30,7 +30,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const onError = useCallback(
-		( error ) => onEvent( { type: 'PAYMENT_METHOD_LOAD_ERROR', payload: error.message } ),
+		( error ) => onEvent( { type: 'PAYMENT_METHOD_LOAD_ERROR', payload: error } ),
 		[ onEvent ]
 	);
 
