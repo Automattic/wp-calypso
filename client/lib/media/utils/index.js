@@ -28,6 +28,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getFileExtension } from 'lib/media/utils/get-file-extension';
 import { getMimeType } from 'lib/media/utils/get-mime-type';
 import { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
+import { getAllowedFileTypesForSite } from 'lib/media/utils/get-allowed-file-types-for-site';
 
 const { uniqueId } = impureLodash;
 
@@ -43,20 +44,7 @@ export { getMimePrefix } from 'lib/media/utils/get-mime-prefix';
 export { filterItemsByMimePrefix } from 'lib/media/utils/filter-items-by-mime-prefix';
 export { sortItemsByDate } from 'lib/media/utils/sort-items-by-date';
 export { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
-
-/**
- * Returns an array of supported file extensions for the specified site.
- *
- * @param  {object} site Site object
- * @returns {Array}      Supported file extensions
- */
-export function getAllowedFileTypesForSite( site ) {
-	if ( ! site ) {
-		return [];
-	}
-
-	return site.options.allowed_file_types;
-}
+export { getAllowedFileTypesForSite } from 'lib/media/utils/get-allowed-file-types-for-site';
 
 /**
  * Returns true if the specified item is a valid file in a Premium plan,
