@@ -18,10 +18,11 @@ export default class CheckoutErrorBoundary extends React.Component {
 		return { currentError: error, hasError: true };
 	}
 
-	componentDidCatch( error ) {
+	componentDidCatch( error, errorInfo ) {
 		if ( this.props.onError ) {
-			debug( 'reporting error', error );
-			this.props.onError( error );
+			const errorMessage = `${ error.message }; Stack: ${ error.stack }; Component Stack: ${ errorInfo.componentStack }`;
+			debug( 'reporting the error', errorMessage );
+			this.props.onError( errorMessage );
 		}
 	}
 

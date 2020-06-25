@@ -99,7 +99,7 @@ export default function CheckoutSystemDecider( {
 					extra: {
 						env: config( 'env_id' ),
 						type: 'checkout_system_decider',
-						message: String( error.message ),
+						message: String( error ),
 					},
 				} )
 			);

@@ -103,7 +103,7 @@ export const CheckoutProvider = ( props ) => {
 	const { __ } = useI18n();
 	const errorMessage = __( 'Sorry, there was an error loading this page.' );
 	const onError = useCallback(
-		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error.message } ),
+		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error } ),
 		[ onEvent ]
 	);
 	return (
