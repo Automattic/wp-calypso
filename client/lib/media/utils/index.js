@@ -3,7 +3,6 @@
  */
 import path from 'path';
 import { includes, omitBy, startsWith, get } from 'lodash';
-import { isUri } from 'valid-url';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:media' );
 
@@ -19,13 +18,15 @@ import {
 	GallerySizeableTypes,
 	GalleryDefaultAttrs,
 	ValidationErrors as MediaValidationErrors,
-} from './constants';
+} from 'lib/media/constants';
 import { stringify } from 'lib/shortcode';
 import impureLodash from 'lib/impure-lodash';
 import versionCompare from 'lib/version-compare';
 import { getUrlParts } from 'lib/url';
 import wpcom from 'lib/wp';
 import { getEditorPostId } from 'state/ui/editor/selectors';
+
+import { getFileExtension } from 'lib/media/utils/get-file-extension';
 
 const { uniqueId } = impureLodash;
 
@@ -35,49 +36,7 @@ const { uniqueId } = impureLodash;
 const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
 
 export { url } from 'lib/media/utils/url';
-
-/**
- * Given a media string, File, or object, returns the file extension.
- *
- * @example
- * getFileExtension( 'example.gif' );
- * getFileExtension( { URL: 'https://wordpress.com/example.gif' } );
- * getFileExtension( new window.File( [''], 'example.gif' ) );
- * // All examples return 'gif'
- *
- * @param  {(string|window.File|object)} media Media object or string
- * @returns {string}                     File extension
- */
-export function getFileExtension( media ) {
-	let extension;
-
-	if ( ! media ) {
-		return;
-	}
-
-	const isString = 'string' === typeof media;
-	const isFileObject = 'File' in window && media instanceof window.File;
-
-	if ( isString ) {
-		let filePath;
-		if ( isUri( media ) ) {
-			filePath = getUrlParts( media ).pathname;
-		} else {
-			filePath = media;
-		}
-
-		extension = path.extname( filePath ).slice( 1 );
-	} else if ( isFileObject ) {
-		extension = path.extname( media.name ).slice( 1 );
-	} else if ( media.extension ) {
-		extension = media.extension;
-	} else {
-		const pathname = getUrlParts( media.URL || media.file || media.guid || '' ).pathname || '';
-		extension = path.extname( pathname ).slice( 1 );
-	}
-
-	return extension;
-}
+export { getFileExtension } from 'lib/media/utils/get-file-extension';
 
 /**
  * Given a media string or object, returns the MIME type prefix.
