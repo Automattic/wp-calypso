@@ -18,12 +18,12 @@ import {
 } from 'state/current-user/selectors';
 
 /**
- * These reporters are added to _all_ performance tracking metrics.
- * Be sure to add only reporters that make sense for all metrics and are always present.
+ * This reporter is added to _all_ performance tracking metrics.
+ * Be sure to add only metrics that make sense for tracked pages and are always present.
  *
  * @param state redux state
  */
-const getDefaultCollector = ( state ) => {
+const buildDefaultCollector = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteIsSingleUser = isSingleUserSite( state, siteId );
@@ -40,23 +40,28 @@ const getDefaultCollector = ( state ) => {
 	};
 };
 
+const buildMetadataCollector = ( metadata = {} ) => {
+	return ( reporter ) => {
+		Object.entries( metadata ).forEach( ( [ key, value ] ) => reporter.data.set( key, value ) );
+	};
+};
+
 const isPerformanceTrackingEnabled = () => {
 	const isEnabledForEnvironment = config.isEnabled( CONFIG_NAME );
 	const isEnabledForCurrentInteraction = abtest( AB_NAME ) === AB_VARIATION_ON;
 	return isEnabledForEnvironment && isEnabledForCurrentInteraction;
 };
 
-export const startPerformanceTracking = (
-	name,
-	{ fullPageLoad = false, collectors = [] } = {}
-) => {
+export const startPerformanceTracking = ( name, { fullPageLoad = false } = {} ) => {
 	if ( isPerformanceTrackingEnabled() ) {
-		start( name, { fullPageLoad, collectors } );
+		start( name, { fullPageLoad } );
 	}
 };
 
-export const stopPerformanceTracking = ( name, state, { collectors = [] } = {} ) => {
+export const stopPerformanceTracking = ( name, { state = {}, metadata = {} } = {} ) => {
 	if ( isPerformanceTrackingEnabled() ) {
-		stop( name, { collectors: [ getDefaultCollector( state ), ...collectors ] } );
+		stop( name, {
+			collectors: [ buildDefaultCollector( state ), buildMetadataCollector( metadata ) ],
+		} );
 	}
 };
