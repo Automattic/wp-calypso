@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/inline-help/init';
+
+/**
  * Returns an array of all search results for a given search query or `null`
  * if there are no results for that query.
  *

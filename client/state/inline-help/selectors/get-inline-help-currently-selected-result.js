@@ -11,6 +11,8 @@ import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-
 import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
 import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
 
+import 'state/inline-help/init';
+
 /**
  * Returns the selected search result item
  *

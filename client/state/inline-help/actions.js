@@ -20,6 +20,7 @@ import {
 } from 'state/action-types';
 
 import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
+import 'state/inline-help/init';
 
 /**
  * Fetches search results for a given query string.
