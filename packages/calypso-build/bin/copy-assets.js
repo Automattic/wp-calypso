@@ -21,6 +21,7 @@ const copyOptions = {
 		'**/*.png',
 		'**/*.svg',
 		'**/*.scss',
+		'**/package.json',
 		'!**/test/**',
 	],
 	concurrency: 127,

@@ -10,7 +10,7 @@
 		"clean": "check-npm-client && npx rimraf dist",
 		"prepublish": "check-npm-client && yarn run clean",
 		"prepare": "check-npm-client && run-s build:modules build:bundle",
-		"build:modules": "check-npm-client && transpile",
+		"build:modules": "check-npm-client && transpile && copy-assets",
 		"build:bundle": "check-npm-client && webpack --display errors-only"
 	},
 	"keywords": [
@@ -32,10 +32,6 @@
 		"History.md",
 		"README.md"
 	],
-	"browser": {
-		"./dist/cjs/lib/util/fs.js": "./dist/cjs/lib/util/fs-browser.js",
-		"./dist/esm/lib/util/fs.js": "./dist/esm/lib/util/fs-browser.js"
-	},
 	"dependencies": {
 		"@babel/runtime": "^7.8.3",
 		"debug": "^4.1.1",
