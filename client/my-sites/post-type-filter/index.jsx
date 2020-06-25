@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { compact, find, flow, includes, reduce } from 'lodash';
+import { compact, find, flow, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,19 +56,6 @@ export class PostTypeFilter extends Component {
 		return reduce(
 			counts,
 			( memo, count, status ) => {
-				// * Always add 'publish' and 'draft' tabs
-				// * Add all tabs in all-sites mode
-				// * Add all tabs in JP mode, for CPTs
-				// * In all other cases, add status tabs only if there's at least one post/CPT with that status
-				if (
-					siteId &&
-					! ( jetpack && query.type !== 'post' ) &&
-					! count &&
-					! includes( [ 'publish', 'draft' ], status )
-				) {
-					return memo;
-				}
-
 				let label, pathStatus;
 				switch ( status ) {
 					case 'publish':
