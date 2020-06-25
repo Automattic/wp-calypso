@@ -38,23 +38,7 @@ export { isVideoPressItem } from 'lib/media/utils/is-videopress-item';
 export { playtime } from 'lib/media/utils/playtime';
 export { getThumbnailSizeDimensions } from 'lib/media/utils/get-thumbnail-size-dimensions';
 export { generateGalleryShortcode } from 'lib/media/utils/generate-gallery-shortcode';
-
-/**
- * Returns true if the specified user is capable of deleting the media
- * item, or false otherwise.
- *
- * @param  {object}  item Media item
- * @param  {object}  user User object
- * @param  {object}  site Site object
- * @returns {boolean}      Whether user can delete item
- */
-export function canUserDeleteItem( item, user, site ) {
-	if ( user.ID === item.author_ID ) {
-		return site.capabilities.delete_posts;
-	}
-
-	return site.capabilities.delete_others_posts;
-}
+export { canUserDeleteItem } from 'lib/media/utils/can-user-delete-item';
 
 /**
  * Wrapper method for the HTML canvas toBlob() function. Polyfills if the
