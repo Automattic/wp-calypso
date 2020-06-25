@@ -40,20 +40,7 @@ export { getThumbnailSizeDimensions } from 'lib/media/utils/get-thumbnail-size-d
 export { generateGalleryShortcode } from 'lib/media/utils/generate-gallery-shortcode';
 export { canUserDeleteItem } from 'lib/media/utils/can-user-delete-item';
 export { canvasToBlob } from 'lib/media/utils/canvas-to-blob';
-
-/**
- * Returns true if specified item is currently being uploaded (i.e. is transient).
- *
- * @param  {object}  item Media item
- * @returns {boolean}      Whether item is being uploaded
- */
-export function isItemBeingUploaded( item ) {
-	if ( ! item ) {
-		return null;
-	}
-
-	return !! item.transient;
-}
+export { isItemBeingUploaded } from 'lib/media/utils/is-item-being-uploaded';
 
 export function isTransientPreviewable( item ) {
 	return !! ( item && item.URL );
