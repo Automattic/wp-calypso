@@ -83,6 +83,11 @@ const BrandLogo = styled.span`
 	top: ${ ( props ) => ( props.isSummary ? '0' : '15px' ) };
 	right: ${ ( props ) => ( props.isSummary ? '0' : '10px' ) };
 	transform: translateY( ${ ( props ) => ( props.isSummary ? '4px' : '0' ) } );
+
+	.rtl & {
+		right: auto;
+		left: ${ ( props ) => ( props.isSummary ? '0' : '10px' ) };
+	}
 `;
 
 const LockIconGraphic = styled( LockIcon )`
@@ -92,6 +97,11 @@ const LockIconGraphic = styled( LockIcon )`
 	top: 14px;
 	width: 20px;
 	height: 20px;
+
+	.rtl & {
+		right: auto;
+		left: 10px;
+	}
 `;
 
 const SmallBrandLogo = styled( BrandLogo )`

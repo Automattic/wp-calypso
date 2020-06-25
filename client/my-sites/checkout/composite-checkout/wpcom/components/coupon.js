@@ -114,7 +114,7 @@ const ApplyButton = styled( Button )`
 	margin: 0;
 
 	.rtl & {
-		animation-name: ${ animateInRTL }
+		animation-name: ${ animateInRTL };
 		left: 4px;
 		right: auto;
 	}
