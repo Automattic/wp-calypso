@@ -3,6 +3,7 @@
  */
 import edit from './edit';
 import save from './save';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 
 /**
  * WordPress dependencies
@@ -10,7 +11,7 @@ import save from './save';
 import { __ } from '@wordpress/i18n';
 
 const name = 'premium-content/subscriber-view';
-const category = 'common';
+const category = getCategoryWithFallbacks( 'design', 'common' );
 const settings = {
 	name,
 	category,

@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './edit';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 import './style.scss';
 
 const icon = (
@@ -22,7 +23,7 @@ registerBlockType( 'a8c/navigation-menu', {
 	title: __( 'Navigation Menu', 'full-site-editing' ),
 	description: __( 'Visual placeholder for site-wide navigation and menus.', 'full-site-editing' ),
 	icon,
-	category: 'layout',
+	category: getCategoryWithFallbacks( 'design', 'layout' ),
 	supports: {
 		align: [ 'wide', 'full', 'right', 'left' ],
 		html: false,

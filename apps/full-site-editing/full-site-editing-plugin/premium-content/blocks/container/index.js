@@ -12,9 +12,10 @@ import { select } from '@wordpress/data';
  */
 import edit from './edit';
 import save from './save';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 
 const name = 'premium-content/container';
-const category = 'common';
+const category = getCategoryWithFallbacks( 'design', 'common' );
 
 const blockContainsPremiumBlock = ( block ) => {
 	if ( block.name.indexOf( 'premium-content/' ) === 0 ) {
