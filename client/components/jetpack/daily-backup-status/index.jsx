@@ -96,7 +96,9 @@ class DailyBackupStatus extends Component {
 
 		// We should only showing the summarized ActivityCard for Real-time sites when the latest backup is not a full backup
 		const showBackupDetails =
-			hasRealtimeBackups && 'rewind__backup_complete_full' !== backup.activityName;
+			hasRealtimeBackups &&
+			( 'rewind__backup_complete_full' !== backup.activityName ||
+				'rewind__backup_only_complete_full' !== backup.activityName );
 
 		return (
 			<>

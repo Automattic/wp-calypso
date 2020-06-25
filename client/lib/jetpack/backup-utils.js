@@ -25,7 +25,8 @@ export const isActivityItemDateEqual = ( activityDateString, targetDateString ) 
 export const getBackupAttemptsForDate = ( logs, targetDateString ) => ( {
 	complete: logs.filter(
 		( item ) =>
-			'rewind__backup_complete_full' === item.activityName &&
+			( 'rewind__backup_complete_full' === item.activityName ||
+				'rewind__backup_only_complete_full' === item.activityName ) &&
 			isActivityItemDateEqual( item.activityDate, targetDateString )
 	),
 	error: logs.filter(
@@ -137,7 +138,9 @@ export const isActivityBackup = ( activity ) => {
 	return (
 		'rewind__backup_complete_full' === activity.activityName ||
 		'rewind__backup_complete_initial' === activity.activityName ||
-		'rewind__backup_error' === activity.activityName
+		'rewind__backup_error' === activity.activityName ||
+		'rewind__backup_only_complete_full' === activity.activityName ||
+		'rewind__backup_only_complete_initial' === activity.activityName
 	);
 };
 
@@ -173,7 +176,9 @@ export const getRealtimeBackups = ( logs, date ) => {
 export const isSuccessfulDailyBackup = ( backup ) => {
 	return (
 		'rewind__backup_complete_full' === backup.activityName ||
-		'rewind__backup_complete_initial' === backup.activityName
+		'rewind__backup_complete_initial' === backup.activityName ||
+		'rewind__backup_only_complete_full' === backup.activityName ||
+		'rewind__backup_only_complete_initial' === backup.activityName
 	);
 };
 
