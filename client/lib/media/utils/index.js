@@ -26,9 +26,8 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 
 import { getFileExtension } from 'lib/media/utils/get-file-extension';
 import { getMimeType } from 'lib/media/utils/get-mime-type';
-import { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
-import { getAllowedFileTypesForSite } from 'lib/media/utils/get-allowed-file-types-for-site';
 import { isSupportedFileTypeInPremium } from 'lib/media/utils/is-supported-file-type-in-premium';
+import { isSupportedFileTypeForSite } from 'lib/media/utils/is-supported-file-type-for-site';
 
 const { uniqueId } = impureLodash;
 
@@ -46,29 +45,7 @@ export { sortItemsByDate } from 'lib/media/utils/sort-items-by-date';
 export { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
 export { getAllowedFileTypesForSite } from 'lib/media/utils/get-allowed-file-types-for-site';
 export { isSupportedFileTypeInPremium } from 'lib/media/utils/is-supported-file-type-in-premium';
-
-/**
- * Returns true if the specified item is a valid file for the given site,
- * or false otherwise. A file is valid if the sites allowable file types
- * contains the item's type.
- *
- * @param  {object}  item Media object
- * @param  {object}  site Site object
- * @returns {boolean}      Whether the site supports the item
- */
-export function isSupportedFileTypeForSite( item, site ) {
-	if ( ! site || ! item ) {
-		return false;
-	}
-
-	if ( ! isSiteAllowedFileTypesToBeTrusted( site ) ) {
-		return true;
-	}
-
-	return getAllowedFileTypesForSite( site ).some( function ( allowed ) {
-		return allowed.toLowerCase() === item.extension.toLowerCase();
-	} );
-}
+export { isSupportedFileTypeForSite } from 'lib/media/utils/is-supported-file-type-for-site';
 
 /**
  * Returns true if the specified item exceeds the maximum upload size for
