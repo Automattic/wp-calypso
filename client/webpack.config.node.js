@@ -19,7 +19,6 @@ const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const nodeExternals = require( 'webpack-node-externals' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 
 /**
@@ -43,20 +42,9 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
  */
 function getExternals() {
 	return [
-		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
-		// with modules that are incompatible with webpack bundling.
-		//
-		nodeExternals( {
-			whitelist: [
-				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
-				// non-JS asset imports that couldn't be processed by Node.js at runtime.
-				'@automattic/components',
-
-				// Ensure that file-loader files imported from packages in node_modules are
-				// _not_ externalized and can be processed by the fileLoader.
-				fileLoader.test,
-			],
-		} ),
+		'webpack',
+		'webpack-dev-middleware',
+		'webpack-hot-middleware',
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
 		// to the path of the `build/bundle.js` bundle.
 		{
@@ -133,6 +121,9 @@ const webpackConfig = {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			// The `formidable` package (used by `superagent`) contains conditional code that hijacks
+			// the `require` function. That breaks webpack.
+			'global.GENTLY': false,
 		} ),
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
