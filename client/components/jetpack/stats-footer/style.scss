@@ -23,7 +23,7 @@
 }
 
 .stats-footer__stat {
-	font-size: 20px;
+	font-size: $font-title-small;
 	margin: 0 24px 20px 0;
 	flex: 1;
 	max-width: 110px;
@@ -34,7 +34,7 @@
 }
 
 .stats-footer__stat-number {
-	font-size: 28px;
+	font-size: $font-title-large;
 	display: block;
 }
 
