@@ -319,3 +319,13 @@ function load_donations() {
 	require_once __DIR__ . '/donations/donations.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_donations' );
+
+/**
+ * Load WordPress.com color scheme.
+ */
+function load_colors() {
+	if ( defined( 'WPCOM_BLOCK_EDITOR_COLORS' ) && WPCOM_BLOCK_EDITOR_COLORS ) {
+		require_once __DIR__ . '/colors/index.php';
+	}
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_colors' );
