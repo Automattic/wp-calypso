@@ -201,6 +201,14 @@ ABTest.prototype.getVariation = function () {
 	return this.getSavedVariation( this.experimentId );
 };
 
+function getUserLocaleSlug() {
+	const userInstance = user().get();
+	if ( userInstance && userInstance.localeSlug ) {
+		return userInstance.localeSlug;
+	}
+	return 'en';
+}
+
 export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 	const client = typeof navigator !== 'undefined' ? window.navigator : {};
 	const clientLanguage = client.language || client.userLanguage || 'en';
@@ -208,7 +216,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
 	const localeFromSession = getLocaleSlug() || 'en';
 	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
-	const userLocale = user().get().localeSlug || 'en';
+	const userLocale = getUserLocaleSlug();
 
 	if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
 		debug( '%s: User has a %s locale', experimentId, userLocale );

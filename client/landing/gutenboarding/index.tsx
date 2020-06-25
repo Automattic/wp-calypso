@@ -19,6 +19,7 @@ import config from '../../config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore, User as UserStore } from '@automattic/data-stores';
+import { abtest } from '../../lib/abtest';
 
 /**
  * Internal dependencies
@@ -132,6 +133,8 @@ window.AppBoot = async () => {
 		</I18nProvider>,
 		document.getElementById( 'wpcom' )
 	);
+
+	abtest( 'showBusinessPlanBump' );
 };
 
 /**
