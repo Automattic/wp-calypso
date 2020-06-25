@@ -94,10 +94,12 @@ export class SearchPurchase extends Component {
 		const { currentUrl } = this.state;
 
 		// we enable WP.com sites
-		if ( status === IS_DOT_COM_GET_SEARCH || status === ALREADY_CONNECTED ) {
-			const product = window.location.pathname.split( '/' ).pop();
+		if ( status === IS_DOT_COM_GET_SEARCH ) {
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/wpcom_search' );
+		}
 
-			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + product );
+		if ( status === ALREADY_CONNECTED ) {
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/jetpack_search' );
 		}
 
 		processJpSite( currentUrl );
