@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { CheckoutPaymentMethodSlug } from './checkout-payment-method-slug';
+import type { CartItemExtra } from 'lib/cart-values/types';
 
 /**
  * Amount object as used by composite-checkout. If that
@@ -35,7 +36,7 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		plan_length?: string;
 		product_id: number;
 		product_slug: string;
-		extra: object;
+		extra: CartItemExtra;
 		volume?: number;
 		item_original_cost_display: string;
 		item_original_cost_integer: number;
