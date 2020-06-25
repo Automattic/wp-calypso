@@ -114,5 +114,13 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 				`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsCount }).`
 			);
 		} );
+
+		step( 'Resets search UI to default state when search input is cleared ', async function () {
+			await supportSearchComponent.clearSearchField();
+
+			const resultsCount = await supportSearchComponent.getSearchResultsCount();
+
+			assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
+		} );
 	} );
 } );

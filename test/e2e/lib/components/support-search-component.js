@@ -63,7 +63,9 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	async clearSearchField() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.inline-help__search [role="search"] [aria-label="Close Search"]' )
+			By.css(
+				'.inline-help__search [role="search"] [aria-label="Close Search"], .help-search__search [role="search"] [aria-label="Close Search"]'
+			)
 		);
 		const val = await this.getSearchInputValue();
 		assert.equal( val, '', `Failed to correctly clear search input using clear UI` );
