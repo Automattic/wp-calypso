@@ -32,6 +32,10 @@ class ListAll extends Component {
 		page( getDomainManagementPath( domain.domain, domain.type, site.slug, currentRoute ) );
 	};
 
+	handleAddEmailClick = () => {
+		// TODO
+	};
+
 	isLoading() {
 		const { domainsList, requestingDomains } = this.props;
 		return requestingDomains && domainsList.length === 0;
@@ -50,7 +54,9 @@ class ListAll extends Component {
 				<DomainItem
 					key={ `${ index }-${ domain.name }` }
 					domain={ domain }
+					showSite={ true }
 					onClick={ this.handleDomainItemClick }
+					onAddEmailClick={ this.handleAddEmailClick }
 				/>
 			) );
 	}
