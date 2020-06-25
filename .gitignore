@@ -77,4 +77,7 @@ cached-requests.json
 /desktop/config
 /desktop/public
 /desktop/release
+/desktop/resource/certificates/mac.p12
+/desktop/resource/certificates/win.p12
 /client/desktop/config.json
+/desktop/id_rsa
