@@ -16,7 +16,7 @@ export const scanPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ scanBasePath() }/${ siteSlug }` : scanBasePath();
 
 const calypsoBasePath = () =>
-	abtest( 'jetpackSidebarSection' ) !== 'showJetpackSidebarSection'
+	abtest( 'jetpackSidebarSection' ) === 'showJetpackSidebarSection'
 		? '/settings/jetpack'
 		: '/settings/security';
 

@@ -9,9 +9,7 @@ import page from 'page';
 import { makeLayout, render as clientRender, notFound } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
-import { siteHasScanProductPurchase } from 'state/purchases/selectors';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
-import isRewindActive from 'state/selectors/is-rewind-active';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { jetpack } from './controller';
 
@@ -19,10 +17,8 @@ const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const showJetpackSection = isJetpackSectionEnabledForSite( state, siteId );
-	const hasScanProduct = siteHasScanProductPurchase( state, siteId );
-	const hasActiveRewind = isRewindActive( state, siteId );
 
-	if ( ! showJetpackSection || ( ! hasScanProduct && ! hasActiveRewind ) ) {
+	if ( ! showJetpackSection ) {
 		return notFound( context, next );
 	}
 
