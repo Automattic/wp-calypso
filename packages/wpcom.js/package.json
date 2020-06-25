@@ -4,12 +4,12 @@
 	"version": "6.0.0",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:main": "src/index.js",
 	"author": "Automattic, Inc.",
 	"private": true,
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && run-s build:modules build:bundle",
+		"build": "check-npm-client && run-s build:modules build:bundle",
 		"build:modules": "check-npm-client && transpile && copy-assets",
 		"build:bundle": "check-npm-client && webpack --display errors-only"
 	},

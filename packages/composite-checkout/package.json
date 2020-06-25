@@ -4,11 +4,11 @@
 	"description": "A checkout component for Automattic brands",
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
+	"calypso:main": "src/public-api.js",
 	"sideEffects": false,
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile"
+		"build": "check-npm-client && transpile"
 	},
 	"files": [
 		"dist",

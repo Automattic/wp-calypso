@@ -4,6 +4,7 @@
 	"description": "React helpers for tracking viewport changes",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:main": "src/index.js",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -26,8 +27,7 @@
 	},
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile"
+		"build": "check-npm-client && transpile"
 	},
 	"publishConfig": {
 		"access": "public"

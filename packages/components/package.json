@@ -7,6 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:main": "src/index.js",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -41,7 +42,6 @@
 	},
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__components*\"",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile && tsc && copy-assets"
+		"build": "check-npm-client && transpile && tsc && copy-assets"
 	}
 }

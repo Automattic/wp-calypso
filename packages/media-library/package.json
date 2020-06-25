@@ -7,6 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:main": "src/index.ts",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -26,7 +27,6 @@
 	"dependencies": {},
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist types \"../../.tsc-cache/packages__media-library*\"",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile && tsc && copy-assets"
+		"build": "check-npm-client && transpile && tsc && copy-assets"
 	}
 }
