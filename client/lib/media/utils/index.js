@@ -8,14 +8,9 @@ const debug = debugFactory( 'calypso:media' );
  * Internal dependencies
  */
 import { reduxGetState } from 'lib/redux-bridge';
-import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
 import { getUrlParts } from 'lib/url';
 import wpcom from 'lib/wp';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-
-import { isSupportedFileTypeInPremium } from 'lib/media/utils/is-supported-file-type-in-premium';
-import { isSupportedFileTypeForSite } from 'lib/media/utils/is-supported-file-type-for-site';
-import { isExceedingSiteMaxUploadSize } from 'lib/media/utils/is-exceeding-site-max-upload-size';
 
 export { url } from 'lib/media/utils/url';
 export { getFileExtension } from 'lib/media/utils/get-file-extension';
@@ -37,35 +32,7 @@ export { canvasToBlob } from 'lib/media/utils/canvas-to-blob';
 export { isItemBeingUploaded } from 'lib/media/utils/is-item-being-uploaded';
 export { isTransientPreviewable } from 'lib/media/utils/is-transient-previewable';
 export { createTransientMedia } from 'lib/media/utils/create-transient-media';
-
-/**
- * Validates a media item for a site, and returns validation errors (if any).
- *
- * @param  {object}      site Site object
- * @param  {object}      item Media item
- * @returns {Array|null}      Validation errors, or null if no site.
- */
-export function validateMediaItem( site, item ) {
-	const itemErrors = [];
-
-	if ( ! site ) {
-		return;
-	}
-
-	if ( ! isSupportedFileTypeForSite( item, site ) ) {
-		if ( isSupportedFileTypeInPremium( item, site ) ) {
-			itemErrors.push( MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN );
-		} else {
-			itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
-		}
-	}
-
-	if ( true === isExceedingSiteMaxUploadSize( item, site ) ) {
-		itemErrors.push( MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE );
-	}
-
-	return itemErrors;
-}
+export { validateMediaItem } from 'lib/media/utils/validate-media-item';
 
 /**
  * Given a media file URL (possibly served through photon) and site slug, returns information
