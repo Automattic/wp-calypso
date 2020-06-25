@@ -1,0 +1,16 @@
+@import '~@automattic/color-studio/dist/color-variables';
+@import '~@wordpress/base-styles/mixins';
+
+/**
+ * WordPress.com brand colors for Block editor
+ */
+
+// Most of the UI is blue
+:root body {
+	@include wpcom_admin-scheme( $studio-blue-40 );
+}
+
+// Primary buttons are pink
+.components-button.is-primary {
+	@include wpcom_admin-scheme( $studio-pink-50 );
+}
