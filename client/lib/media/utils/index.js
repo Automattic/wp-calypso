@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import path from 'path';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:media' );
 
@@ -10,18 +9,13 @@ const debug = debugFactory( 'calypso:media' );
  */
 import { reduxGetState } from 'lib/redux-bridge';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
-import impureLodash from 'lib/impure-lodash';
 import { getUrlParts } from 'lib/url';
 import wpcom from 'lib/wp';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
-import { getFileExtension } from 'lib/media/utils/get-file-extension';
-import { getMimeType } from 'lib/media/utils/get-mime-type';
 import { isSupportedFileTypeInPremium } from 'lib/media/utils/is-supported-file-type-in-premium';
 import { isSupportedFileTypeForSite } from 'lib/media/utils/is-supported-file-type-for-site';
 import { isExceedingSiteMaxUploadSize } from 'lib/media/utils/is-exceeding-site-max-upload-size';
-
-const { uniqueId } = impureLodash;
 
 export { url } from 'lib/media/utils/url';
 export { getFileExtension } from 'lib/media/utils/get-file-extension';
@@ -42,64 +36,7 @@ export { canUserDeleteItem } from 'lib/media/utils/can-user-delete-item';
 export { canvasToBlob } from 'lib/media/utils/canvas-to-blob';
 export { isItemBeingUploaded } from 'lib/media/utils/is-item-being-uploaded';
 export { isTransientPreviewable } from 'lib/media/utils/is-transient-previewable';
-
-/**
- * Returns an object describing a transient media item which can be used in
- * optimistic rendering prior to media persistence to server.
- *
- * @param  {(string|object|window.Blob|window.File)} file URL or File object
- * @returns {object}                         Transient media object
- */
-export function createTransientMedia( file ) {
-	const transientMedia = {
-		transient: true,
-		ID: uniqueId( 'media-' ),
-	};
-
-	if ( 'string' === typeof file ) {
-		// Generate from string
-		Object.assign( transientMedia, {
-			file: file,
-			title: path.basename( file ),
-			extension: getFileExtension( file ),
-			mime_type: getMimeType( file ),
-		} );
-	} else if ( file.thumbnails ) {
-		// Generate from a file data object
-		Object.assign( transientMedia, {
-			file: file.URL,
-			title: file.name,
-			caption: file.caption || '',
-			extension: file.extension,
-			mime_type: file.mime_type,
-			guid: file.URL,
-			URL: file.URL,
-			external: true,
-		} );
-	} else {
-		// Handle the case where a an object has been passed that wraps a
-		// Blob and contains a fileName
-		const fileContents = file.fileContents || file;
-		const fileName = file.fileName || file.name;
-
-		// Generate from window.File object
-		const fileUrl = window.URL.createObjectURL( fileContents );
-
-		Object.assign( transientMedia, {
-			URL: fileUrl,
-			guid: fileUrl,
-			file: fileName,
-			title: file.title || path.basename( fileName ),
-			extension: getFileExtension( file.fileName || fileContents ),
-			mime_type: getMimeType( file.fileName || fileContents ),
-			// Size is not an API media property, though can be useful for
-			// validation purposes if known
-			size: fileContents.size,
-		} );
-	}
-
-	return transientMedia;
-}
+export { createTransientMedia } from 'lib/media/utils/create-transient-media';
 
 /**
  * Validates a media item for a site, and returns validation errors (if any).
