@@ -201,13 +201,6 @@ export class UserStep extends Component {
 		} );
 	};
 
-	save = ( form ) => {
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			form,
-		} );
-	};
-
 	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
