@@ -67,6 +67,9 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 			// Card can take a little while to display, so let's wait...
 			await driverHelper.waitTillPresentAndDisplayed( driver, helpCardSelector );
 
+			// For safety also scroll into viewport - also helps when visually verify test runs.
+			await driverHelper.scrollIntoView( driver, helpCardSelector );
+
 			// Verify it is there.
 			const isGetHelpCardPresent = await driverHelper.isElementPresent( driver, helpCardSelector );
 			assert.equal(
