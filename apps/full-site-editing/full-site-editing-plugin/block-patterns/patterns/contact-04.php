@@ -58,10 +58,10 @@ $markup = '
 // phpcs:enable WordPress.WP.CapitalPDangit.Misspelled
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Contact', 'full-site-editing' ),
-	'categories' => array( 'contact' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Contact', 'full-site-editing' ),
+	'categories'    => array( 'contact' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Burger Brothers', 'full-site-editing' ),
 		esc_html__( '123 Example St, San Francisco,', 'full-site-editing' ),
@@ -77,4 +77,5 @@ return array(
 		esc_html__( 'Sunday:', 'full-site-editing' ),
 		esc_html__( 'Closed', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

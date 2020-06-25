@@ -18,7 +18,7 @@ export function usePerformanceTrackerStop() {
 	// Use `useLayoutEffect` + rAF to be as close as possible to the actual rendering
 	useLayoutEffect( () => {
 		requestAnimationFrame( () => {
-			stopPerformanceTracking( sectionName, store.getState() );
+			stopPerformanceTracking( sectionName, { state: store.getState() } );
 		} );
 	}, [ sectionName, store ] );
 }

@@ -185,7 +185,7 @@
 		margin-top: 0;
 	}
 
-	.domain-types__auto-renew-placeholder {
+	.domain-types__auto-renew-placeholder, .domain-types__expires-placeholder {
 		width: 20%;
 		p {
 			@include placeholder( --color-neutral-5 );

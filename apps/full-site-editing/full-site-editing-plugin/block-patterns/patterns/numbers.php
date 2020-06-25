@@ -40,9 +40,9 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Numbers', 'full-site-editing' ),
-	'categories' => array( 'text' ),
-	'content'    => sprintf(
+	'title'         => esc_html__( 'Numbers', 'full-site-editing' ),
+	'categories'    => array( 'text' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( '1,652', 'full-site-editing' ),
 		esc_html__( 'Volunteers available', 'full-site-editing' ),
@@ -51,4 +51,5 @@ return array(
 		esc_html__( '1,927', 'full-site-editing' ),
 		esc_html__( 'Matches last year', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

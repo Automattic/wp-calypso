@@ -39,7 +39,7 @@ import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { WrapDomainStatusButtons } from './helpers';
+import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
@@ -356,7 +356,7 @@ class RegisteredDomainType extends React.Component {
 				domain={ this.props.domain }
 				position="registered-domain"
 				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [ 'newTransfersWrongNS', 'pendingConsent' ] }
+				allowedRules={ [ 'newTransfersWrongNS', 'pendingConsent' ] }
 			/>
 		);
 	}
@@ -366,7 +366,7 @@ class RegisteredDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase, moment } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -412,19 +412,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<div>
-						{ domain.expired
-							? this.props.translate( 'Expired: %(expiry_date)s', {
-									args: {
-										expiry_date: moment( domain.expiry ).format( 'LL' ),
-									},
-							  } )
-							: this.props.translate( 'Expires: %(expiry_date)s', {
-									args: {
-										expiry_date: moment( domain.expiry ).format( 'LL' ),
-									},
-							  } ) }
-					</div>
+					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
 						<WrapDomainStatusButtons>
@@ -470,7 +458,7 @@ export default connect(
 		return {
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			isLoadingPurchase:
-				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},

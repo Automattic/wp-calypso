@@ -25,7 +25,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { WrapDomainStatusButtons } from './helpers';
+import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
 class SiteRedirectType extends React.Component {
 	resolveStatus() {
@@ -108,7 +108,7 @@ class SiteRedirectType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase, moment } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -131,13 +131,7 @@ class SiteRedirectType extends React.Component {
 					/>
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<div>
-						{ this.props.translate( 'Expires: %(expiry_date)s', {
-							args: {
-								expiry_date: moment( domain.expiry ).format( 'LL' ),
-							},
-						} ) }
-					</div>
+					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
 						<WrapDomainStatusButtons>
@@ -174,7 +168,7 @@ export default connect(
 		return {
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			isLoadingPurchase:
-				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		};
 	},
 	{

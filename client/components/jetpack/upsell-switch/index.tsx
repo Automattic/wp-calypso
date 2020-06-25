@@ -10,6 +10,7 @@ import classNames from 'classnames';
  */
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import isAtomicSite from 'state/selectors/is-site-wpcom-atomic';
 import Main from 'components/main';
 
 type QueryComponentProps = {
@@ -35,32 +36,47 @@ type Props = {
 	getStateForSite: QueryFunction;
 	siteId: number | null;
 	siteState: SiteState | null;
+	atomicSite: boolean;
 };
 
 function UpsellSwitch( props: Props ): React.ReactElement {
-	const { UpsellComponent, display, children, QueryComponent, siteId, siteState } = props;
+	const {
+		UpsellComponent,
+		display,
+		children,
+		QueryComponent,
+		siteId,
+		siteState,
+		atomicSite,
+	} = props;
 
 	const [ { showUpsell, isLoading }, setState ] = useState( {
 		showUpsell: true,
 		isLoading: true,
 	} );
+
 	useEffect( () => {
+		// Show loading placeholder, the site's state isn't initialized
 		if ( ! siteState || siteState?.state === 'uninitialized' ) {
 			return setState( {
 				isLoading: true,
 				showUpsell: true,
 			} );
 		}
-		const { state } = siteState;
-		if ( state === 'unavailable' ) {
+
+		// Show the expected content. It's distinct to unavailable (active, inactive, provisioning)
+		// or if it's an Atomic site
+		if ( siteState.state !== 'unavailable' || atomicSite ) {
 			return setState( {
 				isLoading: false,
-				showUpsell: true,
+				showUpsell: false,
 			} );
 		}
+
+		// Show the upsell page
 		return setState( {
 			isLoading: false,
-			showUpsell: false,
+			showUpsell: true,
 		} );
 	}, [ siteState ] );
 
@@ -83,9 +99,11 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 export default connect( ( state, ownProps: Props ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteState = ownProps.getStateForSite( state, siteId );
+	const atomicSite = siteId && isAtomicSite( state, siteId );
 
 	return {
 		siteId,
 		siteState,
+		atomicSite,
 	};
 } )( UpsellSwitch );

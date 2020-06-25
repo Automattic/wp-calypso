@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/inline-help/init';
+
+/**
  * Returns a bool indicating if the inline help popover is currently showing.
  *
  * @param  {object}  state  Global state tree

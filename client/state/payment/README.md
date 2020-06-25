@@ -11,7 +11,7 @@ Stores the two-letter code which represents the country that is currently used a
 
 ## Reducers
 
-The included reducers add the following keys to the global state tree, under `ui.payment`:
+The included reducers add the following keys to the global state tree, under `payment`:
 
 ### `countryCode`
 

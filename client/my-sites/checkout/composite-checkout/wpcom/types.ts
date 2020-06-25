@@ -42,6 +42,7 @@ import type {
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
+	WPCOMCartCreditsItem,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
 } from './types/checkout-cart';
@@ -81,6 +82,7 @@ export type {
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
+	WPCOMCartCreditsItem,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
 	WpcomStoreState,

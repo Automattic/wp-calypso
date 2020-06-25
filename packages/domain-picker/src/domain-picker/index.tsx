@@ -53,7 +53,7 @@ export interface Props {
 	domainSuggestionVendor: string;
 
 	/** The initial domain search query */
-	initialDomainSearch: string;
+	initialDomainSearch?: string;
 
 	/** Called when the domain search query is changed */
 	onSetDomainSearch: ( value: string ) => void;
@@ -68,7 +68,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	analyticsFlowId,
 	analyticsUiAlgo,
 	domainSuggestionVendor,
-	initialDomainSearch,
+	initialDomainSearch = '',
 	onSetDomainSearch,
 } ) => {
 	const { __ } = useI18n();
@@ -154,6 +154,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<Icon icon={ search } />
 				</div>
 				<TextControl
+					// Unable to remove this instance due to it being a HotJar term: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
 					data-hj-whitelist
 					hideLabelFromVision
 					label={ label }

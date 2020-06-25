@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { find, get, has } from 'lodash';
+import { get, has } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { PAYMENT_COUNTRY_CODE_SET, PAYMENT_POSTAL_CODE_SET } from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import { paymentCountryCodeSchema, paymentPostalCodeSchema } from './schema';
+import { extractStoredCardMetaValue } from './util';
 
 /**
  * Checkout Flux Bridge
@@ -19,9 +20,6 @@ import { paymentCountryCodeSchema, paymentPostalCodeSchema } from './schema';
 import { registerActionForward } from 'lib/redux-bridge';
 registerActionForward( 'TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' );
 registerActionForward( 'TRANSACTION_PAYMENT_SET' );
-
-export const extractStoredCardMetaValue = ( action, meta_key ) =>
-	( find( get( action, 'payment.storedCard.meta' ), { meta_key } ) || {} ).meta_value;
 
 /**
  * Returns the updated state after a country code has been set.
@@ -91,7 +89,9 @@ export const postalCode = withSchemaValidation(
 	}
 );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	countryCode,
 	postalCode,
 } );
+
+export default withStorageKey( 'payment', combinedReducer );

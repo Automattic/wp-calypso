@@ -24,11 +24,12 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Headline', 'full-site-editing' ),
-	'categories' => array( 'text' ),
-	'content'    => sprintf(
+	'title'         => esc_html__( 'Headline', 'full-site-editing' ),
+	'categories'    => array( 'text' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Eat Dessert First is for my love of food and sharing my favorites with you.', 'full-site-editing' ),
 		esc_html__( 'Hi, I’m Lillie. Previously a magazine editor, I became a full-time mother and freelance writer in 2017. I spend most of my time with my kids and husband over at The Brown Bear Family.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

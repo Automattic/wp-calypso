@@ -45,9 +45,15 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				location: {},
 				display_taxes: true,
 			},
+			locale: 'US',
+			is_signup: false,
 			savings_total: 0,
 			savings_total_display: 'R$0',
 			savings_total_integer: 0,
+			coupon_savings_total: 0,
+			coupon_savings_total_display: '0',
+			coupon_savings_total_integer: 0,
+			is_coupon_applied: true,
 			sub_total: '144',
 			sub_total_display: 'R$144',
 			sub_total_integer: 14400,
@@ -96,7 +102,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected credits', function () {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
-			expect( clientCart.credits.amount.displayValue ).toBe( 'R$100' );
+			expect( clientCart.credits.amount.displayValue ).toBe( '- R$100' );
 		} );
 		it( 'has the expected coupon', function () {
 			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
@@ -232,9 +238,18 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				location: {},
 				display_taxes: true,
 			},
-			savings_total: -88,
-			savings_total_display: '-R$88',
-			savings_total_integer: -8800,
+			locale: 'US',
+			is_signup: false,
+			savings_total: 88,
+			savings_total_display: 'R$88',
+			savings_total_integer: 8800,
+			coupon_savings_total: 88,
+			coupon_savings_total_display: '- R$88',
+			coupon_savings_total_integer: 8800,
+			is_coupon_applied: false,
+			credits: 0,
+			credits_integer: 0,
+			credits_display: '0',
 			sub_total: '144',
 			sub_total_display: 'R$144',
 			sub_total_integer: 14400,
@@ -480,9 +495,18 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				location: {},
 				display_taxes: true,
 			},
-			savings_total: -88,
-			savings_total_display: '-R$88',
-			savings_total_integer: -8800,
+			locale: 'US',
+			is_signup: false,
+			savings_total: 88,
+			savings_total_display: 'R$88',
+			savings_total_integer: 8800,
+			coupon_savings_total: 88,
+			coupon_savings_total_display: '- R$88',
+			coupon_savings_total_integer: 8800,
+			is_coupon_applied: false,
+			credits: 0,
+			credits_integer: 0,
+			credits_display: '0',
 			sub_total: '216',
 			sub_total_display: '$216',
 			sub_total_integer: 21600,
@@ -643,9 +667,14 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				location: {},
 				display_taxes: true,
 			},
-			savings_total: -17,
-			savings_total_display: '-$17',
-			savings_total_integer: -1700,
+			locale: 'US',
+			is_signup: false,
+			savings_total: 17,
+			savings_total_display: '$17',
+			savings_total_integer: 1700,
+			coupon_savings_total: 17,
+			coupon_savings_total_display: '$17',
+			coupon_savings_total_integer: 1700,
 			sub_total: '127',
 			sub_total_display: '$127',
 			sub_total_integer: 12700,
@@ -695,7 +724,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected credits', function () {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'USD' );
-			expect( clientCart.credits.amount.displayValue ).toBe( '$100' );
+			expect( clientCart.credits.amount.displayValue ).toBe( '- $100' );
 		} );
 		it( 'has the expected coupon', function () {
 			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
@@ -763,7 +792,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.coupon.id ).toBeDefined();
 			} );
 			it( 'has the expected label', function () {
-				expect( clientCart.coupon.label ).toBe( 'Total savings' );
+				expect( clientCart.coupon.label ).toBe( 'Coupon: fakecoupon' );
 			} );
 			it( 'has the expected type', function () {
 				expect( clientCart.coupon.type ).toBe( 'coupon' );
@@ -772,10 +801,10 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.coupon.amount.currency ).toBe( 'USD' );
 			} );
 			it( 'has the expected value', function () {
-				expect( clientCart.coupon.amount.value ).toBe( -1700 );
+				expect( clientCart.coupon.amount.value ).toBe( 1700 );
 			} );
 			it( 'has the expected display value', function () {
-				expect( clientCart.coupon.amount.displayValue ).toBe( '-$17' );
+				expect( clientCart.coupon.amount.displayValue ).toBe( '- $17' );
 			} );
 		} );
 
@@ -864,9 +893,15 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				location: {},
 				display_taxes: true,
 			},
+			locale: 'US',
+			is_signup: false,
 			savings_total: 0,
 			savings_total_display: 'R$0',
 			savings_total_integer: 0,
+			coupon_savings_total: 0,
+			coupon_savings_total_display: '0',
+			coupon_savings_total_integer: 0,
+			is_coupon_applied: true,
 			sub_total: '144',
 			sub_total_display: 'R$144',
 			sub_total_integer: 14400,
@@ -907,7 +942,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			expect( clientCart.items ).toBeDefined();
 		} );
 		it( 'has the expected number of line items', function () {
-			expect( clientCart.items.length ).toBe( 2 );
+			expect( clientCart.items.length ).toBe( 1 );
 		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
@@ -915,13 +950,12 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected credits', function () {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
-			expect( clientCart.credits.amount.displayValue ).toBe( 'R$100' );
+			expect( clientCart.credits.amount.displayValue ).toBe( '- R$100' );
 		} );
-		it( 'does not show an original price for the credits item', function () {
-			const creditsItem = clientCart.items.find( ( item ) => {
-				return 'wordpress-com-credits' === item.type;
-			} );
-			expect( creditsItem.wpcom_meta.item_original_cost_display ).toBe( '' );
+		it( 'does not include the credits pseudo-line-item', function () {
+			expect(
+				clientCart.items.some( ( item ) => item.type === 'wordpress-com-credits' )
+			).toBeFalsy();
 		} );
 		it( 'has the expected coupon', function () {
 			expect( clientCart.couponCode ).toBe( 'fakecoupon' );

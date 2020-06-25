@@ -865,28 +865,20 @@ function handleUncaughtErrors( calypsoPort ) {
 	};
 }
 
-function handleEditorLoaded( calypsoPort ) {
-	const unsubscribe = subscribe( () => {
-		const store = select( 'core/editor' );
+async function handleEditorLoaded( calypsoPort ) {
+	await isEditorReadyWithBlocks();
+	const isNew = select( 'core/editor' ).isCleanNewPost();
+	const blocks = select( 'core/block-editor' ).getBlocks();
 
-		if ( typeof store.__unstableIsEditorReady !== 'function' ) {
-			// This is probably a very old veresion of the plugin, bail out.
-			unsubscribe();
-			return;
-		}
-
-		const isReady = store.__unstableIsEditorReady();
-		if ( isReady ) {
-			requestAnimationFrame( () => {
-				calypsoPort.postMessage( {
-					action: 'trackPerformance',
-					payload: {
-						mark: 'editor.ready',
-					},
-				} );
-			} );
-			unsubscribe();
-		}
+	requestAnimationFrame( () => {
+		calypsoPort.postMessage( {
+			action: 'trackPerformance',
+			payload: {
+				mark: 'editor.ready',
+				isNew,
+				blockCount: blocks.length,
+			},
+		} );
 	} );
 }
 

@@ -1,0 +1,6 @@
+{
+	"sideEffects": [
+		"./init.js",
+		"./reducer.js"
+	]
+}

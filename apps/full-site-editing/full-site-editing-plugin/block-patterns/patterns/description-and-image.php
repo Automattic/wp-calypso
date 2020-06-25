@@ -30,11 +30,12 @@ $markup = '
 ';
 
 return array(
-	'title'      => esc_html__( 'Description and Image', 'full-site-editing' ),
-	'categories' => array( 'images' ),
-	'content'    => sprintf(
+	'title'         => esc_html__( 'Description and Image', 'full-site-editing' ),
+	'categories'    => array( 'images' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'The artist is the creator of beautiful things. To reveal art and conceal the artist is art&#8217;s aim. The critic is he who can translate into another manner or a new material his impression of beautiful things.', 'full-site-editing' ),
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/leaf.jpg' )
 	),
+	'viewportWidth' => 1280,
 );

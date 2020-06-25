@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
-import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import FormSecurity from 'my-sites/site-settings/form-security';
 import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
+import JetpackCredentialsBanner from 'my-sites/site-settings/jetpack-credentials-banner';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
@@ -23,6 +23,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
+import { shouldDisplayJetpackCredentialsBanner } from 'state/site-settings/jetpack-credentials-banner/selectors';
 import { siteHasScanProductPurchase } from 'state/purchases/selectors';
 import isRewindActive from 'state/selectors/is-rewind-active';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -35,6 +36,7 @@ const SiteSettingsSecurity = ( {
 	hasScanProduct,
 	hasActiveRewind,
 	isJetpackSectionEnabled,
+	shouldDisplayBanner,
 	translate,
 } ) => {
 	if ( ! siteIsJetpack ) {
@@ -54,7 +56,8 @@ const SiteSettingsSecurity = ( {
 	// If Jetpack section is enabled, we no longer display the credentials here, instead we
 	// display a Banner with a CTA that points to their new location (Settings > Jetpack).
 	const showCredentials = ! isJetpackSectionEnabled && ( hasActiveRewind || hasScanProduct );
-	const showJetpackBanner = isJetpackSectionEnabled && ( hasActiveRewind || hasScanProduct );
+	const showJetpackBanner =
+		isJetpackSectionEnabled && ( hasActiveRewind || hasScanProduct ) && shouldDisplayBanner;
 
 	return (
 		<Main className="settings-security site-settings">
@@ -71,20 +74,7 @@ const SiteSettingsSecurity = ( {
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
-			{ showJetpackBanner && (
-				<Banner
-					callToAction="Take me there!"
-					title={ translate( 'Looking for Jetpack backups and security scans settings?' ) }
-					description={ translate(
-						"In order to simplify your experience we've moved these to their dedicated section under the Jetpack settings tab."
-					) }
-					dismissPreferenceName="backup-scan-security-settings-moved"
-					dismissTemporary
-					horizontal
-					href={ `/settings/jetpack/${ site.slug }` }
-					jetpack
-				/>
-			) }
+			{ showJetpackBanner && <JetpackCredentialsBanner siteSlug={ site.slug } /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
@@ -98,6 +88,7 @@ SiteSettingsSecurity.propTypes = {
 	hasScanProduct: PropTypes.bool,
 	hasActiveRewind: PropTypes.bool,
 	isJetpackSectionEnabled: PropTypes.bool,
+	shouldDisplayBanner: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
@@ -111,5 +102,6 @@ export default connect( ( state ) => {
 		hasScanProduct: siteHasScanProductPurchase( state, siteId ),
 		hasActiveRewind: isRewindActive( state, siteId ),
 		isJetpackSectionEnabled: isJetpackSectionEnabledForSite( state, siteId ),
+		shouldDisplayBanner: shouldDisplayJetpackCredentialsBanner( state ),
 	};
 } )( localize( SiteSettingsSecurity ) );

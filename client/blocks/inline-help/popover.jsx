@@ -41,7 +41,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
-import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 import { isEnabled } from 'config';
 
 class InlineHelpPopover extends Component {
@@ -181,7 +181,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderPrimaryView = () => {
-		const { translate, siteId, showOptIn, showOptOut, isCheckout } = this.props;
+		const { translate, siteId, showOptIn, showOptOut, isCheckout, editorDeprecated } = this.props;
 
 		// Don't show additional items inside Checkout.
 		if ( isCheckout ) {
@@ -191,7 +191,7 @@ class InlineHelpPopover extends Component {
 		return (
 			<>
 				<QueryActiveTheme siteId={ siteId } />
-				{ showOptOut && (
+				{ showOptOut && ! editorDeprecated && (
 					<Button
 						onClick={ this.switchToClassicEditor }
 						className="inline-help__classic-editor-toggle"
@@ -200,7 +200,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 				) }
 
-				{ showOptIn && (
+				{ showOptIn && ! editorDeprecated && (
 					<Button
 						onClick={ this.switchToBlockEditor }
 						className="inline-help__gutenberg-editor-toggle"
@@ -292,9 +292,7 @@ const optIn = ( siteId, gutenbergUrl ) => {
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
-	const classicUrl = isEnabled( 'editor/after-deprecation' )
-		? getWpAdminClassicEditorRedirectionUrl( state, siteId )
-		: `/${ currentRoute.replace( '/block-editor/', '' ) }`;
+	const classicRoute = currentRoute.replace( '/block-editor/', '' );
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
@@ -308,12 +306,13 @@ function mapStateToProps( state ) {
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		classicUrl,
+		classicUrl: `/${ classicRoute }`,
 		siteId,
 		showOptOut: showSwitchEditorButton && isGutenbergOptOutEnabled( state, siteId ),
 		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 		isCheckout: section.name && section.name === 'checkout',
+		editorDeprecated: isEnabled( 'editor/after-deprecation' ) && inEditorDeprecationGroup( state ),
 	};
 }
 

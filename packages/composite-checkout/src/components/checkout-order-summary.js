@@ -15,7 +15,6 @@ import {
 	useTotal,
 	renderDisplayValueMarkdown,
 } from '../public-api';
-import { useTranslate } from 'i18n-calypso';
 
 export default function CheckoutOrderSummaryStep() {
 	const [ items ] = useLineItems();
@@ -63,13 +62,13 @@ const CheckoutSummaryStepTotal = styled.span`
 `;
 
 export function CheckoutOrderSummary() {
-	const translate = useTranslate();
+	const { __ } = useI18n();
 	const taxes = useLineItemsOfType( 'tax' );
 	const total = useTotal();
 
 	return (
 		<CheckoutSummaryCard>
-			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
+			<CheckoutSummaryTitle>{ __( 'Purchase Details' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryAmountWrapper>
 				{ taxes.map( ( tax ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
@@ -78,7 +77,7 @@ export function CheckoutOrderSummary() {
 					</CheckoutSummaryLineItem>
 				) ) }
 				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
+					<span>{ __( 'Total' ) }</span>
 					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>

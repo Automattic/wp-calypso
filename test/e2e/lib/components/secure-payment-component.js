@@ -104,7 +104,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 					pauseBetweenKeysMS: pauseBetweenKeysMS,
 				}
 			);
-			driverHelper.clickWhenClickable(
+			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( `#country-selector option[value="${ cardCountryCode }"]` )
 			);
@@ -280,21 +280,25 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async hasCouponApplied() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.cart__remove-link' ) );
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			return driverHelper.isElementPresent(
+				this.driver,
+				By.css( '#checkout-line-item-coupon-line-item' )
+			);
+		}
+		return driverHelper.isElementPresent( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
 	async waitForCouponToBeApplied() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.savings-list' ) );
-			const savingsListElement = await this.driver.findElement( By.css( '.savings-list' ) );
-			const savingsListText = await savingsListElement.getText();
-			return savingsListText.includes( 'Coupon:' );
+			return driverHelper.waitTillPresentAndDisplayed(
+				this.driver,
+				By.css( '#checkout-line-item-coupon-line-item' )
+			);
 		}
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.cart__remove-link' )
-		);
+		return driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
 	async waitForCouponToBeRemoved() {
@@ -302,7 +306,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		if ( isCompositeCheckout ) {
 			return await driverHelper.waitTillNotPresent(
 				this.driver,
-				By.css( '.checkout-steps__step-content .savings-list__item[data-savings-type="coupon"]' )
+				By.css( '#checkout-line-item-coupon-line-item' )
 			);
 		}
 		return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
@@ -329,7 +333,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				this.driver,
 				By.css( '.checkout-modal .checkout-button.is-status-primary' )
 			);
-			// Make sure the coupon item in savings list is removed
+			// Make sure the coupon item is removed
 			return this.waitForCouponToBeRemoved();
 		}
 
