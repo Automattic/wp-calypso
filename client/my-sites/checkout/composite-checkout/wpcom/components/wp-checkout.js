@@ -200,6 +200,18 @@ export default function WPCheckout( {
 
 	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 
+	const onReviewError = useCallback(
+		( error ) =>
+			onEvent( {
+				type: 'STEP_LOAD_ERROR',
+				payload: {
+					message: error,
+					stepId: 'review',
+				},
+			} ),
+		[ onEvent ]
+	);
+
 	return (
 		<Checkout>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
@@ -220,6 +232,7 @@ export default function WPCheckout( {
 			</CheckoutSummaryArea>
 			<CheckoutStepArea>
 				<CheckoutStepBody
+					onError={ onReviewError }
 					className="wp-checkout__review-order-step"
 					stepId="review-order-step"
 					isStepActive={ isOrderReviewActive }
