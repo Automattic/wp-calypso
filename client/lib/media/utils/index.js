@@ -2,7 +2,6 @@
  * External dependencies
  */
 import path from 'path';
-import { includes, omitBy } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:media' );
 
@@ -10,13 +9,7 @@ const debug = debugFactory( 'calypso:media' );
  * Internal dependencies
  */
 import { reduxGetState } from 'lib/redux-bridge';
-import {
-	GalleryColumnedTypes,
-	GallerySizeableTypes,
-	GalleryDefaultAttrs,
-	ValidationErrors as MediaValidationErrors,
-} from 'lib/media/constants';
-import { stringify } from 'lib/shortcode';
+import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
 import impureLodash from 'lib/impure-lodash';
 import { getUrlParts } from 'lib/url';
 import wpcom from 'lib/wp';
@@ -44,56 +37,7 @@ export { isExceedingSiteMaxUploadSize } from 'lib/media/utils/is-exceeding-site-
 export { isVideoPressItem } from 'lib/media/utils/is-videopress-item';
 export { playtime } from 'lib/media/utils/playtime';
 export { getThumbnailSizeDimensions } from 'lib/media/utils/get-thumbnail-size-dimensions';
-
-/**
- * Given an array of media items, returns a gallery shortcode using an
- * optional set of parameters.
- *
- * @param  {object} settings Gallery settings
- * @returns {string}          Gallery shortcode
- */
-export function generateGalleryShortcode( settings ) {
-	let attrs;
-
-	if ( ! settings.items.length ) {
-		return;
-	}
-
-	// gallery images are passed in as an array of objects
-	// in settings.items but we just need the IDs set to attrs.ids
-	attrs = Object.assign(
-		{
-			ids: settings.items.map( ( item ) => item.ID ).join(),
-		},
-		settings
-	);
-
-	delete attrs.items;
-
-	if ( ! includes( GalleryColumnedTypes, attrs.type ) ) {
-		delete attrs.columns;
-	}
-
-	if ( ! includes( GallerySizeableTypes, attrs.type ) ) {
-		delete attrs.size;
-	}
-
-	attrs = omitBy( attrs, function ( value, key ) {
-		return GalleryDefaultAttrs[ key ] === value;
-	} );
-
-	// WordPress expects all lowercase
-	if ( attrs.orderBy ) {
-		attrs.orderby = attrs.orderBy;
-		delete attrs.orderBy;
-	}
-
-	return stringify( {
-		tag: 'gallery',
-		type: 'single',
-		attrs: attrs,
-	} );
-}
+export { generateGalleryShortcode } from 'lib/media/utils/generate-gallery-shortcode';
 
 /**
  * Returns true if the specified user is capable of deleting the media
