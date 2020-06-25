@@ -20,9 +20,7 @@ import versionCompare from 'lib/version-compare';
 import { redirect } from './utils';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
-import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -259,10 +257,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 		handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
-		isInstall() {
-			return includes( FLOW_TYPES, this.props.type );
-		}
-
 		render() {
 			return (
 				<WrappedComponent
@@ -272,6 +266,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 					renderFooter={ this.renderFooter }
 					renderNotices={ this.renderNotices }
 					isCurrentUrlFetching={ this.isCurrentUrlFetching() }
+					connectProps={ this.props }
 				/>
 			);
 		}
@@ -290,7 +285,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 			return {
 				// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 				getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
-				isLoggedIn: !! getCurrentUserId( state ),
 				isMobileAppFlow,
 				isRequestingSites: isRequestingSites( state ),
 				jetpackConnectSite,

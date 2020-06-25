@@ -34,10 +34,10 @@ export class JetpackConnectMain extends Component {
 		processJpSite: PropTypes.func,
 	};
 
-	state = this.props.url
+	state = this.props.connectProps.url
 		? {
-				currentUrl: cleanUrl( this.props.url ),
-				shownUrl: this.props.url,
+				currentUrl: cleanUrl( this.props.connectProps.url ),
+				shownUrl: this.props.connectProps.url,
 				waitingForSites: false,
 		  }
 		: {
@@ -47,30 +47,30 @@ export class JetpackConnectMain extends Component {
 		  };
 
 	UNSAFE_componentWillMount() {
-		if ( this.props.url ) {
-			this.checkUrl( cleanUrl( this.props.url ) );
+		if ( this.props.connectProps.url ) {
+			this.checkUrl( cleanUrl( this.props.connectProps.url ) );
 		}
 	}
 
 	componentDidMount() {
 		let from = 'direct';
-		if ( this.props.type === 'install' ) {
+		if ( this.props.connectProps.type === 'install' ) {
 			from = 'jpdotcom';
 		}
-		if ( this.props.type === 'pro' ) {
+		if ( this.props.connectProps.type === 'pro' ) {
 			from = 'ad';
 		}
-		if ( this.props.type === 'premium' ) {
+		if ( this.props.connectProps.type === 'premium' ) {
 			from = 'ad';
 		}
-		if ( this.props.type === 'personal' ) {
+		if ( this.props.connectProps.type === 'personal' ) {
 			from = 'ad';
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from,
-			cta_id: this.props.ctaId,
-			cta_from: this.props.ctaFrom,
+			cta_id: this.props.connectProps.ctaId,
+			cta_from: this.props.connectProps.ctaFrom,
 		} );
 	}
 
@@ -110,7 +110,7 @@ export class JetpackConnectMain extends Component {
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
 	isInstall() {
-		return includes( FLOW_TYPES, this.props.type );
+		return includes( FLOW_TYPES, this.props.connectProps.type );
 	}
 
 	renderSiteInput( status ) {
@@ -134,16 +134,21 @@ export class JetpackConnectMain extends Component {
 	}
 
 	renderLocaleSuggestions() {
-		if ( this.props.isLoggedIn || ! this.props.locale ) {
+		if ( this.props.isLoggedIn || ! this.props.connectProps.locale ) {
 			return;
 		}
 
-		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
+		return (
+			<LocaleSuggestions
+				path={ this.props.connectProps.path }
+				locale={ this.props.connectProps.locale }
+			/>
+		);
 	}
 
 	render() {
-		const { renderFooter, status, type } = this.props;
-
+		const { renderFooter, status } = this.props;
+		const { type } = this.props.connectProps;
 		return (
 			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
