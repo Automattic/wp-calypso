@@ -302,7 +302,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
  * Load WPCOM block editor nav sidebar
  */
 function load_wpcom_block_editor_sidebar() {
-	if ( defined( 'WPCOM_BLOCK_EDITOR_SIDEBAR' ) && WPCOM_BLOCK_EDITOR_SIDEBAR ) {
+	if (
+		( defined( 'WPCOM_BLOCK_EDITOR_SIDEBAR' ) && WPCOM_BLOCK_EDITOR_SIDEBAR ) ||
+		apply_filters( 'a8c_enable_nav_sidebar', false )
+	) {
 		require_once __DIR__ . '/wpcom-block-editor-nav-sidebar/class-wpcom-block-editor-nav-sidebar.php';
 	}
 }
