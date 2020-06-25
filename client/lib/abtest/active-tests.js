@@ -167,13 +167,4 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	jetpackSidebarSection: {
-		datestamp: '20200622',
-		variations: {
-			showJetpackSidebarSection: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };
