@@ -35,6 +35,11 @@ import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/wooc
 import { getSocialServiceFromClientId } from 'lib/login';
 import { abtest } from 'lib/abtest';
 import JetpackLogo from 'components/jetpack-logo';
+import Experiment, {
+	DefaultVariation,
+	Variation,
+	LoadingVariations,
+} from 'client/components/experiment';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -188,6 +193,13 @@ export class UserStep extends Component {
 
 		return false;
 	}
+
+	save = ( form ) => {
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			form,
+		} );
+	};
 
 	save = ( form ) => {
 		this.props.saveSignupStep( {
@@ -412,22 +424,45 @@ export class UserStep extends Component {
 
 		return (
 			<>
-				<SignupForm
-					{ ...omit( this.props, [ 'translate' ] ) }
-					redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
-					disabled={ this.userCreationStarted() }
-					submitting={ this.userCreationStarted() }
-					save={ this.save }
-					submitForm={ this.submitForm }
-					submitButtonText={ this.submitButtonText() }
-					suggestedUsername={ this.props.suggestedUsername }
-					handleSocialResponse={ this.handleSocialResponse }
-					isSocialSignupEnabled={ isSocialSignupEnabled }
-					socialService={ socialService }
-					socialServiceResponse={ socialServiceResponse }
-					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
-				/>
+				<Experiment name="user_home_test">
+					<DefaultVariation name="control">
+						<SignupForm
+							{ ...omit( this.props, [ 'translate' ] ) }
+							redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
+							disabled={ this.userCreationStarted() }
+							submitting={ this.userCreationStarted() }
+							save={ this.save }
+							submitForm={ this.submitForm }
+							submitButtonText={ this.submitButtonText() }
+							suggestedUsername={ this.props.suggestedUsername }
+							handleSocialResponse={ this.handleSocialResponse }
+							isSocialSignupEnabled={ isSocialSignupEnabled }
+							socialService={ socialService }
+							socialServiceResponse={ socialServiceResponse }
+							recaptchaClientId={ this.state.recaptchaClientId }
+							showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
+						/>
+					</DefaultVariation>
+					<Variation name="treatment">
+						<SignupForm
+							{ ...omit( this.props, [ 'translate' ] ) }
+							redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
+							disabled={ this.userCreationStarted() }
+							submitting={ this.userCreationStarted() }
+							save={ this.save }
+							submitForm={ this.submitForm }
+							submitButtonText={ this.submitButtonText() }
+							suggestedUsername={ this.props.suggestedUsername }
+							handleSocialResponse={ this.handleSocialResponse }
+							isSocialSignupEnabled={ isSocialSignupEnabled }
+							socialService={ socialService }
+							socialServiceResponse={ socialServiceResponse }
+							recaptchaClientId={ this.state.recaptchaClientId }
+							showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
+						/>
+					</Variation>
+				</Experiment>
+
 				<div id="g-recaptcha"></div>
 			</>
 		);
