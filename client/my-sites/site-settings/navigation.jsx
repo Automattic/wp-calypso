@@ -115,7 +115,8 @@ export default connect( ( state ) => {
 	return {
 		site,
 		shouldShowJetpackSettings:
-			isJetpackSectionEnabledForSite( state, site.ID ) &&
+			siteId &&
+			isJetpackSectionEnabledForSite( state, siteId ) &&
 			( siteHasScanProductPurchase( state, siteId ) || isRewindActive( state, siteId ) ),
 	};
 } )( localize( SiteSettingsNavigation ) );
