@@ -41,10 +41,7 @@ export { generateGalleryShortcode } from 'lib/media/utils/generate-gallery-short
 export { canUserDeleteItem } from 'lib/media/utils/can-user-delete-item';
 export { canvasToBlob } from 'lib/media/utils/canvas-to-blob';
 export { isItemBeingUploaded } from 'lib/media/utils/is-item-being-uploaded';
-
-export function isTransientPreviewable( item ) {
-	return !! ( item && item.URL );
-}
+export { isTransientPreviewable } from 'lib/media/utils/is-transient-previewable';
 
 /**
  * Returns an object describing a transient media item which can be used in
