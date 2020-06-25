@@ -279,6 +279,7 @@
 		"eslint-config-prettier": "^6.11.0",
 		"eslint-config-wpcalypso": "^5.0.0",
 		"eslint-plugin-import": "^2.20.0",
+		"eslint-plugin-inclusive-language": "^1.0.0",
 		"eslint-plugin-jest": "^23.6.0",
 		"eslint-plugin-jsdoc": "^18.11.0",
 		"eslint-plugin-jsx-a11y": "^6.2.3",

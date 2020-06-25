@@ -10748,6 +10748,11 @@ eslint-plugin-import@^2.20.0:
     read-pkg-up "^2.0.0"
     resolve "^1.12.0"
 
+eslint-plugin-inclusive-language@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-inclusive-language/-/eslint-plugin-inclusive-language-1.0.0.tgz#bf2222355065b344770be052a0fc3420a5bba7e5"
+  integrity sha512-O+dHXecD09zB4yaiFXy36KMm2Wt7bHskXF4LMJJLt3j+1956wZ68mH16h50PWwjiLZXcMtrAyBB9N9Vk9Gt84A==
+
 eslint-plugin-jest@^23.6.0:
   version "23.6.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.6.0.tgz#508b32f80d44058c8c01257c0ee718cfbd521e9d"
