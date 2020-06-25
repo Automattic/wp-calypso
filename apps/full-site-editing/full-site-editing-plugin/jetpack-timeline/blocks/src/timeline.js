@@ -6,9 +6,9 @@
  * External dependencies
  */
 
-import { InnerBlocks, BlockControls } from '@wordpress/block-editor';
+import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import { registerBlockType, createBlock } from '@wordpress/blocks';
-import { ToolbarButton } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
@@ -97,9 +97,13 @@ export function registerTimelineBlock() {
 
 			return (
 				<>
-					<BlockControls>
-						<ToolbarButton onClick={ toggleAlternate }>Toggle Alternating</ToolbarButton>
-					</BlockControls>
+					<InspectorControls>
+						<ToggleControl
+							label={ __( 'Alternate Items', 'full-site-editing' ) }
+							onChange={ toggleAlternate }
+							checked={ isAlternating }
+						/>
+					</InspectorControls>
 					<ul className={ classes }>
 						<InnerBlocks
 							allowedBlocks={ [ 'jetpack/timeline-item' ] }
