@@ -6,5 +6,7 @@ export { withStopPerformanceTrackingProp } from './with-stop-performance-trackin
 export { default as PerformanceTrackerStop } from './performance-tracker-stop';
 
 export type PerformanceTrackProps = {
-	stopPerformanceTracking: ( metadata: { [ key: string ]: string | boolean | number } ) => void;
+	stopPerformanceTracking: (
+		metadata: { [ key: string ]: string | boolean | number } = {}
+	) => void;
 };
