@@ -29,6 +29,7 @@ function enqueue_script_and_style() {
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/editor-domain-picker.asset.php';
 	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
 	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-domain-picker.js' );
+	$styles_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-domain-picker.css' );
 
 	wp_enqueue_script(
 		'a8c-fse-editor-domain-picker-script',
@@ -36,6 +37,13 @@ function enqueue_script_and_style() {
 		$script_dependencies,
 		$script_version,
 		true
+	);
+
+	wp_enqueue_style(
+		'a8c-fse-editor-domain-picker-styles',
+		plugins_url( 'dist/editor-domain-picker.css', __FILE__ ),
+		array(),
+		$styles_version
 	);
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );

@@ -1,28 +1,21 @@
 /**
  * External dependencies
  */
+import * as React from 'react';
 import 'a8c-fse-common-data-stores';
-import { select } from '@wordpress/data';
 
-/* eslint-disable no-console */
+import DomainPickerButton from './src/domain-picker-button';
+import * as ReactDOM from 'react-dom';
 
-console.log( "👋 Hi! I'm the editor-domain-picker bundle running!" );
-
-let results;
-let int: number | undefined = setInterval( () => {
-	results = select( 'automattic/domains/suggestions' ).getCategories();
-
-	if ( results.length ) {
-		// eslint-disable-next-line no-console
-		console.log( results );
-		clearInterval( int );
-		int = undefined;
+const awaitSettingsBar = setInterval( () => {
+	const settingsBar = document.querySelector( '.edit-post-header__settings' );
+	if ( ! settingsBar ) {
+		return;
 	}
+	clearInterval( awaitSettingsBar );
+
+	const domainPickerContainer = document.createElement( 'div' );
+	settingsBar.prepend( domainPickerContainer );
+
+	ReactDOM.render( React.createElement( DomainPickerButton ), domainPickerContainer );
 } );
-
-setTimeout( () => {
-	if ( int ) {
-		console.log( '😢 Timed out before we were able to get Domain Categories.' );
-		clearInterval( int );
-	}
-}, 5000 );
