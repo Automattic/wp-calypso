@@ -11,7 +11,6 @@ jest.mock( 'state/media/thunks/upload-media', () => ( { uploadMedia: jest.fn() }
 describe( 'media - thunks - addMedia', () => {
 	const site = Symbol( 'site' );
 	const file = Symbol( 'file' );
-	const transientDate = Symbol( 'transientDate' );
 	const dispatch = jest.fn();
 	const getState = jest.fn();
 
@@ -20,16 +19,8 @@ describe( 'media - thunks - addMedia', () => {
 	it( 'should dispatch to uploadMedia with the file uploader', async () => {
 		const uploader = jest.fn();
 		getFileUploader.mockReturnValueOnce( uploader );
-		await addMedia( site, file, transientDate );
-
-		expect( uploadMedia ).toHaveBeenCalledWith( site, file, uploader, transientDate );
-	} );
-
-	it( 'should default transientDate to undefined', async () => {
-		const uploader = jest.fn();
-		getFileUploader.mockReturnValueOnce( uploader );
 		await addMedia( site, file );
 
-		expect( uploadMedia ).toHaveBeenCalledWith( site, file, uploader, undefined );
+		expect( uploadMedia ).toHaveBeenCalledWith( file, site, uploader );
 	} );
 } );

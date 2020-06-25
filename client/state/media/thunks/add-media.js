@@ -7,11 +7,10 @@ import { getFileUploader } from 'lib/media/utils';
 /**
  * Upload a single media item
  *
- * @param {object} site The site for which to upload the file
- * @param {object} file The file to upload
- * @param {string?} transientDate Transient date to use for the file
+ * @param {object} site The site for which to upload the file(s)
+ * @param {object|object[]} file The file or files to upload
  */
-export const addMedia = ( site, file, transientDate = undefined ) => ( dispatch, getState ) => {
+export const addMedia = ( site, file ) => ( dispatch, getState ) => {
 	const uploader = getFileUploader( getState(), site, file );
-	return dispatch( uploadMedia( site, file, uploader, transientDate ) );
+	return dispatch( uploadMedia( file, site, uploader ) );
 };

@@ -16,6 +16,7 @@ import {
 	failMediaItemRequest,
 	setMediaItemErrors,
 } from 'state/media/actions';
+import serially from 'state/media/thunks/serially';
 
 /**
  * Add a single media item. Allow passing in the transient date so
@@ -27,15 +28,18 @@ import {
  * Note: Temporarily this action will dispatch to the flux store, until
  * the flux store is removed.
  *
- * @param {object} site The site to add the media to
  * @param {object} file The file to upload
+ * @param {object} site The site to add the media to
  * @param {Function} uploader The file uploader to use
  * @param {string?} transientDate Date for the transient item
  * @returns {import('redux-thunk').ThunkAction<Promise<object>, any, any, any>} A thunk resolving with the uploaded media item
  */
-export const uploadMedia = ( site, file, uploader, transientDate = getTransientDate() ) => async (
-	dispatch
-) => {
+export const uploadSingleMedia = (
+	file,
+	site,
+	uploader,
+	transientDate = getTransientDate()
+) => async ( dispatch ) => {
 	const transientMedia = {
 		date: transientDate,
 		...createTransientMedia( file ),
@@ -90,3 +94,5 @@ export const uploadMedia = ( site, file, uploader, transientDate = getTransientD
 		throw error;
 	}
 };
+
+export const uploadMedia = serially( uploadSingleMedia );

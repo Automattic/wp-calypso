@@ -53,7 +53,7 @@ describe( 'media - thunks - uploadMedia', () => {
 
 			const { ID, ...fileWithoutPassedInId } = file;
 
-			await uploadMedia( site, fileWithoutPassedInId, fileUploader, transientDate );
+			await uploadMedia( fileWithoutPassedInId, site, fileUploader, transientDate );
 
 			expect( createMediaItem ).toHaveBeenCalledWith( site, {
 				date: transientDate,
@@ -66,7 +66,7 @@ describe( 'media - thunks - uploadMedia', () => {
 			const { ID: passedInId } = file;
 			const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
 
-			await uploadMedia( site, file, fileUploader, transientDate );
+			await uploadMedia( file, site, fileUploader, transientDate );
 
 			expect( createMediaItem ).toHaveBeenCalledWith( site, {
 				...file,
@@ -83,7 +83,7 @@ describe( 'media - thunks - uploadMedia', () => {
 			getTransientDate.mockReturnValueOnce( generatedTransientDate );
 			const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
 
-			await uploadMedia( site, file, fileUploader );
+			await uploadMedia( file, site, fileUploader );
 
 			expect( createMediaItem ).toHaveBeenCalledWith( site, {
 				...file,
@@ -99,7 +99,7 @@ describe( 'media - thunks - uploadMedia', () => {
 
 			const setMediaItemErrors = jest.spyOn( syncActions, 'setMediaItemErrors' );
 
-			await expect( uploadMedia( site, file, fileUploader, transientDate ) ).rejects.toBe( errors );
+			await expect( uploadMedia( file, site, fileUploader, transientDate ) ).rejects.toBe( errors );
 
 			expect( validateMediaItem ).toHaveBeenCalledWith( site, {
 				date: transientDate,
@@ -115,7 +115,7 @@ describe( 'media - thunks - uploadMedia', () => {
 
 				const setMediaItemErrors = jest.spyOn( syncActions, 'setMediaItemErrors' );
 
-				await uploadMedia( site, file, fileUploader, transientDate );
+				await uploadMedia( file, site, fileUploader, transientDate );
 
 				expect( validateMediaItem ).toHaveBeenCalledWith( site, {
 					date: transientDate,
@@ -133,7 +133,7 @@ describe( 'media - thunks - uploadMedia', () => {
 			const receiveMedia = jest.spyOn( syncActions, 'receiveMedia' );
 			const failMediaItemRequest = jest.spyOn( syncActions, 'failMediaItemRequest' );
 
-			await uploadMedia( site, file, fileUploader, transientDate );
+			await uploadMedia( file, site, fileUploader, transientDate );
 
 			expect( createMediaItem ).toHaveBeenCalledWith( site, { ...file, date: transientDate } );
 			expect( successMediaItemRequest ).toHaveBeenCalledWith( siteId, transientId );
@@ -158,7 +158,7 @@ describe( 'media - thunks - uploadMedia', () => {
 				);
 				const fluxFetchMediaLimits = jest.spyOn( fluxUtils, 'dispatchFluxFetchMediaLimits' );
 
-				await uploadMedia( site, file, fileUploader, transientDate );
+				await uploadMedia( file, site, fileUploader, transientDate );
 
 				expect( fluxCreateMediaItem ).toHaveBeenCalledWith(
 					{ ...file, date: transientDate },
@@ -182,7 +182,7 @@ describe( 'media - thunks - uploadMedia', () => {
 			const receiveMedia = jest.spyOn( syncActions, 'receiveMedia' );
 			const failMediaItemRequest = jest.spyOn( syncActions, 'failMediaItemRequest' );
 
-			await expect( uploadMedia( site, file, fileUploader, transientDate ) ).rejects.toBe( error );
+			await expect( uploadMedia( file, site, fileUploader, transientDate ) ).rejects.toBe( error );
 
 			expect( createMediaItem ).toHaveBeenCalledWith( site, { ...file, date: transientDate } );
 			expect( successMediaItemRequest ).not.toHaveBeenCalled();
@@ -201,7 +201,7 @@ describe( 'media - thunks - uploadMedia', () => {
 					'dispatchFluxReceiveMediaItemError'
 				);
 
-				await expect( uploadMedia( site, file, fileUploader, transientDate ) ).rejects.toBe(
+				await expect( uploadMedia( file, site, fileUploader, transientDate ) ).rejects.toBe(
 					error
 				);
 
