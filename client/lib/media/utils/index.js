@@ -1,16 +1,3 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:media' );
-
-/**
- * Internal dependencies
- */
-import { reduxGetState } from 'lib/redux-bridge';
-import wpcom from 'lib/wp';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-
 export { url } from 'lib/media/utils/url';
 export { getFileExtension } from 'lib/media/utils/get-file-extension';
 export { getMimeType } from 'lib/media/utils/get-mime-type';
@@ -33,36 +20,4 @@ export { isTransientPreviewable } from 'lib/media/utils/is-transient-previewable
 export { createTransientMedia } from 'lib/media/utils/create-transient-media';
 export { validateMediaItem } from 'lib/media/utils/validate-media-item';
 export { mediaURLToProxyConfig } from 'lib/media/utils/media-url-to-proxy-config';
-
-export const getFileUploader = () => ( file, siteId ) => {
-	// Determine upload mechanism by object type
-	const isUrl = 'string' === typeof file;
-
-	// Assign parent ID if currently editing post
-	const postId = getEditorPostId( reduxGetState() );
-	const title = file.title;
-	if ( postId ) {
-		file = {
-			parent_id: postId,
-			[ isUrl ? 'url' : 'file' ]: file,
-		};
-	} else if ( file.fileContents ) {
-		//if there's no parent_id, but the file object is wrapping a Blob
-		//(contains fileContents, fileName etc) still wrap it in a new object
-		file = {
-			file: file,
-		};
-	}
-
-	if ( title ) {
-		file.title = title;
-	}
-
-	debug( 'Uploading media to %d from %o', siteId, file );
-
-	if ( isUrl ) {
-		return wpcom.site( siteId ).addMediaUrls( {}, file );
-	}
-
-	return wpcom.site( siteId ).addMediaFiles( {}, file );
-};
+export { getFileUploader } from 'lib/media/utils/get-file-uploader';
