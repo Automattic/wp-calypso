@@ -27,6 +27,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 
 import { getFileExtension } from 'lib/media/utils/get-file-extension';
 import { getMimeType } from 'lib/media/utils/get-mime-type';
+import { getMimePrefix } from 'lib/media/utils/get-mime-prefix';
 
 const { uniqueId } = impureLodash;
 
@@ -38,32 +39,7 @@ const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
 export { url } from 'lib/media/utils/url';
 export { getFileExtension } from 'lib/media/utils/get-file-extension';
 export { getMimeType } from 'lib/media/utils/get-mime-type';
-
-/**
- * Given a media string or object, returns the MIME type prefix.
- *
- * @example
- * getMimeType( 'example.gif' );
- * getMimeType( { URL: 'https://wordpress.com/example.gif' } );
- * getMimeType( { mime_type: 'image/gif' } );
- * // All examples return 'image'
- *
- * @param  {(string|window.File|object)} media Media object or mime type string
- * @returns {string}       The MIME type prefix
- */
-export function getMimePrefix( media ) {
-	const mimeType = getMimeType( media );
-
-	if ( ! mimeType ) {
-		return;
-	}
-
-	const mimePrefixMatch = mimeType.match( /^([^/]+)\// );
-
-	if ( mimePrefixMatch ) {
-		return mimePrefixMatch[ 1 ];
-	}
-}
+export { getMimePrefix } from 'lib/media/utils/get-mime-prefix';
 
 /**
  * Given an array of media objects, returns a filtered array composed of
