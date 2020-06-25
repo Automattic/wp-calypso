@@ -11,6 +11,7 @@ import ScanPage from './main';
 import ScanHistoryPage from './history';
 import ScanUpsellPage from './upsell';
 import WPCOMScanUpsellPage from './wpcom-scan-upsell';
+import getSiteScanRequestStatus from 'state/selectors/get-site-scan-request-status';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import ScanPlaceholder from 'components/jetpack/scan-placeholder';
@@ -46,6 +47,7 @@ function scanUpsellSwitcher( placeholder, primary ) {
 			UpsellComponent={ UpsellComponent }
 			display={ primary }
 			getStateForSite={ getSiteScanState }
+			getRequestStatusForSite={ getSiteScanRequestStatus }
 			QueryComponent={ QueryJetpackScan }
 		>
 			{ placeholder }
