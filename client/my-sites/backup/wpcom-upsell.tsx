@@ -69,8 +69,10 @@ export default function WPCOMUpsellPage(): ReactElement {
 				isPrimary
 			>
 				<p>
-					{ translate(
-						'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+					{ preventWidows(
+						translate(
+							'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+						)
 					) }
 				</p>
 				<PromoCardCTA
