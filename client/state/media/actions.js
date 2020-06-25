@@ -16,7 +16,6 @@ import {
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_ITEM_REQUESTING,
 	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
@@ -128,22 +127,6 @@ export function successMediaRequest( siteId, query ) {
 export function requestMediaItem( siteId, mediaId ) {
 	return {
 		type: MEDIA_ITEM_REQUEST,
-		siteId,
-		mediaId,
-	};
-}
-
-/**
- * Returns an action object used in signalling that a media item for the site
- * are being requested.
- *
- * @param  {number} siteId  Site ID
- * @param  {number} mediaId Media ID
- * @returns {object}         Action object
- */
-export function requestingMediaItem( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUESTING,
 		siteId,
 		mediaId,
 	};

@@ -15,7 +15,6 @@ import {
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_ITEM_REQUESTING,
 	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
@@ -206,46 +205,6 @@ export const queryRequests = withoutPersistence( ( state = {}, action ) => {
 			return {
 				...state,
 				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
-			};
-		}
-	}
-
-	return state;
-} );
-
-/**
- * Returns the updated site post requests state after an action has been
- * dispatched. The state reflects a mapping of site ID, post ID pairing to a
- * boolean reflecting whether a request for the post is in progress.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export const mediaItemRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEDIA_ITEM_REQUESTING: {
-			const { siteId, mediaId } = action;
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ mediaId ]: true,
-				},
-			};
-		}
-		case MEDIA_ITEM_REQUEST_SUCCESS: {
-			const { siteId, mediaId } = action;
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], mediaId ),
-			};
-		}
-		case MEDIA_ITEM_REQUEST_FAILURE: {
-			const { siteId, mediaId } = action;
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], mediaId ),
 			};
 		}
 	}
@@ -465,6 +424,15 @@ export const transientItems = withoutPersistence(
 	}
 );
 
+/**
+ * Returns the updated site post requests state after an action has been
+ * dispatched. The state reflects a mapping of site ID, media ID pairing to a
+ * boolean reflecting whether a request for the media item is in progress.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
 export const fetching = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEDIA_REQUEST: {
@@ -521,7 +489,6 @@ export default combineReducers( {
 	errors,
 	queries,
 	queryRequests,
-	mediaItemRequests,
 	selectedItems,
 	transientItems,
 	fetching,

@@ -10,7 +10,6 @@ import {
 	receiveMedia,
 	deleteMedia,
 	requestMediaItem,
-	requestingMediaItem,
 	successMediaItemRequest,
 	failMediaItemRequest,
 } from 'state/media/actions';
@@ -19,7 +18,6 @@ import {
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_ITEM_REQUESTING,
 	MEDIA_RECEIVE,
 } from 'state/action-types';
 
@@ -102,18 +100,6 @@ describe( 'media - actions - sync', () => {
 
 			expect( action ).to.eql( {
 				type: MEDIA_ITEM_REQUEST,
-				siteId: 2916284,
-				mediaId: 2454,
-			} );
-		} );
-	} );
-
-	describe( 'requestingMediaItem()', () => {
-		test( 'should return an action object', () => {
-			const action = requestingMediaItem( 2916284, 2454 );
-
-			expect( action ).to.eql( {
-				type: MEDIA_ITEM_REQUESTING,
 				siteId: 2916284,
 				mediaId: 2454,
 			} );
