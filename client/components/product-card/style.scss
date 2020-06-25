@@ -69,10 +69,6 @@
 	font-size: $font-title-small;
 	line-height: 24px;
 
-	@include breakpoint-deprecated( '>960px' ) {
-		font-size: $font-title-small;
-	}
-
 	em,
 	strong,
 	span {

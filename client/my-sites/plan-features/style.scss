@@ -262,10 +262,6 @@ $plan-features-sidebar-width: 272px;
 	font-size: $font-title-small;
 	color: var( --color-primary );
 	line-height: 0.7;
-
-	@include breakpoint-deprecated( '<960px' ) {
-		font-size: $font-title-small;
-	}
 }
 
 .plan-features__audience {
