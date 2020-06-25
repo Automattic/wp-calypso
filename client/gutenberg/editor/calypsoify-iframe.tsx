@@ -49,6 +49,7 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 
 /**
  * Types
@@ -750,6 +751,11 @@ const mapStateToProps = (
 	// needed for loading the editor in SU sessions
 	if ( wpcom.addSupportParams ) {
 		queryArgs = wpcom.addSupportParams( queryArgs );
+	}
+
+	// Pass through to iframed editor if user is in editor deprecation group.
+	if ( config.isEnabled( 'editor/after-deprecation' ) && inEditorDeprecationGroup( state ) ) {
+		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
 	const siteAdminUrl =
