@@ -77,6 +77,18 @@ export type WPCOMTransactionEndpointDomainDetails = {
 	postalCode: string;
 };
 
+const emptyDomainDetails: WPCOMTransactionEndpointDomainDetails = {
+	firstName: '',
+	lastName: '',
+	email: '',
+	phone: '',
+	address_1: '',
+	city: '',
+	state: '',
+	countryCode: '',
+	postalCode: '',
+};
+
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromLineItems( {
@@ -86,6 +98,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode,
 	subdivisionCode,
 	items,
+	contactDetails,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -93,6 +106,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode: string;
 	subdivisionCode?: string;
 	items: WPCOMCartItem[];
+	contactDetails: WPCOMTransactionEndpointDomainDetails;
 } ): WPCOMTransactionEndpointCart {
 	debug( 'creating cart from items', items );
 
@@ -100,16 +114,6 @@ export function createTransactionEndpointCartFromLineItems( {
 		( firstValue: string, item ) => firstValue || item.amount.currency,
 		''
 	);
-
-	const convertItem = ( item: WPCOMCartItem ) => {
-		return {
-			product_id: item.wpcom_meta?.product_id,
-			meta: item.wpcom_meta?.meta,
-			currency: item.amount.currency,
-			volume: item.wpcom_meta?.volume ?? 1,
-			extra: item.wpcom_meta?.extra,
-		};
-	};
 
 	return {
 		blog_id: siteId || '0',
@@ -121,7 +125,8 @@ export function createTransactionEndpointCartFromLineItems( {
 		extra: [],
 		products: items
 			.filter( ( product ) => ! getNonProductWPCOMCartItemTypes().includes( product.type ) )
-			.map( convertItem ),
+			.map( ( item ) => addRegistrationDataToGSuiteItem( item, contactDetails ) )
+			.map( createTransactionEndpointCartItemFromLineItem ),
 		tax: {
 			location: {
 				country_code: country,
@@ -130,6 +135,34 @@ export function createTransactionEndpointCartFromLineItems( {
 			},
 		},
 	};
+}
+
+function createTransactionEndpointCartItemFromLineItem(
+	item: WPCOMCartItem
+): WPCOMTransactionEndpointCartItem {
+	return {
+		product_id: item.wpcom_meta?.product_id,
+		meta: item.wpcom_meta?.meta,
+		currency: item.amount.currency,
+		volume: item.wpcom_meta?.volume ?? 1,
+		extra: item.wpcom_meta?.extra,
+	} as WPCOMTransactionEndpointCartItem;
+}
+
+function addRegistrationDataToGSuiteItem(
+	item: WPCOMCartItem,
+	contactDetails: WPCOMTransactionEndpointDomainDetails
+): WPCOMCartItem {
+	if ( ! item.wpcom_meta?.extra.google_apps_users ) {
+		return item;
+	}
+	return {
+		...item,
+		wpcom_meta: {
+			...item.wpcom_meta,
+			extra: { ...item.wpcom_meta.extra, google_apps_registration_data: contactDetails },
+		},
+	} as WPCOMCartItem;
 }
 
 export function createTransactionEndpointRequestPayloadFromLineItems( {
@@ -176,6 +209,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			postalCode,
 			subdivisionCode,
 			items: items.filter( ( item ) => item.type !== 'tax' ),
+			contactDetails: domainDetails || emptyDomainDetails,
 		} ),
 		domainDetails,
 		payment: {
