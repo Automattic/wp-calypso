@@ -366,8 +366,8 @@ export function CheckoutStepBody( {
 							? goToThisStep
 							: null
 					}
-					editButtonText={ editButtonText || 'Edit' }
-					editButtonAriaLabel={ editButtonAriaLabel || 'Edit this step' }
+					editButtonText={ editButtonText || __( 'Edit' ) }
+					editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 				/>
 				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
 					{ activeStepContent }
@@ -376,13 +376,13 @@ export function CheckoutStepBody( {
 							onClick={ goToNextStep }
 							value={
 								formStatus === 'validating'
-									? validatingButtonText || 'Please wait…'
-									: nextStepButtonText || 'Continue'
+									? validatingButtonText || __( 'Please wait…' )
+									: nextStepButtonText || __( 'Continue' )
 							}
 							ariaLabel={
 								formStatus === 'validating'
-									? validatingButtonAriaLabel || 'Please wait…'
-									: nextStepButtonAriaLabel || 'Continue to next step'
+									? validatingButtonAriaLabel || __( 'Please wait…' )
+									: nextStepButtonAriaLabel || __( 'Continue to next step' )
 							}
 							buttonType="primary"
 							disabled={ formStatus !== 'ready' }
@@ -407,6 +407,7 @@ CheckoutStepBody.propTypes = {
 	errorMessage: PropTypes.string,
 	onError: PropTypes.func,
 	editButtonAriaLabel: PropTypes.string,
+	editButtonText: PropTypes.string,
 	nextStepButtonText: PropTypes.string,
 	nextStepButtonAriaLabel: PropTypes.string,
 	isStepActive: PropTypes.bool.isRequired,
@@ -586,7 +587,7 @@ function CheckoutStepHeader( {
 					className="checkout-step__edit-button"
 					buttonType="text-button"
 					onClick={ onEdit }
-					aria-label={ editButtonAriaLabel }
+					aria-label={ editButtonAriaLabel || __( 'Edit this step' ) }
 				>
 					{ editButtonText || __( 'Edit' ) }
 				</HeaderEditButton>
