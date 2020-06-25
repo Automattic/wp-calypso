@@ -31,11 +31,6 @@ import { isExceedingSiteMaxUploadSize } from 'lib/media/utils/is-exceeding-site-
 
 const { uniqueId } = impureLodash;
 
-/**
- * Module variables
- */
-const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
-
 export { url } from 'lib/media/utils/url';
 export { getFileExtension } from 'lib/media/utils/get-file-extension';
 export { getMimeType } from 'lib/media/utils/get-mime-type';
@@ -47,20 +42,7 @@ export { getAllowedFileTypesForSite } from 'lib/media/utils/get-allowed-file-typ
 export { isSupportedFileTypeInPremium } from 'lib/media/utils/is-supported-file-type-in-premium';
 export { isSupportedFileTypeForSite } from 'lib/media/utils/is-supported-file-type-for-site';
 export { isExceedingSiteMaxUploadSize } from 'lib/media/utils/is-exceeding-site-max-upload-size';
-
-/**
- * Returns true if the provided media object is a VideoPress video item.
- *
- * @param  {object}  item Media object
- * @returns {boolean}      Whether the media is a VideoPress video item
- */
-export function isVideoPressItem( item ) {
-	if ( ! item || ! item.videopress_guid ) {
-		return false;
-	}
-
-	return REGEXP_VIDEOPRESS_GUID.test( item.videopress_guid );
-}
+export { isVideoPressItem } from 'lib/media/utils/is-videopress-item';
 
 /**
  * Returns a human-readable string representing the specified seconds
