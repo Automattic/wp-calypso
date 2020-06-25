@@ -43,44 +43,7 @@ export { isSupportedFileTypeInPremium } from 'lib/media/utils/is-supported-file-
 export { isSupportedFileTypeForSite } from 'lib/media/utils/is-supported-file-type-for-site';
 export { isExceedingSiteMaxUploadSize } from 'lib/media/utils/is-exceeding-site-max-upload-size';
 export { isVideoPressItem } from 'lib/media/utils/is-videopress-item';
-
-/**
- * Returns a human-readable string representing the specified seconds
- * duration.
- *
- * @example
- * playtime( 7 ); // -> "0:07"
- *
- * @param  {number} duration Duration in seconds
- * @returns {string}          Human-readable duration
- */
-export function playtime( duration ) {
-	if ( isNaN( duration ) ) {
-		return;
-	}
-
-	const hours = Math.floor( duration / 3600 ),
-		minutes = Math.floor( duration / 60 ) % 60,
-		seconds = Math.floor( duration ) % 60;
-
-	let runtime = [ minutes, seconds ]
-		.map( function ( value ) {
-			return ( '0' + value ).slice( -2 );
-		} )
-		.join( ':' );
-
-	if ( hours ) {
-		runtime = [ hours, runtime ].join( ':' );
-	}
-
-	runtime = runtime.replace( /^(00:)+/g, '' );
-
-	if ( -1 === runtime.indexOf( ':' ) ) {
-		runtime = '0:' + runtime;
-	}
-
-	return runtime.replace( /^0(\d)(.*)/, '$1$2' );
-}
+export { playtime } from 'lib/media/utils/playtime';
 
 /**
  * Returns an object containing width and height dimenions in pixels for
