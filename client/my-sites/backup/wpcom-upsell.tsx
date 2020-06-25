@@ -22,6 +22,7 @@ import Gridicon from 'components/gridicon';
 import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Asset dependencies
@@ -63,7 +64,7 @@ export default function WPCOMUpsellPage(): ReactElement {
 			/>
 
 			<PromoCard
-				title={ translate( 'Get time travel for your site with Jetpack Backup' ) }
+				title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
 				image={ { path: JetpackBackupSVG } }
 				isPrimary
 			>
