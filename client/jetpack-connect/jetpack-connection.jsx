@@ -268,6 +268,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 				<WrappedComponent
 					processJpSite={ this.processJpSite }
 					status={ this.state.status }
+					path={ this.props.path }
 					renderFooter={ this.renderFooter }
 					renderNotices={ this.renderNotices }
 					isCurrentUrlFetching={ this.isCurrentUrlFetching() }
