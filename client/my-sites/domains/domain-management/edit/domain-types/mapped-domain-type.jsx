@@ -33,7 +33,7 @@ import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { WrapDomainStatusButtons } from './helpers';
+import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 
@@ -258,15 +258,7 @@ class MappedDomainType extends React.Component {
 	};
 
 	render() {
-		const {
-			domain,
-			selectedSite,
-			purchase,
-			mappingPurchase,
-			isLoadingPurchase,
-			moment,
-			translate,
-		} = this.props;
+		const { domain, selectedSite, purchase, mappingPurchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -275,24 +267,6 @@ class MappedDomainType extends React.Component {
 		const newDomainManagementNavigation = config.isEnabled(
 			'domains/new-status-design/new-options'
 		);
-
-		let expiresText;
-
-		if ( ! domain.expiry ) {
-			expiresText = translate( 'Expires: Never' );
-		} else if ( domain.bundledPlanSubscriptionId ) {
-			expiresText = translate( 'Expires with your plan on %(expiry_date)s', {
-				args: {
-					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-				},
-			} );
-		} else {
-			expiresText = translate( 'Expires: %(expiry_date)s', {
-				args: {
-					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-				},
-			} );
-		}
 
 		return (
 			<div className="domain-types__container">
@@ -318,7 +292,7 @@ class MappedDomainType extends React.Component {
 					/>
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<div>{ expiresText }</div>
+					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.subscriptionId && (
 						<WrapDomainStatusButtons>
@@ -375,7 +349,7 @@ export default connect(
 			mappingPurchase:
 				mappingPurchase && currentUserId === mappingPurchase.userId ? mappingPurchase : null,
 			isLoadingPurchase:
-				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
 			isJetpackSite: isJetpackSite( state, ownProps.selectedSite.ID ),
 		};
