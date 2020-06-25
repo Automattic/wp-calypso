@@ -1,10 +1,6 @@
 <?php
 /**
- * File for various functionality which needs to be added to Simple and Atomic
- * sites. The code in this file is always loaded in the block editor.
- *
- * Currently, this module may not be the best place if you need to load
- * front-end assets, but you could always add a separate action for that.
+ * Plans grid for block editor.
  *
  * @package A8C\FSE
  */
@@ -29,6 +25,7 @@ function enqueue_script_and_style() {
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/editor-plans-grid.asset.php';
 	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
 	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-plans-grid.js' );
+	$styles_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-plans-grid.css' );
 
 	wp_enqueue_script(
 		'a8c-fse-editor-plans-grid-script',
@@ -36,6 +33,13 @@ function enqueue_script_and_style() {
 		$script_dependencies,
 		$script_version,
 		true
+	);
+
+	wp_enqueue_style(
+		'a8c-fse-editor-plans-grid-styles',
+		plugins_url( 'dist/editor-plans-grid.css', __FILE__ ),
+		array(),
+		$styles_version
 	);
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );

@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { Modal } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -10,17 +11,27 @@ import { Modal } from '@wordpress/components';
 import PlansGrid, { Props as PlansGridProps } from '@automattic/plans-grid';
 import './styles.scss';
 
-interface Props extends PlansGridProps {
+interface Props extends Omit< PlansGridProps, 'header' > {
 	isOpen: boolean;
 	onClose: () => void;
 }
 
-const PlansModal: React.FunctionComponent< Props > = ( { isOpen, onClose, domain, plan } ) => {
+const PlansModal: React.FunctionComponent< Props > = ( { isOpen, onClose, ...props } ) => {
 	if ( ! isOpen ) {
 		return null;
 	}
 
-	const header = <div>Plans Grid</div>;
+	const header = (
+		<div>
+			<h1 className="wp-brand-font">{ __( 'Choose a plan', 'full-site-editing' ) }</h1>
+			<p>
+				{ __(
+					'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.',
+					'full-site-editing'
+				) }
+			</p>
+		</div>
+	);
 
 	return (
 		<Modal
@@ -30,7 +41,9 @@ const PlansModal: React.FunctionComponent< Props > = ( { isOpen, onClose, domain
 			onRequestClose={ onClose }
 			title=""
 		>
-			<PlansGrid currentDomain={ domain } header={ header } currentPlan={ plan } />
+			<div className="plans-grid-container">
+				<PlansGrid header={ header } { ...props } />
+			</div>
 		</Modal>
 	);
 };

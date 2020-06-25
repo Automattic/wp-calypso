@@ -2,22 +2,38 @@
  * External dependencies
  */
 import * as React from 'react';
-
-import 'a8c-fse-common-data-stores';
-
-// import PlansModal from '../plans-modal';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { Plans } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import { useSelectedPlan } from '../hooks/use-selected-plan';
+import 'a8c-fse-common-data-stores';
+
+/**
+ * Internal dependencies
+ */
+import PlansModal from '../plans-modal';
+import { PLANS_STORE } from '../stores';
+
+type PlansSlug = Plans.PlanSlug;
 
 const PlansGridButton = () => {
 	const [ isPlansModalVisible, setPlansModalVisibility ] = React.useState( false );
 
-	useSelectedPlan();
-	// const currentPlan = useSelectedPlan();
+	// TODO: Get current domain from store.
+	const currentDomain = undefined;
 
-	// TODO: Get current domain from domain store
-	// const currentDomain = '';
+	// TODO: Proper plan selection as seen in gutenboarding version. Needs currentDomain to work on this.
+	const currentPlan = useSelect( ( select ) => {
+		const selectedPlan = select( PLANS_STORE ).getSelectedPlan();
+		return selectedPlan || undefined;
+	} );
+
+	const { setPlan } = useDispatch( PLANS_STORE );
+
+	const handlePlanSelect = ( plan: PlansSlug ) => {
+		setPlan( plan );
+		setPlansModalVisibility( false );
+	};
 
 	return (
 		<>
@@ -27,15 +43,17 @@ const PlansGridButton = () => {
 				aria-pressed={ isPlansModalVisible }
 				onClick={ () => setPlansModalVisibility( ( s ) => ! s ) }
 			>
-				<span>Plans</span>
+				{ /* TODO: Refine this  */ }
+				<span>Plans: { currentPlan && currentPlan.title }</span>
 				<Icon icon={ chevronDown } size={ 22 } />
 			</Button>
-			{ /* <PlansModal
+			<PlansModal
 				isOpen={ isPlansModalVisible }
 				currentDomain={ currentDomain }
 				currentPlan={ currentPlan }
+				onPlanSelect={ handlePlanSelect }
 				onClose={ () => setPlansModalVisibility( false ) }
-			/> */ }
+			/>
 		</>
 	);
 };
