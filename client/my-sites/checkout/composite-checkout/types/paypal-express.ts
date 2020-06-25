@@ -61,6 +61,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			postalCode,
 			subdivisionCode,
 			items: items.filter( ( item ) => ! getNonProductWPCOMCartItemTypes().includes( item.type ) ),
+			contactDetails: domainDetails,
 		} ),
 		country,
 		postalCode,
