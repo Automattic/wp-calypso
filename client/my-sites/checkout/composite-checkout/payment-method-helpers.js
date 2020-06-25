@@ -165,7 +165,7 @@ export function WordPressCreditsLabel( { credits } ) {
 		<React.Fragment>
 			<div>
 				{ translate( 'WordPress.com Credits: %(amount)s available', {
-					args: { amount: credits.amount.displayValue },
+					args: { amount: credits.wpcom_meta.credits_display },
 					comment: "The total value of credits on the user's account",
 				} ) }
 			</div>
@@ -297,7 +297,9 @@ export function filterAppropriatePaymentMethods( {
 	serverAllowedPaymentMethods,
 } ) {
 	const isPurchaseFree = total.amount.value === 0;
-	debug( 'is purchase free?', isPurchaseFree );
+	const isFullCredits =
+		! isPurchaseFree && credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
+	debug( 'is purchase free?', isPurchaseFree, 'is full credits?', isFullCredits );
 
 	return paymentMethodObjects
 		.filter( ( methodObject ) => {
@@ -308,14 +310,22 @@ export function filterAppropriatePaymentMethods( {
 			return isPurchaseFree ? false : true;
 		} )
 		.filter( ( methodObject ) => {
+			// If the purchase is full-credits, only display the full-credits method
 			if ( methodObject.id === 'full-credits' ) {
-				return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+				return isFullCredits ? true : false;
 			}
+			return isFullCredits ? false : true;
+		} )
+		.filter( ( methodObject ) => {
 			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 				return isPaymentMethodEnabled(
 					'card',
 					allowedPaymentMethods || serverAllowedPaymentMethods
 				);
+			}
+			if ( methodObject.id === 'full-credits' ) {
+				// If the full-credits payment method still exists here (see above filter), it's enabled
+				return true;
 			}
 			if ( methodObject.id === 'free-purchase' ) {
 				// If the free payment method still exists here (see above filter), it's enabled

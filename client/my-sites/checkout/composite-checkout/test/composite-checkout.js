@@ -120,6 +120,9 @@ describe( 'CompositeCheckout', () => {
 
 		const initialCart = {
 			coupon: '',
+			coupon_savings_total: 0,
+			coupon_savings_total_integer: 0,
+			coupon_savings_total_display: '0',
 			currency: 'BRL',
 			locale: 'br-pt',
 			is_coupon_applied: false,
@@ -310,14 +313,14 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the paypal payment method option when full credits are available', async () => {
+	it( 'does not render the other payment method options when full credits are available', async () => {
 		let renderResult;
 		const cartChanges = { credits_integer: 15600, credits_display: 'R$156' };
 		await act( async () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
+		const { queryByText } = renderResult;
+		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
@@ -661,21 +664,24 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
 		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const additionalProps = { couponCode: 'MYCOUPONCODE' };
+		const additionalProps = {
+			couponCode: 'MYCOUPONCODE',
+			coupon_savings_total_integer: 10,
+			coupon_savings_total_display: '$R10',
+		};
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 				container
 			);
 		} );
-		const { getAllByLabelText, getAllByText } = renderResult;
+		const { getAllByLabelText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		getAllByLabelText( 'Total savings' ).map( ( element ) =>
+		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$10' )
 		);
-		expect( getAllByText( 'Coupon: MYCOUPONCODE' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'displays loading while old cart store is loading', async () => {
@@ -743,6 +749,8 @@ async function mockSetCartEndpoint( _, requestCart ) {
 			'WPCOM_Billing_Ebanx',
 			'WPCOM_Billing_Web_Payment',
 		],
+		coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
+		coupon_savings_total_integer: requestCoupon ? 1000 : 0,
 		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
 		savings_total_integer: requestCoupon ? 1000 : 0,
 		total_tax_display: 'R$7',

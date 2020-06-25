@@ -13,6 +13,7 @@ import {
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
+	WPCOMCartCreditsItem,
 	CheckoutCartItem,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
@@ -33,6 +34,8 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		total_tax_display,
 		total_cost_integer,
 		total_cost_display,
+		coupon_savings_total_display,
+		coupon_savings_total_integer,
 		savings_total_display,
 		savings_total_integer,
 		currency,
@@ -56,17 +59,49 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const savingsLineItem: WPCOMCartCouponItem = {
+	const couponLineItem: WPCOMCartCouponItem = {
+		id: 'coupon-line-item',
+		label: String( translate( 'Coupon: %(couponCode)s', { args: { couponCode: coupon } } ) ),
+		type: 'coupon',
+		amount: {
+			currency: currency,
+			value: coupon_savings_total_integer,
+			displayValue: String(
+				translate( '- %(discountAmount)s', {
+					args: { discountAmount: coupon_savings_total_display },
+				} )
+			),
+		},
+		wpcom_meta: {
+			couponCode: coupon,
+		},
+	};
+
+	const creditsLineItem: WPCOMCartCreditsItem = {
+		id: 'credits',
+		label: String( translate( 'Credits' ) ),
+		type: 'credits',
+		amount: {
+			currency: currency,
+			value: credits_integer,
+			displayValue: String(
+				translate( '- %(discountAmount)s', { args: { discountAmount: credits_display } } )
+			),
+		},
+		wpcom_meta: {
+			credits_integer,
+			credits_display,
+		},
+	};
+
+	const savingsLineItem: CheckoutCartItem = {
 		id: 'savings-line-item',
 		label: String( translate( 'Total savings' ) ),
-		type: 'coupon',
+		type: 'savings',
 		amount: {
 			currency: currency,
 			value: savings_total_integer,
 			displayValue: savings_total_display,
-		},
-		wpcom_meta: {
-			couponCode: coupon,
 		},
 	};
 
@@ -93,17 +128,13 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 	};
 
 	return {
-		items: products.map( translateReponseCartProductToWPCOMCartItem ),
+		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
-		coupon: Math.abs( savings_total_integer ) > 0 ? savingsLineItem : null,
+		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
 		total: totalItem,
+		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
-		credits: {
-			id: 'credits',
-			type: 'credits',
-			label: String( translate( 'Credits' ) ),
-			amount: { value: credits_integer, displayValue: credits_display, currency },
-		},
+		credits: credits_integer > 0 ? creditsLineItem : null,
 		allowedPaymentMethods: allowed_payment_methods
 			.filter( ( slug ) => {
 				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
@@ -113,6 +144,14 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 			.filter( Boolean ),
 		couponCode: coupon,
 	};
+}
+
+function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartProduct ): boolean {
+	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.
+	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
+		return false;
+	}
+	return true;
 }
 
 // Convert a backend cart item to a checkout cart item
@@ -161,15 +200,9 @@ function translateReponseCartProductToWPCOMCartItem(
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
 
 	// for displaying crossed-out original price
-	let itemOriginalCostDisplay = item_original_cost_display || '';
-	let itemOriginalSubtotalDisplay = item_original_subtotal_display || '';
-	let itemSubtotalMonthlyCostDisplay = item_subtotal_monthly_cost_display || '';
-	// but for the credits item this is confusing and unnecessary
-	if ( 'wordpress-com-credits' === product_slug ) {
-		itemOriginalCostDisplay = '';
-		itemOriginalSubtotalDisplay = '';
-		itemSubtotalMonthlyCostDisplay = '';
-	}
+	const itemOriginalCostDisplay = item_original_cost_display || '';
+	const itemOriginalSubtotalDisplay = item_original_subtotal_display || '';
+	const itemSubtotalMonthlyCostDisplay = item_subtotal_monthly_cost_display || '';
 
 	return {
 		id: uuid,
@@ -205,5 +238,5 @@ function translateReponseCartProductToWPCOMCartItem(
 }
 
 export function getNonProductWPCOMCartItemTypes(): string[] {
-	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits' ];
+	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits', 'savings' ];
 }

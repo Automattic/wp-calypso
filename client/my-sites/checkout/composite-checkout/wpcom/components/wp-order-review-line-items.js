@@ -54,7 +54,6 @@ function WPLineItem( {
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
 	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
-	const isSavings = item.type === 'coupon';
 
 	let gsuiteDiscountCallout = null;
 	if (
@@ -93,7 +92,6 @@ function WPLineItem( {
 					<DomainDiscountCallout item={ item } />
 				</LineItemMeta>
 			) }
-			{ isSavings && <SavingsList item={ item } /> }
 			{ isGSuite && (
 				<GSuiteUsersList
 					users={ item.wpcom_meta.extra.google_apps_users }
@@ -421,17 +419,12 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [
-		'domain_redemption',
-		'tax',
-		'credits',
-		'wordpress-com-credits',
-	];
+	const itemTypesThatCannotBeDeleted = [ 'domain_redemption', 'tax', 'credits' ];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }
 
 function shouldLineItemBeShownWhenStepInactive( item ) {
-	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	const itemTypesToIgnore = [ 'tax' ];
 	return ! itemTypesToIgnore.includes( item.type );
 }
 
@@ -464,33 +457,6 @@ function LineItemSublabelAndPrice( { item } ) {
 		} );
 	}
 	return item.sublabel || null;
-}
-
-function SavingsList( { item } ) {
-	const translate = useTranslate();
-	const savingsItems = [];
-	if ( item.wpcom_meta?.couponCode ) {
-		savingsItems.push( {
-			type: 'coupon',
-			label: translate( 'Coupon: %s', { args: item.wpcom_meta?.couponCode } ),
-		} );
-	}
-	if ( savingsItems.length < 1 ) {
-		return null;
-	}
-	return (
-		<LineItemMeta className="savings-list">
-			{ savingsItems.map( ( savingsItem ) => (
-				<LineItemMeta
-					className="savings-list__item"
-					key={ savingsItem.label }
-					data-savings-type={ savingsItem.type }
-				>
-					{ savingsItem.label }
-				</LineItemMeta>
-			) ) }
-		</LineItemMeta>
-	);
 }
 
 function DomainDiscountCallout( { item } ) {

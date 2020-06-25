@@ -325,7 +325,11 @@ export default function CompositeCheckout( {
 
 	useDisplayErrors( errors, showErrorMessage );
 
-	const itemsForCheckout = ( items.length ? [ ...items, tax, couponItem ] : [] ).filter( Boolean );
+	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
+	const itemsForCheckout = ( items.length
+		? [ ...items, tax, couponItem, ...( isFullCredits ? [] : [ credits ] ) ]
+		: []
+	).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart );
