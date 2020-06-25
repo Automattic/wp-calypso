@@ -54,7 +54,7 @@ export default function DomainPickerButton() {
 			<DomainPickerModal
 				analyticsFlowId={ FLOW_ID }
 				domainSuggestions={ domainSuggestions }
-				domainSearch={ search }
+				initialDomainSearch={ search }
 				domainCategories={ domainCategories }
 				domainCategory={ domainCategory }
 				onSetDomainCategory={ setDomainCategory }
@@ -62,6 +62,8 @@ export default function DomainPickerButton() {
 				isOpen={ isDomainModalVisible }
 				showDomainConnectButton
 				showDomainCategories
+				// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+				// @ts-ignore
 				currentDomain={ currentDomain }
 				onDomainSelect={ () => setDomainModalVisibility( false ) }
 				onClose={ () => setDomainModalVisibility( false ) }

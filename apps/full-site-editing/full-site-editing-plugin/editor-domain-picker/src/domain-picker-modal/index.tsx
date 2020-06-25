@@ -12,7 +12,7 @@ import './styles.scss';
 
 interface Props extends DomainPickerProps {
 	isOpen: boolean;
-	onMoreOptions?: () => void;
+	onClose: () => void;
 }
 
 const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose, ...props } ) => {
@@ -28,13 +28,7 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose,
 			onRequestClose={ onClose }
 			title=""
 		>
-			<DomainPicker
-				showDomainConnectButton
-				onClose={ onClose }
-				showDomainCategories
-				quantity={ 10 }
-				{ ...props }
-			/>
+			<DomainPicker showDomainCategories { ...props } />
 		</Modal>
 	);
 };
