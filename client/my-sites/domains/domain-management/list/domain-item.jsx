@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -9,6 +10,11 @@ import React, { PureComponent } from 'react';
 import { CompactCard } from '@automattic/components';
 
 class DomainItem extends PureComponent {
+	static propTypes = {
+		domain: PropTypes.object.isRequired,
+		onClick: PropTypes.func.isRequired,
+	};
+
 	handleClick = () => {
 		this.props.onClick( this.props.domain );
 	};
