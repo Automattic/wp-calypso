@@ -54,7 +54,7 @@ import wp from 'lib/wp';
 import { getReduxStore } from 'lib/redux-bridge';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isUserLoggedIn } from 'state/current-user/selectors';
-import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
+import { extractStoredCardMetaValue } from 'state/payment/util';
 
 const wpcom = wp.undocumented();
 
