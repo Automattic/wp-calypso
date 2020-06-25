@@ -125,6 +125,16 @@ export async function submitStripeRedirectTransaction( paymentMethodId, transact
 	return submit( formattedTransactionData );
 }
 
+export async function submitStripeSofortTransaction( transactionData, submit ) {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_Stripe_Source_Sofort',
+		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+	} );
+	debug( 'sending stripe sofort transaction', formattedTransactionData );
+	return submit( formattedTransactionData );
+}
+
 export function submitCreditsTransaction( transactionData, submit ) {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {

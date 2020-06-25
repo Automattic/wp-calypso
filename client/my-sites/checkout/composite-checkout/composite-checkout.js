@@ -478,7 +478,9 @@ export default function CompositeCheckout( {
 			giropay: ( transactionData ) =>
 				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			ideal: ( transactionData ) =>
-				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+                genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+            sofort: ( transactionData ) =>
+                genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>
