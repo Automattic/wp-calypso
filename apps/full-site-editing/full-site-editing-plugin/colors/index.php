@@ -18,7 +18,7 @@ function editor_colors() {
 	$admin_color = get_user_option( 'admin_color' );
 
 	// Don't apply editor overrides if user has set custom wp-admin color scheme.
-	if ( empty( $admin_color ) || in_array( $admin_color, [ 'classic', 'fresh' ], true ) ) {
+	if ( empty( $admin_color ) || in_array( $admin_color, array( 'classic', 'fresh' ), true ) ) {
 		wp_enqueue_style(
 			'a8c-fse-colors-editor',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
