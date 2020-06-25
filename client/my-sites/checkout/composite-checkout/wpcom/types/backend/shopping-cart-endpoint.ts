@@ -365,6 +365,7 @@ function convertRequestCartProductToResponseCartProduct(
 		product_type: null,
 		included_domain_purchase_amount: null,
 		is_renewal: undefined,
+		is_sale_coupon_applied: false,
 		subscription_id: undefined,
 	};
 }
