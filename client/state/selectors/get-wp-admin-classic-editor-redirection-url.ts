@@ -13,12 +13,8 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
 import wpcom from 'lib/wp';
 
-export default function getWpAdminClassicEditorRedirectionUrl(
-	state: AppState,
-	siteId: number,
-	postId: postId
-) {
-	postId = postId ?? ( getEditorPostId( state ) as number );
+export default function getWpAdminClassicEditorRedirectionUrl( state: AppState, siteId: number ) {
+	const postId = getEditorPostId( state ) as number;
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 
 	let queryArgs = pickBy( {
