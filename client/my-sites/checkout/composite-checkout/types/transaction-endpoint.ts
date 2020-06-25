@@ -47,13 +47,7 @@ export type WPCOMTransactionEndpointCart = {
 	currency: string;
 	temporary: false;
 	extra: string[];
-	products: {
-		product_id: number;
-		meta?: string;
-		currency: string;
-		volume: number;
-		extra?: CartItemExtra;
-	}[];
+	products: WPCOMTransactionEndpointCartItem[];
 	tax: {
 		location: {
 			country_code: string;
@@ -61,6 +55,14 @@ export type WPCOMTransactionEndpointCart = {
 			subdivision_code?: string;
 		};
 	};
+};
+
+type WPCOMTransactionEndpointCartItem = {
+	product_id: number;
+	meta?: string;
+	currency: string;
+	volume: number;
+	extra?: CartItemExtra;
 };
 
 export type WPCOMTransactionEndpointDomainDetails = {
