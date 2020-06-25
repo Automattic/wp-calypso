@@ -16,7 +16,7 @@ import {
 	failMediaItemRequest,
 	setMediaItemErrors,
 } from 'state/media/actions';
-import serially from 'state/media/thunks/serially';
+import { serially } from 'state/media/thunks/serially';
 
 /**
  * Add a single media item. Allow passing in the transient date so

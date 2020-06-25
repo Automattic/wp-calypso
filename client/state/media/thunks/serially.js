@@ -10,10 +10,6 @@ import { getBaseTime, getTransientDate } from 'state/media/utils/transient-date'
  * @param {Function} mediaAddingAction Dispatchable action accepting a file as a first argument and date as the last argument
  */
 export const serially = ( mediaAddingAction ) => ( files, ...extraArgs ) => ( dispatch ) => {
-	if ( ! Array.isArray( files ) ) {
-		return dispatch( mediaAddingAction( files, ...extraArgs ) );
-	}
-
 	const baseTime = getBaseTime();
 	const fileCount = files.length;
 

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { uploadMedia } from './upload-media';
+import { uploadMedia, uploadSingleMedia } from './upload-media';
 import wpcom from 'lib/wp';
 
 const getExternalUploader = ( service ) => ( file, siteId ) => {
@@ -18,5 +18,7 @@ const getExternalUploader = ( service ) => ( file, siteId ) => {
 export const addExternalMedia = ( site, file, service ) => ( dispatch ) => {
 	const uploader = getExternalUploader( service );
 
-	return dispatch( uploadMedia( file, site, uploader ) );
+	const action = Array.isArray( file ) ? uploadMedia : uploadSingleMedia;
+
+	return dispatch( action( file, site, uploader ) );
 };

@@ -27,14 +27,6 @@ describe( 'serially', () => {
 	} );
 
 	const files = range( 3 ).map( ( i ) => Symbol( `file${ i }` ) );
-	const [ file ] = files;
-
-	it( 'should handle a non-array argument', async () => {
-		await wrapped( file, extraArg1, extraArg2 )( dispatch );
-
-		expect( mediaAddingAction ).toHaveBeenCalledTimes( 1 );
-		expect( mediaAddingAction ).toHaveBeenCalledWith( file, extraArg1, extraArg2 );
-	} );
 
 	it( 'should call the media adding action for each file', async () => {
 		await wrapped( files, extraArg1, extraArg2 )( dispatch );

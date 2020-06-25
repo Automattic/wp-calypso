@@ -2,9 +2,12 @@
  * Internal dependencies
  */
 import { addExternalMedia as addExternalMediaThunk } from 'state/media/thunks/add-external-media';
-import { uploadMedia } from 'state/media/thunks/upload-media';
+import { uploadMedia, uploadSingleMedia } from 'state/media/thunks/upload-media';
 
-jest.mock( 'state/media/thunks/upload-media', () => ( { uploadMedia: jest.fn() } ) );
+jest.mock( 'state/media/thunks/upload-media', () => ( {
+	uploadMedia: jest.fn(),
+	uploadSingleMedia: jest.fn(),
+} ) );
 
 describe( 'media - thunks - addExternalMedia', () => {
 	const site = Symbol( 'site' );
@@ -15,9 +18,15 @@ describe( 'media - thunks - addExternalMedia', () => {
 
 	const addExternalMedia = ( ...args ) => addExternalMediaThunk( ...args )( dispatch, getState );
 
-	it( 'should dispatch to uploadMedia with the file uploader', async () => {
+	it( 'should dispatch to uploadSingleMedia with the file uploader', async () => {
 		await addExternalMedia( site, file, service );
 
-		expect( uploadMedia ).toHaveBeenCalledWith( file, site, expect.any( Function ) );
+		expect( uploadSingleMedia ).toHaveBeenCalledWith( file, site, expect.any( Function ) );
+	} );
+
+	it( 'should dispatch to uploadMedia with the file uploader', async () => {
+		await addExternalMedia( site, [ file, file ], service );
+
+		expect( uploadMedia ).toHaveBeenCalledWith( [ file, file ], site, expect.any( Function ) );
 	} );
 } );
