@@ -67,7 +67,7 @@
 .backup__subheader {
 	margin: 20px 16px 8px;
 
-	font-family: $brand-serif;
+	@extend .wp-brand-font;
 	font-size: $font-title-small;
 
 	@include breakpoint-deprecated( '>660px' ) {
