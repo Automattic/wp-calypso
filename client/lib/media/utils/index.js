@@ -27,6 +27,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 
 import { getFileExtension } from 'lib/media/utils/get-file-extension';
 import { getMimeType } from 'lib/media/utils/get-mime-type';
+import { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
 
 const { uniqueId } = impureLodash;
 
@@ -41,20 +42,7 @@ export { getMimeType } from 'lib/media/utils/get-mime-type';
 export { getMimePrefix } from 'lib/media/utils/get-mime-prefix';
 export { filterItemsByMimePrefix } from 'lib/media/utils/filter-items-by-mime-prefix';
 export { sortItemsByDate } from 'lib/media/utils/sort-items-by-date';
-
-/**
- * Returns true if the site can be trusted to accurately report its allowed
- * file types. Returns false otherwise.
- *
- * Jetpack currently does not sync the allowed file types
- * option, so we must assume that all file types are supported.
- *
- * @param  {object}  site Site object
- * @returns {boolean}      Site allowed file types are accurate
- */
-export function isSiteAllowedFileTypesToBeTrusted( site ) {
-	return ! site || ! site.jetpack;
-}
+export { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
 
 /**
  * Returns an array of supported file extensions for the specified site.
