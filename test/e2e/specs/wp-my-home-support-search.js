@@ -138,5 +138,21 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 				assert.equal( resultsCount, 5, 'There are no contextual results displayed.' );
 			}
 		);
+
+		step( 'Does not request search results for empty search queries', async function () {
+			await supportSearchComponent.clearSearchField();
+
+			const emptyWhitespaceQuery = '         ';
+
+			await supportSearchComponent.searchFor( emptyWhitespaceQuery );
+
+			const searchPerformed = await supportSearchComponent.isRequestingSearchResults();
+
+			assert.equal(
+				searchPerformed,
+				false,
+				'A search was unexpectedly performed for an empty search query.'
+			);
+		} );
 	} );
 } );
