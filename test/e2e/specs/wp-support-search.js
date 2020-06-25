@@ -31,7 +31,7 @@ before( async function () {
 describe( `[${ host }] Accessing support search: (${ screenSize })`, async function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Inline Help FAB popover', function () {
+	describe( 'Inline Help FAB popover @parallel', function () {
 		step( 'Login and select a non My Home page', async function () {
 			const loginFlow = new LoginFlow( driver );
 
