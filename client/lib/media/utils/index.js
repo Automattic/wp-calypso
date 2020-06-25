@@ -40,29 +40,7 @@ export { getFileExtension } from 'lib/media/utils/get-file-extension';
 export { getMimeType } from 'lib/media/utils/get-mime-type';
 export { getMimePrefix } from 'lib/media/utils/get-mime-prefix';
 export { filterItemsByMimePrefix } from 'lib/media/utils/filter-items-by-mime-prefix';
-
-/**
- * Given an array of media objects, returns a copy sorted by media date.
- *
- * @param  {Array} items Array of media objects
- * @returns {Array}       Sorted array of media objects
- */
-export function sortItemsByDate( items ) {
-	return items.slice( 0 ).sort( function ( a, b ) {
-		if ( a.date && b.date ) {
-			const dateCompare = Date.parse( b.date ) - Date.parse( a.date );
-
-			// We only return the result of a date comaprison if item dates
-			// are set and the dates are not equal...
-			if ( 0 !== dateCompare ) {
-				return dateCompare;
-			}
-		}
-
-		// ...otherwise, we return the greater of the two item IDs
-		return b.ID - a.ID;
-	} );
-}
+export { sortItemsByDate } from 'lib/media/utils/sort-items-by-date';
 
 /**
  * Returns true if the site can be trusted to accurately report its allowed
