@@ -11,7 +11,6 @@ const debug = debugFactory( 'calypso:media' );
  */
 import { reduxGetState } from 'lib/redux-bridge';
 import {
-	MimeTypes,
 	VideoPressFileTypes,
 	ThumbnailSizeDimensions,
 	GalleryColumnedTypes,
@@ -27,6 +26,7 @@ import wpcom from 'lib/wp';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
 import { getFileExtension } from 'lib/media/utils/get-file-extension';
+import { getMimeType } from 'lib/media/utils/get-mime-type';
 
 const { uniqueId } = impureLodash;
 
@@ -37,6 +37,7 @@ const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
 
 export { url } from 'lib/media/utils/url';
 export { getFileExtension } from 'lib/media/utils/get-file-extension';
+export { getMimeType } from 'lib/media/utils/get-mime-type';
 
 /**
  * Given a media string or object, returns the MIME type prefix.
@@ -61,42 +62,6 @@ export function getMimePrefix( media ) {
 
 	if ( mimePrefixMatch ) {
 		return mimePrefixMatch[ 1 ];
-	}
-}
-
-/**
- * Given a media string, File, or object, returns the MIME type if one can
- * be determined.
- *
- * @example
- * getMimeType( 'example.gif' );
- * getMimeType( { URL: 'https://wordpress.com/example.gif' } );
- * getMimeType( { mime_type: 'image/gif' } );
- * // All examples return 'image/gif'
- *
- * @param  {(string|window.File|object)} media Media object or string
- * @returns {string}                     Mime type of the media, if known
- */
-export function getMimeType( media ) {
-	if ( ! media ) {
-		return;
-	}
-
-	if ( media.mime_type ) {
-		return media.mime_type;
-	} else if ( 'File' in window && media instanceof window.File ) {
-		return media.type;
-	}
-
-	let extension = getFileExtension( media );
-
-	if ( ! extension ) {
-		return;
-	}
-
-	extension = extension.toLowerCase();
-	if ( MimeTypes.hasOwnProperty( extension ) ) {
-		return MimeTypes[ extension ];
 	}
 }
 
