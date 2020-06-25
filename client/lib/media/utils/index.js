@@ -11,7 +11,6 @@ const debug = debugFactory( 'calypso:media' );
  */
 import { reduxGetState } from 'lib/redux-bridge';
 import {
-	VideoPressFileTypes,
 	ThumbnailSizeDimensions,
 	GalleryColumnedTypes,
 	GallerySizeableTypes,
@@ -29,6 +28,7 @@ import { getFileExtension } from 'lib/media/utils/get-file-extension';
 import { getMimeType } from 'lib/media/utils/get-mime-type';
 import { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
 import { getAllowedFileTypesForSite } from 'lib/media/utils/get-allowed-file-types-for-site';
+import { isSupportedFileTypeInPremium } from 'lib/media/utils/is-supported-file-type-in-premium';
 
 const { uniqueId } = impureLodash;
 
@@ -45,28 +45,7 @@ export { filterItemsByMimePrefix } from 'lib/media/utils/filter-items-by-mime-pr
 export { sortItemsByDate } from 'lib/media/utils/sort-items-by-date';
 export { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
 export { getAllowedFileTypesForSite } from 'lib/media/utils/get-allowed-file-types-for-site';
-
-/**
- * Returns true if the specified item is a valid file in a Premium plan,
- * or false otherwise.
- *
- * @param  {object}  item Media object
- * @param  {object}  site Site object
- * @returns {boolean}      Whether the Premium plan supports the item
- */
-export function isSupportedFileTypeInPremium( item, site ) {
-	if ( ! site || ! item ) {
-		return false;
-	}
-
-	if ( ! isSiteAllowedFileTypesToBeTrusted( site ) ) {
-		return true;
-	}
-
-	return VideoPressFileTypes.some( function ( allowed ) {
-		return allowed.toLowerCase() === item.extension.toLowerCase();
-	} );
-}
+export { isSupportedFileTypeInPremium } from 'lib/media/utils/is-supported-file-type-in-premium';
 
 /**
  * Returns true if the specified item is a valid file for the given site,
