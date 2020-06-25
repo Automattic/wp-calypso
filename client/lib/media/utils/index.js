@@ -27,7 +27,6 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 
 import { getFileExtension } from 'lib/media/utils/get-file-extension';
 import { getMimeType } from 'lib/media/utils/get-mime-type';
-import { getMimePrefix } from 'lib/media/utils/get-mime-prefix';
 
 const { uniqueId } = impureLodash;
 
@@ -40,20 +39,7 @@ export { url } from 'lib/media/utils/url';
 export { getFileExtension } from 'lib/media/utils/get-file-extension';
 export { getMimeType } from 'lib/media/utils/get-mime-type';
 export { getMimePrefix } from 'lib/media/utils/get-mime-prefix';
-
-/**
- * Given an array of media objects, returns a filtered array composed of
- * items from the original array matching the specified mime prefix.
- *
- * @param  {Array}  items      Array of media objects
- * @param  {string} mimePrefix A mime prefix, e.g. "image"
- * @returns {Array}             Filtered array of matching media objects
- */
-export function filterItemsByMimePrefix( items, mimePrefix ) {
-	return items.filter( function ( item ) {
-		return getMimePrefix( item ) === mimePrefix;
-	} );
-}
+export { filterItemsByMimePrefix } from 'lib/media/utils/filter-items-by-mime-prefix';
 
 /**
  * Given an array of media objects, returns a copy sorted by media date.
