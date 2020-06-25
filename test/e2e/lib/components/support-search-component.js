@@ -24,7 +24,9 @@ class SupportSearchComponent extends AsyncBaseContainer {
 
 	async waitForResults() {
 		const driver = this.driver;
-		const resultsLoadingSelector = By.css( '.inline-help__results-placeholder' );
+		const resultsLoadingSelector = By.css(
+			'.inline-help__results-placeholder, .help-search__results-placeholder'
+		);
 
 		return driverHelper.waitTillNotPresent(
 			driver,
@@ -74,7 +76,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	async hasNoResultsMessage() {
 		return await driverHelper.isElementPresent(
 			this.driver,
-			By.css( '.inline-help__empty-results' )
+			By.css( '.inline-help__empty-results, .help-search__empty-results' )
 		);
 	}
 }

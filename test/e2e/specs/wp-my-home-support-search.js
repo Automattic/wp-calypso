@@ -122,5 +122,21 @@ describe( `[${ host }] Accessing support search: (${ screenSize })`, async funct
 
 			assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
 		} );
+
+		step(
+			'Shows "No results" indicator and re-displays contextual results for search queries which return no results',
+			async function () {
+				const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
+
+				await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
+				const resultsCount = await supportSearchComponent.getSearchResultsCount();
+
+				const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
+
+				assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
+
+				assert.equal( resultsCount, 5, 'There are no contextual results displayed.' );
+			}
+		);
 	} );
 } );
