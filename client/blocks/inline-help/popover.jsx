@@ -41,6 +41,8 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import { isEnabled } from 'config';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -179,7 +181,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderPrimaryView = () => {
-		const { translate, siteId, showOptIn, showOptOut, isCheckout } = this.props;
+		const { translate, siteId, showOptIn, showOptOut, isCheckout, editorDeprecated } = this.props;
 
 		// Don't show additional items inside Checkout.
 		if ( isCheckout ) {
@@ -189,7 +191,7 @@ class InlineHelpPopover extends Component {
 		return (
 			<>
 				<QueryActiveTheme siteId={ siteId } />
-				{ showOptOut && (
+				{ showOptOut && ! editorDeprecated && (
 					<Button
 						onClick={ this.switchToClassicEditor }
 						className="inline-help__classic-editor-toggle"
@@ -198,7 +200,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 				) }
 
-				{ showOptIn && (
+				{ showOptIn && ! editorDeprecated && (
 					<Button
 						onClick={ this.switchToBlockEditor }
 						className="inline-help__gutenberg-editor-toggle"
@@ -310,6 +312,7 @@ function mapStateToProps( state ) {
 		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 		isCheckout: section.name && section.name === 'checkout',
+		editorDeprecated: isEnabled( 'editor/after-deprecation' ) && inEditorDeprecationGroup( state ),
 	};
 }
 
