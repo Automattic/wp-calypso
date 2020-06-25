@@ -31,7 +31,7 @@ import createSelector from 'lib/create-selector';
 import findOngoingTour from './find-ongoing-tour';
 import getToursHistory from './get-tours-history';
 
-const BLACKLISTED_SECTIONS = [
+const DISALLOWED_SECTIONS = [
 	'signup',
 	'upgrades', // checkout
 	'checkout-thank-you', // thank you page
@@ -149,7 +149,7 @@ const findTriggeredTour = ( state ) => {
 	} );
 };
 
-const isSectionBlacklisted = ( state ) => includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
+const isSectionDisallowed = ( state ) => includes( DISALLOWED_SECTIONS, getSectionName( state ) );
 
 export const hasTourJustBeenVisible = createSelector(
 	( state, now = Date.now() ) => {
@@ -163,7 +163,7 @@ export const hasTourJustBeenVisible = createSelector(
 	[ getActionLog ]
 );
 
-const shouldBailAllTours = ( state ) => isSectionBlacklisted( state );
+const shouldBailAllTours = ( state ) => isSectionDisallowed( state );
 
 const shouldBailNewTours = ( state ) => hasTourJustBeenVisible( state );
 

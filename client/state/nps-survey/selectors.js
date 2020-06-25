@@ -10,7 +10,7 @@ import { get } from 'lodash';
 import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
 import { getSectionName } from 'state/ui/selectors';
 
-const SECTION_NAME_WHITELIST = [
+const ALLOWED_SECTION_NAMES = [
 	'discover',
 	'menus',
 	'people',
@@ -33,7 +33,7 @@ export function isSessionEligibleForNpsSurvey( state ) {
 
 export function isSectionEligibleForNpsSurvey( state ) {
 	const sectionName = getSectionName( state );
-	return SECTION_NAME_WHITELIST.indexOf( sectionName ) > -1;
+	return ALLOWED_SECTION_NAMES.indexOf( sectionName ) > -1;
 }
 
 export function isSectionAndSessionEligibleForNpsSurvey( state ) {
