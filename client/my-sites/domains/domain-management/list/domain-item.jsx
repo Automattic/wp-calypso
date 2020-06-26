@@ -79,6 +79,11 @@ class DomainItem extends PureComponent {
 							} ) }
 						</div>
 					) }
+					<DomainNotice
+						status="info"
+						text={ translate( 'Activating domain' ) }
+						className="domain-item__mobile-notice"
+					/>
 				</div>
 				<div className="domain-item__transfer-lock">
 					<Gridicon size={ 18 } icon="checkmark" />
