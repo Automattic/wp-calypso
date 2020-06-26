@@ -59,6 +59,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import ClipboardButton from 'components/forms/clipboard-button';
 import SectionHeader from 'components/section-header';
 import accept from 'lib/accept';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 /**
  * Style dependencies
@@ -645,7 +646,7 @@ class InvitePeople extends React.Component {
 	state = this.resetState();
 
 	render() {
-		const { site, translate, isWPForTeamsSite } = this.props;
+		const { site, translate, isWPForTeamsSite, isJetpack } = this.props;
 		if ( site && ! userCan( 'promote_users', site ) ) {
 			return (
 				<Main>
@@ -663,6 +664,8 @@ class InvitePeople extends React.Component {
 			<Main className="invite-people">
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 				{ site.ID && <QuerySiteInvites siteId={ site.ID } /> }
+				{ site.ID && isJetpack && <QueryJetpackModules siteId={ site.ID } /> }
+
 				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'Invite People' ) }
@@ -688,7 +691,7 @@ const connectComponent = connect(
 		return {
 			siteId,
 			needsVerification: ! isCurrentUserEmailVerified( state ),
-			showSSONotice: !! ( activating || active ),
+			showSSONotice: ! ( activating || active ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
