@@ -203,8 +203,7 @@ references:
     command: |
       source "$HOME/.nvm/nvm.sh"
       nvm use
-      cd desktop
-      npm install
+      $(cd desktop && npm install)
   desktop-cache-paths: &desktop-cache-paths
     - desktop/build
     - desktop/client
