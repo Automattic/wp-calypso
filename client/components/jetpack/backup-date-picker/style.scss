@@ -3,7 +3,7 @@
 	align-items: center;
 	background: #fff;
 	padding-top: 0.5rem;
-	font-size: 0.875rem;
+	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		background: transparent;

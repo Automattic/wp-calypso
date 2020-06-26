@@ -16,7 +16,7 @@
 }
 
 .scan__content p {
-	font-size: 18px;
+	font-size: $font-body;
 	margin-bottom: 16px;
 	line-height: 24px;
 
@@ -53,13 +53,13 @@
 
 .scan__header {
 	color: var( --studio-black );
-	font-size: rem( 28px );
+	font-size: $font-title-medium;
+	font-weight: 600;
 	line-height: 1;
 	margin: 32px 0 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: rem( 36px );
-		font-weight: 600;
+		font-size: $font-headline-small;
 		margin: 32px 0 24px;
 	}
 	&.is-placeholder {
@@ -72,8 +72,8 @@
 .scan__subheader {
 	margin: 20px 16px 8px;
 
-	font-family: 'Recoleta', Georgia, 'Times New Roman', Times, serif;
-	font-size: rem( 21px );
+	@extend .wp-brand-font;
+	font-size: $font-title-small;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin: 36px 0 4px;

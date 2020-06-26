@@ -8,9 +8,14 @@
 		@include placeholder( --color-neutral-10 );
 	}
 
-	.card-heading {
-		font-size: 18px;
+	.card-heading,
+	.threat-item-header__alert-filename {
+		font-size: $font-body;
 		line-height: 24px;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			font-size: $font-title-small;
+		}
 	}
 
 	.log-item__subheader {

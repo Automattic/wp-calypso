@@ -35,13 +35,13 @@
 
 .daily-backup-status__date,
 .daily-backup-status__static-title {
-	font-size: 1.4rem;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	margin-bottom: 1rem;
 }
 
 .daily-backup-status__failed-message {
-	font-size: 1.4rem;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	color: var( --color-scary-50 );
 	margin-bottom: 0.5rem;
@@ -84,12 +84,12 @@
 }
 
 .daily-backup-status__title {
-	font-size: 22px;
+	font-size: $font-title-medium;
 	font-weight: 600;
 	margin-bottom: 18px;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 36px;
+		font-size: $font-headline-small;
 		margin: 8px 0 12px;
 	}
 }
@@ -166,7 +166,7 @@
 	margin-top: -0.3rem;
 	color: var( --studio-gray-40 );
 	font-weight: 400;
-	font-size: 0.9rem;
+	font-size: $font-body-small;
 }
 
 .daily-backup-status__credentials-warning {
@@ -179,7 +179,7 @@
 	align-items: center;
 	margin-bottom: 1rem;
 	font-weight: 600;
-	font-size: 0.9rem;
+	font-size: $font-body-small;
 	line-height: 1rem;
 }
 
@@ -221,7 +221,7 @@
 	}
 
 	div {
-		font-size: 18px;
+		font-size: $font-title-small;
 		font-weight: 600;
 	}
 }
@@ -267,7 +267,7 @@
 	top: -1.9rem;
 	background-color: rgba( 0, 0, 0, 0.5 );
 	color: #fff;
-	font-size: 0.8rem;
+	font-size: $font-body-small;
 	padding-top: 0.3rem;
 }
 
@@ -395,7 +395,7 @@
 		margin-top: 0;
 		color: var( --studio-gray-40 );
 		font-weight: 400;
-		font-size: 0.9rem;
+		font-size: $font-body;
 	}
 
 	.form-button.daily-backup-status__download-button,
@@ -409,7 +409,7 @@
 	}
 
 	.daily-backup-status__failed-message {
-		font-size: 36px;
+		font-size: $font-headline-small;
 		font-weight: 600;
 		margin-bottom: 2rem;
 	}
