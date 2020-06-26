@@ -86,13 +86,13 @@ class DomainItem extends PureComponent {
 					/>
 				</div>
 				<div className="domain-item__transfer-lock">
-					<Gridicon size={ 18 } icon="checkmark" />
+					<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
 				</div>
 				<div className="domain-item__privacy">
-					<Gridicon size={ 18 } icon="checkmark" />
+					<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
 				</div>
 				<div className="domain-item__auto-renew">
-					<Gridicon size={ 18 } icon="minus" />
+					<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
 				</div>
 				<div className="domain-item__email">
 					<Button onClick={ this.addEmailClick }>{ translate( 'Add' ) }</Button>

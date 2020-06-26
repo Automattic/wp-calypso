@@ -217,3 +217,7 @@ input[type='radio'].domain-management-list-item__radio {
 		display: none;
 	}
 }
+
+.domain-item__icon {
+	fill: var( --color-text-subtle );
+}
