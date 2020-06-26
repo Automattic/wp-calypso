@@ -160,14 +160,14 @@ input[type='radio'].domain-management-list-item__radio {
 }
 
 .domain-item__title {
-	font-size: 18px;
+	font-size: $font-body;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-left: 4px;
 }
 
 .domain-item__meta {
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 }
 
@@ -201,7 +201,7 @@ input[type='radio'].domain-management-list-item__radio {
 	width: 15%;
 	flex-shrink: 0;
 	text-align: center;
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-right: 8px;
 
 	@include breakpoint-deprecated( '<960px' ) {
