@@ -13,14 +13,6 @@
 	}
 }
 
-.history.is_jetpackcom .section-nav {
-	margin-top: 16px;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		margin-top: 0;
-	}
-}
-
 .history__body {
 	@include breakpoint-deprecated( '<660px' ) {
 		padding: 0 16px;
