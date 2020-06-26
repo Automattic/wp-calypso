@@ -143,7 +143,6 @@ export class JetpackConnectMain extends Component {
 
 	render() {
 		const { renderFooter, status, type } = this.props;
-
 		return (
 			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
