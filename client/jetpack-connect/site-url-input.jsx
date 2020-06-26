@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
@@ -17,7 +17,7 @@ import Spinner from 'components/spinner';
 import SuggestionSearch from 'components/suggestion-search';
 import { localizeUrl } from 'lib/i18n-utils';
 
-class JetpackConnectSiteUrlInput extends PureComponent {
+class JetpackConnectSiteUrlInput extends Component {
 	static propTypes = {
 		handleOnClickTos: PropTypes.func,
 		isError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),

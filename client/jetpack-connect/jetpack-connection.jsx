@@ -5,7 +5,7 @@ import debugModule from 'debug';
 import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, startsWith } from 'lodash';
+import { flowRight, get, includes, startsWith, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -258,6 +258,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 		handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
 		render() {
+			const props = this.props.locale ? this.props : omit( this.props, 'locale' );
+
 			return (
 				<WrappedComponent
 					processJpSite={ this.processJpSite }
@@ -265,7 +267,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 					renderFooter={ this.renderFooter }
 					renderNotices={ this.renderNotices }
 					isCurrentUrlFetching={ this.isCurrentUrlFetching() }
-					{ ...this.props }
+					{ ...props }
 				/>
 			);
 		}
