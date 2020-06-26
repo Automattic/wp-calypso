@@ -187,3 +187,54 @@
 		}
 	}
 }
+
+.activity-card-list__loading-placeholder {
+	.filterbar {
+		@include placeholder( --color-neutral-10 );
+		height: 51px;
+		margin-bottom: 2rem;
+	}
+
+	.activity-card-list__pagination-top,
+	.activity-card-list__pagination-bottom {
+		@include placeholder( --color-neutral-10 );
+		height: 34px;
+		width: 50%;
+		margin: 0 auto;
+
+		&.is-compact {
+			height: 28px;
+		}
+	}
+
+	.activity-card-list__date-group-date {
+		span {
+			@include placeholder( --color-neutral-10 );
+			font-weight: 600;
+			font-size: 1rem;
+			line-height: 23px;
+		}
+	}
+
+	.activity-card-list__date-group-content::before {
+		background: transparent;
+	}
+
+	.activity-card__time-text {
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.activity-card {
+		margin-bottom: 32px;
+	}
+
+	.card {
+		@include placeholder( --color-neutral-10 );
+		height: 102px;
+		border-left: initial;
+
+		&::before {
+			background: transparent;
+		}
+	}
+}

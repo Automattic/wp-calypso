@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -29,7 +30,7 @@ import './style.scss';
 
 class ActivityCardList extends Component {
 	static propTypes = {
-		logs: PropTypes.array.isRequired,
+		logs: PropTypes.array,
 		pageSize: PropTypes.number.isRequired,
 		showDateSeparators: PropTypes.bool,
 		showFilter: PropTypes.bool,
@@ -134,7 +135,7 @@ class ActivityCardList extends Component {
 		);
 
 		return (
-			<>
+			<div className="activity-card-list">
 				{ showFilter && (
 					<Filterbar
 						{ ...{
@@ -172,19 +173,72 @@ class ActivityCardList extends Component {
 						total={ logs.length }
 					/>
 				) }
-			</>
+			</div>
 		);
 	}
 
+	renderLoading() {
+		const { showPagination, showDateSeparators, isBreakpointActive } = this.props;
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		return (
+			<div className="activity-card-list__loading-placeholder">
+				<div className="filterbar" />
+				{ showPagination && (
+					<div
+						className={ classNames( 'activity-card-list__pagination-top', {
+							'is-compact': isBreakpointActive,
+						} ) }
+					/>
+				) }
+				<div key="activity-card-list__date-group-loading">
+					{ showDateSeparators && (
+						<div className="activity-card-list__date-group-date">
+							<span>MMM Do</span>
+						</div>
+					) }
+					<div className="activity-card-list__date-group-content">
+						{ [ 1, 2, 3 ].map( ( i ) => (
+							<div
+								className="activity-card-list__secondary-card activity-card"
+								key={ `loading-secondary-${ i }` }
+							>
+								<div className="activity-card__time">
+									<div className="activity-card__time-text">Sometime</div>
+								</div>
+								<div className="card" />
+							</div>
+						) ) }
+						<div className="activity-card-list__primary-card activity-card">
+							<div className="activity-card__time">
+								<div className="activity-card__time-text">Sometime</div>
+							</div>
+							<div className="card" />
+						</div>
+					</div>
+				</div>
+				{ showPagination && (
+					<div
+						className={ classNames( 'activity-card-list__pagination-bottom', {
+							'is-compact': isBreakpointActive,
+						} ) }
+					/>
+				) }
+			</div>
+		);
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+	}
+
 	render() {
-		const { applySiteOffset, siteId } = this.props;
+		const { applySiteOffset, siteId, logs } = this.props;
 
 		return (
-			<div className="activity-card-list">
+			<>
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
-				{ applySiteOffset && this.renderData() }
-			</div>
+				{ ! logs && this.renderLoading() }
+				{ logs && applySiteOffset && this.renderData() }
+			</>
 		);
 	}
 }
