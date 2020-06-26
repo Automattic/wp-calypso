@@ -5,38 +5,46 @@ import debugModule from 'debug';
 import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, startsWith, omit } from 'lodash';
+import { flowRight, get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import HelpButton from './help-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import page from 'page';
 import versionCompare from 'lib/version-compare';
-import { redirect } from './utils';
+import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs, externalRedirect } from 'lib/route';
-import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
+import { checkUrl } from 'state/jetpack-connect/actions';
+import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { urlToSlug } from 'lib/url';
 
-import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
+import {
+	JPC_PATH_PLANS,
+	JPC_PATH_REMOTE_INSTALL,
+	MINIMUM_JETPACK_VERSION,
+	REMOTE_PATH_AUTH,
+} from './constants';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_OWNED,
 	IS_DOT_COM,
+	IS_DOT_COM_GET_SEARCH,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
 	NOT_EXISTS,
 	NOT_JETPACK,
 	NOT_WORDPRESS,
 	OUTDATED_JETPACK,
-	SITE_BLOCKED,
+	SITE_BLACKLISTED,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
 
@@ -47,8 +55,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 		state = {
 			status: '',
 			url: '',
-			redirecting: false,
-			waitingForSites: true,
 		};
 
 		renderFooter = () => {
@@ -63,10 +69,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 			);
 		};
 
-		dismissUrl = () => this.props.dismissUrl( this.state.url );
-
-		goBack = () => page.back();
-
 		processJpSite = ( url ) => {
 			const { isMobileAppFlow, skipRemoteInstall, forceRemoteInstall } = this.props;
 
@@ -80,14 +82,13 @@ const jetpackConnection = ( WrappedComponent ) => {
 				! forceRemoteInstall &&
 				! this.state.redirecting
 			) {
-				this.redirect( 'remote_auth', this.props.siteHomeUrl );
+				this.goToRemoteAuth( this.props.siteHomeUrl );
 			}
-
 			if ( status === ALREADY_OWNED && ! this.state.redirecting ) {
 				if ( isMobileAppFlow ) {
 					this.redirectToMobileApp( 'already-connected' );
 				}
-				this.redirect( 'plans_selection', url );
+				this.goToPlans( url );
 			}
 
 			if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
@@ -105,37 +106,63 @@ const jetpackConnection = ( WrappedComponent ) => {
 					! isMobileAppFlow &&
 					! skipRemoteInstall
 				) {
-					this.redirect( 'remote_install' );
+					this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
 				} else {
-					this.redirect( 'install_instructions', url );
+					this.goToInstallInstructions( '/jetpack/connect/instructions' );
 				}
 			}
 		};
 
-		recordTracks = ( url, type ) => {
+		//goBack = () => page.back();
+
+		makeSafeRedirectionFunction( func ) {
+			return ( url ) => {
+				if ( ! this.state.redirecting ) {
+					this.setState( { redirecting: true } );
+					func( url );
+				}
+			};
+		}
+
+		goToPlans = this.makeSafeRedirectionFunction( ( url ) => {
 			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 				url: url,
-				type: type,
+				type: 'plans_selection',
 			} );
-		};
 
-		redirect = ( type, url ) => {
-			if ( ! this.state.redirecting ) {
-				this.setState( { redirecting: true } );
+			page.redirect( `${ JPC_PATH_PLANS }/${ urlToSlug( url ) }` );
+		} );
 
-				redirect( type, url );
-			}
-		};
+		goToRemoteAuth = this.makeSafeRedirectionFunction( ( url ) => {
+			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+				url: url,
+				type: 'remote_auth',
+			} );
+			externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
+		} );
 
-		redirectToMobileApp = ( reason ) => {
-			if ( ! this.state.redirecting ) {
-				this.setState( { redirecting: true } );
+		goToRemoteInstall = this.makeSafeRedirectionFunction( ( url ) => {
+			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+				url: url,
+				type: 'remote_install',
+			} );
+			page.redirect( url );
+		} );
 
-				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
-				debug( `Redirecting to mobile app ${ url }` );
-				externalRedirect( url );
-			}
-		};
+		goToInstallInstructions = this.makeSafeRedirectionFunction( ( url ) => {
+			const urlWithQuery = addQueryArgs( { url: url }, url );
+			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+				url: urlWithQuery,
+				type: 'install_instructions',
+			} );
+			page( urlWithQuery );
+		} );
+
+		redirectToMobileApp = this.makeSafeRedirectionFunction( ( reason ) => {
+			const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
+			debug( `Redirecting to mobile app ${ url }` );
+			externalRedirect( url );
+		} );
 
 		isCurrentUrlFetched() {
 			return (
@@ -176,28 +203,17 @@ const jetpackConnection = ( WrappedComponent ) => {
 			);
 		}
 
-		renderNotices = () => {
-			return ! this.isCurrentUrlFetching() &&
-				this.isCurrentUrlFetched() &&
-				! this.props.jetpackConnectSite.isDismissed &&
-				this.state.status &&
-				this.state.status !== IS_DOT_COM_GET_SEARCH ? (
-				<JetpackConnectNotices
-					noticeType={ this.state.status }
-					onDismissClick={ IS_DOT_COM === this.state.status ? this.goBack : this.dismissUrl }
-					url={ this.state.url }
-					onTerminalError={ this.props.isMobileAppFlow ? this.redirectToMobileApp : null }
-				/>
-			) : null;
-		};
-
 		getStatus = ( url ) => {
 			if ( url === '' ) {
 				return false;
 			}
 
 			if ( this.isError( 'site_blacklisted' ) ) {
-				return SITE_BLOCKED;
+				return SITE_BLACKLISTED;
+			}
+
+			if ( this.checkProperty( 'userOwnsSite' ) ) {
+				return ALREADY_OWNED;
 			}
 
 			if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
@@ -215,6 +231,14 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return WORDPRESS_DOT_COM;
 			}
 
+			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+				const product = window.location.href.split( '/' )[ 5 ];
+
+				if ( startsWith( product, 'jetpack_search' ) ) {
+					return IS_DOT_COM_GET_SEARCH;
+				}
+				return IS_DOT_COM;
+			}
 			if ( ! this.checkProperty( 'exists' ) ) {
 				return NOT_EXISTS;
 			}
@@ -241,26 +265,21 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return ALREADY_CONNECTED;
 			}
 
-			if ( this.checkProperty( 'userOwnsSite' ) ) {
-				return ALREADY_OWNED;
-			}
-
 			return false;
 		};
 
 		handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
-		render() {
-			const props = this.props.locale ? this.props : omit( this.props, 'locale' );
+		isInstall() {
+			return includes( FLOW_TYPES, this.props.type );
+		}
 
+		render() {
 			return (
 				<WrappedComponent
 					processJpSite={ this.processJpSite }
 					status={ this.state.status }
 					renderFooter={ this.renderFooter }
-					renderNotices={ this.renderNotices }
-					isCurrentUrlFetching={ this.isCurrentUrlFetching() }
-					{ ...props }
 				/>
 			);
 		}
@@ -279,6 +298,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			return {
 				// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 				getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
+				isLoggedIn: !! getCurrentUserId( state ),
 				isMobileAppFlow,
 				isRequestingSites: isRequestingSites( state ),
 				jetpackConnectSite,
@@ -289,7 +309,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 		},
 		{
 			checkUrl,
-			dismissUrl,
 			recordTracksEvent,
 		}
 	);
