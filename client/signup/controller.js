@@ -42,7 +42,7 @@ import { waitForData } from 'state/data-layer/http-data';
 import { requestGeoLocation } from 'state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
-import Experiment, { DefaultVariation, Variation, LoadingVariations } from 'components/experiment';
+import Experiment, { DefaultVariation, Variation } from 'components/experiment';
 
 /**
  * Constants
@@ -282,7 +282,7 @@ export default {
 							pageTitle={ getFlowPageTitle( flowName ) }
 						/>
 					</DefaultVariation>
-					<Variation name="variantShowSwapped">
+					<Variation name="show_swapped">
 						<SignupComponent
 							store={ context.store }
 							path={ context.path }
