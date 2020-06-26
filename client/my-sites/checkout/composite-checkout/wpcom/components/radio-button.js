@@ -223,7 +223,7 @@ function handleLabelDisabled( { isDisabled } ) {
 			background: lightgray;
 		}
 		
-	:after {
+		:after {
 			background: white;
 		}
 		
