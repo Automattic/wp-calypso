@@ -14,7 +14,7 @@ export const allDomains = withSchemaValidation( allDomainsSchema, ( state = [], 
 	switch ( action.type ) {
 		case ALL_DOMAINS_REQUEST_SUCCESS:
 			return ( action?.domains ?? [] ).map( ( domain ) => {
-				domain.type = getDomainType( domain.type );
+				domain.type = getDomainType( domain );
 				return domain;
 			} );
 	}

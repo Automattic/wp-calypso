@@ -27,6 +27,7 @@ import isRequestingAllDomains from 'state/selectors/is-requesting-all-domains';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
 import PropTypes from 'prop-types';
+import { type as domainTypes } from 'lib/domains/constants';
 import QueryAllDomains from 'components/data/query-all-domains';
 
 /**
@@ -84,7 +85,9 @@ class ListAll extends Component {
 		const { domainsList, canManageSitesMap } = this.props;
 
 		return domainsList
-			.filter( ( domain ) => canManageSitesMap[ domain.blogId ] ) // filter on sites we can manage
+			.filter(
+				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
+			) // filter on sites we can manage, that aren't `wpcom` type
 			.map( ( domain, index ) => (
 				<DomainItem
 					key={ `${ index }-${ domain.name }` }

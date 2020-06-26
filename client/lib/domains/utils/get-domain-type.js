@@ -12,7 +12,7 @@ export function getDomainType( domainFromApi ) {
 		return domainTypes.TRANSFER;
 	}
 
-	if ( domainFromApi.wpcom_domain ) {
+	if ( domainFromApi.wpcom_domain || domainFromApi.type === 'wpcom' ) {
 		return domainTypes.WPCOM;
 	}
 
