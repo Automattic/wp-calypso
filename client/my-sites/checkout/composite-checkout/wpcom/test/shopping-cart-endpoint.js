@@ -80,6 +80,7 @@ describe( 'addItemToResponseCart', function () {
 			included_domain_purchase_amount: null,
 			is_bundled: null,
 			is_domain_registration: null,
+			is_sale_coupon_applied: false,
 			is_renewal: undefined,
 			item_subtotal_display: null,
 			item_subtotal_integer: null,
