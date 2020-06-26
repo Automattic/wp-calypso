@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import {
 	constant,
 	difference,
@@ -30,6 +29,8 @@ import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
 import findOngoingTour from './find-ongoing-tour';
 import getToursHistory from './get-tours-history';
+
+import 'state/guided-tours/init';
 
 const SECTIONS_WITHOUT_TOURS = [
 	'signup',
@@ -189,14 +190,14 @@ export const findEligibleTour = createSelector(
 /**
  * Returns the current state for Guided Tours.
  *
- * This includes the raw state from state/ui/guidedTour, but also the available
+ * This includes the raw state from state/guidedTours, but also the available
  * configuration (`stepConfig`) for the currently active tour step, if one is
  * active.
  *
  * @param  {object}  state Global state tree
  * @returns {object}        Current Guided Tours state
  */
-const getRawGuidedTourState = ( state ) => get( state, 'ui.guidedTour', false );
+const getRawGuidedTourState = ( state ) => get( state, 'guidedTours', false );
 
 export const getGuidedTourState = createSelector(
 	( state ) => {

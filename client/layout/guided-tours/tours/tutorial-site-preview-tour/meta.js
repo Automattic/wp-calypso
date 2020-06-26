@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { and } from 'layout/guided-tours/utils';
-import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/ui/guided-tours/contexts';
+import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/guided-tours/contexts';
 
 export default {
 	name: 'tutorialSitePreview',

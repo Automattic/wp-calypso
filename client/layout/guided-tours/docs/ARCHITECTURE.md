@@ -12,7 +12,7 @@ With `actionLog`, any number of selectors can be written and composed to process
 
 All of these different ways to leverage the action log constitute *triggers**. Presently, we have one family of triggers: triggers based on navigation to a specific path. This is what is at play when tour authors define a tour with `<Tour path="/themes">`, for instance.
 
-The last high-level piece to understand is that Guided Tours barely has any explicit state (e.g. "which step of a tour are we in?", "how long is the tour taking to complete?"), instead relying as much as possible on the action log, which includes a dedicated `GUIDED_TOUR_UPDATE` action to signal tour transitions. The result is that, instead of a hypothetical `state.ui.guidedTours.isTourRunning && <Tour />`, we find a cascade of selectors that ultimately compute the state of Guided Tours. This is achievable thanks to a lot of memoization with `createSelector`:
+The last high-level piece to understand is that Guided Tours barely has any explicit state (e.g. "which step of a tour are we in?", "how long is the tour taking to complete?"), instead relying as much as possible on the action log, which includes a dedicated `GUIDED_TOUR_UPDATE` action to signal tour transitions. The result is that, instead of a hypothetical `state.guidedTours.isTourRunning && <Tour />`, we find a cascade of selectors that ultimately compute the state of Guided Tours. This is achievable thanks to a lot of memoization with `createSelector`:
 
 ```text
 getGuidedTourState

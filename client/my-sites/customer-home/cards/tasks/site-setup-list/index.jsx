@@ -26,7 +26,7 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { requestGuidedTour } from 'state/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { skipCurrentViewHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';

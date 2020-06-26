@@ -24,7 +24,7 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl, getSiteProducts } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { requestGuidedTour } from 'state/guided-tours/actions';
 import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
