@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useState, ReactNode, useEffect, ComponentType } from 'react';
+import React, { ReactElement, useState, ReactNode, useEffect, ComponentType, useMemo } from 'react';
 import { connect, DefaultRootState } from 'react-redux';
 import classNames from 'classnames';
 
@@ -12,6 +12,7 @@ import Main from 'components/main';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-wpcom-atomic';
+import getSiteProducts, { SiteProduct } from 'state/sites/selectors/get-site-products';
 
 type QueryComponentProps = {
 	siteId: number | null;
@@ -36,10 +37,12 @@ type Props = {
 	QueryComponent: ComponentType< QueryComponentProps >;
 	getStateForSite: QueryFunction;
 	isRequestingForSite: RequestFunction;
+	isRequesting: boolean;
+	productSlugTest?: ( slug: string ) => boolean;
 	siteId: number | null;
 	siteState: SiteState | null;
 	atomicSite: boolean;
-	isRequesting: boolean;
+	siteProducts: SiteProduct[] | null;
 };
 
 const UI_STATE_LOADING = Symbol();
@@ -57,11 +60,21 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 		siteState,
 		atomicSite,
 		isRequesting,
+		siteProducts,
+		productSlugTest,
 	} = props;
 	const { state, reason } = siteState || {};
 
 	const [ uiState, setUiState ] = useState< UiState >( null );
 	const [ showUpsell, setUpsell ] = useState( false );
+
+	const hasProduct = useMemo( () => {
+		if ( ! siteProducts || ! productSlugTest ) {
+			return false;
+		}
+		const siteProductsSlugs = siteProducts.map( ( { productSlug } ) => productSlug );
+		return !! siteProductsSlugs.find( productSlugTest );
+	}, [ siteProducts, productSlugTest ] ) as boolean;
 
 	// Reset states when site or section changes
 	useEffect( () => {
@@ -89,10 +102,15 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 	useEffect( () => {
 		// Show the expected content only if the state is distinct to unavailable
 		// (active, inactive, provisioning) or if the site is Atomic
-		if ( UI_STATE_LOADED === uiState && ! atomicSite && ( ! state || state === 'unavailable' ) ) {
+		if (
+			UI_STATE_LOADED === uiState &&
+			! atomicSite &&
+			! hasProduct &&
+			( ! state || state === 'unavailable' )
+		) {
 			setUpsell( true );
 		}
-	}, [ uiState, atomicSite, state ] );
+	}, [ uiState, atomicSite, hasProduct, state ] );
 
 	if ( UI_STATE_LOADED !== uiState ) {
 		return (
@@ -112,11 +130,15 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 
 export default connect( ( state, { getStateForSite, isRequestingForSite }: Props ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteState = getStateForSite( state, siteId );
+	const atomicSite = ( siteId && isAtomicSite( state, siteId ) ) as boolean;
+	const siteProducts = getSiteProducts( state, siteId );
 
 	return {
 		siteId,
-		siteState: getStateForSite( state, siteId ),
-		atomicSite: !! ( siteId && isAtomicSite( state, siteId ) ),
+		siteState,
+		atomicSite,
+		siteProducts,
 		isRequesting: isRequestingForSite( state, siteId ),
 	};
 } )( UpsellSwitch );
