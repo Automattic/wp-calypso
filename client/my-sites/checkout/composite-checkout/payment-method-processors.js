@@ -13,7 +13,7 @@ import {
 	wpcomPayPalExpress,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
-	submitStripeIdealTransaction,
+	submitStripeRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
 	submitExistingCardPayment,
@@ -23,7 +23,12 @@ import { createStripePaymentMethod } from 'lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
 
-export function idealProcessor( submitData, getThankYouUrl, isWhiteGloveOffer ) {
+export function genericRedirectProcessor(
+	paymentMethodId,
+	submitData,
+	getThankYouUrl,
+	isWhiteGloveOffer
+) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const query = isWhiteGloveOffer ? { type: 'white-glove' } : {};
 	const successUrl = formatUrl( {
@@ -39,7 +44,8 @@ export function idealProcessor( submitData, getThankYouUrl, isWhiteGloveOffer ) 
 		pathname,
 		query,
 	} );
-	const pending = submitStripeIdealTransaction(
+	const pending = submitStripeRedirectTransaction(
+		paymentMethodId,
 		{
 			...submitData,
 			successUrl,

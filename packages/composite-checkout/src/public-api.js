@@ -39,6 +39,10 @@ import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
 import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
 import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import {
+	createGiropayPaymentMethodStore,
+	createGiropayMethod,
+} from './lib/payment-methods/giropay';
+import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 } from './lib/payment-methods/stripe-credit-card-fields';
@@ -85,6 +89,8 @@ export {
 	createExistingCardMethod,
 	createFreePaymentMethod,
 	createFullCreditsMethod,
+	createGiropayMethod,
+	createGiropayPaymentMethodStore,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
 	createPayPalMethod,

@@ -89,6 +89,13 @@ const RadioButtonWrapper = styled.div`
 
 		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 			display: block;
+			filter: grayscale( ${ getGrayscaleValue } );
+		}
+	}
+
+	:hover .payment-logos {
+		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+			filter: grayscale( 0 );
 		}
 	}
 

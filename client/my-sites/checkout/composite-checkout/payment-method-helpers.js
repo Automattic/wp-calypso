@@ -4,16 +4,19 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { prepareDomainContactDetails } from 'my-sites/checkout/composite-checkout/wpcom';
-import wp from 'lib/wp';
 
 /**
  * Internal dependencies
  */
+import wp from 'lib/wp';
 import {
 	createTransactionEndpointRequestPayloadFromLineItems,
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
 } from './types';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	prepareDomainContactDetails,
+} from 'my-sites/checkout/composite-checkout/wpcom';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
@@ -104,13 +107,21 @@ export async function submitStripeCardTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function submitStripeIdealTransaction( transactionData, submit ) {
+export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
+	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
+		?.name;
+	if ( ! paymentMethodType ) {
+		throw new Error( `No payment method found for type: ${ paymentMethodId }` );
+	}
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
-		paymentMethodType: 'WPCOM_Billing_Stripe_Source_Ideal',
+		paymentMethodType,
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
-	debug( 'sending stripe ideal transaction', formattedTransactionData );
+	debug(
+		`sending stripe redirect transaction for type: ${ paymentMethodId }`,
+		formattedTransactionData
+	);
 	return submit( formattedTransactionData );
 }
 

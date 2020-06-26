@@ -90,6 +90,13 @@ const RadioButtonWrapper = styled.div`
 
 		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 			display: block;
+			filter: grayscale( ${ getGrayscaleValue } );
+		}
+	}
+
+	:hover .payment-logos {
+		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+			filter: grayscale( 0 );
 		}
 	}
 
@@ -101,7 +108,7 @@ const RadioButtonWrapper = styled.div`
 		filter: grayscale( 0 );
 	}
 
-	${handleWrapperDisabled};
+	${ handleWrapperDisabled };
 `;
 
 function handleWrapperDisabled( { disabled } ) {
@@ -173,7 +180,7 @@ const Label = styled.label`
 		z-index: 3;
 	}
 
-	${handleLabelDisabled};
+	${ handleLabelDisabled };
 `;
 
 function handleLabelDisabled( { disabled } ) {

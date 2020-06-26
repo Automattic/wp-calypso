@@ -218,7 +218,7 @@ function IdealPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting ideal payment' );
 					setTransactionPending();
-					onEvent( { type: 'IDEAL_TRANSACTION_BEGIN' } );
+					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'ideal' } } );
 					submitTransaction( {
 						stripe,
 						name: customerName?.value,
