@@ -18,8 +18,8 @@
 }
 
 .memberships__onboarding-wrapper {
-	flex-direction: row;
 	display: flex;
+	flex-direction: row;
 	padding-top: 30px;
 }
 
@@ -40,7 +40,13 @@
 }
 
 .memberships__onboarding-header {
-	font-size: 24px;
+	font-family: Recoleta;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 28px;
+	line-height: 38px;
+	/* identical to box height */
+	letter-spacing: 0.36px;
 	margin-bottom: 24px;
 }
 .memberships__onboarding-paragraph {
@@ -50,22 +56,42 @@
 }
 .memberships__onboarding-benefits {
 	color: var( --color-text-subtle );
-	margin-top: 24px;
+	display: flex;
+	flex-wrap: wrap;
 }
 .memberships__onboarding-benefits > div {
 	line-height: 24px;
 	margin-top: 10px;
-}
-.memberships__onboarding-benefits > div > svg {
-	margin-right: 10px;
-	float: left;
+	flex: 1 450;
+	flex-basis: 45%;
+	align-items: center;
+	justify-content: space-around;
+	padding: 10px;
+
+	/* Gray / Gray 90 */
+	color: var( --color-text-subtle );
 }
 
-.memberships__onboarding-benefits > div > span {
-	display: block;
-	overflow: hidden;
+.memberships__onboarding-benefits > hr {
+	line-height: 24px;
+	flex-basis: 100%;
+	align-items: center;
+	
+	/* Gray / Gray 90 */
+	color: var( --color-text-subtle );
 }
 
+.memberships__onboarding-benefits > div > h3 {
+	font-family: Recoleta;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 20px;
+	line-height: 27px;
+	letter-spacing: 0.38px;
+
+	/* Gray / Gray 90 */
+	color: #1d2327;
+}
 .memberships__earnings-breakdown-list {
 	margin: 0;
 }

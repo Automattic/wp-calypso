@@ -33,7 +33,6 @@ import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ExternalLink from 'components/external-link';
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { localizeUrl } from 'lib/i18n-utils';
 
@@ -485,67 +484,55 @@ class MembershipsSection extends Component {
 						</div>
 						<p className="memberships__onboarding-paragraph">
 							{ this.props.translate(
-								'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more. One-time, monthly, and yearly credit and debit card payment options are supported.'
+								'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more.'
 							) }
-						</p>
-						<p className="memberships__onboarding-paragraph">
-							<ExternalLinkWithTracking
-								href={ localizeUrl( 'https://wordpress.com/support/recurring-payments-button/' ) }
-								icon={ true }
-								tracksEventName="calypso_earn_payments_learn_more"
-							>
-								{ this.props.translate(
-									'Learn more about payments and earning money on your website.'
-								) }
-							</ExternalLinkWithTracking>
 						</p>
 						<p className="memberships__onboarding-paragraph">
 							{ this.props.translate(
-								'Payments are safely, securely, and seamlessly processed by Stripe, a payment partner for all credit and debit card payments. Stripe provides easy access to your money and takes just minutes to set up.'
+								'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
+								{
+									components: {
+										link: <a href="/support/recurring-payments-button/" />,
+									},
+								}
 							) }
 						</p>
-						{ cta }
-						<div className="memberships__onboarding-benefits">
-							<div>
-								<Gridicon size={ 18 } icon="checkmark" />
-								<span>
-									{ this.props.translate(
-										'Add a high converting one-click payment button to your site.'
-									) }
-								</span>
-							</div>
-							<div>
-								<Gridicon size={ 18 } icon="checkmark" />
-								<span>
-									{ this.props.translate(
-										'Offer monthly, yearly, and lifetime subscription options.'
-									) }
-								</span>
-							</div>
-							<div>
-								<Gridicon size={ 18 } icon="checkmark" />
-								<span>
-									{ this.props.translate( 'You select which premium content requires payment.' ) }
-								</span>
-							</div>
-							<div>
-								<Gridicon size={ 18 } icon="checkmark" />
-								<span>
-									{ this.props.translate( 'Send paid newsletters with premium content.' ) }
-								</span>
-							</div>
-							<div>
-								<Gridicon size={ 18 } icon="checkmark" />
-								<span>{ this.props.translate( 'Collect payments in 135 countries.' ) }</span>
-							</div>
-							<div>
-								<Gridicon size={ 18 } icon="checkmark" />
-								<span>{ this.props.translate( 'Easily manage subscribers.' ) }</span>
-							</div>
-						</div>
+						<p className="memberships__onboarding-paragraph">{ cta }</p>
+						<p className="memberships__onboarding-paragraph">
+							{ this.props.translate(
+								'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
+							) }
+						</p>
 					</div>
 					<div className="memberships__onboarding-column-image">
 						<img src={ paymentsImage } aria-hidden="true" alt="" />
+					</div>
+				</div>
+				<div className="memberships__onboarding-benefits">
+					<hr />
+					<div>
+						<h3>Get paid for anything</h3>
+						{ this.props.translate(
+							'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
+						) }
+					</div>
+					<div>
+						<h3>Flexibility you need</h3>
+						{ this.props.translate(
+							'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
+						) }
+					</div>
+					<div>
+						<h3>You're in control</h3>
+						{ this.props.translate(
+							'You choose which content requires payment. Easily manage subscribers and payment plans.'
+						) }
+					</div>
+					<div>
+						<h3>Global payments</h3>
+						{ this.props.translate(
+							'Collect payments in 135 countries to reach customers around the world.'
+						) }
 					</div>
 				</div>
 			</Card>
