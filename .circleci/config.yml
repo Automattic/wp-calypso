@@ -191,6 +191,13 @@ references:
       cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
+  yarn-install-ignore-scripts: &yarn-install-ignore-scripts
+    name: Install dependencies
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn install --frozen-lockfile --ignore-scripts
   desktop-cache-paths: &desktop-cache-paths
     - desktop/build
     - desktop/client
@@ -643,7 +650,7 @@ jobs:
       - attach_workspace:
           at: /Users/distiller/wp-calypso
       - run: *update-node
-      - run: *yarn-install
+      - run: *yarn-install-ignore-scripts
       - run:
           name: Build Desktop Mac
           no_output_timeout: 30m

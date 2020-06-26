@@ -81,3 +81,5 @@ cached-requests.json
 /desktop/resource/certificates/win.p12
 /client/desktop/config.json
 /desktop/id_rsa
+/desktop/e2e/logs
+/desktop/e2e/screenshots
