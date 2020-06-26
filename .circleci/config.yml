@@ -198,13 +198,6 @@ references:
       nvm use
       npm install -g yarn
       yarn install --frozen-lockfile --ignore-scripts
-  desktop-install-dependencies: &desktop-install-dependencies
-    name: Install dependencies
-    command: |
-      source "$HOME/.nvm/nvm.sh"
-      nvm use
-      cd desktop
-      npm install
   desktop-cache-paths: &desktop-cache-paths
     - desktop/build
     - desktop/client
@@ -657,7 +650,7 @@ jobs:
       - attach_workspace:
           at: /Users/distiller/wp-calypso
       - run: *update-node
-      - run: *desktop-install-dependencies
+      - run: *yarn-install-ignore-scripts
       - run:
           name: Build Desktop Mac
           no_output_timeout: 30m
