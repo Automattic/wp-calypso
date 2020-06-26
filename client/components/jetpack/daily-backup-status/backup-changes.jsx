@@ -81,7 +81,9 @@ const BackupChanges = ( { deltas } ) => {
 				<div key={ item.activityId } className="daily-backup-status__post-block">
 					<Gridicon className="daily-backup-status__post-icon" icon="pencil" />
 					<a className="daily-backup-status__post-link" href={ item.activityDescription[ 0 ].url }>
-						{ item.activityDescription[ 0 ].children[ 0 ] }
+						{ typeof item.activityDescription[ 0 ].children[ 0 ] === 'string'
+							? item.activityDescription[ 0 ].children[ 0 ]
+							: item.activityDescription[ 0 ].children[ 0 ].text }
 					</a>
 				</div>
 			);
