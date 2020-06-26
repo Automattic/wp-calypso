@@ -67,7 +67,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				/>
 			) }
 			<div className="activity-log-v2__content">
-				{ logs && <ActivityCardList logs={ logs } pageSize={ 10 } /> }
+				<ActivityCardList logs={ logs } pageSize={ 10 } />
 			</div>
 		</Main>
 	);
