@@ -39,7 +39,6 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			className={ classNames( 'history', {
 				is_jetpackcom: isJetpackPlatform,
 			} ) }
-			wideLayout={ ! isJetpackPlatform }
 		>
 			<DocumentHead title={ translate( 'Scan' ) } />
 			<SidebarNavigation />
