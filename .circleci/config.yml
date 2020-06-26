@@ -664,10 +664,15 @@ jobs:
 
                   make -f desktop/Makefile package
       - run:
+          name: e2e Tests
+          command: make -f desktop/Makefile e2e
+      - run:
+          when: always
           name: Clean Up
           command: |
             rm -rf desktop/release/mac
       - store_artifacts:
+          when: always
           path: desktop/release
       - persist_to_workspace:
           root: ~/wp-calypso

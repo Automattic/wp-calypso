@@ -48,6 +48,11 @@ package:
 
 	@cd $(CALYPSO_DIR) && yarn run build-desktop:app
 
+e2e:
+	$(info Running end-to-end tests...)
+
+	@cd $(CALYPSO_DIR) && yarn run test-desktop:e2e
+
 clean:
 	@rm -rf $(DESKTOP_DIR)$/release
 
