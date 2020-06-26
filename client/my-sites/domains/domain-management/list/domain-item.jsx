@@ -95,7 +95,9 @@ class DomainItem extends PureComponent {
 					<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
 				</div>
 				<div className="domain-item__email">
-					<Button onClick={ this.addEmailClick }>{ translate( 'Add' ) }</Button>
+					<Button compact onClick={ this.addEmailClick }>
+						{ translate( 'Add' ) }
+					</Button>
 				</div>
 			</CompactCard>
 		);
