@@ -7,7 +7,10 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
-import { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/wpcom/types';
+import type {
+	WPCOMCartItem,
+	DomainContactDetails,
+} from 'my-sites/checkout/composite-checkout/wpcom/types';
 import type { CartItemExtra } from 'lib/cart-values/types';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
@@ -22,7 +25,7 @@ export type WPCOMTransactionEndpoint = (
 export type WPCOMTransactionEndpointRequestPayload = {
 	cart: WPCOMTransactionEndpointCart;
 	payment: WPCOMTransactionEndpointPaymentDetails;
-	domainDetails?: WPCOMTransactionEndpointDomainDetails;
+	domainDetails?: DomainContactDetails;
 	isWhiteGloveOffer: boolean;
 };
 
@@ -66,30 +69,6 @@ type WPCOMTransactionEndpointCartItem = {
 	extra?: CartItemExtra;
 };
 
-export type WPCOMTransactionEndpointDomainDetails = {
-	firstName: string;
-	lastName: string;
-	email: string;
-	phone: string;
-	address_1: string;
-	city: string;
-	state: string;
-	countryCode: string;
-	postalCode: string;
-};
-
-const emptyDomainDetails: WPCOMTransactionEndpointDomainDetails = {
-	firstName: '',
-	lastName: '',
-	email: '',
-	phone: '',
-	address_1: '',
-	city: '',
-	state: '',
-	countryCode: '',
-	postalCode: '',
-};
-
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromLineItems( {
@@ -107,7 +86,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode: string;
 	subdivisionCode?: string;
 	items: WPCOMCartItem[];
-	contactDetails: WPCOMTransactionEndpointDomainDetails;
+	contactDetails: DomainContactDetails;
 } ): WPCOMTransactionEndpointCart {
 	debug( 'creating cart from items', items );
 
@@ -152,7 +131,7 @@ function createTransactionEndpointCartItemFromLineItem(
 
 function addRegistrationDataToGSuiteItem(
 	item: WPCOMCartItem,
-	contactDetails: WPCOMTransactionEndpointDomainDetails
+	contactDetails: DomainContactDetails
 ): WPCOMCartItem {
 	if ( ! isGSuiteProductSlug( item.wpcom_meta?.product_slug ) ) {
 		return item;
@@ -188,7 +167,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	country: string;
 	postalCode: string;
 	subdivisionCode?: string;
-	domainDetails?: WPCOMTransactionEndpointDomainDetails;
+	domainDetails?: DomainContactDetails;
 	items: WPCOMCartItem[];
 	paymentMethodType: string;
 	paymentMethodToken?: string;
@@ -210,7 +189,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			postalCode,
 			subdivisionCode,
 			items: items.filter( ( item ) => item.type !== 'tax' ),
-			contactDetails: domainDetails || emptyDomainDetails,
+			contactDetails: domainDetails || {},
 		} ),
 		domainDetails,
 		payment: {
