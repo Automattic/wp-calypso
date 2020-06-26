@@ -169,6 +169,11 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
+asana-phrase@0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/asana-phrase/-/asana-phrase-0.0.8.tgz#16217ffd443a31a33ba8c0726a0d235558f475d9"
+  integrity sha1-FiF//UQ6MaM7qMByag0jVVj0ddk=
+
 async-exit-hook@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/async-exit-hook/-/async-exit-hook-2.0.1.tgz#8bd8b024b0ec9b1c01cccb9af9db29bd717dfaf3"
@@ -639,6 +644,11 @@ fd-slicer@~1.1.0:
   integrity sha1-JcfInLH5B3+IkbvmHY85Dq4lbx4=
   dependencies:
     pend "~1.2.0"
+
+ffmpeg-static@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/ffmpeg-static/-/ffmpeg-static-2.4.0.tgz#eb3a248849943d493c2a311c0e5e45a06259103a"
+  integrity sha512-OcYTewd3we/Zi4W+VJtEqrfDzRSMwLs0NyAa61qw/FqtbttidGrm+BFsq44prtT3s6/LV6+aoXNpyNBOshXBuA==
 
 filelist@^1.0.1:
   version "1.0.1"
