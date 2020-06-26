@@ -9,6 +9,7 @@ import debugFactory from 'debug';
 import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
 import { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/wpcom/types';
 import type { CartItemExtra } from 'lib/cart-values/types';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 
 const debug = debugFactory( 'calypso:transaction-endpoint' );
 
@@ -153,7 +154,7 @@ function addRegistrationDataToGSuiteItem(
 	item: WPCOMCartItem,
 	contactDetails: WPCOMTransactionEndpointDomainDetails
 ): WPCOMCartItem {
-	if ( ! item.wpcom_meta?.extra.google_apps_users ) {
+	if ( ! isGSuiteProductSlug( item.wpcom_meta?.product_slug ) ) {
 		return item;
 	}
 	return {
