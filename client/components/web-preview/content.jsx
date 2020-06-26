@@ -316,20 +316,21 @@ export class WebPreviewContent extends Component {
 							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
 						</div>
 					) }
-					<div
-						className={ classNames( 'web-preview__frame-wrapper', {
-							'is-resizable': ! this.props.isModalWindow,
-						} ) }
-						style={ { display: 'seo' === this.state.device ? 'none' : 'inherit' } }
-					>
-						<iframe
-							ref={ this.setIframeInstance }
-							className="web-preview__frame"
-							src="about:blank"
-							onLoad={ () => this.setLoaded( 'iframe-onload' ) }
-							title={ this.props.iframeTitle || translate( 'Preview' ) }
-						/>
-					</div>
+					{ 'seo' !== this.state.device && (
+						<div
+							className={ classNames( 'web-preview__frame-wrapper', {
+								'is-resizable': ! this.props.isModalWindow,
+							} ) }
+						>
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								src="about:blank"
+								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
+								title={ this.props.iframeTitle || translate( 'Preview' ) }
+							/>
+						</div>
+					) }
 					{ 'seo' === this.state.device && (
 						<SeoPreviewPane
 							overridePost={ this.props.overridePost }
