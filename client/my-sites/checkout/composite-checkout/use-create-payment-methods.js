@@ -282,9 +282,9 @@ export default function useCreatePaymentMethods( {
 		fullCreditsPaymentMethod,
 		applePayMethod,
 		...existingCardMethods,
-		stripeMethod,
-		paypalMethod,
 		idealMethod,
 		giropayMethod,
+		stripeMethod,
+		paypalMethod,
 	].filter( Boolean );
 }
