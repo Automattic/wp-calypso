@@ -45,10 +45,12 @@ function scanUpsellSwitcher( placeholder, primary ) {
 	return (
 		<UpsellSwitch
 			UpsellComponent={ UpsellComponent }
-			display={ primary }
-			getStateForSite={ getSiteScanState }
-			getRequestStatusForSite={ getSiteScanRequestStatus }
 			QueryComponent={ QueryJetpackScan }
+			getStateForSite={ getSiteScanState }
+			isRequestingForSite={ ( state, siteId ) =>
+				'pending' === getSiteScanRequestStatus( state, siteId )
+			}
+			display={ primary }
 		>
 			{ placeholder }
 		</UpsellSwitch>

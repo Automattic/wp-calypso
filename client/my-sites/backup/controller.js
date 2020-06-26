@@ -24,9 +24,12 @@ export function showUpsellIfNoBackup( context, next ) {
 		<>
 			<UpsellSwitch
 				UpsellComponent={ UpsellComponent }
-				display={ context.primary }
-				getStateForSite={ getRewindState }
 				QueryComponent={ QueryRewindState }
+				getStateForSite={ getRewindState }
+				isRequestingForSite={ ( state, siteId ) =>
+					'uninitialized' === getRewindState( state, siteId )?.state
+				}
+				display={ context.primary }
 			>
 				<SidebarNavigation />
 				{ ! isJetpackCloud() && (

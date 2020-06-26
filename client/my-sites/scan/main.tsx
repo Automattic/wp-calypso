@@ -13,6 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
+import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import FormattedHeader from 'components/formatted-header';
 import SecurityIcon from 'components/jetpack/security-icon';
 import ScanPlaceholder from 'components/jetpack/scan-placeholder';
@@ -249,6 +250,7 @@ class ScanPage extends Component< Props > {
 			>
 				<DocumentHead title="Scan" />
 				<SidebarNavigation />
+				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				{ ! isJetpackPlatform && (
 					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />

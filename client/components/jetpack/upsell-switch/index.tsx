@@ -18,6 +18,7 @@ type QueryComponentProps = {
 };
 
 type QueryFunction = ( arg0: DefaultRootState, arg1: number | null ) => SiteState;
+type RequestFunction = ( arg0: DefaultRootState, arg1: number | null ) => boolean;
 
 export type UpsellComponentProps = {
 	reason?: string;
@@ -34,60 +35,56 @@ type Props = {
 	display: ReactElement;
 	QueryComponent: ComponentType< QueryComponentProps >;
 	getStateForSite: QueryFunction;
-	// TODO: update type
-	getRequestStatusForSite?: any;
+	isRequestingForSite: RequestFunction;
 	siteId: number | null;
 	siteState: SiteState | null;
-	// TODO: update type
-	requestStatus: any;
 	atomicSite: boolean;
+	isRequesting: boolean;
 };
+
+const UI_STATE_LOADING = Symbol( 'loading' );
+const UI_STATE_LOADED = Symbol( 'loaded' );
+
+type UiState = typeof UI_STATE_LOADED | typeof UI_STATE_LOADING | null;
 
 function UpsellSwitch( props: Props ): React.ReactElement {
 	const {
 		UpsellComponent,
+		QueryComponent,
 		display,
 		children,
-		QueryComponent,
 		siteId,
 		siteState,
-		requestStatus,
 		atomicSite,
+		isRequesting,
 	} = props;
+	const { state, reason } = siteState || {};
 
-	const [ { showUpsell, isLoading }, setState ] = useState( {
-		showUpsell: true,
-		isLoading: true,
-	} );
+	const [ uiState, setUiState ] = useState< UiState >( null );
+	const [ showUpsell, setUpsell ] = useState( false );
+
+	// The data queried by QueryComponent can be fetched at any time by other
+	// parts of the app and therefore trigger a rendering of the loading state.
+	// We want to prevent that by making sure the component renders its loading
+	// state only once while mounted.
+	useEffect( () => {
+		if ( ! uiState && isRequesting ) {
+			setUiState( UI_STATE_LOADING );
+		}
+		if ( UI_STATE_LOADING === uiState && ! isRequesting ) {
+			setUiState( UI_STATE_LOADED );
+		}
+	}, [ uiState, isRequesting ] );
 
 	useEffect( () => {
-		const state = siteState?.state;
-
-		// Show loading placeholder, the site's state isn't initialized
-		if ( ! requestStatus || requestStatus === 'pending' || state === 'uninitialized' ) {
-			return setState( {
-				isLoading: true,
-				showUpsell: true,
-			} );
+		// Show the expected content only if the state is distinct to unavailable
+		// (active, inactive, provisioning) or if the site is Atomic
+		if ( UI_STATE_LOADED === uiState && ! atomicSite && ( ! state || state === 'unavailable' ) ) {
+			setUpsell( true );
 		}
+	}, [ uiState, atomicSite, state ] );
 
-		// Show the upsell page
-		if ( ( ! state || state === 'unavailable' ) && ! atomicSite ) {
-			return setState( {
-				isLoading: false,
-				showUpsell: true,
-			} );
-		}
-
-		// Show the expected content. It's distinct to unavailable (active, inactive, provisioning)
-		// or if it's an Atomic site
-		return setState( {
-			isLoading: false,
-			showUpsell: false,
-		} );
-	}, [ siteState, requestStatus, atomicSite ] );
-
-	if ( isLoading ) {
+	if ( UI_STATE_LOADED !== uiState ) {
 		return (
 			<Main
 				className={ classNames( 'upsell-switch__loading', { is_jetpackcom: isJetpackCloud() } ) }
@@ -98,23 +95,18 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 		);
 	}
 	if ( showUpsell ) {
-		return <UpsellComponent reason={ siteState?.reason } />;
+		return <UpsellComponent reason={ reason } />;
 	}
 	return display;
 }
 
-export default connect( ( state, { getStateForSite, getRequestStatusForSite }: Props ) => {
+export default connect( ( state, { getStateForSite, isRequestingForSite }: Props ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteState = getStateForSite( state, siteId );
-	const requestStatus = getRequestStatusForSite
-		? getRequestStatusForSite( state, siteId )
-		: siteState;
-	const atomicSite = !! ( siteId && isAtomicSite( state, siteId ) );
 
 	return {
 		siteId,
-		siteState,
-		requestStatus,
-		atomicSite,
+		siteState: getStateForSite( state, siteId ),
+		atomicSite: !! ( siteId && isAtomicSite( state, siteId ) ),
+		isRequesting: isRequestingForSite( state, siteId ),
 	};
 } )( UpsellSwitch );
