@@ -254,6 +254,13 @@ export default class SignupFlowController {
 			this._processStep( pendingStep );
 		}
 
+		console.log(
+			'completedSteps.length: ' +
+				completedSteps.length +
+				' currentSteps.length: ' +
+				currentSteps.length
+		);
+
 		if ( completedSteps.length === currentSteps.length && undefined !== this._onComplete ) {
 			this._assertFlowProvidedRequiredDependencies();
 			// deferred to ensure that the onComplete function is called after the stores have

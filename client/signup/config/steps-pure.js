@@ -37,6 +37,8 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	addOrRemoveFromProgressStore = noop,
+	verifyCart = noop,
+	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -152,6 +154,17 @@ export function generateSteps( {
 			},
 		},
 
+		'user-new': {
+			stepName: 'user-new',
+			apiRequestFunction: createAccount,
+			fulfilledStepCallback: maybeRemoveStepForUserlessCheckout,
+			providesToken: true,
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
@@ -165,6 +178,12 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-new': {
+			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
@@ -292,6 +311,15 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 			delayApiRequestUntilComplete: true,
+		},
+
+		'domains-new': {
+			stepName: 'domains',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [ 'domainItem', 'themeItem', 'siteUrl' ],
+			props: {
+				isDomainOnly: false,
+			},
 		},
 
 		'domain-only': {
@@ -628,6 +656,13 @@ export function generateSteps( {
 			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
+		},
+
+		'verify-cart': {
+			stepName: 'verify-cart',
+			apiRequestFunction: verifyCart,
+			dependencies: [ 'siteUrl', 'cartItem', 'domainItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug' ],
 		},
 	};
 }

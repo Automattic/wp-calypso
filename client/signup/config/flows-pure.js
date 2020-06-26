@@ -125,6 +125,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'onboarding-new': {
+			steps: [ 'domains-new', 'plans-new', 'user-new', 'verify-cart' ],
+			destination: getSignupDestination,
+			description:
+				'Simplify the User step (account creation step) and move it right before the Checkout, after Plans/Domains steps. Read more in https://wp.me/pbxNRc-m0',
+			lastModified: '2020-06-17',
+			showRecaptcha: true,
+		},
+
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,

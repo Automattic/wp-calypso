@@ -23,6 +23,8 @@ import {
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	addOrRemoveFromProgressStore,
+	verifyCart,
+	maybeRemoveStepForUserlessCheckout,
 } from 'lib/signup/step-actions';
 import { abtest } from 'lib/abtest';
 import { generateSteps } from './steps-pure';
@@ -44,6 +46,8 @@ export default generateSteps( {
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	addOrRemoveFromProgressStore,
+	verifyCart,
+	maybeRemoveStepForUserlessCheckout,
 } );
 
 export function isDomainStepSkippable( flowName ) {

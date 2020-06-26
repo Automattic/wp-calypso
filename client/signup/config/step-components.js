@@ -15,12 +15,14 @@ const stepNameToModuleName = {
 	'domain-only': 'domains',
 	'domains-theme-preselected': 'domains',
 	'domains-launch': 'domains',
+	'domains-new': 'domains',
 	'from-url': 'import-url',
 	'import-preview': 'import-preview',
 	/* import-url will eventually replace from-url step. Forgive temporary naming. */
 	'import-url': 'import-url-onboarding',
 	launch: 'launch-site',
 	plans: 'plans',
+	'plans-new': 'plans',
 	'plans-business': 'plans',
 	'plans-ecommerce': 'plans',
 	'plans-import': 'plans',
@@ -52,6 +54,7 @@ const stepNameToModuleName = {
 	'template-first-themes': 'theme-selection',
 	'fse-themes': 'theme-selection',
 	user: 'user',
+	'user-new': 'user',
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
 	displayname: 'user',
@@ -64,6 +67,7 @@ const stepNameToModuleName = {
 	passwordless: 'passwordless',
 	'p2-site': 'p2-site',
 	'upsell-plan': 'upsell',
+	'verify-cart': 'verify-cart',
 };
 
 export async function getStepComponent( stepName ) {

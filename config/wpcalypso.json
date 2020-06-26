@@ -149,6 +149,7 @@
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": false,
+		"signup/userless-checkout/onboarding": true,
 		"signup/wpcc": true,
 		"signup/wpforteams": true,
 		"site-indicator": true,
