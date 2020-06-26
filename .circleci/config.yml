@@ -632,13 +632,7 @@ jobs:
     steps:
       - checkout
       - run: *update-node
-      - run:
-          name: Install Dependencies
-          command: |
-            source "$HOME/.nvm/nvm.sh"
-            nvm use
-            npm install -g yarn
-            yarn install
+      - run: *yarn-install
       - restore_cache: *desktop-restore-source-cache
       - run: *desktop-decrypt-assets
       - run:
