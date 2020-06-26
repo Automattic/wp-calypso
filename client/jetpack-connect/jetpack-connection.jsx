@@ -5,7 +5,11 @@ import debugModule from 'debug';
 import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+<<<<<<< HEAD
 import { flowRight, get, includes, startsWith, omit } from 'lodash';
+=======
+import { flowRight, get, includes, startsWith } from 'lodash';
+>>>>>>> Manage product type at checkout depending on the type of site.
 import { localize } from 'i18n-calypso';
 
 /**
@@ -196,8 +200,26 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return false;
 			}
 
+			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+				const product = window.location.href.split( '/' )[ 5 ];
+
+				if ( startsWith( product, 'jetpack_search' ) || startsWith( product, 'wpcom_search' ) ) {
+					return IS_DOT_COM_GET_SEARCH;
+				}
+				return IS_DOT_COM;
+			}
+
 			if ( this.isError( 'site_blacklisted' ) ) {
 				return SITE_BLOCKED;
+			}
+
+			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+				const product = window.location.href.split( '/' )[ 5 ];
+
+				if ( startsWith( product, 'jetpack_search' ) ) {
+					return IS_DOT_COM_GET_SEARCH;
+				}
+				return IS_DOT_COM;
 			}
 
 			if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {

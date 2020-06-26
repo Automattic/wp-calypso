@@ -282,7 +282,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug, cart, isJetpackNotAtomic } = this.props;
+		const { planSlug, cart, isJetpack, isJetpackNotAtomic } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -305,13 +305,22 @@ export class Checkout extends React.Component {
 		}
 
 		if (
-			( ( startsWith( this.props.product, 'jetpack_backup' ) ||
+			( startsWith( this.props.product, 'jetpack_backup' ) ||
 				startsWith( this.props.product, 'jetpack_scan' ) ) &&
-				isJetpackNotAtomic ) ||
+			isJetpackNotAtomic
+		) {
+			cartItem = jetpackProductItem( this.props.product );
+		}
+
+		if (
 			startsWith( this.props.product, 'jetpack_search' ) ||
 			startsWith( this.props.product, 'wpcom_search' )
 		) {
-			cartItem = jetpackProductItem( this.props.product );
+			if ( isJetpack ) {
+				cartItem = jetpackProductItem( 'jetpack_search' );
+			} else {
+				cartItem = jetpackProductItem( 'wpcom_search' );
+			}
 		}
 
 		if ( cartItem ) {

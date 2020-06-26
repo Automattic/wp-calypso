@@ -93,7 +93,9 @@ export class SearchPurchase extends Component {
 		const { status, processJpSite } = this.props;
 		const { currentUrl } = this.state;
 
-		// we enable WP.com sites
+		// we handle product addition during checkout (wpcom-> wpcom_search),
+		// irrespective of the product displayed in the route, but to avoid confusion,
+		// we assign it here correctly
 		if ( status === IS_DOT_COM_GET_SEARCH ) {
 			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/wpcom_search' );
 		}
