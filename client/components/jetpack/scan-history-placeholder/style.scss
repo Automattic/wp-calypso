@@ -3,3 +3,17 @@
 	display: inline-flex;
 	@include placeholder( --color-neutral-10 );
 }
+
+.scan-history-placeholder__header {
+	margin: 32px 0 16px;
+
+	font-size: 28px;
+	line-height: 1;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 32px 0 24px;
+
+		font-size: 36px;
+		font-weight: 600;
+	}
+}
