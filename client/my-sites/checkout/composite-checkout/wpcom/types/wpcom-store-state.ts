@@ -38,7 +38,7 @@ export type ManagedContactDetailsShape< T > = {
 	tldExtraFields?: ManagedContactDetailsTldExtraFieldsShape< T >;
 };
 
-type ManagedContactDetailsTldExtraFieldsShape< T > = {
+export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	ca?: {
 		lang?: T;
 		legalType?: T;
@@ -336,9 +336,9 @@ function touchIfDifferent(
 
 function setValueUnlessTouched(
 	newValue: undefined | null | string,
-	oldData: ManagedValue
-): ManagedValue {
-	if ( newValue === undefined || newValue === null ) {
+	oldData: ManagedValue | undefined
+): ManagedValue | undefined {
+	if ( newValue === undefined || newValue === null || oldData === undefined ) {
 		return oldData;
 	}
 	return oldData.isTouched ? oldData : { ...oldData, value: newValue, errors: [] };
@@ -500,7 +500,7 @@ function prepareUkDomainContactExtraDetailsErrors(
 ): UkDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.uk ) {
 		// Needed for compatibility with existing component props
-		const toErrorPayload = ( errorMessage, index ) => {
+		const toErrorPayload = ( errorMessage: string, index: number ) => {
 			return { errorCode: index.toString(), errorMessage };
 		};
 
@@ -598,11 +598,11 @@ export function prepareGSuiteContactValidationRequest(
 ): GSuiteContactValidationRequest {
 	return {
 		contact_information: {
-			firstName: details.firstName.value,
-			lastName: details.lastName.value,
-			alternateEmail: details.alternateEmail.value,
-			postalCode: details.postalCode.value,
-			countryCode: details.countryCode.value,
+			firstName: details.firstName?.value ?? '',
+			lastName: details.lastName?.value ?? '',
+			alternateEmail: details.alternateEmail?.value ?? '',
+			postalCode: details.postalCode?.value ?? '',
+			countryCode: details.countryCode?.value ?? '',
 		},
 	};
 }
