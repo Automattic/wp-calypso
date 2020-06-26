@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { concat } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,7 +13,7 @@ import FormattedHeader from 'components/formatted-header';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { retrievePlan } from './persistence-utils';
 
-class JetpackConnectMainHeader extends PureComponent {
+class JetpackConnectMainHeader extends Component {
 	static propTypes = {
 		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
 	};

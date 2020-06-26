@@ -133,7 +133,7 @@ export default function () {
 	);
 
 	page(
-		`/jetpack/connect/${ locale }`,
+		`/jetpack/connect/:type(personal|premium|pro|backup|scan|realtimebackup)?/${ locale }`,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
