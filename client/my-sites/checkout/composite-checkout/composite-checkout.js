@@ -61,8 +61,7 @@ import {
 	fullCreditsProcessor,
 	existingCardProcessor,
 	payPalProcessor,
-	idealProcessor,
-	giropayProcessor,
+	genericRedirectProcessor,
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
@@ -477,9 +476,9 @@ export default function CompositeCheckout( {
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
 			giropay: ( transactionData ) =>
-				giropayProcessor( transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			ideal: ( transactionData ) =>
-				idealProcessor( transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>
