@@ -280,8 +280,8 @@ export default function useCreatePaymentMethods( {
 	return [
 		freePaymentMethod,
 		fullCreditsPaymentMethod,
-		applePayMethod,
 		...existingCardMethods,
+		applePayMethod,
 		idealMethod,
 		giropayMethod,
 		stripeMethod,
