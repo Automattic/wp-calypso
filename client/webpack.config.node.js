@@ -135,7 +135,6 @@ const webpackConfig = {
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]user$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
