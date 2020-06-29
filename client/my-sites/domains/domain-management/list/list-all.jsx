@@ -89,6 +89,7 @@ class ListAll extends Component {
 				<DomainItem
 					key={ `${ index }-${ domain.name }` }
 					domain={ domain }
+					isManagingAllSites={ true }
 					showSite={ true }
 					onClick={ this.handleDomainItemClick }
 					onAddEmailClick={ this.handleAddEmailClick }

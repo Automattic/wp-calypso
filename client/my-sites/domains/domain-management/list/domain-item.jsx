@@ -12,10 +12,13 @@ import { localize } from 'i18n-calypso';
 import { Button, CompactCard } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import DomainNotice from 'my-sites/domains/domain-management/components/domain-notice';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
+		isManagingAllSites: PropTypes.bool,
 		showSite: PropTypes.bool,
 		showCheckbox: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
@@ -24,6 +27,7 @@ class DomainItem extends PureComponent {
 	};
 
 	static defaultProps = {
+		isManagingAllSites: false,
 		showSite: false,
 		showCheckbox: false,
 		onToggle: null,
@@ -49,14 +53,28 @@ class DomainItem extends PureComponent {
 		onAddEmailClick( domain );
 	};
 
+	renderOptionsButton() {
+		const { isManagingAllSites, translate } = this.props;
+
+		return (
+			<div className="domain-item__options">
+				<EllipsisMenu onClick={ this.stopPropagation } toggleTitle={ translate( 'Options' ) }>
+					{ ! isManagingAllSites && (
+						<PopoverMenuItem icon="domains">{ translate( 'Make primary domain' ) }</PopoverMenuItem>
+					) }
+					<PopoverMenuItem icon="refresh">{ translate( 'Renew now' ) }</PopoverMenuItem>
+					<PopoverMenuItem icon="sync">{ translate( 'Turn off auto-renew' ) }</PopoverMenuItem>
+					<PopoverMenuItem icon="pencil">{ translate( 'Edit settings' ) }</PopoverMenuItem>
+				</EllipsisMenu>
+			</div>
+		);
+	}
+
 	render() {
 		const { domain, showSite, showCheckbox, translate } = this.props;
 
-		const iconClassName = 'card__link-indicator';
-
 		return (
 			<CompactCard className="domain-item" onClick={ this.handleClick }>
-				<Gridicon className={ iconClassName } icon="chevron-right" />
 				{ showCheckbox && (
 					<FormCheckbox
 						className="domain-item__checkbox"
@@ -99,6 +117,7 @@ class DomainItem extends PureComponent {
 						{ translate( 'Add' ) }
 					</Button>
 				</div>
+				{ this.renderOptionsButton() }
 			</CompactCard>
 		);
 	}
