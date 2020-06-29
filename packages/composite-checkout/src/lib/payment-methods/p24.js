@@ -78,7 +78,7 @@ export function createP24Method( { store, stripe, stripeConfiguration } ) {
 		submitButton: (
 			<P24PayButton store={ store } stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
-		getAriaLabel: ( __ ) => __( 'P24' ),
+		getAriaLabel: () => 'Przelewy24',
 	};
 }
 
@@ -233,7 +233,7 @@ function isFormValid( store ) {
 function P24Label() {
 	return (
 		<React.Fragment>
-			<span>P24</span>
+			<span>Przelewy24</span>
 			<PaymentMethodLogos className="p24__logo payment-logos">
 				<P24Logo />
 			</PaymentMethodLogos>
