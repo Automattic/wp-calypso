@@ -145,6 +145,10 @@ const CouponLinkWrapper = styled.div`
 const CouponField = styled( Coupon )`
 	margin: 20px 30px 20px 0;
 
+	.rtl & {
+		margin: 20px 0 20px 30px;
+	}
+
 	.is-summary & {
 		margin: 10px 0 0;
 	}

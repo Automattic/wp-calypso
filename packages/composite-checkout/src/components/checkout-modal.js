@@ -108,6 +108,11 @@ const CheckoutModalWrapper = styled.div`
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
+
+	.rtl & {
+		right: 0;
+		left: auto;
+	}
 `;
 
 const CheckoutModalContent = styled.div`
@@ -140,6 +145,11 @@ const CheckoutModalActions = styled.div`
 
 	button:first-of-type {
 		margin-right: 8px;
+
+		.rtl & {
+			margin-right: 0;
+			margin-left: 8px;
+		}
 	}
 `;
 

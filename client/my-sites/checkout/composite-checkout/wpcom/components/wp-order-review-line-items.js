@@ -200,6 +200,10 @@ const LineItemMeta = styled.div`
 const DiscountCalloutUI = styled.div`
 	color: ${ ( props ) => props.theme.colors.success };
 	text-align: right;
+
+	.rtl & {
+		text-align: left;
+	}
 `;
 
 const LineItemTitle = styled.div`
@@ -211,6 +215,11 @@ const LineItemTitle = styled.div`
 const LineItemPriceUI = styled.span`
 	margin-left: 12px;
 	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+
+	.rtl & {
+		margin-right: 12px;
+		margin-left: 0;
+	}
 `;
 
 const DeleteButton = styled( Button )`
@@ -225,6 +234,11 @@ const DeleteButton = styled( Button )`
 
 	svg {
 		opacity: 1;
+	}
+
+	.rtl & {
+		right: auto;
+		left: -50px;
 	}
 `;
 
@@ -335,6 +349,10 @@ const WPOrderReviewList = styled.ul`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	box-sizing: border-box;
 	margin: 20px 30px 20px 0;
+
+	.rtl & {
+		margin: 20px 0 20px 30px;
+	}
 
 	.is-summary & {
 		border-top: 0;

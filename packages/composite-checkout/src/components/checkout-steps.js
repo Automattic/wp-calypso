@@ -33,6 +33,7 @@ const CheckoutStepDataContext = React.createContext();
 const CheckoutSingleStepDataContext = React.createContext();
 
 export function Checkout( { children, className } ) {
+	const { isRTL } = useI18n();
 	const { formStatus } = useFormStatus();
 	const [ activeStepNumber, setActiveStepNumber ] = useState( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
@@ -45,9 +46,15 @@ export function Checkout( { children, className } ) {
 
 	const getDefaultCheckoutSteps = () => <DefaultCheckoutSteps />;
 
+	const classNames = joinClasses( [
+		'composite-checkout',
+		...( className ? [ className ] : [] ),
+		...( isRTL() ? [ 'rtl' ] : [] ),
+	] );
+
 	if ( formStatus === 'loading' ) {
 		return (
-			<ContainerUI className={ joinClasses( [ className, 'composite-checkout' ] ) }>
+			<ContainerUI className={ classNames }>
 				<MainContentUI
 					className={ joinClasses( [ className, 'checkout__content' ] ) }
 					isLastStepActive={ false }
@@ -59,7 +66,7 @@ export function Checkout( { children, className } ) {
 	}
 
 	return (
-		<ContainerUI className={ joinClasses( [ className, 'composite-checkout' ] ) }>
+		<ContainerUI className={ classNames }>
 			<MainContentUI className={ joinClasses( [ className, 'checkout__content' ] ) }>
 				<CheckoutStepDataContext.Provider
 					value={ {
@@ -456,10 +463,15 @@ const CheckoutSummaryUI = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		margin-left: 24px;
 		margin-right: 0;
+		margin-left: 24px;
 		order: 2;
 		width: 328px;
+
+		.rtl & {
+			margin-right: 24px;
+			margin-left; 0;
+		}
 	}
 `;
 
@@ -499,6 +511,11 @@ const SubmitButtonWrapperUI = styled.div`
 
 	button {
 		width: ${ ( props ) => ( props.isLastStepActive ? 'calc( 100% - 60px )' : '100%' ) };
+	}
+
+	.rtl & {
+		right: 0;
+		left: auto;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
@@ -638,6 +655,11 @@ const StepTitle = styled.span`
 		props.isActive ? props.theme.weights.bold : props.theme.weights.normal };
 	margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
 	flex: ${ ( props ) => ( props.fullWidth ? '1' : 'inherit' ) };
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
+	}
 `;
 
 const StepHeader = styled.h2`
@@ -653,6 +675,11 @@ const StepNumberOuterWrapper = styled.div`
 	width: 27px;
 	height: 27px;
 	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;
 
 const StepNumberInnerWrapper = styled.div`
@@ -677,6 +704,12 @@ const StepNumber = styled.div`
 	top: 0;
 	left: 0;
 	backface-visibility: hidden;
+
+	.rtl & {
+		right: 0;
+		left: auto;
+	}
+
 	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
@@ -725,6 +758,11 @@ const StepContentUI = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
+
+	.rtl & {
+		padding-right: 35px;
+		padding-left: 0;
+	}
 `;
 
 const StepSummaryUI = styled.div`
@@ -732,6 +770,11 @@ const StepSummaryUI = styled.div`
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
+
+	.rtl & {
+		padding-right: 35px;
+		padding-left: 0;
+	}
 `;
 
 function saveStepNumberToUrl( stepNumber ) {

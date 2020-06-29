@@ -82,5 +82,10 @@ const ApplePayButton = styled.button`
 		height: 100%;
 		background-color: #ccc;
 		opacity: 0.7;
+
+		.rtl & {
+			right: 0;
+			left: auto;
+		}
 	}
 `;

@@ -119,7 +119,7 @@ type DescriptionProps = {
 };
 
 const Description = styled.p< DescriptionProps >`
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 	color: ${ ( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
 	font-style: italic;

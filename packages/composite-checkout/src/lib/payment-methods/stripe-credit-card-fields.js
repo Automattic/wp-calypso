@@ -286,7 +286,7 @@ const CreditCardFieldsWrapper = styled.div`
 	display: ${ ( props ) => ( props.isLoaded ? 'block' : 'none' ) };
 	position: relative;
 
-	:after {
+	::after {
 		display: block;
 		width: calc( 100% - 6px );
 		height: 1px;
@@ -295,6 +295,11 @@ const CreditCardFieldsWrapper = styled.div`
 		position: absolute;
 		top: 0;
 		left: 3px;
+
+		.rtl & {
+			right: 3px;
+			left: auto;
+		}
 	}
 `;
 
@@ -302,6 +307,11 @@ const LoadingIndicator = styled( Spinner )`
 	position: absolute;
 	right: 15px;
 	top: 10px;
+
+	.rtl & {
+		right: auto;
+		left: 15px;
+	}
 `;
 
 const CreditCardField = styled( Field )`
@@ -527,7 +537,6 @@ function CreditCardLabel() {
 
 function CreditCardLogos() {
 	//TODO: Determine which logos to show
-
 	return (
 		<PaymentMethodLogos>
 			<VisaLogo />

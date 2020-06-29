@@ -112,6 +112,10 @@ const Input = styled.input`
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
 	padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 12px 10px;
 
+	.rtl & {
+		padding: 13px 10px 12px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
+	}
+
 	:focus {
 		outline: ${ ( props ) =>
 				props.isError ? props.theme.colors.error : props.theme.colors.outline }
@@ -147,12 +151,22 @@ const FieldIcon = styled.div`
 	top: 50%;
 	transform: translateY( -50% );
 	right: 10px;
+
+	.rtl & {
+		right: auto;
+		left: 10px;
+	}
 `;
 
 const ButtonIconUI = styled.div`
 	position: absolute;
 	top: 0;
 	right: 0;
+
+	.rtl & {
+		right: auto;
+		left: 0;
+	}
 
 	button {
 		border: 1px solid transparent;
@@ -170,7 +184,7 @@ const ButtonIconUI = styled.div`
 `;
 
 const Description = styled.p`
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 	color: ${ ( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
 	font-style: italic;

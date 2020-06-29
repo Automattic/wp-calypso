@@ -87,14 +87,16 @@ function formatDate( cardExpiry ) {
 }
 
 export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } ) {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
+
+	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (
 		<React.Fragment>
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
-				<CardDetails>**** { last4 }</CardDetails>
-				{ `${ __( 'Expiry:' ) }  ${ formatDate( cardExpiry ) }` }
+				<CardDetails>{ maskedCardDetails }</CardDetails>
+				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</div>
 			<div>
 				<PaymentLogo brand={ brand } isSummary={ true } />
@@ -217,20 +219,28 @@ function ButtonContents( { formStatus, total } ) {
 }
 
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
+
+	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
 				<PaymentLogo brand={ brand } isSummary={ true } />
-				<CardDetails>**** { last4 }</CardDetails>
-				{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }
+				<CardDetails>{ maskedCardDetails }</CardDetails>
+				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
 const CardDetails = styled.span`
+	display: inline-block;
 	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;

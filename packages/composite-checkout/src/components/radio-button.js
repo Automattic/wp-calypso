@@ -68,7 +68,7 @@ const RadioButtonWrapper = styled.div`
 		margin: 0;
 	}
 
-	:before {
+	::before {
 		display: block;
 		width: 100%;
 		height: 100%;
@@ -79,9 +79,14 @@ const RadioButtonWrapper = styled.div`
 		border: ${ getBorderWidth } solid ${ getBorderColor };
 		border-radius: 3px;
 		box-sizing: border-box;
+
+		.rtl & {
+			right: 0;
+			left: auto;
+		}
 	}
 
-	:hover:before {
+	:hover::before {
 		border: 3px solid ${ ( props ) => props.theme.colors.highlight };
 	}
 
@@ -117,8 +122,8 @@ function handleWrapperDisabled( { disabled } ) {
 	}
 
 	return `
-		:before,
-		:hover:before {
+		::before,
+		:hover::before {
 			border: 1px solid lightgray;
 		}
 
@@ -147,11 +152,15 @@ const Label = styled.label`
 	align-items: flex-start;
 	font-size: 14px;
 
+	.rtl & {
+		padding: 16px 40px 16px 14px;
+	}
+
 	:hover {
 		cursor: pointer;
 	}
 
-	:before {
+	::before {
 		display: block;
 		width: 16px;
 		height: 16px;
@@ -164,9 +173,14 @@ const Label = styled.label`
 		background: ${ ( props ) => props.theme.colors.surface };
 		box-sizing: border-box;
 		z-index: 2;
+
+		.rtl & {
+			right: 16px;
+			left: auto;
+		}
 	}
 
-	:after {
+	::after {
 		display: block;
 		width: 8px;
 		height: 8px;
@@ -178,6 +192,11 @@ const Label = styled.label`
 		background: ${ getRadioColor };
 		box-sizing: border-box;
 		z-index: 3;
+
+		.rtl & {
+			right: 20px;
+			left: auto;
+		}
 	}
 
 	${ handleLabelDisabled };
@@ -191,20 +210,20 @@ function handleLabelDisabled( { disabled } ) {
 	return `
 		color: lightgray;
 		font-style: italic;
-		
+
 		:hover {
 			cursor: default;
 		}
-		
-		:before {
+
+		::before {
 			border: 1px solid lightgray;
 			background: lightgray;
 		}
-		
-		:after {
+
+		::after {
 			background: white;
 		}
-		
+
 		span {
 			color: lightgray;
 		}

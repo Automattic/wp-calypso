@@ -82,7 +82,11 @@ const LoadingTitle = styled.h1`
 	animation: ${ pulse } 2s ease-in-out infinite;
 	height: 20px;
 
-	:before {
+	.rtl & {
+		margin: 3px 35px 0 0;
+	}
+
+	::before {
 		content: '';
 		display: block;
 		position: absolute;
@@ -92,6 +96,11 @@ const LoadingTitle = styled.h1`
 		height: 27px;
 		background: ${ ( props ) => props.theme.colors.borderColorLight };
 		border-radius: 100%;
+
+		.rtl & {
+			right: -35px;
+			left: auto;
+		}
 	}
 `;
 const LoadingCopy = styled.p`
@@ -103,6 +112,10 @@ const LoadingCopy = styled.p`
 	margin: 8px 0 0 35px;
 	padding: 0;
 	animation: ${ pulse } 2s ease-in-out infinite;
+
+	.rtl & {
+		margin: 8px 35px 0 0;
+	}
 `;
 
 const LoadingFooter = styled.div`
@@ -111,7 +124,7 @@ const LoadingFooter = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 24px;
 
-	:before {
+	::before {
 		content: '';
 		display: block;
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };

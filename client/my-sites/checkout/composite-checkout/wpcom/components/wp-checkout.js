@@ -357,6 +357,10 @@ const CheckoutSummaryTitleLink = styled.button`
 	padding: 20px 23px 20px 14px;
 	width: 100%;
 
+	.rtl & {
+		padding: 20px 14px 20px 23px;
+	}
+
 	.is-visible & {
 		border-bottom: none;
 	}
@@ -377,6 +381,11 @@ const CheckoutSummaryTitle = styled.span`
 
 const CheckoutSummaryTitleIcon = styled( Gridicon )`
 	margin-right: 4px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 4px;
+	}
 `;
 
 const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
@@ -386,6 +395,11 @@ const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
 	width: 18px;
 	height: 18px;
 	vertical-align: bottom;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 4px;
+	}
 
 	.is-visible & {
 		transform: rotate( 180deg );
@@ -444,8 +458,16 @@ const CheckoutTermsUI = styled.div`
 		position: relative;
 	}
 
-	& div:first-of-type {
+	.rtl & > * {
+		margin: 16px -24px 16px 0;
+		padding-right: 24px;
 		padding-left: 0;
+	}
+
+	& div:first-of-type {
+		padding-right: 0;
+		padding-left: 0;
+		margin-right: 0;
 		margin-left: 0;
 		margin-top: 32px;
 	}
@@ -456,6 +478,11 @@ const CheckoutTermsUI = styled.div`
 		position: absolute;
 		top: 0;
 		left: 0;
+
+		.rtl & {
+			left: auto;
+			right: 0;
+		}
 	}
 
 	p {

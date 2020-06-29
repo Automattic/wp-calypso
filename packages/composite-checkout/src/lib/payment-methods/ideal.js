@@ -158,7 +158,7 @@ function ErrorMessage( { isError, errorMessage } ) {
 }
 
 const Description = styled.p`
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 	color: ${ ( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
 	font-style: italic;
@@ -169,7 +169,7 @@ const IdealFormWrapper = styled.div`
 	padding: 16px;
 	position: relative;
 
-	:after {
+	::after {
 		display: block;
 		width: calc( 100% - 6px );
 		height: 1px;
@@ -178,6 +178,11 @@ const IdealFormWrapper = styled.div`
 		position: absolute;
 		top: 0;
 		left: 3px;
+
+		.rtl & {
+			right: 3px;
+			left: auto;
+		}
 	}
 `;
 

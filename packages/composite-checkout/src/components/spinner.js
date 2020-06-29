@@ -27,7 +27,7 @@ const SpinnerWrapper = styled.div`
 	animation: ${ rotate } 3s linear infinite;
 	animation-fill-mode: backwards;
 
-	:after {
+	::after {
 		position: absolute;
 		top: 0;
 		left: -1px;
@@ -42,5 +42,12 @@ const SpinnerWrapper = styled.div`
 		border-radius: 100%;
 		animation: ${ rotate } 3s linear infinite;
 		animation-fill-mode: backwards;
+
+		.rtl & {
+			border-right-color: transparent;
+			border-left-color: ${ ( props ) => props.theme.colors.highlight };
+			right: -1px;
+			left: auto;
+		}
 	}
 `;

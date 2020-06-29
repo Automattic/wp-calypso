@@ -145,9 +145,19 @@ function getTermText( term, translate ) {
 const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;
 
 const DoNotPayThis = styled.span`
 	text-decoration: line-through;
 	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;

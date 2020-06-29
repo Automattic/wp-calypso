@@ -15,4 +15,9 @@ const Error = styled.div`
 	background: ${ ( props ) => props.theme.colors.warningBackground };
 	box-sizing: border-box;
 	line-height: 1.2em;
+
+	.rtl & {
+		border-right: 3px solid ${ ( props ) => props.theme.colors.error };
+		border-left: 0 none;
+	}
 `;

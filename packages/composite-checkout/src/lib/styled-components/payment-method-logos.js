@@ -5,8 +5,12 @@ import styled from '@emotion/styled';
 
 export const PaymentMethodLogos = styled.span`
 	flex: 1;
-	text-align: right;
 	transform: translateY( 3px );
+	text-align: right;
+
+	.rtl & {
+		text-align: left;
+	}
 
 	svg {
 		display: inline-block;
