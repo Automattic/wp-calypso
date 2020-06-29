@@ -35,7 +35,8 @@ export default class JetpackConnectFlow {
 			this.driver,
 			WporgCreatorPage._getCreatorURL( this.template )
 		);
-		await wporgCreator.waitForWpadmin();
+
+		await wporgCreator.waitForWpadmin( this.template );
 		this.url = await wporgCreator.getUrl();
 		this.password = await wporgCreator.getPassword();
 		this.username = await wporgCreator.getUsername();

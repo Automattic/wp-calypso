@@ -138,6 +138,11 @@ export default class PeoplePage extends AsyncBaseContainer {
 		const driver = this.driver;
 		return await driver.wait( async () => {
 			driver.navigate().refresh();
+			await DriverHelper.waitTillPresentAndDisplayed(
+				this.driver,
+				By.css( '.people-profile__login:not([data-e2e-login="Loading Users"])' )
+			);
+
 			return await DriverHelper.isElementPresent(
 				driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )

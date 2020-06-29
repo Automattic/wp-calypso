@@ -380,6 +380,9 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function () {
 
 			await sidebarComponent.selectActivity();
 			const activityPage = await ActivityPage.Expect( driver );
+			if ( host !== 'WPCOM' ) {
+				await activityPage.clearFilter();
+			}
 			const displayed = await activityPage.postTitleDisplayed( blogPostTitle );
 			return assert(
 				displayed,
