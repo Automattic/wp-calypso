@@ -59,3 +59,22 @@
 		display: none;
 	}
 }
+
+.stats__promo-title {
+	@extend .wp-brand-font;
+	font-size: 28px;
+	line-height: 36px;
+	margin-bottom: 4px;
+
+	@include breakpoint-deprecated( '>800px' ) {
+		font-size: 32px;
+		line-height: 40px;
+	}
+}
+
+.stats__action {
+	display: flex;
+	padding-top: 0;
+	margin-top: auto;
+	font-size: $font-body-small;
+}
