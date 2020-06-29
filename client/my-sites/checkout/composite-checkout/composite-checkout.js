@@ -481,6 +481,8 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'p24', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			giropay: ( transactionData ) =>
 				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+			wechat: ( transactionData ) =>
+				genericRedirectProcessor( 'wechat', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			ideal: ( transactionData ) =>
 				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			sofort: ( transactionData ) =>
