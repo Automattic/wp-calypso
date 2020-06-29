@@ -55,6 +55,10 @@ class ListAll extends Component {
 		page( getDomainManagementPath( domain.domain, domain.type, site.slug, currentRoute ) );
 	};
 
+	handleAddEmailClick = () => {
+		// TODO
+	};
+
 	headerButtons() {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			return null;
@@ -85,7 +89,10 @@ class ListAll extends Component {
 				<DomainItem
 					key={ `${ index }-${ domain.name }` }
 					domain={ domain }
+					isManagingAllSites={ true }
+					showSite={ true }
 					onClick={ this.handleDomainItemClick }
+					onAddEmailClick={ this.handleAddEmailClick }
 				/>
 			) );
 	}

@@ -143,3 +143,72 @@ input[type='radio'].domain-management-list-item__radio {
 		display: none;
 	}
 }
+
+.domain-item {
+	display: flex;
+	align-items: center;
+}
+
+.domain-item .domain-item__checkbox {
+	margin-right: 12px;
+}
+
+.domain-item__link {
+	margin-right: 8px;
+	flex: 1;
+	overflow: hidden;
+}
+
+.domain-item__title {
+	font-size: $font-body;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-left: 4px;
+}
+
+.domain-item__meta {
+	font-size: $font-body-small;
+	color: var( --color-text-subtle );
+}
+
+.domain-item__status {
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: -4px;
+
+	.domain-notice {
+		margin-left: 4px;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-direction: column;
+		margin-left: 0;
+		flex-wrap: nowrap;
+		overflow: hidden;
+
+		.domain-item__title {
+			margin-left: 0;
+		}
+
+		.domain-notice {
+			margin-left: -2px;
+		}
+	}
+}
+
+.domain-item__transfer-lock, .domain-item__auto-renew, .domain-item__privacy, .domain-item__email {
+	max-width: 120px;
+	width: 15%;
+	flex-shrink: 0;
+	text-align: center;
+	font-size: $font-body-small;
+	margin-right: 8px;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		display: none;
+	}
+}
+
+.domain-item__icon {
+	fill: var( --color-text-subtle );
+}
