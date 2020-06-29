@@ -98,13 +98,14 @@ const mapStateToProps = ( state: DefaultRootState ) => {
 		siteName,
 		siteSlug,
 		isRequestingHistory: showPlaceholders,
-		threats: logEntries,
+		threats: logEntries as Threat[],
 	};
 };
 
 const mapDispatchToProps = { dispatchRecordTracksEvent: recordTracksEvent };
 
-type Props = ExternalProps & typeof mapDispatchToProps & ReturnType< typeof mapStateToProps >;
+type ConnectedProps = typeof mapDispatchToProps & ReturnType< typeof mapStateToProps >;
+type Props = ExternalProps & ConnectedProps;
 
 const ThreatHistoryList: React.FC< Props > = ( {
 	siteId,
