@@ -13,29 +13,11 @@ import getSiteTitle from 'state/sites/selectors/get-site-title';
 import config from 'config';
 
 import { getDocumentHeadTitle } from 'state/document-head/selectors/get-document-head-title';
-import { getDocumentHeadUnreadCount } from 'state/document-head/selectors/get-document-head-unread-count';
-
-const UNREAD_COUNT_CAP = 40;
+import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors/get-document-head-capped-unread-count';
 
 export { getDocumentHeadTitle } from 'state/document-head/selectors/get-document-head-title';
 export { getDocumentHeadUnreadCount } from 'state/document-head/selectors/get-document-head-unread-count';
-
-/**
- * Returns a count reflecting unread items, capped at a value determined by
- * UNREAD_COUNT_CAP. Any value greater than the cap yields 'cap+'. Examples:
- * '1', '20', '39', '40+'
- *
- * @param  {object}  state  Global state tree
- * @returns {string}         Unread count (string because it can be e.g. '40+')
- */
-export function getDocumentHeadCappedUnreadCount( state ) {
-	const unreadCount = getDocumentHeadUnreadCount( state );
-	if ( ! unreadCount ) {
-		return '';
-	}
-
-	return unreadCount <= UNREAD_COUNT_CAP ? String( unreadCount ) : `${ UNREAD_COUNT_CAP }+`;
-}
+export { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors/get-document-head-capped-unread-count';
 
 /**
  * Returns the formatted document title, based on the currently set title,
