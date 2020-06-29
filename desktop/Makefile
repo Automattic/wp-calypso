@@ -41,7 +41,10 @@ client:
 
 	@cd $(CALYPSO_DIR) && yarn run build-desktop:client
 
-source: config server client
+source:
+	$(info Building app source...)
+
+	@cd $(CALYPSO_DIR) && yarn run build-desktop:source
 
 package:
 	$(info Packaging app...)
