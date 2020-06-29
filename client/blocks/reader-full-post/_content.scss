@@ -241,6 +241,69 @@
 		margin: auto;
 	}
 
+	.wp-block-button {
+		display: inline-block;
+		margin-right: 8px;
+		margin-bottom: 8px;
+		border: 1px solid var( --color-neutral-10 );
+		padding: 1.1em 1.44em;
+	}
+
+	.wp-block-button__link {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		border: none;
+		border-radius: 0;
+		cursor: pointer;
+		display: inline-block;
+		font-size: 1.5rem;
+		font-weight: 600;
+		letter-spacing: 0.0333em;
+		line-height: 1.25;
+		margin: 0;
+		opacity: 1;
+		text-align: center;
+		text-decoration: none;
+		text-transform: uppercase;
+		transition: opacity 0.15s linear;
+	}
+
+	/* .has-vivid-red-background-color {
+		background-color: #cf2e2e;
+	}
+
+	.has-vivid-purple-background-color {
+		background-color: #9b51e0;
+	}
+
+	.has-luminous-vivid-orange-background-color {
+		background-color: #ff6900;
+	}
+
+	.has-luminous-vivid-amber-background-color {
+		background-color: #fcb900;
+	}
+
+	.has-vivid-green-cyan-background-color {
+		background-color: #00d084;
+	}
+
+	.has-vivid-cyan-blue-background-color {
+		background-color: #0693e3;
+	} */
+
+	/* .has-cool-to-warm-spectrum-gradient-background {
+		background: linear-gradient(
+			135deg,
+			#4aeadc,
+			#9778d1 20%,
+			#cf2aba 40%,
+			#ee2c82 60%,
+			#fb6962 80%,
+			#fef84c
+		);
+	} */
+
 	// Import Gutenberg gallery styles
 	@import 'gutenberg-gallery.scss';
 
