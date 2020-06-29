@@ -43,6 +43,7 @@ export default function CheckoutSystemDecider( {
 	clearTransaction,
 	cart,
 	isWhiteGloveOffer,
+	isLoggedOutCart,
 } ) {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
@@ -155,6 +156,7 @@ export default function CheckoutSystemDecider( {
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
 			isWhiteGloveOffer={ isWhiteGloveOffer }
+			isLoggedOutCart={ isLoggedOutCart }
 		/>
 	);
 }

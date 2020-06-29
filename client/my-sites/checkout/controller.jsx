@@ -23,6 +23,7 @@ import { canUserPurchaseGSuite } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
+import userFactory from 'lib/user';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -54,8 +55,12 @@ export function checkout( context, next ) {
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
+	const isLoggedOutCart = isLoggedOut && '/checkout/no-site' === context.pathname;
+
 	context.primary = (
-		<CartData>
+		<CartData isLoggedOutCart={ isLoggedOutCart }>
 			<CheckoutSystemDecider
 				product={ product }
 				purchaseId={ purchaseId }
@@ -72,6 +77,7 @@ export function checkout( context, next ) {
 				upgradeIntent={ context.query.intent }
 				clearTransaction={ false }
 				isWhiteGloveOffer={ 'white-glove' === context.query.type }
+				isLoggedOutCart={ isLoggedOutCart }
 			/>
 		</CartData>
 	);

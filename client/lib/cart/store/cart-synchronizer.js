@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, flowRight, get } from 'lodash';
+import { assign, flowRight, flow, get } from 'lodash';
 import Dispatcher from 'dispatcher';
 import { TRANSACTION_STEP_SET } from 'lib/transaction/action-types';
 import debugFactory from 'debug';
@@ -10,7 +10,10 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Emitter from 'lib/mixins/emitter';
-import { preprocessCartForServer } from 'lib/cart-values';
+import { preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { addCartItem } from 'lib/cart-values/cart-items';
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
 
 /**
  * Internal dependencies
@@ -154,6 +157,24 @@ CartSynchronizer.prototype._postToServer = function ( callback ) {
 
 CartSynchronizer.prototype._poll = function () {
 	this._performRequest( 'poll', this._getFromServer.bind( this ) );
+};
+
+CartSynchronizer.prototype._pollFromLocalStorage = function () {
+	const newCartItemsToAdd = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) );
+	const other = flow( ...newCartItemsToAdd.map( ( cartItem ) => addCartItem( cartItem ) ) );
+
+	const changeFunction = ( cart ) => {
+		return fillInAllCartItemAttributes( other( cart ), productsList.get() );
+	};
+
+	const initialCart = {
+		cart_key: this._cartKey,
+		products: [],
+		temporary: true,
+		create_new_blog: true,
+	};
+	this._latestValue = changeFunction( initialCart );
+	this._performRequest( 'fetchFromLocalStorage', this._postToServer.bind( this ) );
 };
 
 CartSynchronizer.prototype.fetch = function () {

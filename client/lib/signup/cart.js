@@ -30,14 +30,13 @@ export default {
 		let newCart = {
 			cart_key: cartKey,
 			products: [],
-			temporary: false,
 		};
 
 		newCart = addProductsToCart( newCart, newCartItems );
 		newCart = preprocessCartForServer( newCart );
 
-		wpcom.undocumented().setCart( cartKey, newCart, function ( postError ) {
-			callback( postError );
+		wpcom.undocumented().setCart( cartKey, newCart, function ( postError, data ) {
+			callback( postError, data );
 		} );
 	},
 	addToCart: function ( cartKey, newCartItems, callback ) {

@@ -160,7 +160,11 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	needsFax() {
-		return this.props.contactDetails.countryCode === 'NL' && hasTld( this.props.cart, 'nl' );
+		return (
+			this.props.contactDetails &&
+			this.props.contactDetails.countryCode === 'NL' &&
+			hasTld( this.props.cart, 'nl' )
+		);
 	}
 
 	renderSubmitButton() {
@@ -192,7 +196,7 @@ export class DomainDetailsForm extends PureComponent {
 		};
 		return (
 			<ContactDetailsFormFields
-				userCountryCode={ userCountryCode }
+				userCountryCode={ userCountryCode || undefined }
 				contactDetails={ contactDetails }
 				needsFax={ this.needsFax() }
 				needsOnlyGoogleAppsDetails={ this.needsOnlyGoogleAppsDetails() }
@@ -313,7 +317,7 @@ export class DomainDetailsFormContainer extends PureComponent {
 		return (
 			<div>
 				<QueryContactDetailsCache />
-				{ this.props.contactDetails ? (
+				{ this.props.isLoggedOutCart || this.props.contactDetails ? (
 					<DomainDetailsForm { ...this.props } />
 				) : (
 					<SecurePaymentFormPlaceholder />

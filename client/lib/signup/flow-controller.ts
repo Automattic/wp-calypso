@@ -58,6 +58,7 @@ interface Step {
 	optionalDependencies?: string[];
 	providesToken?: boolean;
 	stepName: string;
+	allowUnauthenticated?: boolean;
 }
 
 const steps: Record< string, Step > = untypedSteps;
@@ -254,13 +255,6 @@ export default class SignupFlowController {
 			this._processStep( pendingStep );
 		}
 
-		console.log(
-			'completedSteps.length: ' +
-				completedSteps.length +
-				' currentSteps.length: ' +
-				currentSteps.length
-		);
-
 		if ( completedSteps.length === currentSteps.length && undefined !== this._onComplete ) {
 			this._assertFlowProvidedRequiredDependencies();
 			// deferred to ensure that the onComplete function is called after the stores have
@@ -270,7 +264,7 @@ export default class SignupFlowController {
 	}
 
 	_canProcessStep( step: Step ) {
-		const { providesToken } = steps[ step.stepName ];
+		const { providesToken, allowUnauthenticated } = steps[ step.stepName ];
 		const dependencies = get( steps, [ step.stepName, 'dependencies' ], [] );
 		const dependenciesFound = pick(
 			getSignupDependencyStore( this._reduxStore.getState() ),
@@ -287,7 +281,7 @@ export default class SignupFlowController {
 
 		return (
 			dependenciesSatisfied &&
-			( providesToken || this._canMakeAuthenticatedRequests() ) &&
+			( allowUnauthenticated || providesToken || this._canMakeAuthenticatedRequests() ) &&
 			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
 		);
 	}

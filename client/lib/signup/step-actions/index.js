@@ -247,7 +247,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		const providedDependencies = {
 			domainItem,
 			themeItem,
-			siteUrl,
+			siteUrl: siteUrl || null,
 		};
 
 		return defer( () => callback( undefined, providedDependencies ) );
@@ -305,7 +305,6 @@ export function verifyCart( callback, dependencies, stepData, reduxStore ) {
 
 	if ( isPurchasingItem ) {
 		const newCartItems = [ cartItem, domainItem ].filter( ( item ) => item );
-		const cartKey = 'no-user';
 
 		const addToCartAndProceed = () => {
 			const newCartItemsToAdd = newCartItems.map( ( item ) =>
@@ -313,13 +312,15 @@ export function verifyCart( callback, dependencies, stepData, reduxStore ) {
 			);
 
 			if ( newCartItemsToAdd.length ) {
-				SignupCart.addToCart( cartKey, newCartItemsToAdd, function ( cartError ) {
-					callback( cartError, providedDependencies );
-				} );
+				window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItemsToAdd ) );
+				const providedDependencies = { siteSlug: 'no-site' };
+				callback( undefined, providedDependencies );
 			} else {
 				// maybe return ... callback( undefined, providedDependencies );
 			}
 		};
+
+		addToCartAndProceed();
 	}
 
 	const state = reduxStore.getState();
@@ -458,6 +459,7 @@ export function createAccount(
 	{
 		userData,
 		flowName,
+		lastKnownFlow,
 		queryArgs,
 		service,
 		access_token,
@@ -469,6 +471,18 @@ export function createAccount(
 	},
 	reduxStore
 ) {
+	const flowToCheck = flowName || lastKnownFlow;
+
+	if ( 'onboarding-new' === flowToCheck ) {
+		const { cartItem, domainItem } = dependencies;
+		const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
+
+		if ( isPurchasingItem ) {
+			const providedDependencies = {};
+			return defer( () => callback( undefined, providedDependencies ) );
+		}
+	}
+
 	// See client/signup/config/flows-pure.js p2 flow for more info.
 	if ( flowName === 'p2' ) {
 		flowName = 'wp-for-teams';
@@ -711,22 +725,6 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export function maybeRemoveVerifyCartStep( stepName, defaultDependencies, nextProps ) {
-	if ( 'onboarding-new' !== nextProps.flowName ) {
-		return;
-	}
-
-	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
-
-	if ( isEmpty( cartItem ) ) {
-		submitSignupStep( { stepName } );
-
-		if ( shouldExcludeStep( stepName ) ) {
-			flows.excludeStep( stepName );
-		}
-	}
-}
-
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
 	if ( 'onboarding-new' !== nextProps.flowName ) {
 		return;
@@ -736,10 +734,13 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
 
 	if ( ! isEmpty( cartItem ) ) {
-		submitSignupStep( { stepName }, { bearer_token, username, marketing_price_group } );
-		recordExcludeStepEvent( stepName, tracksEventValue );
+		submitSignupStep(
+			{ stepName },
+			{ bearer_token: null, username: null, marketing_price_group: null }
+		);
+		recordExcludeStepEvent( stepName, null );
 
-		fulfilledDependencies = [ 'domainItem' ];
+		const fulfilledDependencies = [ 'bearer_token', 'username', 'marketing_price_group' ];
 
 		if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 			flows.excludeStep( stepName );

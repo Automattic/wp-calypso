@@ -248,7 +248,6 @@ class Signup extends React.Component {
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
 		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
-		console.log( 'in oncmplt, filteredDestination: ' + filteredDestination );
 
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
@@ -398,6 +397,11 @@ class Signup extends React.Component {
 					redirectTo: this.loginRedirectTo( destination ),
 				} );
 			}
+		}
+
+		if ( ! userIsLoggedIn && 'onboarding-new' === this.props.flowName ) {
+			window.location.href = destination;
+			return;
 		}
 	}
 

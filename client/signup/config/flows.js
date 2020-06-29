@@ -56,6 +56,10 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
+	if ( 'no-site' === dependencies.siteSlug ) {
+		return '/home';
+	}
+
 	return `/home/${ dependencies.siteSlug }`;
 }
 

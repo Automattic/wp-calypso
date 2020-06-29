@@ -61,6 +61,7 @@ const wpcom = wp.undocumented();
 let _cartKey = null;
 let _synchronizer = null;
 let _poller = null;
+let _userLoggedIn = true;
 
 const CartStore = {
 	get() {
@@ -72,11 +73,16 @@ const CartStore = {
 		} );
 	},
 	setSelectedSiteId( selectedSiteId, userLoggedIn = true ) {
-		if ( ! userLoggedIn ) {
-			return;
+		let newCartKey = selectedSiteId;
+		_userLoggedIn = userLoggedIn;
+
+		if ( ! newCartKey ) {
+			newCartKey = _userLoggedIn ? 'no-site' : 'no-user';
 		}
 
-		const newCartKey = selectedSiteId || 'no-site';
+		if ( 'no-site' === newCartKey && ! _userLoggedIn ) {
+			return;
+		}
 
 		if ( _cartKey === newCartKey ) {
 			return;
@@ -92,7 +98,10 @@ const CartStore = {
 		_synchronizer = cartSynchronizer( _cartKey, wpcom );
 		_synchronizer.on( 'change', emitChange );
 
-		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
+		_poller =
+			'no-user' === newCartKey
+				? PollerPool.add( CartStore, _synchronizer._pollFromLocalStorage.bind( _synchronizer ) )
+				: PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 	},
 };
 
@@ -110,11 +119,11 @@ function emitChange() {
 	CartStore.emit( 'change' );
 }
 
-function update( changeFunction ) {
+function update( changeFunction, initialCart ) {
 	const wrappedFunction = ( cart ) =>
 		fillInAllCartItemAttributes( changeFunction( cart ), productsList.get() );
 
-	const previousCart = CartStore.get();
+	const previousCart = initialCart || CartStore.get();
 	const nextCart = wrappedFunction( previousCart );
 
 	_synchronizer && _synchronizer.update( wrappedFunction );

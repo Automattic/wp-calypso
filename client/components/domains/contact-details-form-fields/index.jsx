@@ -60,7 +60,7 @@ export class ContactDetailsFormFields extends Component {
 				{},
 				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
 			)
-		).isRequired,
+		),
 		contactDetailsErrors: PropTypes.shape(
 			Object.assign(
 				{},
@@ -570,7 +570,7 @@ export class ContactDetailsFormFields extends Component {
 
 export default connect( ( state, props ) => {
 	const contactDetails = props.contactDetails;
-	const countryCode = contactDetails.countryCode;
+	const countryCode = contactDetails && contactDetails.countryCode;
 
 	const hasCountryStates =
 		contactDetails && contactDetails.countryCode
