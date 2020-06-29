@@ -42,8 +42,8 @@ type Props = {
 	isRequesting: boolean;
 };
 
-const UI_STATE_LOADING = Symbol( 'loading' );
-const UI_STATE_LOADED = Symbol( 'loaded' );
+const UI_STATE_LOADING = Symbol();
+const UI_STATE_LOADED = Symbol();
 
 type UiState = typeof UI_STATE_LOADED | typeof UI_STATE_LOADING | null;
 
@@ -68,13 +68,17 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 	// We want to prevent that by making sure the component renders its loading
 	// state only once while mounted.
 	useEffect( () => {
-		if ( ! uiState && isRequesting ) {
-			setUiState( UI_STATE_LOADING );
+		if ( ! uiState ) {
+			if ( isRequesting ) {
+				setUiState( UI_STATE_LOADING );
+			} else if ( state ) {
+				setUiState( UI_STATE_LOADED );
+			}
 		}
 		if ( UI_STATE_LOADING === uiState && ! isRequesting ) {
 			setUiState( UI_STATE_LOADED );
 		}
-	}, [ uiState, isRequesting ] );
+	}, [ uiState, isRequesting, state ] );
 
 	useEffect( () => {
 		// Show the expected content only if the state is distinct to unavailable
