@@ -68,7 +68,7 @@
 		"build-desktop:server": "check-npm-client && BROWSERSLIST_ENV=server CALYPSO_ENV=desktop webpack --config client/webpack.config.desktop.js --display errors-only",
 		"build-desktop:client": "check-npm-client && CALYPSO_ENV=desktop DESKTOP_MONOREPO=true yarn run build-client-fallback",
 		"build-desktop:install-app-deps": "check-npm-client && cd desktop && yarn install --frozen-lockfile",
-		"build-desktop:app": "check-npm-client && cd desktop && yarn run build",
+		"build-desktop:app": "cd desktop && yarn run build",
 		"test-desktop:e2e": "node desktop/e2e/run.js",
 		"build-docker": "check-npm-client && node bin/build-docker.js",
 		"build-static": "check-npm-client && npx ncp static public",
