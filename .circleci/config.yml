@@ -621,7 +621,7 @@ jobs:
       - slack/status:
           webhook: << parameters.slack-webhook >>
 
-  desktop-build-source:
+  wp-desktop-source:
     <<: *desktop_defaults
     steps:
       - checkout
@@ -639,7 +639,7 @@ jobs:
           root: /home/circleci/wp-calypso
           paths: *desktop-cache-paths
 
-  desktop-build-mac:
+  wp-desktop-mac:
     macos:
       xcode: "10.1.0"
     shell: /bin/bash --login
@@ -755,10 +755,10 @@ workflows:
 #           test-flags: '-W -S $CIRCLE_SHA1'
 #           test-target: 'WOO'
 #           slack-webhook: '$SLACK_WOO'
-      - desktop-build-source
-      - desktop-build-mac:
+      - wp-desktop-source
+      - wp-desktop-mac:
           requires:
-            - desktop-build-source
+            - wp-desktop-source
 
   calypso-nightly:
     jobs:
