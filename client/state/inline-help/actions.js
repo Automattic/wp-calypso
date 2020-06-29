@@ -27,9 +27,9 @@ import 'state/inline-help/init';
  * Set the query search in the sate tree for the inline help.
  *
  * @param {string} searchQuery - query store to store.
- * @return {Function}            Action thunk.
+ * @returns {Function}            Action thunk.
  */
-export function setInlineHelpQuerySearch ( searchQuery = '' ) {
+export function setInlineHelpQuerySearch( searchQuery = '' ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SET_QUERY_SEARCH,
