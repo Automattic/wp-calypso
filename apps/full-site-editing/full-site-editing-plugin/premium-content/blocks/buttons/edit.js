@@ -53,6 +53,9 @@ function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 	// Hides the inspector controls of the Recurring Payments inner block acting as a subscribe button so users can only
 	// switch plans using the plan selector of the Premium Content block.
 	useEffect( () => {
+		if ( ! subscribeButton ) {
+			return;
+		}
 		addFilter(
 			'jetpack.RecurringPayments.showControls',
 			'full-site-editing/premium-content-hide-recurring-payments-controls',
