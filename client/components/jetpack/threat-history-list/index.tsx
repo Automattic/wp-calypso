@@ -189,7 +189,7 @@ const ThreatHistoryList: React.FC< Props > = ( {
 				{ filteredEntries.map( ( threat ) => (
 					<ThreatItem
 						key={ threat.id }
-						threat={ threat as Threat }
+						threat={ threat }
 						onFixThreat={ () => openDialog( threat ) }
 						isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 						contactSupportUrl={ contactSupportUrl( siteSlug ) }
