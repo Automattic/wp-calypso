@@ -1,0 +1,30 @@
+{
+	"name": "WordPressDesktop",
+	"version": "5.2.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-desktop/"
+	},
+	"license": "GPLv2",
+	"private": true,
+	"description": "Desktop version of WordPress.com",
+	"author": {
+		"name": "Automattic Inc.",
+		"email": "wp-desktop@automattic.com"
+	},
+	"homepage": "https://desktop.wordpress.com/",
+	"main": "build/desktop.js",
+	"keywords": [
+		"desktop",
+		"wordpress",
+		"wordpress.com"
+	],
+	"scripts": {
+		"build": "electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never"
+	},
+	"devDependencies": {
+		"electron": "8.3.0",
+		"electron-builder": "^22.4.0",
+		"electron-notarize": "^0.1.1"
+	}
+}

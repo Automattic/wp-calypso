@@ -99,10 +99,7 @@ export default function setup() {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		app.use(
-			'/desktop',
-			express.static( path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop' ) )
-		);
+		app.use( '/desktop', express.static( 'public_desktop' ) );
 	}
 
 	app.use( api() );
