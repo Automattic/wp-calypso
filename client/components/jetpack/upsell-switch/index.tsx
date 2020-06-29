@@ -77,6 +77,7 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 	const [ uiState, setUiState ] = useState< UiState >( null );
 	const [ showUpsell, setUpsell ] = useState( false );
 
+	// Returns true if this product is present, either as a product or in the plan.
 	const hasProduct = useMemo( () => {
 		if ( ! productSlugTest || ( ! siteProducts && ! sitePlan ) ) {
 			return false;
