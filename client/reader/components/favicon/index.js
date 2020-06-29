@@ -8,8 +8,8 @@ function Favicon( props ) {
 	const { site, className, size } = props;
 	const [ hasError, setError ] = useState( false );
 
-	// if loading error show W Gridicon
-	if ( hasError ) {
+	// if loading error or missing icon show W Gridicon
+	if ( hasError || site.site_icon === null ) {
 		return <Gridicon icon="my-sites" size={ 18 } className={ props.className } />;
 	}
 
