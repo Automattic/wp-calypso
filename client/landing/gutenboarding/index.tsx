@@ -63,10 +63,6 @@ interface AppWindow extends Window {
 	currentUser?: User;
 	i18nLocaleStrings?: string;
 	installedChunks?: string[];
-	__requireChunkCallback__?: {
-		add( callback: Function ): void;
-		getInstalledChunks(): string[];
-	};
 	BUILD_TARGET?: string;
 }
 declare const window: AppWindow;
@@ -266,10 +262,6 @@ function getLocaleFromUser( user: User ): string {
 }
 
 async function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
-	if ( ! window.__requireChunkCallback__ ) {
-		return;
-	}
-
 	interface TranslationChunksCache {
 		[ propName: string ]: undefined | boolean;
 	}
@@ -297,17 +289,5 @@ async function setupTranslationChunks( localeSlug: string, translatedChunks: str
 		values.reduce( ( localeDataObj, chunk ) => Object.assign( {}, localeDataObj, chunk ) )
 	);
 
-	interface RequireChunkCallbackParameters {
-		publicPath: string;
-		scriptSrc: string;
-	}
-
-	window.__requireChunkCallback__.add(
-		( { publicPath, scriptSrc }: RequireChunkCallbackParameters, promises: any[] ) => {
-			const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
-
-			promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
-		}
-	);
 	return localeData;
 }
