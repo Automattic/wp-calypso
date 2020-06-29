@@ -21,7 +21,6 @@ const MyPlanCard = ( { action, isError, isPlaceholder, details, product, tagline
 		'has-action-only': action && ! details && ! isPlaceholder,
 	} );
 	const detailsClassNames = classNames( 'my-plan-card__details', { 'is-error': isError } );
-
 	return (
 		<Card className={ cardClassNames } compact>
 			<div className="my-plan-card__primary">
