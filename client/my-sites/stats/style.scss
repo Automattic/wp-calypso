@@ -60,21 +60,49 @@
 	}
 }
 
-.stats__promo-title {
-	@extend .wp-brand-font;
-	font-size: 28px;
-	line-height: 36px;
-	margin-bottom: 4px;
 
-	@include breakpoint-deprecated( '>800px' ) {
-		font-size: 32px;
-		line-height: 40px;
-	}
-}
-
-.stats__action {
+.stats__promo {
 	display: flex;
-	padding-top: 0;
-	margin-top: auto;
-	font-size: $font-body-small;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	position: relative;
+
+	.stats__promo-text, .stats__promo-illustration {
+		box-sizing: border-box;
+		padding: 24px;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			padding: 32px;
+		}
+	}
+
+	.stats__promo-text {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.stats__promo-illustration {
+		display: none;
+		@include breakpoint-deprecated( '>800px' ) {
+			width: 33.33%;
+			display: block;
+			align-self: center;
+			flex-shrink: 0;
+			margin-left: auto;
+			text-align: center;
+		}
+	}
+
+	.stats__promo-title {
+		@extend .wp-brand-font;
+		font-size: 28px;
+		line-height: 36px;
+		margin-bottom: 4px;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			font-size: 32px;
+			line-height: 40px;
+		}
+	}
 }

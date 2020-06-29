@@ -11,7 +11,6 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Card, Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
@@ -267,36 +266,42 @@ class StatsSite extends Component {
 						</div>
 					</div>
 				</div>
-				<div>
-					{ isFreePlan && (
-						<Card>
-							<h3 className="stats__promo-title">free plan start earning money now</h3>
-							<p>
-								Accept credit and debit card payments today for just about anything – physical and
-								digital goods, services, donations and tips, or access to your exclusive content.
-								Turn your website into a reliable source of income with payments and ads.
-							</p>
-							<Button className="stats__action" href="http://www.url.com">
-								Get started
-							</Button>
-							<div className="stats__illustration">
-								<img src={ earnIllustration } alt="" />
-							</div>
-						</Card>
-					) }
-					{ ! isFreePlan && (
-						<Card>
-							<h3 className="stats__promo-title">paid plan start earning money now</h3>
-							<p>
-								Accept credit and debit card payments today for just about anything – physical and
-								digital goods, services, donations and tips, or access to your exclusive content.
-								Turn your website into a reliable source of income with payments and ads.
-							</p>
-							<div className="stats__illustration">
-								<img src={ earnIllustration } alt="" />
-							</div>
-						</Card>
-					) }
+				<div className="stats__promo">
+					<div className="stats__promo-text">
+						{ isFreePlan && (
+							<>
+								<h2 className="stats__promo-title">{ translate( 'Start earning money now.' ) }</h2>
+								<p>
+									{ translate(
+										'Upgrade to any paid plan and start accepting payments for just about anything – physical and digital goods, services, donations, or access to exclusive content. {{link}}Learn how to get started{{/link}}.',
+										{
+											components: {
+												link: <a href={ `/earn/${ slug }` } />,
+											},
+										}
+									) }
+								</p>
+							</>
+						) }
+						{ ! isFreePlan && (
+							<>
+								<h2 className="stats__promo-title">{ translate( 'Start earning money now.' ) }</h2>
+								<p>
+									{ translate(
+										'Accept credit and debit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{link}}Learn how to get started{{/link}}.',
+										{
+											components: {
+												link: <a href={ `/earn/${ slug }` } />,
+											},
+										}
+									) }
+								</p>
+							</>
+						) }
+					</div>
+					<div className="stats__promo-illustration">
+						<img src={ earnIllustration } alt="" />
+					</div>
 				</div>
 				<JetpackColophon />
 			</>
