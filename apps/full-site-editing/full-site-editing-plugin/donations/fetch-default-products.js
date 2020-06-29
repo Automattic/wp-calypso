@@ -4,15 +4,15 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 
-const fetchStatus = async ( type = null ) => {
-	let path = '/wpcom/v2/memberships/status';
-	if ( type ) {
-		path += `?type=${ type }`;
-	}
+const fetchDefaultProducts = async ( currency ) => {
 	try {
 		const result = await apiFetch( {
-			path,
-			method: 'GET',
+			path: '/wpcom/v2/memberships/products',
+			method: 'POST',
+			data: {
+				type: 'donation',
+				currency,
+			},
 		} );
 		return result;
 	} catch ( error ) {
@@ -20,4 +20,4 @@ const fetchStatus = async ( type = null ) => {
 	}
 };
 
-export default fetchStatus;
+export default fetchDefaultProducts;

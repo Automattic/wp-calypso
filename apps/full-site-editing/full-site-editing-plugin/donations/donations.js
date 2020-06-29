@@ -15,7 +15,7 @@ import { Button } from '@wordpress/components';
  */
 import StripeNudge from './stripe-nudge';
 
-const Donations = ( { stripeConnectUrl } ) => {
+const Donations = ( { products, stripeConnectUrl } ) => {
 	const [ activeTab, setActiveTab ] = useState( 'one-time' );
 
 	const isActive = ( button ) => ( activeTab === button ? 'active' : null );
