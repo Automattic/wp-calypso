@@ -30,8 +30,8 @@ import WooWizardSetupPage from '../lib/pages/woocommerce/woo-wizard-setup-page';
 import WooWizardPaymentsPage from '../lib/pages/woocommerce/woo-wizard-payments-page';
 import WooWizardShippingPage from '../lib/pages/woocommerce/woo-wizard-shipping-page';
 import WooWizardExtrasPage from '../lib/pages/woocommerce/woo-wizard-extras-page';
-//import WooWizardJetpackPage from '../lib/pages/woocommerce/woo-wizard-jetpack-page';
-// import WooWizardReadyPage from '../lib/pages/woocommerce/woo-wizard-ready-page';
+import WooWizardJetpackPage from '../lib/pages/woocommerce/woo-wizard-jetpack-page';
+import WooWizardReadyPage from '../lib/pages/woocommerce/woo-wizard-ready-page';
 
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
@@ -41,6 +41,13 @@ import SecurePaymentComponent from '../lib/components/secure-payment-component';
 import WPHomePage from '../lib/pages/wp-home-page';
 import ThankYouModalComponent from '../lib/components/thank-you-modal-component';
 import MyPlanPage from '../lib/pages/my-plan-page';
+import WooWizardWelcomePage from '../lib/pages/woocommerce/woo-wizard-welcome-page';
+import WooWizardIndustryPage from '../lib/pages/woocommerce/woo-wizard-industry-page';
+import WooWizardProductPage from '../lib/pages/woocommerce/woo-wizard-product-page';
+import WooWizardBusinessDetailsPage from '../lib/pages/woocommerce/woo-wizard-business-details-page';
+import WooWizardThemePage from '../lib/pages/woocommerce/woo-wizard-theme-page';
+import WPAdminInPlaceApprovePage from '../lib/pages/wp-admin/wp-admin-in-place-approve-page';
+import WPAdminInPlacePlansPage from '../lib/pages/wp-admin/wp-admin-in-place-plans-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -126,6 +133,11 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
+		step( 'Can log in to WPCOM', async function () {
+			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
+			await loginFlow.login();
+		} );
+
 		step( 'Can create wporg site', async function () {
 			this.timeout( mochaTimeOut * 12 );
 
@@ -145,23 +157,18 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 			return await this.wpAdminJetpack.connectWordPressCom();
 		} );
 
-		step( 'Can login into WordPress.com', async function () {
-			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
-			return await loginFlow.loginUsingExistingForm();
-		} );
-
-		step( 'Can approve connection on the authorization page', async function () {
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
-			return await jetpackAuthorizePage.approveConnection();
+		step( 'Can Approve in-place connection', async function () {
+			const inPlaceApprovePage = await WPAdminInPlaceApprovePage.Expect( driver );
+			await inPlaceApprovePage.approve();
 		} );
 
 		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlanJetpack();
+			const pickAPlanPage = await WPAdminInPlacePlansPage.Expect( driver );
+			return await pickAPlanPage.selectFreePlan();
 		} );
 
-		step( 'Can then see the Jetpack plan page in Calypso', async function () {
-			return await PlansPage.Expect( driver );
+		step( 'Can assert we are on Jetpack Dashboard', async function () {
+			await WPAdminJetpackPage.Expect( driver );
 		} );
 	} );
 
@@ -328,11 +335,14 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		const address2 = '';
 		const city = 'Denver';
 		const postalCode = '80205';
-		const currency = 'USD';
-		const productType = 'physical';
 
 		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
+		} );
+
+		step( 'Can login into WordPress.com', async function () {
+			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
+			return await loginFlow.login();
 		} );
 
 		step( 'Can create wporg site', async function () {
@@ -349,6 +359,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 
 		step( 'Can fill out and submit store information form', async function () {
+			await ( await WooWizardWelcomePage.Expect( driver ) ).start();
 			const wooWizardSetupPage = await WooWizardSetupPage.Expect( driver );
 			return await wooWizardSetupPage.enterStoreDetailsAndSubmit( {
 				countryCode,
@@ -357,51 +368,42 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 				address2,
 				city,
 				postalCode,
-				currency,
-				productType,
 			} );
 		} );
 
-		step( 'Can continue through payments information', async function () {
-			const wooWizardPaymentsPage = await WooWizardPaymentsPage.Expect( driver );
-			return await wooWizardPaymentsPage.selectContinue();
+		step( 'Can select fashion industry', async function () {
+			await ( await WooWizardIndustryPage.Expect( driver ) ).selectFashionIndustry();
+		} );
+		step( 'Can select product type', async function () {
+			await ( await WooWizardProductPage.Expect( driver ) ).selectPhysicalProduct();
 		} );
 
-		step( 'Can continue through shipping information', async function () {
-			const wooWizardShippingPage = await WooWizardShippingPage.Expect( driver );
-			await wooWizardShippingPage.fillFlatRates();
-			return await wooWizardShippingPage.selectContinue();
+		step( 'Can fill business details', async function () {
+			await ( await WooWizardBusinessDetailsPage.Expect( driver ) ).fillBusinessInfo();
 		} );
 
-		step( 'Can continue through extras information', async function () {
-			const wooWizardExtrasPage = await WooWizardExtrasPage.Expect( driver );
-			return await wooWizardExtrasPage.selectContinue();
+		step( 'Can skip theme step', async function () {
+			await ( await WooWizardThemePage.Expect( driver ) ).skip();
 		} );
 
 		// @TODO: Fix me! Disabled on May 23rd 2019 since the flow was getting stuck there.
 		// Passes locally and in manual testing, so we suspect it's the way how
 		// Calypso live-branches URL is passed to this step.
-		/*
-		step( 'Can continue with Jetpack', async function() {
+		// /*
+		step( 'Can continue with Jetpack', async function () {
 			this.timeout( mochaTimeOut * 5 );
 
 			const wooWizardJetpackPage = await WooWizardJetpackPage.Expect( driver );
 			return await wooWizardJetpackPage.selectContinueWithJetpack();
 		} );
 
-		step( 'Can log into WP.com', async function() {
-			const user = dataHelper.getAccountConfig( 'jetpackConnectUser' );
-			const loginPage = await LoginPage.Expect( driver );
-			return await loginPage.login( user[ 0 ], user[ 1 ] );
-		} );
-
-		step( 'Can wait for Jetpack get connected', async function() {
+		step( 'Can wait for Jetpack get connected', async function () {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			// HACKY. Connection should be auto-approved, but it fails all the time, so we need to manually click the button
 			return await jetpackAuthorizePage.approveConnection();
 		} );
 
-		step( 'Can click the free plan button', async function() {
+		step( 'Can click the free plan button', async function () {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
@@ -410,7 +412,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		// step( 'Can see the Woo wizard ready page', async function() {
 		// 	return await WooWizardReadyPage.Expect( driver );
 		// } );
-		*/
+		// */
 	} );
 
 	describe( 'Remote Installation Connect From Calypso, when Jetpack not installed: @parallel @jetpack', function () {

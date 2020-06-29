@@ -46,7 +46,7 @@ describe( `[${ host }] Gutenberg Markdown block: (${ screenSize }) @jetpack`, fu
 		step( 'Can create wporg site and connect Jetpack', async function () {
 			this.timeout( mochaTimeOut * 12 );
 			const jnFlow = new JetpackConnectFlow( driver, 'jetpackConnectUser' );
-			await jnFlow.connectFromWPAdmin();
+			await jnFlow.inPlaceConnectFromWPAdmin();
 			url = jnFlow.url;
 		} );
 
