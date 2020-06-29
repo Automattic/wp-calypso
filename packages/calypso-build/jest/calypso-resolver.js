@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
-const { sync: resolveSync } = require( 'resolve' );
+const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
+const resolve = require( 'resolve' );
 
 module.exports = function calypsoResolver( path, options ) {
-	const result = resolveSync( path, {
+	const result = resolve.sync( path, {
 		basedir: options.basedir,
 		extensions: options.extensions,
 		isDirectory,
@@ -17,15 +17,7 @@ module.exports = function calypsoResolver( path, options ) {
 		packageFilter,
 	} );
 
-	try {
-		return fs.realpathSync.native( result );
-	} catch ( error ) {
-		if ( error.code !== 'ENOENT' ) {
-			throw error;
-		}
-	}
-
-	return result;
+	return realpathSync( result );
 };
 
 function packageFilter( pkg ) {
@@ -74,7 +66,14 @@ function realpathCached( path ) {
 		return result;
 	}
 
-	result = fs.realpathSync( path );
+	result = path;
+	try {
+		result = fs.realpathSync.native( path );
+	} catch ( error ) {
+		if ( error.code !== 'ENOENT' ) {
+			throw error;
+		}
+	}
 
 	checkedRealpathPaths.set( path, result );
 
