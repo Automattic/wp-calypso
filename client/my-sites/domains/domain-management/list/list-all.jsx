@@ -29,7 +29,7 @@ import Main from 'components/main';
 import PropTypes from 'prop-types';
 import { type as domainTypes } from 'lib/domains/constants';
 import QueryAllDomains from 'components/data/query-all-domains';
-
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 /**
  * Style dependencies
  */
@@ -113,6 +113,7 @@ class ListAll extends Component {
 					<QueryAllDomains />
 					<Main wideLayout>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
+						<SidebarNavigation />
 						<div className="list-all__items">{ this.renderDomainsList() }</div>
 					</Main>
 				</div>
