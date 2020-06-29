@@ -12,7 +12,14 @@ import Main from 'components/main';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-wpcom-atomic';
-import getSiteProducts, { SiteProduct } from 'state/sites/selectors/get-site-products';
+import { getSiteProducts, getSitePlan } from 'state/sites/selectors';
+import { getPlan } from 'lib/plans';
+
+/**
+ * Type dependencies
+ */
+import type { SiteProduct } from 'state/sites/selectors/get-site-products';
+import type { SitePlan } from 'state/sites/selectors/get-site-plan';
 
 type QueryComponentProps = {
 	siteId: number | null;
@@ -43,6 +50,7 @@ type Props = {
 	siteState: SiteState | null;
 	atomicSite: boolean;
 	siteProducts: SiteProduct[] | null;
+	sitePlan: SitePlan | null;
 };
 
 const UI_STATE_LOADING = Symbol();
@@ -61,6 +69,7 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 		atomicSite,
 		isRequesting,
 		siteProducts,
+		sitePlan,
 		productSlugTest,
 	} = props;
 	const { state, reason } = siteState || {};
@@ -69,12 +78,23 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 	const [ showUpsell, setUpsell ] = useState( false );
 
 	const hasProduct = useMemo( () => {
-		if ( ! siteProducts || ! productSlugTest ) {
+		if ( ! productSlugTest || ( ! siteProducts && ! sitePlan ) ) {
 			return false;
 		}
-		const siteProductsSlugs = siteProducts.map( ( { productSlug } ) => productSlug );
-		return !! siteProductsSlugs.find( productSlugTest );
-	}, [ siteProducts, productSlugTest ] ) as boolean;
+		let productsList: string[] = [];
+		if ( siteProducts ) {
+			productsList = siteProducts.map( ( { productSlug } ) => productSlug );
+		}
+		if ( sitePlan ) {
+			const sitePlanDetails = getPlan( sitePlan.product_slug );
+			productsList = [
+				...productsList,
+				...sitePlanDetails.getHiddenFeatures(),
+				...sitePlanDetails.getInferiorHiddenFeatures(),
+			];
+		}
+		return !! productsList.find( productSlugTest );
+	}, [ siteProducts, productSlugTest, sitePlan ] ) as boolean;
 
 	// Reset states when site or section changes
 	useEffect( () => {
@@ -133,12 +153,14 @@ export default connect( ( state, { getStateForSite, isRequestingForSite }: Props
 	const siteState = getStateForSite( state, siteId );
 	const atomicSite = ( siteId && isAtomicSite( state, siteId ) ) as boolean;
 	const siteProducts = getSiteProducts( state, siteId );
+	const sitePlan = getSitePlan( state, siteId );
 
 	return {
 		siteId,
 		siteState,
 		atomicSite,
 		siteProducts,
+		sitePlan,
 		isRequesting: isRequestingForSite( state, siteId ),
 	};
 } )( UpsellSwitch );
