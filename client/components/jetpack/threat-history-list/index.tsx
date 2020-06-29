@@ -19,19 +19,45 @@ import getSiteScanHistory from 'state/selectors/get-site-scan-history';
 import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { useThreats } from 'lib/jetpack/use-threats';
+import { Threat } from 'components/jetpack/threat-item/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const filterOptions = [
+type FilterValue = 'all' | 'fixed' | 'ignored';
+type FilterOption =
+	| {
+			value: 'all';
+			label: 'All';
+	  }
+	| {
+			value: 'fixed';
+			label: 'Fixed';
+	  }
+	| {
+			value: 'ignored';
+			label: 'Ignored';
+	  };
+
+const filterOptions: FilterOption[] = [
 	{ value: 'all', label: 'All' },
 	{ value: 'fixed', label: 'Fixed' },
 	{ value: 'ignored', label: 'Ignored' },
 ];
 
-const ThreatStatusFilter = ( { isPlaceholder, onSelect, initialSelected } ) => {
+interface ThreatStatusFilterProps {
+	isPlaceholder: boolean;
+	onSelect: ( ...args: any[] ) => void;
+	initialSelected: FilterValue;
+}
+
+const ThreatStatusFilter: React.FC< ThreatStatusFilterProps > = ( {
+	isPlaceholder,
+	onSelect,
+	initialSelected,
+} ) => {
 	return isPlaceholder ? (
 		<div className="threat-history-list__filters is-placeholder"></div>
 	) : (
@@ -45,7 +71,17 @@ const ThreatStatusFilter = ( { isPlaceholder, onSelect, initialSelected } ) => {
 	);
 };
 
-const ThreatHistoryList = ( {
+interface ThreatHistoryListProps {
+	siteId: number;
+	siteName: string;
+	siteSlug: string;
+	isRequestingHistory: boolean;
+	threats: Threat[];
+	filter: FilterValue;
+	dispatchRecordTracksEvent: Function;
+}
+
+const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( {
 	siteId,
 	siteName,
 	siteSlug,
@@ -139,7 +175,6 @@ const ThreatHistoryList = ( {
 						showDialog={ showThreatDialog }
 						onCloseDialog={ closeDialog }
 						onConfirmation={ fixThreat }
-						siteId={ siteId }
 						siteName={ siteName }
 						threat={ selectedThreat }
 						action={ 'fix' }
