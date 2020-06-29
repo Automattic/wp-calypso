@@ -12,18 +12,11 @@ import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import getSiteTitle from 'state/sites/selectors/get-site-title';
 import config from 'config';
 
+import { getDocumentHeadTitle } from 'state/document-head/selectors/get-document-head-title';
+
 const UNREAD_COUNT_CAP = 40;
 
-/**
- * Returns the document title as set by the DocumentHead component or setTitle
- * action.
- *
- * @param  {object}  state  Global state tree
- * @returns {?string}        Document title
- */
-export function getDocumentHeadTitle( state ) {
-	return state.documentHead.title;
-}
+export { getDocumentHeadTitle } from 'state/document-head/selectors/get-document-head-title';
 
 /**
  * Returns a count reflecting unread items.
