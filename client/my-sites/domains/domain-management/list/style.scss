@@ -191,17 +191,8 @@ input[type='radio'].domain-management-list-item__radio {
 		}
 
 		.domain-notice {
-			display: none;
+			margin-left: -2px;
 		}
-	}
-}
-
-.domain-item__mobile-notice {
-	display: none;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		display: initial;
-		margin-left: -2px;
 	}
 }
 

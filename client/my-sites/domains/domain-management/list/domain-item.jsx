@@ -85,7 +85,7 @@ class DomainItem extends PureComponent {
 				<div className="domain-item__link">
 					<div className="domain-item__status">
 						<div className="domain-item__title">{ domain.domain }</div>
-						<DomainNotice status="info" text={ translate( 'Activating domain' ) } />
+						<DomainNotice status="info" text="Activating domain" />
 					</div>
 					{ showSite && (
 						<div className="domain-item__meta">
@@ -97,11 +97,6 @@ class DomainItem extends PureComponent {
 							} ) }
 						</div>
 					) }
-					<DomainNotice
-						status="info"
-						text={ translate( 'Activating domain' ) }
-						className="domain-item__mobile-notice"
-					/>
 				</div>
 				<div className="domain-item__transfer-lock">
 					<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
