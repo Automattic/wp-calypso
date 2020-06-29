@@ -20,7 +20,7 @@
 		"wordpress.com"
 	],
 	"scripts": {
-		"build": "electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never"
+		"build": "npx electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never"
 	},
 	"devDependencies": {
 		"electron": "8.3.0",
