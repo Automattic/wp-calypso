@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import {
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_FAILURE,
@@ -43,8 +44,11 @@ export const requesting = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( {
-	domains: allDomains,
-	requesting,
-	errors,
-} );
+export default withStorageKey(
+	'all-domains',
+	combineReducers( {
+		domains: allDomains,
+		requesting,
+		errors,
+	} )
+);
