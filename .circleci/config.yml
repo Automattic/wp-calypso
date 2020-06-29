@@ -625,7 +625,7 @@ jobs:
           name: Build Desktop Source
           no_output_timeout: 15m
           command: |
-            make -f desktop/Makefile source
+            yarn run build-desktop:source
       - save_cache: *desktop-save-source-cache
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
@@ -643,7 +643,6 @@ jobs:
       - attach_workspace:
           at: /Users/distiller/wp-calypso
       - run: *update-node
-      - run: *yarn-install
       - run:
           name: Build Desktop Mac
           no_output_timeout: 30m
@@ -655,7 +654,7 @@ jobs:
                   source $HOME/.nvm/nvm.sh
                   nvm use
 
-                  make -f desktop/Makefile package
+                  yarn run build-desktop
       - run:
           name: e2e Tests
           command: |
@@ -663,7 +662,7 @@ jobs:
             nvm use
             npm install -g yarn
 
-            make -f desktop/Makefile e2e
+            yarn run test-desktop:e2e
       - run:
           when: always
           name: Clean Up
