@@ -10,7 +10,7 @@ function Favicon( props ) {
 
 	// if loading error or missing icon show W Gridicon
 	if ( hasError || site.site_icon === null ) {
-		return <Gridicon icon="my-sites" size={ 18 } className={ props.className } />;
+		return <Gridicon icon="globe" size={ 18 } className={ props.className } />;
 	}
 
 	return (
