@@ -53,11 +53,16 @@ export const getDesignImageUrl = ( design: Design ) => {
 			viewport_height: 700,
 		}
 	);
-	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( previewUrl ), {
+	const mShotsParams = {
+		// viewport size (how much of the source page to capture)
 		vpw: 1200,
 		vph: 3072,
+		// size of the resulting image
 		w: 700,
 		h: 1800,
+	};
+	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( previewUrl ), {
+		...mShotsParams,
 		// requeue: true, // Uncomment this line to force the screenshots to be regenerated
 	} );
 	return mshotsRequest;
