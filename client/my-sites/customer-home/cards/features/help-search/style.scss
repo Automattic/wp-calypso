@@ -3,7 +3,7 @@
 $search_results_top_spacing: 24px;
 $card_padding_small: 16px;
 $card_padding_large: 24px;
-$min_results_height: 175px;
+$min_results_height: 180px;
 
 .customer-home__layout .help-search {
 
@@ -157,14 +157,14 @@ $min_results_height: 175px;
 	// PlaceholderLines component
 	.inline-help__results-placeholder {
 		min-height: $min_results_height;
-		margin: $search_results_top_spacing 0 0;
+		margin: #{$search_results_top_spacing + 1} #{-$search_results_top_spacing} 0;
 		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
 		border-top: 1px solid var( --color-border-subtle );
 	}
 
 	.inline-help__results-placeholder-item {
 		height: 15px;
-		margin: 20px 0;
+		margin: 20px $card_padding_large 0;
 		border-radius: 16px;
 		background-color: var( --color-neutral-5 );
 
