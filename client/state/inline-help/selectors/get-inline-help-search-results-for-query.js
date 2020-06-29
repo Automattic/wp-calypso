@@ -7,6 +7,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import 'state/inline-help/init';
+import getSearchQuery from 'state/inline-help/selectors/get-search-query';
 
 /**
  * Returns an array of all search results for the current search query or an
@@ -17,7 +18,7 @@ import 'state/inline-help/init';
  */
 
 export default function getInlineHelpSearchResultsForQuery( state ) {
-	const searchQuery = get( state, 'inlineHelp.searchResults.search.searchQuery' );
+	const searchQuery = getSearchQuery( state );
 	const allResults = get( state, 'inlineHelp.searchResults.search.items' );
 	return get( allResults, [ searchQuery ], [] );
 }
