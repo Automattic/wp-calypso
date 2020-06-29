@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { addQueryArgs } from 'lib/url';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
@@ -15,11 +14,6 @@ const scanBasePath = () => '/scan';
 export const scanPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ scanBasePath() }/${ siteSlug }` : scanBasePath();
 
-const calypsoBasePath = () =>
-	abtest( 'jetpackSidebarSection' ) === 'showJetpackSidebarSection'
-		? '/settings/jetpack'
-		: '/settings/security';
-
-const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : calypsoBasePath() );
+const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : '/settings/jetpack' );
 export const settingsPath = ( siteSlug?: string ) =>
 	siteSlug ? `${ settingsBasePath() }/${ siteSlug }` : settingsBasePath();

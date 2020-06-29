@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { isEnabled } from 'config';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
@@ -11,11 +10,6 @@ const FLAG_ATOMIC_SITES = 'jetpack/features-section/atomic';
 const FLAG_SIMPLE_SITES = 'jetpack/features-section/simple';
 
 export default function isJetpackSectionEnabledForSite( state: object, siteId?: number | null ) {
-	// If the ab test is disabled there's no need to look any further.
-	if ( abtest( 'jetpackSidebarSection' ) !== 'showJetpackSidebarSection' ) {
-		return false;
-	}
-
 	// From here, we can only determine whether the Jetpack section is enabled
 	// if we have a site ID -- no site ID, no access.
 	if ( ! siteId ) {
