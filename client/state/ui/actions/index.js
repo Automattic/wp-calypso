@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PREVIEW_IS_SHOWING, NAVIGATE, HISTORY_REPLACE } from 'state/action-types';
+import { NAVIGATE, HISTORY_REPLACE } from 'state/action-types';
 
 /**
  * Re-exports
@@ -10,13 +10,7 @@ export { setSection, hideSidebar } from '../section/actions';
 export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
 export { setSelectedSiteId, setAllSitesSelected } from './set-sites';
 export { toggleNotificationsPanel } from './notifications';
-
-export function setPreviewShowing( isShowing ) {
-	return {
-		type: PREVIEW_IS_SHOWING,
-		isShowing,
-	};
-}
+export { setPreviewShowing } from './preview';
 
 /**
  * Returns an action object signalling navigation to the given path.
