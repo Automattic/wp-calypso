@@ -8,15 +8,12 @@ import {
 } from 'state/action-types';
 import { allDomainsSchema } from './schema';
 import { combineReducers, withSchemaValidation } from 'state/utils';
-import { getDomainType } from 'lib/domains/utils';
+import { createLightSiteDomainObject } from 'state/all-domains/helpers';
 
 export const allDomains = withSchemaValidation( allDomainsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case ALL_DOMAINS_REQUEST_SUCCESS:
-			return ( action?.domains ?? [] ).map( ( domain ) => {
-				domain.type = getDomainType( domain );
-				return domain;
-			} );
+			return ( action?.domains ?? [] ).map( createLightSiteDomainObject );
 	}
 
 	return state;
