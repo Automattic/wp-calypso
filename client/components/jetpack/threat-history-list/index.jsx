@@ -31,7 +31,7 @@ const filterOptions = [
 	{ value: 'ignored', label: 'Ignored' },
 ];
 
-const ThreatStatusFilter = ( { isPlaceholder, onSelect } ) => {
+const ThreatStatusFilter = ( { isPlaceholder, onSelect, initialSelected } ) => {
 	return isPlaceholder ? (
 		<div className="threat-history-list__filters is-placeholder"></div>
 	) : (
@@ -39,6 +39,7 @@ const ThreatStatusFilter = ( { isPlaceholder, onSelect } ) => {
 			className="threat-history-list__filters"
 			options={ filterOptions }
 			onSelect={ onSelect }
+			initialSelected={ initialSelected }
 			primary
 		/>
 	);
@@ -117,6 +118,7 @@ const ThreatHistoryList = ( {
 				<div className="threat-history-list__filters-wrapper">
 					<ThreatStatusFilter
 						isPlaceholder={ isRequestingHistory }
+						initialSelected={ currentFilter.value }
 						onSelect={ handleOnFilterChange }
 					/>
 				</div>
