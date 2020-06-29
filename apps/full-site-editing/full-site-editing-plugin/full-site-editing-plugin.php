@@ -158,6 +158,14 @@ function load_editor_domain_picker() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_domain_picker' );
 
 /**
+ * Sigh: load_editor_plans_grid
+ */
+function load_editor_plans_grid() {
+	require_once __DIR__ . '/editor-plans-grid/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_plans_grid' );
+
+/**
  * Sigh: load_editor_gutenboarding_launch
  */
 function load_editor_gutenboarding_launch() {
