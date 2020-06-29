@@ -2,47 +2,18 @@
  * Internal dependencies
  */
 import {
-	SELECTED_SITE_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	NAVIGATE,
 	HISTORY_REPLACE,
 } from 'state/action-types';
 
-import 'state/data-layer/wpcom/sites/jitm';
-
 /**
  * Re-exports
  */
 export { setSection, hideSidebar } from '../section/actions';
 export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
-
-/**
- * Returns an action object to be used in signalling that a site has been set
- * as selected.
- *
- * @param {number} siteId Site ID
- * @returns {object} Action object
- */
-export function setSelectedSiteId( siteId ) {
-	return {
-		type: SELECTED_SITE_SET,
-		siteId,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that all sites have been
- * set as selected.
- *
- * @returns {object} Action object
- */
-export function setAllSitesSelected() {
-	return {
-		type: SELECTED_SITE_SET,
-		siteId: null,
-	};
-}
+export { setSelectedSiteId, setAllSitesSelected } from './set-sites';
 
 export function setPreviewShowing( isShowing ) {
 	return {
