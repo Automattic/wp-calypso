@@ -109,8 +109,8 @@ class ListAll extends Component {
 				<div className="list-all__container">
 					<QueryAllDomains />
 					<Main wideLayout>
-						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
+						<SidebarNavigation />
 						<div className="list-all__items">{ this.renderDomainsList() }</div>
 					</Main>
 				</div>
