@@ -20,7 +20,7 @@ const MAX_URL_PARAM_VALUE_LENGTH = 50;
 const MAX_KEYWORD_PARAM_VALUE_LENGTH = 80;
 const MAX_GCLID_PARAM_VALUE_LENGTH = 100;
 // These are the URL params that end up in the `ad_details` cookie
-const ALLOWED_URL_PARAMS = [
+const URL_PARAM_WHITELIST = [
 	'adgroupid',
 	'campaignid',
 	'device',
@@ -58,8 +58,8 @@ function isValidOtherUrlParamValue( key, value ) {
 	return value.length <= MAX_URL_PARAM_VALUE_LENGTH;
 }
 
-function isValidAndAllowedUrlParamValue( key, value ) {
-	if ( -1 === ALLOWED_URL_PARAMS.indexOf( key ) ) {
+function isValidWhitelistedUrlParamValue( key, value ) {
+	if ( -1 === URL_PARAM_WHITELIST.indexOf( key ) ) {
 		return false;
 	} else if ( 'utm_source' === key || 'utm_campaign' === value ) {
 		return isValidUtmSourceOrCampaign( value );
@@ -94,7 +94,7 @@ export function updateQueryParamsTracking() {
 
 	if ( searchParams ) {
 		const validEntries = Array.from( searchParams.entries() ).filter( ( [ key, value ] ) =>
-			isValidAndAllowedUrlParamValue( key, value )
+			isValidWhitelistedUrlParamValue( key, value )
 		);
 		sanitizedQuery = new URLSearchParams( validEntries );
 
