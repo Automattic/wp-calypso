@@ -36,7 +36,6 @@ import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import imports from './imports/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
-import invites from './invites/reducer';
 import jetpackProductInstall from './jetpack-product-install/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -103,7 +102,6 @@ const reducers = {
 	importerNux,
 	imports,
 	inlineSupportArticle,
-	invites,
 	jetpackProductInstall,
 	jetpackRemoteInstall,
 	jetpackSync,
