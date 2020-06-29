@@ -63,6 +63,12 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 	const [ uiState, setUiState ] = useState< UiState >( null );
 	const [ showUpsell, setUpsell ] = useState( false );
 
+	// Reset states when site or section changes
+	useEffect( () => {
+		setUiState( null );
+		setUpsell( false );
+	}, [ siteId, QueryComponent ] );
+
 	// The data queried by QueryComponent can be fetched at any time by other
 	// parts of the app and therefore trigger a rendering of the loading state.
 	// We want to prevent that by making sure the component renders its loading
