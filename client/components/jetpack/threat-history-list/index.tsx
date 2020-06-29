@@ -94,8 +94,8 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( {
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const dispatch = useDispatch();
 	const handleOnFilterChange = React.useCallback(
-		( filterEntry ) => {
-			let filterValue = filterEntry.value;
+		( filterEntry: FilterOption ) => {
+			let filterValue: FilterValue | '' = filterEntry.value;
 			if ( 'all' === filterValue ) {
 				filterValue = '';
 			}
