@@ -109,7 +109,10 @@ class DomainItem extends PureComponent {
 				</div>
 				<div className="domain-item__email">
 					<Button compact onClick={ this.addEmailClick }>
-						{ translate( 'Add' ) }
+						{ translate( 'Add', {
+							context: 'Button label',
+							comment: '"Add" as in "Add an email"',
+						} ) }
 					</Button>
 				</div>
 				{ this.renderOptionsButton() }
