@@ -11,6 +11,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Card, Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
@@ -28,7 +29,7 @@ import StickyPanel from 'components/sticky-panel';
 import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
+import { isJetpackSite, getSitePlanSlug, isCurrentPlanPaid } from 'state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
@@ -39,6 +40,12 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import EmptyContent from 'components/empty-content';
 import { activateModule } from 'state/jetpack/modules/actions';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+
+/**
+ * Image dependencies
+ */
+
+import earnIllustration from 'assets/images/customer-home/illustration--task-earn.svg';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -126,7 +133,7 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack } = this.props;
+		const { date, siteId, slug, isJetpack, isFreePlan } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -260,6 +267,37 @@ class StatsSite extends Component {
 						</div>
 					</div>
 				</div>
+				<div>
+					{ isFreePlan && (
+						<Card>
+							<h3 className="stats__promo-title">free plan start earning money now</h3>
+							<p>
+								Accept credit and debit card payments today for just about anything – physical and
+								digital goods, services, donations and tips, or access to your exclusive content.
+								Turn your website into a reliable source of income with payments and ads.
+							</p>
+							<Button className="stats__action" href="http://www.url.com">
+								Get started
+							</Button>
+							<div className="stats__illustration">
+								<img src={ earnIllustration } alt="" />
+							</div>
+						</Card>
+					) }
+					{ ! isFreePlan && (
+						<Card>
+							<h3 className="stats__promo-title">paid plan start earning money now</h3>
+							<p>
+								Accept credit and debit card payments today for just about anything – physical and
+								digital goods, services, donations and tips, or access to your exclusive content.
+								Turn your website into a reliable source of income with payments and ads.
+							</p>
+							<div className="stats__illustration">
+								<img src={ earnIllustration } alt="" />
+							</div>
+						</Card>
+					) }
+				</div>
 				<JetpackColophon />
 			</>
 		);
@@ -324,6 +362,7 @@ export default connect(
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
+			isFreePlan: ! isCurrentPlanPaid( state, siteId ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
