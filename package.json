@@ -383,11 +383,5 @@
 			"pre-commit": "yarn run -s install-if-no-packages && node bin/pre-commit-hook.js",
 			"pre-push": "yarn run -s install-if-no-packages && node bin/pre-push-hook.js"
 		}
-	},
-	"devDependencies": {
-		"electron-chromedriver": "4.2.0",
-		"electron-mocha": "8.0.0",
-		"mocha-steps": "1.3.0",
-		"selenium-webdriver": "4.0.0-alpha.1"
 	}
 }
