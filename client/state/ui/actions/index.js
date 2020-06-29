@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	PREVIEW_IS_SHOWING,
-	NOTIFICATIONS_PANEL_TOGGLE,
-	NAVIGATE,
-	HISTORY_REPLACE,
-} from 'state/action-types';
+import { PREVIEW_IS_SHOWING, NAVIGATE, HISTORY_REPLACE } from 'state/action-types';
 
 /**
  * Re-exports
@@ -14,6 +9,7 @@ import {
 export { setSection, hideSidebar } from '../section/actions';
 export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
 export { setSelectedSiteId, setAllSitesSelected } from './set-sites';
+export { toggleNotificationsPanel } from './notifications';
 
 export function setPreviewShowing( isShowing ) {
 	return {
@@ -21,17 +17,6 @@ export function setPreviewShowing( isShowing ) {
 		isShowing,
 	};
 }
-
-/**
- * Sets ui state to toggle the notifications panel
- *
- * @returns {object} An action object
- */
-export const toggleNotificationsPanel = () => {
-	return {
-		type: NOTIFICATIONS_PANEL_TOGGLE,
-	};
-};
 
 /**
  * Returns an action object signalling navigation to the given path.
