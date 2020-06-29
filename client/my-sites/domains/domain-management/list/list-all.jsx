@@ -17,6 +17,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { domainAddNew } from 'my-sites/domains/paths';
 import DocumentHead from 'components/data/document-head';
 import DomainItem from './domain-item';
+import ListHeader from './list-header';
 import FormattedHeader from 'components/formatted-header';
 import { getFlatDomainsList } from 'state/sites/domains/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -83,7 +84,7 @@ class ListAll extends Component {
 
 		const { domainsList, canManageSitesMap } = this.props;
 
-		return domainsList
+		const domainListItems = domainsList
 			.filter( ( domain ) => canManageSitesMap[ domain.blogId ] ) // filter on sites we can manage
 			.map( ( domain, index ) => (
 				<DomainItem
@@ -95,6 +96,8 @@ class ListAll extends Component {
 					onAddEmailClick={ this.handleAddEmailClick }
 				/>
 			) );
+
+		return [ <ListHeader key="list-header" />, ...domainListItems ];
 	}
 
 	render() {

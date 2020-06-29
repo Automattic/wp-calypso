@@ -144,9 +144,15 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
-.domain-item {
+.domain-item, .list-header {
 	display: flex;
 	align-items: center;
+}
+
+@include breakpoint-deprecated( '<960px' ) {
+	.list-header {
+		display: none;
+	}
 }
 
 .domain-item .domain-item__checkbox {
@@ -197,7 +203,7 @@ input[type='radio'].domain-management-list-item__radio {
 }
 
 .domain-item__transfer-lock, .domain-item__auto-renew, .domain-item__privacy, .domain-item__email {
-	max-width: 120px;
+	max-width: 100px;
 	width: 15%;
 	flex-shrink: 0;
 	text-align: center;
@@ -207,6 +213,12 @@ input[type='radio'].domain-management-list-item__radio {
 	@include breakpoint-deprecated( '<960px' ) {
 		display: none;
 	}
+}
+
+.domain-item__options {
+	width: 80px;
+	font-size: $font-body-small;
+	text-align: center;
 }
 
 .domain-item__icon {
