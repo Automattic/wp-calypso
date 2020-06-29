@@ -50,6 +50,7 @@ export const getDesignImageUrl = ( design: Design ) => {
 		{
 			font_headings: design.fonts.headings,
 			font_base: design.fonts.base,
+			site_title: design.title,
 			viewport_height: 700,
 		}
 	);
