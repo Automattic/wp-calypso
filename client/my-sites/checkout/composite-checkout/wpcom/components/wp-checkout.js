@@ -44,6 +44,7 @@ import {
 	getDomainValidationResult,
 	getGSuiteValidationResult,
 } from 'my-sites/checkout/composite-checkout/contact-validation';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -52,8 +53,8 @@ const ContactFormTitle = () => {
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
 	const [ items ] = useLineItems();
-	const isGSuiteInCart = items.some(
-		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	const isGSuiteInCart = items.some( ( item ) =>
+		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
 	);
 
 	if ( areDomainsInLineItems( items ) ) {
@@ -110,8 +111,8 @@ export default function WPCheckout( {
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
 	const isDomainFieldsVisible = !! firstDomainItem;
-	const isGSuiteInCart = items.some(
-		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	const isGSuiteInCart = items.some( ( item ) =>
+		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
 	);
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 

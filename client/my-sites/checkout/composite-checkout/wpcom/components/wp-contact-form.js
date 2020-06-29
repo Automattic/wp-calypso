@@ -25,6 +25,7 @@ import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-contact-form' );
 
@@ -41,8 +42,8 @@ export default function WPContactForm( {
 	const translate = useTranslate();
 	const [ items ] = useLineItems();
 	const isDomainFieldsVisible = useHasDomainsInCart();
-	const isGSuiteInCart = items.some(
-		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	const isGSuiteInCart = items.some( ( item ) =>
+		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
 	);
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const { formStatus } = useFormStatus();

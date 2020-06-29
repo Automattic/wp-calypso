@@ -15,6 +15,7 @@ import wp from 'lib/wp';
  * Internal dependencies
  */
 import { isLineItemADomain } from 'my-sites/checkout/composite-checkout/wpcom/hooks/has-domains';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 
 const wpcom = wp.undocumented();
 
@@ -95,7 +96,7 @@ export async function getDomainValidationResult( items, contactInfo ) {
 
 export async function getGSuiteValidationResult( items, contactInfo ) {
 	const domainNames = items
-		.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
+		.filter( ( item ) => isGSuiteProductSlug( item.wpcom_meta?.product_slug ) )
 		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
 	return wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );

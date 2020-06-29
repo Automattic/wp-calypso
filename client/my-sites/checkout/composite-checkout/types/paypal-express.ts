@@ -2,14 +2,16 @@
  * External dependencies
  */
 import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
-import { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/wpcom/types';
+import type {
+	WPCOMCartItem,
+	DomainContactDetails,
+} from 'my-sites/checkout/composite-checkout/wpcom/types';
 
 /**
  * Internal dependencies
  */
 import {
 	WPCOMTransactionEndpointCart,
-	WPCOMTransactionEndpointDomainDetails,
 	createTransactionEndpointCartFromLineItems,
 } from './transaction-endpoint';
 
@@ -21,7 +23,7 @@ export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
 	cancelUrl: string;
 	cart: WPCOMTransactionEndpointCart;
-	domainDetails: WPCOMTransactionEndpointDomainDetails;
+	domainDetails: DomainContactDetails;
 	country: string;
 	postalCode: string;
 	isWhiteGloveOffer: boolean;
@@ -45,7 +47,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	country: string;
 	postalCode: string;
 	subdivisionCode: string;
-	domainDetails: WPCOMTransactionEndpointDomainDetails;
+	domainDetails: DomainContactDetails;
 	items: WPCOMCartItem[];
 } ): PayPalExpressEndpointRequestPayload {
 	const urlParams = new URLSearchParams( window.location.search );
@@ -61,6 +63,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			postalCode,
 			subdivisionCode,
 			items: items.filter( ( item ) => ! getNonProductWPCOMCartItemTypes().includes( item.type ) ),
+			contactDetails: domainDetails,
 		} ),
 		country,
 		postalCode,
