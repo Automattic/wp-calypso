@@ -35,7 +35,6 @@ import {
 } from 'my-sites/email/paths';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { decodeURIComponentIfValid } from 'lib/url';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -56,12 +55,7 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		pageContext.primary = (
-			<>
-				<SidebarNavigation />
-				<DomainManagement.ListAll />
-			</>
-		);
+		pageContext.primary = <DomainManagement.ListAll />;
 		next();
 	},
 
