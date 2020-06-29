@@ -241,6 +241,31 @@
 		margin: auto;
 	}
 
+	.wp-block-button {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
+			'Cantarell', 'Helvetica Neue', sans-serif;
+		border-style: solid;
+		border-width: 1px;
+		cursor: pointer;
+		display: inline-block;
+		margin: 0;
+		outline: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		text-decoration: none;
+		vertical-align: top;
+		box-sizing: border-box;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 22px;
+		border-radius: 2px;
+		padding: 8px 14px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		border-color: var( --color-neutral-10 );
+	}
+
 	// Import Gutenberg gallery styles
 	@import 'gutenberg-gallery.scss';
 
