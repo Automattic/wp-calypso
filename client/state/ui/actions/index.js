@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { NAVIGATE, HISTORY_REPLACE } from 'state/action-types';
+import { HISTORY_REPLACE } from 'state/action-types';
 
 /**
  * Re-exports
@@ -11,14 +11,7 @@ export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
 export { setSelectedSiteId, setAllSitesSelected } from './set-sites';
 export { toggleNotificationsPanel } from './notifications';
 export { setPreviewShowing } from './preview';
-
-/**
- * Returns an action object signalling navigation to the given path.
- *
- * @param  {string} path Navigation path
- * @returns {object}      Action object
- */
-export const navigate = ( path ) => ( { type: NAVIGATE, path } );
+export { navigate } from './navigate';
 
 /**
  * Replaces the current url and modifies the browser history entry. Equivalent to window.replaceHistory
