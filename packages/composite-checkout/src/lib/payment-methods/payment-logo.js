@@ -106,6 +106,10 @@ const LockIconGraphic = styled( LockIcon )`
 
 const SmallBrandLogo = styled( BrandLogo )`
 	transform: translate( ${ ( props ) => ( props.isSummary ? '-10px, 4px' : '10px, 0' ) } );
+
+	.rtl & {
+		transform: translate( ${ ( props ) => ( props.isSummary ? '10px, 4px' : '-10px, 0' ) } );
+	}
 `;
 
 function LockIcon( { className } ) {

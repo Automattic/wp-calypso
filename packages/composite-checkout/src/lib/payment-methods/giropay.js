@@ -115,6 +115,11 @@ const GiropayFormWrapper = styled.div`
 		position: absolute;
 		top: 0;
 		left: 3px;
+
+		.rtl & {
+			right: 3px;
+			left: auto;
+		}
 	}
 `;
 
