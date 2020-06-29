@@ -205,7 +205,7 @@ class GSuiteAddUsers extends React.Component {
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
 						<GSuiteNewUserList
-							autoFocus
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
 							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }

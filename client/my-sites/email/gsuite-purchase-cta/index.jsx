@@ -42,7 +42,7 @@ export const GSuitePurchaseCta = ( {
 		recordEvent( 'calypso_email_gsuite_purchase_cta_view', {
 			domain_name: domainName,
 		} );
-	}, [ domainName ] );
+	}, [ domainName ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const goToAddGSuiteUsers = ( planType ) => {
 		recordEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
