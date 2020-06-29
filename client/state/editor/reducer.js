@@ -24,6 +24,7 @@ import lastDraft from './last-draft/reducer';
 import contactForm from './contact-form/reducer';
 import saveBlockers from './save-blockers/reducer';
 import rawContent from './raw-content/reducer';
+import convertToBlocksDialog from './convert-to-blocks-dialog/reducer';
 
 /**
  * Returns the updated editor post ID state after an action has been
@@ -114,6 +115,7 @@ const combinedReducer = combineReducers( {
 	contactForm,
 	saveBlockers,
 	rawContent,
+	convertToBlocksDialog,
 } );
 
 export default withStorageKey( 'editor', combinedReducer );

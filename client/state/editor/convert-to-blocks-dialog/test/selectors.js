@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import isConvertToBlocksDialogDismissed from 'state/selectors/is-convert-to-blocks-dialog-dismissed';
+import { isConvertToBlocksDialogDismissed } from 'state/editor/convert-to-blocks-dialog/selectors';
 
 const state = {
-	ui: {
+	editor: {
 		convertToBlocksDialog: {
 			12345678: {
 				1: 'dismissed',

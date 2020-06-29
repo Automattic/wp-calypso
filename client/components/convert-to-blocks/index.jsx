@@ -13,8 +13,8 @@ import { Button, Modal } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import isConvertToBlocksDialogDismissed from 'state/selectors/is-convert-to-blocks-dialog-dismissed';
-import { dismissConvertToBlocksDialog } from 'state/ui/convert-to-blocks-dialog/actions';
+import { dismissConvertToBlocksDialog } from 'state/editor/convert-to-blocks-dialog/actions';
+import { isConvertToBlocksDialogDismissed } from 'state/editor/convert-to-blocks-dialog/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
