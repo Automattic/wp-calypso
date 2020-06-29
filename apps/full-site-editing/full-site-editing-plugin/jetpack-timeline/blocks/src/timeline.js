@@ -8,7 +8,7 @@
 
 import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import { registerBlockType, createBlock } from '@wordpress/blocks';
-import { ToggleControl } from '@wordpress/components';
+import { ToggleControl, PanelBody } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
@@ -98,11 +98,13 @@ export function registerTimelineBlock() {
 			return (
 				<>
 					<InspectorControls>
-						<ToggleControl
-							label={ __( 'Alternate Items', 'full-site-editing' ) }
-							onChange={ toggleAlternate }
-							checked={ isAlternating }
-						/>
+						<PanelBody title={ __( 'Timeline settings', 'full-site-editing' ) }>
+							<ToggleControl
+								label={ __( 'Alternate items', 'full-site-editing' ) }
+								onChange={ toggleAlternate }
+								checked={ isAlternating }
+							/>
+						</PanelBody>
 					</InspectorControls>
 					<ul className={ classes }>
 						<InnerBlocks
