@@ -91,6 +91,7 @@ exports[`SettingsPage should render as expected 1`] = `
   />
   <Localized(FoldableCard)
     className="settings__form-card"
+    clickableHeader={true}
     expanded={false}
     header="Show connection details"
     onClick={[Function]}
@@ -136,6 +137,7 @@ exports[`SettingsPage should render as expected when not connected 1`] = `
   />
   <Localized(FoldableCard)
     className="settings__form-card"
+    clickableHeader={true}
     expanded={false}
     header="Show connection details"
     onClick={[Function]}
