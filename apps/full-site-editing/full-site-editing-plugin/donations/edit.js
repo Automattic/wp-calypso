@@ -27,22 +27,18 @@ const Edit = () => {
 		setIsLoading( false );
 	};
 
-	const hasRequiredProducts = ( resultProducts ) => {
-		const USDDonations = resultProducts.filter(
-			( product ) => product.currency === 'USD' && product.type === 'donation'
-		);
-
-		if ( ! USDDonations.length ) {
-			return;
-		}
-
-		const intervals = [];
-		USDDonations.forEach( ( donation ) => intervals.push( donation.interval ) );
+	const hasRequiredProducts = ( productList, productCurrency ) => {
+		const productIntervals = productList.reduce( ( intervals, { currency, type, interval } ) => {
+			if ( currency === productCurrency && type === 'donation' ) {
+				intervals.push( interval );
+			}
+			return intervals;
+		}, [] );
 
 		return (
-			intervals.includes( 'one-time' ) &&
-			intervals.includes( '1 month' ) &&
-			intervals.includes( '1 year' )
+			productIntervals.includes( 'one-time' ) &&
+			productIntervals.includes( '1 month' ) &&
+			productIntervals.includes( '1 year' )
 		);
 	};
 
@@ -54,7 +50,7 @@ const Edit = () => {
 			setUpgradeUrl( result.upgrade_url );
 			setStripeConnectUrl( result.connect_url );
 
-			if ( result.products.length && hasRequiredProducts( result.products ) ) {
+			if ( result.products.length && hasRequiredProducts( result.products, 'USD' ) ) {
 				setProducts( result.products );
 			} else {
 				fetchDefaultProducts( 'USD' ).then(
