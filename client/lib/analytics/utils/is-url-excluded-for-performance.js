@@ -3,7 +3,7 @@
  */
 import debug from './debug';
 
-// For better load performance, these routes are exluded from loading ads.
+// For better load performance, these routes are excluded from loading ads.
 const excludedRoutes = [ '/log-in' ];
 
 /**
