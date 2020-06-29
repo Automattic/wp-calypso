@@ -267,12 +267,12 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const giropayMethod = useCreateGiropay( {
-    onlyLoadPaymentMethods,
-    isStripeLoading,
-    stripeLoadingError,
-    stripeConfiguration,
-    stripe,
-} );
+		onlyLoadPaymentMethods,
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+	} );
 	const sofortMethod = useCreateSofort( {
 		onlyLoadPaymentMethods,
 		isStripeLoading,
@@ -319,7 +319,7 @@ export default function useCreatePaymentMethods( {
 		...existingCardMethods,
 		idealMethod,
 		giropayMethod,
-        sofortMethod,
+		sofortMethod,
 		stripeMethod,
 		paypalMethod,
 	].filter( Boolean );
