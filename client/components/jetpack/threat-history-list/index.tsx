@@ -72,10 +72,6 @@ const ThreatStatusFilter: React.FC< ThreatStatusFilterProps > = ( {
 	);
 };
 
-interface ExternalProps {
-	filter: FilterValue;
-}
-
 const mapStateToProps = ( state: DefaultRootState ) => {
 	const site = getSelectedSite( state ) as Site;
 	const siteId = site.ID;
@@ -103,6 +99,10 @@ const mapStateToProps = ( state: DefaultRootState ) => {
 };
 
 const mapDispatchToProps = { dispatchRecordTracksEvent: recordTracksEvent };
+
+interface ExternalProps {
+	filter: FilterValue;
+}
 
 type ConnectedProps = typeof mapDispatchToProps & ReturnType< typeof mapStateToProps >;
 type Props = ExternalProps & ConnectedProps;
