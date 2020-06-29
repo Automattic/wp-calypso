@@ -2,6 +2,11 @@
 [data-type='jetpack/timeline'] {
 
 	// Always show the Timeline appender, even when a child block is selected.
+	.block-list-appender {
+		display: none;
+	}
+
+	&.is-selected .block-list-appender,
 	&.has-child-selected .block-list-appender {
 		display: block;
 	}
@@ -18,6 +23,9 @@
 	margin-right: 12px;
 	padding-left: 0;
 	padding-right: 8px;
+
+	// Temporarily make this important. It can be retired once this custom appender is replaced with the real one.
+	animation: none !important;
 
 	&:hover {
 		color: #fff;
