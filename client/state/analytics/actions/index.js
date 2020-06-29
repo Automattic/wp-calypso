@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ANALYTICS_TRACKING_ON, ANALYTICS_TRACKS_OPT_OUT } from 'state/action-types';
+import { ANALYTICS_TRACKS_OPT_OUT } from 'state/action-types';
 
 /**
  * Re-exports
@@ -20,13 +20,7 @@ export { default as withAnalytics } from './with-analytics';
 export { default as enhanceWithSiteType } from './enhance-with-site-type';
 export { default as composeAnalytics } from './compose-analytics';
 export { bumpStat } from './bump-stat';
-
-export function loadTrackingTool( trackingTool ) {
-	return {
-		type: ANALYTICS_TRACKING_ON,
-		trackingTool,
-	};
-}
+export { loadTrackingTool } from './load-tracking-tool';
 
 export function setTracksOptOut( isOptingOut ) {
 	return {
