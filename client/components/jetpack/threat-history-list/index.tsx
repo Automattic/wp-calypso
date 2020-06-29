@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, DefaultRootState } from 'react-redux';
 import page from 'page';
 
 /**
@@ -20,6 +20,7 @@ import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { useThreats } from 'lib/jetpack/use-threats';
 import { Threat } from 'components/jetpack/threat-item/types';
+import { Site } from 'my-sites/scan/types';
 
 /**
  * Style dependencies
@@ -71,17 +72,41 @@ const ThreatStatusFilter: React.FC< ThreatStatusFilterProps > = ( {
 	);
 };
 
-interface ThreatHistoryListProps {
-	siteId: number;
-	siteName: string;
-	siteSlug: string;
-	isRequestingHistory: boolean;
-	threats: Threat[];
+interface ExternalProps {
 	filter: FilterValue;
-	dispatchRecordTracksEvent: Function;
 }
 
-const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( {
+const mapStateToProps = ( state: DefaultRootState ) => {
+	const site = getSelectedSite( state ) as Site;
+	const siteId = site.ID;
+	const siteName = site.name;
+	const siteSlug = getSelectedSiteSlug( state ) as string;
+	const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
+	const siteLogEntries = getSiteScanHistory( state, siteId );
+
+	const showPlaceholders = !! isRequestingHistory && 0 === siteLogEntries.length;
+	const logEntries = showPlaceholders
+		? [
+				{ id: 1, status: 'fixed' },
+				{ id: 2, status: 'ignored' },
+				{ id: 3, status: 'fixed' },
+				{ id: 4, status: 'ignored' },
+		  ]
+		: siteLogEntries;
+	return {
+		siteId,
+		siteName,
+		siteSlug,
+		isRequestingHistory: showPlaceholders,
+		threats: logEntries,
+	};
+};
+
+const mapDispatchToProps = { dispatchRecordTracksEvent: recordTracksEvent };
+
+type Props = ExternalProps & typeof mapDispatchToProps & ReturnType< typeof mapStateToProps >;
+
+const ThreatHistoryList: React.FC< Props > = ( {
 	siteId,
 	siteName,
 	siteSlug,
@@ -163,7 +188,7 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( {
 				{ filteredEntries.map( ( threat ) => (
 					<ThreatItem
 						key={ threat.id }
-						threat={ threat }
+						threat={ threat as Threat }
 						onFixThreat={ () => openDialog( threat ) }
 						isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 						contactSupportUrl={ contactSupportUrl( siteSlug ) }
@@ -186,30 +211,6 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( {
 };
 
 export default connect(
-	( state ) => {
-		const site = getSelectedSite( state );
-		const siteId = site.ID;
-		const siteName = site.name;
-		const siteSlug = getSelectedSiteSlug( state );
-		const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
-		const siteLogEntries = getSiteScanHistory( state, siteId );
-
-		const showPlaceholders = isRequestingHistory && 0 === siteLogEntries.length;
-		const logEntries = showPlaceholders
-			? [
-					{ id: 1, status: 'fixed' },
-					{ id: 2, status: 'ignored' },
-					{ id: 3, status: 'fixed' },
-					{ id: 4, status: 'ignored' },
-			  ]
-			: siteLogEntries;
-		return {
-			siteId,
-			siteName,
-			siteSlug,
-			isRequestingHistory: showPlaceholders,
-			threats: logEntries,
-		};
-	},
-	{ dispatchRecordTracksEvent: recordTracksEvent }
+	mapStateToProps,
+	mapDispatchToProps
 )( withLocalizedMoment( ThreatHistoryList ) );
