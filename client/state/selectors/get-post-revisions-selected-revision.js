@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import getPostRevision from 'state/selectors/get-post-revision';
 import getPostRevisionsSelectedRevisionId from 'state/selectors/get-post-revisions-selected-revision-id';
 

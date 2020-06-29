@@ -47,7 +47,7 @@ let mockReduxPostId = null;
 jest.mock( 'lib/redux-bridge', () => ( {
 	reduxGetState: () => ( {
 		media: { errors: {} },
-		ui: { editor: { postId: mockReduxPostId } },
+		editor: { postId: mockReduxPostId },
 	} ),
 	reduxDispatch: () => ( {} ),
 } ) );

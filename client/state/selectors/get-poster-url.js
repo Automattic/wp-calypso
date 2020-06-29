@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/posts/init';
+
+/**
  * Returns the poster URL of the video.
  *
  *
@@ -7,5 +12,5 @@
  */
 
 export default function getPosterUrl( state ) {
-	return state.ui.editor.videoEditor.url;
+	return state.editor.videoEditor.url;
 }

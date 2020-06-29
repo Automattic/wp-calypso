@@ -36,7 +36,7 @@ import {
 	bumpStat,
 } from 'state/analytics/actions';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
@@ -21,7 +20,7 @@ import Notice from 'components/notice';
 import RemoveButton from 'components/remove-button';
 import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getSitePost, getEditedPost } from 'state/posts/selectors';
 import config from 'config';
 

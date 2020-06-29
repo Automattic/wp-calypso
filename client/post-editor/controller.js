@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -18,10 +17,10 @@ import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/acti
 import { addQueryArgs, addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
+import { startEditingNewPost, stopEditingPost } from 'state/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getEditorNewPostPath } from 'state/ui/editor/selectors';
+import { getEditorNewPostPath } from 'state/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';

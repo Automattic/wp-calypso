@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import EditorGutenbergOptInDialog from 'post-editor/editor-gutenberg-opt-in-dialog';
 import EditorGutenbergBlocksWarningDialog from 'post-editor/editor-gutenberg-blocks-warning-dialog';
-import { getEditorRawContent, isEditorLoading } from 'state/ui/editor/selectors';
+import { getEditorRawContent, isEditorLoading } from 'state/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';

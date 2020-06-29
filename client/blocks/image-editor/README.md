@@ -54,7 +54,7 @@ It can also contain these optional properties (with defaults if not set):
 
 Default, pre-selected aspect ratio for the image editor. If `allowedAspectRatios` prop is present as well,
 it must include the `defaultAspectRatio`. For the list of all possible aspect ratios, see
-`client/state/ui/editor/image-editor/constants`.
+`client/state/editor/image-editor/constants`.
 
 ### `allowedAspectRatios`
 
@@ -66,7 +66,7 @@ it must include the `defaultAspectRatio`. For the list of all possible aspect ra
 
 List allowed aspect ratios user can select when editing an image. If there is only a single specified aspect ratio in
 the `allowedAspectRatios` array, it will be set as `defaultAspectRatio` as well.
-For the list of all possible aspect ratios, see `client/state/ui/editor/image-editor/constants`.
+For the list of all possible aspect ratios, see `client/state/editor/image-editor/constants`.
 
 ### `onDone`
 

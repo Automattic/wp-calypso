@@ -61,11 +61,10 @@ const initialReduxState = {
 	currentUser: {
 		capabilities: {},
 	},
-	ui: {
-		editor: {
-			imageEditor: {},
-		},
+	editor: {
+		imageEditor: {},
 	},
+	ui: {},
 };
 
 function renderWithRedux( ui ) {

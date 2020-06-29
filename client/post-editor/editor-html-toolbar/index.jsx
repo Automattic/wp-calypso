@@ -5,7 +5,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, isEmpty, map, reduce, throttle } from 'lodash';
+import { isEmpty, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -26,8 +26,9 @@ import {
 	fieldRemove,
 	fieldUpdate,
 	settingsUpdate,
-} from 'state/ui/editor/contact-form/actions';
-import { blockSave } from 'state/ui/editor/save-blockers/actions';
+} from 'state/editor/contact-form/actions';
+import { getEditorContactForm } from 'state/editor/contact-form/selectors';
+import { blockSave } from 'state/editor/save-blockers/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import { Button } from '@automattic/components';
@@ -708,7 +709,7 @@ const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 
 	return {
-		contactForm: get( state, 'ui.editor.contactForm', {} ),
+		contactForm: getEditorContactForm( state ) ?? {},
 		isDropZoneVisible: isDropZoneVisible( state ),
 		site,
 		canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),

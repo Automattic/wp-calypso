@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -44,7 +43,7 @@ import { savePost, deletePost, trashPost, restorePost } from 'state/posts/action
 import { infoNotice, withoutNotice } from 'state/notices/actions';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import getEditorUrl from 'state/selectors/get-editor-url';
-import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
+import { getEditorDuplicatePostPath } from 'state/editor/selectors';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';

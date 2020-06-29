@@ -18,7 +18,7 @@ import EditorPublishButton from 'post-editor/editor-publish-button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
+import { getEditorPublishButtonStatus } from 'state/editor/selectors';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';

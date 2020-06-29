@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import tinymce from 'tinymce/tinymce';
 import { includes, partial } from 'lodash';
 
@@ -10,7 +9,7 @@ import { includes, partial } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorRawContent } from 'state/ui/editor/selectors';
+import { getEditorRawContent } from 'state/editor/selectors';
 
 function embedReversal( editor ) {
 	const store = editor.getParam( 'redux_store' );

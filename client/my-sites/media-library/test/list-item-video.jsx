@@ -32,10 +32,9 @@ const initialReduxState = {
 	currentUser: {
 		capabilities: {},
 	},
-	ui: {
-		editor: {
-			imageEditor: {},
-		},
+	ui: {},
+	editor: {
+		imageEditor: {},
 	},
 };
 

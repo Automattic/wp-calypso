@@ -35,12 +35,12 @@ import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
+import { setEditorIframeLoaded, startEditingPost } from 'state/editor/actions';
 import { notifyDesktopViewPostClicked, notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { editPost, trashPost } from 'state/posts/actions';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
@@ -270,7 +270,7 @@ class CalypsoifyIframe extends Component<
 				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
 
-				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+				//set postId on state.editor.postId, so components like editor revisions can read from it
 				this.props.startEditingPost( siteId, postId );
 
 				//set post type on state.posts.[ id ].type, so components like document head can read from it

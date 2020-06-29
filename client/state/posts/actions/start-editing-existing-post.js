@@ -6,8 +6,8 @@ import { receivePost } from 'state/posts/actions/receive-post';
 import { getEditedPost } from 'state/posts/selectors';
 import { normalizePostForActions } from 'state/posts/utils';
 import isPreviousRouteGutenberg from 'state/selectors/is-previous-route-gutenberg';
-import { editorReset, editorSetLoadingError, startEditingPost } from 'state/ui/editor/actions';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { editorReset, editorSetLoadingError, startEditingPost } from 'state/editor/actions';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 import 'state/posts/init';

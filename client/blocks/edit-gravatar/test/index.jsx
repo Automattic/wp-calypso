@@ -13,7 +13,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { AspectRatios } from 'state/editor/image-editor/constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );

@@ -18,10 +18,8 @@ describe( 'editedPostHasContent()', () => {
 					queries: {},
 					edits: {},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -49,10 +47,8 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -81,10 +77,8 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -113,10 +107,8 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -145,10 +137,8 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -189,10 +179,8 @@ describe( 'editedPostHasContent()', () => {
 						},
 					},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -213,10 +201,8 @@ describe( 'editedPostHasContent()', () => {
 						},
 					},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -237,10 +223,8 @@ describe( 'editedPostHasContent()', () => {
 						},
 					},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -261,10 +245,8 @@ describe( 'editedPostHasContent()', () => {
 						},
 					},
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			},
 			2916284,
@@ -293,12 +275,10 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
-				ui: {
-					editor: {
-						rawContent: {
-							initial: '',
-							current: 'ribs',
-						},
+				editor: {
+					rawContent: {
+						initial: '',
+						current: 'ribs',
 					},
 				},
 			},

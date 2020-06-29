@@ -31,7 +31,7 @@ jest.mock( 'state/selectors/get-sites-items', () => ( {
 	__esModule: true,
 	default: () => ( { 1: '' } ),
 } ) );
-jest.mock( 'state/ui/editor/selectors', () => ( {
+jest.mock( 'state/editor/selectors', () => ( {
 	postId: '',
 	getEditorPostId: () => {},
 } ) );

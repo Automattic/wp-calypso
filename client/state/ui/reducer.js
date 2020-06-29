@@ -12,7 +12,6 @@ import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
 import comments from './comments/reducer';
 import dropZone from './drop-zone/reducer';
-import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
 import editorDeprecationDialog from './editor-deprecation-dialog/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
@@ -98,7 +97,6 @@ const reducer = combineReducers( {
 	checkout,
 	comments,
 	dropZone,
-	editor,
 	editorDeprecationDialog,
 	guidedTour,
 	gutenbergOptInDialog,
