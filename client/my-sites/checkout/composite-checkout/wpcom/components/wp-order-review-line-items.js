@@ -351,14 +351,13 @@ const WPOrderReviewListItem = styled.li`
 
 function GSuiteUsersList( { item } ) {
 	const users = item.wpcom_meta?.extra?.google_apps_users ?? [];
-	const gsuiteDiscountCallout = <GSuiteDiscountCallout item={ item } />;
 	return (
 		<>
 			{ users.map( ( user, index ) => {
 				return (
 					<LineItemMeta key={ user.email }>
 						<div key={ user.email }>{ user.email }</div>
-						{ index === 0 && gsuiteDiscountCallout }
+						{ index === 0 && <GSuiteDiscountCallout item={ item } /> }
 					</LineItemMeta>
 				);
 			} ) }
