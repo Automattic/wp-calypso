@@ -106,7 +106,7 @@ const AlipayFormWrapper = styled.div`
 	padding: 16px;
 	position: relative;
 
-	:after {
+	::after {
 		display: block;
 		width: calc( 100% - 6px );
 		height: 1px;
@@ -115,6 +115,11 @@ const AlipayFormWrapper = styled.div`
 		position: absolute;
 		top: 0;
 		left: 3px;
+
+		.rtl & {
+			right: 3px;
+			left: auto;
+		}
 	}
 `;
 
