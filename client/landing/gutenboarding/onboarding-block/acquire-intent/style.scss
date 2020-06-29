@@ -12,18 +12,18 @@
 	display: flex;
 	flex-direction: column;
 	margin: 0 -20px;
-	padding: 25px 20px 20px;
+	padding: 24px;
 
 	@include break-small {
 		@include onboarding-heading-text;
 		margin: 0 -44px; // override block margins
-		padding: 0 120px;
+		padding: 48px;
 		justify-content: center;
 	}
 
 	@include break-medium {
 		margin: 0 -88px; // override block margins
-		padding: 12px 170px 0;
+		padding: 64px;
 		font-size: 64px;
 	}
 }
