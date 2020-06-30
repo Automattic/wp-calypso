@@ -47,7 +47,28 @@ const addPaidBlockFlags = async () => {
 function registerDonationsBlock() {
 	registerBlockType( 'a8c/donations', {
 		title: __( 'Donations (a8c-only)', 'full-site-editing' ),
-		description: __( 'Accept donations on your site.', 'full-site-editing' ),
+		description: __(
+			'Collect one-time, monthly, or annually recurring donations.',
+			'full-site-editing'
+		),
+		attributes: {
+			oneTimePlanId: {
+				type: 'number',
+				default: null,
+			},
+			monthlyPlanId: {
+				type: 'number',
+				default: null,
+			},
+			annuallyPlanId: {
+				type: 'number',
+				default: null,
+			},
+			showCustomAmount: {
+				type: 'boolean',
+				default: false,
+			},
+		},
 		category: 'common',
 		icon: (
 			<svg
@@ -80,13 +101,6 @@ function registerDonationsBlock() {
 		supports: {
 			html: false,
 		},
-		keywords: [
-			'donations',
-			/* translators: block keyword */
-			__( 'premium', 'full-site-editing' ),
-			/* translators: block keyword */
-			__( 'paywall', 'full-site-editing' ),
-		],
 		edit,
 		save() {
 			return <div>Donations block</div>;
