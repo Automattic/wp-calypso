@@ -120,4 +120,9 @@
 
 .wp-block-buttons .wp-block[data-type='jetpack/recurring-payments'] {
 	display: inline-block;
+	margin: 0 8px 0 0;
+}
+
+.editor-styles-wrapper .wp-block-buttons .wp-block[data-type='jetpack/recurring-payments'] .wp-block-button:not( .alignleft ):not( .alignright ) {
+	margin: 0;
 }
