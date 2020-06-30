@@ -6,6 +6,7 @@ import { keyBy, keys, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ import { domainAddNew } from 'my-sites/domains/paths';
 import DocumentHead from 'components/data/document-head';
 import DomainItem from './domain-item';
 import FormattedHeader from 'components/formatted-header';
-import { getFlatDomainsList } from 'state/sites/domains/selectors';
+import { getAllDomains, getFlatDomainsList } from 'state/sites/domains/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
@@ -26,10 +27,12 @@ import getVisibleSites from 'state/selectors/get-visible-sites';
 import isRequestingAllDomains from 'state/selectors/is-requesting-all-domains';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
-import PropTypes from 'prop-types';
 import { type as domainTypes } from 'lib/domains/constants';
 import QueryAllDomains from 'components/data/query-all-domains';
+import QuerySiteDomains from 'components/data/query-site-domains';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { emailManagement } from 'my-sites/email/paths';
+
 /**
  * Style dependencies
  */
@@ -56,8 +59,10 @@ class ListAll extends Component {
 		page( getDomainManagementPath( domain.domain, domain.type, site.slug, currentRoute ) );
 	};
 
-	handleAddEmailClick = () => {
-		// TODO
+	handleAddEmailClick = ( domain ) => {
+		const { sites, currentRoute } = this.props;
+		const site = sites[ domain.blogId ];
+		page( emailManagement( site.slug, domain.domain, currentRoute ) );
 	};
 
 	headerButtons() {
@@ -73,8 +78,14 @@ class ListAll extends Component {
 	}
 
 	isLoading() {
-		const { domainsList, requestingDomains } = this.props;
-		return requestingDomains && domainsList.length === 0;
+		const { domainsList, requestingDomains, sites } = this.props;
+		return ! sites || ( requestingDomains && domainsList.length === 0 );
+	}
+
+	findDomainDetails( domainsDetails = [], domain = {} ) {
+		return domainsDetails[ domain?.blogId ]?.find(
+			( element ) => element.type === domain.type && element.domain === domain.domain
+		);
 	}
 
 	renderDomainsList() {
@@ -82,21 +93,25 @@ class ListAll extends Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { domainsList, canManageSitesMap } = this.props;
+		const { domainsList, sites, domainsDetails, canManageSitesMap } = this.props;
 
 		return domainsList
 			.filter(
 				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
 			) // filter on sites we can manage, that aren't `wpcom` type
 			.map( ( domain, index ) => (
-				<DomainItem
-					key={ `${ index }-${ domain.name }` }
-					domain={ domain }
-					isManagingAllSites={ true }
-					showSite={ true }
-					onClick={ this.handleDomainItemClick }
-					onAddEmailClick={ this.handleAddEmailClick }
-				/>
+				<React.Fragment key={ `${ index }-${ domain.name }` }>
+					{ domain?.blogId && <QuerySiteDomains siteId={ domain.blogId } /> }
+					<DomainItem
+						domain={ domain }
+						domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
+						site={ sites[ domain?.blogId ] }
+						isManagingAllSites={ true }
+						showSite={ true }
+						onClick={ this.handleDomainItemClick }
+						onAddEmailClick={ this.handleAddEmailClick }
+					/>
+				</React.Fragment>
 			) );
 	}
 
@@ -135,6 +150,7 @@ export default connect(
 			canManageSitesMap: canCurrentUserForSites( state, keys( sites ), 'manage_options' ),
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
+			domainsDetails: getAllDomains( state ),
 			requestingDomains: isRequestingAllDomains( state ),
 			sites,
 			user: getCurrentUser( state ),

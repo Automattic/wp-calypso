@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
-import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
+import { isUnderDomainManagementAll, domainManagementRoot } from 'my-sites/domains/paths';
 
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
 
 function resolveRootPath( relativeTo ) {
-	if ( relativeTo === emailManagementAllSitesPrefix ) {
+	if ( relativeTo === emailManagementAllSitesPrefix || relativeTo === domainManagementRoot() ) {
 		return emailManagementAllSitesPrefix;
 	}
 	if ( isUnderEmailManagementAll( relativeTo ) || isUnderDomainManagementAll( relativeTo ) ) {
