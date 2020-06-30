@@ -5,8 +5,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
-	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
+	"main": "src/index.ts",
 	"calypso:main": "src/index.ts",
 	"sideEffects": [
 		"*.css",
