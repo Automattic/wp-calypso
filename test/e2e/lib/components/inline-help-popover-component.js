@@ -14,6 +14,10 @@ class InlineHelpPopoverComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.inline-help' ) );
 	}
 
+	async waitForToggleNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, By.css( '.inline-help__button' ) );
+	}
+
 	async isToggleVisible() {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.inline-help__button' ) );
 	}

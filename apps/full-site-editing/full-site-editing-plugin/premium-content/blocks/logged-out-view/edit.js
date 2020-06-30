@@ -23,13 +23,17 @@ import Context from '../container/context';
  * @property { string } containerClientId
  * @property { Attributes } attributes
  * @property { Function } setAttributes
- * @property { Function } selectBlock
+ * @property { Function } selectContainerBlock
  *
  * @param { Props } props Properties
  */
-function Edit( { selectBlock } ) {
+function Edit( { selectContainerBlock } ) {
 	useEffect( () => {
-		selectBlock();
+		// Selects the container block on mount.
+		//
+		// Execution delayed with setTimeout to ensure it runs after any block auto-selection performed by inner blocks
+		// (such as the Recurring Payments block). @see https://github.com/Automattic/wp-calypso/issues/43450
+		setTimeout( selectContainerBlock, 0 );
 	}, [] );
 
 	return (
@@ -75,7 +79,7 @@ export default compose( [
 	withDispatch( ( dispatch, props ) => {
 		const { selectBlock } = dispatch( 'core/block-editor' );
 		return {
-			selectBlock() {
+			selectContainerBlock() {
 				// @ts-ignore difficult to type with JSDoc
 				selectBlock( props.containerClientId );
 			},

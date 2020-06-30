@@ -617,7 +617,7 @@ function openLinksInParentFrame( calypsoPort ) {
 
 	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
 		const manageReusableBlocksLinkSelectors = [
-			'.editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
+			'.block-editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
 			'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
 		].join( ',' );
 		$( '#editor' ).on( 'click', manageReusableBlocksLinkSelectors, ( e ) => {

@@ -48,7 +48,7 @@ import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import { getPlan } from 'lib/plans';
-import { getTld } from 'lib/domains';
+import { getTopLevelOfTld } from 'lib/domains';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
@@ -389,7 +389,7 @@ export default function CompositeCheckout( {
 			! hasDomainRegistration( responseCart ) &&
 			! hasTransferProduct( responseCart );
 		const getIsFieldDisabled = () => isDisabled;
-		const tlds = getAllTlds( domainNames );
+		const tlds = getAllTopLevelTlds( domainNames );
 
 		return (
 			<React.Fragment>
@@ -756,8 +756,8 @@ function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeatur
 	return { analyticsPath, analyticsProps };
 }
 
-function getAllTlds( domainNames ) {
-	return Array.from( new Set( domainNames.map( getTld ) ) ).sort();
+function getAllTopLevelTlds( domainNames ) {
+	return Array.from( new Set( domainNames.map( getTopLevelOfTld ) ) ).sort();
 }
 
 function displayRenewalSuccessNotice( responseCart, purchases, translate, moment ) {

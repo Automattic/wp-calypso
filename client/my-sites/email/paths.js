@@ -2,12 +2,26 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
+import { isUnderDomainManagementAll, domainManagementRoot } from 'my-sites/domains/paths';
 
-export function emailManagementAddGSuiteUsers( siteName, domainName ) {
+export const emailManagementPrefix = '/email';
+export const emailManagementAllSitesPrefix = '/email/all';
+
+function resolveRootPath( relativeTo ) {
+	if ( relativeTo === emailManagementAllSitesPrefix || relativeTo === domainManagementRoot() ) {
+		return emailManagementAllSitesPrefix;
+	}
+	if ( isUnderEmailManagementAll( relativeTo ) || isUnderDomainManagementAll( relativeTo ) ) {
+		return emailManagementAllSitesPrefix;
+	}
+	return emailManagementPrefix;
+}
+
+export function emailManagementAddGSuiteUsers( siteName, domainName, relativeTo = null ) {
 	let path;
 
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'gsuite/add-users' );
+		path = emailManagementEdit( siteName, domainName, 'gsuite/add-users', relativeTo );
 	} else {
 		path = '/email/gsuite/add-users/' + siteName;
 	}
@@ -27,15 +41,20 @@ export function emailManagementAddGSuiteUsersLegacy( siteName, domainName ) {
 	return path;
 }
 
-export function emailManagementNewGSuiteAccount( siteName, domainName, planType ) {
-	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType );
+export function emailManagementNewGSuiteAccount(
+	siteName,
+	domainName,
+	planType,
+	relativeTo = null
+) {
+	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType, relativeTo );
 }
 
-export function emailManagement( siteName, domainName ) {
+export function emailManagement( siteName, domainName, relativeTo = null ) {
 	let path;
 
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'manage' );
+		path = emailManagementEdit( siteName, domainName, 'manage', relativeTo );
 	} else if ( siteName ) {
 		path = '/email/' + siteName;
 	} else {
@@ -45,11 +64,11 @@ export function emailManagement( siteName, domainName ) {
 	return path;
 }
 
-export function emailManagementForwarding( siteName, domainName ) {
-	return emailManagementEdit( siteName, domainName, 'forwarding' );
+export function emailManagementForwarding( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'forwarding', relativeTo );
 }
 
-export function emailManagementEdit( siteName, domainName, slug ) {
+export function emailManagementEdit( siteName, domainName, slug, relativeTo = null ) {
 	slug = slug || 'manage';
 
 	// Encodes only real domain names and not parameter placeholders
@@ -59,5 +78,9 @@ export function emailManagementEdit( siteName, domainName, slug ) {
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return '/email/' + domainName + '/' + slug + '/' + siteName;
+	return resolveRootPath( relativeTo ) + '/' + domainName + '/' + slug + '/' + siteName;
+}
+
+export function isUnderEmailManagementAll( path ) {
+	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }

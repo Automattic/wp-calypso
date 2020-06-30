@@ -29,7 +29,10 @@ export interface SitePlan {
  * @param siteId Site ID
  * @returns Site's plan object
  */
-export default function getSitePlan( state, siteId: number ): SitePlan | null {
+export default function getSitePlan( state, siteId: number | null ): SitePlan | null {
+	if ( ! siteId ) {
+		return null;
+	}
 	const site = getRawSite( state, siteId );
 
 	if ( ! site ) {

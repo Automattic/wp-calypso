@@ -8,7 +8,7 @@ const path = require( 'path' );
  */
 const i18n = require( '..' );
 
-// generate whitelist file
+// generate allowed file
 const sourceFiles = [
 	'examples/i18n-test-examples.jsx',
 	'examples/i18n-test-example-second-file.jsx',

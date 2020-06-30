@@ -5,12 +5,13 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
+import { updateMedia } from 'state/media/thunks';
 
 class EditorMediaModalGalleryCaption extends React.Component {
 	static displayName = 'EditorMediaModalGalleryCaption';
@@ -52,7 +53,7 @@ class EditorMediaModalGalleryCaption extends React.Component {
 			return;
 		}
 
-		MediaActions.update( siteId, Object.assign( {}, item, { caption } ) );
+		this.props.updateMedia( siteId, Object.assign( {}, item, { caption } ) );
 	};
 
 	render() {
@@ -63,10 +64,11 @@ class EditorMediaModalGalleryCaption extends React.Component {
 				onChange={ this.setCaption }
 				onBlur={ this.saveCaption }
 				onMouseDown={ ( event ) => event.stopPropagation() }
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				className="editor-media-modal-gallery__caption"
 			/>
 		);
 	}
 }
 
-export default localize( EditorMediaModalGalleryCaption );
+export default localize( connect( null, { updateMedia } )( EditorMediaModalGalleryCaption ) );

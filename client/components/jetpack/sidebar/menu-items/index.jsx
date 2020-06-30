@@ -43,6 +43,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 		<>
 			<QueryScanState siteId={ siteId } />
 			<SidebarItem
+				tipTarget="activity"
 				icon={ showIcons ? 'clipboard' : undefined }
 				label={ translate( 'Activity Log', {
 					comment: 'Jetpack sidebar menu item',

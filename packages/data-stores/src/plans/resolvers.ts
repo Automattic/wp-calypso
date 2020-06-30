@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { apiFetch } from '@wordpress/data-controls';
+import type { APIFetchOptions } from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -34,11 +35,17 @@ function getMonthlyPrice( plan: APIPlan ) {
 }
 
 export function* getPrices() {
+	/* the type below (APIFetchOptions) as a blatant lie to TypeScript :D
+	   the data-controls package is mistyped to demand APIFetchOptions
+	   as a parameter, while APIFetchOptions is meant for `@wordpress/api-fetch`,
+	   NOT for { apiFetch } from '@wordpress/data-controls'.
+	*/
 	const plans = yield apiFetch( {
-		path: 'https://public-api.wordpress.com/rest/v1.5/plans',
+		global: true, // needed when used in wp-admin, otherwise wp-admin will add site-prefix (search for wpcomFetchAddSitePrefix)
+		url: 'https://public-api.wordpress.com/rest/v1.5/plans',
 		mode: 'cors',
 		credentials: 'omit',
-	} );
+	} as APIFetchOptions );
 
 	// filter for supported plans
 	const WPCOMPlans: APIPlan[] = plans.filter(

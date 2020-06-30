@@ -15,7 +15,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.sidebar' ) );
 		this.storeSelector = By.css( '.menu-link-text[data-e2e-sidebar="Store"]' );
 	}
-	async _postInit(){
+	async _postInit() {
 		return await this.ensureSidebarMenuVisible();
 	}
 
@@ -72,7 +72,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectActivity() {
-		await this.expandDrawerItem( 'Tools' );
+		await this.expandDrawerItem( 'Jetpack' );
 		return await this._scrollToAndClickMenuItem( 'activity' );
 	}
 

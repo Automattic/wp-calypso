@@ -27,5 +27,53 @@ export const dispatchFluxReceiveMediaItemError = ( transientMediaId, siteId, err
 		error,
 	} );
 
+export const dispatchFluxUpdateMediaItem = ( siteId, updatedMediaItem ) => {
+	Dispatcher.handleViewAction( {
+		type: 'RECEIVE_MEDIA_ITEM',
+		siteId,
+		data: updatedMediaItem,
+	} );
+};
+
+export const dispatchFluxUpdateMediaItemSuccess = ( siteId, updatedMediaItem ) => {
+	Dispatcher.handleServerAction( {
+		type: 'RECEIVE_MEDIA_ITEM',
+		siteId,
+		data: updatedMediaItem,
+	} );
+};
+
+export const dispatchFluxUpdateMediaItemError = ( siteId, error ) => {
+	Dispatcher.handleServerAction( {
+		type: 'RECEIVE_MEDIA_ITEM',
+		siteId,
+		error,
+	} );
+};
+
+export const dispatchFluxRemoveMediaItem = ( siteId, mediaItem ) => {
+	Dispatcher.handleViewAction( {
+		type: 'REMOVE_MEDIA_ITEM',
+		siteId: siteId,
+		data: mediaItem,
+	} );
+};
+
+export const dispatchFluxRemoveMediaItemSuccess = ( siteId, mediaItem ) => {
+	Dispatcher.handleServerAction( {
+		type: 'REMOVE_MEDIA_ITEM',
+		siteId,
+		data: mediaItem,
+	} );
+};
+
+export const dispatchFluxRemoveMediaItemError = ( siteId, error ) => {
+	Dispatcher.handleViewAction( {
+		type: 'REMOVE_MEDIA_ITEM',
+		siteId,
+		error,
+	} );
+};
+
 export const dispatchFluxFetchMediaLimits = ( siteId ) =>
 	Dispatcher.handleServerAction( { type: 'FETCH_MEDIA_LIMITS', siteId } );

@@ -38,7 +38,7 @@
 			@extend .wp-brand-font;
 			font-size: 20px;
 			line-height: 28px;
-			margin-bottom: 0;
+			margin-bottom: 8px;
 		}
 
 		@include breakpoint-deprecated( '>480px' ) {
