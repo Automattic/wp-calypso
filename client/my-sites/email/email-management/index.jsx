@@ -43,6 +43,7 @@ import QueryEmailAccounts from 'components/data/query-email-accounts';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { localizeUrl } from 'lib/i18n-utils';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -248,11 +249,13 @@ class EmailManagement extends React.Component {
 	}
 
 	addEmailForwardingCard( domain ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { selectedSiteSlug, currentRoute, translate } = this.props;
 
 		return (
 			<VerticalNav>
-				<VerticalNavItem path={ emailManagementForwarding( selectedSiteSlug, domain ) }>
+				<VerticalNavItem
+					path={ emailManagementForwarding( selectedSiteSlug, domain, currentRoute ) }
+				>
 					{ translate( 'Email Forwarding' ) }
 				</VerticalNavItem>
 			</VerticalNav>
@@ -260,10 +263,10 @@ class EmailManagement extends React.Component {
 	}
 
 	goToEditOrList = () => {
-		const { selectedDomainName, selectedSiteSlug } = this.props;
+		const { selectedDomainName, selectedSiteSlug, currentRoute } = this.props;
 
 		if ( selectedDomainName ) {
-			page( domainManagementEdit( selectedSiteSlug, selectedDomainName ) );
+			page( domainManagementEdit( selectedSiteSlug, selectedDomainName, currentRoute ) );
 		} else {
 			page( domainManagementList( selectedSiteSlug ) );
 		}
@@ -273,6 +276,7 @@ class EmailManagement extends React.Component {
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
+		currentRoute: getCurrentRoute( state ),
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),

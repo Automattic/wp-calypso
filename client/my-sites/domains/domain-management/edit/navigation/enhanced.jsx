@@ -90,7 +90,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getEmail() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { emailForwardsCount } = domain;
 
 		if ( ! this.isDomainInNormalState() ) {
@@ -136,7 +136,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ emailManagement( selectedSite.slug, domain.name ) }
+				path={ emailManagement( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="email"
 				text={ navigationText }
 				description={ navigationDescription }
