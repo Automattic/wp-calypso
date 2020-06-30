@@ -92,16 +92,10 @@ export class SearchPurchase extends Component {
 	componentDidUpdate() {
 		const { status, processJpSite } = this.props;
 		const { currentUrl } = this.state;
-
-		// we handle product addition during checkout (wpcom-> wpcom_search),
-		// irrespective of the product displayed in the route, but to avoid confusion,
-		// we assign it here correctly
-		// if ( status === IS_DOT_COM_GET_SEARCH ) {
-		// 	page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/wpcom_search' );
-		// }
+		const product = this.getProduct();
 
 		if ( status === ALREADY_CONNECTED ) {
-			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/jetpack_search' );
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + product );
 		}
 
 		processJpSite( currentUrl );
@@ -148,8 +142,21 @@ export class SearchPurchase extends Component {
 		);
 	}
 
+	getProduct() {
+		const product = window.location.pathname.split( '/' )[ 3 ];
+		const type = window.location.pathname.split( '/' )[ 4 ];
+
+		return [ 'monthly', 'yearly' ].includes( type ) ? product + '_' + type : product;
+	}
+
 	renderSiteInput( status ) {
-		const product = window.location.pathname.split( '/' ).pop();
+		const product = this.getProduct();
+		const isSearch = [
+			'jetpack_search',
+			'wpcom_search',
+			'jetpack_search_monthly',
+			'wpcom_search_monthly',
+		].includes( product );
 
 		return (
 			<Card className="jetpack-connect__site-url-input-container">
@@ -165,7 +172,7 @@ export class SearchPurchase extends Component {
 						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
 					}
 					isInstall={ true }
-					product={ product }
+					isSearch={ isSearch }
 					candidateSites={ this.state.candidateSites }
 				/>
 			</Card>

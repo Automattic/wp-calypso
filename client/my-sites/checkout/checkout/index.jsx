@@ -282,7 +282,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug, cart, isJetpackNotAtomic } = this.props;
+		const { planSlug, product, cart, isJetpackNotAtomic } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -305,23 +305,32 @@ export class Checkout extends React.Component {
 		}
 
 		if (
-			( startsWith( this.props.product, 'jetpack_backup' ) ||
-				startsWith( this.props.product, 'jetpack_scan' ) ) &&
+			( startsWith( product, 'jetpack_backup' ) || startsWith( product, 'jetpack_scan' ) ) &&
 			isJetpackNotAtomic
 		) {
-			cartItem = jetpackProductItem( this.props.product );
+			cartItem = jetpackProductItem( product );
 		}
 
 		if (
-			startsWith( this.props.product, 'jetpack_search' ) ||
-			startsWith( this.props.product, 'wpcom_search' )
+			[
+				'jetpack_search',
+				'wpcom_search',
+				'jetpack_search_monthly',
+				'wpcom_search_monthly',
+			].includes( product )
 		) {
 			if ( isJetpackNotAtomic ) {
-				cartItem = jetpackProductItem( 'jetpack_search' );
+				cartItem = product.includes( 'monthly' )
+					? jetpackProductItem( 'jetpack_search_monthly' )
+					: jetpackProductItem( 'jetpack_search' );
+			}
+
+			if ( config.isEnabled( 'jetpack/wpcom-search-product' ) && ! isJetpackNotAtomic ) {
+				cartItem = product.includes( 'monthly' )
+					? jetpackProductItem( 'wpcom_search_monthly' )
+					: jetpackProductItem( 'wpcom_search' );
 			} else {
-				cartItem = config.isEnabled( 'jetpack/wpcom-search-product' )
-					? jetpackProductItem( 'wpcom_search' )
-					: null;
+				cartItem = null;
 			}
 		}
 

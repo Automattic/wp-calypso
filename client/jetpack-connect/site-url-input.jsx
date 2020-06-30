@@ -28,7 +28,7 @@ class JetpackConnectSiteUrlInput extends Component {
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
 		autoFocus: PropTypes.bool,
-		product: PropTypes.string,
+		isSearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -59,14 +59,13 @@ class JetpackConnectSiteUrlInput extends Component {
 	};
 
 	renderButtonLabel() {
-		const { product, translate } = this.props;
+		const { isSearch, translate } = this.props;
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
 				return translate( 'Continue' );
 			}
-			return product === 'jetpack_search' || product === 'wpcom_search'
-				? translate( 'Get Search' )
-				: translate( 'Start Installation' );
+
+			return isSearch ? translate( 'Get Search' ) : translate( 'Start Installation' );
 		}
 		return translate( 'Setting up…' );
 	}
@@ -125,13 +124,12 @@ class JetpackConnectSiteUrlInput extends Component {
 			isFetching,
 			onChange,
 			onSubmit,
-			product,
+			isSearch,
 			translate,
 			url,
 			autoFocus,
 		} = this.props;
 
-		const isSearch = product === 'jetpack_search' || product === 'wpcom_search';
 		return (
 			<div>
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
