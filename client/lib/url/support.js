@@ -24,7 +24,6 @@ export const CALYPSO_COURSES = '/help/courses';
 export const CREATE = `${ root }/create`;
 export const CUSTOM_DNS = `${ root }/domains/custom-dns`;
 export const DESIGNATED_AGENT = `${ root }/designated-agent/`;
-export const DOMAIN_HELPER_PREFIX = `${ root }/domain-helper/?host=`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;
 export const DOMAIN_WAITING = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAINS = `${ root }/domains`;
