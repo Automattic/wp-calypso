@@ -242,7 +242,13 @@ elif [ $CIRCLE_NODE_TOTAL > 1 ]; then
       for locale in ${LOCALE_ARRAY[@]}; do
         for config in "${MAGELLAN_CONFIGS[@]}"; do
           if [ "$config" != "" ]; then
-            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --test=$FILE_LIST $SUITE_TAG_OVERRIDE"
+            if [[ "$config" == *"magellan.json"* ]]; then
+            	S_T_OVERRIDE=$SUITE_TAG_OVERRIDE;
+            else
+            	S_T_OVERRIDE=""
+            fi
+
+            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --test=$FILE_LIST $S_T_OVERRIDE"
 
             eval $CMD
             RETURN+=$?
