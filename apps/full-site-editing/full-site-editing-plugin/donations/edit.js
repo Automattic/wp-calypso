@@ -14,31 +14,36 @@ import UpgradePlan from './upgrade-plan';
 import fetchDefaultProducts from './fetch-default-products';
 import fetchStatus from './fetch-status';
 
-const Edit = () => {
+const Edit = ( { attributes, setAttributes } ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ loadingError, setLoadingError ] = useState( '' );
 	const [ shouldUpgrade, setShouldUpgrade ] = useState( false );
 	const [ stripeConnectUrl, setStripeConnectUrl ] = useState( false );
 	const [ products, setProducts ] = useState( [] );
 	const [ upgradeUrl, setUpgradeUrl ] = useState( '' );
+	const [ siteSlug, setSiteSlug ] = useState( '' );
 
 	const apiError = ( message ) => {
 		setLoadingError( message );
 		setIsLoading( false );
 	};
 
-	const hasRequiredProducts = ( productList, productCurrency ) => {
-		const productIntervals = productList.reduce( ( intervals, { currency, type, interval } ) => {
+	const filterProducts = ( productList, productCurrency ) => {
+		return productList.reduce( ( filteredProducts, { id, currency, type, interval } ) => {
 			if ( currency === productCurrency && type === 'donation' ) {
-				intervals.push( interval );
+				filteredProducts[ interval ] = id;
 			}
-			return intervals;
-		}, [] );
+			return filteredProducts;
+		}, {} );
+	};
+
+	const hasRequiredProducts = ( productIdsPerInterval ) => {
+		const intervals = Object.keys( productIdsPerInterval );
 
 		return (
-			productIntervals.includes( 'one-time' ) &&
-			productIntervals.includes( '1 month' ) &&
-			productIntervals.includes( '1 year' )
+			intervals.includes( 'one-time' ) &&
+			intervals.includes( '1 month' ) &&
+			intervals.includes( '1 year' )
 		);
 	};
 
@@ -49,12 +54,15 @@ const Edit = () => {
 			setShouldUpgrade( result.should_upgrade_to_access_memberships );
 			setUpgradeUrl( result.upgrade_url );
 			setStripeConnectUrl( result.connect_url );
+			setSiteSlug( result.site_slug );
 
-			if ( result.products.length && hasRequiredProducts( result.products, 'USD' ) ) {
-				setProducts( result.products );
+			const filteredProducts = filterProducts( result.products, 'USD' );
+
+			if ( hasRequiredProducts( filteredProducts ) ) {
+				setProducts( filteredProducts );
 			} else {
 				fetchDefaultProducts( 'USD' ).then(
-					( defaultProducts ) => setProducts( defaultProducts ),
+					( defaultProducts ) => setProducts( filterProducts( defaultProducts, 'USD' ) ),
 					apiError
 				);
 			}
@@ -80,7 +88,15 @@ const Edit = () => {
 		return <UpgradePlan upgradeUrl={ upgradeUrl } />;
 	}
 
-	return <Donations stripeConnectUrl={ stripeConnectUrl } products={ products } />;
+	return (
+		<Donations
+			attributes={ attributes }
+			products={ products }
+			stripeConnectUrl={ stripeConnectUrl }
+			setAttributes={ setAttributes }
+			siteSlug={ siteSlug }
+		/>
+	);
 };
 
 export default Edit;
