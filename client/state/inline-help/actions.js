@@ -24,7 +24,7 @@ import getContextualHelpResults from 'state/inline-help/selectors/get-contextual
 import 'state/inline-help/init';
 
 /**
- * Set the query search in the sate tree for the inline help.
+ * Set the search query in the state tree for the inline help.
  *
  * @param {string} searchQuery - query store to store.
  * @returns {Function}            Action thunk.
