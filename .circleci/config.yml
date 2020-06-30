@@ -20,7 +20,6 @@ references:
       - image: circleci/node:12.18.0-browsers
     environment:
       CONFIG_ENV: release
-      MINIFY_JS: true
       DETECT_CHROMEDRIVER_VERSION: 'false'
       NODE_ARGS: --max_old_space_size=3072
 
