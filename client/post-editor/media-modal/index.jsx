@@ -13,7 +13,6 @@ import {
 	isEmpty,
 	identity,
 	includes,
-	map,
 	noop,
 	partial,
 	some,
@@ -40,7 +39,7 @@ import { getEditorPostId } from 'state/editor/selectors';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { deleteMedia } from 'state/media/actions';
+import { editMedia, deleteMedia } from 'state/media/thunks';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaModalDialog from './dialog';
@@ -263,9 +262,8 @@ export class EditorMediaModal extends Component {
 			this.setNextAvailableDetailView();
 		}
 
-		MediaActions.delete( site.ID, toDelete );
+		this.props.deleteMedia( site.ID, toDelete );
 		mcBumpStat( 'editor_media_actions', 'delete_media' );
-		this.props.deleteMedia( site.ID, map( toDelete, 'ID' ) );
 	};
 
 	deleteMedia = () => {
@@ -309,7 +307,7 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
 
 		this.props.onRestoreMediaHook();
 	};
@@ -338,7 +336,7 @@ export class EditorMediaModal extends Component {
 			height && { height }
 		);
 
-		MediaActions.update( site.ID, item, true );
+		this.props.editMedia( site.ID, item );
 
 		resetAllImageEditorState();
 
@@ -656,5 +654,6 @@ export default connect(
 		),
 		recordEditorEvent,
 		recordEditorStat,
+		editMedia,
 	}
 )( localize( EditorMediaModal ) );

@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { filter, startsWith } from 'lodash';
+import { filter } from 'lodash';
 import { stringify } from 'qs';
+import { isUnderEmailManagementAll } from 'my-sites/email/paths';
 
 function resolveRootPath( relativeTo = null ) {
 	if ( relativeTo ) {
@@ -10,7 +11,7 @@ function resolveRootPath( relativeTo = null ) {
 			return domainManagementAllRoot();
 		}
 
-		if ( relativeTo.startsWith( domainManagementAllRoot() + '/' ) ) {
+		if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
 			return domainManagementAllRoot();
 		}
 	}
@@ -22,7 +23,7 @@ function domainManagementEditBase( siteName, domainName, slug, relativeTo = null
 	slug = slug || 'edit';
 
 	// Encodes only real domain names and not parameter placeholders
-	if ( ! startsWith( domainName, ':' ) ) {
+	if ( ! domainName.startsWith( ':' ) ) {
 		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
 		// Note they are encoded twice since page.js decodes the path by default.
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
@@ -46,7 +47,7 @@ function domainManagementTransferBase(
 }
 
 export function isUnderDomainManagementAll( path ) {
-	return path.startsWith( domainManagementAllRoot() + '/' );
+	return path?.startsWith( domainManagementAllRoot() + '/' );
 }
 
 export function domainAddNew( siteName, searchTerm ) {
@@ -68,7 +69,7 @@ export function domainManagementRoot() {
 }
 
 export function domainManagementList( siteName, relativeTo = null ) {
-	if ( relativeTo && relativeTo.startsWith( domainManagementAllRoot() + '/' ) ) {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
 		return domainManagementRoot();
 	}
 	return domainManagementRoot() + '/' + siteName;

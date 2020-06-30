@@ -17,6 +17,7 @@ import FormattedHeader from 'components/formatted-header';
 import PromoCard from 'components/promo-section/promo-card';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Asset dependencies
@@ -44,13 +45,15 @@ export default function WPCOMUpsellPage(): ReactElement {
 			/>
 
 			<PromoCard
-				title={ translate( 'Get time travel for your site with Jetpack Backup' ) }
+				title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
 				image={ { path: JetpackBackupSVG } }
 				isPrimary
 			>
 				<p>
-					{ translate(
-						'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+					{ preventWidows(
+						translate(
+							'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+						)
 					) }
 				</p>
 

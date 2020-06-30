@@ -11,7 +11,7 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 
 const referDebug = debug( 'calypso:analytics:refer' );
 
-const whitelistedEventProps = [
+const allowedEventProps = [
 	'status',
 	'success',
 	'duplicate',
@@ -54,7 +54,7 @@ export async function trackAffiliateReferral( { affiliateId, campaignId, subId, 
 		if ( response.ok ) {
 			referDebug( 'Recording Refer platform success response.', json );
 			recordTracksEvent( 'calypso_refer_visit_response', {
-				...pick( json.data, whitelistedEventProps ),
+				...pick( json.data, allowedEventProps ),
 				status: response.status || '',
 				success: json.success || true,
 				description: json.message || 'success',
@@ -64,7 +64,7 @@ export async function trackAffiliateReferral( { affiliateId, campaignId, subId, 
 
 		referDebug( 'Recording Refer platform error response.', json );
 		recordTracksEvent( 'calypso_refer_visit_response', {
-			...pick( json.data, whitelistedEventProps ),
+			...pick( json.data, allowedEventProps ),
 			status: response.status || '',
 			success: json.success || false,
 			description: json.message || 'error',

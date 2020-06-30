@@ -16,14 +16,15 @@ import {
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_ITEM_REQUESTING,
 	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING,
 	MEDIA_SOURCE_CHANGE,
+	MEDIA_ITEM_UPDATE,
+	MEDIA_ITEM_EDIT,
+	MEDIA_ITEM_DELETE,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/media';
@@ -62,22 +63,6 @@ export function receiveMedia( siteId, media, found, query ) {
 export function requestMedia( siteId, query ) {
 	return {
 		type: MEDIA_REQUEST,
-		siteId,
-		query,
-	};
-}
-
-/**
- * Returns an action object used in signalling that media item(s) for the site
- * are being requested.
- *
- * @param  {number} siteId Site ID
- * @param  {object} query  Query object
- * @returns {object}        Action object
- */
-export function requestingMedia( siteId, query ) {
-	return {
-		type: MEDIA_REQUESTING,
 		siteId,
 		query,
 	};
@@ -134,22 +119,6 @@ export function requestMediaItem( siteId, mediaId ) {
 }
 
 /**
- * Returns an action object used in signalling that a media item for the site
- * are being requested.
- *
- * @param  {number} siteId  Site ID
- * @param  {number} mediaId Media ID
- * @returns {object}         Action object
- */
-export function requestingMediaItem( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUESTING,
-		siteId,
-		mediaId,
-	};
-}
-
-/**
  * Returns an action object used in signalling that a request for media item(s)
  * has failed.
  *
@@ -200,6 +169,32 @@ export function createMediaItem( site, transientMedia ) {
 }
 
 /**
+ * Returns an action object used in signalling that media item for the site
+ * are to be edited.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} item media item
+ */
+export const editMediaItem = ( siteId, item ) => ( {
+	type: MEDIA_ITEM_EDIT,
+	siteId,
+	item,
+} );
+
+/**
+ * Returns an action object used in signalling that media item data for the site
+ * are to be updated.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} item media item
+ */
+export const updateMediaItem = ( siteId, item ) => ( {
+	type: MEDIA_ITEM_UPDATE,
+	siteId,
+	item,
+} );
+
+/**
  * Returns an action object used in signalling that media item(s) for the site
  * are to be deleted.
  *
@@ -218,6 +213,12 @@ export function deleteMedia( siteId, mediaIds ) {
 		siteId,
 	};
 }
+
+export const deleteMediaItem = ( siteId, mediaId ) => ( {
+	type: MEDIA_ITEM_DELETE,
+	siteId,
+	mediaId,
+} );
 
 /**
  * Returns an action object used in signalling that the media source for the site has changed.
