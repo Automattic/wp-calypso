@@ -48,7 +48,7 @@ export interface Props {
 	/** Domain suggestions to show when the picker is expanded */
 	quantityExpanded?: number;
 
-	currentDomain?: DomainSuggestion;
+	currentDomain?: string;
 
 	/** The flow where the Domain Picker is used. Eg: Gutenboarding */
 	analyticsFlowId: string;
@@ -73,12 +73,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	analyticsUiAlgo,
 	initialDomainSearch = '',
 	onSetDomainSearch,
+	currentDomain,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
 
-	// We're not keeping the current selection in local state at the moment
-	//const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	// keep domain query in local state to allow free editing of the input value while the modal is open
@@ -180,6 +179,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<div className="domain-picker__suggestion-item-group">
 						{ domainSuggestions?.map( ( suggestion, i ) => (
 							<SuggestionItem
+								selected={ currentDomain === suggestion.domain_name }
 								key={ suggestion.domain_name }
 								suggestion={ suggestion }
 								railcarId={ baseRailcarId ? `${ baseRailcarId }${ i }` : undefined }

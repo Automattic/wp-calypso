@@ -87,7 +87,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				analyticsFlowId={ FLOW_ID }
 				initialDomainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
-				currentDomain={ domain }
+				currentDomain={ domain?.domain_name }
 				onDomainSelect={ onDomainSelect }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
 			/>
