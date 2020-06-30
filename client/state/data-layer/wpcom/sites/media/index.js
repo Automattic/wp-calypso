@@ -104,7 +104,7 @@ export const requestMediaSuccess = ( { siteId, query }, { media, found } ) => [
 
 export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
 
-export function handleMediaItemRequest( action ) {
+export function requestMediaItem( action ) {
 	const { mediaId, query, siteId } = action;
 
 	log( 'Request media item %d for site %d', mediaId, siteId );
@@ -165,7 +165,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 
 	[ MEDIA_ITEM_REQUEST ]: [
 		dispatchRequest( {
-			fetch: handleMediaItemRequest,
+			fetch: requestMediaItem,
 			onSuccess: receiveMediaItem,
 			onError: receiveMediaItemError,
 		} ),
