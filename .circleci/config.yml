@@ -205,11 +205,6 @@ references:
     - desktop/public
     - desktop/resource/certificates/win.p12
     - desktop/resource/certificates/mac.p12
-    - build
-    - public
-    - client/server
-    - config/secrets.json
-    - client/desktop/config.json
   desktop-decrypt-assets: &desktop-decrypt-assets
     name: Decrypt desktop app assets
     command: |
