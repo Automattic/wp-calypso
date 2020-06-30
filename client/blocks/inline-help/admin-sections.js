@@ -16,7 +16,7 @@ import { getLocaleSlug } from 'lib/i18n-utils';
  * @param {String} siteSlug - The current site slug.
  * @returns {Array}           An array of admin sections with site-specific URLs.
  */
-const adminSections = memoize( siteSlug => [
+const adminSections = memoize( ( siteSlug ) => [
 	{
 		title: translate( 'Add a new domain' ),
 		description: translate(
@@ -63,9 +63,57 @@ const adminSections = memoize( siteSlug => [
 		icon: 'customize',
 	},
 	{
+		title: translate( 'Change my homepage' ),
+		link: `/customize/${ siteSlug }`,
+		synonyms: [ 'home', 'homepage' ],
+		icon: 'customize',
+	},
+	{
+		title: translate( 'Edit my menu' ),
+		link: `/customize/${ siteSlug }`,
+		synonyms: [ 'menu' ],
+		icon: 'customize',
+	},
+	{
+		title: translate( 'Set a site logo' ),
+		link: `/customize/${ siteSlug }`,
+		synonyms: [ 'logo', 'identity' ],
+		icon: 'customize',
+	},
+	{
 		title: translate( 'Find a plan to suit my site' ),
 		link: `/plans/${ siteSlug }`,
-		synonyms: [ 'upgrade', 'business', 'profressional', 'personal' ],
+		synonyms: [ 'upgrade', 'business', 'professional', 'personal' ],
+		icon: 'plans',
+	},
+	{
+		title: translate( 'Cancel my plan' ),
+		link: `/me/purchases/${ siteSlug }`,
+		synonyms: [ 'upgrade', 'business', 'professional', 'personal' ],
+		icon: 'plans',
+	},
+	{
+		title: translate( 'Upgrade my plan' ),
+		link: `/plans/${ siteSlug }`,
+		synonyms: [ 'upgrade', 'business', 'professional', 'personal' ],
+		icon: 'plans',
+	},
+	{
+		title: translate( 'Cancel G Suite' ),
+		link: `/me/purchases/${ siteSlug }`,
+		synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
+		icon: 'plans',
+	},
+	{
+		title: translate( 'Renew my plan' ),
+		link: `/plans/${ siteSlug }`,
+		synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'plan' ],
+		icon: 'plans',
+	},
+	{
+		title: translate( 'Renew my domain' ),
+		link: `/plans/${ siteSlug }`,
+		synonyms: [ 'domain', 'business', 'professional', 'personal', 'plan' ],
 		icon: 'plans',
 	},
 	{
@@ -74,7 +122,7 @@ const adminSections = memoize( siteSlug => [
 		icon: 'history',
 	},
 	{
-		title: translate( "View my site's latest statistics" ),
+		title: translate( "View my site's latest stats" ),
 		link: `/stats/day/${ siteSlug }`,
 		synonyms: [ 'analytics' ],
 		icon: 'stats-alt',
@@ -92,7 +140,7 @@ const adminSections = memoize( siteSlug => [
 		icon: 'cloud-upload',
 	},
 	{
-		title: translate( 'Earn money from my content and traffic' ),
+		title: translate( 'Earn money from my site' ),
 		description: translate(
 			"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program."
 		),
@@ -173,7 +221,7 @@ const adminSections = memoize( siteSlug => [
 		icon: 'share',
 	},
 	{
-		title: translate( 'Install, manage and search for site plugins' ),
+		title: translate( 'Install, manage, and search for site Plugins' ),
 		description: translate(
 			'You can customize your website by changing the footer credit in customizer.'
 		),
@@ -182,7 +230,7 @@ const adminSections = memoize( siteSlug => [
 		icon: 'plugins',
 	},
 	{
-		title: translate( 'Approve or remove comments' ),
+		title: translate( 'Approve or delete comments' ),
 		link: `/comments/all/${ siteSlug }`,
 		synonyms: [ 'spam', 'discussion', 'moderation', 'moderate' ],
 		icon: 'chat',
@@ -193,6 +241,35 @@ const adminSections = memoize( siteSlug => [
 		synonyms: [ 'discussion', 'moderation', 'blacklist' ],
 		icon: 'cog',
 	},
+
+	{
+		title: translate( 'Manage post categories' ),
+		link: `/settings/writing/${ siteSlug }`,
+		synonyms: [ 'post', 'category' ],
+		icon: 'cog',
+	},
+
+	{
+		title: translate( 'Edit my site title, tagline, or logo' ),
+		link: `/settings/general/${ siteSlug }`,
+		synonyms: [ 'title', 'logo' ],
+		icon: 'cog',
+	},
+
+	{
+		title: translate( 'Set up a podcast' ),
+		link: `/settings/writing/${ siteSlug }`,
+		synonyms: [ 'podcast', 'radio', 'audio' ],
+		icon: 'cog',
+	},
+
+	{
+		title: translate( "Change my site's privacy settings" ),
+		link: `/settings/general/${ siteSlug }`,
+		synonyms: [ 'privacy' ],
+		icon: 'cog',
+	},
+
 	{
 		title: translate( 'Manage SEO and traffic settings' ),
 		link: `/settings/traffic/${ siteSlug }`,
@@ -235,7 +312,7 @@ const adminSections = memoize( siteSlug => [
 		icon: 'cog',
 	},
 	{
-		title: translate( 'Change my privacy settings' ),
+		title: translate( 'Change my account privacy settings' ),
 		link: '/me/privacy',
 		synonyms: [ 'security', 'tracking' ],
 		icon: 'visible',
@@ -253,6 +330,63 @@ const adminSections = memoize( siteSlug => [
 		synonyms: [ 'android', 'iphone', 'mobile', 'desktop', 'phone' ],
 		icon: 'my-sites',
 	},
+	{
+		title: translate( 'View my drafted posts' ),
+		link: `/posts/drafts/${ siteSlug }`,
+		synonyms: [ 'posts', 'draft' ],
+		icon: 'my-sites',
+	},
+	{
+		title: translate( 'Manage my blog posts' ),
+		link: '/posts/${ siteSlug }',
+		synonyms: [ 'lists', 'posts' ],
+		icon: 'my-sites',
+	},
+	{
+		title: translate( 'View my drafted pages' ),
+		link: `/pages/drafts/${ siteSlug }`,
+		synonyms: [ 'pages', 'draft' ],
+		icon: 'my-sites',
+	},
+	{
+		title: translate( 'Manage my pages' ),
+		link: `/pages/${ siteSlug }`,
+		synonyms: [ 'lists', 'pages' ],
+		icon: 'my-sites',
+	},
+	{
+		title: translate( 'I cannot find my site on Google' ),
+		link: `/marketing/traffic/${ siteSlug }`,
+		synonyms: [ 'google', 'traffic' ],
+		icon: 'speaker',
+	},
+	{
+		title: translate( 'Verify my site with Google' ),
+		link: `/marketing/traffic/${ siteSlug }`,
+		synonyms: [ 'google', 'traffic' ],
+		icon: 'cog',
+	},
+
+	{
+		title: translate( 'Create a new site' ),
+		link: '/jetpack/new?ref=calypso-selector',
+		synonyms: [ 'site' ],
+		icon: 'cog',
+	},
+
+	{
+		title: translate( 'View contact form messages' ),
+		link: `https://${ siteSlug }/wp-admin/edit.php?post_type=feedback&calypsoify=1`,
+		synonyms: [ 'contact', 'form' ],
+		icon: 'cog',
+	},
+
+	{
+		title: translate( 'Portfolio projects (for those who have them active)' ),
+		link: `/types/jetpack-portfolio/${ siteSlug }`,
+		synonyms: [ 'portfolio' ],
+		icon: 'cog',
+	},
 ] );
 
 /**
@@ -264,7 +398,7 @@ const adminSections = memoize( siteSlug => [
  * @returns {Array}             A filtered (or empty) array
  */
 export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 4 ) {
-	const searchTermWords = words( searchTerm ).map( word => word.toLowerCase() );
+	const searchTermWords = words( searchTerm ).map( ( word ) => word.toLowerCase() );
 
 	if ( searchTermWords.length < 1 ) {
 		return [];
@@ -285,7 +419,7 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 	);
 
 	return collection
-		.filter( item => {
+		.filter( ( item ) => {
 			if ( searchRegex.test( item.title ) ) {
 				return true;
 			}
@@ -294,7 +428,7 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 				? intersection( item.synonyms, searchTermWords ).length > 0
 				: false;
 		} )
-		.map( item => ( { ...item, type: 'internal', key: item.title } ) )
+		.map( ( item ) => ( { ...item, type: 'internal', key: item.title } ) )
 		.slice( 0, limit );
 }
 
