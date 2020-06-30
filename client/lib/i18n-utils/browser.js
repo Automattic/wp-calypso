@@ -18,6 +18,7 @@ export {
 	getPathParts,
 	filterLanguageRevisions,
 	translationExists,
+	isMagnificentLocale,
 } from './utils';
 
 export const getLocaleSlug = () => i18n.getLocaleSlug();

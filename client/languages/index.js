@@ -1,6 +1,11 @@
 /**
+ * External dependencies
+ */
+import values from 'lodash/values';
+
+/**
  * Internal dependencies
  */
-import _languages from './languages-meta.json';
+import languagesMeta from './languages-meta.json';
 
-export const languages = _languages;
+export const languages = values( languagesMeta );

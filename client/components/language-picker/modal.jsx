@@ -32,7 +32,6 @@ import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
-import Gridicon from 'components/gridicon';
 import LanguagePickerItemTooltip from './tooltip';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
@@ -68,6 +67,7 @@ export class LanguagePickerModal extends PureComponent {
 		countryCode: '',
 		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
 		empathyMode: false,
+		useFallbackForIncompleteLanguages: false,
 	};
 
 	constructor( props ) {
@@ -81,6 +81,7 @@ export class LanguagePickerModal extends PureComponent {
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
 			empathyMode: props.empathyMode,
+			useFallbackForIncompleteLanguages: props.useFallbackForIncompleteLanguages,
 		};
 
 		this.languagesList = React.createRef();
@@ -405,10 +406,14 @@ export class LanguagePickerModal extends PureComponent {
 		this.setState( { empathyMode: event.target.checked } );
 	};
 
+	handleUseFallbackForIncompleteLanguages = ( event ) => {
+		this.setState( { useFallbackForIncompleteLanguages: event.target.checked } );
+	};
+
 	handleSelectLanguage = () => {
-		const { empathyMode, selectedLanguageSlug } = this.state;
+		const { empathyMode, selectedLanguageSlug, useFallbackForIncompleteLanguages } = this.state;
 		const langSlug = selectedLanguageSlug;
-		this.props.onSelected( langSlug, empathyMode );
+		this.props.onSelected( langSlug, { empathyMode, useFallbackForIncompleteLanguages } );
 		this.handleClose();
 	};
 
@@ -525,7 +530,7 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	renderNonMagnificentLocaleNotice() {
-		const { selectedLanguageSlug } = this.state;
+		const { selectedLanguageSlug, useFallbackForIncompleteLanguages } = this.state;
 
 		if ( ! this.getShouldRenderNoticeForNonMagnificentLocale( selectedLanguageSlug ) ) {
 			return null;
@@ -533,9 +538,18 @@ export class LanguagePickerModal extends PureComponent {
 
 		return (
 			<div className="language-picker__modal-locale-notice">
-				<p>
+				{ ! this.props.getNonMagnificentLocaleNoticeMessage && (
+					<FormLabel>
+						<FormCheckbox
+							checked={ useFallbackForIncompleteLanguages }
+							onChange={ this.handleUseFallbackForIncompleteLanguages }
+						/>
+						<span>{ this.props.translate( 'Display interface in English' ) }</span>
+					</FormLabel>
+				) }
+
+				<p className="language-picker__modal-locale-explanation form-setting-explanation">
 					{ this.getNonMagnificentLocaleNoticeMessage( selectedLanguageSlug ) }
-					<Gridicon icon="notice-outline" size={ 18 } />
 				</p>
 			</div>
 		);

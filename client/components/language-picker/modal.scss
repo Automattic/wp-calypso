@@ -188,9 +188,13 @@
 	padding: 8px 16px;
 	text-align: right;
 
-	svg {
-		vertical-align: middle;
-		margin-left: 4px;
-		color: var( --color-warning-light );
+	.form-label {
+		display: inline-block;
+		vertical-align: top;
+		margin: 0;
+	}
+
+	p {
+		margin: 0;
 	}
 }
