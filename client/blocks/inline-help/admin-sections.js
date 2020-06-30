@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import {  memoize } from 'lodash';
+import { memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -240,35 +240,30 @@ export const adminSections = memoize( ( siteSlug ) => [
 		synonyms: [ 'discussion', 'moderation', 'blacklist' ],
 		icon: 'cog',
 	},
-
 	{
 		title: translate( 'Manage post categories' ),
 		link: `/settings/writing/${ siteSlug }`,
 		synonyms: [ 'post', 'category' ],
 		icon: 'cog',
 	},
-
 	{
 		title: translate( 'Edit my site title, tagline, or logo' ),
 		link: `/settings/general/${ siteSlug }`,
 		synonyms: [ 'title', 'logo' ],
 		icon: 'cog',
 	},
-
 	{
 		title: translate( 'Set up a podcast' ),
 		link: `/settings/writing/${ siteSlug }`,
 		synonyms: [ 'podcast', 'radio', 'audio' ],
 		icon: 'cog',
 	},
-
 	{
 		title: translate( "Change my site's privacy settings" ),
 		link: `/settings/general/${ siteSlug }`,
 		synonyms: [ 'privacy' ],
 		icon: 'cog',
 	},
-
 	{
 		title: translate( 'Manage SEO and traffic settings' ),
 		link: `/settings/traffic/${ siteSlug }`,
@@ -365,21 +360,18 @@ export const adminSections = memoize( ( siteSlug ) => [
 		synonyms: [ 'google', 'traffic' ],
 		icon: 'cog',
 	},
-
 	{
 		title: translate( 'Create a new site' ),
 		link: '/jetpack/new?ref=calypso-selector',
 		synonyms: [ 'site' ],
 		icon: 'cog',
 	},
-
 	{
 		title: translate( 'View contact form messages' ),
 		link: `https://${ siteSlug }/wp-admin/edit.php?post_type=feedback&calypsoify=1`,
 		synonyms: [ 'contact', 'form' ],
 		icon: 'cog',
 	},
-
 	{
 		title: translate( 'Portfolio projects (for those who have them active)' ),
 		link: `/types/jetpack-portfolio/${ siteSlug }`,
