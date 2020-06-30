@@ -154,7 +154,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		step( 'Can click the Connect Jetpack button', async function () {
 			await driverHelper.refreshIfJNError( driver );
 			this.wpAdminJetpack = await WPAdminJetpackPage.Expect( driver );
-			return await this.wpAdminJetpack.connectWordPressCom();
+			return await this.wpAdminJetpack.inPlaceConnect();
 		} );
 
 		step( 'Can Approve in-place connection', async function () {

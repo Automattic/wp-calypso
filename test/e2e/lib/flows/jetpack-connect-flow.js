@@ -90,7 +90,7 @@ export default class JetpackConnectFlow {
 		await WPAdminSidebar.refreshIfJNError( this.driver );
 		await ( await WPAdminSidebar.Expect( this.driver ) ).selectJetpack();
 		await driverHelper.refreshIfJNError( this.driver );
-		await ( await WPAdminJetpackPage.Expect( this.driver ) ).connectWordPressCom();
+		await ( await WPAdminJetpackPage.Expect( this.driver ) ).inPlaceConnect();
 		await ( await WPAdminInPlaceApprovePage.Expect( this.driver ) ).approve();
 		await ( await WPAdminInPlacePlansPage.Expect( this.driver ) ).selectFreePlan();
 		return await WPAdminJetpackPage.Expect( this.driver );
