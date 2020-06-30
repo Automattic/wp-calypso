@@ -12,6 +12,7 @@ import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
+import { useShouldSiteBePublicOnSelectedPlan } from '../hooks/use-selected-plan';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
@@ -67,6 +68,8 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 		return makePath( Step.IntentGathering );
 	};
 
+	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
+
 	useEffect( () => {
 		if (
 			! isCreatingSite &&
@@ -75,9 +78,17 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 			shouldTriggerCreate &&
 			canUseStyleStep()
 		) {
-			createSite( currentUser.username );
+			createSite( currentUser.username, undefined, shouldSiteBePublic );
 		}
-	}, [ createSite, currentUser, isCreatingSite, newSite, shouldTriggerCreate, canUseStyleStep ] );
+	}, [
+		createSite,
+		currentUser,
+		isCreatingSite,
+		newSite,
+		shouldTriggerCreate,
+		canUseStyleStep,
+		shouldSiteBePublic,
+	] );
 
 	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
 
