@@ -55,7 +55,6 @@ export default function DomainPickerButton() {
 				currentDomain={ currentDomain }
 				onDomainSelect={ () => setDomainModalVisibility( false ) }
 				onClose={ () => setDomainModalVisibility( false ) }
-				domainSuggestionVendor="variation4_front"
 			/>
 		</>
 	);
