@@ -2,9 +2,8 @@
 /**
  * External dependencies
  */
-import { intersection, memoize, words } from 'lodash';
+import {  memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { getLocaleSlug } from 'lib/i18n-utils';
 
 /**
  * Internal Dependencies
@@ -16,7 +15,7 @@ import { getLocaleSlug } from 'lib/i18n-utils';
  * @param {String} siteSlug - The current site slug.
  * @returns {Array}           An array of admin sections with site-specific URLs.
  */
-const adminSections = memoize( ( siteSlug ) => [
+export const adminSections = memoize( ( siteSlug ) => [
 	{
 		title: translate( 'Add a new domain' ),
 		description: translate(
@@ -388,62 +387,3 @@ const adminSections = memoize( ( siteSlug ) => [
 		icon: 'cog',
 	},
 ] );
-
-/**
- * Returns a filtered site admin collection
- *
- * @param   {String} searchTerm The search term
- * @param   {Array}  collection A collection of site admin objects
- * @param   {Number} limit      The maximum number of results to show
- * @returns {Array}             A filtered (or empty) array
- */
-export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 4 ) {
-	const searchTermWords = words( searchTerm ).map( ( word ) => word.toLowerCase() );
-
-	if ( searchTermWords.length < 1 ) {
-		return [];
-	}
-
-	const searchRegex = new RegExp(
-		// Join a series of look aheads
-		// matching full and partial works
-		// Example: "Add a dom" => /(?=.*\badd\b)(?=.*\ba\b)(?=.*\bdom).+/gi
-		searchTermWords
-			.map( ( word, i ) =>
-				// if it's the last word, don't look for a end word boundary
-				// otherwise
-				i + 1 === searchTermWords.length ? `(?=.*\\b${ word })` : `(?=.*\\b${ word }\\b)`
-			)
-			.join( '' ) + '.+',
-		'gi'
-	);
-
-	return collection
-		.filter( ( item ) => {
-			if ( searchRegex.test( item.title ) ) {
-				return true;
-			}
-			// Until we get the synonyms translated, just check when the language is `'en'`
-			return 'en' === getLocaleSlug()
-				? intersection( item.synonyms, searchTermWords ).length > 0
-				: false;
-		} )
-		.map( ( item ) => ( { ...item, type: 'internal', key: item.title } ) )
-		.slice( 0, limit );
-}
-
-/**
- * Returns a filtered site admin collection using the memoized adminSections.
- *
- * @param   {String} searchTerm The search term
- * @param   {String} siteSlug   The current site slug
- * @param   {Number} limit      The maximum number of results to show
- * @returns {Array}             A filtered (or empty) array
- */
-export function getAdminSectionsResults( searchTerm = '', siteSlug, limit ) {
-	if ( ! searchTerm ) {
-		return [];
-	}
-
-	return filterListBySearchTerm( searchTerm, adminSections( siteSlug || '' ), limit );
-}
