@@ -18,7 +18,7 @@ import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-res
 import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
 import {
-	setInlineHelpQuerySearch,
+	setInlineHelpSearchQuery,
 	selectNextResult,
 	selectPreviousResult,
 } from 'state/inline-help/actions';
@@ -88,11 +88,11 @@ class InlineHelpSearchCard extends Component {
 		}
 
 		// Set the query search
-		this.props.setInlineHelpQuerySearch( searchQuery );
+		this.props.setInlineHelpSearchQuery( searchQuery );
 	};
 
 	componentDidMount() {
-		this.props.setInlineHelpQuerySearch();
+		this.props.setInlineHelpSearchQuery();
 	}
 
 	render() {
@@ -117,7 +117,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,
-	setInlineHelpQuerySearch,
+	setInlineHelpSearchQuery,
 	selectNextResult,
 	selectPreviousResult,
 };
