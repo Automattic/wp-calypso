@@ -10,6 +10,8 @@ import {
 	createGiropayPaymentMethodStore,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
+	createSofortMethod,
+	createSofortPaymentMethodStore,
 	createFullCreditsMethod,
 	createFreePaymentMethod,
 	createApplePayMethod,
@@ -109,6 +111,32 @@ function useCreateIdeal( {
 		() =>
 			shouldLoad
 				? createIdealMethod( {
+						store: paymentMethodStore,
+						stripe,
+						stripeConfiguration,
+				  } )
+				: null,
+		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+	);
+}
+
+function useCreateSofort( {
+	onlyLoadPaymentMethods,
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+} ) {
+	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
+	const isMethodAllowed = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'sofort' )
+		: true;
+	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+	const paymentMethodStore = useMemo( () => createSofortPaymentMethodStore(), [] );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createSofortMethod( {
 						store: paymentMethodStore,
 						stripe,
 						stripeConfiguration,
@@ -245,6 +273,13 @@ export default function useCreatePaymentMethods( {
 		stripeConfiguration,
 		stripe,
 	} );
+	const sofortMethod = useCreateSofort( {
+		onlyLoadPaymentMethods,
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+	} );
 
 	const stripeMethod = useCreateStripe( {
 		onlyLoadPaymentMethods,
@@ -284,6 +319,7 @@ export default function useCreatePaymentMethods( {
 		applePayMethod,
 		idealMethod,
 		giropayMethod,
+		sofortMethod,
 		stripeMethod,
 		paypalMethod,
 	].filter( Boolean );
