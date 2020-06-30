@@ -644,8 +644,6 @@ jobs:
       xcode: "10.1.0"
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
-    environment:
-      DETECT_CHROMEDRIVER_VERSION: 'false'
     steps:
       - checkout
       - attach_workspace:
