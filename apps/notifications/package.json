@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
 		"prebuild": "check-npm-client && yarn run clean",
-		"build": "check-npm-client && calypso-build --config='./webpack.config.js'"
+		"build": "check-npm-client && calypso-build --config='./webpack.config.js' --display errors-only"
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "^2.1.1",
