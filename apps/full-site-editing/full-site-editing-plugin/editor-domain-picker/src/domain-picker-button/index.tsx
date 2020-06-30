@@ -45,6 +45,7 @@ export default function DomainPickerButton() {
 			</Button>
 			<DomainPickerModal
 				analyticsFlowId={ FLOW_ID }
+				analyticsUiAlgo="editor_domain_modal"
 				initialDomainSearch={ search }
 				onSetDomainSearch={ setDomainSearch }
 				isOpen={ isDomainModalVisible }
