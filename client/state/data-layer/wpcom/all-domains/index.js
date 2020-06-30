@@ -6,7 +6,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { convertToCamelCase } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { ALL_DOMAINS_REQUEST } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
@@ -47,7 +46,6 @@ registerHandlers( 'state/data-layer/wpcom/all-domains/index.js', {
 			fetch: getAllDomains,
 			onSuccess: getAllDomainsSuccess,
 			onError: getAllDomainsError,
-			fromApi: convertToCamelCase,
 		} ),
 	],
 } );
