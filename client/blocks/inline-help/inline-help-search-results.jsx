@@ -93,7 +93,7 @@ HelpSearchResults.propTypes = {
 
 export default connect(
 	( state, ownProps ) => ( {
-		searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
+		searchResults: getInlineHelpSearchResultsForQuery( state ),
 		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 		selectedResultIndex: getSelectedResultIndex( state ),
 		hasAPIResults: hasInlineHelpAPIResults( state ),

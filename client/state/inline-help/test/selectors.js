@@ -74,7 +74,7 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 			},
 		};
 
-		expect( getInlineHelpSearchResultsForQuery( state, 'foo' ) ).to.deep.equal( [
+		expect( getInlineHelpSearchResultsForQuery( state ) ).to.deep.equal( [
 			{
 				title: 'Foo Item 0 title',
 				description: 'Foo Item 0 description',
@@ -113,9 +113,9 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 			},
 		};
 
-		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.be.a( 'array' );
-		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.have.length( 0 );
-		expect( getInlineHelpSearchResultsForQuery( state, 'bar' ) ).to.deep.equal( [] );
+		expect( getInlineHelpSearchResultsForQuery( state ) ).to.be.a( 'array' );
+		expect( getInlineHelpSearchResultsForQuery( state ) ).to.have.length( 0 );
+		expect( getInlineHelpSearchResultsForQuery( state ) ).to.deep.equal( [] );
 	} );
 
 	test( 'should return empty string when no items', () => {
@@ -130,8 +130,8 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 			},
 		};
 
-		expect( getInlineHelpSearchResultsForQuery( state, 'foo' ) ).to.be.a( 'array' );
-		expect( getInlineHelpSearchResultsForQuery( state, 'foo' ) ).to.have.length( 0 );
-		expect( getInlineHelpSearchResultsForQuery( state, 'foo' ) ).to.deep.equal( [] );
+		expect( getInlineHelpSearchResultsForQuery( state ) ).to.be.a( 'array' );
+		expect( getInlineHelpSearchResultsForQuery( state ) ).to.have.length( 0 );
+		expect( getInlineHelpSearchResultsForQuery( state ) ).to.deep.equal( [] );
 	} );
 } );
