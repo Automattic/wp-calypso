@@ -184,8 +184,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			return ! this.isCurrentUrlFetching() &&
 				this.isCurrentUrlFetched() &&
 				! this.props.jetpackConnectSite.isDismissed &&
-				this.state.status &&
-				this.state.status !== IS_DOT_COM_GET_SEARCH ? (
+				this.state.status ? (
 				<JetpackConnectNotices
 					noticeType={ this.state.status }
 					onDismissClick={ IS_DOT_COM === this.state.status ? this.goBack : this.dismissUrl }
@@ -211,15 +210,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 			if ( this.isError( 'site_blacklisted' ) ) {
 				return SITE_BLOCKED;
-			}
-
-			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
-				const product = window.location.href.split( '/' )[ 5 ];
-
-				if ( startsWith( product, 'jetpack_search' ) ) {
-					return IS_DOT_COM_GET_SEARCH;
-				}
-				return IS_DOT_COM;
 			}
 
 			if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {

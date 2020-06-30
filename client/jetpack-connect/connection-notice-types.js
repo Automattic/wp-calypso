@@ -11,6 +11,7 @@ export const ALREADY_OWNED = 'alreadyOwned';
 export const DEFAULT_AUTHORIZE_ERROR = 'defaultAuthorizeError';
 export const INSTALL_RESPONSE_ERROR = 'unableToInstall';
 export const IS_DOT_COM = 'isDotCom';
+export const IS_DOT_COM_GET_SEARCH = 'isDotComGetSearch';
 export const JETPACK_IS_DISCONNECTED = 'jetpackIsDisconnected';
 export const JETPACK_IS_VALID = 'jetpackIsValid';
 export const LOGIN_FAILURE = 'loginFailure';

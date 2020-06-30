@@ -32,7 +32,7 @@ import { urlToSlug } from 'lib/url';
 import searchSites from 'components/search-sites';
 import jetpackConnection from './jetpack-connection';
 
-import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from './constants';
+import { JPC_PATH_REMOTE_INSTALL } from './constants';
 import { ALREADY_CONNECTED } from './connection-notice-types';
 
 export class SearchPurchase extends Component {
@@ -96,9 +96,9 @@ export class SearchPurchase extends Component {
 		// we handle product addition during checkout (wpcom-> wpcom_search),
 		// irrespective of the product displayed in the route, but to avoid confusion,
 		// we assign it here correctly
-		if ( status === IS_DOT_COM_GET_SEARCH ) {
-			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/wpcom_search' );
-		}
+		// if ( status === IS_DOT_COM_GET_SEARCH ) {
+		// 	page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/wpcom_search' );
+		// }
 
 		if ( status === ALREADY_CONNECTED ) {
 			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/jetpack_search' );
