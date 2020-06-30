@@ -91,7 +91,7 @@ class SocialLogin extends Component {
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (
 					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
-						{ translate( 'Two-Step Authentication' ) }
+						{ translate( 'Social Logins' ) }
 					</HeaderCake>
 				) }
 
