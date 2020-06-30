@@ -34,9 +34,4 @@ export default class ActivityPage extends AsyncBaseContainer {
 			);
 		}, this.explicitWaitMS * 3 );
 	}
-
-	async clearFilter() {
-		const selector = By.css( '.filterbar .filterbar__selection-close' );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
-	}
 }
