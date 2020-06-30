@@ -319,7 +319,9 @@ export class Checkout extends React.Component {
 			if ( isJetpack ) {
 				cartItem = jetpackProductItem( 'jetpack_search' );
 			} else {
-				cartItem = jetpackProductItem( 'wpcom_search' );
+				cartItem = config.isEnabled( 'jetpack/wpcom-search-product' )
+					? jetpackProductItem( 'wpcom_search' )
+					: null;
 			}
 		}
 
