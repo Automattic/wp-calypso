@@ -126,6 +126,7 @@ cp -R $CODE/src/components $TARGET/
 
 # Fix the text domain
 npx eslint . --fix > /dev/null 2>&1
+phpcbf $TARGET
 
 if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json
