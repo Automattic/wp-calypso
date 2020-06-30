@@ -19,27 +19,20 @@ class ListHeader extends React.PureComponent {
 	render() {
 		const { translate } = this.props;
 
-		const linkColumnClass = 'domain-item__link';
-		const transferLockClass = 'domain-item__transfer-lock';
-		const privacyClass = 'domain-item__privacy';
-		const autoRenewClass = 'domain-item__auto-renew';
-		const emailClass = 'domain-item__email';
-		const optionsClass = 'domain-item__options';
-
 		return (
 			<CompactCard className="list-header">
-				<div className={ linkColumnClass } />
-				<div className={ transferLockClass }>
+				<div className="list__domain-link" />
+				<div className="list__domain-transfer-lock">
 					{ translate( 'Transfer lock' ) }
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
 							'When enabled, a transfer lock prevents your domain from being transferred to another ' +
-								'provider. Sometimes, the transfer lock cannot be disabled, such as when a domain ' +
+								'provider. Sometimes the transfer lock cannot be disabled, such as when a domain ' +
 								'is recently registered.'
 						) }
 					</InfoPopover>
 				</div>
-				<div className={ privacyClass }>
+				<div className="list__domain-privacy">
 					{ translate( 'Privacy' ) }
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
@@ -49,7 +42,7 @@ class ListHeader extends React.PureComponent {
 						) }
 					</InfoPopover>
 				</div>
-				<div className={ autoRenewClass }>
+				<div className="list__domain-auto-renew">
 					{ translate( 'Auto-renew' ) }
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
@@ -58,7 +51,7 @@ class ListHeader extends React.PureComponent {
 						) }
 					</InfoPopover>
 				</div>
-				<div className={ emailClass }>
+				<div className="list__domain-email">
 					{ translate( 'Email' ) }
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
@@ -68,7 +61,7 @@ class ListHeader extends React.PureComponent {
 						) }
 					</InfoPopover>
 				</div>
-				<div className={ optionsClass }>{ translate( 'Options' ) }</div>
+				<div className="list__domain-options">{ translate( 'Options' ) }</div>
 			</CompactCard>
 		);
 	}

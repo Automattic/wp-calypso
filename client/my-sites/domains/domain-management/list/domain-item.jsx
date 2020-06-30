@@ -57,7 +57,7 @@ class DomainItem extends PureComponent {
 		const { isManagingAllSites, translate } = this.props;
 
 		return (
-			<div className="domain-item__options">
+			<div className="list__domain-options">
 				<EllipsisMenu onClick={ this.stopPropagation } toggleTitle={ translate( 'Options' ) }>
 					{ ! isManagingAllSites && (
 						<PopoverMenuItem icon="domains">{ translate( 'Make primary domain' ) }</PopoverMenuItem>
@@ -82,7 +82,7 @@ class DomainItem extends PureComponent {
 						onClick={ this.stopPropagation }
 					/>
 				) }
-				<div className="domain-item__link">
+				<div className="list__domain-link">
 					<div className="domain-item__status">
 						<div className="domain-item__title">{ domain.domain }</div>
 						<DomainNotice status="info" text="Activating domain" />
@@ -98,16 +98,16 @@ class DomainItem extends PureComponent {
 						</div>
 					) }
 				</div>
-				<div className="domain-item__transfer-lock">
+				<div className="list__domain-transfer-lock">
 					<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
 				</div>
-				<div className="domain-item__privacy">
+				<div className="list__domain-privacy">
 					<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
 				</div>
-				<div className="domain-item__auto-renew">
+				<div className="list__domain-auto-renew">
 					<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
 				</div>
-				<div className="domain-item__email">
+				<div className="list__domain-email">
 					<Button compact onClick={ this.addEmailClick }>
 						{ translate( 'Add', {
 							context: 'Button label',
