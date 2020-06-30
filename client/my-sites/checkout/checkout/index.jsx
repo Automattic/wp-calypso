@@ -282,7 +282,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug, cart, isJetpack, isJetpackNotAtomic } = this.props;
+		const { planSlug, cart, isJetpackNotAtomic } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -316,7 +316,7 @@ export class Checkout extends React.Component {
 			startsWith( this.props.product, 'jetpack_search' ) ||
 			startsWith( this.props.product, 'wpcom_search' )
 		) {
-			if ( isJetpack ) {
+			if ( isJetpackNotAtomic ) {
 				cartItem = jetpackProductItem( 'jetpack_search' );
 			} else {
 				cartItem = config.isEnabled( 'jetpack/wpcom-search-product' )
