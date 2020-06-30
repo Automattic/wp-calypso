@@ -18,6 +18,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { domainAddNew } from 'my-sites/domains/paths';
 import DocumentHead from 'components/data/document-head';
 import DomainItem from './domain-item';
+import ListHeader from './list-header';
 import FormattedHeader from 'components/formatted-header';
 import { getAllDomains, getFlatDomainsList } from 'state/sites/domains/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -95,7 +96,7 @@ class ListAll extends Component {
 
 		const { domainsList, sites, domainsDetails, canManageSitesMap } = this.props;
 
-		return domainsList
+		const domainListItems = domainsList
 			.filter(
 				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
 			) // filter on sites we can manage, that aren't `wpcom` type
@@ -113,6 +114,8 @@ class ListAll extends Component {
 					/>
 				</React.Fragment>
 			) );
+
+		return [ <ListHeader key="list-header" />, ...domainListItems ];
 	}
 
 	render() {
