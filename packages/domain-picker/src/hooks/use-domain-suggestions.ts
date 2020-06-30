@@ -7,11 +7,7 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import {
-	DOMAIN_SUGGESTION_VENDOR,
-	DOMAIN_SUGGESTIONS_STORE,
-	DOMAIN_SEARCH_DEBOUNCE_INTERVAL,
-} from '../constants';
+import { DOMAIN_SUGGESTIONS_STORE, DOMAIN_SEARCH_DEBOUNCE_INTERVAL } from '../constants';
 
 export function useDomainSuggestions(
 	searchTerm = '',
@@ -32,7 +28,6 @@ export function useDomainSuggestions(
 				include_dotblogsubdomain: false,
 				quantity: quantity + 1, // increment the count to add the free domain
 				locale,
-				vendor: DOMAIN_SUGGESTION_VENDOR,
 				category_slug: domainCategory,
 			} );
 		},
