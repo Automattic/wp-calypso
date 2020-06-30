@@ -24,14 +24,14 @@ import { recordOnboardingStart } from './lib/analytics';
 import useOnSiteCreation from './hooks/use-on-site-creation';
 import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 import useSignup from './hooks/use-signup';
-import useOnLogin from './hooks/use-on-login';
+import useOnSignup from './hooks/use-on-signup';
 
 registerBlockType( name, settings );
 
 export function Gutenboard() {
 	const { __ } = useI18n();
 
-	useOnLogin();
+	useOnSignup();
 	useOnSiteCreation();
 	usePageViewTracksEvents();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();

@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -11,32 +10,24 @@ import { useI18n } from '@automattic/react-i18n';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
-import { getFreeDomainSuggestions } from '../utils/domain-suggestions';
-import { useDomainSuggestions } from './use-domain-suggestions'; // @TODO: get this from packages and remove hook from Gutenboarding
 import { useShouldSiteBePublicOnSelectedPlan } from './use-selected-plan';
 
 /**
- * After signup or login a site is automatically created using the username and bearerToken
+ * After signup a site is automatically created using the username and bearerToken
  **/
 
-export default function useOnLogin() {
-	const { i18nLocale } = useI18n();
-
-	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+export default function useOnSignup() {
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
 
-	const allSuggestions = useDomainSuggestions( { searchOverride: siteTitle, locale: i18nLocale } );
-	const freeDomainSuggestion = getFreeDomainSuggestions( allSuggestions )?.[ 0 ];
-
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string, isPublicSite?: boolean ) => {
-			createSite( username, freeDomainSuggestion, bearerToken, isPublicSite );
+			createSite( username, bearerToken, isPublicSite );
 		},
-		[ createSite, freeDomainSuggestion ]
+		[ createSite ]
 	);
 
 	React.useEffect( () => {

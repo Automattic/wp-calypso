@@ -21,7 +21,6 @@ import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import Plans from './plans';
 import Domains from './domains';
-import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
 
 import './colors.scss';
 import './style.scss';
@@ -35,7 +34,6 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const shouldTriggerCreate = useNewQueryParam();
-	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	const makePath = usePath();
 
@@ -77,17 +75,9 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 			shouldTriggerCreate &&
 			canUseStyleStep()
 		) {
-			createSite( currentUser.username, freeDomainSuggestion );
+			createSite( currentUser.username );
 		}
-	}, [
-		createSite,
-		currentUser,
-		freeDomainSuggestion,
-		isCreatingSite,
-		newSite,
-		shouldTriggerCreate,
-		canUseStyleStep,
-	] );
+	}, [ createSite, currentUser, isCreatingSite, newSite, shouldTriggerCreate, canUseStyleStep ] );
 
 	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
 

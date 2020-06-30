@@ -92,12 +92,7 @@ export const setShowSignupDialog = ( showSignup: boolean ) => ( {
 	showSignup,
 } );
 
-export function* createSite(
-	username: string,
-	freeDomainSuggestion?: DomainSuggestion,
-	bearerToken?: string,
-	isPublicSite = false
-) {
+export function* createSite( username: string, bearerToken?: string, isPublicSite = false ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
 		'getState'
@@ -105,8 +100,7 @@ export function* createSite(
 
 	const shouldEnableFse = !! selectedDesign?.is_fse;
 
-	const currentDomain = domain ?? freeDomainSuggestion;
-	const siteUrl = currentDomain?.domain_name || siteTitle || username;
+	const siteUrl = domain?.domain_name || siteTitle || username;
 
 	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
 
