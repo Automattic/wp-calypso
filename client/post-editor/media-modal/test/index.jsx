@@ -40,7 +40,6 @@ jest.mock( 'post-editor/media-modal/secondary-actions', () =>
 );
 jest.mock( 'lib/accept', () => require( 'sinon' ).stub().callsArgWithAsync( 1, true ) );
 jest.mock( 'lib/media/actions', () => ( {
-	delete: () => {},
 	setLibrarySelectedItems: () => {},
 } ) );
 jest.mock( 'my-sites/media-library', () => require( 'components/empty-component' ) );
@@ -63,7 +62,7 @@ describe( 'EditorMediaModal', () => {
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
 		setLibrarySelectedItems = sandbox.stub( mediaActions, 'setLibrarySelectedItems' );
-		deleteMedia = sandbox.stub( mediaActions, 'delete' );
+		deleteMedia = sandbox.stub();
 		onClose = sandbox.stub();
 	} );
 
@@ -87,7 +86,12 @@ describe( 'EditorMediaModal', () => {
 		const media = DUMMY_MEDIA.slice( 0, 1 );
 
 		const tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } selectedItems={ media } translate={ translate } />
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				selectedItems={ media }
+				translate={ translate }
+				deleteMedia={ deleteMedia }
+			/>
 		).instance();
 		tree.deleteMedia();
 
@@ -106,7 +110,12 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'should prompt to delete multiple items from the list view', () => {
 		const tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } selectedItems={ DUMMY_MEDIA } translate={ translate } />
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				selectedItems={ DUMMY_MEDIA }
+				translate={ translate }
+				deleteMedia={ deleteMedia }
+			/>
 		).instance();
 		tree.deleteMedia();
 
@@ -131,6 +140,7 @@ describe( 'EditorMediaModal', () => {
 				site={ DUMMY_SITE }
 				selectedItems={ [ media ] }
 				view={ ModalViews.DETAIL }
+				deleteMedia={ deleteMedia }
 			/>
 		).instance();
 		tree.deleteMedia();
@@ -154,6 +164,7 @@ describe( 'EditorMediaModal', () => {
 				site={ DUMMY_SITE }
 				selectedItems={ DUMMY_MEDIA }
 				view={ ModalViews.DETAIL }
+				deleteMedia={ deleteMedia }
 			/>
 		).instance();
 		tree.deleteMedia();

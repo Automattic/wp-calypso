@@ -13,7 +13,6 @@ import {
 	isEmpty,
 	identity,
 	includes,
-	map,
 	noop,
 	partial,
 	some,
@@ -40,8 +39,7 @@ import { getEditorPostId } from 'state/editor/selectors';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { editMedia } from 'state/media/thunks';
-import { deleteMedia } from 'state/media/actions';
+import { editMedia, deleteMedia } from 'state/media/thunks';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaModalDialog from './dialog';
@@ -264,9 +262,8 @@ export class EditorMediaModal extends Component {
 			this.setNextAvailableDetailView();
 		}
 
-		MediaActions.delete( site.ID, toDelete );
+		this.props.deleteMedia( site.ID, toDelete );
 		mcBumpStat( 'editor_media_actions', 'delete_media' );
-		this.props.deleteMedia( site.ID, map( toDelete, 'ID' ) );
 	};
 
 	deleteMedia = () => {
