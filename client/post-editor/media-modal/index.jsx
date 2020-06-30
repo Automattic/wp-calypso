@@ -40,6 +40,7 @@ import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { editMedia, deleteMedia } from 'state/media/thunks';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaModalDialog from './dialog';
@@ -117,7 +118,7 @@ export class EditorMediaModal extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
-			MediaActions.setLibrarySelectedItems( nextProps.site.ID, [] );
+			this.props.setMediaLibrarySelectedItems( nextProps.site.ID, [] );
 		}
 
 		if ( this.props.visible === nextProps.visible ) {
@@ -143,13 +144,13 @@ export class EditorMediaModal extends Component {
 	UNSAFE_componentWillMount() {
 		const { view, selectedItems, site, single } = this.props;
 		if ( ! isEmpty( selectedItems ) && ( view === ModalViews.LIST || single ) ) {
-			MediaActions.setLibrarySelectedItems( site.ID, [] );
+			this.props.setMediaLibrarySelectedItems( site.ID, [] );
 		}
 	}
 
 	componentWillUnmount() {
 		this.props.resetView();
-		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+		this.props.setMediaLibrarySelectedItems( this.props.site.ID, [] );
 	}
 
 	getDefaultState( props ) {
@@ -297,7 +298,7 @@ export class EditorMediaModal extends Component {
 	};
 
 	onAddAndEditImage = () => {
-		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+		this.props.setMediaLibrarySelectedItems( this.props.site.ID, [] );
 
 		this.props.setView( ModalViews.IMAGE_EDITOR );
 	};
@@ -446,7 +447,7 @@ export class EditorMediaModal extends Component {
 			} else {
 				items = items.concat( item );
 			}
-			MediaActions.setLibrarySelectedItems( site.ID, items );
+			this.props.setMediaLibrarySelectedItems( site.ID, items );
 		}
 
 		// Find and set detail selected index for the edited item
@@ -655,5 +656,6 @@ export default connect(
 		recordEditorEvent,
 		recordEditorStat,
 		editMedia,
+		setMediaLibrarySelectedItems,
 	}
 )( localize( EditorMediaModal ) );

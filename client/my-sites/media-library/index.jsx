@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 import Content from './content';
 import getMediaErrors from 'state/selectors/get-media-errors';
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import MediaActions from 'lib/media/actions';
 import MediaLibraryDropZone from './drop-zone';
 import { filterItemsByMimePrefix } from 'lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
@@ -26,6 +25,7 @@ import {
 	getKeyringConnections,
 } from 'state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -121,7 +121,7 @@ class MediaLibrary extends Component {
 		}
 
 		if ( ! isEqual( selectedItems, filteredItems ) ) {
-			MediaActions.setLibrarySelectedItems( this.props.site.ID, filteredItems );
+			this.props.setMediaLibrarySelectedItems( this.props.site.ID, filteredItems );
 		}
 
 		this.props.onAddMedia();
@@ -219,5 +219,6 @@ export default connect(
 	} ),
 	{
 		requestKeyringConnections,
+		setMediaLibrarySelectedItems,
 	}
 )( MediaLibrary );

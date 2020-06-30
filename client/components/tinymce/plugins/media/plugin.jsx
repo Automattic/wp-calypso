@@ -13,6 +13,7 @@ import closest from 'component-closest';
 /**
  * Internal dependencies
  */
+import { reduxDispatch } from 'lib/redux-bridge';
 import * as MediaConstants from 'lib/media/constants';
 import MediaActions from 'lib/media/actions';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
@@ -31,6 +32,7 @@ import { getEditorRawContent, isEditorSaveBlocked } from 'state/editor/selectors
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Module variables
@@ -307,7 +309,7 @@ function mediaButton( editor ) {
 			// hasn't yet been loaded, we preload the image before rendering.
 			const imageUrl = event.resizedImageUrl || media.URL;
 			if ( ! loadedImages.isLoaded( imageUrl ) ) {
-				const preloadImage = new Image();
+				const preloadImage = new window.Image();
 				preloadImage.src = imageUrl;
 				preloadImage.onload = loadedImages.onLoad.bind( null, imageUrl );
 				preloadImage.onerror = preloadImage.onload;
@@ -492,7 +494,7 @@ function mediaButton( editor ) {
 					view: ModalViews.DETAIL,
 				}
 			);
-			MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+			reduxDispatch( setMediaLibrarySelectedItems( siteId, [ image ] ) );
 		},
 	} );
 
@@ -734,7 +736,7 @@ function mediaButton( editor ) {
 			delete gallery.orderby;
 		}
 
-		MediaActions.setLibrarySelectedItems( selectedSite.ID, gallery.items );
+		reduxDispatch( setMediaLibrarySelectedItems( selectedSite.ID, gallery.items ) );
 
 		renderModal(
 			{
