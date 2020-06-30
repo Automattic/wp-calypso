@@ -89,6 +89,7 @@ import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
+import { CartProvider } from './cart-provider';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -518,46 +519,48 @@ export default function CompositeCheckout( {
 			<QueryStoredCards />
 
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-			<CheckoutProvider
-				items={ itemsForCheckout }
-				total={ total }
-				onPaymentComplete={ onPaymentComplete }
-				showErrorMessage={ showErrorMessage }
-				showInfoMessage={ showInfoMessage }
-				showSuccessMessage={ showSuccessMessage }
-				onEvent={ recordEvent }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ paymentProcessors }
-				registry={ defaultRegistry }
-				isLoading={
-					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
-				}
-				isValidating={ isCartPendingUpdate }
-			>
-				<WPCheckout
-					removeItem={ removeItem }
-					updateLocation={ updateLocation }
-					submitCoupon={ submitCoupon }
-					removeCoupon={ removeCoupon }
-					couponStatus={ couponStatus }
-					changePlanLength={ changeItemVariant }
-					siteId={ siteId }
-					siteUrl={ siteSlug }
-					CountrySelectMenu={ CountrySelectMenu }
-					countriesList={ countriesList }
-					StateSelect={ StateSelect }
-					renderDomainContactFields={ renderDomainContactFields }
-					variantSelectOverride={ variantSelectOverride }
-					getItemVariants={ getItemVariants }
-					responseCart={ responseCart }
-					addItemToCart={ addItemWithEssentialProperties }
-					subtotal={ subtotal }
-					isCartPendingUpdate={ isCartPendingUpdate }
-					CheckoutTerms={ CheckoutTerms }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isWhiteGloveOffer={ isWhiteGloveOffer }
-				/>
-			</CheckoutProvider>
+			<CartProvider cart={ responseCart }>
+				<CheckoutProvider
+					items={ itemsForCheckout }
+					total={ total }
+					onPaymentComplete={ onPaymentComplete }
+					showErrorMessage={ showErrorMessage }
+					showInfoMessage={ showInfoMessage }
+					showSuccessMessage={ showSuccessMessage }
+					onEvent={ recordEvent }
+					paymentMethods={ paymentMethods }
+					paymentProcessors={ paymentProcessors }
+					registry={ defaultRegistry }
+					isLoading={
+						isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
+					}
+					isValidating={ isCartPendingUpdate }
+				>
+					<WPCheckout
+						removeItem={ removeItem }
+						updateLocation={ updateLocation }
+						submitCoupon={ submitCoupon }
+						removeCoupon={ removeCoupon }
+						couponStatus={ couponStatus }
+						changePlanLength={ changeItemVariant }
+						siteId={ siteId }
+						siteUrl={ siteSlug }
+						CountrySelectMenu={ CountrySelectMenu }
+						countriesList={ countriesList }
+						StateSelect={ StateSelect }
+						renderDomainContactFields={ renderDomainContactFields }
+						variantSelectOverride={ variantSelectOverride }
+						getItemVariants={ getItemVariants }
+						responseCart={ responseCart }
+						addItemToCart={ addItemWithEssentialProperties }
+						subtotal={ subtotal }
+						isCartPendingUpdate={ isCartPendingUpdate }
+						CheckoutTerms={ CheckoutTerms }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						isWhiteGloveOffer={ isWhiteGloveOffer }
+					/>
+				</CheckoutProvider>
+			</CartProvider>
 		</React.Fragment>
 	);
 }
