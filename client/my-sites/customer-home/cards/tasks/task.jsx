@@ -134,7 +134,7 @@ const Task = ( {
 						ref={ skipButtonRef }
 						onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
 					>
-						{ enableSkipOptions ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
+						{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
 						{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
 					</Button>
 					{ enableSkipOptions && areSkipOptionsVisible && (
@@ -146,13 +146,13 @@ const Task = ( {
 							className="task__skip-popover"
 						>
 							<PopoverMenuItem onClick={ () => skipTask( '1d' ) }>
-								{ translate( 'Tomorrow' ) }
+								{ translate( 'For a day' ) }
 							</PopoverMenuItem>
 							<PopoverMenuItem onClick={ () => skipTask( '1w' ) }>
-								{ translate( 'Next week' ) }
+								{ translate( 'For a week' ) }
 							</PopoverMenuItem>
 							<PopoverMenuItem onClick={ () => skipTask() }>
-								{ translate( 'Never' ) }
+								{ translate( 'Forever' ) }
 							</PopoverMenuItem>
 						</PopoverMenu>
 					) }
