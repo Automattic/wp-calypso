@@ -21,7 +21,7 @@ import * as driverManager from '../driver-manager';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
 import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
-import NoticesComponent from '../components/notices-component';
+// import NoticesComponent from '../components/notices-component';
 
 export default class JetpackConnectFlow {
 	constructor( driver, account, template ) {
@@ -109,8 +109,8 @@ export default class JetpackConnectFlow {
 				return;
 			}
 			// seems like it is not waiting for this
-			const noticesComponent = await NoticesComponent.Expect( this.driver );
-			await noticesComponent.dismissNotice();
+			// const noticesComponent = await NoticesComponent.Expect( this.driver );
+			// await noticesComponent.dismissNotice();
 			return await removeSites();
 		};
 

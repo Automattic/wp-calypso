@@ -7,7 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
-import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
+// import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
 import * as driverHelper from '../driver-helper.js';
 
 export default class SidebarComponent extends AsyncBaseContainer {
@@ -261,7 +261,11 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			// no broken sites
 			return false;
 		}
-		// await driverHelper.clickWhenClickable( this.driver, brokenSiteButton );
+
+		const countSelector = By.css( '.count' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, countSelector );
+		const count = await this.driver.findElement( countSelector ).getText();
+
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, brokenSiteButton );
 		const buttons = await this.driver.findElements( brokenSiteButton );
 		if ( buttons.length > 1 ) {
@@ -280,6 +284,15 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.disconnect-jetpack__button-wrap a[href*="/stats"]' )
+		);
+
+		await this.driver.wait(
+			async () => {
+				const newCount = await this.driver.findElement( countSelector ).getText();
+				return parseInt( newCount ) < parseInt( count );
+			},
+			this.explicitWaitMS * 2,
+			'Unable to disconnect the site. Site count not updating.'
 		);
 
 		// const surveyPage = await DisconnectSurveyPage.Expect( this.driver );
