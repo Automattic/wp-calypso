@@ -151,8 +151,8 @@ export default {
 	passwordlessAfterPlans: {
 		datestamp: '20200618',
 		variations: {
-			variantPasswordless: 50,
-			control: 50,
+			variantPasswordless: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
