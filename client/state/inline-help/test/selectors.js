@@ -143,6 +143,13 @@ describe( 'Admin section search and filters', () => {
 			const result = getAdminHelpResults( {} );
 			expect( result ).to.deep.equal( [] );
 		} );
+
+		test( 'should return admin help results for `domain` term', () => {
+			const results = getAdminHelpResults( {}, 'Add a new domain' );
+			expect( results ).to.be.a( 'array' );
+			expect( results ).to.not.deep.equal( [] );
+			expect( results ).to.not.have.length( 0 );
+		} );
 	} );
 
 	describe( 'filterListBySearchTerm()', () => {
