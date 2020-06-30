@@ -125,13 +125,11 @@ const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 	}
 };
 
-const onFetchStatusFailure = ( ...response ) => {
-	return [
-		{
-			type: JETPACK_SCAN_REQUEST_FAILURE,
-			siteId: response.siteId,
-		},
-	];
+const onFetchStatusFailure = ( { siteId } ) => ( dispatch ) => {
+	dispatch( {
+		type: JETPACK_SCAN_REQUEST_FAILURE,
+		siteId,
+	} );
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/scan', {
