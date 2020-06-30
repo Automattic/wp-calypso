@@ -29,7 +29,7 @@ import 'state/inline-help/init';
  * @param {string} searchQuery - query store to store.
  * @returns {Function}            Action thunk.
  */
-export function setInlineHelpQuerySearch( searchQuery = '' ) {
+export function setInlineHelpSearchQuery( searchQuery = '' ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SET_QUERY_SEARCH,
