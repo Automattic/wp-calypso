@@ -263,10 +263,10 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
-	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
+	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
 	// called before route-specific middleware, so it's up to the cache *writes* in server
-	// render to make sure that Redux state and markup are only cached for whitelisted query args.
+	// render to make sure that Redux state and markup are only cached for specified query args.
 	const cacheKey = getNormalizedPath( request.path, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
@@ -976,7 +976,7 @@ export default function pages() {
 			} );
 	} );
 
-	// catchall to render 404 for all routes not whitelisted in client/sections
+	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );
 
 	// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
