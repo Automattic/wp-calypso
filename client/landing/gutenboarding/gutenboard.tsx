@@ -25,6 +25,7 @@ import useOnSiteCreation from './hooks/use-on-site-creation';
 import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 import useSignup from './hooks/use-signup';
 import useOnSignup from './hooks/use-on-signup';
+import useOnLogin from './hooks/use-on-login';
 
 registerBlockType( name, settings );
 
@@ -32,6 +33,7 @@ export function Gutenboard() {
 	const { __ } = useI18n();
 
 	useOnSignup();
+	useOnLogin();
 	useOnSiteCreation();
 	usePageViewTracksEvents();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
