@@ -109,8 +109,8 @@ export default class JetpackConnectFlow {
 				return;
 			}
 			// seems like it is not waiting for this
-			const noticesComponent = await NoticesComponent.Expect( this.driver );
-			await noticesComponent.dismissNotice();
+			// const noticesComponent = await NoticesComponent.Expect( this.driver );
+			// await noticesComponent.dismissNotice();
 			return await removeSites();
 		};
 

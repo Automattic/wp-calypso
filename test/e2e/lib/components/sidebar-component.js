@@ -261,11 +261,29 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			// no broken sites
 			return false;
 		}
-		await driverHelper.clickWhenClickable( this.driver, brokenSiteButton );
+		// await driverHelper.clickWhenClickable( this.driver, brokenSiteButton );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, brokenSiteButton );
+		const buttons = await this.driver.findElements( brokenSiteButton );
+		if ( buttons.length > 1 ) {
+			await buttons[ 1 ].click();
+		} else {
+			await driverHelper.clickWhenClickable( this.driver, brokenSiteButton );
+		}
+
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, disconnectJetpackButton );
 		await driverHelper.clickWhenClickable( this.driver, disconnectJetpackButton );
-		const surveyPage = await DisconnectSurveyPage.Expect( this.driver );
-		await surveyPage.skipSurveyAndDisconnectSite();
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.disconnect-site__actions a[href*="down"]' )
+		);
+
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.disconnect-jetpack__button-wrap a[href*="/stats"]' )
+		);
+
+		// const surveyPage = await DisconnectSurveyPage.Expect( this.driver );
+		// await surveyPage.skipSurveyAndDisconnectSite();
 		// Necessary to drive the loop forward
 		return true;
 	}
