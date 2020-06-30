@@ -72,3 +72,5 @@ Required. A component to display with the site has a valid status.
 ### `children`
 
 Optional. Components to display while loading site state.
+### `productSlugTest`
+Optional. Provide a function that takes a string and outputs a boolean to test for the presence of a given product.
