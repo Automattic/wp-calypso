@@ -14,6 +14,7 @@ import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
+	ACCOUNT_CREATION_AND_LOGIN,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
 	RECEIVED_AUTHORIZATION_RESPONSE,
@@ -37,6 +38,14 @@ export class PayButton extends React.Component {
 				break;
 
 			case INPUT_VALIDATION:
+				if ( this.props.transactionStep.error ) {
+					state = this.beforeSubmit();
+				} else {
+					state = this.sending();
+				}
+				break;
+
+			case ACCOUNT_CREATION_AND_LOGIN:
 				if ( this.props.transactionStep.error ) {
 					state = this.beforeSubmit();
 				} else {

@@ -76,7 +76,7 @@ const CartStore = {
 		let newCartKey = selectedSiteId;
 		_userLoggedIn = userLoggedIn;
 
-		if ( ! newCartKey ) {
+		if ( '/checkout/no-site' === window.location.pathname ) {
 			newCartKey = _userLoggedIn ? 'no-site' : 'no-user';
 		}
 

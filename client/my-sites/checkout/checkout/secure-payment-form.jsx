@@ -51,8 +51,6 @@ import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/proce
 import { isWpComEcommercePlan } from 'lib/plans';
 import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
 import { isExternal } from 'lib/url';
-import { getSavedVariations } from 'lib/abtest';
-import wpcom from 'lib/wp';
 
 /**
  * Module variables
@@ -159,83 +157,8 @@ export class SecurePaymentForm extends Component {
 	handlePaymentBoxSubmit = ( event ) => {
 		gaRecordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
-		this.createAccount( event );
+		this.submitTransaction( event );
 	};
-
-	async createAccount( event ) {
-		event && event.preventDefault();
-		const email = get( this.props.transaction, 'newCardFormFields.email', null );
-
-		try {
-			if ( ! email ) {
-				// throw error
-			}
-
-			const response = await wpcom.undocumented().usersNew(
-				{
-					email,
-					'g-recaptcha-error': undefined,
-					'g-recaptcha-response': undefined,
-					is_passwordless: true,
-					signup_flow_name: 'onboarding-new',
-					validate: false,
-					ab_test_variations: getSavedVariations(),
-				},
-				null
-			);
-			this.createAccountCallback( null, response );
-		} catch ( err ) {
-			this.createAccountCallback( err );
-		}
-	}
-
-	createAccountCallback = ( error, response ) => {
-		if ( error ) {
-			// const errorMessage = this.getErrorMessage( error );
-
-			// this.setState( {
-			// 	errorMessages: [ errorMessage ],
-			// 	isSubmitting: false,
-			// } );
-			// this.submitTracksEvent( false, { action_message: error.message } );
-			return;
-		}
-
-		wpcom.loadToken( response.bearer_token );
-
-		this.submitTransaction();
-	};
-
-	getErrorMessage( errorObj = { error: null, message: null } ) {
-		const { translate } = this.props;
-
-		switch ( errorObj.error ) {
-			case 'already_taken':
-			case 'already_active':
-			case 'email_exists':
-				return (
-					<>
-						{ translate( 'An account with this email address already exists.' ) }
-						&nbsp;
-						{ translate( 'If this is you {{a}}log in now{{/a}}.', {
-							components: {
-								a: (
-									<a
-										href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
-											this.state.email
-										) }` }
-									/>
-								),
-							},
-						} ) }
-					</>
-				);
-			default:
-				return translate(
-					'Sorry, something went wrong when trying to create your account. Please try again.'
-				);
-		}
-	}
 
 	getInitialCard() {
 		return this.props.cards[ 0 ];
@@ -262,6 +185,8 @@ export class SecurePaymentForm extends Component {
 			transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
+		const email = get( this.props.transaction, 'newCardFormFields.email', null );
+
 		submit(
 			{
 				cart,
@@ -272,6 +197,8 @@ export class SecurePaymentForm extends Component {
 				stripe: transaction.stripe,
 				stripeConfiguration: transaction.stripeConfiguration,
 				isWhiteGloveOffer,
+				email,
+				isLoggedOutCart: this.props.isLoggedOutCart,
 			},
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
@@ -281,9 +208,9 @@ export class SecurePaymentForm extends Component {
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
-		const { isJetpack, siteIsPrivate } = this.props;
+		const { isJetpack, siteIsPrivate, isLoggedOutCart } = this.props;
 
-		if ( isJetpack || ! siteIsPrivate ) {
+		if ( ! isLoggedOutCart && ( isJetpack || ! siteIsPrivate ) ) {
 			return;
 		}
 

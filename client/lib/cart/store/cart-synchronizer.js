@@ -161,20 +161,23 @@ CartSynchronizer.prototype._poll = function () {
 
 CartSynchronizer.prototype._pollFromLocalStorage = function () {
 	const newCartItemsToAdd = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) );
-	const other = flow( ...newCartItemsToAdd.map( ( cartItem ) => addCartItem( cartItem ) ) );
+	const addtoCart = flow( ...newCartItemsToAdd.map( ( cartItem ) => addCartItem( cartItem ) ) );
 
 	const changeFunction = ( cart ) => {
-		return fillInAllCartItemAttributes( other( cart ), productsList.get() );
+		return fillInAllCartItemAttributes( addtoCart( cart ), productsList.get() );
 	};
 
-	const initialCart = {
-		cart_key: this._cartKey,
-		products: [],
-		temporary: true,
-		create_new_blog: true,
-	};
-	this._latestValue = changeFunction( initialCart );
-	this._performRequest( 'fetchFromLocalStorage', this._postToServer.bind( this ) );
+	if ( ! this._latestValue ) {
+		const initialCart = {
+			cart_key: this._cartKey,
+			products: [],
+			temporary: true,
+			create_new_blog: true,
+		};
+		this._latestValue = changeFunction( initialCart );
+	}
+
+	this._performRequest( 'poll', this._postToServer.bind( this ) );
 };
 
 CartSynchronizer.prototype.fetch = function () {
@@ -229,6 +232,7 @@ CartSynchronizer.prototype._performRequest = function ( type, requestFunction ) 
 			request.state = 'completed';
 
 			if ( ! this._hasLoadedFromServer ) {
+				request.id + ': _processQueuedChanges ' + request.type;
 				this._processQueuedChanges();
 				this._hasLoadedFromServer = true;
 			}

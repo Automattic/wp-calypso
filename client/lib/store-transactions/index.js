@@ -5,6 +5,7 @@ import { isEmpty, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:store-transactions' );
 import inherits from 'inherits';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import paymentGatewayLoader from 'lib/payment-gateway-loader';
 import { validatePaymentDetails } from 'lib/checkout';
 import {
 	INPUT_VALIDATION,
+	ACCOUNT_CREATION_AND_LOGIN,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
 	REDIRECTING_FOR_AUTHORIZATION,
@@ -31,6 +33,7 @@ import {
 	confirmStripePaymentIntent,
 	StripeValidationError,
 } from 'lib/stripe';
+import { getSavedVariations } from 'lib/abtest';
 
 const wpcom = wp.undocumented();
 
@@ -73,10 +76,24 @@ function TransactionFlow( initialData, onStep ) {
 		throw new Error( 'Invalid payment method: ' + paymentMethod );
 	}
 
-	paymentHandler.call( this );
+	if ( initialData.isLoggedOutCart ) {
+		this._pushStep( { name: ACCOUNT_CREATION_AND_LOGIN, first: true } );
+		this._createAccount( initialData.email )
+			.then( ( errorMessage ) => {
+				if ( errorMessage ) {
+					throw new Error( errorMessage );
+				}
+				paymentHandler.call( this );
+			} )
+			.catch( ( error ) => {
+				this._pushStep( { name: ACCOUNT_CREATION_AND_LOGIN, error, first: true, last: true } );
+			} );
+	} else {
+		paymentHandler.call( this );
+	}
 }
 
-TransactionFlow.prototype._pushStep = function ( options ) {
+TransactionFlow.prototype._pushStep = async function ( options ) {
 	const defaults = {
 		first: false,
 		last: false,
@@ -84,6 +101,70 @@ TransactionFlow.prototype._pushStep = function ( options ) {
 	};
 
 	this._onStep( Object.assign( defaults, options ) );
+};
+
+TransactionFlow.prototype._createAccount = async function ( email ) {
+	try {
+		if ( ! email ) {
+			// new ValidationError( 'invalid-card-details', validation.errors ),
+			throw new Error( 'Account creation failed.' );
+		}
+
+		const response = await wp.undocumented().usersNew(
+			{
+				email,
+				'g-recaptcha-error': undefined,
+				'g-recaptcha-response': undefined,
+				is_passwordless: true,
+				signup_flow_name: 'onboarding-new',
+				validate: false,
+				ab_test_variations: getSavedVariations(),
+			},
+			null
+		);
+		this._createAccountCallback( null, response );
+	} catch ( err ) {
+		return this._createAccountCallback( err );
+	}
+};
+
+TransactionFlow.prototype._createAccountCallback = async function ( errorObj, response ) {
+	if ( errorObj ) {
+		const getErrorMessage = ( error ) => {
+			switch ( error ) {
+				case 'already_taken':
+				case 'already_active':
+				case 'email_exists':
+					return i18n.translate( 'An account with this email address already exists.' );
+				default:
+					return i18n.translate(
+						'Sorry, something went wrong when trying to create your account. Please try again.'
+					);
+			}
+		};
+		return getErrorMessage( errorObj.error );
+	}
+
+	wp.loadToken( response.bearer_token );
+	const url = 'https://wordpress.com/wp-login.php';
+	const bodyObj = {
+		authorization: 'Bearer ' + response.bearer_token,
+		log: response.username,
+	};
+	const bodyTemp = Object.fromEntries(
+		Object.entries( bodyObj ?? {} ).map( ( [ key, val ] ) => [ key, val ?? '' ] )
+	);
+	const body = new globalThis.URLSearchParams( bodyTemp ).toString();
+
+	const loginResponse = await globalThis.fetch( url, {
+		method: 'POST',
+		redirect: 'manual',
+		credentials: 'include',
+		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+		body,
+	} );
+
+	// handle login error
 };
 
 TransactionFlow.prototype._paymentHandlers = {

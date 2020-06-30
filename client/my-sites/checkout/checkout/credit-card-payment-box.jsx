@@ -14,6 +14,7 @@ import CreditCardSelector from './credit-card-selector';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
+	ACCOUNT_CREATION_AND_LOGIN,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
 	REDIRECTING_FOR_AUTHORIZATION,
@@ -41,6 +42,12 @@ function isFormSubmitting( transactionStep ) {
 			return false;
 
 		case INPUT_VALIDATION:
+			if ( transactionStep.error ) {
+				return false;
+			}
+			return true;
+
+		case ACCOUNT_CREATION_AND_LOGIN:
 			if ( transactionStep.error ) {
 				return false;
 			}

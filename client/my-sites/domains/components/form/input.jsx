@@ -115,6 +115,7 @@ export default class Input extends React.Component {
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError }
 					inputRef={ this.inputRef }
+					type={ this.props.type || 'text' }
 				/>
 				{ this.props.errorMessage && (
 					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />

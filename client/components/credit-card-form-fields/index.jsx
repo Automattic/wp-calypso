@@ -348,6 +348,7 @@ export class CreditCardFormFields extends React.Component {
 					autoFocus,
 					label: 'Email address',
 					placeholder: ' ',
+					type: 'email',
 				} ) }
 				<div className="credit-card-form-fields__field number">
 					<CreditCardNumberField
