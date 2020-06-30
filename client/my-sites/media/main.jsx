@@ -29,6 +29,7 @@ import { getMimeType } from 'lib/media/utils';
 import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
+import { editMedia } from 'state/media/thunks';
 
 /**
  * Style dependencies
@@ -153,7 +154,7 @@ class Media extends Component {
 			},
 		};
 
-		MediaActions.update( site.ID, item, true );
+		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
@@ -216,7 +217,7 @@ class Media extends Component {
 			return;
 		}
 
-		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
 	};
@@ -444,4 +445,4 @@ const mapStateToProps = ( state, { mediaId, site } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( Media ) );
+export default connect( mapStateToProps, { editMedia } )( localize( Media ) );

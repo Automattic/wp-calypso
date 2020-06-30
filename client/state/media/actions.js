@@ -24,6 +24,8 @@ import {
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
 	MEDIA_SOURCE_CHANGE,
+	MEDIA_ITEM_UPDATE,
+	MEDIA_ITEM_EDIT,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/media';
@@ -198,6 +200,32 @@ export function createMediaItem( site, transientMedia ) {
 		transientMedia,
 	};
 }
+
+/**
+ * Returns an action object used in signalling that media item for the site
+ * are to be edited.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} item media item
+ */
+export const editMediaItem = ( siteId, item ) => ( {
+	type: MEDIA_ITEM_EDIT,
+	siteId,
+	item,
+} );
+
+/**
+ * Returns an action object used in signalling that media item data for the site
+ * are to be updated.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} item media item
+ */
+export const updateMediaItem = ( siteId, item ) => ( {
+	type: MEDIA_ITEM_UPDATE,
+	siteId,
+	item,
+} );
 
 /**
  * Returns an action object used in signalling that media item(s) for the site

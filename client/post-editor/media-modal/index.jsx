@@ -40,6 +40,7 @@ import { getEditorPostId } from 'state/editor/selectors';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import { editMedia } from 'state/media/thunks';
 import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
@@ -309,7 +310,7 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
 
 		this.props.onRestoreMediaHook();
 	};
@@ -338,7 +339,7 @@ export class EditorMediaModal extends Component {
 			height && { height }
 		);
 
-		MediaActions.update( site.ID, item, true );
+		this.props.editMedia( site.ID, item );
 
 		resetAllImageEditorState();
 
@@ -656,5 +657,6 @@ export default connect(
 		),
 		recordEditorEvent,
 		recordEditorStat,
+		editMedia,
 	}
 )( localize( EditorMediaModal ) );

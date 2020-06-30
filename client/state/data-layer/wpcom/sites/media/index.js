@@ -1,11 +1,21 @@
 /**
+ * External dependencies
+ */
+import { toPairs } from 'lodash';
+
+/**
  * Internal dependencies
  */
 
 import debug from 'debug';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'state/action-types';
+import {
+	MEDIA_REQUEST,
+	MEDIA_ITEM_REQUEST,
+	MEDIA_ITEM_UPDATE,
+	MEDIA_ITEM_EDIT,
+} from 'state/action-types';
 import {
 	failMediaRequest,
 	failMediaItemRequest,
@@ -17,11 +27,57 @@ import {
 } from 'state/media/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import {
+	dispatchFluxUpdateMediaItemSuccess,
+	dispatchFluxUpdateMediaItemError,
+} from 'state/media/utils/flux-adapter';
 
 /**
  * Module variables
  */
 const log = debug( 'calypso:middleware-media' );
+
+export function updateMedia( action ) {
+	const { siteId, item } = action;
+
+	return [
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/media/${ item.ID }`,
+				apiVersion: '1.1',
+				body: item,
+			},
+			action
+		),
+	];
+}
+
+export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
+	dispatch( receiveMedia( siteId, mediaItem ) );
+	dispatchFluxUpdateMediaItemSuccess( siteId, mediaItem );
+};
+
+export const updateMediaError = ( { siteId }, error ) => (/* dispatch, getState */) => {
+	dispatchFluxUpdateMediaItemError( siteId, error );
+};
+
+export const editMedia = ( action ) => {
+	const { siteId, item } = action;
+	const { ID: mediaId, ...rest } = item;
+
+	return [
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/media/${ mediaId }/edit`,
+				apiVersion: '1.1',
+				formData: toPairs( rest ),
+			},
+			action
+		),
+	];
+};
 
 export function requestMedia( action ) {
 	log( 'Request media for site %d using query %o', action.siteId, action.query );
@@ -87,6 +143,22 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 			fetch: handleMediaItemRequest,
 			onSuccess: receiveMediaItem,
 			onError: receiveMediaItemError,
+		} ),
+	],
+
+	[ MEDIA_ITEM_UPDATE ]: [
+		dispatchRequest( {
+			fetch: updateMedia,
+			onSuccess: updateMediaSuccess,
+			onError: updateMediaError,
+		} ),
+	],
+
+	[ MEDIA_ITEM_EDIT ]: [
+		dispatchRequest( {
+			fetch: editMedia,
+			onSuccess: updateMediaSuccess,
+			onError: updateMediaError,
 		} ),
 	],
 } );
