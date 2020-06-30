@@ -20,8 +20,6 @@ import {
 	failMediaRequest,
 	failMediaItemRequest,
 	receiveMedia,
-	requestingMedia,
-	requestingMediaItem,
 	successMediaRequest,
 	successMediaItemRequest,
 } from 'state/media/actions';
@@ -83,7 +81,6 @@ export function requestMedia( action ) {
 	log( 'Request media for site %d using query %o', action.siteId, action.query );
 
 	return [
-		requestingMedia( action.siteId, action.query ),
 		http(
 			{
 				method: 'GET',
@@ -108,7 +105,6 @@ export function handleMediaItemRequest( action ) {
 	log( 'Request media item %d for site %d', mediaId, siteId );
 
 	return [
-		requestingMediaItem( siteId, query ),
 		http(
 			{
 				apiVersion: '1.2',
