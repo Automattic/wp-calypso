@@ -7,7 +7,7 @@ import { intersection, words } from 'lodash';
  * Internal dependencies
  */
 import { adminSections } from 'blocks/inline-help/admin-sections';
-import { getLocaleSlug } from "lib/i18n-utils";
+import { getLocaleSlug } from 'lib/i18n-utils';
 
 /**
  * Returns a filtered site admin collection.

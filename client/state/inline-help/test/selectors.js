@@ -9,7 +9,9 @@ import { expect } from 'chai';
 import isInlineHelpPopoverVisible from 'state/inline-help/selectors/is-inline-help-popover-visible';
 import getSearhQuery from 'state/inline-help/selectors/get-search-query';
 import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
-import getAdminHelpResults, { filterListBySearchTerm } from 'state/inline-help/selectors/get-admin-help-results';
+import getAdminHelpResults, {
+	filterListBySearchTerm,
+} from 'state/inline-help/selectors/get-admin-help-results';
 
 describe( '#isInlineHelpPopoverVisible()', () => {
 	test( 'should return if the popover is visible', () => {
@@ -171,10 +173,7 @@ describe( 'Admin section search and filters', () => {
 		];
 
 		test( 'should ignore non-word characters and return `[]`', () => {
-			const result = filterListBySearchTerm(
-				"<$(*&#\\\\\\'''''>",
-				mockCollection
-			);
+			const result = filterListBySearchTerm( "<$(*&#\\\\\\'''''>", mockCollection );
 			expect( result ).to.deep.equal( [] );
 		} );
 
@@ -184,10 +183,7 @@ describe( 'Admin section search and filters', () => {
 		} );
 
 		test( 'should return a direct match', () => {
-			const result = filterListBySearchTerm(
-				'The best section',
-				mockCollection
-			);
+			const result = filterListBySearchTerm( 'The best section', mockCollection );
 			expect( result ).to.deep.equal( [
 				{
 					description: 'Better than that other section.',
