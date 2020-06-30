@@ -327,3 +327,11 @@ function load_donations() {
 	require_once __DIR__ . '/donations/donations.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_donations' );
+
+/**
+ * Coming soon
+ */
+function load_coming_soon() {
+	require_once __DIR__ . '/coming-soon/coming-soon.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
