@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, DefaultRootState } from 'react-redux';
 import page from 'page';
 
 /**
@@ -19,19 +19,46 @@ import getSiteScanHistory from 'state/selectors/get-site-scan-history';
 import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { useThreats } from 'lib/jetpack/use-threats';
+import { Threat } from 'components/jetpack/threat-item/types';
+import { Site } from 'my-sites/scan/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const filterOptions = [
+type FilterValue = 'all' | 'fixed' | 'ignored';
+type FilterOption =
+	| {
+			value: 'all';
+			label: 'All';
+	  }
+	| {
+			value: 'fixed';
+			label: 'Fixed';
+	  }
+	| {
+			value: 'ignored';
+			label: 'Ignored';
+	  };
+
+const filterOptions: FilterOption[] = [
 	{ value: 'all', label: 'All' },
 	{ value: 'fixed', label: 'Fixed' },
 	{ value: 'ignored', label: 'Ignored' },
 ];
 
-const ThreatStatusFilter = ( { isPlaceholder, onSelect } ) => {
+interface ThreatStatusFilterProps {
+	isPlaceholder: boolean;
+	onSelect: ( ...args: any[] ) => void;
+	initialSelected: FilterValue;
+}
+
+const ThreatStatusFilter: React.FC< ThreatStatusFilterProps > = ( {
+	isPlaceholder,
+	onSelect,
+	initialSelected,
+} ) => {
 	return isPlaceholder ? (
 		<div className="threat-history-list__filters is-placeholder"></div>
 	) : (
@@ -39,12 +66,48 @@ const ThreatStatusFilter = ( { isPlaceholder, onSelect } ) => {
 			className="threat-history-list__filters"
 			options={ filterOptions }
 			onSelect={ onSelect }
+			initialSelected={ initialSelected }
 			primary
 		/>
 	);
 };
 
-const ThreatHistoryList = ( {
+const mapStateToProps = ( state: DefaultRootState ) => {
+	const site = getSelectedSite( state ) as Site;
+	const siteId = site.ID;
+	const siteName = site.name;
+	const siteSlug = getSelectedSiteSlug( state ) as string;
+	const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
+	const siteLogEntries = getSiteScanHistory( state, siteId );
+
+	const showPlaceholders = !! isRequestingHistory && 0 === siteLogEntries.length;
+	const logEntries = showPlaceholders
+		? [
+				{ id: 1, status: 'fixed' },
+				{ id: 2, status: 'ignored' },
+				{ id: 3, status: 'fixed' },
+				{ id: 4, status: 'ignored' },
+		  ]
+		: siteLogEntries;
+	return {
+		siteId,
+		siteName,
+		siteSlug,
+		isRequestingHistory: showPlaceholders,
+		threats: logEntries as Threat[],
+	};
+};
+
+const mapDispatchToProps = { dispatchRecordTracksEvent: recordTracksEvent };
+
+interface ExternalProps {
+	filter: FilterValue;
+}
+
+type ConnectedProps = typeof mapDispatchToProps & ReturnType< typeof mapStateToProps >;
+type Props = ExternalProps & ConnectedProps;
+
+const ThreatHistoryList: React.FC< Props > = ( {
 	siteId,
 	siteName,
 	siteSlug,
@@ -57,8 +120,8 @@ const ThreatHistoryList = ( {
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const dispatch = useDispatch();
 	const handleOnFilterChange = React.useCallback(
-		( filterEntry ) => {
-			let filterValue = filterEntry.value;
+		( filterEntry: FilterOption ) => {
+			let filterValue: FilterValue | '' = filterEntry.value;
 			if ( 'all' === filterValue ) {
 				filterValue = '';
 			}
@@ -117,6 +180,7 @@ const ThreatHistoryList = ( {
 				<div className="threat-history-list__filters-wrapper">
 					<ThreatStatusFilter
 						isPlaceholder={ isRequestingHistory }
+						initialSelected={ currentFilter.value }
 						onSelect={ handleOnFilterChange }
 					/>
 				</div>
@@ -137,7 +201,6 @@ const ThreatHistoryList = ( {
 						showDialog={ showThreatDialog }
 						onCloseDialog={ closeDialog }
 						onConfirmation={ fixThreat }
-						siteId={ siteId }
 						siteName={ siteName }
 						threat={ selectedThreat }
 						action={ 'fix' }
@@ -149,30 +212,6 @@ const ThreatHistoryList = ( {
 };
 
 export default connect(
-	( state ) => {
-		const site = getSelectedSite( state );
-		const siteId = site.ID;
-		const siteName = site.name;
-		const siteSlug = getSelectedSiteSlug( state );
-		const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
-		const siteLogEntries = getSiteScanHistory( state, siteId );
-
-		const showPlaceholders = isRequestingHistory && 0 === siteLogEntries.length;
-		const logEntries = showPlaceholders
-			? [
-					{ id: 1, status: 'fixed' },
-					{ id: 2, status: 'ignored' },
-					{ id: 3, status: 'fixed' },
-					{ id: 4, status: 'ignored' },
-			  ]
-			: siteLogEntries;
-		return {
-			siteId,
-			siteName,
-			siteSlug,
-			isRequestingHistory: showPlaceholders,
-			threats: logEntries,
-		};
-	},
-	{ dispatchRecordTracksEvent: recordTracksEvent }
+	mapStateToProps,
+	mapDispatchToProps
 )( withLocalizedMoment( ThreatHistoryList ) );
