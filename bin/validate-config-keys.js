@@ -33,7 +33,7 @@ const environmentKeys = fs
 	.readdirSync( configRoot, { encoding: 'utf8' } )
 	.filter( ( filename ) => /\.json$/.test( path.basename( filename ) ) ) // only the JSON config files
 	.filter( ( filename ) => '_shared.json' !== filename ) // base config for all environments
-	.filter( ( filename ) => 'client.json' !== filename ) // whitelist of keys allowed in client
+	.filter( ( filename ) => 'client.json' !== filename ) // list of keys allowed in client
 	.filter( ( filename ) => ! /secrets/g.test( filename ) ) // secret tokens not part of this system
 	.map( ( filename ) => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
