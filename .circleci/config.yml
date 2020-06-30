@@ -759,6 +759,8 @@ workflows:
           test-flags: '-W -S $CIRCLE_SHA1'
           test-target: 'WOO'
           slack-webhook: '$SLACK_WOO'
+  wp-desktop:
+    jobs:
       - wp-desktop-source
       - wp-desktop-mac:
           requires:
