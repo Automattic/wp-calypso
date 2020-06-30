@@ -26,7 +26,7 @@ import 'state/inline-help/init';
 /**
  * Set the search query in the state tree for the inline help.
  *
- * @param {string} searchQuery - query store to store.
+ * @param {string} searchQuery - query string to persist.
  * @returns {Function}            Action thunk.
  */
 export function setInlineHelpSearchQuery( searchQuery = '' ) {
