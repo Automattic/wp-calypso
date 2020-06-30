@@ -149,11 +149,18 @@ input[type='radio'].domain-management-list-item__radio {
 	align-items: center;
 }
 
-@include breakpoint-deprecated( '<960px' ) {
-	.list-header {
+.list-header {
+	.info-popover {
+		vertical-align: middle;
+		margin-left: 1px;
+	}
+
+	@include breakpoint-deprecated( '<960px' ) {
 		display: none;
 	}
 }
+
+
 
 .domain-item .domain-item__checkbox {
 	margin-right: 12px;
@@ -216,7 +223,7 @@ input[type='radio'].domain-management-list-item__radio {
 }
 
 .domain-item__options {
-	width: 80px;
+	width: 65px;
 	font-size: $font-body-small;
 	text-align: center;
 }
