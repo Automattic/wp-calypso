@@ -634,7 +634,7 @@ export class MySitesSidebar extends Component {
 
 		let storeLink = '/store' + siteSuffix;
 		if ( isEcommerce( site.plan ) ) {
-			storeLink = site.options.admin_url + 'admin.php?page=wc-setup-checklist&calypsoify=1';
+			storeLink = site.options.admin_url + 'admin.php?page=wc-admin&calypsoify=1';
 		}
 
 		return (
