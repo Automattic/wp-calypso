@@ -202,6 +202,7 @@ export const sitePluginUpdated = ( siteId ) => ( {
  * @param  {string} [frontPageOptions.show_on_front] What to show in homepage. Can be 'page' or 'posts'.
  * @param  {number} [frontPageOptions.page_on_front] If `show_on_front = 'page'`, the front page ID.
  * @param  {number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
+ * @param  {number} [frontPageOptions.page_for_coming_soon] Coming soon page ID.
  * @returns {object} Action object
  */
 export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {

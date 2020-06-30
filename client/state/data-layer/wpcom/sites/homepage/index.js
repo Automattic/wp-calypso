@@ -22,6 +22,7 @@ const updateSiteFrontPageRequest = ( action ) =>
 			body: {
 				is_page_on_front: 'page' === get( action.frontPageOptions, 'show_on_front' ),
 				page_on_front_id: get( action.frontPageOptions, 'page_on_front' ),
+				page_for_coming_soon_id: get( action.frontPageOptions, 'page_for_coming_soon' ),
 				page_for_posts_id: get( action.frontPageOptions, 'page_for_posts' ),
 			},
 		},
@@ -30,13 +31,14 @@ const updateSiteFrontPageRequest = ( action ) =>
 
 const setSiteFrontPage = (
 	{ siteId },
-	{ is_page_on_front, page_on_front_id, page_for_posts_id }
+	{ is_page_on_front, page_on_front_id, page_for_coming_soon_id, page_for_posts_id }
 ) => ( dispatch ) => {
 	dispatch(
 		bypassDataLayer(
 			updateSiteFrontPage( siteId, {
 				show_on_front: is_page_on_front ? 'page' : 'posts',
 				page_on_front: parseInt( page_on_front_id, 10 ),
+				page_for_coming_soon: parseInt( page_for_coming_soon_id, 10 ),
 				page_for_posts: parseInt( page_for_posts_id, 10 ),
 			} )
 		)
