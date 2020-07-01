@@ -71,6 +71,9 @@ export const LocaleContext: React.FunctionComponent< Props > = ( { children } ) 
 		loadInitalLocale();
 	}, [] );
 
+	// fixme: Exposes the changeLocale function for demonstration purposes
+	window.updateLocale = changeLocale; // eslint-disable-line no-global-assign
+
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
 			<I18nProvider localeData={ reactLocaleData }>{ children }</I18nProvider>
