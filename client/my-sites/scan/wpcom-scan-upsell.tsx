@@ -8,15 +8,16 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from '@wordpress/url';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import FormattedHeader from 'components/formatted-header';
+import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCTA from 'components/promo-section/promo-card/cta';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Asset dependencies
@@ -56,7 +57,9 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 					cta={ {
 						text: translate( 'Get daily scanning' ),
 						action: {
-							url: `/checkout/${ siteSlug }/jetpack_scan`,
+							url: addQueryArgs( `/checkout/${ siteSlug }/jetpack_scan`, {
+								redirect_to: window.location.href,
+							} ),
 							onClick: onUpgradeClick,
 							selfTarget: true,
 						},
