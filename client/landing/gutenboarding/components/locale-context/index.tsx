@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { setLocaleData } from '@wordpress/i18n';
+import { setLocaleData, LocaleData } from '@wordpress/i18n';
 import { subscribe, select } from '@wordpress/data';
 import { I18nProvider } from '@automattic/react-i18n';
 import {
@@ -13,6 +13,7 @@ import {
 import { getLanguageSlugs } from '../../../../lib/i18n-utils';
 import { getUrlParts } from '../../../../lib/url/url-parts';
 import config from '../../../../config';
+import type { User } from '../../../../lib/user';
 
 /**
  * Internal dependencies
@@ -24,6 +25,20 @@ const USE_TRANSLATION_CHUNKS: boolean =
 	config.isEnabled( 'use-translation-chunks' ) ||
 	getUrlParts( document.location.href ).searchParams.has( 'USE_TRASNSLATION_CHUNKS' );
 
+interface AppWindow extends Window {
+	currentUser?: User;
+	BUILD_TARGET?: string;
+	installedChunks?: string[];
+	i18nLocaleStrings?: string;
+	__requireChunkCallback__?: {
+		add( callback: Function ): void;
+		getInstalledChunks(): string[];
+	};
+	updateLocale: () => void; // fixme: this is just for demonstration purposes
+}
+
+declare const window: AppWindow;
+
 export type ChangeLocaleFunction = ( newLocale: string ) => void;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -34,7 +49,7 @@ export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 	const [ reactLocaleData, setReactLocaleData ] = React.useState();
 
-	const setLocale = ( newLocaleData ) => {
+	const setLocale = ( newLocaleData: LocaleData ) => {
 		// Translations done within react are made using the localData passed to the <I18nProvider/>.
 		// We must also set the locale for translations done outside of a react rendering cycle using setLocaleData.
 		setLocaleData( newLocaleData );
@@ -70,7 +85,7 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 	}, [] );
 
 	// fixme: Exposes the changeLocale function for demonstration purposes
-	window.updateLocale = changeLocale; // eslint-disable-line no-global-assign
+	window.updateLocale = changeLocale;
 
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
@@ -122,7 +137,7 @@ async function setupTranslationChunks( localeSlug: string, translatedChunks: str
 	);
 
 	const localeData = await Promise.all(
-		[ ...installedChunks ].map( ( chunkId ) => loadTranslationForChunkIfNeeded( chunkId ) )
+		[ ...installedChunks ].map( ( chunkId: string ) => loadTranslationForChunkIfNeeded( chunkId ) )
 	).then( ( values ) =>
 		values.reduce( ( localeDataObj, chunk ) => Object.assign( {}, localeDataObj, chunk ) )
 	);
