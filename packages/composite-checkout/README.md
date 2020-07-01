@@ -172,6 +172,14 @@ It has the following props.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
+In addition, `CheckoutProvider` monitors the [transaction status](#useTransactionStatus) and will take actions when it changes.
+
+- If the `transactionStatus` changes to 'pending', the [form status](#useFormStatus) will be set to 'submitting'.
+- If the `transactionStatus` changes to 'error', the transaction status will be set to 'not-started', the [form status](#useFormStatus) will be set to 'ready', and the error message will be displayed.
+- If the `transactionStatus` changes to 'complete', the [form status](#useFormStatus) will be set to 'complete' (which will cause the `onPaymentComplete` function to be called).
+- If the `transactionStatus` changes to 'redirecting', the page will be redirected to the `transactionRedirectUrl` (or will display an error as above if there is no url).
+- If the `transactionStatus` changes to 'not-started', the [form status](#useFormStatus) will be set to 'ready'.
+
 ### CheckoutReviewOrder
 
 Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and whatever `submitButton` is in the current payment method.
@@ -424,17 +432,18 @@ A React Hook that returns the `total` property provided to the [CheckoutProvider
 
 ### useTransactionStatus
 
-A React Hook that returns an object with the following properties to be used by [payment methods](#payment-methods) for storing and communicating the current status of the transaction. This differs from the current status of the _form_, which is handled by [useFormStatus](#useFormStatus).
+A React Hook that returns an object with the following properties to be used by [payment methods](#payment-methods) for storing and communicating the current status of the transaction. This differs from the current status of the _form_, which is handled by [useFormStatus](#useFormStatus). Note, however, that [CheckoutProvider](#CheckoutProvider) will automatically perform certain actions when the transaction status changes. See [CheckoutProvider](#CheckoutProvider) for the details.
 
 - `transactionStatus: string`. The current status of the transaction; one of 'not-started', 'complete', 'error', 'pending', 'redirecting', 'authorizing'.
+- `previousTransactionStatus: string`. The last status of the transaction; one of 'not-started', 'complete', 'error', 'pending', 'redirecting', 'authorizing'.
 - `transactionError: string | null`. The most recent error message encountered by the transaction if its status is 'error'.
 - `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is 'redirecting'.
-- `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionAuthorizing`, `setTransactionRedirecting`, or `setTransactionComplete`.
+- `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionAuthorizing` or `setTransactionComplete`.
 - `resetTransaction: () => void`. Function to change the transaction status to 'not-started'.
 - `setTransactionComplete: ( object ) => void`. Function to change the transaction status to 'complete' and save the response object in `transactionLastResponse`.
 - `setTransactionError: ( string ) => void`. Function to change the transaction status to 'error' and save the error in `transactionError`.
 - `setTransactionPending: () => void`. Function to change the transaction status to 'pending'.
-- `setTransactionRedirecting: ( object ) => void`. Function to change the transaction status to 'redirecting' and save the response object in `transactionLastResponse`.
+- `setTransactionRedirecting: ( string ) => void`. Function to change the transaction status to 'redirecting' and save the redirect URL in `transactionRedirectUrl`.
 - `setTransactionAuthorizing: ( object ) => void`. Function to change the transaction status to 'authorizing' and save the response object in `transactionLastResponse`.
 
 ## FAQ

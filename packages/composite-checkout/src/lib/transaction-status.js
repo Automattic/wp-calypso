@@ -14,6 +14,7 @@ export function useTransactionStatus() {
 }
 
 const initialState = {
+	previousTransactionStatus: 'not-started', // string
 	transactionStatus: 'not-started', // string
 	transactionError: null, // string | null
 	transactionLastResponse: null, // object | null
@@ -91,6 +92,7 @@ function transactionStatusReducer( state, action ) {
 			const { status, response, error, url } = action.payload;
 			return {
 				...state,
+				previousTransactionStatus: state.transactionStatus,
 				transactionStatus: status,
 				transactionLastResponse: response,
 				transactionRedirectUrl: url,
