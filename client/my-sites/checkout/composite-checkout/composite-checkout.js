@@ -485,6 +485,8 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			sofort: ( transactionData ) =>
 				genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+			eps: ( transactionData ) =>
+				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>
