@@ -3,19 +3,18 @@
  */
 import React, { useState } from 'react';
 import { useSelect } from '@wordpress/data';
-import { Plans, DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import PlanItem from './plan-item';
+import { PLANS_STORE } from '../constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const PLANS_STORE = Plans.register();
 
 export interface Props {
 	selectedPlanSlug: string;

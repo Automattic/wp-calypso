@@ -57,7 +57,16 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	}
 
 	// Otherwise, just return to post type listings
+
+	let label = translate( 'Back' );
+	if ( postType === 'post' ) {
+		label = translate( 'View Posts' );
+	} else if ( postType === 'page' ) {
+		label = translate( 'View Pages' );
+	}
+
 	return {
 		url: getPostTypeAllPostsUrl( state, postType ),
+		label,
 	};
 }

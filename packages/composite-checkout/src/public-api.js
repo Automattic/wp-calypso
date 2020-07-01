@@ -39,6 +39,7 @@ import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
 import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
 import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
+import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
 import {
 	createGiropayPaymentMethodStore,
 	createGiropayMethod,
@@ -86,6 +87,8 @@ export {
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
+	createAlipayMethod,
+	createAlipayPaymentMethodStore,
 	createApplePayMethod,
 	createExistingCardMethod,
 	createFreePaymentMethod,

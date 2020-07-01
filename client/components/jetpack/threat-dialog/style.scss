@@ -53,7 +53,8 @@
 			width: 100%;
 
 			@include breakpoint-deprecated( '>480px' ) {
-				width: 140px;
+				min-width: 140px;
+				width: auto;
 			}
 		}
 	}

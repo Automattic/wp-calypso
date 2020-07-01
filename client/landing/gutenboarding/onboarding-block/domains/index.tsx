@@ -15,7 +15,6 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { FLOW_ID } from '../../constants';
 import ActionButtons, { BackButton } from '../../components/action-buttons';
 import { Title, SubTitle } from '../../components/titles';
@@ -25,7 +24,6 @@ import { Title, SubTitle } from '../../components/titles';
  */
 import './style.scss';
 
-const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 interface Props {
@@ -91,7 +89,6 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				onSetDomainSearch={ setDomainSearch }
 				currentDomain={ domain }
 				onDomainSelect={ onDomainSelect }
-				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
 			/>
 		</div>

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
+import { useSelect } from '@wordpress/data';
 import { times } from 'lodash';
 import { Button, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
@@ -15,8 +16,13 @@ import SuggestionItem from './suggestion-item';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
 import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
 import DomainCategories from '../domain-categories';
-import { PAID_DOMAINS_TO_SHOW, PAID_DOMAINS_TO_SHOW_EXPANDED } from '../constants';
+import {
+	PAID_DOMAINS_TO_SHOW,
+	PAID_DOMAINS_TO_SHOW_EXPANDED,
+	DOMAIN_SUGGESTIONS_STORE,
+} from '../constants';
 import { DomainNameExplanationImage } from '../domain-name-explanation/';
+
 /**
  * Style dependencies
  */
@@ -50,8 +56,6 @@ export interface Props {
 	/** An identifier for the wrapping UI used for setting ui_algo. Eg: domain_popover */
 	analyticsUiAlgo: string;
 
-	domainSuggestionVendor: string;
-
 	/** The initial domain search query */
 	initialDomainSearch?: string;
 
@@ -67,7 +71,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
 	analyticsFlowId,
 	analyticsUiAlgo,
-	domainSuggestionVendor,
 	initialDomainSearch = '',
 	onSetDomainSearch,
 } ) => {
@@ -81,6 +84,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	// keep domain query in local state to allow free editing of the input value while the modal is open
 	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
 	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
+
+	const domainSuggestionVendor = useSelect( ( select ) =>
+		select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestionVendor()
+	);
 
 	const allDomainSuggestions = useDomainSuggestions(
 		domainSearch.trim(),

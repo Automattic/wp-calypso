@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import { Plans, DomainSuggestions } from '@automattic/data-stores';
+import type { Plans, DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -12,13 +12,12 @@ import { Plans, DomainSuggestions } from '@automattic/data-stores';
 import { Title } from '../titles';
 import PlansTable from '../plans-table';
 import PlansDetails from '../plans-details';
+import { PLANS_STORE } from '../constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const PLANS_STORE = Plans.register();
 type PlansSlug = Plans.PlanSlug;
 
 export interface Props {

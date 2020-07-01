@@ -475,6 +475,8 @@ export default function CompositeCheckout( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
+			alipay: ( transactionData ) =>
+				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			giropay: ( transactionData ) =>
 				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			ideal: ( transactionData ) =>

@@ -473,8 +473,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				} );
 				break;
 			case sslStatuses.SSL_ACTIVE:
-				sslStatusHuman = translate( 'on', {
-					comment: 'Shows as "HTTPS encryption: on" in the nav menu',
+				sslStatusHuman = translate( 'active', {
+					comment: 'Shows as "HTTPS encryption: active" in the nav menu',
 				} );
 				break;
 			case sslStatuses.SSL_DISABLED:

@@ -9,7 +9,6 @@ import { Site } from '@automattic/data-stores';
 import DomainPickerModal from '../domain-picker-modal';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import { useDomainSuggestions, DOMAIN_SUGGESTION_VENDOR } from '../hooks/use-domain-suggestions';
 const FLOW_ID = 'gutenboarding';
 
 const SITES_STORE = Site.register( { client_id: '', client_secret: '' } );
@@ -23,13 +22,6 @@ declare global {
 export default function DomainPickerButton() {
 	const [ isDomainModalVisible, setDomainModalVisibility ] = React.useState( false );
 	const [ domainSearch, setDomainSearch ] = React.useState( '' );
-	const [ domainCategory, setDomainCategory ] = React.useState< string | undefined >( '' );
-
-	const domainSuggestions = useDomainSuggestions( domainSearch, domainCategory );
-
-	const domainCategories = useSelect( ( select ) =>
-		select( 'automattic/domains/suggestions' ).getCategories()
-	);
 
 	const site = useSelect( ( select ) => select( SITES_STORE ).getSite( window._currentSiteId ) );
 
@@ -53,11 +45,8 @@ export default function DomainPickerButton() {
 			</Button>
 			<DomainPickerModal
 				analyticsFlowId={ FLOW_ID }
-				domainSuggestions={ domainSuggestions }
+				analyticsUiAlgo="editor_domain_modal"
 				initialDomainSearch={ search }
-				domainCategories={ domainCategories }
-				domainCategory={ domainCategory }
-				onSetDomainCategory={ setDomainCategory }
 				onSetDomainSearch={ setDomainSearch }
 				isOpen={ isDomainModalVisible }
 				showDomainConnectButton
@@ -67,10 +56,6 @@ export default function DomainPickerButton() {
 				currentDomain={ currentDomain }
 				onDomainSelect={ () => setDomainModalVisibility( false ) }
 				onClose={ () => setDomainModalVisibility( false ) }
-				// eslint-disable-next-line @typescript-eslint/no-empty-function
-				recordAnalytics={ () => {} }
-				railcarId={ 'railcarId' }
-				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			/>
 		</>
 	);

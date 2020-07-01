@@ -81,7 +81,6 @@ export default function useOnSiteCreation() {
 
 			if ( selectedPlan && ! selectedPlan?.isFree ) {
 				const planProduct = {
-					meta: selectedPlan.title,
 					product_id: selectedPlan.productId,
 					product_slug: selectedPlan.storeSlug,
 					extra: {

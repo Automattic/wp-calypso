@@ -14,6 +14,10 @@ import { stringifyDomainQueryObject } from './utils';
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
 
 const createSelectors = ( vendor: string ) => {
+	function getDomainSuggestionVendor() {
+		return vendor;
+	}
+
 	function getCategories( state: State ) {
 		// Sort domain categories by tier, then by title.
 		return [
@@ -72,7 +76,7 @@ const createSelectors = ( vendor: string ) => {
 			include_dotblogsubdomain: false,
 			only_wordpressdotcom: false,
 			quantity: 5,
-			vendor: vendor,
+			vendor,
 
 			// Merge options
 			...queryOptions,
@@ -96,6 +100,7 @@ const createSelectors = ( vendor: string ) => {
 	return {
 		getCategories,
 		getDomainSuggestions,
+		getDomainSuggestionVendor,
 		isLoadingDomainSuggestions,
 		__internalGetDomainSuggestions,
 	};

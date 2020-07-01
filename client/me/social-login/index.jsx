@@ -79,8 +79,8 @@ class SocialLogin extends Component {
 
 	render() {
 		const { path, translate } = this.props;
-		const title = translate( 'Social Login' );
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
+		const title = useCheckupMenu ? translate( 'Social Logins' ) : translate( 'Social Login' );
 
 		return (
 			<Main className="security social-login">
@@ -91,7 +91,7 @@ class SocialLogin extends Component {
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (
 					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
-						{ translate( 'Two-Step Authentication' ) }
+						{ title }
 					</HeaderCake>
 				) }
 

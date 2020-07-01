@@ -134,7 +134,10 @@ export function acceptInvite( invite, callback ) {
 					dispatch( successNotice( ...acceptedNotice( invite ) ) );
 				}
 
-				recordTracksEvent( 'calypso_invite_accepted' );
+				recordTracksEvent( 'calypso_invite_accepted', {
+					is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+					inviter_blog_id: get( invite, 'site.ID', false ),
+				} );
 			}
 			dispatch( requestSites() );
 			if ( typeof callback === 'function' ) {
