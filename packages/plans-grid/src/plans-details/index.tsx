@@ -4,19 +4,20 @@
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { useSelect } from '@wordpress/data';
-import { Plans } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
-
 import { Icon, check } from '@wordpress/icons';
 
-const TickIcon = <Icon icon={ check } size={ 25 } />;
+/**
+ * Internal dependencies
+ */
+import { PLANS_STORE } from '../constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const PLANS_STORE = Plans.register();
+const TickIcon = <Icon icon={ check } size={ 25 } />;
 
 type Props = {
 	onSelect: Function;
