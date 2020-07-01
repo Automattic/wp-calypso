@@ -5,6 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -57,6 +58,15 @@ class DomainItem extends PureComponent {
 		onAddEmailClick( domain );
 	};
 
+	renewDomain = ( event ) => {
+		event.stopPropagation();
+
+		const { productSlug, name, subscriptionId } = this.props.domainDetails;
+		page(
+			`/checkout/${ productSlug }:${ name }/renew/${ subscriptionId }/${ this.props.site.slug }`
+		);
+	};
+
 	renderOptionsButton() {
 		const { isManagingAllSites, translate } = this.props;
 
@@ -66,7 +76,9 @@ class DomainItem extends PureComponent {
 					{ ! isManagingAllSites && (
 						<PopoverMenuItem icon="domains">{ translate( 'Make primary domain' ) }</PopoverMenuItem>
 					) }
-					<PopoverMenuItem icon="refresh">{ translate( 'Renew now' ) }</PopoverMenuItem>
+					<PopoverMenuItem icon="refresh" onClick={ this.renewDomain }>
+						{ translate( 'Renew now' ) }
+					</PopoverMenuItem>
 					<PopoverMenuItem icon="sync">{ translate( 'Turn off auto-renew' ) }</PopoverMenuItem>
 					<PopoverMenuItem icon="pencil">{ translate( 'Edit settings' ) }</PopoverMenuItem>
 				</EllipsisMenu>
