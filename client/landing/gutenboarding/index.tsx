@@ -63,6 +63,10 @@ interface AppWindow extends Window {
 	currentUser?: User;
 	i18nLocaleStrings?: string;
 	installedChunks?: string[];
+	__requireChunkCallback__?: {
+		add( callback: Function ): void;
+		getInstalledChunks(): string[];
+	};
 	BUILD_TARGET?: string;
 }
 declare const window: AppWindow;
@@ -262,6 +266,10 @@ function getLocaleFromUser( user: User ): string {
 }
 
 async function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
+	if ( ! window.__requireChunkCallback__ ) {
+		return;
+	}
+
 	interface TranslationChunksCache {
 		[ propName: string ]: undefined | boolean;
 	}
