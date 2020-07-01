@@ -198,6 +198,7 @@ function useTransactionStatusHandler( redirectToUrl ) {
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const { setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const {
+		previousTransactionStatus,
 		transactionStatus,
 		transactionRedirectUrl,
 		transactionError,
@@ -213,11 +214,11 @@ function useTransactionStatusHandler( redirectToUrl ) {
 	);
 	const redirectInfoMessage = __( 'Redirecting to payment partner…' );
 	useEffect( () => {
-		if ( transactionStatus === 'pending' ) {
+		if ( transactionStatus === 'pending' && previousTransactionStatus !== 'pending' ) {
 			debug( 'transaction is beginning' );
 			setFormSubmitting();
 		}
-		if ( transactionStatus === 'error' ) {
+		if ( transactionStatus === 'error' && previousTransactionStatus !== 'error' ) {
 			debug( 'showing error', transactionError );
 			showErrorMessage( transactionError || genericErrorMessage );
 			onEvent( {
@@ -227,11 +228,11 @@ function useTransactionStatusHandler( redirectToUrl ) {
 			resetTransaction();
 			setFormReady();
 		}
-		if ( transactionStatus === 'complete' ) {
+		if ( transactionStatus === 'complete' && previousTransactionStatus !== 'complete' ) {
 			debug( 'marking complete' );
 			setFormComplete();
 		}
-		if ( transactionStatus === 'redirecting' ) {
+		if ( transactionStatus === 'redirecting' && previousTransactionStatus !== 'redirecting' ) {
 			if ( ! transactionRedirectUrl ) {
 				debug( 'tried to redirect but there was no redirect url' );
 				setTransactionError( redirectErrormessage );
@@ -240,6 +241,10 @@ function useTransactionStatusHandler( redirectToUrl ) {
 			debug( 'redirecting to', transactionRedirectUrl );
 			showInfoMessage( redirectInfoMessage );
 			redirectToUrl( transactionRedirectUrl );
+		}
+		if ( transactionStatus === 'not-started' && previousTransactionStatus !== 'not-started' ) {
+			debug( 'transaction status has been reset; enabling form' );
+			setFormReady();
 		}
 	}, [
 		paymentMethodId,
@@ -252,6 +257,7 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		showErrorMessage,
 		showInfoMessage,
 		transactionStatus,
+		previousTransactionStatus,
 		transactionError,
 		transactionRedirectUrl,
 		redirectToUrl,
