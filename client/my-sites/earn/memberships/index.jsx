@@ -39,7 +39,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 /**
  * Image dependencies
  */
-import paymentsImage from 'assets/images/earn/payments-icon.svg';
+import paymentsImage from 'assets/images/earn/payments-illustration.svg';
 
 /**
  * Style dependencies
