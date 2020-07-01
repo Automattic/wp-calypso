@@ -90,7 +90,7 @@ function BancontactFields() {
 	return (
 		<BancontactFormWrapper>
 			<BancontactField
-				id="cardholderName"
+				id="bancontact-cardholder-name"
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
