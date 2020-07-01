@@ -5,11 +5,7 @@ import debugModule from 'debug';
 import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-<<<<<<< HEAD
 import { flowRight, get, includes, startsWith, omit } from 'lodash';
-=======
-import { flowRight, get, includes, startsWith } from 'lodash';
->>>>>>> Manage product type at checkout depending on the type of site.
 import { localize } from 'i18n-calypso';
 
 /**
@@ -184,7 +180,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 			return ! this.isCurrentUrlFetching() &&
 				this.isCurrentUrlFetched() &&
 				! this.props.jetpackConnectSite.isDismissed &&
-				this.state.status ? (
+				this.state.status &&
+				this.state.status !== IS_DOT_COM_GET_SEARCH ? (
 				<JetpackConnectNotices
 					noticeType={ this.state.status }
 					onDismissClick={ IS_DOT_COM === this.state.status ? this.goBack : this.dismissUrl }
@@ -212,6 +209,15 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return SITE_BLOCKED;
 			}
 
+			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+				const product = window.location.href.split( '/' )[ 5 ];
+
+				if ( startsWith( product, 'jetpack_search' ) ) {
+					return IS_DOT_COM_GET_SEARCH;
+				}
+				return IS_DOT_COM;
+			}
+
 			if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
 				return NOT_JETPACK;
 			}
@@ -225,15 +231,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 				url.toLowerCase() === 'https://wordpress.com'
 			) {
 				return WORDPRESS_DOT_COM;
-			}
-
-			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
-				const product = window.location.href.split( '/' )[ 5 ];
-
-				if ( startsWith( product, 'jetpack_search' ) || startsWith( product, 'wpcom_search' ) ) {
-					return IS_DOT_COM_GET_SEARCH;
-				}
-				return IS_DOT_COM;
 			}
 
 			if ( ! this.checkProperty( 'exists' ) ) {
