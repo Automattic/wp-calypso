@@ -33,7 +33,7 @@ import {
 	WordPressFreePurchaseLabel,
 	WordPressFreePurchaseSummary,
 } from './payment-method-helpers';
-import { createWeChatMethod, createWeChatPaymentMethodStore } from './wechat';
+import { createWeChatMethod, createWeChatPaymentMethodStore } from './payment-methods/wechat';
 
 function useCreatePayPal( { onlyLoadPaymentMethods } ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
