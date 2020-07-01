@@ -33,7 +33,6 @@ export function generateSteps( {
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
 	isDomainFulfilled = noop,
-	removeDomainStepForPaidPlans = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	addOrRemoveFromProgressStore = noop,
@@ -287,7 +286,6 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 			],
 			optionalDependencies: [ 'shouldHideFreePlan' ],
-			fulfilledStepCallback: removeDomainStepForPaidPlans,
 			props: {
 				isDomainOnly: false,
 			},

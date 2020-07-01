@@ -170,12 +170,12 @@ class DomainRegistrationSuggestion extends React.Component {
 		const {
 			cart,
 			isDomainOnly,
-			shouldHideFreeDomainExplainer,
 			domainsWithPlansOnly,
 			selectedSite,
 			suggestion,
+			selectedFreePlanInSwapFlow,
 		} = this.props;
-		const shouldShowFullDomainPrice = isDomainOnly || shouldHideFreeDomainExplainer;
+		const shouldShowFullDomainPrice = isDomainOnly || selectedFreePlanInSwapFlow;
 		return getDomainPriceRule(
 			domainsWithPlansOnly,
 			selectedSite,
@@ -361,6 +361,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				{ ...this.getButtonProps() }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
+				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }

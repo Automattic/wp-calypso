@@ -1098,7 +1098,8 @@ class RegisterDomainStep extends React.Component {
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-						shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
+						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
 				);
 			}, this );
@@ -1230,6 +1231,9 @@ class RegisterDomainStep extends React.Component {
 			<Notice text={ domainForwardingExplainer } showDismiss={ false } />
 		);
 
+		const shouldHideFreeDomainExplainer =
+			this.props.selectedFreePlanInSwapFlow || this.props.selectedPaidPlanInSwapFlow;
+
 		return (
 			<>
 				{ renderCustomDomainForFreePlanExplainer }
@@ -1261,11 +1265,12 @@ class RegisterDomainStep extends React.Component {
 					pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 					unavailableDomains={ this.state.unavailableDomains }
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-					shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
+					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 				>
 					{ this.props.isEligibleVariantForDomainTest &&
 						hasResults &&
-						! this.props.shouldHideFreeDomainExplainer &&
+						! shouldHideFreeDomainExplainer &&
 						this.renderFreeDomainExplainer() }
 
 					{ showTldFilterBar && (

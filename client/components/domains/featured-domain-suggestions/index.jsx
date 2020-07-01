@@ -122,7 +122,8 @@ export class FeaturedDomainSuggestions extends Component {
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-						shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
+						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
 				) }
 				{ secondarySuggestion && (
@@ -135,7 +136,8 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-						shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
+						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
 				) }
 			</div>
