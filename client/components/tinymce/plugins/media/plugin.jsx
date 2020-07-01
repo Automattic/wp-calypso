@@ -13,7 +13,6 @@ import closest from 'component-closest';
 /**
  * Internal dependencies
  */
-import { reduxDispatch } from 'lib/redux-bridge';
 import * as MediaConstants from 'lib/media/constants';
 import MediaActions from 'lib/media/actions';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
@@ -494,7 +493,7 @@ function mediaButton( editor ) {
 					view: ModalViews.DETAIL,
 				}
 			);
-			reduxDispatch( setMediaLibrarySelectedItems( siteId, [ image ] ) );
+			dispatch( setMediaLibrarySelectedItems( siteId, [ image ] ) );
 		},
 	} );
 
@@ -736,7 +735,7 @@ function mediaButton( editor ) {
 			delete gallery.orderby;
 		}
 
-		reduxDispatch( setMediaLibrarySelectedItems( selectedSite.ID, gallery.items ) );
+		dispatch( setMediaLibrarySelectedItems( selectedSite.ID, gallery.items ) );
 
 		renderModal(
 			{
