@@ -62,8 +62,7 @@ export default class LoginFlow {
 
 		if (
 			! useFreshLogin &&
-			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) ) &&
-			host !== 'PRESSABLEBLEEDINGEDGE'
+			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
 		) {
 			console.log( 'Reusing login cookie for ' + this.account.username );
 			await this.driver.navigate().refresh();
