@@ -31,6 +31,8 @@ import {
 	dispatchFluxUpdateMediaItemError,
 	dispatchFluxRemoveMediaItemSuccess,
 	dispatchFluxRemoveMediaItemError,
+	dispatchFluxRequestMediaItemSuccess,
+	dispatchFluxRequestMediaItemError,
 } from 'state/media/utils/flux-adapter';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -122,13 +124,17 @@ export function requestMediaItem( action ) {
 	];
 }
 
-export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
-	receiveMedia( siteId, media ),
-	successMediaItemRequest( siteId, mediaId ),
-];
+export const receiveMediaItem = ( { mediaId, siteId }, media ) => ( dispatch ) => {
+	dispatch( receiveMedia( siteId, media ) );
+	dispatch( successMediaItemRequest( siteId, mediaId ) );
 
-export const receiveMediaItemError = ( { mediaId, siteId } ) =>
-	failMediaItemRequest( siteId, mediaId );
+	dispatchFluxRequestMediaItemSuccess( siteId, media );
+};
+
+export const receiveMediaItemError = ( { mediaId, siteId }, error ) => ( dispatch ) => {
+	dispatch( failMediaItemRequest( siteId, mediaId ) );
+	dispatchFluxRequestMediaItemError( siteId, error );
+};
 
 export const requestDeleteMedia = ( action ) => {
 	return [
