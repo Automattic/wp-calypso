@@ -86,6 +86,7 @@ import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import { isEnabled } from 'config';
 
 /**
  * Style dependencies
@@ -301,7 +302,9 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
-				{ ! this.props.isEditorDeprecated && <EditorDeprecationDialog /> }
+				{ ! this.props.isEditorDeprecated && ! isEnabled( 'desktop' ) && (
+					<EditorDeprecationDialog />
+				) }
 				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
