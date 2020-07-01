@@ -15,14 +15,10 @@ export default class FormTextInput extends PureComponent {
 	};
 
 	state = {
-		value: '',
+		value: this.props.value || '',
 	};
 
 	currentTextField = undefined;
-
-	componentDidMount() {
-		this.state = { value: this.props.value || '' };
-	}
 
 	componentDidUpdate( oldProps ) {
 		this.updateValueIfNeeded( oldProps.value );
