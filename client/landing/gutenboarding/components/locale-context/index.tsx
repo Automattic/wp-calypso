@@ -13,7 +13,7 @@ import {
 import { getLanguageSlugs } from '../../../../lib/i18n-utils';
 import { getUrlParts } from '../../../../lib/url/url-parts';
 import config from '../../../../config';
-import type { User } from '../../../../lib/user';
+import type { User } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ const USE_TRANSLATION_CHUNKS: boolean =
 	getUrlParts( document.location.href ).searchParams.has( 'USE_TRASNSLATION_CHUNKS' );
 
 interface AppWindow extends Window {
-	currentUser?: User;
+	currentUser?: User.CurrentUser;
 	BUILD_TARGET?: string;
 	installedChunks?: string[];
 	i18nLocaleStrings?: string;
@@ -34,7 +34,7 @@ interface AppWindow extends Window {
 		add( callback: Function ): void;
 		getInstalledChunks(): string[];
 	};
-	updateLocale: () => void; // fixme: this is just for demonstration purposes
+	updateLocale: ( newLocale: string ) => Promise< void >; // fixme: this is just for demonstration purposes
 }
 
 declare const window: AppWindow;
@@ -47,13 +47,13 @@ const ChangeLocaleContext = React.createContext< ChangeLocaleFunction >( () => {
 export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 
 export const LocaleContext: React.FunctionComponent = ( { children } ) => {
-	const [ reactLocaleData, setReactLocaleData ] = React.useState();
+	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >();
 
-	const setLocale = ( newLocaleData: LocaleData ) => {
+	const setLocale = ( newLocaleData: LocaleData | undefined ) => {
 		// Translations done within react are made using the localData passed to the <I18nProvider/>.
 		// We must also set the locale for translations done outside of a react rendering cycle using setLocaleData.
 		setLocaleData( newLocaleData );
-		setReactLocaleData( newLocaleData );
+		setContextLocaleData( newLocaleData );
 	};
 
 	const changeLocale = async ( newLocale: string ) => {
@@ -89,14 +89,14 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
-			<I18nProvider localeData={ reactLocaleData }>{ children }</I18nProvider>
+			<I18nProvider localeData={ contextLocaleData }>{ children }</I18nProvider>
 		</ChangeLocaleContext.Provider>
 	);
 };
 
-function waitForCurrentUser(): Promise< User | undefined > {
+function waitForCurrentUser(): Promise< User.CurrentUser | undefined > {
 	let unsubscribe: () => void = () => undefined;
-	return new Promise< User | undefined >( ( resolve ) => {
+	return new Promise< User.CurrentUser | undefined >( ( resolve ) => {
 		unsubscribe = subscribe( () => {
 			const currentUser = select( USER_STORE ).getCurrentUser();
 			if ( currentUser ) {
@@ -198,6 +198,6 @@ async function getLocaleData( locale: string ) {
 	return getLanguageFile( locale );
 }
 
-function getLocaleFromUser( user: User ): string {
+function getLocaleFromUser( user: User.CurrentUser ): string {
 	return user.locale_variant || user.localeVariant || user.language || user.localeSlug;
 }
