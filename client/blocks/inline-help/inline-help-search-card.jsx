@@ -92,7 +92,7 @@ class InlineHelpSearchCard extends Component {
 	};
 
 	componentDidMount() {
-		this.props.setInlineHelpSearchQuery();
+		this.props.setInlineHelpSearchQuery( '' );
 	}
 
 	render() {
