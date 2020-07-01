@@ -16,6 +16,8 @@ import {
 	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
+	createEpsMethod,
+	createEpsPaymentMethodStore,
 	createFullCreditsMethod,
 	createFreePaymentMethod,
 	createApplePayMethod,
@@ -200,6 +202,30 @@ function useCreateSofort( {
 	);
 }
 
+function useCreateEps( {
+	onlyLoadPaymentMethods,
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+} ) {
+	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
+	const isMethodAllowed = onlyLoadPaymentMethods ? onlyLoadPaymentMethods.includes( 'eps' ) : true;
+	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+	const paymentMethodStore = useMemo( () => createEpsPaymentMethodStore(), [] );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createEpsMethod( {
+						store: paymentMethodStore,
+						stripe,
+						stripeConfiguration,
+				  } )
+				: null,
+		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+	);
+}
+
 function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
 	const shouldLoadFullCreditsMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'full-credits' )
@@ -343,6 +369,15 @@ export default function useCreatePaymentMethods( {
 		stripeConfiguration,
 		stripe,
 	} );
+
+	const epsMethod = useCreateEps( {
+		onlyLoadPaymentMethods,
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+	} );
+
 	const sofortMethod = useCreateSofort( {
 		onlyLoadPaymentMethods,
 		isStripeLoading,
@@ -392,6 +427,7 @@ export default function useCreatePaymentMethods( {
 		sofortMethod,
 		alipayMethod,
 		p24Method,
+		epsMethod,
 		stripeMethod,
 		paypalMethod,
 	].filter( Boolean );
