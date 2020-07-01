@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
 import { connect } from 'react-redux';
 import { concat, flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -32,7 +33,7 @@ import { urlToSlug } from 'lib/url';
 import searchSites from 'components/search-sites';
 import jetpackConnection from './jetpack-connection';
 
-import { JPC_PATH_REMOTE_INSTALL } from './constants';
+import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from './constants';
 import { ALREADY_CONNECTED } from './connection-notice-types';
 
 export class SearchPurchase extends Component {
@@ -92,11 +93,14 @@ export class SearchPurchase extends Component {
 	componentDidUpdate() {
 		const { status, processJpSite } = this.props;
 		const { currentUrl } = this.state;
+		const product = this.getProduct();
 
-		// here we will add status === IS_DOT_COM_SEARCH to the condition once
-		// we enable WP.com sites
+		if ( config.isEnabled( 'jetpack/wpcom-search-product' ) && status === IS_DOT_COM_GET_SEARCH ) {
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + product );
+		}
+
 		if ( status === ALREADY_CONNECTED ) {
-			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + 'jetpack_search' );
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + product );
 		}
 
 		processJpSite( currentUrl );
@@ -143,7 +147,22 @@ export class SearchPurchase extends Component {
 		);
 	}
 
+	getProduct() {
+		const product = window.location.pathname.split( '/' )[ 3 ];
+		const type = window.location.pathname.split( '/' )[ 4 ];
+
+		return [ 'monthly', 'yearly' ].includes( type ) ? product + '_' + type : product;
+	}
+
 	renderSiteInput( status ) {
+		const product = this.getProduct();
+		const isSearch = [
+			'jetpack_search',
+			'wpcom_search',
+			'jetpack_search_monthly',
+			'wpcom_search_monthly',
+		].includes( product );
+
 		return (
 			<Card className="jetpack-connect__site-url-input-container">
 				{ this.props.renderNotices() }
@@ -158,7 +177,7 @@ export class SearchPurchase extends Component {
 						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
 					}
 					isInstall={ true }
-					product={ 'jetpack_search' }
+					isSearch={ isSearch }
 					candidateSites={ this.state.candidateSites }
 				/>
 			</Card>

@@ -34,12 +34,13 @@ export default function () {
 	);
 
 	if ( isLoggedOut ) {
-		page( '/jetpack/connect/:type(jetpack_search)/:interval(yearly|monthly)?', ( { path } ) =>
-			page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
+		page(
+			'/jetpack/connect/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
+			( { path } ) => page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
 		);
 	} else {
 		page(
-			'/jetpack/connect/:type(jetpack_search)/:interval(yearly|monthly)?',
+			'/jetpack/connect/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
 			controller.persistMobileAppFlow,
 			controller.setMasterbar,
 			controller.purchase,

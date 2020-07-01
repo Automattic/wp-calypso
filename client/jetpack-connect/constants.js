@@ -1,3 +1,4 @@
+export const IS_DOT_COM_GET_SEARCH = 'isDotComGetSearch';
 export const JETPACK_MINIMUM_WORDPRESS_VERSION = '4.7';
 export const JPC_PATH_PLANS = '/jetpack/connect/plans';
 export const JPC_PATH_REMOTE_INSTALL = '/jetpack/connect/install';
