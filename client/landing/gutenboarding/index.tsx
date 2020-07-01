@@ -2,8 +2,6 @@
  * External dependencies
  */
 import '@automattic/calypso-polyfills';
-import { useI18n } from '@automattic/react-i18n';
-import { switchWebpackCSS } from '../../lib/i18n-utils/switch-locale';
 import * as React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
@@ -24,6 +22,7 @@ import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 import { addHotJarScript } from 'lib/analytics/hotjar';
+import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
 
 /**
  * Style dependencies
@@ -94,33 +93,6 @@ window.AppBoot = async () => {
 		document.getElementById( 'wpcom' )
 	);
 };
-
-function WindowLocaleEffectManager() {
-	const { __, isRTL, i18nLocale } = useI18n();
-
-	// Some languages may need to set an html lang attribute that is different from their slug
-	let lang = __( 'html_lang_attribute' );
-
-	// Some languages don't have the translation for html_lang_attribute
-	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug
-	if ( lang === 'html_lang_attribute' ) {
-		lang = i18nLocale;
-	}
-
-	React.useEffect( () => {
-		document.documentElement.lang = lang;
-	}, [ lang ] );
-
-	const isRtl = isRTL();
-
-	React.useEffect( () => {
-		document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
-		document.body.classList[ isRtl ? 'add' : 'remove' ]( 'rtl' );
-		switchWebpackCSS( isRtl );
-	}, [ isRtl ] );
-
-	return null;
-}
 
 async function checkAndRedirectIfSiteWasCreatedRecently() {
 	const shouldPathCauseRedirectForSelectedSite = () => {

@@ -31,9 +31,7 @@ const ChangeLocaleContext = React.createContext< ChangeLocaleFunction >( () => {
 
 export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 
-type Props = {};
-
-export const LocaleContext: React.FunctionComponent< Props > = ( { children } ) => {
+export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 	const [ reactLocaleData, setReactLocaleData ] = React.useState();
 
 	const setLocale = ( newLocaleData ) => {
