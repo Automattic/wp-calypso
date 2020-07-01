@@ -8,9 +8,13 @@ import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
-import { addAction, addFilter, applyFilters, doAction } from '@wordpress/hooks';
+import { addAction, addFilter, applyFilters, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { Component } from 'react';
+import { registerPlugin } from '@wordpress/plugins';
+import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
+import { Button } from '@wordpress/components';
+import { wordpress } from '@wordpress/icons';
+import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
 
@@ -564,10 +568,6 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleCloseEditor( calypsoPort ) {
-	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a'; // maintain support for Gutenberg plugin < v7.7
-	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
-	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
-
 	addAction( 'a8c.wpcom-block-editor.closeEditor', 'a8c/wpcom-block-editor/closeEditor', () => {
 		const { port2 } = new MessageChannel();
 		calypsoPort.postMessage(
@@ -591,8 +591,42 @@ function handleCloseEditor( calypsoPort ) {
 		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
-	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, dispatchAction );
-	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, dispatchAction );
+	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
+		render: function CloseWpcomBlockEditor() {
+			const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
+			const [ label, setLabel ] = useState( calypsoifyGutenberg.closeButtonLabel );
+
+			useEffect( () => {
+				addAction(
+					'updateCloseButtonOverrides',
+					'a8c/wpcom-block-editor/CloseWpcomBlockEditor',
+					( data ) => {
+						setCloseUrl( data.closeUrl );
+						setLabel( data.label );
+					}
+				);
+				return () =>
+					removeAction(
+						'updateCloseButtonOverrides',
+						'a8c/wpcom-block-editor/CloseWpcomBlockEditor'
+					);
+			} );
+
+			return (
+				<MainDashboardButton>
+					<Button
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="edit-post-fullscreen-mode-close wpcom-block-editor__close-button"
+						href={ closeUrl }
+						icon={ wordpress }
+						iconSize={ 36 }
+						label={ label }
+						onClick={ dispatchAction }
+					/>
+				</MainDashboardButton>
+			);
+		},
+	} );
 }
 
 /**
