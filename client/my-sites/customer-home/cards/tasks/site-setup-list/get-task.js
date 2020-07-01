@@ -84,6 +84,22 @@ export const getTask = (
 ) => {
 	let taskData = {};
 	switch ( task.id ) {
+		case 'start_site_setup':
+			taskData = {
+				timing: 1,
+				title: translate( 'Site created' ),
+				description: translate(
+					"Next, we'll guide you through setting up and launching your site."
+				),
+				actionText: 'Get started',
+				...( ! task.isCompleted && {
+					actionDispatch: requestSiteChecklistTaskUpdate,
+					actionDispatchArgs: [ siteId, task.id ],
+				} ),
+				actionAdvanceToNext: true,
+				completeOnView: true,
+			};
+			break;
 		case SITE_CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
 				timing: 2,
