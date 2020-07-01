@@ -5,17 +5,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { defer } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorFeaturedImagePreview from './preview';
+import { fetch } from 'state/media/thunks';
 
-export default class extends React.Component {
-	static displayName = 'EditorFeaturedImagePreviewContainer';
-
+class EditorFeaturedImagePreviewContainer extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		itemId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
@@ -53,7 +52,7 @@ export default class extends React.Component {
 			}
 
 			defer( () => {
-				MediaActions.fetch( this.props.siteId, this.props.itemId );
+				this.props.fetch( this.props.siteId, this.props.itemId );
 			} );
 		} );
 	};
@@ -83,3 +82,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default connect( null, { fetch } )( EditorFeaturedImagePreviewContainer );

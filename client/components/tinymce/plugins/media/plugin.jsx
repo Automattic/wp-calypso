@@ -32,6 +32,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { fetch } from 'state/media/thunks';
 
 /**
  * Module variables
@@ -718,7 +719,7 @@ function mediaButton( editor ) {
 
 			const media = MediaStore.get( selectedSite.ID, id );
 			if ( ! media ) {
-				MediaActions.fetch( selectedSite.ID, id );
+				store.dispatch( fetch( selectedSite.ID, id ) );
 			}
 
 			return assign( { ID: id }, media );
@@ -781,7 +782,7 @@ function mediaButton( editor ) {
 			}
 
 			setTimeout( function () {
-				MediaActions.fetch( selectedSite.ID, parsed.media.ID );
+				store.dispatch( fetch( selectedSite.ID, parsed.media.ID ) );
 			}, 0 );
 		} );
 	}

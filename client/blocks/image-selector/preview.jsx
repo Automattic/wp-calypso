@@ -14,10 +14,10 @@ import { localize } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import ImagePreloader from 'components/image-preloader';
-import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import Spinner from 'components/spinner';
 import { url } from 'lib/media/utils';
+import { fetch } from 'state/media/thunks';
 
 export class ImageSelectorPreview extends Component {
 	static propTypes = {
@@ -80,7 +80,7 @@ export class ImageSelectorPreview extends Component {
 				id = parseInt( id, 10 );
 				const media = MediaStore.get( siteId, id );
 				if ( ! media ) {
-					MediaActions.fetch( siteId, id );
+					fetch( siteId, id );
 				}
 			} );
 		} );
