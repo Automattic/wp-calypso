@@ -251,18 +251,12 @@
 		margin: 0;
 		outline: 0;
 		overflow: hidden;
-		text-overflow: ellipsis;
-		text-decoration: none;
 		vertical-align: top;
-		box-sizing: border-box;
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 22px;
 		border-radius: 2px;
 		padding: 8px 14px;
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
 		border-color: var( --color-neutral-10 );
 	}
 
