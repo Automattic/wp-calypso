@@ -27,7 +27,6 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import getCurrentUserMarketingPriceGroup from 'state/selectors/get-current-user-marketing-price-group';
 
 /**
  * Style dependencies
@@ -235,7 +234,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem, marketing_price_group } } ) => ( {
+	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -247,9 +246,6 @@ export default connect(
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-
-		// the former is for signing up; the latter is for the logged-in case
-		marketingPriceGroup: marketing_price_group || getCurrentUserMarketingPriceGroup( state ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

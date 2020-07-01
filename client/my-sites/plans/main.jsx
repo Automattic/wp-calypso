@@ -14,7 +14,6 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import getCurrentUserMarketingPriceGroup from 'state/selectors/get-current-user-marketing-price-group';
 import Main from 'components/main';
 import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -194,6 +193,5 @@ export default connect( ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-		marketingPriceGroup: getCurrentUserMarketingPriceGroup( state ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
