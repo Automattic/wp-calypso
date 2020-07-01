@@ -4,13 +4,22 @@
 .domain-picker__empty-state {
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	flex-direction: column;
 
 	&--text {
 		max-width: 320px;
 		font-size: 0.9em;
-		margin: 0 10px;
+		margin: 10px 0;
 		color: $dark-gray-500;
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+		align-items: center;
+
+		&--text {
+			margin: 15px 0;
+		}
 	}
 }
 
