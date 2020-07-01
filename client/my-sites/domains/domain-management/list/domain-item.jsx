@@ -5,6 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import { withoutHttp } from 'lib/url';
+import { resolveDomainStatus } from 'lib/domains';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -117,9 +119,12 @@ class DomainItem extends PureComponent {
 
 	render() {
 		const { domain, showSite, site, showCheckbox, domainDetails, translate } = this.props;
+		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
+
+		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
 
 		return (
-			<CompactCard className="domain-item" onClick={ this.handleClick }>
+			<CompactCard className={ rowClasses } onClick={ this.handleClick }>
 				{ showCheckbox && (
 					<FormCheckbox
 						className="domain-item__checkbox"
@@ -130,7 +135,9 @@ class DomainItem extends PureComponent {
 				<div className="list__domain-link">
 					<div className="domain-item__status">
 						<div className="domain-item__title">{ domain.domain }</div>
-						<DomainNotice status="info" text="Activating domain" />
+						{ listStatusText && (
+							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
+						) }
 					</div>
 					{ showSite && (
 						<div className="domain-item__meta">

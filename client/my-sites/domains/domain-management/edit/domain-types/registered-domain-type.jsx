@@ -43,89 +43,9 @@ import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
+import { resolveDomainStatus } from 'lib/domains';
 
 class RegisteredDomainType extends React.Component {
-	resolveStatus() {
-		const { domain, translate, purchase, moment } = this.props;
-		const { registrationDate, expiry } = domain;
-
-		if ( domain.pendingTransfer ) {
-			return {
-				statusText: translate( 'Outbound transfer initiated' ),
-				statusClass: 'status-error',
-				icon: 'cached',
-			};
-		}
-
-		if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		}
-
-		if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		}
-
-		if ( isExpiringSoon( domain, 30 ) ) {
-			const expiresMessage = translate( 'Expires in %(days)s', {
-				args: { days: moment.utc( expiry ).fromNow( true ) },
-			} );
-
-			if ( isExpiringSoon( domain, 5 ) ) {
-				return {
-					statusText: expiresMessage,
-					statusClass: 'status-error',
-					icon: 'info',
-				};
-			}
-
-			return {
-				statusText: expiresMessage,
-				statusClass: 'status-warning',
-				icon: 'info',
-			};
-		}
-
-		if ( domain.expired ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		}
-
-		const recentlyRegistered = isRecentlyRegistered( registrationDate );
-
-		if ( recentlyRegistered ) {
-			return {
-				statusText: translate( 'Activating' ),
-				statusClass: 'status-pending',
-				icon: 'cloud_upload',
-			};
-		}
-
-		if ( hasPendingGSuiteUsers( domain ) ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-warning',
-				icon: 'info',
-			};
-		}
-
-		return {
-			statusText: translate( 'Active' ),
-			statusClass: 'status-success',
-			icon: 'check_circle',
-		};
-	}
-
 	renderExpired() {
 		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
 		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
@@ -369,7 +289,7 @@ class RegisteredDomainType extends React.Component {
 		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = this.resolveStatus();
+		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase );
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
 		const newDomainManagementNavigation = config.isEnabled(
