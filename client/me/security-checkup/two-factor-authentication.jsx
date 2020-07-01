@@ -75,12 +75,15 @@ class SecurityCheckupTwoFactorAuthentication extends React.Component {
 		}
 
 		return (
-			<SecurityCheckupNavigationItem
-				path={ '/me/security/two-step' }
-				materialIcon={ icon }
-				text={ translate( 'Two-Step Authentication' ) }
-				description={ description }
-			/>
+			<React.Fragment>
+				<QueryUserSettings />
+				<SecurityCheckupNavigationItem
+					path={ '/me/security/two-step' }
+					materialIcon={ icon }
+					text={ translate( 'Two-Step Authentication' ) }
+					description={ description }
+				/>
+			</React.Fragment>
 		);
 	}
 }
