@@ -64,7 +64,8 @@ before( async function () {
 describe( `Jetpack Connect: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Disconnect expired sites: @parallel @jetpack @canary', function () {
+	// Expired sites cleanup is moved to async job: `e2e_jetpack_cleanup_user`
+	describe.skip( 'Disconnect expired sites: @parallel @jetpack @canary', function () {
 		const timeout = mochaTimeOut * 10;
 
 		this.timeout( timeout );
