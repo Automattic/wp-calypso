@@ -41,6 +41,7 @@ export class ImageSelector extends Component {
 		showEditIcon: PropTypes.bool,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
+		setMediaLibrarySelectedItems: PropTypes.func,
 	};
 
 	static defaultProps = {
