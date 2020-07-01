@@ -20,9 +20,7 @@
 		"wordpress.com"
 	],
 	"scripts": {
-		"build": "npx electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
-		"ci:github:add-review": "node bin/github/add-review.js",
-		"ci:github:dismiss-review": "node bin/github/dismiss-review.js"
+		"build": "npx electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never"
 	},
 	"devDependencies": {
 		"asana-phrase": "0.0.8",
