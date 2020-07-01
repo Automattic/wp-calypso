@@ -15,6 +15,7 @@ import { rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
 import getBackupDownloadId from 'state/selectors/get-backup-download-id';
+import getBackupAnyDownloadId from 'state/selectors/get-backup-any-download-id';
 import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
 import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
 import ProgressBar from './progress-bar';
@@ -43,6 +44,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 
 	const downloadId = useSelector( ( state ) => getBackupDownloadId( state, siteId, rewindId ) );
+	const anyDownloadId = useSelector( ( state ) => getBackupAnyDownloadId( state, siteId ) );
 	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId, rewindId ) );
 	const downloadProgress = useSelector( ( state ) =>
 		getBackupDownloadProgress( state, siteId, rewindId )
@@ -57,7 +59,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		'calypso_jetpack_backup_download_click'
 	);
 
-	const renderConfirm = () => (
+	const renderConfirm = ( otherDownloadId: number | null ) => (
 		<>
 			<div className="rewind-flow__header">
 				<img
@@ -91,9 +93,15 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				className="rewind-flow__primary-button"
 				primary
 				onClick={ trackedRequestDownload }
-				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
+				disabled={
+					otherDownloadId !== null ||
+					Object.values( rewindConfig ).every( ( setting ) => ! setting )
+				}
+				busy={ otherDownloadId !== null }
 			>
-				{ translate( 'Create downloadable file' ) }
+				{ otherDownloadId !== null
+					? translate( 'Another downloadable file being created' )
+					: translate( 'Create downloadable file' ) }
 			</Button>
 		</>
 	);
@@ -211,7 +219,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	const render = () => {
 		if ( downloadProgress === null && downloadUrl === null ) {
-			return renderConfirm();
+			return renderConfirm( anyDownloadId );
 		} else if ( downloadProgress !== null && downloadUrl === null ) {
 			if ( ! userRequestedDownload ) {
 				setUserRequestedDownload( true );
@@ -225,7 +233,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
+			<QueryRewindBackupStatus
+				downloadId={ downloadId | ( anyDownloadId && anyDownloadId !== downloadId ) }
+				siteId={ siteId }
+			/>
 			{ render() }
 		</>
 	);
