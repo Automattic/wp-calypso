@@ -30,11 +30,9 @@ import 'state/inline-help/init';
  * @returns {Function}            Action thunk.
  */
 export function setInlineHelpSearchQuery( searchQuery = '' ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_SET_SEARCH_QUERY,
-			searchQuery,
-		} );
+	return {
+		type: INLINE_HELP_SET_SEARCH_QUERY,
+		searchQuery,
 	};
 }
 
