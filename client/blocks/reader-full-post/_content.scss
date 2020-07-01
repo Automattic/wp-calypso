@@ -243,6 +243,7 @@
 
 	.wp-block-button {
 		border-style: solid;
+		font-family: $sans;
 		border-width: 1px;
 		cursor: pointer;
 		display: inline-block;
@@ -256,6 +257,11 @@
 		border-radius: 2px;
 		padding: 8px 14px;
 		border-color: var( --color-neutral-10 );
+	}
+
+	.wp-block-button__link,
+	.wp-block-button__link:hover {
+		color: inherit;
 	}
 
 	// Import Gutenberg gallery styles
