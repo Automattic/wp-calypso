@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .memberships__module-header {
 	background: var( --color-surface );
 	height: 40px;
@@ -20,7 +23,10 @@
 .memberships__onboarding-wrapper {
 	display: flex;
 	flex-direction: row;
-	padding: 16px;
+
+	@include break-medium {
+		padding: 8px;
+	}
 }
 
 .memberships__onboarding-column-info {
@@ -28,20 +34,23 @@
 }
 .memberships__onboarding-column-image {
 	display: none;
-	@include breakpoint-deprecated( '>800px' ) {
+	@include break-medium {
 		flex: 2;
 		display: block;
 		text-align: center;
-		padding-left: 10px;
-		padding-right: 10px;
+		padding-top: 8px;
 	}
 }
 
 .memberships__onboarding-header {
 	@extend .wp-brand-font;
-	font-size: $font-title-large;
+	font-size: $font-title-medium;
 	/* identical to box height */
-	margin-bottom: 16px;
+	margin-bottom: 8px;
+
+	@include break-medium {
+		font-size: $font-title-large;
+	}
 }
 .memberships__onboarding-paragraph {
 	font-size: $font-body;
@@ -60,13 +69,25 @@
 	flex-wrap: wrap;
 	justify-content: space-between;
 	border-top: 1px solid var( --color-neutral-5 );
-	padding-top: 16px;
-	margin: 0 16px;
+	padding-top: 8px;
+
+	@include break-medium {
+		padding-top: 0;
+		margin: 0 8px;
+	}
 }
 .memberships__onboarding-benefits > div {
-	margin: 24px 0;
-	flex-basis: 48%;
+	margin: 16px 0;
+	flex-basis: 100%;
 	color: var( --color-text-subtle );
+
+	@include break-small {
+		flex-basis: 48%;
+	}
+
+	@include break-medium {
+		margin: 16px 0;
+	}
 }
 
 .memberships__onboarding-benefits > div > h3 {
