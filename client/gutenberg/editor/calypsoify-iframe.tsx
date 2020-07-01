@@ -757,7 +757,7 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( config.isEnabled( 'editor/after-deprecation' ) && inEditorDeprecationGroup( state ) ) {
+	if ( inEditorDeprecationGroup( state ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
