@@ -498,7 +498,7 @@ class MembershipsSection extends Component {
 							) }
 						</p>
 						<p className="memberships__onboarding-paragraph">{ cta }</p>
-						<p className="memberships__onboarding-paragraph">
+						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
 							{ this.props.translate(
 								'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
 							) }

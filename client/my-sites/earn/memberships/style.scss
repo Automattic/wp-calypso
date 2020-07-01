@@ -20,13 +20,11 @@
 .memberships__onboarding-wrapper {
 	display: flex;
 	flex-direction: row;
-	padding-top: 30px;
+	padding: 16px;
 }
 
 .memberships__onboarding-column-info {
 	flex: 3;
-	padding-left: 10px;
-	padding-right: 10px;
 }
 .memberships__onboarding-column-image {
 	display: none;
@@ -40,57 +38,42 @@
 }
 
 .memberships__onboarding-header {
-	font-family: Recoleta;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 28px;
-	line-height: 38px;
+	@extend .wp-brand-font;
+	font-size: $font-title-large;
 	/* identical to box height */
-	letter-spacing: 0.36px;
-	margin-bottom: 24px;
+	margin-bottom: 16px;
 }
 .memberships__onboarding-paragraph {
 	font-size: $font-body;
-	margin-bottom: 24px;
-	color: var( --color-text-subtle );
+	color: var( --color-text );
+
+	.button {
+		margin-top: 16px;
+	}
+}
+.memberships__onboarding-paragraph-disclaimer {
+	font-size: $font-body-small;
 }
 .memberships__onboarding-benefits {
 	color: var( --color-text-subtle );
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-between;
+	border-top: 1px solid var( --color-neutral-5 );
+	padding-top: 16px;
+	margin: 0 16px;
 }
 .memberships__onboarding-benefits > div {
-	line-height: 24px;
-	margin-top: 10px;
-	flex: 1 450;
-	flex-basis: 45%;
-	align-items: center;
-	justify-content: space-around;
-	padding: 10px;
-
-	/* Gray / Gray 90 */
-	color: var( --color-text-subtle );
-}
-
-.memberships__onboarding-benefits > hr {
-	line-height: 24px;
-	flex-basis: 100%;
-	align-items: center;
-	
-	/* Gray / Gray 90 */
+	margin: 24px 0;
+	flex-basis: 48%;
 	color: var( --color-text-subtle );
 }
 
 .memberships__onboarding-benefits > div > h3 {
-	font-family: Recoleta;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 20px;
+	@extend .wp-brand-font;
+	font-size: $font-title-small;
 	line-height: 27px;
-	letter-spacing: 0.38px;
-
-	/* Gray / Gray 90 */
-	color: #1d2327;
+	color: var( --color-text );
 }
 .memberships__earnings-breakdown-list {
 	margin: 0;
