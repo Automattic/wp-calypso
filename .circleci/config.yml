@@ -632,9 +632,6 @@ jobs:
     <<: *desktop_defaults
     steps:
       - checkout
-      - run:
-          name: Test CI Failure
-          command: exit 1
       - run: *update-node
       - run: *yarn-install
       - restore_cache: *desktop-restore-source-cache
