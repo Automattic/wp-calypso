@@ -601,6 +601,7 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 		stepOptionalDependencies,
 		fulfilledDependencies
 	);
+
 	return isEmpty( dependenciesNotProvided );
 }
 
@@ -611,7 +612,7 @@ function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 	submitSignupStep( { stepName, domainItem }, { domainItem } );
 	recordExcludeStepEvent( stepName, tracksEventValue );
 
-	fulfilledDependencies = [ 'domainItem' ];
+	fulfilledDependencies = [ 'domainItem', 'siteId', 'siteSlug', 'themeItem' ];
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
