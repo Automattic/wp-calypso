@@ -128,9 +128,8 @@ export function generateFlows( {
 		'onboarding-new': {
 			steps: [ 'domains-new', 'plans-new', 'user-new', 'verify-cart' ],
 			destination: getSignupDestination,
-			description:
-				'Simplify the User step (account creation step) and move it right before the Checkout, after Plans/Domains steps. Read more in https://wp.me/pbxNRc-m0',
-			lastModified: '2020-06-17',
+			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
+			lastModified: '2020-06-26',
 			showRecaptcha: true,
 		},
 

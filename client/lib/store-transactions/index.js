@@ -34,6 +34,7 @@ import {
 	StripeValidationError,
 } from 'lib/stripe';
 import { getSavedVariations } from 'lib/abtest';
+import { stringifyBody } from 'state/login/utils';
 
 const wpcom = wp.undocumented();
 
@@ -151,20 +152,18 @@ TransactionFlow.prototype._createAccountCallback = async function ( errorObj, re
 		authorization: 'Bearer ' + response.bearer_token,
 		log: response.username,
 	};
-	const bodyTemp = Object.fromEntries(
-		Object.entries( bodyObj ?? {} ).map( ( [ key, val ] ) => [ key, val ?? '' ] )
-	);
-	const body = new globalThis.URLSearchParams( bodyTemp ).toString();
 
 	const loginResponse = await globalThis.fetch( url, {
 		method: 'POST',
 		redirect: 'manual',
 		credentials: 'include',
 		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-		body,
+		body: stringifyBody( bodyObj ),
 	} );
 
-	// handle login error
+	if ( ! loginResponse.ok ) {
+		// TODO: handle login error
+	}
 };
 
 TransactionFlow.prototype._paymentHandlers = {

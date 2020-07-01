@@ -232,7 +232,6 @@ CartSynchronizer.prototype._performRequest = function ( type, requestFunction ) 
 			request.state = 'completed';
 
 			if ( ! this._hasLoadedFromServer ) {
-				request.id + ': _processQueuedChanges ' + request.type;
 				this._processQueuedChanges();
 				this._hasLoadedFromServer = true;
 			}

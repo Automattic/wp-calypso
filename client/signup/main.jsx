@@ -13,6 +13,7 @@ import {
 	get,
 	includes,
 	indexOf,
+	isEmpty,
 	isEqual,
 	kebabCase,
 	map,
@@ -390,6 +391,15 @@ class Signup extends React.Component {
 
 			const { bearer_token: bearerToken, username } = dependencies;
 
+			if (
+				isEmpty( bearerToken ) &&
+				isEmpty( username ) &&
+				'onboarding-new' === this.props.flowName
+			) {
+				window.location.href = destination;
+				return;
+			}
+
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
 				this.setState( {
 					bearerToken: dependencies.bearer_token,
@@ -397,11 +407,6 @@ class Signup extends React.Component {
 					redirectTo: this.loginRedirectTo( destination ),
 				} );
 			}
-		}
-
-		if ( ! userIsLoggedIn && 'onboarding-new' === this.props.flowName ) {
-			window.location.href = destination;
-			return;
 		}
 	}
 

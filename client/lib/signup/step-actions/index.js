@@ -311,13 +311,9 @@ export function verifyCart( callback, dependencies, stepData, reduxStore ) {
 				addPrivacyProtectionIfSupported( item, reduxStore )
 			);
 
-			if ( newCartItemsToAdd.length ) {
-				window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItemsToAdd ) );
-				const providedDependencies = { siteSlug: 'no-site' };
-				callback( undefined, providedDependencies );
-			} else {
-				// maybe return ... callback( undefined, providedDependencies );
-			}
+			window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItemsToAdd ) );
+			const providedDependencies = { siteSlug: 'no-site' };
+			callback( undefined, providedDependencies );
 		};
 
 		addToCartAndProceed();

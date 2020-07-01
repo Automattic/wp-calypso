@@ -173,7 +173,7 @@ export class SecurePaymentForm extends Component {
 	async submitTransaction( event ) {
 		event && event.preventDefault();
 
-		const { cart, transaction, isWhiteGloveOffer } = this.props;
+		const { cart, transaction, isWhiteGloveOffer, isLoggedOutCart } = this.props;
 
 		const origin = getLocationOrigin( window.location );
 		const successPath = this.props.redirectTo();
@@ -198,7 +198,7 @@ export class SecurePaymentForm extends Component {
 				stripeConfiguration: transaction.stripeConfiguration,
 				isWhiteGloveOffer,
 				email,
-				isLoggedOutCart: this.props.isLoggedOutCart,
+				isLoggedOutCart,
 			},
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects

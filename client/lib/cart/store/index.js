@@ -80,10 +80,6 @@ const CartStore = {
 			newCartKey = _userLoggedIn ? 'no-site' : 'no-user';
 		}
 
-		if ( 'no-site' === newCartKey && ! _userLoggedIn ) {
-			return;
-		}
-
 		if ( _cartKey === newCartKey ) {
 			return;
 		}
@@ -119,11 +115,11 @@ function emitChange() {
 	CartStore.emit( 'change' );
 }
 
-function update( changeFunction, initialCart ) {
+function update( changeFunction ) {
 	const wrappedFunction = ( cart ) =>
 		fillInAllCartItemAttributes( changeFunction( cart ), productsList.get() );
 
-	const previousCart = initialCart || CartStore.get();
+	const previousCart = CartStore.get();
 	const nextCart = wrappedFunction( previousCart );
 
 	_synchronizer && _synchronizer.update( wrappedFunction );
