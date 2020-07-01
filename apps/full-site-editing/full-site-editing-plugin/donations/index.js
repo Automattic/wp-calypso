@@ -3,13 +3,17 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
-import { __, _x } from '@wordpress/i18n';
-/* eslint-enable wpcalypso/import-docblock */
+import { _x } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import edit from './edit';
+import * as donations from './blocks/donations';
+import * as donation from './blocks/donation';
+
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 /**
@@ -25,7 +29,7 @@ const addPaidBlockFlags = async () => {
 	}
 	const shouldUpgrade = membershipsStatus.should_upgrade_to_access_memberships;
 	if ( shouldUpgrade ) {
-		const donationsBlock = getBlockType( 'a8c/donations' );
+		const donationsBlock = getBlockType( donations.name );
 		if ( ! donationsBlock ) {
 			return;
 		}
@@ -36,8 +40,8 @@ const addPaidBlockFlags = async () => {
 			'full-site-editing'
 		);
 
-		unregisterBlockType( 'a8c/donations' );
-		registerBlockType( 'a8c/donations', {
+		unregisterBlockType( donations.name );
+		registerBlockType( donations.name, {
 			...donationsBlock,
 			title: `${ donationsBlock.title } (${ paidFlag })`,
 		} );
@@ -45,66 +49,8 @@ const addPaidBlockFlags = async () => {
 };
 
 function registerDonationsBlock() {
-	registerBlockType( 'a8c/donations', {
-		title: __( 'Donations (a8c-only)', 'full-site-editing' ),
-		description: __(
-			'Collect one-time, monthly, or annually recurring donations.',
-			'full-site-editing'
-		),
-		attributes: {
-			oneTimePlanId: {
-				type: 'number',
-				default: null,
-			},
-			monthlyPlanId: {
-				type: 'number',
-				default: null,
-			},
-			annuallyPlanId: {
-				type: 'number',
-				default: null,
-			},
-			showCustomAmount: {
-				type: 'boolean',
-				default: false,
-			},
-		},
-		category: 'common',
-		icon: (
-			<svg
-				width="25"
-				height="24"
-				viewBox="0 0 25 24"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path
-					d="M12.7439 14.4271L8.64053 13.165L8.51431 13.8718L8.09208 20.7415C8.06165 21.2365 8.61087 21.5526 9.02363 21.2776L12.7439 18.799L16.7475 21.304C17.1687 21.5676 17.7094 21.2343 17.6631 20.7396L17.0212 13.8718L17.0212 13.165L12.7439 14.4271Z"
-					fill="black"
-				/>
-				<circle
-					cx="12.7439"
-					cy="8.69796"
-					r="5.94466"
-					stroke="black"
-					strokeWidth="1.5"
-					fill="none"
-				/>
-				<path
-					d="M9.71023 8.12461L11.9543 10.3687L15.7776 6.54533"
-					stroke="black"
-					strokeWidth="1.5"
-					fill="none"
-				/>
-			</svg>
-		),
-		supports: {
-			html: false,
-		},
-		edit,
-		save() {
-			return <div>Donations block</div>;
-		},
+	[ donations, donation ].forEach( ( { name, settings } ) => {
+		registerBlockType( name, settings );
 	} );
 
 	// Done after registration so the status API request doesn't suspend the execution.

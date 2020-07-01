@@ -33,6 +33,14 @@
 	}
 
 	.donations__content {
-		padding: 24px;
+		padding: 0 24px;
+	}
+}
+
+.wp-block-a8c-donation {
+	display: none;
+
+	&.is-active {
+		display: inherit;
 	}
 }
