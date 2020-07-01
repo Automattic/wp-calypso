@@ -62,7 +62,8 @@ export default class LoginFlow {
 
 		if (
 			! useFreshLogin &&
-			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
+			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) ) &&
+			host !== 'PRESSABLEBLEEDINGEDGE'
 		) {
 			console.log( 'Reusing login cookie for ' + this.account.username );
 			await this.driver.navigate().refresh();
@@ -121,7 +122,6 @@ export default class LoginFlow {
 		} catch ( e ) {
 			await CustomerHome.Expect( this.driver );
 		}
-
 
 		await NavBarComponent.Expect( this.driver );
 
