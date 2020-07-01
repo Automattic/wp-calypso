@@ -196,6 +196,7 @@ class EarningsMain extends Component {
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
 					align="left"

@@ -30,7 +30,9 @@
 }
 
 .memberships__onboarding-column-info {
-	flex: 3;
+	@include break-medium {
+		width: 66%;
+	}
 }
 .memberships__onboarding-column-image {
 	display: none;
@@ -72,7 +74,7 @@
 	padding-top: 8px;
 
 	@include break-medium {
-		padding-top: 0;
+		padding-top: 16px;
 		margin: 0 8px;
 	}
 }
