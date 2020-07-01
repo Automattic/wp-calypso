@@ -85,6 +85,7 @@ export default {
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
+			context.pathname.indexOf( 'onboarding-plan-first' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.params.flowName === 'user' ||
@@ -247,7 +248,7 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
-		if ( flowName === 'onboarding' ) {
+		if ( flowName === 'onboarding' || flowName === 'onboarding-plan-first' ) {
 			context.primary = (
 				<Experiment name="domain_step_plan_step_swap">
 					<DefaultVariation>
@@ -282,6 +283,7 @@ export default {
 					</Variation>
 				</Experiment>
 			);
+
 			next();
 		}
 

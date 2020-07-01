@@ -109,7 +109,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	domainStepPlanStepSwap: {
-		datestamp: '20200513',
+		datestamp: '20210513',
 		variations: {
 			variantShowSwapped: 0,
 			control: 100,
