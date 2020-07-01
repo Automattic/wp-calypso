@@ -12,7 +12,7 @@ import { recordPageView } from 'lib/analytics/page-view';
 import config from 'config';
 import SearchPurchase from './search';
 import { hideMasterbar, showMasterbar, hideSidebar } from 'state/ui/actions';
-import { MOBILE_APP_REDIRECT_URL_WHITELIST } from '../../jetpack-connect/constants';
+import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from '../../jetpack-connect/constants';
 import {
 	persistMobileRedirect,
 	retrieveMobileRedirect,
@@ -29,7 +29,7 @@ import {
 /**
  * Module variables
  */
-const debug = new Debug( 'calypso:jetpack-connect:controller' );
+const debug = new Debug( 'calypso:purchase-product:controller' );
 const analyticsPageTitleByType = {
 	jetpack_search: 'Jetpack Search',
 };
@@ -55,7 +55,7 @@ export function persistMobileAppFlow( context, next ) {
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
-			some( MOBILE_APP_REDIRECT_URL_WHITELIST, ( pattern ) =>
+			some( ALLOWED_MOBILE_APP_REDIRECT_URL_LIST, ( pattern ) =>
 				pattern.test( query.mobile_redirect )
 			)
 		) {
