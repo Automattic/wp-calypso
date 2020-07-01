@@ -24,9 +24,11 @@ export default class WooWizardSetupPage extends AsyncBaseContainer {
 		// currency,
 		// productType,
 		// inPerson = false,
-		helpWoo = false,
+		// helpWoo = false,
 	} ) {
-		const countryContainerSelector = By.id( 'woocommerce-select-control-0__control-input' );
+		const countryContainerSelector = By.css(
+			'[for="woocommerce-select-control-0__control-input"]'
+		);
 		const countrySelector = By.css( `button[id$="${ countryCode }:${ stateCode }"]` );
 		const addressSelector = By.id( 'inspector-text-control-0' );
 		const address2Selector = By.id( 'inspector-text-control-1' );
@@ -39,9 +41,9 @@ export default class WooWizardSetupPage extends AsyncBaseContainer {
 		// const productTypeContainerSelector = By.id( 'select2-product_type-container' );
 		// const productTypeSelector = By.css( `li[id$="${ productType }"]` );
 		// const inPersonSelector = By.id( 'woocommerce_sell_in_person' );
-		const helpWooSelector = By.css(
-			'.woocommerce-profile-wizard__tracking #inspector-checkbox-control-1'
-		);
+		// const helpWooSelector = By.css(
+		// 	'.woocommerce-profile-wizard__tracking #inspector-checkbox-control-1'
+		// );
 		const submitButtonSelector = By.css( 'button.components-button.is-button.is-primary' );
 		const continueButtonSelector = By.css( '.woocommerce-profile-wizard__usage-wrapper button' );
 
@@ -66,9 +68,9 @@ export default class WooWizardSetupPage extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable( this.driver, submitButtonSelector );
 
-		if ( ! helpWoo ) {
-			await driverHelper.clickWhenClickable( this.driver, helpWooSelector );
-		}
+		// if ( helpWoo ) {
+		// 	await driverHelper.clickWhenClickable( this.driver, helpWooSelector );
+		// }
 
 		return await driverHelper.clickWhenClickable( this.driver, continueButtonSelector );
 	}

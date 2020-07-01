@@ -328,7 +328,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 	} );
 
-	describe( 'Connect From WooCommerce plugin when Jetpack is not installed: @parallel @jetpack', function () {
+	// The Woo wizard is just not reliable.
+	describe.skip( 'Connect From WooCommerce plugin when Jetpack is not installed: @parallel @jetpack', function () {
 		const countryCode = 'US';
 		const stateCode = 'CO';
 		const address = '2101 Blake St';
