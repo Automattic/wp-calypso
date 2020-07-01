@@ -85,7 +85,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				} ) }
 			>
 				{ suggestion.is_free ? (
-					__( 'Free' )
+					__( 'Included in free plan' )
 				) : (
 					<>
 						<span className="domain-picker__price-long">
