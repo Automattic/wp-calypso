@@ -19,7 +19,7 @@ import QueryMembershipsEarnings from 'components/data/query-memberships-earnings
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import { requestDisconnectStripeAccount } from 'state/memberships/settings/actions';
 import { requestSubscribers, requestSubscriptionStop } from 'state/memberships/subscribers/actions';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities, preventWidows } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import UpsellNudge from 'blocks/upsell-nudge';
@@ -475,32 +475,40 @@ class MembershipsSection extends Component {
 	}
 
 	renderOnboarding( cta ) {
+		const { translate } = this.props;
+
 		return (
 			<Card>
 				<div className="memberships__onboarding-wrapper">
 					<div className="memberships__onboarding-column-info">
-						<div className="memberships__onboarding-header">
-							{ this.props.translate( 'Accept payments on your website.' ) }
-						</div>
+						<h2 className="memberships__onboarding-header">
+							{ preventWidows( translate( 'Accept payments on your website.' ) ) }
+						</h2>
 						<p className="memberships__onboarding-paragraph">
-							{ this.props.translate(
-								'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more.'
+							{ preventWidows(
+								translate(
+									'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more.'
+								)
 							) }
 						</p>
 						<p className="memberships__onboarding-paragraph">
-							{ this.props.translate(
-								'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
-								{
-									components: {
-										link: <a href="/support/recurring-payments-button/" />,
-									},
-								}
+							{ preventWidows(
+								translate(
+									'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
+									{
+										components: {
+											link: <a href="/support/recurring-payments-button/" />,
+										},
+									}
+								)
 							) }
 						</p>
 						<p className="memberships__onboarding-paragraph">{ cta }</p>
 						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
-							{ this.props.translate(
-								'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
+							{ preventWidows(
+								translate(
+									'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
+								)
 							) }
 						</p>
 					</div>
@@ -510,27 +518,33 @@ class MembershipsSection extends Component {
 				</div>
 				<div className="memberships__onboarding-benefits">
 					<div>
-						<h3>{ this.props.translate( 'Payments for anything' ) }</h3>
-						{ this.props.translate(
-							'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
+						<h3>{ translate( 'Payments for anything' ) }</h3>
+						{ preventWidows(
+							translate(
+								'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
+							)
 						) }
 					</div>
 					<div>
-						<h3>{ this.props.translate( 'Flexibile options' ) }</h3>
-						{ this.props.translate(
-							'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
+						<h3>{ translate( 'Flexibile options' ) }</h3>
+						{ preventWidows(
+							translate(
+								'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
+							)
 						) }
 					</div>
 					<div>
-						<h3>{ this.props.translate( "You're in control" ) }</h3>
-						{ this.props.translate(
-							'You choose which content requires payment. Easily manage subscribers and payment plans.'
+						<h3>{ translate( "You're in control" ) }</h3>
+						{ preventWidows(
+							translate(
+								'You choose which content requires payment. Easily manage subscribers and payment plans.'
+							)
 						) }
 					</div>
 					<div>
-						<h3>{ this.props.translate( 'Global payments' ) }</h3>
-						{ this.props.translate(
-							'Collect payments in 135 countries to reach customers around the world.'
+						<h3>{ translate( 'Global payments' ) }</h3>
+						{ preventWidows(
+							translate( 'Collect payments in 135 countries to reach customers around the world.' )
 						) }
 					</div>
 				</div>
