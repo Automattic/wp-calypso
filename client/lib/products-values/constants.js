@@ -106,7 +106,6 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }{ ' ' }
 		</>
 	);
-
 	const backupRealtime = (
 		<>
 			{ ' ' }
@@ -117,9 +116,7 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }{ ' ' }
 		</>
 	);
-
 	const search = translate( 'Jetpack Search' );
-
 	const scanDaily = (
 		<>
 			{ translate( 'Jetpack Scan {{em}}Daily{{/em}}', {
@@ -129,7 +126,6 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }{ ' ' }
 		</>
 	);
-
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
@@ -143,7 +139,6 @@ export const getJetpackProductsDisplayNames = () => {
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
 	};
 };
-
 export const getJetpackProductsTaglines = () => {
 	const searchTagline = translate( 'Search your site.' );
 	const scanTagline = 'Scan your site.';

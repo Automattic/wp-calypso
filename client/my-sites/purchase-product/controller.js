@@ -22,6 +22,8 @@ import {
 import {
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from 'lib/products-values/constants';
 
 /**
@@ -38,9 +40,11 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
 		yearly: {
 			jetpack_search: PRODUCT_JETPACK_SEARCH,
+			wpcom_search: PRODUCT_WPCOM_SEARCH,
 		},
 		monthly: {
 			jetpack_search: PRODUCT_JETPACK_SEARCH_MONTHLY,
+			wpcom_search: PRODUCT_WPCOM_SEARCH_MONTHLY,
 		},
 	};
 

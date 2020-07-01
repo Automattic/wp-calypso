@@ -32,9 +32,12 @@ import { urlToSlug } from 'lib/url';
 import searchSites from 'components/search-sites';
 import jetpackConnection from '../../jetpack-connect/jetpack-connection';
 
-import { IS_DOT_COM_SEARCH, JPC_PATH_REMOTE_INSTALL } from '../../jetpack-connect/constants';
+import { JPC_PATH_REMOTE_INSTALL } from '../../jetpack-connect/constants';
 
-import { ALREADY_CONNECTED } from '../../jetpack-connect/connection-notice-types';
+import {
+	ALREADY_CONNECTED,
+	IS_DOT_COM_GET_SEARCH,
+} from '../../jetpack-connect/connection-notice-types';
 
 export class SearchPurchase extends Component {
 	static propTypes = {
@@ -94,7 +97,7 @@ export class SearchPurchase extends Component {
 		const { status, processJpSite } = this.props;
 		const { currentUrl } = this.state;
 
-		if ( status === IS_DOT_COM_SEARCH || status === ALREADY_CONNECTED ) {
+		if ( status === IS_DOT_COM_GET_SEARCH || status === ALREADY_CONNECTED ) {
 			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + 'jetpack_search' );
 		}
 

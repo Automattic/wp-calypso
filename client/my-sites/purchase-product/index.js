@@ -14,7 +14,7 @@ import { makeLayout, render as clientRender } from 'controller';
 /**
  * Style dependencies
  */
-import './style.scss';
+import '../../jetpack-connect/style.scss';
 
 export default function () {
 	const user = userFactory();
