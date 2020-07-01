@@ -40,6 +40,7 @@ import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
 import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
 import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
+import { createP24PaymentMethodStore, createP24Method } from './lib/payment-methods/p24';
 import {
 	createGiropayPaymentMethodStore,
 	createGiropayMethod,
@@ -99,6 +100,8 @@ export {
 	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
+	createP24Method,
+	createP24PaymentMethodStore,
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
