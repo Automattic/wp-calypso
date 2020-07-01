@@ -509,27 +509,34 @@ class MembershipsSection extends Component {
 					</div>
 				</div>
 				<div className="memberships__onboarding-benefits">
-					<hr />
 					<div>
-						<h3>Get paid for anything</h3>
+						<h3>
+							{ this.props.translate( 'Get paid for anything' ) }
+						</h3>
 						{ this.props.translate(
 							'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
 						) }
 					</div>
 					<div>
-						<h3>Flexibility you need</h3>
+						<h3>
+							{ this.props.translate( 'Flexibility you need' ) }
+						</h3>
 						{ this.props.translate(
 							'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
 						) }
 					</div>
 					<div>
-						<h3>You're in control</h3>
+						<h3>
+							{ this.props.translate( "You're in control" ) }
+						</h3>
 						{ this.props.translate(
 							'You choose which content requires payment. Easily manage subscribers and payment plans.'
 						) }
 					</div>
 					<div>
-						<h3>Global payments</h3>
+						<h3>
+							{ this.props.translate( 'Global payments' ) }
+						</h3>
 						{ this.props.translate(
 							'Collect payments in 135 countries to reach customers around the world.'
 						) }
