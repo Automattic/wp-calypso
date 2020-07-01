@@ -352,6 +352,7 @@ export default function CompositeCheckout( {
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
+		siteSlug,
 	} );
 
 	// Once we pass paymentMethods into CompositeCheckout, we should try to avoid
