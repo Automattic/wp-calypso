@@ -185,6 +185,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							) }
 						</div>
 
+<<<<<<< HEAD
 						<div className="domain-picker__suggestion-item-group">
 							{ ! domainSuggestions ||
 							( domainSuggestions?.length && domainSuggestions?.length > 1 ) ? (
@@ -205,6 +206,50 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										onSelect={ onDomainSelect }
 									/>
 								) ) ?? times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+=======
+							{ domainSuggestions.length > 1 && (
+								<div className="domain-picker__suggestion-item-group">
+									<p className="domain-picker__suggestion-group-label">
+										{ __( 'Custom domains' ) }
+									</p>
+									{ domainSuggestions.slice( 1 ).map( ( suggestion, i ) => (
+										<SuggestionItem
+											key={ suggestion.domain_name }
+											suggestion={ suggestion }
+											railcarId={ baseRailcarId ? `${ baseRailcarId }${ i }` : undefined }
+											isRecommended={ i === 0 }
+											onRender={ () =>
+												handleItemRender( suggestion, `${ baseRailcarId }${ i }`, i, i === 0 )
+											}
+											onSelect={ onDomainSelect }
+										/>
+									) ) }
+								</div>
+							) }
+
+							{ ! isExpanded &&
+								allDomainSuggestions?.length &&
+								allDomainSuggestions?.length > quantity && (
+									<div className="domain-picker__show-more">
+										<Button onClick={ () => setIsExpanded( true ) }>
+											{ __( 'View more results' ) }
+										</Button>
+									</div>
+								) }
+						</div>
+					) : (
+						<div className="domain-picker__suggestion-sections">
+							<div className="domain-picker__suggestion-item-group">
+								<p className="domain-picker__suggestion-group-label">{ __( 'Sub-domain' ) }</p>
+								<SuggestionItemPlaceholder key={ -1 } />
+							</div>
+							<div className="domain-picker__suggestion-item-group">
+								<p className="domain-picker__suggestion-group-label">{ __( 'Custom domains' ) }</p>
+								{ times( quantity - 1, ( i ) => (
+									<SuggestionItemPlaceholder key={ i } />
+								) ) }
+							</div>
+>>>>>>> Handle lack of paid domains response from the API
 						</div>
 
 						{ ! isExpanded &&
