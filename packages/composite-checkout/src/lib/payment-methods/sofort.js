@@ -88,7 +88,7 @@ function SofortFields() {
 	return (
 		<SofortFormWrapper>
 			<SofortField
-				id="cardholderName"
+				id="sofort-cardholder-name"
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
@@ -115,10 +115,10 @@ const SofortFormWrapper = styled.div`
 		position: absolute;
 		top: 0;
 		left: 3px;
-		
+
 		.rtl & {
-		    left: auto;
-		    right: 3px;
+			left: auto;
+			right: 3px;
 		}
 	}
 `;

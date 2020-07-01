@@ -98,7 +98,7 @@ function IdealFields() {
 	return (
 		<IdealFormWrapper>
 			<IdealField
-				id="cardholderName"
+				id="ideal-cardholder-name"
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
@@ -109,7 +109,7 @@ function IdealFields() {
 				disabled={ isDisabled }
 			/>
 			<BankSelector
-				id="bank-selector"
+				id="ideal-bank-selector"
 				value={ customerBank?.value ?? '' }
 				onChange={ changeCustomerBank }
 				label={ __( 'Bank' ) }
