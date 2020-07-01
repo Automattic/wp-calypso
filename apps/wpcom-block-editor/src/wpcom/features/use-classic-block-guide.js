@@ -6,11 +6,18 @@ import domReady from '@wordpress/dom-ready';
 import ReactDOM from 'react-dom';
 import { useState } from '@wordpress/element';
 import { Guide } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import url from 'url';
+/* eslint-enable import/no-extraneous-dependencies */
+
+const parsedEditorUrl = url.parse( window.location.href, true );
 
 const ClassicGuide = () => {
 	const [ isOpen, setOpen ] = useState( true );
 
 	const closeGuide = () => setOpen( false );
+
+	// useDispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
 
 	return (
 		<>
@@ -33,9 +40,11 @@ const ClassicGuide = () => {
 	);
 };
 
+// Hard coding these values for now - query string can be passed in from client/gutenberg/editor/calypsoify-iframe.tsx
 const guideDismissed = false;
+parsedEditorUrl.query[ 'show-classic-block-guide' ] = true;
 
-if ( ! guideDismissed ) {
+if ( parsedEditorUrl.query[ 'show-classic-block-guide' ] && ! guideDismissed ) {
 	domReady( () => {
 		const editInception = setInterval( () => {
 			// Cycle through interval until blockEditor is found.
