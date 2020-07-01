@@ -227,6 +227,15 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return WORDPRESS_DOT_COM;
 			}
 
+			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+				const product = window.location.href.split( '/' )[ 5 ];
+
+				if ( startsWith( product, 'jetpack_search' ) || startsWith( product, 'wpcom_search' ) ) {
+					return IS_DOT_COM_GET_SEARCH;
+				}
+				return IS_DOT_COM;
+			}
+
 			if ( ! this.checkProperty( 'exists' ) ) {
 				return NOT_EXISTS;
 			}
