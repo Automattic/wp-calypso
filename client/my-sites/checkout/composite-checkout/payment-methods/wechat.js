@@ -97,7 +97,7 @@ function WeChatFields() {
 	return (
 		<WeChatFormWrapper>
 			<WeChatField
-				id="cardholderName"
+				id="wechat-cardholder-name"
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
