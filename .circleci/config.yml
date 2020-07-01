@@ -224,7 +224,7 @@ references:
       when: on_success
       command: cd desktop && yarn ci:github:dismiss-review
   desktop-notify-github-failure: &desktop-notify-github-failure
-      name: Notify Github Success
+      name: Notify Github Failure
       when: on_fail
       command: cd desktop && yarn ci:github:add-review
   desktop-notify-slack-failure: &desktop-notify-slack-failure
