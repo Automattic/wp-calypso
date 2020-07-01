@@ -446,4 +446,6 @@ const mapStateToProps = ( state, { mediaId, site } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { editMedia, deleteMedia, setMediaLibrarySelectedItems } )( localize( Media ) );
+export default connect( mapStateToProps, { editMedia, deleteMedia, setMediaLibrarySelectedItems } )(
+	localize( Media )
+);

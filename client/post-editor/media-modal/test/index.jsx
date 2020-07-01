@@ -15,7 +15,6 @@ import React from 'react';
  */
 import { EditorMediaModal } from '../';
 import accept from 'lib/accept';
-import mediaActions from 'lib/media/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 
