@@ -82,7 +82,7 @@ async function addReview() {
 	// if there are no existing reviews then create one
 	if ( ! alreadyReviewed ) {
 		const msg =
-			`WordPress Desktop CI Failure in job \`${ buildName }\`:` +
+			`WordPress Desktop CI Failure for job "${ buildName }".` +
 			`\n\n${ pullRequestUserName } please inspect this job's build steps for breaking changes at [this link](${ buildUrl }).` +
 			` For temporal failures, you may try to "Rerun Workflow from Failed".` +
 			`\n\nPlease also ensure this branch is rebased off latest Calypso master.`;
