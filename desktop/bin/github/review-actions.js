@@ -1,4 +1,5 @@
 /* eslint-disable import/no-nodejs-modules */
+/* eslint-disable no-console */
 
 // External Dependencies
 const https = require( 'https' );
@@ -7,7 +8,9 @@ const https = require( 'https' );
 const buildName = process.env.CIRCLE_JOB;
 const buildUrl = process.env.CIRCLE_BUILD_URL;
 const pullRequestUserName = `@${ process.env.CIRCLE_USERNAME }` || '';
-const pullRequestNum = getPullNumber( process.env.CIRCLE_PULL_REQUEST );
+const pullRequestNum = process.env.CIRCLE_PULL_REQUEST
+	? getPullNumber( process.env.CIRCLE_PULL_REQUEST )
+	: null;
 
 const gitHubReviewUsername = 'wp-desktop';
 const calypsoProject = 'Automattic/wp-calypso';
@@ -58,6 +61,12 @@ function dismissReview( reviewId ) {
 }
 
 async function getReviews( dismiss ) {
+	// exit if this is not a pull request
+	if ( ! pullRequestNum ) {
+		console.log( 'PR # is null (not in a pull request), exiting...' );
+		return;
+	}
+
 	let reviewed = false;
 	const response = await request( 'GET' );
 	const reviews = JSON.parse( response );
@@ -77,6 +86,12 @@ async function getReviews( dismiss ) {
 }
 
 async function addReview() {
+	// exit if this is not a pull request
+	if ( ! pullRequestNum ) {
+		console.log( 'PR # is null (not in a pull request), exiting...' );
+		return;
+	}
+
 	const alreadyReviewed = await getReviews( false );
 
 	// if there are no existing reviews then create one
@@ -85,7 +100,7 @@ async function addReview() {
 			`WordPress Desktop CI Failure for job "${ buildName }".` +
 			`\n\n${ pullRequestUserName } please inspect this job's build steps for breaking changes at [this link](${ buildUrl }).` +
 			` For temporal failures, you may try to "Rerun Workflow from Failed".` +
-			`\n\nPlease also ensure this branch is rebased off latest Calypso master.`;
+			`\n\nPlease also ensure this branch is rebased off latest Calypso.`;
 		const createReviewParameters = {
 			commit_id: pullRequestSha,
 			body: msg,
