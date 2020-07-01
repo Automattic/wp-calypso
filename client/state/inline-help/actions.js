@@ -7,7 +7,7 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-	INLINE_HELP_SET_QUERY_SEARCH,
+	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
@@ -32,7 +32,7 @@ import 'state/inline-help/init';
 export function setInlineHelpSearchQuery( searchQuery = '' ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: INLINE_HELP_SET_QUERY_SEARCH,
+			type: INLINE_HELP_SET_SEARCH_QUERY,
 			searchQuery,
 		} );
 	};
