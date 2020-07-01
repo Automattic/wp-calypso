@@ -18,6 +18,11 @@ import './features/tracking';
 import './features/convert-to-blocks-button';
 import './features/use-classic-block-guide';
 
+/**
+ * Style dependencies
+ */
+import './editor.scss';
+
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 
 registerPlugin( 'track-inserter-menu-events', {

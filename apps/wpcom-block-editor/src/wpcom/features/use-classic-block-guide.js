@@ -6,8 +6,10 @@ import domReady from '@wordpress/dom-ready';
 import ReactDOM from 'react-dom';
 import { useState } from '@wordpress/element';
 import { Guide } from '@wordpress/components';
+// eslint-disable-next-line
 import { useDispatch } from '@wordpress/data';
 import url from 'url';
+import { translate } from 'i18n-calypso';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const parsedEditorUrl = url.parse( window.location.href, true );
@@ -24,13 +26,29 @@ const ClassicGuide = () => {
 			{ isOpen && (
 				<Guide
 					onFinish={ closeGuide }
+					finishButtonText={ translate( 'Get started' ) }
 					pages={ [
 						{
 							content: (
-								<>
-									<h1>Welcome!</h1>
-									<p>You can still use the Classic Block if you want</p>
-								</>
+								<div className="use-classic-block-guide__wrapper">
+									<div className="use-classic-block-guide__content">
+										<h1 className="use-classic-block-guide__header">
+											{ translate( 'Say hello to the Classic block' ) }
+										</h1>
+										<p>
+											{ translate(
+												'The block editor is now the default editor for all your sites, but you can still use the Classic block, if you prefer.'
+											) }
+										</p>
+									</div>
+									<div>
+										<img
+											alt="Screenshot of the Classic block"
+											className="use-classic-block-guide__image"
+											src="https://s0.wp.com/i/classic-block-welcome.png"
+										/>
+									</div>
+								</div>
 							),
 						},
 					] }

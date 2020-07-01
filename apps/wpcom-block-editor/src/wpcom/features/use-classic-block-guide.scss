@@ -1,0 +1,19 @@
+@import '~@automattic/typography/sass/fonts';
+
+.use-classic-block-guide__wrapper {
+	display: flex;
+}
+
+.use-classic-block-guide__content {
+	padding: 2em;
+}
+
+.use-classic-block-guide__header {
+	font-family: $brand-serif;
+	font-size: 3em;
+	line-height: 1.2em;
+}
+
+.use-classic-block-guide__image {
+	width: 100%;
+}
