@@ -27,11 +27,7 @@ import LoginPage from '../lib/pages/login-page';
 import JetpackComPage from '../lib/pages/external/jetpackcom-page';
 import JetpackComFeaturesDesignPage from '../lib/pages/external/jetpackcom-features-design-page';
 import WooWizardSetupPage from '../lib/pages/woocommerce/woo-wizard-setup-page';
-import WooWizardPaymentsPage from '../lib/pages/woocommerce/woo-wizard-payments-page';
-import WooWizardShippingPage from '../lib/pages/woocommerce/woo-wizard-shipping-page';
-import WooWizardExtrasPage from '../lib/pages/woocommerce/woo-wizard-extras-page';
 import WooWizardJetpackPage from '../lib/pages/woocommerce/woo-wizard-jetpack-page';
-import WooWizardReadyPage from '../lib/pages/woocommerce/woo-wizard-ready-page';
 
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
