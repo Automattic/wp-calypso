@@ -227,6 +227,11 @@ references:
       name: Notify Github Success
       when: on_fail
       command: cd desktop && yarn ci:github:add-review
+  desktop-notify-slack-failure: &desktop-notify-slack-failure
+      webhook: '$SLACK_WP_DESKTOP_E2E'
+      fail_only: true
+      mentions: '$CIRCLE_USERNAME'
+      failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
   prepare:
@@ -641,6 +646,7 @@ jobs:
           root: /home/circleci/wp-calypso
           paths: *desktop-cache-paths
       - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
 
   wp-desktop-mac:
     macos:
@@ -693,6 +699,7 @@ jobs:
             - desktop/release
       - run: *desktop-notify-github-success
       - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
 
 workflows:
   version: 2
