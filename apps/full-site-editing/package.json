@@ -34,6 +34,9 @@
 		"editor-gutenboarding-launch": "check-npm-client && calypso-build --source='editor-gutenboarding-launch'",
 		"dev:editor-gutenboarding-launch": "check-npm-client && yarn run editor-gutenboarding-launch",
 		"build:editor-gutenboarding-launch": "check-npm-client && NODE_ENV=production yarn run editor-gutenboarding-launch",
+		"editor-site-launch": "check-npm-client && calypso-build --source='editor-site-launch'",
+		"dev:editor-site-launch": "check-npm-client && yarn run editor-site-launch",
+		"build:editor-site-launch": "check-npm-client && NODE_ENV=production yarn run editor-site-launch",
 		"newspack-blocks": "check-npm-client && npm-run-all --parallel newspack-blocks-*",
 		"newspack-blog-posts-block-editor": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-editor'",
 		"newspack-blog-posts-block-view": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-view'",
@@ -121,7 +124,8 @@
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0",
 		"react": "^16.12.0",
-		"react-dom": "^16.12.0"
+		"react-dom": "^16.12.0",
+		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
 		"@wordpress/eslint-plugin": "^6.0.0"

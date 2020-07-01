@@ -166,6 +166,14 @@ function load_editor_plans_grid() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_plans_grid' );
 
 /**
+ * Sigh: load_editor_site_launch
+ */
+function load_editor_site_launch() {
+	require_once __DIR__ . '/editor-site-launch/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_site_launch' );
+
+/**
  * Sigh: load_editor_gutenboarding_launch
  */
 function load_editor_gutenboarding_launch() {
