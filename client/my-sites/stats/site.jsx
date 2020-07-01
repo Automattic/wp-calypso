@@ -39,6 +39,8 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import EmptyContent from 'components/empty-content';
 import { activateModule } from 'state/jetpack/modules/actions';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import Banner from 'components/banner';
+import isVipSite from 'state/selectors/is-vip-site';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -126,7 +128,7 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack } = this.props;
+		const { date, siteId, slug, isJetpack, isVip } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -180,6 +182,21 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
+					{ ! isVip && (
+						<Banner
+							className="stats__upsell-nudge"
+							icon="star"
+							title={ translate( 'Start earning money now' ) }
+							description={ translate(
+								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
+							) }
+							href={ `/earn/${ slug }` }
+							tracksImpressionName="calypso_earn_banner_on_stats_impression"
+							tracksClickName="calypso__earn_banner_on_stats_cta_click"
+							showIcon={ true }
+							jetpack={ false }
+						/>
+					) }
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
 							date={ date }
@@ -317,11 +334,13 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isVip = isVipSite( state, siteId );
 		const showEnableStatsModule =
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isJetpack,
 			siteId,
+			isVip,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
 			showEnableStatsModule,
