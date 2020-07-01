@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
 import { connect } from 'react-redux';
 import { concat, flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -32,12 +33,8 @@ import { urlToSlug } from 'lib/url';
 import searchSites from 'components/search-sites';
 import jetpackConnection from '../../jetpack-connect/jetpack-connection';
 
-import { JPC_PATH_REMOTE_INSTALL } from '../../jetpack-connect/constants';
-
-import {
-	ALREADY_CONNECTED,
-	IS_DOT_COM_GET_SEARCH,
-} from '../../jetpack-connect/connection-notice-types';
+import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from '../../jetpack-connect/constants';
+import { ALREADY_CONNECTED } from '../../jetpack-connect/connection-notice-types';
 
 export class SearchPurchase extends Component {
 	static propTypes = {
@@ -96,9 +93,14 @@ export class SearchPurchase extends Component {
 	componentDidUpdate() {
 		const { status, processJpSite } = this.props;
 		const { currentUrl } = this.state;
+		const product = this.getProduct();
 
-		if ( status === IS_DOT_COM_GET_SEARCH || status === ALREADY_CONNECTED ) {
-			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + 'jetpack_search' );
+		if ( config.isEnabled( 'jetpack/wpcom-search-product' ) && status === IS_DOT_COM_GET_SEARCH ) {
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + product );
+		}
+
+		if ( status === ALREADY_CONNECTED ) {
+			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + product );
 		}
 
 		processJpSite( currentUrl );
@@ -145,7 +147,24 @@ export class SearchPurchase extends Component {
 		);
 	}
 
+	getProduct() {
+		// purchase-product/:product/:type
+		const product = window.location.pathname.split( '/' )[ 2 ];
+		const type = window.location.pathname.split( '/' )[ 3 ];
+
+		return type === 'monthly' ? product + '_' + type : product;
+	}
+
 	renderSiteInput( status ) {
+		const product = this.getProduct();
+
+		const isSearch = [
+			'jetpack_search',
+			'wpcom_search',
+			'jetpack_search_monthly',
+			'wpcom_search_monthly',
+		].includes( product );
+
 		return (
 			<Card className="purchase-product__site-url-input-container">
 				{ this.props.renderNotices() }
@@ -160,7 +179,7 @@ export class SearchPurchase extends Component {
 						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
 					}
 					isInstall={ true }
-					product={ 'jetpack_search' }
+					isSearch={ isSearch }
 					candidateSites={ this.state.candidateSites }
 				/>
 			</Card>
