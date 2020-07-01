@@ -11,7 +11,7 @@ module.exports = {
 		},
 	},
 	extends: [ 'eslint:recommended', 'plugin:jsdoc/recommended' ],
-	plugins: [ 'jsdoc', 'wpcalypso' ],
+	plugins: [ 'jsdoc', 'wpcalypso', 'inclusive-language' ],
 	rules: {
 		'array-bracket-spacing': [ 2, 'always' ],
 		'brace-style': [ 2, '1tbs' ],
@@ -144,5 +144,8 @@ module.exports = {
 		'wpcalypso/jsx-classname-namespace': 2,
 		'wpcalypso/redux-no-bound-selectors': 2,
 		yoda: 0,
+
+		// Ensure our codebases use inclusive language
+		'inclusive-language/use-inclusive-words': 'error',
 	},
 };
