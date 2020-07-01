@@ -19,7 +19,6 @@ import {
 	registerStore,
 	useSelect,
 	useDispatch,
-	useMessages,
 } from '@automattic/composite-checkout';
 
 /**
@@ -409,13 +408,10 @@ function LoadingFields() {
 function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage, showInfoMessage } = useMessages();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
 	const { formStatus } = useFormStatus();
 	const {
 		transactionStatus,
-		transactionLastResponse,
-		resetTransaction,
 		setTransactionComplete,
 		setTransactionAuthorizing,
 		setTransactionRedirecting,
@@ -425,37 +421,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
 
-	useEffect( () => {
-		let isSubscribed = true;
-
-		if ( transactionStatus === 'authorizing' ) {
-			debug( 'showing auth' );
-			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionLastResponse,
-			} )
-				.then( ( authenticationResponse ) => {
-					debug( 'stripe auth is complete', authenticationResponse );
-					isSubscribed && setTransactionComplete();
-				} )
-				.catch( ( error ) => {
-					isSubscribed && setTransactionError( error.message );
-				} );
-		}
-
-		return () => ( isSubscribed = false );
-	}, [
-		onEvent,
-		setTransactionComplete,
-		resetTransaction,
-		showInfoMessage,
-		showErrorMessage,
-		transactionStatus,
-		transactionLastResponse,
-		setTransactionError,
-		stripeConfiguration,
-	] );
+	useShowStripeModalAuth( transactionStatus === 'authorizing', stripeConfiguration );
 
 	return (
 		<Button
@@ -509,6 +475,46 @@ function ButtonContents( { formStatus, total } ) {
 		return sprintf( __( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	}
 	return __( 'Please wait…' );
+}
+
+function useShowStripeModalAuth( shouldShowModal, stripeConfiguration ) {
+	const onEvent = useEvents();
+	const {
+		transactionLastResponse,
+		resetTransaction,
+		setTransactionComplete,
+		setTransactionError,
+	} = useTransactionStatus();
+
+	useEffect( () => {
+		let isSubscribed = true;
+
+		if ( shouldShowModal ) {
+			debug( 'showing stripe authentication modal' );
+			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+			showStripeModalAuth( {
+				stripeConfiguration,
+				response: transactionLastResponse,
+			} )
+				.then( ( authenticationResponse ) => {
+					debug( 'stripe auth is complete', authenticationResponse );
+					isSubscribed && setTransactionComplete();
+				} )
+				.catch( ( error ) => {
+					isSubscribed && setTransactionError( error.message );
+				} );
+		}
+
+		return () => ( isSubscribed = false );
+	}, [
+		shouldShowModal,
+		onEvent,
+		setTransactionComplete,
+		resetTransaction,
+		transactionLastResponse,
+		setTransactionError,
+		stripeConfiguration,
+	] );
 }
 
 function StripeSummary() {
