@@ -78,11 +78,30 @@ function HelpSearchResults( {
 						) }
 					</p>
 				) }
-				<ul className="inline-help__results-list">
-					{ ! hasAPIResults && ( contextualResults.map( renderHelpLink ) ) }
-					{ hasAPIResults && apiResults.map( renderHelpLink ) }
-					{ ! isEmpty( adminResults ) && adminResults.map( renderHelpLink ) }
-				</ul>
+
+				{ ! hasAPIResults && (
+					<div className="inline-help__contextual-results">
+						<ul className="inline-help__results-list">
+							{ contextualResults.map( renderHelpLink ) }
+						</ul>
+					</div>
+				) }
+
+				{ hasAPIResults && (
+					<div className="inline-help__api-results">
+						<ul className="inline-help__results-list">
+							{ apiResults.map( renderHelpLink ) }
+						</ul>
+					</div>
+				) }
+
+				{ ! isEmpty( adminResults ) && (
+					<div className="inline-help__admin-results">
+						<ul className="inline-help__results-list">
+							{ adminResults.map( renderHelpLink ) }
+						</ul>
+					</div>
+				) }
 			</div>
 		);
 	};
