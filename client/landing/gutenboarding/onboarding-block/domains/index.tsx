@@ -83,7 +83,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const trackDomainSearchInteraction = ( query: string ) => {
 		trackEventWithFlow( 'calypso_newsite_domain_search_blur', {
 			query,
-			where: 'domain_step',
+			where: isModal ? 'domain_modal' : 'domain_page',
 		} );
 	};
 
