@@ -152,7 +152,7 @@ class CalypsoifyIframe extends Component<
 								this.props.iframeUrl
 						  )
 						: window.location.replace( this.props.iframeUrl );
-				}, 8000 ); // One second longer than we give the iframe to load
+				}, 8000 ); // Three seconds longer than we give the iframe to load
 			}
 		}, 1000 );
 	}
