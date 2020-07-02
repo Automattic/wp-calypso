@@ -148,11 +148,18 @@ export class SearchPurchase extends Component {
 	}
 
 	getProduct() {
-		// purchase-product/:product/:type
-		const product = window.location.pathname.split( '/' )[ 2 ];
-		const type = window.location.pathname.split( '/' )[ 3 ];
+		const type = window.location.pathname.includes( 'monthly' ) && 'monthly';
+		let product = '';
 
-		return type === 'monthly' ? product + '_' + type : product;
+		if ( window.location.pathname.includes( 'jetpack_search' ) ) {
+			product = type ? 'jetpack_search_monthly' : 'jetpack_search';
+		}
+
+		if ( window.location.pathname.includes( 'wpcom_search' ) ) {
+			product = type ? 'wpcom_search_monthly' : 'wpcom_search';
+		}
+
+		return product;
 	}
 
 	renderSiteInput( status ) {
