@@ -1,14 +1,13 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import {
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_FAILURE,
 	ALL_DOMAINS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { allDomainsSchema } from './schema';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import { createLightSiteDomainObject } from 'state/all-domains/helpers';
 
 export const allDomains = withSchemaValidation( allDomainsSchema, ( state = [], action ) => {
