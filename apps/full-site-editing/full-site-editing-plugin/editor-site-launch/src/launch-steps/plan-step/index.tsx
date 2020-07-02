@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import LaunchStep, { Props as LaunchStepProps } from '../../launch-step';
+import PlansGridFSE from '../../../../editor-plans-grid/src/plans-grid-fse';
 import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep } ) => {
@@ -34,7 +35,9 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep } ) 
 					</Button>
 				</div>
 			</div>
-			<div className="nux-launch-step__body"></div>
+			<div className="nux-launch-step__body">
+				<PlansGridFSE />
+			</div>
 		</LaunchStep>
 	);
 };
