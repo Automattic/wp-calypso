@@ -28,6 +28,11 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile # Not needed when restoring from cache.
 
+    - name: Run composer
+      uses: nick-zh/composer-php@master
+      with:
+        action: 'install'
+
     - name: Build packages
       if: steps.cache.outputs.cache-hit == 'true'
       run: yarn run postinstall # Needed only when not running yarn install.
