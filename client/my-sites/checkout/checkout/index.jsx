@@ -330,7 +330,7 @@ export class Checkout extends React.Component {
 					? jetpackProductItem( 'wpcom_search_monthly' )
 					: jetpackProductItem( 'wpcom_search' );
 			} else {
-				cartItem = null;
+				cartItem = ! isJetpackNotAtomic ? null : cartItem;
 			}
 		}
 

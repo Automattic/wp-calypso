@@ -5,7 +5,7 @@ import debugModule from 'debug';
 import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, startsWith, omit } from 'lodash';
+import { flowRight, get, includes, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -197,9 +197,12 @@ const jetpackConnection = ( WrappedComponent ) => {
 			}
 
 			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
-				const product = window.location.href.split( '/' )[ 5 ];
+				const product_path = window.location.pathname;
 
-				if ( startsWith( product, 'jetpack_search' ) || startsWith( product, 'wpcom_search' ) ) {
+				if (
+					product_path.includes( 'jetpack_search' ) ||
+					product_path.includes( 'wpcom_search' )
+				) {
 					return IS_DOT_COM_GET_SEARCH;
 				}
 				return IS_DOT_COM;
@@ -207,15 +210,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 			if ( this.isError( 'site_blacklisted' ) ) {
 				return SITE_BLOCKED;
-			}
-
-			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
-				const product = window.location.href.split( '/' )[ 5 ];
-
-				if ( startsWith( product, 'jetpack_search' ) ) {
-					return IS_DOT_COM_GET_SEARCH;
-				}
-				return IS_DOT_COM;
 			}
 
 			if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
