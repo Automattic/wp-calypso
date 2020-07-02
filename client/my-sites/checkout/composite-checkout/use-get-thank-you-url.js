@@ -34,6 +34,7 @@ import { persistSignupDestination, retrieveSignupDestination } from 'signup/util
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import { abtest } from 'lib/abtest';
+import { getLocationOrigin } from 'lib/cart-values';
 
 export function getThankYouPageUrl( {
 	siteSlug,
@@ -266,6 +267,7 @@ function getRedirectUrlForConciergeNudge( {
 			isTransactionResultEmpty,
 		} );
 		if ( upgradePath ) {
+			debug( 'showing upgrade path', upgradePath );
 			return upgradePath;
 		}
 
@@ -273,7 +275,20 @@ function getRedirectUrlForConciergeNudge( {
 		// being offered and so sold, to be inline with HE availability.
 		// To dial back, uncomment the condition below and modify the test config.
 		if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-			return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
+			const conciergePath = `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
+			debug( 'showing concierge path' );
+			// The server will transform ":receiptId" to "pending", and
+			// "/offer-quickstart-session/pending" is not a valid calypso url.
+			// Instead, we'll use the `redirectTo` query string to pass the url we
+			// actually want.
+			if ( pendingOrReceiptId === ':receiptId' ) {
+				const origin =
+					typeof window !== 'undefined'
+						? getLocationOrigin( window.location )
+						: 'https://wordpress.com';
+				return `/checkout/thank-you/${ siteSlug }/pending?redirectTo=${ origin }${ conciergePath }`;
+			}
+			return conciergePath;
 		}
 	}
 
