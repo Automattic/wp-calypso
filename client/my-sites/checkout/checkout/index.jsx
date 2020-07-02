@@ -305,7 +305,9 @@ export class Checkout extends React.Component {
 		}
 
 		if (
-			( startsWith( product, 'jetpack_backup' ) || startsWith( product, 'jetpack_scan' ) ) &&
+			( startsWith( product, 'jetpack_backup' ) ||
+				startsWith( product, 'jetpack_scan' ) ||
+				startsWith( product, 'jetpack_anti_spam' ) ) &&
 			isJetpackNotAtomic
 		) {
 			cartItem = jetpackProductItem( product );
