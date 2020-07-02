@@ -7,6 +7,7 @@ import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
@@ -39,7 +40,7 @@ function HelpSearchResults( {
 		openResult( event, selectedResult );
 	};
 
-	const renderHelpLink = ( { link, key, description, title }, index ) => {
+	const renderHelpLink = ( { link, key, description, title, icon }, index ) => {
 		const classes = classNames( 'inline-help__results-item', {
 			'is-selected': selectedResultIndex === index,
 		} );
@@ -52,6 +53,7 @@ function HelpSearchResults( {
 					title={ decodeEntities( description ) }
 					tabIndex={ -1 }
 				>
+					{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 					{ preventWidows( decodeEntities( title ) ) }
 				</a>
 			</li>
