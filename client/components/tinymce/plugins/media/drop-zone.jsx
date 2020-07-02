@@ -13,11 +13,11 @@ import { bumpStat } from 'lib/analytics/mc';
 import getMediaErrors from 'state/selectors/get-media-errors';
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import MediaDropZone from 'my-sites/media-library/drop-zone';
-import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite } from 'state/ui/selectors';
 import { blockSave } from 'state/editor/save-blockers/actions';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 class TinyMCEDropZone extends React.Component {
 	static propTypes = {
@@ -107,7 +107,7 @@ class TinyMCEDropZone extends React.Component {
 			}
 
 			onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
-			MediaActions.setLibrarySelectedItems( site.ID, [] );
+			this.props.setMediaLibrarySelectedItems( site.ID, [] );
 		} else {
 			// In all other cases, show the media modal list view
 			onRenderModal( { visible: true } );
@@ -144,5 +144,5 @@ export default connect(
 			selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		};
 	},
-	{ blockSave }
+	{ blockSave, setMediaLibrarySelectedItems }
 )( TinyMCEDropZone );

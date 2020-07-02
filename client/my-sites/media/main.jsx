@@ -30,6 +30,7 @@ import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
 import { editMedia, deleteMedia } from 'state/media/thunks';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -76,7 +77,7 @@ class Media extends Component {
 		}
 
 		if ( this.props.selectedSite ) {
-			MediaActions.setLibrarySelectedItems( this.props.selectedSite.ID, [] );
+			this.props.setMediaLibrarySelectedItems( this.props.selectedSite.ID, [] );
 		}
 
 		page( redirect );
@@ -445,4 +446,6 @@ const mapStateToProps = ( state, { mediaId, site } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { editMedia, deleteMedia } )( localize( Media ) );
+export default connect( mapStateToProps, { editMedia, deleteMedia, setMediaLibrarySelectedItems } )(
+	localize( Media )
+);

@@ -14,11 +14,11 @@ import { noop } from 'lodash';
 import ImageSelectorPreview from './preview';
 import ImageSelectorDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import MediaActions from 'lib/media/actions';
 import MediaModal from 'post-editor/media-modal';
 import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -41,6 +41,7 @@ export class ImageSelector extends Component {
 		showEditIcon: PropTypes.bool,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
+		setMediaLibrarySelectedItems: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -59,7 +60,7 @@ export class ImageSelector extends Component {
 
 		if ( imageIds ) {
 			const images = imageIds.map( ( imageId ) => MediaStore.get( siteId, imageId ) );
-			MediaActions.setLibrarySelectedItems( siteId, images );
+			this.props.setMediaLibrarySelectedItems( siteId, images );
 		}
 
 		this.setState( {
@@ -159,15 +160,18 @@ export class ImageSelector extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const { siteId } = ownProps;
-	const props = {
-		siteId: getSelectedSiteId( state ),
-		isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
-	};
+export default connect(
+	( state, ownProps ) => {
+		const { siteId } = ownProps;
+		const props = {
+			siteId: getSelectedSiteId( state ),
+			isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
+		};
 
-	if ( siteId ) {
-		props.siteId = siteId;
-	}
-	return props;
-} )( localize( ImageSelector ) );
+		if ( siteId ) {
+			props.siteId = siteId;
+		}
+		return props;
+	},
+	{ setMediaLibrarySelectedItems }
+)( localize( ImageSelector ) );

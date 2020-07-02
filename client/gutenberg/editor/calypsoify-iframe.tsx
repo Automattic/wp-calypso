@@ -50,6 +50,7 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Types
@@ -207,7 +208,7 @@ class CalypsoifyIframe extends Component<
 			if ( data.imageId ) {
 				const { siteId } = this.props;
 				const image = MediaStore.get( siteId, data.imageId );
-				MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+				this.props.setMediaLibrarySelectedItems( siteId, [ image ] );
 			}
 
 			this.setState( {
@@ -249,9 +250,9 @@ class CalypsoifyIframe extends Component<
 					};
 				} );
 
-				MediaActions.setLibrarySelectedItems( siteId, selectedItems );
+				this.props.setMediaLibrarySelectedItems( siteId, selectedItems );
 			} else {
-				MediaActions.setLibrarySelectedItems( siteId, [] );
+				this.props.setMediaLibrarySelectedItems( siteId, [] );
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
@@ -818,6 +819,7 @@ const mapDispatchToProps = {
 	trashPost,
 	updateSiteFrontPage,
 	notifyDesktopCannotOpenEditor,
+	setMediaLibrarySelectedItems,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;

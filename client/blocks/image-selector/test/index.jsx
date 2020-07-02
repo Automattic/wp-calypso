@@ -47,6 +47,7 @@ describe( 'ImageSelector', () => {
 		onImageSelected: noop,
 		onRemoveImage: noop,
 		imageIds: [],
+		setMediaLibrarySelectedItems: noop,
 	};
 	const store = {
 		getState: () => ( {
