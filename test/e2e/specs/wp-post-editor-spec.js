@@ -29,7 +29,7 @@ import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
 import * as mediaHelper from '../lib/media-helper';
 import * as dataHelper from '../lib/data-helper';
-import * as twitterHelper from '../lib/twitter-helper'
+import * as twitterHelper from '../lib/twitter-helper';
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
@@ -287,7 +287,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function () {
 			describe( 'Can see post publicized on twitter', function () {
 				step( 'Can see post message', async function () {
 					const tweetFound = await twitterHelper.latestTweetsContain( publicizeMessage );
-					assert.strictEqual( tweetFound, true, 'Tweet for publicized post not found on Twitter.');
+					assert.strictEqual( tweetFound, true, 'Tweet for publicized post not found on Twitter.' );
 				} );
 			} );
 		}

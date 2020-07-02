@@ -66,8 +66,15 @@ export default class WporgCreatorPage extends AsyncBaseContainer {
 		return await this.driver.findElement( URL_ELEMENT ).getText();
 	}
 
-	async waitForWpadmin() {
+	async waitForWpadmin( template ) {
 		await driverHelper.refreshIfJNError( this.driver );
+
+		if ( template === 'wooCommerceNoJetpack' ) {
+			const selector = By.css( 'a.wc-setup-footer-links' );
+			await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+			await driverHelper.clickWhenClickable( this.driver, selector );
+		}
+
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, PASSWORD_ELEMENT );
 	}
 
