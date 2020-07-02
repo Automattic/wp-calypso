@@ -150,14 +150,4 @@ describe( 'getAdminSectionsResults()', () => {
 		expect( results ).to.not.deep.equal( [] );
 		expect( results ).to.not.have.length( 0 );
 	} );
-
-	test( 'should return a direct match for `Add a new domain` term', () => {
-		const results = getAdminHelpResults( {}, 'Add a new domain' );
-
-		console.log( { results } );
-
-		expect( results ).to.be.a( 'array' );
-		expect( results ).to.not.deep.equal( [] );
-		expect( results ).to.not.have.length( 0 );
-	} );
 } );
