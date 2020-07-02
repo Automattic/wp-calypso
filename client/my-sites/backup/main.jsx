@@ -101,9 +101,12 @@ class BackupsPage extends Component {
 	}
 
 	/**
-	 *  Return an object with the last backup and the rest of the activities from the selected date
+	 * Return an object with the last backup and the rest of the activities from the selected date
+	 *
+	 * @param hasRealtimeBackups
+	 * @param hasRealTimebackups
 	 */
-	backupsFromSelectedDate = () => {
+	backupsFromSelectedDate = ( hasRealtimeBackups ) => {
 		const { moment } = this.props;
 
 		const date = this.getSelectedDate();
@@ -117,7 +120,11 @@ class BackupsPage extends Component {
 		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
 			this.props.indexedLog[ index ].forEach( ( log ) => {
 				// Discard log if it's not activity rewindable, failed backup or with streams
-				if ( ! isActivityBackup( log ) && ! isSuccessfulRealtimeBackup( log ) ) {
+				if (
+					! isActivityBackup( log ) &&
+					( ! isSuccessfulRealtimeBackup( log ) ||
+						( isSuccessfulRealtimeBackup( log ) && ! hasRealtimeBackups ) )
+				) {
 					return;
 				}
 
@@ -152,7 +159,8 @@ class BackupsPage extends Component {
 			gmtOffset,
 		} = this.props;
 
-		const backupsFromSelectedDate = this.backupsFromSelectedDate();
+		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
+		const backupsFromSelectedDate = this.backupsFromSelectedDate( hasRealtimeBackups );
 		const lastBackup = backupsFromSelectedDate.lastBackup;
 		const realtimeBackups = backupsFromSelectedDate.rewindableActivities;
 
@@ -162,7 +170,7 @@ class BackupsPage extends Component {
 		// todo: commented as a quick fix before Jetpack Cloud launch. All the non-english account break here.
 		// See: 1169345694087188-as-1176670093007897
 		// const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
-		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
+
 		const isToday = today.isSame( this.getSelectedDate(), 'day' );
 
 		return (
