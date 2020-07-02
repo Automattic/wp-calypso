@@ -3,9 +3,13 @@
  */
 import values from 'lodash/values';
 
-/**
- * Internal dependencies
- */
-import languagesMeta from './languages-meta.json';
+let languagesMeta = [];
+
+try {
+	languagesMeta = require( './languages-meta.json' );
+} catch ( error ) {
+	// Use fallback languages meta data if `languages-meta.json` has failed to download.
+	languagesMeta = require( './fallback-languages-meta.json' );
+}
 
 export const languages = values( languagesMeta );
