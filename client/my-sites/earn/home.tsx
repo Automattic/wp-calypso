@@ -16,6 +16,7 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
@@ -49,9 +50,10 @@ interface ConnectedProps {
 	isFreePlan: boolean;
 	isJetpack: boolean;
 	isAtomicSite: boolean;
+	isLoading: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
-	hasConnectedAccount: boolean;
+	hasConnectedAccount: boolean | null;
 	hasSetupAds: boolean;
 	trackUpgrade: ( plan: string, feature: string ) => void;
 	trackLearnLink: ( feature: string ) => void;
@@ -66,6 +68,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isFreePlan,
 	isJetpack,
 	isAtomicSite,
+	isLoading,
 	hasSimplePayments,
 	hasWordAds,
 	hasConnectedAccount,
@@ -481,6 +484,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
 			),
 		},
+		isLoading,
 		promos: compact( [
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
@@ -504,6 +508,13 @@ export default connect< ConnectedProps, {}, {} >(
 	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
+		const hasConnectedAccount = get(
+			state,
+			[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
+			null
+		);
+		const sitePlanSlug = get( getCurrentPlan( state, site.ID ), 'productSlug', null );
+		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
 		return {
 			siteId: site.ID,
 			selectedSiteSlug,
@@ -512,11 +523,8 @@ export default connect< ConnectedProps, {}, {} >(
 			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
 			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
-			hasConnectedAccount: !! get(
-				state,
-				[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
-				false
-			),
+			hasConnectedAccount,
+			isLoading,
 			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
 		};
 	},
