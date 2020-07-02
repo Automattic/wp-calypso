@@ -20,7 +20,11 @@ import DocumentHead from 'components/data/document-head';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import FormattedHeader from 'components/formatted-header';
-import { getAllDomains, getFlatDomainsList } from 'state/sites/domains/selectors';
+import {
+	getAllDomains,
+	getFlatDomainsList,
+	getAllRequestingSiteDomains,
+} from 'state/sites/domains/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
@@ -47,6 +51,7 @@ class ListAll extends Component {
 		sites: PropTypes.object.isRequired,
 		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
+		isRequestingAllSiteDomains: PropTypes.object,
 	};
 
 	clickAddDomain = () => {
@@ -94,7 +99,13 @@ class ListAll extends Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { domainsList, sites, domainsDetails, canManageSitesMap } = this.props;
+		const {
+			domainsList,
+			sites,
+			domainsDetails,
+			canManageSitesMap,
+			isRequestingAllSiteDomains,
+		} = this.props;
 
 		const domainListItems = domainsList
 			.filter(
@@ -108,6 +119,7 @@ class ListAll extends Component {
 						domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
 						site={ sites[ domain?.blogId ] }
 						isManagingAllSites={ true }
+						isLoadingDomainDetails={ isRequestingAllSiteDomains[ domain?.blogId ] ?? false }
 						showSite={ true }
 						onClick={ this.handleDomainItemClick }
 						onAddEmailClick={ this.handleAddEmailClick }
@@ -155,6 +167,7 @@ export default connect(
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
 			requestingDomains: isRequestingAllDomains( state ),
+			isRequestingAllSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
 			user: getCurrentUser( state ),
 		};

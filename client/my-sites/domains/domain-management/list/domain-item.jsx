@@ -30,7 +30,7 @@ class DomainItem extends PureComponent {
 		onClick: PropTypes.func.isRequired,
 		onAddEmailClick: PropTypes.func.isRequired,
 		onToggle: PropTypes.func,
-		isLoadingExtendedData: PropTypes.bool,
+		isLoadingDomainDetails: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -38,7 +38,7 @@ class DomainItem extends PureComponent {
 		showSite: false,
 		showCheckbox: false,
 		onToggle: null,
-		isLoadingExtendedData: false,
+		isLoadingDomainDetails: false,
 	};
 
 	handleClick = () => {
