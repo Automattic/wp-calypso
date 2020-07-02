@@ -7,19 +7,26 @@ $border: 1px solid $light-gray-500;
 $transition-period: 200ms;
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
-	visibility: hidden;
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
 	background: $black;
-	opacity: 0;
-	transition: opacity $transition-period;
-	@include reduce-motion( 'transition' );
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
+	@include reduce-motion( 'animation' );
 
-	&:not( [aria-hidden=true] ) {
-		visibility: visible;
+	&.is-fading-out {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-in reverse;
+		@include reduce-motion( 'animation' );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__fade {
+	0% {
+		opacity: 0;
+	}
+	100% {
 		opacity: 0.44;
 	}
 }
@@ -27,19 +34,26 @@ $transition-period: 200ms;
 .wpcom-block-editor-nav-sidebar-nav-sidebar__container {
 	box-sizing: border-box;
 	position: fixed;
-	visibility: hidden;
 	top: 0;
-	left: -$sidebar-width;
 	bottom: 0;
 	width: $sidebar-width;
 	border-right: $border;
 	background: $white;
 	z-index: 1;
-	transition: left $transition-period;
-	@include reduce-motion( 'transition' );
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-out;
+	@include reduce-motion( 'animation' );
 
-	&:not( [aria-hidden=true] ) {
-		visibility: visible;
+	&.is-sliding-left {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-in reverse;
+		@include reduce-motion( 'animation' );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__slide {
+	0% {
+		left: -$sidebar-width;
+	}
+	100% {
 		left: 0;
 	}
 }

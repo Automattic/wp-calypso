@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { WPSyntheticEvent } from '@wordpress/element';
+import { useLayoutEffect, useRef, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { Button as OriginalButton } from '@wordpress/components';
 import { chevronLeft } from '@wordpress/icons';
@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -41,8 +42,27 @@ export default function WpcomBlockEditorNavSidebar() {
 	const items = useNavItems();
 	const statusLabels = usePostStatusLabels();
 
+	const prevIsOpen = useRef( isOpen );
+	const [ isClosing, setIsClosing ] = useState( false );
+
+	// Using layout effect to prevent a brief moment in time where both `isOpen` and `isClosing`
+	// are both false, causing a flicker during the fade out animation.
+	useLayoutEffect( () => {
+		if ( ! isOpen && prevIsOpen.current ) {
+			// Check current and previous isOpen value to see if we're closing
+			setIsClosing( true );
+		}
+
+		prevIsOpen.current = isOpen;
+	}, [ isOpen, prevIsOpen, setIsClosing ] );
+
 	if ( ! postType ) {
 		// Still loading
+		return null;
+	}
+
+	if ( ! isOpen && ! isClosing ) {
+		// Remove from DOM when closed so sidebar doesn't participate in tab order
 		return null;
 	}
 
@@ -52,7 +72,7 @@ export default function WpcomBlockEditorNavSidebar() {
 	let closeLabel = get( postType, [ 'labels', 'all_items' ], __( 'Back', 'full-site-editing' ) );
 	closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', closeLabel );
 
-	const handleClose = ( e: WPSyntheticEvent ) => {
+	const handleClose = ( e: React.MouseEvent ) => {
 		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
 			e.preventDefault();
 			doAction( 'a8c.wpcom-block-editor.closeEditor' );
@@ -62,12 +82,22 @@ export default function WpcomBlockEditorNavSidebar() {
 	return (
 		<>
 			<div
-				className="wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard"
-				aria-hidden={ ! isOpen }
+				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard', {
+					'is-fading-out': isClosing,
+				} ) }
+				onAnimationEnd={ ( ev: React.AnimationEvent ) => {
+					if (
+						ev.animationName === 'wpcom-block-editor-nav-sidebar-nav-sidebar__fade' &&
+						isClosing
+					) {
+						setIsClosing( false );
+					}
+				} }
 			/>
 			<div
-				className="wpcom-block-editor-nav-sidebar-nav-sidebar__container"
-				aria-hidden={ ! isOpen }
+				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
+					'is-sliding-left': isClosing,
+				} ) }
 			>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header" />
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container">
