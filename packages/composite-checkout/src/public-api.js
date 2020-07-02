@@ -3,7 +3,9 @@
  */
 import Button from './components/button';
 import CheckoutErrorBoundary from './components/checkout-error-boundary';
-import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
+import { CheckoutProvider } from './components/checkout-provider';
+import useMessages from './components/use-messages';
+import useEvents from './components/use-events';
 import {
 	Checkout,
 	CheckoutStep,
