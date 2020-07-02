@@ -45,6 +45,7 @@ export default function ConvertToBlocksDialog( { handleResponse, postId, showDia
 
 	return (
 		<Modal
+			isDismissible={ false }
 			onRequestClose={ onClose( 'cancel' ) }
 			shouldCloseOnClickOutside={ false }
 			title={ translate( 'Convert to blocks?' ) }
