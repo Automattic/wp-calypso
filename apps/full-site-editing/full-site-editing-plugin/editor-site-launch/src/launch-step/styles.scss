@@ -1,16 +1,16 @@
 @import '~@automattic/typography/sass/fonts';
 
-.launch-step {
+.nux-launch-step {
 	// TODO: container padding/margin with mobile breakpoints goes here.
 	padding: 88px;
 }
 
-.launch-step__header {
+.nux-launch-step__header {
 	display: flex;
 	align-items: baseline;
 }
 
-.launch-step__heading {
+.nux-launch-step__heading {
 	flex-grow: 1;
 
 	h1 {

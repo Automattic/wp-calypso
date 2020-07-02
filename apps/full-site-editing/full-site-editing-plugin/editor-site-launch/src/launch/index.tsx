@@ -59,7 +59,7 @@ const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Privacy }
 	};
 
 	return (
-		<div className="launch">
+		<div className="nux-launch">
 			<CurrentLaunchStep
 				onPrevStep={ handlePrevStep }
 				onNextStep={ handleNextStep }

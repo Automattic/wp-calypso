@@ -16,7 +16,7 @@ export interface Props {
 }
 
 const LaunchStep: React.FunctionComponent< Props > = ( { className, children } ) => {
-	return <div className={ classnames( 'launch-step', className ) }>{ children }</div>;
+	return <div className={ classnames( 'nux-launch-step', className ) }>{ children }</div>;
 };
 
 export default LaunchStep;

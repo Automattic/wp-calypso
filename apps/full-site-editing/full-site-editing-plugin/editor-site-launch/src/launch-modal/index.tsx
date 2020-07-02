@@ -23,9 +23,9 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, step } ) => {
 
 	return (
 		<Modal
-			className="launch-modal"
-			overlayClassName="launch-modal-overlay"
-			bodyOpenClassName="has-launch-modal"
+			className="nux-launch-modal"
+			overlayClassName="nux-launch-modal-overlay"
+			bodyOpenClassName="has-nux-launch-modal"
 			onRequestClose={ handleClose }
 			title="You're almost there! Review a few things before launching your site!"
 		>

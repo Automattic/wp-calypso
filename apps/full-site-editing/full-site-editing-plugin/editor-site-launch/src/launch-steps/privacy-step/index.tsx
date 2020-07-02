@@ -17,21 +17,21 @@ const PrivacyStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep }
 	};
 
 	return (
-		<LaunchStep className="privacy-step">
-			<div className="launch-step__header">
-				<div className="launch-step__heading">
-					<h1 className="launch-step__title">{ __( 'Site privacy', 'full-site-editing' ) }</h1>
-					<p className="launch-step__subtitle">
+		<LaunchStep className="nux-launch-privacy-step">
+			<div className="nux-launch-step__header">
+				<div className="nux-launch-step__heading">
+					<h1 className="nux-launch-step__title">{ __( 'Site privacy', 'full-site-editing' ) }</h1>
+					<p className="nux-launch-step__subtitle">
 						{ __( 'Control who is able to see your site once your launch', 'full-site-editing' ) }
 					</p>
 				</div>
-				<div className="launch-step__actions">
+				<div className="nux-launch-step__actions">
 					<Button isPrimary onClick={ handleContinue }>
 						{ __( 'Continue', 'full-site-editing' ) }
 					</Button>
 				</div>
 			</div>
-			<div className="launch-step__body"></div>
+			<div className="nux-launch-step__body"></div>
 		</LaunchStep>
 	);
 };

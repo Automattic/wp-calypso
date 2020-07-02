@@ -17,24 +17,24 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep } ) 
 	};
 
 	return (
-		<LaunchStep className="domain-step">
-			<div className="launch-step__header">
-				<div className="launch-step__heading">
-					<h1 className="launch-step__title">{ __( 'Choose a plan', 'full-site-editing' ) }</h1>
-					<p className="launch-step__subtitle">
+		<LaunchStep className="nux-launch-plan-step">
+			<div className="nux-launch-step__header">
+				<div className="nux-launch-step__heading">
+					<h1 className="nux-launch-step__title">{ __( 'Choose a plan', 'full-site-editing' ) }</h1>
+					<p className="nux-launch-step__subtitle">
 						{ __(
 							'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.',
 							'full-site-editing'
 						) }
 					</p>
 				</div>
-				<div className="launch-step__actions">
+				<div className="nux-launch-step__actions">
 					<Button isTertiary onClick={ handleBack }>
 						{ __( 'Go back', 'full-site-editing' ) }
 					</Button>
 				</div>
 			</div>
-			<div className="launch-step__body"></div>
+			<div className="nux-launch-step__body"></div>
 		</LaunchStep>
 	);
 };
