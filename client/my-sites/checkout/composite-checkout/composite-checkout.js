@@ -122,6 +122,7 @@ export default function CompositeCheckout( {
 	couponCode: couponCodeFromUrl,
 	isWhiteGloveOffer,
 	isComingFromUpsell,
+	isLoggedOutCart,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(

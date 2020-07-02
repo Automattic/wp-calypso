@@ -133,6 +133,7 @@ export default function CheckoutSystemDecider( {
 						cart={ cart }
 						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isComingFromUpsell={ isComingFromUpsell }
+						isLoggedOutCart={ isLoggedOutCart }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>
