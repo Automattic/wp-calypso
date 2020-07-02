@@ -2,14 +2,12 @@
 /**
  * External dependencies
  */
-import domReady from '@wordpress/dom-ready';
-import ReactDOM from 'react-dom';
 import { useState } from '@wordpress/element';
 import { Guide } from '@wordpress/components';
-// eslint-disable-next-line
 import { useDispatch } from '@wordpress/data';
 import url from 'url';
 import { translate } from 'i18n-calypso';
+import { registerPlugin } from '@wordpress/plugins';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const parsedEditorUrl = url.parse( window.location.href, true );
@@ -19,7 +17,9 @@ const ClassicGuide = () => {
 
 	const closeGuide = () => setOpen( false );
 
-	// useDispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+	// Make sure we don't end up with the standard wpcom nux showing as well.
+	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
+	setWpcomNuxStatus( { isNuxEnabled: false } );
 
 	return (
 		<>
@@ -63,22 +63,7 @@ const guideDismissed = false;
 parsedEditorUrl.query[ 'show-classic-block-guide' ] = true;
 
 if ( parsedEditorUrl.query[ 'show-classic-block-guide' ] && ! guideDismissed ) {
-	domReady( () => {
-		const editInception = setInterval( () => {
-			// Cycle through interval until blockEditor is found.
-			const blockEditor = document.querySelector( '.block-editor' );
-
-			if ( ! blockEditor ) {
-				return;
-			}
-
-			clearInterval( editInception );
-
-			const switchToClassicNotice = document.createElement( 'div' );
-			switchToClassicNotice.className = 'edit-post-switch-to-classic-notice';
-			blockEditor.parentNode.insertBefore( switchToClassicNotice, blockEditor );
-
-			ReactDOM.render( <ClassicGuide />, switchToClassicNotice );
-		}, 200 );
+	registerPlugin( 'wpcom-classic-block-editor-nux', {
+		render: () => <ClassicGuide />,
 	} );
 }
