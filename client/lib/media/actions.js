@@ -17,7 +17,6 @@ import MediaStore from './store';
 import MediaListStore from './list-store';
 import {
 	changeMediaSource,
-	clearMediaErrors,
 	createMediaItem,
 	deleteMedia,
 	failMediaItemRequest,
@@ -282,16 +281,6 @@ MediaActions.delete = function ( siteId, item ) {
 				siteId: siteId,
 			} );
 		} );
-};
-
-MediaActions.clearValidationErrorsByType = function ( siteId, type ) {
-	debug( 'Clearing validation errors for %d, by type %s', siteId, type );
-	Dispatcher.handleViewAction( {
-		type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
-		siteId: siteId,
-		errorType: type,
-	} );
-	reduxDispatch( clearMediaErrors( siteId, type ) );
 };
 
 MediaActions.sourceChanged = function ( siteId ) {

@@ -39,7 +39,7 @@ import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions
 import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { withoutNotice } from 'state/notices/actions';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { clearMediaErrors } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -129,7 +129,7 @@ export class MediaLibraryContent extends React.Component {
 			};
 
 			if ( site ) {
-				onDismiss = MediaActions.clearValidationErrorsByType.bind( null, site.ID, errorType );
+				onDismiss = () => this.props.clearMediaErrors( site.ID, errorType );
 			}
 
 			let status = 'is-error';
@@ -457,19 +457,18 @@ export default connect(
 			selectedItems: getMediaLibrarySelectedItems( state, ownProps.site?.ID ),
 		};
 	},
-	() => ( {
-		toggleGuidedTour: ( shouldPause ) => {
-			// We're using `reduxDispatch` to avoid dispatch clashes with the media data Flux implementation.
-			// The eventual Reduxification of the media store should prevent this. See: #26168
-			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
+	{
+		toggleGuidedTour: ( shouldPause ) => ( dispatch ) => {
+			dispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		deleteKeyringConnection: ( connection ) => {
+		deleteKeyringConnection: ( connection ) => ( dispatch ) => {
 			// We don't want this to trigger a global notice - a notice is shown inline
 			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
 
-			reduxDispatch( deleteKeyring() );
+			dispatch( deleteKeyring() );
 		},
-	} ),
+		clearMediaErrors,
+	},
 	null,
 	{ pure: false }
 )( localize( MediaLibraryContent ) );
