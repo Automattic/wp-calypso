@@ -71,15 +71,19 @@ function HelpSearchResults( {
 		}
 
 		return (
-			<>
+			<div className="inline-help__search-results">
 				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
-					<p className="inline-help__empty-results">{ translate( 'No results.' ) }</p>
+					<p className="inline-help__empty-results">{
+						translate( 'Sorry, there were no matches. Here are some of the most searched for help pages for this section:'
+						) }
+					</p>
 				) }
 				<ul className="inline-help__results-list">
 					{ ! hasAPIResults && ( contextualResults.map( renderHelpLink ) ) }
-					{ apiResults.map( renderHelpLink ) }
+					{ hasAPIResults && apiResults.map( renderHelpLink ) }
+					{ ! isEmpty( adminResults ) && adminResults.map( renderHelpLink ) }
 				</ul>
-			</>
+			</div>
 		);
 	};
 
