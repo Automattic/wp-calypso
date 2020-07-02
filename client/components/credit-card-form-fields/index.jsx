@@ -325,7 +325,7 @@ export class CreditCardFormFields extends React.Component {
 	}
 
 	render() {
-		const { translate, countriesList, autoFocus } = this.props;
+		const { translate, countriesList, autoFocus, isLoggedOutCart } = this.props;
 		const countryDetailsRequired = this.shouldRenderCountrySpecificFields();
 		const creditCardFormFieldsExtrasClassNames = classNames( {
 			'credit-card-form-fields__extras': true,
@@ -344,12 +344,13 @@ export class CreditCardFormFields extends React.Component {
 					} ),
 					placeholder: ' ',
 				} ) }
-				{ this.createField( 'email', Input, {
-					autoFocus,
-					label: 'Email address',
-					placeholder: ' ',
-					type: 'email',
-				} ) }
+				{ isLoggedOutCart &&
+					this.createField( 'email', Input, {
+						autoFocus,
+						label: 'Email address',
+						placeholder: ' ',
+						type: 'email',
+					} ) }
 				<div className="credit-card-form-fields__field number">
 					<CreditCardNumberField
 						translate={ this.props.translate }

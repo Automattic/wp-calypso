@@ -336,6 +336,7 @@ export class SecurePaymentForm extends Component {
 					onSubmit={ this.handlePaymentBoxSubmit }
 					transactionStep={ this.props.transaction.step }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
+					isLoggedOutCart={ this.props.isLoggedOutCart }
 				>
 					{ this.props.children }
 				</CreditCardPaymentBox>
@@ -363,6 +364,7 @@ export class SecurePaymentForm extends Component {
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
+					isLoggedOutCart={ this.props.isLoggedOutCart }
 				>
 					{ this.props.children }
 				</StripeElementsPaymentBox>

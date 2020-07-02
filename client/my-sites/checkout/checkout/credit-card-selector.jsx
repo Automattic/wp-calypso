@@ -80,6 +80,7 @@ class CreditCardSelector extends React.Component {
 					transaction={ this.props.transaction }
 					hasStoredCards={ this.props.cards.length > 0 }
 					selected={ selected }
+					isLoggedOutCart={ this.props.isLoggedOutCart }
 				/>
 			</CreditCard>
 		);

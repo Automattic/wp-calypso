@@ -202,6 +202,7 @@ class CreditCardPaymentBox extends React.Component {
 			stripe,
 			isStripeLoading,
 			stripeLoadingError,
+			isLoggedOutCart,
 			translate,
 		} = this.props;
 
@@ -217,6 +218,7 @@ class CreditCardPaymentBox extends React.Component {
 						isStripeLoading={ isStripeLoading }
 						stripeLoadingError={ stripeLoadingError }
 						translate={ translate }
+						isLoggedOutCart={ isLoggedOutCart }
 					/>
 
 					{ this.props.children }
