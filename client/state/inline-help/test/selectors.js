@@ -11,6 +11,7 @@ import getSearhQuery from 'state/inline-help/selectors/get-search-query';
 import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
 import getInlineHelpAdminResultsForQuery from 'state/inline-help/selectors/get-inline-help-admin-results-for-query';
 import getInlineHelpContextualResultsForQuery from 'state/inline-help/selectors/get-inline-help-contextual-results-for-query';
+import getInlineHelpApiResultsForQuery from 'state/inline-help/selectors/get-inline-help-api-results-for-query';
 import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
 
 describe( '#isInlineHelpPopoverVisible()', () => {
@@ -154,8 +155,53 @@ describe( 'getAdminSectionsResults()', () => {
 	} );
 } );
 
+
+describe( 'getInlineHelpApiResultsForQuery()', () => {
+	test( 'should return only API endpoint items, according to the current query', () => {
+		const state = {
+			inlineHelp: {
+				searchResults: {
+					search: {
+						searchQuery: 'foo',
+						items: {
+							foo: [
+								{
+									title: 'API response Item - title',
+									description: 'API response Item - no support_type key',
+									link: 'http://admin-section.item.link',
+								},
+								{
+									title: 'Admin Section Item - title',
+									description: 'Admin Section - description',
+									link: 'http://admin-section.item.link',
+									support_type: 'admin_section',
+								},
+								{
+									title: 'Contextual Item - title',
+									description: 'Contextual - description',
+									link: 'http://contextual-item.item.link',
+									support_type: 'contextual_help',
+								},
+
+							],
+						},
+					},
+				},
+			},
+		};
+
+		expect( getInlineHelpApiResultsForQuery( state ) ).to.deep.equal( [
+			{
+				title: 'API response Item - title',
+				description: 'API response Item - no support_type key',
+				link: 'http://admin-section.item.link',
+			},
+		] );
+	} );
+} );
+
 describe( 'getInlineHelpAdminResultsForQuery()', () => {
-	test( 'should return only items admin itmes, according to the current query', () => {
+	test( 'should return only items admin items, according to the current query', () => {
 		const state = {
 			inlineHelp: {
 				searchResults: {
@@ -200,7 +246,7 @@ describe( 'getInlineHelpAdminResultsForQuery()', () => {
 } );
 
 describe( 'getInlineHelpContextualResultsForQuery()', () => {
-	test( 'should return only items admin itmes, according to the current query', () => {
+	test( 'should return only items contextual items, according to the current query', () => {
 		const state = {
 			inlineHelp: {
 				searchResults: {
