@@ -12,6 +12,7 @@ $transition-period: 200ms;
 	left: 0;
 	right: 0;
 	bottom: 0;
+	z-index: 1;
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
 	@include reduce-motion( 'animation' );
 
@@ -38,7 +39,6 @@ $transition-period: 200ms;
 	width: $sidebar-width;
 	border-right: $border;
 	background: $white;
-	z-index: 1;
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-out;
 	@include reduce-motion( 'animation' );
 

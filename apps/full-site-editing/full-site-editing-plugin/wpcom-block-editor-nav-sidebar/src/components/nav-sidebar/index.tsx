@@ -2,14 +2,20 @@
  * External dependencies
  */
 import { useLayoutEffect, useRef, useState } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
-import { Button as OriginalButton } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import {
+	Button as OriginalButton,
+	IsolatedEventContainer,
+	withConstrainedTabbing,
+} from '@wordpress/components';
 import { chevronLeft } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
+import { ESCAPE } from '@wordpress/keycodes';
+import { compose } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -28,7 +34,8 @@ const Button = ( {
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
-export default function WpcomBlockEditorNavSidebar() {
+function WpcomBlockEditorNavSidebar() {
+	const { toggleSidebar } = useDispatch( STORE_KEY );
 	const [ isOpen, postType, selectedItemId ] = useSelect( ( select ) => {
 		const { getPostType } = select( 'core' ) as any;
 
@@ -79,25 +86,48 @@ export default function WpcomBlockEditorNavSidebar() {
 		}
 	};
 
+	const dismissSidebar = () => {
+		if ( isOpen && ! isClosing ) {
+			toggleSidebar();
+		}
+	};
+
+	const handleClickGuard = ( e: React.MouseEvent ) => {
+		if ( e.currentTarget === e.target ) {
+			dismissSidebar();
+		}
+	};
+
+	const handleKeyDown = ( e: React.KeyboardEvent ) => {
+		if ( e.keyCode === ESCAPE ) {
+			e.stopPropagation();
+			dismissSidebar();
+		}
+	};
+
 	return (
-		<>
-			<div
-				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard', {
-					'is-fading-out': isClosing,
-				} ) }
-				onAnimationEnd={ ( ev: React.AnimationEvent ) => {
-					if (
-						ev.animationName === 'wpcom-block-editor-nav-sidebar-nav-sidebar__fade' &&
-						isClosing
-					) {
-						setIsClosing( false );
-					}
-				} }
-			/>
+		<IsolatedEventContainer
+			className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard', {
+				'is-fading-out': isClosing,
+			} ) }
+			onAnimationEnd={ ( ev: React.AnimationEvent ) => {
+				if (
+					ev.animationName === 'wpcom-block-editor-nav-sidebar-nav-sidebar__fade' &&
+					isClosing
+				) {
+					setIsClosing( false );
+				}
+			} }
+			onClick={ handleClickGuard }
+			onKeyDown={ handleKeyDown }
+		>
 			<div
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
+				ref={ ( el ) => el && el.focus() }
+				role="dialog"
+				tabIndex={ -1 }
 			>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header" />
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container">
@@ -126,9 +156,11 @@ export default function WpcomBlockEditorNavSidebar() {
 					<ViewAllPosts postType={ postType } />
 				</div>
 			</div>
-		</>
+		</IsolatedEventContainer>
 	);
 }
+
+export default compose( [ withConstrainedTabbing ] )( WpcomBlockEditorNavSidebar );
 
 function useNavItems(): Post[] {
 	return useSelect( ( select ) => {
