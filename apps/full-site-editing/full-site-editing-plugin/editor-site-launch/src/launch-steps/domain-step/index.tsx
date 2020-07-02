@@ -13,7 +13,7 @@ import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const handleBack = () => {
-		onPrevStep && onPrevStep();
+		onPrevStep?.();
 	};
 
 	const handleContinue = () => {
