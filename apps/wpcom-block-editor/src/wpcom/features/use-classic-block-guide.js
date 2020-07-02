@@ -10,12 +10,17 @@ import { translate } from 'i18n-calypso';
 import { registerPlugin } from '@wordpress/plugins';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const parsedEditorUrl = url.parse( window.location.href, true );
+const parsedEditorUrl = url.parse( globalThis.location.href, true );
+const storageKey = `classic_block_guide_${ globalThis._currentSiteId }_is_dismissed`;
 
 const ClassicGuide = () => {
 	const [ isOpen, setOpen ] = useState( true );
 
-	const closeGuide = () => setOpen( false );
+	const closeGuide = () => {
+		globalThis.localStorage.setItem( storageKey, 'true' );
+
+		setOpen( false );
+	};
 
 	// Make sure we don't end up with the standard wpcom nux showing as well.
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
@@ -58,8 +63,9 @@ const ClassicGuide = () => {
 	);
 };
 
-// Hard coding these values for now - query string can be passed in from client/gutenberg/editor/calypsoify-iframe.tsx
-const guideDismissed = false;
+const guideDismissed = globalThis.localStorage.getItem( storageKey );
+
+// Hard coding this value for now - query string can be passed in from client/gutenberg/editor/calypsoify-iframe.tsx
 parsedEditorUrl.query[ 'show-classic-block-guide' ] = true;
 
 if ( parsedEditorUrl.query[ 'show-classic-block-guide' ] && ! guideDismissed ) {
