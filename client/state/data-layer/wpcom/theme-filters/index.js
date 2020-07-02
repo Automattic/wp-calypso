@@ -13,7 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import isSiteEligibleForFullSiteEditing from 'state/selectors/is-site-eligible-for-full-site-editing';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -45,7 +45,7 @@ registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 		( store, action ) => {
 			const state = store.getState();
 			const selectedSiteId = getSelectedSiteId( state );
-			const isFse = isSiteUsingFullSiteEditing( state, selectedSiteId );
+			const isFse = isSiteEligibleForFullSiteEditing( state, selectedSiteId );
 
 			return themeFiltersHandlers( store, {
 				...action,
