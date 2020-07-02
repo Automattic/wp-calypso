@@ -65,7 +65,7 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 
 			if ( USE_TRANSLATION_CHUNKS ) {
 				const chunkedLocaleData = await setupTranslationChunks( newLocale, translatedChunks );
-				setLocale( chunkedLocaleData );
+				setLocale( { ...chunkedLocaleData, ...localeData } );
 			} else {
 				setLocale( localeData );
 			}
