@@ -104,10 +104,11 @@ class BackupsPage extends Component {
 	 *  Return an object with the last backup and the rest of the activities from the selected date
 	 */
 	backupsFromSelectedDate = () => {
-		const { moment } = this.props;
+		const { moment, siteCapabilities } = this.props;
 
 		const date = this.getSelectedDate();
 		const index = moment( date ).format( INDEX_FORMAT );
+		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 
 		const backupsOnSelectedDate = {
 			lastBackup: null,
@@ -117,7 +118,10 @@ class BackupsPage extends Component {
 		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
 			this.props.indexedLog[ index ].forEach( ( log ) => {
 				// Discard log if it's not activity rewindable, failed backup or with streams
-				if ( ! isActivityBackup( log ) && ! isSuccessfulRealtimeBackup( log ) ) {
+				if (
+					( ! hasRealtimeBackups && ! isActivityBackup( log ) ) ||
+					( ! isActivityBackup( log ) && ! isSuccessfulRealtimeBackup( log ) )
+				) {
 					return;
 				}
 
