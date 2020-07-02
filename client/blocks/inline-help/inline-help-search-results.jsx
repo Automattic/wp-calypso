@@ -16,7 +16,9 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
-import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
+import getInlineHelpApiResultsForQuery from 'state/inline-help/selectors/get-inline-help-api-results-for-query';
+import getInlineHelpAdminResultsForQuery from 'state/inline-help/selectors/get-inline-help-admin-results-for-query';
+import getInlineHelpContextualResultsForQuery from 'state/inline-help/selectors/get-inline-help-contextual-results-for-query';
 import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
 import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
@@ -28,14 +30,16 @@ function HelpSearchResults( {
 	isSearching = false,
 	openResult,
 	searchQuery = '',
-	searchResults,
+	apiResults,
+	adminResults,
+	contextualResults,
 	selectedResultIndex = -1,
 	selectSearchResult,
 	translate = identity,
 	placeholderLines,
 } ) {
 	const selectResultHandler = ( selectionIndex ) => ( event ) => {
-		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
+		const selectedResult = apiResults?.[ selectionIndex ] ?? null;
 		selectSearchResult( selectionIndex );
 		openResult( event, selectedResult );
 	};
@@ -71,7 +75,10 @@ function HelpSearchResults( {
 				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
 					<p className="inline-help__empty-results">{ translate( 'No results.' ) }</p>
 				) }
-				<ul className="inline-help__results-list">{ searchResults.map( renderHelpLink ) }</ul>
+				<ul className="inline-help__results-list">
+					{ ! hasAPIResults && ( contextualResults.map( renderHelpLink ) ) }
+					{ apiResults.map( renderHelpLink ) }
+				</ul>
 			</>
 		);
 	};
@@ -89,14 +96,18 @@ HelpSearchResults.propTypes = {
 	searchQuery: PropTypes.string,
 	openResult: PropTypes.func.isRequired,
 	hasAPIResults: PropTypes.bool,
-	searchResults: PropTypes.array,
+	apiResults: PropTypes.array,
+	adminResults: PropTypes.array,
+	contextualResults: PropTypes.array,
 	selectedResultIndex: PropTypes.number,
 	isSearching: PropTypes.bool,
 };
 
 export default connect(
 	( state, ownProps ) => ( {
-		searchResults: getInlineHelpSearchResultsForQuery( state ),
+		apiResults: getInlineHelpApiResultsForQuery( state ),
+		adminResults: getInlineHelpAdminResultsForQuery( state ),
+		contextualResults: getInlineHelpContextualResultsForQuery( state ),
 		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 		selectedResultIndex: getSelectedResultIndex( state ),
 		hasAPIResults: hasInlineHelpAPIResults( state ),
