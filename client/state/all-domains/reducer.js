@@ -7,7 +7,7 @@ import {
 	ALL_DOMAINS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { allDomainsSchema } from './schema';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import { createLightSiteDomainObject } from 'state/all-domains/helpers';
 
 export const allDomains = withSchemaValidation( allDomainsSchema, ( state = [], action ) => {
@@ -43,8 +43,11 @@ export const requesting = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( {
-	domains: allDomains,
-	requesting,
-	errors,
-} );
+export default withStorageKey(
+	'all-domains',
+	combineReducers( {
+		domains: allDomains,
+		requesting,
+		errors,
+	} )
+);
