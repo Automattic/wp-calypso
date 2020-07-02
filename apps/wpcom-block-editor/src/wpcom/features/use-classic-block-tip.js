@@ -5,19 +5,24 @@
 import url from 'url';
 import { translate } from 'i18n-calypso';
 import { registerPlugin } from '@wordpress/plugins';
-import { Tip } from '@wordpress/components';
-import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@wordpress/block-editor';
+import { Popover } from '@wordpress/components';
+import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const parsedEditorUrl = url.parse( globalThis.location.href, true );
 
 const ClassicBlockTip = () => {
 	return (
-		<InserterMenuExtension>
-			<Tip>
-				<p>{ translate( 'Say hello to the Classic block' ) }</p>
-			</Tip>
-		</InserterMenuExtension>
+		<MainDashboardButton>
+			<Popover position="bottom left" noArrow={ false }>
+				<h2>{ translate( 'Add the Classic block' ) }</h2>
+				<p>
+					{ translate(
+						"To use the Classic block in the future, click here, then search for 'classic'; and click to insert the block"
+					) }
+				</p>
+			</Popover>
+		</MainDashboardButton>
 	);
 };
 
@@ -26,7 +31,7 @@ parsedEditorUrl.query[ 'show-classic-block-guide' ] = true;
 
 // Check if the experimental slot is available before to register plugin.
 if (
-	typeof InserterMenuExtension !== 'undefined' &&
+	typeof MainDashboardButton !== 'undefined' &&
 	parsedEditorUrl.query[ 'show-classic-block-guide' ]
 ) {
 	registerPlugin( 'block-inserter-classic-contextual-tip', {
