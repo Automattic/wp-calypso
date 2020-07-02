@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { getLocaleSlug } from 'lib/i18n-utils';
 /**
  * Returns admin section items with site-based urls.
  *
- * @param {String} siteSlug - The current site slug.
+ * @param {string} siteSlug - The current site slug.
  * @returns {Array}           An array of admin sections with site-specific URLs.
  */
 export const adminSections = memoize( ( siteSlug ) => [
@@ -386,7 +385,7 @@ export const adminSections = memoize( ( siteSlug ) => [
  *
  * @param   {String} searchTerm The search term
  * @param   {Array}  collection A collection of site admin objects
- * @param   {Number} limit      The maximum number of results to show
+ * @param   {number} limit      The maximum number of results to show
  * @returns {Array}             A filtered (or empty) array
  */
 export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 4 ) {

@@ -15,9 +15,9 @@ import { adminSections, filterListBySearchTerm } from 'blocks/inline-help/admin-
  * in the inline-block component.
  *
  * @param   {object} state  Global state tree
- * @param   {String} searchTerm The search term
- * @param   {String} siteSlug   The current site slug
- * @param   {Number} limit      The maximum number of results to show
+ * @param   {string} searchTerm The search term
+ * @param   {string} siteSlug   The current site slug
+ * @param   {number} limit      The maximum number of results to show
  * @returns {Array}             A filtered (or empty) array
  */
 export default function getAdminHelpResults( state, searchTerm = '', siteSlug, limit ) {
