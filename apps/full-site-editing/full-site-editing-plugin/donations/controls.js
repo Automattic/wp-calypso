@@ -13,14 +13,14 @@ const Controls = ( props ) => {
 		<InspectorControls>
 			<PanelBody title={ __( 'Settings', 'full-site-editing' ) }>
 				<ToggleControl
-					checked={ monthlyPlanId }
+					checked={ !! monthlyPlanId }
 					onChange={ ( value ) =>
 						setAttributes( { monthlyPlanId: value ? products[ '1 month' ] : null } )
 					}
 					label={ __( 'Show monthly donations', 'full-site-editing' ) }
 				/>
 				<ToggleControl
-					checked={ annuallyPlanId }
+					checked={ !! annuallyPlanId }
 					onChange={ ( value ) =>
 						setAttributes( { annuallyPlanId: value ? products[ '1 year' ] : null } )
 					}
