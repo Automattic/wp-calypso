@@ -17,7 +17,6 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import isPrivateSite from 'state/selectors/is-private-site';
 import getWpAdminClassicEditorRedirectionUrl from '../../state/selectors/get-wp-admin-classic-editor-redirection-url';
 import isEditorDeprecationDialogShowing from 'state/selectors/is-editor-deprecation-dialog-showing';
-import { isEnabled } from 'config';
 
 /**
  * We don't support classic editor in Calypso for private atomic sites. This components makes sure
@@ -82,7 +81,7 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 		]
 	);
 
-	if ( isEnabled( 'editor/before-deprecation' ) && editorDeprecationDialogShowing ) {
+	if ( editorDeprecationDialogShowing ) {
 		return null;
 	}
 
