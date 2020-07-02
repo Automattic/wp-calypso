@@ -79,4 +79,5 @@ return array(
 		esc_html__( 'Get new content delivered directly to your inbox.', 'full-site-editing' ),
 		esc_html__( 'Sign up', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

@@ -38,4 +38,5 @@ return array(
 		esc_html__( 'Learn more', 'full-site-editing' ),
 		esc_html__( 'Pre-order', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

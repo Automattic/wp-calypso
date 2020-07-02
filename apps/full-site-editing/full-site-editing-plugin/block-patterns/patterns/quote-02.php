@@ -38,4 +38,5 @@ return array(
 		esc_html__( '"The artist is the creator of beautiful things. To reveal art and conceal the artist is art&rsquo;s aim. The critic is he who can translate into another manner or a new material his impression of beautiful things."', 'full-site-editing' ),
 		esc_html__( '— Oscar Wilde', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

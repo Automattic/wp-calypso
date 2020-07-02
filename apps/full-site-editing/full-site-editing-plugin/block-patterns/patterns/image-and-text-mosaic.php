@@ -66,4 +66,5 @@ return array(
 		esc_html__( 'Learn more', 'full-site-editing' ),
 		esc_html__( 'We&rsquo;re also offering unique, handmade ceramic mugs as well as original sets, consisting of tea, cups and matching tea pot, perfect for gifting.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

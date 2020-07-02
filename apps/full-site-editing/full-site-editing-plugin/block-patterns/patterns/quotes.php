@@ -85,4 +85,5 @@ return array(
 		esc_html__( 'KAREN P.', 'full-site-editing' ),
 		esc_html__( 'I can&rsquo;t thank her enough for working with me at my level and keeping me motivated. She has dealt with my out of shape and not so young body extremely well. I couldn&rsquo;t ask for a better instructor. Thank you.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

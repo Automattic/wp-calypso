@@ -38,4 +38,5 @@ return array(
 		esc_html__( '"So many things are possible just as long as you don&rsquo;t know they&rsquo;re impossible."', 'full-site-editing' ),
 		esc_html__( '— Norton Juster', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

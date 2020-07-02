@@ -59,4 +59,5 @@ return array(
 		esc_html__( '60 Minutes', 'full-site-editing' ),
 		esc_html__( 'Register now', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

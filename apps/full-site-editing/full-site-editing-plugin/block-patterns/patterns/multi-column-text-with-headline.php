@@ -105,4 +105,5 @@ return array(
 		esc_html__( 'I&rsquo;m a natural light photographer specializing in portraits of non-models. I aim for my work to be uniquely beautiful without trying too hard. My passion is to explore my creativity while documenting significant moments in my clients&rsquo; lives.', 'full-site-editing' ),
 		esc_html__( 'I&rsquo;m based in New York and currently work at GTX Studio. I also shoot a lot of portraiture as well as assignments for agencies.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

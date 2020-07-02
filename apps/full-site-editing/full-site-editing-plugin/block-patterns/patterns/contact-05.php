@@ -50,4 +50,5 @@ return array(
 		esc_html__( 'Facebook', 'full-site-editing' ),
 		esc_html__( 'hello@example.com', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

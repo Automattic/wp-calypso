@@ -41,4 +41,5 @@ return array(
 		esc_html__( 'VERONICA ENGLAND', 'full-site-editing' ),
 		esc_html__( 'MASON DECKER', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

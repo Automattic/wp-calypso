@@ -42,4 +42,5 @@ return array(
 		esc_html__( 'The Endless Movement', 'full-site-editing' ),
 		esc_html__( 'Watch our award-winning showreel: 2020 — The Endless Movement.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

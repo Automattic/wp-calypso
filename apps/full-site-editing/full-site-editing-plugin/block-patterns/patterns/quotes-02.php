@@ -90,4 +90,5 @@ return array(
 		esc_html__( 'Great food at a great price! Love the seafood plates as well as the salads. Excellent eating experience from walking in the door and being greeted by stuff, seated and drink order taken, was probably 5 minutes. Server was very helpful and friendly. We&rsquo;ll definitely come back!', 'full-site-editing' ),
 		esc_html__( 'The place is awesome with attending staff. Excellent and authentic flavors. Will surely visit this place again. It also is an excellent place to have a business conversation. We really recommend this restaurant.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

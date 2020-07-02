@@ -62,4 +62,5 @@ return array(
 		esc_html__( 'Stitcher', 'full-site-editing' ),
 		esc_html__( 'RSS', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

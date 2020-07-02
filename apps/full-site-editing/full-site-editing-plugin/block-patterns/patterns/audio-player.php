@@ -25,4 +25,5 @@ return array(
 		$markup,
 		esc_html__( 'First time here? Let me tell you why this show rocks!', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

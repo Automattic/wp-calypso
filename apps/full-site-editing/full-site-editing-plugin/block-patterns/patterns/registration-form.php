@@ -75,4 +75,5 @@ return array(
 		esc_html__( '“The lesson was excellent and well structured. I now have a much better grounding in digital photography, understand the strength and weakness of my camera. It was the best way to flatten out a steep learning curve!”', 'full-site-editing' ),
 		esc_html__( 'Mason D.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

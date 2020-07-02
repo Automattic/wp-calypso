@@ -63,4 +63,5 @@ return array(
 		esc_html__( '“Vanity and pride are different things, though the words are often used synonymously. A person may be proud without being vain. Pride relates more to our opinion of ourselves, vanity to what we would have others think of us.”', 'full-site-editing' ),
 		esc_html__( '— Mary Bennet', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

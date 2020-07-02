@@ -94,6 +94,7 @@ return array(
 		esc_html__( 'Retratos', 'full-site-editing' ),
 		esc_html__( '2017', 'full-site-editing' ),
 		esc_html__( 'Disappearance', 'full-site-editing' ),
-		esc_html__( '2016', 'full-site-editing' ),
+		esc_html__( '2016', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

@@ -30,4 +30,5 @@ return array(
 		esc_html__( 'These are the best pancakes you&rsquo;ll ever have', 'full-site-editing' ),
 		esc_html__( 'When I was younger I loved pancakes. Excuse me, I loved maple syrup. Pancakes were a way to get as much maple syrup on my plate, my hands, and my face. Eventually my mother realized I was leaving the pancakes half-eaten and we’d run out of syrup in two weeks instead of a month. It’s not that my mother’s pancakes were bad, it was that I didn’t know what a pancake tasted like that wasn’t drenched in dark, sweet, syrup.', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

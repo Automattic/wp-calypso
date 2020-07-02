@@ -87,6 +87,7 @@ return array(
 		esc_html__( 'Jefferson Thorpe', 'full-site-editing' ),
 		esc_html__( '“I was instantly blown away by their sound design and consistency.”', 'full-site-editing' ),
 		esc_html__( 'Calvin Tristan', 'full-site-editing' ),
-		esc_html__( '“Utterly impressive—nothing more needs to be said about these folks.”', 'full-site-editing')
+		esc_html__( '“Utterly impressive—nothing more needs to be said about these folks.”', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );
