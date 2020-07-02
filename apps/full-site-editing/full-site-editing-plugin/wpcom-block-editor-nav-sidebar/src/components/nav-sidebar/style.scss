@@ -12,7 +12,6 @@ $transition-period: 200ms;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: $black;
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
 	@include reduce-motion( 'animation' );
 
@@ -24,10 +23,10 @@ $transition-period: 200ms;
 
 @keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__fade {
 	0% {
-		opacity: 0;
+		background-color: rgba( $black, 0 );
 	}
 	100% {
-		opacity: 0.44;
+		background-color: rgba( $black, 0.7 );
 	}
 }
 
