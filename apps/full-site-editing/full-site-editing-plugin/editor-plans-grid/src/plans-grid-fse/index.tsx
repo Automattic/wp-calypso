@@ -17,20 +17,7 @@ const PlansGridFSE: React.FunctionComponent< Props > = ( { ...props } ) => {
 
 	const currentPlan = useSelectedPlan();
 
-	// const { setPlan } = useDispatch( PLANS_STORE );
-
-	// const handlePlanSelect = ( plan: Plans.PlanSlug ) => {
-	// 	setPlan( plan );
-	// };
-
-	return (
-		<PlansGrid
-			currentDomain={ currentDomain }
-			currentPlan={ currentPlan }
-			// onPlanSelect={ handlePlanSelect }
-			{ ...props }
-		/>
-	);
+	return <PlansGrid currentDomain={ currentDomain } currentPlan={ currentPlan } { ...props } />;
 };
 
 export default PlansGridFSE;
