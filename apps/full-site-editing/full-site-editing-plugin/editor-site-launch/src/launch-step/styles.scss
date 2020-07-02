@@ -1,0 +1,20 @@
+@import '~@automattic/typography/sass/fonts';
+
+.nux-launch-step {
+	// TODO: container padding/margin with mobile breakpoints goes here.
+	padding: 88px;
+}
+
+.nux-launch-step__header {
+	display: flex;
+	align-items: baseline;
+}
+
+.nux-launch-step__heading {
+	flex-grow: 1;
+
+	h1 {
+		@extend .wp-brand-font;
+		font-size: 42px;
+	}
+}
