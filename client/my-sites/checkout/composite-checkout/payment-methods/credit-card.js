@@ -42,6 +42,9 @@ import {
 import PaymentLogo from 'my-sites/checkout/composite-checkout/wpcom/components/payment-logo';
 import { showStripeModalAuth } from 'lib/stripe';
 import Spinner from 'my-sites/checkout/composite-checkout/wpcom/components/spinner';
+import CountrySelectMenu from 'my-sites/checkout/composite-checkout/wpcom/components/country-select-menu';
+import useCountryList from 'my-sites/checkout/composite-checkout/wpcom/hooks/use-country-list';
+import { isValid } from 'my-sites/checkout/composite-checkout/wpcom/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -172,6 +175,7 @@ function StripeCreditCardFields() {
 	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'stripe'
 	);
+	const [ shouldShowContactFields, setShowContactFields ] = useState( false );
 
 	const handleStripeFieldChange = ( input ) => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -215,61 +219,6 @@ function StripeCreditCardFields() {
 			{ ! isStripeFullyLoaded && <LoadingFields /> }
 
 			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
-				<Label>
-					<LabelText>{ __( 'Card number' ) }</LabelText>
-					<StripeFieldWrapper className="number" hasError={ cardNumberError }>
-						<CardNumberElement
-							style={ cardNumberStyle }
-							onReady={ () => {
-								setIsStripeFullyLoaded( true );
-							} }
-							onChange={ ( input ) => {
-								handleStripeFieldChange( input );
-							} }
-						/>
-						<PaymentLogo brand={ brand } />
-
-						{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
-					</StripeFieldWrapper>
-				</Label>
-				<FieldRow gap="4%" columnWidths="48% 48%">
-					<LeftColumn>
-						<Label>
-							<LabelText>{ __( 'Expiry date' ) }</LabelText>
-							<StripeFieldWrapper className="expiration-date" hasError={ cardExpiryError }>
-								<CardExpiryElement
-									style={ cardNumberStyle }
-									onChange={ ( input ) => {
-										handleStripeFieldChange( input );
-									} }
-								/>
-							</StripeFieldWrapper>
-							{ cardExpiryError && <StripeErrorMessage>{ cardExpiryError }</StripeErrorMessage> }
-						</Label>
-					</LeftColumn>
-					<RightColumn>
-						<Label>
-							<LabelText>{ __( 'Security code' ) }</LabelText>
-							<GridRow gap="4%" columnWidths="67% 29%">
-								<LeftColumn>
-									<StripeFieldWrapper className="cvv" hasError={ cardCvcError }>
-										<CardCvcElement
-											style={ cardNumberStyle }
-											onChange={ ( input ) => {
-												handleStripeFieldChange( input );
-											} }
-										/>
-									</StripeFieldWrapper>
-								</LeftColumn>
-								<RightColumn>
-									<CVVImage />
-								</RightColumn>
-							</GridRow>
-							{ cardCvcError && <StripeErrorMessage>{ cardCvcError }</StripeErrorMessage> }
-						</Label>
-					</RightColumn>
-				</FieldRow>
-
 				<CreditCardField
 					id="cardholder-name"
 					type="Text"
@@ -281,6 +230,76 @@ function StripeCreditCardFields() {
 					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
 					errorMessage={ __( 'This field is required' ) }
 				/>
+
+				<FieldRow>
+					<Label>
+						<input
+							type="checkbox"
+							checked={ ! shouldShowContactFields }
+							onChange={ ( event ) => setShowContactFields( ! event.target.checked ) }
+						/>
+						<LabelText>{ __( 'Credit card address is the same as contact details' ) }</LabelText>
+					</Label>
+				</FieldRow>
+
+				{ shouldShowContactFields && <ContactFields /> }
+
+				<FieldRow>
+					<Label>
+						<LabelText>{ __( 'Card number' ) }</LabelText>
+						<StripeFieldWrapper className="number" hasError={ cardNumberError }>
+							<CardNumberElement
+								style={ cardNumberStyle }
+								onReady={ () => {
+									setIsStripeFullyLoaded( true );
+								} }
+								onChange={ ( input ) => {
+									handleStripeFieldChange( input );
+								} }
+							/>
+							<PaymentLogo brand={ brand } />
+
+							{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
+						</StripeFieldWrapper>
+					</Label>
+					<FieldRow gap="4%" columnWidths="48% 48%">
+						<LeftColumn>
+							<Label>
+								<LabelText>{ __( 'Expiry date' ) }</LabelText>
+								<StripeFieldWrapper className="expiration-date" hasError={ cardExpiryError }>
+									<CardExpiryElement
+										style={ cardNumberStyle }
+										onChange={ ( input ) => {
+											handleStripeFieldChange( input );
+										} }
+									/>
+								</StripeFieldWrapper>
+								{ cardExpiryError && <StripeErrorMessage>{ cardExpiryError }</StripeErrorMessage> }
+							</Label>
+						</LeftColumn>
+						<RightColumn>
+							<Label>
+								<LabelText>{ __( 'Security code' ) }</LabelText>
+								<GridRow gap="4%" columnWidths="67% 29%">
+									<LeftColumn>
+										<StripeFieldWrapper className="cvv" hasError={ cardCvcError }>
+											<CardCvcElement
+												style={ cardNumberStyle }
+												onChange={ ( input ) => {
+													handleStripeFieldChange( input );
+												} }
+											/>
+										</StripeFieldWrapper>
+									</LeftColumn>
+									<RightColumn>
+										<CVVImage />
+									</RightColumn>
+								</GridRow>
+								{ cardCvcError && <StripeErrorMessage>{ cardCvcError }</StripeErrorMessage> }
+							</Label>
+						</RightColumn>
+					</FieldRow>
+				</FieldRow>
 			</CreditCardFieldsWrapper>
 		</StripeFields>
 	);
@@ -336,9 +355,10 @@ const GridRow = styled.div`
 	display: -ms-grid;
 	display: grid;
 	width: 100%;
-	-ms-grid-columns: ${ ( props ) => props.columnWidths.replace( ' ', ' ' + props.gap + ' ' ) };
-	grid-template-columns: ${ ( props ) => props.columnWidths };
-	grid-column-gap: ${ ( props ) => props.gap };
+	-ms-grid-columns: ${ ( props ) =>
+		props.columnWidths?.replace( ' ', ' ' + props.gap + ' ' ) ?? 'inherit' };
+	grid-template-columns: ${ ( props ) => props.columnWidths ?? 'none' };
+	grid-column-gap: ${ ( props ) => props.gap ?? '4%' };
 	justify-items: stretch;
 `;
 
@@ -697,3 +717,54 @@ const CVVImage = styled( CVV )`
 	display: block;
 	width: 100%;
 `;
+
+function ContactFields() {
+	const { formStatus } = useFormStatus();
+	const { __ } = useI18n();
+	const isDisabled = formStatus !== 'ready';
+	const countriesList = useCountryList( [] );
+
+	const [ ccInfo, setCcInfo ] = useState( {
+		postalCode: { value: '', isTouched: false },
+		countryCode: { value: '', isTouched: false },
+	} );
+	const { postalCode, countryCode } = ccInfo;
+	const updatePostalCode = ( value ) =>
+		setCcInfo( ( oldInfo ) => ( { ...oldInfo, postalCode: { value, isTouched: true } } ) );
+	const updateCountryCode = ( value ) =>
+		setCcInfo( ( oldInfo ) => ( { ...oldInfo, countryCode: { value, isTouched: true } } ) );
+
+	return (
+		<FieldRow gap="4%" columnWidths="48% 48%">
+			<LeftColumn>
+				<Field
+					id="credit-card-postal-code"
+					type="text"
+					label={ __( 'Postal code' ) }
+					value={ postalCode.value }
+					disabled={ isDisabled }
+					onChange={ ( value ) => {
+						updatePostalCode( value );
+					} }
+					autoComplete="postal-code"
+					isError={ postalCode.isTouched && ! isValid( postalCode ) }
+					errorMessage={ __( 'This field is required.' ) }
+				/>
+			</LeftColumn>
+
+			<RightColumn>
+				<CountrySelectMenu
+					translate={ __ }
+					onChange={ ( event ) => {
+						updateCountryCode( event.target.value );
+					} }
+					isError={ countryCode.isTouched && ! isValid( countryCode ) }
+					isDisabled={ isDisabled }
+					errorMessage={ __( 'This field is required.' ) }
+					currentValue={ countryCode.value }
+					countriesList={ countriesList }
+				/>
+			</RightColumn>
+		</FieldRow>
+	);
+}
