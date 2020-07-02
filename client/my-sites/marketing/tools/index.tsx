@@ -11,7 +11,6 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import MarketingToolsGoogleAdwordsFeature from './google-adwords';
 import MarketingToolsFeature from './feature';
 import MarketingToolsGoogleMyBusinessFeature from './google-my-business-feature';
 import MarketingToolsHeader from './header';
@@ -94,8 +93,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				</MarketingToolsFeature>
 
 				<MarketingToolsGoogleMyBusinessFeature />
-
-				<MarketingToolsGoogleAdwordsFeature />
 
 				<MarketingToolsFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
