@@ -1,3 +1,4 @@
+
 /**
  * Internal dependencies
  */
@@ -21,6 +22,9 @@ import {
 } from 'state/action-types';
 
 import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
+import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import 'state/inline-help/init';
 
 /**
@@ -47,7 +51,10 @@ export function setInlineHelpSearchQuery( searchQuery = '' ) {
  */
 export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
-		const contextualResults = getContextualHelpResults( getState() );
+		const state = getState();
+		const siteSlug = getSiteSlug( state, getSelectedSiteId( state ) );
+		const contextualResults = getContextualHelpResults( state );
+		const helpAdminResults = getAdminHelpResults(state, searchQuery, siteSlug );
 
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();
@@ -94,7 +101,11 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
-					searchResults: hasAPIResults ? searchResults : contextualResults,
+					searchResults: [
+						...searchResults,
+						...contextualResults,
+						...helpAdminResults,
+					]
 				} );
 			} )
 			.catch( ( error ) => {
