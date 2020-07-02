@@ -7,12 +7,8 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { createBlock } from '@wordpress/blocks';
-import {
-	InnerBlocks,
-	InspectorControls,
-	__experimentalBlock as Block,
-} from '@wordpress/block-editor';
-import { Button, ExternalLink, PanelBody, ToggleControl } from '@wordpress/components';
+import { InnerBlocks, __experimentalBlock as Block } from '@wordpress/block-editor';
+import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -20,10 +16,12 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import Context from './context';
+import Controls from './controls';
 import StripeNudge from './stripe-nudge';
-import intervalClassNames from '../donation/interval-class-names';
 
-const Tabs = ( { attributes, clientId, products, setAttributes, siteSlug, stripeConnectUrl } ) => {
+const Tabs = ( props ) => {
+	const { attributes, clientId, products, stripeConnectUrl } = props;
 	const { showMonthly, showAnnually, showCustom } = attributes;
 	const [ activeTab, setActiveTab ] = useState( 'one-time' );
 
@@ -70,20 +68,6 @@ const Tabs = ( { attributes, clientId, products, setAttributes, siteSlug, stripe
 		}
 	}, [ showMonthly, showAnnually ] );
 
-	// Toggles the visibility of the inner blocks based on the current tab.
-	useEffect( () => {
-		const activeBlock = document.querySelector( '.wp-block-a8c-donation.is-active' );
-		if ( activeBlock ) {
-			activeBlock.classList.remove( 'is-active' );
-		}
-		const newActiveBlock = document.querySelector(
-			`.wp-block-a8c-donation.${ intervalClassNames[ activeTab ] }`
-		);
-		if ( newActiveBlock ) {
-			newActiveBlock.classList.add( 'is-active' );
-		}
-	}, [ activeTab, innerBlocks ] );
-
 	return (
 		<Block.div>
 			{ stripeConnectUrl && <StripeNudge stripeConnectUrl={ stripeConnectUrl } /> }
@@ -115,31 +99,12 @@ const Tabs = ( { attributes, clientId, products, setAttributes, siteSlug, stripe
 					</div>
 				) }
 				<div className="donations__content">
-					<InnerBlocks templateLock={ true } templateInsertUpdatesSelection={ false } />
+					<Context.Provider value={ { activeTab } }>
+						<InnerBlocks templateLock={ true } templateInsertUpdatesSelection={ false } />
+					</Context.Provider>
 				</div>
 			</div>
-			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'full-site-editing' ) }>
-					<ToggleControl
-						checked={ showMonthly }
-						onChange={ ( value ) => setAttributes( { showMonthly: value } ) }
-						label={ __( 'Show monthly donations', 'full-site-editing' ) }
-					/>
-					<ToggleControl
-						checked={ showAnnually }
-						onChange={ ( value ) => setAttributes( { showAnnually: value } ) }
-						label={ __( 'Show annual donations', 'full-site-editing' ) }
-					/>
-					<ToggleControl
-						checked={ showCustom }
-						onChange={ ( value ) => setAttributes( { showCustom: value } ) }
-						label={ __( 'Show custom amount option', 'full-site-editing' ) }
-					/>
-					<ExternalLink href={ `https://wordpress.com/earn/payments/${ siteSlug }` }>
-						{ __( 'View donation earnings', 'full-site-editing' ) }
-					</ExternalLink>
-				</PanelBody>
-			</InspectorControls>
+			<Controls { ...props } />
 		</Block.div>
 	);
 };

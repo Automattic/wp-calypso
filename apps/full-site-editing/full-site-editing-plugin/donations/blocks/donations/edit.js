@@ -14,7 +14,10 @@ import UpgradePlan from './upgrade-plan';
 import fetchDefaultProducts from './fetch-default-products';
 import fetchStatus from './fetch-status';
 
-const Edit = ( { attributes, clientId, setAttributes } ) => {
+const Edit = ( props ) => {
+	const { attributes } = props;
+	const { currency } = attributes;
+
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ loadingError, setLoadingError ] = useState( '' );
 	const [ shouldUpgrade, setShouldUpgrade ] = useState( false );
@@ -22,7 +25,6 @@ const Edit = ( { attributes, clientId, setAttributes } ) => {
 	const [ products, setProducts ] = useState( [] );
 	const [ upgradeUrl, setUpgradeUrl ] = useState( '' );
 	const [ siteSlug, setSiteSlug ] = useState( '' );
-	const { currency } = attributes;
 
 	const apiError = ( message ) => {
 		setLoadingError( message );
@@ -97,11 +99,9 @@ const Edit = ( { attributes, clientId, setAttributes } ) => {
 
 	return (
 		<Tabs
-			attributes={ attributes }
-			clientId={ clientId }
+			{ ...props }
 			products={ products }
 			stripeConnectUrl={ stripeConnectUrl }
-			setAttributes={ setAttributes }
 			siteSlug={ siteSlug }
 		/>
 	);
