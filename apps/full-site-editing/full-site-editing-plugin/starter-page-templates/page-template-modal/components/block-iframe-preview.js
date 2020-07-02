@@ -9,6 +9,7 @@ import classnames from 'classnames';
  */
 /* eslint-disable import/no-extraneous-dependencies */
 import {
+	createPortal,
 	useRef,
 	useEffect,
 	useState,
@@ -87,7 +88,6 @@ const BlockFramePreview = ( {
 	title,
 } ) => {
 	const frameContainerRef = useRef();
-	const renderedBlocksRef = useRef();
 	const iframeRef = useRef();
 
 	// Set the initial scale factor.
@@ -176,15 +176,6 @@ const BlockFramePreview = ( {
 		body.scrollTop = 0;
 	}, [ recomputeBlockListKey ] );
 
-	// Append rendered Blocks to iFrame when changed
-	useEffect( () => {
-		const renderedBlocksDOM = renderedBlocksRef && renderedBlocksRef.current;
-
-		if ( renderedBlocksDOM ) {
-			iframeRef.current.contentDocument.body.appendChild( renderedBlocksDOM );
-		}
-	}, [ recomputeBlockListKey ] );
-
 	// Handling windows resize event.
 	useEffect( () => {
 		const refreshPreview = debounce( rescale, DEBOUNCE_TIMEOUT );
@@ -215,22 +206,26 @@ const BlockFramePreview = ( {
 				title={ __( 'Preview', 'full-site-editing' ) }
 				className={ classnames( 'editor-styles-wrapper', className ) }
 				style={ style }
-			/>
-
-			<div ref={ renderedBlocksRef } className="block-editor">
-				<div className="edit-post-visual-editor">
-					<div className="editor-styles-wrapper">
-						<div className="editor-writing-flow">
-							<CustomBlockPreview
-								blocks={ renderedBlocks }
-								settings={ settings }
-								hidePageTitle={ ! title }
-								recomputeBlockListKey={ recomputeBlockListKey }
-							/>
-						</div>
-					</div>
-				</div>
-			</div>
+			>
+				{ iframeRef.current?.contentDocument?.body &&
+					createPortal(
+						<div className="block-editor">
+							<div className="edit-post-visual-editor">
+								<div className="editor-styles-wrapper">
+									<div className="editor-writing-flow">
+										<CustomBlockPreview
+											blocks={ renderedBlocks }
+											settings={ settings }
+											hidePageTitle={ ! title }
+											recomputeBlockListKey={ recomputeBlockListKey }
+										/>
+									</div>
+								</div>
+							</div>
+						</div>,
+						iframeRef.current.contentDocument.body
+					) }
+			</iframe>
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
