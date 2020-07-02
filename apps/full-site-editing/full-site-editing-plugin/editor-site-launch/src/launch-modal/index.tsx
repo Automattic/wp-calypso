@@ -8,7 +8,11 @@ import { Modal } from '@wordpress/components';
  * Internal dependencies
  */
 import './styles.scss';
+import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
 import Launch, { LaunchStepType } from '../launch';
 
 interface Props {
@@ -27,7 +31,10 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, step } ) => {
 			overlayClassName="nux-launch-modal-overlay"
 			bodyOpenClassName="has-nux-launch-modal"
 			onRequestClose={ handleClose }
-			title="You're almost there! Review a few things before launching your site!"
+			title={ __(
+				"You're almost there! Review a few things before launching your site!",
+				'full-site-editing'
+			) }
 		>
 			<Launch step={ step }></Launch>
 		</Modal>

@@ -30,7 +30,7 @@ const LaunchButton: React.FunctionComponent = () => {
 				aria-haspopup="menu"
 				onClick={ handleClick }
 			>
-				{ __( 'Launch Site', 'full-site-editing' ) }
+				{ __( 'Launch site', 'full-site-editing' ) }
 			</Button>
 			{ isLaunchModalVisible && <LaunchModal onClose={ handleModalClose } /> }
 		</>
