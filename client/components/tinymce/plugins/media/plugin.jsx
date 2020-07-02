@@ -31,7 +31,7 @@ import { getEditorRawContent, isEditorSaveBlocked } from 'state/editor/selectors
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
 import { fetchMediaItem } from 'state/media/thunks';
 
 /**
@@ -415,7 +415,7 @@ function mediaButton( editor ) {
 	function initMediaModal() {
 		const selectedSite = getSelectedSiteFromState();
 		if ( selectedSite ) {
-			MediaActions.clearValidationErrors( selectedSite.ID );
+			dispatch( clearMediaItemErrors( selectedSite.ID ) );
 		}
 	}
 
@@ -482,7 +482,7 @@ function mediaButton( editor ) {
 			}
 			const image = MediaStore.get( siteId, imageId );
 
-			MediaActions.clearValidationErrors( siteId );
+			dispatch( clearMediaItemErrors( siteId ) );
 			renderModal(
 				{
 					visible: true,
