@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
@@ -16,9 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
-import getInlineHelpApiResultsForQuery from 'state/inline-help/selectors/get-inline-help-api-results-for-query';
-import getInlineHelpAdminResultsForQuery from 'state/inline-help/selectors/get-inline-help-admin-results-for-query';
-import getInlineHelpContextualResultsForQuery from 'state/inline-help/selectors/get-inline-help-contextual-results-for-query';
+import getResultsToShow from 'state/inline-help/selectors/get-results-to-show-in-ui';
 import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
 import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
@@ -30,48 +28,83 @@ function HelpSearchResults( {
 	isSearching = false,
 	openResult,
 	searchQuery = '',
-	apiResults,
-	adminResults,
-	contextualResults,
+	searchResults = [],
 	selectedResultIndex = -1,
 	selectSearchResult,
 	translate = identity,
 	placeholderLines,
 } ) {
+	const supportType = useRef( searchResults?.[ 0 ]?.support_type );
+
+	function getTitleBySectionType( addSection, type ) {
+		if ( ! addSection ) {
+			return null;
+		}
+
+		let title = '';
+		switch ( type ) {
+			case 'api_help':
+				title = translate( 'Support articles:' );
+				break;
+			case 'admin_section':
+				title = translate( 'Show me where to:' );
+				break;
+			default:
+				return null
+		}
+
+		return (
+			<li className="inline-help__results-title">
+				<h2>{ title }</h2>
+			</li>
+		);
+	}
+
 	const selectResultHandler = ( selectionIndex ) => ( event ) => {
-		const selectedResult = apiResults?.[ selectionIndex ] ?? null;
+		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
 		selectSearchResult( selectionIndex );
 		openResult( event, selectedResult );
 	};
 
-	const renderHelpLink = ( { link, key, description, title, icon }, index ) => {
+	const renderHelpLink = ( { link, key, description, title, icon, support_type = 'api_help' }, index ) => {
+		const addResultsSection = supportType?.current !== support_type || ! index;
+		if ( addResultsSection ) {
+			supportType.current = support_type;
+		}
+
 		const classes = classNames( 'inline-help__results-item', {
 			'is-selected': selectedResultIndex === index,
 		} );
 
 		return (
-			<li key={ link ?? key } className={ classes }>
-				<a
-					href={ localizeUrl( link ) }
-					onClick={ selectResultHandler( index ) }
-					title={ decodeEntities( description ) }
-					tabIndex={ -1 }
-				>
-					{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-					{ preventWidows( decodeEntities( title ) ) }
-				</a>
-			</li>
+			<>
+				{ getTitleBySectionType( addResultsSection, support_type ) }
+				<li key={ link ?? key } className={ classes }>
+					<a
+						href={ localizeUrl( link ) }
+						onClick={ selectResultHandler( index ) }
+						title={ decodeEntities( description ) }
+						tabIndex={ -1 }
+					>
+						{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+						{ preventWidows( decodeEntities( title ) ) }
+					</a>
+				</li>
+			</>
 		);
 	};
 
 	const renderSearchResults = () => {
 		if ( isSearching ) {
+			// reset current section reference.
+			supportType.current = null;
+
 			// search, but no results so far
 			return <PlaceholderLines lines={ placeholderLines } />;
 		}
 
 		return (
-			<div className="inline-help__search-results">
+			<>
 				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
 					<p className="inline-help__empty-results">{
 						translate( 'Sorry, there were no matches. Here are some of the most searched for help pages for this section:'
@@ -79,32 +112,10 @@ function HelpSearchResults( {
 					</p>
 				) }
 
-				{ ! hasAPIResults && (
-					<div className="inline-help__contextual-results">
-						<ul className="inline-help__results-list">
-							{ contextualResults.map( renderHelpLink ) }
-						</ul>
-					</div>
-				) }
-
-				{ hasAPIResults && (
-					<div className="inline-help__api-results">
-						<h2 className="inline-help__view-heading">{ translate( 'Support articles:' ) }</h2>
-						<ul className="inline-help__results-list">
-							{ apiResults.map( renderHelpLink ) }
-						</ul>
-					</div>
-				) }
-
-				{ ! isEmpty( adminResults ) && (
-					<div className="inline-help__admin-results">
-						<h2 className="inline-help__view-heading">{ translate( 'Show me where to:' ) }</h2>
-						<ul className="inline-help__results-list">
-							{ adminResults.map( renderHelpLink ) }
-						</ul>
-					</div>
-				) }
-			</div>
+				<ul className="inline-help__results-list">
+					{ searchResults.map( renderHelpLink ) }
+				</ul>
+			</>
 		);
 	};
 
@@ -121,18 +132,14 @@ HelpSearchResults.propTypes = {
 	searchQuery: PropTypes.string,
 	openResult: PropTypes.func.isRequired,
 	hasAPIResults: PropTypes.bool,
-	apiResults: PropTypes.array,
-	adminResults: PropTypes.array,
-	contextualResults: PropTypes.array,
+	searchResults: PropTypes.array,
 	selectedResultIndex: PropTypes.number,
 	isSearching: PropTypes.bool,
 };
 
 export default connect(
 	( state, ownProps ) => ( {
-		apiResults: getInlineHelpApiResultsForQuery( state ),
-		adminResults: getInlineHelpAdminResultsForQuery( state ),
-		contextualResults: getInlineHelpContextualResultsForQuery( state ),
+		searchResults: getResultsToShow( state ),
 		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 		selectedResultIndex: getSelectedResultIndex( state ),
 		hasAPIResults: hasInlineHelpAPIResults( state ),
