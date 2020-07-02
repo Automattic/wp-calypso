@@ -24,6 +24,7 @@ const getFallbackLinks = () => [
 		description: translate(
 			'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
 		),
+		support_type: 'contextual_help',
 	},
 	{
 		link: localizeUrl( 'https://wordpress.com/support/business-plan/' ),
@@ -32,6 +33,7 @@ const getFallbackLinks = () => [
 		description: translate(
 			'Learn more about installing a custom theme or plugin using the Business plan.'
 		),
+		support_type: 'contextual_help',
 	},
 	{
 		link: localizeUrl( 'https://wordpress.com/support/domains/' ),
@@ -40,6 +42,7 @@ const getFallbackLinks = () => [
 		description: translate(
 			'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 		),
+		support_type: 'contextual_help',
 	},
 	{
 		link: localizeUrl( 'https://wordpress.com/support/start/' ),
@@ -48,12 +51,14 @@ const getFallbackLinks = () => [
 		description: translate(
 			"Use our five-step checklist to get set up and ready to publish, no matter what kind of site you're building."
 		),
+		support_type: 'contextual_help',
 	},
 	{
 		link: localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ),
 		post_id: 1507,
 		title: translate( 'Privacy Settings' ),
 		description: translate( 'Limit your site’s visibility or make it completely private.' ),
+		support_type: 'contextual_help',
 	},
 ];
 let fallbackLinks = getFallbackLinks();
@@ -68,6 +73,7 @@ const getContextLinksForSection = () => ( {
 				'Your stats page includes a bunch of nifty graphs, charts, and lists that show you how many ' +
 					'visits your site gets, what posts and pages are the most popular ones, and much more. Learn what it all means.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/getting-more-views-and-traffic/' ),
@@ -76,6 +82,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Want more traffic? Here are some tips for attracting more visitors to your site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/increase-your-site-traffic/' ),
@@ -85,6 +92,7 @@ const getContextLinksForSection = () => ( {
 				'One of the most frequent questions our community members ask us — and themselves — ' +
 					'is how to get more traffic. Here are a few best practices.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/grow-your-community/' ),
@@ -93,6 +101,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'You’ve worked hard on building your site, now it’s time to explore the community and get noticed. Learn how.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	sharing: [
@@ -104,6 +113,7 @@ const getContextLinksForSection = () => ( {
 				'Start sharing your site and attract more traffic and visitors to your content! ' +
 					'Learn to activate and control the social media and sharing options on your website or blog through these videos.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/sharing/' ),
@@ -113,6 +123,7 @@ const getContextLinksForSection = () => ( {
 				'At the bottom of each post or page, you can include sharing buttons for your readers ' +
 					'to make it easier to share your content.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/instagram/' ),
@@ -122,6 +133,7 @@ const getContextLinksForSection = () => ( {
 				'Instagram is a simple way to capture, customize, ' +
 					'and share photos and short videos using your smartphone or other mobile device. Learn how to use it with your website!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/twitter/' ),
@@ -131,6 +143,7 @@ const getContextLinksForSection = () => ( {
 				'Twitter is a service for the exchange of brief messages, commonly ' +
 					'called "tweets", between users. Learn how to use it with your website!'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	me: [
@@ -142,6 +155,7 @@ const getContextLinksForSection = () => ( {
 				'Your profile is the information you’d like to be shown along with your ' +
 					'name when you publish content or comment on WordPress.com sites.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/gravatars/' ),
@@ -151,12 +165,14 @@ const getContextLinksForSection = () => ( {
 				'WordPress.com associates an Avatar with your email address. Gravatar ' +
 					'powers the user avatars on WordPress.com.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/account-deactivation/' ),
 			post_id: 138080,
 			title: translate( 'Account Closure' ),
 			description: translate( 'Need a fresh start? Learn how to close your account.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/change-your-username/' ),
@@ -166,6 +182,7 @@ const getContextLinksForSection = () => ( {
 				'You can change both your WordPress.com account username (the name you use to login) ' +
 					'and your display name (the name that is seen on your posts and comments). Learn how!'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	account: [
@@ -176,6 +193,7 @@ const getContextLinksForSection = () => ( {
 				'You can change both your WordPress.com account username (the name you use to login) ' +
 					'and your display name (the name that is seen on your posts and comments). Learn how!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/video-tutorials/manage-your-account/' ),
@@ -184,6 +202,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn the ins and outs of managing your WordPress.com account and site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/account-settings/' ),
@@ -192,6 +211,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'You can review and edit basic account information in Account Settings. '
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/account-deactivation/' ),
@@ -200,6 +220,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn how to permanently delete your WordPress.com account, and what it means for your website and data.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	security: [
@@ -211,6 +232,7 @@ const getContextLinksForSection = () => ( {
 				'Your WordPress.com site is your home on the internet, and you want to keep that home safe. ' +
 					'Learn how to add an additional "lock" to your account!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/account-recovery/' ),
@@ -219,6 +241,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'At some point, you may run into a situation in which you’ve lost access to your account. Learn how to get back on track!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/passwords/' ),
@@ -227,6 +250,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Passwords are very important to user accounts, and there may come a time when you need to change your password.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/third-party-applications/' ),
@@ -236,6 +260,7 @@ const getContextLinksForSection = () => ( {
 				'WordPress.com allows you to connect with third-party applications that ' +
 					'extend your WordPress.com site in new and cool ways.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	purchases: [
@@ -246,6 +271,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Have a question or need to change something about a purchase you have made? Learn how.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/auto-renewal/' ),
@@ -255,6 +281,7 @@ const getContextLinksForSection = () => ( {
 				'Your WordPress.com plans and any domains you add to your sites are based ' +
 					'on a yearly subscription that renews automatically.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/discover-the-wordpress-com-plans/' ),
@@ -263,6 +290,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals."
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'notification-settings': [
@@ -274,6 +302,7 @@ const getContextLinksForSection = () => ( {
 				'Notifications help you stay on top of the activity on your site and all the things happening on ' +
 					'WordPress.com — learn how to use them.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/email-notifications/' ),
@@ -282,6 +311,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'WordPress.com sends email notifications to the email address registered to your account. Learn how to manage them.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/following-comments/' ),
@@ -291,6 +321,7 @@ const getContextLinksForSection = () => ( {
 				'When you leave a comment, you can automatically get email notifications for other new comments ' +
 					"on the same post or page — you'll never be out of the loop."
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/following/' ),
@@ -299,6 +330,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'When you follow a blog on WordPress.com, new posts from that site will automatically appear in your Reader.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	media: [
@@ -309,6 +341,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'The Media Library is where you can manage your images, audio, videos, and documents all in one place.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl(
@@ -319,6 +352,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Use free images (and other media) to make your pages and posts more interesting and engaging when on a budget!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/add-media/' ),
@@ -328,6 +362,7 @@ const getContextLinksForSection = () => ( {
 				'Dress up your text-based posts and pages with individual images, image galleries, ' +
 					'slideshows, videos, and audio.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/videos/' ),
@@ -336,6 +371,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Videos are a great way to enhance your site pages and blog posts. Learn how to include them.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	people: [
@@ -346,6 +382,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'User roles determine the access level or permissions of a person authorized to use a WordPress.com site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/user-mentions/' ),
@@ -355,6 +392,7 @@ const getContextLinksForSection = () => ( {
 				'User mentions are a great way to include other WordPress.com users within your ' +
 					'posts and comments.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/adding-users/' ),
@@ -363,6 +401,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/followers/' ),
@@ -372,6 +411,7 @@ const getContextLinksForSection = () => ( {
 				'When someone follows your site, each time you publish new content on your blog they ' +
 					'receive an update in their Reader, via email, or both depending on their settings.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	plugins: [
@@ -384,6 +424,7 @@ const getContextLinksForSection = () => ( {
 					'sites automatically. Additionally, the Business plan allows you to choose from many ' +
 					'thousands of plugins, and install them on your site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/plugins/managing-plugins/' ),
@@ -392,6 +433,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'After you install a plugin, it will appear in a list at My Sites → Plugins.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/plugins/adding-plugins/' ),
@@ -401,6 +443,7 @@ const getContextLinksForSection = () => ( {
 				'Along with all the tools and features built right into WordPress.com, the Business plan ' +
 					'allows you to install other plugins.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/business-plan/' ),
@@ -410,6 +453,7 @@ const getContextLinksForSection = () => ( {
 				"When you want to build a one-of-a-kind website, it's time for WordPress.com Business: " +
 					'upload plugins and themes to create a truly tailored experience for your visitors.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'posts-pages': [
@@ -422,6 +466,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/five-step-website-setup/' ),
@@ -432,6 +477,7 @@ const getContextLinksForSection = () => ( {
 					'Learn five steps that will get the framework of your new website all set up, ' +
 					'leaving it ready and waiting for your great content'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/pages/landing-pages/' ),
@@ -441,6 +487,7 @@ const getContextLinksForSection = () => ( {
 				'Landing pages are pages with a single purpose: encouraging your visitors to, for example, sign up for ' +
 					'a service, buy a product, or join a mailing list.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/posts/' ),
@@ -449,6 +496,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Posts are what make your blog a blog — they’re servings of content that are listed in reverse chronological order.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/posts/post-formats/' ),
@@ -457,6 +505,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn how to make gallery, video, audio, and other post types pop with post formats. '
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'settings-writing': [
@@ -467,12 +516,14 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn how to manage categories, date format, content types, and more.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/posts/categories-vs-tags/' ),
 			post_id: 2135,
 			title: translate( 'Categories vs. Tags' ),
 			description: translate( 'Learn the differences between categories and tags.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/feeds/' ),
@@ -481,6 +532,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'A feed (often called RSS) is a stream of posts or comments that is updated when new content is published.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/portfolios/' ),
@@ -490,6 +542,7 @@ const getContextLinksForSection = () => ( {
 				'To show off your portfolio separate from your blog posts and pages, the Portfolio content type will let you' +
 					' manage all your portfolio projects in one place.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'settings-discussion': [
@@ -500,6 +553,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'The Discussion Settings are used to control how visitors and other blogs interact with your site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl(
@@ -510,6 +564,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'You can enable/disable comments on future posts by going into your Discussion settings. '
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/comments/' ),
@@ -518,6 +573,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Comments are a way for visitors to add feedback to your posts and pages.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/subscriptions-and-newsletters/' ),
@@ -526,6 +582,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn how readers can subscribe to your blog to receive email notifications of all of your posts.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'settings-traffic': [
@@ -536,6 +593,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Want more traffic? Here are some tips for attracting more visitors to your site!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/related-posts/' ),
@@ -544,6 +602,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'The Related Posts feature pulls relevant content from your blog to display at the bottom of your posts.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/webmaster-tools/' ),
@@ -552,6 +611,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn how to verify your WordPress.com site for the webmaster tools that many search engines provide.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/amp-accelerated-mobile-pages/' ),
@@ -561,6 +621,7 @@ const getContextLinksForSection = () => ( {
 				'Accelerated Mobile Pages (AMP) allows browsers and apps to load your site more quickly on mobile devices. ' +
 					'By default, it is enabled for every WordPress.com site.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'settings-security': [
@@ -572,6 +633,7 @@ const getContextLinksForSection = () => ( {
 				'Learn what we do to help protect your site and your personal data, along with added steps ' +
 					'we recommend you take to do the same.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/unwanted-comments/' ),
@@ -580,6 +642,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'There are many ways to protect your WordPress.com blogs from unwanted comments. Learn all about them!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/selecting-a-strong-password/' ),
@@ -588,6 +651,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'The weakest point in any security for your online accounts is usually your password. Learn how to select a strong one.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	settings: [
@@ -598,6 +662,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'The Settings menu of your site is where you will configure everything about how the blog works and functions.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/settings/general-settings/' ),
@@ -607,6 +672,7 @@ const getContextLinksForSection = () => ( {
 				'The General Settings let you control how your site is displayed, such as the ' +
 					'title, tagline, language, and visibility.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/site-icons/' ),
@@ -616,6 +682,7 @@ const getContextLinksForSection = () => ( {
 				'A Site Icon is a unique icon for your site that is shown in your visitor’s browser tab ' +
 					'and other places around WordPress.com.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/five-step-blog-setup/' ),
@@ -624,6 +691,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Get ready to publish! Our five-step checklist walks you through all the fundamentals.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	themes: [
@@ -635,6 +703,7 @@ const getContextLinksForSection = () => ( {
 				'A theme controls the general look and feel of your site including things like ' +
 					'page layout, widget locations, and default font.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/themes/mobile-themes/' ),
@@ -644,6 +713,7 @@ const getContextLinksForSection = () => ( {
 				'When a visitor browses to a WordPress.com site on a mobile device, we show ' +
 					'special themes designed to work on small screens focusing on fast load times.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/premium-themes/' ),
@@ -653,6 +723,7 @@ const getContextLinksForSection = () => ( {
 				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
 					'no extra cost, as many times as you’d like.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl(
@@ -664,6 +735,7 @@ const getContextLinksForSection = () => ( {
 				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
 					'time to go beyond them. Learn to use child themes to customize and extend your website.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	theme: [
@@ -675,6 +747,7 @@ const getContextLinksForSection = () => ( {
 				'A theme controls the general look and feel of your site including things like ' +
 					'page layout, widget locations, and default font.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/themes/mobile-themes/' ),
@@ -684,6 +757,7 @@ const getContextLinksForSection = () => ( {
 				'When a visitor browses to a WordPress.com site on a mobile device, we show ' +
 					'special themes designed to work on small screens focusing on fast load times.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/premium-themes/' ),
@@ -693,6 +767,7 @@ const getContextLinksForSection = () => ( {
 				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
 					'no extra cost, as many times as you’d like.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl(
@@ -704,6 +779,7 @@ const getContextLinksForSection = () => ( {
 				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
 					'time to go beyond them. Learn to use child themes to customize and extend your website.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	plans: [
@@ -714,6 +790,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals."
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/plan-features/' ),
@@ -722,6 +799,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn about the capabilities and features that the different plans unlock for your site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/auto-renewal/' ),
@@ -731,6 +809,7 @@ const getContextLinksForSection = () => ( {
 				'Your WordPress.com plans and any domains you add to your sites are based on a yearly ' +
 					'subscription that renews automatically.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/jetpack-add-ons/' ),
@@ -739,6 +818,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn about the free Jetpack plugin, its benefits, and the useful capabilities and features that a Jetpack plan unlocks.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'post-editor': [
@@ -750,6 +830,7 @@ const getContextLinksForSection = () => ( {
 				'When creating a post or page on your WordPress.com blog, you have two editing modes ' +
 					'available to you: the Visual Editor and the HTML Editor.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/visual-editor/' ),
@@ -759,6 +840,7 @@ const getContextLinksForSection = () => ( {
 				'The visual editor provides a semi-WYSIWYG (What You See is What You Get) content editor that ' +
 					'allows you to easily create, edit, and format your content in a view similar to that of a word processor.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/xml-rpc/' ),
@@ -767,6 +849,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn how to create and edit content for your WordPress.com site even without being connected to the internet!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/adding-users/' ),
@@ -775,6 +858,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'gutenberg-editor': [
@@ -785,6 +869,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'The WordPress Editor uses blocks to transform the way you create content: it turns a single document into a collection of discrete elements with explicit, easy-to-tweak structure.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/xml-rpc/' ),
@@ -793,6 +878,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn how to create and edit content for your WordPress.com site even without being connected to the internet!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/adding-users/' ),
@@ -801,6 +887,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	reader: [
@@ -812,6 +899,7 @@ const getContextLinksForSection = () => ( {
 				'Read posts from all the sites you follow — even ones that aren’t on WordPress.com! ' +
 					'Discover great new reads and keep track of your comments and replies in one convenient place.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/following/' ),
@@ -820,6 +908,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'When you follow a blog on WordPress.com, new posts from that site will automatically appear in your Reader.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/topics/' ),
@@ -829,6 +918,7 @@ const getContextLinksForSection = () => ( {
 				'Looking for posts on a specific topic? Besides following entire blogs, you can also follow posts on a specific subject ' +
 					'from across WordPress.com. You do this by adding the topic you’re interested in under the Tags heading in the Reader.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/grow-your-community/' ),
@@ -837,6 +927,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'You’ve worked hard on building your site, now it’s time to explore the community and get noticed.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	help: [
@@ -848,6 +939,7 @@ const getContextLinksForSection = () => ( {
 				'Blogging U. courses deliver free expert advice, pro tips, and inspiration right to your ' +
 					'email inbox. Sign up now!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/help-support-options/' ),
@@ -856,6 +948,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'WordPress.com offers a number of avenues for reaching helpful, individualized support.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/' ),
@@ -863,11 +956,13 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Looking to learn more about a feature? Our docs have all the details.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://learn.wordpress.com/' ),
 			title: translate( 'Self-guided Online Tutorial' ),
 			description: translate( 'A step-by-step guide to getting familiar with the platform.' ),
+			support_type: 'contextual_help',
 		},
 	],
 	comments: [
@@ -878,6 +973,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Comments are a way for visitors to add feedback to your posts and pages.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/comment-display-options/' ),
@@ -887,6 +983,7 @@ const getContextLinksForSection = () => ( {
 				'You can control comment threading, paging, and comment order settings from the ' +
 					'Discussion Settings page in your site’s settings.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/unwanted-comments/' ),
@@ -895,6 +992,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'There are many ways to protect your WordPress.com blogs from unwanted comments. Learn all about them!'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/comment-likes/' ),
@@ -903,6 +1001,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Comment Likes: how to like others’ comments and control how Comment Likes appear on your site.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	hosting: [
@@ -913,6 +1012,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				"Access and edit your website's files directly by using an SFTP client."
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/phpmyadmin-and-mysql/' ),
@@ -921,6 +1021,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/php-version-switching/' ),
@@ -929,6 +1030,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Sites on the Business Plan using custom plugins and/or custom themes and any site on the eCommerce Plan, now have the option to switch PHP versions.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	checkout: [
@@ -939,6 +1041,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn about the capabilities and features that the different plans unlock for your site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/jetpack-add-ons/' ),
@@ -947,6 +1050,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Learn about the free Jetpack plugin, its benefits, and the useful capabilities and features that a Jetpack plan unlocks.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
@@ -955,6 +1059,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Have a question or need to change something about a purchase you have made? Learn how.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/auto-renewal/' ),
@@ -964,6 +1069,7 @@ const getContextLinksForSection = () => ( {
 				'Your WordPress.com plans and any domains you add to your sites are based on a yearly ' +
 					'subscription that renews automatically.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	domains: [
@@ -974,6 +1080,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Want to use a custom email with your domain, such as info@yourgroovydomain.com? There are multiple ways to add email to your custom domain.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ),
@@ -982,6 +1089,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'Custom DNS records are special settings that change how your domain works. They allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl(
@@ -992,6 +1100,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'This article walks you through transferring your domain registration to another registrar. Your domain will need to be unlocked and privacy removed (if applicable) for the transfer.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/domain-mapping-vs-domain-transfer/' ),
@@ -1000,6 +1109,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'You can connect an existing domain you own that’s registered elsewhere by either mapping or transferring. Domain mapping lets you connect a domain while keeping it registered at the current registrar (where you purchased the domain from). Domain transferring moves the domain to WordPress.com so we become the new registrar.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			link: localizeUrl( 'https://wordpress.com/support/domains/' ),
@@ -1008,6 +1118,7 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'A domain name is an address people use to visit your site. It tells the web browser where to look for your site. Just like a street address, a domain is how people visit your website online. And, like having a sign in front of your store, a custom domain name helps give your site a professional look.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 } );
@@ -1034,6 +1145,7 @@ const getVideosForSection = () => ( {
 				'Find out how to add social sharing buttons to your WordPress.com site, which you can also ' +
 					'do with a Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1043,6 +1155,7 @@ const getVideosForSection = () => ( {
 				'Find out how to share blog posts directly on Facebook from your WordPress.com site, ' +
 					'which you can also do on a Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1051,6 +1164,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to display your latest Instagram photos right on your WordPress.com site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1059,6 +1173,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to set up a social links menu on your WordPress.com or Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1067,6 +1182,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to display your Twitter timeline on your WordPress.com or Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1075,6 +1191,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to set up the social media icons widget on your WordPress.com or Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1084,6 +1201,7 @@ const getVideosForSection = () => ( {
 				'Find out how to embed a Tweet in your content (including posts and pages) on your WordPress.com ' +
 					'or Jetpack-enabled WordPress website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1093,6 +1211,7 @@ const getVideosForSection = () => ( {
 				'Find out how to embed an Instagram photo in your content (including posts and pages) on your WordPress.com ' +
 					'or Jetpack-enabled WordPress website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1102,6 +1221,7 @@ const getVideosForSection = () => ( {
 				'Find out how to embed a Facebook update in your content (including posts, pages, and even comments) on your ' +
 					'WordPress.com or Jetpack-enabled WordPress website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1110,6 +1230,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to share blog posts directly on Twitter from your WordPress.com or Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	settings: [
@@ -1118,6 +1239,7 @@ const getVideosForSection = () => ( {
 			link: 'https://www.youtube.com/embed/0YCZ22k4SfQ',
 			title: translate( 'Add a Site Logo' ),
 			description: translate( 'Find out how to add a custom logo to your WordPress.com site.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1127,6 +1249,7 @@ const getVideosForSection = () => ( {
 				'Find out how to update the Title and Tagline of your WordPress.com site, which you can also ' +
 					'do on your Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1135,18 +1258,21 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to change your website privacy settings on WordPress.com.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/bjxKGxW0MRA',
 			title: translate( 'Add a Site Icon' ),
 			description: translate( 'Find out how to add a site icon on WordPress.com.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/z6fCtvLB0wM',
 			title: translate( 'Create a Multilingual Site' ),
 			description: translate( 'Find out how to create a multilingual site on WordPress.com.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1155,6 +1281,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to customize your content options on select WordPress.com themes.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1163,6 +1290,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to change your blog or website language and your interface language settings on WordPress.com.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1171,6 +1299,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to activate free email forwarding from an address using a custom domain registered through WordPress.com.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'post-editor': [
@@ -1181,12 +1310,14 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to add a featured image where available on your WordPress.com or Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/dAcEBKXPlyA',
 			title: translate( 'Add a Contact Form to Your Website' ),
 			description: translate( 'Find out how to add a contact form to your WordPress.com site.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1196,6 +1327,7 @@ const getVideosForSection = () => ( {
 				'Find out how to embed a YouTube video in your content (including posts, pages, and even comments) ' +
 					'on your WordPress.com or Jetpack-enabled WordPress website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1204,6 +1336,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to schedule a post on your WordPress.com website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1214,6 +1347,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to add a payment button to your WordPress.com website.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	account: [
@@ -1222,18 +1356,21 @@ const getVideosForSection = () => ( {
 			link: 'https://www.youtube.com/embed/aO-6yu3_xWQ',
 			title: translate( 'Change Your Password' ),
 			description: translate( 'Find out how to change your account password on WordPress.com.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/qhsjkqFdDZo',
 			title: translate( 'Change Your WordPress.com Username' ),
 			description: translate( 'Find out how to change your username on WordPress.com.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/Tyxu_xT6q1k',
 			title: translate( 'Change Your WordPress.com Display Name' ),
 			description: translate( 'Find out how to change your display name on WordPress.com.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1242,6 +1379,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to change your account email address on WordPress.com.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	customizer: [
@@ -1252,6 +1390,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to add a custom header image to your WordPress.com website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1260,12 +1399,14 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to create a custom menu on your WordPress.com or Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/2H_Jsgh2Z3Y',
 			title: translate( 'Add a Widget' ),
 			description: translate( 'Find out how to add a widget to your WordPress.com website.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1274,6 +1415,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to add a custom background to your WordPress.com site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1282,6 +1424,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to change the fonts on your WordPress.com website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1290,6 +1433,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to add an image gallery widget to your WordPress.com website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1298,6 +1442,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to use the Featured Content option on your WordPress.com website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1306,6 +1451,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to add an image widget to your WordPress.com website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	'posts-pages': [
@@ -1316,30 +1462,35 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to create a one-page website or landing page on your WordPress.com site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/4IkFQzl5nXc',
 			title: translate( 'Set Up a Website in 5 Steps' ),
 			description: translate( 'Find out how to create a website on WordPress.com in five steps.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/mta6Y0o7yJk',
 			title: translate( 'Set Up a Blog in 5 Steps' ),
 			description: translate( 'Find out how to create a blog on WordPress.com in five steps.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/Gx7YNX1Wk5U',
 			title: translate( 'Create a Page' ),
 			description: translate( 'Find out how to create a page on your WordPress.com site.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/mCfuh5bCOwM',
 			title: translate( 'Create a Post' ),
 			description: translate( 'Find out how to create a post on WordPress.com.' ),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1348,6 +1499,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to use a custom menu in a widget on your WordPress.com or Jetpack-enabled WordPress site.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1356,6 +1508,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'By default, your new WordPress.com website displays your latest posts. Find out how to create a static homepage instead.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1364,6 +1517,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to show related posts on your WordPress.com site, which you can also do on a Jetpack-enabled WordPress blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1372,6 +1526,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to add testimonials to your WordPress.com website or blog.'
 			),
+			support_type: 'contextual_help',
 		},
 		{
 			type: RESULT_VIDEO,
@@ -1380,6 +1535,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to change your page or post visibility settings WordPress.com.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	media: [
@@ -1390,6 +1546,7 @@ const getVideosForSection = () => ( {
 			description: translate(
 				'Find out how to add a photo gallery on your WordPress.com and Jetpack-enabled website.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	themes: [
@@ -1398,6 +1555,7 @@ const getVideosForSection = () => ( {
 			link: 'https://www.youtube.com/embed/yOfAuOb68Hc',
 			title: translate( 'Change Your Website Theme on WordPress.com' ),
 			description: translate( 'Find out how to change your WordPress.com theme.' ),
+			support_type: 'contextual_help',
 		},
 	],
 } );
@@ -1413,6 +1571,7 @@ const getToursForSection = () => ( {
 			description: translate(
 				'It’s easy to add a button that can collect payments or donations. See how!'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 	media: [
@@ -1424,6 +1583,7 @@ const getToursForSection = () => ( {
 			description: translate(
 				'The Media Library is a useful tool to help you manage, search, and edit your photos, videos, documents, and other media.'
 			),
+			support_type: 'contextual_help',
 		},
 	],
 } );
