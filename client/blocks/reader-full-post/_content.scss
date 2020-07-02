@@ -241,6 +241,10 @@
 		margin: auto;
 	}
 
+	.wp-block-buttons {
+		margin: 0px;
+	}
+
 	.wp-block-button {
 		border-style: solid;
 		font-family: $sans;
@@ -248,6 +252,8 @@
 		cursor: pointer;
 		display: inline-block;
 		margin: 0;
+		margin-right: 0.25em;
+		margin-bottom: 0.6em;
 		outline: 0;
 		overflow: hidden;
 		vertical-align: top;
