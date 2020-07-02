@@ -74,15 +74,8 @@ const Edit = ( props ) => {
 	};
 
 	useEffect( () => {
-		const getStatus = async () => {
-			try {
-				const status = await fetchStatus( 'donation' );
-				mapStatusToState( status );
-			} catch ( message ) {
-				apiError( message );
-			}
-		};
-		getStatus();
+		const updateData = () => fetchStatus( 'donation' ).then( mapStatusToState, apiError );
+		updateData();
 	}, [] );
 
 	if ( isLoading ) {

@@ -8,7 +8,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 
 const Controls = ( props ) => {
 	const { attributes, setAttributes, siteSlug } = props;
-	const { showMonthly, showAnnually, showCustom } = attributes;
+	const { showMonthly, showAnnual, showCustom } = attributes;
 	return (
 		<InspectorControls>
 			<PanelBody title={ __( 'Settings', 'full-site-editing' ) }>
@@ -18,8 +18,8 @@ const Controls = ( props ) => {
 					label={ __( 'Show monthly donations', 'full-site-editing' ) }
 				/>
 				<ToggleControl
-					checked={ showAnnually }
-					onChange={ ( value ) => setAttributes( { showAnnually: value } ) }
+					checked={ showAnnual }
+					onChange={ ( value ) => setAttributes( { showAnnual: value } ) }
 					label={ __( 'Show annual donations', 'full-site-editing' ) }
 				/>
 				<ToggleControl
