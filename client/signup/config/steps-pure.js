@@ -37,7 +37,6 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	addOrRemoveFromProgressStore = noop,
-	verifyCart = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
@@ -160,8 +159,18 @@ export function generateSteps( {
 			fulfilledStepCallback: maybeRemoveStepForUserlessCheckout,
 			providesToken: true,
 			dependencies: [ 'cartItem', 'domainItem' ],
-			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
-			optionalDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'allowUnauthenticated',
+			],
+			optionalDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'allowUnauthenticated',
+			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -313,16 +322,6 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 			delayApiRequestUntilComplete: true,
-		},
-
-		'domains-new': {
-			stepName: 'domains',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'domainItem', 'themeItem', 'siteUrl' ],
-			allowUnauthenticated: true,
-			props: {
-				isDomainOnly: false,
-			},
 		},
 
 		'domain-only': {
@@ -659,15 +658,6 @@ export function generateSteps( {
 			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
-		},
-
-		'verify-cart': {
-			stepName: 'verify-cart',
-			apiRequestFunction: verifyCart,
-			allowUnauthenticated: true,
-			dependencies: [ 'siteUrl', 'cartItem', 'domainItem' ],
-			providesDependencies: [ 'siteId', 'siteSlug' ],
-			optionalDependencies: [ 'siteId', 'siteSlug' ],
 		},
 	};
 }

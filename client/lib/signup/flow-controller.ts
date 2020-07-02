@@ -264,7 +264,7 @@ export default class SignupFlowController {
 	}
 
 	_canProcessStep( step: Step ) {
-		const { providesToken, allowUnauthenticated } = steps[ step.stepName ];
+		const { providesToken } = steps[ step.stepName ];
 		const dependencies = get( steps, [ step.stepName, 'dependencies' ], [] );
 		const dependenciesFound = pick(
 			getSignupDependencyStore( this._reduxStore.getState() ),
@@ -278,6 +278,11 @@ export default class SignupFlowController {
 		);
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
+		const allowUnauthenticated = get(
+			getSignupDependencyStore( this._reduxStore.getState() ),
+			'allowUnauthenticated',
+			false
+		);
 
 		return (
 			dependenciesSatisfied &&

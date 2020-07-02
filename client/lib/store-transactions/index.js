@@ -426,11 +426,15 @@ TransactionFlow.prototype._createCardToken = function ( callback ) {
 };
 
 TransactionFlow.prototype._submitWithPayment = function ( payment ) {
+	const siteParams = this._initialData?.isLoggedOutCart
+		? JSON.parse( window.localStorage.getItem( 'siteParams' ) )
+		: null;
 	const transaction = {
 		cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
 		domain_details: this._initialData.domainDetails,
 		payment,
 		is_white_glove_offer: this._initialData?.isWhiteGloveOffer,
+		new_site_params: siteParams,
 	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );

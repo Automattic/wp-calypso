@@ -788,6 +788,7 @@ export class Checkout extends React.Component {
 
 		if ( this.props.isLoggedOutCart ) {
 			window.localStorage.removeItem( 'shoppingCart' );
+			window.localStorage.removeItem( 'siteParams' );
 			window.location = redirectPath;
 			return;
 		}
