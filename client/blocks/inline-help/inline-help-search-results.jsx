@@ -89,6 +89,7 @@ function HelpSearchResults( {
 
 				{ hasAPIResults && (
 					<div className="inline-help__api-results">
+						<h2 className="inline-help__view-heading">{ translate( 'Support articles:' ) }</h2>
 						<ul className="inline-help__results-list">
 							{ apiResults.map( renderHelpLink ) }
 						</ul>
@@ -97,6 +98,7 @@ function HelpSearchResults( {
 
 				{ ! isEmpty( adminResults ) && (
 					<div className="inline-help__admin-results">
+						<h2 className="inline-help__view-heading">{ translate( 'Show me where to:' ) }</h2>
 						<ul className="inline-help__results-list">
 							{ adminResults.map( renderHelpLink ) }
 						</ul>
