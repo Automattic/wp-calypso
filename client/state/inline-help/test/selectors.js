@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import isInlineHelpPopoverVisible from 'state/inline-help/selectors/is-inline-help-popover-visible';
 import getSearhQuery from 'state/inline-help/selectors/get-search-query';
 import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
+import getInlineHelpAdminResultsForQuery from 'state/inline-help/selectors/get-inline-help-admin-results-for-query';
 import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
 
 describe( '#isInlineHelpPopoverVisible()', () => {
@@ -149,5 +150,50 @@ describe( 'getAdminSectionsResults()', () => {
 		expect( results ).to.be.a( 'array' );
 		expect( results ).to.not.deep.equal( [] );
 		expect( results ).to.not.have.length( 0 );
+	} );
+} );
+
+describe( 'getInlineHelpAdminResultsForQuery()', () => {
+	test( 'should return only items admin itmes, according to the current query', () => {
+		const state = {
+			inlineHelp: {
+				searchResults: {
+					search: {
+						searchQuery: 'foo',
+						items: {
+							foo: [
+								{
+									title: 'API response Item - title',
+									description: 'API response Item - no support_type key',
+									link: 'http://admin-section.item.link',
+								},
+								{
+									title: 'Admin Section Item - title',
+									description: 'Admin Section - description',
+									link: 'http://admin-section.item.link',
+									support_type: 'admin_section',
+								},
+								{
+									title: 'Contextual Item - title',
+									description: 'Contextual - description',
+									link: 'http://contextual-item.item.link',
+									support_type: 'contextual_help',
+								},
+
+							],
+						},
+					},
+				},
+			},
+		};
+
+		expect( getInlineHelpAdminResultsForQuery( state ) ).to.deep.equal( [
+			{
+				title: 'Admin Section Item - title',
+				description: 'Admin Section - description',
+				link: 'http://admin-section.item.link',
+				support_type: 'admin_section',
+			},
+		] );
 	} );
 } );
