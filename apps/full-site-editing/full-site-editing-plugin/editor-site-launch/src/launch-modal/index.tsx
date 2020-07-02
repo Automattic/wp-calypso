@@ -18,7 +18,7 @@ interface Props {
 
 const LaunchModal: React.FunctionComponent< Props > = ( { onClose, step } ) => {
 	const handleClose = () => {
-		onClose && onClose();
+		onClose?.();
 	};
 
 	return (
