@@ -37,7 +37,7 @@ const Tab = ( props ) => {
 	const setAttribute = ( attributeName, value ) => {
 		if ( attributeName in attributesPerInterval ) {
 			return setAttributes( {
-				[ attributes[ attributesPerInterval[ attributeName ][ interval ] ] ]: value,
+				[ attributesPerInterval[ attributeName ][ interval ] ]: value,
 			} );
 		}
 		return setAttributes( { [ attributeName ]: value } );
@@ -78,7 +78,7 @@ const Tab = ( props ) => {
 							</div>
 						) ) }
 					</div>
-					{ getAttribute( 'showCustom' ) && (
+					{ getAttribute( 'showCustomAmount' ) && (
 						<>
 							<RichText
 								tagName={ Block.p }

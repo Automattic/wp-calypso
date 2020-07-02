@@ -28,15 +28,19 @@ const settings = {
 			type: 'string',
 			default: 'USD',
 		},
-		showMonthly: {
-			type: 'boolean',
-			default: true,
+		oneTimePlanId: {
+			type: 'number',
+			default: null,
 		},
-		showAnnual: {
-			type: 'boolean',
-			default: true,
+		monthlyPlanId: {
+			type: 'number',
+			default: null,
 		},
-		showCustom: {
+		annuallyPlanId: {
+			type: 'number',
+			default: null,
+		},
+		showCustomAmount: {
 			type: 'boolean',
 			default: true,
 		},

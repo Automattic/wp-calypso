@@ -7,24 +7,28 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 
 const Controls = ( props ) => {
-	const { attributes, setAttributes, siteSlug } = props;
-	const { showMonthly, showAnnual, showCustom } = attributes;
+	const { attributes, setAttributes, products, siteSlug } = props;
+	const { monthlyPlanId, annuallyPlanId, showCustomAmount } = attributes;
 	return (
 		<InspectorControls>
 			<PanelBody title={ __( 'Settings', 'full-site-editing' ) }>
 				<ToggleControl
-					checked={ showMonthly }
-					onChange={ ( value ) => setAttributes( { showMonthly: value } ) }
+					checked={ monthlyPlanId }
+					onChange={ ( value ) =>
+						setAttributes( { monthlyPlanId: value ? products[ '1 month' ] : null } )
+					}
 					label={ __( 'Show monthly donations', 'full-site-editing' ) }
 				/>
 				<ToggleControl
-					checked={ showAnnual }
-					onChange={ ( value ) => setAttributes( { showAnnual: value } ) }
+					checked={ annuallyPlanId }
+					onChange={ ( value ) =>
+						setAttributes( { annuallyPlanId: value ? products[ '1 year' ] : null } )
+					}
 					label={ __( 'Show annual donations', 'full-site-editing' ) }
 				/>
 				<ToggleControl
-					checked={ showCustom }
-					onChange={ ( value ) => setAttributes( { showCustom: value } ) }
+					checked={ showCustomAmount }
+					onChange={ ( value ) => setAttributes( { showCustomAmount: value } ) }
 					label={ __( 'Show custom amount option', 'full-site-editing' ) }
 				/>
 				<ExternalLink href={ `https://wordpress.com/earn/payments/${ siteSlug }` }>
