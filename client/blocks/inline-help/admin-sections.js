@@ -237,7 +237,7 @@ export const adminSections = memoize( ( siteSlug ) => [
 	{
 		title: translate( 'Manage how users can comment on my site' ),
 		link: `/settings/discussion/${ siteSlug }`,
-		synonyms: [ 'discussion', 'moderation', 'blacklist' ],
+		synonyms: [ 'discussion', 'moderation', 'blocklist' ],
 		icon: 'cog',
 	},
 	{
@@ -383,7 +383,7 @@ export const adminSections = memoize( ( siteSlug ) => [
 /**
  * Returns a filtered site admin collection.
  *
- * @param   {String} searchTerm The search term
+ * @param   {string} searchTerm The search term
  * @param   {Array}  collection A collection of site admin objects
  * @param   {number} limit      The maximum number of results to show
  * @returns {Array}             A filtered (or empty) array
