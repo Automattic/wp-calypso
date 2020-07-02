@@ -30,5 +30,12 @@ export default createSelector(
 			).length > 0
 		);
 	},
-	( state: AppState, siteId: number | null ) => getSiteProducts( state, siteId )
+	( state: AppState, siteId: number | null ) => getSiteProducts( state, siteId ),
+	( state: AppState, siteId: number | null, productSlug: string | string[] ): string => {
+		siteId = siteId || 0;
+		if ( ! Array.isArray( productSlug ) ) {
+			productSlug = [ productSlug ];
+		}
+		return `{ siteId || 0 }-${ productSlug.join( '-' ) }`;
+	}
 );
