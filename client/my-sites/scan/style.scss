@@ -1,12 +1,4 @@
-.scan.is_jetpackcom .section-nav {
-	margin-top: 16px;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		margin-top: 0;
-	}
-}
-
-.scan__main .formatted-header.is-left-align {
+.scan .formatted-header {
 	margin-top: 20px;
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -116,5 +108,17 @@
 		@include breakpoint-deprecated( '>660px' ) {
 			margin-top: 64px;
 		}
+	}
+}
+
+/**
+ * Jetpack.com specific styles
+ */
+
+.scan.is_jetpackcom .section-nav {
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 0;
 	}
 }
