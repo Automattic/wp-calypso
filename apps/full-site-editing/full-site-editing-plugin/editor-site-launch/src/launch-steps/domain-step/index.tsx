@@ -17,7 +17,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 	};
 
 	const handleContinue = () => {
-		onNextStep && onNextStep();
+		onNextStep?.();
 	};
 
 	return (
