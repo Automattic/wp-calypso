@@ -53,6 +53,7 @@ export function useTransactionStatusManager() {
 
 	const {
 		transactionStatus,
+		previousTransactionStatus,
 		transactionLastResponse,
 		transactionError,
 		transactionRedirectUrl,
@@ -61,6 +62,7 @@ export function useTransactionStatusManager() {
 	return useMemo(
 		() => ( {
 			transactionStatus,
+			previousTransactionStatus,
 			transactionError,
 			transactionLastResponse,
 			transactionRedirectUrl,
@@ -73,6 +75,7 @@ export function useTransactionStatusManager() {
 		} ),
 		[
 			transactionStatus,
+			previousTransactionStatus,
 			transactionError,
 			transactionLastResponse,
 			transactionRedirectUrl,
