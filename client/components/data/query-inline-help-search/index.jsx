@@ -24,7 +24,7 @@ class QueryInlineHelpSearch extends Component {
 	}
 
 	request( props ) {
-		if ( props.requesting || ! props.query ) {
+		if ( props.requesting ) {
 			return;
 		}
 

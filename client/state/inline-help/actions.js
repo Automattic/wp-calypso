@@ -7,6 +7,7 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
@@ -21,6 +22,19 @@ import {
 
 import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
 import 'state/inline-help/init';
+
+/**
+ * Set the search query in the state tree for the inline help.
+ *
+ * @param {string} searchQuery - query string to persist.
+ * @returns {Function}            Action thunk.
+ */
+export function setInlineHelpSearchQuery( searchQuery = '' ) {
+	return {
+		type: INLINE_HELP_SET_SEARCH_QUERY,
+		searchQuery,
+	};
+}
 
 /**
  * Fetches search results for a given query string.
