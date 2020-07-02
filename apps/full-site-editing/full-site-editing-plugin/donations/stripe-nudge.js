@@ -1,19 +1,12 @@
 /**
- * External dependencies
- */
-/**
  * WordPress dependencies
  */
-// eslint-disable-next-line no-restricted-imports
+// eslint-disable-next-line wpcalypso/import-docblock,no-restricted-imports
 import { Button, Dashicon } from '@wordpress/components';
 import { Warning } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { withDispatch } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 
 const StripeNudge = ( { autosaveAndRedirect, stripeConnectUrl } ) => (
 	<Warning
