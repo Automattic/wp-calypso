@@ -28,7 +28,7 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose,
 			onRequestClose={ onClose }
 			title=""
 		>
-			<DomainPicker showDomainCategories { ...props } />
+			<DomainPicker { ...props } />
 		</Modal>
 	);
 };

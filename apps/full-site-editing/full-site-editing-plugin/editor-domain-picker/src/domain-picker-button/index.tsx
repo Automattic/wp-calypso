@@ -5,6 +5,8 @@ import * as React from 'react';
 import { useSelect } from '@wordpress/data';
 import 'a8c-fse-common-data-stores';
 import { Site } from '@automattic/data-stores';
+// eslint-disable-next-line no-duplicate-imports
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 import DomainPickerModal from '../domain-picker-modal';
 import { Button } from '@wordpress/components';
@@ -22,15 +24,23 @@ declare global {
 export default function DomainPickerButton() {
 	const [ isDomainModalVisible, setDomainModalVisibility ] = React.useState( false );
 	const [ domainSearch, setDomainSearch ] = React.useState( '' );
-
 	const site = useSelect( ( select ) => select( SITES_STORE ).getSite( window._currentSiteId ) );
+	const [ domainName, setDomainName ] = React.useState(
+		site?.URL && new URL( site?.URL ).hostname
+	);
 
-	const currentDomain = {
-		domain_name: ( site?.URL && new URL( site?.URL ).hostname ) || '',
-		is_free: site?.URL?.endsWith( 'wordpress.com' ),
-	};
+	React.useEffect( () => {
+		setDomainName( ( site?.URL && new URL( site?.URL ).hostname ) || '' );
+	}, [ site ] );
 
 	const search = ( domainSearch.trim() || site?.name ) ?? '';
+
+	const handleDomainSelect = ( domain?: DomainSuggestions.DomainSuggestion ) => {
+		// TODO: store whole domain suggestion object here because it has product_id and other useful info
+		// that we need for the cart
+		setDomainName( domain?.domain_name );
+		setDomainModalVisibility( false );
+	};
 
 	return (
 		<>
@@ -40,7 +50,7 @@ export default function DomainPickerButton() {
 				aria-pressed={ isDomainModalVisible }
 				onClick={ () => setDomainModalVisibility( ( s ) => ! s ) }
 			>
-				<span className="domain-picker-button__label">{ `Domain: ${ currentDomain.domain_name }` }</span>
+				<span className="domain-picker-button__label">{ `Domain: ${ domainName ?? '' }` }</span>
 				<Icon icon={ chevronDown } size={ 22 } />
 			</Button>
 			<DomainPickerModal
@@ -49,12 +59,10 @@ export default function DomainPickerButton() {
 				initialDomainSearch={ search }
 				onSetDomainSearch={ setDomainSearch }
 				isOpen={ isDomainModalVisible }
-				showDomainConnectButton
-				showDomainCategories
 				// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 				// @ts-ignore
-				currentDomain={ currentDomain }
-				onDomainSelect={ () => setDomainModalVisibility( false ) }
+				currentDomain={ domainName }
+				onDomainSelect={ handleDomainSelect }
 				onClose={ () => setDomainModalVisibility( false ) }
 			/>
 		</>
