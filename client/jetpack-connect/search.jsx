@@ -151,7 +151,7 @@ export class SearchPurchase extends Component {
 		const product = window.location.pathname.split( '/' )[ 3 ];
 		const type = window.location.pathname.split( '/' )[ 4 ];
 
-		return [ 'monthly', 'yearly' ].includes( type ) ? product + '_' + type : product;
+		return [ 'monthly' ].includes( type ) ? product + '_' + type : product;
 	}
 
 	renderSiteInput( status ) {
