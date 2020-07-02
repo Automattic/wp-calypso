@@ -14,6 +14,7 @@ export function useTransactionStatus() {
 }
 
 const initialState = {
+	previousTransactionStatus: 'not-started', // string
 	transactionStatus: 'not-started', // string
 	transactionError: null, // string | null
 	transactionLastResponse: null, // object | null
@@ -52,6 +53,7 @@ export function useTransactionStatusManager() {
 
 	const {
 		transactionStatus,
+		previousTransactionStatus,
 		transactionLastResponse,
 		transactionError,
 		transactionRedirectUrl,
@@ -60,6 +62,7 @@ export function useTransactionStatusManager() {
 	return useMemo(
 		() => ( {
 			transactionStatus,
+			previousTransactionStatus,
 			transactionError,
 			transactionLastResponse,
 			transactionRedirectUrl,
@@ -72,6 +75,7 @@ export function useTransactionStatusManager() {
 		} ),
 		[
 			transactionStatus,
+			previousTransactionStatus,
 			transactionError,
 			transactionLastResponse,
 			transactionRedirectUrl,
@@ -91,6 +95,7 @@ function transactionStatusReducer( state, action ) {
 			const { status, response, error, url } = action.payload;
 			return {
 				...state,
+				previousTransactionStatus: state.transactionStatus,
 				transactionStatus: status,
 				transactionLastResponse: response,
 				transactionRedirectUrl: url,

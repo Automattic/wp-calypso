@@ -33,6 +33,7 @@ import {
 	WordPressFreePurchaseLabel,
 	WordPressFreePurchaseSummary,
 } from './payment-method-helpers';
+import { createWeChatMethod, createWeChatPaymentMethodStore } from './payment-methods/wechat';
 
 function useCreatePayPal( { onlyLoadPaymentMethods } ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
@@ -147,6 +148,34 @@ function useCreateGiropay( {
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+	);
+}
+
+function useCreateWeChat( {
+	onlyLoadPaymentMethods,
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+	siteSlug,
+} ) {
+	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
+	const isMethodAllowed = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'wechat' )
+		: true;
+	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+	const paymentMethodStore = useMemo( () => createWeChatPaymentMethodStore(), [] );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createWeChatMethod( {
+						store: paymentMethodStore,
+						stripe,
+						stripeConfiguration,
+						siteSlug,
+				  } )
+				: null,
+		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration, siteSlug ]
 	);
 }
 
@@ -333,6 +362,7 @@ export default function useCreatePaymentMethods( {
 	isApplePayAvailable,
 	isApplePayLoading,
 	storedCards,
+	siteSlug,
 } ) {
 	const paypalMethod = useCreatePayPal( {
 		onlyLoadPaymentMethods,
@@ -386,6 +416,15 @@ export default function useCreatePaymentMethods( {
 		stripe,
 	} );
 
+	const wechatMethod = useCreateWeChat( {
+		onlyLoadPaymentMethods,
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		siteSlug,
+	} );
+
 	const stripeMethod = useCreateStripe( {
 		onlyLoadPaymentMethods,
 		isStripeLoading,
@@ -428,6 +467,7 @@ export default function useCreatePaymentMethods( {
 		alipayMethod,
 		p24Method,
 		epsMethod,
+		wechatMethod,
 		stripeMethod,
 		paypalMethod,
 	].filter( Boolean );

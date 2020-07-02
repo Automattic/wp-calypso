@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useEffect, useCallback, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -14,8 +14,8 @@ import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, defaultRegistry } from '../lib/registry';
-import { useFormStatusManager, useFormStatus } from '../lib/form-status';
-import { useTransactionStatusManager, useTransactionStatus } from '../lib/transaction-status';
+import { useFormStatusManager } from '../lib/form-status';
+import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../theme';
 import {
 	validateArg,
@@ -23,7 +23,7 @@ import {
 	validateLineItems,
 	validatePaymentMethods,
 } from '../lib/validation';
-import { usePaymentMethodId } from '../lib/payment-methods';
+import TransactionStatusHandler from './transaction-status-handler';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -174,95 +174,5 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showSuccessMessage,
 		total,
 	] );
-	return null;
-}
-
-export function useEvents() {
-	const { onEvent } = useContext( CheckoutContext );
-	if ( ! onEvent ) {
-		throw new Error( 'useEvents can only be used inside a CheckoutProvider' );
-	}
-	return onEvent;
-}
-
-export function useMessages() {
-	const { showErrorMessage, showInfoMessage, showSuccessMessage } = useContext( CheckoutContext );
-	if ( ! showErrorMessage || ! showInfoMessage || ! showSuccessMessage ) {
-		throw new Error( 'useMessages can only be used inside a CheckoutProvider' );
-	}
-	return { showErrorMessage, showInfoMessage, showSuccessMessage };
-}
-
-function useTransactionStatusHandler( redirectToUrl ) {
-	const { __ } = useI18n();
-	const { showErrorMessage, showInfoMessage } = useMessages();
-	const { setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
-	const {
-		transactionStatus,
-		transactionRedirectUrl,
-		transactionError,
-		resetTransaction,
-		setTransactionError,
-	} = useTransactionStatus();
-	const onEvent = useEvents();
-	const [ paymentMethodId ] = usePaymentMethodId();
-
-	const genericErrorMessage = __( 'An error occurred during the transaction' );
-	const redirectErrormessage = __(
-		'An error occurred while redirecting to the payment partner. Please try again or contact support.'
-	);
-	const redirectInfoMessage = __( 'Redirecting to payment partner…' );
-	useEffect( () => {
-		if ( transactionStatus === 'pending' ) {
-			debug( 'transaction is beginning' );
-			setFormSubmitting();
-		}
-		if ( transactionStatus === 'error' ) {
-			debug( 'showing error', transactionError );
-			showErrorMessage( transactionError || genericErrorMessage );
-			onEvent( {
-				type: 'TRANSACTION_ERROR',
-				payload: { message: transactionError || '', paymentMethodId },
-			} );
-			resetTransaction();
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'marking complete' );
-			setFormComplete();
-		}
-		if ( transactionStatus === 'redirecting' ) {
-			if ( ! transactionRedirectUrl ) {
-				debug( 'tried to redirect but there was no redirect url' );
-				setTransactionError( redirectErrormessage );
-				return;
-			}
-			debug( 'redirecting to', transactionRedirectUrl );
-			showInfoMessage( redirectInfoMessage );
-			redirectToUrl( transactionRedirectUrl );
-		}
-	}, [
-		paymentMethodId,
-		onEvent,
-		resetTransaction,
-		setTransactionError,
-		setFormReady,
-		setFormComplete,
-		setFormSubmitting,
-		showErrorMessage,
-		showInfoMessage,
-		transactionStatus,
-		transactionError,
-		transactionRedirectUrl,
-		redirectToUrl,
-		redirectInfoMessage,
-		redirectErrormessage,
-		genericErrorMessage,
-	] );
-}
-
-function TransactionStatusHandler( { redirectToUrl } ) {
-	const defaultRedirect = useCallback( ( url ) => ( window.location = url ), [] );
-	useTransactionStatusHandler( redirectToUrl || defaultRedirect );
 	return null;
 }

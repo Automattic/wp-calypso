@@ -89,6 +89,7 @@ import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
+import { CartProvider } from './cart-provider';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -352,6 +353,7 @@ export default function CompositeCheckout( {
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
+		siteSlug,
 	} );
 
 	// Once we pass paymentMethods into CompositeCheckout, we should try to avoid
@@ -481,6 +483,8 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'p24', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			giropay: ( transactionData ) =>
 				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+			wechat: ( transactionData ) =>
+				genericRedirectProcessor( 'wechat', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			ideal: ( transactionData ) =>
 				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, isWhiteGloveOffer ),
 			sofort: ( transactionData ) =>
@@ -515,46 +519,48 @@ export default function CompositeCheckout( {
 			<QueryStoredCards />
 
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-			<CheckoutProvider
-				items={ itemsForCheckout }
-				total={ total }
-				onPaymentComplete={ onPaymentComplete }
-				showErrorMessage={ showErrorMessage }
-				showInfoMessage={ showInfoMessage }
-				showSuccessMessage={ showSuccessMessage }
-				onEvent={ recordEvent }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ paymentProcessors }
-				registry={ defaultRegistry }
-				isLoading={
-					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
-				}
-				isValidating={ isCartPendingUpdate }
-			>
-				<WPCheckout
-					removeItem={ removeItem }
-					updateLocation={ updateLocation }
-					submitCoupon={ submitCoupon }
-					removeCoupon={ removeCoupon }
-					couponStatus={ couponStatus }
-					changePlanLength={ changeItemVariant }
-					siteId={ siteId }
-					siteUrl={ siteSlug }
-					CountrySelectMenu={ CountrySelectMenu }
-					countriesList={ countriesList }
-					StateSelect={ StateSelect }
-					renderDomainContactFields={ renderDomainContactFields }
-					variantSelectOverride={ variantSelectOverride }
-					getItemVariants={ getItemVariants }
-					responseCart={ responseCart }
-					addItemToCart={ addItemWithEssentialProperties }
-					subtotal={ subtotal }
-					isCartPendingUpdate={ isCartPendingUpdate }
-					CheckoutTerms={ CheckoutTerms }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isWhiteGloveOffer={ isWhiteGloveOffer }
-				/>
-			</CheckoutProvider>
+			<CartProvider cart={ responseCart }>
+				<CheckoutProvider
+					items={ itemsForCheckout }
+					total={ total }
+					onPaymentComplete={ onPaymentComplete }
+					showErrorMessage={ showErrorMessage }
+					showInfoMessage={ showInfoMessage }
+					showSuccessMessage={ showSuccessMessage }
+					onEvent={ recordEvent }
+					paymentMethods={ paymentMethods }
+					paymentProcessors={ paymentProcessors }
+					registry={ defaultRegistry }
+					isLoading={
+						isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
+					}
+					isValidating={ isCartPendingUpdate }
+				>
+					<WPCheckout
+						removeItem={ removeItem }
+						updateLocation={ updateLocation }
+						submitCoupon={ submitCoupon }
+						removeCoupon={ removeCoupon }
+						couponStatus={ couponStatus }
+						changePlanLength={ changeItemVariant }
+						siteId={ siteId }
+						siteUrl={ siteSlug }
+						CountrySelectMenu={ CountrySelectMenu }
+						countriesList={ countriesList }
+						StateSelect={ StateSelect }
+						renderDomainContactFields={ renderDomainContactFields }
+						variantSelectOverride={ variantSelectOverride }
+						getItemVariants={ getItemVariants }
+						responseCart={ responseCart }
+						addItemToCart={ addItemWithEssentialProperties }
+						subtotal={ subtotal }
+						isCartPendingUpdate={ isCartPendingUpdate }
+						CheckoutTerms={ CheckoutTerms }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						isWhiteGloveOffer={ isWhiteGloveOffer }
+					/>
+				</CheckoutProvider>
+			</CartProvider>
 		</React.Fragment>
 	);
 }
