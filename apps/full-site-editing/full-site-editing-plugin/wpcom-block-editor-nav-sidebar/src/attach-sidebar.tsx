@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useDispatch } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, createPortal, useState } from '@wordpress/element';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 
@@ -35,10 +35,18 @@ registerPlugin( 'a8c-full-site-editing-nav-sidebar', {
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
 
+		const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
+		useEffect( () => {
+			document.body.appendChild( clickGuardRoot );
+			return () => {
+				document.body.removeChild( clickGuardRoot );
+			};
+		} );
+
 		return (
 			<MainDashboardButton>
 				<ToggleSidebarButton />
-				<WpcomBlockEditorNavSidebar />
+				{ createPortal( <WpcomBlockEditorNavSidebar />, clickGuardRoot ) }
 			</MainDashboardButton>
 		);
 	},

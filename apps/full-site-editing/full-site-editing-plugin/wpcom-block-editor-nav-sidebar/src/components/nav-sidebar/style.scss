@@ -1,6 +1,7 @@
 @import '~@wordpress/base-styles/colors';
 @import '~@wordpress/base-styles/mixins';
 @import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/z-index';
 
 $sidebar-width: 272px;
 $border: 1px solid $light-gray-500;
@@ -12,7 +13,8 @@ $transition-period: 200ms;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 2;
+	// Use the same z-index as the <Modal> component
+	z-index: z-index( '.components-modal__header' );
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
 	@include reduce-motion( 'animation' );
 
