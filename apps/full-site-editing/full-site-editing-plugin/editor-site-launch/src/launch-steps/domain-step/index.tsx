@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import LaunchStep, { Props as LaunchStepProps } from '../../launch-step';
+import DomainPickerFSE from '../../../../editor-domain-picker/src/domain-picker-fse';
 import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
@@ -40,7 +41,10 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					</Button>
 				</div>
 			</div>
-			<div className="nux-launch-step__body"></div>
+			<div className="nux-launch-step__body">
+				{ /* TODO: When a domain is selected, it should advance to the next step */ }
+				<DomainPickerFSE />
+			</div>
 		</LaunchStep>
 	);
 };

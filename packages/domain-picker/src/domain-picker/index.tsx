@@ -31,7 +31,7 @@ import './style.scss';
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 export interface Props {
-	header: React.ReactElement;
+	header?: React.ReactElement;
 
 	showDomainCategories?: boolean;
 
@@ -154,7 +154,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="domain-picker">
-			{ header }
+			{ header && header }
 			<div className="domain-picker__search">
 				<div className="domain-picker__search-icon">
 					<Icon icon={ search } />
