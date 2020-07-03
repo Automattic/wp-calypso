@@ -192,7 +192,7 @@ const sections = [
 		name: 'purchase-product',
 		paths: [ '/purchase-product' ],
 		module: 'my-sites/purchase-product',
-		secondary: false,
+		secondary: true,
 		enableLoggedOut: true,
 	},
 	{
