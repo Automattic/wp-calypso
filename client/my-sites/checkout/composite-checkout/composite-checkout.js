@@ -336,7 +336,8 @@ export default function CompositeCheckout( {
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
-		getStoredCards || wpcomGetStoredCards
+		getStoredCards || wpcomGetStoredCards,
+		recordEvent
 	);
 	const {
 		canMakePayment: isApplePayAvailable,
