@@ -547,7 +547,7 @@ export default function CompositeCheckout( {
 			paypal: ( transactionData ) =>
 				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
 		} ),
-		[ couponItem, getThankYouUrl, isWhiteGloveOffer ]
+		[ couponItem, getThankYouUrl, isWhiteGloveOffer, siteSlug ]
 	);
 
 	useRecordCheckoutLoaded(
