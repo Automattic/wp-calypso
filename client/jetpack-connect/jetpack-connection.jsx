@@ -180,8 +180,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			return ! this.isCurrentUrlFetching() &&
 				this.isCurrentUrlFetched() &&
 				! this.props.jetpackConnectSite.isDismissed &&
-				this.state.status &&
-				this.state.status !== IS_DOT_COM_GET_SEARCH ? (
+				this.state.status ? (
 				<JetpackConnectNotices
 					noticeType={ this.state.status }
 					onDismissClick={ IS_DOT_COM === this.state.status ? this.goBack : this.dismissUrl }
