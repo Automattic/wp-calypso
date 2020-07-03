@@ -11,7 +11,6 @@ import { Step, usePath, useCurrentStep } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 
 import { useShouldSiteBePublicOnSelectedPlan } from './use-selected-plan';
-import { useFreeDomainSuggestion } from './use-free-domain-suggestion';
 import { USER_STORE } from '../stores/user';
 import useSignup from './use-signup';
 import { PLANS_STORE } from '../stores/plans';
@@ -41,11 +40,10 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
-	const freeDomainSuggestion = useFreeDomainSuggestion();
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, freeDomainSuggestion, undefined, shouldSiteBePublic )
+			? createSite( currentUser.username, undefined, shouldSiteBePublic )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps

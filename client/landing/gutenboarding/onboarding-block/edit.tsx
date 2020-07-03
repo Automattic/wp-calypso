@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import type { BlockEditProps } from '@wordpress/blocks';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
+import type { BlockEditProps } from '@wordpress/blocks';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
-import { USER_STORE } from '../stores/user';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
@@ -21,21 +20,16 @@ import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import Plans from './plans';
 import Domains from './domains';
-import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
 
 import './colors.scss';
 import './style.scss';
 
-const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
+const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const { selectedDesign, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const { createSite } = useDispatch( STORE_KEY );
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
-	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const shouldTriggerCreate = useNewQueryParam();
-	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	const makePath = usePath();
 
@@ -45,15 +39,15 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 		window.scrollTo( 0, 0 );
 	}, [ pathname ] );
 
-	const canUseDesignStep = useCallback( (): boolean => {
+	const canUseDesignStep = React.useCallback( (): boolean => {
 		return !! siteTitle;
 	}, [ siteTitle ] );
 
-	const canUseStyleStep = useCallback( (): boolean => {
+	const canUseStyleStep = React.useCallback( (): boolean => {
 		return !! selectedDesign;
 	}, [ selectedDesign ] );
 
-	const canUseCreateSiteStep = useCallback( (): boolean => {
+	const canUseCreateSiteStep = React.useCallback( (): boolean => {
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
@@ -68,26 +62,6 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 
 		return makePath( Step.IntentGathering );
 	};
-
-	useEffect( () => {
-		if (
-			! isCreatingSite &&
-			! newSite &&
-			currentUser &&
-			shouldTriggerCreate &&
-			canUseStyleStep()
-		) {
-			createSite( currentUser.username, freeDomainSuggestion );
-		}
-	}, [
-		createSite,
-		currentUser,
-		freeDomainSuggestion,
-		isCreatingSite,
-		newSite,
-		shouldTriggerCreate,
-		canUseStyleStep,
-	] );
 
 	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
 

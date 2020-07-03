@@ -11,7 +11,6 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { useShouldSiteBePublicOnSelectedPlan } from './use-selected-plan';
-import { useNewQueryParam } from '../path';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
@@ -19,22 +18,21 @@ import { useNewQueryParam } from '../path';
 
 export default function useOnSignup() {
 	const { createSite } = useDispatch( ONBOARD_STORE );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
+
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const shouldTriggerCreate = useNewQueryParam();
 	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
 
+	const handleCreateSite = React.useCallback(
+		( username: string, bearerToken?: string, isPublicSite?: boolean ) => {
+			createSite( username, bearerToken, isPublicSite );
+		},
+		[ createSite ]
+	);
+
 	React.useEffect( () => {
-		if ( ! isCreatingSite && ! newSite && currentUser && shouldTriggerCreate ) {
-			createSite( currentUser.username, undefined, shouldSiteBePublic );
+		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
+			handleCreateSite( newUser.username, newUser.bearerToken, shouldSiteBePublic );
 		}
-	}, [
-		createSite,
-		currentUser,
-		isCreatingSite,
-		newSite,
-		shouldTriggerCreate,
-		shouldSiteBePublic,
-	] );
+	}, [ newSite, newUser, handleCreateSite, shouldSiteBePublic ] );
 }
