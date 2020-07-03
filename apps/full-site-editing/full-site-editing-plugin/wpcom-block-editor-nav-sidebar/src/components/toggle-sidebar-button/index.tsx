@@ -21,23 +21,21 @@ const Button = ( {
 
 export default function ToggleSidebarButton() {
 	const { toggleSidebar } = useDispatch( STORE_KEY );
-	const isOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
+	const isSidebarOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
+	const isSidebarClosing = useSelect( ( select ) => select( STORE_KEY ).isSidebarClosing() );
 
 	return (
-		<>
-			<Button
-				className={ classnames(
-					'edit-post-fullscreen-mode-close',
-					'wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',
-					{
-						'is-open': isOpen,
-					}
-				) }
-				icon={ wordpress }
-				iconSize={ 36 }
-				onClick={ toggleSidebar }
-			></Button>
-			<div className="wpcom-block-editor-nav-sidebar-toggle-sidebar-button__spacer" />
-		</>
+		<Button
+			className={ classnames(
+				'edit-post-fullscreen-mode-close',
+				'wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',
+				{
+					'is-hidden': isSidebarOpen || isSidebarClosing,
+				}
+			) }
+			icon={ wordpress }
+			iconSize={ 36 }
+			onClick={ toggleSidebar }
+		/>
 	);
 }

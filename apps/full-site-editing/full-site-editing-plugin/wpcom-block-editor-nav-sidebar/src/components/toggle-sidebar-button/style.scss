@@ -1,22 +1,9 @@
-@import '~@wordpress/base-styles/mixins';
 @import '~@wordpress/base-styles/variables';
-@import '../nav-sidebar/style.scss';
 
 .wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button {
 	height: $header-height !important;
-	position: fixed;
-	z-index: 3;
-	top: 0;
-	left: 0;
-	transition: transform $transition-period;
-	@include reduce-motion( 'transition' );
 
-	&.is-open {
-		transform: scale( 0.55 );
+	&.is-hidden {
+		visibility: hidden;
 	}
-}
-
-.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__spacer {
-	height: $header-height;
-	width: $header-height;
 }
