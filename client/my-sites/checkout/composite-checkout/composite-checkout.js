@@ -237,6 +237,7 @@ export default function CompositeCheckout( {
 		isWhiteGloveOffer,
 		hideNudge,
 		recordEvent,
+		isLoggedOutCart,
 	} );
 
 	const moment = useLocalizedMoment();
@@ -281,7 +282,8 @@ export default function CompositeCheckout( {
 			}
 
 			if (
-				( responseCart.create_new_blog &&
+				( ! isLoggedOutCart &&
+					responseCart.create_new_blog &&
 					Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
 					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
 				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
@@ -305,6 +307,14 @@ export default function CompositeCheckout( {
 			}
 
 			debug( 'just redirecting to', url );
+
+			if ( isLoggedOutCart ) {
+				window.localStorage.removeItem( 'shoppingCart' );
+				window.localStorage.removeItem( 'siteParams' );
+				window.location = url;
+				return;
+			}
+
 			page.redirect( url );
 		},
 		[
@@ -489,7 +499,7 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
-			card: stripeCardProcessor,
+			card: ( transactionData ) => stripeCardProcessor( transactionData, isLoggedOutCart ),
 			alipay: ( transactionData ) =>
 				genericRedirectProcessor(
 					'alipay',
@@ -621,6 +631,7 @@ export default function CompositeCheckout( {
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
 						isWhiteGloveOffer={ isWhiteGloveOffer }
+						isLoggedOutCart={ isLoggedOutCart }
 					/>
 				</CheckoutProvider>
 			</CartProvider>

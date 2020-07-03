@@ -17,6 +17,8 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	prepareDomainContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
+import { getSavedVariations } from 'lib/abtest';
+import { stringifyBody } from 'state/login/utils';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
@@ -105,15 +107,16 @@ export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-export async function submitStripeCardTransaction( transactionData, submit ) {
+export async function submitStripeCardTransaction( transactionData, submit, isLoggedOutCart ) {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+		isLoggedOutCart,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, isLoggedOutCart );
 }
 
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
@@ -210,7 +213,53 @@ function WordPressLogo() {
 	);
 }
 
-export async function wpcomTransaction( payload ) {
+async function createAccountCallback( errorObj, response ) {
+	wp.loadToken( response.bearer_token );
+	const url = 'https://wordpress.com/wp-login.php';
+	const bodyObj = {
+		authorization: 'Bearer ' + response.bearer_token,
+		log: response.username,
+	};
+
+	const loginResponse = await globalThis.fetch( url, {
+		method: 'POST',
+		redirect: 'manual',
+		credentials: 'include',
+		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: stringifyBody( bodyObj ),
+	} );
+
+	if ( ! loginResponse.ok ) {
+		// TODO: handle login error
+	}
+}
+
+async function createAccount() {
+	// TODO: Fetch email from store
+	const email = document.getElementById( 'contact-signup-email' ).value;
+
+	const response = await wp.undocumented().usersNew(
+		{
+			email,
+			'g-recaptcha-error': undefined,
+			'g-recaptcha-response': undefined,
+			is_passwordless: true,
+			signup_flow_name: 'onboarding-new',
+			validate: false,
+			ab_test_variations: getSavedVariations(),
+		},
+		null
+	);
+	createAccountCallback( null, response );
+}
+
+export async function wpcomTransaction( payload, isLoggedOutCart ) {
+	if ( isLoggedOutCart ) {
+		return createAccount().then( ( error ) => {
+			return wp.undocumented().transactions( payload );
+		} );
+	}
+
 	return wp.undocumented().transactions( payload );
 }
 

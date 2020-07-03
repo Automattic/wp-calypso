@@ -101,6 +101,7 @@ export default function WPCheckout( {
 	isCartPendingUpdate,
 	showErrorMessageBriefly,
 	isWhiteGloveOffer,
+	isLoggedOutCart,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -300,6 +301,7 @@ export default function WPCheckout( {
 										shouldShowContactDetailsValidationErrors
 									}
 									contactValidationCallback={ validateContactDetails }
+									isLoggedOutCart={ isLoggedOutCart }
 								/>
 							}
 							completeStepContent={
