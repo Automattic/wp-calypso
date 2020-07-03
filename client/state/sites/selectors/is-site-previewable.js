@@ -29,7 +29,8 @@ export default function isSitePreviewable( state, siteId ) {
 		return false;
 	}
 
-	if ( site.options.is_wpforteams_site ) {
+	const isWPForTeamsSite = getSiteOption( state, siteId, 'is_wpforteams_site' );
+	if ( isWPForTeamsSite ) {
 		return false;
 	}
 
