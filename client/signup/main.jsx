@@ -78,6 +78,7 @@ import {
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'signup/p2-processing-screen';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 /**
  * Style dependencies
@@ -248,7 +249,12 @@ class Signup extends React.Component {
 	}
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
-		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
+		const filteredDestination = getDestination(
+			destination,
+			dependencies,
+			this.props.flowName,
+			this.props.localeSlug
+		);
 
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
@@ -664,6 +670,7 @@ export default connect(
 			siteType: getSiteType( state ),
 			shouldStepShowSitePreview,
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
+			localeSlug: getCurrentLocaleSlug( state ),
 		};
 	},
 	{

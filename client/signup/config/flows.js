@@ -14,14 +14,20 @@ import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
 import { abtest } from 'lib/abtest';
 
-function getCheckoutUrl( dependencies ) {
+function getCheckoutUrl( dependencies, localeSlug ) {
+	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
+
+	if ( 'no-site' === dependencies.siteSlug ) {
+		checkoutURL += `/${ localeSlug }`;
+	}
+
 	return addQueryArgs(
 		{
 			signup: 1,
 			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 		},
-		`/checkout/${ dependencies.siteSlug }`
+		checkoutURL
 	);
 }
 
@@ -103,9 +109,9 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
-function filterDestination( destination, dependencies ) {
+function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
+		return getCheckoutUrl( dependencies, localeSlug );
 	}
 
 	const cookies = cookie.parse( document.cookie );

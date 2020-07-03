@@ -29,7 +29,7 @@ export default function () {
 	if ( isLoggedOut ) {
 		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
 
-		page( '/checkout/no-site', noSite, checkout, makeLayout, clientRender );
+		page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 
 		page( '/checkout*', redirectLoggedOut );
 
