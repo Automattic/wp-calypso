@@ -74,7 +74,7 @@ function updateEditor() {
 			e.preventDefault();
 			await dispatch( 'core/editor' ).savePost();
 
-			recordTracksEvent( 'calypso_editor_launch_click', {} );
+			recordTracksEvent( 'calypso_newsite_editor_launch_click' );
 
 			// Using window.top to escape from the editor iframe on WordPress.com
 			window.top.location.href = launchHref;
