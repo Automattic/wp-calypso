@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useLayoutEffect, useRef, useState } from '@wordpress/element';
+import { useLayoutEffect, useRef } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	Button as OriginalButton,
@@ -35,12 +35,13 @@ const Button = ( {
 );
 
 function WpcomBlockEditorNavSidebar() {
-	const { toggleSidebar } = useDispatch( STORE_KEY );
-	const [ isOpen, postType, selectedItemId ] = useSelect( ( select ) => {
+	const { toggleSidebar, setSidebarClosing } = useDispatch( STORE_KEY );
+	const [ isOpen, isClosing, postType, selectedItemId ] = useSelect( ( select ) => {
 		const { getPostType } = select( 'core' ) as any;
 
 		return [
 			select( STORE_KEY ).isSidebarOpened(),
+			select( STORE_KEY ).isSidebarClosing(),
 			getPostType( select( 'core/editor' ).getCurrentPostType() ),
 			select( 'core/editor' ).getCurrentPostId(),
 		];
@@ -50,18 +51,17 @@ function WpcomBlockEditorNavSidebar() {
 	const statusLabels = usePostStatusLabels();
 
 	const prevIsOpen = useRef( isOpen );
-	const [ isClosing, setIsClosing ] = useState( false );
 
 	// Using layout effect to prevent a brief moment in time where both `isOpen` and `isClosing`
 	// are both false, causing a flicker during the fade out animation.
 	useLayoutEffect( () => {
 		if ( ! isOpen && prevIsOpen.current ) {
 			// Check current and previous isOpen value to see if we're closing
-			setIsClosing( true );
+			setSidebarClosing( true );
 		}
 
 		prevIsOpen.current = isOpen;
-	}, [ isOpen, prevIsOpen, setIsClosing ] );
+	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
 	if ( ! postType ) {
 		// Still loading
@@ -115,7 +115,7 @@ function WpcomBlockEditorNavSidebar() {
 					ev.animationName === 'wpcom-block-editor-nav-sidebar-nav-sidebar__fade' &&
 					isClosing
 				) {
-					setIsClosing( false );
+					setSidebarClosing( false );
 				}
 			} }
 			onClick={ handleClickGuard }
