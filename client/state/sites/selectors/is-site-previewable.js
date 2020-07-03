@@ -29,6 +29,10 @@ export default function isSitePreviewable( state, siteId ) {
 		return false;
 	}
 
+	if ( site.options.is_wpforteams_site ) {
+		return false;
+	}
+
 	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
 	return !! unmappedUrl && isHttps( unmappedUrl );
 }
