@@ -236,7 +236,9 @@ async function createAccountCallback( errorObj, response ) {
 
 async function createAccount() {
 	// TODO: Fetch email from store
-	const email = document.getElementById( 'contact-signup-email' ).value;
+	const email =
+		document.getElementById( 'contact-signup-email' )?.value ||
+		document.getElementById( 'email' ).value;
 
 	const response = await wp.undocumented().usersNew(
 		{
