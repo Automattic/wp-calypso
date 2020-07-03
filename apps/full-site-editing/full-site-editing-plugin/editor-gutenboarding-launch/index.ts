@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
 import { addAction } from '@wordpress/hooks';
 import { dispatch } from '@wordpress/data';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+
 // Depend on `core/editor` store.
 import '@wordpress/editor';
 
@@ -71,6 +73,9 @@ function updateEditor() {
 			// Disable href navigation
 			e.preventDefault();
 			await dispatch( 'core/editor' ).savePost();
+
+			recordTracksEvent( 'calypso_newsite_editor_launch_click' );
+
 			// Using window.top to escape from the editor iframe on WordPress.com
 			window.top.location.href = launchHref;
 		};

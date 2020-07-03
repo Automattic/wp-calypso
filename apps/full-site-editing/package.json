@@ -92,6 +92,7 @@
 		"prepare": "check-npm-client && yarn run sync:newspack-blocks --nodemodules"
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "*",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
