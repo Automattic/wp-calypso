@@ -8,6 +8,8 @@ import {
 	createStripeMethod,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
+	createBancontactMethod,
+	createBancontactPaymentMethodStore,
 	createGiropayMethod,
 	createGiropayPaymentMethodStore,
 	createP24Method,
@@ -116,6 +118,32 @@ function useCreateP24( {
 		() =>
 			shouldLoad
 				? createP24Method( {
+						store: paymentMethodStore,
+						stripe,
+						stripeConfiguration,
+				  } )
+				: null,
+		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+	);
+}
+
+function useCreateBancontact( {
+	onlyLoadPaymentMethods,
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+} ) {
+	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
+	const isMethodAllowed = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'bancontact' )
+		: true;
+	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+	const paymentMethodStore = useMemo( () => createBancontactPaymentMethodStore(), [] );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createBancontactMethod( {
 						store: paymentMethodStore,
 						stripe,
 						stripeConfiguration,
@@ -392,6 +420,14 @@ export default function useCreatePaymentMethods( {
 		stripe,
 	} );
 
+	const bancontactMethod = useCreateBancontact( {
+		onlyLoadPaymentMethods,
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+	} );
+
 	const giropayMethod = useCreateGiropay( {
 		onlyLoadPaymentMethods,
 		isStripeLoading,
@@ -468,6 +504,7 @@ export default function useCreatePaymentMethods( {
 		p24Method,
 		epsMethod,
 		wechatMethod,
+		bancontactMethod,
 		stripeMethod,
 		paypalMethod,
 	].filter( Boolean );

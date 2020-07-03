@@ -94,7 +94,7 @@ function P24Fields() {
 	return (
 		<P24FormWrapper>
 			<P24Field
-				id="cardholderName"
+				id="p24-cardholder-name"
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
@@ -105,7 +105,7 @@ function P24Fields() {
 				disabled={ isDisabled }
 			/>
 			<P24Field
-				id="cardholderEmail"
+				id="p24-cardholder-email"
 				type="Text"
 				autoComplete="cc-email"
 				label={ __( 'Email address' ) }

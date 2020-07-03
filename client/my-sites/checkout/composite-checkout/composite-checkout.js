@@ -478,19 +478,69 @@ export default function CompositeCheckout( {
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
 			alipay: ( transactionData ) =>
-				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'alipay',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			p24: ( transactionData ) =>
-				genericRedirectProcessor( 'p24', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'p24',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
+			bancontact: ( transactionData ) =>
+				genericRedirectProcessor(
+					'bancontact',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			giropay: ( transactionData ) =>
-				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'giropay',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			wechat: ( transactionData ) =>
-				genericRedirectProcessor( 'wechat', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'wechat',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			ideal: ( transactionData ) =>
-				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'ideal',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			sofort: ( transactionData ) =>
-				genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'sofort',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			eps: ( transactionData ) =>
-				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'eps',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>

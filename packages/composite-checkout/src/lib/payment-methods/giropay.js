@@ -88,7 +88,7 @@ function GiropayFields() {
 	return (
 		<GiropayFormWrapper>
 			<GiropayField
-				id="cardholderName"
+				id="giropay-cardholder-name"
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }

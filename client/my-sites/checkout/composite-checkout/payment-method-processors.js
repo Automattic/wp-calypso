@@ -27,22 +27,33 @@ export function genericRedirectProcessor(
 	paymentMethodId,
 	submitData,
 	getThankYouUrl,
-	isWhiteGloveOffer
+	isWhiteGloveOffer,
+	siteSlug
 ) {
-	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-	const query = isWhiteGloveOffer ? { type: 'white-glove' } : {};
-	const successUrl = formatUrl( {
+	const { protocol, hostname, port, pathname } = parseUrl(
+		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
+		true
+	);
+	const cancelUrlQuery = isWhiteGloveOffer ? { type: 'white-glove' } : {};
+	const redirectToSuccessUrl = formatUrl( {
 		protocol,
 		hostname,
 		port,
 		pathname: getThankYouUrl(),
+	} );
+	const successUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname: `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`,
+		query: { redirectTo: redirectToSuccessUrl },
 	} );
 	const cancelUrl = formatUrl( {
 		protocol,
 		hostname,
 		port,
 		pathname,
-		query,
+		query: cancelUrlQuery,
 	} );
 	const pending = submitStripeRedirectTransaction(
 		paymentMethodId,

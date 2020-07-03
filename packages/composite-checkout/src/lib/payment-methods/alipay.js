@@ -88,7 +88,7 @@ function AlipayFields() {
 	return (
 		<AlipayFormWrapper>
 			<AlipayField
-				id="cardholderName"
+				id="alipay-cardholder-name"
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
