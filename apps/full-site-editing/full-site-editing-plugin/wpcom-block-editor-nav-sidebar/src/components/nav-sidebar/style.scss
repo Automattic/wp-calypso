@@ -63,6 +63,30 @@ $transition-period: 200ms;
 	height: $header-height;
 	border-bottom: $border;
 	box-sizing: content-box;
+	display: flex;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: $header-height !important;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out forwards;
+	@include reduce-motion( 'animation' );
+
+	&.is-growing {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out reverse;
+		@include reduce-motion( 'animation' );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__shrink {
+	0% {
+		transform: scale( 1 );
+	}
+	100% {
+		transform: scale( 0.55 );
+	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container {

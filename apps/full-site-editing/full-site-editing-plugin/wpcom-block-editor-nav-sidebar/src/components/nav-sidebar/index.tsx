@@ -8,7 +8,7 @@ import {
 	IsolatedEventContainer,
 	withConstrainedTabbing,
 } from '@wordpress/components';
-import { chevronLeft } from '@wordpress/icons';
+import { chevronLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get } from 'lodash';
@@ -129,7 +129,20 @@ function WpcomBlockEditorNavSidebar() {
 				role="dialog"
 				tabIndex={ -1 }
 			>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header" />
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
+					<Button
+						className={ classNames(
+							'edit-post-fullscreen-mode-close',
+							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button',
+							{
+								'is-growing': isClosing,
+							}
+						) }
+						icon={ wordpress }
+						iconSize={ 36 }
+						onClick={ dismissSidebar }
+					/>
+				</div>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container">
 					<Button
 						href={ closeUrl }
