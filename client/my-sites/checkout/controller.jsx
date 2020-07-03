@@ -60,7 +60,7 @@ export function checkout( context, next ) {
 	const isLoggedOutCart = isLoggedOut && context.pathname.includes( '/checkout/no-site' );
 
 	context.primary = (
-		<CartData>
+		<CartData isLoggedOutCart={ isLoggedOutCart }>
 			<CheckoutSystemDecider
 				product={ product }
 				purchaseId={ purchaseId }
