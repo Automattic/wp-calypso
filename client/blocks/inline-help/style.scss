@@ -377,6 +377,11 @@
 
 		.gridicon {
 			margin: 0 3px -3px 0;
+
+			&.gridicons-chevron-right {
+				position: absolute;
+				right: 0;
+			}
 		}
 
 		&:hover {
