@@ -82,7 +82,14 @@ class InlineHelpSearchCard extends Component {
 						link: link,
 						search_term: query,
 					} );
-					return page( link );
+					// push state only if it's internal link.
+					if ( ! ( /^http/.test( link ) ) ) {
+						event.preventDefault();
+						return page( link );
+					} else {
+						// redirect external links.
+						return window.location.href = link;
+					}
 				}
 
 				selectedResultIndex >= 0 && onSelect( event );
