@@ -80,6 +80,13 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		</div>
 	);
 
+	const trackDomainSearchInteraction = ( query: string ) => {
+		trackEventWithFlow( 'calypso_newsite_domain_search_blur', {
+			query,
+			where: isModal ? 'domain_modal' : 'domain_page',
+		} );
+	};
+
 	return (
 		<div className="gutenboarding-page domains">
 			<DomainPicker
@@ -87,7 +94,8 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				analyticsFlowId={ FLOW_ID }
 				initialDomainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
-				currentDomain={ domain }
+				onDomainSearchBlur={ trackDomainSearchInteraction }
+				currentDomain={ domain?.domain_name }
 				onDomainSelect={ onDomainSelect }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
 			/>

@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
  */
 import { ScreenReaderText } from '@automattic/components';
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import MediaActions from 'lib/media/actions';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -31,7 +31,7 @@ class RemoveButton extends PureComponent {
 
 		const items = reject( selectedItems, ( item ) => item.ID === itemId );
 
-		MediaActions.setLibrarySelectedItems( siteId, items );
+		this.props.setMediaLibrarySelectedItems( siteId, items );
 	};
 
 	render() {
@@ -52,6 +52,9 @@ class RemoveButton extends PureComponent {
 
 RemoveButton.displayName = 'RemoveButton';
 
-export default connect( ( state, { siteId } ) => ( {
-	selectedItems: getMediaLibrarySelectedItems( state, siteId ),
-} ) )( localize( RemoveButton ) );
+export default connect(
+	( state, { siteId } ) => ( {
+		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
+	} ),
+	{ setMediaLibrarySelectedItems }
+)( localize( RemoveButton ) );

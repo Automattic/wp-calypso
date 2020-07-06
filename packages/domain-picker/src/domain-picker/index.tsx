@@ -31,7 +31,7 @@ import './style.scss';
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 export interface Props {
-	header: React.ReactElement;
+	header?: React.ReactElement;
 
 	showDomainCategories?: boolean;
 
@@ -48,7 +48,10 @@ export interface Props {
 	/** Domain suggestions to show when the picker is expanded */
 	quantityExpanded?: number;
 
-	currentDomain?: DomainSuggestion;
+	/** Called when the user leaves the search box */
+	onDomainSearchBlur: ( value: string ) => void;
+
+	currentDomain?: string;
 
 	/** The flow where the Domain Picker is used. Eg: Gutenboarding */
 	analyticsFlowId: string;
@@ -69,16 +72,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onDomainSelect,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
+	onDomainSearchBlur,
 	analyticsFlowId,
 	analyticsUiAlgo,
 	initialDomainSearch = '',
 	onSetDomainSearch,
+	currentDomain,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
 
-	// We're not keeping the current selection in local state at the moment
-	//const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	// keep domain query in local state to allow free editing of the input value while the modal is open
@@ -101,15 +104,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		isExpanded ? quantityExpanded : quantity
 	);
 
-	// Put the free domain at the second place and things will be sorted properly
-	if ( domainSuggestions && domainSuggestions.length > 1 ) {
-		const freeDomainIndex = domainSuggestions.findIndex( ( domain ) => domain.is_free );
-		if ( freeDomainIndex > -1 ) {
-			const swap = domainSuggestions[ 1 ];
-			domainSuggestions[ 1 ] = domainSuggestions[ freeDomainIndex ];
-			domainSuggestions[ freeDomainIndex ] = swap;
+	const onDomainSearchBlurValue = ( event: React.FormEvent< HTMLInputElement > ) => {
+		if ( onDomainSearchBlur ) {
+			onDomainSearchBlur( event.currentTarget.value );
 		}
-	}
+	};
 
 	// Reset expansion state after every search
 	useEffect( () => {
@@ -155,7 +154,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="domain-picker">
-			{ header }
+			{ header && header }
 			<div className="domain-picker__search">
 				<div className="domain-picker__search-icon">
 					<Icon icon={ search } />
@@ -167,6 +166,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					label={ label }
 					placeholder={ label }
 					onChange={ handleInputChange }
+					onBlur={ onDomainSearchBlurValue }
 					value={ domainSearch }
 				/>
 			</div>
@@ -177,19 +177,46 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
 						</div>
 					) }
-					<div className="domain-picker__suggestion-item-group">
-						{ domainSuggestions?.map( ( suggestion, i ) => (
-							<SuggestionItem
-								key={ suggestion.domain_name }
-								suggestion={ suggestion }
-								railcarId={ baseRailcarId ? `${ baseRailcarId }${ i }` : undefined }
-								isRecommended={ i === 0 }
-								onRender={ () =>
-									handleItemRender( suggestion, `${ baseRailcarId }${ i }`, i, i === 0 )
-								}
-								onSelect={ onDomainSelect }
-							/>
-						) ) ?? times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+					<div className="domain-picker__suggestion-sections">
+						<div className="domain-picker__suggestion-item-group">
+							<p className="domain-picker__suggestion-group-label">{ __( 'Sub-domain' ) }</p>
+							{ domainSuggestions?.[ 0 ] ? (
+								<SuggestionItem
+									key={ domainSuggestions[ 0 ].domain_name }
+									suggestion={ domainSuggestions[ 0 ] }
+									railcarId={ baseRailcarId ? `${ baseRailcarId }1` : undefined }
+									onRender={ () =>
+										handleItemRender( domainSuggestions[ 0 ], `${ baseRailcarId }1`, 0, false )
+									}
+									selected={ currentDomain === domainSuggestions[ 0 ].domain_name }
+									onSelect={ onDomainSelect }
+								/>
+							) : (
+								<SuggestionItemPlaceholder />
+							) }
+						</div>
+						<div className="domain-picker__suggestion-item-group">
+							{ ! domainSuggestions ||
+							( domainSuggestions?.length && domainSuggestions?.length > 1 ) ? (
+								<p className="domain-picker__suggestion-group-label">{ __( 'Custom domains' ) }</p>
+							) : null }
+							{ domainSuggestions
+								?.slice( 1 )
+								.map( ( suggestion, i ) => (
+									<SuggestionItem
+										key={ suggestion.domain_name }
+										suggestion={ suggestion }
+										railcarId={ baseRailcarId ? `${ baseRailcarId }${ i }` : undefined }
+										isRecommended={ i === 0 }
+										onRender={ () =>
+											handleItemRender( suggestion, `${ baseRailcarId }${ i }`, i, i === 0 )
+										}
+										selected={ currentDomain === suggestion.domain_name }
+										onSelect={ onDomainSelect }
+									/>
+								) ) ?? times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+						</div>
+
 						{ ! isExpanded &&
 							allDomainSuggestions?.length &&
 							allDomainSuggestions?.length > quantity && (

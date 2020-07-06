@@ -8,7 +8,7 @@ import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
-import { addAction, addFilter, applyFilters, doAction, removeAction } from '@wordpress/hooks';
+import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { registerPlugin } from '@wordpress/plugins';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
@@ -17,6 +17,7 @@ import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
+import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editing/full-site-editing-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 
 /**
  * Internal dependencies
@@ -582,14 +583,13 @@ function handleCloseEditor( calypsoPort ) {
 	} );
 
 	const dispatchAction = ( e ) => {
-		if ( ! applyFilters( 'a8c.wpcom-block-editor.shouldCloseEditor', true ) ) {
-			return;
-		}
-
 		e.preventDefault();
-
 		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
+
+	if ( isNavSidebarPresent() ) {
+		return;
+	}
 
 	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
 		render: function CloseWpcomBlockEditor() {
@@ -627,6 +627,16 @@ function handleCloseEditor( calypsoPort ) {
 			);
 		},
 	} );
+}
+
+/**
+ * Uses presence of data store to detect whether the nav sidebar has been loaded.
+ * Could run into timing issues, but the nav sidebar's data store is currently
+ * loaded early enough that this works for our needs.
+ */
+function isNavSidebarPresent() {
+	const selectors = select( NAV_SIDEBAR_STORE_KEY );
+	return !! selectors;
 }
 
 /**

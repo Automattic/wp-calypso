@@ -417,7 +417,7 @@ describe( 'Checkout', () => {
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			expect( firstStepContinue ).not.toBeDisabled();
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContinue ).toBeDisabled();
 		} );
@@ -435,7 +435,7 @@ describe( 'Checkout', () => {
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
@@ -453,7 +453,7 @@ describe( 'Checkout', () => {
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
@@ -494,7 +494,7 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
 
-		it( 'does not render the edit button if the form status is submitting', () => {
+		it( 'does not render the edit button if the form status is submitting', async () => {
 			const { queryByText, getAllByText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
@@ -502,7 +502,9 @@ describe( 'Checkout', () => {
 			fireEvent.click( firstStepContinue );
 			expect( queryByText( 'Edit' ) ).toBeInTheDocument();
 			const submitButton = getAllByText( 'Pay Please' )[ 0 ];
-			fireEvent.click( submitButton );
+			await act( async () => {
+				return fireEvent.click( submitButton );
+			} );
 			expect( queryByText( 'Edit' ) ).not.toBeInTheDocument();
 		} );
 
@@ -545,7 +547,7 @@ describe( 'Checkout', () => {
 			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
 			await act( async () => {
 				// isComplete does not update until we press continue
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 		} );

@@ -22,30 +22,12 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
+import { resolveDomainStatus } from 'lib/domains';
 
 class SiteRedirectType extends React.Component {
-	resolveStatus() {
-		const { translate, purchase } = this.props;
-
-		if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		}
-
-		return {
-			statusText: translate( 'Active' ),
-			statusClass: 'status-success',
-			icon: 'check_circle',
-		};
-	}
-
 	renderDefaultRenewButton() {
 		const { domain, purchase, isLoadingPurchase } = this.props;
 
@@ -111,7 +93,7 @@ class SiteRedirectType extends React.Component {
 		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = this.resolveStatus();
+		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase );
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
 

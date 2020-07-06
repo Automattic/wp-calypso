@@ -36,7 +36,7 @@ export default function ScanHistoryPage( { filter }: Props ) {
 
 	return (
 		<Main
-			className={ classNames( 'history', {
+			className={ classNames( 'scan history', {
 				is_jetpackcom: isJetpackPlatform,
 			} ) }
 		>

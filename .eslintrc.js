@@ -176,5 +176,8 @@ module.exports = {
 		// - events because we use it for some event emitters
 		// - path because we use it quite a bit
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
+
+		// temporarily demote inclusive language rule to a warning until we clear the repository
+		'inclusive-language/use-inclusive-words': 'warn',
 	},
 };

@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 1.10
+Stable tag: 1.12
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,22 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.12 =
+* Experimental navigation sidebar in block editor, can be enabled in config or with a hook.
+* Default content included in the donation block can be edited.
+* Track when the launch button is clicked.
+
+= 1.11 =
+* Fix broken blocks in page layout picker preview in Firefox.
+* Add settings to the donation block.
+* Fix premium content block to ensure it is auto-selected when mounted.
+* Add fallback to donations block to set default products if none are already defined.
+* Fix block pattern preview viewport scaling.
+* Fix broken site editor page.
+* Add one time payment option to payment plans.
+* Add a general transform to premium content.
+* Fix custom font size in block patterns previews.
 
 = 1.10 =
 * Improvements to the premium blocks.

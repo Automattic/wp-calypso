@@ -122,7 +122,6 @@ export default class LoginFlow {
 			await CustomerHome.Expect( this.driver );
 		}
 
-
 		await NavBarComponent.Expect( this.driver );
 
 		const navbarComponent = await NavBarComponent.Expect( this.driver );

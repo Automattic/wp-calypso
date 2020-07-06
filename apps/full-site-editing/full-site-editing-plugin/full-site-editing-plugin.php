@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 1.10
+ * Version: 1.12
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '1.10' );
+define( 'PLUGIN_VERSION', '1.12' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -164,6 +164,14 @@ function load_editor_plans_grid() {
 	require_once __DIR__ . '/editor-plans-grid/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_plans_grid' );
+
+/**
+ * Sigh: load_editor_site_launch
+ */
+function load_editor_site_launch() {
+	require_once __DIR__ . '/editor-site-launch/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_site_launch' );
 
 /**
  * Sigh: load_editor_gutenboarding_launch

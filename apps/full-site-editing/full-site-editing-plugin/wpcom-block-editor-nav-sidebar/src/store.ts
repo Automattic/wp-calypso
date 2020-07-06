@@ -22,12 +22,23 @@ const opened: Reducer< boolean, Action > = ( state = false, action ) => {
 	}
 };
 
-const reducer = combineReducers( { opened } );
+const closing: Reducer< boolean, Action > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'SET_SIDEBAR_CLOSING':
+			return action.isClosing;
+
+		default:
+			return state;
+	}
+};
+
+const reducer = combineReducers( { opened, closing } );
 
 type State = ReturnType< typeof reducer >;
 
 const selectors = {
 	isSidebarOpened: ( state: State ) => state.opened,
+	isSidebarClosing: ( state: State ) => state.closing,
 };
 
 registerStore( STORE_KEY, {

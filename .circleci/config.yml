@@ -14,6 +14,14 @@ references:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       DETECT_CHROMEDRIVER_VERSION: 'false'
       CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
+  desktop_defaults: &desktop_defaults
+    working_directory: ~/wp-calypso
+    docker:
+      - image: circleci/node:12.18.0-browsers
+    environment:
+      CONFIG_ENV: release
+      DETECT_CHROMEDRIVER_VERSION: 'false'
+      NODE_ARGS: --max_old_space_size=3072
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -122,7 +130,11 @@ references:
 
   yarn-install: &yarn-install
     name: Install dependencies
-    command: yarn install --frozen-lockfile
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn install --frozen-lockfile
 
   update-node: &update-node
     name: Update node
@@ -178,6 +190,48 @@ references:
     command: |
       cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
+
+  desktop-install-app-deps: &desktop-install-app-deps
+      name: Install Desktop Dependencies
+      command: |
+        source "$HOME/.nvm/nvm.sh"
+        nvm use
+        npm install -g yarn
+        yarn run build-desktop:install-app-deps
+  desktop-cache-paths: &desktop-cache-paths
+    - desktop/build
+    - desktop/client
+    - desktop/config
+    - desktop/public
+    - desktop/resource/certificates/win.p12
+    - desktop/resource/certificates/mac.p12
+  desktop-decrypt-assets: &desktop-decrypt-assets
+    name: Decrypt desktop app assets
+    command: |
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+  desktop-restore-source-cache: &desktop-restore-source-cache
+      name: Restore desktop cache
+      keys:
+        - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+  desktop-save-source-cache: &desktop-save-source-cache
+      name: Save desktop cache
+      key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+      paths: *desktop-cache-paths
+  desktop-notify-github-success: &desktop-notify-github-success
+      name: Notify Github Success
+      when: on_success
+      command: cd desktop && yarn ci:github:dismiss-review
+  desktop-notify-github-failure: &desktop-notify-github-failure
+      name: Notify Github Failure
+      when: on_fail
+      command: cd desktop && yarn ci:github:add-review
+  desktop-notify-slack-failure: &desktop-notify-slack-failure
+      webhook: '$SLACK_WP_DESKTOP_E2E'
+      fail_only: true
+      mentions: '$CIRCLE_USERNAME'
+      failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
   prepare:
@@ -574,6 +628,79 @@ jobs:
       - slack/status:
           webhook: << parameters.slack-webhook >>
 
+  wp-desktop-source:
+    <<: *desktop_defaults
+    steps:
+      - checkout
+      - run: *update-node
+      - run: *yarn-install
+      - restore_cache: *desktop-restore-source-cache
+      - run: *desktop-decrypt-assets
+      - run:
+          name: Build Desktop Source
+          no_output_timeout: 15m
+          command: |
+            yarn run build-desktop:source
+      - save_cache: *desktop-save-source-cache
+      - persist_to_workspace:
+          root: /home/circleci/wp-calypso
+          paths: *desktop-cache-paths
+      - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
+
+  wp-desktop-mac:
+    macos:
+      xcode: "10.1.0"
+    shell: /bin/bash --login
+    working_directory: /Users/distiller/wp-calypso
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /Users/distiller/wp-calypso
+      - run: *update-node
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Mac
+          no_output_timeout: 30m
+          environment:
+            CSC_LINK: resource/certificates/mac.p12
+            CSC_FOR_PULL_REQUEST: true
+          command: |
+                  set +e
+                  source $HOME/.nvm/nvm.sh
+                  nvm use
+
+                  yarn run build-desktop:app
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            yarn run test-desktop:e2e
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            rm -rf desktop/release/mac
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+      - run: *desktop-notify-github-success
+      - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
+
 workflows:
   version: 2
   calypso:
@@ -644,6 +771,12 @@ workflows:
           test-flags: '-W -S $CIRCLE_SHA1'
           test-target: 'WOO'
           slack-webhook: '$SLACK_WOO'
+  wp-desktop:
+    jobs:
+      - wp-desktop-source
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-source
 
   calypso-nightly:
     jobs:

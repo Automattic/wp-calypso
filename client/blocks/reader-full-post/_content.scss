@@ -241,6 +241,35 @@
 		margin: auto;
 	}
 
+	.wp-block-buttons {
+		margin: 0;
+	}
+
+	.wp-block-button {
+		border-style: solid;
+		font-family: $sans;
+		border-width: 1px;
+		cursor: pointer;
+		display: inline-block;
+		margin: 0;
+		margin-right: 0.25em;
+		margin-bottom: 0.6em;
+		outline: 0;
+		overflow: hidden;
+		vertical-align: top;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 22px;
+		border-radius: 2px;
+		padding: 8px 14px;
+		border-color: var( --color-neutral-10 );
+	}
+
+	.wp-block-button__link,
+	.wp-block-button__link:hover {
+		color: inherit;
+	}
+
 	// Import Gutenberg gallery styles
 	@import 'gutenberg-gallery.scss';
 

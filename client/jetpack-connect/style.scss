@@ -12,7 +12,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	@include woocommerce-colors();
 }
 
-.is-section-jetpack-connect {
+.is-section-jetpack-connect,
+.is-section-purchase-product {
 
 	.layout__content {
 		position: static;
@@ -126,7 +127,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-.jetpack-connect__site-url-entry-container {
+.jetpack-connect__site-url-entry-container,
+.purchase-product__site-url-entry-container {
 	margin: 0 auto;
 	max-width: 400px;
 
@@ -146,6 +148,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__site-url-input-container,
+.purchase-product__site-url-input-container,
 .example-components__site-url-input-container {
 	.jetpack-connect__site-address-container,
 	.example-components__site-address-container {
@@ -819,7 +822,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 /**
  * Onboarding styles
  **/
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ) {
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
+.layout.is-section-purchase-product {
 	background-color: var( --color-jetpack-onboarding-background );
 
 	&.layout {

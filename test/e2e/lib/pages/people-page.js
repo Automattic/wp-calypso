@@ -138,11 +138,16 @@ export default class PeoplePage extends AsyncBaseContainer {
 		const driver = this.driver;
 		return await driver.wait( async () => {
 			driver.navigate().refresh();
+			await DriverHelper.waitTillPresentAndDisplayed(
+				this.driver,
+				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
+			);
+
 			return await DriverHelper.isElementPresent(
 				driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);
-		}, this.explicitWaitMS * 4 );
+		}, this.explicitWaitMS * 10 );
 	}
 
 	async goToRevokeInvitePage( emailAddress ) {

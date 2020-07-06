@@ -50,6 +50,7 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Types
@@ -152,7 +153,7 @@ class CalypsoifyIframe extends Component<
 								this.props.iframeUrl
 						  )
 						: window.location.replace( this.props.iframeUrl );
-				}, 6000 ); // One second longer than we give the iframe to load
+				}, 8000 ); // Three seconds longer than we give the iframe to load
 			}
 		}, 1000 );
 	}
@@ -207,7 +208,7 @@ class CalypsoifyIframe extends Component<
 			if ( data.imageId ) {
 				const { siteId } = this.props;
 				const image = MediaStore.get( siteId, data.imageId );
-				MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+				this.props.setMediaLibrarySelectedItems( siteId, [ image ] );
 			}
 
 			this.setState( {
@@ -249,9 +250,9 @@ class CalypsoifyIframe extends Component<
 					};
 				} );
 
-				MediaActions.setLibrarySelectedItems( siteId, selectedItems );
+				this.props.setMediaLibrarySelectedItems( siteId, selectedItems );
 			} else {
-				MediaActions.setLibrarySelectedItems( siteId, [] );
+				this.props.setMediaLibrarySelectedItems( siteId, [] );
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
@@ -757,7 +758,7 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( config.isEnabled( 'editor/after-deprecation' ) && inEditorDeprecationGroup( state ) ) {
+	if ( inEditorDeprecationGroup( state ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
@@ -818,6 +819,7 @@ const mapDispatchToProps = {
 	trashPost,
 	updateSiteFrontPage,
 	notifyDesktopCannotOpenEditor,
+	setMediaLibrarySelectedItems,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;

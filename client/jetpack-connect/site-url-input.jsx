@@ -28,7 +28,7 @@ class JetpackConnectSiteUrlInput extends Component {
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
 		autoFocus: PropTypes.bool,
-		product: PropTypes.string,
+		isSearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -59,14 +59,13 @@ class JetpackConnectSiteUrlInput extends Component {
 	};
 
 	renderButtonLabel() {
-		const { product, translate } = this.props;
+		const { isSearch, translate } = this.props;
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
 				return translate( 'Continue' );
 			}
-			return product === 'jetpack_search'
-				? translate( 'Get Search' )
-				: translate( 'Start Installation' );
+
+			return isSearch ? translate( 'Get Search' ) : translate( 'Start Installation' );
 		}
 		return translate( 'Setting up…' );
 	}
@@ -125,7 +124,7 @@ class JetpackConnectSiteUrlInput extends Component {
 			isFetching,
 			onChange,
 			onSubmit,
-			product,
+			isSearch,
 			translate,
 			url,
 			autoFocus,
@@ -136,7 +135,7 @@ class JetpackConnectSiteUrlInput extends Component {
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="globe" />
-					{ product !== 'jetpack_search' && (
+					{ ! isSearch && (
 						<FormTextInput
 							ref={ this.refInput }
 							id="siteUrl"
@@ -149,7 +148,7 @@ class JetpackConnectSiteUrlInput extends Component {
 							value={ url }
 						/>
 					) }
-					{ product === 'jetpack_search' && (
+					{ isSearch && (
 						<SuggestionSearch
 							id="siteSelection"
 							placeholder={ 'Type your site' }

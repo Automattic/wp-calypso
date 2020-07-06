@@ -5,7 +5,7 @@ import debugModule from 'debug';
 import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, startsWith, omit } from 'lodash';
+import { flowRight, get, includes, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -25,19 +25,18 @@ import { isRequestingSites } from 'state/sites/selectors';
 import { retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-import { MINIMUM_JETPACK_VERSION } from './constants';
+import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_OWNED,
 	IS_DOT_COM,
-	IS_DOT_COM_GET_SEARCH,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
 	NOT_EXISTS,
 	NOT_JETPACK,
 	NOT_WORDPRESS,
 	OUTDATED_JETPACK,
-	SITE_BLACKLISTED,
+	SITE_BLOCKED,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
 
@@ -83,6 +82,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			) {
 				this.redirect( 'remote_auth', this.props.siteHomeUrl );
 			}
+
 			if ( status === ALREADY_OWNED && ! this.state.redirecting ) {
 				if ( isMobileAppFlow ) {
 					this.redirectToMobileApp( 'already-connected' );
@@ -195,12 +195,20 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return false;
 			}
 
-			if ( this.isError( 'site_blacklisted' ) ) {
-				return SITE_BLACKLISTED;
+			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+				const product_path = window.location.pathname;
+
+				if (
+					product_path.includes( 'jetpack_search' ) ||
+					product_path.includes( 'wpcom_search' )
+				) {
+					return IS_DOT_COM_GET_SEARCH;
+				}
+				return IS_DOT_COM;
 			}
 
-			if ( this.checkProperty( 'userOwnsSite' ) ) {
-				return ALREADY_OWNED;
+			if ( this.isError( 'site_blacklisted' ) ) {
+				return SITE_BLOCKED;
 			}
 
 			if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
@@ -218,14 +226,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return WORDPRESS_DOT_COM;
 			}
 
-			if ( this.checkProperty( 'isWordPressDotCom' ) ) {
-				const product = window.location.href.split( '/' )[ 5 ];
-
-				if ( startsWith( product, 'jetpack_search' ) ) {
-					return IS_DOT_COM_GET_SEARCH;
-				}
-				return IS_DOT_COM;
-			}
 			if ( ! this.checkProperty( 'exists' ) ) {
 				return NOT_EXISTS;
 			}
@@ -250,6 +250,10 @@ const jetpackConnection = ( WrappedComponent ) => {
 			}
 			if ( this.checkProperty( 'isJetpackConnected' ) && this.checkProperty( 'userOwnsSite' ) ) {
 				return ALREADY_CONNECTED;
+			}
+
+			if ( this.checkProperty( 'userOwnsSite' ) ) {
+				return ALREADY_OWNED;
 			}
 
 			return false;

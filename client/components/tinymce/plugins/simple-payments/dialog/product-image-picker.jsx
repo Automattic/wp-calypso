@@ -16,8 +16,7 @@ import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
 import RemoveButton from 'components/remove-button';
-import { requestMediaItem } from 'state/media/actions';
-import MediaActions from 'lib/media/actions';
+import { requestMediaItem, setMediaLibrarySelectedItems } from 'state/media/actions';
 
 class ProductImagePicker extends Component {
 	static propTypes = {
@@ -62,7 +61,7 @@ class ProductImagePicker extends Component {
 	onImageChange = ( imageId ) => {
 		this.props.input.onChange( imageId );
 		// the action cares only about the ID -- that allows us to construct a 'valid' item
-		MediaActions.setLibrarySelectedItems( this.props.siteId, [ { ID: imageId } ] );
+		this.props.setMediaLibrarySelectedItems( this.props.siteId, [ { ID: imageId } ] );
 	};
 
 	getImagePlaceholder() {
@@ -139,4 +138,5 @@ class ProductImagePicker extends Component {
 
 export default connect( ( state ) => ( { siteId: getSelectedSiteId( state ) } ), {
 	requestMediaItem,
+	setMediaLibrarySelectedItems,
 } )( localize( ProductImagePicker ) );

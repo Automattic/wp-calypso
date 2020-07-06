@@ -1,4 +1,5 @@
-.donations__container {
+
+.editor-styles-wrapper .donations__container {
 	border: 1px solid #a7aaad;
 
 	.donations__tabs {
@@ -33,6 +34,37 @@
 	}
 
 	.donations__content {
-		padding: 24px;
+		padding: 0 24px;
+	}
+
+	.donations__amounts {
+		margin-top: 30px;
+		margin-bottom: 30px;
+
+		.donations__amount:not( .alignleft ):not( .alignright ) {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+	}
+
+	.donations__amount .wp-block-button__link {
+		background-color: #fff;
+		color: inherit;
+		border: 1px solid #a7aaad;
+	}
+
+	.donations__custom-amount .wp-block-button__link {
+		cursor: default;
+	}
+
+	.donations__custom-amount-placeholder {
+		margin-left: 8px;
+		color: #a7aaad;
+		padding-right: 40px;
+	}
+
+	.donations__separator {
+		line-height: 8px;
+		height: 8px;
 	}
 }

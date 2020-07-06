@@ -7,14 +7,17 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import Donations from './donations';
+import Tabs from './tabs';
 import LoadingError from './loading-error';
 import LoadingStatus from './loading-status';
 import UpgradePlan from './upgrade-plan';
 import fetchDefaultProducts from './fetch-default-products';
 import fetchStatus from './fetch-status';
 
-const Edit = ( { attributes, setAttributes } ) => {
+const Edit = ( props ) => {
+	const { attributes } = props;
+	const { currency } = attributes;
+
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ loadingError, setLoadingError ] = useState( '' );
 	const [ shouldUpgrade, setShouldUpgrade ] = useState( false );
@@ -28,14 +31,13 @@ const Edit = ( { attributes, setAttributes } ) => {
 		setIsLoading( false );
 	};
 
-	const filterProducts = ( productList, productCurrency ) => {
-		return productList.reduce( ( filteredProducts, { id, currency, type, interval } ) => {
-			if ( currency === productCurrency && type === 'donation' ) {
+	const filterProducts = ( productList ) =>
+		productList.reduce( ( filteredProducts, { id, currency: productCurrency, type, interval } ) => {
+			if ( productCurrency === currency && type === 'donation' ) {
 				filteredProducts[ interval ] = id;
 			}
 			return filteredProducts;
 		}, {} );
-	};
 
 	const hasRequiredProducts = ( productIdsPerInterval ) => {
 		const intervals = Object.keys( productIdsPerInterval );
@@ -56,13 +58,13 @@ const Edit = ( { attributes, setAttributes } ) => {
 			setStripeConnectUrl( result.connect_url );
 			setSiteSlug( result.site_slug );
 
-			const filteredProducts = filterProducts( result.products, 'USD' );
+			const filteredProducts = filterProducts( result.products );
 
 			if ( hasRequiredProducts( filteredProducts ) ) {
 				setProducts( filteredProducts );
 			} else {
-				fetchDefaultProducts( 'USD' ).then(
-					( defaultProducts ) => setProducts( filterProducts( defaultProducts, 'USD' ) ),
+				fetchDefaultProducts( currency ).then(
+					( defaultProducts ) => setProducts( filterProducts( defaultProducts ) ),
 					apiError
 				);
 			}
@@ -89,11 +91,10 @@ const Edit = ( { attributes, setAttributes } ) => {
 	}
 
 	return (
-		<Donations
-			attributes={ attributes }
+		<Tabs
+			{ ...props }
 			products={ products }
 			stripeConnectUrl={ stripeConnectUrl }
-			setAttributes={ setAttributes }
 			siteSlug={ siteSlug }
 		/>
 	);

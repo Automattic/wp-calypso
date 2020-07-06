@@ -16,7 +16,6 @@ import { Env } from 'tinymce/tinymce';
  */
 import { serialize as serializeContactForm } from 'components/tinymce/plugins/contact-form/shortcode-utils';
 import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
-import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -41,6 +40,7 @@ import getMediaErrors from 'state/selectors/get-media-errors';
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -495,7 +495,7 @@ export class EditorHtmlToolbar extends Component {
 			}
 
 			this.onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
-			MediaActions.setLibrarySelectedItems( site.ID, [] );
+			this.props.setMediaLibrarySelectedItems( site.ID, [] );
 		} else {
 			// In all other cases, show the media modal list view
 			this.openMediaModal();
@@ -724,6 +724,7 @@ const mapDispatchToProps = {
 	fieldRemove,
 	fieldUpdate,
 	settingsUpdate,
+	setMediaLibrarySelectedItems,
 };
 
 export default connect(

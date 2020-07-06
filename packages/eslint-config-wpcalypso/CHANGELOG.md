@@ -1,3 +1,7 @@
+### v6.0.0 (2020-07-01)
+
+- Add [`inclusive-language`](https://github.com/muenzpraeger/eslint-plugin-inclusive-language) rule (01f9b02524)
+
 ### v5.0.0 (2019-11-19)
 
 - Require eslint v6

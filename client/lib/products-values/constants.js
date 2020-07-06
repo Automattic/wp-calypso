@@ -17,6 +17,8 @@ export const PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY = 'jetpack_backup_daily_monthl
 export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_monthly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
 export const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
+export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
+export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
 export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
 
@@ -33,7 +35,12 @@ export const JETPACK_BACKUP_PRODUCTS = [
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
 ];
 
-export const JETPACK_SEARCH_PRODUCTS = [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ];
+export const JETPACK_SEARCH_PRODUCTS = [
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
+];
 export const isJetpackSearch = ( slug ) => JETPACK_SEARCH_PRODUCTS.includes( slug );
 
 export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ];
@@ -99,7 +106,6 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }{ ' ' }
 		</>
 	);
-
 	const backupRealtime = (
 		<>
 			{ ' ' }
@@ -110,9 +116,7 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }{ ' ' }
 		</>
 	);
-
 	const search = translate( 'Jetpack Search' );
-
 	const scanDaily = (
 		<>
 			{ translate( 'Jetpack Scan {{em}}Daily{{/em}}', {
@@ -122,7 +126,6 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }{ ' ' }
 		</>
 	);
-
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
@@ -130,11 +133,12 @@ export const getJetpackProductsDisplayNames = () => {
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
 		[ PRODUCT_JETPACK_SEARCH ]: search,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_WPCOM_SEARCH ]: search,
+		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_JETPACK_SCAN ]: scanDaily,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
 	};
 };
-
 export const getJetpackProductsTaglines = () => {
 	const searchTagline = translate( 'Search your site.' );
 	const scanTagline = 'Scan your site.';
@@ -153,6 +157,8 @@ export const getJetpackProductsTaglines = () => {
 		),
 		[ PRODUCT_JETPACK_SEARCH ]: searchTagline,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchTagline,
+		[ PRODUCT_WPCOM_SEARCH ]: searchTagline,
+		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: searchTagline,
 		[ PRODUCT_JETPACK_SCAN ]: scanTagline,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanTagline,
 	};

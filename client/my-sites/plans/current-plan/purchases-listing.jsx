@@ -43,6 +43,7 @@ import {
 	isJetpackScan,
 } from 'lib/products-values';
 import {
+	isJetpackSearch,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
@@ -98,13 +99,18 @@ class PurchasesListing extends Component {
 		return (
 			filter(
 				this.props.purchases,
-				( purchase ) => purchase.active && isJetpackProduct( purchase )
+				( purchase ) =>
+					purchase.active && ( isJetpackProduct( purchase ) || isJetpackSearch( purchase ) )
 			) ?? null
 		);
 	}
 
 	getTitle( purchase ) {
 		const { currentPlanSlug } = this.props;
+
+		if ( isJetpackSearch( purchase.productSlug ) ) {
+			return getJetpackProductDisplayName( purchase );
+		}
 
 		if ( isJetpackProduct( purchase ) ) {
 			return getJetpackProductDisplayName( purchase );
@@ -125,8 +131,11 @@ class PurchasesListing extends Component {
 			return getJetpackProductTagline( purchase );
 		}
 
-		const productPurchases = this.getProductPurchases();
+		if ( isJetpackSearch( purchase ) ) {
+			return getJetpackProductTagline( 'search' );
+		}
 
+		const productPurchases = this.getProductPurchases();
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
 			return (
@@ -325,7 +334,6 @@ class PurchasesListing extends Component {
 		if ( isEmpty( productPurchases ) ) {
 			return null;
 		}
-
 		return (
 			<Fragment>
 				<Card compact>
@@ -338,7 +346,7 @@ class PurchasesListing extends Component {
 						details={ this.getExpirationInfoForPurchase( purchase ) }
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
-						product={ purchase?.productSlug }
+						product={ purchase.productSlug }
 						tagline={ this.getTagline( purchase ) }
 						title={ this.getTitle( purchase ) }
 					/>

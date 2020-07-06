@@ -40,20 +40,6 @@ if ( false ) {
 	describe( `[${ host }] Pressable NUX: (${ screenSize })`, function () {
 		this.timeout( mochaTimeOut * 2 );
 
-		describe( 'Disconnect expired sites: @parallel @jetpack', function () {
-			const timeout = mochaTimeOut * 10;
-
-			this.timeout( timeout );
-
-			before( async function () {
-				return await driverManager.ensureNotLoggedIn( driver );
-			} );
-
-			step( 'Can disconnect any expired sites', async function () {
-				return await new JetpackConnectFlow( driver ).removeSites( timeout );
-			} );
-		} );
-
 		describe( 'Connect via Pressable @parallel @jetpack', function () {
 			before( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );

@@ -189,6 +189,13 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'purchase-product',
+		paths: [ '/purchase-product' ],
+		module: 'my-sites/purchase-product',
+		secondary: false,
+		enableLoggedOut: true,
+	},
+	{
 		name: 'signup',
 		paths: [ '/start' ],
 		module: 'signup',

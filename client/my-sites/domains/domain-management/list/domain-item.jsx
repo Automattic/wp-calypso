@@ -5,6 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import { withoutHttp } from 'lib/url';
 import { type as domainTypes } from 'lib/domains/constants';
 import { handleRenewNowClick } from 'lib/purchases';
+import { resolveDomainStatus } from 'lib/domains';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -141,9 +143,12 @@ class DomainItem extends PureComponent {
 
 	render() {
 		const { domain, showSite, site, showCheckbox, domainDetails, translate } = this.props;
+		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
+
+		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
 
 		return (
-			<CompactCard className="domain-item" onClick={ this.handleClick }>
+			<CompactCard className={ rowClasses } onClick={ this.handleClick }>
 				{ showCheckbox && (
 					<FormCheckbox
 						className="domain-item__checkbox"
@@ -154,7 +159,9 @@ class DomainItem extends PureComponent {
 				<div className="list__domain-link">
 					<div className="domain-item__status">
 						<div className="domain-item__title">{ domain.domain }</div>
-						<DomainNotice status="info" text="Activating domain" />
+						{ listStatusText && (
+							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
+						) }
 					</div>
 					{ showSite && (
 						<div className="domain-item__meta">
@@ -179,7 +186,12 @@ class DomainItem extends PureComponent {
 					) }
 				</div>
 				<div className="list__domain-auto-renew">
-					<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
+					{ domainDetails?.bundledPlanSubscriptionId && (
+						<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
+					) }
+					{ ! domainDetails?.bundledPlanSubscriptionId && domainDetails?.isAutoRenewing && (
+						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
+					) }
 				</div>
 				<div className="list__domain-email">{ this.renderEmail( domainDetails ) }</div>
 				{ this.renderOptionsButton() }

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "1.10.0",
+	"version": "1.12.0",
 	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
@@ -34,6 +34,9 @@
 		"editor-gutenboarding-launch": "check-npm-client && calypso-build --source='editor-gutenboarding-launch'",
 		"dev:editor-gutenboarding-launch": "check-npm-client && yarn run editor-gutenboarding-launch",
 		"build:editor-gutenboarding-launch": "check-npm-client && NODE_ENV=production yarn run editor-gutenboarding-launch",
+		"editor-site-launch": "check-npm-client && calypso-build --source='editor-site-launch'",
+		"dev:editor-site-launch": "check-npm-client && yarn run editor-site-launch",
+		"build:editor-site-launch": "check-npm-client && NODE_ENV=production yarn run editor-site-launch",
 		"newspack-blocks": "check-npm-client && npm-run-all --parallel newspack-blocks-*",
 		"newspack-blog-posts-block-editor": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-editor'",
 		"newspack-blog-posts-block-view": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-view'",
@@ -89,11 +92,12 @@
 		"prepare": "check-npm-client && yarn run sync:newspack-blocks --nodemodules"
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "*",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
-		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
+		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@wordpress/api-fetch": "*",
 		"@wordpress/base-styles": "1.9.0",
 		"@wordpress/block-editor": "*",
@@ -112,6 +116,7 @@
 		"@wordpress/html-entities": "*",
 		"@wordpress/i18n": "*",
 		"@wordpress/icons": "*",
+		"@wordpress/interface": "^0.6.0",
 		"@wordpress/keycodes": "*",
 		"@wordpress/plugins": "*",
 		"@wordpress/rich-text": "*",
@@ -121,9 +126,11 @@
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0",
 		"react": "^16.12.0",
-		"react-dom": "^16.12.0"
+		"react-dom": "^16.12.0",
+		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
+		"@types/wordpress__plugins": "^2.3.6",
 		"@wordpress/eslint-plugin": "^6.0.0"
 	}
 }

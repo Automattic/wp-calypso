@@ -124,8 +124,12 @@ cp -R $CODE/src/blocks/carousel $TARGET/blocks/
 cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 
-# Fix the text domain
+echo "Fixing the text domains…"
+echo -n "eslint --fix: "
 npx eslint . --fix > /dev/null 2>&1
+echo "done"
+echo -n "phpcbf: "
+../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || echo '!! There was an error executing phpcbf'
 
 if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json

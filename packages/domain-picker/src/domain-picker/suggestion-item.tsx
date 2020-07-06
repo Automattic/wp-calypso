@@ -18,6 +18,7 @@ interface Props {
 	isRecommended?: boolean;
 	onRender: () => void;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
+	selected?: boolean;
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
@@ -26,6 +27,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	isRecommended = false,
 	onSelect,
 	onRender,
+	selected,
 } ) => {
 	const { __ } = useI18n();
 
@@ -65,6 +67,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 			type="button"
 			className={ classnames( 'domain-picker__suggestion-item', {
 				'is-free': suggestion.is_free,
+				'is-selected': selected,
 			} ) }
 			onClick={ onDomainSelect }
 			id={ labelId }
@@ -82,7 +85,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				} ) }
 			>
 				{ suggestion.is_free ? (
-					__( 'Free' )
+					__( 'Included in free plan' )
 				) : (
 					<>
 						<span className="domain-picker__price-long">

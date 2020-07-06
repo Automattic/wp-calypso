@@ -8,16 +8,17 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from '@wordpress/url';
 import { Button } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import FormattedHeader from 'components/formatted-header';
-import PromoCard from 'components/promo-section/promo-card';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
+import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
+import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PromoCard from 'components/promo-section/promo-card';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 
 /**
  * Asset dependencies
@@ -60,7 +61,9 @@ export default function WPCOMUpsellPage(): ReactElement {
 				<div className="backup__wpcom-ctas">
 					<Button
 						className="backup__wpcom-cta backup__wpcom-realtime-cta"
-						href={ `/checkout/${ siteSlug }/jetpack_backup_realtime` }
+						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_realtime`, {
+							redirect_to: window.location.href,
+						} ) }
 						onClick={ onUpgradeClick }
 						selfTarget={ true }
 						primary
@@ -69,7 +72,9 @@ export default function WPCOMUpsellPage(): ReactElement {
 					</Button>
 					<Button
 						className="backup__wpcom-cta backup__wpcom-daily-cta"
-						href={ `/checkout/${ siteSlug }/jetpack_backup_daily` }
+						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_daily`, {
+							redirect_to: window.location.href,
+						} ) }
 						onClick={ onUpgradeClick }
 						selfTarget={ true }
 					>

@@ -89,6 +89,7 @@ import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
+import { CartProvider } from './cart-provider';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -352,6 +353,7 @@ export default function CompositeCheckout( {
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
+		siteSlug,
 	} );
 
 	// Once we pass paymentMethods into CompositeCheckout, we should try to avoid
@@ -475,12 +477,70 @@ export default function CompositeCheckout( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
+			alipay: ( transactionData ) =>
+				genericRedirectProcessor(
+					'alipay',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
+			p24: ( transactionData ) =>
+				genericRedirectProcessor(
+					'p24',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
+			bancontact: ( transactionData ) =>
+				genericRedirectProcessor(
+					'bancontact',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			giropay: ( transactionData ) =>
-				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'giropay',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
+			wechat: ( transactionData ) =>
+				genericRedirectProcessor(
+					'wechat',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			ideal: ( transactionData ) =>
-				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'ideal',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			sofort: ( transactionData ) =>
-				genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, isWhiteGloveOffer ),
+				genericRedirectProcessor(
+					'sofort',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
+			eps: ( transactionData ) =>
+				genericRedirectProcessor(
+					'eps',
+					transactionData,
+					getThankYouUrl,
+					isWhiteGloveOffer,
+					siteSlug
+				),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>
@@ -509,46 +569,48 @@ export default function CompositeCheckout( {
 			<QueryStoredCards />
 
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-			<CheckoutProvider
-				items={ itemsForCheckout }
-				total={ total }
-				onPaymentComplete={ onPaymentComplete }
-				showErrorMessage={ showErrorMessage }
-				showInfoMessage={ showInfoMessage }
-				showSuccessMessage={ showSuccessMessage }
-				onEvent={ recordEvent }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ paymentProcessors }
-				registry={ defaultRegistry }
-				isLoading={
-					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
-				}
-				isValidating={ isCartPendingUpdate }
-			>
-				<WPCheckout
-					removeItem={ removeItem }
-					updateLocation={ updateLocation }
-					submitCoupon={ submitCoupon }
-					removeCoupon={ removeCoupon }
-					couponStatus={ couponStatus }
-					changePlanLength={ changeItemVariant }
-					siteId={ siteId }
-					siteUrl={ siteSlug }
-					CountrySelectMenu={ CountrySelectMenu }
-					countriesList={ countriesList }
-					StateSelect={ StateSelect }
-					renderDomainContactFields={ renderDomainContactFields }
-					variantSelectOverride={ variantSelectOverride }
-					getItemVariants={ getItemVariants }
-					responseCart={ responseCart }
-					addItemToCart={ addItemWithEssentialProperties }
-					subtotal={ subtotal }
-					isCartPendingUpdate={ isCartPendingUpdate }
-					CheckoutTerms={ CheckoutTerms }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isWhiteGloveOffer={ isWhiteGloveOffer }
-				/>
-			</CheckoutProvider>
+			<CartProvider cart={ responseCart }>
+				<CheckoutProvider
+					items={ itemsForCheckout }
+					total={ total }
+					onPaymentComplete={ onPaymentComplete }
+					showErrorMessage={ showErrorMessage }
+					showInfoMessage={ showInfoMessage }
+					showSuccessMessage={ showSuccessMessage }
+					onEvent={ recordEvent }
+					paymentMethods={ paymentMethods }
+					paymentProcessors={ paymentProcessors }
+					registry={ defaultRegistry }
+					isLoading={
+						isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
+					}
+					isValidating={ isCartPendingUpdate }
+				>
+					<WPCheckout
+						removeItem={ removeItem }
+						updateLocation={ updateLocation }
+						submitCoupon={ submitCoupon }
+						removeCoupon={ removeCoupon }
+						couponStatus={ couponStatus }
+						changePlanLength={ changeItemVariant }
+						siteId={ siteId }
+						siteUrl={ siteSlug }
+						CountrySelectMenu={ CountrySelectMenu }
+						countriesList={ countriesList }
+						StateSelect={ StateSelect }
+						renderDomainContactFields={ renderDomainContactFields }
+						variantSelectOverride={ variantSelectOverride }
+						getItemVariants={ getItemVariants }
+						responseCart={ responseCart }
+						addItemToCart={ addItemWithEssentialProperties }
+						subtotal={ subtotal }
+						isCartPendingUpdate={ isCartPendingUpdate }
+						CheckoutTerms={ CheckoutTerms }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						isWhiteGloveOffer={ isWhiteGloveOffer }
+					/>
+				</CheckoutProvider>
+			</CartProvider>
 		</React.Fragment>
 	);
 }

@@ -30,18 +30,11 @@ jest.mock( 'my-sites/media-library/list-item', () => require( 'components/empty-
 jest.mock( 'my-sites/media-library/list-plan-upgrade-nudge', () =>
 	require( 'components/empty-component' )
 );
-jest.mock( 'lib/media/actions', () => ( {
-	__esModule: true,
-	default: {
-		setLibrarySelectedItems: ( siteId, mediaIds ) => {
-			mockSelectedItems.length = 0;
-			mockSelectedItems.push( ...mediaIds );
-		},
-	},
-} ) );
 
 describe( 'MediaLibraryList item selection', () => {
 	let wrapper, mediaList;
+
+	const setMediaLibrarySelectedItems = jest.fn();
 
 	function toggleItem( itemIndex, shiftClick ) {
 		mediaList.toggleItem( fixtures.media[ itemIndex ], shiftClick );
@@ -79,6 +72,7 @@ describe( 'MediaLibraryList item selection', () => {
 					mediaScale={ 0.24 }
 					moment={ moment }
 					selectedItems={ [] }
+					setMediaLibrarySelectedItems={ setMediaLibrarySelectedItems }
 				/>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
@@ -167,6 +161,7 @@ describe( 'MediaLibraryList item selection', () => {
 					moment={ moment }
 					single
 					selectedItems={ [] }
+					setMediaLibrarySelectedItems={ setMediaLibrarySelectedItems }
 				/>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
@@ -209,6 +204,7 @@ describe( 'MediaLibraryList item selection', () => {
 					source={ source }
 					single
 					selectedItems={ [] }
+					setMediaLibrarySelectedItems={ setMediaLibrarySelectedItems }
 				/>
 			)
 				.find( MediaList )

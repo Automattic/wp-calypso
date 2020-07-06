@@ -26,6 +26,7 @@ const DomainPickerButton: React.FunctionComponent< Props > = ( {
 	...buttonProps
 } ) => {
 	const makePath = usePath();
+
 	return (
 		<>
 			<Link

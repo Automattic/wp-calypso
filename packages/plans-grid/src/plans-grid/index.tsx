@@ -21,7 +21,7 @@ import './style.scss';
 type PlansSlug = Plans.PlanSlug;
 
 export interface Props {
-	header: React.ReactElement;
+	header?: React.ReactElement;
 	currentPlan?: Plans.Plan;
 	onPlanSelect?: ( plan: PlansSlug ) => void;
 	onPickDomainClick?: () => void;
@@ -46,7 +46,8 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 	return (
 		<div className="plans-grid">
-			<div className="plans-grid__header">{ header }</div>
+			{ header && <div className="plans-grid__header">{ header }</div> }
+
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
 					<PlansTable

@@ -62,8 +62,4 @@ describe( `[${ host }] Jurassic Ninja Connection: (${ screenSize }) @jetpack`, f
 	step( 'Can save JN credentials to file', async function () {
 		await writeJNCredentials( this.jnFlow.url, 'demo', this.jnFlow.password );
 	} );
-
-	step( 'Can remove diconnected sites', async function () {
-		await this.jnFlow.removeSites();
-	} );
 } );

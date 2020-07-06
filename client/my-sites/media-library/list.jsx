@@ -12,7 +12,6 @@ import React from 'react';
  * Internal dependencies
  */
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
@@ -21,6 +20,7 @@ import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import SortedGrid from 'components/sorted-grid';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getPreference } from 'state/preferences/selectors';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -138,7 +138,7 @@ export class MediaLibraryList extends React.Component {
 		} );
 
 		if ( this.props.site ) {
-			MediaActions.setLibrarySelectedItems( this.props.site.ID, selectedItems );
+			this.props.setMediaLibrarySelectedItems( this.props.site.ID, selectedItems );
 		}
 	};
 
@@ -254,7 +254,10 @@ export class MediaLibraryList extends React.Component {
 	}
 }
 
-export default connect( ( state, { site } ) => ( {
-	mediaScale: getPreference( state, 'mediaScale' ),
-	selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
-} ) )( withRtl( withLocalizedMoment( MediaLibraryList ) ) );
+export default connect(
+	( state, { site } ) => ( {
+		mediaScale: getPreference( state, 'mediaScale' ),
+		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
+	} ),
+	{ setMediaLibrarySelectedItems }
+)( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

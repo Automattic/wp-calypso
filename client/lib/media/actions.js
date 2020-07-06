@@ -24,7 +24,6 @@ import {
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
-	setMediaLibrarySelectedItems,
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'state/media/actions';
@@ -35,7 +34,6 @@ import {
  * TODO: Better method types
  *
  * @property {Function} fetch
- * @property {Function} setLibrarySelectedItems
  */
 
 /**
@@ -314,16 +312,6 @@ MediaActions.delete = function ( siteId, item ) {
 				siteId: siteId,
 			} );
 		} );
-};
-
-MediaActions.setLibrarySelectedItems = function ( siteId, items ) {
-	debug( 'Setting selected items for %d as %o', siteId, items );
-	Dispatcher.handleViewAction( {
-		type: 'SET_MEDIA_LIBRARY_SELECTED_ITEMS',
-		siteId: siteId,
-		data: items,
-	} );
-	reduxDispatch( setMediaLibrarySelectedItems( siteId, items ) );
 };
 
 MediaActions.clearValidationErrors = function ( siteId, itemId ) {

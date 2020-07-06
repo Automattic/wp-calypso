@@ -8,19 +8,14 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import PlansGrid, { Props as PlansGridProps } from '@automattic/plans-grid';
+import PlansGridFSE, { Props as PlansGridFSEProps } from '../plans-grid-fse';
 import './styles.scss';
 
-interface Props extends Omit< PlansGridProps, 'header' > {
-	isOpen: boolean;
+interface Props extends PlansGridFSEProps {
 	onClose: () => void;
 }
 
-const PlansModal: React.FunctionComponent< Props > = ( { isOpen, onClose, ...props } ) => {
-	if ( ! isOpen ) {
-		return null;
-	}
-
+const PlansModal: React.FunctionComponent< Props > = ( { onClose, ...props } ) => {
 	const header = (
 		<div>
 			{ /* eslint-disable @wordpress/i18n-text-domain */ }
@@ -41,8 +36,9 @@ const PlansModal: React.FunctionComponent< Props > = ( { isOpen, onClose, ...pro
 			onRequestClose={ onClose }
 			title=""
 		>
+			{ header }
 			<div className="plans-grid-container">
-				<PlansGrid header={ header } { ...props } />
+				<PlansGridFSE { ...props } />
 			</div>
 		</Modal>
 	);
