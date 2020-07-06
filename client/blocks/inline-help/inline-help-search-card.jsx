@@ -104,10 +104,6 @@ class InlineHelpSearchCard extends Component {
 		this.props.setInlineHelpSearchQuery( searchQuery );
 	};
 
-	componentDidMount() {
-		this.props.setInlineHelpSearchQuery( '' );
-	}
-
 	render() {
 		return (
 			<SearchCard
