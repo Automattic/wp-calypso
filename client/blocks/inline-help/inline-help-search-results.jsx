@@ -102,7 +102,7 @@ function HelpSearchResults( {
 						tabIndex={ -1 }
 					>
 						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && <Gridicon icon="domains" size={ 18 } /> }
-						{ preventWidows( decodeEntities( title ) ) }
+						<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && <Gridicon icon="chevron-right" size={ 18 } /> }
 					</a>
 				</li>
