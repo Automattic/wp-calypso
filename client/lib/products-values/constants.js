@@ -105,8 +105,8 @@ export const getJetpackProductsShortNames = () => {
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SCAN ]: translate( 'Daily Scan' ),
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Daily Scan' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti Spam' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti Spam' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-Spam' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-Spam' ),
 	};
 };
 
@@ -141,7 +141,7 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 
-	const antiSpam = <>{ translate( 'Jetpack Anti Spam' ) }</>;
+	const antiSpam = <>{ translate( 'Jetpack Anti-Spam' ) }</>;
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
@@ -274,7 +274,7 @@ export const getJetpackProducts = () => {
 		} );
 	isEnabled( 'jetpack/anti-spam-product' ) &&
 		output.push( {
-			title: translate( 'Jetpack Anti Spam' ),
+			title: translate( 'Jetpack Anti-Spam' ),
 			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_ANTI_SPAM ],
 			// There is only one option per billing interval, but this
 			// component still needs the full display with radio buttons.
