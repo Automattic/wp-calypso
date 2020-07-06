@@ -23,7 +23,7 @@ import { USER_STORE } from '../../stores/user';
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 const USE_TRANSLATION_CHUNKS: boolean =
 	config.isEnabled( 'use-translation-chunks' ) ||
-	getUrlParts( document.location.href ).searchParams.has( 'USE_TRASNSLATION_CHUNKS' );
+	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 interface AppWindow extends Window {
 	currentUser?: User.CurrentUser;
