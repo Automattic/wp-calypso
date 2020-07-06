@@ -20,6 +20,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import ActivityCardList from 'components/activity-card-list';
 import DocumentHead from 'components/data/document-head';
 import QuerySitePlans from 'components/data/query-site-plans';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import FormattedHeader from 'components/formatted-header';
 import Upsell from 'components/jetpack/upsell';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
@@ -90,6 +91,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			wideLayout={ ! isJetpackCloud() }
 		>
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
+			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
