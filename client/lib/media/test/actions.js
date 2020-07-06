@@ -12,15 +12,8 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	DUMMY_API_RESPONSE,
-	DUMMY_ITEM,
-	DUMMY_QUERY,
-	DUMMY_SITE_ID,
-	DUMMY_UPLOAD,
-} from './fixtures';
+import { DUMMY_API_RESPONSE, DUMMY_ITEM, DUMMY_QUERY, DUMMY_SITE_ID } from './fixtures';
 import { stubs } from './mocks/lib/wp';
-import { site } from './fixtures/site';
 
 jest.mock( 'lib/media/store', () => ( {
 	dispatchToken: require( 'dispatcher' ).register( () => {} ),
@@ -139,22 +132,6 @@ describe( 'MediaActions', () => {
 					} );
 
 					done();
-				} );
-			} );
-		} );
-	} );
-
-	describe( '#addExternal()', () => {
-		test( 'should accept an upload', () => {
-			return MediaActions.addExternal( site, [ DUMMY_UPLOAD ], 'external' ).then( () => {
-				expect( stubs.mediaAddExternal ).to.have.been.calledWithMatch( 'external', [
-					DUMMY_UPLOAD.guid,
-				] );
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_MEDIA_ITEM',
-					siteId: DUMMY_SITE_ID,
-					id: 'media-1',
-					data: DUMMY_API_RESPONSE.media[ 0 ],
 				} );
 			} );
 		} );
