@@ -62,8 +62,8 @@ function HelpSearchResults( {
 		);
 	}
 
-	const onLinkClickHandler = ( selectionIndex, type ) => ( event ) => {
-		// check if it's internal link.
+	const onLinkClickHandler = ( type ) => ( event ) => {
+		// check and catch admin section links.
 		const adminLink = event?.target?.href;
 		if ( type === 'admin_section' && adminLink ) {
 			recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
@@ -73,10 +73,11 @@ function HelpSearchResults( {
 			return page( adminLink );
 		}
 
-		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
-		selectSearchResult( selectionIndex );
-		onSelect( event, selectedResult );
+		// Set the current selected result item.
+		onSelect( event );
 	};
+
+	const selectCurrentResultIndex = ( index ) => () => selectSearchResult( index );
 
 	const renderHelpLink = ( { link, key, description, title, icon, support_type = 'api_help' }, index ) => {
 		const addResultsSection = supportType?.current !== support_type || ! index;
@@ -94,7 +95,8 @@ function HelpSearchResults( {
 				<li className={ classes }>
 					<a
 						href={ localizeUrl( link ) }
-						onClick={ onLinkClickHandler( index, support_type ) }
+						onMouseDown={ selectCurrentResultIndex( index ) }
+						onClick={ onLinkClickHandler( support_type ) }
 						title={ decodeEntities( description ) }
 						tabIndex={ -1 }
 					>
