@@ -10,7 +10,6 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -51,6 +50,7 @@ import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/perf
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { fetch as fetchMediaItem } from 'state/media/thunks';
 
 /**
  * Types
@@ -242,7 +242,7 @@ class CalypsoifyIframe extends Component<
 				const selectedItems = ids.map( ( id ) => {
 					const media = MediaStore.get( siteId, id );
 					if ( ! media ) {
-						MediaActions.fetch( siteId, id );
+						this.props.fetchMediaItem( siteId, id );
 					}
 					return {
 						ID: id,
@@ -820,6 +820,7 @@ const mapDispatchToProps = {
 	updateSiteFrontPage,
 	notifyDesktopCannotOpenEditor,
 	setMediaLibrarySelectedItems,
+	fetchMediaItem,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
