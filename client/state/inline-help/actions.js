@@ -98,14 +98,18 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 					hasAPIResults,
 				} );
 
+
+				let items = [];
+				if ( hasAPIResults ) {
+					items = [ ...searchResults, ...helpAdminResults ];
+				} else {
+					items = [ ...contextualResults, ...helpAdminResults ];
+				}
+
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
-					searchResults: [
-						...searchResults,
-						...contextualResults,
-						...helpAdminResults,
-					]
+					searchResults: items,
 				} );
 			} )
 			.catch( ( error ) => {
