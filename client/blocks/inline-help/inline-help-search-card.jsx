@@ -37,12 +37,14 @@ class InlineHelpSearchCard extends Component {
 		query: PropTypes.string,
 		placeholder: PropTypes.string,
 		location: PropTypes.string,
+		selectedResult: PropTypes.object,
 	};
 
 	static defaultProps = {
 		translate: identity,
 		query: '',
 		location: 'inline-help-popover',
+		selectedResult: {},
 	};
 
 	constructor() {
@@ -71,7 +73,7 @@ class InlineHelpSearchCard extends Component {
 				this.props.selectNextResult();
 				break;
 			case 'Enter': {
-				const { selectedResultIndex, selectedResult = {}, query, onSelect, recordTracksEvent } = this.props;
+				const { selectedResultIndex, selectedResult, query, onSelect, recordTracksEvent } = this.props;
 
 				// check and catch admin section links.
 				const { support_type: supportType, link } = selectedResult;
