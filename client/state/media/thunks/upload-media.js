@@ -68,23 +68,19 @@ export const uploadSingleMedia = (
 			found,
 		} = await uploader( file, siteId );
 
+		const uploadedMediaWithTransientId = {
+			...uploadedMedia,
+			transientId: transientMedia.ID,
+		};
+
 		dispatchFluxReceiveMediaItemSuccess( transientMedia.ID, siteId, uploadedMedia );
 
 		dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
-		dispatch(
-			receiveMedia(
-				siteId,
-				{
-					...uploadedMedia,
-					transientId: transientMedia.ID,
-				},
-				found
-			)
-		);
+		dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
 		dispatchFluxFetchMediaLimits( siteId );
 
-		return uploadedMedia;
+		return uploadedMediaWithTransientId;
 	} catch ( error ) {
 		dispatchFluxReceiveMediaItemError( transientMedia.ID, siteId, error );
 
