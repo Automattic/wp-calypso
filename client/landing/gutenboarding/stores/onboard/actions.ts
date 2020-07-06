@@ -57,11 +57,6 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
-export const setSiteLanguage = ( siteLanguage: string ) => ( {
-	type: 'SET_SITE_LANGUAGE' as const,
-	siteLanguage,
-} );
-
 export const togglePageLayout = ( pageLayout: Template ) => ( {
 	type: 'TOGGLE_PAGE_LAYOUT' as const,
 	pageLayout,
@@ -112,7 +107,12 @@ export function* updatePlan( planSlug: Plans.PlanSlug ) {
 	yield setPlan( plan );
 }
 
-export function* createSite( username: string, locale: string, bearerToken?: string, isPublicSite = false ) {
+export function* createSite(
+	username: string,
+	languageSlug: string,
+	bearerToken?: string,
+	isPublicSite = false
+) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
 		'getState'
@@ -121,7 +121,7 @@ export function* createSite( username: string, locale: string, bearerToken?: str
 	const shouldEnableFse = !! selectedDesign?.is_fse;
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
-	const lang_id = ( getLanguage( locale ) as Language )?.value;
+	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
 
 	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
 
@@ -173,7 +173,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setSiteTitle
 	| typeof setSiteVertical
-	| typeof setSiteLanguage
 	| typeof togglePageLayout
 	| typeof setShowSignupDialog
 	| typeof setPlan
