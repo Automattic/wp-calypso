@@ -194,6 +194,11 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	const urlParams = new URLSearchParams( window.location.search );
 	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
 
+	let newSiteParams;
+	if ( isLoggedOutCart ) {
+		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) );
+	}
+
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
 			siteId,
@@ -221,6 +226,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			idealBank,
 		},
 		isWhiteGloveOffer: isWhiteGlove,
+		...( isLoggedOutCart && { newSiteParams } ),
 	};
 }
 
