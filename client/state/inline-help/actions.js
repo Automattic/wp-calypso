@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { slice } from 'lodash';
+import { slice, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,7 @@ import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-resu
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import 'state/inline-help/init';
+import { SUPPORT_TYPE_API_HELP, SUPPORT_TYPE_CONTEXTUAL_HELP } from "../../blocks/inline-help/constants";
 
 /**
  * Set the search query in the state tree for the inline help.
@@ -58,7 +59,10 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
 		const siteSlug = getSiteSlug( state, getSelectedSiteId( state ) );
-		const contextualResults = getContextualHelpResults( state );
+		const contextualResults = map( getContextualHelpResults( state ), item => ( {
+			...item,
+			support_type: SUPPORT_TYPE_CONTEXTUAL_HELP,
+		} ) );
 		const helpAdminResults = slice( getAdminHelpResults( state, searchQuery, siteSlug ), 0, 3 );
 
 		// Ensure empty strings are removed as valid searches.
@@ -106,7 +110,10 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 
 				let items = [];
 				if ( hasAPIResults ) {
-					items = [ ...searchResults, ...helpAdminResults ];
+					items = [ ...( map( searchResults, item => ( {
+						...item,
+						support_type: SUPPORT_TYPE_API_HELP,
+					} ) ) ), ...helpAdminResults ];
 				} else {
 					items = [ ...contextualResults, ...helpAdminResults ];
 				}
