@@ -196,7 +196,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 
 	let newSiteParams;
 	if ( isLoggedOutCart ) {
-		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) );
+		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
 	}
 
 	return {
