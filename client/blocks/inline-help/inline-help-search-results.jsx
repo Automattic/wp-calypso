@@ -19,6 +19,7 @@ import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import getSearchResultsByQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
 import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
+import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
 import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
 import { selectResult } from 'state/inline-help/actions';
@@ -31,6 +32,7 @@ function HelpSearchResults( {
 	onSelect,
 	searchQuery = '',
 	searchResults = [],
+	selectedResult = {},
 	selectedResultIndex = -1,
 	selectSearchResult,
 	translate = identity,
@@ -63,15 +65,18 @@ function HelpSearchResults( {
 		);
 	}
 
-	const onLinkClickHandler = ( type ) => ( event ) => {
+	const onLinkClickHandler = ( event ) => {
+		const { support_type: supportType, link } = selectedResult;
+
 		// check and catch admin section links.
-		const adminLink = event?.target?.href;
-		if ( type === SUPPORT_TYPE_ADMIN_SECTION && adminLink ) {
+		if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
+			event.preventDefault();
+
 			recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
-				link: adminLink,
+				link: link,
 				search_term: searchQuery,
 			} );
-			return page( adminLink );
+			return page( link );
 		}
 
 		// Set the current selected result item.
@@ -97,7 +102,7 @@ function HelpSearchResults( {
 					<a
 						href={ localizeUrl( link ) }
 						onMouseDown={ selectCurrentResultIndex( index ) }
-						onClick={ onLinkClickHandler( support_type ) }
+						onClick={ onLinkClickHandler }
 						title={ decodeEntities( description ) }
 						tabIndex={ -1 }
 					>
@@ -151,6 +156,7 @@ HelpSearchResults.propTypes = {
 	searchResults: PropTypes.array,
 	selectedResultIndex: PropTypes.number,
 	isSearching: PropTypes.bool,
+	selectedResult: PropTypes.object,
 };
 
 export default connect(
@@ -159,6 +165,7 @@ export default connect(
 		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 		selectedResultIndex: getSelectedResultIndex( state ),
 		hasAPIResults: hasInlineHelpAPIResults( state ),
+		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	} ),
 	{
 		recordTracksEvent,
