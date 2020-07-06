@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes } from 'lodash';
+import page from 'page';
 import debugFactory from 'debug';
 
 /**
@@ -69,8 +70,19 @@ class InlineHelpSearchCard extends Component {
 				this.props.selectNextResult();
 				break;
 			case 'Enter': {
-				const hasSelection = this.props.selectedResultIndex >= 0;
-				hasSelection && this.props.onSelect( event );
+				const { selectedResultIndex, selectedResult = {}, query, onSelect, recordTracksEvent } = this.props;
+
+				// check and catch admin section links.
+				const { support_type: supportType, link } = selectedResult;
+				if ( supportType === 'admin_section' && link ) {
+					recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
+						link: link,
+						search_term: query,
+					} );
+					return page( link );
+				}
+
+				selectedResultIndex >= 0 && onSelect( event );
 				break;
 			}
 		}
