@@ -5,7 +5,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import { withoutHttp } from 'lib/url';
 import { type as domainTypes } from 'lib/domains/constants';
+import { handleRenewNowClick } from 'lib/purchases';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -30,6 +30,7 @@ class DomainItem extends PureComponent {
 		onClick: PropTypes.func.isRequired,
 		onAddEmailClick: PropTypes.func.isRequired,
 		onToggle: PropTypes.func,
+		purchase: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -62,15 +63,15 @@ class DomainItem extends PureComponent {
 	renewDomain = ( event ) => {
 		event.stopPropagation();
 
-		const { productSlug, name, subscriptionId } = this.props.domainDetails;
-		page(
-			`/checkout/${ productSlug }:${ name }/renew/${ subscriptionId }/${ this.props.site.slug }`
-		);
+		const { purchase, site } = this.props;
+		handleRenewNowClick( purchase, site.slug );
 	};
 
-	canRenewDomain( domainDetails ) {
+	canRenewDomain() {
+		const { domainDetails, purchase } = this.props;
 		return (
 			domainDetails &&
+			purchase &&
 			domainDetails.currentUserCanManage &&
 			[ domainTypes.WPCOM, domainTypes.TRANSFER ].indexOf( domainDetails.type ) === -1 &&
 			! domainDetails.bundledPlanSubscriptionId
@@ -78,7 +79,7 @@ class DomainItem extends PureComponent {
 	}
 
 	renderOptionsButton() {
-		const { domainDetails, isManagingAllSites, translate } = this.props;
+		const { isManagingAllSites, translate } = this.props;
 
 		return (
 			<div className="list__domain-options">
@@ -86,16 +87,9 @@ class DomainItem extends PureComponent {
 					{ ! isManagingAllSites && (
 						<PopoverMenuItem icon="domains">{ translate( 'Make primary domain' ) }</PopoverMenuItem>
 					) }
-					{ this.canRenewDomain( domainDetails ) && (
+					{ this.canRenewDomain() && (
 						<PopoverMenuItem icon="refresh" onClick={ this.renewDomain }>
 							{ translate( 'Renew now' ) }
-						</PopoverMenuItem>
-					) }
-					{ this.canRenewDomain( domainDetails ) && (
-						<PopoverMenuItem icon="sync">
-							{ domainDetails.isAutoRenewing
-								? translate( 'Turn off auto-renew' )
-								: translate( 'Turn on auto-renew' ) }
 						</PopoverMenuItem>
 					) }
 					<PopoverMenuItem icon="pencil">{ translate( 'Edit settings' ) }</PopoverMenuItem>
