@@ -29,11 +29,13 @@ import getUserSettings from 'state/selectors/get-user-settings';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage, localizeUrl } from 'lib/i18n-utils';
 import getCountries from 'state/selectors/get-countries';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormInputValidation from 'components/forms/form-input-validation';
 import isSiteWhiteGlove from 'state/selectors/is-site-white-glove';
+import ExternalLink from 'components/external-link';
+import { CONCIERGE_WPCOM_BUSINESS_ID } from 'me/concierge/constants';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -128,6 +130,7 @@ class InfoStep extends Component {
 			},
 			site,
 			isWhiteGlove,
+			scheduleId,
 			translate,
 		} = this.props;
 		const language = getLanguage( currentUserLocale ).name;
@@ -225,6 +228,44 @@ class InfoStep extends Component {
 					>
 						{ translate( 'Continue to calendar' ) }
 					</FormButton>
+
+					{ scheduleId === CONCIERGE_WPCOM_BUSINESS_ID ? (
+						<>
+							<br />
+							<br />
+							<FormSettingExplanation>
+								{ translate(
+									'We are currently offering Quick Start sessions in {{strong}}English Only{{/strong}}.',
+									{
+										components: { strong: <strong /> },
+									}
+								) }
+							</FormSettingExplanation>
+						</>
+					) : (
+						<>
+							<br />
+							<br />
+							<FormSettingExplanation>
+								{ translate(
+									'We are currently offering Quick Start sessions in {{strong}}English Only{{/strong}}. If you are unable to' +
+										' participate in English, {{externalLink}}please click here for instructions on cancelling{{/externalLink}}.',
+									{
+										components: {
+											externalLink: (
+												<ExternalLink
+													href={ localizeUrl(
+														'https://wordpress.com/support/concierge-support/#how-do-i-get-a-refund-for-an-unused-session'
+													) }
+												/>
+											),
+											strong: <strong />,
+										},
+									}
+								) }
+							</FormSettingExplanation>
+						</>
+					) }
 				</CompactCard>
 			</div>
 		);

@@ -19,6 +19,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { CONCIERGE_WPCOM_BUSINESS_ID } from 'me/concierge/constants';
 
 class AppointmentInfo extends Component {
 	static propTypes = {
@@ -96,7 +97,7 @@ class AppointmentInfo extends Component {
 						</a>
 					</FormFieldset>
 
-					{ scheduleId === 1 ? (
+					{ scheduleId === CONCIERGE_WPCOM_BUSINESS_ID ? (
 						<>
 							<br />
 							<FormSettingExplanation>

@@ -110,6 +110,7 @@ export class ConciergeMain extends Component {
 				site={ site }
 				onComplete={ this.goToNextStep }
 				onBack={ this.goToPreviousStep }
+				scheduleId={ scheduleId }
 			/>
 		);
 	};
