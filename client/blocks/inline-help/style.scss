@@ -377,12 +377,18 @@
 		cursor: pointer;
 		color: var( --color-text-inverted );
 
+		&:hover,
+		&:focus {
+			background: none;
+
+			a {
+				color: var( --color-link-dark );
+			}
+
+		}
+
 		a {
 			color: var( --color-text-inverted );
-			&:hover,
-			&:focus {
-				background: none;
-			}
 		}
 	}
 
