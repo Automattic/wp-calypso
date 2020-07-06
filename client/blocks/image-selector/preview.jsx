@@ -8,6 +8,7 @@ import { isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -80,7 +81,7 @@ export class ImageSelectorPreview extends Component {
 				id = parseInt( id, 10 );
 				const media = MediaStore.get( siteId, id );
 				if ( ! media ) {
-					fetchMediaItem( siteId, id );
+					this.props.fetchMediaItem( siteId, id );
 				}
 			} );
 		} );
@@ -237,4 +238,4 @@ export class ImageSelectorPreview extends Component {
 	}
 }
 
-export default localize( ImageSelectorPreview );
+export default connect( null, { fetchMediaItem } )( localize( ImageSelectorPreview ) );
