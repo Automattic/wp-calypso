@@ -30,7 +30,7 @@ const debug = debugFactory( 'calypso:inline-help' );
 
 class InlineHelpSearchCard extends Component {
 	static propTypes = {
-		openResult: PropTypes.func.isRequired,
+		onSelect: PropTypes.func.isRequired,
 		translate: PropTypes.func,
 		query: PropTypes.string,
 		placeholder: PropTypes.string,
@@ -70,7 +70,7 @@ class InlineHelpSearchCard extends Component {
 				break;
 			case 'Enter': {
 				const hasSelection = this.props.selectedResultIndex >= 0;
-				hasSelection && this.props.openResult( event, this.props.selectedResult );
+				hasSelection && this.props.onSelect( event, this.props.selectedResult );
 				break;
 			}
 		}

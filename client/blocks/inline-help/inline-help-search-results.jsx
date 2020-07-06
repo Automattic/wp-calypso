@@ -27,7 +27,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 function HelpSearchResults( {
 	hasAPIResults = false,
 	isSearching = false,
-	openResult,
+	onSelect,
 	searchQuery = '',
 	searchResults = [],
 	selectedResultIndex = -1,
@@ -75,7 +75,7 @@ function HelpSearchResults( {
 
 		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
 		selectSearchResult( selectionIndex );
-		openResult( event, selectedResult );
+		onSelect( event, selectedResult );
 	};
 
 	const renderHelpLink = ( { link, key, description, title, icon, support_type = 'api_help' }, index ) => {
@@ -142,7 +142,7 @@ function HelpSearchResults( {
 HelpSearchResults.propTypes = {
 	translate: PropTypes.func,
 	searchQuery: PropTypes.string,
-	openResult: PropTypes.func.isRequired,
+	onSelect: PropTypes.func.isRequired,
 	hasAPIResults: PropTypes.bool,
 	searchResults: PropTypes.array,
 	selectedResultIndex: PropTypes.number,
