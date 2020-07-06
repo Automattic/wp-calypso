@@ -9,7 +9,6 @@
  */
 
 import { addFilter } from '@wordpress/hooks';
-import { Component } from '@wordpress/element';
 import { BlockControls } from '@wordpress/block-editor';
 import { Toolbar, ToolbarButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -23,17 +22,23 @@ import { rawHandler, serialize } from '@wordpress/blocks';
  */
 
 export function withConvertToBlocksButton( ClassicEdit ) {
-	return class extends Component {
+	return class extends ClassicEdit {
 		render() {
+			const defaultBlock = super.render();
+
+			if ( ! Array.isArray( defaultBlock ) ) {
+				return <ClassicEdit { ...this.props } />;
+			}
+
 			return (
 				<>
 					<BlockControls>
 						<Toolbar>
 							<ToolbarButton
-								title={ __( 'Convert to Blocks' ) }
+								title={ __( 'Convert to blocks' ) }
 								onClick={ this.props.convertToBlocks }
 							>
-								{ __( 'Convert to Blocks' ) }
+								{ __( 'Convert to blocks' ) }
 							</ToolbarButton>
 						</Toolbar>
 					</BlockControls>
