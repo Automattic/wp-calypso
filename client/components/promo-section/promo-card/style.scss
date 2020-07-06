@@ -21,6 +21,11 @@
 		}
 	}
 
+	.action-panel__title {
+		display: flex;
+		justify-content: space-between;
+	}
+
 	.action-panel__body {
 		display: flex;
 		flex-direction: column;
@@ -93,8 +98,8 @@
 		}
 	}
 	.promo-card__title-badge {
-		margin-left: 48px;
 		background-color: var( --color-accent-60 );
 		color: var( --color-text-inverted );
+		margin: auto 0 auto 8px;
 	}
 }
