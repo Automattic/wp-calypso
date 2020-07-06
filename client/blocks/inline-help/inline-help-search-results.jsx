@@ -70,13 +70,20 @@ function HelpSearchResults( {
 
 		// check and catch admin section links.
 		if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
-			event.preventDefault();
-
+			// record track-event.
 			recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
 				link: link,
 				search_term: searchQuery,
 			} );
-			return page( link );
+
+			// push state only if it's internal link.
+			if ( ! ( /^http/.test( link ) ) ) {
+				event.preventDefault();
+				return page( link );
+			} else {
+				// default behavior for external links.
+				return;
+			}
 		}
 
 		// Set the current selected result item.
