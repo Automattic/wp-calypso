@@ -372,15 +372,20 @@
 		text-decoration: underline;
 		font-weight: normal;
 		line-height: 1.4;
-		display: block;
+		display: flex;
 		padding: 8px 16px;
 
+		span {
+			flex-grow: 2;
+		}
+
 		.gridicon {
-			margin: 0 3px -3px 0;
+			align-self: center;
+			margin-right: 8px;
 
 			&.gridicons-chevron-right {
-				position: absolute;
-				right: 0;
+				margin: 0;
+				color: var( --color-neutral-30 );
 			}
 		}
 
@@ -407,6 +412,10 @@
 
 		a {
 			color: var( --color-text-inverted );
+
+			.gridicons-chevron-right {
+				color: var( --color-text-inverted );
+			}
 		}
 	}
 
