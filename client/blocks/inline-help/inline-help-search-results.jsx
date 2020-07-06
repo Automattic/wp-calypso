@@ -17,7 +17,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
-import getResultsToShow from 'state/inline-help/selectors/get-results-to-show-in-ui';
+import getSearchResultsByQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
 import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
 import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
@@ -153,7 +153,7 @@ HelpSearchResults.propTypes = {
 
 export default connect(
 	( state, ownProps ) => ( {
-		searchResults: getResultsToShow( state ),
+		searchResults: getSearchResultsByQuery( state ),
 		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 		selectedResultIndex: getSelectedResultIndex( state ),
 		hasAPIResults: hasInlineHelpAPIResults( state ),
