@@ -3,6 +3,7 @@
 - add new `postCssOptions` option for the SASS loader, allowing more powerful customization of the
   PostCSS loader, deprecating the less capable `postCssConfig` option
 - Updated terser-webpack-plugin to ^4.1.0
+- Add `query-string`, `split-on-first`, and `strict-uri-encode` to the list of transpiled NPM dependencies.
 
 # 6.2.0
 
