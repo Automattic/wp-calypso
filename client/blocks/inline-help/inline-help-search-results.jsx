@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef } from 'react';
+import React, { useRef, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
@@ -89,9 +89,9 @@ function HelpSearchResults( {
 		} );
 
 		return (
-			<>
+			<Fragment key={ link ?? key }>
 				{ getTitleBySectionType( addResultsSection, support_type ) }
-				<li key={ link ?? key } className={ classes }>
+				<li className={ classes }>
 					<a
 						href={ localizeUrl( link ) }
 						onClick={ onLinkClickHandler( index, support_type ) }
@@ -102,7 +102,7 @@ function HelpSearchResults( {
 						{ preventWidows( decodeEntities( title ) ) }
 					</a>
 				</li>
-			</>
+			</Fragment>
 		);
 	};
 
