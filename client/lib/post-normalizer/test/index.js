@@ -653,7 +653,7 @@ describe( 'index', () => {
 			expect( normalized.content ).toBe( '<iframe src="https://spotify.com/"></iframe>' );
 		} );
 
-		test( 'applies the right level of sandboxing to whitelisted sources', () => {
+		test( 'applies the right level of sandboxing to specified sources', () => {
 			const post = {
 				content: '<iframe src="http://youtube.com"></iframe>',
 			};
@@ -692,7 +692,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'content.detectMedia', () => {
-		test( 'detects whitelisted iframes', () => {
+		test( 'detects "allowed" iframes', () => {
 			const post = {
 				content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>',
 			};
@@ -784,7 +784,7 @@ describe( 'index', () => {
 			expect( normalized.content_embeds ).toEqual( [] );
 		} );
 
-		test( 'ignores embeds from non-whitelisted providers', () => {
+		test( 'ignores embeds from disallowed providers', () => {
 			const badSrcs = [
 				'http://example.com',
 				'http://example.com?src=http://youtube.com',
