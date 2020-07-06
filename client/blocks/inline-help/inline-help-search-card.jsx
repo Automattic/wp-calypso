@@ -23,6 +23,7 @@ import {
 	selectNextResult,
 	selectPreviousResult,
 } from 'state/inline-help/actions';
+import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 
 /**
  * Module variables
@@ -74,7 +75,7 @@ class InlineHelpSearchCard extends Component {
 
 				// check and catch admin section links.
 				const { support_type: supportType, link } = selectedResult;
-				if ( supportType === 'admin_section' && link ) {
+				if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 					recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
 						link: link,
 						search_term: query,

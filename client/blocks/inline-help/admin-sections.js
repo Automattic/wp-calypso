@@ -8,6 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { getLocaleSlug } from 'lib/i18n-utils';
+import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 
 /**
  * Returns admin section items with site-based urls.
@@ -429,6 +430,6 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 				? intersection( item.synonyms, searchTermWords ).length > 0
 				: false;
 		} )
-		.map( ( item ) => ( { ...item, support_type: 'admin_section', key: item.title } ) )
+		.map( ( item ) => ( { ...item, support_type: SUPPORT_TYPE_ADMIN_SECTION, key: item.title } ) )
 		.slice( 0, limit );
 }

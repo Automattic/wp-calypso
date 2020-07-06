@@ -23,6 +23,7 @@ import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selec
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
 import { selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
+import { SUPPORT_TYPE_ADMIN_SECTION, SUPPORT_TYPE_API_HELP } from './constants';
 
 function HelpSearchResults( {
 	hasAPIResults = false,
@@ -45,10 +46,10 @@ function HelpSearchResults( {
 
 		let title = '';
 		switch ( type ) {
-			case 'api_help':
+			case SUPPORT_TYPE_API_HELP:
 				title = translate( 'Support articles:' );
 				break;
-			case 'admin_section':
+			case SUPPORT_TYPE_ADMIN_SECTION:
 				title = translate( 'Show me where to:' );
 				break;
 			default:
@@ -65,7 +66,7 @@ function HelpSearchResults( {
 	const onLinkClickHandler = ( type ) => ( event ) => {
 		// check and catch admin section links.
 		const adminLink = event?.target?.href;
-		if ( type === 'admin_section' && adminLink ) {
+		if ( type === SUPPORT_TYPE_ADMIN_SECTION && adminLink ) {
 			recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
 				link: adminLink,
 				search_term: searchQuery,
@@ -79,7 +80,14 @@ function HelpSearchResults( {
 
 	const selectCurrentResultIndex = ( index ) => () => selectSearchResult( index );
 
-	const renderHelpLink = ( { link, key, description, title, icon, support_type = 'api_help' }, index ) => {
+	const renderHelpLink = ( {
+		link,
+		key,
+		description,
+		title,
+		icon,
+		support_type = SUPPORT_TYPE_API_HELP
+	}, index ) => {
 		const addResultsSection = supportType?.current !== support_type || ! index;
 		if ( addResultsSection ) {
 			supportType.current = support_type;
