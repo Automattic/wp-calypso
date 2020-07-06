@@ -93,12 +93,16 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( purchases && purchases[ 0 ].productType === 'search' ) {
 			return (
-				translate( 'We are currently indexing your site.' ) +
-				'\n' +
-				translate(
-					'In the meantime we have configured Jetpack Search on your site.' +
-						'You should try customizing it i your traditional WordPress Dashboard.'
-				)
+				<div>
+					<p>{ translate( 'We are currently indexing your site.' ) }</p>
+					<p>
+						{ translate( 'In the meantime we have configured Jetpack Search on your site.' ) +
+							' ' +
+							translate(
+								'You should try customizing it in your traditional WordPress Dashboard.'
+							) }
+					</p>
+				</div>
 			);
 		}
 
@@ -425,7 +429,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<button className={ headerButtonClassName } onClick={ this.goToCustomizer }>
-						{ translate( 'Try Search and customize it now.' ) }
+						{ translate( 'Try Search and customize it now' ) }
 					</button>
 				</div>
 			);
