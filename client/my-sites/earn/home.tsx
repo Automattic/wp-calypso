@@ -508,17 +508,18 @@ export default connect< ConnectedProps, {}, {} >(
 	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
+		const isFreePlan = ! isCurrentPlanPaid( state, site.ID );
 		const hasConnectedAccount = get(
 			state,
 			[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
 			null
 		);
 		const sitePlanSlug = get( getCurrentPlan( state, site.ID ), 'productSlug', null );
-		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
+		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
 		return {
 			siteId: site.ID,
 			selectedSiteSlug,
-			isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
+			isFreePlan,
 			isJetpack: isJetpackSite( state, site.ID ),
 			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
 			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
