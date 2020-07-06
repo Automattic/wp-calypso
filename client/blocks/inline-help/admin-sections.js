@@ -75,7 +75,7 @@ export const adminSections = memoize( ( siteSlug ) => [
 	},
 	{
 		title: translate( 'Set a site logo' ),
-		link: `/customize/${ siteSlug }`,
+		link: `/customize/${ siteSlug }?autofocus[section]=title_tagline`,
 		synonyms: [ 'logo', 'identity' ],
 		icon: 'customize',
 	},
