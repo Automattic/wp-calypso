@@ -348,6 +348,16 @@
 	}
 }
 
+.inline-help__results-title {
+	margin-top: 10px;
+	h2 {
+		font-weight: bold;
+		line-height: 1.4;
+		display: block;
+		padding: 8px 16px;
+	}
+}
+
 .inline-help__results-item {
 	margin: 0;
 	font-size: $font-body-small;
