@@ -50,7 +50,7 @@ import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/perf
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
-import { fetch as fetchMediaItem } from 'state/media/thunks';
+import { fetchMediaItem } from 'state/media/thunks';
 
 /**
  * Types

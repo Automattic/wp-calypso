@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import MediaStore from 'lib/media/store';
 import EditorFeaturedImagePreview from './preview';
-import { fetch } from 'state/media/thunks';
+import { fetchMediaItem } from 'state/media/thunks';
 
 class EditorFeaturedImagePreviewContainer extends React.Component {
 	static propTypes = {
@@ -83,4 +83,4 @@ class EditorFeaturedImagePreviewContainer extends React.Component {
 	}
 }
 
-export default connect( null, { fetch } )( EditorFeaturedImagePreviewContainer );
+export default connect( null, { fetchMediaItem } )( EditorFeaturedImagePreviewContainer );

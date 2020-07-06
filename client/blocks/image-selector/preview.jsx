@@ -17,7 +17,7 @@ import ImagePreloader from 'components/image-preloader';
 import MediaStore from 'lib/media/store';
 import Spinner from 'components/spinner';
 import { url } from 'lib/media/utils';
-import { fetch } from 'state/media/thunks';
+import { fetchMediaItem } from 'state/media/thunks';
 
 export class ImageSelectorPreview extends Component {
 	static propTypes = {
@@ -80,7 +80,7 @@ export class ImageSelectorPreview extends Component {
 				id = parseInt( id, 10 );
 				const media = MediaStore.get( siteId, id );
 				if ( ! media ) {
-					fetch( siteId, id );
+					fetchMediaItem( siteId, id );
 				}
 			} );
 		} );
