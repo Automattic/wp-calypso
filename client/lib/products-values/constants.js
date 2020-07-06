@@ -21,8 +21,8 @@ export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
 export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
-export const PRODUCT_JETPACK_ANTISPAM = 'jetpack_antispam';
-export const PRODUCT_JETPACK_ANTISPAM_MONTHLY = 'jetpack_antispam_monthly';
+export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
+export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = [
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -47,9 +47,9 @@ export const isJetpackSearch = ( slug ) => JETPACK_SEARCH_PRODUCTS.includes( slu
 
 export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ];
 
-export const JETPACK_ANTISPAM_PRODUCTS = [
-	PRODUCT_JETPACK_ANTISPAM,
-	PRODUCT_JETPACK_ANTISPAM_MONTHLY,
+export const JETPACK_ANTI_SPAM_PRODUCTS = [
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 ];
 
 export const JETPACK_PRODUCTS_LIST = [

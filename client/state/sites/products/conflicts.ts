@@ -4,9 +4,9 @@
 import createSelector from 'lib/create-selector';
 import { FEATURE_SPAM_AKISMET_PLUS } from 'lib/plans/constants';
 import {
-	PRODUCT_JETPACK_ANTISPAM,
-	PRODUCT_JETPACK_ANTISPAM_MONTHLY,
-	JETPACK_ANTISPAM_PRODUCTS,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	JETPACK_ANTI_SPAM_PRODUCTS,
 } from 'lib/products-values/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import isSiteWPCOM from 'state/selectors/is-site-wpcom';
@@ -28,14 +28,14 @@ export const isAntiSpamConflicting = createSelector(
 	( state: AppState, siteId: number ): boolean | null => {
 		const planHasFeature = hasFeature( state, siteId, FEATURE_SPAM_AKISMET_PLUS );
 		const isWPCOM = isSiteWPCOM( state, siteId );
-		const hasAntiSpam = hasSiteProduct( state, siteId, JETPACK_ANTISPAM_PRODUCTS );
+		const hasAntiSpam = hasSiteProduct( state, siteId, JETPACK_ANTI_SPAM_PRODUCTS );
 		return planHasFeature || isWPCOM || hasAntiSpam;
 	},
 	[
 		( state: AppState, siteId: number ) => [
 			hasFeature( state, siteId, FEATURE_SPAM_AKISMET_PLUS ),
 			isSiteWPCOM( state, siteId ),
-			hasSiteProduct( state, siteId, JETPACK_ANTISPAM_PRODUCTS ),
+			hasSiteProduct( state, siteId, JETPACK_ANTI_SPAM_PRODUCTS ),
 		],
 	]
 );
@@ -58,8 +58,8 @@ export default function isProductConflictingWithSite(
 	}
 
 	switch ( productSlug ) {
-		case PRODUCT_JETPACK_ANTISPAM:
-		case PRODUCT_JETPACK_ANTISPAM_MONTHLY:
+		case PRODUCT_JETPACK_ANTI_SPAM:
+		case PRODUCT_JETPACK_ANTI_SPAM_MONTHLY:
 			return isAntiSpamConflicting( state, siteId );
 	}
 	return null;

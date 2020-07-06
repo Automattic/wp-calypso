@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import { default as isProductConflictingWithSite, isAntiSpamConflicting } from '../conflicts';
 import {
-	PRODUCT_JETPACK_ANTISPAM,
-	PRODUCT_JETPACK_ANTISPAM_MONTHLY,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 } from 'lib/products-values/constants';
 import { PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
 
@@ -55,7 +55,7 @@ describe( 'conflicts', () => {
 			const isProductConflicting = isProductConflictingWithSite(
 				{},
 				null,
-				PRODUCT_JETPACK_ANTISPAM
+				PRODUCT_JETPACK_ANTI_SPAM
 			);
 			expect( isProductConflicting ).to.be.null;
 		} );
@@ -67,18 +67,18 @@ describe( 'conflicts', () => {
 
 		test( 'should return true when testing for Anti-Spam annual', () => {
 			const isProductConflicting = isProductConflictingWithSite(
-				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTISPAM } ),
+				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTI_SPAM } ),
 				1234,
-				PRODUCT_JETPACK_ANTISPAM
+				PRODUCT_JETPACK_ANTI_SPAM
 			);
 			expect( isProductConflicting ).to.be.true;
 		} );
 
 		test( 'should return true when testing for Anti-Spam monthly', () => {
 			const isProductConflicting = isProductConflictingWithSite(
-				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTISPAM_MONTHLY } ),
+				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY } ),
 				1234,
-				PRODUCT_JETPACK_ANTISPAM_MONTHLY
+				PRODUCT_JETPACK_ANTI_SPAM_MONTHLY
 			);
 			expect( isProductConflicting ).to.be.true;
 		} );
@@ -103,7 +103,7 @@ describe( 'conflicts', () => {
 
 		test( 'should return true when the site already has Anti-Spam', () => {
 			const isConflicting = isAntiSpamConflicting(
-				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTISPAM_MONTHLY } ),
+				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY } ),
 				1234
 			);
 			expect( isConflicting ).to.be.true;
