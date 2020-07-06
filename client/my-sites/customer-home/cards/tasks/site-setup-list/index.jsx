@@ -4,7 +4,7 @@
 import { Card, Button } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import page from 'page';
 import classnames from 'classnames';
@@ -94,6 +94,43 @@ const trackTaskDisplay = ( dispatch, task, siteId ) => {
 	);
 };
 
+const siteSetupListReducer = ( state, action ) => {
+	switch ( action.type ) {
+		case 'SET_CURRENT_TASK_ID':
+			return {
+				...state,
+				currentTaskId: action.currentTaskId,
+			};
+		case 'SET_CURRENT_TASK':
+			return {
+				...state,
+				currentTask: action.currentTask,
+			};
+		case 'SET_USER_SELECTED_TASK':
+			return {
+				...state,
+				userSelectedTask: action.userSelectedTask,
+			};
+		case 'SET_USE_DRILL_LAYOUT':
+			return {
+				...state,
+				useDrillLayout: action.useDrillLayout,
+			};
+		case 'SET_CURRENT_DRILL_LAYOUT_VIEW':
+			return {
+				...state,
+				currentDrillLayoutView: action.currentDrillLayoutView,
+			};
+		case 'SET_IS_LOADING':
+			return {
+				...state,
+				isLoading: action.isLoading,
+			};
+		default:
+			return state;
+	}
+};
+
 const SiteSetupList = ( {
 	emailVerificationStatus,
 	isEmailUnverified,
@@ -104,13 +141,65 @@ const SiteSetupList = ( {
 	taskUrls,
 	userEmail,
 } ) => {
-	const [ currentTaskId, setCurrentTaskId ] = useState( null );
-	const [ currentTask, setCurrentTask ] = useState( null );
-	const [ userSelectedTask, setUserSelectedTask ] = useState( false );
-	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
-	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
-	const [ isLoading, setIsLoading ] = useState( false );
+	// Data layer dispatch
 	const dispatch = useDispatch();
+
+	// Local state reducer
+	const [ state, localDispatch ] = useReducer( siteSetupListReducer, {
+		currentTaskId: null, // id of the current task
+		currentTask: null, // full object for current task
+		userSelectedTask: false, // was the currently selected task selected by the user
+		useDrillLayout: false, // is using small-screen layout view
+		currentDrillLayoutView: 'nav', // viewing a card on the list of checklist steps?
+	} );
+
+	// Set currentTaskId
+	const currentTaskId = state.currentTaskId;
+	const setCurrentTaskId = ( id ) =>
+		localDispatch( {
+			type: 'SET_CURRENT_TASK_ID',
+			currentTaskId: id,
+		} );
+
+	// Set currentTask
+	const currentTask = state.currentTask;
+	const setCurrentTask = ( task ) =>
+		localDispatch( {
+			type: 'SET_CURRENT_TASK',
+			currentTask: task,
+		} );
+
+	// Set userSelectedTask
+	const userSelectedTask = state.currentTask;
+	const setUserSelectedTask = ( isUserSelectedTask ) =>
+		localDispatch( {
+			type: 'SET_USER_SELECTED_TASK',
+			userSelectedTask: isUserSelectedTask,
+		} );
+
+	// Set useDrillLayout
+	const useDrillLayout = state.useDrillLayout;
+	const setUseDrillLayout = ( shouldUseDrillLayout ) =>
+		localDispatch( {
+			type: 'SET_USE_DRILL_LAYOUT',
+			useDrillLayout: shouldUseDrillLayout,
+		} );
+
+	// Set currentDrillLayoutView
+	const currentDrillLayoutView = state.currentDrillLayoutView;
+	const setCurrentDrillLayoutView = ( drillLayoutView ) =>
+		localDispatch( {
+			type: 'SET_CURRENT_DRILL_LAYOUT_VIEW',
+			currentDrillLayoutView: drillLayoutView,
+		} );
+
+	// Set isLoading
+	const isLoading = state.isLoading;
+	const setIsLoading = ( currentlyLoading ) =>
+		localDispatch( {
+			type: 'SET_IS_LOADING',
+			isLoading: currentlyLoading,
+		} );
 
 	const isDomainUnverified =
 		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
