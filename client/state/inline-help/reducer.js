@@ -67,24 +67,6 @@ export function requesting( state = {}, action ) {
 	return state;
 }
 
-/**
- * Compute the total items shown in the user interface,
- * according to the current value of searchQuery and
- * hasApiResults.
- * This helper function is aligned to the
- * getResultsToShow() selector, used to render the
- * results items in the UI.
- *
- * @param  {object} state  Global state tree.
- * @returns {number} Items shown count.
- */
-function getShownItemCount ( state ) {
-	return ( isEmpty( state.searchQuery ) || ! state.hasAPIResults
-		? ( filter( state.items?.[ state.searchQuery ], { support_type: 'contextual_help' } ) ).length
-		: ( filter( state.items?.[ state.searchQuery ], ( { support_type } ) => typeof support_type === 'undefined' ) ).length
-	) + ( filter( state.items?.[ state.searchQuery ], { support_type: 'admin_section' } ) ).length;
-}
-
 export const search = withoutPersistence(
 	(
 		state = {
@@ -137,7 +119,7 @@ export const search = withoutPersistence(
 					selectedResult: action.resultIndex,
 				};
 			case INLINE_HELP_SELECT_NEXT_RESULT: {
-				const shownItemsCount = getShownItemCount( state );
+				const shownItemsCount = state.items?.[ state.searchQuery ]?.length;
 				if ( shownItemsCount < 0 ) {
 					return {
 						...state,
@@ -151,7 +133,7 @@ export const search = withoutPersistence(
 				};
 			}
 			case INLINE_HELP_SELECT_PREVIOUS_RESULT: {
-				const shownItemsCount = getShownItemCount( state );
+				const shownItemsCount = state.items?.[ state.searchQuery ]?.length;
 				if ( shownItemsCount < 0 ) {
 					return {
 						...state,
