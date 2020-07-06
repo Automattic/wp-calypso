@@ -177,7 +177,19 @@ module.exports = {
 		// - path because we use it quite a bit
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
 
-		// temporarily demote inclusive language rule to a warning until we clear the repository
-		'inclusive-language/use-inclusive-words': 'warn',
+		/**
+		 * temporarily demote inclusive language rule to a warning until we clear the repository
+		 * and allow certain terms that we can't fix yet due to complexity or lack of control over the name
+		 */
+		'inclusive-language/use-inclusive-words': [
+			'warn',
+			{
+				words: [],
+				allowedTerms: [
+					{ term: 'masterbar', allowPartialMatches: true },
+					{ term: 'mastercard', allowPartialMatches: true },
+				],
+			},
+		],
 	},
 };
