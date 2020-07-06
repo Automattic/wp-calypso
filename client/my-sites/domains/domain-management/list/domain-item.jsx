@@ -155,7 +155,12 @@ class DomainItem extends PureComponent {
 					) }
 				</div>
 				<div className="list__domain-auto-renew">
-					<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
+					{ domainDetails?.bundledPlanSubscriptionId && (
+						<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
+					) }
+					{ ! domainDetails?.bundledPlanSubscriptionId && domainDetails?.isAutoRenewing && (
+						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
+					) }
 				</div>
 				<div className="list__domain-email">{ this.renderEmail( domainDetails ) }</div>
 				{ this.renderOptionsButton() }
