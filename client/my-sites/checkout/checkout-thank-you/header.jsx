@@ -324,7 +324,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		event.preventDefault();
 		const { siteAdminUrl } = this.props;
 
-		//Maybe record tracks event
+		this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
+			product_name: 'search',
+			value: 'Customizer',
+			site: 'wpcom',
+		} );
+
 		window.location.href = siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search';
 	};
 
