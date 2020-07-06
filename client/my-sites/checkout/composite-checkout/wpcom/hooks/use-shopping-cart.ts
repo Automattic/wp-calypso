@@ -3,6 +3,7 @@
  */
 import { useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
 import debugFactory from 'debug';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ import {
 	WPCOMCartCouponItem,
 	CheckoutCartItem,
 	CartLocation,
+	getProductSlug,
 } from '../types';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
@@ -102,6 +104,8 @@ function shoppingCartHookReducer(
 		case 'REMOVE_CART_ITEM': {
 			const uuidToRemove = action.uuidToRemove;
 			debug( 'removing item from cart with uuid', uuidToRemove );
+			removeItemFromLocalStorage( getProductSlug( state.responseCart, uuidToRemove ) );
+
 			return {
 				...state,
 				responseCart: removeItemFromResponseCart( state.responseCart, uuidToRemove ),
@@ -246,6 +250,22 @@ function shoppingCartHookReducer(
 	}
 
 	return state;
+}
+
+function removeItemFromLocalStorage( productSlug: string ) {
+	const cartItemsFromLocalStorage = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) );
+
+	if ( ! isEmpty( cartItemsFromLocalStorage ) ) {
+		const newCart = cartItemsFromLocalStorage.filter(
+			( product ) => product.product_slug !== productSlug
+		);
+
+		try {
+			window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCart ) );
+		} catch ( e ) {
+			throw new Error( 'An unexpected error occured while saving your cart: ' + e );
+		}
+	}
 }
 
 function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {

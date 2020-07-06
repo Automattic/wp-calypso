@@ -234,8 +234,12 @@ function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSitePara
 		addPrivacyProtectionIfSupported( item, state )
 	);
 
-	window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItemsToAdd ) );
-	window.localStorage.setItem( 'siteParams', JSON.stringify( newSiteParams ) );
+	try {
+		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItemsToAdd ) );
+		window.localStorage.setItem( 'siteParams', JSON.stringify( newSiteParams ) );
+	} catch ( e ) {
+		throw new Error( 'An unexpected error occured while saving your cart: ' + e );
+	}
 
 	const providedDependencies = {
 		domainItem,

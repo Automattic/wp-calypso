@@ -222,7 +222,8 @@ export default function CompositeCheckout( {
 		getCart || wpcomGetCart,
 		showAddCouponSuccessMessage,
 		cart,
-		recordEvent
+		recordEvent,
+		isLoggedOutCart
 	);
 
 	const getThankYouUrl = useGetThankYouUrl( {

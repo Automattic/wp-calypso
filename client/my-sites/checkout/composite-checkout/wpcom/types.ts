@@ -32,6 +32,7 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	convertRawResponseCartToResponseCart,
 	convertResponseCartToRequestCart,
+	getProductSlug,
 } from './types/backend/shopping-cart-endpoint';
 import type {
 	DomainContactDetails,
@@ -124,6 +125,7 @@ export {
 	formatDomainContactValidationResponse,
 	isValid,
 	areRequiredFieldsNotEmpty,
+	getProductSlug,
 };
 
 /* eslint-enable no-duplicate-imports */
