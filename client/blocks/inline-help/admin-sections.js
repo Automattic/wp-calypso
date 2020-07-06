@@ -69,7 +69,7 @@ export const adminSections = memoize( ( siteSlug ) => [
 	},
 	{
 		title: translate( 'Edit my menu' ),
-		link: `/customize/${ siteSlug }`,
+		link: `/customize/${ siteSlug }?autofocus[panel]=nav_menus`,
 		synonyms: [ 'menu' ],
 		icon: 'customize',
 	},
