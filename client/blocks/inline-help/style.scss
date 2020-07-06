@@ -375,6 +375,10 @@
 		display: block;
 		padding: 8px 16px;
 
+		.gridicon {
+			margin: 0 3px -3px 0;
+		}
+
 		&:hover {
 			cursor: pointer;
 			//color: var( --color-primary );
