@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
+import { noop, castArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,8 @@ export const serially = ( mediaAddingAction, onItemUploaded = noop, onItemFailur
 	files,
 	...extraArgs
 ) => async ( dispatch ) => {
+	files = castArray( files );
+
 	const baseTime = getBaseTime();
 	const fileCount = files.length;
 	const uploadedItems = [];
