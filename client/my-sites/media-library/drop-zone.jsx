@@ -16,6 +16,7 @@ import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 import { clearMediaItemErrors } from 'state/media/actions';
+import { addMedia } from 'state/media/thunks';
 
 class MediaLibraryDropZone extends React.Component {
 	static displayName = 'MediaLibraryDropZone';
@@ -25,6 +26,7 @@ class MediaLibraryDropZone extends React.Component {
 		fullScreen: PropTypes.bool,
 		onAddMedia: PropTypes.func,
 		trackStats: PropTypes.bool,
+		addMedia: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -39,7 +41,7 @@ class MediaLibraryDropZone extends React.Component {
 		}
 
 		this.props.clearMediaItemErrors( this.props.site.ID );
-		MediaActions.add( this.props.site, files );
+		this.props.addMedia( files, this.props.site );
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
@@ -93,4 +95,6 @@ class MediaLibraryDropZone extends React.Component {
 	}
 }
 
-export default connect( null, { clearMediaItemErrors } )( localize( MediaLibraryDropZone ) );
+export default connect( null, { addMedia, clearMediaItemErrors } )(
+	localize( MediaLibraryDropZone )
+);

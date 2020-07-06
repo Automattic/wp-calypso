@@ -11,16 +11,6 @@ export const DUMMY_UPLOAD = {
 	guid: 'test',
 };
 
-export const DUMMY_BLOB_UPLOAD = {
-	fileContents: {
-		size: 123456,
-	},
-	fileName: 'blob-file.jpg',
-	mimeType: 'image/jpeg',
-};
-
-export const DUMMY_URL = 'https://wordpress.com/i/stats-icon.gif';
-
 export const DUMMY_API_RESPONSE = {
 	media: [ { title: 'Image' } ],
 	meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' },
