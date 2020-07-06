@@ -25,6 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementEdit, domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
+import { getSiteAdminUrl } from 'state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import Gridicon from 'components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
@@ -43,7 +44,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getHeading() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
+		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, purchases } = this.props;
 
 		if ( ! isDataLoaded ) {
 			return this.props.translate( 'Loading…' );
@@ -51,6 +52,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some items failed.' );
+		}
+
+		if ( purchases && purchases[ 0 ].productType === 'search' ) {
+			return translate( 'Welcome to Jetpack Search!' );
 		}
 
 		if (
@@ -79,10 +84,22 @@ export class CheckoutThankYouHeader extends PureComponent {
 			hasFailedPurchases,
 			primaryPurchase,
 			displayMode,
+			purchases,
 		} = this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
+		}
+
+		if ( purchases && purchases[ 0 ].productType === 'search' ) {
+			return (
+				translate( 'We are currently indexing your site.' ) +
+				'\n' +
+				translate(
+					'In the meantime we have configured Jetpack Search on your site.' +
+						'You should try customizing it i your traditional WordPress Dashboard.'
+				)
+			);
 		}
 
 		if ( ! isDataLoaded || ! primaryPurchase ) {
@@ -303,6 +320,14 @@ export class CheckoutThankYouHeader extends PureComponent {
 		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
 	};
 
+	goToCustomizer = ( event ) => {
+		event.preventDefault();
+		const { siteAdminUrl } = this.props;
+
+		//Maybe record tracks event
+		window.location.href = siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search';
+	};
+
 	getButtonText = () => {
 		const {
 			displayMode,
@@ -382,12 +407,24 @@ export class CheckoutThankYouHeader extends PureComponent {
 			hasFailedPurchases,
 			translate,
 			primaryPurchase,
+			purchases,
 			selectedSite,
 			displayMode,
 			isAtomic,
 		} = this.props;
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
+		const isSearch = purchases && purchases[ 0 ].productType === 'search';
+
+		if ( isSearch ) {
+			return (
+				<div className="checkout-thank-you__header-button">
+					<button className={ headerButtonClassName } onClick={ this.goToCustomizer }>
+						{ translate( 'Try Search and customize it now.' ) }
+					</button>
+				</div>
+			);
+		}
 
 		if (
 			! isConciergePurchase &&
@@ -510,6 +547,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
 		isAtomic: isAtomicSite( state, ownProps.selectedSite.ID ),
+		siteAdminUrl: getSiteAdminUrl( state, ownProps.selectedSite.ID ),
 	} ),
 	{
 		recordStartTransferClickInThankYou,
