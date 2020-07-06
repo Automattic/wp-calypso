@@ -27,6 +27,10 @@ import { waitForData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
 import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
 import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
+import { getLastPath } from 'state/reader-ui/selectors';
+import { getSection } from 'state/ui/selectors';
+import { isAutomatticTeamMember } from 'reader/lib/teams';
+import { getReaderTeams } from 'state/reader/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -135,11 +139,22 @@ const exported = {
 		const mcKey = 'following';
 		const startDate = getStartDate( context );
 
-		// toggle read
 		const state = context.store.getState();
-		const isOpen = isFollowingOpen( state );
-		if ( ! isOpen ) {
-			context.store.dispatch( toggleReaderSidebarFollowing() );
+		// only for a8c for now
+		if ( isAutomatticTeamMember( getReaderTeams( state ) ) ) {
+			// select last reader path if available, otherwise just open following
+			const currentSection = getSection( state );
+			const lastPath = getLastPath( state );
+
+			if ( lastPath && lastPath !== '/read' && currentSection.name !== 'reader' ) {
+				return page.redirect( lastPath );
+			}
+
+			// if we have no last path, default to Following/All and expand following
+			const isOpen = isFollowingOpen( state );
+			if ( ! isOpen ) {
+				context.store.dispatch( toggleReaderSidebarFollowing() );
+			}
 		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );

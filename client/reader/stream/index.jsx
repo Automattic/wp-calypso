@@ -105,7 +105,7 @@ class ReaderStream extends React.Component {
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
-			this.props.viewStream( { streamKey } );
+			this.props.viewStream( { streamKey, path: window.location.pathname } );
 			this.fetchNextPage( {} );
 		}
 
@@ -152,7 +152,7 @@ class ReaderStream extends React.Component {
 	componentDidMount() {
 		const { streamKey } = this.props;
 		this.props.resetCardExpansions();
-		this.props.viewStream( { streamKey } );
+		this.props.viewStream( { streamKey, path: window.location.pathname } );
 		this.fetchNextPage( {} );
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
