@@ -42,10 +42,10 @@ describe( 'serially', () => {
 		} );
 	} );
 
-	it( 'should not fail all the uploads if one of them fails', async () => {
+	it( 'should not fail all the uploads if one of them fails and should resolve in the list of successful uploads', async () => {
 		innerThunk.mockResolvedValueOnce( 1 ).mockRejectedValueOnce( 2 ).mockResolvedValueOnce( 3 );
 
-		await expect( wrapped( files, extraArg1, extraArg2 )( dispatch ) ).resolves.toEqual( 3 );
+		await expect( wrapped( files, extraArg1, extraArg2 )( dispatch ) ).resolves.toEqual( [ 1, 3 ] );
 
 		expect( mediaAddingAction ).toHaveBeenCalledTimes( 3 );
 	} );
