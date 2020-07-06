@@ -184,6 +184,19 @@ input[type='radio'].domain-management-list-item__radio {
 	color: var( --color-text-subtle );
 }
 
+
+.domain-item__status-info {
+	border-left: 3px solid var( --color-success-50 );
+}
+
+.domain-item__status-warning {
+	border-left: 3px solid var( --color-warning-40 );
+}
+
+.domain-item__status-alert {
+	border-left: 3px solid var( --color-error );
+}
+
 .domain-item__status {
 	display: flex;
 	flex-wrap: wrap;
