@@ -63,7 +63,7 @@ export const adminSections = memoize( ( siteSlug ) => [
 	},
 	{
 		title: translate( 'Change my homepage' ),
-		link: `/customize/${ siteSlug }`,
+		link: `/customize/${ siteSlug }?autofocus[section]=static_front_page`,
 		synonyms: [ 'home', 'homepage' ],
 		icon: 'customize',
 	},
