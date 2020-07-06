@@ -129,7 +129,7 @@
 	.cart__total {
 		color: var( --color-text-subtle );
 		display: table;
-		font-size: 20px;
+		font-size: $font-title-small;
 
 		.cart__total-row.grand-total {
 			display: table-footer-group;

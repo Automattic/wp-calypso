@@ -46,7 +46,7 @@
 }
 
 .action-card__heading {
-	font-size: 21px;
+	font-size: $font-title-small;
 	margin: 5px 0;
 
 	@include breakpoint-deprecated( '>960px' ) {

@@ -256,7 +256,7 @@
 	// Icons smaller on 2col
 	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & .stats-list__icon {
-			font-size: 20px;
+			font-size: $font-title-small;
 			line-height: 1.3;
 		}
 

@@ -29,7 +29,7 @@
 
 .empty-content__line {
 	color: var( --color-neutral-50 );
-	font-size: 22px;
+	font-size: $font-title-small;
 	margin-bottom: 40px;
 
 	@include breakpoint-deprecated( '<660px' ) {

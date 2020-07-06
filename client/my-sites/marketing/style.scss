@@ -304,7 +304,7 @@
 	position: absolute;
 	right: 16px;
 	top: 30px;
-	font-size: 22px;
+	font-size: $font-title-small;
 	color: #aeb8be;
 
 	@include breakpoint-deprecated( '<480px' ) {
@@ -1027,7 +1027,7 @@
 }
 
 .sharing-buttons-preview__panel-heading {
-	font-size: 20px;
+	font-size: $font-title-small;
 	font-weight: normal;
 	color: var( --color-neutral-70 );
 }

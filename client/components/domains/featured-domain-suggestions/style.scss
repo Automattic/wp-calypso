@@ -77,7 +77,7 @@
     }
 
     .domain-registration-suggestion__title {
-		font-size: 20px;
+		font-size: $font-title-small;
 		font-weight: 400;
 		line-height: 1.2;
 		margin-bottom: 0.25em;
@@ -154,7 +154,7 @@
 			font-size: 1.6em;
 		}
 		.featured-domain-suggestions--title-in-14em & {
-			font-size: 1.4em;
+			font-size: $font-title-small;
 		}
 		.featured-domain-suggestions--title-in-12em & {
 			font-size: 1.2em;
