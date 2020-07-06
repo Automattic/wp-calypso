@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -33,6 +34,7 @@ function HelpSearchResults( {
 	selectSearchResult,
 	translate = identity,
 	placeholderLines,
+	recordTracksEvent,
 } ) {
 	const supportType = useRef( searchResults?.[ 0 ]?.support_type );
 
@@ -60,7 +62,17 @@ function HelpSearchResults( {
 		);
 	}
 
-	const selectResultHandler = ( selectionIndex ) => ( event ) => {
+	const onLinkClickHandler = ( selectionIndex, type ) => ( event ) => {
+		// check if it's internal link.
+		const adminLink = event?.target?.href;
+		if ( type === 'admin_section' && adminLink ) {
+			recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
+				link: adminLink,
+				search_term: searchQuery,
+			} );
+			return page( adminLink );
+		}
+
 		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
 		selectSearchResult( selectionIndex );
 		openResult( event, selectedResult );
@@ -82,7 +94,7 @@ function HelpSearchResults( {
 				<li key={ link ?? key } className={ classes }>
 					<a
 						href={ localizeUrl( link ) }
-						onClick={ selectResultHandler( index ) }
+						onClick={ onLinkClickHandler( index, support_type ) }
 						title={ decodeEntities( description ) }
 						tabIndex={ -1 }
 					>
