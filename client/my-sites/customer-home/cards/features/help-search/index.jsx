@@ -18,6 +18,7 @@ import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import HelpSearchCard from 'blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from 'blocks/inline-help/inline-help-search-results';
+import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
 import { RESULT_POST_ID, RESULT_LINK } from 'blocks/inline-help/constants';
 
 /**
@@ -28,9 +29,14 @@ import './style.scss';
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
-const HelpSearch = ( props ) => {
+const HelpSearch = ( {
+	searchQuery,
+	hideInlineHelpUI,
+	showInlineHelpUI,
+	selectedResult,
+	openSupportArticleDialog,
+} ) => {
 	const translate = useTranslate();
-	const { searchQuery, hideInlineHelpUI, showInlineHelpUI } = props;
 
 	// When the Customer Home Support is shown we must hide the
 	// Inline Help FAB
@@ -41,7 +47,7 @@ const HelpSearch = ( props ) => {
 		return () => showInlineHelpUI();
 	}, [ hideInlineHelpUI, showInlineHelpUI ] );
 
-	const openResultView = ( event, selectedResult ) => {
+	const openResultView = ( event ) => {
 		event.preventDefault();
 
 		// Edge case if no search result is selected
@@ -53,7 +59,7 @@ const HelpSearch = ( props ) => {
 		const resultPostId = get( selectedResult, RESULT_POST_ID );
 		const resultLink = amendYouTubeLink( get( selectedResult, RESULT_LINK ) );
 
-		props.openSupportArticleDialog( {
+		openSupportArticleDialog( {
 			postId: resultPostId,
 			actionUrl: resultLink,
 		} );
@@ -94,11 +100,10 @@ const HelpSearch = ( props ) => {
 	);
 };
 
-const mapStateToProps = ( state ) => {
-	return {
-		searchQuery: getSearchQuery( state ),
-	};
-};
+const mapStateToProps = ( state ) => ( {
+	searchQuery: getSearchQuery( state ),
+	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
+} );
 
 const mapDispatchToProps = {
 	hideInlineHelpUI: hideInlineHelp,
