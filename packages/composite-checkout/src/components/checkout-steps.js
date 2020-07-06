@@ -150,7 +150,7 @@ export const CheckoutSummaryCard = styled.div`
 	}
 `;
 
-export function CheckoutStepArea( { children, className } ) {
+export function CheckoutStepArea( { children, className, submitButtonHeader } ) {
 	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const { formStatus } = useFormStatus();
@@ -165,10 +165,14 @@ export function CheckoutStepArea( { children, className } ) {
 	);
 
 	return (
-		<CheckoutStepAreaUI className={ joinClasses( [ className, 'checkout__step-wrapper' ] ) }>
+		<CheckoutStepAreaUI
+			className={ joinClasses( [ className, 'checkout__step-wrapper' ] ) }
+			isLastStepActive={ ! isThereAnotherNumberedStep }
+		>
 			{ children }
 
 			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+				{ submitButtonHeader ? submitButtonHeader : null }
 				<CheckoutErrorBoundary
 					errorMessage={ __( 'There was a problem with the submit button.' ) }
 					onError={ onSubmitButtonLoadError }
@@ -179,6 +183,10 @@ export function CheckoutStepArea( { children, className } ) {
 		</CheckoutStepAreaUI>
 	);
 }
+
+CheckoutStep.propTypes = {
+	submitButtonHeader: PropTypes.node,
+};
 
 export function CheckoutSteps( { children, areStepsActive = true } ) {
 	let stepNumber = 0;
@@ -799,7 +807,7 @@ function getStepNumberFromUrl() {
 		const stepNumber = parts.length > 1 ? parts[ 1 ] : 1;
 		return parseInt( stepNumber, 10 );
 	}
-	return 1;
+	return null;
 }
 
 function useChangeStepNumberForUrl( setActiveStepNumber ) {
@@ -816,7 +824,7 @@ function useChangeStepNumberForUrl( setActiveStepNumber ) {
 		window.addEventListener?.( 'hashchange', () => {
 			const newStepNumber = getStepNumberFromUrl();
 			debug( 'step number in url changed to', newStepNumber );
-			isSubscribed && setActiveStepNumber( newStepNumber );
+			newStepNumber && isSubscribed && setActiveStepNumber( newStepNumber );
 		} );
 		return () => ( isSubscribed = false );
 	}, [ setActiveStepNumber ] );

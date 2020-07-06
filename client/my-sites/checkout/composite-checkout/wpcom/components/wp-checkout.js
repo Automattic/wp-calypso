@@ -231,7 +231,7 @@ export default function WPCheckout( {
 					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
-			<CheckoutStepArea>
+			<CheckoutStepArea submitButtonHeader={ <SubmitButtonHeader /> }>
 				<CheckoutStepBody
 					onError={ onReviewError }
 					className="wp-checkout__review-order-step"
@@ -516,3 +516,23 @@ function useUpdateCartLocationWhenPaymentMethodChanges(
 		}
 	}, [ activePaymentMethod, updateCartContactDetails ] );
 }
+
+function SubmitButtonHeader() {
+	const translate = useTranslate();
+	return (
+		<SubmitButtonHeaderUI>
+			{ translate( 'By checking out you agree to our {{a}}Terms of Service{{/a}}', {
+				components: {
+					a: <a href="#checkout-terms" />,
+				},
+			} ) }
+		</SubmitButtonHeaderUI>
+	);
+}
+
+const SubmitButtonHeaderUI = styled.div`
+	font-size: 13px;
+	margin-top: -5px;
+	margin-bottom: 10px;
+	text-align: center;
+`;
