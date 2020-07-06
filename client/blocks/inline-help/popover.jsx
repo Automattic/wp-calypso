@@ -141,11 +141,11 @@ class InlineHelpPopover extends Component {
 				<QuerySupportTypes />
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
-						openResult={ this.openResultView }
+						onSelect={ this.openResultView }
 						query={ this.props.searchQuery }
 					/>
 					<InlineHelpSearchResults
-						openResult={ this.openResultView }
+						onSelect={ this.openResultView }
 						searchQuery={ this.props.searchQuery }
 					/>
 				</div>

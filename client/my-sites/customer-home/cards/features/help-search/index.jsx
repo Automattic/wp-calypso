@@ -67,13 +67,13 @@ const HelpSearch = ( props ) => {
 					<div className="help-search__content">
 						<div className="help-search__search inline-help__search">
 							<HelpSearchCard
-								openResult={ openResultView }
+								onSelect={ openResultView }
 								query={ searchQuery }
 								location="customer-home"
 								placeholder={ translate( 'Search support articles' ) }
 							/>
 							<HelpSearchResults
-								openResult={ openResultView }
+								onSelect={ openResultView }
 								searchQuery={ searchQuery }
 								placeholderLines={ 5 }
 							/>
