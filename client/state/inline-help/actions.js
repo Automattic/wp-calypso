@@ -1,5 +1,10 @@
 
 /**
+ * External dependencies
+ */
+import { slice } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -54,7 +59,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 		const state = getState();
 		const siteSlug = getSiteSlug( state, getSelectedSiteId( state ) );
 		const contextualResults = getContextualHelpResults( state );
-		const helpAdminResults = getAdminHelpResults(state, searchQuery, siteSlug );
+		const helpAdminResults = slice( getAdminHelpResults( state, searchQuery, siteSlug ), 0, 3 );
 
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();
