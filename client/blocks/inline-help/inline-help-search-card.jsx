@@ -70,7 +70,7 @@ class InlineHelpSearchCard extends Component {
 				break;
 			case 'Enter': {
 				const hasSelection = this.props.selectedResultIndex >= 0;
-				hasSelection && this.props.onSelect( event, this.props.selectedResult );
+				hasSelection && this.props.onSelect( event );
 				break;
 			}
 		}
