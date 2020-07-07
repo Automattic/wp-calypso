@@ -395,8 +395,12 @@ export const adminSections = memoize( ( siteSlug ) => [
  * @returns {Array}             A filtered (or empty) array
  */
 export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 4 ) {
-	const searchTermWords = words( searchTerm ).map( ( word ) => word.toLowerCase() );
+	// Early return if search term is empty.
+	if ( ! searchTerm.length ) {
+		return [];
+	}
 
+	const searchTermWords = words( searchTerm ).map( ( word ) => word.toLowerCase() );
 	if ( searchTermWords.length < 1 ) {
 		return [];
 	}
