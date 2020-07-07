@@ -12,6 +12,7 @@ export const PANEL_MAPPINGS = {
 	'custom-css': [ 'section', 'jetpack_custom_css' ],
 	amp: [ 'section', 'amp_design' ],
 	menus: [ 'panel', 'nav_menus' ],
+	homepage: [ 'section', 'static_front_page' ],
 };
 
 /**
