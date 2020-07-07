@@ -73,7 +73,10 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
 		const siteSlug = getSiteSlug( state, getSelectedSiteId( state ) );
-		const contextualResults = mapWithSupportTypeProp( getContextualHelpResults( state ), SUPPORT_TYPE_CONTEXTUAL_HELP );
+		const contextualResults = mapWithSupportTypeProp(
+			getContextualHelpResults( state ),
+			SUPPORT_TYPE_CONTEXTUAL_HELP
+		);
 		const helpAdminResults = slice( getAdminHelpResults( state, searchQuery, siteSlug ), 0, 3 );
 
 		// Ensure empty strings are removed as valid searches.
@@ -120,9 +123,9 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 
 				const resultItems = hasAPIResults
 					? [
-						...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
-						...helpAdminResults,
-					]
+							...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
+							...helpAdminResults,
+					  ]
 					: [ ...contextualResults, ...helpAdminResults ];
 
 				dispatch( {
