@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@master
+      uses: actions/checkout@HEAD
 
-    # https://github.com/actions/cache/blob/master/examples.md#node---lerna
+    # https://github.com/actions/cache/blob/HEAD/examples.md#node---lerna
     - name: Restore node_modules cache
       id: cache
-      uses: actions/cache@master
+      uses: actions/cache@HEAD
       with:
         path: |
           node_modules
@@ -29,7 +29,7 @@ jobs:
       run: yarn install --frozen-lockfile # Not needed when restoring from cache.
 
     - name: Run composer
-      uses: nick-zh/composer-php@master
+      uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
 
@@ -56,11 +56,11 @@ jobs:
       TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
     steps:
     - name: Checkout code
-      uses: actions/checkout@master
+      uses: actions/checkout@HEAD
 
     # It saves a bit of time to download the artifact rather than doing a build.
     - name: Get Build
-      uses: actions/download-artifact@master
+      uses: actions/download-artifact@HEAD
       with:
         name: fse-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
@@ -74,24 +74,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@master
+      uses: actions/checkout@HEAD
 
     # It saves a bit of time to download the artifact rather than doing a build.
     - name: Get build
-      uses: actions/download-artifact@master
+      uses: actions/download-artifact@HEAD
       with:
         name: fse-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
 
     - name: Run composer
-      uses: nick-zh/composer-php@master
+      uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
 
     # We still need to access some local node modules to run things.
     - name: Restore node_modules cache
       id: cache
-      uses: actions/cache@master
+      uses: actions/cache@HEAD
       with:
         path: |
           node_modules
@@ -120,10 +120,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@master
+      uses: actions/checkout@HEAD
 
     - name: Run composer
-      uses: nick-zh/composer-php@master
+      uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
 
