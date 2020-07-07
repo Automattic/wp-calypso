@@ -525,7 +525,7 @@ export function edits( state = {}, action ) {
 		}
 
 		case POST_GEO_IMAGE_RECEIVE: {
-			// process new edit for a post: merge it into the existing edits
+			// process new goe data for a post: merge it into the existing one
 			const siteId = action.siteId;
 			const postId = action.postId || '';
 			const postEditsLog = get( state, [ siteId, postId ] );
