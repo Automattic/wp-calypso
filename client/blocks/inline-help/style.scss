@@ -355,6 +355,10 @@
 		line-height: 1.4;
 		display: block;
 		padding: 8px 16px;
+
+		&:after {
+			content: ':';
+		}
 	}
 }
 
