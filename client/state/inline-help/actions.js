@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { slice, map } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -77,7 +77,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 			getContextualHelpResults( state ),
 			SUPPORT_TYPE_CONTEXTUAL_HELP
 		);
-		const helpAdminResults = slice( getAdminHelpResults( state, searchQuery, siteSlug ), 0, 3 );
+		const helpAdminResults = getAdminHelpResults( state, searchQuery, siteSlug, 3 );
 
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();
