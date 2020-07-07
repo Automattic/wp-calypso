@@ -32,6 +32,7 @@ import { requestSite } from 'state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customize-homepage-with-gutenberg';
 import getSiteUrl from 'state/selectors/get-site-url';
+import { addQueryArgs } from 'lib/route';
 
 /**
  * Style dependencies
@@ -299,7 +300,10 @@ export default connect(
 			currentTheme,
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
-			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
+			customizeUrl: addQueryArgs(
+				{ 'new-homepage': true },
+				getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId )
+			),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
