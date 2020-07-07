@@ -118,32 +118,30 @@ export const search = withoutPersistence(
 					selectedResult: action.resultIndex,
 				};
 			case INLINE_HELP_SELECT_NEXT_RESULT: {
-				const shownItemsCount = state.items?.[ state.searchQuery ]?.length;
-				if ( shownItemsCount < 0 ) {
+				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
 					return {
 						...state,
-						selectedResult: -1,
+						selectedResult: ( state.selectedResult + 1 ) % state.items[ state.searchQuery ].length,
 					};
 				}
 
 				return {
 					...state,
-					selectedResult:
-						state.selectedResult + 1 >= shownItemsCount ? 0 : state.selectedResult + 1,
+					selectedResult: -1,
 				};
 			}
 			case INLINE_HELP_SELECT_PREVIOUS_RESULT: {
-				const shownItemsCount = state.items?.[ state.searchQuery ]?.length;
-				if ( shownItemsCount < 0 ) {
+				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
+					const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
 					return {
 						...state,
-						selectedResult: -1,
+						selectedResult: newResult < 0 ? state.items[ state.searchQuery ].length - 1 : newResult,
 					};
 				}
 
 				return {
 					...state,
-					selectedResult: state.selectedResult < 1 ? shownItemsCount - 1 : state.selectedResult - 1,
+					selectedResult: -1,
 				};
 			}
 		}
