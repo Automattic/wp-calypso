@@ -17,6 +17,8 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import { withoutHttp } from 'lib/url';
+import { type as domainTypes } from 'lib/domains/constants';
+import { handleRenewNowClick } from 'lib/purchases';
 import { resolveDomainStatus } from 'lib/domains';
 
 class DomainItem extends PureComponent {
@@ -30,6 +32,7 @@ class DomainItem extends PureComponent {
 		onClick: PropTypes.func.isRequired,
 		onAddEmailClick: PropTypes.func.isRequired,
 		onToggle: PropTypes.func,
+		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
 	};
 
@@ -61,6 +64,24 @@ class DomainItem extends PureComponent {
 		onAddEmailClick( domain );
 	};
 
+	renewDomain = ( event ) => {
+		event.stopPropagation();
+
+		const { purchase, site } = this.props;
+		handleRenewNowClick( purchase, site.slug );
+	};
+
+	canRenewDomain() {
+		const { domainDetails, purchase } = this.props;
+		return (
+			domainDetails &&
+			purchase &&
+			domainDetails.currentUserCanManage &&
+			[ domainTypes.WPCOM, domainTypes.TRANSFER ].indexOf( domainDetails.type ) === -1 &&
+			! domainDetails.bundledPlanSubscriptionId
+		);
+	}
+
 	renderOptionsButton() {
 		const { isManagingAllSites, translate } = this.props;
 
@@ -70,8 +91,11 @@ class DomainItem extends PureComponent {
 					{ ! isManagingAllSites && (
 						<PopoverMenuItem icon="domains">{ translate( 'Make primary domain' ) }</PopoverMenuItem>
 					) }
-					<PopoverMenuItem icon="refresh">{ translate( 'Renew now' ) }</PopoverMenuItem>
-					<PopoverMenuItem icon="sync">{ translate( 'Turn off auto-renew' ) }</PopoverMenuItem>
+					{ this.canRenewDomain() && (
+						<PopoverMenuItem icon="refresh" onClick={ this.renewDomain }>
+							{ translate( 'Renew now' ) }
+						</PopoverMenuItem>
+					) }
 					<PopoverMenuItem icon="pencil">{ translate( 'Edit settings' ) }</PopoverMenuItem>
 				</EllipsisMenu>
 			</div>

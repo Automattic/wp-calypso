@@ -37,6 +37,8 @@ import QueryAllDomains from 'components/data/query-all-domains';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { emailManagement } from 'my-sites/email/paths';
+import { getUserPurchases } from 'state/purchases/selectors';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 
 /**
  * Style dependencies
@@ -104,6 +106,7 @@ class ListAll extends Component {
 			sites,
 			domainsDetails,
 			canManageSitesMap,
+			purchases,
 			requestingSiteDomains,
 		} = this.props;
 
@@ -118,6 +121,9 @@ class ListAll extends Component {
 						domain={ domain }
 						domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
 						site={ sites[ domain?.blogId ] }
+						purchase={
+							purchases[ this.findDomainDetails( domainsDetails, domain )?.subscriptionId ]
+						}
 						isManagingAllSites={ true }
 						isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
 						showSite={ true }
@@ -131,7 +137,7 @@ class ListAll extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, user } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -141,6 +147,7 @@ class ListAll extends Component {
 				</div>
 				<div className="list-all__container">
 					<QueryAllDomains />
+					<QueryUserPurchases userId={ user.ID } />
 					<Main wideLayout>
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
@@ -161,15 +168,19 @@ const addDomainClick = () =>
 export default connect(
 	( state ) => {
 		const sites = keyBy( getVisibleSites( state ), 'ID' );
+		const user = getCurrentUser( state );
+		const purchases = keyBy( getUserPurchases( state, user?.ID ) || [], 'id' );
+
 		return {
 			canManageSitesMap: canCurrentUserForSites( state, keys( sites ), 'manage_options' ),
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
+			purchases,
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
-			user: getCurrentUser( state ),
+			user,
 		};
 	},
 	( dispatch ) => {
