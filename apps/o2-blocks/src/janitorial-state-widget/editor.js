@@ -6,7 +6,7 @@ import { RichText } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
-import Tiers from './tiers/tiers';
+import Tiers from './components/tiers/tiers';
 
 const edit = ( props ) => {
 	const {
