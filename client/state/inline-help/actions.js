@@ -80,11 +80,16 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 			getContextualHelpResults( state ),
 			SUPPORT_TYPE_CONTEXTUAL_HELP
 		);
-		const helpAdminResults = getAdminHelpResults( state, searchQuery, {
-			customizeUrl,
-			siteId,
-			siteSlug,
-		}, 3 );
+		const helpAdminResults = getAdminHelpResults(
+			state,
+			searchQuery,
+			{
+				customizeUrl,
+				siteId,
+				siteSlug,
+			},
+			3
+		);
 
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();
