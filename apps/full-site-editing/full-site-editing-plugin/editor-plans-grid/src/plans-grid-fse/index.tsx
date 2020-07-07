@@ -17,7 +17,16 @@ const PlansGridFSE: React.FunctionComponent< Props > = ( { ...props } ) => {
 
 	const currentPlan = useSelectedPlan();
 
-	return <PlansGrid currentDomain={ currentDomain } currentPlan={ currentPlan } { ...props } />;
+	const handleSelect = ( plan ) => console.log( plan ); // eslint-disable-line no-console
+
+	return (
+		<PlansGrid
+			currentDomain={ currentDomain }
+			currentPlan={ currentPlan }
+			onPlanSelect={ handleSelect }
+			{ ...props }
+		/>
+	);
 };
 
 export default PlansGridFSE;
