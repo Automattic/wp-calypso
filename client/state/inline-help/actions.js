@@ -49,6 +49,18 @@ export function setInlineHelpSearchQuery( searchQuery = '' ) {
 }
 
 /**
+ * Map the collection, populating each result object
+ * with the given support type value.
+ *
+ * @param {Array}   collection   - collection to populate.
+ * @param {string}  support_type - Support type to add to each result item.
+ * @returns {array}                populated collection.
+ */
+function mapWithSupportTypeProp( collection, support_type ) {
+	return map( collection, ( item ) => ( { ...item, support_type } ) );
+}
+
+/**
  * Fetches search results for a given query string.
  * Triggers an API request. If this returns no results
  * then hard coded results are returned based on the context of the
@@ -61,10 +73,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
 		const siteSlug = getSiteSlug( state, getSelectedSiteId( state ) );
-		const contextualResults = map( getContextualHelpResults( state ), ( item ) => ( {
-			...item,
-			support_type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-		} ) );
+		const contextualResults = mapWithSupportTypeProp( getContextualHelpResults( state ), SUPPORT_TYPE_CONTEXTUAL_HELP );
 		const helpAdminResults = slice( getAdminHelpResults( state, searchQuery, siteSlug ), 0, 3 );
 
 		// Ensure empty strings are removed as valid searches.
@@ -109,23 +118,17 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 					hasAPIResults,
 				} );
 
-				let items = [];
-				if ( hasAPIResults ) {
-					items = [
-						...map( searchResults, ( item ) => ( {
-							...item,
-							support_type: SUPPORT_TYPE_API_HELP,
-						} ) ),
+				const resultItems = hasAPIResults
+					? [
+						...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
 						...helpAdminResults,
-					];
-				} else {
-					items = [ ...contextualResults, ...helpAdminResults ];
-				}
+					]
+					: [ ...contextualResults, ...helpAdminResults ];
 
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
-					searchResults: items,
+					searchResults: resultItems,
 				} );
 			} )
 			.catch( ( error ) => {
