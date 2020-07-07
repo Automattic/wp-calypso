@@ -51,7 +51,7 @@ class ListAll extends Component {
 		sites: PropTypes.object.isRequired,
 		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
-		isRequestingAllSiteDomains: PropTypes.object,
+		requestingSiteDomains: PropTypes.object,
 	};
 
 	clickAddDomain = () => {
@@ -84,8 +84,8 @@ class ListAll extends Component {
 	}
 
 	isLoading() {
-		const { domainsList, requestingDomains, sites } = this.props;
-		return ! sites || ( requestingDomains && domainsList.length === 0 );
+		const { domainsList, requestingFlatDomains, sites } = this.props;
+		return ! sites || ( requestingFlatDomains && domainsList.length === 0 );
 	}
 
 	findDomainDetails( domainsDetails = [], domain = {} ) {
@@ -104,7 +104,7 @@ class ListAll extends Component {
 			sites,
 			domainsDetails,
 			canManageSitesMap,
-			isRequestingAllSiteDomains,
+			requestingSiteDomains,
 		} = this.props;
 
 		const domainListItems = domainsList
@@ -119,7 +119,7 @@ class ListAll extends Component {
 						domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
 						site={ sites[ domain?.blogId ] }
 						isManagingAllSites={ true }
-						isLoadingDomainDetails={ isRequestingAllSiteDomains[ domain?.blogId ] ?? false }
+						isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
 						showSite={ true }
 						onClick={ this.handleDomainItemClick }
 						onAddEmailClick={ this.handleAddEmailClick }
@@ -166,8 +166,8 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
-			requestingDomains: isRequestingAllDomains( state ),
-			isRequestingAllSiteDomains: getAllRequestingSiteDomains( state ),
+			requestingFlatDomains: isRequestingAllDomains( state ),
+			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
 			user: getCurrentUser( state ),
 		};
