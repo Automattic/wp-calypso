@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { filter, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
