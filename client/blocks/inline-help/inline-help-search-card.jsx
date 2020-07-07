@@ -73,7 +73,13 @@ class InlineHelpSearchCard extends Component {
 				this.props.selectNextResult();
 				break;
 			case 'Enter': {
-				const { selectedResultIndex, selectedResult, query, onSelect, recordTracksEvent } = this.props;
+				const {
+					selectedResultIndex,
+					selectedResult,
+					query,
+					onSelect,
+					recordTracksEvent,
+				} = this.props;
 
 				// check and catch admin section links.
 				const { support_type: supportType, link } = selectedResult;
@@ -83,12 +89,12 @@ class InlineHelpSearchCard extends Component {
 						search_term: query,
 					} );
 					// push state only if it's internal link.
-					if ( ! ( /^http/.test( link ) ) ) {
+					if ( ! /^http/.test( link ) ) {
 						event.preventDefault();
 						return page( link );
 					} else {
 						// redirect external links.
-						return window.location.href = link;
+						return ( window.location.href = link );
 					}
 				}
 

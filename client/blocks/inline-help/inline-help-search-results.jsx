@@ -55,7 +55,7 @@ function HelpSearchResults( {
 				title = translate( 'Show me where to:' );
 				break;
 			default:
-				return null
+				return null;
 		}
 
 		return (
@@ -77,7 +77,7 @@ function HelpSearchResults( {
 			} );
 
 			// push state only if it's internal link.
-			if ( ! ( /^http/.test( link ) ) ) {
+			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
 				return page( link );
 			} else {
@@ -92,7 +92,10 @@ function HelpSearchResults( {
 
 	const selectCurrentResultIndex = ( index ) => () => selectSearchResult( index );
 
-	const renderHelpLink = ( { link,  key,  description,  title,  support_type = SUPPORT_TYPE_API_HELP }, index ) => {
+	const renderHelpLink = (
+		{ link, key, description, title, support_type = SUPPORT_TYPE_API_HELP },
+		index
+	) => {
 		const addResultsSection = supportType?.current !== support_type || ! index;
 		if ( addResultsSection ) {
 			supportType.current = support_type;
@@ -113,9 +116,13 @@ function HelpSearchResults( {
 						title={ decodeEntities( description ) }
 						tabIndex={ -1 }
 					>
-						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && <Gridicon icon="domains" size={ 18 } /> }
+						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && (
+							<Gridicon icon="domains" size={ 18 } />
+						) }
 						<span>{ preventWidows( decodeEntities( title ) ) }</span>
-						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && <Gridicon icon="chevron-right" size={ 18 } /> }
+						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && (
+							<Gridicon icon="chevron-right" size={ 18 } />
+						) }
 					</a>
 				</li>
 			</Fragment>
@@ -134,15 +141,14 @@ function HelpSearchResults( {
 		return (
 			<>
 				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
-					<p className="inline-help__empty-results">{
-						translate( 'Sorry, there were no matches. Here are some of the most searched for help pages for this section:'
+					<p className="inline-help__empty-results">
+						{ translate(
+							'Sorry, there were no matches. Here are some of the most searched for help pages for this section:'
 						) }
 					</p>
 				) }
 
-				<ul className="inline-help__results-list">
-					{ searchResults.map( renderHelpLink ) }
-				</ul>
+				<ul className="inline-help__results-list">{ searchResults.map( renderHelpLink ) }</ul>
 			</>
 		);
 	};

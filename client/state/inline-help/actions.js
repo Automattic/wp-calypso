@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -31,7 +30,10 @@ import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-resu
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import 'state/inline-help/init';
-import { SUPPORT_TYPE_API_HELP, SUPPORT_TYPE_CONTEXTUAL_HELP } from "../../blocks/inline-help/constants";
+import {
+	SUPPORT_TYPE_API_HELP,
+	SUPPORT_TYPE_CONTEXTUAL_HELP,
+} from '../../blocks/inline-help/constants';
 
 /**
  * Set the search query in the state tree for the inline help.
@@ -59,7 +61,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
 		const siteSlug = getSiteSlug( state, getSelectedSiteId( state ) );
-		const contextualResults = map( getContextualHelpResults( state ), item => ( {
+		const contextualResults = map( getContextualHelpResults( state ), ( item ) => ( {
 			...item,
 			support_type: SUPPORT_TYPE_CONTEXTUAL_HELP,
 		} ) );
@@ -107,13 +109,15 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 					hasAPIResults,
 				} );
 
-
 				let items = [];
 				if ( hasAPIResults ) {
-					items = [ ...( map( searchResults, item => ( {
-						...item,
-						support_type: SUPPORT_TYPE_API_HELP,
-					} ) ) ), ...helpAdminResults ];
+					items = [
+						...map( searchResults, ( item ) => ( {
+							...item,
+							support_type: SUPPORT_TYPE_API_HELP,
+						} ) ),
+						...helpAdminResults,
+					];
 				} else {
 					items = [ ...contextualResults, ...helpAdminResults ];
 				}
