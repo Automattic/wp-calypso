@@ -186,10 +186,10 @@ export const adminSections = memoize( ( siteSlug ) => [
 		icon: 'cog',
 	},
 	{
-		title: translate( "Set a site icon" ),
+		title: translate( 'Set a site icon' ),
 		link: `/settings/general/${ siteSlug }`,
 		icon: 'cog',
-		synonyms: [ 'logo' ]
+		synonyms: [ 'logo' ],
 	},
 	{
 		title: translate( "Change my site's footer text" ),
