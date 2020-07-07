@@ -120,9 +120,6 @@ function HelpSearchResults( {
 							<Gridicon icon="domains" size={ 18 } />
 						) }
 						<span>{ preventWidows( decodeEntities( title ) ) }</span>
-						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && (
-							<Gridicon icon="chevron-right" size={ 18 } />
-						) }
 					</a>
 				</li>
 			</Fragment>

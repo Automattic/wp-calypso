@@ -386,11 +386,6 @@
 		.gridicon {
 			align-self: center;
 			margin-right: 8px;
-
-			&.gridicons-chevron-right {
-				margin: 0;
-				color: var( --color-neutral-30 );
-			}
 		}
 
 		&:hover {
@@ -416,10 +411,6 @@
 
 		a {
 			color: var( --color-text-inverted );
-
-			.gridicons-chevron-right {
-				color: var( --color-text-inverted );
-			}
 		}
 	}
 
