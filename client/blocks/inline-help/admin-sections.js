@@ -357,13 +357,13 @@ export const adminSections = memoize( ( siteSlug ) => [
 	{
 		title: translate( 'I cannot find my site on Google' ),
 		link: `/marketing/traffic/${ siteSlug }`,
-		synonyms: [ 'google', 'traffic' ],
+		synonyms: [ 'google', 'traffic', 'seo' ],
 		icon: 'speaker',
 	},
 	{
 		title: translate( 'Verify my site with Google' ),
 		link: `/marketing/traffic/${ siteSlug }`,
-		synonyms: [ 'google', 'traffic' ],
+		synonyms: [ 'google', 'traffic', 'seo' ],
 		icon: 'cog',
 	},
 	{
