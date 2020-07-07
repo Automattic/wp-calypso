@@ -24,7 +24,7 @@ import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results
 import { selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 import Gridicon from 'components/gridicon';
-import { SUPPORT_TYPE_ADMIN_SECTION, SUPPORT_TYPE_API_HELP } from './constants';
+import {SUPPORT_TYPE_ADMIN_SECTION, SUPPORT_TYPE_API_HELP, SUPPORT_TYPE_CONTEXTUAL_HELP} from './constants';
 
 function HelpSearchResults( {
 	hasAPIResults = false,
@@ -41,13 +41,20 @@ function HelpSearchResults( {
 } ) {
 	const supportTypeRef = useRef( searchResults?.[ 0 ]?.support_type );
 
-	function getTitleBySectionType( addSection, type ) {
+	function getTitleBySectionType( addSection, type, query = '' ) {
 		if ( ! addSection ) {
 			return null;
 		}
 
 		let title = '';
 		switch ( type ) {
+			case SUPPORT_TYPE_CONTEXTUAL_HELP:
+				if ( ! query.length ) {
+					return;
+				}
+				title = translate( 'This might interest you' );
+				break;
+
 			case SUPPORT_TYPE_API_HELP:
 				title = translate( 'Support articles' );
 				break;
@@ -106,7 +113,7 @@ function HelpSearchResults( {
 
 		return (
 			<Fragment key={ link ?? key }>
-				{ getTitleBySectionType( addResultsSection, support_type ) }
+				{ getTitleBySectionType( addResultsSection, support_type, searchQuery ) }
 				<li className={ classes }>
 					<a
 						href={ localizeUrl( link ) }
