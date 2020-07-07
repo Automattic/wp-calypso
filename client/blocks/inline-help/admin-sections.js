@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { intersection, words, memoize, noop } from 'lodash';
+import { intersection, words, memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { getCustomizerUrl } from 'state/sites/selectors';
 
 /**
  * Internal Dependencies
@@ -13,11 +14,12 @@ import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 /**
  * Returns admin section items with site-based urls.
  *
- * @param   {object} options.siteSlug     - The current site slug.
- * @param   {object} options.customizeUrl - Customizer URL.
- * @returns {Array}                         An array of admin sections with site-specific URLs.
+ * @param   {number} siteId   - The current site ID.
+ * @param   {string} siteSlug - The current site slug.
+ * @param   {object} state    - Global state
+ * @returns {Array}             An array of admin sections with site-specific URLs.
  */
-export const adminSections = memoize( ( { siteSlug, customizeUrl = noop } ) => [
+export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	{
 		title: translate( 'Add a new domain' ),
 		description: translate(
@@ -59,25 +61,25 @@ export const adminSections = memoize( ( { siteSlug, customizeUrl = noop } ) => [
 	},
 	{
 		title: translate( "Customize my site's theme" ),
-		link: customizeUrl(),
+		link: getCustomizerUrl( state, siteId ),
 		synonyms: [ 'color', 'font', 'design', 'css', 'widgets' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Change my homepage' ),
-		link: customizeUrl( 'homepage' ),
+		link: getCustomizerUrl( state, siteId, 'homepage' ),
 		synonyms: [ 'home', 'homepage' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Edit my menu' ),
-		link: customizeUrl( 'menus' ),
+		link: getCustomizerUrl( state, siteId, 'menus' ),
 		synonyms: [ 'menu' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Set a site logo' ),
-		link: customizeUrl( 'identity' ),
+		link: getCustomizerUrl( state, siteId, 'identity' ),
 		synonyms: [ 'logo', 'identity' ],
 		icon: 'customize',
 	},

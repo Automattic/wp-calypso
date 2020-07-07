@@ -6,6 +6,8 @@
  * Internal dependencies
  */
 import { adminSections, filterListBySearchTerm } from 'blocks/inline-help/admin-sections';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Returns a filtered site admin collection using the memoized adminSections.
@@ -16,14 +18,16 @@ import { adminSections, filterListBySearchTerm } from 'blocks/inline-help/admin-
  *
  * @param   {object} state      Global state tree
  * @param   {string} searchTerm The search term
- * @param   {object} options    Options object with useful data.
  * @param   {number} limit      The maximum number of results to show
  * @returns {Array}             A filtered (or empty) array
  */
-export default function getAdminHelpResults( state, searchTerm = '', options = {}, limit ) {
+export default function getAdminHelpResults( state, searchTerm = '', limit ) {
 	if ( ! searchTerm ) {
 		return [];
 	}
 
-	return filterListBySearchTerm( searchTerm, adminSections( options ), limit );
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSiteSlug( state, siteId );
+
+	return filterListBySearchTerm( searchTerm, adminSections( siteId, siteSlug, state ), limit );
 }

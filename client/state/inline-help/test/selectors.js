@@ -139,12 +139,25 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 
 describe( 'getAdminSectionsResults()', () => {
 	test( 'should return an empty array when there is no search term', () => {
-		const result = getAdminHelpResults( {} );
+		const result = getAdminHelpResults( {
+			ui: {
+				selectedSiteId: 1,
+			},
+			sites: {},
+		} );
 		expect( result ).to.deep.equal( [] );
 	} );
 
 	test( 'should return results for `domain` term', () => {
-		const results = getAdminHelpResults( {}, 'Add a new domain' );
+		const results = getAdminHelpResults(
+			{
+				ui: {
+					selectedSiteId: 1,
+				},
+				sites: {},
+			},
+			'Add a new domain'
+		);
 
 		expect( results ).to.be.a( 'array' );
 		expect( results ).to.not.deep.equal( [] );
