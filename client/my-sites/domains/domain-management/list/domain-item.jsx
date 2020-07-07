@@ -82,6 +82,45 @@ class DomainItem extends PureComponent {
 		);
 	}
 
+	renderCheckmark( present ) {
+		return present ? <Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" /> : null;
+	}
+
+	renderMinus() {
+		return <Gridicon className="domain-item__icon" size={ 18 } icon="minus" />;
+	}
+
+	renderTransferLock() {
+		const { domainDetails } = this.props;
+		if ( domainDetails?.type === domainTypes.REGISTERED ) {
+			return this.renderCheckmark( domainDetails?.isLocked );
+		}
+
+		return this.renderMinus();
+	}
+
+	renderAutoRenew() {
+		const { domainDetails } = this.props;
+		switch ( domainDetails?.type ) {
+			case domainTypes.WPCOM:
+			case domainTypes.TRANSFER:
+				return this.renderMinus();
+			default:
+				return domainDetails?.bundledPlanSubscriptionId
+					? this.renderMinus()
+					: this.renderCheckmark( domainDetails?.isAutoRenewing );
+		}
+	}
+
+	renderPrivacy() {
+		const { domainDetails } = this.props;
+		if ( domainDetails?.type === domainTypes.REGISTERED ) {
+			return this.renderCheckmark( domainDetails?.privateDomain );
+		}
+
+		return this.renderMinus();
+	}
+
 	renderOptionsButton() {
 		const { isManagingAllSites, translate } = this.props;
 
@@ -153,24 +192,9 @@ class DomainItem extends PureComponent {
 
 		return (
 			<>
-				<div className="list__domain-transfer-lock">
-					{ domainDetails?.isLocked && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
-				<div className="list__domain-privacy">
-					{ domainDetails?.privateDomain && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
-				<div className="list__domain-auto-renew">
-					{ domainDetails?.bundledPlanSubscriptionId && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
-					) }
-					{ ! domainDetails?.bundledPlanSubscriptionId && domainDetails?.isAutoRenewing && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
+				<div className="list__domain-transfer-lock">{ this.renderTransferLock() }</div>
+				<div className="list__domain-privacy">{ this.renderPrivacy() }</div>
+				<div className="list__domain-auto-renew">{ this.renderAutoRenew() }</div>
 				<div className="list__domain-email">{ this.renderEmail( domainDetails ) }</div>
 				{ this.renderOptionsButton() }
 			</>
