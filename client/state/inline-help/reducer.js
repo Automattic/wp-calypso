@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -129,7 +128,8 @@ export const search = withoutPersistence(
 
 				return {
 					...state,
-					selectedResult: ( state.selectedResult + 1 ) >= shownItemsCount ? 0 : state.selectedResult + 1
+					selectedResult:
+						state.selectedResult + 1 >= shownItemsCount ? 0 : state.selectedResult + 1,
 				};
 			}
 			case INLINE_HELP_SELECT_PREVIOUS_RESULT: {
@@ -143,7 +143,7 @@ export const search = withoutPersistence(
 
 				return {
 					...state,
-					selectedResult: state.selectedResult < 1 ? shownItemsCount - 1 : state.selectedResult - 1
+					selectedResult: state.selectedResult < 1 ? shownItemsCount - 1 : state.selectedResult - 1,
 				};
 			}
 		}
