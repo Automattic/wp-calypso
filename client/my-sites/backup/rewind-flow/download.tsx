@@ -14,10 +14,10 @@ import { defaultRewindConfig, RewindConfig } from './types';
 import { getRewindBackupProgress, rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
-import getBackupDownloadId from 'state/selectors/get-backup-download-id';
 import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
 import getBackupDownloadRewindId from 'state/selectors/get-backup-download-rewind-id';
 import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
+import getBackupProgress from 'state/selectors/get-backup-progress';
 import getRequest from 'state/selectors/get-request';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
@@ -33,6 +33,11 @@ interface Props {
 	siteUrl: string;
 }
 
+// Future Work: Centralize typing
+interface BackupProgress {
+	downloadId: number;
+}
+
 const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	backupDisplayDate,
 	rewindId,
@@ -45,7 +50,11 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const [ userRequestedDownload, setUserRequestedDownload ] = useState( false );
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 
-	const downloadId = useSelector( ( state ) => getBackupDownloadId( state, siteId ) );
+	const backupProgress = useSelector( ( state ) =>
+		getBackupProgress( state, siteId )
+	) as BackupProgress | null;
+	console.log( 'backupProgress: ', backupProgress );
+	const downloadId = backupProgress?.downloadId;
 	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId ) );
 	const downloadProgress = useSelector( ( state ) => getBackupDownloadProgress( state, siteId ) );
 	const downloadRewindId = useSelector( ( state ) => getBackupDownloadRewindId( state, siteId ) );
