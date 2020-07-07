@@ -57,16 +57,28 @@ export function prefetchDesignThumbs() {
 }
 
 export function getAvailableDesigns(
+	includeEdgeDesigns: boolean = isEnabled( 'gutenboarding/edge-templates' ),
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ) {
+	let designs = availableDesigns;
+
+	if ( ! includeEdgeDesigns ) {
+		designs = {
+			...designs,
+			featured: designs.featured.filter( ( design ) => ! design.is_alpha ),
+		};
+	}
+
 	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
 	// the FSE designs.
-	return {
-		...availableDesigns,
-		featured: availableDesigns.featured.filter( ( design ) =>
+	designs = {
+		...designs,
+		featured: designs.featured.filter( ( design ) =>
 			useFseDesigns ? design.is_fse : ! design.is_fse
 		),
 	};
+
+	return designs;
 }
 
 export default getAvailableDesigns();
