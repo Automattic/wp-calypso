@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
