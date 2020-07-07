@@ -49,10 +49,10 @@ function HelpSearchResults( {
 		let title = '';
 		switch ( type ) {
 			case SUPPORT_TYPE_API_HELP:
-				title = translate( 'Support articles:' );
+				title = translate( 'Support articles' );
 				break;
 			case SUPPORT_TYPE_ADMIN_SECTION:
-				title = translate( 'Show me where to:' );
+				title = translate( 'Show me where to' );
 				break;
 			default:
 				return null;
@@ -60,7 +60,7 @@ function HelpSearchResults( {
 
 		return (
 			<li className="inline-help__results-title">
-				<h2>{ title }</h2>
+				<h2>{ title }</h2>:
 			</li>
 		);
 	}
