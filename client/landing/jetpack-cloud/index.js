@@ -9,8 +9,8 @@ import React from 'react';
  */
 import { translate } from 'i18n-calypso';
 import { makeLayout, render as clientRender } from 'controller';
-import Home from './sections/home';
 import { siteSelection, sites, navigation } from 'my-sites/controller';
+import { getCurrentUser } from 'state/current-user/selectors';
 import Landing from './sections/landing';
 
 const selectionPrompt = ( context, next ) => {
@@ -21,17 +21,20 @@ const selectionPrompt = ( context, next ) => {
 	next();
 };
 
+const redirectToPrimarySiteLanding = ( context ) => {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+
+	page( `/landing/${ currentUser?.primarySiteSlug ?? '' }` );
+};
+
 const landingController = ( context, next ) => {
 	context.primary = <Landing />;
 	next();
 };
 
 export default function () {
-	const homeController = ( context, next ) => {
-		context.primary = <Home />;
-		next();
-	};
-	page( '/', homeController, makeLayout, clientRender );
+	page( '/', siteSelection, redirectToPrimarySiteLanding );
 	page( '/landing', siteSelection, selectionPrompt, sites, navigation, makeLayout, clientRender );
 	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
 }
