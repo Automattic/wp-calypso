@@ -11,13 +11,15 @@ import { noop } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
-import { rewindBackup } from 'state/activity-log/actions';
+import { getRewindBackupProgress, rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
 import getBackupDownloadId from 'state/selectors/get-backup-download-id';
 import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
 import getBackupDownloadRewindId from 'state/selectors/get-backup-download-rewind-id';
 import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
+import getRequest from 'state/selectors/get-request';
+import Loading from './loading';
 import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
@@ -47,6 +49,9 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId ) );
 	const downloadProgress = useSelector( ( state ) => getBackupDownloadProgress( state, siteId ) );
 	const downloadRewindId = useSelector( ( state ) => getBackupDownloadRewindId( state, siteId ) );
+	const downloadInfoRequest = useSelector( ( state ) =>
+		getRequest( state, getRewindBackupProgress( siteId ) )
+	);
 
 	const requestDownload = useCallback(
 		() => dispatch( rewindBackup( siteId, rewindId, rewindConfig ) ),
@@ -57,6 +62,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		'calypso_jetpack_backup_download_click'
 	);
 
+	const isDownloadInfoRequestComplete = downloadInfoRequest?.hasLoaded;
 	const isOtherDownloadInfo = downloadRewindId !== rewindId;
 	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== null;
 
@@ -218,7 +224,9 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	);
 
 	const render = () => {
-		if ( isOtherDownloadInfo || ( downloadProgress === null && downloadUrl === null ) ) {
+		if ( ! isDownloadInfoRequestComplete ) {
+			return <Loading />;
+		} else if ( isOtherDownloadInfo || ( downloadProgress === null && downloadUrl === null ) ) {
 			return renderConfirm();
 		} else if ( downloadProgress !== null && downloadUrl === null ) {
 			if ( ! userRequestedDownload ) {
