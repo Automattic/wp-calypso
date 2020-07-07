@@ -74,7 +74,6 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 		const state = getState();
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
-		const customizeUrl = getCustomizerUrl( state, siteId );
 
 		const contextualResults = mapWithSupportTypeProp(
 			getContextualHelpResults( state ),
@@ -84,7 +83,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 			state,
 			searchQuery,
 			{
-				customizeUrl,
+				customizeUrl: ( panel ) => getCustomizerUrl( state, siteId, panel ),
 				siteId,
 				siteSlug,
 			},
