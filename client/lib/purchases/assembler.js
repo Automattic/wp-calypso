@@ -58,7 +58,6 @@ function createPurchaseObject( purchase ) {
 		totalRefundAmount: Number( purchase.total_refund_amount ),
 		totalRefundText: purchase.total_refund_text,
 		refundAmount: Number( purchase.refund_amount ),
-		refundCurrencySymbol: purchase.refund_currency_symbol,
 		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
