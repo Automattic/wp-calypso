@@ -30,6 +30,7 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
 	| { type: 'TOUCH_CONTACT_DETAILS' }
 	| { type: 'UPDATE_COUNTRY_CODE'; payload: string }
+	| { type: 'LOAD_COUNTRY_CODE_FROM_GEOIP'; payload: string }
 	| {
 			type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE';
 			payload: PossiblyCompleteDomainContactDetails;
@@ -78,6 +79,8 @@ export function useWpcomStore(
 				return updaters.setErrorMessages( state, action.payload );
 			case 'TOUCH_CONTACT_DETAILS':
 				return updaters.touchContactFields( state );
+			case 'LOAD_COUNTRY_CODE_FROM_GEOIP':
+				return updaters.populateCountryCodeFromGeoIP( state, action.payload );
 			case 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE':
 				return updaters.populateDomainFieldsFromCache( state, action.payload );
 			default:
@@ -155,6 +158,10 @@ export function useWpcomStore(
 
 			updateVatId( payload: string ): WpcomStoreAction {
 				return { type: 'UPDATE_VAT_ID', payload: payload };
+			},
+
+			loadCountryCodeFromGeoIP( payload: string ): WpcomStoreAction {
+				return { type: 'LOAD_COUNTRY_CODE_FROM_GEOIP', payload };
 			},
 
 			loadDomainContactDetailsFromCache(
