@@ -121,17 +121,15 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 					hasAPIResults,
 				} );
 
-				const resultItems = hasAPIResults
-					? [
-							...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
-							...helpAdminResults,
-					  ]
-					: [ ...contextualResults, ...helpAdminResults ];
-
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
-					searchResults: resultItems,
+					searchResults: hasAPIResults
+						? [
+								...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
+								...helpAdminResults,
+						  ]
+						: [ ...contextualResults, ...helpAdminResults ],
 				} );
 			} )
 			.catch( ( error ) => {
