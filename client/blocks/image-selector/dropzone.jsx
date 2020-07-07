@@ -39,10 +39,11 @@ class ImageSelectorDropZone extends Component {
 			return false;
 		}
 
-		const uploadedMedia = await this.props.addMedia( this.props.site, {
+		const file = {
 			fileContents: droppedImage,
 			fileName: droppedImage.name,
-		} );
+		};
+		const uploadedMedia = await this.props.addMedia( file, this.props.site );
 
 		this.props.onDroppedImage( uploadedMedia );
 	};
