@@ -55,6 +55,7 @@ export const JETPACK_ANTI_SPAM_PRODUCTS = [
 export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_BACKUP_PRODUCTS,
 	...( isEnabled( 'jetpack/scan-product' ) ? JETPACK_SCAN_PRODUCTS : [] ),
+	...( isEnabled( 'jetpack/anti-spam-product' ) ? JETPACK_ANTI_SPAM_PRODUCTS : [] ),
 	...( isEnabled( 'jetpack/search-product' ) ? JETPACK_SEARCH_PRODUCTS : [] ),
 ];
 
@@ -69,6 +70,7 @@ export const JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS = 'more_than_1m_records';
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
 export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';
 export const JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/scan/';
+export const JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/anti-spam/';
 
 export const JETPACK_PRODUCT_PRICE_MATRIX = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -87,6 +89,10 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = {
 		relatedProduct: PRODUCT_JETPACK_SCAN_MONTHLY,
 		ratio: 12,
 	},
+	[ PRODUCT_JETPACK_ANTI_SPAM ]: {
+		relatedProduct: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+		ratio: 12,
+	},
 };
 
 // Translatable strings
@@ -100,6 +106,8 @@ export const getJetpackProductsShortNames = () => {
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SCAN ]: translate( 'Daily Scan' ),
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Daily Scan' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-Spam' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-Spam' ),
 	};
 };
 
@@ -133,6 +141,8 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }{ ' ' }
 		</>
 	);
+
+	const antiSpam = <>{ translate( 'Jetpack Anti-Spam' ) }</>;
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
@@ -144,11 +154,14 @@ export const getJetpackProductsDisplayNames = () => {
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_JETPACK_SCAN ]: scanDaily,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
 };
 export const getJetpackProductsTaglines = () => {
 	const searchTagline = translate( 'Search your site.' );
-	const scanTagline = 'Scan your site.';
+	const scanTagline = translate( 'Scan your site.' );
+	const antiSpamTagline = translate( 'Automatically clear spam from comments and forms.' );
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
 			'Your data is being securely backed up every day with a 30-day archive.'
@@ -168,6 +181,8 @@ export const getJetpackProductsTaglines = () => {
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: searchTagline,
 		[ PRODUCT_JETPACK_SCAN ]: scanTagline,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanTagline,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamTagline,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamTagline,
 	};
 };
 
@@ -177,6 +192,9 @@ export const getJetpackProductsDescriptions = () => {
 	);
 	const scanDescription = translate(
 		'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
+	);
+	const antiSpamDescription = translate(
+		'Automatically clear spam from comments and forms. Save time, get more responses, give your visitors a better experience – all without lifting a finger.'
 	);
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
@@ -195,6 +213,8 @@ export const getJetpackProductsDescriptions = () => {
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
 		[ PRODUCT_JETPACK_SCAN ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
 	};
 };
 
@@ -252,6 +272,33 @@ export const getJetpackProducts = () => {
 			optionDescriptions: getJetpackProductsDescriptions(),
 			optionsLabel: translate( 'Select a product option:' ),
 			slugs: JETPACK_SCAN_PRODUCTS,
+		} );
+	isEnabled( 'jetpack/anti-spam-product' ) &&
+		output.push( {
+			title: translate( 'Jetpack Anti-Spam' ),
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_ANTI_SPAM ],
+			// There is only one option per billing interval, but this
+			// component still needs the full display with radio buttons.
+			forceRadios: true,
+			hasPromo: false,
+			id: PRODUCT_JETPACK_ANTI_SPAM,
+			link: {
+				label: translate( 'Learn more' ),
+				props: {
+					location: 'product_jetpack_anti_spam_description',
+					slug: 'learn-more-anti-spam',
+				},
+				url: JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL,
+			},
+			options: {
+				yearly: [ PRODUCT_JETPACK_ANTI_SPAM ],
+				monthly: [ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ],
+			},
+			optionShortNames: getJetpackProductsShortNames(),
+			optionDisplayNames: getJetpackProductsDisplayNames(),
+			optionDescriptions: getJetpackProductsDescriptions(),
+			optionsLabel: translate( 'Select a product option:' ),
+			slugs: JETPACK_ANTI_SPAM_PRODUCTS,
 		} );
 	isEnabled( 'jetpack/search-product' ) &&
 		output.push( {
