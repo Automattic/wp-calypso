@@ -14,9 +14,6 @@ import { defaultRewindConfig, RewindConfig } from './types';
 import { getRewindBackupProgress, rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
-import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
-import getBackupDownloadRewindId from 'state/selectors/get-backup-download-rewind-id';
-import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
 import getBackupProgress from 'state/selectors/get-backup-progress';
 import getRequest from 'state/selectors/get-request';
 import Loading from './loading';
@@ -36,6 +33,9 @@ interface Props {
 // Future Work: Centralize typing
 interface BackupProgress {
 	downloadId: number;
+	progress?: number;
+	rewindId: string;
+	url?: string;
 }
 
 const BackupDownloadFlow: FunctionComponent< Props > = ( {
@@ -53,10 +53,14 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const backupProgress = useSelector( ( state ) =>
 		getBackupProgress( state, siteId )
 	) as BackupProgress | null;
+
 	const downloadId = backupProgress?.downloadId;
-	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId ) );
-	const downloadProgress = useSelector( ( state ) => getBackupDownloadProgress( state, siteId ) );
-	const downloadRewindId = useSelector( ( state ) => getBackupDownloadRewindId( state, siteId ) );
+	const downloadUrl = backupProgress?.url;
+	const downloadProgress =
+		backupProgress && backupProgress.progress !== undefined && ! isNaN( backupProgress.progress )
+			? backupProgress.progress
+			: undefined;
+	const downloadRewindId = backupProgress?.rewindId;
 	const downloadInfoRequest = useSelector( ( state ) =>
 		getRequest( state, getRewindBackupProgress( siteId ) )
 	);
@@ -72,7 +76,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	const isDownloadInfoRequestComplete = downloadInfoRequest?.hasLoaded;
 	const isOtherDownloadInfo = downloadRewindId !== rewindId;
-	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== null;
+	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== undefined;
 
 	const renderConfirm = () => (
 		<>
@@ -120,7 +124,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		</>
 	);
 
-	const renderInProgress = () => (
+	const renderInProgress = ( percent: number ) => (
 		<>
 			<div className="rewind-flow__header">
 				<img
@@ -131,7 +135,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title">
 				{ translate( 'Currently creating a downloadable backup of your site' ) }
 			</h3>
-			<ProgressBar percent={ downloadProgress } />
+			<ProgressBar percent={ percent } />
 			<p className="rewind-flow__info">
 				{ translate(
 					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
@@ -234,14 +238,17 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const render = () => {
 		if ( ! isDownloadInfoRequestComplete ) {
 			return <Loading />;
-		} else if ( isOtherDownloadInfo || ( downloadProgress === null && downloadUrl === null ) ) {
+		} else if (
+			isOtherDownloadInfo ||
+			( downloadProgress === undefined && downloadUrl === undefined )
+		) {
 			return renderConfirm();
-		} else if ( downloadProgress !== null && downloadUrl === null ) {
+		} else if ( downloadProgress !== undefined && downloadUrl === undefined ) {
 			if ( ! userRequestedDownload ) {
 				setUserRequestedDownload( true );
 			}
-			return renderInProgress();
-		} else if ( downloadUrl !== null ) {
+			return renderInProgress( downloadProgress );
+		} else if ( downloadUrl !== undefined ) {
 			return renderReady();
 		}
 		return renderError();
@@ -250,7 +257,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	return (
 		<>
 			<QueryRewindBackupStatus
-				downloadId={ downloadProgress !== null ? downloadId : undefined }
+				downloadId={ downloadProgress !== undefined ? downloadId : undefined }
 				siteId={ siteId }
 			/>
 			{ render() }
