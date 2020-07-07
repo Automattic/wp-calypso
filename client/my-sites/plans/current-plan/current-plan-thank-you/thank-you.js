@@ -63,6 +63,7 @@ export class ThankYouCard extends Component {
 			this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
 				product_name: 'search',
 				value,
+				site: 'jetpack',
 			} );
 		};
 
