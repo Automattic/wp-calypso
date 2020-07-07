@@ -3,7 +3,7 @@ $devdocs-max-width: 720px;
 // Sidebar Title
 .devdocs__title {
 	color: var( --color-sidebar-text-alternative );
-	font-size: 24px;
+	font-size: $font-title-medium;
 	padding: 24px;
 }
 
@@ -378,7 +378,7 @@ $devdocs-max-width: 720px;
 	}
 
 	h3 {
-		font-size: 24px;
+		font-size: $font-title-medium;
 	}
 
 	p,

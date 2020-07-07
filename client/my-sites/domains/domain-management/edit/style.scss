@@ -72,7 +72,7 @@
 					font-size: 28px;
 				}
 				&.mobile-l {
-					font-size: 24px;
+					font-size: $font-title-medium;
 				}
 				&.mobile-xl {
 					font-size: $font-title-small;
@@ -87,7 +87,7 @@
 					font-size: 28px;
 				}
 				&.desktop-l {
-					font-size: 24px;
+					font-size: $font-title-medium;
 				}
 				&.desktop-xl {
 					font-size: $font-title-small;
