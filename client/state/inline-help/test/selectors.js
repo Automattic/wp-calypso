@@ -9,9 +9,6 @@ import { expect } from 'chai';
 import isInlineHelpPopoverVisible from 'state/inline-help/selectors/is-inline-help-popover-visible';
 import getSearhQuery from 'state/inline-help/selectors/get-search-query';
 import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
-import getInlineHelpAdminResultsForQuery from 'state/inline-help/selectors/get-inline-help-admin-results-for-query';
-import getInlineHelpContextualResultsForQuery from 'state/inline-help/selectors/get-inline-help-contextual-results-for-query';
-import getInlineHelpApiResultsForQuery from 'state/inline-help/selectors/get-inline-help-api-results-for-query';
 import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
 
 describe( '#isInlineHelpPopoverVisible()', () => {
