@@ -13,7 +13,9 @@
 	font-size: 54px;
 }
 
-.card-heading-47 {
+/* 47px is deprecated, use .card-heading-48 */
+.card-heading-47,
+.card-heading-48 {
 	font-size: 47px;
 }
 
@@ -29,8 +31,10 @@
 	font-size: 24px;
 }
 
-.card-heading-21 {
-	font-size: 21px;
+/* 21px is deprecated, use .card-heading-20 */
+.card-heading-21,
+.card-heading-20 {
+	font-size: $font-title-small;
 }
 
 .card-heading-16 {
@@ -41,6 +45,8 @@
 	font-size: $font-body-small;
 }
 
-.card-heading-11 {
+/* 11px is deprecated, use .card-heading-12 */
+.card-heading-11,
+.card-heading-12 {
 	font-size: $font-body-extra-small;
 }

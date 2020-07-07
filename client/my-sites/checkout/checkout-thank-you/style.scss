@@ -178,6 +178,7 @@
 .checkout-thank-you__success-message-item {
 	font-size: 18px;
 	font-weight: 400;
+	margin-top: 15px;
 }
 
 .checkout-thank-you__header.is-placeholder {
@@ -287,7 +288,7 @@
 }
 
 .checkout-thank-you__jetpack-error-heading {
-	font-size: 21px;
+	font-size: $font-title-small;
 	font-weight: 400;
 	line-height: 32px;
 	margin-top: 0;
@@ -621,7 +622,7 @@
 }
 
 .is-section-checkout-thank-you .empty-content__title {
-	font-size: 20px;
+	font-size: $font-title-small;
 	font-weight: normal;
 }
 

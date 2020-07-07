@@ -18,7 +18,7 @@
 
 .rewind-flow__title {
 	text-align: center;
-	font-size: 22px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	padding-bottom: 32px;
 
@@ -29,7 +29,7 @@
 
 .rewind-flow__title-placeholder {
 	@include placeholder( --color-neutral-light );
-	font-size: 22px;
+	font-size: $font-title-small;
 	font-weight: 600;
 }
 

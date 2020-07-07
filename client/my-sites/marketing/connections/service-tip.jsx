@@ -17,14 +17,14 @@ import { localizeUrl } from 'lib/i18n-utils';
  * Module constants
  */
 /**
- * Whitelist of services that we provide tips for.
+ * List of services that we provide tips for.
  *
- * When adding tips for more services, please update the whitelist in addition to adding
+ * When adding tips for more services, please update the list in addition to adding
  * a method with the tip's content.
  *
  * @type {string[]}
  */
-const SERVICES_WHITELIST = [ 'facebook', 'twitter', 'instagram', 'google_plus' ];
+const SERVICES_WITH_TIPS = [ 'facebook', 'twitter', 'instagram', 'google_plus' ];
 
 class SharingServiceTip extends Component {
 	static propTypes = {
@@ -102,7 +102,7 @@ class SharingServiceTip extends Component {
 
 	render() {
 		const { service } = this.props;
-		if ( ! includes( SERVICES_WHITELIST, service.ID ) || 'google_plus' === service.ID ) {
+		if ( ! includes( SERVICES_WITH_TIPS, service.ID ) || 'google_plus' === service.ID ) {
 			return <div className="connections__sharing-service-tip" />;
 		}
 

@@ -20,14 +20,14 @@ import { localizeUrl } from 'lib/i18n-utils';
  * Module constants
  */
 /**
- * Whitelist of services that we provide examples for.
+ * List of services that we provide examples for.
  *
- * When adding examples for more services, please update the whitelist in addition to adding
+ * When adding examples for more services, please update the list in addition to adding
  * a method with the example's content.
  *
  * @type {string[]}
  */
-const SERVICES_WHITELIST = [
+const SERVICES_WITH_EXAMPLES = [
 	'bandpage',
 	'facebook',
 	'google_plus',
@@ -305,7 +305,7 @@ class SharingServiceExamples extends Component {
 	}
 
 	render() {
-		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
+		if ( ! includes( SERVICES_WITH_EXAMPLES, this.props.service.ID ) ) {
 			/**
 			 * TODO: Refactoring this line has to be tackled in a seperate diff.
 			 * Touching this changes services-group.jsx which changes service.jsx

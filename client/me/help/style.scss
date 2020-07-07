@@ -47,7 +47,7 @@
 	font-size: $font-body;
 	color: var( --color-primary );
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 21px;
+		font-size: $font-title-small;
 	}
 }
 

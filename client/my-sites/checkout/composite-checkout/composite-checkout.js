@@ -336,7 +336,8 @@ export default function CompositeCheckout( {
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
-		getStoredCards || wpcomGetStoredCards
+		getStoredCards || wpcomGetStoredCards,
+		recordEvent
 	);
 	const {
 		canMakePayment: isApplePayAvailable,
@@ -546,7 +547,7 @@ export default function CompositeCheckout( {
 			paypal: ( transactionData ) =>
 				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
 		} ),
-		[ couponItem, getThankYouUrl, isWhiteGloveOffer ]
+		[ couponItem, getThankYouUrl, isWhiteGloveOffer, siteSlug ]
 	);
 
 	useRecordCheckoutLoaded(

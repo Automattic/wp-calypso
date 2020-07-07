@@ -50,6 +50,7 @@ function HelpSearchResults( {
 					href={ localizeUrl( link ) }
 					onClick={ selectResultHandler( index ) }
 					title={ decodeEntities( description ) }
+					tabIndex={ -1 }
 				>
 					{ preventWidows( decodeEntities( title ) ) }
 				</a>

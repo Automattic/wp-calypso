@@ -14,7 +14,22 @@ export default class FormTextInput extends PureComponent {
 		className: PropTypes.string,
 	};
 
+	state = {
+		value: this.props.value || '',
+	};
+
 	currentTextField = undefined;
+
+	componentDidUpdate( oldProps ) {
+		this.updateValueIfNeeded( oldProps.value );
+	}
+
+	updateValueIfNeeded( oldValue ) {
+		const { value } = this.props;
+		if ( oldValue !== value && value !== this.state.value ) {
+			this.setState( { value } );
+		}
+	}
 
 	textFieldRef = ( element ) => {
 		this.currentTextField = element;
@@ -44,8 +59,21 @@ export default class FormTextInput extends PureComponent {
 		}
 	};
 
+	onChange = ( event ) => {
+		this.setState( { value: event.target.value } );
+		this.props.onChange?.( event );
+	};
+
 	render() {
-		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus', 'inputRef' );
+		const props = omit(
+			this.props,
+			'isError',
+			'isValid',
+			'selectOnFocus',
+			'inputRef',
+			'onChange',
+			'value'
+		);
 
 		const classes = classNames( 'form-text-input', this.props.className, {
 			'is-error': this.props.isError,
@@ -56,9 +84,11 @@ export default class FormTextInput extends PureComponent {
 			<input
 				type="text"
 				{ ...props }
+				value={ this.state.value }
 				ref={ this.textFieldRef }
 				className={ classes }
 				onClick={ this.selectOnFocus }
+				onChange={ this.onChange }
 			/>
 		);
 	}

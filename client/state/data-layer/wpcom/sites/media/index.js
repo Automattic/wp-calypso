@@ -31,6 +31,8 @@ import {
 	dispatchFluxUpdateMediaItemError,
 	dispatchFluxRemoveMediaItemSuccess,
 	dispatchFluxRemoveMediaItemError,
+	dispatchFluxRequestMediaItemSuccess,
+	dispatchFluxRequestMediaItemError,
 } from 'state/media/utils/flux-adapter';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -104,7 +106,7 @@ export const requestMediaSuccess = ( { siteId, query }, { media, found } ) => [
 
 export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
 
-export function handleMediaItemRequest( action ) {
+export function requestMediaItem( action ) {
 	const { mediaId, query, siteId } = action;
 
 	log( 'Request media item %d for site %d', mediaId, siteId );
@@ -122,13 +124,17 @@ export function handleMediaItemRequest( action ) {
 	];
 }
 
-export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
-	receiveMedia( siteId, media ),
-	successMediaItemRequest( siteId, mediaId ),
-];
+export const receiveMediaItem = ( { mediaId, siteId }, media ) => ( dispatch ) => {
+	dispatch( receiveMedia( siteId, media ) );
+	dispatch( successMediaItemRequest( siteId, mediaId ) );
 
-export const receiveMediaItemError = ( { mediaId, siteId } ) =>
-	failMediaItemRequest( siteId, mediaId );
+	dispatchFluxRequestMediaItemSuccess( siteId, media );
+};
+
+export const receiveMediaItemError = ( { mediaId, siteId }, error ) => ( dispatch ) => {
+	dispatch( failMediaItemRequest( siteId, mediaId ) );
+	dispatchFluxRequestMediaItemError( siteId, error );
+};
 
 export const requestDeleteMedia = ( action ) => {
 	return [
@@ -165,7 +171,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 
 	[ MEDIA_ITEM_REQUEST ]: [
 		dispatchRequest( {
-			fetch: handleMediaItemRequest,
+			fetch: requestMediaItem,
 			onSuccess: receiveMediaItem,
 			onError: receiveMediaItemError,
 		} ),

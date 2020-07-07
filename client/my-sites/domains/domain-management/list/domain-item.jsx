@@ -33,6 +33,7 @@ class DomainItem extends PureComponent {
 		onAddEmailClick: PropTypes.func.isRequired,
 		onToggle: PropTypes.func,
 		purchase: PropTypes.object,
+		isLoadingDomainDetails: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -40,6 +41,7 @@ class DomainItem extends PureComponent {
 		showSite: false,
 		showCheckbox: false,
 		onToggle: null,
+		isLoadingDomainDetails: false,
 	};
 
 	handleClick = () => {
@@ -134,6 +136,47 @@ class DomainItem extends PureComponent {
 		);
 	}
 
+	renderActionItems() {
+		const { isLoadingDomainDetails, domainDetails } = this.props;
+
+		if ( isLoadingDomainDetails ) {
+			return (
+				<>
+					<div className="list__domain-transfer-lock list__action_item_placeholder" />
+					<div className="list__domain-privacy list__action_item_placeholder" />
+					<div className="list__domain-auto-renew list__action_item_placeholder" />
+					<div className="list__domain-email list__action_item_placeholder" />
+					<div className="list__domain-options list__action_item_placeholder" />
+				</>
+			);
+		}
+
+		return (
+			<>
+				<div className="list__domain-transfer-lock">
+					{ domainDetails?.isLocked && (
+						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
+					) }
+				</div>
+				<div className="list__domain-privacy">
+					{ domainDetails?.privateDomain && (
+						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
+					) }
+				</div>
+				<div className="list__domain-auto-renew">
+					{ domainDetails?.bundledPlanSubscriptionId && (
+						<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
+					) }
+					{ ! domainDetails?.bundledPlanSubscriptionId && domainDetails?.isAutoRenewing && (
+						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
+					) }
+				</div>
+				<div className="list__domain-email">{ this.renderEmail( domainDetails ) }</div>
+				{ this.renderOptionsButton() }
+			</>
+		);
+	}
+
 	getSiteName( site ) {
 		if ( site.name ) {
 			return `${ site.name } (${ withoutHttp( site.URL ) })`;
@@ -175,26 +218,7 @@ class DomainItem extends PureComponent {
 						</div>
 					) }
 				</div>
-				<div className="list__domain-transfer-lock">
-					{ domainDetails?.isLocked && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
-				<div className="list__domain-privacy">
-					{ domainDetails?.privateDomain && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
-				<div className="list__domain-auto-renew">
-					{ domainDetails?.bundledPlanSubscriptionId && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
-					) }
-					{ ! domainDetails?.bundledPlanSubscriptionId && domainDetails?.isAutoRenewing && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
-				<div className="list__domain-email">{ this.renderEmail( domainDetails ) }</div>
-				{ this.renderOptionsButton() }
+				{ this.renderActionItems() }
 			</CompactCard>
 		);
 	}
