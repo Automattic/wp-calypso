@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -22,17 +21,11 @@ import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/editor/selectors';
 import { getSitePost, getEditedPost } from 'state/posts/selectors';
-import config from 'config';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Module variables
- */
-const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 
 // Convert a float coordinate to formatted string with 7 decimal places.
 // Ensures correct equality comparison with values returned from WP.com API
@@ -124,9 +117,13 @@ class EditorLocation extends React.Component {
 			locating: true,
 		} );
 
-		navigator.geolocation.getCurrentPosition( this.onGeolocateSuccess, this.onGeolocateFailure, {
-			enableHighAccuracy: true,
-		} );
+		window.navigator.geolocation.getCurrentPosition(
+			this.onGeolocateSuccess,
+			this.onGeolocateFailure,
+			{
+				enableHighAccuracy: true,
+			}
+		);
 
 		this.props.recordEditorStat( 'location_geolocate' );
 		this.props.recordEditorEvent( 'Location Geolocated' );
@@ -151,20 +148,17 @@ class EditorLocation extends React.Component {
 	};
 
 	renderCurrentLocation = () => {
-		if ( ! this.props.coordinates ) {
+		if ( ! this.props.mapUrl ) {
 			return;
 		}
 
-		const src =
-			GOOGLE_MAPS_BASE_URL +
-			stringify( {
-				markers: this.props.coordinates.join( ',' ),
-				zoom: 8,
-				size: '400x300',
-				key: config( 'google_maps_and_places_api_key' ),
-			} );
-
-		return <img src={ src } className="editor-location__map" />;
+		return (
+			<img
+				src={ this.props.mapUrl }
+				alt={ this.props.translate( 'Map of post location' ) }
+				className="editor-location__map"
+			/>
+		);
 	};
 
 	privateCoordinatesHaveBeenEdited() {
@@ -253,6 +247,7 @@ export default connect(
 
 		const editedPost = getEditedPost( state, siteId, postId );
 		const coordinates = PostMetadata.geoCoordinates( editedPost );
+		const mapUrl = PostMetadata.geoStaticMapUrl( editedPost );
 		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( editedPost );
 		const label = PostMetadata.geoLabel( editedPost );
 
@@ -262,6 +257,7 @@ export default connect(
 			savedCoordinates,
 			savedIsSharedPublicly,
 			coordinates,
+			mapUrl,
 			isSharedPublicly,
 			label,
 		};
