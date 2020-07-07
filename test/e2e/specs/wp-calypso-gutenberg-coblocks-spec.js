@@ -59,35 +59,14 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can publish and view content', async function () {
-			// FIXME: hack based on `gEditorComponent.publish()`, which was closing the sidebar too fast in this test
-			// We're basically removing the `this.closePublishedPanel()` call.
-			const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
-			const publishSelector = By.css(
-				'.editor-post-publish-panel__header-publish-button button[aria-disabled=false]'
-			);
-			await driverHelper.clickWhenClickable(
-				driver,
-				By.css( '.editor-post-publish-panel__toggle' )
-			);
-			await driverHelper.waitTillPresentAndDisplayed(
-				driver,
-				By.css( '.editor-post-publish-panel__header' )
-			);
-			await driverHelper.waitTillPresentAndDisplayed( driver, publishSelector );
-			await driverHelper.clickWhenClickable( driver, publishSelector );
-			await driverHelper.waitTillNotPresent(
-				driver,
-				By.css( '.editor-post-publish-panel__content .components-spinner' )
-			);
-			await driverHelper.waitTillPresentAndDisplayed( driver, By.css( '.components-snackbar' ) );
-			await driverHelper.clickWhenClickable( driver, snackBarNoticeLinkSelector );
-			return await driverHelper.acceptAlertIfPresent( driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			return await gEditorComponent.publish( { visit: true, closePanel: false } );
 		} );
 
 		step( 'Can see the Click to Tweet block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.wp-block-coblocks-click-to-tweet' )
+				By.css( '.entry-content .wp-block-coblocks-click-to-tweet' )
 			);
 		} );
 	} );
@@ -115,7 +94,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can see the Dynamic HR block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.wp-block-coblocks-dynamic-separator' )
+				By.css( '.entry-content .wp-block-coblocks-dynamic-separator' )
 			);
 		} );
 	} );
@@ -143,7 +122,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can see the Hero block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.wp-block-coblocks-hero' )
+				By.css( '.entry-content .wp-block-coblocks-hero' )
 			);
 		} );
 	} );
@@ -198,7 +177,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can see the Logos & Badges block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.wp-block-coblocks-logos' )
+				By.css( '.entry-content .wp-block-coblocks-logos' )
 			);
 		} );
 	} );
@@ -226,7 +205,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can see the Pricing Table block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.wp-block-coblocks-pricing-table' )
+				By.css( '.entry-content .wp-block-coblocks-pricing-table' )
 			);
 		} );
 	} );
