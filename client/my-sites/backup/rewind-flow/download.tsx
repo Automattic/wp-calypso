@@ -53,7 +53,6 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const backupProgress = useSelector( ( state ) =>
 		getBackupProgress( state, siteId )
 	) as BackupProgress | null;
-	console.log( 'backupProgress: ', backupProgress );
 	const downloadId = backupProgress?.downloadId;
 	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId ) );
 	const downloadProgress = useSelector( ( state ) => getBackupDownloadProgress( state, siteId ) );
