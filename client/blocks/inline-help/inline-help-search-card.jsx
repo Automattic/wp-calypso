@@ -34,6 +34,7 @@ class InlineHelpSearchCard extends Component {
 	static propTypes = {
 		onSelect: PropTypes.func.isRequired,
 		translate: PropTypes.func,
+		track: PropTypes.func,
 		query: PropTypes.string,
 		placeholder: PropTypes.string,
 		location: PropTypes.string,
@@ -73,29 +74,26 @@ class InlineHelpSearchCard extends Component {
 				this.props.selectNextResult();
 				break;
 			case 'Enter': {
-				const {
-					selectedResultIndex,
-					selectedResult,
-					query,
-					onSelect,
-					recordTracksEvent,
-				} = this.props;
+				const { selectedResultIndex, selectedResult, query, onSelect, track } = this.props;
 
 				// check and catch admin section links.
 				const { support_type: supportType, link } = selectedResult;
 				if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
-					recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
+					track( 'calypso_inlinehelp_admin_section_search', {
 						link: link,
 						search_term: query,
 					} );
+
 					// push state only if it's internal link.
 					if ( ! /^http/.test( link ) ) {
 						event.preventDefault();
-						return page( link );
+						page( link );
 					} else {
 						// redirect external links.
-						return ( window.location.href = link );
+						window.location.href = link;
 					}
+
+					return;
 				}
 
 				selectedResultIndex >= 0 && onSelect( event );
@@ -109,7 +107,7 @@ class InlineHelpSearchCard extends Component {
 
 		if ( query?.length ) {
 			debug( 'search query received: ', searchQuery );
-			this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
+			this.props.track( 'calypso_inlinehelp_search', {
 				search_query: searchQuery,
 				location: this.props.location,
 			} );
@@ -140,7 +138,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 } );
 const mapDispatchToProps = {
-	recordTracksEvent,
+	track: recordTracksEvent,
 	setInlineHelpSearchQuery,
 	selectNextResult,
 	selectPreviousResult,

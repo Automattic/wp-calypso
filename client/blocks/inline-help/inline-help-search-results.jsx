@@ -7,7 +7,6 @@ import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 import page from 'page';
 
 /**
@@ -24,6 +23,7 @@ import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selec
 import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
 import { selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
+import Gridicon from 'components/gridicon';
 import { SUPPORT_TYPE_ADMIN_SECTION, SUPPORT_TYPE_API_HELP } from './constants';
 
 function HelpSearchResults( {
@@ -37,9 +37,9 @@ function HelpSearchResults( {
 	selectSearchResult,
 	translate = identity,
 	placeholderLines,
-	recordTracksEvent,
+	track,
 } ) {
-	const supportType = useRef( searchResults?.[ 0 ]?.support_type );
+	const supportTypeRef = useRef( searchResults?.[ 0 ]?.support_type );
 
 	function getTitleBySectionType( addSection, type ) {
 		if ( ! addSection ) {
@@ -71,7 +71,7 @@ function HelpSearchResults( {
 		// check and catch admin section links.
 		if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
-			recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
+			track( 'calypso_inlinehelp_admin_section_search', {
 				link: link,
 				search_term: searchQuery,
 			} );
@@ -79,11 +79,10 @@ function HelpSearchResults( {
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
-				return page( link );
-			} else {
-				// default behavior for external links.
-				return;
+				page( link );
 			}
+
+			return;
 		}
 
 		// Set the current selected result item.
@@ -96,9 +95,9 @@ function HelpSearchResults( {
 		{ link, key, description, title, support_type = SUPPORT_TYPE_API_HELP },
 		index
 	) => {
-		const addResultsSection = supportType?.current !== support_type || ! index;
+		const addResultsSection = supportTypeRef?.current !== support_type || ! index;
 		if ( addResultsSection ) {
-			supportType.current = support_type;
+			supportTypeRef.current = support_type;
 		}
 
 		const classes = classNames( 'inline-help__results-item', {
@@ -129,7 +128,7 @@ function HelpSearchResults( {
 	const renderSearchResults = () => {
 		if ( isSearching ) {
 			// reset current section reference.
-			supportType.current = null;
+			supportTypeRef.current = null;
 
 			// search, but no results so far
 			return <PlaceholderLines lines={ placeholderLines } />;
@@ -167,6 +166,7 @@ HelpSearchResults.propTypes = {
 	selectedResultIndex: PropTypes.number,
 	isSearching: PropTypes.bool,
 	selectedResult: PropTypes.object,
+	track: PropTypes.func,
 };
 
 export default connect(
@@ -178,7 +178,7 @@ export default connect(
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	} ),
 	{
-		recordTracksEvent,
+		track: recordTracksEvent,
 		selectSearchResult: selectResult,
 	}
 )( localize( HelpSearchResults ) );

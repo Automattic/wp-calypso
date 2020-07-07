@@ -54,7 +54,7 @@ export function setInlineHelpSearchQuery( searchQuery = '' ) {
  *
  * @param {Array}   collection   - collection to populate.
  * @param {string}  support_type - Support type to add to each result item.
- * @returns {array}                populated collection.
+ * @returns {Array}                Populated collection.
  */
 function mapWithSupportTypeProp( collection, support_type ) {
 	return map( collection, ( item ) => ( { ...item, support_type } ) );

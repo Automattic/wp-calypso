@@ -34,7 +34,7 @@ const HelpSearch = ( {
 	hideInlineHelpUI,
 	showInlineHelpUI,
 	selectedResult,
-	openSupportArticleDialog,
+	openDialog,
 } ) => {
 	const translate = useTranslate();
 
@@ -59,10 +59,7 @@ const HelpSearch = ( {
 		const resultPostId = get( selectedResult, RESULT_POST_ID );
 		const resultLink = amendYouTubeLink( get( selectedResult, RESULT_LINK ) );
 
-		openSupportArticleDialog( {
-			postId: resultPostId,
-			actionUrl: resultLink,
-		} );
+		openDialog( { postId: resultPostId, actionUrl: resultLink } );
 	};
 
 	return (
@@ -108,7 +105,7 @@ const mapStateToProps = ( state ) => ( {
 const mapDispatchToProps = {
 	hideInlineHelpUI: hideInlineHelp,
 	showInlineHelpUI: showInlineHelp,
-	openSupportArticleDialog,
+	openDialog: openSupportArticleDialog,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( HelpSearch );
