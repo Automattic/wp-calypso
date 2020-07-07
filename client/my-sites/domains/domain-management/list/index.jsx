@@ -46,6 +46,9 @@ import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
+import DomainItem from './domain-item';
+import ListHeader from './list-header';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 /**
  * Style dependencies
  */
@@ -205,7 +208,11 @@ export class List extends React.Component {
 
 				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
 
-				<div className="domain-management-list__items">{ this.listItems() }</div>
+				<div className="domain-management-list__items">
+					{ ! this.props.renderAllSites && config.isEnabled( 'manage/all-domains' )
+						? this.listNewItems()
+						: this.listItems() }
+				</div>
 
 				<DomainToPlanNudge />
 			</Main>
@@ -396,6 +403,46 @@ export class List extends React.Component {
 			! domain.isWPCOMDomain &&
 			! domain.isWpcomStagingDomain
 		);
+	}
+
+	listNewItems() {
+		if ( this.isLoading() ) {
+			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
+		}
+
+		const { translate, selectedSite, renderAllSites, isDomainOnly, hasSingleSite } = this.props;
+
+		const domains =
+			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
+				? this.filterOutWpcomDomains( this.props.domains )
+				: this.props.domains;
+
+		const domainListItems = domains.map( ( domain, index ) => (
+			<DomainItem
+				key={ `${ domain.name }-${ index }` }
+				domain={ { domain: domain.name } }
+				domainDetails={ domain }
+				site={ selectedSite }
+				isManagingAllSites={ false }
+			/>
+		) );
+
+		const manageAllDomainsLink = hasSingleSite ? null : (
+			<CompactCard
+				className="list__no-chevron"
+				key="manage-all-domains"
+				href={ domainManagementRoot() }
+			>
+				{ translate( 'Manage all your domains' ) }
+			</CompactCard>
+		);
+
+		return [
+			<QuerySitePurchases siteId={ selectedSite.ID } />,
+			<ListHeader key="domains-header" />,
+			...domainListItems,
+			manageAllDomainsLink,
+		];
 	}
 
 	listItems() {

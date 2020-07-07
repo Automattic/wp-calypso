@@ -258,3 +258,7 @@ input[type='radio'].domain-management-list-item__radio {
 .domain-item__icon {
 	fill: var( --color-text-subtle );
 }
+
+.list__no-chevron .gridicon {
+	display: none;
+}
