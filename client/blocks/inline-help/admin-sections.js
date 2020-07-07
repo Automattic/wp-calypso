@@ -391,7 +391,7 @@ export const adminSections = memoize( ( siteSlug ) => [
  *
  * @param   {string} searchTerm The search term
  * @param   {Array}  collection A collection of site admin objects
- * @param   {number} limit      The maximum number of results to show
+ * @param   {number} limit      The maximum number of filtered results to return
  * @returns {Array}             A filtered (or empty) array
  */
 export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 4 ) {
