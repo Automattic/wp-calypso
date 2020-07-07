@@ -497,6 +497,8 @@ export default function useCreatePaymentMethods( {
 		fullCreditsPaymentMethod,
 		...existingCardMethods,
 		applePayMethod,
+		stripeMethod,
+		paypalMethod,
 		idealMethod,
 		giropayMethod,
 		sofortMethod,
@@ -505,7 +507,5 @@ export default function useCreatePaymentMethods( {
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
-		stripeMethod,
-		paypalMethod,
 	].filter( Boolean );
 }
