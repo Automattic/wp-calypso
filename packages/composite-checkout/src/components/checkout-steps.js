@@ -55,10 +55,7 @@ export function Checkout( { children, className } ) {
 	if ( formStatus === 'loading' ) {
 		return (
 			<ContainerUI className={ classNames }>
-				<MainContentUI
-					className={ joinClasses( [ className, 'checkout__content' ] ) }
-					isLastStepActive={ false }
-				>
+				<MainContentUI className={ joinClasses( [ className, 'checkout__content' ] ) }>
 					<LoadingContent />
 				</MainContentUI>
 			</ContainerUI>
@@ -164,14 +161,17 @@ export function CheckoutStepArea( { children, className, submitButtonHeader } ) 
 		[ onEvent ]
 	);
 
+	const classNames = joinClasses( [
+		'checkout__step-wrapper',
+		...( className ? [ className ] : [] ),
+		...( ! isThereAnotherNumberedStep ? [ 'is-last-step-active' ] : [] ),
+	] );
+
 	return (
-		<CheckoutStepAreaUI
-			className={ joinClasses( [ className, 'checkout__step-wrapper' ] ) }
-			isLastStepActive={ ! isThereAnotherNumberedStep }
-		>
+		<CheckoutStepAreaUI className={ classNames }>
 			{ children }
 
-			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+			<SubmitButtonWrapperUI>
 				{ submitButtonHeader ? submitButtonHeader : null }
 				<CheckoutErrorBoundary
 					errorMessage={ __( 'There was a problem with the submit button.' ) }
@@ -486,8 +486,12 @@ const CheckoutSummaryUI = styled.div`
 const CheckoutStepAreaUI = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	box-sizing: border-box;
-	margin: 0 auto ${ ( props ) => ( props.isLastStepActive ? '100px' : 0 ) };
+	margin: 0 auto;
 	width: 100%;
+
+	&.is-last-step-active {
+		margin-bottom: 100px;
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -507,18 +511,18 @@ const CheckoutStepAreaUI = styled.div`
 const SubmitButtonWrapperUI = styled.div`
 	background: ${ ( props ) => props.theme.colors.background };
 	padding: 24px;
-	position: ${ ( props ) => ( props.isLastStepActive ? 'fixed' : 'relative' ) };
 	bottom: 0;
 	left: 0;
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;
-	border-top-width: ${ ( props ) => ( props.isLastStepActive ? '1px' : '0' ) };
+	border-top-width: 0;
 	border-top-style: solid;
 	border-top-color: ${ ( props ) => props.theme.colors.borderColorLight };
 
-	button {
-		width: ${ ( props ) => ( props.isLastStepActive ? 'calc( 100% - 60px )' : '100%' ) };
+	.is-last-step-active & {
+		border-top-width: 1px;
+		position: fixed;
 	}
 
 	.rtl & {
@@ -526,12 +530,22 @@ const SubmitButtonWrapperUI = styled.div`
 		left: auto;
 	}
 
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		position: relative;
-		border: 0;
+	button {
+		width: 100%;
 
-		button {
-			width: 100%;
+		.is-last-step-active & {
+			width: calc( 100% - 60px );
+		}
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		.is-last-step-active & {
+			position: relative;
+			border: 0;
+
+			button {
+				width: 100%;
+			}
 		}
 	}
 `;

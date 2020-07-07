@@ -531,8 +531,17 @@ function SubmitButtonHeader() {
 }
 
 const SubmitButtonHeaderUI = styled.div`
+	display: none;
 	font-size: 13px;
 	margin-top: -5px;
 	margin-bottom: 10px;
 	text-align: center;
+
+	.is-last-step-active & {
+		display: block;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+			display: none;
+		}
+	}
 `;
