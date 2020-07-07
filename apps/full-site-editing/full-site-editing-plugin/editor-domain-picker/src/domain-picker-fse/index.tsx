@@ -4,6 +4,7 @@
 import * as React from 'react';
 import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
+//import { Cart } from '@automattic/wpcom-hooks';
 
 /**
  * Internal dependencies
@@ -19,6 +20,9 @@ const DomainPickerFSE: React.FunctionComponent< Props > = ( props ) => {
 	const [ domainSearch, setDomainSearch ] = React.useState( '' );
 
 	const site = useSite();
+
+	//const [ cart, setCart ] = Cart.useSiteCart?.( site?.ID );
+
 	const currentDomain = useCurrentDomain();
 
 	const search = ( domainSearch.trim() || site?.name ) ?? '';

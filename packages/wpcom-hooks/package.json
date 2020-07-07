@@ -1,0 +1,49 @@
+{
+	"name": "@automattic/wpcom-hooks",
+	"version": "1.0.0-alpha.0",
+	"description": "React hooks than can be useful when dealing with WPCOM APIs",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/wpcom-hooks"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"scripts": {
+		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__wpcom-hooks*\"",
+		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "check-npm-client && yarn run clean",
+		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@wordpress/api-fetch": "^3.18.0",
+		"@wordpress/url": "^2.8.2",
+		"fast-json-stable-stringify": "^2.1.0",
+		"i18n-calypso": "^5.0.0",
+		"qs": "^6.9.1",
+		"react": "^16.12.0",
+		"redux": "^4.0.5",
+		"tslib": "^1.10.0",
+		"utility-types": "^3.10.0",
+		"wpcom": "^6.0.0",
+		"wpcom-proxy-request": "^6.0.0"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^4"
+	}
+}
