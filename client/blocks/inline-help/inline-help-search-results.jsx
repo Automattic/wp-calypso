@@ -24,7 +24,11 @@ import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results
 import { selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 import Gridicon from 'components/gridicon';
-import {SUPPORT_TYPE_ADMIN_SECTION, SUPPORT_TYPE_API_HELP, SUPPORT_TYPE_CONTEXTUAL_HELP} from './constants';
+import {
+	SUPPORT_TYPE_ADMIN_SECTION,
+	SUPPORT_TYPE_API_HELP,
+	SUPPORT_TYPE_CONTEXTUAL_HELP,
+} from './constants';
 
 function HelpSearchResults( {
 	hasAPIResults = false,
