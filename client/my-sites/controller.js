@@ -308,7 +308,16 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 
 // Clears selected site from global redux state
 export function noSite( context, next ) {
-	context.store.dispatch( setSelectedSiteId( null ) );
+	const { getState } = getStore( context );
+	const currentUser = getCurrentUser( getState() );
+	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
+
+	if ( hasOneSite ) {
+		siteSelection( context, next );
+	} else {
+		context.store.dispatch( setSelectedSiteId( null ) );
+	}
+
 	return next();
 }
 
@@ -351,7 +360,8 @@ export function siteSelection( context, next ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 
 		const redirectToPrimary = ( primarySiteSlug ) => {
-			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
+			const pathName = context.pathname.split( '/no-site' )[ 0 ];
+			let redirectPath = `${ pathName }/${ primarySiteSlug }`;
 			if ( context.querystring ) {
 				redirectPath += `?${ context.querystring }`;
 			}

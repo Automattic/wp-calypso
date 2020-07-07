@@ -5,6 +5,7 @@ import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
+import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -91,12 +92,12 @@ export async function submitApplePayPayment( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function submitPayPalExpressRequest( transactionData, submit ) {
+export async function submitPayPalExpressRequest( transactionData, submit, isLoggedOutCart ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, isLoggedOutCart );
 }
 
 export function getDomainDetails( select ) {
@@ -114,7 +115,6 @@ export async function submitStripeCardTransaction( transactionData, submit, isLo
 		paymentMethodToken: transactionData.paymentMethodToken.id,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
-		isLoggedOutCart,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
 	return submit( formattedTransactionData, isLoggedOutCart );
@@ -264,6 +264,11 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	if ( isLoggedOutCart ) {
 		return createAccount().then( ( response ) => {
 			const siteId = get( response, 'blog_details.blogid', undefined );
+			const siteSlug = get( response, 'blog_details.site_slug', undefined );
+			const { dispatch } = defaultRegistry;
+			siteId && dispatch( 'wpcom' ).setSiteId( siteId );
+			siteSlug && dispatch( 'wpcom' ).setSiteSlug( siteSlug );
+
 			const newPayload = {
 				...payload,
 				cart: {
@@ -280,7 +285,29 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	return wp.undocumented().transactions( payload );
 }
 
-export async function wpcomPayPalExpress( payload ) {
+export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
+	if ( isLoggedOutCart ) {
+		return createAccount().then( ( response ) => {
+			const siteId = get( response, 'blog_details.blogid', undefined );
+			const siteSlug = get( response, 'blog_details.site_slug', undefined );
+			const { dispatch } = defaultRegistry;
+			siteId && dispatch( 'wpcom' ).setSiteId( siteId );
+			siteSlug && dispatch( 'wpcom' ).setSiteSlug( siteSlug );
+
+			const newPayload = {
+				...payload,
+				siteId,
+				cart: {
+					...payload.cart,
+					blog_id: siteId || '0',
+					cart_key: siteId || 'no-site',
+				},
+			};
+
+			return wp.undocumented().paypalExpressUrl( newPayload );
+		} );
+	}
+
 	return wp.undocumented().paypalExpressUrl( payload );
 }
 

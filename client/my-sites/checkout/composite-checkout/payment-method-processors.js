@@ -192,7 +192,13 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem, isWhiteGloveOffer ) {
+export async function payPalProcessor(
+	submitData,
+	getThankYouUrl,
+	couponItem,
+	isWhiteGloveOffer,
+	isLoggedOutCart
+) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const query = isWhiteGloveOffer ? { type: 'white-glove' } : {};
 	const successUrl = formatUrl( {
@@ -221,7 +227,8 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem, i
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
 		},
-		wpcomPayPalExpress
+		wpcomPayPalExpress,
+		isLoggedOutCart
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {

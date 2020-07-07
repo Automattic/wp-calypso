@@ -47,7 +47,6 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 export type WPCOMTransactionEndpointCart = {
 	blog_id: string;
 	cart_key: string;
-	create_new_blog: boolean;
 	coupon: string;
 	currency: string;
 	temporary: false;
@@ -80,7 +79,6 @@ export function createTransactionEndpointCartFromLineItems( {
 	subdivisionCode,
 	items,
 	contactDetails,
-	isLoggedOutCart,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -89,7 +87,6 @@ export function createTransactionEndpointCartFromLineItems( {
 	subdivisionCode?: string;
 	items: WPCOMCartItem[];
 	contactDetails: DomainContactDetails;
-	isLoggedOutCart: boolean;
 } ): WPCOMTransactionEndpointCart {
 	debug( 'creating cart from items', items );
 
@@ -98,16 +95,9 @@ export function createTransactionEndpointCartFromLineItems( {
 		''
 	);
 
-	let cartKey = siteId;
-
-	if ( ! cartKey ) {
-		cartKey = isLoggedOutCart ? 'no-user' : 'no-site';
-	}
-
 	return {
 		blog_id: siteId || '0',
-		cart_key: cartKey,
-		create_new_blog: false,
+		cart_key: siteId || 'no-site',
 		coupon: couponId || '',
 		currency: currency || '',
 		temporary: false,
@@ -171,7 +161,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	cancelUrl,
 	successUrl,
 	idealBank,
-	isLoggedOutCart,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -189,7 +178,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
-	isLoggedOutCart: boolean;
 } ): WPCOMTransactionEndpointRequestPayload {
 	const urlParams = new URLSearchParams( window.location.search );
 	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
@@ -203,7 +191,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			subdivisionCode,
 			items: items.filter( ( item ) => item.type !== 'tax' ),
 			contactDetails: domainDetails || {},
-			isLoggedOutCart,
 		} ),
 		domainDetails,
 		payment: {

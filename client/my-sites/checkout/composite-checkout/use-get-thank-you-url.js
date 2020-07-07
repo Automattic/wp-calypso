@@ -53,7 +53,6 @@ export function getThankYouPageUrl( {
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
-	isLoggedOutCart,
 } ) {
 	debug( 'starting getThankYouPageUrl' );
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
@@ -133,7 +132,7 @@ export function getThankYouPageUrl( {
 	}
 
 	// Domain only flow
-	if ( ! isLoggedOutCart && cart.create_new_blog ) {
+	if ( cart.create_new_blog ) {
 		const newBlogUrl = signupDestination || fallbackUrl;
 		const newBlogReceiptUrl = `${ newBlogUrl }/${ pendingOrReceiptId }`;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
@@ -159,7 +158,7 @@ export function getThankYouPageUrl( {
 		? { d: 'white-glove' }
 		: getDisplayModeParamFromCart( cart );
 	if ( isEligibleForSignupDestinationResult && signupDestination ) {
-		debug( 'is elligible for signup destination', signupDestination );
+		debug( 'is eligible for signup destination', signupDestination );
 		return getUrlWithQueryParam( signupDestination, displayModeParam );
 	}
 	debug( 'returning fallback url', fallbackUrl );
@@ -362,6 +361,10 @@ export function useGetThankYouUrl( {
 		const receiptId = transactionResult.receipt_id;
 		const orderId = transactionResult.order_id;
 		const isTransactionResultEmpty = isEmpty( transactionResult );
+
+		if ( isEmpty( siteSlug ) || 'no-user' === siteSlug ) {
+			siteSlug = select( 'wpcom' ).getSiteSlug();
+		}
 
 		const getThankYouPageUrlArguments = {
 			siteSlug,

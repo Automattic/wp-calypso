@@ -23,6 +23,7 @@ type WpcomStoreAction =
 	  }
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
+	| { type: 'SET_SITE_SLUG'; payload: string }
 	| { type: 'TRANSACTION_COMPLETE'; payload: object }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_PHONE'; payload: string }
@@ -92,6 +93,8 @@ export function useWpcomStore(
 		switch ( action.type ) {
 			case 'SET_SITE_ID':
 				return action.payload;
+			case 'SET_SITE_SLUG':
+				return action.payload;
 			default:
 				return state;
 		}
@@ -113,6 +116,7 @@ export function useWpcomStore(
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
+				siteSlug: siteIdReducer( checkedState.siteSlug, action ),
 				transactionResult: transactionResultReducer( checkedState.transactionResult, action ),
 			};
 		},
@@ -126,6 +130,10 @@ export function useWpcomStore(
 
 			setSiteId( payload: string ): WpcomStoreAction {
 				return { type: 'SET_SITE_ID', payload };
+			},
+
+			setSiteSlug( payload: string ): WpcomStoreAction {
+				return { type: 'SET_SITE_SLUG', payload };
 			},
 
 			setTransactionResponse( payload: object ): WpcomStoreAction {
@@ -174,6 +182,10 @@ export function useWpcomStore(
 		selectors: {
 			getSiteId( state: WpcomStoreState ): string {
 				return state.siteId;
+			},
+
+			getSiteSlug( state: WpcomStoreState ): string {
+				return state.siteSlug;
 			},
 
 			getTransactionResult( state: WpcomStoreState ): object {
