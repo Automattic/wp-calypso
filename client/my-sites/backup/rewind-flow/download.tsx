@@ -15,8 +15,8 @@ import { rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
 import getBackupDownloadId from 'state/selectors/get-backup-download-id';
-import getBackupAnyDownloadId from 'state/selectors/get-backup-any-download-id';
 import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
+import getBackupDownloadRewindId from 'state/selectors/get-backup-download-rewind-id';
 import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
 import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
@@ -43,12 +43,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const [ userRequestedDownload, setUserRequestedDownload ] = useState( false );
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 
-	const downloadId = useSelector( ( state ) => getBackupDownloadId( state, siteId, rewindId ) );
-	const anyDownloadId = useSelector( ( state ) => getBackupAnyDownloadId( state, siteId ) );
-	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId, rewindId ) );
-	const downloadProgress = useSelector( ( state ) =>
-		getBackupDownloadProgress( state, siteId, rewindId )
-	);
+	const downloadId = useSelector( ( state ) => getBackupDownloadId( state, siteId ) );
+	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId ) );
+	const downloadProgress = useSelector( ( state ) => getBackupDownloadProgress( state, siteId ) );
+	const downloadRewindId = useSelector( ( state ) => getBackupDownloadRewindId( state, siteId ) );
 
 	const requestDownload = useCallback(
 		() => dispatch( rewindBackup( siteId, rewindId, rewindConfig ) ),
@@ -59,7 +57,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		'calypso_jetpack_backup_download_click'
 	);
 
-	const renderConfirm = ( otherDownloadId: number | null ) => (
+	const isOtherDownloadInfo = downloadRewindId !== rewindId;
+	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== null;
+
+	const renderConfirm = () => (
 		<>
 			<div className="rewind-flow__header">
 				<img
@@ -94,12 +95,11 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				primary
 				onClick={ trackedRequestDownload }
 				disabled={
-					otherDownloadId !== null ||
+					isOtherDownloadInProgress ||
 					Object.values( rewindConfig ).every( ( setting ) => ! setting )
 				}
-				busy={ otherDownloadId !== null }
 			>
-				{ otherDownloadId !== null
+				{ isOtherDownloadInProgress
 					? translate( 'Another downloadable file being created' )
 					: translate( 'Create downloadable file' ) }
 			</Button>
@@ -218,8 +218,8 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	);
 
 	const render = () => {
-		if ( downloadProgress === null && downloadUrl === null ) {
-			return renderConfirm( anyDownloadId );
+		if ( isOtherDownloadInfo || ( downloadProgress === null && downloadUrl === null ) ) {
+			return renderConfirm();
 		} else if ( downloadProgress !== null && downloadUrl === null ) {
 			if ( ! userRequestedDownload ) {
 				setUserRequestedDownload( true );
@@ -234,7 +234,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	return (
 		<>
 			<QueryRewindBackupStatus
-				downloadId={ downloadId | ( anyDownloadId && anyDownloadId !== downloadId ) }
+				downloadId={ downloadProgress !== null ? downloadId : undefined }
 				siteId={ siteId }
 			/>
 			{ render() }
