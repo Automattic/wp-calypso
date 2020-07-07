@@ -64,7 +64,7 @@ class ListAll extends Component {
 	handleDomainItemClick = ( domain ) => {
 		const { sites, currentRoute } = this.props;
 		const site = sites[ domain.blogId ];
-		page( getDomainManagementPath( domain.domain, domain.type, site.slug, currentRoute ) );
+		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
 	};
 
 	handleAddEmailClick = ( domain ) => {

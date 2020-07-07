@@ -45,7 +45,7 @@ class DomainItem extends PureComponent {
 	};
 
 	handleClick = () => {
-		this.props.onClick( this.props.domain );
+		this.props.onClick( this.props.domainDetails );
 	};
 
 	stopPropagation = ( event ) => {

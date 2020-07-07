@@ -424,6 +424,7 @@ export class List extends React.Component {
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
+				onClick={ this.goToEditDomainRoot }
 			/>
 		) );
 
