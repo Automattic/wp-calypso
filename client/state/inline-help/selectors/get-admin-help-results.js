@@ -14,16 +14,16 @@ import { adminSections, filterListBySearchTerm } from 'blocks/inline-help/admin-
  * because the admin sections are store in the admin-sections.js,
  * in the inline-block component.
  *
- * @param   {object} state  Global state tree
+ * @param   {object} state      Global state tree
  * @param   {string} searchTerm The search term
- * @param   {string} siteSlug   The current site slug
+ * @param   {object} options    Options object with useful data.
  * @param   {number} limit      The maximum number of results to show
  * @returns {Array}             A filtered (or empty) array
  */
-export default function getAdminHelpResults( state, searchTerm = '', siteSlug = '', limit ) {
+export default function getAdminHelpResults( state, searchTerm = '', options = {}, limit ) {
 	if ( ! searchTerm ) {
 		return [];
 	}
 
-	return filterListBySearchTerm( searchTerm, adminSections( siteSlug ), limit );
+	return filterListBySearchTerm( searchTerm, adminSections( options ), limit );
 }
