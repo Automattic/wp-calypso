@@ -209,10 +209,21 @@ class DomainItem extends PureComponent {
 	}
 
 	render() {
-		const { domain, showSite, site, showCheckbox, domainDetails, translate } = this.props;
+		const {
+			domain,
+			domainDetails,
+			isManagingAllSites,
+			showSite,
+			site,
+			showCheckbox,
+			translate,
+		} = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
+		const domainTitleClass = classNames( 'domain-item__title', {
+			'domain-item__primary': ! isManagingAllSites && domainDetails?.isPrimary,
+		} );
 
 		return (
 			<CompactCard className={ rowClasses } onClick={ this.handleClick }>
@@ -225,7 +236,7 @@ class DomainItem extends PureComponent {
 				) }
 				<div className="list__domain-link">
 					<div className="domain-item__status">
-						<div className="domain-item__title">{ domain.domain }</div>
+						<div className={ domainTitleClass }>{ domain.domain }</div>
 						{ listStatusText && (
 							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
 						) }

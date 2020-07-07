@@ -259,6 +259,10 @@ input[type='radio'].domain-management-list-item__radio {
 	fill: var( --color-text-subtle );
 }
 
+.domain-item__primary {
+	font-weight: 600;
+}
+
 .list__no-chevron .gridicon {
 	display: none;
 }
