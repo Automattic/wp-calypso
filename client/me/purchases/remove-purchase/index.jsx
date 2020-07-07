@@ -341,7 +341,7 @@ class RemovePurchase extends Component {
 			);
 		}
 
-		if ( this.props.isAtomicSite ) {
+		if ( this.props.isAtomicSite && ! purchase.productName.includes( 'Search' ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 
