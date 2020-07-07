@@ -27,6 +27,7 @@ import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/
 import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -195,7 +196,7 @@ async function redirectIfBlockEditor( context, next ) {
 	}
 
 	// If the new editor is classic, we bypass the selected editor check.
-	if ( 'classic' === newEditorChoice ) {
+	if ( ! inEditorDeprecationGroup( state ) && 'classic' === newEditorChoice ) {
 		return next();
 	}
 
