@@ -26,25 +26,26 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 			'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 		),
 		link: `/domains/add/${ siteSlug }`,
-		synonyms: [ 'domain' ],
+		synonyms: [ 'domains' ],
 		icon: 'domains',
 	},
 	{
 		title: translate( 'Manage my domain settings' ),
 		link: `/domains/manage/${ siteSlug }`,
+		synonyms: [ 'domains' ],
 		icon: 'domains',
 	},
 	{
 		title: translate( 'Change my site address' ),
 		link: `/domains/manage/${ siteSlug }/edit/${ siteSlug }`,
-		synonyms: [ 'domain' ],
+		synonyms: [ 'domains', 'domain' ],
 		icon: 'domains',
 	},
 	{
 		title: translate( 'Add a site redirect' ),
 		description: translate( 'Redirect your site to another domain.' ),
 		link: `/domains/add/site-redirect/${ siteSlug }`,
-		synonyms: [ 'domain', 'forward' ],
+		synonyms: [ 'domains', 'domain', 'forward' ],
 		icon: 'domains',
 	},
 	{
