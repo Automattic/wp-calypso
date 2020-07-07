@@ -4,7 +4,7 @@
 import { Card, Button } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import page from 'page';
 import classnames from 'classnames';
