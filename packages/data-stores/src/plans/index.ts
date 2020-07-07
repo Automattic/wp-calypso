@@ -31,7 +31,6 @@ export function register(): typeof STORE_KEY {
 			controls,
 			reducer: reducer as any,
 			selectors,
-			persist: [ 'selectedPlanSlug' ],
 		} );
 	}
 	return STORE_KEY;

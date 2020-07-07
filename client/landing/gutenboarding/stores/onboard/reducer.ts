@@ -3,7 +3,7 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -144,6 +144,16 @@ const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, act
 	return state;
 };
 
+const plan: Reducer< Plans.Plan | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLAN' ) {
+		return action.plan;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -157,6 +167,7 @@ const reducer = combineReducers( {
 	siteTitle,
 	siteVertical,
 	showSignupDialog,
+	plan,
 } );
 
 export type State = ReturnType< typeof reducer >;
