@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { addMedia } from './add-media';
-import { serially } from './serially';
+import { uploadMedia } from './upload-media';
+import { getFileUploader } from 'lib/media/utils';
 
 /**
  * Upload a list of woocommerce product images.
@@ -20,22 +20,20 @@ import { serially } from './serially';
 export const addWoocommerceProductImage = ( files, site, onUpload, onError, onFinish ) => async (
 	dispatch
 ) => {
-	const add = serially(
-		// `serially` assumes the action's arguments go file then extra args
-		// but `addMedia` uses the old `site`,`file` pattern. Maybe we should
-		// change everything to be `file(s)`, `site`?
-		// @todo(saramarcondes) update addMedia signatures to all match order expected by serially
-		addMedia,
-		( uploadedMedia, originalFile ) =>
-			onUpload( {
-				ID: uploadedMedia.ID,
-				transientId: originalFile.ID,
-				URL: uploadedMedia.URL,
-				placeholder: originalFile.preview,
-			} ),
-		onError
+	const uploadedItems = await dispatch(
+		uploadMedia(
+			files,
+			site,
+			getFileUploader(),
+			( uploadedMedia, originalFile ) =>
+				onUpload( {
+					ID: uploadedMedia.ID,
+					transientId: originalFile.ID,
+					URL: uploadedMedia.URL,
+					placeholder: originalFile.preview,
+				} ),
+			onError
+		)
 	);
-
-	const uploadedItems = await dispatch( add( files, site ) );
 	onFinish( uploadedItems.map( ( item ) => item.ID ) );
 };
