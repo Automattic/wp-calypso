@@ -167,8 +167,8 @@ const PostMetadata = {
 		const longitude = coordinates[ 1 ].toFixed( 6 );
 
 		if (
-			latitude === post?.geo?.latitude.toFixed( 6 ) &&
-			longitude === post?.geo?.longitude.toFixed( 6 )
+			latitude === post?.geo?.latitude?.toFixed( 6 ) &&
+			longitude === post?.geo?.longitude?.toFixed( 6 )
 		) {
 			const staticImage = post?.geo?.map_url;
 			if ( staticImage ) {
