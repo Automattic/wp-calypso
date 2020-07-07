@@ -56,35 +56,6 @@ MediaActions.setQuery = function ( siteId, query ) {
 	} );
 };
 
-MediaActions.fetch = function ( siteId, itemId ) {
-	const fetchKey = [ siteId, itemId ].join();
-	if ( MediaActions._fetching[ fetchKey ] ) {
-		return;
-	}
-
-	MediaActions._fetching[ fetchKey ] = true;
-	Dispatcher.handleViewAction( {
-		type: 'FETCH_MEDIA_ITEM',
-		siteId: siteId,
-		id: itemId,
-	} );
-
-	debug( 'Fetching media for %d using ID %d', siteId, itemId );
-	wpcom
-		.site( siteId )
-		.media( itemId )
-		.get( function ( error, data ) {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_MEDIA_ITEM',
-				error: error,
-				siteId: siteId,
-				data: data,
-			} );
-
-			delete MediaActions._fetching[ fetchKey ];
-		} );
-};
-
 MediaActions.fetchNextPage = function ( siteId ) {
 	if ( MediaListStore.isFetchingNextPage( siteId ) ) {
 		return;
