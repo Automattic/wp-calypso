@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { intersection, words, memoize } from 'lodash';
+import { intersection, words, memoize, noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -17,7 +17,7 @@ import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
  * @param   {object} options.customizeUrl - Customizer URL.
  * @returns {Array}                         An array of admin sections with site-specific URLs.
  */
-export const adminSections = memoize( ( { siteSlug, customizeUrl } ) => [
+export const adminSections = memoize( ( { siteSlug, customizeUrl = noop } ) => [
 	{
 		title: translate( 'Add a new domain' ),
 		description: translate(
