@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import 'a8c-fse-common-data-stores';
 
 /**
  * Internal dependencies

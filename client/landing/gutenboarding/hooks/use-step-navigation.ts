@@ -9,11 +9,9 @@ import { useHistory } from 'react-router-dom';
  */
 import { Step, usePath, useCurrentStep } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-
-import { useShouldSiteBePublicOnSelectedPlan } from './use-selected-plan';
 import { USER_STORE } from '../stores/user';
+import { useShouldSiteBePublic } from './use-selected-plan';
 import useSignup from './use-signup';
-import { PLANS_STORE } from '../stores/plans';
 
 /**
  * A React hook that returns callback to navigate to previous and next steps in Gutenboarding flow
@@ -39,7 +37,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { createSite } = useDispatch( ONBOARD_STORE );
-	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
+	const shouldSiteBePublic = useShouldSiteBePublic();
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
@@ -50,7 +48,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { domain, hasUsedPlansStep } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
-	const plan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
+	const plan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 
 	// remove Domains step only if it's at the end
 	if ( ! siteTitle && domain ) {

@@ -54,7 +54,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handleNext = () => {
 		trackEventWithFlow( 'calypso_newsite_domain_select', {
-			domain_name: domain?.domain_name,
+			domain_name: selectedDomainRef.current,
 		} );
 		if ( isModal ) {
 			history.goBack();

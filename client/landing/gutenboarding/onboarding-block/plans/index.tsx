@@ -37,8 +37,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
 
-	//@TODO: do the same for domains step
-	const { setDomain, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
+	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	React.useEffect( () => {
 		! isModal && setHasUsedPlansStep( true );
 	}, [] );
@@ -57,9 +56,12 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handlePlanSelect = ( planSlug: PlanSlug ) => {
-		if ( isPlanFree( planSlug ) ) {
+		// When picking a free plan, if there is a paid domain selected, it's changed automatically to a free domain
+		if ( isPlanFree( planSlug ) && ! domain?.is_free ) {
 			setDomain( freeDomainSuggestion );
 		}
+
+		updatePlan( planSlug );
 
 		if ( isModal ) {
 			history.goBack();

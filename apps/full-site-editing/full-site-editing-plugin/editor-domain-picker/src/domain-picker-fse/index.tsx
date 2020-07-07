@@ -8,7 +8,6 @@ import type { DomainSuggestions } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
-import 'a8c-fse-common-data-stores';
 import { useSite, useCurrentDomain } from '../hooks/use-current-domain';
 
 const FLOW_ID = 'gutenboarding';

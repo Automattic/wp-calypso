@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { DomainSuggestions, Site, VerticalsTemplates } from '@automattic/data-stores';
+import type { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 
@@ -11,6 +11,7 @@ import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import type { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
+import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
 
@@ -92,6 +93,16 @@ export const setShowSignupDialog = ( showSignup: boolean ) => ( {
 	showSignup,
 } );
 
+export const setPlan = ( plan: Plans.Plan ) => ( {
+	type: 'SET_PLAN' as const,
+	plan,
+} );
+
+export function* updatePlan( planSlug: Plans.PlanSlug ) {
+	const plan: Plans.Plan = yield select( PLANS_STORE, 'getPlanBySlug', planSlug );
+	yield setPlan( plan );
+}
+
 export function* createSite( username: string, bearerToken?: string, isPublicSite = false ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
@@ -153,4 +164,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteVertical
 	| typeof togglePageLayout
 	| typeof setShowSignupDialog
+	| typeof setPlan
 >;
