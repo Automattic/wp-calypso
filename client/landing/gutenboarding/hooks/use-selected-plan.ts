@@ -39,11 +39,7 @@ export function useSelectedPlan() {
 	return selectedPlan || planFromPath || defaultPlan;
 }
 
-export function useIsSelectedPlanEcommerce() {
+export function useShouldSiteBePublic() {
 	const currentSlug = useSelectedPlan()?.storeSlug;
 	return useSelect( ( select ) => select( PLANS_STORE ).isPlanEcommerce( currentSlug ) );
-}
-
-export function useShouldSiteBePublicOnSelectedPlan() {
-	return useIsSelectedPlanEcommerce();
 }
