@@ -27,7 +27,7 @@ import {
 
 import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
 import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import 'state/inline-help/init';
 import {
@@ -72,12 +72,19 @@ function mapWithSupportTypeProp( collection, support_type ) {
 export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
-		const siteSlug = getSiteSlug( state, getSelectedSiteId( state ) );
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
+		const customizeUrl = getCustomizerUrl( state, siteId );
+
 		const contextualResults = mapWithSupportTypeProp(
 			getContextualHelpResults( state ),
 			SUPPORT_TYPE_CONTEXTUAL_HELP
 		);
-		const helpAdminResults = getAdminHelpResults( state, searchQuery, siteSlug, 3 );
+		const helpAdminResults = getAdminHelpResults( state, searchQuery, {
+			customizeUrl,
+			siteId,
+			siteSlug,
+		}, 3 );
 
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();

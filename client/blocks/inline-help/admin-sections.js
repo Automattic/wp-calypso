@@ -13,10 +13,11 @@ import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 /**
  * Returns admin section items with site-based urls.
  *
- * @param {string} siteSlug - The current site slug.
- * @returns {Array}           An array of admin sections with site-specific URLs.
+ * @param   {object} options.siteSlug     - The current site slug.
+ * @param   {object} options.customizeUrl - Customizer URL.
+ * @returns {Array}                         An array of admin sections with site-specific URLs.
  */
-export const adminSections = memoize( ( siteSlug ) => [
+export const adminSections = memoize( ( { siteSlug, customizeUrl } ) => [
 	{
 		title: translate( 'Add a new domain' ),
 		description: translate(
@@ -58,25 +59,25 @@ export const adminSections = memoize( ( siteSlug ) => [
 	},
 	{
 		title: translate( "Customize my site's theme" ),
-		link: `/customize/${ siteSlug }`,
+		link: `${ customizeUrl }`,
 		synonyms: [ 'color', 'font', 'design', 'css', 'widgets' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Change my homepage' ),
-		link: `/customize/${ siteSlug }?autofocus[section]=static_front_page`,
+		link: `${ customizeUrl }?autofocus[section]=static_front_page`,
 		synonyms: [ 'home', 'homepage' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Edit my menu' ),
-		link: `/customize/${ siteSlug }?autofocus[panel]=nav_menus`,
+		link: `${ customizeUrl }?autofocus[panel]=nav_menus`,
 		synonyms: [ 'menu' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Set a site logo' ),
-		link: `/customize/${ siteSlug }?autofocus[section]=title_tagline`,
+		link: `${ customizeUrl }?autofocus[section]=title_tagline`,
 		synonyms: [ 'logo', 'identity' ],
 		icon: 'customize',
 	},
