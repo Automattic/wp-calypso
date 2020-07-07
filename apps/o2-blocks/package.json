@@ -34,6 +34,7 @@
 		"@wordpress/i18n": "^3.14.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
-		"moment": "^2.26.0"
+		"moment": "^2.26.0",
+		"new-github-issue-url": "^0.2.1"
 	}
 }

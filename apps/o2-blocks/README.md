@@ -36,3 +36,10 @@ To build bundle in `apps/o2-blocks/dist`, run:
 cd apps/o2-blocks
 yarn build
 ```
+
+## Development environment
+
+1. Build `o2-blocks` by running `yarn build --watch`;
+2. Run `wp-env start` to start a local dockerized WordPress instance that will automatically use and activate `o2-blocks` as a plugin.
+
+If you are not well-acquainted with `wp-env` yet, read [this](https://make.wordpress.org/core/2020/03/03/wp-env-simple-local-environments-for-wordpress/) article first.
