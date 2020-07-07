@@ -521,7 +521,7 @@ function SubmitButtonHeader() {
 	const translate = useTranslate();
 	return (
 		<SubmitButtonHeaderUI>
-			{ translate( 'By checking out you agree to our {{a}}Terms of Service{{/a}}', {
+			{ translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
 				components: {
 					a: <a href="#checkout-terms" />,
 				},
