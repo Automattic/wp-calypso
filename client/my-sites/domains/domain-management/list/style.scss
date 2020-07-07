@@ -262,3 +262,7 @@ input[type='radio'].domain-management-list-item__radio {
 .list__no-chevron .gridicon {
 	display: none;
 }
+
+.list__action_item_placeholder {
+	@include placeholder( --color-neutral-5 );
+}

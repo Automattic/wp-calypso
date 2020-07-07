@@ -20,7 +20,11 @@ import DocumentHead from 'components/data/document-head';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import FormattedHeader from 'components/formatted-header';
-import { getAllDomains, getFlatDomainsList } from 'state/sites/domains/selectors';
+import {
+	getAllDomains,
+	getFlatDomainsList,
+	getAllRequestingSiteDomains,
+} from 'state/sites/domains/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
@@ -33,6 +37,8 @@ import QueryAllDomains from 'components/data/query-all-domains';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { emailManagement } from 'my-sites/email/paths';
+import { getUserPurchases } from 'state/purchases/selectors';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 
 /**
  * Style dependencies
@@ -47,6 +53,7 @@ class ListAll extends Component {
 		sites: PropTypes.object.isRequired,
 		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
+		requestingSiteDomains: PropTypes.object,
 	};
 
 	clickAddDomain = () => {
@@ -79,8 +86,8 @@ class ListAll extends Component {
 	}
 
 	isLoading() {
-		const { domainsList, requestingDomains, sites } = this.props;
-		return ! sites || ( requestingDomains && domainsList.length === 0 );
+		const { domainsList, requestingFlatDomains, sites } = this.props;
+		return ! sites || ( requestingFlatDomains && domainsList.length === 0 );
 	}
 
 	findDomainDetails( domainsDetails = [], domain = {} ) {
@@ -94,7 +101,14 @@ class ListAll extends Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { domainsList, sites, domainsDetails, canManageSitesMap } = this.props;
+		const {
+			domainsList,
+			sites,
+			domainsDetails,
+			canManageSitesMap,
+			purchases,
+			requestingSiteDomains,
+		} = this.props;
 
 		const domainListItems = domainsList
 			.filter(
@@ -107,7 +121,11 @@ class ListAll extends Component {
 						domain={ domain }
 						domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
 						site={ sites[ domain?.blogId ] }
+						purchase={
+							purchases[ this.findDomainDetails( domainsDetails, domain )?.subscriptionId ]
+						}
 						isManagingAllSites={ true }
+						isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
 						showSite={ true }
 						onClick={ this.handleDomainItemClick }
 						onAddEmailClick={ this.handleAddEmailClick }
@@ -119,7 +137,7 @@ class ListAll extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, user } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -129,6 +147,7 @@ class ListAll extends Component {
 				</div>
 				<div className="list-all__container">
 					<QueryAllDomains />
+					<QueryUserPurchases userId={ user.ID } />
 					<Main wideLayout>
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
@@ -149,14 +168,19 @@ const addDomainClick = () =>
 export default connect(
 	( state ) => {
 		const sites = keyBy( getVisibleSites( state ), 'ID' );
+		const user = getCurrentUser( state );
+		const purchases = keyBy( getUserPurchases( state, user?.ID ) || [], 'id' );
+
 		return {
 			canManageSitesMap: canCurrentUserForSites( state, keys( sites ), 'manage_options' ),
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
-			requestingDomains: isRequestingAllDomains( state ),
+			purchases,
+			requestingFlatDomains: isRequestingAllDomains( state ),
+			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
-			user: getCurrentUser( state ),
+			user,
 		};
 	},
 	( dispatch ) => {

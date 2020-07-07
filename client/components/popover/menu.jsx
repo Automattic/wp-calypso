@@ -84,8 +84,8 @@ class PopoverMenu extends Component {
 
 		return React.cloneElement( child, {
 			action: null,
-			onClick: () => {
-				onClick && onClick();
+			onClick: ( event ) => {
+				onClick && onClick( event );
 				this._onClose( action );
 			},
 		} );
