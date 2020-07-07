@@ -20,10 +20,10 @@ import { adminSections, filterListBySearchTerm } from 'blocks/inline-help/admin-
  * @param   {number} limit      The maximum number of results to show
  * @returns {Array}             A filtered (or empty) array
  */
-export default function getAdminHelpResults( state, searchTerm = '', siteSlug, limit ) {
+export default function getAdminHelpResults( state, searchTerm = '', siteSlug = '', limit ) {
 	if ( ! searchTerm ) {
 		return [];
 	}
 
-	return filterListBySearchTerm( searchTerm, adminSections( siteSlug || '' ), limit );
+	return filterListBySearchTerm( searchTerm, adminSections( siteSlug ), limit );
 }
