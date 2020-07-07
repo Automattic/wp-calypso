@@ -401,7 +401,7 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 	}
 
 	const searchTermWords = words( searchTerm ).map( ( word ) => word.toLowerCase() );
-	if ( searchTermWords.length < 1 ) {
+	if ( ! searchTermWords.length ) {
 		return [];
 	}
 
