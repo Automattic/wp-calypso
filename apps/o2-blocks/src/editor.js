@@ -9,3 +9,4 @@ import './spoiler/editor';
 import './todo/editor';
 import './task';
 import './project-status';
+import './janitorial-state-widget/editor';

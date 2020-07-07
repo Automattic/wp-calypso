@@ -1,0 +1,73 @@
+.janitorial-state-widget-tier-selected .janitorial-state-widget-bullet {
+	color: green;
+}
+
+.janitorial-state-widget-tier-selected-marker {
+	margin-left: 1em;
+	color: green;
+}
+
+.editor-styles-wrapper .janitorial-state-widget-tier-ul,
+.janitorial-state-widget-tier-ul {
+	list-style: none !important;
+}
+
+.janitorial-state-widget-bullet {
+	position: absolute;
+	vertical-align: middle;
+	display: inline-block;
+	margin: 0 -2.5rem;
+}
+
+.janitorial-state-widget-bullet.can-edit {
+	cursor: pointer;
+}
+
+.editor-styles-wrapper .janitorial-state-widget-bullet {
+	margin-left: -1.5rem;
+	padding-top: 1px;
+}
+
+.editor-styles-wrapper .janitorial-state-widget-tier-ul li,
+.janitorial-state-widget-tier-ul li {
+	margin-bottom: 5px;
+	line-height: 20px;
+}
+
+.janitorial-state-widget-tier-ul li small {
+	display: block;
+}
+
+.janitorial-state-widget-tier-ul li small a {
+	margin-right: 5px;
+}
+
+.janitorial-state-widget-tier-ul li small a:nth-child(2) {
+	margin-left: 5px;
+}
+
+.janitorial-state-widget-tier-ul li small a:nth-child(3) {
+	margin-left: 5px;
+}
+
+.janitorial-state-widget-sort-helper {
+	list-style: none;
+}
+
+.janitorial-state-widget-sort-helper .janitorial-state-widget-bullet {
+	display: none;
+}
+
+.janitorial-state-widget-sort-helper small {
+	display: none;
+}
+
+.janitorial-state-widget-sort-helper .janitorial-state-widget-tier-selected-marker {
+	display: none;
+}
+
+.janitorial-state-widget-sort-icon {
+	position: relative;
+	top: 6px;
+	cursor: grab;
+}

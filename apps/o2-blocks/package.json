@@ -28,6 +28,8 @@
 		"@wordpress/editor": "^9.16.0",
 		"@wordpress/element": "^2.14.0",
 		"@wordpress/i18n": "^3.12.0",
-		"classnames": "^2.2.6"
+		"array-move": "^2.2.2",
+		"classnames": "^2.2.6",
+		"react-sortable-hoc": "^1.11.0"
 	}
 }

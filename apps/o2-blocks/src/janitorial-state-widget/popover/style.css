@@ -1,0 +1,53 @@
+.janitorial-state-widget-popover-container {
+	min-width: 500px;
+	padding: 20px;
+	position: relative;
+}
+
+.janitorial-state-widget-popover-close {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+}
+
+.janitorial-state-widget-popover-tier-issue-sort-order .components-select-control__input {
+	max-width: initial;
+}
+
+.janitorial-state-widget-popover-tier-label-not-valid .components-base-control__field .components-text-control__input {
+	border-color: red;
+}
+
+.janitorial-state-widget-popover-tier-link-not-valid .components-base-control__field .components-text-control__input {
+	border-color: red;
+}
+
+.janitorial-state-widget-popover-tier-repos-not-valid .components-base-control__field .components-textarea-control__input {
+	border-color: red;
+}
+
+.janitorial-state-widget-popover-tier-issues-labels-not-valid .components-base-control__field .components-textarea-control__input {
+	border-color: red;
+}
+
+.janitorial-state-widget-toggle {
+	text-align: right;
+}
+
+.janitorial-state-widget-toggle-label {
+	padding-right: 10px;
+}
+
+.janitorial-state-widget-link-fields {
+	overflow: hidden;
+	transition: max-height 0.6s ease;
+}
+
+.janitorial-state-widget-link-fields-hidden {
+	max-height: 0;
+}
+
+.janitorial-state-widget-link-fields .components-text-control__input,
+.janitorial-state-widget-link-fields .components-select-control__input {
+	margin: 0;
+}
