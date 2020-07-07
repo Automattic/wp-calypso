@@ -116,9 +116,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					isOtherDownloadInProgress ||
 					Object.values( rewindConfig ).every( ( setting ) => ! setting )
 				}
+				busy={ isOtherDownloadInProgress }
 			>
 				{ isOtherDownloadInProgress
-					? translate( 'Another downloadable file being created' )
+					? translate( 'Another downloadable file is being created' )
 					: translate( 'Create downloadable file' ) }
 			</Button>
 		</>
