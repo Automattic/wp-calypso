@@ -4,6 +4,7 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -240,7 +241,9 @@ async function createAccount() {
 		document.getElementById( 'contact-signup-email' )?.value ||
 		document.getElementById( 'email' ).value;
 
-	const response = await wp.undocumented().usersNew(
+	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+
+	const response = await wp.undocumented().createUserAndSite(
 		{
 			email,
 			'g-recaptcha-error': undefined,
@@ -249,16 +252,28 @@ async function createAccount() {
 			signup_flow_name: 'onboarding-new',
 			validate: false,
 			ab_test_variations: getSavedVariations(),
+			new_site_params: newSiteParams,
 		},
 		null
 	);
 	createAccountCallback( null, response );
+	return response;
 }
 
 export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	if ( isLoggedOutCart ) {
-		return createAccount().then( ( error ) => {
-			return wp.undocumented().transactions( payload );
+		return createAccount().then( ( response ) => {
+			const siteId = get( response, 'blog_details.blogid', undefined );
+			const newPayload = {
+				...payload,
+				cart: {
+					...payload.cart,
+					blog_id: siteId || '0',
+					cart_key: siteId || 'no-site',
+				},
+			};
+
+			return wp.undocumented().transactions( newPayload );
 		} );
 	}
 

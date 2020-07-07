@@ -172,7 +172,6 @@ CartSynchronizer.prototype._pollFromLocalStorage = function () {
 			cart_key: this._cartKey,
 			products: [],
 			temporary: true,
-			create_new_blog: true,
 		};
 		this._latestValue = changeFunction( initialCart );
 	}

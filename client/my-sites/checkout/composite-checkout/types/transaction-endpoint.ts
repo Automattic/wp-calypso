@@ -107,7 +107,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	return {
 		blog_id: siteId || '0',
 		cart_key: cartKey,
-		create_new_blog: siteId ? false : true,
+		create_new_blog: false,
 		coupon: couponId || '',
 		currency: currency || '',
 		temporary: false,
@@ -194,11 +194,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	const urlParams = new URLSearchParams( window.location.search );
 	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
 
-	let newSiteParams;
-	if ( isLoggedOutCart ) {
-		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
-	}
-
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
 			siteId,
@@ -226,7 +221,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			idealBank,
 		},
 		isWhiteGloveOffer: isWhiteGlove,
-		...( isLoggedOutCart && { newSiteParams } ),
 	};
 }
 
