@@ -60,7 +60,7 @@ function HelpSearchResults( {
 
 		return (
 			<li className="inline-help__results-title">
-				<h2>{ title }</h2>:
+				<h2>{ title }</h2>
 			</li>
 		);
 	}
