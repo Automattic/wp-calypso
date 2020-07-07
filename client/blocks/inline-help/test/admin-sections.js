@@ -26,12 +26,12 @@ describe( 'filterListBySearchTerm()', () => {
 		},
 	];
 
-	test( 'should ignore non-word characters and return `[]`', () => {
+	test( 'should ignore non-word characters and return an empty array', () => {
 		const result = filterListBySearchTerm( "<$(*&#\\\\\\'''''>", mockCollection );
 		expect( result ).to.deep.equal( [] );
 	} );
 
-	test( 'should return `[]` for no matches', () => {
+	test( 'should return an empty array for no matches', () => {
 		const result = filterListBySearchTerm( 'ciao', mockCollection );
 		expect( result ).to.deep.equal( [] );
 	} );

@@ -138,7 +138,7 @@ describe( '#getInlineHelpSearchResultsForQuery()', () => {
 } );
 
 describe( 'getAdminSectionsResults()', () => {
-	test( 'should return `[]` when there is no search term', () => {
+	test( 'should return an empty array when there is no search term', () => {
 		const result = getAdminHelpResults( {} );
 		expect( result ).to.deep.equal( [] );
 	} );
