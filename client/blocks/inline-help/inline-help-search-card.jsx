@@ -48,17 +48,17 @@ const InlineHelpSearchCard = ( {
 
 	// Make focus in the input element.
 	useEffect( () => {
-	    if ( ! cardRef?.current ) {
-	    	return;
-	    }
+		if ( ! cardRef?.current ) {
+			return;
+		}
 
-	    const inputElement = cardRef.current.searchInput;
-	    if ( ! inputElement ) {
-	    	return;
-	    }
-	    const timerId = setTimeout( () => ( inputElement.focus() ), 0 );
+		const inputElement = cardRef.current.searchInput;
+		if ( ! inputElement ) {
+			return;
+		}
+		const timerId = setTimeout( () => inputElement.focus(), 0 );
 
-	    return () => window.clearTimeout( timerId );
+		return () => window.clearTimeout( timerId );
 	}, [ cardRef ] );
 
 	const onKeyDown = ( event ) => {
