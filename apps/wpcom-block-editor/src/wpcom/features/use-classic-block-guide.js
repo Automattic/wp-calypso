@@ -2,13 +2,18 @@
 /**
  * External dependencies
  */
-import { useState } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { Guide } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import url from 'url';
-import { translate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 /* eslint-enable import/no-extraneous-dependencies */
+
+/**
+ * Internal dependencies
+ */
+import { ClassicBlockImage, InserterImage, InserterIconImage } from './images';
 
 const parsedEditorUrl = url.parse( globalThis.location.href, true );
 const storageKey = `classic_block_guide_${ globalThis._currentSiteId }_is_dismissed`;
@@ -27,39 +32,56 @@ const ClassicGuide = () => {
 	setWpcomNuxStatus( { isNuxEnabled: false } );
 
 	return (
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<>
 			{ isOpen && (
 				<Guide
+					className="edit-post-welcome-guide"
 					onFinish={ closeGuide }
-					finishButtonText={ translate( 'Get started' ) }
+					finishButtonText={ __( 'Get started' ) }
 					pages={ [
 						{
+							image: <ClassicBlockImage />,
 							content: (
-								<div className="use-classic-block-guide__wrapper">
-									<div className="use-classic-block-guide__content">
-										<h1 className="use-classic-block-guide__header">
-											{ translate( 'Say hello to the Classic block' ) }
-										</h1>
-										<p>
-											{ translate(
-												'The block editor is now the default editor for all your sites, but you can still use the Classic block, if you prefer.'
-											) }
-										</p>
-									</div>
-									<div>
-										<img
-											alt="Screenshot of the Classic block"
-											className="use-classic-block-guide__image"
-											src="https://s0.wp.com/i/classic-block-welcome.png"
-										/>
-									</div>
-								</div>
+								<>
+									<h1 className="use-classic-block-guide__heading edit-post-welcome-guide__heading">
+										{ __( 'Say hello to the Classic block' ) }
+									</h1>
+									<p className="edit-post-welcome-guide__text">
+										{ __(
+											'The block editor is now the default editor for all your sites, but you can still use the Classic block, if you prefer.'
+										) }
+									</p>
+								</>
+							),
+						},
+						{
+							image: <InserterImage />,
+							content: (
+								<>
+									<h1 className="use-classic-block-guide__heading edit-post-welcome-guide__heading">
+										{ __( 'How to add the Classic block' ) }
+									</h1>
+									<p className="edit-post-welcome-guide__text">
+										{ createInterpolateElement(
+											__(
+												'To use the classic block, click on the <InserterIconImage /> at the top of the screen, search for Classic and insert the block.'
+											),
+											{
+												InserterIconImage: (
+													<InserterIconImage className="edit-post-welcome-guide__inserter-icon" />
+												),
+											}
+										) }
+									</p>
+								</>
 							),
 						},
 					] }
 				/>
 			) }
 		</>
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 };
 
