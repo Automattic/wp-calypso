@@ -349,12 +349,13 @@
 }
 
 .inline-help__results-title {
+	margin-top: 10px;
 	h2 {
 		font-weight: bold;
 		line-height: 1.4;
 		display: block;
 		padding: 8px 16px;
-		font-size: $font-body-small;
+
 		&:after {
 			content: ':';
 		}
@@ -383,14 +384,21 @@
 		}
 
 		.gridicon {
-			align-self: baseline;
+			align-self: center;
 			margin-right: 8px;
+			color: var( --color-neutral-light );
 		}
 
 		&:hover {
 			cursor: pointer;
 			//color: var( --color-primary );
 			background: var( --color-neutral-0 );
+
+			.gridicon {
+				align-self: center;
+				margin-right: 8px;
+				color: var( --color-neutral );
+			}
 		}
 	}
 
@@ -409,6 +417,10 @@
 		}
 
 		a {
+			color: var( --color-text-inverted );
+		}
+
+		.gridicon {
 			color: var( --color-text-inverted );
 		}
 	}
