@@ -11,7 +11,6 @@ import { combineReducers, withoutPersistence } from 'state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
 import comments from './comments/reducer';
-import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
 import editorDeprecationDialog from './editor-deprecation-dialog/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
@@ -96,7 +95,6 @@ const reducer = combineReducers( {
 	actionLog,
 	checkout,
 	comments,
-	dropZone,
 	editorDeprecationDialog,
 	guidedTour,
 	gutenbergOptInDialog,

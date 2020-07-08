@@ -1,10 +1,8 @@
 /**
  * Internal dependencies
  */
-
 import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
-
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 
 // TODO(biskobe) - Can be improved with `keyedReducer` instead of state spread.
 const isVisible = withoutPersistence( ( state = {}, action ) => {
@@ -30,6 +28,8 @@ const isVisible = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	isVisible,
 } );
+
+export default withStorageKey( 'dropZone', combinedReducer );
