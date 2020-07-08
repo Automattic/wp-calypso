@@ -12,7 +12,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { bumpStat } from 'lib/analytics/mc';
-import MediaActions from 'lib/media/actions';
 import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
 import { clearMediaItemErrors } from 'state/media/actions';

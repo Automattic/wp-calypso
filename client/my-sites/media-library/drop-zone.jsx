@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import { bumpStat } from 'lib/analytics/mc';
 import DropZone from 'components/drop-zone';
-import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 import { clearMediaItemErrors } from 'state/media/actions';
 import { addMedia } from 'state/media/thunks';
@@ -68,7 +67,7 @@ class MediaLibraryDropZone extends React.Component {
 		// using the Array prototype. Safari may pass types as `null` which
 		// makes detection impossible, so we err on allowing the transfer.
 		//
-		// See: http://www.w3.org/html/wg/drafts/html/master/editing.html#the-datatransfer-interface
+		// See: https://html.spec.whatwg.org/multipage/dnd.html#the-datatransfer-interface
 		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
 	};
 

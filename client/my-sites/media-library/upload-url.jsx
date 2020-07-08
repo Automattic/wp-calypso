@@ -16,7 +16,6 @@ import { localize } from 'i18n-calypso';
 import { bumpStat } from 'lib/analytics/mc';
 import FormTextInput from 'components/forms/form-text-input';
 import { ScreenReaderText } from '@automattic/components';
-import MediaActions from 'lib/media/actions';
 import { clearMediaItemErrors } from 'state/media/actions';
 import { addMedia } from 'state/media/thunks';
 

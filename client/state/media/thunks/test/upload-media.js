@@ -152,19 +152,4 @@ describe( 'media - thunks - uploadMedia', () => {
 			} );
 		} );
 	} );
-
-	describe( 'when validation fails', () => {
-		beforeEach( () => {
-			createTransientMediaItems.mockReturnValueOnce( [] );
-		} );
-
-		it( 'should call onItemFailure with the file', async () => {
-			const onItemFailure = jest.fn();
-			await uploadMedia( file, site, fileUploader, jest.fn(), onItemFailure );
-
-			expect( onItemFailure ).toHaveBeenCalledWith( file );
-			// ensure the failure was truly at the top and not during file uploading
-			expect( fileUploader ).not.toHaveBeenCalled();
-		} );
-	} );
 } );

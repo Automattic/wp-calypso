@@ -20,7 +20,7 @@ describe( 'media - thunks - addExternalMedia', () => {
 
 	describe( 'single file', () => {
 		it( 'should dispatch to uploadMedia with the file uploader', async () => {
-			await addExternalMedia( site, file, service );
+			await addExternalMedia( file, site, service );
 
 			expect( uploadMedia ).toHaveBeenCalledWith( file, site, expect.any( Function ) );
 		} );
@@ -28,7 +28,7 @@ describe( 'media - thunks - addExternalMedia', () => {
 
 	describe( 'multiple files', () => {
 		it( 'should dispatch to uploadMedia with the file uploader', async () => {
-			await addExternalMedia( site, [ file, file ], service );
+			await addExternalMedia( [ file, file ], site, service );
 
 			expect( uploadMedia ).toHaveBeenCalledWith( [ file, file ], site, expect.any( Function ) );
 		} );

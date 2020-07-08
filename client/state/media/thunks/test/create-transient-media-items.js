@@ -1,11 +1,16 @@
 /**
  * Internal dependencies
  */
-import * as thunks from 'state/media/thunks/upload-media';
+import { createTransientMediaItems as createTransientMediaItemsThunk } from 'state/media/thunks/create-transient-media-items';
 import { createTransientMedia, validateMediaItem } from 'lib/media/utils';
 import * as dateUtils from 'state/media/utils/transient-date';
 import * as fluxUtils from 'state/media/utils/flux-adapter';
 import * as syncActions from 'state/media/actions';
+
+jest.mock( 'lib/media/utils', () => ( {
+	createTransientMedia: jest.fn(),
+	validateMediaItem: jest.fn(),
+} ) );
 
 describe( 'media - thunks - createTransientMediaItems', () => {
 	const dispatch = jest.fn();
@@ -21,7 +26,7 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 	} );
 
 	const createTransientMediaItems = ( ...args ) =>
-		thunks.createTransientMediaItems( ...args )( dispatch );
+		createTransientMediaItemsThunk( ...args )( dispatch );
 
 	afterEach( () => {
 		jest.resetAllMocks();
