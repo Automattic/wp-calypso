@@ -40,11 +40,12 @@ class FeaturedImageDropZone extends Component {
 
 		const transientId = uniqueId( 'featured-image' );
 
-		const promise = this.props.addMedia( this.props.site, {
+		const file = {
 			ID: transientId,
 			fileContents: droppedImage,
 			fileName: droppedImage.name,
-		} );
+		};
+		const promise = this.props.addMedia( file, this.props.site );
 
 		// set the transient item as the featured image so that there isn't a delay while uploading
 		this.props.editPost( this.props.siteId, this.props.postId, {
