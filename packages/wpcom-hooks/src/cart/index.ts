@@ -68,7 +68,13 @@ export function useSiteCart(
 	siteId: string
 ): [ Cart | undefined, ( newCart: Cart ) => Promise< Cart > ] {
 	const [ cart, setLocalCart ] = React.useState< Cart >();
-	const [ updateTick, setUpdateTick ] = React.useState( 1 );
+
+	// using this allows this hook to re-render every component using it when the cart changes
+	function setCartAndNotifySubscribers( newCart: Cart ) {
+		// we need to dispatch to window so components using the hook in different React trees
+		// still get notified when the cart is updated
+		window.dispatchEvent( new CustomEvent( 'wpcom-cart-update', { detail: newCart } ) );
+	}
 
 	React.useEffect( () => {
 		wpcom
@@ -80,12 +86,29 @@ export function useSiteCart(
 				},
 				() => 0 // sendRequest requires a callback even though it returns a promise
 			)
-			.then( setLocalCart );
-	}, [ siteId, updateTick ] );
+			.then( setCartAndNotifySubscribers );
+	}, [ siteId ] );
 
-	function setCart( newCart: Cart ) {
+	React.useEffect( () => {
+		const handler = ( { detail }: CustomEventInit< Cart > ) => setLocalCart( detail );
+
+		window.addEventListener( 'wpcom-cart-update', handler );
+
+		return () => window.removeEventListener( 'wpcom-cart-update', handler );
+	}, [ setLocalCart ] );
+
+	function setCart( newCartHolder: ( ( prevCart?: Cart ) => Cart ) | Cart ) {
+		let newCart;
+
+		// accept useState style prevState => newState callback
+		if ( typeof newCartHolder === 'function' ) {
+			newCart = newCartHolder( cart );
+		} else {
+			newCart = newCartHolder;
+		}
+
 		// optimistically set the cart
-		setLocalCart( newCart );
+		setCartAndNotifySubscribers( newCart );
 
 		// sync with server
 		return wpcom
@@ -100,8 +123,7 @@ export function useSiteCart(
 				() => 0 // sendRequest requires a callback even though it returns a promise
 			)
 			.then( ( serverCart: Cart ) => {
-				setLocalCart( serverCart );
-				setUpdateTick( ( tick ) => tick++ );
+				setCartAndNotifySubscribers( serverCart );
 				return serverCart;
 			} );
 	}

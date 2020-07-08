@@ -16,19 +16,12 @@ const FLOW_ID = 'gutenboarding';
 
 export type Props = Partial< DomainPickerProps >;
 
-let a = 1;
-
 const DomainPickerFSE: React.FunctionComponent< Props > = ( props ) => {
 	const [ domainSearch, setDomainSearch ] = React.useState( '' );
 
 	const site = useSite();
 
 	const [ cart, setCart ] = Cart.useSiteCart?.( site?.ID );
-
-	// this hacky logic is just to test both reading and writing functionalities of the hook in the PR
-	if ( cart && a-- ) {
-		setCart( cart );
-	}
 
 	const currentDomain = useCurrentDomain();
 
@@ -41,6 +34,21 @@ const DomainPickerFSE: React.FunctionComponent< Props > = ( props ) => {
 		// TODO: store whole domain suggestion object here because it has product_id and other useful info
 		// that we need for the cart
 		setDomainName( domain?.domain_name );
+
+		const domainProduct = {
+			meta: domain?.domain_name,
+			product_id: domain?.product_id,
+			extra: {
+				privacy_available: domain?.supports_privacy,
+				privacy: domain?.supports_privacy,
+				source: 'gutenboarding',
+			},
+		};
+
+		setCart( {
+			...cart,
+			products: [ domainProduct ],
+		} as Cart.Cart );
 	};
 
 	return (
