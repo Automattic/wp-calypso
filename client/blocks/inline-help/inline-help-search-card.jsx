@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes } from 'lodash';
@@ -44,6 +44,23 @@ const InlineHelpSearchCard = ( {
 	placeholder,
 	translate = identity,
 } ) => {
+	const cardRef = useRef();
+
+	// Make focus in the input element.
+	useEffect( () => {
+	    if ( ! cardRef?.current ) {
+	    	return;
+	    }
+
+	    const inputElement = cardRef.current.searchInput;
+	    if ( ! inputElement ) {
+	    	return;
+	    }
+	    const timerId = setTimeout( () => ( inputElement.focus() ), 0 );
+
+	    return () => window.clearTimeout( timerId );
+	}, [ cardRef ] );
+
 	const onKeyDown = ( event ) => {
 		// ignore keyboard access when manipulating a text selection in input etc.
 		if ( event.getModifierState( 'Shift' ) ) {
@@ -107,6 +124,7 @@ const InlineHelpSearchCard = ( {
 
 	return (
 		<SearchCard
+			ref={ cardRef }
 			searching={ isSearching }
 			initialValue={ query }
 			onSearch={ searchHelperHandler }
