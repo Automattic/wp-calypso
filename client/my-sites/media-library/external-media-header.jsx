@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
@@ -14,10 +13,9 @@ import PropTypes from 'prop-types';
  */
 import MediaLibraryScale from './scale';
 import { Card, Button } from '@automattic/components';
-import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
-import { addExternalMedia, fetchNextMediaPage } from 'state/media/thunks';
+import { addExternalMedia, fetchNextMediaPage, changeMediaSource } from 'state/media/thunks';
 
 const DEBOUNCE_TIME = 250;
 
@@ -90,8 +88,8 @@ class MediaLibraryExternalHeader extends React.Component {
 	onClick() {
 		const { ID } = this.props.site;
 
-		MediaActions.sourceChanged( ID );
 		this.props.fetchNextMediaPage( ID );
+		this.props.changeMediaSource( ID );
 	}
 
 	onCopy = () => {
@@ -159,6 +157,6 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 }
 
-export default connect( null, { addExternalMedia, fetchNextMediaPage } )(
+export default connect( null, { addExternalMedia, changeMediaSource, fetchNextMediaPage } )(
 	localize( MediaLibraryExternalHeader )
 );
