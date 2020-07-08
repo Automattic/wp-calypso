@@ -468,7 +468,7 @@ export class List extends React.Component {
 		);
 
 		return [
-			<QuerySitePurchases siteId={ selectedSite.ID } />,
+			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
 			<ListHeader key="domains-header" />,
 			...domainListItems,
 			manageAllDomainsLink,
