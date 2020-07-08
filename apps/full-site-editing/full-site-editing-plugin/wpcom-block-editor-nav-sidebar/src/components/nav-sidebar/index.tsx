@@ -153,18 +153,18 @@ function WpcomBlockEditorNavSidebar() {
 						{ closeLabel }
 					</Button>
 				</div>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__controls">
-					<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-						{ items.map( ( item ) => (
-							<NavItem
-								key={ item.id }
-								item={ item }
-								postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
-								selected={ item.id === selectedItemId }
-								statusLabel={ statusLabels[ item.status ] }
-							/>
-						) ) }
-					</ul>
+				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
+					{ items.map( ( item ) => (
+						<NavItem
+							key={ item.id }
+							item={ item }
+							postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
+							selected={ item.id === selectedItemId }
+							statusLabel={ statusLabels[ item.status ] }
+						/>
+					) ) }
+				</ul>
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons">
 					<CreatePage postType={ postType } />
 					<ViewAllPosts postType={ postType } />
 				</div>
