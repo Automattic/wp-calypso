@@ -82,7 +82,7 @@ function HelpSearchResults( {
 		// check and catch admin section links.
 		if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
-			track( 'calypso_inlinehelp_admin_section_search', {
+			track( 'calypso_inlinehelp_admin_section_visit', {
 				link: link,
 				search_term: searchQuery,
 			} );

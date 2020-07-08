@@ -79,7 +79,7 @@ class InlineHelpSearchCard extends Component {
 				// check and catch admin section links.
 				const { support_type: supportType, link } = selectedResult;
 				if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
-					track( 'calypso_inlinehelp_admin_section_search', {
+					track( 'calypso_inlinehelp_admin_section_visit', {
 						link: link,
 						search_term: query,
 					} );
