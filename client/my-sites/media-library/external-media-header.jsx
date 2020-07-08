@@ -3,7 +3,6 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -17,7 +16,6 @@ import { Card, Button } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
-import { addExternalMedia } from 'state/media/thunks';
 
 const DEBOUNCE_TIME = 250;
 
@@ -98,7 +96,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		const { site, selectedItems, source, onSourceChange } = this.props;
 
 		onSourceChange( '', () => {
-			this.props.addExternalMedia( site, selectedItems, source );
+			MediaActions.addExternal( site, selectedItems, source );
 		} );
 	};
 
@@ -159,4 +157,4 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 }
 
-export default connect( null, { addExternalMedia } )( localize( MediaLibraryExternalHeader ) );
+export default localize( MediaLibraryExternalHeader );
