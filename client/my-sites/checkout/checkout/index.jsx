@@ -44,6 +44,14 @@ import {
 	isJetpackBackupSlug,
 	isJetpackCloudProductSlug,
 } from 'lib/products-values';
+import {
+	JETPACK_PRODUCTS_LIST,
+	JETPACK_SEARCH_PRODUCTS,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
+} from 'lib/products-values/constants';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -290,48 +298,36 @@ export class Checkout extends React.Component {
 			cartItem = getCartItemForPlan( planSlug );
 		}
 
-		if ( startsWith( this.props.product, 'theme' ) ) {
-			cartMeta = this.props.product.split( ':' )[ 1 ];
+		if ( startsWith( product, 'theme' ) ) {
+			cartMeta = product.split( ':' )[ 1 ];
 			cartItem = themeItem( cartMeta );
 		}
 
-		if ( startsWith( this.props.product, 'domain-mapping' ) ) {
-			cartMeta = this.props.product.split( ':' )[ 1 ];
+		if ( startsWith( product, 'domain-mapping' ) ) {
+			cartMeta = product.split( ':' )[ 1 ];
 			cartItem = domainMapping( { domain: cartMeta } );
 		}
 
-		if ( startsWith( this.props.product, 'concierge-session' ) ) {
+		if ( startsWith( product, 'concierge-session' ) ) {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
-		if (
-			( startsWith( product, 'jetpack_backup' ) || startsWith( product, 'jetpack_scan' ) ) &&
-			isJetpackNotAtomic
-		) {
-			cartItem = jetpackProductItem( product );
-		}
-
-		if (
-			[
-				'jetpack_search',
-				'wpcom_search',
-				'jetpack_search_monthly',
-				'wpcom_search_monthly',
-			].includes( product )
-		) {
+		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
 			if ( isJetpackNotAtomic ) {
 				cartItem = product.includes( 'monthly' )
-					? jetpackProductItem( 'jetpack_search_monthly' )
-					: jetpackProductItem( 'jetpack_search' );
+					? jetpackProductItem( PRODUCT_JETPACK_SEARCH_MONTHLY )
+					: jetpackProductItem( PRODUCT_JETPACK_SEARCH );
 			}
 
 			if ( config.isEnabled( 'jetpack/wpcom-search-product' ) && ! isJetpackNotAtomic ) {
 				cartItem = product.includes( 'monthly' )
-					? jetpackProductItem( 'wpcom_search_monthly' )
-					: jetpackProductItem( 'wpcom_search' );
+					? jetpackProductItem( PRODUCT_WPCOM_SEARCH_MONTHLY )
+					: jetpackProductItem( PRODUCT_WPCOM_SEARCH );
 			} else {
 				cartItem = ! isJetpackNotAtomic ? null : cartItem;
 			}
+		} else if ( JETPACK_PRODUCTS_LIST.includes( product ) && isJetpackNotAtomic ) {
+			cartItem = jetpackProductItem( product );
 		}
 
 		if ( cartItem ) {
