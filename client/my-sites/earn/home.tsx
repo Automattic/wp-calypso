@@ -523,22 +523,23 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 export default connect< ConnectedProps, {}, {} >(
 	( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? -1;
+		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
+		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
-		const isFreePlan = ! isCurrentPlanPaid( state, site.ID );
+		const isFreePlan = ! isCurrentPlanPaid( state, siteId );
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
 		return {
-			siteId: site.ID,
+			siteId,
 			selectedSiteSlug,
 			isFreePlan,
-			isJetpack: isJetpackSite( state, site.ID ),
-			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
-			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
-			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
+			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			isLoading,
 			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
