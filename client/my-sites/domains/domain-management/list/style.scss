@@ -286,3 +286,17 @@ input[type='radio'].domain-management-list-item__radio {
 		align-items: center;
 	}
 }
+
+.list__domains-header-buttons {
+	display: flex;
+
+	.popover-cart {
+		margin-right: 4px;
+	}
+
+	.popover-cart .header-button, .popover-cart .header-button:hover {
+		min-height: initial;
+		background: none;
+		color: var( --color-text );
+	}
+}

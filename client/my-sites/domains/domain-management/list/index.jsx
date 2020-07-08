@@ -49,6 +49,7 @@ import { getDomainManagementPath } from './utils';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 /**
  * Style dependencies
  */
@@ -76,6 +77,7 @@ export class List extends React.Component {
 		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
+		isPopoverCartVisible: false,
 	};
 
 	isLoading() {
@@ -169,6 +171,12 @@ export class List extends React.Component {
 		);
 	}
 
+	togglePopoverCart = () => {
+		this.setState( {
+			isPopoverCartVisible: ! this.state.isPopoverCartVisible,
+		} );
+	};
+
 	renderNewDesign() {
 		return (
 			<>
@@ -179,7 +187,19 @@ export class List extends React.Component {
 						headerText={ this.props.translate( 'Site Domains' ) }
 						align="left"
 					/>
-					<div className="list__domains-header-buttons">{ this.addDomainButton() }</div>
+					<div className="list__domains-header-buttons">
+						<PopoverCart
+							cart={ this.props.cart }
+							selectedSite={ this.props.selectedSite }
+							visible={ this.state.isPopoverCartVisible }
+							pinned={ false }
+							path={ this.props.currentRoute }
+							onToggle={ this.togglePopoverCart }
+							closeSectionNavMobilePanel={ noop }
+							compact
+						/>
+						{ this.addDomainButton() }
+					</div>
 				</div>
 
 				{ this.domainWarnings() }
