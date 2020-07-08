@@ -3,44 +3,49 @@
  */
 import { intersection, words, memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { getCustomizerUrl } from 'state/sites/selectors';
 
 /**
  * Internal Dependencies
  */
 import { getLocaleSlug } from 'lib/i18n-utils';
+import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 
 /**
  * Returns admin section items with site-based urls.
  *
- * @param {string} siteSlug - The current site slug.
- * @returns {Array}           An array of admin sections with site-specific URLs.
+ * @param   {number} siteId   - The current site ID.
+ * @param   {string} siteSlug - The current site slug.
+ * @param   {object} state    - Global state
+ * @returns {Array}             An array of admin sections with site-specific URLs.
  */
-export const adminSections = memoize( ( siteSlug ) => [
+export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	{
 		title: translate( 'Add a new domain' ),
 		description: translate(
 			'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 		),
 		link: `/domains/add/${ siteSlug }`,
-		synonyms: [ 'domain' ],
+		synonyms: [ 'domains' ],
 		icon: 'domains',
 	},
 	{
 		title: translate( 'Manage my domain settings' ),
 		link: `/domains/manage/${ siteSlug }`,
+		synonyms: [ 'domains' ],
 		icon: 'domains',
 	},
 	{
 		title: translate( 'Change my site address' ),
 		link: `/domains/manage/${ siteSlug }/edit/${ siteSlug }`,
-		synonyms: [ 'domain' ],
+		synonyms: [ 'domains', 'domain' ],
 		icon: 'domains',
 	},
 	{
 		title: translate( 'Add a site redirect' ),
 		description: translate( 'Redirect your site to another domain.' ),
 		link: `/domains/add/site-redirect/${ siteSlug }`,
-		synonyms: [ 'domain', 'forward' ],
+		synonyms: [ 'domains', 'domain', 'forward' ],
 		icon: 'domains',
 	},
 	{
@@ -57,25 +62,25 @@ export const adminSections = memoize( ( siteSlug ) => [
 	},
 	{
 		title: translate( "Customize my site's theme" ),
-		link: `/customize/${ siteSlug }`,
+		link: getCustomizerUrl( state, siteId ),
 		synonyms: [ 'color', 'font', 'design', 'css', 'widgets' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Change my homepage' ),
-		link: `/customize/${ siteSlug }?autofocus[section]=static_front_page`,
+		link: getCustomizerUrl( state, siteId, 'homepage' ),
 		synonyms: [ 'home', 'homepage' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Edit my menu' ),
-		link: `/customize/${ siteSlug }?autofocus[panel]=nav_menus`,
+		link: getCustomizerUrl( state, siteId, 'menus' ),
 		synonyms: [ 'menu' ],
 		icon: 'customize',
 	},
 	{
 		title: translate( 'Set a site logo' ),
-		link: `/customize/${ siteSlug }?autofocus[section]=title_tagline`,
+		link: getCustomizerUrl( state, siteId, 'identity' ),
 		synonyms: [ 'logo', 'identity' ],
 		icon: 'customize',
 	},
@@ -429,6 +434,6 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 				? intersection( item.synonyms, searchTermWords ).length > 0
 				: false;
 		} )
-		.map( ( item ) => ( { ...item, type: 'internal', key: item.title } ) )
+		.map( ( item ) => ( { ...item, support_type: SUPPORT_TYPE_ADMIN_SECTION, key: item.title } ) )
 		.slice( 0, limit );
 }

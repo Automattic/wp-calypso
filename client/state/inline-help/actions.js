@@ -21,7 +21,12 @@ import {
 } from 'state/action-types';
 
 import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
+import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
 import 'state/inline-help/init';
+import {
+	SUPPORT_TYPE_API_HELP,
+	SUPPORT_TYPE_CONTEXTUAL_HELP,
+} from '../../blocks/inline-help/constants';
 
 /**
  * Set the search query in the state tree for the inline help.
@@ -37,6 +42,18 @@ export function setInlineHelpSearchQuery( searchQuery = '' ) {
 }
 
 /**
+ * Map the collection, populating each result object
+ * with the given support type value.
+ *
+ * @param {Array}   collection   - collection to populate.
+ * @param {string}  support_type - Support type to add to each result item.
+ * @returns {Array}                Populated collection.
+ */
+function mapWithSupportTypeProp( collection, support_type ) {
+	return collection.map( ( item ) => ( { ...item, support_type } ) );
+}
+
+/**
  * Fetches search results for a given query string.
  * Triggers an API request. If this returns no results
  * then hard coded results are returned based on the context of the
@@ -47,7 +64,12 @@ export function setInlineHelpSearchQuery( searchQuery = '' ) {
  */
 export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
-		const contextualResults = getContextualHelpResults( getState() );
+		const state = getState();
+		const contextualResults = mapWithSupportTypeProp(
+			getContextualHelpResults( state ),
+			SUPPORT_TYPE_CONTEXTUAL_HELP
+		);
+		const helpAdminResults = getAdminHelpResults( state, searchQuery, 3 );
 
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();
@@ -94,7 +116,12 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
-					searchResults: hasAPIResults ? searchResults : contextualResults,
+					searchResults: hasAPIResults
+						? [
+								...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
+								...helpAdminResults,
+						  ]
+						: [ ...contextualResults, ...helpAdminResults ],
 				} );
 			} )
 			.catch( ( error ) => {
