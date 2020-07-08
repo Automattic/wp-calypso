@@ -369,7 +369,7 @@
 		"webpack-dev-middleware": "^3.7.2",
 		"webpack-dev-server": "^3.10.3",
 		"webpack-hot-middleware": "^2.25.0",
-		"webpack-node-externals": "^1.7.2",
+		"webpack-node-externals": "^2.1.0",
 		"whybundled": "^1.4.2",
 		"wp-calypso": "^0.17.0",
 		"wp-e2e-tests": "^0.0.1",
