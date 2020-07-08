@@ -1,25 +1,39 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
+import React, { ReactElement } from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ThankYou from './thank-you';
+import { Button } from '@automattic/components';
+import ThankYou, { ThankYouCtaType } from './thank-you';
 
-const AntiSpamProductThankYou = ( { translate } ) => (
-	<ThankYou
-		illustration="/calypso/images/illustrations/thankYou.svg"
-		showScanCTAs
-		title={ translate( 'Say goodbye to spam!' ) }
-	>
-		<p>
-			{ translate(
-				'Jetpack Anti-Spam is now active on your site and catching all spam. Enjoy more peace of mind and a better experience for your visitors.'
-			) }
-		</p>
-	</ThankYou>
-);
-export default localize( AntiSpamProductThankYou );
+const ThankYouCta: ThankYouCtaType = ( { dismissUrl, recordThankYouClick } ) => {
+	const translate = useTranslate();
+	return (
+		<Button primary href={ dismissUrl } onClick={ () => recordThankYouClick( 'anti-spam' ) }>
+			{ translate( 'Go back to your site' ) }
+		</Button>
+	);
+};
+
+const AntiSpamProductThankYou = (): ReactElement => {
+	const translate = useTranslate();
+	return (
+		<ThankYou
+			illustration="/calypso/images/illustrations/thankYou.svg"
+			title={ translate( 'Say goodbye to spam!' ) }
+			ThankYouCtaComponent={ ThankYouCta }
+		>
+			<p>
+				{ translate(
+					'Jetpack Anti-Spam is now active on your site and catching all spam. Enjoy more peace of mind and a better experience for your visitors.'
+				) }
+			</p>
+		</ThankYou>
+	);
+};
+
+export default AntiSpamProductThankYou;

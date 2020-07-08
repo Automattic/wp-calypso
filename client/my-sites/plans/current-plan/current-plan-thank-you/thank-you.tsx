@@ -45,15 +45,21 @@ const mapStateToProps = ( state: DefaultRootState ) => {
 
 const mapDispatchToProps = { recordTracksEvent, requestGuidedTour };
 
+export type ThankYouCtaType = React.FC< {
+	dismissUrl: string;
+	recordThankYouClick: ( productName: string, value?: string ) => void;
+} >;
+
 type ExternalProps = {
 	children: ReactElement;
-	illustration: string;
-	showCalypsoIntro: boolean;
-	showContinueButton: boolean;
-	showHideMessage: boolean;
-	showSearchRedirects: boolean;
-	showScanCTAs: boolean;
-	title: TranslateResult;
+	illustration?: string;
+	ThankYouCtaComponent?: ThankYouCtaType;
+	showCalypsoIntro?: boolean;
+	showContinueButton?: boolean;
+	showHideMessage?: boolean;
+	showSearchRedirects?: boolean;
+	showScanCTAs?: boolean;
+	title?: TranslateResult;
 };
 
 type Props = ReturnType< typeof mapStateToProps > &
@@ -63,6 +69,7 @@ type Props = ReturnType< typeof mapStateToProps > &
 
 export const ThankYouCard: FC< Props > = ( {
 	children,
+	ThankYouCtaComponent,
 	currentRoute,
 	illustration,
 	queryArgs,
@@ -92,7 +99,6 @@ export const ThankYouCard: FC< Props > = ( {
 				: currentRoute,
 		[ currentRoute, queryArgs ]
 	);
-
 	const recordThankYouClick = useCallback(
 		( productName, value ) => {
 			dispatchRecordTracksEvent( 'calypso_jetpack_product_thankyou', {
@@ -177,6 +183,14 @@ export const ThankYouCard: FC< Props > = ( {
 						<Button href={ dismissUrl } onClick={ startChecklistTour }>
 							{ translate( 'See checklist' ) }
 						</Button>
+					</p>
+				) }
+				{ ThankYouCtaComponent && (
+					<p className="current-plan-thank-you__followup">
+						<ThankYouCtaComponent
+							dismissUrl={ dismissUrl }
+							recordThankYouClick={ recordThankYouClick }
+						/>
 					</p>
 				) }
 			</div>
