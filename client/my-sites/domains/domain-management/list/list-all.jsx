@@ -109,7 +109,6 @@ class ListAll extends Component {
 					site={ sites[ domain?.blogId ] }
 					isManagingAllSites={ true }
 					isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
-					showSite={ true }
 					onClick={ this.handleDomainItemClick }
 					onAddEmailClick={ this.handleAddEmailClick }
 				/>

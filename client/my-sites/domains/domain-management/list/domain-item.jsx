@@ -20,6 +20,7 @@ import { withoutHttp } from 'lib/url';
 import { type as domainTypes } from 'lib/domains/constants';
 import { handleRenewNowClick } from 'lib/purchases';
 import { resolveDomainStatus } from 'lib/domains';
+import InfoPopover from 'components/info-popover';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -27,7 +28,6 @@ class DomainItem extends PureComponent {
 		domainDetails: PropTypes.object,
 		site: PropTypes.object,
 		isManagingAllSites: PropTypes.bool,
-		showSite: PropTypes.bool,
 		showCheckbox: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
 		onAddEmailClick: PropTypes.func.isRequired,
@@ -38,7 +38,6 @@ class DomainItem extends PureComponent {
 
 	static defaultProps = {
 		isManagingAllSites: false,
-		showSite: false,
 		showCheckbox: false,
 		onToggle: null,
 		isLoadingDomainDetails: false,
@@ -208,16 +207,44 @@ class DomainItem extends PureComponent {
 		return withoutHttp( site.URL );
 	}
 
+	renderSiteMeta() {
+		const { domainDetails, isManagingAllSites, site, translate } = this.props;
+
+		if ( isManagingAllSites ) {
+			return (
+				<div className="domain-item__meta">
+					{ translate( 'Site: %(siteName)s', {
+						args: {
+							siteName: this.getSiteName( site ),
+						},
+						comment:
+							'%(siteName)s is the site name and URL or just the URL used to identify a site',
+					} ) }
+				</div>
+			);
+		}
+
+		if ( ! isManagingAllSites && domainDetails.isWPCOMDomain ) {
+			return (
+				<div className="domain-item__meta">
+					{ translate( 'Free site address' ) }
+
+					<InfoPopover iconSize={ 18 }>
+						{ translate(
+							'Your WordPress.com site comes with a free address using a WordPress.com subdomain. As ' +
+								'an alternative to using the free subdomain, you can instead use a custom domain ' +
+								'name for your site, for example: yourgroovydomain.com.'
+						) }
+					</InfoPopover>
+				</div>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
-		const {
-			domain,
-			domainDetails,
-			isManagingAllSites,
-			showSite,
-			site,
-			showCheckbox,
-			translate,
-		} = this.props;
+		const { domain, domainDetails, isManagingAllSites, showCheckbox } = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
@@ -241,17 +268,7 @@ class DomainItem extends PureComponent {
 							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
 						) }
 					</div>
-					{ showSite && (
-						<div className="domain-item__meta">
-							{ translate( 'Site: %(siteName)s', {
-								args: {
-									siteName: this.getSiteName( site ),
-								},
-								comment:
-									'%(siteName)s is the site name and URL or just the URL used to identify a site',
-							} ) }
-						</div>
-					) }
+					{ this.renderSiteMeta() }
 				</div>
 				{ this.renderActionItems() }
 			</CompactCard>

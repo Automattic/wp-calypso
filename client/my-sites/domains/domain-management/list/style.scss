@@ -182,6 +182,12 @@ input[type='radio'].domain-management-list-item__radio {
 .domain-item__meta {
 	font-size: $font-body-small;
 	color: var( --color-text-subtle );
+
+	.info-popover {
+		vertical-align: middle;
+		margin-left: 1px;
+		transform: translateY( -1px );
+	}
 }
 
 
@@ -274,7 +280,7 @@ input[type='radio'].domain-management-list-item__radio {
 .list__domains-header {
 	display: flex;
 	justify-content: space-between;
-	align-items: start;
+	align-items: flex-start;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		align-items: center;
