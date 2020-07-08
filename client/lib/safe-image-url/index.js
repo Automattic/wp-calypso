@@ -33,7 +33,7 @@ const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.c
  * Generate a safe version of the provided URL
  *
  * Images that Calypso uses have to be provided by a trusted TLS host. To do
- * this, we check the host of the URL against a whitelist, and run the image
+ * this, we check the host of the URL against a list of allowed hosts, and run the image
  * through photon if the host name does not match.
  *
  * NOTE: This function will return `null` for external URLs with query strings,

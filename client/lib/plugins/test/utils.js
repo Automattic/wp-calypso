@@ -43,14 +43,14 @@ describe( 'Plugins Utils', () => {
 		} );
 	} );
 
-	describe( 'whiteListPluginData', () => {
-		test( 'should have a method whiteListPluginData', () => {
-			assert.isFunction( PluginUtils.whiteListPluginData );
+	describe( 'getAllowedPluginData', () => {
+		test( 'should have a method getAllowedPluginData', () => {
+			assert.isFunction( PluginUtils.getAllowedPluginData );
 		} );
 
 		test( 'should stip out unknown keys', () => {
 			const plugin = { unknownKey: true };
-			assert.deepEqual( PluginUtils.whiteListPluginData( plugin ), {} );
+			assert.deepEqual( PluginUtils.getAllowedPluginData( plugin ), {} );
 		} );
 
 		test( 'should keep known keys', () => {
@@ -69,7 +69,7 @@ describe( 'Plugins Utils', () => {
 				update: {},
 				updating: false,
 			};
-			assert.deepEqual( PluginUtils.whiteListPluginData( plugin ), plugin );
+			assert.deepEqual( PluginUtils.getAllowedPluginData( plugin ), plugin );
 		} );
 	} );
 
