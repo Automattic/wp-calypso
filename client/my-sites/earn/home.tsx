@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import page from 'page';
-import { get, compact } from 'lodash';
+import { compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,11 +12,10 @@ import { get, compact } from 'lodash';
 import wp from 'lib/wp';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
@@ -524,15 +523,13 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 export default connect< ConnectedProps, {}, {} >(
 	( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? -1;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		const isFreePlan = ! isCurrentPlanPaid( state, site.ID );
-		const hasConnectedAccount = get(
-			state,
-			[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
-			null
-		);
-		const sitePlanSlug = get( getCurrentPlan( state, site.ID ), 'productSlug', null );
+		const hasConnectedAccount =
+			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
 		return {
 			siteId: site.ID,
