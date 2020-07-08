@@ -990,8 +990,9 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_MEMBERSHIPS ]: {
 		getSlug: () => constants.FEATURE_MEMBERSHIPS,
-		getTitle: () => i18n.translate( 'Sell Subscriptions' ),
-		getDescription: () => i18n.translate( 'Accept monthly or annual payments on your website.' ),
+		getTitle: () => i18n.translate( 'Payments' ),
+		getDescription: () =>
+			i18n.translate( 'Accept one-time, monthly, or annual payments on your website.' ),
 	},
 
 	[ constants.FEATURE_PREMIUM_CONTENT_BLOCK ]: {
