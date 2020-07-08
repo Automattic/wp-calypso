@@ -11,7 +11,7 @@ import { PLANS_STORE } from '../stores/plans';
 import { usePlanRouteParam } from '../path';
 
 export function useSelectedPlan() {
-	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
+	const selectedPlan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 
 	const planPath = usePlanRouteParam();
 	const planFromPath = useSelect( ( select ) => select( PLANS_STORE ).getPlanByPath( planPath ) );
@@ -19,16 +19,16 @@ export function useSelectedPlan() {
 
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const hasPaidDesign = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDesign() );
-	const defaultPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getDefaultPlan( hasPaidDomain, hasPaidDesign )
-	);
 
-	// If the selected plan is not a paid plan
-	// and the user selects a premium domain
+	const defaultPaidPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
+
+	// If the selected plan is not a paid plan and the user selects a premium domain
 	// return the default paid plan.
-	if ( hasPaidDomain && isPlanFree( selectedPlan?.storeSlug ) ) {
-		return defaultPlan;
+	if ( isPlanFree( selectedPlan?.storeSlug ) && hasPaidDomain ) {
+		return defaultPaidPlan;
 	}
+
+	const defaultPlan = hasPaidDomain || hasPaidDesign ? defaultPaidPlan : undefined;
 
 	/**
 	 * Plan is decided in this order
@@ -39,11 +39,7 @@ export function useSelectedPlan() {
 	return selectedPlan || planFromPath || defaultPlan;
 }
 
-export function useIsSelectedPlanEcommerce() {
+export function useShouldSiteBePublic() {
 	const currentSlug = useSelectedPlan()?.storeSlug;
 	return useSelect( ( select ) => select( PLANS_STORE ).isPlanEcommerce( currentSlug ) );
-}
-
-export function useShouldSiteBePublicOnSelectedPlan() {
-	return useIsSelectedPlanEcommerce();
 }

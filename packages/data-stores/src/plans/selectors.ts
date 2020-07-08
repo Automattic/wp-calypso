@@ -10,11 +10,9 @@ function getPlan( slug: PlanSlug ) {
 	return PLANS_LIST[ slug ];
 }
 
-export const getSelectedPlan = ( state: State ) =>
-	state.selectedPlanSlug ? getPlan( state.selectedPlanSlug ) : null;
+export const getPlanBySlug = ( _: State, slug: PlanSlug ) => getPlan( slug );
 
-export const getDefaultPlan = ( _: State, hasPaidDomain: boolean, hasPaidDesign: boolean ) =>
-	hasPaidDomain || hasPaidDesign ? getPlan( DEFAULT_PAID_PLAN ) : undefined;
+export const getDefaultPaidPlan = () => getPlan( DEFAULT_PAID_PLAN );
 
 export const getSupportedPlans = ( state: State ) => state.supportedPlanSlugs.map( getPlan );
 

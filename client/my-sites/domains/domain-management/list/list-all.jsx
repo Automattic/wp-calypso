@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import LazyRender from 'react-lazily-render';
 
 /**
  * Internal dependencies
@@ -96,41 +97,41 @@ class ListAll extends Component {
 		);
 	}
 
+	renderDomainItem( domain ) {
+		const { sites, domainsDetails, requestingSiteDomains } = this.props;
+
+		return (
+			<>
+				{ domain?.blogId && <QuerySiteDomains siteId={ domain.blogId } /> }
+				<DomainItem
+					domain={ domain }
+					domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
+					site={ sites[ domain?.blogId ] }
+					isManagingAllSites={ true }
+					isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
+					showSite={ true }
+					onClick={ this.handleDomainItemClick }
+					onAddEmailClick={ this.handleAddEmailClick }
+				/>
+			</>
+		);
+	}
+
 	renderDomainsList() {
 		if ( this.isLoading() ) {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const {
-			domainsList,
-			sites,
-			domainsDetails,
-			canManageSitesMap,
-			purchases,
-			requestingSiteDomains,
-		} = this.props;
+		const { domainsList, canManageSitesMap } = this.props;
 
 		const domainListItems = domainsList
 			.filter(
 				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
 			) // filter on sites we can manage, that aren't `wpcom` type
 			.map( ( domain, index ) => (
-				<React.Fragment key={ `${ index }-${ domain.name }` }>
-					{ domain?.blogId && <QuerySiteDomains siteId={ domain.blogId } /> }
-					<DomainItem
-						domain={ domain }
-						domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
-						site={ sites[ domain?.blogId ] }
-						purchase={
-							purchases[ this.findDomainDetails( domainsDetails, domain )?.subscriptionId ]
-						}
-						isManagingAllSites={ true }
-						isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
-						showSite={ true }
-						onClick={ this.handleDomainItemClick }
-						onAddEmailClick={ this.handleAddEmailClick }
-					/>
-				</React.Fragment>
+				<LazyRender key={ `lazy-${ index }-${ domain.name }` }>
+					{ ( render ) => ( render ? this.renderDomainItem( domain ) : <ListItemPlaceholder /> ) }
+				</LazyRender>
 			) );
 
 		return [ <ListHeader key="list-header" />, ...domainListItems ];

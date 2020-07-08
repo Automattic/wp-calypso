@@ -12,7 +12,7 @@ import {
 	COMMENTS_QUERY_UPDATE,
 	COMMENTS_LIST_REQUEST,
 } from 'state/action-types';
-import { queries, pendingActions } from 'state/ui/comments/reducer';
+import { queries, pendingActions } from 'state/comments/ui/reducer';
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 
 const siteId = 12345678;

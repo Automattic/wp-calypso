@@ -14,11 +14,9 @@ export const supportedPlanSlugs = Object.keys( PLANS_LIST );
 
 const DEFAUlT_STATE: {
 	supportedPlanSlugs: PlanSlug[];
-	selectedPlanSlug?: PlanSlug;
 	prices: PricesMap;
 } = {
 	supportedPlanSlugs,
-	selectedPlanSlug: undefined,
 	prices: {
 		[ PLAN_FREE ]: '',
 		[ PLAN_PERSONAL ]: '',
@@ -30,11 +28,6 @@ const DEFAUlT_STATE: {
 
 const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 	switch ( action.type ) {
-		case 'SET_PLAN':
-			return {
-				...state,
-				selectedPlanSlug: action.slug,
-			};
 		case 'SET_PRICES':
 			return {
 				...state,
