@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import page from 'page';
-import { get, compact } from 'lodash';
+import { compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,9 +12,9 @@ import { get, compact } from 'lodash';
 import wp from 'lib/wp';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
@@ -43,15 +43,21 @@ import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
 import premiumContentImage from 'assets/images/earn/premium-content.svg';
 import paidNewsletterImage from 'assets/images/earn/newsletters.svg';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug;
 	isFreePlan: boolean;
 	isJetpack: boolean;
 	isAtomicSite: boolean;
+	isLoading: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
-	hasConnectedAccount: boolean;
+	hasConnectedAccount: boolean | null;
 	hasSetupAds: boolean;
 	trackUpgrade: ( plan: string, feature: string ) => void;
 	trackLearnLink: ( feature: string ) => void;
@@ -66,6 +72,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isFreePlan,
 	isJetpack,
 	isAtomicSite,
+	isLoading,
 	hasSimplePayments,
 	hasWordAds,
 	hasConnectedAccount,
@@ -470,17 +477,23 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		};
 	};
 
-	const promos: PromoSectionProps = {
-		header: {
-			title: translate( 'Start earning money now' ),
-			image: {
-				path: earnSectionImage,
-				align: 'right',
-			},
-			body: translate(
-				'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
-			),
+	const getHeaderCard = () => ( {
+		title: translate( 'Start earning money now' ),
+		image: {
+			path: earnSectionImage,
+			align: 'right',
 		},
+		body: translate(
+			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
+		),
+	} );
+
+	const getPlaceholderPromoCard = () => {
+		return { title: '', body: '', image: <div /> };
+	};
+
+	const promos: PromoSectionProps = {
+		header: getHeaderCard(),
 		promos: compact( [
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
@@ -495,28 +508,40 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
 			{ ! isFreePlan && <QueryMembershipsSettings siteId={ siteId } /> }
-			<PromoSection { ...promos } />
+			{ isLoading && (
+				<div className="earn__placeholder-promo-card">
+					<PromoSection
+						header={ getHeaderCard() }
+						promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] }
+					/>
+				</div>
+			) }
+			{ ! isLoading && <PromoSection { ...promos } /> }
 		</Fragment>
 	);
 };
 
 export default connect< ConnectedProps, {}, {} >(
 	( state ) => {
+		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
+		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
+		const isFreePlan = ! isCurrentPlanPaid( state, siteId );
+		const hasConnectedAccount =
+			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
+		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
 		return {
-			siteId: site.ID,
+			siteId,
 			selectedSiteSlug,
-			isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
-			isJetpack: isJetpackSite( state, site.ID ),
-			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
-			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
-			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
-			hasConnectedAccount: !! get(
-				state,
-				[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
-				false
-			),
+			isFreePlan,
+			isJetpack: isJetpackSite( state, siteId ),
+			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
+			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
+			hasConnectedAccount,
+			isLoading,
 			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
 		};
 	},
