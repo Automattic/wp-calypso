@@ -212,6 +212,11 @@ module.exports = {
 
 					// Gutenboarding: https://github.com/Automattic/wp-calypso/issues/43996
 					'vertical-whitelist',
+
+					// These are WP.com errors that need coordination to change
+					// https://github.com/Automattic/wp-calypso/issues/43998
+					'site_blacklisted',
+					'blacklisted_domain',
 				],
 			},
 		],
