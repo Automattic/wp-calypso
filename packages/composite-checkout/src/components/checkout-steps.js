@@ -164,7 +164,7 @@ export function CheckoutStepArea( { children, className, submitButtonHeader } ) 
 	const classNames = joinClasses( [
 		'checkout__step-wrapper',
 		...( className ? [ className ] : [] ),
-		...( ! isThereAnotherNumberedStep ? [ 'is-last-step-active' ] : [] ),
+		...( ! isThereAnotherNumberedStep ? [ 'checkout__step-wrapper--last-step' ] : [] ),
 	] );
 
 	return (
@@ -489,7 +489,7 @@ const CheckoutStepAreaUI = styled.div`
 	margin: 0 auto;
 	width: 100%;
 
-	&.is-last-step-active {
+	&.checkout__step-wrapper--last-step {
 		margin-bottom: 100px;
 	}
 
@@ -520,7 +520,7 @@ const SubmitButtonWrapperUI = styled.div`
 	border-top-style: solid;
 	border-top-color: ${ ( props ) => props.theme.colors.borderColorLight };
 
-	.is-last-step-active & {
+	.checkout__step-wrapper--last-step & {
 		border-top-width: 1px;
 		position: fixed;
 	}
@@ -533,13 +533,13 @@ const SubmitButtonWrapperUI = styled.div`
 	button {
 		width: 100%;
 
-		.is-last-step-active & {
+		.checkout__step-wrapper--last-step & {
 			width: calc( 100% - 60px );
 		}
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		.is-last-step-active & {
+		.checkout__step-wrapper--last-step & {
 			position: relative;
 			border: 0;
 

@@ -537,7 +537,7 @@ const SubmitButtonHeaderUI = styled.div`
 	margin-bottom: 10px;
 	text-align: center;
 
-	.is-last-step-active & {
+	.checkout__step-wrapper--last-step & {
 		display: block;
 
 		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
