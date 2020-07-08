@@ -44,6 +44,11 @@ import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
 import premiumContentImage from 'assets/images/earn/premium-content.svg';
 import paidNewsletterImage from 'assets/images/earn/newsletters.svg';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug;
@@ -473,18 +478,23 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		};
 	};
 
-	const promos: PromoSectionProps = {
-		header: {
-			title: translate( 'Start earning money now' ),
-			image: {
-				path: earnSectionImage,
-				align: 'right',
-			},
-			body: translate(
-				'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
-			),
+	const getHeaderCard = () => ( {
+		title: translate( 'Start earning money now' ),
+		image: {
+			path: earnSectionImage,
+			align: 'right',
 		},
-		isLoading,
+		body: translate(
+			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
+		),
+	} );
+
+	const getPlaceholderPromoCard = () => {
+		return { title: '', body: '', image: <div /> };
+	};
+
+	const promos: PromoSectionProps = {
+		header: getHeaderCard(),
 		promos: compact( [
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
@@ -499,7 +509,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
 			{ ! isFreePlan && <QueryMembershipsSettings siteId={ siteId } /> }
-			<PromoSection { ...promos } />
+			{ isLoading && (
+				<div className="earn__placeholder-promo-card">
+					<PromoSection
+						header={ getHeaderCard() }
+						promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] }
+					/>
+				</div>
+			) }
+			{ ! isLoading && <PromoSection { ...promos } /> }
 		</Fragment>
 	);
 };

@@ -31,23 +31,14 @@ export interface Props {
 	title: string | TranslateResult;
 	isPrimary?: boolean;
 	badge?: string;
-	isLoading: boolean;
 }
 
 const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnProperty( 'path' );
 
-const PromoCard: FunctionComponent< Props > = ( {
-	title,
-	image,
-	isPrimary,
-	children,
-	badge,
-	isLoading,
-} ) => {
+const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children, badge } ) => {
 	const classes = classNames( {
 		'promo-card': true,
 		'is-primary': isPrimary,
-		'is-placeholder': isLoading,
 	} );
 	return (
 		<ActionPanel className={ classes }>

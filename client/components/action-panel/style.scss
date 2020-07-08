@@ -12,13 +12,6 @@
 	line-height: 24px;
 	color: var( --color-neutral-70 );
 	clear: none;
-
-	.is-placeholder & {
-		@include placeholder( --color-neutral-10 );
-		* {
-			visibility: hidden;
-		}
-	}
 }
 
 // Body
@@ -30,13 +23,6 @@
 
 	p {
 		margin-bottom: 20px;
-
-		.is-placeholder & {
-			@include placeholder( --color-neutral-10 );
-			* {
-				visibility: hidden;
-			}
-		}
 	}
 }
 
@@ -68,21 +54,6 @@ a.action-panel__body-text-link {
 			float: left;
 			margin-left: 0;
 			margin-right: 24px;
-		}
-	}
-
-	.is-placeholder & {
-		* {
-			display: none;
-		}
-
-		&::before {
-			@include placeholder( --color-neutral-10 );
-			content: '\00a0';
-			display: block;
-			width: 24px;
-			height: 24px;
-			border-radius: 50%;
 		}
 	}
 }
@@ -121,15 +92,6 @@ a.action-panel__body-text-link {
 // Footer
 .action-panel__cta {
 	padding-top: 17px;
-
-	.is-placeholder & {
-		& > * {
-			@include placeholder( --color-neutral-10 );
-			* {
-				visibility: hidden;
-			}
-		}
-	}
 }
 
 .action-panel__footer {
