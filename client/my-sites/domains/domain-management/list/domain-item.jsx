@@ -145,6 +145,10 @@ class DomainItem extends PureComponent {
 	renderEmail( domainDetails ) {
 		const { translate } = this.props;
 
+		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
+			return this.renderMinus();
+		}
+
 		if ( hasGSuiteWithUs( domainDetails ) ) {
 			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
 			return translate( '%(gSuiteMailboxCount)d mailbox', '%(gSuiteMailboxCount)d mailboxes', {
