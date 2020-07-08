@@ -45,6 +45,8 @@ import Spinner from 'my-sites/checkout/composite-checkout/wpcom/components/spinn
 import CountrySelectMenu from 'my-sites/checkout/composite-checkout/wpcom/components/country-select-menu';
 import useCountryList from 'my-sites/checkout/composite-checkout/wpcom/hooks/use-country-list';
 import { isValid } from 'my-sites/checkout/composite-checkout/wpcom/types';
+import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
+import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -146,7 +148,7 @@ export function createCreditCardMethod( { store, stripe, stripeConfiguration } )
 		id: 'card',
 		label: <CreditCardLabel />,
 		activeContent: (
-			<StripeCreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
+			<CreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
 		submitButton: (
 			<StripePayButton
@@ -160,7 +162,7 @@ export function createCreditCardMethod( { store, stripe, stripeConfiguration } )
 	};
 }
 
-function StripeCreditCardFields() {
+function CreditCardFields() {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
@@ -725,46 +727,43 @@ function ContactFields() {
 	const countriesList = useCountryList( [] );
 
 	const [ ccInfo, setCcInfo ] = useState( {
-		postalCode: { value: '', isTouched: false },
 		countryCode: { value: '', isTouched: false },
 	} );
-	const { postalCode, countryCode } = ccInfo;
-	const updatePostalCode = ( value ) =>
-		setCcInfo( ( oldInfo ) => ( { ...oldInfo, postalCode: { value, isTouched: true } } ) );
-	const updateCountryCode = ( value ) =>
-		setCcInfo( ( oldInfo ) => ( { ...oldInfo, countryCode: { value, isTouched: true } } ) );
+	const getField = ( key ) => ccInfo[ key ];
+	const getFieldValue = ( key ) => getField( key )?.value ?? '';
+	const setFieldValue = ( key, value ) =>
+		setCcInfo( ( oldInfo ) => ( { ...oldInfo, [ key ]: { value, isTouched: true } } ) );
+	const getErrorMessagesForField = ( key ) => {
+		// TODO: do actual validation
+		if ( ! isValid( getField( key ) || {} ) ) {
+			return [ __( 'This field is required.' ) ];
+		}
+		return [];
+	};
 
 	return (
-		<FieldRow gap="4%" columnWidths="48% 48%">
-			<LeftColumn>
-				<Field
-					id="credit-card-postal-code"
-					type="text"
-					label={ __( 'Postal code' ) }
-					value={ postalCode.value }
-					disabled={ isDisabled }
-					onChange={ ( value ) => {
-						updatePostalCode( value );
-					} }
-					autoComplete="postal-code"
-					isError={ postalCode.isTouched && ! isValid( postalCode ) }
-					errorMessage={ __( 'This field is required.' ) }
-				/>
-			</LeftColumn>
-
-			<RightColumn>
-				<CountrySelectMenu
-					translate={ __ }
-					onChange={ ( event ) => {
-						updateCountryCode( event.target.value );
-					} }
-					isError={ countryCode.isTouched && ! isValid( countryCode ) }
-					isDisabled={ isDisabled }
-					errorMessage={ __( 'This field is required.' ) }
-					currentValue={ countryCode.value }
+		<div>
+			<CountrySelectMenu
+				translate={ __ }
+				onChange={ ( event ) => {
+					setFieldValue( 'countryCode', event.target.value );
+				} }
+				isError={ getField( 'countryCode' ).isTouched && ! isValid( getField( 'countryCode' ) ) }
+				isDisabled={ isDisabled }
+				errorMessage={ __( 'This field is required.' ) }
+				currentValue={ getFieldValue( 'countryCode' ) }
+				countriesList={ countriesList }
+			/>
+			{ shouldRenderAdditionalCountryFields( getFieldValue( 'countryCode' ) ) && (
+				<CountrySpecificPaymentFields
+					countryCode={ getFieldValue( 'countryCode' ) }
 					countriesList={ countriesList }
+					getErrorMessage={ getErrorMessagesForField }
+					getFieldValue={ getFieldValue }
+					handleFieldChange={ setFieldValue }
+					disableFields={ isDisabled }
 				/>
-			</RightColumn>
-		</FieldRow>
+			) }
+		</div>
 	);
 }
