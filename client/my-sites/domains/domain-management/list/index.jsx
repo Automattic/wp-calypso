@@ -140,6 +140,57 @@ export class List extends React.Component {
 		);
 	}
 
+	renderOldDesign() {
+		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
+
+		return (
+			<>
+				{ ! this.props.renderAllSites && (
+					<FormattedHeader
+						brandFont
+						className="domain-management__page-heading"
+						headerText={ this.props.translate( 'Site Domains' ) }
+						align="left"
+					/>
+				) }
+				{ ! this.props.renderAllSites && (
+					<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+				) }
+				{ ! this.props.renderAllSites && this.domainWarnings() }
+
+				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
+
+				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
+
+				<div className="domain-management-list__items">{ this.listItems() }</div>
+
+				<DomainToPlanNudge />
+			</>
+		);
+	}
+
+	renderNewDesign() {
+		return (
+			<>
+				<div className="list__domains-header">
+					<FormattedHeader
+						brandFont
+						className="domain-management__page-heading"
+						headerText={ this.props.translate( 'Site Domains' ) }
+						align="left"
+					/>
+					<div className="list__domains-header-buttons">{ this.addDomainButton() }</div>
+				</div>
+
+				{ this.domainWarnings() }
+				{ this.domainCreditsInfoNotice() }
+
+				<div className="domain-management-list__items">{ this.listNewItems() }</div>
+				<DomainToPlanNudge />
+			</>
+		);
+	}
+
 	render() {
 		if ( ! this.props.userCanManageOptions ) {
 			if ( this.props.renderAllSites ) {
@@ -184,37 +235,15 @@ export class List extends React.Component {
 		}
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
-		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
-				{ ! this.props.renderAllSites && (
-					<FormattedHeader
-						brandFont
-						className="domain-management__page-heading"
-						headerText={ this.props.translate( 'Site Domains' ) }
-						align="left"
-					/>
-				) }
-				{ ! this.props.renderAllSites && (
-					<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
-				) }
-				{ ! this.props.renderAllSites && this.domainWarnings() }
-
-				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
-
-				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
-
-				<div className="domain-management-list__items">
-					{ ! this.props.renderAllSites && config.isEnabled( 'manage/all-domains' )
-						? this.listNewItems()
-						: this.listItems() }
-				</div>
-
-				<DomainToPlanNudge />
+				{ ! this.props.renderAllSites && config.isEnabled( 'manage/all-domains' )
+					? this.renderNewDesign()
+					: this.renderOldDesign() }
 			</Main>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

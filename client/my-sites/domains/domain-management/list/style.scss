@@ -270,3 +270,13 @@ input[type='radio'].domain-management-list-item__radio {
 .list__action_item_placeholder {
 	@include placeholder( --color-neutral-5 );
 }
+
+.list__domains-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: start;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		align-items: center;
+	}
+}
