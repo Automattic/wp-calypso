@@ -137,7 +137,7 @@ function HelpSearchResults( {
 	};
 
 	const renderSearchResults = () => {
-		if ( isSearching ) {
+		if ( isSearching && ! searchResults.length ) {
 			// reset current section reference.
 			supportTypeRef.current = null;
 
