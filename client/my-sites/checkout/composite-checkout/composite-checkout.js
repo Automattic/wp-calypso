@@ -780,7 +780,7 @@ function useDetectedCountryCode() {
 			dispatch( 'wpcom' ).loadCountryCodeFromGeoIP( detectedCountryCode );
 			setHaveUsedDetectedCountryCode( true );
 		}
-	} );
+	}, [ haveUsedDetectedCountryCode, detectedCountryCode ] );
 }
 
 function useCachedDomainContactDetails() {
