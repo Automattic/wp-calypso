@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { map } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -55,7 +50,7 @@ export function setInlineHelpSearchQuery( searchQuery = '' ) {
  * @returns {Array}                Populated collection.
  */
 function mapWithSupportTypeProp( collection, support_type ) {
-	return map( collection, ( item ) => ( { ...item, support_type } ) );
+	return collection.map( ( item ) => ( { ...item, support_type } ) );
 }
 
 /**
