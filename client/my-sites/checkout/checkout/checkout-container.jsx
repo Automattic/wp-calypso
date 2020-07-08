@@ -122,7 +122,8 @@ class CheckoutContainer extends React.Component {
 							redirectTo={ redirectTo }
 							upgradeIntent={ upgradeIntent }
 							hideNudge={ isComingFromGutenboarding || isComingFromUpsell }
-							returnToBlockEditor={ isComingFromGutenboarding || isGutenboardingCreate }
+							returnToBlockEditor={ isGutenboardingCreate }
+							returnToHome={ isComingFromGutenboarding }
 							isWhiteGloveOffer={ isWhiteGloveOffer }
 						>
 							{ this.props.children }
