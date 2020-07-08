@@ -11,14 +11,13 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { preventWidows } from 'lib/formatting';
-import { settingsPath } from 'lib/jetpack/paths';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { Button } from '@automattic/components';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { addQueryArgs } from 'lib/url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
+import { getSiteAdminUrl } from 'state/sites/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -30,14 +29,12 @@ const mapStateToProps = ( state: DefaultRootState ) => {
 	const currentUser = getCurrentUser( state );
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
-	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
 	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	return {
 		siteAdminUrl,
 		selectedSite,
-		selectedSiteSlug,
 		currentRoute: getCurrentRoute( state ),
 		queryArgs: getCurrentQueryArguments( state ),
 	};
@@ -48,6 +45,7 @@ const mapDispatchToProps = { recordTracksEvent, requestGuidedTour };
 export type ThankYouCtaType = React.FC< {
 	dismissUrl: string;
 	recordThankYouClick: ( productName: string, value?: string ) => void;
+	startChecklistTour: () => void;
 } >;
 
 type ExternalProps = {
@@ -58,7 +56,6 @@ type ExternalProps = {
 	showContinueButton?: boolean;
 	showHideMessage?: boolean;
 	showSearchRedirects?: boolean;
-	showScanCTAs?: boolean;
 	title?: TranslateResult;
 };
 
@@ -79,10 +76,8 @@ export const ThankYouCard: FC< Props > = ( {
 	showContinueButton,
 	showHideMessage,
 	showSearchRedirects,
-	showScanCTAs,
 	siteAdminUrl,
 	selectedSite,
-	selectedSiteSlug,
 	title,
 	translate,
 } ) => {
@@ -175,21 +170,12 @@ export const ThankYouCard: FC< Props > = ( {
 						</Button>
 					</p>
 				) }
-				{ showScanCTAs && (
-					<p className="current-plan-thank-you__followup">
-						<Button href={ `${ settingsPath( selectedSiteSlug ) }#credentials` } primary>
-							{ translate( 'Add server credentials now' ) }
-						</Button>
-						<Button href={ dismissUrl } onClick={ startChecklistTour }>
-							{ translate( 'See checklist' ) }
-						</Button>
-					</p>
-				) }
 				{ ThankYouCtaComponent && (
 					<p className="current-plan-thank-you__followup">
 						<ThankYouCtaComponent
 							dismissUrl={ dismissUrl }
 							recordThankYouClick={ recordThankYouClick }
+							startChecklistTour={ startChecklistTour }
 						/>
 					</p>
 				) }
