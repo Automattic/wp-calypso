@@ -158,6 +158,10 @@ class Starter_Page_Templates {
 				'title' => 'Blank',
 				'slug'  => 'blank',
 			),
+			array(
+				'title' => 'Current',
+				'slug'  => 'current',
+			),
 		);
 		/**
 		 * Filters the config before it's passed to the frontend.

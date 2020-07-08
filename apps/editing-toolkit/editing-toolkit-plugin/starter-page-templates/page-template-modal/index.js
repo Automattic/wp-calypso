@@ -194,6 +194,12 @@ class PageTemplateModal extends Component {
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
 
+		// Skip setting template if user selects current layout
+		if ( 'current' === slug ) {
+			this.props.setIsOpen( false );
+			return;
+		}
+
 		// Check to see if this is a blank template selection
 		// and reset the template if so.
 		if ( 'blank' === slug ) {
@@ -291,6 +297,9 @@ class PageTemplateModal extends Component {
 	};
 
 	getBlocksByTemplateSlug( slug ) {
+		if ( slug === 'current' ) {
+			return this.props.currentBlocks;
+		}
 		return get( this.getBlocksByTemplateSlugs( this.props.templates ), [ slug ], [] );
 	}
 
@@ -301,6 +310,7 @@ class PageTemplateModal extends Component {
 	getTemplateGroups = () => {
 		return {
 			blankTemplate: filter( this.props.templates, { slug: 'blank' } ),
+			currentTemplate: filter( this.props.templates, { slug: 'current' } ),
 			aboutTemplates: filter( this.props.templates, { category: 'about' } ),
 			blogTemplates: filter( this.props.templates, { category: 'blog' } ),
 			contactTemplates: filter( this.props.templates, { category: 'contact' } ),
@@ -366,6 +376,7 @@ class PageTemplateModal extends Component {
 
 		const {
 			blankTemplate,
+			currentTemplate,
 			aboutTemplates,
 			blogTemplates,
 			contactTemplates,
@@ -413,6 +424,12 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
+								{ this.props.isFrontPage &&
+									this.renderTemplatesList(
+										currentTemplate,
+										__( 'Current', 'full-site-editing' )
+									) }
+
 								{ this.props.isFrontPage &&
 									this.renderTemplatesList(
 										homepageTemplates,
@@ -475,7 +492,11 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksForPreview( previewedTemplate ) }
 								viewportWidth={ 1200 }
-								title={ ! hidePageTitle && this.getTitleByTemplateSlug( previewedTemplate ) }
+								title={
+									! hidePageTitle && previewedTemplate === 'current'
+										? this.props.currentPostTitle
+										: this.getTitleByTemplateSlug( previewedTemplate )
+								}
 							/>
 						</>
 					) }
@@ -507,13 +528,14 @@ export const PageTemplatesPlugin = compose(
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
 		const isOpen = select( 'automattic/starter-page-layouts' ).isOpen();
+		const currentBlocks = select( 'core/editor' ).getBlocks();
 		return {
 			isOpen,
 			getMeta,
 			_starter_page_template,
-			postContentBlock: select( 'core/editor' )
-				.getBlocks()
-				.find( ( block ) => block.name === 'a8c/post-content' ),
+			currentBlocks,
+			currentPostTitle: select( 'core/editor' ).getCurrentPost().title,
+			postContentBlock: currentBlocks.find( ( block ) => block.name === 'a8c/post-content' ),
 			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 or higher
 			areTipsEnabled: select( 'core/nux' ) ? select( 'core/nux' ).areTipsEnabled() : false, // Gutenberg 7.1.0 or lower
 		};
