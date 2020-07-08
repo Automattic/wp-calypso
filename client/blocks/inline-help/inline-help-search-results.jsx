@@ -54,7 +54,7 @@ function HelpSearchResults( {
 		switch ( type ) {
 			case SUPPORT_TYPE_CONTEXTUAL_HELP:
 				if ( ! query.length ) {
-					return;
+					return null;
 				}
 				title = translate( 'This might interest you' );
 				break;
