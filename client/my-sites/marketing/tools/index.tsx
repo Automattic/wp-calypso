@@ -96,9 +96,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					) }
 					imagePath={ earnIllustration }
 				>
-					<Button onClick={ handleEarnClick } href="https://wp.me/logo-maker">
-						{ translate( 'Start earning' ) }
-					</Button>
+					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
