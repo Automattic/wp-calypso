@@ -5,7 +5,7 @@
 	justify-content: center;
 	flex-direction: column;
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: $font-body-small;
 	text-align: center;
 
 	.continue-as-user__gravatar-link {

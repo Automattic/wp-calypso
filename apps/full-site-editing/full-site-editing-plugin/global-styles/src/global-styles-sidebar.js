@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import { PluginSidebar } from '@wordpress/edit-post';
+import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { Button, PanelBody } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 
 /**
  * Internal dependencies
@@ -39,7 +38,7 @@ const PanelActionButtons = ( {
 } ) => (
 	<div className={ className }>
 		<Button disabled={ ! hasLocalChanges } isDefault onClick={ resetAction }>
-			{ __( 'Reset' ) }
+			{ __( 'Reset', 'full-site-editing' ) }
 		</Button>
 		<Button
 			className={ 'global-styles-sidebar__publish-button' }
@@ -47,7 +46,7 @@ const PanelActionButtons = ( {
 			isPrimary
 			onClick={ publishAction }
 		>
-			{ __( 'Publish' ) }
+			{ __( 'Publish', 'full-site-editing' ) }
 		</Button>
 	</div>
 );
@@ -73,26 +72,31 @@ export default ( {
 	return (
 		<>
 			<PluginSidebarMoreMenuItem icon={ <GlobalStylesIcon /> } target="global-styles">
-				{ __( 'Global Styles' ) }
+				{ __( 'Global Styles', 'full-site-editing' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
 				icon={ <GlobalStylesIcon /> }
 				name={ 'global-styles' }
-				title={ __( 'Global Styles' ) }
+				title={ __( 'Global Styles', 'full-site-editing' ) }
 				className="global-styles-sidebar"
 			>
 				<PanelBody>
 					<p>
 						{
 							/* translators: %s: Name of site. */
-							sprintf( __( 'You are customizing %s.' ), siteName )
+							sprintf( __( 'You are customizing %s.', 'full-site-editing' ), siteName )
 						}
 					</p>
-					<p>{ __( 'Any change you make here will apply to the entire website.' ) }</p>
+					<p>
+						{ __(
+							'Any change you make here will apply to the entire website.',
+							'full-site-editing'
+						) }
+					</p>
 					{ hasLocalChanges ? (
 						<div>
 							<p>
-								<em>{ __( 'You have unsaved changes.' ) }</em>
+								<em>{ __( 'You have unsaved changes.', 'full-site-editing' ) }</em>
 							</p>
 							<PanelActionButtons
 								hasLocalChanges={ hasLocalChanges }
@@ -102,7 +106,7 @@ export default ( {
 						</div>
 					) : null }
 				</PanelBody>
-				<PanelBody title={ __( 'Font Selection' ) }>
+				<PanelBody title={ __( 'Font Selection', 'full-site-editing' ) }>
 					<FontSelectionPanel
 						fontBase={ fontBase }
 						fontBaseDefault={ fontBaseDefault }
@@ -125,7 +129,7 @@ export default ( {
 				<PanelBody>
 					{ hasLocalChanges ? (
 						<p>
-							<em>{ __( 'You have unsaved changes.' ) }</em>
+							<em>{ __( 'You have unsaved changes.', 'full-site-editing' ) }</em>
 						</p>
 					) : null }
 					<PanelActionButtons

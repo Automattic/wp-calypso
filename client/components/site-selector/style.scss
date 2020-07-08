@@ -36,7 +36,7 @@
 // Styles for Site elements within the Selector
 .site-selector .site,
 .site-selector .all-sites {
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	// Highlight selected site
 	&.is-selected {
@@ -115,7 +115,7 @@
 	}
 
 	.search__input[type='search'] {
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 
 	.search__open-icon,
@@ -132,7 +132,7 @@
 	overflow-y: auto;
 	background: var( --color-surface );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		max-height: calc( 100% - 109px );
 	}
 }
@@ -156,7 +156,7 @@
 	box-sizing: border-box;
 	display: inline-block;
 	text-transform: uppercase;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	padding: 8px;
 	color: var( --color-neutral-40 );
@@ -166,7 +166,7 @@
 		color: var( --color-neutral-70 );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 16px;
 	}
 
@@ -199,7 +199,7 @@
 .site-selector__hidden-sites-message {
 	color: var( --color-text-subtle );
 	display: block;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding: 16px 16px 24px;
 
 	.site-selector__manage-hidden-sites {

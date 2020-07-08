@@ -60,8 +60,8 @@ export default class extends React.Component {
 	};
 
 	getSelectedText = () => {
-		let text = '',
-			filteredPath = this.getFilteredPath(),
+		let text = '';
+		const filteredPath = this.getFilteredPath(),
 			found = find( this.getNavtabs(), { path: filteredPath } );
 
 		if ( 'undefined' !== typeof found ) {

@@ -20,7 +20,7 @@ import { isPartnerPurchase } from 'lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import { connectOptions } from './theme-options';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
@@ -90,13 +90,15 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		<Main className="themes">
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="themes__page-heading"
 				headerText={ translate( 'Themes' ) }
 				align="left"
 			/>
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
-				<Banner
+				<UpsellNudge
+					forceDisplay
 					plan={ PLAN_JETPACK_BUSINESS }
 					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 					description={ translate(
@@ -105,6 +107,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 							'and security scanning.'
 					) }
 					event="themes_plans_free_personal_premium"
+					showIcon={ true }
 				/>
 			) }
 			<ThemeShowcase

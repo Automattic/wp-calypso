@@ -1,5 +1,8 @@
-function getCurrentStream( state ) {
-	return state.ui.reader.currentStream;
-}
+/**
+ * Internal dependencies
+ */
+import 'state/reader-ui/init';
 
-export default getCurrentStream;
+export default function getCurrentStream( state ) {
+	return state.readerUi.currentStream;
+}

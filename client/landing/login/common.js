@@ -8,12 +8,12 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import analytics from 'lib/analytics';
+import { initializeAnalytics } from 'lib/analytics/init';
 import getSuperProps from 'lib/analytics/super-props';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import { getUrlParts } from 'lib/url';
 import { setCurrentUser } from 'state/current-user/actions';
-import setRouteAction from 'state/ui/actions/set-route';
+import { setRoute as setRouteAction } from 'state/route/actions';
 
 const debug = debugFactory( 'calypso' );
 
@@ -108,7 +108,7 @@ const setRouteMiddleware = ( reduxStore ) => {
 };
 
 const setAnalyticsMiddleware = ( currentUser, reduxStore ) => {
-	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 };
 
 export function setupMiddlewares( currentUser, reduxStore ) {

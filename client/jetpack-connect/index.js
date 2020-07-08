@@ -24,14 +24,40 @@ export default function () {
 	const isLoggedOut = ! user.get();
 	const locale = getLanguageRouteParam( 'locale' );
 
+	const planTypeString = [
+		'personal',
+		'premium',
+		'pro',
+		'backup',
+		'scan',
+		'realtimebackup',
+		'antispam',
+	].join( '|' );
+
 	page(
-		'/jetpack/connect/:type(personal|premium|pro|backup|scan|realtimebackup|jetpack_search)/:interval(yearly|monthly)?',
+		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?`,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,
 		makeLayout,
 		clientRender
 	);
+
+	if ( isLoggedOut ) {
+		page(
+			'/jetpack/connect/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
+			( { path } ) => page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
+		);
+	} else {
+		page(
+			'/jetpack/connect/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
+			controller.persistMobileAppFlow,
+			controller.setMasterbar,
+			controller.purchase,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 		page(
@@ -100,7 +126,7 @@ export default function () {
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
 		( { params } ) =>
-			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : ''}` )
+			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
 	);
 
 	if ( isLoggedOut ) {
@@ -118,7 +144,7 @@ export default function () {
 	);
 
 	page(
-		`/jetpack/connect/${ locale }`,
+		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,

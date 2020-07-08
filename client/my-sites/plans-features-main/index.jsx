@@ -49,9 +49,14 @@ import {
 	getPopularPlanSpec,
 	isFreePlan,
 	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
 	planMatches,
 	plansLink,
 } from 'lib/plans';
+import { isValidFeatureKey } from 'lib/plans/features-list';
 import { Button } from '@automattic/components';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
@@ -67,10 +72,10 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
-import PlanTestimonials from '../plan-testimonials';
 
 /**
  * Style dependencies
@@ -109,6 +114,19 @@ export class PlansFeaturesMain extends Component {
 		return true;
 	}
 
+	isDisplayingPlansNeededForFeature() {
+		const { selectedFeature, selectedPlan, previousRoute } = this.props;
+
+		if (
+			isValidFeatureKey( selectedFeature ) &&
+			getPlan( selectedPlan ) &&
+			! isPersonalPlan( selectedPlan ) &&
+			! previousRoute.startsWith( '/plans/' )
+		) {
+			return true;
+		}
+	}
+
 	getPlanFeatures() {
 		const {
 			basePlansPath,
@@ -120,7 +138,6 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
-			isEligibleForPlanStepTest,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -129,12 +146,24 @@ export class PlansFeaturesMain extends Component {
 			redirectTo,
 			siteId,
 			plansWithScroll,
-			translate,
 			customHeader,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const availablePlans = this.isDisplayingPlansNeededForFeature()
+			? visiblePlans.filter( ( plan ) => {
+					if ( isEcommercePlan( selectedPlan ) ) {
+						return isEcommercePlan( plan );
+					}
+					if ( isBusinessPlan( selectedPlan ) ) {
+						return isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+					if ( isPremiumPlan( selectedPlan ) ) {
+						return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+			  } )
+			: visiblePlans;
 
 		return (
 			<div
@@ -149,16 +178,7 @@ export class PlansFeaturesMain extends Component {
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
 				{ customHeader }
-				{ this.isJetpackBackupAvailable() && (
-					<FormattedHeader
-						headerText={ translate( 'Plans' ) }
-						subHeaderText={ translate(
-							'Get everything your site needs, in one package — so you can focus on your business.'
-						) }
-						compactOnMobile
-						isSecondary
-					/>
-				) }
+				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
@@ -168,11 +188,10 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
-					isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }
-					visiblePlans={ visiblePlans }
+					visiblePlans={ availablePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
@@ -181,10 +200,10 @@ export class PlansFeaturesMain extends Component {
 					popularPlanSpec={ getPopularPlanSpec( {
 						customerType,
 						isJetpack,
+						availablePlans,
 					} ) }
 					siteId={ siteId }
 				/>
-				{ isEligibleForPlanStepTest && <PlanTestimonials /> }
 			</div>
 		);
 	}
@@ -195,6 +214,8 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			selectedPlan,
 			hideFreePlan,
+			hidePersonalPlan,
+			hidePremiumPlan,
 			sitePlanSlug,
 		} = this.props;
 
@@ -251,6 +272,14 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
 		}
 
+		if ( hidePersonalPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+		}
+
+		if ( hidePremiumPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
 			plans.splice( plans.indexOf( plans.filter( ( p ) => p.type === TYPE_PERSONAL )[ 0 ] ), 1 );
 		}
@@ -272,6 +301,11 @@ export class PlansFeaturesMain extends Component {
 
 			return plan ? [ ...accum, plan ] : accum;
 		}, [] );
+	}
+
+	isPersonalCustomerTypePlanVisible() {
+		const { hidePersonalPlan } = this.props;
+		return ! hidePersonalPlan;
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
@@ -302,7 +336,7 @@ export class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( customerType === 'personal' ) {
+		if ( customerType === 'personal' && this.isPersonalCustomerTypePlanVisible() ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM ] )
 			);
@@ -372,7 +406,7 @@ export class PlansFeaturesMain extends Component {
 						document.location.search
 					) }
 				>
-					{ translate( 'Blogs and Personal Sites' ) }
+					{ translate( 'Blogs and personal sites' ) }
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
@@ -382,7 +416,7 @@ export class PlansFeaturesMain extends Component {
 						document.location.search
 					) }
 				>
-					{ translate( 'Business Sites and Online Stores' ) }
+					{ translate( 'Business sites and online stores' ) }
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
@@ -419,13 +453,52 @@ export class PlansFeaturesMain extends Component {
 
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs } = this.props;
+
+		if ( this.isDisplayingPlansNeededForFeature() ) {
+			return null;
+		}
 		if ( displayJetpackPlans ) {
 			return this.getIntervalTypeToggle();
 		}
-		if ( withWPPlanTabs ) {
+		if ( withWPPlanTabs && this.isPersonalCustomerTypePlanVisible() ) {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
+	}
+
+	renderSecondaryFormattedHeader() {
+		const { siteSlug, translate } = this.props;
+		let headerText;
+		let subHeaderText;
+		if ( this.isJetpackBackupAvailable() ) {
+			headerText = translate( 'Plans' );
+			subHeaderText = translate(
+				'Get everything your site needs, in one package — so you can focus on your business.'
+			);
+		}
+		if ( this.isDisplayingPlansNeededForFeature() ) {
+			headerText = translate( 'Upgrade your plan to access this feature and more' );
+			subHeaderText = (
+				<Button
+					className="plans-features-main__view-all-plans is-link"
+					href={ `/plans/${ siteSlug }` }
+				>
+					{ translate( 'View all plans' ) }
+				</Button>
+			);
+		}
+		if ( ! headerText ) {
+			return null;
+		}
+
+		return (
+			<FormattedHeader
+				headerText={ headerText }
+				subHeaderText={ subHeaderText }
+				compactOnMobile
+				isSecondary
+			/>
+		);
 	}
 
 	renderProductsSelector() {
@@ -500,6 +573,8 @@ PlansFeaturesMain.propTypes = {
 	basePlansPath: PropTypes.string,
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
+	hidePersonalPlan: PropTypes.bool,
+	hidePremiumPlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.string,
@@ -522,6 +597,8 @@ PlansFeaturesMain.propTypes = {
 PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
 	hideFreePlan: false,
+	hidePersonalPlan: false,
+	hidePremiumPlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
 	showFAQ: true,
@@ -554,6 +631,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			previousRoute: getPreviousRoute( state ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,

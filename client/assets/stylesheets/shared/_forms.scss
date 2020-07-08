@@ -132,15 +132,15 @@ select {
 		no-repeat right 10px center;
 	border-color: var( --color-neutral-10 );
 	border-style: solid;
-	border-radius: 4px;
-	border-width: 1px 1px 2px;
+	border-radius: 2px;
+	border-width: 1px;
 	color: var( --color-neutral-70 );
 	cursor: pointer;
 	display: inline-block;
 	margin: 0;
 	outline: 0;
 	overflow: hidden;
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 400;
 	line-height: 1.4em;
 	text-overflow: ellipsis;

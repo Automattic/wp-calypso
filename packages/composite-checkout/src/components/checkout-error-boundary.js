@@ -4,6 +4,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'composite-checkout:checkout-error-boundary' );
 
 export default class CheckoutErrorBoundary extends React.Component {
 	constructor( props ) {
@@ -15,6 +18,14 @@ export default class CheckoutErrorBoundary extends React.Component {
 		return { currentError: error, hasError: true };
 	}
 
+	componentDidCatch( error, errorInfo ) {
+		if ( this.props.onError ) {
+			const errorMessage = `${ error.message }; Stack: ${ error.stack }; Component Stack: ${ errorInfo.componentStack }`;
+			debug( 'reporting the error', errorMessage );
+			this.props.onError( errorMessage );
+		}
+	}
+
 	render() {
 		if ( this.state.hasError ) {
 			return <ErrorFallback errorMessage={ this.props.errorMessage } />;
@@ -24,7 +35,8 @@ export default class CheckoutErrorBoundary extends React.Component {
 }
 
 CheckoutErrorBoundary.propTypes = {
-	errorMessage: PropTypes.string.isRequired,
+	errorMessage: PropTypes.node.isRequired,
+	onError: PropTypes.func,
 };
 
 function ErrorFallback( { errorMessage } ) {

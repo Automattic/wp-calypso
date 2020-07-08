@@ -39,6 +39,8 @@ const domainProduct = {
 	product_id: 106,
 	volume: 1,
 	is_domain_registration: true,
+	item_original_cost_integer: 500,
+	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
 };
@@ -59,6 +61,8 @@ const domainTransferProduct = {
 	meta: 'foo.cash',
 	product_id: 106,
 	volume: 1,
+	item_original_cost_integer: 500,
+	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
 };
@@ -75,6 +79,8 @@ const planWithBundledDomain = {
 	meta: '',
 	product_id: 1009,
 	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
 };
@@ -90,6 +96,8 @@ const planWithoutDomain = {
 	meta: '',
 	product_id: 1009,
 	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
 };
@@ -112,6 +120,9 @@ describe( 'CompositeCheckout', () => {
 
 		const initialCart = {
 			coupon: '',
+			coupon_savings_total: 0,
+			coupon_savings_total_integer: 0,
+			coupon_savings_total_display: '0',
 			currency: 'BRL',
 			locale: 'br-pt',
 			is_coupon_applied: false,
@@ -122,6 +133,8 @@ describe( 'CompositeCheckout', () => {
 			},
 			temporary: false,
 			allowed_payment_methods: [ 'WPCOM_Billing_Stripe_Payment_Method' ],
+			savings_total_integer: 0,
+			savings_total_display: 'R$0',
 			total_tax_integer: 700,
 			total_tax_display: 'R$7',
 			total_cost_integer: 15600,
@@ -180,6 +193,18 @@ describe( 'CompositeCheckout', () => {
 							product_slug: 'domain_reg',
 							prices: {},
 						},
+						premium_theme: {
+							product_id: 39,
+							product_name: 'Product',
+							product_slug: 'premium_theme',
+							prices: {},
+						},
+						'concierge-session': {
+							product_id: 371,
+							product_name: 'Product',
+							product_slug: 'concierge-session',
+							prices: {},
+						},
 					},
 				},
 				countries: { payments: countryList, domains: countryList },
@@ -187,8 +212,8 @@ describe( 'CompositeCheckout', () => {
 		} );
 
 		MyCheckout = ( { cartChanges, additionalProps } ) => (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-				<ReduxProvider store={ store }>
+			<ReduxProvider store={ store }>
+				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 					<CompositeCheckout
 						siteSlug={ 'foo.com' }
 						setCart={ mockSetCartEndpoint }
@@ -199,8 +224,8 @@ describe( 'CompositeCheckout', () => {
 						overrideCountryList={ countryList }
 						{ ...additionalProps }
 					/>
-				</ReduxProvider>
-			</StripeHookProvider>
+				</StripeHookProvider>
+			</ReduxProvider>
 		);
 	} );
 
@@ -246,7 +271,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when no credits are available', async () => {
@@ -275,7 +300,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the full credits payment method option when full credits are available', async () => {
@@ -288,14 +313,14 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the paypal payment method option when full credits are available', async () => {
+	it( 'does not render the other payment method options when full credits are available', async () => {
 		let renderResult;
 		const cartChanges = { credits_integer: 15600, credits_display: 'R$156' };
 		await act( async () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+		const { queryByText } = renderResult;
+		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
@@ -314,7 +339,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
 		const { queryByText } = renderResult;
-		expect( queryByText( 'Paypal' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
@@ -431,13 +456,13 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the checkout greeting header', async () => {
+	it( 'renders the checkout summary', async () => {
 		let renderResult;
 		await act( async () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'You are all set to check out' ) ).toBeInTheDocument();
+		expect( getByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
@@ -477,6 +502,68 @@ describe( 'CompositeCheckout', () => {
 		);
 	} );
 
+	it( 'does not redirect if the cart is empty when it loads but the url has a concierge session', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'concierge-session' };
+		await act( async () => {
+			render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithoutDomain ] };
+		const additionalProps = { product: 'concierge-session' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$144' )
+		);
+		getAllByLabelText( 'Support Session' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$49' )
+		);
+	} );
+
+	it( 'does not redirect if the cart is empty when it loads but the url has a theme', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'theme:ovation' };
+		await act( async () => {
+			render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithoutDomain ] };
+		const additionalProps = { product: 'theme:ovation' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$144' )
+		);
+		getAllByLabelText( 'Premium Theme: Ovation' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$69' )
+		);
+	} );
+
 	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { product: 'domain-mapping:bar.com' };
@@ -499,11 +586,12 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getAllByLabelText } = renderResult;
+		const { getAllByLabelText, getAllByText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		getAllByLabelText( 'Domain Mapping: bar.com' ).map( ( element ) =>
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+		getAllByLabelText( 'bar.com' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$0' )
 		);
 	} );
@@ -534,8 +622,9 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByLabelText } = renderResult;
-		expect( getByLabelText( 'Domain Registration: foo.cash' ) ).toBeInTheDocument();
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
@@ -548,8 +637,9 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByLabelText } = renderResult;
-		expect( getByLabelText( 'Domain Mapping: bar.com' ) ).toBeInTheDocument();
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'adds renewal products to the cart when the url has multiple renewals', async () => {
@@ -565,15 +655,20 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByLabelText } = renderResult;
-		expect( getByLabelText( 'Domain Mapping: bar.com' ) ).toBeInTheDocument();
-		expect( getByLabelText( 'Domain Registration: bar.com' ) ).toBeInTheDocument();
+		const { getAllByText } = renderResult;
+		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'bar.com' ) ).toHaveLength( 5 );
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
 		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const additionalProps = { couponCode: 'MYCOUPONCODE' };
+		const additionalProps = {
+			couponCode: 'MYCOUPONCODE',
+			coupon_savings_total_integer: 10,
+			coupon_savings_total_display: '$R10',
+		};
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -585,7 +680,7 @@ describe( 'CompositeCheckout', () => {
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( '-$0' )
+			expect( element ).toHaveTextContent( 'R$10' )
 		);
 	} );
 
@@ -654,6 +749,10 @@ async function mockSetCartEndpoint( _, requestCart ) {
 			'WPCOM_Billing_Ebanx',
 			'WPCOM_Billing_Web_Payment',
 		],
+		coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
+		coupon_savings_total_integer: requestCoupon ? 1000 : 0,
+		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
+		savings_total_integer: requestCoupon ? 1000 : 0,
 		total_tax_display: 'R$7',
 		total_tax_integer: taxInteger,
 		total_cost_display: 'R$156',
@@ -663,7 +762,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 		coupon_discounts_integer: [],
-		tax: {},
+		tax: { location: {}, display_taxes: true },
 	};
 }
 
@@ -679,8 +778,11 @@ function convertRequestProductToResponseProduct( currency ) {
 					product_slug: 'personal-bundle',
 					currency: currency,
 					is_domain_registration: false,
+					item_original_cost_integer: 14400,
+					item_original_cost_display: 'R$144',
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -693,8 +795,11 @@ function convertRequestProductToResponseProduct( currency ) {
 					product_slug: 'domain_map',
 					currency: currency,
 					is_domain_registration: false,
+					item_original_cost_integer: 0,
+					item_original_cost_display: 'R$0',
 					item_subtotal_integer: 0,
 					item_subtotal_display: 'R$0',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -707,8 +812,43 @@ function convertRequestProductToResponseProduct( currency ) {
 					product_slug: 'domain_reg',
 					currency: currency,
 					is_domain_registration: true,
+					item_original_cost_integer: 70,
+					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
 					item_subtotal_display: 'R$70',
+					months_per_bill_period: 12,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 39:
+				return {
+					product_id: 39,
+					product_name: 'Premium Theme: Ovation',
+					product_slug: 'premium_theme',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 69,
+					item_original_cost_display: 'R$69',
+					item_subtotal_integer: 69,
+					item_subtotal_display: 'R$69',
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 371:
+				return {
+					product_id: 371,
+					product_name: 'Support Session',
+					product_slug: 'concierge-session',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 49,
+					item_original_cost_display: 'R$49',
+					item_subtotal_integer: 49,
+					item_subtotal_display: 'R$49',
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -722,8 +862,10 @@ function convertRequestProductToResponseProduct( currency ) {
 			product_slug: 'unknown',
 			currency: currency,
 			is_domain_registration: false,
-			item_subtotal_integer: 0,
+			savings_total_display: '$0',
+			savings_total_integer: 0,
 			item_subtotal_display: '$0',
+			item_subtotal_integer: 0,
 			item_tax: 0,
 		};
 	};

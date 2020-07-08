@@ -38,6 +38,9 @@ export class DowngradeStep extends Component {
 		const canRefund = !! parseFloat( refundAmount );
 		const amount = currencySymbol + ( canRefund ? refundAmount : planCost );
 		const isEnglishLocale = [ 'en', 'en-gb' ].indexOf( userUtils.getLocaleSlug() ) >= 0;
+		const downgradeWarning = translate(
+			'If you choose to downgrade, your plan will be downgraded immediately.'
+		);
 		let refundDetails, refundTitle, refundReason;
 		if ( isEnglishLocale ) {
 			refundTitle = translate( 'Would you rather switch to a more affordable plan?' );
@@ -76,7 +79,9 @@ export class DowngradeStep extends Component {
 				<FormSectionHeading>{ refundTitle }</FormSectionHeading>
 				<FormFieldset>
 					{ refundReason }
-					<p>{ refundDetails }</p>
+					<p>
+						{ refundDetails } { downgradeWarning }
+					</p>
 				</FormFieldset>
 			</div>
 		);

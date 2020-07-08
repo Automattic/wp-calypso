@@ -1,18 +1,18 @@
 .reader-recommended-sites {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin: 0 15px;
 	}
 }
 
 .reader-recommended-sites__header {
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: $font-body-small;
 	letter-spacing: 0.01em;
 	font-weight: 600;
 	margin: 8px 0;
 	position: relative;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 16px 0;
 	}
 
@@ -29,7 +29,7 @@
 	margin: 0 0 20px;
 	padding: 0;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -41,7 +41,7 @@
 	list-style-type: none;
 	width: 100%;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		align-items: flex-end;
 		flex-direction: column;
 	}
@@ -57,7 +57,7 @@
 		top: 16px;
 		right: 16px;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
     		top: 0;
     		right: 0;
 		}
@@ -82,19 +82,19 @@
 		margin: 0;
 		padding: 0;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			padding: 0 0 20px;
 		}
 
 		.follow-button .follow-button__label {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: inline;
 			}
 		}
 	}
 
 	&:last-child {
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			margin-left: 20px;
 		}
 	}

@@ -9,6 +9,7 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/jetpack/settings';
+import 'state/jetpack/init';
 
 export const requestJetpackSettings = ( siteId, query ) => ( {
 	type: JETPACK_SETTINGS_REQUEST,
@@ -47,7 +48,7 @@ export const updateJetpackSettings = ( siteId, settings ) => ( {
 /**
  * Regenerate the target email of Post by Email.
  *
- * @param  {Int}     siteId  ID of the site.
+ * @param  {number}     siteId  ID of the site.
  * @returns {object}          Action object to regenerate the email when dispatched.
  */
 export const regeneratePostByEmail = ( siteId ) =>

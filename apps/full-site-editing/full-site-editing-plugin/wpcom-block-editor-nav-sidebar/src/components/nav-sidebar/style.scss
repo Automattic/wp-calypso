@@ -1,0 +1,133 @@
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/z-index';
+
+$sidebar-width: 272px;
+$border: 1px solid $light-gray-500;
+$transition-period: 200ms;
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	// Use the same z-index as the <Modal> component
+	z-index: z-index( '.components-modal__header' );
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
+	@include reduce-motion( 'animation' );
+
+	&.is-fading-out {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-in reverse;
+		@include reduce-motion( 'animation' );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__fade {
+	0% {
+		background-color: rgba( $black, 0 );
+	}
+	100% {
+		background-color: rgba( $black, 0.7 );
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__container {
+	box-sizing: border-box;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	width: $sidebar-width;
+	border-right: $border;
+	background: $white;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-out;
+	@include reduce-motion( 'animation' );
+
+	&.is-sliding-left {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-in reverse;
+		@include reduce-motion( 'animation' );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__slide {
+	0% {
+		left: -$sidebar-width;
+	}
+	100% {
+		left: 0;
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__header {
+	height: $header-height;
+	border-bottom: $border;
+	box-sizing: content-box;
+	display: flex;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: $header-height !important;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out forwards;
+	@include reduce-motion( 'animation' );
+
+	&.is-growing {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out reverse;
+		@include reduce-motion( 'animation' );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__shrink {
+	0% {
+		transform: scale( 1 );
+	}
+	100% {
+		transform: scale( 0.55 );
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container {
+	border-bottom: $border;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
+	height: 46px;
+	width: 100%;
+	font-weight: 600;
+	border: none !important;
+	box-shadow: none !important;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__controls {
+	padding: 10px;
+}
+
+.wpcom-block-editor-nav-sidebar__page-list li {
+	margin: 0;
+	padding: 0;
+}
+
+@keyframes wpcom-block-editor-nav-sidebar__shrink {
+	0% {
+		transform: scale( 1 );
+	}
+	100% {
+		transform: scale( 0.55 );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar__grow {
+	0% {
+		transform: scale( 0.55 );
+	}
+	100% {
+		transform: scale( 1 );
+	}
+}

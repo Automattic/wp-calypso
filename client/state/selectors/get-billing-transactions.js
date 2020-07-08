@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/billing-transactions/init';
+
+/**
  * Returns all billing transactions.
  * Returns null if the billing transactions have not been fetched yet.
  *

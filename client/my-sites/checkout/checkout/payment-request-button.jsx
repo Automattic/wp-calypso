@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
@@ -25,7 +25,7 @@ export default function PaymentRequestButton( {
 	const onClick = ( event ) => {
 		event.persist();
 		event.preventDefault();
-		analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_open_payment_sheet', {
+		recordTracksEvent( 'calypso_checkout_apple_pay_open_payment_sheet', {
 			is_renewal: isRenewal,
 		} );
 		setIsSubmitting( true );

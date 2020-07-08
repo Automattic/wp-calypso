@@ -17,7 +17,7 @@ import {
 	hasDomainRegistration,
 	hasPlan,
 } from './cart-items';
-import { isCredits, isDomainRedemption, whitelistAttributes } from 'lib/products-values';
+import { isCredits, isDomainRedemption, allowedProductAttributes } from 'lib/products-values';
 import { detectWebPaymentMethod } from 'lib/web-payment';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
@@ -268,7 +268,7 @@ export function fillInAllCartItemAttributes( cart, products ) {
 
 export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const product = products[ cartItem.product_slug ];
-	const attributes = whitelistAttributes( product );
+	const attributes = allowedProductAttributes( product );
 
 	return extend( {}, cartItem, attributes );
 }

@@ -18,7 +18,6 @@ import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import versionCompare from 'lib/version-compare';
-import analytics from 'lib/analytics';
 import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
@@ -57,8 +56,7 @@ class PluginInformation extends React.Component {
 		) {
 			return;
 		}
-		const recordEvent = gaRecordEvent.bind(
-			analytics,
+		const recordEvent = gaRecordEvent(
 			'Plugins',
 			'Clicked Plugin Homepage Link',
 			'Plugin Name',
@@ -81,8 +79,7 @@ class PluginInformation extends React.Component {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
-		const recordEvent = gaRecordEvent.bind(
-			analytics,
+		const recordEvent = gaRecordEvent(
 			'Plugins',
 			'Clicked wp.org Plugin Link',
 			'Plugin Name',

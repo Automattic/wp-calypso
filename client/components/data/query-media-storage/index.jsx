@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -63,17 +62,8 @@ QueryMediaStorage.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingMediaStorage: isRequestingMediaStorage( state, ownProps.siteId ),
-		};
-	},
-	( dispatch ) => {
-		return bindActionCreators(
-			{
-				requestMediaStorage,
-			},
-			dispatch
-		);
-	}
+	( state, ownProps ) => ( {
+		requestingMediaStorage: isRequestingMediaStorage( state, ownProps.siteId ),
+	} ),
+	{ requestMediaStorage }
 )( QueryMediaStorage );

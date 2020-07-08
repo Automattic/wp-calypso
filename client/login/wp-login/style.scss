@@ -46,7 +46,7 @@ $image-height: 47px;
 
 .wp-login__header {
 	color: var( --color-neutral-40 );
-	font-size: 16px;
+	font-size: $font-body;
 	margin-bottom: 16px;
 	text-align: center;
 
@@ -75,8 +75,8 @@ $image-height: 47px;
 		box-sizing: border-box;
 		cursor: pointer;
 		display: block;
-		font-size: 14px;
-		font-weight: 500;
+		font-size: $font-body-small;
+		font-weight: 600;
 		line-height: 4em;
 		padding: 0 24px;
 		text-align: center;
@@ -144,7 +144,7 @@ $image-height: 47px;
 }
 
 .wp-login__private-site-header {
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 10px;
 	text-align: center;
 }
@@ -246,7 +246,7 @@ $image-height: 47px;
 		border-bottom: none;
 		line-height: 3.4em;
 		color: var( --color-neutral-60 );
-		font-size: 14px;
+		font-size: $font-body-small;
 		text-decoration: underline;
 		font-weight: normal;
 	}
@@ -280,16 +280,7 @@ $image-height: 47px;
 	.login__form-terms a:hover {
 		text-align: left;
 		color: var( --color-neutral-60 );
-		font-size: 12px;
-	}
-
-	.login__form-social-divider {
-		text-align: center;
-		margin-top: 12px;
-		margin-bottom: 12px;
-		font-size: 12px;
-		position: initial;
-		text-transform: initial;
+		font-size: $font-body-extra-small;
 	}
 
 	.login__social {
@@ -323,7 +314,7 @@ $image-height: 47px;
 		.text-control__label,
 		.components-base-control__label {
 			color: var( --color-neutral-50 );
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: normal;
 		}
 
@@ -375,13 +366,13 @@ $image-height: 47px;
 		width: auto;
 		min-width: 100%;
 		text-align: center;
-		font-size: 14px;
+		font-size: $font-body-small;
 		line-height: 24px;
 		height: 42px;
 		display: block;
 		margin: 13px auto;
 		float: none;
-		font-weight: 500;
+		font-weight: 600;
 		letter-spacing: 0;
 		transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 		border-radius: 4px;
@@ -416,7 +407,7 @@ $image-height: 47px;
 	.two-factor-authentication__verification-code-form input,
 	.login__form input {
 		padding: 18px 14px;
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.wp-login__main {

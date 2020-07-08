@@ -29,7 +29,7 @@ export const navigationMiddleware = ( store ) => {
 					get( action, [ 'meta', 'skipUrlUpdate' ] ) ||
 					! (
 						/^[/]activity-log[/]/.test( document.location.pathname ) ||
-						/^[/]backups[/]activity[/]/.test( document.location.pathname )
+						/^[/]backup[/]activity[/]/.test( document.location.pathname )
 					)
 				) {
 					return afterFilter;

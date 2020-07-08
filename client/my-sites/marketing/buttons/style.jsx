@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -32,7 +32,7 @@ class SharingButtonsStyle extends React.Component {
 		const { path } = this.props;
 
 		this.props.onChange( value );
-		analytics.tracks.recordEvent( 'calypso_sharing_buttons_style_radio_button_click', {
+		recordTracksEvent( 'calypso_sharing_buttons_style_radio_button_click', {
 			value,
 			path,
 		} );

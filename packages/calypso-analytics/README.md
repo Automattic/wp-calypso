@@ -7,7 +7,7 @@ Automatticians may refer to internal documentation for more information about Tr
 
 ## Usage
 
-Note: In most situations it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
+Note: In most situations it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/HEAD/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
 
 ### `recordTracksEvent( name, properties )`
 
@@ -44,8 +44,9 @@ recordTracksEvent( 'calypso_do_thing', { extra: 'info' } );
 `recordTracksEvent( name, properties )` deprecates the following call to the analytics lib method:
 
 ```js
-import analytics from 'lib/analytics';
-analytics.tracks.recordEvent( name, properties );
+import { recordTracksEvent } from 'lib/analytics/tracks';
+
+recordTracksEvent( name, properties );
 ```
 
 ## Naming Conventions

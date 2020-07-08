@@ -61,7 +61,7 @@
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		.like-button__label-status {
 			display: none;
 		}
@@ -71,6 +71,6 @@
 .like-button__label {
 	// this keeps the label from collapsing and making the icon drop down
 	margin-left: 1px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	min-width: 10px;
 }

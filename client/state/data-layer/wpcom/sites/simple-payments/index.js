@@ -32,6 +32,7 @@ import {
 } from 'state/simple-payments/product-list/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import { isEnabled } from 'config';
 
 /**
  * Convert custom post metadata array to product attributes
@@ -69,7 +70,13 @@ function customPostMetadataToProductAttributes( metadata ) {
  */
 export function customPostToProduct( customPost ) {
 	if ( ! isValidSimplePaymentsProduct( customPost ) ) {
-		throw new TransformerError( 'Custom post is not a valid simple payment product', customPost );
+		const simplePaymentsName = isEnabled( 'earn/rename-payment-blocks' )
+			? 'Pay with PayPal'
+			: 'Simple Payments';
+		throw new TransformerError(
+			'Custom post is not a valid ' + simplePaymentsName + ' product',
+			customPost
+		);
 	}
 
 	const metadataAttributes = customPostMetadataToProductAttributes( customPost.metadata );

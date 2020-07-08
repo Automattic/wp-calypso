@@ -12,7 +12,9 @@ import { localize } from 'i18n-calypso';
  */
 import AccountPassword from 'me/account-password';
 import { Card } from '@automattic/components';
+import config from 'config';
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import ReauthRequired from 'me/reauth-required';
@@ -43,15 +45,21 @@ class Security extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { path, translate } = this.props;
+		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
 			<Main className="security">
-				<PageViewTracker path="/me/security" title="Me > Password" />
+				<PageViewTracker path={ path } title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
 				<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
+				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
+				{ useCheckupMenu && (
+					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
+						{ translate( 'Password' ) }
+					</HeaderCake>
+				) }
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<Card className="me-security-settings security__settings">

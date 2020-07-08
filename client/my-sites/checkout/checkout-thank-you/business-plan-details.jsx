@@ -5,37 +5,69 @@
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
 import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
+import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 
 /**
  * Image dependencies
  */
 import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
+import jetpackBackupImage from 'assets/images/illustrations/jetpack-backup.svg';
 import themeImage from 'assets/images/illustrations/themes.svg';
 import updatesImage from 'assets/images/illustrations/updates.svg';
 
 function trackOnboardingButtonClick() {
-	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
+	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
-const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
+const BusinessPlanDetails = ( {
+	selectedSite,
+	sitePlans,
+	selectedFeature,
+	purchases,
+	displayMode,
+} ) => {
+	const shouldPromoteJetpack = useSelector( ( state ) =>
+		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
+	);
+
 	const plan = find( sitePlans.data, isBusiness );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const whiteGloveQuickStartDescription =
+		'white-glove' === displayMode
+			? 'Schedule a one-on-one session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
+			: i18n.translate(
+					'Schedule a Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
+			  );
 
 	return (
 		<div>
 			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+
+			{ shouldPromoteJetpack && (
+				<PurchaseDetail
+					icon={ <img alt="" src={ jetpackBackupImage } /> }
+					title={ i18n.translate( 'Check your backups' ) }
+					description={ i18n.translate(
+						'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+					) }
+					buttonText={ i18n.translate( 'See the latest backup' ) }
+					href={ `/backup/${ selectedSite.slug }` }
+					onClick={ trackOnboardingButtonClick }
+				/>
+			) }
 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
@@ -45,10 +77,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 			<PurchaseDetail
 				icon={ <img alt="" src={ conciergeImage } /> }
 				title={ i18n.translate( 'Get personalized help' ) }
-				description={ i18n.translate(
-					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
-						'your site and learn more about WordPress.com.'
-				) }
+				description={ whiteGloveQuickStartDescription }
 				buttonText={ i18n.translate( 'Schedule a session' ) }
 				href={ `/me/concierge/${ selectedSite.slug }/book` }
 				onClick={ trackOnboardingButtonClick }

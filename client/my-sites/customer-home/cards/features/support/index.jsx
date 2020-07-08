@@ -35,7 +35,7 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 		<Card className="support">
 			<CardHeading>{ translate( 'Support' ) }</CardHeading>
 			<h6 className="support__header customer-home__card-subheader">
-				{ translate( 'Get all the help you need' ) }
+				{ translate( 'Get all the help you need.' ) }
 			</h6>
 			<div className="support__content">
 				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />

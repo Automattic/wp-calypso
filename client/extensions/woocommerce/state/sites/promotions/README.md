@@ -42,7 +42,7 @@ As Promotions only exist in memory state on the client at this point, the defini
 
 ### appliesTo
 
-The `appliesTo` object for a promotion is a complex object which describes what all the promotion can be applied to. At this point, exluded products or categories are not supported.
+The `appliesTo` object for a promotion is a complex object which describes what all the promotion can be applied to. At this point, excluded products or categories are not supported.
 
 #### Example: all products.
 

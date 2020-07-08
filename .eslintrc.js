@@ -129,6 +129,12 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
+					// Use `@wordpress/icons` instead of `Icon` or `Dashicon` from `@wordpress/components`.
+					{
+						name: '@wordpress/components',
+						importNames: [ 'Dashicon', 'Icon' ],
+						message: 'Please use `@wordpress/icons` instead.',
+					},
 				],
 			},
 		],
@@ -170,5 +176,20 @@ module.exports = {
 		// - events because we use it for some event emitters
 		// - path because we use it quite a bit
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
+
+		/**
+		 * temporarily demote inclusive language rule to a warning until we clear the repository
+		 * and allow certain terms that we can't fix yet due to complexity or lack of control over the name
+		 */
+		'inclusive-language/use-inclusive-words': [
+			'warn',
+			{
+				words: [],
+				allowedTerms: [
+					{ term: 'masterbar', allowPartialMatches: true },
+					{ term: 'mastercard', allowPartialMatches: true },
+				],
+			},
+		],
 	},
 };

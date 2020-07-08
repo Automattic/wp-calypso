@@ -20,6 +20,7 @@ import Spinner from 'components/spinner';
 
 export class WechatPaymentQRCode extends Component {
 	static propTypes = {
+		className: PropTypes.string,
 		orderId: PropTypes.number.isRequired,
 		redirectUrl: PropTypes.string.isRequired,
 		cart: PropTypes.object.isRequired,
@@ -82,7 +83,7 @@ export class WechatPaymentQRCode extends Component {
 
 	render() {
 		return (
-			<React.Fragment>
+			<div className={ this.props.className }>
 				<QueryOrderTransaction orderId={ this.props.orderId } pollIntervalMs={ 2000 } />
 
 				<p className="checkout__wechat-qrcode-instruction">
@@ -111,7 +112,7 @@ export class WechatPaymentQRCode extends Component {
 						}
 					) }
 				</p>
-			</React.Fragment>
+			</div>
 		);
 	}
 }

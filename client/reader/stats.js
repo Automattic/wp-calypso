@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
 
@@ -124,11 +124,11 @@ export function recordTrack( eventName, eventProperties, { pathnameOverride } = 
 		}
 	}
 
-	tracks.recordEvent( eventName, eventProperties );
+	recordTracksEvent( eventName, eventProperties );
 }
 
-const tracksRailcarEventWhitelist = new Set();
-tracksRailcarEventWhitelist
+const allowedTracksRailcarEventNames = new Set();
+allowedTracksRailcarEventNames
 	.add( 'calypso_reader_related_post_from_same_site_clicked' )
 	.add( 'calypso_reader_related_post_from_other_site_clicked' )
 	.add( 'calypso_reader_related_post_site_clicked' )
@@ -165,7 +165,7 @@ export const recordTracksRailcarInteract = partial(
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
 	recordTrack( eventName, assign( getTracksPropertiesForPost( post ), additionalProps ), options );
-	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
+	if ( post.railcar && allowedTracksRailcarEventNames.has( eventName ) ) {
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(
 			eventName,
@@ -173,7 +173,7 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {}, 
 			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
-		console.warn( 'Consider whitelisting reader track', eventName ); //eslint-disable-line no-console
+		console.warn( 'Consider allowing reader track', eventName ); //eslint-disable-line no-console
 	}
 }
 

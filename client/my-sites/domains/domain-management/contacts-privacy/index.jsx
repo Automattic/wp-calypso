@@ -24,6 +24,8 @@ import {
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import isRequestingWhois from 'state/selectors/is-requesting-whois';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 
 /**
  * Style dependencies
@@ -37,11 +39,7 @@ class ContactsPrivacy extends React.PureComponent {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	render() {
-		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
-		}
-
+	renderForOwner() {
 		const { translate } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const {
@@ -56,41 +54,63 @@ class ContactsPrivacy extends React.PureComponent {
 			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
 
 		return (
+			<>
+				<ContactsPrivacyCard
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.selectedSite }
+					privateDomain={ privateDomain }
+					privacyAvailable={ privacyAvailable }
+					contactInfoDisclosed={ contactInfoDisclosed }
+					contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
+					isPendingIcannVerification={ isPendingIcannVerification }
+				/>
+
+				<VerticalNavItem
+					path={ domainManagementEditContactInfo(
+						this.props.selectedSite.slug,
+						this.props.selectedDomainName,
+						this.props.currentRoute
+					) }
+				>
+					{ translate( 'Edit contact info' ) }
+				</VerticalNavItem>
+
+				{ canManageConsent && (
+					<VerticalNavItem
+						path={ domainManagementManageConsent(
+							this.props.selectedSite.slug,
+							this.props.selectedDomainName,
+							this.props.currentRoute
+						) }
+					>
+						{ translate( 'Manage Consent for Personal Data Use' ) }
+					</VerticalNavItem>
+				) }
+			</>
+		);
+	}
+
+	renderForOthers() {
+		const { domains, selectedDomainName } = this.props;
+		return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+	}
+
+	render() {
+		if ( this.isDataLoading() ) {
+			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
+		}
+
+		const { translate } = this.props;
+		const domain = getSelectedDomain( this.props );
+
+		return (
 			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
 					{ translate( 'Contacts and Privacy' ) }
 				</Header>
 
 				<VerticalNav>
-					<ContactsPrivacyCard
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite }
-						privateDomain={ privateDomain }
-						privacyAvailable={ privacyAvailable }
-						contactInfoDisclosed={ contactInfoDisclosed }
-						contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
-						isPendingIcannVerification={ isPendingIcannVerification }
-					/>
-
-					<VerticalNavItem
-						path={ domainManagementEditContactInfo(
-							this.props.selectedSite.slug,
-							this.props.selectedDomainName
-						) }
-					>
-						{ translate( 'Edit contact info' ) }
-					</VerticalNavItem>
-
-					{ canManageConsent && (
-						<VerticalNavItem
-							path={ domainManagementManageConsent(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName
-							) }
-						>
-							{ translate( 'Manage Consent for Personal Data Use' ) }
-						</VerticalNavItem>
-					) }
+					{ domain.currentUserCanManage ? this.renderForOwner() : this.renderForOthers() }
 				</VerticalNav>
 			</Main>
 		);
@@ -101,12 +121,19 @@ class ContactsPrivacy extends React.PureComponent {
 	}
 
 	goToEdit = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			domainManagementEdit(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 }
 
 export default connect( ( state, ownProps ) => {
 	return {
+		currentRoute: getCurrentRoute( state ),
 		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
 	};
 } )( localize( ContactsPrivacy ) );

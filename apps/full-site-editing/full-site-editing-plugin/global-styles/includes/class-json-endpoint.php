@@ -73,24 +73,24 @@ class JSON_Endpoint extends \WP_REST_Controller {
 		register_rest_route(
 			$this->rest_namespace,
 			$this->rest_route,
-			[
-				[
+			array(
+				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_data' ],
-					'permission_callback' => [ $this, 'permission_callback' ],
-				],
-			]
+					'callback'            => array( $this, 'get_data' ),
+					'permission_callback' => array( $this, 'permission_callback' ),
+				),
+			)
 		);
 		register_rest_route(
 			$this->rest_namespace,
 			$this->rest_route,
-			[
-				[
+			array(
+				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
-					'callback'            => [ $this, 'update_data' ],
-					'permission_callback' => [ $this, 'permission_callback' ],
-				],
-			]
+					'callback'            => array( $this, 'update_data' ),
+					'permission_callback' => array( $this, 'permission_callback' ),
+				),
+			)
 		);
 	}
 

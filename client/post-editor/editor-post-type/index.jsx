@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
@@ -13,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getEditedPost } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { decodeEntities } from 'lib/formatting';

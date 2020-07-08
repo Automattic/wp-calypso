@@ -9,6 +9,7 @@ import { noop } from 'lodash';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -172,7 +173,9 @@ class Site extends React.Component {
 						</span>
 					) }
 				</a>
-				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
+				{ this.props.indicator && isEnabled( 'site-indicator' ) ? (
+					<SiteIndicator site={ site } />
+				) : null }
 			</div>
 		);
 	}

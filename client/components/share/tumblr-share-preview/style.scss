@@ -34,7 +34,7 @@
 
 .tumblr-share-preview__profile-line {
 	display: flex;
-	font-size: 13px;
+	font-size: $font-body-small;
 	justify-content: space-between;
 	line-height: 20px;
 	margin-bottom: 13px;
@@ -67,7 +67,7 @@
 .tumblr-share-preview__message,
 .tumblr-share-preview__summery,
 .tumblr-share-preview__article-link-line {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 21px;
 }
 

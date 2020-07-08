@@ -26,6 +26,7 @@ import { getCustomizerFocus } from './panels';
 import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import wpcom from 'lib/wp';
 import { addItem } from 'lib/cart/actions';
 import { trackClick } from 'my-sites/themes/helpers';
@@ -48,6 +49,7 @@ class Customize extends React.Component {
 			iframeLoaded: false,
 			errorFromIframe: false,
 			timeoutError: false,
+			returnUrl: undefined,
 		};
 	}
 
@@ -62,6 +64,7 @@ class Customize extends React.Component {
 		isJetpack: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		isCustomerHomeEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -70,6 +73,11 @@ class Customize extends React.Component {
 	};
 
 	UNSAFE_componentWillMount() {
+		this.getReturnUrl().then( ( validatedUrl ) => {
+			this.setState( {
+				returnUrl: validatedUrl,
+			} );
+		} );
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
@@ -115,10 +123,32 @@ class Customize extends React.Component {
 		return false;
 	};
 
+	getReturnUrl = async () => {
+		const returnUrl = new URLSearchParams( window.location.search ).get( 'return' );
+
+		if ( ! returnUrl ) {
+			return null;
+		}
+
+		try {
+			const response = await wpcom.req.get( '/me/validate-redirect', { redirect_url: returnUrl } );
+
+			if ( ! response || ! response.redirect_to ) {
+				return null;
+			}
+
+			return response.redirect_to;
+		} catch {
+			// Ignore error, treat URL as invalid
+			return null;
+		}
+	};
+
 	getPreviousPath = () => {
 		let path = this.props.prevPath;
+
 		if ( ! path || /^\/customize\/?/.test( path ) ) {
-			path = '/stats';
+			path = this.props.isCustomerHomeEnabled ? '/home' : '/stats';
 			if ( this.props.domain ) {
 				path += '/' + this.props.domain;
 			}
@@ -127,7 +157,7 @@ class Customize extends React.Component {
 	};
 
 	goBack = () => {
-		const path = this.getPreviousPath();
+		const path = this.state.returnUrl || this.getPreviousPath();
 
 		if ( path.includes( '/themes' ) ) {
 			trackClick( 'customizer', 'close' );
@@ -384,6 +414,7 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = get( site, 'ID' );
+		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, siteId );
 		return {
 			site,
 			siteId,
@@ -391,6 +422,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			// TODO: include panel from props?
 			customizerUrl: getCustomizerUrl( state, siteId ),
+			isCustomerHomeEnabled,
 		};
 	},
 	{ requestSite, themeActivated }

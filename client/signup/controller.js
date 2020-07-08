@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
  */
 import config from 'config';
 import { sectionify } from 'lib/route';
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
 import SignupComponent from './main';
 import { getStepComponent } from './config/step-components';
 import {
@@ -26,10 +26,22 @@ import {
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
 import { setCurrentFlowName } from 'state/signup/flow/actions';
+import { setSelectedSiteId } from 'state/ui/actions';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import {
+	getSiteVerticalId,
+	getSiteVerticalIsUserInput,
+} from 'state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { login } from 'lib/paths';
+import { waitForData } from 'state/data-layer/http-data';
+import { requestGeoLocation } from 'state/data-getters';
+import { getDotBlogVerticalId } from './config/dotblog-verticals';
+import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -41,7 +53,93 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
  */
 let initialContext;
 
+const removeWhiteBackground = function () {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-white-signup' );
+};
+
+export const addP2SignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'is-p2-signup' );
+};
+
+export const removeP2SignupClassName = function () {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-p2-signup' );
+};
+
 export default {
+	redirectTests( context, next ) {
+		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			next();
+		} else if (
+			context.pathname.indexOf( 'domain' ) >= 0 ||
+			context.pathname.indexOf( 'plan' ) >= 0 ||
+			context.pathname.indexOf( 'onboarding-passwordless' ) >= 0 ||
+			context.pathname.indexOf( 'wpcc' ) >= 0 ||
+			context.pathname.indexOf( 'launch-site' ) >= 0 ||
+			context.params.flowName === 'user' ||
+			context.params.flowName === 'account' ||
+			context.params.flowName === 'crowdsignal'
+		) {
+			removeWhiteBackground();
+			next();
+		} else if ( context.pathname.includes( 'p2' ) ) {
+			// We still want to keep the original styling for the new user creation step
+			// so people know they are creating an account at WP.com.
+			if ( context.pathname.includes( 'user' ) ) {
+				removeP2SignupClassName();
+			} else {
+				addP2SignupClassName();
+			}
+
+			removeWhiteBackground();
+
+			next();
+		} else {
+			waitForData( {
+				geo: () => requestGeoLocation(),
+			} )
+				.then( ( { geo } ) => {
+					const countryCode = geo.data.body.country_short;
+					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
+						window.location.replace( window.location.origin + '/new' + window.location.search );
+					} else if (
+						-1 === context.pathname.indexOf( 'free' ) &&
+						-1 === context.pathname.indexOf( 'personal' ) &&
+						-1 === context.pathname.indexOf( 'premium' ) &&
+						-1 === context.pathname.indexOf( 'business' ) &&
+						-1 === context.pathname.indexOf( 'ecommerce' ) &&
+						'variantPasswordless' === abtest( 'passwordlessAfterPlans', countryCode )
+					) {
+						const stepName = getStepName( context.params );
+						const stepSectionName = getStepSectionName( context.params );
+						const urlWithoutLocale = getStepUrl(
+							'onboarding-passwordless',
+							stepName,
+							stepSectionName
+						);
+						window.location = urlWithoutLocale;
+					} else {
+						removeWhiteBackground();
+						next();
+					}
+				} )
+				.catch( () => {
+					removeWhiteBackground();
+					next();
+				} );
+		}
+	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( userLoggedIn && context.params.lang ) {
@@ -154,14 +252,16 @@ export default {
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
 
-		analytics.pageView.record(
-			basePath,
-			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName,
-			{ flow: flowName }
-		);
+		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
+			flow: flowName,
+		} );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
+
+		if ( flowName !== 'launch-site' ) {
+			context.store.dispatch( setSelectedSiteId( null ) );
+		}
 
 		context.primary = React.createElement( SignupComponent, {
 			store: context.store,
@@ -176,6 +276,27 @@ export default {
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName ),
 		} );
+
+		next();
+	},
+	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
+		const state = signupStore.getState();
+		const verticalId = getSiteVerticalId( state );
+		const verticalIsUserInput = getSiteVerticalIsUserInput( state );
+		const siteType = getSiteType( state );
+
+		if ( ! siteType && query.site_type ) {
+			signupStore.dispatch( setSiteType( query.site_type ) );
+		}
+
+		if ( ( ! verticalId || ! verticalIsUserInput ) && query.vertical ) {
+			signupStore.dispatch(
+				setSiteVertical( {
+					id: getDotBlogVerticalId( query.vertical ) || query.vertical,
+					isUserInput: false,
+				} )
+			);
+		}
 
 		next();
 	},

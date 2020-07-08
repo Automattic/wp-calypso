@@ -1,0 +1,19 @@
+{
+	"build": "development",
+	"calypso_config": "desktop-development",
+	"server_port": 3000,
+	"server_url": "http://calypso.localhost",
+	"server_host": "calypso.localhost",
+	"updater": {
+		"downloadUrl": "https://apps.wordpress.com/desktop/",
+		"apiUrl": "https://api.github.com/repos/Automattic/wp-desktop/releases",
+		"delay": 2000,
+		"interval": 600000
+	},
+	"debug": {
+		"enabled_by_default": true,
+		"namespace": "desktop:*",
+		"clear_log": false,
+		"colors": true
+	}
+}

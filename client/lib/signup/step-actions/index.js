@@ -2,7 +2,19 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { assign, defer, difference, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
+import {
+	assign,
+	defer,
+	difference,
+	get,
+	has,
+	includes,
+	isEmpty,
+	isNull,
+	omitBy,
+	pick,
+	startsWith,
+} from 'lodash';
 import { parse as parseURL } from 'url';
 
 /**
@@ -12,11 +24,9 @@ import { parse as parseURL } from 'url';
 // Libraries
 import wpcom from 'lib/wp';
 import guessTimezone from 'lib/i18n-utils/guess-timezone';
-
-/* eslint-enable no-restricted-imports */
-import userFactory from 'lib/user';
-import { abtest, getSavedVariations } from 'lib/abtest';
-import analytics from 'lib/analytics';
+import user from 'lib/user';
+import { getSavedVariations } from 'lib/abtest';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { recordRegistration } from 'lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
@@ -55,7 +65,6 @@ import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user'
 /**
  * Constants
  */
-const user = userFactory();
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
@@ -185,16 +194,15 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		validate: false,
 	};
 
-	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
-		newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
-	}
+	newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( signupDependencies, 'shouldHideFreePlan', false );
+	const shouldHideDomainStep = ! siteUrl && 'onboarding-plan-first' === flowToCheck;
 
-	if ( shouldSkipDomainStep || shouldHideFreePlan ) {
+	if ( shouldSkipDomainStep || shouldHideFreePlan || shouldHideDomainStep ) {
 		newSiteParams.blog_name =
-			get( user.get(), 'username' ) ||
+			user().get()?.username ||
 			get( signupDependencies, 'username' ) ||
 			siteTitle ||
 			siteType ||
@@ -321,15 +329,15 @@ function processItemCart(
 		}
 	};
 
-	if ( ! user.get() && isFreeThemePreselected ) {
+	if ( ! user().get() && isFreeThemePreselected ) {
 		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-	} else if ( user.get() && isFreeThemePreselected ) {
+	} else if ( user().get() && isFreeThemePreselected ) {
 		fetchSitesAndUser(
 			siteSlug,
 			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
 			reduxStore
 		);
-	} else if ( user.get() ) {
+	} else if ( user().get() ) {
 		fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
 	} else {
 		addToCartAndProceed();
@@ -377,11 +385,87 @@ export function createAccount(
 	},
 	reduxStore
 ) {
+	// See client/signup/config/flows-pure.js p2 flow for more info.
+	if ( flowName === 'p2' ) {
+		flowName = 'wp-for-teams';
+	}
+
 	const state = reduxStore.getState();
 
 	const siteVertical = getSiteVertical( state );
 	const surveySiteType = getSurveySiteType( state ).trim();
 	const userExperience = getUserExperience( state );
+
+	const SIGNUP_TYPE_SOCIAL = 'social';
+	const SIGNUP_TYPE_DEFAULT = 'default';
+
+	const responseHandler = ( signupType ) => ( error, response ) => {
+		const emailInError =
+			signupType === SIGNUP_TYPE_SOCIAL ? { email: get( error, 'data.email', undefined ) } : {};
+		const errors =
+			error && error.error
+				? [
+						{
+							error: error.error,
+							message: error.message,
+							...emailInError,
+						},
+				  ]
+				: undefined;
+
+		if ( errors ) {
+			callback( errors );
+			return;
+		}
+
+		// we should either have an error with an error property, or we should have a response with a bearer_token
+		const bearerToken = {};
+		if ( response && response.bearer_token ) {
+			bearerToken.bearer_token = response.bearer_token;
+		} else {
+			// something odd happened...
+			//eslint-disable-next-line no-console
+			console.error( 'Expected either an error or a bearer token. got %o, %o.', error, response );
+		}
+
+		const username =
+			( response && response.signup_sandbox_username ) ||
+			( response && response.username ) ||
+			userData.username;
+
+		const userId =
+			( response && response.signup_sandbox_user_id ) ||
+			( response && response.user_id ) ||
+			userData.ID;
+
+		const email = ( response && response.email ) || ( userData && userData.user_email );
+
+		const registrationUserData = {
+			ID: userId,
+			username,
+			email,
+		};
+
+		const marketing_price_group = response?.marketing_price_group ?? '';
+
+		// Fire after a new user registers.
+		recordRegistration( {
+			userData: registrationUserData,
+			flow: flowName,
+			type: signupType,
+		} );
+
+		const providedDependencies = assign( { username, marketing_price_group }, bearerToken );
+
+		if ( signupType === SIGNUP_TYPE_DEFAULT && oauth2Signup ) {
+			assign( providedDependencies, {
+				oauth2_client_id: queryArgs.oauth2_client_id,
+				oauth2_redirect: get( response, 'oauth2_redirect', '' ).split( '@' )[ 1 ],
+			} );
+		}
+
+		callback( undefined, providedDependencies );
+	};
 
 	if ( service ) {
 		// We're creating a new social account
@@ -393,53 +477,7 @@ export function createAccount(
 				signup_flow_name: flowName,
 				...userData,
 			},
-			( error, response ) => {
-				const errors =
-					error && error.error
-						? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
-						: undefined;
-
-				if ( errors ) {
-					callback( errors );
-					return;
-				}
-
-				if ( ! response || ! response.bearer_token ) {
-					// something odd happened...
-					//eslint-disable-next-line no-console
-					console.error(
-						'Expected either an error or a bearer token. got %o, %o.',
-						error,
-						response
-					);
-				}
-
-				debug( 'Social Signup: response: ', response );
-				debug( 'Social Signup: userData: ', userData );
-
-				const userId =
-					( response && response.signup_sandbox_user_id ) ||
-					( response && response.user_id ) ||
-					userData.ID;
-
-				const username =
-					( response && response.signup_sandbox_username ) ||
-					( response && response.username ) ||
-					userData.username;
-
-				const email = ( response && response.email ) || ( userData && userData.user_email );
-
-				const registrationUserData = {
-					ID: userId,
-					username: username,
-					email,
-				};
-
-				// Fire after a new user registers.
-				recordRegistration( { userData: registrationUserData, flow: flowName, type: 'social' } );
-
-				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
-			}
+			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
 	} else {
 		wpcom.undocumented().usersNew(
@@ -468,59 +506,7 @@ export function createAccount(
 				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
 				recaptchaToken ? { 'g-recaptcha-response': recaptchaToken } : null
 			),
-			( error, response ) => {
-				const errors =
-					error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
-
-				if ( errors ) {
-					callback( errors );
-					return;
-				}
-
-				// we should either have an error with an error property, or we should have a response with a bearer_token
-				const bearerToken = {};
-				if ( response && response.bearer_token ) {
-					bearerToken.bearer_token = response.bearer_token;
-				} else {
-					// something odd happened...
-					//eslint-disable-next-line no-console
-					console.error(
-						'Expected either an error or a bearer token. got %o, %o.',
-						error,
-						response
-					);
-				}
-
-				const username =
-					( response && response.signup_sandbox_username ) ||
-					( response && response.username ) ||
-					userData.username;
-
-				const userId =
-					( response && response.signup_sandbox_user_id ) ||
-					( response && response.user_id ) ||
-					userData.ID;
-
-				const registrationUserData = {
-					ID: userId,
-					username,
-					email: userData.email,
-				};
-
-				// Fire after a new user registers.
-				recordRegistration( { userData: registrationUserData, flow: flowName, type: 'default' } );
-
-				const providedDependencies = assign( { username }, bearerToken );
-
-				if ( oauth2Signup ) {
-					assign( providedDependencies, {
-						oauth2_client_id: queryArgs.oauth2_client_id,
-						oauth2_redirect: get( response, 'oauth2_redirect', '' ).split( '@' )[ 1 ],
-					} );
-				}
-
-				callback( undefined, providedDependencies );
-			}
+			responseHandler( SIGNUP_TYPE_DEFAULT )
 		);
 	}
 }
@@ -538,9 +524,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		validate: false,
 	};
 
-	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
-		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
-	}
+	data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 
 	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
 		let providedDependencies, siteSlug;
@@ -552,7 +536,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 			providedDependencies = { siteSlug };
 		}
 
-		if ( user.get() && isEmpty( errors ) ) {
+		if ( user().get() && isEmpty( errors ) ) {
 			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
 		} else {
 			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
@@ -568,7 +552,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	const themeSlugWithRepo = 'pub/p2020';
 
 	const data = {
-		blog_name: site,
+		blog_name: `${ site }.p2.blog`,
 		blog_title: siteTitle,
 		public: -1, // wp for teams sites are not supposed to be public
 		options: {
@@ -589,7 +573,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			providedDependencies = { siteSlug };
 		}
 
-		if ( user.get() && isEmpty( errors ) ) {
+		if ( user().get() && isEmpty( errors ) ) {
 			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
 		} else {
 			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
@@ -598,7 +582,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 }
 
 function recordExcludeStepEvent( step, value ) {
-	analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
+	recordTracksEvent( 'calypso_signup_actions_exclude_step', {
 		step,
 		value,
 	} );
@@ -620,23 +604,43 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	return isEmpty( dependenciesNotProvided );
 }
 
-export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep } = nextProps;
+function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 	let fulfilledDependencies = [];
+	const domainItem = undefined;
 
-	if ( siteDomains && siteDomains.length > 1 ) {
-		const domainItem = undefined;
-		submitSignupStep( { stepName, domainItem }, { domainItem } );
-		recordExcludeStepEvent(
-			stepName,
-			siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' )
-		);
+	submitSignupStep( { stepName, domainItem }, { domainItem } );
+	recordExcludeStepEvent( stepName, tracksEventValue );
 
-		fulfilledDependencies = [ 'domainItem' ];
-	}
+	fulfilledDependencies = [ 'domainItem' ];
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
+	}
+}
+
+export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { siteDomains, submitSignupStep } = nextProps;
+
+	if ( siteDomains && siteDomains.length > 1 ) {
+		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
+		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
+	}
+}
+
+export function removeDomainStepForPaidPlans( stepName, defaultDependencies, nextProps ) {
+	// This is for domainStepPlanStepSwap A/B test.
+	// Remove the domain step if a paid plan is selected, check https://wp.me/pbxNRc-cj#comment-277
+	// Exit if not in the right flow.
+	if ( 'onboarding-plan-first' !== nextProps.flowName ) {
+		return;
+	}
+
+	const { submitSignupStep } = nextProps;
+	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+
+	if ( ! isEmpty( cartItem ) ) {
+		const tracksEventValue = null;
+		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
 	}
 }
 
@@ -720,7 +724,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 
 		// Track our landing page verticals
 		if ( isValidLandingPageVertical( vertical ) ) {
-			analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+			recordTracksEvent( 'calypso_signup_vertical_landing_page', {
 				vertical,
 				flow: flowName,
 			} );
@@ -738,5 +742,30 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
+	}
+}
+
+export function addOrRemoveFromProgressStore( stepName, defaultDependencies, nextProps ) {
+	const hasdDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
+	const hasCartItemInDependencyStore = has( nextProps, 'signupDependencies.cartItem' );
+	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
+	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+	const hasAddedFreePlanFreeDomain =
+		hasCartItemInDependencyStore &&
+		! cartItem &&
+		hasdDomainItemInDependencyStore &&
+		isEmpty( domainItem );
+
+	// Don't show the upsell offer if paid plan is selected or free plan + free domain selected.
+	if ( cartItem || hasAddedFreePlanFreeDomain ) {
+		if ( includes( flows.excludedSteps, stepName ) ) {
+			return;
+		}
+
+		nextProps.submitSignupStep( { stepName }, {} );
+		flows.excludeStep( stepName );
+	} else if ( includes( flows.excludedSteps, stepName ) ) {
+		flows.resetExcludedStep( stepName );
+		nextProps.removeStep( { stepName } );
 	}
 }

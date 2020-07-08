@@ -13,13 +13,13 @@
 		cursor: pointer;
 		user-select: none;
 		font-weight: normal;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
 	}
 
 	th {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		color: var( --color-neutral-40 );
 	}
 }
@@ -31,7 +31,7 @@
 	&.is-year {
 		background: none;
 		text-align: left;
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		color: var( --color-neutral-40 );
 	}
 
@@ -73,7 +73,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;
@@ -87,7 +87,7 @@
 }
 
 .stats-views__key-label {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral );
 	letter-spacing: 0.1em;
 	text-transform: uppercase;

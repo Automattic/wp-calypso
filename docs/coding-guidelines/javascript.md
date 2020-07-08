@@ -235,7 +235,7 @@ if ( typeof window !== 'undefined' ) {
 }
 ```
 
-Note that because parts of our application are [rendered on the server](https://github.com/Automattic/wp-calypso/blob/master/docs/server-side-rendering.md), we cannot always assume that a `window` global is present. Therefore, if you must reference a `window` global, always perform a `typeof` check to verify that it exists.
+Note that because parts of our application are [rendered on the server](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/server-side-rendering.md), we cannot always assume that a `window` global is present. Therefore, if you must reference a `window` global, always perform a `typeof` check to verify that it exists.
 
 ## Naming Conventions
 

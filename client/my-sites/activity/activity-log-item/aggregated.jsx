@@ -25,7 +25,7 @@ import { filterStateToQuery } from 'state/activity-log/utils';
 import { addQueryArgs } from 'lib/url';
 import ActivityActor from './activity-actor';
 import ActivityMedia from './activity-media';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
@@ -51,7 +51,7 @@ class ActivityLogAggregatedItem extends Component {
 	trackClick = ( intent ) => {
 		const { activity } = this.props;
 		const section = activity.activityGroup;
-		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', {
+		recordTracksEvent( 'calypso_activitylog_item_click', {
 			activity: activity.activityName,
 			section,
 			intent: intent,

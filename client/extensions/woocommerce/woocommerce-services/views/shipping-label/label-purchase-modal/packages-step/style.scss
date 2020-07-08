@@ -4,7 +4,7 @@
 }
 
 .packages-step__dialog-package-name {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .packages-step__contents {
@@ -12,7 +12,7 @@
 	padding-bottom: 24px;
 	flex-direction: column;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -22,7 +22,7 @@
 	padding: 0 0 24px;
 	flex-shrink: 0;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 		width: 35%;
 		padding: 0 24px 0 0;
@@ -65,7 +65,7 @@
 	padding: 1px 6px;
 	border: solid 1px var( --color-neutral-20 );
 	border-radius: 12px;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	line-height: 14px;
 	color: var( --color-text );
@@ -101,7 +101,7 @@
 }
 
 .packages-step__package-item-description {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .packages-step__package-items-header {

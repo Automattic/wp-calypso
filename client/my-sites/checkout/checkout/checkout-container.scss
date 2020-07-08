@@ -18,7 +18,7 @@
 		width: 100%;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 		align-items: flex-start;
 

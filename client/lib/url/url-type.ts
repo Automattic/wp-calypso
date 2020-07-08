@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { URL as URLString } from 'types';
+import type { URL as URLString } from 'types';
 
 // For complete definitions of these classifications, see:
 // https://url.spec.whatwg.org/#urls

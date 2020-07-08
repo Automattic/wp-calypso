@@ -75,6 +75,7 @@ export class CommentsManagement extends Component {
 				<SidebarNavigation />
 				{ ! showPermissionError && (
 					<FormattedHeader
+						brandFont
 						className="comments__page-heading"
 						headerText={ translate( 'Comments' ) }
 						align="left"

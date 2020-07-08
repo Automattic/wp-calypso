@@ -65,11 +65,11 @@ $compact-header-height: 35;
 
 	border-style: solid;
 	border-color: var( --color-neutral-10 );
-	border-width: 1px 1px 2px;
-	border-radius: 4px;
+	border-width: 1px;
+	border-radius: 2px;
 	background-color: var( --color-surface );
 
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	color: var( --color-neutral-70 );
 	transition: background-color 0.2s ease;
@@ -90,7 +90,7 @@ $compact-header-height: 35;
 		height: #{$compact-header-height}px;
 		line-height: #{$compact-header-height - 3}px;
 		padding-right: #{$side-margin / 2}px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		.count {
 			border-width: 0;
@@ -107,12 +107,12 @@ $compact-header-height: 35;
 
 		&:active,
 		&.is-active {
-			border-width: 1px 1px 2px;
+			border-width: 1px;
 		}
 	}
 
 	.select-dropdown.is-open & {
-		border-radius: 4px 4px 0 0;
+		border-radius: 2px 2px 0 0;
 		box-shadow: none;
 		background-color: var( --color-neutral-0 );
 
@@ -161,7 +161,7 @@ $compact-header-height: 35;
 	background-color: var( --color-surface );
 	border: 1px solid var( --color-neutral-10 );
 	border-top: 0;
-	border-radius: 0 0 4px 4px;
+	border-radius: 0 0 2px 2px;
 	visibility: hidden;
 
 	.accessible-focus & {
@@ -178,7 +178,7 @@ $compact-header-height: 35;
 	height: #{$option-height}px;
 
 	&:last-child .select-dropdown__item {
-		border-radius: 0 0 4px 4px;
+		border-radius: 0 0 2px 2px;
 	}
 }
 
@@ -190,7 +190,7 @@ $compact-header-height: 35;
 	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
 
 	color: var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	white-space: nowrap;
 	overflow: hidden;
@@ -199,7 +199,7 @@ $compact-header-height: 35;
 	// hack to set text width in bold weight
 	&::before {
 		content: attr( data-bold-text );
-		font-weight: 700;
+		font-weight: 600;
 		white-space: nowrap;
 		opacity: 0;
 	}
@@ -279,7 +279,7 @@ $compact-header-height: 35;
 	line-height: 20px;
 
 	label {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 0 #{$side-margin}px;
 	}
 }

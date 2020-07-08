@@ -10,7 +10,7 @@ add_action(
 	'init',
 	function() {
 		$asset_file   = __DIR__ . '/dist/jetpack-timleine.asset.php';
-		$asset        = file_exists( $asset_file ) ? require_once $asset_file : null;
+		$asset        = file_exists( $asset_file ) ? require $asset_file : null;
 		$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
 		$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( __DIR__ . '/index.js' );
 
@@ -23,11 +23,27 @@ add_action(
 			true
 		);
 
+		$style_file = is_rtl()
+		? 'jetpack-timeline.rtl.css'
+		: 'jetpack-timeline.css';
+
+		wp_register_style(
+			'jetpack-timeline',
+			plugins_url( 'dist/' . $style_file, __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
+		);
+
 		// Register block.
 		register_block_type(
 			'jetpack/timeline',
 			array(
-				'editor_script' => 'jetpack-timeline',
+				'editor_script'   => 'jetpack-timeline',
+				'editor_style'    => 'jetpack-timeline',
+				'render_callback' => function( $attribs, $content ) {
+					wp_enqueue_style( 'jetpack-timeline' );
+					return $content;
+				},
 			)
 		);
 
@@ -48,19 +64,3 @@ add_action(
 	}
 );
 
-// Register block assets.
-add_action(
-	'enqueue_block_assets',
-	function() {
-		$style_file = is_rtl()
-		? 'jetpack-timeline.rtl.css'
-		: 'jetpack-timeline.css';
-
-		wp_enqueue_style(
-			'jetpack-timeline',
-			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-		);
-	}
-);

@@ -4,20 +4,23 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { prepareDomainContactDetails } from 'my-sites/checkout/composite-checkout/wpcom';
-import wp from 'lib/wp';
 
 /**
  * Internal dependencies
  */
+import wp from 'lib/wp';
 import {
 	createTransactionEndpointRequestPayloadFromLineItems,
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
 } from './types';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	prepareDomainContactDetails,
+} from 'my-sites/checkout/composite-checkout/wpcom';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
-export function useStoredCards( getStoredCards ) {
+export function useStoredCards( getStoredCards, onEvent ) {
 	const [ state, dispatch ] = useReducer( storedCardsReducer, {
 		storedCards: [],
 		isLoading: true,
@@ -30,13 +33,19 @@ export function useStoredCards( getStoredCards ) {
 		}
 
 		// TODO: handle errors
-		fetchStoredCards().then( ( cards ) => {
-			debug( 'stored cards fetched', cards );
-			isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
-		} );
+		fetchStoredCards()
+			.then( ( cards ) => {
+				debug( 'stored cards fetched', cards );
+				isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
+			} )
+			.catch( ( error ) => {
+				debug( 'stored cards failed to load', error );
+				onEvent( { type: 'STORED_CARD_ERROR', payload: error.message } );
+				isSubscribed && dispatch( { type: 'FETCH_END', payload: [] } );
+			} );
 
 		return () => ( isSubscribed = false );
-	}, [ getStoredCards ] );
+	}, [ getStoredCards, onEvent ] );
 	return state;
 }
 
@@ -70,7 +79,7 @@ export async function submitApplePayPayment( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function makePayPalExpressRequest( transactionData, submit ) {
+export async function submitPayPalExpressRequest( transactionData, submit ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 	} );
@@ -87,7 +96,7 @@ export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-export async function sendStripeTransaction( transactionData, submit ) {
+export async function submitStripeCardTransaction( transactionData, submit ) {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
@@ -95,6 +104,24 @@ export async function sendStripeTransaction( transactionData, submit ) {
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
+	return submit( formattedTransactionData );
+}
+
+export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
+	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
+		?.name;
+	if ( ! paymentMethodType ) {
+		throw new Error( `No payment method found for type: ${ paymentMethodId }` );
+	}
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		...transactionData,
+		paymentMethodType,
+		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+	} );
+	debug(
+		`sending stripe redirect transaction for type: ${ paymentMethodId }`,
+		formattedTransactionData
+	);
 	return submit( formattedTransactionData );
 }
 
@@ -148,8 +175,9 @@ export function WordPressCreditsLabel( { credits } ) {
 	return (
 		<React.Fragment>
 			<div>
-				{ translate( 'WordPress.com Credits: %(amount)s', {
-					args: { amount: credits.amount.displayValue },
+				{ translate( 'WordPress.com Credits: %(amount)s available', {
+					args: { amount: credits.wpcom_meta.credits_display },
+					comment: "The total value of credits on the user's account",
 				} ) }
 			</div>
 			<WordPressLogo />
@@ -280,7 +308,9 @@ export function filterAppropriatePaymentMethods( {
 	serverAllowedPaymentMethods,
 } ) {
 	const isPurchaseFree = total.amount.value === 0;
-	debug( 'is purchase free?', isPurchaseFree );
+	const isFullCredits =
+		! isPurchaseFree && credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
+	debug( 'is purchase free?', isPurchaseFree, 'is full credits?', isFullCredits );
 
 	return paymentMethodObjects
 		.filter( ( methodObject ) => {
@@ -291,14 +321,22 @@ export function filterAppropriatePaymentMethods( {
 			return isPurchaseFree ? false : true;
 		} )
 		.filter( ( methodObject ) => {
+			// If the purchase is full-credits, only display the full-credits method
 			if ( methodObject.id === 'full-credits' ) {
-				return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+				return isFullCredits ? true : false;
 			}
+			return isFullCredits ? false : true;
+		} )
+		.filter( ( methodObject ) => {
 			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 				return isPaymentMethodEnabled(
 					'card',
 					allowedPaymentMethods || serverAllowedPaymentMethods
 				);
+			}
+			if ( methodObject.id === 'full-credits' ) {
+				// If the full-credits payment method still exists here (see above filter), it's enabled
+				return true;
 			}
 			if ( methodObject.id === 'free-purchase' ) {
 				// If the free payment method still exists here (see above filter), it's enabled

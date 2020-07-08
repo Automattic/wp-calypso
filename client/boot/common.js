@@ -14,7 +14,7 @@ import store from 'store';
  */
 import { setupLocale } from './locale';
 import config from 'config';
-import { ReduxWrappedLayout } from 'controller';
+import { ProviderWrappedLayout } from 'controller';
 import notices from 'notices';
 import { getToken } from 'lib/oauth-token';
 import emailVerification from 'components/email-verification';
@@ -29,7 +29,8 @@ import { checkFormHandler } from 'lib/protect-form';
 import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
-import analytics from 'lib/analytics';
+import { tracksEvents } from 'lib/analytics/tracks';
+import { initializeAnalytics } from 'lib/analytics/init';
 import { bumpStat } from 'lib/analytics/mc';
 import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
@@ -40,9 +41,9 @@ import { initConnection as initHappychatConnection } from 'state/happychat/conne
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import { setRoute as setRouteAction } from 'state/ui/actions';
+import { setRoute as setRouteAction } from 'state/route/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
@@ -51,6 +52,7 @@ import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
+import { requestUnseenStatusAny } from 'state/reader-ui/seen-posts/actions';
 
 const debug = debugFactory( 'calypso' );
 
@@ -120,6 +122,7 @@ const oauthTokenMiddleware = () => {
 			'/start',
 			'/authorize',
 			'/api/oauth/token',
+			'/connect',
 		];
 
 		// Forces OAuth users to the /login page if no token is present
@@ -129,7 +132,29 @@ const oauthTokenMiddleware = () => {
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
 				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const redirectPath = isDesktop ? config( 'login_url' ) : '/authorize';
+				const isJetpackCloud = [
+					'jetpack-cloud-development',
+					'jetpack-cloud-stage',
+					'jetpack-cloud-production',
+				].includes( config( 'env_id' ) );
+				const redirectPath = isDesktop || isJetpackCloud ? config( 'login_url' ) : '/authorize';
+
+				const currentPath = window.location.pathname;
+				// In the context of Jetpack Cloud, if the user isn't authorized, we want
+				// to save the current path (/<product>/<site-slug>) so we can redirect
+				// the user back to it once the login flow is finished. We also set an expiration
+				// to this because we don't want to redirect by mistake a user with an old path
+				// stored in their session.
+				if ( isJetpackCloud && currentPath !== '/' ) {
+					const EXPIRATION_IN_SECONDS = 300;
+					const SESSION_STORAGE_PATH_KEY = 'jetpack_cloud_redirect_path';
+					const SESSION_STORAGE_PATH_KEY_EXPIRES_IN = 'jetpack_cloud_redirect_path_expires_in';
+					window.sessionStorage.setItem( SESSION_STORAGE_PATH_KEY, currentPath );
+					window.sessionStorage.setItem(
+						SESSION_STORAGE_PATH_KEY_EXPIRES_IN,
+						parseInt( new Date().getTime() / 1000 ) + EXPIRATION_IN_SECONDS
+					);
+				}
 				page( redirectPath );
 				return;
 			}
@@ -231,7 +256,7 @@ function setupErrorLogger( reduxStore ) {
 
 	errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
 
-	analytics.on( 'record-event', ( eventName, lastTracksEvent ) =>
+	tracksEvents.on( 'record-event', ( eventName, lastTracksEvent ) =>
 		errorLogger.saveExtraData( { lastTracksEvent } )
 	);
 
@@ -255,7 +280,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
-	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 
@@ -288,11 +313,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		// to avoid bumping stats and changing focus to the content
 		if ( isLegacyRoute( path ) ) {
 			return next();
-		}
-
-		// Focus UI on the content on page navigation
-		if ( ! config.isEnabled( 'code-splitting' ) ) {
-			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
 		// Bump general stat tracking overall Newdash usage
@@ -337,6 +357,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	const state = reduxStore.getState();
+	// get reader unread status
+	if ( config.isEnabled( 'reader/seen-posts' ) ) {
+		reduxStore.dispatch( requestUnseenStatusAny() );
+	}
+
 	if ( config.isEnabled( 'happychat' ) ) {
 		reduxStore.dispatch( requestHappychatEligibility() );
 	}
@@ -377,7 +402,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 };
 
 function renderLayout( reduxStore ) {
-	const layoutElement = React.createElement( ReduxWrappedLayout, {
+	const layoutElement = React.createElement( ProviderWrappedLayout, {
 		store: reduxStore,
 	} );
 

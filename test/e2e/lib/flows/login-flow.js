@@ -14,6 +14,7 @@ import StatsPage from '../pages/stats-page';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
+import CustomerHome from '../pages/customer-home-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
@@ -115,7 +116,12 @@ export default class LoginFlow {
 
 		await this.checkForDevDocsAndRedirectToReader();
 
-		await ReaderPage.Expect( this.driver );
+		try {
+			await ReaderPage.Expect( this.driver );
+		} catch ( e ) {
+			await CustomerHome.Expect( this.driver );
+		}
+
 		await NavBarComponent.Expect( this.driver );
 
 		const navbarComponent = await NavBarComponent.Expect( this.driver );

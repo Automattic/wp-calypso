@@ -4,17 +4,36 @@
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
-import { HOME_LAYOUT_REQUEST } from 'state/action-types';
+import { HOME_LAYOUT_REQUEST, HOME_LAYOUT_SKIP_CURRENT_VIEW } from 'state/action-types';
 import { setHomeLayout } from 'state/home/actions';
 import config from 'config';
 
 const requestLayout = ( action ) => {
+	const isDev = config.isEnabled( 'home/layout-dev' ) || action.isDev;
 	return http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/home/layout`,
 			apiNamespace: 'wpcom/v2',
-			...( config.isEnabled( 'home/experimental-layout' ) && { query: { experimental: true } } ),
+			query: {
+				...( isDev && { dev: true } ),
+				...( isDev && action.forcedView && { view: action.forcedView } ),
+			},
+		},
+		action
+	);
+};
+
+const skipCurrentView = ( action ) => {
+	return http(
+		{
+			method: 'POST',
+			path: `/sites/${ action.siteId }/home/layout/skip`,
+			apiNamespace: 'wpcom/v2',
+			...( config.isEnabled( 'home/layout-dev' ) && { query: { dev: true } } ),
+			body: {
+				...( action.reminder && { reminder: action.reminder } ),
+			},
 		},
 		action
 	);
@@ -26,6 +45,12 @@ registerHandlers( 'state/data-layer/wpcom/sites/home/layout/index.js', {
 	[ HOME_LAYOUT_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestLayout,
+			onSuccess: setLayout,
+		} ),
+	],
+	[ HOME_LAYOUT_SKIP_CURRENT_VIEW ]: [
+		dispatchRequest( {
+			fetch: skipCurrentView,
 			onSuccess: setLayout,
 		} ),
 	],

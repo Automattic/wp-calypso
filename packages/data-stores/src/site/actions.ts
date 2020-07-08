@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import {
+import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
 	NewSiteSuccessResponse,
 	SiteDetails,
 	SiteError,
 } from './types';
-import { WpcomClientCredentials } from '../shared-types';
+import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -79,10 +79,15 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		type: 'RESET_SITE_STORE' as const,
 	} );
 
+	const resetNewSiteFailed = () => ( {
+		type: 'RESET_RECEIVE_NEW_SITE_FAILED' as const,
+	} );
+
 	return {
 		fetchNewSite,
 		receiveNewSite,
 		receiveNewSiteFailed,
+		resetNewSiteFailed,
 		createSite,
 		receiveSite,
 		receiveSiteFailed,
@@ -100,6 +105,7 @@ export type Action =
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
+			| ActionCreators[ 'resetNewSiteFailed' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

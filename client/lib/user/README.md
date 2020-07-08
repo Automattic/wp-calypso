@@ -5,8 +5,11 @@ This component is a wrapper module for interacting with the wpcom.js `/me` endpo
 
 ## User
 ```es6
-import userFactory from 'lib/user';
-const user = userFactory();
+import user from 'lib/user';
+
+function clearUser() {
+  user().clear();
+}
 ```
 
 ### `User#get()`
@@ -30,6 +33,6 @@ import user from 'lib/user/utilities';
 This is a small module that logs a user out by clearing user stored data by calling `User#clear()` and redirects user to WordPress.com to be logged out.
 
 ### `UserUtilities#getLogoutUrl()`
-Returns a localized logout URL based on the current user's language. 
+Returns a localized logout URL based on the current user's language.
 
 For example, an English speaking user be redirected to `wordpress.com` after being logged, but a Spanish speaking user will be redirected to `es.wordpress.com`.;

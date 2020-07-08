@@ -7,22 +7,26 @@ import React from 'react';
  * Internal dependencies
  */
 import ManageSite from './manage-site';
+import { SECTION_MANAGE_SITE } from 'my-sites/customer-home/cards/constants';
 
 const cardComponents = {
-	'home-section-manage-site': ManageSite,
+	[ SECTION_MANAGE_SITE ]: ManageSite,
 };
 
 const Tertiary = ( { cards } ) => {
+	if ( ! cards || ! cards.length ) {
+		return null;
+	}
+
 	return (
 		<>
-			{ cards &&
-				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
-							key: index,
-						} )
-				) }
+			{ cards.map(
+				( card, index ) =>
+					cardComponents[ card ] &&
+					React.createElement( cardComponents[ card ], {
+						key: index,
+					} )
+			) }
 		</>
 	);
 };

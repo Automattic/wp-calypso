@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import MediaLibrary from 'my-sites/media-library';
 import QueryMedia from 'components/data/query-media';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -25,11 +26,11 @@ import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaActions from 'lib/media/actions';
 import { getMimeType } from 'lib/media/utils';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
+import { editMedia, deleteMedia } from 'state/media/thunks';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -76,7 +77,7 @@ class Media extends Component {
 		}
 
 		if ( this.props.selectedSite ) {
-			MediaActions.setLibrarySelectedItems( this.props.selectedSite.ID, [] );
+			this.props.setMediaLibrarySelectedItems( this.props.selectedSite.ID, [] );
 		}
 
 		page( redirect );
@@ -90,12 +91,11 @@ class Media extends Component {
 	};
 
 	openDetailsModalForAllSelected = () => {
-		const site = this.props.selectedSite;
-		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+		const { selectedItems } = this.props;
 
 		this.setState( {
 			currentDetail: 0,
-			selectedItems: selected,
+			selectedItems,
 		} );
 	};
 
@@ -155,7 +155,7 @@ class Media extends Component {
 			},
 		};
 
-		MediaActions.update( site.ID, item, true );
+		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
@@ -218,7 +218,7 @@ class Media extends Component {
 			return;
 		}
 
-		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
 	};
@@ -235,9 +235,8 @@ class Media extends Component {
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
-		const { selectedSite, translate } = this.props;
-		const selected = MediaLibrarySelectedStore.getAll( selectedSite.ID );
-		const selectedCount = selected.length;
+		const { translate } = this.props;
+		const selectedCount = this.props.selectedItems.length;
 		const confirmMessage = translate(
 			'Are you sure you want to delete this item? ' +
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
@@ -300,11 +299,9 @@ class Media extends Component {
 		const selectedItems = this.getSelectedItems();
 
 		const selected =
-			selectedItems && selectedItems.length
-				? selectedItems
-				: MediaLibrarySelectedStore.getAll( site.ID );
+			selectedItems && selectedItems.length ? selectedItems : this.props.selectedItems;
 
-		MediaActions.delete( site.ID, selected );
+		this.props.deleteMedia( site.ID, selected );
 	};
 
 	getAnalyticsPath = () => {
@@ -364,6 +361,7 @@ class Media extends Component {
 
 	render() {
 		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
+
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
@@ -371,6 +369,7 @@ class Media extends Component {
 				<DocumentHead title={ translate( 'Media' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
 					align="left"
@@ -415,33 +414,38 @@ class Media extends Component {
 					</EditorMediaModalDialog>
 				) }
 				{ site && site.ID && (
-					<MediaLibrarySelectedData siteId={ site.ID }>
-						<MediaLibrary
-							{ ...this.props }
-							className="media__main-section"
-							onFilterChange={ this.onFilterChange }
-							site={ site }
-							single={ false }
-							filter={ this.props.filter }
-							source={ this.state.source }
-							onEditItem={ this.openDetailsModalForASingleImage }
-							onViewDetails={ this.openDetailsModalForAllSelected }
-							onDeleteItem={ this.handleDeleteMediaEvent }
-							onSourceChange={ this.handleSourceChange }
-							modal={ false }
-							containerWidth={ this.state.containerWidth }
-						/>
-					</MediaLibrarySelectedData>
+					<MediaLibrary
+						{ ...this.props }
+						className="media__main-section"
+						onFilterChange={ this.onFilterChange }
+						site={ site }
+						single={ false }
+						filter={ this.props.filter }
+						source={ this.state.source }
+						onEditItem={ this.openDetailsModalForASingleImage }
+						onViewDetails={ this.openDetailsModalForAllSelected }
+						onDeleteItem={ this.handleDeleteMediaEvent }
+						onSourceChange={ this.handleSourceChange }
+						modal={ false }
+						containerWidth={ this.state.containerWidth }
+					/>
 				) }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { mediaId } ) => ( {
-	selectedSite: getSelectedSite( state ),
-	previousRoute: getPreviousRoute( state ),
-	media: getMediaItem( state, getSelectedSiteId( state ), mediaId ),
-} );
+const mapStateToProps = ( state, { mediaId, site } ) => {
+	const siteId = getSelectedSiteId( state ) || site.ID;
 
-export default connect( mapStateToProps )( localize( Media ) );
+	return {
+		selectedSite: getSelectedSite( state ),
+		previousRoute: getPreviousRoute( state ),
+		media: getMediaItem( state, siteId, mediaId ),
+		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
+	};
+};
+
+export default connect( mapStateToProps, { editMedia, deleteMedia, setMediaLibrarySelectedItems } )(
+	localize( Media )
+);

@@ -17,10 +17,10 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
+	isRecentMonthlyPurchase,
 	isRenewing,
 	purchaseType,
 	showCreditCardExpiringWarning,
-	subscribedWithinPastWeek,
 	getPartnerName,
 } from 'lib/purchases';
 import {
@@ -79,7 +79,7 @@ class PurchaseItem extends Component {
 
 		if ( isExpiring( purchase ) ) {
 			if ( expiry < moment().add( 30, 'days' ) ) {
-				const status = subscribedWithinPastWeek( purchase ) ? 'is-info' : 'is-error';
+				const status = isRecentMonthlyPurchase( purchase ) ? 'is-info' : 'is-error';
 				return (
 					<Notice isCompact status={ status } icon="notice">
 						{ translate( 'Expires %(timeUntilExpiry)s', {

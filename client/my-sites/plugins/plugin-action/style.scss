@@ -22,7 +22,7 @@
 	}
 
 	.plugin-action__label {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			color: var( --color-neutral-70 );
 		}
 	}
@@ -48,7 +48,7 @@
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: center;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 16px;
 	margin-right: 8px;
 	cursor: pointer;

@@ -24,7 +24,7 @@ import {
 import { Button } from '@automattic/components';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSearchQuery } from 'state/inline-help/selectors';
+import getSearchQuery from 'state/inline-help/selectors/get-search-query';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
@@ -69,6 +69,7 @@ class InlineHelpRichResult extends Component {
 				search_query: searchQuery,
 				tour,
 				result_url: link,
+				location: 'inline-help-popover',
 			},
 			isUndefined
 		);

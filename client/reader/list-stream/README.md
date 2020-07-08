@@ -1,9 +1,5 @@
 # Reader List Stream
 
-A stream of posts from a Reader List
+A stream of posts from a Reader list.
 
-## Props
-
-- `list`: A list object from the `reader-list-store` to pull posts for
-
-See `reader/following-stream` for more props
+Lists are a deprecated feature. Creation and editing of lists are not possible in Calypso, but it is still possible to view an existing list.

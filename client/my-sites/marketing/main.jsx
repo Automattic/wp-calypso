@@ -33,11 +33,12 @@ import './style.scss';
 
 export const Sharing = ( {
 	contentComponent,
-	path,
+	pathname,
 	showButtons,
 	showConnections,
 	showTraffic,
 	siteId,
+	isJetpack,
 	isVip,
 	siteSlug,
 	translate,
@@ -81,8 +82,7 @@ export const Sharing = ( {
 		} );
 	}
 
-	const selected = find( filters, { route: path } );
-
+	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
@@ -90,6 +90,7 @@ export const Sharing = ( {
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="marketing__page-heading"
 				headerText={ translate( 'Marketing and Integrations' ) }
 				align="left"
@@ -98,19 +99,19 @@ export const Sharing = ( {
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
 						{ filters.map( ( { id, route, title } ) => (
-							<NavItem key={ id } path={ route } selected={ path === route }>
+							<NavItem key={ id } path={ route } selected={ pathname === route }>
 								{ title }
 							</NavItem>
 						) ) }
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && (
+			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ FEATURE_NO_ADS }
 					description={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No Ads with WordPress.com Premium' ) }
+					title={ translate( 'No ads with WordPress.com Premium' ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon={ true }
@@ -146,5 +147,6 @@ export default connect( ( state ) => {
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		isJetpack: isJetpack,
 	};
 } )( localize( Sharing ) );

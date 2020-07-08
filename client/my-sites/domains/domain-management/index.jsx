@@ -10,8 +10,9 @@ import EditContactInfo from './edit-contact-info';
 import List from './list';
 import ManageConsent from './manage-consent';
 import NameServers from './name-servers';
-import PrimaryDomain from './primary-domain';
-import SiteRedirect from './site-redirect';
+import Security from './security';
+import SiteRedirect from './edit/site-redirect';
+import SiteRedirectSettings from './site-redirect';
 import Transfer from './transfer';
 import TransferIn from './edit/transfer-in';
 import TransferOut from './transfer/transfer-out';
@@ -30,8 +31,9 @@ export default {
 	List,
 	ListAll,
 	NameServers,
-	PrimaryDomain,
+	Security,
 	SiteRedirect,
+	SiteRedirectSettings,
 	TransferIn,
 	TransferOut,
 	TransferToOtherSite,

@@ -85,7 +85,7 @@ export function couponsUpdated( { dispatch }, action ) {
 
 	if ( undefined !== params.offset ) {
 		debug(
-			`Coupons ${ params.offset + 1}-${
+			`Coupons ${ params.offset + 1 }-${
 				params.offset + coupons.length
 			} out of ${ totalCoupons } received.`
 		);

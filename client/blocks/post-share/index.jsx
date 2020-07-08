@@ -58,7 +58,7 @@ import NoConnectionsNotice from './no-connections-notice';
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
 import EventsTooltip from 'components/date-picker/events-tooltip';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { sectionify } from 'lib/route';
 
@@ -152,7 +152,7 @@ class PostShare extends Component {
 			document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_publicize_share_preview_toggle', {
+		recordTracksEvent( 'calypso_publicize_share_preview_toggle', {
 			show: showSharingPreview,
 		} );
 		this.setState( { showSharingPreview } );
@@ -165,7 +165,7 @@ class PostShare extends Component {
 	};
 
 	sharePost = () => {
-		const { postId, siteId, connections } = this.props;
+		const { postId, siteId, connections, isJetpack } = this.props;
 		const servicesToPublish = connections.filter(
 			( connection ) => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1
 		);
@@ -181,11 +181,15 @@ class PostShare extends Component {
 			},
 			{ service_all: 0 }
 		);
-		const additionalProperties = { context_path: sectionify( currentPage ) };
+		const additionalProperties = {
+			context_path: sectionify( currentPage ),
+			is_jetpack: isJetpack,
+			blog_id: siteId,
+		};
 		const eventProperties = { ...numberOfAccountsPerService, ...additionalProperties };
 
 		if ( this.state.scheduledDate ) {
-			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', eventProperties );
+			recordTracksEvent( 'calypso_publicize_share_schedule', eventProperties );
 
 			this.props.schedulePostShareAction(
 				siteId,
@@ -195,7 +199,7 @@ class PostShare extends Component {
 				servicesToPublish.map( ( connection ) => connection.ID )
 			);
 		} else {
-			analytics.tracks.recordEvent( 'calypso_publicize_share_instantly', eventProperties );
+			recordTracksEvent( 'calypso_publicize_share_instantly', eventProperties );
 			this.props.sharePost( siteId, postId, this.state.skipped, this.state.message );
 		}
 	};

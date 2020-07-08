@@ -17,15 +17,15 @@ $markup = '
 			</a>
 		</figure>
 		<!-- /wp:image -->
-		
+
 		<!-- wp:paragraph {"align":"center","textColor":"foreground-light","className":"margin-bottom-half"} -->
 		<p class="has-text-color has-text-align-center has-foreground-light-color margin-bottom-half"><strong>%2$s</strong></p>
 		<!-- /wp:paragraph -->
-		
+
 		<!-- wp:heading {"align":"center","className":"margin-top-half entry-title"} -->
 		<h2 class="has-text-align-center margin-top-half entry-title"><a href="#">%3$s</a></h2>
 		<!-- /wp:heading -->
-		
+
 		<!-- wp:buttons {"align":"center"} -->
 		<div class="wp-block-buttons aligncenter">
 			<!-- wp:button {"borderRadius":0,"className":"is-style-outline"} -->
@@ -40,13 +40,14 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Headline', 'full-site-editing' ),
-	'content' => sprintf(
+	'title'         => esc_html__( 'Headline', 'full-site-editing' ),
+	'categories'    => array( 'blog' ),
+	'content'       => sprintf(
 		$markup,
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/cayla1-w6ftfbpcs9i-unsplash.jpg' ),
-		esc_html__( 'Featured Post', 'full-site-editing' ),
+		esc_html__( 'Weekly Recipe', 'full-site-editing' ),
 		esc_html__( 'Stay Warm in Autumn: Roasted Pumpkin Soup', 'full-site-editing' ),
-		esc_html__( 'Continue reading', 'full-site-editing' )
+		esc_html__( 'More Recipes', 'full-site-editing' )
 	),
+	'viewportWidth' => 1280,
 );

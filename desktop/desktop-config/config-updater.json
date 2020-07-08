@@ -1,0 +1,15 @@
+{
+	"build": "updater",
+	"debug": {
+		"enabled_by_default": false,
+		"namespace": "desktop:*",
+		"clear_log": false,
+		"colors": true
+	},
+	"updater": {
+		"downloadUrl": "https://github.com/Automattic/wp-desktop/releases",
+		"apiUrl": "https://api.github.com/repos/Automattic/wp-desktop/releases",
+		"delay": 2000,
+		"interval": 600000
+	}
+}

@@ -14,8 +14,8 @@ import {
 	receiveUpdates,
 } from 'state/reader/streams/actions';
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: { recordEvent: jest.fn() },
+jest.mock( 'lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( 'lib/wp' );

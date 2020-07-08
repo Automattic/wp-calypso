@@ -4,17 +4,15 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith, isArray } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
 import url from 'url';
-
+import { localize, LocalizeProps } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getCustomizerUrl,
 	getSiteOption,
@@ -22,10 +20,12 @@ import {
 	isRequestingSites,
 	isRequestingSite,
 	isJetpackSite,
+	getSite,
 } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
-import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
+import { replaceHistory, navigate } from 'state/ui/actions';
+import { setRoute } from 'state/route/actions';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
@@ -34,16 +34,23 @@ import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
+import { setEditorIframeLoaded, startEditingPost } from 'state/editor/actions';
+import { notifyDesktopViewPostClicked, notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { editPost, trashPost } from 'state/posts/actions';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
+import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { fetchMediaItem } from 'state/media/thunks';
 
 /**
  * Types
@@ -94,6 +101,7 @@ enum EditorActions {
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
+	ViewPost = 'viewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
@@ -103,9 +111,15 @@ enum EditorActions {
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
+	GetNavSidebarLabels = 'getNavSidebarLabels',
+	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
+	TrackPerformance = 'trackPerformance',
 }
 
-class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
+class CalypsoifyIframe extends Component<
+	Props & ConnectedProps & ProtectedFormProps & LocalizeProps & PerformanceTrackProps,
+	State
+> {
 	state: State = {
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
@@ -119,12 +133,29 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	iframePort: MessagePort | null = null;
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
+	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	successfulIframeLoad = false;
+	waitForIframeToInit: ReturnType< typeof setInterval > | undefined = undefined;
+	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
+		this.waitForIframeToInit = setInterval( () => {
+			if ( this.props.shouldLoadIframe ) {
+				clearInterval( this.waitForIframeToInit );
+				this.waitForIframeToLoad = setTimeout( () => {
+					config.isEnabled( 'desktop' )
+						? this.props.notifyDesktopCannotOpenEditor(
+								this.props.site,
+								REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE,
+								this.props.iframeUrl
+						  )
+						: window.location.replace( this.props.iframeUrl );
+				}, 8000 ); // Three seconds longer than we give the iframe to load
+			}
+		}, 1000 );
 	}
 
 	componentWillUnmount() {
@@ -177,7 +208,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			if ( data.imageId ) {
 				const { siteId } = this.props;
 				const image = MediaStore.get( siteId, data.imageId );
-				MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+				this.props.setMediaLibrarySelectedItems( siteId, [ image ] );
 			}
 
 			this.setState( {
@@ -202,6 +233,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// the kind of assignment which causes re-renders and we
 			// want it set immediately
 			this.mediaSelectPort = ports[ 0 ];
+			this.mediaCancelPort = ports[ 1 ];
 
 			if ( value ) {
 				const ids = Array.isArray( value )
@@ -210,7 +242,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				const selectedItems = ids.map( ( id ) => {
 					const media = MediaStore.get( siteId, id );
 					if ( ! media ) {
-						MediaActions.fetch( siteId, id );
+						this.props.fetchMediaItem( siteId, id );
 					}
 					return {
 						ID: id,
@@ -218,9 +250,9 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					};
 				} );
 
-				MediaActions.setLibrarySelectedItems( siteId, selectedItems );
+				this.props.setMediaLibrarySelectedItems( siteId, selectedItems );
 			} else {
-				MediaActions.setLibrarySelectedItems( siteId, [] );
+				this.props.setMediaLibrarySelectedItems( siteId, [] );
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
@@ -239,7 +271,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
 
-				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+				//set postId on state.editor.postId, so components like editor revisions can read from it
 				this.props.startEditingPost( siteId, postId );
 
 				//set post type on state.posts.[ id ].type, so components like document head can read from it
@@ -275,6 +307,13 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.openPreviewModal( postUrl, ports[ 0 ] );
 		}
 
+		if ( EditorActions.ViewPost === action ) {
+			const { postUrl } = payload;
+			config.isEnabled( 'desktop' )
+				? this.props.notifyDesktopViewPostClicked( postUrl )
+				: window.open( postUrl, '_top' );
+		}
+
 		if ( EditorActions.OpenCustomizer === action ) {
 			const { autofocus = null, unsavedChanges = false } = payload;
 			this.openCustomizer( autofocus, unsavedChanges );
@@ -295,13 +334,33 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
-			// TODO - In future iterations, replace window param with gutenboarding site info.
-			const urlParams = new URLSearchParams( window.location.search );
 			const isGutenboarding =
-				config.isEnabled( 'gutenboarding' ) && urlParams.has( 'is-gutenboarding' );
+				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				frankenflowUrl: `${ window.location.origin }/start/frankenflow?siteSlug=${ this.props.siteId }`,
+				frankenflowUrl: `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`,
+			} );
+		}
+
+		if ( EditorActions.GetNavSidebarLabels === action ) {
+			const { translate } = this.props;
+
+			ports[ 0 ].postMessage( {
+				allPostsLabels: {
+					page: translate( 'View all pages' ),
+					post: translate( 'View all posts' ),
+				},
+				createPostLabels: {
+					page: translate( 'Create new page' ),
+					post: translate( 'Create new post' ),
+				},
+			} );
+		}
+
+		if ( EditorActions.GetCalypsoUrlInfo === action ) {
+			ports[ 0 ].postMessage( {
+				origin: window.location.origin,
+				siteSlug: this.props.siteSlug,
 			} );
 		}
 
@@ -318,6 +377,15 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( EditorActions.PostStatusChange === action ) {
 			const { status } = payload;
 			this.handlePostStatusChange( status );
+		}
+
+		if ( EditorActions.TrackPerformance === action ) {
+			if ( payload.mark === 'editor.ready' ) {
+				this.props.stopPerformanceTracking( {
+					isNew: payload.isNew,
+					blockCount: payload.blockCount,
+				} );
+			}
 		}
 	};
 
@@ -379,6 +447,12 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// and prevent sending more messages (which will be ignored)
 			this.mediaSelectPort.close();
 			this.mediaSelectPort = null;
+		}
+
+		if ( ! this.state.classicBlockEditorId && ! media && this.mediaCancelPort ) {
+			this.mediaCancelPort.postMessage( true );
+			this.mediaCancelPort.close();
+			this.mediaCancelPort = null;
 		}
 
 		this.setState( { classicBlockEditorId: null, isMediaModalVisible: false } );
@@ -543,6 +617,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	onIframeLoaded = async ( iframeUrl: string ) => {
+		clearTimeout( this.waitForIframeToLoad );
 		if ( ! this.successfulIframeLoad ) {
 			// Sometimes (like in IE) the WindowActions.Loaded message arrives after
 			// the onLoad event is fired. To deal with this case we'll poll
@@ -572,7 +647,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	render() {
-		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
+		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -621,25 +696,24 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
-				<MediaLibrarySelectedData siteId={ siteId }>
-					<EditorMediaModal
-						disabledDataSources={ getDisabledDataSources( allowedTypes ) }
-						enabledFilters={ getEnabledFilters( allowedTypes ) }
-						galleryViewEnabled={ isUsingClassicBlock }
-						isGutenberg={ ! isUsingClassicBlock }
-						onClose={ this.closeMediaModal }
-						onInsertMedia={ this.insertClassicBlockMedia }
-						single={ ! multiple }
-						source=""
-						visible={ isMediaModalVisible }
-					/>
-				</MediaLibrarySelectedData>
+				<EditorMediaModal
+					disabledDataSources={ getDisabledDataSources( allowedTypes ) }
+					enabledFilters={ getEnabledFilters( allowedTypes ) }
+					galleryViewEnabled={ isUsingClassicBlock }
+					isGutenberg={ ! isUsingClassicBlock }
+					onClose={ this.closeMediaModal }
+					onInsertMedia={ this.insertClassicBlockMedia }
+					single={ ! multiple }
+					source=""
+					visible={ isMediaModalVisible }
+				/>
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<WebPreview
 					externalUrl={ postUrl }
 					onClose={ this.closePreviewModal }
 					overridePost={ editedPost }
 					previewUrl={ previewUrl }
+					showEditHeaderLink={ true }
 					showPreview={ isPreviewVisible }
 				/>
 			</Fragment>
@@ -659,6 +733,7 @@ const mapStateToProps = (
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
@@ -680,6 +755,11 @@ const mapStateToProps = (
 	// needed for loading the editor in SU sessions
 	if ( wpcom.addSupportParams ) {
 		queryArgs = wpcom.addSupportParams( queryArgs );
+	}
+
+	// Pass through to iframed editor if user is in editor deprecation group.
+	if ( inEditorDeprecationGroup( state ) ) {
+		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
 	const siteAdminUrl =
@@ -710,6 +790,7 @@ const mapStateToProps = (
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
+		siteSlug,
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(
@@ -720,6 +801,9 @@ const mapStateToProps = (
 			'wp_template_part'
 		),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
+		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
+		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+		site: getSite( state, siteId ),
 	};
 };
 
@@ -730,11 +814,20 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	setEditorIframeLoaded,
 	startEditingPost,
+	notifyDesktopViewPostClicked,
 	editPost,
 	trashPost,
 	updateSiteFrontPage,
+	notifyDesktopCannotOpenEditor,
+	setMediaLibrarySelectedItems,
+	fetchMediaItem,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
-export default connect( mapStateToProps, mapDispatchToProps )( protectForm( CalypsoifyIframe ) );
+export default flowRight(
+	withStopPerformanceTrackingProp,
+	connect( mapStateToProps, mapDispatchToProps ),
+	localize,
+	protectForm
+)( CalypsoifyIframe );

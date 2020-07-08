@@ -2,7 +2,8 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/index', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 

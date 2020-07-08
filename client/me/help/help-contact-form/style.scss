@@ -14,7 +14,7 @@
 .help-contact-form__selection {
 	margin-bottom: 24px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-bottom: 32px;
 	}
 }
@@ -30,14 +30,14 @@
 		display: none;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.segmented-control {
 			// Show the segmented control when the browser is wider than 960px
 			display: flex;
 		}
 
 		.segmented-control__text {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 18px;
 		}
 
@@ -50,13 +50,13 @@
 
 .help-contact-form__selection-subtext {
 	display: block;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 16px;
 }
 
 .help-contact-form__title {
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	margin-bottom: 5px;
 }

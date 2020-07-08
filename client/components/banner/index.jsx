@@ -32,6 +32,7 @@ import DismissibleCard from 'blocks/dismissible-card';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -59,6 +60,7 @@ export class Banner extends Component {
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		primaryButton: PropTypes.bool,
 		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
@@ -82,6 +84,7 @@ export class Banner extends Component {
 		jetpack: false,
 		onClick: noop,
 		onDismiss: noop,
+		primaryButton: true,
 		showIcon: true,
 		tracksImpressionName: 'calypso_banner_cta_impression',
 		tracksClickName: 'calypso_banner_cta_click',
@@ -177,6 +180,7 @@ export class Banner extends Component {
 			compact,
 			list,
 			price,
+			primaryButton,
 			title,
 			target,
 			tracksImpressionName,
@@ -223,18 +227,18 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact primary target={ target }>
-									{ callToAction }
+								<Button compact primary={ primaryButton } target={ target }>
+									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
 								<Button
 									compact
 									href={ this.getHref() }
 									onClick={ this.handleClick }
-									primary
+									primary={ primaryButton }
 									target={ target }
 								>
-									{ callToAction }
+									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
 					</div>

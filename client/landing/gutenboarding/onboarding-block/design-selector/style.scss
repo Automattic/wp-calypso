@@ -6,39 +6,18 @@
 .design-selector {
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
+	padding-bottom: $gutenboarding-footer-height;
 
 	.design-selector__header {
-		display: block;
 		@include onboarding-heading-padding;
 
-		@include break-large {
-			display: flex;
-			align-items: center;
-		}
-
-		@include onboarding-break-gigantic {
-			display: flex;
-			align-items: center;
-		}
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	.design-selector__heading {
 		flex-grow: 1;
-	}
-
-	.design-selector__start-over-button {
-		&.is-link {
-			color: var( --color-text-subtle );
-			padding-top: 1em;
-
-			@include break-large {
-				padding-top: 0;
-			}
-
-			@include onboarding-break-gigantic {
-				padding-top: 0;
-			}
-		}
 	}
 
 	.design-selector__grid {
@@ -49,7 +28,7 @@
 		cursor: pointer;
 		float: left;
 		width: 100%;
-		margin: 0;
+		margin: 32px; // only applies in IE
 
 		&:hover,
 		&:focus {
@@ -57,6 +36,11 @@
 				border-color: var( --highlightColor );
 			}
 		}
+
+		@include break-mobile {
+			width: calc( 50% - 32px );
+		}
+
 		@include break-large {
 			width: calc( 33.33% - 64px );
 		}
@@ -70,12 +54,17 @@
 		.design-selector__grid {
 			display: grid;
 			grid-template-columns: 1fr;
-			column-gap: 64px;
 			row-gap: 48px;
 			margin: 0 0 30px;
 
+			@include break-mobile {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 32px;
+			}
+
 			@include break-large {
 				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 64px;
 			}
 
 			@include onboarding-break-gigantic {
@@ -117,12 +106,51 @@
 		}
 	}
 
-	.design-selector__option-name {
-		color: var( --studio-gray-40 );
-		display: block;
-		margin: 16px 0;
-		text-align: center;
+	.design-selector__option-meta {
+		display: inline-grid;
+		margin-top: 8px;
 		width: 100%;
+		gap: 6px;
+		grid-template-columns: 1fr [name] auto [badge] 1fr;
+
+		> * {
+			// This is to create space between Tooltip component and other elements
+			min-height: 2em;
+		}
+	}
+
+	.design-selector__option-name {
 		@include onboarding-medium-text;
+		align-self: center;
+		color: var( --studio-gray-40 );
+		grid-area: name;
+		padding: 2px 0; // To match line-alignment with premium badge
+		text-align: center;
+	}
+
+	.design-selector__premium-container {
+		grid-area: badge;
+		text-align: left;
+	}
+
+	.design-selector__premium-badge {
+		background-color: var( --studio-black );
+		border-radius: 1em;
+		color: var( --studio-white );
+		margin: 0;
+		padding: 2px 8px;
+		white-space: nowrap;
+	}
+
+	.design-selector__premium-badge-logo {
+		margin-left: -4px;
+
+		.jetpack-logo__icon-circle {
+			fill: transparent;
+		}
+
+		.jetpack-logo__icon-triangle {
+			fill: var( --studio-white );
+		}
 	}
 }

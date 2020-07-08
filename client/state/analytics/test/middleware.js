@@ -20,18 +20,29 @@ import {
 	loadTrackingTool,
 } from '../actions';
 import { analyticsMiddleware } from '../middleware.js';
-import { spy as mockAnalytics } from 'lib/analytics';
 import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
 import { spy as mockMC } from 'lib/analytics/mc';
 import { spy as mockGA } from 'lib/analytics/ga';
+import { spy as mockPageView } from 'lib/analytics/page-view';
+import { spy as mockTracks } from 'lib/analytics/tracks';
 import { addHotJarScript } from 'lib/analytics/hotjar';
 
-jest.mock( 'lib/analytics', () => {
-	const analyticsSpy = require( 'sinon' ).spy();
-	const { analyticsMock } = require( './helpers/analytics-mock' );
+jest.mock( 'lib/analytics/page-view', () => {
+	const pageViewSpy = require( 'sinon' ).spy();
+	const { pageViewMock } = require( './helpers/analytics-mock' );
 
-	const mock = analyticsMock( analyticsSpy );
-	mock.spy = analyticsSpy;
+	const mock = pageViewMock( pageViewSpy );
+	mock.spy = pageViewSpy;
+
+	return mock;
+} );
+
+jest.mock( 'lib/analytics/tracks', () => {
+	const tracksSpy = require( 'sinon' ).spy();
+	const { tracksMock } = require( './helpers/analytics-mock' );
+
+	const mock = tracksMock( tracksSpy );
+	mock.spy = tracksSpy;
 
 	return mock;
 } );
@@ -75,7 +86,8 @@ const dispatch = analyticsMiddleware()( noop );
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {
 		beforeEach( () => {
-			mockAnalytics.resetHistory();
+			mockPageView.resetHistory();
+			mockTracks.resetHistory();
 			mockAdTracking.resetHistory();
 		} );
 
@@ -88,7 +100,7 @@ describe( 'middleware', () => {
 		test( 'should call tracks.recordEvent', () => {
 			dispatch( recordTracksEvent( 'test', { name: 'value' } ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'tracks.recordEvent', 'test', {
+			expect( mockTracks ).to.have.been.calledWithExactly( 'recordTracksEvent', 'test', {
 				name: 'value',
 			} );
 		} );
@@ -96,7 +108,7 @@ describe( 'middleware', () => {
 		test( 'should call pageView.record', () => {
 			dispatch( recordPageView( 'path', 'title', 'default', { name: 'value' } ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'pageView.record', 'path', 'title', {
+			expect( mockPageView ).to.have.been.calledWithExactly( 'recordPageView', 'path', 'title', {
 				name: 'value',
 			} );
 		} );
@@ -147,7 +159,7 @@ describe( 'middleware', () => {
 		test( 'should call `setOptOut`', () => {
 			dispatch( setTracksOptOut( false ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'tracks.setOptOut', false );
+			expect( mockTracks ).to.have.been.calledWithExactly( 'setTracksOptOut', false );
 		} );
 
 		test( 'should call hotjar.addHotJarScript', () => {

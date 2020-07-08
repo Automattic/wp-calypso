@@ -34,6 +34,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		contactDetailsValidationErrors: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -85,7 +86,10 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		};
 
 		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( payload );
+		}
 	}
 
 	handleChangeEvent = ( event ) => {
@@ -95,7 +99,10 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			},
 		};
 		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( payload );
+		}
 	};
 
 	isTradingNameRequired( registrantType ) {
@@ -242,7 +249,16 @@ export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
 );
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
+		if ( ownProps.isManaged ) {
+			return {
+				// Treat this like a managed component.
+				contactDetails: ownProps.contactDetails ?? {},
+				ccTldDetails: ownProps.ccTldDetails ?? {},
+				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
+			};
+		}
+
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

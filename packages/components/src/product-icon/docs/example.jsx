@@ -71,6 +71,9 @@ function ProductIconExample() {
 				<div style={ iconStyle }>
 					<ProductIcon slug="jetpack_backup_realtime" />
 				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_anti_spam" />
+				</div>
 			</div>
 		</Fragment>
 	);

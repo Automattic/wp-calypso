@@ -15,7 +15,7 @@
 		margin-left: 0;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		.cvv,
 		.expiration-date {
 			flex-basis: calc( 50% - 15px );
@@ -51,7 +51,7 @@
 	}
 
 	select {
-		font-size: 15px;
+		font-size: $font-body;
 		width: 100%;
 	}
 
@@ -86,7 +86,7 @@
 .credit-card-form-fields__element {
 	padding: 12px 14px 3px;
 	border: 1px solid var( --color-neutral-10 );
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.5;
 	min-height: 1.5em;
 	margin-top: 5px;

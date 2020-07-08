@@ -53,11 +53,11 @@ export default ( cardData, onRemoveCard ) => {
 
 ### Props
 
-All props are required.
-
-| Name         | Type     | Description                                               |
-| ------------ | -------- | --------------------------------------------------------- |
-| `lastDigits` | `string` | Last digits of card number.                               |
-| `cardType`   | `string` | Card type (e.g. `visa`).                                  |
-| `name`       | `string` | Name on card (e.g. `James Smith`).                        |
-| `expiry`     | `string` | Expiration date in ISO 8601 (YYYY-MM or YYYY-MM-DD) form. |
+| Name              | Type       | Description                                                       |
+| ----------------- | ---------- | ----------------------------------------------------------------- |
+| `lastDigits?`     | `string`   | Last digits of card number.                                       |
+| `cardType?`       | `string`   | Card type (e.g. `visa`).                                          |
+| `name`            | `string`   | Name on card (e.g. `James Smith`).                                |
+| `expiry?`         | `string`   | Expiration date in ISO 8601 (YYYY-MM or YYYY-MM-DD) form.         |
+| `email?`          | `string`   | Email associatted with the payment method.                        |
+| `paymentPartner?` | `string`   | Payment partner for the method (e.g. `stripe`, `paypal_express`). |

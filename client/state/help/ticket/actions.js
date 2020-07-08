@@ -25,7 +25,11 @@ export const ticketSupportConfigurationRequestFailure = ( error ) => {
 };
 
 export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
-	dispatch( { type: HELP_TICKET_CONFIGURATION_REQUEST } );
+	const requestAction = {
+		type: HELP_TICKET_CONFIGURATION_REQUEST,
+	};
+
+	dispatch( requestAction );
 
 	return wpcom
 		.undocumented()

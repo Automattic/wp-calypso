@@ -15,7 +15,7 @@ declare namespace i18nCalypso {
 				count: number;
 		  } );
 
-	export type Substitution = string | number;
+	export type Substitution = string | number | React.ReactFragment;
 
 	export type Substitutions =
 		| Substitution

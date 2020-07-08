@@ -22,6 +22,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryMedia from 'components/data/query-media';
 import { getCurrentPlan, hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { isEnabled } from 'config';
 
 class SimplePaymentsView extends Component {
 	render() {
@@ -51,7 +52,9 @@ class SimplePaymentsView extends Component {
 						<Gridicon icon="cross" />
 					</div>
 					<p className="wpview-type-simple-payments__unsupported-message">
-						{ translate( "Your plan doesn't include Simple Payments." ) }
+						{ isEnabled( 'earn/rename-payment-blocks' )
+							? translate( "Your plan doesn't include Pay with PayPal" )
+							: translate( "Your plan doesn't include Simple Payments" ) }
 					</p>
 				</div>
 			);
@@ -104,7 +107,7 @@ class SimplePaymentsView extends Component {
 	}
 }
 
-SimplePaymentsView = connect( ( state, props ) => {
+const EnhancedSimplePaymentsView = connect( ( state, props ) => {
 	const { content: shortcode } = props;
 
 	const shortcodeData = deserialize( shortcode );
@@ -125,7 +128,7 @@ SimplePaymentsView = connect( ( state, props ) => {
 	};
 } )( localize( SimplePaymentsView ) );
 
-SimplePaymentsView.match = ( content ) => {
+EnhancedSimplePaymentsView.match = ( content ) => {
 	const match = next( 'simple-payment', content );
 
 	if ( match ) {
@@ -139,12 +142,12 @@ SimplePaymentsView.match = ( content ) => {
 	}
 };
 
-SimplePaymentsView.serialize = ( content ) => {
+EnhancedSimplePaymentsView.serialize = ( content ) => {
 	return encodeURIComponent( content );
 };
 
-SimplePaymentsView.edit = ( editor, content ) => {
+EnhancedSimplePaymentsView.edit = ( editor, content ) => {
 	editor.execCommand( 'simplePaymentsButton', content );
 };
 
-export default SimplePaymentsView;
+export default EnhancedSimplePaymentsView;

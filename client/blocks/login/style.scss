@@ -1,7 +1,7 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-.layout:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
+.layout:not( .is-jetpack-woocommerce-flow ):not( .is-jetpack-woo-dna-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {
 		.button.is-primary {
 			background-color: var( --studio-jetpack-green-50 );
@@ -34,6 +34,7 @@
 }
 
 .layout.is-jetpack-woocommerce-flow,
+.layout.is-jetpack-woo-dna-flow,
 .layout.is-wccom-oauth-flow {
 	.login__jetpack-logo,
 	.login__woocommerce-logo {
@@ -80,7 +81,7 @@
 	.login__header-subtitle {
 		color: var( --color-primary-10 );
 		margin-top: 1em;
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 24px;
 		font-weight: 400;
 	}
@@ -120,9 +121,9 @@
 	label {
 		color: var( --color-neutral-70 );
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		line-height: 1.5;
-		font-weight: 500;
+		font-weight: 600;
 		margin-bottom: 5px;
 	}
 
@@ -179,7 +180,7 @@
 }
 
 .login__form-header {
-	font-size: 22px;
+	font-size: $font-title-small;
 	margin-bottom: 24px;
 	margin-top: 16px;
 	text-align: center;
@@ -191,7 +192,7 @@
 
 .login__form-terms,
 .login__form-signup-link {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-align: center;
 
 	a {
@@ -201,7 +202,7 @@
 
 .login__form-signup-link {
 	clear: both;
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding-top: 20px;
 
 	&.disabled {
@@ -225,7 +226,7 @@
 }
 
 .login__jetpack-logo {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: 20px;
 	}
 }
@@ -244,4 +245,17 @@
 	@include break-mobile {
 		padding: 8px 24px;
 	}
+}
+
+.login__jetpack-plus-wpcom-logo {
+	margin: 40px 0 16px;
+}
+
+.login__form-social-divider {
+	text-align: center;
+	margin-top: 12px;
+	margin-bottom: 12px;
+	font-size: 12px;
+	position: initial;
+	text-transform: initial;
 }

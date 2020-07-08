@@ -7,15 +7,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import DomainStatus from '../card/domain-status';
 import DomainManagementNavigation from '../navigation';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
 class WpcomDomainType extends React.Component {
 	render() {
 		const {
 			domain: { name: domain_name },
 			domain,
+			selectedSite,
 		} = this.props;
+
+		const newDomainManagementNavigation = config.isEnabled(
+			'domains/new-status-design/new-options'
+		);
 
 		return (
 			<div className="domain-types__container">
@@ -25,7 +32,11 @@ class WpcomDomainType extends React.Component {
 					statusClass="status-success"
 					icon="check_circle"
 				/>
-				<DomainManagementNavigation domain={ domain } selectedSite={ this.props.selectedSite } />
+				{ newDomainManagementNavigation ? (
+					<DomainManagementNavigationEnhanced domain={ domain } selectedSite={ selectedSite } />
+				) : (
+					<DomainManagementNavigation domain={ domain } selectedSite={ selectedSite } />
+				) }
 			</div>
 		);
 	}

@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import { SiteVertical, Design } from './types';
-import { OnboardAction } from './actions';
-import { FontPair } from 'landing/gutenboarding/constants';
+import type { SiteVertical, Design } from './types';
+import type { OnboardAction } from './actions';
+import type { FontPair } from '../../constants';
 
-const domain: Reducer<
-	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
-	OnboardAction
-> = ( state, action ) => {
+const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
+	state,
+	action
+) => {
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
 	}
@@ -28,11 +29,18 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
 	}
-	if ( action.type === 'SET_SITE_TITLE' ) {
-		return action.siteTitle;
-	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
+	}
+	return state;
+};
+
+const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
+		return action.domainCategory;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
 	}
 	return state;
 };
@@ -107,15 +115,59 @@ const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 	return state;
 };
 
+const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_IS_REDIRECTING' ) {
+		return action.isRedirecting;
+	}
+	// This reducer is intentionally not cleared by 'RESET_ONBOARD_STORE' to prevent
+	// a flash of the IntentGathering step after the store is reset.
+	return state;
+};
+
+const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
+		return action.hasUsedPlansStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_SHOW_SIGNUP_DIALOG' ) {
+		return action.showSignup;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const plan: Reducer< Plans.Plan | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLAN' ) {
+		return action.plan;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
+	domainCategory,
+	isRedirecting,
+	hasUsedPlansStep,
+	pageLayouts,
 	selectedFonts,
 	selectedDesign,
+	selectedSite,
 	siteTitle,
 	siteVertical,
-	pageLayouts,
-	selectedSite,
+	showSignupDialog,
+	plan,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -16,10 +16,8 @@ import { PluginsList } from '..';
 import { sites } from './fixtures';
 import { createReduxStore } from 'state';
 
-jest.mock( 'lib/analytics', () => ( {
-	ga: {
-		recordEvent: () => {},
-	},
+jest.mock( 'lib/analytics/ga', () => ( {
+	recordEvent: () => {},
 } ) );
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {

@@ -15,11 +15,8 @@ import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 import { sidebar } from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
-import reducer from 'state/concierge/reducer';
 
-export default async ( router, addReducer ) => {
-	await addReducer( [ 'concierge' ], reducer );
-
+export default ( router ) => {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
 		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
 

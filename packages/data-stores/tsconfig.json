@@ -6,6 +6,7 @@
 		"allowJs": false,
 		"jsx": "react",
 		"declaration": true,
+		"declarationMap": true,
 		"declarationDir": "dist/types",
 		"rootDir": "src",
 		"outDir": "dist/esm",
@@ -21,6 +22,8 @@
 		"downlevelIteration": true,
 
 		"forceConsistentCasingInFileNames": true,
+
+		"importsNotUsedAsValues": "error",
 
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],

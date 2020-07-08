@@ -37,12 +37,12 @@ class BillingHistoryTable extends React.Component {
 		const { translate } = this.props;
 
 		if ( this.props.sendingBillingReceiptEmail( receiptId ) ) {
-			return translate( 'Emailing Receipt…' );
+			return translate( 'Emailing receipt…' );
 		}
 
 		return (
 			<a href="#" onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }>
-				{ translate( 'Email Receipt' ) }
+				{ translate( 'Email receipt' ) }
 			</a>
 		);
 	};
@@ -57,7 +57,7 @@ class BillingHistoryTable extends React.Component {
 					href={ billingHistoryReceipt( transaction.id ) }
 					onClick={ this.handleReceiptLinkClick }
 				>
-					{ translate( 'View Receipt' ) }
+					{ translate( 'View receipt' ) }
 				</a>
 				{ this.renderEmailAction( transaction.id ) }
 			</div>

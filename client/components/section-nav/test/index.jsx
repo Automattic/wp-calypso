@@ -18,10 +18,8 @@ import ShallowRenderer from 'react-test-renderer/shallow';
 import SectionNav from '../';
 
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/analytics', () => ( {
-	ga: {
-		recordEvent: () => {},
-	},
+jest.mock( 'lib/analytics/ga', () => ( {
+	recordEvent: () => {},
 } ) );
 
 function createComponent( component, props, children ) {

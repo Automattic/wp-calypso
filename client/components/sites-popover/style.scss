@@ -1,5 +1,5 @@
 .sites-popover {
-	font-size: 15px;
+	font-size: $font-body;
 	width: 300px;
 }
 
@@ -24,8 +24,8 @@
 .sites-popover.has-header .sites-popover__header {
 	border-bottom: 1px solid var( --color-neutral-0 );
 	color: var( --color-neutral-40 );
-	font-size: 12px;
-	font-weight: bold;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
 	padding: 10px 10px 8px 8px;
 }
 

@@ -4,7 +4,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -23,6 +22,7 @@ import Gridicon from 'components/gridicon';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { getSubscription, getStoppingStatus } from 'state/memberships/subscriptions/selectors';
 
 /**
  * Style dependencies
@@ -34,6 +34,7 @@ class Subscription extends React.Component {
 
 	render() {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
+
 		return (
 			<Main className="memberships__subscription">
 				<DocumentHead title={ translate( 'Other Sites' ) } />
@@ -83,7 +84,7 @@ class Subscription extends React.Component {
 											{ translate( 'Renew interval' ) }
 										</em>
 										<span className="memberships__subscription-inner-detail">
-											{ subscription.renew_interval }
+											{ subscription.renew_interval || '-' }
 										</span>
 									</li>
 									<li>
@@ -99,7 +100,9 @@ class Subscription extends React.Component {
 											{ translate( 'Renews on' ) }
 										</em>
 										<span className="memberships__subscription-inner-detail">
-											{ moment( subscription.end_date ).format( 'll' ) }
+											{ subscription.end_date
+												? moment( subscription.end_date ).format( 'll' )
+												: translate( 'Never Expires' ) }
 										</span>
 									</li>
 								</ul>
@@ -120,19 +123,10 @@ class Subscription extends React.Component {
 	}
 }
 
-const getSubscription = ( state, subscriptionId ) =>
-	get( state, 'memberships.subscriptions.items', [] )
-		.filter( ( sub ) => sub.ID === subscriptionId )
-		.pop();
-
 export default connect(
 	( state, props ) => ( {
 		subscription: getSubscription( state, props.subscriptionId ),
-		stoppingStatus: get(
-			state,
-			[ 'memberships', 'subscriptions', 'stoppingSubscription', props.subscriptionId ],
-			false
-		),
+		stoppingStatus: getStoppingStatus( state, props.subscriptionId ),
 	} ),
 	{
 		requestSubscriptionStop,

@@ -4,6 +4,7 @@
 import { SIGNUP_VERTICALS_REQUEST, SIGNUP_VERTICALS_SET } from 'state/action-types';
 
 import 'state/data-layer/wpcom/signup/verticals';
+import 'state/signup/init';
 
 /**
  * Action creator: Request verticals data.

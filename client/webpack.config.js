@@ -20,6 +20,7 @@ const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' 
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
+const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const {
 	cssNameFromFilename,
@@ -46,7 +47,7 @@ const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
-	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
+	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
@@ -55,10 +56,10 @@ const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
-const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 
-const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
+const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 
@@ -116,6 +117,8 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+const outputDir = path.resolve( isDesktopMonorepo ? './desktop' : '.' );
+
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware serves assets from a hard-coded publicPath.
 	// This is required so that running calypso via `yarn start` doesn't break.
@@ -147,7 +150,7 @@ const webpackConfig = {
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 	output: {
-		path: path.resolve( 'public', extraPath ),
+		path: path.join( outputDir, 'public', extraPath ),
 		pathinfo: false,
 		publicPath: `/calypso/${ extraPath }/`,
 		filename: outputFilename,
@@ -178,6 +181,7 @@ const webpackConfig = {
 		} ),
 	},
 	module: {
+		strictExportPresence: true,
 		rules: [
 			TranspileConfig.loader( {
 				workerCount,
@@ -195,7 +199,13 @@ const webpackConfig = {
 			} ),
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
-				postCssConfig: { path: __dirname },
+				postCssConfig: {
+					path: __dirname,
+					ctx: {
+						transformCssProperties: browserslistEnv === 'defaults',
+						customProperties: calypsoColorSchemes,
+					},
+				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 			} ),
 			{
@@ -247,21 +257,17 @@ const webpackConfig = {
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-		isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,
 			minify: ! isDevelopment,
 		} ),
-		isCalypsoClient &&
-			new AssetsWriter( {
-				filename:
-					browserslistEnv === 'defaults'
-						? 'assets-fallback.json'
-						: `assets-${ browserslistEnv }.json`,
-				path: path.join( __dirname, 'server', 'bundler' ),
-				assetExtraPath: extraPath,
-			} ),
+		new AssetsWriter( {
+			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
+			path: path.join( outputDir, 'client', 'server', 'bundler' ),
+			assetExtraPath: extraPath,
+		} ),
 		new DuplicatePackageCheckerPlugin(),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {
@@ -291,53 +297,45 @@ const webpackConfig = {
 		new ConfigFlagPlugin( {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
-		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
-		isCalypsoClient && new RequireChunkCallbackPlugin(),
+		new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
+		! config.isEnabled( 'desktop' ) &&
+			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
+		/*
+		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
+		 */
+		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
+			if ( res.context.includes( '@wordpress/components/' ) ) {
+				res.request = 'components/empty-component';
+			}
+		} ),
+		/*
+		 * Use "evergreen" polyfill config, rather than fallback.
+		 */
+		browserslistEnv === 'evergreen' &&
+			new webpack.NormalModuleReplacementPlugin(
+				/^@automattic\/calypso-polyfills$/,
+				'@automattic/calypso-polyfills/browser-evergreen'
+			),
+		/*
+		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
+		 */
+		browserslistEnv === 'evergreen' &&
+			new webpack.NormalModuleReplacementPlugin(
+				/^lib[/\\]local-storage-polyfill$/,
+				'lodash-es/noop'
+			),
+		/*
+		 * Replace `lodash` with `lodash-es`
+		 */
+		new ExtensiveLodashReplacementPlugin(),
 	].filter( Boolean ),
 	externals: [ 'electron' ],
 };
-
-if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' )
-	);
-}
-
-// Replace `lodash` with `lodash-es`.
-if ( isCalypsoClient ) {
-	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
-}
-
-// Don't bundle `wpcom-xhr-request` for the browser.
-// Even though it's requested, we don't need it on the browser, because we're using
-// `wpcom-proxy-request` instead. Keep it for desktop and server, though.
-if ( isCalypsoClient && ! isDesktop ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^wpcom-xhr-request$/, 'lodash-es/noop' )
-	);
-}
-
-if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {
-	// Use "evergreen" polyfill config, rather than fallback.
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin(
-			/^@automattic\/calypso-polyfills$/,
-			'@automattic/calypso-polyfills/browser-evergreen'
-		)
-	);
-
-	// Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin(
-			/^lib[/\\]local-storage-polyfill$/,
-			'lodash-es/noop'
-		)
-	);
-}
 
 module.exports = webpackConfig;

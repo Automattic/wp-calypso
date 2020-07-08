@@ -10,14 +10,40 @@
 	}
 
 	.comments__conversation-follow-button {
-		float: right;
 		margin-top: 4px;
+		margin-left: 14px;
+		text-align: right;
+	}
+
+	.comments__actions-wrapper {
+		text-align: right;
+		width: 100%;
+	}
+
+	.button.comments__manage-comments-button {
+		color: inherit;
+		margin-top: -2px;
+		padding: 0;
+
+		.gridicon {
+			top: 8px;
+		}
+
+		@include breakpoint-deprecated( '<660px' ) {
+			span {
+				display: none;
+			}
+		}
 	}
 }
 
 .comments__info-bar {
-	margin: 0 24px -24px 0;
-	overflow: auto;
+	margin: 0 36px -36px 0;
+	width: 100%;
+
+	.comments__comment-list.has-double-actions & {
+		margin: 0 8px -8px 0; // move to a separate line to prevent an overlap
+	}
 
 	&.is-no-comments {
 		display: none;
@@ -28,7 +54,7 @@
 	color: var( --color-text-subtle );
 	cursor: pointer;
 	display: block !important; // to overwrite inline-block rule
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1;
 	margin-bottom: 15px !important; // to overwrite 10px value
 

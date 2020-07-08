@@ -19,7 +19,7 @@ import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
-import { isGSuiteRestricted } from 'lib/gsuite';
+import { canUserPurchaseGSuite } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
@@ -64,12 +64,14 @@ export function checkout( context, next ) {
 				isComingFromSignup={ !! context.query.signup }
 				isComingFromGutenboarding={ !! context.query.preLaunch }
 				isGutenboardingCreate={ !! context.query.isGutenboardingCreate }
+				isComingFromUpsell={ !! context.query.upgrade }
 				plan={ plan }
 				selectedSite={ selectedSite }
 				reduxStore={ context.store }
 				redirectTo={ context.query.redirect_to }
 				upgradeIntent={ context.query.intent }
 				clearTransaction={ false }
+				isWhiteGloveOffer={ 'white-glove' === context.query.type }
 			/>
 		</CartData>
 	);
@@ -136,7 +138,7 @@ export function gsuiteNudge( context, next ) {
 		return null;
 	}
 
-	if ( isGSuiteRestricted() ) {
+	if ( ! canUserPurchaseGSuite() ) {
 		next();
 	}
 
@@ -160,7 +162,7 @@ export function gsuiteNudge( context, next ) {
 export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	let upsellType, upgradeItem;
+	let upsellType, upgradeItem, extra;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
 		upsellType = 'concierge-quickstart-session';
@@ -171,6 +173,10 @@ export function upsellNudge( context, next ) {
 	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
 		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
+	} else if ( context.path.includes( 'offer-white-glove' ) ) {
+		upsellType = 'white-glove';
+		upgradeItem = 'business';
+		extra = { type: 'white-glove' };
 	}
 
 	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
@@ -186,6 +192,7 @@ export function upsellNudge( context, next ) {
 				receiptId={ Number( receiptId ) }
 				upsellType={ upsellType }
 				upgradeItem={ upgradeItem }
+				extra={ extra }
 			/>
 		</CheckoutContainer>
 	);

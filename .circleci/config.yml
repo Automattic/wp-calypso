@@ -1,15 +1,27 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@2.6.0
+  slack: circleci/slack@3.4.2
 
 references:
-  shared-environment: &shared-environment
-    CIRCLE_ARTIFACTS: /tmp/artifacts
-    CIRCLE_TEST_REPORTS: /tmp/test_results
-
-  docker-image: &docker-image
-    - image: circleci/node:12.16.1-browsers
+  defaults: &defaults
+    working_directory: ~/wp-calypso
+    docker:
+      - image: circleci/node:12.18.0-browsers
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/artifacts
+      CIRCLE_TEST_REPORTS: /tmp/test_results
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      DETECT_CHROMEDRIVER_VERSION: 'false'
+      CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
+  desktop_defaults: &desktop_defaults
+    working_directory: ~/wp-calypso
+    docker:
+      - image: circleci/node:12.18.0-browsers
+    environment:
+      CONFIG_ENV: release
+      DETECT_CHROMEDRIVER_VERSION: 'false'
+      NODE_ARGS: --max_old_space_size=3072
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -18,7 +30,6 @@ references:
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
-        "$CIRCLE_ARTIFACTS/full-site-editing"   \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
@@ -118,21 +129,38 @@ references:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
 
   yarn-install: &yarn-install
-    environment:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
-    command: yarn install --frozen-lockfile
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn install --frozen-lockfile
+
+  update-node: &update-node
+    name: Update node
+    command: |
+      set +e
+      set +x
+      export NVM_DIR="$HOME/.nvm" && (
+        git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+        cd "$NVM_DIR"
+        git checkout v0.35.3
+      ) && \. "$NVM_DIR/nvm.sh" --no-use
+      nvm install
+      nvm use
+
+  # This is used later to send a custom UA string. `google-chrome` is in the PATH in all circleci-browser images
+  save-chrome-version: &save-chrome-version
+    name: Save chrome version
+    command: |
+      google-chrome --version > .chromedriver_version
+      echo -n "Google Chrome version: " && cat .chromedriver_version
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
     paths:
       - ~/.cache/yarn
-  yarn-e2e-install: &yarn-e2e-install
-    name: Install e2e yarn dependencies
-    command: |
-      cd test/e2e &&
-      CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -163,10 +191,47 @@ references:
       cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
-  defaults: &defaults
-    working_directory: ~/wp-calypso
-    docker: *docker-image
-    environment: *shared-environment
+  desktop-install-app-deps: &desktop-install-app-deps
+      name: Install Desktop Dependencies
+      command: |
+        source "$HOME/.nvm/nvm.sh"
+        nvm use
+        npm install -g yarn
+        yarn run build-desktop:install-app-deps
+  desktop-cache-paths: &desktop-cache-paths
+    - desktop/build
+    - desktop/client
+    - desktop/config
+    - desktop/public
+    - desktop/resource/certificates/win.p12
+    - desktop/resource/certificates/mac.p12
+  desktop-decrypt-assets: &desktop-decrypt-assets
+    name: Decrypt desktop app assets
+    command: |
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+  desktop-restore-source-cache: &desktop-restore-source-cache
+      name: Restore desktop cache
+      keys:
+        - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+  desktop-save-source-cache: &desktop-save-source-cache
+      name: Save desktop cache
+      key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+      paths: *desktop-cache-paths
+  desktop-notify-github-success: &desktop-notify-github-success
+      name: Notify Github Success
+      when: on_success
+      command: cd desktop && yarn ci:github:dismiss-review
+  desktop-notify-github-failure: &desktop-notify-github-failure
+      name: Notify Github Failure
+      when: on_fail
+      command: cd desktop && yarn ci:github:add-review
+  desktop-notify-slack-failure: &desktop-notify-slack-failure
+      webhook: '$SLACK_WP_DESKTOP_E2E'
+      fail_only: true
+      mentions: '$CIRCLE_USERNAME'
+      failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
   prepare:
@@ -176,6 +241,7 @@ commands:
       - run: *setup-results-and-artifacts
       - attach_workspace:
           at: '~'
+      - run: *update-node
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -195,26 +261,15 @@ jobs:
       - checkout
       - run: *update-git-master
       - save_cache: *save-git-cache
+      - run: *update-node
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
-      - run: *yarn-e2e-install
       - save_cache: *save-yarn-cache
-      - run: yarn run build-packages
       - persist_to_workspace:
           root: '~'
           paths:
             - wp-calypso
-
-  typecheck:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: TypeScript typecheck
-          # Report but don't fail the build (`|| exit 0`)
-          command: yarn run typecheck || exit 0
 
   typecheck-strict:
     <<: *defaults
@@ -234,6 +289,18 @@ jobs:
           name: Lint Config Keys
           when: always
           command: yarn run lint:config-defaults
+      - run:
+          name: Lint yarn.lock
+          when: always
+          command: |
+            yarn
+            DIRTY_FILES=$(git status --porcelain 2>/dev/null)
+            if [[ ! -z "$DIRTY_FILES" ]]; then
+              echo "Repository contains uncommitted changes: "
+              echo "$DIRTY_FILES"
+              echo "You need to checkout the branch, run 'yarn' and commit those files."
+              exit 1
+            fi
       - run:
           name: Lint Client and Server
           when: always
@@ -297,7 +364,7 @@ jobs:
       - run:
           name: Build Notifications Panel
           command: |
-            NODE_ENV=production npx lerna run build --scope='@automattic/notifications' -- -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
+            cd apps/notifications/ && NODE_ENV=production yarn run build --output-path=$CIRCLE_ARTIFACTS/notifications-panel
       - store-artifacts-and-test-results
 
   build-o2-blocks:
@@ -308,7 +375,7 @@ jobs:
       - run:
           name: Build Gutenberg Blocks for internal p2s
           command: |
-            NODE_ENV=production npx lerna run build --scope='@automattic/o2-blocks' -- -- --output-path=$CIRCLE_ARTIFACTS/o2-blocks
+            cd apps/o2-blocks/ && NODE_ENV=production yarn run build --output-path=$CIRCLE_ARTIFACTS/o2-blocks
       - store-artifacts-and-test-results
 
   build-wpcom-block-editor:
@@ -319,19 +386,7 @@ jobs:
       - run:
           name: Build the block editor in WordPress.com integration utils package
           command: |
-            npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
-      - store-artifacts-and-test-results
-
-  build-full-site-editing:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Build the Full Site Editing plugin and theme
-          command: |
-            npx lerna run build --scope='@automattic/full-site-editing'
-            tar -czvf $CIRCLE_ARTIFACTS/full-site-editing/build-archive.tar.gz -C apps/full-site-editing/full-site-editing-plugin .
+            cd apps/wpcom-block-editor/ && yarn build --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
       - store-artifacts-and-test-results
   test-full-site-editing:
     <<: *defaults
@@ -341,7 +396,7 @@ jobs:
       - run:
           name: Run Full Site Editing client tests
           command: |
-            npx lerna run test:js --scope='@automattic/full-site-editing' --stream --no-prefix
+            cd apps/full-site-editing && yarn run test:js
   test-client:
     <<: *defaults
     parallelism: 6
@@ -497,6 +552,7 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *save-chrome-version
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
@@ -524,6 +580,7 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *save-chrome-version
       - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed
@@ -571,6 +628,79 @@ jobs:
       - slack/status:
           webhook: << parameters.slack-webhook >>
 
+  wp-desktop-source:
+    <<: *desktop_defaults
+    steps:
+      - checkout
+      - run: *update-node
+      - run: *yarn-install
+      - restore_cache: *desktop-restore-source-cache
+      - run: *desktop-decrypt-assets
+      - run:
+          name: Build Desktop Source
+          no_output_timeout: 15m
+          command: |
+            yarn run build-desktop:source
+      - save_cache: *desktop-save-source-cache
+      - persist_to_workspace:
+          root: /home/circleci/wp-calypso
+          paths: *desktop-cache-paths
+      - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
+
+  wp-desktop-mac:
+    macos:
+      xcode: "10.1.0"
+    shell: /bin/bash --login
+    working_directory: /Users/distiller/wp-calypso
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /Users/distiller/wp-calypso
+      - run: *update-node
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Mac
+          no_output_timeout: 30m
+          environment:
+            CSC_LINK: resource/certificates/mac.p12
+            CSC_FOR_PULL_REQUEST: true
+          command: |
+                  set +e
+                  source $HOME/.nvm/nvm.sh
+                  nvm use
+
+                  yarn run build-desktop:app
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            yarn run test-desktop:e2e
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            rm -rf desktop/release/mac
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+      - run: *desktop-notify-github-success
+      - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
+
 workflows:
   version: 2
   calypso:
@@ -580,9 +710,6 @@ workflows:
           filters:
             branches:
               ignore: master
-      - build-full-site-editing:
-          requires:
-            - setup
       - test-full-site-editing:
           requires:
             - setup
@@ -605,9 +732,6 @@ workflows:
           requires:
             - setup
       - test-server:
-          requires:
-            - setup
-      - typecheck:
           requires:
             - setup
       - typecheck-strict:
@@ -647,6 +771,12 @@ workflows:
           test-flags: '-W -S $CIRCLE_SHA1'
           test-target: 'WOO'
           slack-webhook: '$SLACK_WOO'
+  wp-desktop:
+    jobs:
+      - wp-desktop-source
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-source
 
   calypso-nightly:
     jobs:

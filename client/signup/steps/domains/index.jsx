@@ -15,6 +15,7 @@ import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import RegisterDomainStep from 'components/domains/register-domain-step';
+import CartData from 'components/data/cart';
 import { getStepUrl } from 'signup/utils';
 import StepWrapper from 'signup/step-wrapper';
 import {
@@ -23,7 +24,6 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'lib/cart-values/cart-items';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -31,7 +31,6 @@ import {
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -123,10 +122,15 @@ class DomainsStep extends React.Component {
 
 		this.showTestCopy = false;
 
+		const isEligibleFlowForDomainTest = includes(
+			[ 'onboarding', 'onboarding-plan-first', 'onboarding-passwordless' ],
+			props.flowName
+		);
+
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
 		if (
 			false !== this.props.shouldShowDomainTestCopy &&
-			! props.isPlanStepFulfilled &&
+			isEligibleFlowForDomainTest &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
 			this.showTestCopy = true;
@@ -376,7 +380,7 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteGoals, signupDependencies } = this.props;
+		const { flowName, isDomainOnly, siteType, siteGoals, signupDependencies } = this.props;
 		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
 
 		// 'subdomain' flow coming from .blog landing pages
@@ -399,7 +403,8 @@ class DomainsStep extends React.Component {
 			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
 			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' )
+			'blog' === get( signupDependencies, 'siteType' ) ||
+			'blog' === siteType
 		) {
 			return true;
 		}
@@ -445,7 +450,9 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		return (
+		const shouldHideFreeDomainExplainer = 'onboarding-plan-first' === this.props.flowName;
+
+		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
 				path={ this.props.path }
@@ -476,8 +483,15 @@ class DomainsStep extends React.Component {
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
+				shouldHideFreeDomainExplainer={ shouldHideFreeDomainExplainer }
 			/>
 		);
+
+		if ( 'launch-site' === this.props.flowName ) {
+			return <CartData>{ registerDomainStep }</CartData>;
+		}
+
+		return registerDomainStep;
 	};
 
 	mappingForm = () => {
@@ -645,6 +659,10 @@ class DomainsStep extends React.Component {
 		const fallbackSubHeaderText = this.getSubHeaderText();
 		const showSkip = isDomainStepSkippable( flowName );
 
+		let hideBack;
+		if ( 'onboarding-passwordless' === flowName && ! this.props.stepSectionName ) {
+			hideBack = true;
+		}
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -662,9 +680,10 @@ class DomainsStep extends React.Component {
 					</div>
 				}
 				showSiteMockups={ this.props.showSiteMockups }
-				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
+				hideBack={ hideBack }
 				isTopButtons={ showSkip }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
@@ -713,10 +732,6 @@ export default connect(
 
 		return {
 			designType: getDesignType( state ),
-			// no user = DOMAINS_WITH_PLANS_ONLY
-			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-				: true,
 			productsList,
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
@@ -724,7 +739,6 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
-			isPlanStepFulfilled: get( ownProps.signupDependencies, 'cartItem', false ),
 			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		};
 	},

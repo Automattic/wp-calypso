@@ -59,7 +59,7 @@
 			text-align: right;
 			padding: 0 8px;
 			white-space: nowrap;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 
 			&:first-child {
 				padding: 0 8px 0 16px;
@@ -120,7 +120,7 @@
 				);
 			}
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				&::after {
 					display: none;
 				}
@@ -166,7 +166,7 @@
 
 .table-heading,
 .table-item {
-	font-size: 14px;
+	font-size: $font-body-small;
 	padding: 16px;
 	vertical-align: middle;
 

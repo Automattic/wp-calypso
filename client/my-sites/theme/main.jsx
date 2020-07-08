@@ -23,7 +23,7 @@ import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
 import ThemePreview from 'my-sites/themes/theme-preview';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { Button, Card } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -299,7 +299,7 @@ class ThemeSheet extends React.Component {
 				{ this.getValidSections().map( ( section ) => (
 					<NavItem
 						key={ section }
-						path={ `/theme/${ id }${ section ? '/' + section : ''}${ sitePart }` }
+						path={ `/theme/${ id }${ section ? '/' + section : '' }${ sitePart }` }
 						selected={ section === currentSection }
 					>
 						{ filterStrings[ section ] }
@@ -617,12 +617,12 @@ class ThemeSheet extends React.Component {
 			previousRoute,
 		} = this.props;
 
-		const analyticsPath = `/theme/${ id }${ section ? '/' + section : ''}${
+		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
 		}`;
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''
-		}${ siteId ? ' > Site' : ''}`;
+		}${ siteId ? ' > Site' : '' }`;
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
@@ -661,7 +661,7 @@ class ThemeSheet extends React.Component {
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		if ( hasUpsellBanner ) {
 			pageUpsellBanner = (
-				<Banner
+				<UpsellNudge
 					plan={ PLAN_PREMIUM }
 					className="theme__page-upsell-banner"
 					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
@@ -673,6 +673,7 @@ class ThemeSheet extends React.Component {
 					event="themes_plan_particular_free_with_plan"
 					forceHref={ true }
 					href={ plansUrl }
+					showIcon={ true }
 				/>
 			);
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {

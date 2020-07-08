@@ -10,7 +10,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -53,6 +52,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 import TextControl from 'extensions/woocommerce/components/text-control';
 import { sendEmailLogin } from 'state/auth/actions';
 import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -290,7 +290,7 @@ export class LoginForm extends Component {
 		this.loginUser();
 	};
 
-	renderWooCommerce() {
+	renderWooCommerce( showSocialLogin = true ) {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
 
@@ -392,18 +392,18 @@ export class LoginForm extends Component {
 							</Button>
 						</div>
 
-						{ config.isEnabled( 'signup/social' ) && (
+						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
 							<div className="login__form-social">
 								<div className="login__form-social-divider">
 									<span>{ this.props.translate( 'or' ) }</span>
 								</div>
 								<SocialLoginForm
-									onSuccess={ this.onWooCommerceSocialSuccess }
-									socialService={ this.props.socialService }
-									socialServiceResponse={ this.props.socialServiceResponse }
 									linkingSocialService={
 										this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 									}
+									onSuccess={ this.onWooCommerceSocialSuccess }
+									socialService={ this.props.socialService }
+									socialServiceResponse={ this.props.socialServiceResponse }
 									uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 								/>
 							</div>
@@ -418,12 +418,14 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
 		const {
+			accountType,
 			oauth2Client,
 			redirectTo,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			isGutenboarding,
+			isJetpackWooDnaFlow,
 			wccomFrom,
 			currentRoute,
 			currentQuery,
@@ -465,12 +467,12 @@ export class LoginForm extends Component {
 
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
 			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
-			const oauth2Params = {
+			const oauth2Params = new globalThis.URLSearchParams( {
 				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo,
-			};
+				oauth2_redirect: redirectTo || '',
+			} );
 
-			signupUrl = `/start/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+			signupUrl = `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
 		}
 
 		if ( isGutenboarding ) {
@@ -479,6 +481,10 @@ export class LoginForm extends Component {
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
+		}
+
+		if ( isJetpackWooDnaFlow ) {
+			return this.renderWooCommerce( !! accountType ); // Only show the social buttons after the user entered an email.
 		}
 
 		if (
@@ -640,12 +646,12 @@ export class LoginForm extends Component {
 					<Fragment>
 						<Divider>{ this.props.translate( 'or' ) }</Divider>
 						<SocialLoginForm
-							onSuccess={ this.props.onSuccess }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 							}
+							onSuccess={ this.props.onSuccess }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						/>
 					</Fragment>
@@ -656,7 +662,7 @@ export class LoginForm extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, props ) => {
 		const accountType = getAuthAccountTypeSelector( state );
 
 		return {
@@ -668,12 +674,14 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
 			userEmail:
+				props.userEmail ||
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),

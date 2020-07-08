@@ -57,7 +57,8 @@ export default function RockOnButton() {
 
 ### General guidelines
 
-- Use clear and accurate labels. Use sentence-style capitalization.
+- Use clear and accurate labels.
+- Use sentence-style capitalization.
 - Lead with strong, concise, and actionable verbs.
 - When the customer is confirming an action, use specific labels, such as **Save** or **Trash**, instead of using **OK** and **Cancel**.
 - Prioritize the most important actions. Too many calls to action can cause confusion and make customers unsure of what to do next.

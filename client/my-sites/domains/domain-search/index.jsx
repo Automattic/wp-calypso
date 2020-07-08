@@ -19,8 +19,9 @@ import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
 import { addItem, removeItem } from 'lib/cart/actions';
-import { isGSuiteRestricted, canDomainAddGSuite } from 'lib/gsuite';
+import { canDomainAddGSuite } from 'lib/gsuite';
 import {
+	hasPlan,
 	hasDomainInCart,
 	domainMapping,
 	domainTransfer,
@@ -37,6 +38,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import NewDomainsRedirectionNoticeUpsell from 'my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 
 /**
  * Style dependencies
@@ -48,6 +50,7 @@ class DomainSearch extends Component {
 		basePath: PropTypes.string.isRequired,
 		context: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		hasPlanInCart: PropTypes.bool,
 		isSiteUpgradeable: PropTypes.bool,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
@@ -122,7 +125,7 @@ class DomainSearch extends Component {
 
 		addItem( registration );
 
-		if ( ! isGSuiteRestricted() && canDomainAddGSuite( domain ) ) {
+		if ( canDomainAddGSuite( domain ) ) {
 			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
 		} else {
 			page( '/checkout/' + this.props.selectedSiteSlug );
@@ -137,6 +140,18 @@ class DomainSearch extends Component {
 				productSlug: suggestion.product_slug,
 			} )
 		);
+	}
+
+	getInitialSuggestion() {
+		const { context, selectedSite } = this.props;
+		if ( context.query.suggestion ) {
+			return context.query.suggestion;
+		}
+
+		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
+		const [ , strippedHostname ] =
+			selectedSite.domain.match( wpcomSubdomainWithRandomNumberSuffix ) || [];
+		return strippedHostname ?? selectedSite.domain.split( '.' )[ 0 ];
 	}
 
 	render() {
@@ -170,8 +185,6 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
-			const suggestion =
-				this.props.context.query.suggestion ?? selectedSite.domain.split( '.' )[ 0 ];
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -181,8 +194,9 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
+							{ ! this.props.hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
 							<RegisterDomainStep
-								suggestion={ suggestion }
+								suggestion={ this.getInitialSuggestion() }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
@@ -213,7 +227,7 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -224,6 +238,7 @@ export default connect(
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
 			productsList: getProductsList( state ),
+			hasPlanInCart: hasPlan( ownProps.cart ),
 		};
 	},
 	{

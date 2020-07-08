@@ -1,23 +1,19 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { dismissNudge } from 'blocks/gsuite-stats-nudge/actions';
 import { GOOGLE_APPS_LEARNING_CENTER } from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
+import { useSelector } from 'react-redux';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 
-const user = userFactory();
-
-const GoogleAppsDetails = ( props ) => {
-	props.dismissNudge();
+const GoogleAppsDetails = () => {
+	const email = useSelector( getCurrentUserEmail );
 
 	return (
 		<PurchaseDetail
@@ -40,7 +36,7 @@ const GoogleAppsDetails = ( props ) => {
 						),
 					},
 					args: {
-						email: user.get().email,
+						email,
 					},
 				}
 			) }
@@ -50,6 +46,4 @@ const GoogleAppsDetails = ( props ) => {
 	);
 };
 
-export default connect( null, {
-	dismissNudge,
-} )( GoogleAppsDetails );
+export default GoogleAppsDetails;

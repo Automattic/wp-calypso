@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React from 'react';
 import page from 'page';
 import { includes } from 'lodash';
@@ -16,11 +17,12 @@ import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
 import { domainManagementList } from 'my-sites/domains/paths';
 import { registrar as registrarNames, type as domainTypes } from 'lib/domains/constants';
-import SiteRedirect from './site-redirect';
+import SiteRedirectType from './domain-types/site-redirect-type';
 import WpcomDomainType from './domain-types/wpcom-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
 import MappedDomainType from './domain-types/mapped-domain-type';
 import TransferInDomainType from './domain-types/transfer-in-domain-type';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -63,7 +65,7 @@ class Edit extends React.Component {
 				return RegisteredDomainType;
 
 			case domainTypes.SITE_REDIRECT:
-				return SiteRedirect;
+				return SiteRedirectType;
 
 			case domainTypes.TRANSFER:
 				return TransferInDomainType;
@@ -93,8 +95,12 @@ class Edit extends React.Component {
 	};
 
 	goToDomainManagement = () => {
-		page( domainManagementList( this.props.selectedSite.slug ) );
+		page( domainManagementList( this.props.selectedSite.slug, this.props.currentRoute ) );
 	};
 }
 
-export default localize( Edit );
+export default connect( ( state ) => {
+	return {
+		currentRoute: getCurrentRoute( state ),
+	};
+} )( localize( Edit ) );

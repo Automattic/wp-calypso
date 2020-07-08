@@ -13,7 +13,6 @@ import { Card } from '@automattic/components';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
 import VisitSite from 'blocks/visit-site';
-
 /**
  * Style dependencies
  */

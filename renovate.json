@@ -2,11 +2,6 @@
 	"extends": [ "config:base", "default:pinDigestsDisabled" ],
 	"packageRules": [
 		{
-			"paths": [ "packages/**" ],
-			"packagePatterns": [ "*" ],
-			"rangeStrategy": "replace"
-		},
-		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
 			"prPriority": 2,
@@ -56,8 +51,8 @@
 			"groupName": "Newspack Blog Posts Block Update"
 		}
 	],
-	"postUpdateOptions": [ "yarnDedupeHighest" ],
 	"statusCheckVerify": true,
+	"rangeStrategy": "bump",
 	"ignoreDeps": [ "jquery" ],
 	"labels": [ "Framework", "[Type] Task" ],
 	"lockFileMaintenance": {

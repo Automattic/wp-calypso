@@ -4,18 +4,18 @@
 
 	& .button.domain-suggestion__action.is-borderless {
 	  flex: 1 0 auto;
-	  font-size: 14px;
+	  font-size: $font-body-small;
 	  text-align: left;
 	  width: 100%;
 
 	  .is-section-signup & {
-		  @include breakpoint( '>480px' ) {
+		  @include breakpoint-deprecated( '>480px' ) {
 		  	width: auto;
 		  }
 		}
 
 		.is-section-domains & {
-			@include breakpoint( '>800px' ) {
+			@include breakpoint-deprecated( '>800px' ) {
 		  	width: auto;
 		  }
 		}
@@ -25,20 +25,20 @@
 .domain-transfer-suggestion__domain-description {
 	padding-right: 1em;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 75%;
 	}
 
 	h3 {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 
 	> p {
 		color: var( --color-neutral-70 );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 0;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			margin-bottom: 8px;
 		}
 	}

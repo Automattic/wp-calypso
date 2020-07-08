@@ -37,7 +37,7 @@ export const menuItems = [
 		item: (
 			<GridiconButton
 				icon={ <Gridicon icon="image" /> }
-				label={ i18n.translate( 'Media' ) }
+				label={ i18n.translate( 'Media library' ) }
 				e2e="media"
 			/>
 		),
@@ -52,7 +52,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			item: (
 				<GridiconButton
 					icon={ <Gridicon icon="shutter" /> }
-					label={ i18n.translate( 'Google Photos library' ) }
+					label={ i18n.translate( 'Google Photos' ) }
 					e2e="google-media"
 				/>
 			),
@@ -66,7 +66,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			item: (
 				<GridiconButton
 					icon={ <Gridicon icon="image-multiple" /> }
-					label={ i18n.translate( 'Free photo library' ) }
+					label={ i18n.translate( 'Pexels free photos' ) }
 					e2e="stock-media-pexels"
 				/>
 			),
@@ -93,7 +93,11 @@ menuItems.push( {
 	item: (
 		<GridiconButton
 			icon={ <Gridicon icon="money" /> }
-			label={ i18n.translate( 'Payment button' ) }
+			label={
+				config.isEnabled( 'earn/rename-payment-blocks' )
+					? i18n.translate( 'Pay with PayPal' )
+					: i18n.translate( 'Payment button' )
+			}
 			e2e="payment-button"
 		/>
 	),

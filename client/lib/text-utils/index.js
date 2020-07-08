@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-
 import { reduce } from 'lodash';
 
-export { diffWords } from 'diff';
+export { diffWords } from 'diff/lib/diff/word';
 
 export function countWords( content ) {
 	// Adapted from TinyMCE wordcount plugin:
@@ -21,7 +20,7 @@ export function countWords( content ) {
 		content = content.replace( /&.+?;/g, ' ' ); // turn all other entities into spaces
 
 		// remove numbers and punctuation
-		content = content.replace( /[0-9.(),;:!?%#$\x27\x22_+=\\\/\-]*/g, '' );
+		content = content.replace( /[0-9.(),;:!?%#$\x27\x22_+=\\/-]*/g, '' );
 
 		const words = content.match( /[\w\u2019\x27\-\u00C0-\u1FFF]+/g );
 		if ( words ) {

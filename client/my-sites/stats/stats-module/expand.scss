@@ -2,7 +2,7 @@
 	line-height: 40px;
 	display: block;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		line-height: 48px;
 	}
 
@@ -15,12 +15,12 @@
 		@extend %mobile-link-element;
 		border-top: 1px solid var( --color-border-subtle );
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding: 0 24px;
 		position: relative;
 
 		// Hover state
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			&:hover {
 				background: var( --color-neutral-0 );
 				border-top-color: var( --color-border-inverted );
@@ -33,9 +33,9 @@
 			border-top-color: var( --color-border-inverted );
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 		}
 	}

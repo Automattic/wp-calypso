@@ -36,7 +36,7 @@
 	padding: 8px 12px;
 	border: solid 1px var( --color-neutral-10 );
 	border-right: none;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 18px;
 	color: var( --color-text-subtle );
 	text-align: center;
@@ -70,7 +70,7 @@
 
 .segmented-control.is-compact {
 	.segmented-control__link {
-		font-size: 13px;
+		font-size: $font-body-small;
 		padding: 4px 8px;
 	}
 }

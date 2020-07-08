@@ -10,10 +10,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import ConnectedAppItem from 'me/connected-application-item';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import getConnectedApplications from 'state/selectors/get-connected-applications';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -86,11 +88,17 @@ class ConnectedApplications extends PureComponent {
 	}
 
 	renderConnectedAppsList() {
-		const { path } = this.props;
+		const { path, translate } = this.props;
+		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
 			<Fragment>
-				<SecuritySectionNav path={ path } />
+				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
+				{ useCheckupMenu && (
+					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
+						{ translate( 'Connected Applications' ) }
+					</HeaderCake>
+				) }
 
 				{ this.renderConnectedApps() }
 			</Fragment>
@@ -101,7 +109,7 @@ class ConnectedApplications extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<Main className="connected-applications">
+			<Main className="security connected-applications">
 				<QueryConnectedApplications />
 
 				<PageViewTracker

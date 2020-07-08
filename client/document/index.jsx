@@ -56,6 +56,7 @@ class Document extends React.Component {
 			inlineScriptNonce,
 			isSupportSession,
 			isWCComConnect,
+			isWooDna,
 			addEvergreenCheck,
 			requestFrom,
 			useTranslationChunks,
@@ -69,6 +70,7 @@ class Document extends React.Component {
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
+			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -85,6 +87,8 @@ class Document extends React.Component {
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 			'jetpack-connect' === sectionName &&
 			'woocommerce-onboarding' === requestFrom;
+
+		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
 		const theme = config( 'theme' );
 
@@ -119,6 +123,7 @@ class Document extends React.Component {
 						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
+						'is-white-signup': sectionName === 'signup',
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
@@ -126,6 +131,7 @@ class Document extends React.Component {
 						<div
 							id="wpcom"
 							className="wpcom-site"
+							data-calypso-ssr="true"
 							dangerouslySetInnerHTML={ {
 								__html: renderedLayout,
 							} }
@@ -137,6 +143,7 @@ class Document extends React.Component {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
+									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
@@ -218,9 +225,17 @@ class Document extends React.Component {
 							} }
 						/>
 					) }
+
+					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
+
+					{ ( entrypoint?.language?.translations || [] ).map( ( translationChunk ) => (
+						<script key={ translationChunk } src={ translationChunk } />
+					) ) }
+
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
+
 					{ chunkFiles.js.map( ( chunk ) => (
 						<script key={ chunk } src={ chunk } />
 					) ) }

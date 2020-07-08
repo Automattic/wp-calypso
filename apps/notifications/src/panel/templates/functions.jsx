@@ -67,7 +67,7 @@ const toBlocks = ( text ) =>
 			// Not! This is fun. This: again; isn't emphasized.
 			// May detect false positive if colon found in first sentence.
 			const defined = /^[\w\s-_]+:/.test( raw )
-				? `<strong>${ raw.split( ':' )[ 0 ]}:</strong>${ raw.replace( /^[^:]+:/, '' ) }`
+				? `<strong>${ raw.split( ':' )[ 0 ] }:</strong>${ raw.replace( /^[^:]+:/, '' ) }`
 				: raw;
 
 			// inline `code` snippets
@@ -130,7 +130,7 @@ const toBlocks = ( text ) =>
 
 export function internalP( html ) {
 	return html.split( '\n\n' ).map( ( chunk, i ) => {
-		const key = `block-text-${ i }-${ chunk.length}-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
+		const key = `block-text-${ i }-${ chunk.length }-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
 			-3
 		) }`;
 		const blocks = toBlocks( chunk );
@@ -151,7 +151,7 @@ export function p( html, className ) {
 		className = 'wpnc__paragraph';
 	}
 	return html.split( '\n\n' ).map( ( chunk, i ) => {
-		const key = `block-text-${ i }-${ chunk.length}-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
+		const key = `block-text-${ i }-${ chunk.length }-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
 			-3
 		) }`;
 		const blocks = toBlocks( chunk );

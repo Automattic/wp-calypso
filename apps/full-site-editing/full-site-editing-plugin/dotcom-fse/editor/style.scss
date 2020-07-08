@@ -1,3 +1,7 @@
+.edit-post-header-toolbar > .edit-post-header-toolbar__inserter-toggle {
+	display: none;
+}
+
 .post-type-wp_template_part {
 	.editor-post-title,
 	.editor-post-trash {
@@ -43,7 +47,8 @@
 		padding-left: 0;
 		padding-right: 0;
 
-		.block-editor-block-list__block[data-align='full'] {
+		.block-editor-block-list__block[data-align='full'],
+		.wp-block[data-align='full'] { // Gutenberg >= 8.0.0
 			margin-left: 0;
 			margin-right: 0;
 		}

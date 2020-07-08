@@ -197,6 +197,12 @@ class DomainSearchResults extends React.Component {
 						</Notice>
 					);
 				}
+			} else {
+				availabilityElement = (
+					<Notice status="is-warning" showDismiss={ false }>
+						{ domainUnavailableMessage }
+					</Notice>
+				);
 			}
 		}
 
@@ -257,6 +263,7 @@ class DomainSearchResults extends React.Component {
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+					shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
 				/>
 			);
 
@@ -282,6 +289,7 @@ class DomainSearchResults extends React.Component {
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
 					/>
 				);
 			} );

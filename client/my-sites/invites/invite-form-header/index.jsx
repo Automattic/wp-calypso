@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -19,7 +18,7 @@ class InviteFormHeader extends React.Component {
 	static displayName = 'InviteFormHeader';
 
 	clickedSiteLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_form_header_site_link_click' );
+		recordTracksEvent( 'calypso_invite_accept_form_header_site_link_click' );
 	};
 
 	getSiteLink = () => {

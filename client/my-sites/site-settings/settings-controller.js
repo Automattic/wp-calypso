@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-
 import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
 import canCurrentUser from 'state/selectors/can-current-user';
 import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -32,7 +31,7 @@ export function siteSettings( context, next ) {
 	if ( 'undefined' !== typeof section ) {
 		analyticsPageTitle += ' > ' + titlecase( section );
 	}
-	analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
+	recordPageView( basePath + '/:site', analyticsPageTitle );
 
 	next();
 }

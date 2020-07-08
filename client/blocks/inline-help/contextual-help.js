@@ -2,18 +2,19 @@
  * External dependencies
  */
 import { compact, first, get } from 'lodash';
-import { translate } from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 import { localizeUrl } from 'lib/i18n-utils';
+import { isEnabled } from 'config';
 
 /**
  * Module variables
  */
-const fallbackLinks = [
+const getFallbackLinks = () => [
 	{
 		link: localizeUrl(
 			'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/'
@@ -33,8 +34,8 @@ const fallbackLinks = [
 		),
 	},
 	{
-		link: localizeUrl( 'https://wordpress.com/support/all-about-domains/' ),
-		post_id: 41171,
+		link: localizeUrl( 'https://wordpress.com/support/domains/' ),
+		post_id: 1988,
 		title: translate( 'All About Domains' ),
 		description: translate(
 			'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
@@ -55,8 +56,9 @@ const fallbackLinks = [
 		description: translate( 'Limit your site’s visibility or make it completely private.' ),
 	},
 ];
+let fallbackLinks = getFallbackLinks();
 
-const contextLinksForSection = {
+const getContextLinksForSection = () => ( {
 	stats: [
 		{
 			link: localizeUrl( 'https://wordpress.com/support/stats/' ),
@@ -966,7 +968,7 @@ const contextLinksForSection = {
 	],
 	domains: [
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/add-email/' ),
+			link: localizeUrl( 'https://wordpress.com/support/add-email/' ),
 			post_id: 34087,
 			title: translate( 'Add Email to your Domain' ),
 			description: translate(
@@ -974,7 +976,7 @@ const contextLinksForSection = {
 			),
 		},
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/domains/custom-dns/' ),
+			link: localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ),
 			post_id: 6595,
 			title: translate( 'Manage Custom DNS' ),
 			description: translate(
@@ -983,7 +985,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: localizeUrl(
-				'https://en.support.wordpress.com/move-domain/transfer-domain-registration/'
+				'https://wordpress.com/support/move-domain/transfer-domain-registration/'
 			),
 			post_id: 41298,
 			title: translate( 'Transfer a Domain to Another Registrar' ),
@@ -992,15 +994,15 @@ const contextLinksForSection = {
 			),
 		},
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/domain-mapping-vs-domain-transfer/' ),
-			post_id: 41298,
+			link: localizeUrl( 'https://wordpress.com/support/domain-mapping-vs-domain-transfer/' ),
+			post_id: 157655,
 			title: translate( 'Connect an Existing Domain' ),
 			description: translate(
 				'You can connect an existing domain you own that’s registered elsewhere by either mapping or transferring. Domain mapping lets you connect a domain while keeping it registered at the current registrar (where you purchased the domain from). Domain transferring moves the domain to WordPress.com so we become the new registrar.'
 			),
 		},
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/domains/' ),
+			link: localizeUrl( 'https://wordpress.com/support/domains/' ),
 			post_id: 1988,
 			title: translate( 'All about domains' ),
 			description: translate(
@@ -1008,7 +1010,8 @@ const contextLinksForSection = {
 			),
 		},
 	],
-};
+} );
+let contextLinksForSection = getContextLinksForSection();
 
 /*
 source: https://www.youtube.com/playlist?list=PLQFhxUeNFfdKx9gO0a2mp9h8pKjb2y9la
@@ -1021,7 +1024,7 @@ document.querySelectorAll('.yt-simple-endpoint.ytd-playlist-video-renderer').for
 console.log( data );
 ```
 */
-const videosForSection = {
+const getVideosForSection = () => ( {
 	sharing: [
 		{
 			type: RESULT_VIDEO,
@@ -1205,7 +1208,9 @@ const videosForSection = {
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/V8UToJoSf4Q',
-			title: translate( 'Add a Simple Payment Button' ),
+			title: isEnabled( 'earn/rename-payment-blocks' )
+				? translate( 'Add a Pay with PayPal button' )
+				: translate( 'Add a Simple Payment Button' ),
 			description: translate(
 				'Find out how to add a payment button to your WordPress.com website.'
 			),
@@ -1395,9 +1400,10 @@ const videosForSection = {
 			description: translate( 'Find out how to change your WordPress.com theme.' ),
 		},
 	],
-};
+} );
+let videosForSection = getVideosForSection();
 
-const toursForSection = {
+const getToursForSection = () => ( {
 	'post-editor': [
 		{
 			type: RESULT_TOUR,
@@ -1420,7 +1426,16 @@ const toursForSection = {
 			),
 		},
 	],
-};
+} );
+let toursForSection = getToursForSection();
+
+// Update links when i18n changes.
+i18n.on( 'change', () => {
+	fallbackLinks = getFallbackLinks();
+	contextLinksForSection = getContextLinksForSection();
+	videosForSection = getVideosForSection();
+	toursForSection = getToursForSection();
+} );
 
 export function getContextResults( section ) {
 	// Posts and Pages have a common help section

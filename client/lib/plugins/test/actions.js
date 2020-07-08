@@ -15,10 +15,9 @@ import siteData from './fixtures/site';
 import mockedWpcom from './mocks/wpcom';
 import actions from 'lib/plugins/actions';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/wp', () => require( './mocks/wpcom' ) );
-jest.mock( 'lib/analytics', () => ( {
-	tracks: { recordEvent: () => {} },
+jest.mock( 'lib/analytics/tracks', () => ( {
+	recordTracksEvent: () => {},
 } ) );
 
 describe( 'WPcom Data Actions', () => {

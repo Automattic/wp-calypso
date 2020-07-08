@@ -55,7 +55,7 @@ describe( 'SftpCard', () => {
 		} );
 	} );
 
-	describe( 'Create SFTP Credentials', () => {
+	describe( 'Create SFTP credentials', () => {
 		it( 'should display create SFTP credentials if username not set', () => {
 			const wrapper = shallow( <SftpCard translate={ translate } /> );
 

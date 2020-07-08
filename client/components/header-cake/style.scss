@@ -8,7 +8,7 @@
 .header-cake.card {
 	display: flex;
 	align-items: center;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 18px;
 	padding-top: 11px;
 	padding-bottom: 11px;
@@ -17,7 +17,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: 10px;
 	}
 }

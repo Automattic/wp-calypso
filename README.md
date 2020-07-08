@@ -17,7 +17,7 @@ You can try out the user-side of Calypso on [WordPress.com](https://wordpress.co
 1.	Make sure you have [`git`](https://git-scm.com/), [`node`](https://nodejs.org/), and [`yarn`](https://classic.yarnpkg.com/en/docs/install) installed.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
-4.	Execute `yarn start` from the root directory of the repository.
+4.	Execute `yarn` and then `yarn start` from the root directory of the repository.
 5.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
 
 Need more detailed installation instructions? [We have them](./docs/install.md).

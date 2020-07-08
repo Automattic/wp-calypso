@@ -9,7 +9,7 @@ _Please do not ship anything that does not have Google Analytics tracking in pla
 
 ## Usage
 
-In most situations, it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
+In most situations, it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/HEAD/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
 
 ### `recordGoogleEvent( category, action [, label, value ] )`
 

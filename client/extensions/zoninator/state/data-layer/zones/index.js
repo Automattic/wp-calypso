@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
@@ -21,6 +20,8 @@ import {
 	ZONINATOR_REQUEST_ZONES,
 	ZONINATOR_SAVE_ZONE,
 } from 'zoninator/state/action-types';
+
+import 'state/form/init';
 
 const settingsPath = '/extensions/zoninator';
 

@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
@@ -25,7 +25,7 @@ import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
 import updatesImage from 'assets/images/illustrations/updates.svg';
 
 function trackOnboardingButtonClick() {
-	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
+	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
 const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {

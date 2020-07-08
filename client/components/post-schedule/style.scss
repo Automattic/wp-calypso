@@ -14,8 +14,8 @@
 	position: absolute;
 	z-index: z-index( '.popover', '.post-schedule__header' );
 	top: 11px;
-	font-size: 16px;
-	font-weight: 500;
+	font-size: $font-body;
+	font-weight: 600;
 	width: 47%;
 	margin: 0 27%;
 
@@ -88,7 +88,7 @@
 .post-schedule__clock {
 	text-align: center;
 	margin: 15px auto 10px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 hr.post-schedule__hr {
@@ -104,7 +104,7 @@ input[type='text'].post-schedule__clock-time {
 	width: 42px;
 	text-align: center;
 	padding: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .post-schedule__clock-divisor {
@@ -141,7 +141,7 @@ input[type='text'].post-schedule__clock-time {
 	margin-left: 0;
 
 	.popover__inner {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		max-width: 250px;
 	}
 }

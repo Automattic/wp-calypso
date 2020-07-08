@@ -11,7 +11,6 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import MarketingToolsGoogleAdwordsFeature from './google-adwords';
 import MarketingToolsFeature from './feature';
 import MarketingToolsGoogleMyBusinessFeature from './google-my-business-feature';
 import MarketingToolsHeader from './header';
@@ -75,7 +74,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					imagePath="/calypso/images/marketing/looka-logo.svg"
 				>
 					<Button
-						compact
 						onClick={ handleCreateALogoClick }
 						href="https://wp.me/logo-maker"
 						target="_blank"
@@ -91,14 +89,10 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					) }
 					imagePath="/calypso/images/marketing/social-media-logos.svg"
 				>
-					<Button compact onClick={ handleStartSharingClick }>
-						{ translate( 'Start sharing' ) }
-					</Button>
+					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsGoogleMyBusinessFeature />
-
-				<MarketingToolsGoogleAdwordsFeature />
 
 				<MarketingToolsFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
@@ -108,7 +102,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					imagePath="/calypso/images/marketing/upwork-logo.png"
 				>
 					<Button
-						compact
 						onClick={ handleFindYourExpertClick }
 						href={ '/experts/upwork?source=marketingtools' }
 						target="_blank"

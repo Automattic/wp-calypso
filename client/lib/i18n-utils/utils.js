@@ -105,7 +105,7 @@ export function getLanguageSlugs() {
  * @returns {string} Router param specifier that looks like `:lang(cs|de|fr|pl)`
  */
 export function getLanguageRouteParam( name = 'lang', optional = true ) {
-	return `:${ name }(${ getLanguageSlugs().join( '|' ) })${ optional ? '?' : ''}`;
+	return `:${ name }(${ getLanguageSlugs().join( '|' ) })${ optional ? '?' : '' }`;
 }
 
 /**
@@ -176,29 +176,50 @@ const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, local
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
 		// Avoid changing the hostname when the locale is set via the path.
 		if ( urlParts.pathname.substr( 0, localeSlug.length + 2 ) !== '/' + localeSlug + '/' ) {
-			urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug}.${ hostname }`;
+			urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
 		}
 	}
 	return urlParts;
 };
 
-const setLocalizedWpComPath = ( prefix, validLocales = [] ) => ( urlParts, localeSlug ) => {
+const setLocalizedWpComPath = ( prefix, validLocales = [], limitPathMatch = null ) => (
+	urlParts,
+	localeSlug
+) => {
 	urlParts.host = 'wordpress.com';
+	if (
+		typeof limitPathMatch === 'object' &&
+		limitPathMatch instanceof RegExp &&
+		! limitPathMatch.test( urlParts.pathname )
+	) {
+		validLocales = []; // only rewrite to English.
+	}
 	urlParts.pathname = prefix + urlParts.pathname;
 
 	if ( typeof validLocales === 'string' ) {
 		validLocales = config( validLocales );
 	}
+
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
 		urlParts.pathname = ( localesToSubdomains[ localeSlug ] || localeSlug ) + urlParts.pathname;
 	}
 	return urlParts;
 };
 
-const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug ) => {
+const prefixLocalizedUrlPath = ( validLocales = [], limitPathMatch = null ) => (
+	urlParts,
+	localeSlug
+) => {
 	if ( typeof validLocales === 'string' ) {
 		validLocales = config( validLocales );
 	}
+
+	if ( typeof limitPathMatch === 'object' && limitPathMatch instanceof RegExp ) {
+		if ( ! limitPathMatch.test( urlParts.pathname ) ) {
+			return urlParts; // No rewriting if not matches the path.
+		}
+	}
+
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
 		urlParts.pathname = ( localesToSubdomains[ localeSlug ] || localeSlug ) + urlParts.pathname;
 	}
@@ -207,11 +228,11 @@ const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug )
 
 const urlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( 'support_site_locales' ),
-	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog ),
+	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
 	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', 'jetpack_com_locales' ),
-	'wordpress.com/support': setLocalizedWpComPath( '/support', 'support_site_locales' ),
-	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog ),
+	'en.support.wordpress.com': setLocalizedWpComPath( '/support', 'support_site_locales' ),
+	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
 	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', 'forum_locales' ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),

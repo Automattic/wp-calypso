@@ -1,70 +1,65 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
 import classnames from 'classnames';
-import { useSelect } from '@wordpress/data';
-import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@automattic/react-i18n';
+import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath } from '../../path';
-import Link from '../../components/link';
-import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
-import Arrow from './arrow';
+import { useTrackStep } from '../../hooks/use-track-step';
+import useStepNavigation from '../../hooks/use-step-navigation';
+import { prefetchDesignThumbs } from '../../available-designs';
+import { recordSiteTitleSkip } from '../../lib/analytics';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { NextButton, SkipButton } from 'landing/gutenboarding/components/action-buttons';
 
-const AcquireIntent: FunctionComponent = () => {
-	const { __ } = useI18n();
-	const { siteVertical, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const makePath = usePath();
+const AcquireIntent: React.FunctionComponent = () => {
+	const { getSelectedSiteTitle } = useSelect( ( select ) => select( STORE_KEY ) );
+	const { setSiteTitle, setDomainSearch } = useDispatch( STORE_KEY );
 
-	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
-	const isMobile = useViewportMatch( 'small', '<' );
+	const { goNext } = useStepNavigation();
 
-	const displaySiteTitle = isSiteTitleActive || ! isMobile;
-	const displayVerticalSelect = ! isSiteTitleActive || ! isMobile;
+	useTrackStep( 'IntentGathering', () => ( {
+		has_selected_site_title: !! getSelectedSiteTitle(),
+	} ) );
+
+	const hasSiteTitle = getSelectedSiteTitle()?.trim().length > 1; // for domain results, we need at least 2 characters
+
+	React.useEffect( prefetchDesignThumbs, [] );
+
+	const handleContinue = () => {
+		hasSiteTitle && setDomainSearch( getSelectedSiteTitle() );
+		goNext();
+	};
+
+	const handleSkip = () => {
+		setSiteTitle( '' ); // reset site title if there is no valid entry
+		recordSiteTitleSkip();
+		handleContinue();
+	};
 
 	return (
 		<div
 			className={ classnames( 'gutenboarding-page acquire-intent', {
-				'acquire-intent--mobile-vertical-step': ! isSiteTitleActive && isMobile,
+				'acquire-intent--with-skip': ! hasSiteTitle,
 			} ) }
 		>
-			{ displayVerticalSelect && <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } /> }
-			{ /* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */ }
-			{ displaySiteTitle && (
-				<>
-					{ isMobile && (
-						<Arrow
-							className="acquire-intent__mobile-back-arrow"
-							onClick={ () => setIsSiteTitleActive( false ) }
-						/>
-					) }
-					<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } />
-					<div
-						className={ classnames( 'acquire-intent__footer', {
-							'acquire-intent__footer--hidden': ! siteVertical,
-						} ) }
-					>
-						<Link
-							className="acquire-intent__question-skip"
-							isPrimary
-							to={ siteVertical && makePath( Step.DesignSelection ) }
-						>
-							{ siteTitle ? __( 'Choose a design' ) : __( 'Donʼt know yet' ) }
-						</Link>
-					</div>
-				</>
-			) }
+			<SiteTitle onSubmit={ handleContinue } />
+			<div className="acquire-intent__footer">
+				{ hasSiteTitle ? (
+					<NextButton onClick={ handleContinue } />
+				) : (
+					<SkipButton onClick={ handleSkip } />
+				) }
+			</div>
 		</div>
 	);
 };

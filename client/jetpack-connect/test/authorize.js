@@ -146,7 +146,7 @@ describe( 'JetpackAuthorize', () => {
 
 		test( 'returns false with non-woo from', () => {
 			const props = { authQuery: { from: 'elsewhere' } };
-			expect( isWooRedirect( props ) ).toBe( false );
+			expect( isWooRedirect( props ) ).toBeFalsy();
 		} );
 	} );
 

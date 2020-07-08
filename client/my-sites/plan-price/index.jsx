@@ -28,7 +28,6 @@ export class PlanPrice extends Component {
 			className,
 			isInSignup,
 			isOnSale,
-			isEligibleForPlanStepTest,
 			taxText,
 			translate,
 		} = this.props;
@@ -53,10 +52,6 @@ export class PlanPrice extends Component {
 		const classes = classNames( 'plan-price', className, {
 			'is-original': original,
 			'is-discounted': discounted,
-		} );
-
-		const currencySymbolClasses = classNames( 'plan-price__currency-symbol', {
-			'plan-price__currency-symbol-plan-step-test': isEligibleForPlanStepTest,
 		} );
 
 		const renderPrice = ( priceObj ) => {
@@ -104,7 +99,7 @@ export class PlanPrice extends Component {
 
 		return (
 			<h4 className={ classes }>
-				<sup className={ currencySymbolClasses }>{ priceRange[ 0 ].price.symbol }</sup>
+				<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
 				{ ! higherPriceHtml && renderPriceHtml( priceRange[ 0 ] ) }
 				{ higherPriceHtml &&
 					translate( '{{smallerPrice/}}-{{higherPrice/}}', {
@@ -115,9 +110,6 @@ export class PlanPrice extends Component {
 					<sup className="plan-price__tax-amount">
 						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
 					</sup>
-				) }
-				{ isEligibleForPlanStepTest && (
-					<sub className="plan-price__timeframe-month"> per month</sub>
 				) }
 				{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
 			</h4>

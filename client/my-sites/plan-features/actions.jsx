@@ -33,7 +33,6 @@ const PlanFeaturesActions = ( {
 	isPopular,
 	isInSignup,
 	isLaunchPage,
-	isEligibleForPlanStepTest,
 	onUpgradeClick = noop,
 	planName,
 	planType,
@@ -86,13 +85,11 @@ const PlanFeaturesActions = ( {
 				} );
 			}
 		} else if ( isInSignup ) {
-			buttonText = isEligibleForPlanStepTest
-				? 'Get started'
-				: translate( 'Start with %(plan)s', {
-						args: {
-							plan: planName,
-						},
-				  } );
+			buttonText = translate( 'Start with %(plan)s', {
+				args: {
+					plan: planName,
+				},
+			} );
 		}
 
 		if (

@@ -34,12 +34,12 @@ describe( 'NpsSurvey', () => {
 		submitNpsSurveyWithNoScore: jest.fn(),
 		sendNpsSurveyFeedback: jest.fn(),
 		successNotice: jest.fn(),
-		recordTracksEvent: jest.fn(),
+		recordTracksEventAction: jest.fn(),
 		translate,
 	};
 
 	beforeEach( () => {
-		mockedProps.recordTracksEvent.mockReset();
+		mockedProps.recordTracksEventAction.mockReset();
 	} );
 
 	test( 'should track current page in the dialog', () => {
@@ -55,7 +55,7 @@ describe( 'NpsSurvey', () => {
 		// we don't track the first page.
 
 		expect( wrapper.state( 'currentForm' ) ).toBe( 'feedback' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect( mockedProps.recordTracksEventAction ).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'feedback',
@@ -65,7 +65,7 @@ describe( 'NpsSurvey', () => {
 		wrapper.find( '.nps-survey__finish-button' ).simulate( 'click' );
 
 		expect( wrapper.state( 'currentForm' ) ).toBe( 'promotion' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect( mockedProps.recordTracksEventAction ).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'promotion',
@@ -89,7 +89,7 @@ describe( 'NpsSurvey', () => {
 		// we don't track the first page.
 
 		expect( wrapper.state( 'currentForm' ) ).toBe( 'feedback' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect( mockedProps.recordTracksEventAction ).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'feedback',
@@ -99,7 +99,7 @@ describe( 'NpsSurvey', () => {
 		wrapper.find( '.nps-survey__finish-button' ).simulate( 'click' );
 
 		expect( wrapper.state( 'currentForm' ) ).toBe( 'promotion' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect( mockedProps.recordTracksEventAction ).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'promotion',
@@ -121,7 +121,7 @@ describe( 'NpsSurvey', () => {
 		expect( wrapper.find( 'a[data-type]' ) ).toHaveLength( 2 );
 
 		wrapper.find( 'a[data-type="booking"]' ).simulate( 'click' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect( mockedProps.recordTracksEventAction ).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_link_clicked',
 			{
 				url: 'https://example.com/me/concierge',
@@ -130,7 +130,7 @@ describe( 'NpsSurvey', () => {
 		);
 
 		wrapper.find( 'a[data-type="contact"]' ).simulate( 'click' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect( mockedProps.recordTracksEventAction ).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_link_clicked',
 			{
 				url: 'https://example.com/help/contact',
@@ -145,7 +145,7 @@ describe( 'NpsSurvey', () => {
 		expect( wrapper.find( 'a[data-type]' ) ).toHaveLength( 1 );
 
 		wrapper.find( 'a[data-type="contact"]' ).simulate( 'click' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect( mockedProps.recordTracksEventAction ).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_link_clicked',
 			{
 				url: 'https://example.com/help/contact',

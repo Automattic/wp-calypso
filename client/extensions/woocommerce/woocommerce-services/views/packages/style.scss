@@ -1,19 +1,19 @@
 .packages__add-package-weight {
 	margin-bottom: 8px;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		float: left;
 	}
 
 	&:nth-child( 1 ) {
 		width: 100%;
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 50%;
 		}
 	}
 
 	&:nth-child( 2 ) {
 		width: 100%;
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 50%;
 		}
 	}
@@ -25,7 +25,7 @@
 
 .packages__add-package-weight-group {
 	.form-setting-explanation {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			clear: both;
 		}
 	}
@@ -43,7 +43,7 @@
 		flex-grow: 1;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 610px;
 		height: 610px;
 	}
@@ -76,7 +76,7 @@
 		.form-checkbox {
 			margin-left: 16px;
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				margin-left: 24px;
 			}
 		}
@@ -144,7 +144,7 @@
 .packages__packages-header {
 	font-weight: 600;
 	padding: 12px 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 	border-top: 0;
 	background: var( --color-neutral-0 );
 }
@@ -154,7 +154,7 @@
 	text-align: left;
 	padding-left: 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding-left: 24px;
 	}
 
@@ -166,7 +166,7 @@
 
 .packages__packages-row-details-name {
 	margin-bottom: 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .packages__packages-row-actions {
@@ -174,7 +174,7 @@
 	text-align: right;
 	padding-right: 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding-right: 24px;
 	}
 }
@@ -204,7 +204,7 @@
 			align-items: center;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			padding-left: 24px;
 		}
 	}
@@ -221,16 +221,16 @@
 
 .packages__packages-row-dimensions {
 	width: 30%;
-	font-size: 14px;
-	
-	@include breakpoint( '<660px' ) {
-		font-size: 11px;
+	font-size: $font-body-small;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		font-size: $font-body-extra-small;
 	}
 }
 
 .packages__setting-explanation {
 	display: block;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 	font-weight: 400;
 	margin: 5px 0 0;

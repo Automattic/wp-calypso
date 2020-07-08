@@ -19,6 +19,7 @@ import {
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
+	CART_RELOAD,
 } from 'lib/cart/action-types';
 import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
@@ -53,7 +54,7 @@ import wp from 'lib/wp';
 import { getReduxStore } from 'lib/redux-bridge';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isUserLoggedIn } from 'state/current-user/selectors';
-import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
+import { extractStoredCardMetaValue } from 'state/payment/util';
 
 const wpcom = wp.undocumented();
 
@@ -129,6 +130,12 @@ function disable() {
 	_synchronizer = null;
 	_poller = null;
 	_cartKey = null;
+}
+
+function fetch() {
+	if ( _synchronizer ) {
+		_synchronizer.fetch();
+	}
 }
 
 CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
@@ -229,6 +236,10 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 
 		case CART_TAX_POSTAL_CODE_SET:
 			update( setTaxPostalCode( action.postalCode ) );
+			break;
+
+		case CART_RELOAD:
+			fetch();
 			break;
 	}
 } );

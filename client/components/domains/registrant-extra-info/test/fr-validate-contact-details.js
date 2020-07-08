@@ -25,7 +25,7 @@ describe( 'validateContactDetails', () => {
 		extra: {
 			fr: {
 				registrantType: 'individual',
-				sirenSiret: '123456789',
+				sirenSiret: '123456782',
 				registrantVatId: 'FRXX123456789',
 				trademarkNumber: '123456789',
 			},
@@ -175,6 +175,21 @@ describe( 'validateContactDetails', () => {
 					.to.have.property( 'extra' )
 					.with.property( 'fr' )
 					.with.property( 'sirenSiret' );
+			} );
+		} );
+
+		test( 'should reject values that fail Luhn check', () => {
+			const badSiretNumbers = [ '123456789', '12345678901234' ];
+
+			badSiretNumbers.forEach( ( sirenSiret ) => {
+				const testDetails = Object.assign( {}, contactDetails, { extra: { fr: { sirenSiret } } } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result, `expected to reject '${ sirenSiret }'` )
+					.to.have.property( 'extra' )
+					.with.property( 'fr' )
+					.with.property( 'sirenSiret' )
+					.to.deep.equal( [ 'checksum' ] );
 			} );
 		} );
 

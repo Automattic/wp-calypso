@@ -22,8 +22,8 @@ const SharingConnections = ( { translate } ) => (
 		<QueryKeyringConnections />
 		<QueryKeyringServices />
 		<QueryPublicizeConnections selectedSite />
-		<SharingServicesGroup type="publicize" title={ translate( 'Publicize Your Posts' ) } />
-		<SharingServicesGroup type="other" title={ translate( 'Manage Connections' ) } />
+		<SharingServicesGroup type="publicize" title={ translate( 'Publicize posts' ) } />
+		<SharingServicesGroup type="other" title={ translate( 'Manage connections' ) } />
 	</div>
 );
 

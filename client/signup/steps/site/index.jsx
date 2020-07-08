@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,7 +12,7 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import formState from 'lib/form-state';
 import { login } from 'lib/paths';
 import ValidationFieldset from 'signup/validation-fieldset';
@@ -116,7 +115,7 @@ class Site extends React.Component {
 					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
 						siteUrlsSearched.push( fields.site );
 
-						analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
+						recordTracksEvent( 'calypso_signup_site_url_validation_failed', {
 							error: error.error,
 							site_url: fields.site,
 						} );
@@ -159,7 +158,7 @@ class Site extends React.Component {
 					return;
 				}
 
-				analytics.tracks.recordEvent( 'calypso_signup_site_step_submit', {
+				recordTracksEvent( 'calypso_signup_site_step_submit', {
 					unique_site_urls_searched: siteUrlsSearched.length,
 					times_validation_failed: timesValidationFailed,
 				} );

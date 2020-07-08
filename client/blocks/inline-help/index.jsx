@@ -23,7 +23,8 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
-import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import isInlineHelpPopoverVisible from 'state/inline-help/selectors/is-inline-help-popover-visible';
+import isInlineHelpVisible from 'state/selectors/is-inline-help-visible';
 
 /**
  * Style dependencies
@@ -98,13 +99,13 @@ class InlineHelp extends Component {
 
 	showInlineHelp = () => {
 		debug( 'showing inline help.' );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_show', { location: 'inline-help-popover' } );
 		this.props.showInlineHelpPopover();
 	};
 
 	closeInlineHelp = () => {
 		debug( 'hiding inline help.' );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_close', { location: 'inline-help-popover' } );
 		this.props.hideInlineHelpPopover();
 	};
 
@@ -127,6 +128,14 @@ class InlineHelp extends Component {
 	closeDialog = () => this.setState( { showDialog: false } );
 
 	render() {
+		// If the Customer Home Support Search is present then
+		// we do not want to render the InlineLine Help FAB at all
+		// otherwise there will be x2 Support Search UIs present on
+		// the page.
+		// see https://github.com/Automattic/wp-calypso/issues/38860
+		if ( ! this.props.isInlineHelpVisible ) {
+			return null;
+		}
 		const { translate, isPopoverVisible } = this.props;
 		const { showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
@@ -179,6 +188,7 @@ const mapStateToProps = ( state ) => {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isInlineHelpVisible: isInlineHelpVisible( state ),
 	};
 };
 

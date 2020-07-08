@@ -6,13 +6,13 @@ import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
+import { Button } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import joinClasses from './join-classes';
 import Field from './field';
-import Button from './button';
 
 export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
@@ -47,6 +47,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 		>
 			<Field
 				id={ id }
+				inputClassName="coupon-code"
 				value={ couponFieldValue }
 				disabled={ disabled || isPending }
 				placeholder={ translate( 'Enter your coupon code' ) }
@@ -59,7 +60,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton buttonState={ isPending ? 'disabled' : 'secondary' }>
+				<ApplyButton disabled={ isPending } buttonType="secondary">
 					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
 				</ApplyButton>
 			) }
@@ -85,8 +86,20 @@ const animateIn = keyframes`
   }
 `;
 
+const animateInRTL = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
 const CouponWrapper = styled.form`
-	margin: ${( props ) => props.marginTop} 0 0 0;
+	margin: ${ ( props ) => props.marginTop } 0 0;
 	padding-top: 0;
 	position: relative;
 `;
@@ -95,15 +108,23 @@ const ApplyButton = styled( Button )`
 	position: absolute;
 	top: 5px;
 	right: 4px;
-	padding: 7px;
-	animation: ${animateIn} 0.2s ease-out;
+	padding: 8px;
+	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;
 	margin: 0;
+
+	.rtl & {
+		animation-name: ${ animateInRTL };
+		left: 4px;
+		right: auto;
+	}
 `;
 
 function getCouponErrorMessageFromStatus( translate, status, isFreshOrEdited ) {
 	if ( status === 'invalid' && ! isFreshOrEdited ) {
-		return translate( "We couldn't find your coupon. Please check your code and try again." );
+		return translate(
+			"We couldn't find your coupon. Please check your coupon code and try again."
+		);
 	}
 	if ( status === 'rejected' ) {
 		return translate( 'This coupon does not apply to any items in the cart.' );

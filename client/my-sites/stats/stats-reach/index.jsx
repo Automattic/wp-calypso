@@ -40,7 +40,7 @@ export const StatsReach = ( props ) => {
 		<div>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
-			<SectionHeader label={ translate( 'Follower Totals' ) } />
+			<SectionHeader label={ translate( 'Follower totals' ) } />
 			<Card className="stats-module stats-reach__card">
 				<StatsTabs borderless>
 					<StatsTab

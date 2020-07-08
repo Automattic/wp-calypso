@@ -27,12 +27,12 @@ describe( 'getNewSitePublicSetting()', () => {
 		expect( getNewSitePublicSetting( mockState ) ).toBe( -1 );
 	} );
 
-	test( 'should return `1` for ecommerce plan', () => {
+	test( 'should return `-1` for ecommerce plan', () => {
 		const mockState = {
 			signup: {
 				dependencyStore: { cartItem: { product_slug: 'ecommerce-bundle', free_trial: false } },
 			},
 		};
-		expect( getNewSitePublicSetting( mockState ) ).toBe( 1 );
+		expect( getNewSitePublicSetting( mockState ) ).toBe( -1 );
 	} );
 } );

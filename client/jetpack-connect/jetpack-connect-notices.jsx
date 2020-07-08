@@ -16,6 +16,7 @@ import {
 	INSTALL_RESPONSE_ERROR,
 	INVALID_CREDENTIALS,
 	IS_DOT_COM,
+	IS_DOT_COM_GET_SEARCH,
 	JETPACK_IS_DISCONNECTED,
 	JETPACK_IS_VALID,
 	NOT_ACTIVE_JETPACK,
@@ -27,7 +28,7 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
-	SITE_BLACKLISTED,
+	SITE_BLOCKED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
@@ -49,6 +50,7 @@ export class JetpackConnectNotices extends Component {
 			INSTALL_RESPONSE_ERROR,
 			INVALID_CREDENTIALS,
 			IS_DOT_COM,
+			IS_DOT_COM_GET_SEARCH,
 			JETPACK_IS_DISCONNECTED,
 			JETPACK_IS_VALID,
 			NOT_ACTIVE_JETPACK,
@@ -60,7 +62,7 @@ export class JetpackConnectNotices extends Component {
 			RETRY_AUTH,
 			RETRYING_AUTH,
 			SECRET_EXPIRED,
-			SITE_BLACKLISTED,
+			SITE_BLOCKED,
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 			XMLRPC_ERROR,
@@ -88,7 +90,7 @@ export class JetpackConnectNotices extends Component {
 			case NOT_EXISTS:
 				return noticeValues;
 
-			case SITE_BLACKLISTED:
+			case SITE_BLOCKED:
 				noticeValues.text = translate(
 					"This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}.",
 					{
@@ -103,6 +105,14 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-success';
 				noticeValues.icon = 'plugins';
 				noticeValues.text = translate( 'Good news! WordPress.com sites already have Jetpack.' );
+				return noticeValues;
+
+			case IS_DOT_COM_GET_SEARCH:
+				noticeValues.status = 'is-success';
+				noticeValues.icon = 'status';
+				noticeValues.text = translate(
+					'Good news! Jetpack Search is coming soon to WordPress.com sites.'
+				);
 				return noticeValues;
 
 			case NOT_WORDPRESS:

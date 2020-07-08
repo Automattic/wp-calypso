@@ -53,6 +53,7 @@
 }
 
 // add an extra class specific for the new Gutenberg plugin version so the main override above stays compatible with < v7.7
+// includes additional `.interface-interface-skeleton__header` classes for compatibility with Gutenberg >= 8.0.0
 .post-type-wp_template_part
 	.block-editor-editor-skeleton__header
 	.edit-post-fullscreen-mode-close__toolbar__override,
@@ -61,6 +62,15 @@
 	.edit-post-fullscreen-mode-close__toolbar__override,
 .post-type-post
 	.block-editor-editor-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-wp_template_part
+	.interface-interface-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-page
+	.interface-interface-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-post
+	.interface-interface-skeleton__header
 	.edit-post-fullscreen-mode-close__toolbar__override {
 	// Close button override doesn't need the extraneous left-padding
 	// provided by .edit-post-header__toolbar from WP. So here we

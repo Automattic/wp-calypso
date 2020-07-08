@@ -290,7 +290,7 @@ class SiteVerification extends Component {
 					isSaving={ isSubmittingForm }
 					onButtonClick={ this.handleFormSubmit }
 					showButton
-					title={ translate( 'Site Verification Services' ) }
+					title={ translate( 'Site verification services' ) }
 				/>
 				<Card>
 					{ siteIsJetpack && (

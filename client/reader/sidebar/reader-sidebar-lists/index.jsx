@@ -30,14 +30,17 @@ export class ReaderSidebarLists extends Component {
 	render() {
 		const { translate, isOpen, onClick, ...passedProps } = this.props;
 		return (
-			<ExpandableSidebarMenu
-				expanded={ isOpen }
-				title={ translate( 'Lists' ) }
-				onClick={ onClick }
-				hideAddButton
-			>
-				<ReaderSidebarListsList { ...passedProps } />
-			</ExpandableSidebarMenu>
+			<div>
+				<ExpandableSidebarMenu
+					expanded={ isOpen }
+					title={ translate( 'Lists' ) }
+					onClick={ onClick }
+					materialIcon={ 'list' }
+					hideAddButton
+				>
+					<ReaderSidebarListsList { ...passedProps } />
+				</ExpandableSidebarMenu>
+			</div>
 		);
 	}
 }

@@ -76,7 +76,12 @@ class SiteStream extends React.Component {
 						comment: '%s is the section name. For example: "My Likes"',
 					} ) }
 				/>
-				<ReaderFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
+				<ReaderFeedHeader
+					site={ site }
+					feed={ feed }
+					showBack={ this.props.showBack }
+					streamKey={ this.props.streamKey }
+				/>
 				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
 			</Stream>

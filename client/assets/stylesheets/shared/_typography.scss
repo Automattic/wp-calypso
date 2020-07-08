@@ -1,3 +1,6 @@
+// Brand font
+
+@import '~@automattic/typography/sass/fonts';
 
 // Typeface Variables
 
@@ -39,3 +42,16 @@ $root-font-size: 16px;
 // If there are exceptions to these stacks,
 // please mark them with a //typography-exception comment
 // so we can easily search for them later.
+
+// Typography size variables
+
+$font-headline-large: rem( 54px );
+$font-headline-medium: rem( 48px );
+$font-headline-small: rem( 36px );
+$font-title-large: rem( 32px );
+$font-title-medium: rem( 24px );
+$font-title-small: rem( 20px );
+$font-body: rem( 16px );
+$font-body-small: rem( 14px );
+$font-body-extra-small: rem( 12px );
+$font-code: rem( 15px );

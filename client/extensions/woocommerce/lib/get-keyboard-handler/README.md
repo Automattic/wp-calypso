@@ -23,4 +23,4 @@ export default function ExampleNavList() {
 
 The `tabIndex` is what makes the `li`s focusable, so make sure you have that, and that you also add focus styles along with your hover styles.
 
-This is used in the [`<TableRow>` component](https://github.com/Automattic/wp-calypso/blob/master/client/extensions/woocommerce/components/table/README.md) to make the table rows keyboard accessible.
+This is used in the [`<TableRow>` component](https://github.com/Automattic/wp-calypso/blob/HEAD/client/extensions/woocommerce/components/table/README.md) to make the table rows keyboard accessible.

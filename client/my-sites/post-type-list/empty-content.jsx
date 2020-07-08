@@ -5,12 +5,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getPostType } from 'state/post-types/selectors';
+import { getPostType, getPostTypeLabel } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -21,7 +21,14 @@ function preloadEditor() {
 	preload( 'post-editor' );
 }
 
-function PostTypeListEmptyContent( { siteId, translate, status, typeObject, editPath } ) {
+function PostTypeListEmptyContent( {
+	siteId,
+	translate,
+	status,
+	typeObject,
+	editPath,
+	addNewItemLabel,
+} ) {
 	let title, action;
 
 	if ( 'draft' === status ) {
@@ -31,7 +38,7 @@ function PostTypeListEmptyContent( { siteId, translate, status, typeObject, edit
 	}
 
 	if ( typeObject ) {
-		action = typeObject.labels.add_new_item;
+		action = addNewItemLabel;
 	}
 
 	return (
@@ -60,10 +67,12 @@ PostTypeListEmptyContent.propTypes = {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
+	const localeSlug = getLocaleSlug( state );
 
 	return {
 		siteId,
 		typeObject: getPostType( state, siteId, ownProps.type ),
 		editPath: getEditorUrl( state, siteId, null, ownProps.type ),
+		addNewItemLabel: getPostTypeLabel( state, siteId, ownProps.type, 'add_new_item', localeSlug ),
 	};
 } )( localize( PostTypeListEmptyContent ) );

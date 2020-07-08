@@ -24,17 +24,15 @@ function replaceThreeDotsWithEllipsis( string ) {
 	return string.replace( /\.\.\./g, '…' );
 }
 
-function makeFixerFunction( arg ) {
+function makeFixerFunction( arg, context ) {
 	return ( fixer ) => {
 		switch ( arg.type ) {
 			case 'TemplateLiteral':
 				return arg.quasis.reduce( ( fixes, quasi ) => {
-					if ( 'TemplateElement' === quasi.type && containsThreeDots( quasi.value.raw ) ) {
+					const nodeContent = context.getSourceCode().getText( quasi );
+					if ( 'TemplateElement' === quasi.type && containsThreeDots( nodeContent ) ) {
 						fixes.push(
-							fixer.replaceTextRange(
-								[ quasi.start, quasi.end ],
-								replaceThreeDotsWithEllipsis( quasi.value.raw )
-							)
+							fixer.replaceTextRange( quasi.range, replaceThreeDotsWithEllipsis( nodeContent ) )
 						);
 					}
 					return fixes;
@@ -45,8 +43,8 @@ function makeFixerFunction( arg ) {
 
 			case 'BinaryExpression':
 				return [
-					...makeFixerFunction( arg.left )( fixer ),
-					...makeFixerFunction( arg.right )( fixer ),
+					...makeFixerFunction( arg.left, context )( fixer ),
+					...makeFixerFunction( arg.right, context )( fixer ),
 				];
 		}
 	};
@@ -81,7 +79,7 @@ const rule = ( module.exports = function ( context ) {
 					context.report( {
 						node: arg,
 						message: rule.ERROR_MESSAGE,
-						fix: makeFixerFunction( arg ),
+						fix: makeFixerFunction( arg, context ),
 					} );
 				}
 			} );

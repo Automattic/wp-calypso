@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails } from './types';
-import { Action } from './actions';
+import type { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails } from './types';
+import type { Action } from './actions';
 
 export const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
 	if ( action.type === 'RECEIVE_NEW_SITE' ) {
@@ -30,6 +30,7 @@ export const newSiteError: Reducer< NewSiteErrorResponse | undefined, Action > =
 		case 'FETCH_NEW_SITE':
 		case 'RECEIVE_NEW_SITE':
 		case 'RESET_SITE_STORE':
+		case 'RESET_RECEIVE_NEW_SITE_FAILED':
 			return undefined;
 		case 'RECEIVE_NEW_SITE_FAILED':
 			return {
@@ -50,6 +51,7 @@ export const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = 
 		case 'RECEIVE_NEW_SITE':
 		case 'RECEIVE_NEW_SITE_FAILED':
 		case 'RESET_SITE_STORE':
+		case 'RESET_RECEIVE_NEW_SITE_FAILED':
 			return false;
 	}
 	return state;

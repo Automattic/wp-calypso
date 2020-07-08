@@ -10,7 +10,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
 import { hasRenewalItem } from 'lib/cart-values/cart-items';
@@ -26,6 +26,7 @@ import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
+import { addQueryArgs } from 'lib/url';
 
 const wpcom = wp.undocumented();
 
@@ -67,7 +68,7 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	redirectToPayPal = ( event ) => {
-		const { cart, transaction } = this.props;
+		const { cart, transaction, isWhiteGloveOffer } = this.props;
 		const origin = getLocationOrigin( window.location );
 		event.preventDefault();
 
@@ -80,6 +81,10 @@ export class PaypalPaymentBox extends React.Component {
 
 		if ( this.props.selectedSite ) {
 			cancelUrl += this.props.selectedSite.slug;
+
+			if ( isWhiteGloveOffer ) {
+				cancelUrl = addQueryArgs( { type: 'white-glove' }, cancelUrl );
+			}
 		} else {
 			cancelUrl += 'no-site';
 		}
@@ -90,6 +95,7 @@ export class PaypalPaymentBox extends React.Component {
 			cart,
 			domainDetails: transaction.domainDetails,
 			'postal-code': getTaxPostalCode( cart ),
+			is_white_glove_offer: this.props.isWhiteGloveOffer,
 		} );
 
 		// get PayPal Express URL from rest endpoint
@@ -127,7 +133,7 @@ export class PaypalPaymentBox extends React.Component {
 					disabled: true,
 				} );
 				gaRecordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
-				analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
+				recordTracksEvent( 'calypso_checkout_with_paypal' );
 				window.location = paypalExpressURL;
 			}.bind( this )
 		);
@@ -202,7 +208,7 @@ export class PaypalPaymentBox extends React.Component {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ translate( 'Secure payment' ) }
 								</div>
 							</div>
 

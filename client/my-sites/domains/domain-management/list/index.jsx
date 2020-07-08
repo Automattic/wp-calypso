@@ -20,13 +20,9 @@ import DomainOnly from './domain-only';
 import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
-import {
-	domainManagementEdit,
-	domainManagementList,
-	domainManagementTransferIn,
-} from 'my-sites/domains/paths';
+import { domainManagementRoot, domainManagementList } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
-import { Button } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';
@@ -45,12 +41,15 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import getSites from 'state/selectors/get-sites';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
+import { getDomainManagementPath } from './utils';
 /**
  * Style dependencies
  */
 import './style.scss';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
 export class List extends React.Component {
 	static propTypes = {
@@ -60,6 +59,7 @@ export class List extends React.Component {
 		cart: PropTypes.object,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
+		hasSingleSite: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -86,7 +86,7 @@ export class List extends React.Component {
 					domains={ this.props.domains }
 					position="domain-list"
 					selectedSite={ this.props.selectedSite }
-					ruleWhiteList={ [
+					allowedRules={ [
 						'newDomainsWithPrimary',
 						'newDomains',
 						'unverifiedDomainsCanManage',
@@ -190,8 +190,9 @@ export class List extends React.Component {
 				<SidebarNavigation />
 				{ ! this.props.renderAllSites && (
 					<FormattedHeader
+						brandFont
 						className="domain-management__page-heading"
-						headerText={ this.props.translate( 'Domains' ) }
+						headerText={ this.props.translate( 'Site Domains' ) }
 						align="left"
 					/>
 				) }
@@ -311,7 +312,7 @@ export class List extends React.Component {
 				className="domain-management-list__add-a-domain"
 				onClick={ this.clickAddDomain }
 			>
-				{ this.props.translate( 'Add domain' ) }
+				{ this.props.translate( 'Add a domain to this site' ) }
 			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -402,12 +403,14 @@ export class List extends React.Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
+		const { translate, selectedSite, renderAllSites, isDomainOnly, hasSingleSite } = this.props;
+
 		const domains =
-			this.props.selectedSite.jetpack || ( this.props.renderAllSites && this.props.isDomainOnly )
+			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
 				? this.filterOutWpcomDomains( this.props.domains )
 				: this.props.domains;
 
-		return domains.map( ( domain, index ) => {
+		const domainListItems = domains.map( ( domain, index ) => {
 			return (
 				<ListItem
 					key={ index + domain.name }
@@ -426,14 +429,22 @@ export class List extends React.Component {
 				/>
 			);
 		} );
+
+		if ( hasSingleSite || renderAllSites || ! config.isEnabled( 'manage/all-domains' ) ) {
+			return domainListItems;
+		}
+
+		return [
+			...domainListItems,
+			<CompactCard key="manage-all-domains" href={ domainManagementRoot() }>
+				{ translate( 'Manage all your domains' ) }
+			</CompactCard>,
+		];
 	}
 
 	goToEditDomainRoot = ( domain ) => {
-		if ( domain.type !== type.TRANSFER ) {
-			page( domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
-		} else {
-			page( domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
-		}
+		const { selectedSite, currentRoute } = this.props;
+		page( getDomainManagementPath( domain.name, domain.type, selectedSite.slug, currentRoute ) );
 	};
 
 	goToPlans = () => {
@@ -485,14 +496,17 @@ export default connect(
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const selectedSite = get( ownProps, 'selectedSite', null );
 		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
+		const siteCount = get( getSites( state ), 'length', 0 );
 
 		return {
+			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,
+			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
 		};

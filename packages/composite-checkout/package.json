@@ -32,8 +32,9 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/composite-checkout#readme",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/composite-checkout#readme",
 	"dependencies": {
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@babel/runtime": "^7.8.4",
 		"@emotion/core": "^10.0.27",
 		"@emotion/styled": "^10.0.27",
@@ -41,7 +42,7 @@
 		"debug": "^4.1.1",
 		"emotion-theming": "^10.0.27",
 		"prop-types": "^15.7.2",
-		"react-stripe-elements": "4.0.2"
+		"react-stripe-elements": "^4.0.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.6",

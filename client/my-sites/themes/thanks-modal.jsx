@@ -215,7 +215,8 @@ class ThanksModal extends Component {
 
 		const gutenbergContent = isUsingClassicEditor
 			? translate( 'Activate the Block Editor and edit homepage' )
-			: translate( 'Edit Homepage' );
+			: translate( 'Edit homepage' );
+
 		const customizerContent = (
 			<>
 				<Gridicon icon="external" />

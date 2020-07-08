@@ -13,6 +13,7 @@ import { flowRight as compose } from 'lodash';
  * Internal dependencies
  */
 import scrollTo from 'lib/scroll-to';
+import { settingsPath } from 'lib/jetpack/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import ActivityActor from './activity-actor';
 import ActivityDescription from './activity-description';
@@ -265,7 +266,7 @@ class ActivityLogItem extends Component {
 							href={
 								canAutoconfigure
 									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-									: `/settings/security/${ siteSlug }#credentials`
+									: `${ settingsPath( siteSlug ) }#credentials`
 							}
 							onClick={ trackAddCreds }
 						>
@@ -388,7 +389,7 @@ class ActivityLogItem extends Component {
 						disableButton={ this.state.disableDownloadButton }
 					>
 						{ translate(
-							'{{time/}} is the selected point to create a download backup of. You will get a notification when the backup is ready to download.',
+							'{{time/}} is the selected point to create a download backup. You will get a notification when the backup is ready to download.',
 							{
 								components: {
 									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,

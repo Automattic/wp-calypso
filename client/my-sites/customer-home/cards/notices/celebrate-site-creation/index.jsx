@@ -3,36 +3,26 @@
  */
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import CelebrateNotice from '../celebrate-notice';
+import CelebrateNotice from 'my-sites/customer-home/cards/notices/celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_CREATION } from 'my-sites/customer-home/cards/constants';
 
-const CelebrateSiteCreation = ( { checklistMode, displayChecklist, siteHasPaidPlan } ) => {
+const CelebrateSiteCreation = () => {
 	const translate = useTranslate();
-	const message = siteHasPaidPlan
-		? translate( 'Thank you for your purchase!' )
-		: translate( 'Your site has been created!' );
 
 	return (
 		<CelebrateNotice
-			checklistMode={ checklistMode }
-			dismissalPreferenceName="home-notice-site-created"
-			displayChecklist={ displayChecklist }
-			message={ message }
+			actionText={ translate( 'Get started' ) }
+			description={ translate(
+				"Next, we'll guide you through setting up and launching your site."
+			) }
+			noticeId={ NOTICE_CELEBRATE_SITE_CREATION }
+			title={ translate( 'Your site has been created!' ) }
 		/>
 	);
 };
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
-	};
-};
-
-export default connect( mapStateToProps )( CelebrateSiteCreation );
+export default CelebrateSiteCreation;

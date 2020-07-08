@@ -20,7 +20,7 @@ class RecoveryEmail extends Component {
 			<ManageContact
 				type="email"
 				isLoading={ isLoading }
-				title={ translate( 'Recovery Email Address' ) }
+				title={ translate( 'Recovery email address' ) }
 				subtitle={ email ? email : translate( 'Not set' ) }
 				hasValue={ !! email }
 				onSave={ this.onSave }

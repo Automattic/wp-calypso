@@ -22,6 +22,22 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
+	async inPlaceConnect() {
+		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
+		const spinnerSelector = By.css( '.jp-connect-full__button-container:not([style="display: none;"]) .jp-spinner' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		await this.driver.sleep( 1000 );
+		await driverHelper.clickWhenClickable( this.driver, selector );
+
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, spinnerSelector );
+
+		return await driverHelper.waitTillNotPresent(
+			this.driver,
+			spinnerSelector,
+			this.explicitWaitMS * 3
+		);
+	}
+
 	async atAGlanceDisplayed() {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.jp-at-a-glance' ) );
 	}

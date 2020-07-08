@@ -122,7 +122,7 @@ class LineChart extends Component {
 		svg
 			.append( 'g' )
 			.attr( 'class', 'line-chart__x-axis' )
-			.attr( 'transform', `translate(0,${ height - margin.bottom})` )
+			.attr( 'transform', `translate(0,${ height - margin.bottom })` )
 			.call( axis );
 	};
 

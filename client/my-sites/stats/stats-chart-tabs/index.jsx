@@ -25,6 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { buildChartData, getQueryDate } from './utility';
 import StatTabs from '../stats-tabs';
 import memoizeLast from 'lib/memoize-last';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -156,11 +157,11 @@ const connectComponent = connect(
 			return NO_SITE_STATE;
 		}
 
+		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, period );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) && chartData.length === 0;
-		const quantity = 'year' === period ? 10 : 30;
+		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
@@ -178,4 +179,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
-export default flowRight( localize, connectComponent )( StatModuleChartTabs );
+export default flowRight(
+	localize,
+	connectComponent
+)( withPerformanceTrackerStop( StatModuleChartTabs ) );

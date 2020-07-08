@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/checklist/init';
 
 /**
  * Returns the checklist for the specified site ID

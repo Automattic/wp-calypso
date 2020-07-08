@@ -126,7 +126,7 @@ class CustomContentTypes extends Component {
 
 	renderBlogPostSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Blog Posts' );
+		const fieldLabel = translate( 'Blog posts' );
 		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
 
 		return (
@@ -154,7 +154,7 @@ class CustomContentTypes extends Component {
 
 	renderPortfolioSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Portfolio Projects' );
+		const fieldLabel = translate( 'Portfolio projects' );
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
 				'you can display them using the shortcode [portfolio].',

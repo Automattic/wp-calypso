@@ -106,6 +106,8 @@ function normalize_theme_slug( $theme_slug ) {
  * Whether or not the site is eligible for FSE. This is essentially a feature
  * gate to disable FSE on some sites which could theoretically otherwise use it.
  *
+ * By default, sites should not be eligible.
+ *
  * @return bool True if current site is eligible for FSE, false otherwise.
  */
 function is_site_eligible_for_full_site_editing() {
@@ -116,7 +118,7 @@ function is_site_eligible_for_full_site_editing() {
 	 *
 	 * @param bool true if Full Site Editing should be disabled, false otherwise.
 	 */
-	return ! apply_filters( 'a8c_disable_full_site_editing', false );
+	return ! apply_filters( 'a8c_disable_full_site_editing', true );
 }
 
 /**

@@ -27,12 +27,12 @@ describe( 'shouldNewSiteBePrivateByDefault()', () => {
 		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( true );
 	} );
 
-	test( 'should return `false` for ecommerce plan', () => {
+	test( 'should return `true` for ecommerce plan', () => {
 		const mockState = {
 			signup: {
 				dependencyStore: { cartItem: { product_slug: 'ecommerce-bundle', free_trial: false } },
 			},
 		};
-		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( false );
+		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( true );
 	} );
 } );

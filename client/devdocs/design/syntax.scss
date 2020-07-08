@@ -49,7 +49,7 @@ code[class*='lang-']::-moz-selection, code[class*='lang-'] ::-moz-selection {
 .token.variable,
 .token.inserted {
     color: #0086b3;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .token.atrule,
@@ -67,7 +67,7 @@ code[class*='lang-']::-moz-selection, code[class*='lang-'] ::-moz-selection {
 
 .token.tag {
     color: #e05600;
-    font-weight: bold;
+    font-weight: 600;
 }
 .token.selector {
     color: green;
@@ -79,7 +79,7 @@ code[class*='lang-']::-moz-selection, code[class*='lang-'] ::-moz-selection {
 .token.important,
 .token.function,
 .token.bold {
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .token.italic {

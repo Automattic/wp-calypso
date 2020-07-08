@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import Gridicon from 'components/gridicon';
 import PluginsActions from 'lib/plugins/actions';
@@ -44,7 +44,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 			'Plugin Name',
 			this.props.plugin.slug
 		);
-		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin', {
+		recordTracksEvent( 'calypso_plugins_actions_update_plugin', {
 			site: this.props.site.ID,
 			plugin: this.props.plugin.slug,
 		} );
@@ -61,9 +61,9 @@ class PluginSiteUpdateIndicator extends React.Component {
 	};
 
 	renderUpdate = () => {
-		let message,
-			ongoingUpdates = this.getOngoingUpdates(),
-			isUpdating = ongoingUpdates.length > 0;
+		let message;
+		const ongoingUpdates = this.getOngoingUpdates();
+		const isUpdating = ongoingUpdates.length > 0;
 
 		if ( isUpdating ) {
 			message = this.props.translate( 'Updating to version %(version)s', {

@@ -32,11 +32,13 @@
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@wordpress/api-fetch": "^3.18.0",
 		"@wordpress/data-controls": "^1.4.0",
 		"@wordpress/url": "^2.8.2",
 		"fast-json-stable-stringify": "^2.1.0",
+		"i18n-calypso": "^5.0.0",
 		"qs": "^6.9.1",
-		"redux": "^4.0.4",
+		"redux": "^4.0.5",
 		"tslib": "^1.10.0",
 		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "^6.0.0"

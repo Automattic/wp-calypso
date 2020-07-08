@@ -20,6 +20,7 @@ class FreeDomainExplainer extends React.Component {
 
 		this.props.onSkip( undefined, hideFreePlan );
 	};
+
 	render() {
 		const { translate } = this.props;
 

@@ -2,8 +2,8 @@
  * External dependencies
  */
 import '@automattic/calypso-polyfills';
-import { setLocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@automattic/react-i18n';
+import { setLocaleData } from '@wordpress/i18n';
 import { getLanguageSlugs } from '../../lib/i18n-utils';
 import {
 	getLanguageFile,
@@ -11,12 +11,14 @@ import {
 	getTranslationChunkFile,
 	switchWebpackCSS,
 } from '../../lib/i18n-utils/switch-locale';
+import { getUrlParts } from '../../lib/url/url-parts';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
-import { subscribe, select } from '@wordpress/data';
+import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import type { Site as SiteStore, User as UserStore } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -25,8 +27,11 @@ import GUTENBOARDING_BASE_NAME from './basename.json';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
-import { path } from './path';
+import { Step, path } from './path';
+import { SITE_STORE } from './stores/site';
 import { USER_STORE } from './stores/user';
+import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
+import { addHotJarScript } from 'lib/analytics/hotjar';
 
 /**
  * Style dependencies
@@ -47,9 +52,12 @@ function generateGetSuperProps() {
 }
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
-const USE_TRANSLATION_CHUNKS: string = config.isEnabled( 'use-translation-chunks' );
+const USE_TRANSLATION_CHUNKS: string =
+	config.isEnabled( 'use-translation-chunks' ) ||
+	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
-type User = import('@automattic/data-stores').User.CurrentUser;
+type User = UserStore.CurrentUser;
+type Site = SiteStore.SiteDetails;
 
 interface AppWindow extends Window {
 	currentUser?: User;
@@ -59,6 +67,7 @@ interface AppWindow extends Window {
 		add( callback: Function ): void;
 		getInstalledChunks(): string[];
 	};
+	BUILD_TARGET?: string;
 }
 declare const window: AppWindow;
 
@@ -69,11 +78,6 @@ declare const window: AppWindow;
 const DEVELOPMENT_BASENAME = '/gutenboarding';
 
 window.AppBoot = async () => {
-	if ( ! config.isEnabled( 'gutenboarding' ) ) {
-		window.location.href = '/';
-		return;
-	}
-
 	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
 		const url = new URL( window.location.href );
 		url.pathname = GUTENBOARDING_BASE_NAME + url.pathname.substring( DEVELOPMENT_BASENAME.length );
@@ -86,22 +90,21 @@ window.AppBoot = async () => {
 	// until after the user has completed the gutenboarding flow.
 	// This also saves us from having to pull in lib/user/user and it's dependencies.
 	initializeAnalytics( undefined, generateGetSuperProps() );
+	addHotJarScript();
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	let locale = DEFAULT_LOCALE_SLUG;
+	let i18nLocaleData;
 	try {
 		const [ userLocale, { translatedChunks, ...localeData } ]: (
 			| string
 			| any
 		 )[] = await getLocale();
-		setLocaleData( localeData );
+		i18nLocaleData = localeData;
 
 		if ( USE_TRANSLATION_CHUNKS ) {
-			setupTranslationChunks( userLocale, translatedChunks );
+			i18nLocaleData = await setupTranslationChunks( userLocale, translatedChunks );
 		}
-
-		locale = userLocale;
 
 		// FIXME: Use rtl detection tooling
 		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
@@ -109,8 +112,16 @@ window.AppBoot = async () => {
 		}
 	} catch {}
 
+	// Translations done within react are made using the localData passed to the <I18nProvider/>.
+	// We must also set the locale for translations done outside of a react rendering cycle using setLocaleData.
+	setLocaleData( i18nLocaleData );
+
+	try {
+		checkAndRedirectIfSiteWasCreatedRecently();
+	} catch {}
+
 	ReactDom.render(
-		<I18nProvider locale={ locale }>
+		<I18nProvider localeData={ i18nLocaleData }>
 			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
 				<Switch>
 					<Route exact path={ path }>
@@ -155,6 +166,7 @@ async function getLocale(): Promise< [ string, object ] > {
 
 	// User without bootstrapped locale
 	const user = window.currentUser || ( await waitForCurrentUser() );
+
 	if ( ! user ) {
 		return [ DEFAULT_LOCALE_SLUG, {} ];
 	}
@@ -170,7 +182,7 @@ async function getLocaleData( locale: string ) {
 	}
 
 	if ( USE_TRANSLATION_CHUNKS ) {
-		const manifest = await getLanguageManifestFile( locale );
+		const manifest = await getLanguageManifestFile( locale, window.BUILD_TARGET );
 		const localeData = {
 			...manifest.locale,
 			translatedChunks: manifest.translatedChunks,
@@ -197,11 +209,63 @@ function waitForCurrentUser(): Promise< User | undefined > {
 	} ).finally( unsubscribe );
 }
 
-function getLocaleFromUser( user: User ): string {
-	return user.locale_variant || user.language;
+async function checkAndRedirectIfSiteWasCreatedRecently() {
+	const shouldPathCauseRedirectForSelectedSite = () => {
+		return [ Step.CreateSite, Step.Plans, Step.Style ].some( ( step ) => {
+			if ( window.location.pathname.startsWith( `/${ GUTENBOARDING_BASE_NAME }/${ step }` ) ) {
+				return true;
+			}
+		} );
+	};
+
+	if ( shouldPathCauseRedirectForSelectedSite() ) {
+		const selectedSiteDetails = await waitForSelectedSite();
+
+		if ( selectedSiteDetails ) {
+			const createdAtString = selectedSiteDetails?.options?.created_at;
+			// "2020-05-11T01:08:15+00:00"
+
+			if ( createdAtString ) {
+				const createdAt = new Date( createdAtString );
+				const diff = Date.now() - createdAt.getTime();
+				const diffMinutes = diff / 1000 / 60;
+				if ( diffMinutes < 10 && diffMinutes >= 0 ) {
+					window.location.replace( `/home/${ selectedSiteDetails.ID }` );
+					return;
+				}
+			}
+		}
+	}
+
+	dispatch( ONBOARD_STORE ).setSelectedSite( undefined );
 }
 
-function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
+function waitForSelectedSite(): Promise< Site | undefined > {
+	let unsubscribe: () => void = () => undefined;
+	return new Promise< Site | undefined >( ( resolve ) => {
+		const selectedSite = select( ONBOARD_STORE ).getSelectedSite();
+		if ( ! selectedSite ) {
+			return resolve( undefined );
+		}
+		unsubscribe = subscribe( () => {
+			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
+			if ( resolvedSelectedSite ) {
+				resolve( resolvedSelectedSite );
+			}
+
+			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
+				resolve( undefined );
+			}
+		} );
+		select( SITE_STORE ).getSite( selectedSite );
+	} ).finally( unsubscribe );
+}
+
+function getLocaleFromUser( user: User ): string {
+	return user.locale_variant || user.localeVariant || user.language || user.localeSlug;
+}
+
+async function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
 	if ( ! window.__requireChunkCallback__ ) {
 		return;
 	}
@@ -210,34 +274,28 @@ function setupTranslationChunks( localeSlug: string, translatedChunks: string[] 
 		[ propName: string ]: undefined | boolean;
 	}
 	const loadedTranslationChunks: TranslationChunksCache = {};
-	const loadTranslationForChunkIfNeeded = ( chunkId: string ) => {
+	const loadTranslationForChunkIfNeeded = async ( chunkId: string ) => {
 		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug ).then( ( translations ) => {
-			setLocaleData( translations );
-			loadedTranslationChunks[ chunkId ] = true;
-		} );
+		return getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET ).then(
+			( translations ) => {
+				loadedTranslationChunks[ chunkId ] = true;
+				return translations;
+			}
+		);
 	};
+
 	const installedChunks = new Set(
 		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
 	);
 
-	installedChunks.forEach( ( chunkId ) => {
-		loadTranslationForChunkIfNeeded( chunkId );
-	} );
-
-	interface RequireChunkCallbackParameters {
-		publicPath: string;
-		scriptSrc: string;
-	}
-
-	window.__requireChunkCallback__.add(
-		( { publicPath, scriptSrc }: RequireChunkCallbackParameters, promises: any[] ) => {
-			const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
-
-			promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
-		}
+	const localeData = await Promise.all(
+		[ ...installedChunks ].map( ( chunkId ) => loadTranslationForChunkIfNeeded( chunkId ) )
+	).then( ( values ) =>
+		values.reduce( ( localeDataObj, chunk ) => Object.assign( {}, localeDataObj, chunk ) )
 	);
+
+	return localeData;
 }

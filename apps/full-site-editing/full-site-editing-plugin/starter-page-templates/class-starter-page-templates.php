@@ -32,20 +32,20 @@ class Starter_Page_Templates {
 	private function __construct() {
 		$this->templates_cache_key = implode(
 			'_',
-			[
+			array(
 				'starter_page_templates',
 				PLUGIN_VERSION,
 				get_option( 'site_vertical', 'default' ),
 				get_locale(),
-			]
+			)
 		);
 
-		add_action( 'init', [ $this, 'register_scripts' ] );
-		add_action( 'init', [ $this, 'register_meta_field' ] );
-		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
-		add_action( 'delete_attachment', [ $this, 'clear_sideloaded_image_cache' ] );
-		add_action( 'switch_theme', [ $this, 'clear_templates_cache' ] );
+		add_action( 'init', array( $this, 'register_scripts' ) );
+		add_action( 'init', array( $this, 'register_meta_field' ) );
+		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
+		add_action( 'delete_attachment', array( $this, 'clear_sideloaded_image_cache' ) );
+		add_action( 'switch_theme', array( $this, 'clear_templates_cache' ) );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Starter_Page_Templates {
 		wp_register_script(
 			'starter-page-templates',
 			plugins_url( 'dist/starter-page-templates.js', __FILE__ ),
-			[ 'wp-plugins', 'wp-edit-post', 'wp-element' ],
+			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.js' ),
 			true
 		);
@@ -78,7 +78,7 @@ class Starter_Page_Templates {
 	 * Register meta field for storing the template identifier.
 	 */
 	public function register_meta_field() {
-		$args = [
+		$args = array(
 			'type'           => 'string',
 			'description'    => 'Selected template',
 			'single'         => true,
@@ -87,7 +87,7 @@ class Starter_Page_Templates {
 			'auth_callback'  => function() {
 				return current_user_can( 'edit_posts' );
 			},
-		];
+		);
 		register_meta( 'post', '_starter_page_template', $args );
 	}
 
@@ -109,7 +109,7 @@ class Starter_Page_Templates {
 		wp_register_script(
 			'starter-page-templates-error',
 			null,
-			[],
+			array(),
 			'1.O',
 			true
 		);
@@ -153,17 +153,12 @@ class Starter_Page_Templates {
 		wp_enqueue_script( 'starter-page-templates' );
 		wp_set_script_translations( 'starter-page-templates', 'full-site-editing' );
 
-		$default_info      = [
-			'title'    => get_bloginfo( 'name' ),
-			'vertical' => $vertical['name'],
-		];
-		$default_templates = [
-			[
+		$default_templates = array(
+			array(
 				'title' => 'Blank',
 				'slug'  => 'blank',
-			],
-		];
-		$site_info         = get_option( 'site_contact_info', [] );
+			),
+		);
 		/**
 		 * Filters the config before it's passed to the frontend.
 		 *
@@ -171,18 +166,17 @@ class Starter_Page_Templates {
 		 */
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
-			[
-				'siteInformation' 		=> array_merge( $default_info, $site_info ),
-				'templates'       		=> array_merge( $default_templates, $vertical_templates ),
-				'vertical'        		=> $vertical,
-				'segment'         		=> $segment,
-				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'screenAction'    		=> isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
-				'theme'           		=> normalize_theme_slug( get_stylesheet() ),
-				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'isFrontPage'     		=> isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
-				'hideFrontPageTitle'	=> get_theme_mod( 'hide_front_page_title' ),
-			]
+			array(
+				'templates'          => array_merge( $default_templates, $vertical_templates ),
+				'vertical'           => $vertical,
+				'segment'            => $segment,
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'screenAction'       => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
+				'theme'              => normalize_theme_slug( get_stylesheet() ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'isFrontPage'        => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
+				'hideFrontPageTitle' => get_theme_mod( 'hide_front_page_title' ),
+			)
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
@@ -194,7 +188,7 @@ class Starter_Page_Templates {
 		wp_enqueue_style(
 			'starter-page-templates',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			[],
+			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
 	}
@@ -211,12 +205,12 @@ class Starter_Page_Templates {
 		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
 			$vertical_id = get_option( 'site_vertical', 'default' );
 			$request_url = add_query_arg(
-				[ '_locale' => $this->get_iso_639_locale() ],
+				array( '_locale' => $this->get_iso_639_locale() ),
 				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
 			);
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );
 			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				return [];
+				return array();
 			}
 			$vertical_templates = json_decode( wp_remote_retrieve_body( $response ), true );
 			set_transient( $this->templates_cache_key, $vertical_templates, DAY_IN_SECONDS );
@@ -254,7 +248,7 @@ class Starter_Page_Templates {
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
 		$language = strtolower( $language );
 
-		if ( in_array( $language, [ 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ], true ) ) {
+		if ( in_array( $language, array( 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
 			$language = str_replace( '_', '-', $language );
 		} else {
 			$language = preg_replace( '/([-_].*)$/i', '', $language );

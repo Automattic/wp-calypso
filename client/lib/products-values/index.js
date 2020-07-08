@@ -12,6 +12,7 @@ import {
 	getJetpackProductsTaglines,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
+	JETPACK_SCAN_PRODUCTS,
 } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 import {
@@ -220,6 +221,23 @@ export function isJetpackBackup( product ) {
 	assertValidProduct( product );
 
 	return isJetpackBackupSlug( product.product_slug );
+}
+
+export function isJetpackScanSlug( productSlug ) {
+	return JETPACK_SCAN_PRODUCTS.includes( productSlug );
+}
+
+export function isJetpackScan( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isJetpackScanSlug( product.product_slug );
+}
+
+export function isJetpackCloudProductSlug( productSlug ) {
+	return (
+		JETPACK_SCAN_PRODUCTS.includes( productSlug ) || JETPACK_BACKUP_PRODUCTS.includes( productSlug )
+	);
 }
 
 export function isJetpackProductSlug( productSlug ) {
@@ -510,7 +528,7 @@ export function isUnlimitedThemes( product ) {
 	return 'unlimited_themes' === product.product_slug;
 }
 
-export function whitelistAttributes( product ) {
+export function allowedProductAttributes( product ) {
 	return pick( product, Object.keys( schema.properties ) );
 }
 
@@ -533,50 +551,3 @@ export function isConciergeSession( product ) {
 
 	return 'concierge-session' === product.product_slug;
 }
-
-export default {
-	formatProduct,
-	getDomainProductRanking,
-	getIncludedDomainPurchaseAmount,
-	includesProduct,
-	isBusiness,
-	isChargeback,
-	isCredits,
-	isCustomDesign,
-	isDependentProduct,
-	isDelayedDomainTransfer,
-	isDomainMapping,
-	isDomainProduct,
-	isDomainRedemption,
-	isDomainRegistration,
-	isDomainTransfer,
-	isDomainTransferProduct,
-	isBundled,
-	isDotComPlan,
-	isEnterprise,
-	isFreeJetpackPlan,
-	isFreePlan,
-	isPersonal,
-	isFreeTrial,
-	isFreeWordPressComDomain,
-	isGoogleApps,
-	isGuidedTransfer,
-	isJetpackBusiness,
-	isJetpackPlan,
-	isJetpackPremium,
-	isJetpackMonthlyPlan,
-	isVipPlan,
-	isMonthly,
-	isJpphpBundle,
-	isNoAds,
-	isPlan,
-	isPremium,
-	isSiteRedirect,
-	isSpaceUpgrade,
-	isTheme,
-	isUnlimitedSpace,
-	isUnlimitedThemes,
-	isVideoPress,
-	whitelistAttributes,
-	isConciergeSession,
-};

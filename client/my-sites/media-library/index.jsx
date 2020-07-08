@@ -13,9 +13,8 @@ import { connect } from 'react-redux';
  */
 import Content from './content';
 import getMediaErrors from 'state/selectors/get-media-errors';
-import MediaActions from 'lib/media/actions';
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import MediaLibraryDropZone from './drop-zone';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { filterItemsByMimePrefix } from 'lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
@@ -26,6 +25,7 @@ import {
 	getKeyringConnections,
 } from 'state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -98,7 +98,7 @@ class MediaLibrary extends Component {
 	};
 
 	onAddMedia = () => {
-		const selectedItems = MediaLibrarySelectedStore.getAll( this.props.site.ID );
+		const { selectedItems } = this.props;
 		let filteredItems = selectedItems;
 
 		if ( ! this.props.site ) {
@@ -121,7 +121,7 @@ class MediaLibrary extends Component {
 		}
 
 		if ( ! isEqual( selectedItems, filteredItems ) ) {
-			MediaActions.setLibrarySelectedItems( this.props.site.ID, filteredItems );
+			this.props.setMediaLibrarySelectedItems( this.props.site.ID, filteredItems );
 		}
 
 		this.props.onAddMedia();
@@ -199,7 +199,6 @@ class MediaLibrary extends Component {
 					onAddAndEditImage={ this.props.onAddAndEditImage }
 					onMediaScaleChange={ this.props.onScaleChange }
 					onSourceChange={ this.props.onSourceChange }
-					selectedItems={ this.props.mediaLibrarySelectedItems }
 					onDeleteItem={ this.props.onDeleteItem }
 					onEditItem={ this.props.onEditItem }
 					onViewDetails={ this.props.onViewDetails }
@@ -216,8 +215,10 @@ export default connect(
 		isConnected: isConnected( state, source ),
 		mediaValidationErrors: getMediaErrors( state, site?.ID ),
 		needsKeyring: needsKeyring( state, source ),
+		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 	} ),
 	{
 		requestKeyringConnections,
+		setMediaLibrarySelectedItems,
 	}
 )( MediaLibrary );

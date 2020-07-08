@@ -42,7 +42,8 @@ $markup = '
 ';
 
 return array(
-	'__file'  => 'wp_block',
-	'title'   => esc_html__( 'Three images side-by-side', 'full-site-editing' ),
-	'content' => $markup,
+	'title'         => esc_html__( 'Three images side-by-side', 'full-site-editing' ),
+	'categories'    => array( 'gallery', 'images' ),
+	'content'       => $markup,
+	'viewportWidth' => 1280,
 );

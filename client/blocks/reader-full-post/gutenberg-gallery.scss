@@ -1,5 +1,5 @@
 $grid-size-large: 16px;
-$default-font-size: 13px;
+$default-font-size: $font-body-small;
 $content-width: 610px;
 $break-small: 600px;
 $black: #000;
@@ -11,7 +11,7 @@ $white: #fff;
 	}
 }
 
-// From https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/gallery/style.scss
+// From https://github.com/WordPress/gutenberg/blob/HEAD/packages/block-library/src/gallery/style.scss
 .wp-block-gallery,
 .blocks-gallery-grid {
 	display: flex;

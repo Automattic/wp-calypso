@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
@@ -20,7 +19,7 @@ import FormLabel from 'components/forms/form-label';
 import EditorConfirmationSidebarHeader from './header';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
+import { getEditorPostId, getEditorPublishButtonStatus } from 'state/editor/selectors';
 import {
 	isEditedPostPasswordProtected,
 	isEditedPostPasswordProtectedWithValidPassword,

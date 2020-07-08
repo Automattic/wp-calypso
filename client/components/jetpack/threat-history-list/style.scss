@@ -1,0 +1,19 @@
+.threat-history-list {
+	&__filters-wrapper {
+		margin: 8px 0 24px;
+		text-align: center;
+	}
+
+	&__filters.is-placeholder {
+		@include placeholder( --color-neutral-10 );
+		height: 36px;
+		max-width: 230px;
+		margin: 0 auto;
+		border-radius: 4px;
+	}
+
+	.segmented-control {
+		max-width: 230px;
+		margin: 0 auto;
+	}
+}

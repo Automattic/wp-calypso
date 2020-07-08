@@ -1,0 +1,294 @@
+@import '../styles/placeholder.scss'; // Contains the placeholder mixin
+@import '../styles/mixins';
+
+.domain-picker__empty-state {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+
+	&--text {
+		max-width: 320px;
+		font-size: 0.9em;
+		margin: 10px 0;
+		color: $dark-gray-500;
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+		align-items: center;
+
+		&--text {
+			margin: 15px 0;
+		}
+	}
+}
+
+.domain-picker__show-more {
+	padding: 10px;
+	text-align: center;
+}
+
+.domain-picker__search {
+	position: relative;
+	margin-bottom: 20px;
+
+	input[type='text'].components-text-control__input {
+		padding: 6px 40px 6px 16px;
+		height: 38px;
+		background: #f0f0f0;
+		border: none;
+
+		&::placeholder {
+			color: var( --studio-black );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --studio-blue-30 );
+			background: var( --studio-white );
+		}
+	}
+
+	svg {
+		position: absolute;
+		top: 6px;
+		right: 8px;
+	}
+}
+
+.domain-picker__suggestion-item-group {
+	flex-grow: 1;
+}
+
+.domain-picker__suggestion-sections {
+	flex: 1;
+}
+
+.domain-picker__suggestion-group-label {
+	margin: 0;
+	margin-top: 1.5em;
+	margin-bottom: 1em;
+	text-transform: uppercase;
+	color: var( --studio-gray-20 );
+	font-size: 12px;
+	font-weight: 400;
+	letter-spacing: 1px;
+}
+
+.domain-picker__suggestion-item {
+	@include domain-picker-package-medium-text;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	min-height: 36px + ( 10px * 2 ) + ( 1px * 2 ); // button height + padding height + border height
+	border: 1px solid var( --studio-gray-5 );
+	padding: 10px 14px;
+	margin: 0;
+	position: relative;
+	z-index: 1;
+	text-align: left;
+	cursor: pointer;
+
+	&.placeholder {
+		cursor: default;
+	}
+
+	&.is-selected {
+		background: var( --studio-blue-0 );
+		border-color: var( --studio-blue-40 );
+		z-index: 2;
+	}
+
+	&:hover,
+	&:focus {
+		&:not( .placeholder ) {
+			background: var( --studio-blue-0 );
+			border-color: var( --studio-blue-40 );
+			z-index: 2;
+		}
+
+		// Fade between price and select button only happens on desktop view.
+		@include break-small {
+			.domain-picker__suggestion-item-select-button {
+				opacity: 1;
+			}
+			.domain-picker__price {
+				opacity: 0;
+			}
+		}
+	}
+
+	&:first-of-type {
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	}
+
+	&:last-of-type {
+		border-bottom-left-radius: 5px;
+		border-bottom-right-radius: 5px;
+	}
+
+	+ .domain-picker__suggestion-item {
+		margin-top: -1px;
+	}
+
+	// animate the added domains after you click expand
+	@for $i from 7 through 14 {
+		&:nth-child( #{$i} ) {
+			transform: translateY( 20px );
+			opacity: 0;
+			animation: domain-picker-item-slide-up 0.1s ease-in forwards;
+			animation-delay: #{( $i - 7 ) * 40ms};
+		}
+	}
+
+	@keyframes domain-picker-item-slide-up {
+		100% {
+			transform: translateY( 0 );
+			opacity: 1;
+		}
+	}
+}
+
+.domain-picker__suggestion-item-name {
+	flex-grow: 1;
+	margin-right: 24px;
+	letter-spacing: 0.4px;
+
+	.domain-picker__domain-name {
+		word-break: break-word; // use hyphens if any to break domain name
+	}
+
+	&.placeholder {
+		@include placeholder();
+		max-width: 30%;
+		margin-right: auto; // position the placeholder to the left overriding justify-content: space-between
+	}
+}
+
+.domain-picker__domain-tld {
+	color: var( --studio-blue-40 );
+	// margin for recommended badge. this margin shouldn't
+	// be placed on the badge because if the badge falls
+	// on a newline, it will have whitespace on the left.
+	margin-right: 10px;
+}
+
+.domain-picker__badge {
+	display: inline-flex;
+	border-radius: 2px;
+	padding: 0 10px;
+	line-height: 20px;
+	height: 20px;
+	align-items: center;
+	font-size: 10px;
+	text-transform: uppercase;
+	vertical-align: middle;
+	background-color: var( --studio-blue-50 );
+	color: var( --color-text-inverted );
+}
+
+.domain-picker__price {
+	color: var( --studio-gray-40 );
+	text-align: right;
+	flex-basis: 0;
+	transition: opacity 200ms ease-in-out;
+	// Don't show free text on mobile view
+	&:not( .is-paid ) {
+		display: none;
+	}
+
+	@include break-small {
+		flex-basis: auto;
+
+		&:not( .is-paid ) {
+			display: inline;
+		}
+	}
+
+	&.placeholder {
+		@include placeholder();
+		min-width: 64px;
+	}
+}
+
+.domain-picker__price-long {
+	display: none;
+	@include break-small {
+		display: inline;
+	}
+}
+
+.domain-picker__price-short {
+	display: inline;
+	@include break-small {
+		display: none;
+	}
+}
+
+.domain-picker__price-cost {
+	text-decoration: line-through;
+}
+
+.domain-picker__suggestion-item-select-button {
+	display: flex;
+	align-items: center;
+	height: 36px;
+
+	span {
+		display: none;
+	}
+
+	svg {
+		fill: var( --studio-blue-50 );
+		margin-left: 10px;
+		margin-right: -2px;
+	}
+
+	@include break-small {
+		// We're mocking the look of a button,
+		// this is not an actual button.
+		background: $blue-medium-focus;
+		color: var( --studio-white );
+		border-radius: 2px;
+		padding: 0 12px;
+		opacity: 0;
+		transition: opacity 200ms ease-in-out;
+
+		// Overlaps price for transition purpose
+		position: absolute;
+		right: 14px;
+
+		&:hover {
+			background: mix( black, $blue-medium-focus, 10% );
+		}
+
+		span {
+			display: inline-block;
+		}
+
+		svg {
+			display: none;
+		}
+	}
+}
+
+.domain-picker__body {
+	display: flex;
+
+	// When in mobile, domain categories appear above
+	// the list of domain suggestions.
+	@media ( max-width: $break-mobile ) {
+		display: block;
+
+		.domain-picker__aside {
+			width: 100%;
+			padding: 0;
+		}
+	}
+}
+
+.domain-picker__aside {
+	width: 220px;
+	padding-right: 30px;
+}

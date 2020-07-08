@@ -14,8 +14,7 @@ import WaitingTwoFactorNotificationApproval from './waiting-notification-approva
 export default function TwoFactorContent( {
 	handleValid2FACode,
 	isBrowserSupported,
-	isJetpack,
-	isGutenboarding,
+	switchTwoFactorAuthType,
 	twoFactorAuthType,
 	twoFactorNotificationSent,
 	rebootAfterLogin,
@@ -23,7 +22,10 @@ export default function TwoFactorContent( {
 	if ( twoFactorAuthType === 'webauthn' && isBrowserSupported ) {
 		return (
 			<div>
-				<SecurityKeyForm twoFactorAuthType="webauthn" onSuccess={ handleValid2FACode } />
+				<SecurityKeyForm
+					onSuccess={ handleValid2FACode }
+					switchTwoFactorAuthType={ switchTwoFactorAuthType }
+				/>
 			</div>
 		);
 	}
@@ -38,10 +40,9 @@ export default function TwoFactorContent( {
 			<div>
 				{ poller }
 				<VerificationCodeForm
-					isJetpack={ isJetpack }
-					isGutenboarding={ isGutenboarding }
 					onSuccess={ handleValid2FACode }
 					twoFactorAuthType={ twoFactorAuthType }
+					switchTwoFactorAuthType={ switchTwoFactorAuthType }
 				/>
 			</div>
 		);
@@ -51,10 +52,7 @@ export default function TwoFactorContent( {
 		return (
 			<div>
 				{ poller }
-				<WaitingTwoFactorNotificationApproval
-					isJetpack={ isJetpack }
-					isGutenboarding={ isGutenboarding }
-				/>
+				<WaitingTwoFactorNotificationApproval switchTwoFactorAuthType={ switchTwoFactorAuthType } />
 			</div>
 		);
 	}

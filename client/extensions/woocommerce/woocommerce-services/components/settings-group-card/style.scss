@@ -7,27 +7,27 @@
 		padding-top: 24px;
 		padding-bottom: 24px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			flex-wrap: wrap;
 		}
 	}
 }
 
 .settings-group-card__heading {
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 	color: var( --color-neutral-50 );
 	width: 22%;
 	padding-right: 10px;
 	box-sizing: border-box;
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 	}
 }
 
 .settings-group-card__content {
 	width: 78%;
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 	}
 

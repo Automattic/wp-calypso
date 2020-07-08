@@ -2,17 +2,17 @@
  * External dependencies
  */
 import { assign, get, includes, indexOf, reject } from 'lodash';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import stepConfig from './steps';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
-
-const user = userFactory();
+import { abtest } from 'lib/abtest';
 
 function getCheckoutUrl( dependencies ) {
 	return addQueryArgs(
@@ -60,7 +60,7 @@ function getSignupDestination( dependencies ) {
 }
 
 function getLaunchDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }?d=launched`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getThankYouNoSiteDestination() {
@@ -68,15 +68,15 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }?d=theme`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
 	return `/block-editor/page/${ dependencies.siteSlug }/home`;
 }
 
-function getPreLaunchEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home?is-gutenboarding`;
+function getWhiteGloveUpsellUrl( dependencies ) {
+	return `/checkout/${ dependencies.siteSlug }/offer-white-glove`;
 }
 
 const flows = generateFlows( {
@@ -87,7 +87,6 @@ const flows = generateFlows( {
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
-	getPreLaunchEditorDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -103,6 +102,16 @@ function removeUserStepFromFlow( flow ) {
 function filterDestination( destination, dependencies ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
+	}
+
+	const cookies = cookie.parse( document.cookie );
+	const countryCodeFromCookie = cookies.country_code;
+
+	if (
+		dependencies?.cartItem === null &&
+		'variantShowOffer' === abtest( 'whiteGloveUpsell', countryCodeFromCookie )
+	) {
+		return getWhiteGloveUpsellUrl( dependencies );
 	}
 
 	return destination;
@@ -134,7 +143,7 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user && user.get() ) {
+		if ( user() && user().get() ) {
 			flow = removeUserStepFromFlow( flow );
 		}
 
@@ -163,7 +172,7 @@ const Flows = {
 	 * @param {string} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
 	},
 
 	filterExcludedSteps( flow ) {
@@ -178,6 +187,14 @@ const Flows = {
 
 	resetExcludedSteps() {
 		Flows.excludedSteps = [];
+	},
+
+	resetExcludedStep( stepName ) {
+		const index = Flows.excludedSteps.indexOf( stepName );
+
+		if ( index > -1 ) {
+			Flows.excludedSteps.splice( index, 1 );
+		}
 	},
 
 	getFlows() {

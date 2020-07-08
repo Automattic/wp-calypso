@@ -17,7 +17,6 @@ import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
 import config from 'config';
 import { preload } from 'sections-helper';
-import ResumeEditing from 'my-sites/resume-editing';
 import { getCurrentUserSiteCount, getCurrentUser } from 'state/current-user/selectors';
 import { isSupportSession } from 'state/support/selectors';
 import AsyncLoad from 'components/async-load';
@@ -37,6 +36,8 @@ import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 import { updateSiteMigrationMeta } from 'state/sites/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { hasUnseen } from 'state/reader-ui/seen-posts/selectors';
+import getPreviousPath from 'state/selectors/get-previous-path.js';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -47,6 +48,7 @@ class MasterbarLoggedIn extends React.Component {
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
+		hasUnseen: PropTypes.bool,
 	};
 
 	clickMySites = () => {
@@ -96,6 +98,10 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
+	};
+
+	clickClose = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
 	};
 
 	preloadMySites = () => {
@@ -154,12 +160,32 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
-		const { domainOnlySite, translate, isCheckout, isMigrationInProgress } = this.props;
+		const {
+			domainOnlySite,
+			translate,
+			isCheckout,
+			isMigrationInProgress,
+			previousPath,
+			siteSlug,
+		} = this.props;
 
 		if ( isCheckout === true ) {
+			let closeUrl = siteSlug ? '/plans/' + siteSlug : '/plans';
+			if ( '' !== previousPath && previousPath !== window.location.href ) {
+				closeUrl = previousPath;
+			}
+
 			return (
 				<Masterbar>
 					<div className="masterbar__secure-checkout">
+						<Item
+							url={ closeUrl }
+							icon="cross"
+							className="masterbar__close-button"
+							onClick={ this.clickClose }
+							tooltip={ translate( 'Close Checkout' ) }
+							tipTarget="close"
+						/>
 						<WordPressWordmark className="masterbar__wpcom-wordmark" />
 						<span className="masterbar__secure-checkout-text">
 							{ translate( 'Secure checkout' ) }
@@ -181,13 +207,14 @@ class MasterbarLoggedIn extends React.Component {
 					isActive={ this.isActive( 'reader' ) }
 					tooltip={ translate( 'Read the blogs and topics you follow' ) }
 					preloadSection={ this.preloadReader }
+					hasUnseen={ this.props.hasUnseen }
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
 				{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
+				<AsyncLoad require="my-sites/resume-editing" placeholder={ null } />
 				{ ! domainOnlySite && ! isMigrationInProgress && (
 					<Publish
 						isActive={ this.isActive( 'post' ) }
@@ -239,6 +266,7 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		return {
+			hasUnseen: hasUnseen( state ),
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			siteSlug: getSiteSlug( state, siteId ),
@@ -249,6 +277,7 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
+			previousPath: getPreviousPath( state ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }

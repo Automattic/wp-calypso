@@ -3,12 +3,25 @@
  */
 import { wpcomRequest } from '../wpcom-request-controls';
 import { createActions } from './actions';
-import { WpcomClientCredentials } from '../shared-types';
+import type { WpcomClientCredentials } from '../shared-types';
+import type { CurrentUser } from './types';
+
+declare global {
+	interface Window {
+		currentUser?: CurrentUser;
+	}
+}
 
 export function createResolvers( clientCreds: WpcomClientCredentials ) {
 	const { receiveCurrentUser, receiveCurrentUserFailed } = createActions( clientCreds );
 
 	function* getCurrentUser() {
+		// In environments where `wpcom-user-bootstrap` is set to true, the currentUser
+		// object will be server-side rendered to window.currentUser. In these cases,
+		// return that object instead of performing another API request to `/me`.
+		if ( window.currentUser ) {
+			return receiveCurrentUser( window.currentUser );
+		}
 		try {
 			const currentUser = yield wpcomRequest( {
 				path: '/me',

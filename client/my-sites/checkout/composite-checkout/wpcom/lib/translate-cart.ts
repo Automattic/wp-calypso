@@ -1,35 +1,43 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import {
 	ResponseCart,
 	ResponseCartProduct,
+	TempResponseCartProduct,
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
+	WPCOMCartCreditsItem,
 	CheckoutCartItem,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from '../types';
+import { isPlan, isDomainTransferProduct, isDomainProduct } from 'lib/products-values';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
  * the format required by the composite checkout component.
  *
- * @param translate Localization function
  * @param serverCart Cart object returned by the WPCOM cart endpoint
  * @returns Cart object suitable for passing to the checkout component
  */
-export function translateWpcomCartToCheckoutCart(
-	translate: ( string, any? ) => string,
-	serverCart: ResponseCart
-): WPCOMCart {
+export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
 	const {
 		products,
 		total_tax_integer,
 		total_tax_display,
 		total_cost_integer,
 		total_cost_display,
+		coupon_savings_total_display,
+		coupon_savings_total_integer,
+		savings_total_display,
+		savings_total_integer,
 		currency,
 		credits_integer,
 		credits_display,
@@ -37,14 +45,12 @@ export function translateWpcomCartToCheckoutCart(
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		coupon_discounts_integer,
-		is_coupon_applied,
 		tax,
 	} = serverCart;
 
 	const taxLineItem: CheckoutCartItem = {
 		id: 'tax-line-item',
-		label: translate( 'Tax' ),
+		label: String( translate( 'Tax' ) ),
 		type: 'tax', // TODO: does this need to be localized, e.g. tax-us?
 		amount: {
 			currency: currency,
@@ -53,32 +59,56 @@ export function translateWpcomCartToCheckoutCart(
 		},
 	};
 
-	// TODO: watch out for minimal currency units while localizing this
-	const couponValueRaw = products
-		.map( ( product ) => coupon_discounts_integer[ product.product_id ] )
-		.filter( Boolean )
-		.reduce( ( accum, current ) => accum + current, 0 );
-	const couponValue = Math.round( couponValueRaw );
-	const couponDisplayValue = `-$${ couponValueRaw / 100}`;
-
 	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',
-		label: translate( 'Coupon: %s', { args: coupon } ),
+		label: String( translate( 'Coupon: %(couponCode)s', { args: { couponCode: coupon } } ) ),
 		type: 'coupon',
 		amount: {
 			currency: currency,
-			value: couponValue,
-			displayValue: couponDisplayValue,
+			value: coupon_savings_total_integer,
+			displayValue: String(
+				translate( '- %(discountAmount)s', {
+					args: { discountAmount: coupon_savings_total_display },
+				} )
+			),
 		},
 		wpcom_meta: {
 			couponCode: coupon,
 		},
 	};
 
+	const creditsLineItem: WPCOMCartCreditsItem = {
+		id: 'credits',
+		label: String( translate( 'Credits' ) ),
+		type: 'credits',
+		amount: {
+			currency: currency,
+			value: credits_integer,
+			displayValue: String(
+				translate( '- %(discountAmount)s', { args: { discountAmount: credits_display } } )
+			),
+		},
+		wpcom_meta: {
+			credits_integer,
+			credits_display,
+		},
+	};
+
+	const savingsLineItem: CheckoutCartItem = {
+		id: 'savings-line-item',
+		label: String( translate( 'Total savings' ) ),
+		type: 'savings',
+		amount: {
+			currency: currency,
+			value: savings_total_integer,
+			displayValue: savings_total_display,
+		},
+	};
+
 	const totalItem: CheckoutCartItem = {
 		id: 'total',
 		type: 'total',
-		label: translate( 'Total' ),
+		label: String( translate( 'Total' ) ),
 		amount: {
 			currency: currency,
 			value: total_cost_integer,
@@ -89,7 +119,7 @@ export function translateWpcomCartToCheckoutCart(
 	const subtotalItem: CheckoutCartItem = {
 		id: 'subtotal',
 		type: 'subtotal',
-		label: translate( 'Subtotal' ),
+		label: String( translate( 'Subtotal' ) ),
 		amount: {
 			currency: currency,
 			value: sub_total_integer,
@@ -97,34 +127,14 @@ export function translateWpcomCartToCheckoutCart(
 		},
 	};
 
-	// TODO: inject a real currency localization function
-	function localizeCurrency( currencyCode: string, amount: number ): string {
-		switch ( currencyCode ) {
-			case 'BRL':
-				return 'R$' + amount / 100;
-			default:
-				return '$' + amount / 100;
-		}
-	}
-
 	return {
-		items: products.map(
-			translateWpcomCartItemToCheckoutCartItem(
-				is_coupon_applied,
-				coupon_discounts_integer,
-				localizeCurrency
-			)
-		),
+		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
-		coupon: is_coupon_applied ? couponLineItem : null,
+		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
 		total: totalItem,
+		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
-		credits: {
-			id: 'credits',
-			type: 'credits',
-			label: translate( 'Credits' ),
-			amount: { value: credits_integer, displayValue: credits_display, currency },
-		},
+		credits: credits_integer > 0 ? creditsLineItem : null,
 		allowedPaymentMethods: allowed_payment_methods
 			.filter( ( slug ) => {
 				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
@@ -136,64 +146,97 @@ export function translateWpcomCartToCheckoutCart(
 	};
 }
 
+function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartProduct ): boolean {
+	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.
+	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
+		return false;
+	}
+	return true;
+}
+
 // Convert a backend cart item to a checkout cart item
-function translateWpcomCartItemToCheckoutCartItem(
-	is_coupon_applied: boolean,
-	coupon_discounts_integer: number[],
-	localizeCurrency: ( string, number ) => string
-): ( ResponseCartProduct ) => WPCOMCartItem {
-	return ( serverCartItem: ResponseCartProduct ) => {
-		const {
-			product_id,
-			product_name,
-			product_slug,
-			currency,
-			item_subtotal_integer,
-			is_domain_registration,
-			is_bundled,
+function translateReponseCartProductToWPCOMCartItem(
+	serverCartItem: ResponseCartProduct | TempResponseCartProduct
+): WPCOMCartItem {
+	const {
+		product_id,
+		product_name,
+		product_slug,
+		currency,
+		item_original_cost_display,
+		item_original_cost_integer,
+		item_subtotal_monthly_cost_display,
+		item_subtotal_monthly_cost_integer,
+		item_original_subtotal_display,
+		item_original_subtotal_integer,
+		is_sale_coupon_applied,
+		months_per_bill_period,
+		item_subtotal_display,
+		item_subtotal_integer,
+		is_domain_registration,
+		is_bundled,
+		meta,
+		extra,
+		volume,
+		uuid,
+		product_cost_integer,
+		product_cost_display,
+	} = serverCartItem;
+
+	let label = product_name || '';
+	let sublabel;
+	if ( isPlan( serverCartItem ) ) {
+		sublabel = String( translate( 'Plan Subscription' ) );
+	} else if ( 'premium_theme' === product_slug || 'concierge-session' === product_slug ) {
+		sublabel = '';
+	} else if (
+		meta &&
+		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
+	) {
+		label = meta;
+		sublabel = product_name || '';
+	}
+
+	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
+
+	// for displaying crossed-out original price
+	const itemOriginalCostDisplay = item_original_cost_display || '';
+	const itemOriginalSubtotalDisplay = item_original_subtotal_display || '';
+	const itemSubtotalMonthlyCostDisplay = item_subtotal_monthly_cost_display || '';
+
+	return {
+		id: uuid,
+		label,
+		sublabel,
+		type,
+		amount: {
+			currency: currency || '',
+			value: item_subtotal_integer || 0,
+			displayValue: item_subtotal_display || '',
+		},
+		wpcom_meta: {
+			uuid: uuid,
 			meta,
+			product_id,
+			product_slug,
 			extra,
 			volume,
-			uuid,
-			product_cost_integer,
-			product_cost_display,
-		} = serverCartItem;
-
-		// Sublabel is the domain name for registrations
-		const sublabel = meta;
-
-		// TODO: watch out for this when localizing
-		const value = is_coupon_applied
-			? item_subtotal_integer + ( coupon_discounts_integer[ product_id ] ?? 0 )
-			: item_subtotal_integer;
-		const displayValue = localizeCurrency( currency, value );
-
-		return {
-			id: uuid,
-			label: product_name,
-			sublabel: sublabel,
-			type: product_slug,
-			amount: {
-				currency,
-				value,
-				displayValue,
-			},
-			wpcom_meta: {
-				uuid: uuid,
-				meta: typeof meta === 'string' ? meta : undefined,
-				product_id,
-				product_slug,
-				extra,
-				volume,
-				is_domain_registration,
-				is_bundled,
-				product_cost_integer,
-				product_cost_display,
-			},
-		};
+			is_domain_registration: is_domain_registration || false,
+			is_bundled: is_bundled || false,
+			item_original_cost_display: itemOriginalCostDisplay,
+			item_original_cost_integer: item_original_cost_integer || 0,
+			item_subtotal_monthly_cost_display: itemSubtotalMonthlyCostDisplay,
+			item_subtotal_monthly_cost_integer: item_subtotal_monthly_cost_integer || 0,
+			item_original_subtotal_display: itemOriginalSubtotalDisplay,
+			item_original_subtotal_integer: item_original_subtotal_integer || 0,
+			is_sale_coupon_applied: is_sale_coupon_applied || false,
+			months_per_bill_period,
+			product_cost_integer: product_cost_integer || 0,
+			product_cost_display: product_cost_display || '',
+		},
 	};
 }
 
 export function getNonProductWPCOMCartItemTypes(): string[] {
-	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits' ];
+	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits', 'savings' ];
 }

@@ -29,7 +29,7 @@ class Security2faStatus extends React.Component {
 			<p>
 				{ this.props.twoStepEnabled
 					? this.props.translate(
-							'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
+							'{{status}}Status:{{/status}} Two-step authentication is currently {{onOff}}on{{/onOff}}.',
 							{
 								components: {
 									status: <span className="security-2fa-status__heading" />,
@@ -38,7 +38,7 @@ class Security2faStatus extends React.Component {
 							}
 					  )
 					: this.props.translate(
-							'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
+							'{{status}}Status:{{/status}} Two-step authentication is currently {{onOff}}off{{/onOff}}.',
 							{
 								components: {
 									status: <span className="security-2fa-status__heading" />,

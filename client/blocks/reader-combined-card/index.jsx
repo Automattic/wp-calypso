@@ -137,7 +137,7 @@ class ReaderCombinedCardComponent extends React.Component {
 				<ul className="reader-combined-card__post-list">
 					{ posts.map( ( post, i ) => (
 						<ReaderCombinedCardPost
-							key={ `post-${ postKey.feedId || postKey.blogId}-${ postKey.postIds[ i ]}` }
+							key={ `post-${ postKey.feedId || postKey.blogId }-${ postKey.postIds[ i ] }` }
 							post={ post }
 							postKey={ postKeys[ i ] }
 							streamUrl={ streamUrl }
@@ -158,6 +158,7 @@ class ReaderCombinedCardComponent extends React.Component {
 						showReportSite={ true }
 						showReportPost={ false }
 						post={ posts[ 0 ] }
+						posts={ posts }
 					/>
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }

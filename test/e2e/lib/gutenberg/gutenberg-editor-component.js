@@ -61,7 +61,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await this.closeSidebar();
 	}
 
-	async publish( { visit = false } = {} ) {
+	async publish( { visit = false, closePanel = true } = {} ) {
 		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
@@ -70,7 +70,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const button = await this.driver.findElement( this.publishSelector );
 		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
-		await this.closePublishedPanel();
+		if ( closePanel ) {
+			await this.closePublishedPanel();
+		}
 		await this.waitForSuccessViewPostNotice();
 		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
 
@@ -141,9 +143,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const blockID = await this.addBlock( 'Form' );
 
 		const contactFormBlock = await ContactFormBlockComponent.Expect( this.driver, blockID );
+		await contactFormBlock.openEditSettings();
 		await contactFormBlock.insertEmail( email );
-		await contactFormBlock.insertSubject( subject );
-		return await contactFormBlock.submitForm();
+		return await contactFormBlock.insertSubject( subject );
 	}
 
 	async contactFormDisplayedInEditor() {
@@ -168,28 +170,42 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.css( '.block-editor-writing-flow' ),
 			'start'
 		);
-		const inserterToggleSelector = By.css( '.edit-post-header .block-editor-inserter__toggle' );
+		const inserterToggleSelector = By.css(
+			'.edit-post-header .edit-post-header-toolbar__inserter-toggle'
+		);
 		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
-		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search' );
+		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
+
 		if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
 			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterToggleSelector );
+
 			await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
+			// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
+			// See https://github.com/Automattic/wp-calypso/issues/43179
+			if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
+				await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
+			}
+
 			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );
 		}
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, searchTerm );
 	}
 
+	// @TODO: Remove `.block-editor-inserter__results .components-panel__body-title` selector in favor of the `.block-editor-inserter__block-list .block-editor-inserter__panel-title` selector when Gutenberg 8.0.0 is deployed.
 	async isBlockCategoryPresent( name ) {
-		const categorySelector = '.block-editor-inserter__results .components-panel__body-title';
+		const categorySelector =
+			'.block-editor-inserter__results .components-panel__body-title, .block-editor-inserter__block-list .block-editor-inserter__panel-title';
 		const categoryName = await this.driver.findElement( By.css( categorySelector ) ).getText();
-		return categoryName === name;
+		return categoryName.toLowerCase() === name.toLowerCase();
 	}
 
 	async closeBlockInserter() {
+		// @TODO: Remove `.edit-post-header .block-editor-inserter__toggle` selector in favor of the `.edit-post-header-toolbar__inserter-toggle` selector when Gutenberg 8.0.0 is deployed.
+		// @TODO: Remove `.block-editor-inserter__popover .components-popover__close` selector in favor of the `.edit-post-layout__inserter-panel-header .components-button` selector when Gutenberg 8.0.0 is deployed.
 		const inserterCloseSelector = By.css(
 			driverManager.currentScreenSize() === 'mobile'
-				? '.block-editor-inserter__popover .components-popover__close'
-				: '.edit-post-header .block-editor-inserter__toggle'
+				? '.block-editor-inserter__popover .components-popover__close, .edit-post-layout__inserter-panel-header .components-button'
+				: '.edit-post-header .block-editor-inserter__toggle, .edit-post-header .edit-post-header-toolbar__inserter-toggle'
 		);
 		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
 		await driverHelper.clickWhenClickable( this.driver, inserterCloseSelector );
@@ -213,6 +229,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				blockClass = 'contact-form';
 				break;
 			case 'Simple Payments':
+			case 'Pay with PayPal':
 				prefix = 'jetpack-';
 				blockClass = 'simple-payments';
 				break;
@@ -283,8 +300,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async toggleSidebar( open = true ) {
-		// @TODO: Remove .edit-post-* selector in favor of .interface-* selector when Gutenberg 7.9 is deployed.
-		const sidebarSelector = '.edit-post-sidebar-header, .interface-complementary-area-header';
+		const sidebarSelector = '.interface-complementary-area-header';
 		const sidebarOpen = await driverHelper.isElementPresent(
 			this.driver,
 			By.css( sidebarSelector )
@@ -303,12 +319,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( ".edit-post-sidebar__panel-tabs button[aria-label='Close settings']" )
 				);
 			}
-			// @TODO: Remove .edit-post-* selector in favor of .interface-* selector when Gutenberg 7.9 is deployed.
 			return await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css(
-					".interface-complementary-area-header__small button[aria-label='Close settings'], .edit-post-sidebar-header__small button[aria-label='Close settings']"
-				)
+				By.css( ".interface-complementary-area-header__small button[aria-label='Close settings']" )
 			);
 		}
 	}

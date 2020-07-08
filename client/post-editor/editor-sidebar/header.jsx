@@ -13,7 +13,7 @@ import { flow } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import EditorPostType from 'post-editor/editor-post-type';
-import { closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
+import { closeEditorSidebar } from 'state/editor/sidebar/actions';
 
 const EditorSidebarHeader = ( { closeSidebar, translate } ) => (
 	<div className="editor-sidebar__header">

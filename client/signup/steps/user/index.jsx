@@ -7,11 +7,16 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isJetpackCloudOAuth2Client,
+} from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import flows from 'signup/config/flows';
 import SignupForm from 'blocks/signup-form';
@@ -28,6 +33,8 @@ import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'lib/login';
+import { abtest } from 'lib/abtest';
+import JetpackLogo from 'components/jetpack-logo';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -58,6 +65,7 @@ export class UserStep extends Component {
 
 		if (
 			this.props.flowName !== nextProps.flowName ||
+			this.props.locale !== nextProps.locale ||
 			this.props.subHeaderText !== nextProps.subHeaderText
 		) {
 			this.setSubHeaderText( nextProps );
@@ -169,6 +177,18 @@ export class UserStep extends Component {
 		} );
 	}
 
+	isEligibleForSwapStepsTest() {
+		const cookies = cookie.parse( document.cookie );
+		const countryCodeFromCookie = cookies.country_code;
+		const isUserFromUS = 'US' === countryCodeFromCookie;
+
+		if ( isUserFromUS && 'onboarding' === this.props.flowName ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	save = ( form ) => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -193,6 +213,14 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
+
+		if (
+			this.isEligibleForSwapStepsTest() &&
+			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+		) {
+			const switchFlowName = 'onboarding-plan-first';
+			this.props.goToNextStep( switchFlowName );
+		}
 
 		this.props.goToNextStep();
 	};
@@ -302,6 +330,15 @@ export class UserStep extends Component {
 			);
 		}
 
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			return (
+				<div className={ classNames( 'signup-form__jetpack-cloud-wrapper' ) }>
+					<JetpackLogo full={ false } size={ 60 } />
+					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
+				</div>
+			);
+		}
+
 		if ( includes( [ 'wpcc' ], flowName ) && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
@@ -402,9 +439,12 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
+				fallbackHeaderText={
+					this.props.fallbackHeaderText || this.props.translate( 'Create your account.' )
+				}
 				subHeaderText={ this.state.subHeaderText }
+				fallbackSubHeaderText={ this.props.fallbackSubHeaderText }
 				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
 			/>
 		);

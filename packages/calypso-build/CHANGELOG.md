@@ -1,3 +1,8 @@
+# Next
+
+- Set `strictExportPresence` in webpack so missing exports error the build.
+  See [#43619](https://github.com/Automattic/wp-calypso/pull/43619).
+
 # 6.1.0
 
 - Upgrade [mini-css-extract-plugin-with-rtl](https://github.com/Automattic/mini-css-extract-plugin-with-rtl) to 0.8.0, use an npm-published version instead of GitHub branch reference

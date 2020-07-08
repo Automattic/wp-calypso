@@ -98,52 +98,26 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 
 ## Media Queries
 
-We don't do device specific breakpoints, we use layout-specific breakpoints that communicate the state of the UI. DO NOT define your own media queries. Utilize the mixins [provided in `_mixins.scss`](https://github.com/Automattic/wp-calypso/blob/master/assets/stylesheets/shared/mixins/_breakpoints.scss). Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. This means that devices with smaller screens have to process less CSS (which makes sense since they are generally less powerful). You should avoid the use of `<` breakpoints like this:
+To avoid code bloat and have a more consistent experience we use the same breakpoints in all SCSS files whenever possible. DO NOT define your own media queries. We should use the `break-*` mixins from [Gutenberg](https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss). For example:
 
-Bad:
 ```scss
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .class-name {
-    margin: 20px; // styles for all devices
-    @include breakpoint( “<480px” ) {
-        margin: 10px; // styles for mobile
+    margin-bottom: 8px;
+    padding: 12px;
+
+    @include break-mobile {
+        margin-bottom: 16px;
+        padding: 24px;
     }
 }
 ```
 
-Good:
-```scss
-.class-name {
-    margin: 10px; // styles for all devices
-    @include breakpoint( “>480px” ) {
-        margin: 20px; // styles for desktop
-    }
-}
-```
+ Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. You should avoid the use of max width breakpoints.
 
-There is only one time when using a `<` breakpoint is ok; when it saves you code:
-
-Bad:
-```scss
-.class-name {
-    width: 50%; // styles for all devices
-    @include breakpoint( “>480px” ) {
-        width: auto; // styles for desktop
-    }
-}
-```
-
-Good:
-```scss
-.class-name {
-    @include breakpoint( “<480px” ) {
-        width: 50%; // styles for mobile
-    }
-}
-```
-
-The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `yarn start`.
-
-Adding additional breakpoints should not be undertaken lightly.
+  The old `breakpoint-deprecated` mixin should be replaced with Gutenberg's `break-*` mixins.
 
 
 ### Adding a new Sass file
@@ -246,7 +220,7 @@ You can also define specific values for RTL like so:
   }
 ```
 
-You can find more details in the [RTLCSS documentation](https://github.com/MohammadYounes/rtlcss/blob/master/README.md).
+You can find more details in the [RTLCSS documentation](https://github.com/MohammadYounes/rtlcss/blob/HEAD/README.md).
 
 
 ## Positioning
@@ -267,7 +241,7 @@ selector {
 - DO use a single space before an opening brace
 
 ```scss
-@include breakpoint( ">480px" ) {
+@include breakpoint-deprecated( ">480px" ) {
   color: rgb( 0, 0, 0 );
   transform: translate( -50%, -50% ) scale( 1 );
 }
@@ -282,8 +256,8 @@ add another entry to the `$z-layers` variable in
 
 Because browsers support a hierarchy of stacking contexts rather than a single
 global one, we use a tree with two levels of keys. The first is the name of the
-parent stacking context, and the latter is the selector for the stacking 
-context you've just created.  We keep each level of the tree sorted by z-index 
+parent stacking context, and the latter is the selector for the stacking
+context you've just created.  We keep each level of the tree sorted by z-index
 so we can quickly compare z-index values within a given stacking context.
 
 An element creates a new stacking context when any of the following are true:
@@ -300,8 +274,8 @@ So, to add a new z-index:
 
 1. You'll want to make sure the element actually creates a stacking context
 2. Look up its parent stacking context
-3. Put the new rule in the `$z-layers` tree, using the selector of the parent 
-   stacking context as the initial key and the element's full CSS selector as 
+3. Put the new rule in the `$z-layers` tree, using the selector of the parent
+   stacking context as the initial key and the element's full CSS selector as
    the final key.
 
 You can use this handy Chrome
@@ -380,9 +354,9 @@ $z-layers: (
 ```
 
 While we can support a map with more than 2 layers, there isn't much benefit to doing
-this. Stacking of children are completely resolved within their parent context. So in 
+this. Stacking of children are completely resolved within their parent context. So in
 our example the stacking of `.modal__icon`, `.modal__header`, and `.modal__content` are
-completely resolved within `.modal`. Once this is done the entire `.modal` element is 
+completely resolved within `.modal`. Once this is done the entire `.modal` element is
 passed for stacking in the root element, with it's sibling `.masterbar`.
 
 For further reading on stacking contexts see:

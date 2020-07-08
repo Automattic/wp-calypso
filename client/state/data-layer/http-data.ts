@@ -14,7 +14,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
  */
 import { Lazy, TimestampMS, TimerHandle } from 'types';
 
-enum DataState {
+export enum DataState {
 	Failure = 'failure',
 	Pending = 'pending',
 	Success = 'success',
@@ -192,7 +192,7 @@ export default {
 export const reducer: Reducer< number, Action< typeof HTTP_DATA_TICK > > = (
 	state = 0,
 	{ type }
-) => ( HTTP_DATA_TICK === type ? state + 1 : state) ;
+) => ( HTTP_DATA_TICK === type ? state + 1 : state );
 
 interface HttpDataAction extends Action< typeof HTTP_DATA_REQUEST > {
 	id: DataId;
@@ -305,6 +305,7 @@ export const waitForData = < T extends Query >(
 	{ timeout }: { timeout?: number } = {}
 ): Promise< Results< T > > =>
 	new Promise( ( resolve, reject ) => {
+		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		let unsubscribe = () => {};
 		let timer: TimerHandle;
 		const names = Object.keys( query );

@@ -1,7 +1,7 @@
 body {
 	@extend %content-font;
 	font-family: $serif;
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.7;
 	margin-top: 32px;
 	margin-bottom: 72px;
@@ -108,7 +108,7 @@ a img {
 .wp-caption-dd {
 	background: var( --color-neutral-0 );
 	color: var( --color-neutral-50 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.7;
 	padding: 16px;
 }
@@ -143,7 +143,7 @@ blockquote {
 caption,
 th,
 td {
-	font-weight: normal;
+	font-weight: 400;
 	text-align: left;
 }
 table,
@@ -162,12 +162,12 @@ table {
 caption,
 th,
 td {
-	font-weight: normal;
+	font-weight: 400;
 	text-align: left;
 }
 th {
 	border-width: 0 1px 1px 0;
-	font-weight: 700;
+	font-weight: 600;
 }
 td {
 	border-width: 0 1px 1px 0;

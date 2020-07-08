@@ -6,11 +6,19 @@ import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import PropTypes from 'prop-types';
 import { authorizeQueryDataSchema } from './schema';
 import { head, includes, isEmpty, split } from 'lodash';
+import page from 'page';
+import { urlToSlug } from 'lib/url';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs, untrailingslashit } from 'lib/route';
+import { addQueryArgs, externalRedirect, untrailingslashit } from 'lib/route';
+import {
+	JPC_PATH_PLANS,
+	JPC_PATH_REMOTE_INSTALL,
+	REMOTE_PATH_AUTH,
+	JPC_PATH_CHECKOUT,
+} from './constants';
 
 export function authQueryTransformer( queryObject ) {
 	return {
@@ -37,6 +45,8 @@ export function authQueryTransformer( queryObject ) {
 		siteIcon: queryObject.site_icon || null,
 		siteUrl: queryObject.site_url || null,
 		userEmail: queryObject.user_email || null,
+		woodna_service_name: queryObject.woodna_service_name || null,
+		woodna_help_url: queryObject.woodna_help_url || null,
 	};
 }
 
@@ -123,4 +133,44 @@ export function parseAuthorizationQuery( query ) {
 		// The parser is expected to throw SchemaError or TransformerError on bad input.
 	}
 	return null;
+}
+
+/**
+ * Manage Jetpack Connect redirect after various site states
+ *
+ * @param  {string}     type Redirect type
+ * @param  {string}     url Site url
+ * @param  {?string}    product Product slug
+ * @returns {string}        Redirect url
+ */
+export function redirect( type, url, product = null ) {
+	let urlRedirect = '';
+	const instr = '/jetpack/connect/instructions';
+
+	if ( type === 'plans_selection' ) {
+		urlRedirect = JPC_PATH_PLANS + '/' + urlToSlug( url );
+		page.redirect( urlRedirect );
+	}
+
+	if ( type === 'remote_install' ) {
+		urlRedirect = JPC_PATH_REMOTE_INSTALL;
+		page.redirect( urlRedirect );
+	}
+
+	if ( type === 'remote_auth' ) {
+		urlRedirect = addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH );
+		externalRedirect( urlRedirect );
+	}
+
+	if ( type === 'install_instructions' ) {
+		urlRedirect = addQueryArgs( { url }, instr );
+		page.redirect( urlRedirect );
+	}
+
+	if ( type === 'checkout' ) {
+		urlRedirect = `${ JPC_PATH_CHECKOUT }/${ urlToSlug( url ) }/${ product }`;
+		page.redirect( urlRedirect );
+	}
+
+	return urlRedirect;
 }

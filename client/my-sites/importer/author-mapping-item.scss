@@ -8,7 +8,7 @@
 	& > span:last-of-type {
 		width: 50%;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: 65%;
 		}
 	}
@@ -20,8 +20,8 @@
 		align-items: center;
 		width: 100%;
 
-		@include breakpoint( '<480px' ) {
-			font-size: 12px;
+		@include breakpoint-deprecated( '<480px' ) {
+			font-size: $font-body-extra-small;
 		}
 	}
 }
@@ -35,10 +35,10 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 35%;
 	}
 }
@@ -47,7 +47,7 @@
 	float: left;
 	color: var( --color-neutral-20 );
 
-	@include breakpoint( '<480px') {
+	@include breakpoint-deprecated( '<480px') {
 		display: none;
 	}
 }

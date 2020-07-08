@@ -158,7 +158,7 @@ class StatsPostDetail extends Component {
 
 						<PostMonths
 							dataKey="years"
-							title={ translate( 'Months and Years' ) }
+							title={ translate( 'Months and years' ) }
 							total={ translate( 'Total' ) }
 							siteId={ siteId }
 							postId={ postId }
@@ -166,7 +166,7 @@ class StatsPostDetail extends Component {
 
 						<PostMonths
 							dataKey="averages"
-							title={ translate( 'Average per Day' ) }
+							title={ translate( 'Average per day' ) }
 							total={ translate( 'Overall' ) }
 							siteId={ siteId }
 							postId={ postId }

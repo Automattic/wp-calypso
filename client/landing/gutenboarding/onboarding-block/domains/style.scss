@@ -1,0 +1,16 @@
+@import '../../variables.scss';
+@import '../../mixins';
+
+.gutenboarding-page.domains {
+	background-color: var( --contrastColor );
+	color: var( --mainColor );
+	padding-bottom: $gutenboarding-footer-height + 28px;
+
+	.domains__header {
+		@include onboarding-heading-padding;
+
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+}

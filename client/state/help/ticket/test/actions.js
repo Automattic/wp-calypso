@@ -60,7 +60,7 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should be successful.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
+			assert( spy.calledWith( sinon.match( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) ) );
 
 			action.then( () => {
 				assert(
@@ -81,7 +81,7 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should be failed.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
+			assert( spy.calledWith( sinon.match( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) ) );
 
 			action.then( () => {
 				assert(

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -12,9 +11,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
-import MediaActions from 'lib/media/actions';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import FeaturedImageDropZone from './dropzone';
@@ -27,9 +24,10 @@ import QueryMedia from 'components/data/query-media';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -63,7 +61,7 @@ class EditorFeaturedImage extends Component {
 		const { siteId, featuredImage } = this.props;
 
 		if ( featuredImage ) {
-			MediaActions.setLibrarySelectedItems( siteId, [ featuredImage ] );
+			this.props.setMediaLibrarySelectedItems( siteId, [ featuredImage ] );
 		}
 
 		this.setState( {
@@ -121,16 +119,14 @@ class EditorFeaturedImage extends Component {
 		}
 
 		return (
-			<MediaLibrarySelectedData siteId={ this.props.siteId }>
-				<MediaModal
-					visible={ this.props.selecting || this.state.isSelecting }
-					onClose={ this.setImage }
-					siteId={ this.props.siteId }
-					labels={ { confirm: this.props.translate( 'Set Featured Image' ) } }
-					enabledFilters={ [ 'images' ] }
-					single
-				/>
-			</MediaLibrarySelectedData>
+			<MediaModal
+				visible={ this.props.selecting || this.state.isSelecting }
+				onClose={ this.setImage }
+				siteId={ this.props.siteId }
+				labels={ { confirm: this.props.translate( 'Set Featured Image' ) } }
+				enabledFilters={ [ 'images' ] }
+				single
+			/>
 		);
 	}
 
@@ -202,5 +198,6 @@ export default connect(
 		recordEditorStat,
 		recordEditorEvent,
 		recordTracksEvent,
+		setMediaLibrarySelectedItems,
 	}
 )( localize( EditorFeaturedImage ) );

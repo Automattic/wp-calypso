@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
@@ -24,7 +23,7 @@ import { successNotice, errorNotice, warningNotice } from 'state/notices/actions
 import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
-import { getAvailableExternalAccounts } from 'state/sharing/selectors';
+import { getAvailableExternalAccounts, isServiceExpanded } from 'state/sharing/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	getKeyringConnectionsByName,
@@ -32,12 +31,12 @@ import {
 } from 'state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
-	getRemovableConnections,
 	getSiteUserConnectionsForService,
 	isFetchingConnections,
 } from 'state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import getRemovableConnections from 'state/selectors/get-removable-connections';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
@@ -45,7 +44,7 @@ import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
-import requestExternalAccess from 'lib/sharing';
+import requestExternalAccess from '@automattic/request-external-access';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
 import config from 'config';
 import PicasaMigration from './picasa-migration';
@@ -477,6 +476,10 @@ export class SharingService extends Component {
 			return true;
 		}
 
+		if ( this.props.isExpanded ) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -632,6 +635,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				userId,
+				isExpanded: isServiceExpanded( state, service ),
 			};
 			return isFunction( mapStateToProps ) ? mapStateToProps( state, props ) : props;
 		},

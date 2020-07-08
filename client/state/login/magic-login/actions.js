@@ -1,14 +1,9 @@
 /**
- * External dependencies
- */
-import { stringify } from 'qs';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
 import { AUTHENTICATE_URL } from './constants';
-import { HTTPError } from '../utils';
+import { HTTPError, stringifyBody } from '../utils';
 import {
 	LOGIN_REQUEST_SUCCESS,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
@@ -58,7 +53,7 @@ async function postMagicLoginRequest( url, bodyObj ) {
 		method: 'POST',
 		credentials: 'include',
 		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: stringify( bodyObj ),
+		body: stringifyBody( bodyObj ),
 	} );
 
 	if ( response.ok ) {

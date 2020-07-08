@@ -37,8 +37,8 @@ import {
 	editorEditRawContent,
 	editorResetRawContent,
 	setEditorIframeLoaded,
-} from 'state/ui/editor/actions';
-import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
+} from 'state/editor/actions';
+import { closeEditorSidebar, openEditorSidebar } from 'state/editor/sidebar/actions';
 import {
 	getEditorPostId,
 	isConfirmationSidebarEnabled,
@@ -48,7 +48,7 @@ import {
 	isEditorSaveBlocked,
 	getEditorPostPreviewUrl,
 	getEditorLoadingError,
-} from 'state/ui/editor/selectors';
+} from 'state/editor/selectors';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import {
 	getSitePost,
@@ -67,6 +67,7 @@ import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
 import EditorGutenbergOptInNotice from 'post-editor/editor-gutenberg-opt-in-notice';
 import EditorGutenbergDialogs from 'post-editor/editor-gutenberg-dialogs';
+import EditorDeprecationDialog from 'post-editor/editor-deprecation-dialog';
 import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -84,6 +85,8 @@ import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-butto
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import { isEnabled } from 'config';
 
 /**
  * Style dependencies
@@ -299,6 +302,9 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
+				{ ! this.props.isEditorDeprecated && ! isEnabled( 'desktop' ) && (
+					<EditorDeprecationDialog />
+				) }
 				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
@@ -1185,6 +1191,7 @@ const enhance = flow(
 				isAutosaving: isEditorAutosaving( state ),
 				isLoading: isEditorLoading( state ),
 				loadingError: getEditorLoadingError( state ),
+				isEditorDeprecated: inEditorDeprecationGroup( state ),
 			};
 		},
 		{

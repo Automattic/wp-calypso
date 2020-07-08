@@ -45,7 +45,7 @@ function middleware( app ) {
 	// feature is enabled.
 	if ( shouldBuildChunksMap ) {
 		callbacks.push( () => {
-			execSync( 'node bin/build-languages' );
+			execSync( 'yarn run build-languages' );
 		} );
 	}
 
@@ -115,7 +115,7 @@ function middleware( app ) {
 	app.use(
 		webpackMiddleware( compiler, {
 			mode: 'development',
-			publicPath: `/calypso/${ process.env.DEV_TARGET || 'evergreen'}/`,
+			publicPath: `/calypso/${ process.env.DEV_TARGET || 'evergreen' }/`,
 			stats: {
 				colors: true,
 				hash: true,

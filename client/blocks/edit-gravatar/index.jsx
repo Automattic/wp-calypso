@@ -13,13 +13,13 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { AspectRatios } from 'state/editor/image-editor/constants';
 import { Dialog } from '@automattic/components';
 import FilePicker from 'components/file-picker';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Gravatar from 'components/gravatar';
 import { isCurrentUserUploadingGravatar } from 'state/current-user/gravatar-status/selectors';
-import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
+import { resetAllImageEditorState } from 'state/editor/image-editor/actions';
 import Spinner from 'components/spinner';
 import {
 	receiveGravatarImageFailed,
@@ -165,7 +165,7 @@ export class EditGravatar extends Component {
 
 	render() {
 		const { isUploading, translate, user } = this.props;
-		const gravatarLink = `https://gravatar.com/${ user.username || ''}`;
+		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;

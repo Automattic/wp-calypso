@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isArray } from 'lodash';
+import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getAllLists } from 'state/mailchimp/lists/selectors';
+import { getListId } from 'state/mailchimp/settings/selectors';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -157,12 +159,8 @@ export default connect(
 			siteId,
 			isJetpack,
 			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
-			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
-			mailchimpListId: get(
-				state,
-				[ 'mailchimp', 'settings', 'items', siteId, 'follower_list_id' ],
-				0
-			),
+			mailchimpLists: getAllLists( state, siteId ),
+			mailchimpListId: getListId( state, siteId ),
 		};
 	},
 	{

@@ -6,7 +6,7 @@
 	position: relative;
 	text-align: center;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin: 0 15px;
 	}
 

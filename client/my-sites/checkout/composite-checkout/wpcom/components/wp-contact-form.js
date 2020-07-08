@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import {
@@ -9,17 +9,25 @@ import {
 	useDispatch,
 	useFormStatus,
 	useIsStepActive,
+	useLineItems,
+	useSetStepComplete,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart } from '../hooks/has-domains';
+import { useHasDomainsInCart, useDomainNamesInCart } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import { isGSuiteProductSlug } from 'lib/gsuite';
+
+const debug = debugFactory( 'calypso:composite-checkout:wp-contact-form' );
 
 export default function WPContactForm( {
 	summary,
@@ -29,16 +37,27 @@ export default function WPContactForm( {
 	countriesList,
 	renderDomainContactFields,
 	shouldShowContactDetailsValidationErrors,
+	contactValidationCallback,
 } ) {
 	const translate = useTranslate();
+	const [ items ] = useLineItems();
 	const isDomainFieldsVisible = useHasDomainsInCart();
+	const isGSuiteInCart = items.some( ( item ) =>
+		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
+	);
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
+	useSkipToLastStepIfFormComplete( contactValidationCallback );
 
 	if ( summary && isComplete ) {
-		return <ContactFormSummary isDomainFieldsVisible={ isDomainFieldsVisible } />;
+		return (
+			<ContactFormSummary
+				isDomainFieldsVisible={ isDomainFieldsVisible }
+				isGSuiteInCart={ isGSuiteInCart }
+			/>
+		);
 	}
 	if ( ! isActive ) {
 		return null;
@@ -49,6 +68,7 @@ export default function WPContactForm( {
 			<RenderContactDetails
 				translate={ translate }
 				isDomainFieldsVisible={ isDomainFieldsVisible }
+				isGSuiteInCart={ isGSuiteInCart }
 				contactInfo={ contactInfo }
 				renderDomainContactFields={ renderDomainContactFields }
 				CountrySelectMenu={ CountrySelectMenu }
@@ -168,13 +188,7 @@ TaxFields.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-const DomainContactFieldsDescription = styled.p`
-	font-size: 14px;
-	color: ${( props ) => props.theme.colors.textColor};
-	margin: 0 0 16px;
-`;
-
-function ContactFormSummary( { isDomainFieldsVisible } ) {
+function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
@@ -201,7 +215,9 @@ function ContactFormSummary( { isDomainFieldsVisible } ) {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ showDomainContactSummary && fullName && <SummaryLine>{ fullName }</SummaryLine> }
+					{ ( isGSuiteInCart || showDomainContactSummary ) && fullName && (
+						<SummaryLine>{ fullName }</SummaryLine>
+					) }
 
 					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
@@ -211,9 +227,11 @@ function ContactFormSummary( { isDomainFieldsVisible } ) {
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 
-					{ showDomainContactSummary && contactInfo.alternateEmail.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
-					) }
+					<AlternateEmailSummary
+						contactInfo={ contactInfo }
+						showDomainContactSummary={ showDomainContactSummary }
+						isGSuiteInCart={ isGSuiteInCart }
+					/>
 
 					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
@@ -255,16 +273,10 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
-function getContactDetailsFormat( isDomainFieldsVisible ) {
-	if ( isDomainFieldsVisible ) {
-		return 'DOMAINS';
-	}
-	return 'DEFAULT';
-}
-
 function RenderContactDetails( {
 	translate,
 	isDomainFieldsVisible,
+	isGSuiteInCart,
 	contactInfo,
 	renderDomainContactFields,
 	CountrySelectMenu,
@@ -272,43 +284,150 @@ function RenderContactDetails( {
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 } ) {
-	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
+	const domainNames = useDomainNamesInCart();
 	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
 
-	switch ( format ) {
-		case 'DOMAINS':
-			return (
-				<React.Fragment>
-					<DomainContactFieldsDescription>
-						{ translate(
-							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-						) }
-					</DomainContactFieldsDescription>
-					{ renderDomainContactFields(
-						prepareDomainContactDetails( contactInfo ),
-						prepareDomainContactDetailsErrors( contactInfo ),
-						updateDomainContactFields,
-						shouldShowContactDetailsValidationErrors,
-						isDisabled
+	if ( isDomainFieldsVisible ) {
+		return (
+			<React.Fragment>
+				<ContactDetailsFormDescription>
+					{ translate(
+						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
 					) }
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
-		default:
-			return (
-				<React.Fragment>
-					<TaxFields
-						section="contact"
-						taxInfo={ contactInfo }
-						updateCountryCode={ updateCountryCode }
-						updatePostalCode={ updatePostalCode }
-						CountrySelectMenu={ CountrySelectMenu }
-						countriesList={ countriesList }
-						isDisabled={ isDisabled }
-					/>
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
+				</ContactDetailsFormDescription>
+				{ renderDomainContactFields(
+					domainNames,
+					prepareDomainContactDetails( contactInfo ),
+					prepareDomainContactDetailsErrors( contactInfo ),
+					updateDomainContactFields,
+					shouldShowContactDetailsValidationErrors,
+					isDisabled
+				) }
+				{ requiresVatId && <VatIdField /> }
+			</React.Fragment>
+		);
 	}
+
+	if ( isGSuiteInCart ) {
+		return (
+			<React.Fragment>
+				{ renderDomainContactFields(
+					domainNames,
+					prepareDomainContactDetails( contactInfo ),
+					prepareDomainContactDetailsErrors( contactInfo ),
+					updateDomainContactFields,
+					shouldShowContactDetailsValidationErrors,
+					isDisabled
+				) }
+				{ requiresVatId && <VatIdField /> }
+			</React.Fragment>
+		);
+	}
+
+	return (
+		<React.Fragment>
+			<ContactDetailsFormDescription>
+				{ translate( 'Entering your billing information helps us prevent fraud.' ) }
+			</ContactDetailsFormDescription>
+			<TaxFields
+				section="contact"
+				taxInfo={ contactInfo }
+				updateCountryCode={ updateCountryCode }
+				updatePostalCode={ updatePostalCode }
+				CountrySelectMenu={ CountrySelectMenu }
+				countriesList={ countriesList }
+				isDisabled={ isDisabled }
+			/>
+			{ requiresVatId && <VatIdField /> }
+		</React.Fragment>
+	);
+}
+
+function AlternateEmailSummary( { contactInfo, showDomainContactSummary, isGSuiteInCart } ) {
+	if ( ! isGSuiteInCart && ! showDomainContactSummary ) {
+		return null;
+	}
+	if ( ! contactInfo.alternateEmail.value?.length ) {
+		return null;
+	}
+	if ( contactInfo.alternateEmail.value === contactInfo.email.value && showDomainContactSummary ) {
+		return null;
+	}
+	return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
+}
+
+const ContactDetailsFormDescription = styled.p`
+	font-size: 14px;
+	color: ${ ( props ) => props.theme.colors.textColor };
+	margin: 0 0 16px;
+`;
+
+function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
+	const cachedContactDetails = useSelector( getContactDetailsCache );
+	const shouldValidateCachedContactDetails = useRef( true );
+	const shouldResetFormStatus = useRef( false );
+	const setStepCompleteStatus = useSetStepComplete();
+	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
+
+	useEffect( () => {
+		if ( ! contactValidationCallback ) {
+			debug( 'Cannot validate contact details; no validation callback' );
+			return;
+		}
+		if ( shouldValidateCachedContactDetails.current && cachedContactDetails ) {
+			shouldValidateCachedContactDetails.current = false;
+			if ( formStatus === 'ready' ) {
+				setFormValidating();
+				shouldResetFormStatus.current = true;
+			}
+			contactValidationCallback()
+				.then( ( areDetailsCompleteAndValid ) => {
+					// If the details are already populated and valid, jump to payment method step
+					if ( areDetailsCompleteAndValid ) {
+						debug( 'Contact details are already populated; skipping to payment method step' );
+						saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
+						setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
+					} else {
+						debug( 'Contact details are already populated but not valid' );
+					}
+					if ( shouldResetFormStatus.current ) {
+						setFormReady();
+					}
+				} )
+				.catch( () => {
+					if ( shouldResetFormStatus.current ) {
+						setFormReady();
+					}
+				} );
+		}
+	}, [
+		formStatus,
+		setFormReady,
+		setFormValidating,
+		cachedContactDetails,
+		contactValidationCallback,
+		setStepCompleteStatus,
+	] );
+}
+
+function saveStepNumberToUrl( stepNumber ) {
+	if ( ! window?.history || ! window?.location ) {
+		return;
+	}
+	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
+	if ( window.location.hash === newHash ) {
+		return;
+	}
+	const newUrl = window.location.hash
+		? window.location.href.replace( window.location.hash, newHash )
+		: window.location.href + newHash;
+	debug( 'updating url to', newUrl );
+	window.history.replaceState( null, '', newUrl );
+	// Modifying history does not trigger a hashchange event which is what
+	// composite-checkout uses to change its current step, so we must fire one
+	// manually. (HashChangeEvent is part of the web API so I'm not sure why
+	// eslint reports this as undefined.)
+	const event = new HashChangeEvent( 'hashchange' ); // eslint-disable-line no-undef
+	window.dispatchEvent( event );
 }

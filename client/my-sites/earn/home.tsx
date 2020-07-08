@@ -21,10 +21,16 @@ import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/select
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
-import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import {
+	FEATURE_WORDADS_INSTANT,
+	FEATURE_SIMPLE_PAYMENTS,
+	PLAN_PREMIUM,
+} from 'lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
+import { localizeUrl } from 'lib/i18n-utils';
+import { isEnabled } from 'config';
 
 /**
  * Image dependencies
@@ -34,6 +40,8 @@ import adsImage from 'assets/images/earn/ads.svg';
 import recurringImage from 'assets/images/earn/recurring.svg';
 import referralImage from 'assets/images/earn/referral.svg';
 import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
+import premiumContentImage from 'assets/images/earn/premium-content.svg';
+import paidNewsletterImage from 'assets/images/earn/newsletters.svg';
 
 interface ConnectedProps {
 	siteId: number;
@@ -89,33 +97,63 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		const supportLink =
-			'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/';
+		const supportLink = isEnabled( 'earn/rename-payment-blocks' )
+			? localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/' )
+			: localizeUrl(
+					'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/'
+			  );
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Collect one-time payments' ),
+					text: isEnabled( 'earn/rename-payment-blocks' )
+						? translate( 'Learn how to get started' )
+						: translate( 'Add one-time payments' ),
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
-					text: translate( 'Upgrade to Premium' ),
+					text: translate( 'Unlock this feature' ),
 					action: () => {
-						trackUpgrade( 'premium', 'simple-payments' );
-						page( `/checkout/${ selectedSiteSlug }/premium/` );
+						trackUpgrade( 'plans', 'simple-payments' );
+						page(
+							`/plans/${ selectedSiteSlug }?feature=${ FEATURE_SIMPLE_PAYMENTS }&plan=${ PLAN_PREMIUM }`
+						);
 					},
 			  };
 		const learnMoreLink = hasSimplePayments
 			? null
 			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
+		let title, body;
+		if ( isEnabled( 'earn/rename-payment-blocks' ) ) {
+			title = translate( 'Collect PayPal payments' );
+			body = hasSimplePayments
+				? translate(
+						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
+				  )
+				: translate(
+						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+				  );
+		} else {
+			title = translate( 'Collect one-time payments' );
+			body = hasSimplePayments
+				? translate(
+						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work.'
+				  )
+				: translate(
+						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+				  );
+		}
 		return {
-			title: translate( 'Collect one-time payments' ),
-			body: translate(
-				'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. {{em}}Available to any site with a Premium plan{{/em}}.',
-				{
-					components: {
-						em: <em />,
-					},
-				}
-			),
+			title,
+			body,
 			image: {
 				path: simplePaymentsImage,
 			},
@@ -132,36 +170,59 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
+		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		const cta = isFreePlan
 			? {
-					text: translate( 'Upgrade' ),
+					text: translate( 'Unlock this feature' ),
 					action: () => {
 						trackUpgrade( 'any-paid-plan', 'recurring-payments' );
 						page( `/plans/${ selectedSiteSlug }` );
 					},
 			  }
 			: {
-					text: translate( 'Collect recurring payments' ),
+					text: isPayments
+						? translate( 'Collect payments' )
+						: translate( 'Collect recurring payments' ),
 					action: () => {
 						trackCtaButton( 'recurring-payments' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
-		const title = hasConnectedAccount
-			? translate( 'Manage Recurring Payments' )
+		const hasConnectionTitle = isPayments
+			? translate( 'Manage payments' )
+			: translate( 'Manage recurring payments' );
+		const noConnectionTitle = isPayments
+			? translate( 'Collect payments' )
 			: translate( 'Collect recurring payments' );
-		const body = hasConnectedAccount
+		const title = hasConnectedAccount ? hasConnectionTitle : noConnectionTitle;
+
+		const hasConnectionBody = isPayments
 			? translate(
-					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
+					"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
 			  )
 			: translate(
-					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. {{em}}Available to any site with a paid plan{{/em}}.',
+					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
+			  );
+		const noConnectionBody = isPayments
+			? translate(
+					'Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
+			  )
+			: translate(
+					'Accept ongoing and automated credit card payments for subscriptions, memberships, services, and donations. {{em}}Available with any paid plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
 						},
 					}
 			  );
+
+		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
+
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://wordpress.com/support/recurring-payments/',
@@ -178,6 +239,124 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			actions: {
 				cta,
 				learnMoreLink,
+			},
+		};
+	};
+
+	/**
+	 * Return the content to display in the Premium Content Block card based on the current plan.
+	 *
+	 * @returns {object} Object with props to render a PromoCard.
+	 */
+	const getPremiumContentCard = () => {
+		const cta = isFreePlan
+			? {
+					text: translate( 'Unlock this feature' ),
+					action: () => {
+						trackUpgrade( 'any-paid-plan', 'premium-content' );
+						page( `/plans/${ selectedSiteSlug }` );
+					},
+			  }
+			: {
+					text: translate( 'Add premium content subscriptions' ),
+					action: () => {
+						trackCtaButton( 'premium-content' );
+						page( `/earn/payments/${ selectedSiteSlug }` );
+					},
+			  };
+		const title = hasConnectedAccount
+			? translate( 'Manage your premium content' )
+			: translate( 'Collect payments for content' );
+		const body = hasConnectedAccount
+			? translate(
+					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. Browse our {{a}}docs{{/a}} for the details.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+			  )
+			: translate(
+					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. {{em}}Available with any paid plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
+			  );
+
+		const learnMoreLink = isFreePlan
+			? {
+					url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
+					onClick: () => trackLearnLink( 'premium-content' ),
+			  }
+			: null;
+		return {
+			title,
+			body,
+			badge: translate( 'New' ),
+			image: {
+				path: premiumContentImage,
+			},
+			actions: {
+				cta,
+				learnMoreLink,
+			},
+		};
+	};
+
+	/**
+	 * Return the content to display in the Paid Newsletter card based on the current plan.
+	 *
+	 * @returns {object} Object with props to render a PromoCard.
+	 */
+	const getPaidNewsletterCard = () => {
+		const cta = isFreePlan
+			? {
+					text: translate( 'Unlock this feature' ),
+					action: () => {
+						trackUpgrade( 'any-paid-plan', 'paid-newsletters' );
+						page( `/plans/${ selectedSiteSlug }` );
+					},
+			  }
+			: {
+					text: translate( 'Learn how to get started' ),
+					action: () => {
+						trackCtaButton( 'learn-paid-newsletters' );
+						if ( window && window.location ) {
+							window.location.href = localizeUrl(
+								'https://wordpress.com/support/paid-newsletters/'
+							);
+						}
+					},
+			  };
+		const title = translate( 'Send paid email newsletters' );
+		const body = isFreePlan
+			? translate(
+					'Share premium content with paying subscribers automatically through email. {{em}}Available with any paid plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
+			  )
+			: translate( 'Share premium content with paying subscribers automatically through email.' );
+
+		return {
+			title,
+			body,
+			badge: translate( 'New' ),
+			image: {
+				path: paidNewsletterImage,
+			},
+			actions: {
+				cta,
 			},
 		};
 	};
@@ -210,8 +389,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title: translate( 'Refer a friend, you’ll both earn credits' ),
 			body: peerReferralLink
 				? translate(
-						'To earn free credits, share the link below with your friends, family, and website visitors. ' +
-							'By doing so you agree to the WordPress.com Peer Referral Program {{a}}Terms and Conditions.{{/a}}',
+						'To earn free credits, share the link below with your friends, family, and website visitors.'
+				  )
+				: translate(
+						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. By clicking “Earn free credits”, you agree to {{a}}these terms{{/a}}.',
 						{
 							components: {
 								a: (
@@ -221,14 +402,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 										rel="noopener noreferrer"
 									/>
 								),
-							},
-						}
-				  )
-				: translate(
-						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. {{em}}Available with every plan{{/em}}.',
-						{
-							components: {
-								em: <em />,
 							},
 						}
 				  ),
@@ -254,15 +427,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						action: () => {
 							trackCtaButton( 'ads' );
 							page(
-								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings'}/${ selectedSiteSlug }`
+								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
 							);
 						},
 				  }
 				: {
-						text: translate( 'Upgrade to Premium' ),
+						text: translate( 'Unlock this feature' ),
 						action: () => {
-							trackUpgrade( 'premium', 'ads' );
-							page( `/checkout/${ selectedSiteSlug }/premium/` );
+							trackUpgrade( 'plans', 'ads' );
+							page(
+								`/plans/${ selectedSiteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`
+							);
 						},
 				  };
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
@@ -271,13 +446,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
 			  )
 			: translate(
-					'Publish as you normally would, display advertisements on all your posts and pages, and make money each time someone visits your site. {{em}}Available to sites with a Premium plan{{/em}}.',
+					'Make money each time someone visits your site by displaying advertisements on all your posts and pages. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
 						},
 					}
 			  );
+
 		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
@@ -299,12 +475,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title: translate( 'Start earning money now' ),
 			image: {
 				path: earnSectionImage,
+				align: 'right',
 			},
-			body: translate( 'There is a range of ways to earn money through your WordPress site.' ),
+			body: translate(
+				'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
+			),
 		},
 		promos: compact( [
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
+			getPremiumContentCard(),
+			getPaidNewsletterCard(),
 			getAdsCard(),
 			getPeerReferralsCard(),
 		] ),

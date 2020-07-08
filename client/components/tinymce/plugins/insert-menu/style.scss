@@ -43,7 +43,7 @@
 	color: var( --color-neutral-50 );
 	display: inline-block;
 	font-family: $sans;
-	font-size: 13px;
+	font-size: $font-body-small;
 	margin-left: 4px;
 	margin-top: 3px;
 }
@@ -71,7 +71,7 @@
 }
 
 .mce-container .mce-wpcom-insert-menu .wpcom-insert-menu__menu-label {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }

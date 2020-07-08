@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
 	assign,
+	clone,
 	defer,
 	find,
 	get,
@@ -15,6 +16,7 @@ import {
 	isEqual,
 	kebabCase,
 	map,
+	omit,
 	pick,
 	startsWith,
 } from 'lodash';
@@ -40,7 +42,7 @@ import SignupProcessingScreen from 'signup/processing-screen';
 import SignupHeader from 'signup/signup-header';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { loadTrackingTool } from 'state/analytics/actions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import {
 	isUserLoggedIn,
 	getCurrentUser,
@@ -50,7 +52,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { submitSignupStep, removeStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -74,11 +76,13 @@ import {
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
+import P2SignupProcessingScreen from 'signup/p2-processing-screen';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { addP2SignupClassName } from './controller';
 
 const debug = debugModule( 'calypso:signup' );
 
@@ -87,6 +91,26 @@ function dependenciesContainCartItem( dependencies ) {
 		dependencies &&
 		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
 	);
+}
+
+function addLoadingScreenClassNamesToBody() {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'has-loading-screen-signup' );
+}
+
+function removeLoadingScreenClassNamesFromBody() {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'has-loading-screen-signup' );
+}
+
+function isWPForTeamsFlow( flowName ) {
+	return flowName === 'wp-for-teams' || flowName === 'p2';
 }
 
 class Signup extends React.Component {
@@ -162,7 +186,9 @@ class Signup extends React.Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { stepName, flowName, progress } = nextProps;
 
-		this.removeFulfilledSteps( nextProps );
+		if ( this.props.stepName !== stepName ) {
+			this.removeFulfilledSteps( nextProps );
+		}
 
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
@@ -250,18 +276,25 @@ class Signup extends React.Component {
 
 		if ( startLoadingScreen ) {
 			this.setState( { shouldShowLoadingScreen: true } );
+
+			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+				addLoadingScreenClassNamesToBody();
+
+				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
+				addP2SignupClassName();
+			}
 		}
 
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
+
+			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+				removeLoadingScreenClassNamesFromBody();
+			}
 		}
 	};
 
 	processFulfilledSteps = ( stepName, nextProps ) => {
-		if ( includes( flows.excludedSteps, stepName ) ) {
-			return;
-		}
-
 		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
 		const defaultDependencies = steps[ stepName ].defaultDependencies;
 		isFulfilledCallback && isFulfilledCallback( stepName, defaultDependencies, nextProps );
@@ -270,6 +303,8 @@ class Signup extends React.Component {
 	removeFulfilledSteps = ( nextProps ) => {
 		const { flowName, stepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName ).steps;
+		const excludedSteps = clone( flows.excludedSteps );
+		map( excludedSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 
 		if ( includes( flows.excludedSteps, stepName ) ) {
@@ -472,11 +507,16 @@ class Signup extends React.Component {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
 		const CurrentComponent = this.props.stepComponent;
-		const propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props );
+		const propsFromConfig = assign(
+			{},
+			omit( this.props, 'locale' ),
+			steps[ this.props.stepName ].props
+		);
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName );
 		const planWithDomain =
 			this.props.domainsWithPlansOnly &&
+			domainItem &&
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
@@ -485,6 +525,10 @@ class Signup extends React.Component {
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
+		const ProcessingScreen = isWPForTeamsFlow( this.props.flowName )
+			? P2SignupProcessingScreen
+			: SignupProcessingScreen;
+
 		return (
 			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
@@ -492,7 +536,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen />
+						<ProcessingScreen />
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
@@ -558,13 +602,15 @@ class Signup extends React.Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
-				<SignupHeader
-					positionInFlow={ this.getPositionInFlow() }
-					flowLength={ this.getFlowLength() }
-					flowName={ this.props.flowName }
-					showProgressIndicator={ showProgressIndicator }
-					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-				/>
+				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+					<SignupHeader
+						positionInFlow={ this.getPositionInFlow() }
+						flowLength={ this.getFlowLength() }
+						flowName={ this.props.flowName }
+						showProgressIndicator={ showProgressIndicator }
+						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+					/>
+				) }
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
 				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
 					<SiteMockups stepName={ this.props.stepName } />
@@ -593,7 +639,7 @@ export default connect(
 		);
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ) // this is intentional, not a mistake
 				: true,
 			isDomainOnlySite: isDomainOnlySite( state, siteId ),
 			progress: getSignupProgress( state ),
@@ -615,6 +661,7 @@ export default connect(
 		submitSiteType,
 		submitSiteVertical,
 		submitSignupStep,
+		removeStep,
 		loadTrackingTool,
 		showSitePreview,
 		hideSitePreview,

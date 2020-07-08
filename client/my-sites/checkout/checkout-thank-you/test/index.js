@@ -41,10 +41,8 @@ jest.unmock( 'lib/products-values' );
 const productValues = require( 'lib/products-values' );
 productValues.isDotComPlan = jest.fn( () => false );
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: () => null,
-	},
+jest.mock( 'lib/analytics/tracks', () => ( {
+	recordTracksEvent: () => null,
 } ) );
 jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => 'component--google-apps-details' );

@@ -22,7 +22,7 @@
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
-	"lasagna_url": "wss://horizon.lasagna.pub/socket",
+	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,
 	"mc_analytics_enabled": false,
@@ -31,7 +31,7 @@
 	"port": 3000,
 	"happychat_url": "https://happychat.io/customer",
 	"jetpack_support_blog": "jetpackme.wordpress.com",
-	"wpcom_support_blog": "wordpress.com/support",
+	"wpcom_support_blog": "en.support.wordpress.com",
 	"apple_pay_merchant_id": "merchant.com.wordpress",
 	"apple_oauth_client_id": "com.wordpress.siwa",
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
@@ -133,11 +133,12 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false,
-		"scan": false,
-		"backups": false,
-		"jetpack-cloud-settings": false
+		"jetpack-cloud-settings": false,
+		"jetpack-cloud-auth": false
 	},
 	"site_filter": [],
 	"theme": "default",
-	"site_name": "WordPress.com"
+	"site_name": "WordPress.com",
+	"restricted_me_access": true,
+	"theme_color": "#135e96"
 }

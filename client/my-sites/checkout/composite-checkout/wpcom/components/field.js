@@ -4,16 +4,13 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import Button from './button';
+import { Button } from '@automattic/composite-checkout';
 
 export default function Field( {
 	type,
 	id,
 	className,
+	inputClassName,
 	isError,
 	onChange,
 	label,
@@ -50,6 +47,7 @@ export default function Field( {
 
 			<InputWrapper>
 				<Input
+					className={ inputClassName }
 					id={ id }
 					icon={ icon }
 					value={ value }
@@ -77,6 +75,7 @@ Field.propTypes = {
 	type: PropTypes.string,
 	id: PropTypes.string.isRequired,
 	className: PropTypes.string,
+	inputClassName: PropTypes.string,
 	isError: PropTypes.bool,
 	onChange: PropTypes.func,
 	label: PropTypes.string,
@@ -94,13 +93,13 @@ Field.propTypes = {
 
 const Label = styled.label`
 	display: block;
-	color: ${( props ) => props.theme.colors.textColor};
-	font-weight: ${( props ) => props.theme.weights.bold};
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${( props ) => ( props.disabled ? 'default' : 'pointer') };
+		cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	}
 `;
 
@@ -110,12 +109,16 @@ const Input = styled.input`
 	box-sizing: border-box;
 	font-size: 16px;
 	border: 1px solid
-		${( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
-	padding: 13px ${( props ) => ( props.icon ? '60px' : '10px') } 12px 10px;
+		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
+	padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 12px 10px;
+
+	.rtl & {
+		padding: 13px 10px 12px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
+	}
 
 	:focus {
-		outline: ${( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.outline}
+		outline: ${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline }
 			solid 2px !important;
 	}
 
@@ -131,11 +134,11 @@ const Input = styled.input`
 	}
 
 	::placeholder {
-		color: ${( props ) => props.theme.colors.placeHolderTextColor};
+		color: ${ ( props ) => props.theme.colors.placeHolderTextColor };
 	}
 
 	:disabled {
-		background: ${( props ) => props.theme.colors.disabledField};
+		background: ${ ( props ) => props.theme.colors.disabledField };
 	}
 `;
 
@@ -148,12 +151,22 @@ const FieldIcon = styled.div`
 	top: 50%;
 	transform: translateY( -50% );
 	right: 10px;
+
+	.rtl & {
+		right: auto;
+		left: 10px;
+	}
 `;
 
 const ButtonIconUI = styled.div`
 	position: absolute;
 	top: 0;
 	right: 0;
+
+	.rtl & {
+		right: auto;
+		left: 0;
+	}
 
 	button {
 		border: 1px solid transparent;
@@ -171,9 +184,9 @@ const ButtonIconUI = styled.div`
 `;
 
 const Description = styled.p`
-	margin: 8px 0 0 0;
-	color: ${( props ) =>
-		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight};
+	margin: 8px 0 0;
+	color: ${ ( props ) =>
+		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
 	font-style: italic;
 	font-size: 14px;
 `;

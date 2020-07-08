@@ -90,7 +90,7 @@ const webpackConfig = {
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
-					options: { forceRequire: true, onlyIsomorphic: true },
+					options: { useRequire: true, onlyIsomorphic: true },
 				},
 			},
 			TranspileConfig.loader( {
@@ -133,9 +133,6 @@ const webpackConfig = {
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]user$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'

@@ -1,4 +1,4 @@
-FROM node:12.16.1
+FROM node:12.18.0
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
@@ -25,7 +25,7 @@ RUN        bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile && yarn cache clean
 
 
 # Build the final layer

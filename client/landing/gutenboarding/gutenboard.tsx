@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-import '@wordpress/editor'; // This shouldn't be necessary
 import { useI18n } from '@automattic/react-i18n';
-import { BlockEditorProvider, BlockList as OriginalBlockList } from '@wordpress/block-editor';
+import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import React, { useRef, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
@@ -19,25 +16,27 @@ import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytic
  * Internal dependencies
  */
 import Header from './components/header';
+import SignupForm from './components/signup-form';
 import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
-import GUTENARDING_BASE_NAME from './basename.json';
 import { recordOnboardingStart } from './lib/analytics';
+import useOnSiteCreation from './hooks/use-on-site-creation';
+import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
+import useSignup from './hooks/use-signup';
+import useOnSignup from './hooks/use-on-signup';
+import useOnLogin from './hooks/use-on-login';
 
 registerBlockType( name, settings );
 
-interface BlockListProps extends OriginalBlockList.Props {
-	__experimentalUIParts: {
-		hasPopover: boolean;
-		hasSelectedUI: boolean;
-	};
-}
-
-const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } />;
-
 export function Gutenboard() {
 	const { __ } = useI18n();
+
+	useOnSignup();
+	useOnLogin();
+	useOnSiteCreation();
+	usePageViewTracksEvents();
+	const { showSignupDialog, onSignupDialogClose } = useSignup();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
@@ -75,20 +74,13 @@ export function Gutenboard() {
 	// (and would lead to weird mounting/unmounting behavior).
 	const onboardingBlock = useRef( createBlock( name, {} ) );
 
-	const {
-		location: { pathname },
-	} = useHistory();
-
-	useEffect( () => {
-		recordTracksPageViewWithPageParams( `/${ GUTENARDING_BASE_NAME }${ pathname }` );
-	}, [ pathname ] );
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="block-editor__container">
 			<DropZoneProvider>
 				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
+					{ showSignupDialog && <SignupForm onRequestClose={ onSignupDialogClose } /> }
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }
@@ -104,12 +96,7 @@ export function Gutenboard() {
 								aria-label={ __( 'Onboarding screen content' ) }
 								tabIndex={ -1 }
 							>
-								<BlockList
-									__experimentalUIParts={ {
-										hasPopover: false,
-										hasSelectedUI: false,
-									} }
-								/>
+								<BlockList />
 							</div>
 						</div>
 					</BlockEditorProvider>

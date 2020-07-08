@@ -32,7 +32,7 @@ const DefaultPostFormat = ( {
 		<FormFieldset>
 			{ siteId && <QueryPostFormats siteId={ siteId } /> }
 
-			<FormLabel htmlFor="default_post_format">{ translate( 'Default Post Format' ) }</FormLabel>
+			<FormLabel htmlFor="default_post_format">{ translate( 'Default post format' ) }</FormLabel>
 			<FormSelect
 				name="default_post_format"
 				id="default_post_format"

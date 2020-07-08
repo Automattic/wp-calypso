@@ -1784,10 +1784,8 @@ describe( 'selectors', () => {
 						},
 						edits: {},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -1819,10 +1817,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -1843,10 +1839,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284
@@ -1866,10 +1860,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284
@@ -1889,10 +1881,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284
@@ -1912,10 +1902,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284
@@ -1946,10 +1934,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -1981,12 +1967,10 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {
-								initial: 'Hello World',
-								current: 'Hello World!',
-							},
+					editor: {
+						rawContent: {
+							initial: 'Hello World',
+							current: 'Hello World!',
 						},
 					},
 				},
@@ -2019,10 +2003,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2053,10 +2035,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2090,10 +2070,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2125,10 +2103,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2160,10 +2136,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2207,10 +2181,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2254,10 +2226,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2299,10 +2269,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2337,10 +2305,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					ui: {
-						editor: {
-							rawContent: {},
-						},
+					editor: {
+						rawContent: {},
 					},
 				},
 				2916284,
@@ -2387,10 +2353,8 @@ describe( 'selectors', () => {
 							queries,
 							edits: updateEdits,
 						},
-						ui: {
-							editor: {
-								rawContent: {},
-							},
+						editor: {
+							rawContent: {},
 						},
 					},
 					2916284,
@@ -2412,10 +2376,8 @@ describe( 'selectors', () => {
 							queries,
 							edits: deleteEdits,
 						},
-						ui: {
-							editor: {
-								rawContent: {},
-							},
+						editor: {
+							rawContent: {},
 						},
 					},
 					2916284,
@@ -2457,10 +2419,8 @@ describe( 'selectors', () => {
 								},
 							},
 						},
-						ui: {
-							editor: {
-								rawContent: {},
-							},
+						editor: {
+							rawContent: {},
 						},
 					},
 					2916284,
@@ -2515,10 +2475,8 @@ describe( 'selectors', () => {
 					queries: queries1,
 					edits,
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			};
 
@@ -2528,10 +2486,8 @@ describe( 'selectors', () => {
 					queries: queries2,
 					edits,
 				},
-				ui: {
-					editor: {
-						rawContent: {},
-					},
+				editor: {
+					rawContent: {},
 				},
 			};
 

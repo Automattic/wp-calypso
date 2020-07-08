@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { includes, map } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
+import PopupMonitor from '@automattic/popup-monitor';
 
 /**
  * Internal dependencies
@@ -17,12 +18,11 @@ import PublicizeMessage from './publicize-message';
 import PublicizeServices from './publicize-services';
 import { publicizeConnections } from 'lib/paths';
 import PostMetadata from 'lib/post-metadata';
-import PopupMonitor from 'lib/popup-monitor';
 import { Button } from '@automattic/components';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
@@ -145,7 +145,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 		}
 
 		return (
-			<p className="editor-drawer__description">
+			<p className="editor-sharing__publicize-options-description">
 				{ this.props.translate(
 					'Connect and select social media services to automatically share this post.'
 				) }

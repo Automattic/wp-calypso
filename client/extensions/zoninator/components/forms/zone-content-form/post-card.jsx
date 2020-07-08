@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,7 +12,7 @@ import { flowRight } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
-import { getEditorPath } from 'state/ui/editor/selectors';
+import { getEditorPath } from 'state/editor/selectors';
 import { getPostPreviewUrl } from 'state/posts/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';

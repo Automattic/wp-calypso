@@ -102,7 +102,7 @@ const Privacy = createReactClass( {
 				<DocumentHead title={ translate( 'Privacy Settings' ) } />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<SectionHeader label={ translate( 'Usage Information' ) } />
+				<SectionHeader label={ translate( 'Usage information' ) } />
 				<Card className="privacy__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
 						<FormFieldset>
@@ -163,7 +163,7 @@ const Privacy = createReactClass( {
 					</form>
 				</Card>
 				<SectionHeader
-					label={ translate( 'Data Processing Addendum', {
+					label={ translate( 'Data processing addendum', {
 						comment:
 							'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
 					} ) }

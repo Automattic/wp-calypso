@@ -27,14 +27,14 @@
 
 .help__help-teaser-button-title {
 	color: var( --color-neutral-70 );
-	font-size: 14px;
-	font-weight: 500;
+	font-size: $font-body-small;
+	font-weight: 600;
 	padding-right: 15px;
 }
 
 .help__help-teaser-button-description {
-	color: var( --color-neutral-light );
-	font-size: 12px;
+	color: var( --color-text-subtle );
+	font-size: $font-body-extra-small;
 	display: block;
 	padding-right: 15px;
 }

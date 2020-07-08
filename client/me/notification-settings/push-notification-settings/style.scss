@@ -41,13 +41,13 @@
 	max-width: 500px;
 	text-align: center;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		text-align: left;
 	}
 }
 
 .notification-settings-push-notification-settings__instruction-title {
-	font-weight: 500;
+	font-weight: 600;
 	display: block;
 	margin-bottom: 24px;
 }
@@ -62,7 +62,7 @@
 		margin: 16px 0 0;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 		min-height: 80px;
 		position: relative;
@@ -102,8 +102,8 @@
 }
 
 .notification-settings-push-notification-settings__settings-state {
-	font-size: 13px;
-	font-weight: 500;
+	font-size: $font-body-small;
+	font-weight: 600;
 	margin-left: 8px;
 	text-transform: uppercase;
 	color: var( --color-text-subtle );
@@ -116,7 +116,7 @@
 .notification-settings-push-notification-settings__settings-description {
 	margin-bottom: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-right: 130px;
 	}
 }
@@ -124,7 +124,7 @@
 .notification-settings-push-notification-settings__settings-button {
 	margin-top: 8px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 0;
 		position: absolute;
 	 	bottom: 24px;

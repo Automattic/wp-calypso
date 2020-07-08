@@ -49,7 +49,7 @@
 			left: 0;
 		}
 
-		@include breakpoint( '660px-960px' ) {
+		@include breakpoint-deprecated( '660px-960px' ) {
 			.focus-sidebar &,
 			.has-chat & {
 				width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
@@ -150,11 +150,11 @@
 		}
 
 		span {
-			font-size: 13px;
+			font-size: $font-body-small;
 			font-weight: 400;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding: 6px 12px 8px;
 			.gridicon {
 				margin-right: 0;
@@ -192,7 +192,7 @@
 		span {
 			color: var( --color-text-subtle );
 			display: inline-block;
-			font-size: 13px;
+			font-size: $font-body-small;
 			margin-left: 8px;
 			margin-top: 2px;
 			vertical-align: top;
@@ -207,7 +207,7 @@
 }
 
 .editor-html-toolbar__button-strong {
-	font-weight: bold;
+	font-weight: 600;
 }
 .editor-html-toolbar__button-em {
 	font-style: italic;
@@ -246,7 +246,7 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 90%;
 
 		.dialog__content {

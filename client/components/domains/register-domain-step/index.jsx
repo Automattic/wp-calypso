@@ -266,7 +266,7 @@ class RegisterDomainStep extends React.Component {
 			nextProps.selectedSite.slug !== ( this.props.selectedSite || {} ).slug
 		) {
 			this.setState( this.getState( nextProps ) );
-			this.onSearch( nextProps.suggestion );
+			nextProps.suggestion && this.onSearch( nextProps.suggestion );
 		}
 
 		if (
@@ -428,6 +428,7 @@ class RegisterDomainStep extends React.Component {
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
 			'register-domain-step__search-domain-step-test': this.props.isEligibleVariantForDomainTest,
 		} );
+
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className={ searchBoxClassName }>
@@ -469,6 +470,7 @@ class RegisterDomainStep extends React.Component {
 						showDismiss={ false }
 					/>
 				) }
+
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
@@ -1096,6 +1098,7 @@ class RegisterDomainStep extends React.Component {
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
 					/>
 				);
 			}, this );
@@ -1210,8 +1213,6 @@ class RegisterDomainStep extends React.Component {
 				this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
 
-		const isSignup = this.props.isSignupStep ? '/signup' : '/domains';
-
 		const hasResults =
 			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
 			! this.state.loadingResults;
@@ -1221,54 +1222,79 @@ class RegisterDomainStep extends React.Component {
 				? this.goToTransferDomainStep
 				: this.goToUseYourDomainStep;
 
-		return (
-			<DomainSearchResults
-				key="domain-search-results" // key is required for CSS transition of content/
-				availableDomain={ availableDomain }
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				isDomainOnly={ this.props.isDomainOnly }
-				lastDomainSearched={ lastDomainSearched }
-				lastDomainStatus={ lastDomainStatus }
-				lastDomainIsTransferrable={ lastDomainIsTransferrable }
-				onAddMapping={ onAddMapping }
-				onClickResult={ this.onAddDomain }
-				onClickMapping={ this.goToMapDomainStep }
-				onAddTransfer={ this.props.onAddTransfer }
-				onClickTransfer={ this.goToTransferDomainStep }
-				onClickUseYourDomain={ useYourDomainFunction }
-				tracksButtonClickSource="exact-match-top"
-				suggestions={ suggestions }
-				isLoadingSuggestions={ this.state.loadingResults }
-				products={ this.props.products }
-				selectedSite={ this.props.selectedSite }
-				offerUnavailableOption={ this.props.offerUnavailableOption }
-				placeholderQuantity={ PAGE_SIZE }
-				isSignupStep={ this.props.isSignupStep }
-				railcarId={ this.state.railcarId }
-				fetchAlgo={ '/domains/search/' + this.props.vendor + isSignup }
-				cart={ this.props.cart }
-				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
-				unavailableDomains={ this.state.unavailableDomains }
-				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-			>
-				{ this.props.isEligibleVariantForDomainTest &&
-					hasResults &&
-					this.renderFreeDomainExplainer() }
+		const domainForwardingExplainer =
+			'Domains purchased on a free site will get redirected to your WordPress.com address. You can always upgrade ' +
+			'to a paid plan later and fully use your domain name, instead of having WordPress.com in your URL.';
 
-				{ showTldFilterBar && (
-					<TldFilterBar
-						availableTlds={ this.state.availableTlds }
-						filters={ this.state.filters }
-						isSignupStep={ this.props.isSignupStep }
-						lastFilters={ this.state.lastFilters }
-						onChange={ this.onFiltersChange }
-						onReset={ this.onFiltersReset }
-						onSubmit={ this.onFiltersSubmit }
-						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
-					/>
-				) }
-			</DomainSearchResults>
+		const renderCustomDomainForFreePlanExplainer = this.props.shouldHideFreeDomainExplainer && (
+			<Notice text={ domainForwardingExplainer } showDismiss={ false } />
 		);
+
+		return (
+			<>
+				{ renderCustomDomainForFreePlanExplainer }
+				<DomainSearchResults
+					key="domain-search-results" // key is required for CSS transition of content/
+					availableDomain={ availableDomain }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					isDomainOnly={ this.props.isDomainOnly }
+					lastDomainSearched={ lastDomainSearched }
+					lastDomainStatus={ lastDomainStatus }
+					lastDomainIsTransferrable={ lastDomainIsTransferrable }
+					onAddMapping={ onAddMapping }
+					onClickResult={ this.onAddDomain }
+					onClickMapping={ this.goToMapDomainStep }
+					onAddTransfer={ this.props.onAddTransfer }
+					onClickTransfer={ this.goToTransferDomainStep }
+					onClickUseYourDomain={ useYourDomainFunction }
+					tracksButtonClickSource="exact-match-top"
+					suggestions={ suggestions }
+					isLoadingSuggestions={ this.state.loadingResults }
+					products={ this.props.products }
+					selectedSite={ this.props.selectedSite }
+					offerUnavailableOption={ this.props.offerUnavailableOption }
+					placeholderQuantity={ PAGE_SIZE }
+					isSignupStep={ this.props.isSignupStep }
+					railcarId={ this.state.railcarId }
+					fetchAlgo={ this.getFetchAlgo() }
+					cart={ this.props.cart }
+					pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
+					unavailableDomains={ this.state.unavailableDomains }
+					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+					shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
+				>
+					{ this.props.isEligibleVariantForDomainTest &&
+						hasResults &&
+						! this.props.shouldHideFreeDomainExplainer &&
+						this.renderFreeDomainExplainer() }
+
+					{ showTldFilterBar && (
+						<TldFilterBar
+							availableTlds={ this.state.availableTlds }
+							filters={ this.state.filters }
+							isSignupStep={ this.props.isSignupStep }
+							lastFilters={ this.state.lastFilters }
+							onChange={ this.onFiltersChange }
+							onReset={ this.onFiltersReset }
+							onSubmit={ this.onFiltersSubmit }
+							showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+						/>
+					) }
+				</DomainSearchResults>
+			</>
+		);
+	}
+
+	getFetchAlgo() {
+		const fetchAlgoPrefix = '/domains/search/' + this.props.vendor;
+
+		if ( this.props.isDomainOnly ) {
+			return fetchAlgoPrefix + '/domain-only';
+		}
+		if ( this.props.isSignupStep ) {
+			return fetchAlgoPrefix + '/signup';
+		}
+		return fetchAlgoPrefix + '/domains';
 	}
 
 	getMapDomainUrl() {

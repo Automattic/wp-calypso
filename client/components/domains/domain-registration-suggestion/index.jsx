@@ -167,8 +167,22 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
-		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
+		const {
+			cart,
+			isDomainOnly,
+			shouldHideFreeDomainExplainer,
+			domainsWithPlansOnly,
+			selectedSite,
+			suggestion,
+		} = this.props;
+		const shouldShowFullDomainPrice = isDomainOnly || shouldHideFreeDomainExplainer;
+		return getDomainPriceRule(
+			domainsWithPlansOnly,
+			selectedSite,
+			cart,
+			suggestion,
+			shouldShowFullDomainPrice
+		);
 	}
 
 	renderDomain() {

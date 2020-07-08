@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
@@ -17,6 +16,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import ReduxFormFieldset from 'components/redux-forms/redux-form-fieldset';
 import SectionHeader from 'components/section-header';
+
+import 'state/form/init';
 
 const form = 'extensions.zoninator.zoneDetails';
 

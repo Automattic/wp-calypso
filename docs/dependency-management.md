@@ -51,6 +51,20 @@ You should add dependencies to the root project _only_ when it will be used to t
 yarn add -w <dependency>
 ```
 
+#### Unpublished package as a dependency
+
+Sometimes you'll want to [create a package](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/monorepo.md#a-sample-packagejson) and use it as another workspace's dependency before it's published. To add such dependency, make sure you **specify its exact version** because otherwise, `yarn` will try to resolve it from the `npm` registry and throw the `Not found` error.
+
+Let's say you created a polyfill package and want to add it as a dependency to `packages/calypso-polyfills`. Doing this will make `yarn` resolve to your fresh (unpublished) package and install it as a symlink:
+
+```
+cd packages/calypso-polyfills
+yarn add @automattic/my-awesome-polyfill@1.0.0
+```
+
+That's it! Don't forget to [publish the package](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/monorepo.md#publishing) after merging your PR!
+
+
 ### Delete a dependency
 
 ```

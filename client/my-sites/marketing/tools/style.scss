@@ -3,7 +3,7 @@
 	flex-direction: row;
 	padding: 11px 24px; // standard padding
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		max-height: 300px;
 	}
 }
@@ -15,14 +15,14 @@
 }
 
 .tools__header-title {
-	font-size: 21px;
+	font-size: $font-title-small;
 	font-weight: 400;
 	margin-bottom: 10px;
 	margin-top: 10px;
 }
 
 .tools__header-description {
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 400;
 }
 
@@ -33,7 +33,7 @@
 	margin: 20px 0;
 
 	.button {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 			text-align: center;
 		}
@@ -43,7 +43,7 @@
 .tools__header-image-wrapper {
 	display: none;
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;
 		min-width: 400px;
 	}
@@ -79,7 +79,7 @@
 		margin-top: 20px;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		width: calc( 50% - 1em );
 	}
 }
@@ -99,10 +99,12 @@
 	width: 100%;
 
 	> p {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
 		margin-bottom: 0;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		width: 75%;
 	}
 }
@@ -112,17 +114,13 @@
 	max-width: 150px;
 	width: 15%;
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
-}
-
-.tools__upgrade-button {
-	text-transform: capitalize;
 }
 
 .tools__feature-list-item-child-row {
@@ -133,6 +131,7 @@
 
 	.button {
 		margin: 0;
+		margin-left: calc( 15% + 20px );
 		text-align: center;
 		width: auto;
 	}
@@ -143,7 +142,7 @@
 
 	.google-voucher__initial-step .purchase-detail__button {
 		float: right;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		line-height: 1;
 		padding: 7px;
 	}
@@ -154,26 +153,20 @@
 		justify-content: center;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
-		justify-content: flex-end;
+		justify-content: flex-start;
 
 		.google-voucher__initial-step {
 			display: block;
 		}
 
 		.button {
-			margin: 0 1em 0 0;
 			width: auto;
 		}
 	}
 
-	@include breakpoint( '>1040px' ) {
-
-		.button {
-			margin: 0 0 0 1em;
-		}
-
+	@include breakpoint-deprecated( '>1040px' ) {
 		.purchase-detail__button {
 			float: right;
 		}

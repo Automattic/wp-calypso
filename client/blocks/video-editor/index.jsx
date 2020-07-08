@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +15,7 @@ import { ProgressBar } from '@automattic/components';
 import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
-import { updatePoster } from 'state/ui/editor/video-editor/actions';
+import { updatePoster } from 'state/editor/video-editor/actions';
 import getPosterUploadProgress from 'state/selectors/get-poster-upload-progress';
 import getPosterUrl from 'state/selectors/get-poster-url';
 import shouldShowVideoEditorError from 'state/selectors/should-show-video-editor-error';

@@ -10,7 +10,7 @@ import photon from 'photon';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -62,7 +62,7 @@ class SharingButtonsPreviewButton extends React.Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	onClick = () => {
-		analytics.tracks.recordEvent( 'calypso_sharing_buttons_share_button_click', {
+		recordTracksEvent( 'calypso_sharing_buttons_share_button_click', {
 			service: this.props.button.ID,
 			enabled: ! this.props.enabled, // during onClick enabled is the old state, so negating gives the new state
 			path: this.props.path,

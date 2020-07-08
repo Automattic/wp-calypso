@@ -9,8 +9,8 @@ This component is aware of the selected site and, if the current URL contains a 
 ## Props
 
 * `delay`: time in millisecods to delay the recording of the page view event.
-* `path`: required `String` that represents the path to report as the source of the page view event. It should follow Calypso's [Path Conventions](https://github.com/Automattic/wp-calypso/blob/master/client/lib/analytics/docs/page-views.md#paths-conventions).
-* `title`: required `String` that represent the page's title. It should follow Calypso's [Title Conventions](https://github.com/Automattic/wp-calypso/blob/master/client/lib/analytics/docs/page-views.md#titles-conventions).
+* `path`: required `String` that represents the path to report as the source of the page view event. It should follow Calypso's [Path Conventions](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/analytics/docs/page-views.md#paths-conventions).
+* `title`: required `String` that represent the page's title. It should follow Calypso's [Title Conventions](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/analytics/docs/page-views.md#titles-conventions).
 * `properties`: optional `Object` with aditional properties that correspond to IDs or variables present on the `path`.
 
 ## Examples

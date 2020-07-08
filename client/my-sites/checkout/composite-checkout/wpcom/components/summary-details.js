@@ -4,7 +4,7 @@
 import styled from '@emotion/styled';
 
 export const SummaryDetails = styled.ul`
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 	padding: 0;
 
 	:first-of-type {

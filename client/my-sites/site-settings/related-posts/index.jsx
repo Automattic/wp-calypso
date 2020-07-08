@@ -31,7 +31,7 @@ const RelatedPosts = ( {
 } ) => {
 	return (
 		<div>
-			<SettingsSectionHeader title={ translate( 'Related Posts' ) } />
+			<SettingsSectionHeader title={ translate( 'Related posts' ) } />
 
 			<Card className="related-posts__card site-settings__traffic-settings">
 				<FormFieldset>

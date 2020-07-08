@@ -152,7 +152,7 @@ class PostTrends extends React.Component {
 		return (
 			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
-				<SectionHeader label={ this.props.translate( 'Posting Activity' ) } />
+				<SectionHeader label={ this.props.translate( 'Posting activity' ) } />
 				<Card>
 					<div className={ leftClass } onClick={ this.scrollLeft } role="button" tabIndex="0">
 						<span className="left-arrow" />

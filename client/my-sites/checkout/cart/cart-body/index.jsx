@@ -13,11 +13,16 @@ import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import CartTotal from 'my-sites/checkout/cart/cart-total';
 
 const CartBody = React.forwardRef( ( props, ref ) => {
-	const { cart, selectedSite, collapse = false, showCoupon = false } = props;
+	const { cart, selectedSite, collapse = false, showCoupon = false, isWhiteGloveOffer } = props;
 
 	return (
 		<div className="cart-body" ref={ ref }>
-			<CartItems collapse={ collapse } cart={ cart } selectedSite={ selectedSite } />
+			<CartItems
+				collapse={ collapse }
+				cart={ cart }
+				selectedSite={ selectedSite }
+				isWhiteGloveOffer={ isWhiteGloveOffer }
+			/>
 			<CartTotal cart={ cart } />
 			{ showCoupon && <CartCoupon cart={ cart } /> }
 		</div>

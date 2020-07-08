@@ -9,6 +9,6 @@
 	},
 	"main": "index.js",
 	"dependencies": {
-		"express": "3.5.0"
+		"express": "^3.5.0"
 	}
 }

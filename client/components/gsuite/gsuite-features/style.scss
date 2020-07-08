@@ -3,14 +3,14 @@
 	justify-content: space-between;
 	margin: 1em 0;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		display: flex;
 		flex-flow: row wrap;
 	}
 
 	.gsuite-features__feature-block {
 		p {
-			@include breakpoint( '>960px' ) {
+			@include breakpoint-deprecated( '>960px' ) {
 				max-width: 200px;
 			}
 		}
@@ -58,7 +58,7 @@
 		width: 24px;
 	}
 	.gsuite-features__feature-header {
-		font-size: 15px;
+		font-size: $font-body;
 	}
 }
 

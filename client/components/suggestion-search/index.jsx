@@ -12,7 +12,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
 import { Suggestions } from '@automattic/components';
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -87,7 +87,7 @@ class SuggestionSearch extends Component {
 		const { railcar } = this.props;
 		if ( railcar ) {
 			const { action, id } = railcar;
-			tracks.recordEvent( 'calypso_traintracks_interact', {
+			recordTracksEvent( 'calypso_traintracks_interact', {
 				action,
 				railcar: `${ id }-${ suggestionIndex }`,
 			} );
@@ -115,7 +115,7 @@ class SuggestionSearch extends Component {
 		const { railcar } = this.props;
 		if ( railcar ) {
 			const { fetch_algo, id, ui_algo } = railcar;
-			tracks.recordEvent( 'calypso_traintracks_render', {
+			recordTracksEvent( 'calypso_traintracks_render', {
 				fetch_algo,
 				ui_algo,
 				railcar: `${ id }-${ suggestionIndex }`,

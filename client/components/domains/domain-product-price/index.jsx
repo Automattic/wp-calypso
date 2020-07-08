@@ -35,7 +35,7 @@ class DomainProductPrice extends React.Component {
 	};
 
 	renderFreeWithPlanText() {
-		const { isMappingProduct, translate } = this.props;
+		const { isMappingProduct, isEligibleVariantForDomainTest, translate } = this.props;
 
 		let message;
 		switch ( this.props.rule ) {
@@ -46,7 +46,7 @@ class DomainProductPrice extends React.Component {
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( this.props.isEligibleVariantForDomainTest ) {
+				if ( isEligibleVariantForDomainTest ) {
 					message = translate( 'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}', {
 						args: { cost: this.props.price },
 						components: {
@@ -123,8 +123,12 @@ class DomainProductPrice extends React.Component {
 	renderSalePrice() {
 		const { price, salePrice, translate } = this.props;
 
+		const className = classnames( 'domain-product-price', 'is-free-domain', {
+			'domain-product-price__domain-step-copy-updates': this.props.isEligibleVariantForDomainTest,
+		} );
+
 		return (
-			<div className="domain-product-price is-free-domain">
+			<div className={ className }>
 				<div className="domain-product-price__sale-price">{ salePrice }</div>
 				<div className="domain-product-price__renewal-price">
 					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
@@ -137,18 +141,38 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderPrice() {
-		if ( this.props.salePrice ) {
+		const { salePrice, isEligibleVariantForDomainTest, price, translate } = this.props;
+		if ( salePrice ) {
 			return this.renderSalePrice();
 		}
 
+		const className = classnames( 'domain-product-price', {
+			'is-free-domain': isEligibleVariantForDomainTest,
+			'domain-product-price__domain-step-copy-updates': isEligibleVariantForDomainTest,
+		} );
+
+		const productPriceClassName = isEligibleVariantForDomainTest
+			? ''
+			: 'domain-product-price__price';
+
+		const renewalPrice = isEligibleVariantForDomainTest && (
+			<div className="domain-product-price__renewal-price">
+				{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
+					args: { cost: price },
+					components: { small: <small /> },
+				} ) }
+			</div>
+		);
+
 		return (
-			<div className="domain-product-price">
-				<span className="domain-product-price__price">
-					{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
-						args: { cost: this.props.price },
+			<div className={ className }>
+				<span className={ productPriceClassName }>
+					{ translate( '%(cost)s {{small}}/year{{/small}}', {
+						args: { cost: price },
 						components: { small: <small /> },
 					} ) }
 				</span>
+				{ renewalPrice }
 			</div>
 		);
 	}

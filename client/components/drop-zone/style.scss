@@ -40,8 +40,8 @@
 	z-index: z-index( 'root', '.drop-zone__content' );
 	transform: translateY( -50% );
 	width: 100%;
-	font-size: 14px;
-	font-weight: bold;
+	font-size: $font-body-small;
+	font-weight: 600;
 	text-align: center;
 	color: var( --color-text-inverted );
 	transition: transform 0.3s ease-in-out;

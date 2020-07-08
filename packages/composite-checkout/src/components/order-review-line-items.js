@@ -55,12 +55,12 @@ const LineItemUI = styled( LineItem )`
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
-	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal) };
-	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit') };
-	font-size: ${( { total } ) => ( total ? '1.2em' : '1em') };
-	padding: ${( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0') };
-	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
-		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
+	font-weight: ${ ( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal ) };
+	color: ${ ( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit' ) };
+	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1em' ) };
+	padding: ${ ( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0' ) };
+	border-bottom: ${ ( { theme, total, isSummaryVisible } ) =>
+		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 
 	:first-of-type {
 		padding-top: 0;

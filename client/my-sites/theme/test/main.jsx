@@ -13,7 +13,7 @@ import { createReduxStore } from 'state';
 import { setStore } from 'state/redux-store';
 import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},

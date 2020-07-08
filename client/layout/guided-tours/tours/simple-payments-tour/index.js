@@ -17,6 +17,8 @@ import {
 	Link,
 	Quit,
 } from 'layout/guided-tours/config-elements';
+import { isEnabled } from 'config';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export const SimplePaymentsTour = makeTour(
 	<Tour { ...meta }>
@@ -53,8 +55,16 @@ export const SimplePaymentsTour = makeTour(
 							<span>{ translate( 'Upgrade' ) }</span>
 						</SiteLink>
 					</ButtonRow>
-					<Link href="https://wordpress.com/support/simple-payments">
-						{ translate( 'Learn more about Simple Payments.' ) }
+					<Link
+						href={
+							isEnabled( 'earn/rename-payment-blocks' )
+								? localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' )
+								: localizeUrl( 'https://wordpress.com/support/simple-payments/' )
+						}
+					>
+						{ isEnabled( 'earn/rename-payment-blocks' )
+							? translate( 'Learn more about Pay with PayPal.' )
+							: translate( 'Learn more about Simple Payments.' ) }
 					</Link>
 				</Fragment>
 			) }

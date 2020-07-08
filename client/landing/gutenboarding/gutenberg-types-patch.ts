@@ -4,11 +4,4 @@ declare module '@wordpress/compose' {
 	export function useViewportMatch( viewport: breakpoint, operator?: operator ): boolean;
 }
 
-declare module '@wordpress/element' {
-	export function createInterpolateElement(
-		interpolatedString: string,
-		conversionMap: Record< string, ReactElement >
-	): ReactNode;
-}
-
 export {};

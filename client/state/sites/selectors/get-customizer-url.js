@@ -15,24 +15,31 @@ import isJetpackSite from './is-jetpack-site';
 /**
  * Returns the customizer URL for a site, or null if it cannot be determined.
  *
- * @param  {object} state  Global state tree
- * @param  {?number} siteId Site ID
- * @param  {string} panel  Optional panel to autofocus
- * @returns {string}        Customizer URL
+ * @param   {object}  state     Global state tree
+ * @param   {?number} siteId    Site ID
+ * @param   {string}  panel     Optional panel to autofocus
+ * @param   {string}  returnUrl Optional return url for when the user closes the customizer
+ * @returns {string}            Customizer URL
  */
-export default function getCustomizerUrl( state, siteId, panel ) {
+export default function getCustomizerUrl( state, siteId, panel, returnUrl ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		const siteSlug = getSiteSlug( state, siteId );
-		return [ '' ].concat( compact( [ 'customize', panel, siteSlug ] ) ).join( '/' );
+		const url = [ '' ].concat( compact( [ 'customize', panel, siteSlug ] ) ).join( '/' );
+		return addQueryArgs(
+			{
+				return: returnUrl,
+			},
+			url
+		);
 	}
 
 	const adminUrl = getSiteAdminUrl( state, siteId, 'customize.php' );
+
 	if ( ! adminUrl ) {
 		return null;
 	}
 
-	let returnUrl;
-	if ( 'undefined' !== typeof window ) {
+	if ( ! returnUrl && 'undefined' !== typeof window ) {
 		returnUrl = window.location.href;
 	}
 

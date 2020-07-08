@@ -13,7 +13,7 @@ import { sanitizeSectionContent } from './sanitize-section-content';
 /**
  * @param  {object} site       Site Object
  * @param  {object} log        Notice log Object
- * @returns {Bool} True if notice matches criteria
+ * @returns {boolean} True if notice matches criteria
  */
 function isSameSiteNotice( site, log ) {
 	return site && log.site && log.site.ID === site.ID;
@@ -22,7 +22,7 @@ function isSameSiteNotice( site, log ) {
 /**
  * @param  {string} pluginSlug Plugin Slug
  * @param  {object} log        Notice log Object
- * @returns {Bool} True if notice matches criteria
+ * @returns {boolean} True if notice matches criteria
  */
 function isSamePluginNotice( pluginSlug, log ) {
 	return pluginSlug && log.plugin && log.plugin.slug === pluginSlug;
@@ -34,7 +34,7 @@ function isSamePluginNotice( pluginSlug, log ) {
  * @param  {object} site       Site Object
  * @param  {string} pluginSlug Plugin Slug
  * @param  {object} log        Notice log Object
- * @returns {Bool} True if notice matches criteria
+ * @returns {boolean} True if notice matches criteria
  */
 function filterNoticesBy( site, pluginSlug, log ) {
 	if ( ! site && ! pluginSlug ) {
@@ -50,7 +50,7 @@ function filterNoticesBy( site, pluginSlug, log ) {
 	return false;
 }
 
-export function whiteListPluginData( plugin ) {
+export function getAllowedPluginData( plugin ) {
 	return pick(
 		plugin,
 		'action_links',
@@ -144,7 +144,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 }
 
 export function normalizePluginData( plugin, pluginData ) {
-	plugin = whiteListPluginData( assign( plugin, pluginData ) );
+	plugin = getAllowedPluginData( assign( plugin, pluginData ) );
 
 	return transform( plugin, function ( returnData, item, key ) {
 		switch ( key ) {

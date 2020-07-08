@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:user:settings' );
@@ -11,8 +10,7 @@ import { decodeEntities } from 'lib/formatting';
  * Internal dependencies
  */
 import emitterClass from 'lib/mixins/emitter';
-import userFactory from 'lib/user';
-const user = userFactory();
+import user from 'lib/user';
 import userUtils from 'lib/user/utils';
 import wp from 'lib/wp';
 
@@ -178,7 +176,7 @@ UserSettings.prototype.saveSettings = function ( callback, settingsOverride ) {
 					this.emit( 'change' );
 
 					// Refetch the user data after saving user settings
-					user.fetch();
+					user().fetch();
 				}
 
 				// Let the form know whether the save was successful or not

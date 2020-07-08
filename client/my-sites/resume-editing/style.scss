@@ -13,7 +13,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 
@@ -31,8 +31,8 @@
 
 .resume-editing__label {
 	color: var( --color-text-inverted );
-	font-size: 10px;
-	font-weight: 500;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
 	opacity: 0.7;
 	text-transform: uppercase;
 }
@@ -45,7 +45,7 @@
 	max-width: 25vw;
 	white-space: nowrap;
 	font-family: $serif;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.1;
 
 	&::after {

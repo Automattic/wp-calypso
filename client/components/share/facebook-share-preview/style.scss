@@ -51,7 +51,7 @@
 
 .facebook-share-preview__profile-line,
 .facebook-share-preview__body {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.38;
 }
 
@@ -67,7 +67,7 @@
 
 .facebook-share-preview__meta-line {
 	color: #616770;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 1.34;
 }
 

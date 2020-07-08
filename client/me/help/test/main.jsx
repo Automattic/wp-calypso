@@ -29,7 +29,7 @@ import {
 } from 'lib/plans/constants';
 import { mapStateToProps } from '../main';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'lib/user', () => jest.fn() );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
 jest.mock( 'components/main', () => 'Main' );

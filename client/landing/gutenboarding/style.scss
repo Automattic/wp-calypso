@@ -34,6 +34,8 @@ $admin-sidebar-width-collapsed: 0;
 	// overrides .edit-post-visual-editor
 	padding-top: 0;
 
+	// hide the block toolbar
+	.block-editor-block-list__block-popover,
 	// overrides box-shadow added on focus
 	.block-editor-block-list__block::after {
 		display: none;

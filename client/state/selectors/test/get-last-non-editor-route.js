@@ -6,12 +6,12 @@ import { ROUTE_SET } from 'state/action-types';
 
 function getRouteAndActionLogState( previousPath, actionLogPath ) {
 	return {
-		ui: {
-			route: {
-				path: {
-					previous: previousPath,
-				},
+		route: {
+			path: {
+				previous: previousPath,
 			},
+		},
+		ui: {
 			actionLog: [
 				{ type: ROUTE_SET, path: actionLogPath },
 				{ type: ROUTE_SET, path: previousPath },

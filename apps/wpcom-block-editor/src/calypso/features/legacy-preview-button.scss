@@ -12,7 +12,9 @@
 		display: inline-flex;
 	}
 	// Normally visible on desktops, make it always hidden
-	.editor-post-preview__dropdown {
+	// .block-editor-post-preview__dropdown is the class name in versions >= 8.0
+	.editor-post-preview__dropdown,
+	.block-editor-post-preview__dropdown {
 		display: none;
 	}
 }

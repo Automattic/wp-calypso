@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	handleMediaItemRequest,
+	requestMediaItem,
 	receiveMediaItem,
 	receiveMediaItemError,
 	requestMedia,
@@ -15,19 +15,11 @@ import {
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
-	requestingMedia,
-	requestingMediaItem,
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'state/media/actions';
 
 describe( 'media request', () => {
-	test( 'should dispatch REQUESTING action when request triggers', () => {
-		expect( requestMedia( { siteId: 2916284, query: 'a=b' } ) ).toEqual(
-			expect.arrayContaining( [ requestingMedia( 2916284, 'a=b' ) ] )
-		);
-	} );
-
 	test( 'should dispatch SUCCESS action when request completes', () => {
 		expect(
 			requestMediaSuccess(
@@ -64,7 +56,7 @@ describe( 'media request', () => {
 	} );
 } );
 
-describe( 'handleMediaItemRequest', () => {
+describe( 'requestMediaItem', () => {
 	test( 'should dispatch an http action', () => {
 		const siteId = 12345;
 		const mediaId = 67890;
@@ -73,9 +65,8 @@ describe( 'handleMediaItemRequest', () => {
 			mediaId,
 			siteId,
 		};
-		expect( handleMediaItemRequest( action ) ).toEqual(
+		expect( requestMediaItem( action ) ).toEqual(
 			expect.arrayContaining( [
-				requestingMediaItem( siteId ),
 				http(
 					{
 						apiVersion: '1.2',
@@ -99,12 +90,13 @@ describe( 'receiveMediaItem', () => {
 			siteId,
 		};
 		const media = { ID: 91827364 };
-		expect( receiveMediaItem( action, media ) ).toEqual(
-			expect.arrayContaining( [
-				receiveMedia( siteId, media ),
-				successMediaItemRequest( siteId, mediaId ),
-			] )
-		);
+
+		const dispatch = jest.fn();
+
+		receiveMediaItem( action, media )( dispatch );
+
+		expect( dispatch ).toHaveBeenNthCalledWith( 1, receiveMedia( siteId, media ) );
+		expect( dispatch ).toHaveBeenNthCalledWith( 2, successMediaItemRequest( siteId, mediaId ) );
 	} );
 } );
 
@@ -117,6 +109,11 @@ describe( 'receiveMediaItemError', () => {
 			mediaId,
 			siteId,
 		};
-		expect( receiveMediaItemError( action ) ).toEqual( failMediaItemRequest( siteId, mediaId ) );
+
+		const dispatch = jest.fn();
+
+		receiveMediaItemError( action )( dispatch );
+
+		expect( dispatch ).toHaveBeenCalledWith( failMediaItemRequest( siteId, mediaId ) );
 	} );
 } );

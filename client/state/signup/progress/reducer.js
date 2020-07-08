@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, keyBy, get } from 'lodash';
+import { has, keyBy, get, omit } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -16,6 +16,7 @@ import {
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 	SIGNUP_STEPS_SITE_TYPE_SET,
+	SIGNUP_PROGRESS_REMOVE_STEP,
 } from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
 import { schema } from './schema';
@@ -77,6 +78,12 @@ const updateStep = ( state, newStepState ) => {
 // When called without action.steps, this is basically a state reset function.
 const overwriteSteps = ( state, { steps = {} } ) => keyBy( steps, 'stepName' );
 
+const removeStep = ( state, { step } ) => {
+	const newState = omit( state, step.stepName );
+
+	return newState;
+};
+
 const completeStep = ( state, { step } ) => updateStep( state, { ...step, status: 'completed' } );
 
 const invalidateStep = ( state, { step, errors } ) => {
@@ -120,6 +127,8 @@ export default withSchemaValidation( schema, ( state = {}, action ) => {
 		case SIGNUP_STEPS_SITE_TYPE_SET:
 			delete state[ 'domains-with-preview' ];
 			return state;
+		case SIGNUP_PROGRESS_REMOVE_STEP:
+			return removeStep( state, action );
 	}
 
 	return state;

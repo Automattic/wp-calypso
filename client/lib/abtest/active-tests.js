@@ -1,3 +1,14 @@
+/**
+ * Note: this file is imported by `client` and `test/e2e` tests. `test/e2e` do not have the config
+ * required to make aliased imports work (e.g. `import * from 'lib/'). As such, we must use relative
+ * paths here (e.g. `import * from '../../lib/`)
+ */
+
+/**
+ * Internal dependencies
+ */
+import * as RUM_DATA_COLLECTION from '../../lib/performance-tracking/const';
+
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -24,15 +35,6 @@ export default {
 			show: 80,
 		},
 		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	showCompositeCheckout: {
-		datestamp: '20200326',
-		variations: {
-			composite: 50,
-			regular: 50,
-		},
-		defaultVariation: 'regular',
 		allowExistingUsers: true,
 	},
 	skipThemesSelectionModal: {
@@ -72,10 +74,10 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20190429',
+		datestamp: '20200421',
 		variations: {
-			offer: 100,
-			noOffer: 0,
+			offer: 50,
+			noOffer: 50,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
@@ -100,28 +102,69 @@ export default {
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
-			variantShowUpdates: 90,
-			control: 10,
+			variantShowUpdates: 100,
+			control: 0,
 		},
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	planStepCopyUpdates: {
-		datestamp: '20200326',
+	domainStepPlanStepSwap: {
+		datestamp: '20200513',
 		variations: {
-			variantCopyUpdates: 50,
-			control: 50,
+			variantShowSwapped: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	ATPrivacy: {
-		datestamp: '20200331',
+	newSiteGutenbergOnboarding: {
+		datestamp: '20200702',
 		variations: {
-			variant: 5,
-			control: 95,
+			gutenberg: 10,
+			control: 90,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: [ 'en' ],
+		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE', 'CA', 'AU' ],
+	},
+	[ RUM_DATA_COLLECTION.AB_NAME ]: {
+		datestamp: '20200602',
+		variations: {
+			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 50,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 50,
+		},
+		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
+		localeTargets: 'any',
+		allowExistingUsers: true,
+	},
+	whiteGloveUpsell: {
+		datestamp: '20200623',
+		variations: {
+			variantShowOffer: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
+		countryCodeTargets: [ 'US' ],
+	},
+	passwordlessAfterPlans: {
+		datestamp: '20200618',
+		variations: {
+			variantPasswordless: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		countryCodeTargets: [ 'US' ],
+	},
+	showBusinessPlanBump: {
+		datestamp: '20200619',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

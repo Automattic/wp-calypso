@@ -15,7 +15,7 @@
 	background-color: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
 	border-bottom: 0;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 1;
 	font-weight: bold;
 	text-transform: uppercase;
@@ -44,7 +44,7 @@
 
 .search-preview__url {
 	color: #006621; // matching Google results
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 17px;
 	line-height: 16px;
 	max-width: 616px;
@@ -52,7 +52,7 @@
 
 .search-preview__snippet {
 	color: #545454; // matching Google results
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: 1.4;
 	max-width: 616px;
 }

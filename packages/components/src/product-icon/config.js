@@ -8,6 +8,7 @@ import jetpackPersonal from './images/jetpack-personal.svg';
 import jetpackPremium from './images/jetpack-premium.svg';
 import jetpackProfessional from './images/jetpack-professional.svg';
 import jetpackSearch from './images/jetpack-search.svg';
+import jetpackAntiSpam from './images/jetpack-anti-spam.svg';
 import wpcomBlogger from './images/wpcom-blogger.svg';
 import wpcomBusiness from './images/wpcom-business.svg';
 import wpcomEcommerce from './images/wpcom-ecommerce.svg';
@@ -24,12 +25,14 @@ export const paths = {
 	'jetpack-premium': jetpackPremium,
 	'jetpack-professional': jetpackProfessional,
 	'jetpack-search': jetpackSearch,
+	'jetpack-anti-spam': jetpackAntiSpam,
 	'wpcom-blogger': wpcomBlogger,
 	'wpcom-business': wpcomBusiness,
 	'wpcom-ecommerce': wpcomEcommerce,
 	'wpcom-free': wpcomFree,
 	'wpcom-personal': wpcomPersonal,
 	'wpcom-premium': wpcomPremium,
+	'wpcom-search': jetpackSearch,
 };
 
 export const iconToProductSlugMap = {
@@ -46,7 +49,8 @@ export const iconToProductSlugMap = {
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
-	'jetpack-search': [ 'jetpack_search', 'jetpack_search_monthly' ],
+	'jetpack-search': [ 'jetpack_search', 'jetpack_search_monthly', 'wpcom_search' ],
+	'jetpack-anti-spam': [ 'jetpack_anti_spam', 'jetpack_anti_spam_monthly' ],
 };
 
 export const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].flat();

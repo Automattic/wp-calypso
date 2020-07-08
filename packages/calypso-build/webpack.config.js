@@ -105,6 +105,7 @@ function getWebpackConfig(
 			} ),
 		},
 		module: {
+			strictExportPresence: true,
 			rules: [
 				TranspileConfig.loader( {
 					cacheDirectory: true,

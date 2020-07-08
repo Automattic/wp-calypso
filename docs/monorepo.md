@@ -38,7 +38,7 @@ test/
 
 Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
 
-The only exception are `devDependencies` which _must be declared in the wp-calypso root `package.json`_. `devDependencies` of sub-packages in a monorepo are not reliably installed and cannot be relied on.
+It used to be that `devDependencies` needed to be added to the root `package.json` but since we moved to `yarn` workspaces we're able to add them as regular `devDependencies` within the package that uses them.
 
 ### A sample `package.json`
 
@@ -68,9 +68,9 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	},
 	"files": [ "dist", "src" ],
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"clean": "check-npm-client && npx rimraf dist",
+		"prepublish": "check-npm-client && yarn run clean",
+		"prepare": "check-npm-client && transpile"
 	}
 }
 ```
@@ -78,6 +78,8 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 If your package requires compilation, the `package.json` `prepare` script should compile the package. If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds.
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
+
+Please note the inclusion of `check-npm-client` before each script. This is an intentional guard against someone accidentally using `npm` in the repository instead of `yarn` and should be included at the start of each script. See the root [`package.json`](../../package.json) for an example.
 
 ## Running Tests
 
@@ -102,13 +104,13 @@ yarn run build-packages
 Or even specific packages:
 
 ```bash
-npx lerna run prepare --scope="@automattic/calypso-build"
+yarn workspace @automattic/calypso-build run prepare
 ```
 
 Or specific apps:
 
 ```bash
-npx lerna run build --scope="@automattic/calypso-build"
+yarn workspace @automattic/wpcom-block-editor run build
 ```
 
 All `prepare` scripts found in all `package.json`s of apps and packages are always run on Calypso's `yarn`. Therefore independent apps in `/apps` directory can use `build` instead of `prepare` so avoid unnecessary builds.
@@ -116,7 +118,7 @@ All `prepare` scripts found in all `package.json`s of apps and packages are alwa
 You can also run other custom `package.json` scripts only for your app or package:
 
 ```bash
-npx lerna run your-script --scope="@automattic/your-package"
+yarn workspace @automattic/your-package run your-script
 ```
 
 ## Developing packages
@@ -225,6 +227,6 @@ or
 git tag "@automattic/components@1.0.0"
 ```
 
-Now `lerna publish from-git` will offer to publish only the packages that have a matching Git tag on the current `HEAD` revision.
+Now `npx lerna publish from-git` will offer to publish only the packages that have a matching Git tag on the current `HEAD` revision.
 
 The rest of the workflow is exactly the same as in the `from-package` case.

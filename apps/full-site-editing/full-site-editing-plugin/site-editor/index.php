@@ -4,7 +4,7 @@
  *
  * The purpose of this code is to allow us to use core's Site Editor experiment
  * on Dotcom and Atomic. The corresponding core functionality is initialized here:
- * https://github.com/WordPress/gutenberg/blob/master/lib/edit-site-page.php
+ * https://github.com/WordPress/gutenberg/blob/HEAD/lib/edit-site-page.php
  *
  * We should aim to reuse as much of the core code as possible and use this to adjust it to some
  * specifics of our platforms, or in cases when we want to extend the default experience.
@@ -49,13 +49,13 @@ function add_site_editor_menu_item() {
 /**
  * Used to filter corresponding Site Editor experiment options.
  *
- * These need to be toggled on for the Site Editor to work properly.
- * Furthermore, it's not enough to set them just on a given site.
+ * This needs to be toggled on for the Site Editor to work properly.
+ * Furthermore, it's not enough to set it just on a given site.
  * In WP.com context this needs to be enabled in API context too,
  * and since we want to have it selectively enabled for some subset of
  * sites initially, we can't set this option for the whole API.
- * Instead we'll intercept it with it options filter (option_gutenberg-experiments)
- * and override its values for certain sites.
+ * Instead we'll intercept it with its options filter (pre_option_gutenberg-experiments)
+ * and override its values for eligible sites.
  *
  * @param array $experiments_option Default experiments option array.
  *
@@ -68,10 +68,6 @@ function enable_site_editor_experiment( $experiments_option ) {
 
 	if ( empty( $experiments_option['gutenberg-full-site-editing'] ) ) {
 		$experiments_option['gutenberg-full-site-editing'] = 1;
-	}
-
-	if ( empty( $experiments_option['gutenberg-full-site-editing-demo'] ) ) {
-		$experiments_option['gutenberg-full-site-editing-demo'] = 1;
 	}
 
 	return $experiments_option;

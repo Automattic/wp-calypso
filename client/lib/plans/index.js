@@ -445,22 +445,44 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
-export const getPopularPlanSpec = ( { customerType, isJetpack } ) => {
+export const getPopularPlanSpec = ( { customerType, isJetpack, availablePlans } ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {
 		return false;
 	}
 
-	const spec = {
-		type: TYPE_BUSINESS,
-		group: GROUP_WPCOM,
-	};
-
-	if ( customerType === 'personal' ) {
-		spec.type = TYPE_PREMIUM;
+	if ( availablePlans.length === 0 ) {
+		return false;
 	}
 
-	return spec;
+	const defaultPlan = getPlan( availablePlans[ 0 ] );
+
+	if ( ! defaultPlan ) {
+		return false;
+	}
+
+	const group = GROUP_WPCOM;
+
+	if ( customerType === 'personal' ) {
+		if ( availablePlans.findIndex( isPremiumPlan ) !== -1 ) {
+			return {
+				type: TYPE_PREMIUM,
+				group,
+			};
+		}
+		// when customerType is not personal, default to business
+	} else if ( availablePlans.findIndex( isBusinessPlan ) !== -1 ) {
+		return {
+			type: TYPE_BUSINESS,
+			group,
+		};
+	}
+
+	// finally, just return the default one.
+	return {
+		type: defaultPlan.type,
+		group,
+	};
 };
 
 export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, currentPlan } ) => {

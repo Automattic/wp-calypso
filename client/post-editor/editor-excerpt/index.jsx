@@ -12,7 +12,7 @@ import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import TrackInputChanges from 'components/track-input-changes';
 import FormTextarea from 'components/forms/form-textarea';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 

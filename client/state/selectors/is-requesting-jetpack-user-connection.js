@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/jetpack/init';
 
 /**
  * Returns true if we are currently making a request to retrieve the user connection data. False otherwise.

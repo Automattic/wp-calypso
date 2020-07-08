@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import {
+import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
+import type {
 	WPCOMCartItem,
-	getNonProductWPCOMCartItemTypes,
-} from 'my-sites/checkout/composite-checkout/wpcom';
+	DomainContactDetails,
+} from 'my-sites/checkout/composite-checkout/wpcom/types';
 
 /**
  * Internal dependencies
  */
 import {
 	WPCOMTransactionEndpointCart,
-	WPCOMTransactionEndpointDomainDetails,
 	createTransactionEndpointCartFromLineItems,
 } from './transaction-endpoint';
 
@@ -23,13 +23,13 @@ export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
 	cancelUrl: string;
 	cart: WPCOMTransactionEndpointCart;
-	domainDetails: WPCOMTransactionEndpointDomainDetails;
+	domainDetails: DomainContactDetails;
 	country: string;
 	postalCode: string;
+	isWhiteGloveOffer: boolean;
 };
 
 export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
-	debug,
 	successUrl,
 	cancelUrl,
 	siteId,
@@ -40,7 +40,6 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	domainDetails,
 	items,
 }: {
-	debug: ( _0: string, _1: any ) => void;
 	successUrl: string;
 	cancelUrl: string;
 	siteId: string;
@@ -48,24 +47,28 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	country: string;
 	postalCode: string;
 	subdivisionCode: string;
-	domainDetails: WPCOMTransactionEndpointDomainDetails;
+	domainDetails: DomainContactDetails;
 	items: WPCOMCartItem[];
 } ): PayPalExpressEndpointRequestPayload {
+	const urlParams = new URLSearchParams( window.location.search );
+	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
+
 	return {
 		successUrl,
 		cancelUrl,
 		cart: createTransactionEndpointCartFromLineItems( {
-			debug,
 			siteId,
 			couponId,
 			country,
 			postalCode,
 			subdivisionCode,
 			items: items.filter( ( item ) => ! getNonProductWPCOMCartItemTypes().includes( item.type ) ),
+			contactDetails: domainDetails,
 		} ),
 		country,
 		postalCode,
 		domainDetails,
+		isWhiteGloveOffer: isWhiteGlove,
 	};
 }
 

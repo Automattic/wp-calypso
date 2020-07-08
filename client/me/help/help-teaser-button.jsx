@@ -16,10 +16,10 @@ import { Card } from '@automattic/components';
  */
 import './help-teaser-button.scss';
 
-export default localize( ( { title, description, href, onClick } ) => {
+export default localize( ( { title, description, href, onClick, target } ) => {
 	return (
 		<div className="help__help-teaser-button">
-			<Card href={ href } onClick={ onClick }>
+			<Card href={ href } onClick={ onClick } target={ target }>
 				<Gridicon className="help__help-teaser-button-icon" icon="help" size={ 36 } />
 				<div className="help__help-teaser-text">
 					<span className="help__help-teaser-button-title">{ title }</span>

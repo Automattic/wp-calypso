@@ -17,7 +17,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
-	getPreLaunchEditorDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -114,6 +113,24 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-03-03',
+			showRecaptcha: true,
+		},
+
+		'onboarding-plan-first': {
+			steps: [ 'user', 'plans', 'domains' ],
+			destination: getSignupDestination,
+			description:
+				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',
+			lastModified: '2020-04-22',
+			showRecaptcha: true,
+		},
+
+		'onboarding-passwordless': {
+			steps: [ 'domains', 'plans', 'user-passwordless' ],
+			destination: getSignupDestination,
+			description:
+				'Simplify the User step (account creation step) and move it right before the Checkout, after Plans/Domains steps. Read more in https://wp.me/pbxNRc-m0',
+			lastModified: '2020-06-17',
 			showRecaptcha: true,
 		},
 
@@ -242,11 +259,17 @@ export function generateFlows( {
 
 	if ( isEnabled( 'signup/wpforteams' ) ) {
 		flows[ 'wp-for-teams' ] = {
-			steps: [ 'team-site', 'user' ],
+			steps: [ 'p2-site', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'WordPress for Teams signup flow',
-			lastModified: '2020-03-23',
+			description: 'P2 signup flow',
+			lastModified: '2020-06-04',
 		};
+
+		// Original name for the project was "WP for Teams". Since then, we've renamed it to "P2".
+		// However, backend and Marketing is expecting `wp-for-teams` as the `signup_flow_name` var
+		// so we force it in client/lib/signup/step-actions/index.js `createAccount` function.
+		// Keeping both flows for clarity.
+		flows.p2 = { ...flows[ 'wp-for-teams' ] };
 	}
 
 	flows.domain = {
@@ -343,27 +366,14 @@ export function generateFlows( {
 		};
 	}
 
-	if ( isEnabled( 'gutenboarding' ) ) {
-		flows.frankenflow = {
-			steps: [ 'plans-launch', 'launch' ],
-			destination: getLaunchDestination,
-			description: 'Frankenflow launch for a site created from Gutenboarding',
-			lastModified: '2020-01-22',
-			pageTitle: translate( 'Launch your site' ),
-			providesDependenciesInQuery: [ 'siteSlug' ],
-		};
-	}
-
-	if ( isEnabled( 'gutenboarding' ) ) {
-		flows.prelaunch = {
-			steps: [ 'plans-with-domain' ],
-			destination: getPreLaunchEditorDestination,
-			description: 'Gutenboarding flow for creating a site with a paid domain',
-			lastModified: '2020-04-06',
-			pageTitle: translate( 'Get a domain for your site' ),
-			providesDependenciesInQuery: [ 'siteSlug' ],
-		};
-	}
+	flows[ 'new-launch' ] = {
+		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+		destination: getLaunchDestination,
+		description: 'Launch flow for a site created from /new',
+		lastModified: '2020-04-28',
+		pageTitle: translate( 'Launch your site' ),
+		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
+	};
 
 	return flows;
 }

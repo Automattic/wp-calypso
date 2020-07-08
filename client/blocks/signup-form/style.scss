@@ -16,12 +16,12 @@
 }
 
 .signup-form__terms-of-service-link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 0 0 20px;
 	text-align: center;
 
 	a {
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			white-space: pre;
 		}
 	}
@@ -34,7 +34,7 @@
 	box-sizing: border-box;
 
 	p {
-		font-size: 13px;
+		font-size: $font-body-small;
 		color: var( --color-text-inverted );
 		margin: 0 0 12px;
 		text-align: center;
@@ -76,7 +76,7 @@
 .signup-form__recaptcha-tos {
 	display: none;
 	padding: 20px 10px 10px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --studio-blue-5 );
 	text-align: center;
 
@@ -88,6 +88,30 @@
 	a {
 		color: var( --studio-blue-5 );
 		text-decoration: underline;
+	}
+}
+
+.signup-form.is-showing-recaptcha-tos {
+	.signup-form__terms-of-service-link {
+		margin: 25px 0 0;
+	}
+}
+
+.signup-form.is-passwordless-after-plans {
+	.social-buttons__button {
+		background: none;
+		border: none;
+		width: 50%;
+		box-shadow: none;
+		float: left;
+		color: var( --color-text-inverted );
+		text-decoration: underline;
+		margin-bottom: 30px;
+	}
+	.signup-form__social-buttons-tos {
+		font-size: 12px;
+		margin: 5px 0;
+		clear: both;
 	}
 }
 

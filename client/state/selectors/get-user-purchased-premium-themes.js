@@ -3,6 +3,8 @@
  */
 import { getUserPurchases } from 'state/purchases/selectors';
 
+import 'state/purchases/init';
+
 /**
  * Return the details of any premium themes the user has purchased
  *

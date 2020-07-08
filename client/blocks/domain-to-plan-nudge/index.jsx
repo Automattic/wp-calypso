@@ -10,7 +10,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
@@ -61,7 +61,7 @@ class DomainToPlanNudge extends Component {
 
 		const prices = discountedRawPrice ? [ rawPrice, discountedRawPrice ] : null;
 		return (
-			<Banner
+			<UpsellNudge
 				callToAction={ translate( 'Upgrade for %s', {
 					args: formatCurrency( discountedRawPrice || rawPrice, userCurrency ),
 					comment: '%s will be replaced by a formatted price, i.e $9.99',
@@ -77,6 +77,7 @@ class DomainToPlanNudge extends Component {
 				] }
 				plan={ PLAN_PERSONAL }
 				price={ prices }
+				showIcon
 				title={ translate( 'Upgrade to a Personal Plan and Save!' ) }
 			/>
 		);

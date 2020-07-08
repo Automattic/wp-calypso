@@ -1,11 +1,18 @@
 /**
  * External dependencies
  */
-import {
-	WPCOMCartItem,
-	getNonProductWPCOMCartItemTypes,
-} from 'my-sites/checkout/composite-checkout/wpcom';
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
+import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
+import type {
+	WPCOMCartItem,
+	DomainContactDetails,
+} from 'my-sites/checkout/composite-checkout/wpcom/types';
+import type { CartItemExtra } from 'lib/cart-values/types';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 
 const debug = debugFactory( 'calypso:transaction-endpoint' );
 
@@ -18,18 +25,23 @@ export type WPCOMTransactionEndpoint = (
 export type WPCOMTransactionEndpointRequestPayload = {
 	cart: WPCOMTransactionEndpointCart;
 	payment: WPCOMTransactionEndpointPaymentDetails;
-	domainDetails?: WPCOMTransactionEndpointDomainDetails;
+	domainDetails?: DomainContactDetails;
+	isWhiteGloveOffer: boolean;
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {
 	paymentMethod: string;
-	paymentKey: string;
+	paymentKey?: string;
 	paymentPartner: string;
-	storedDetailsId: string;
+	storedDetailsId?: string;
 	name: string;
+	email?: string;
 	zip: string;
 	postalCode: string;
 	country: string;
+	successUrl?: string;
+	cancelUrl?: string;
+	idealBank?: string;
 };
 
 export type WPCOMTransactionEndpointCart = {
@@ -40,13 +52,7 @@ export type WPCOMTransactionEndpointCart = {
 	currency: string;
 	temporary: false;
 	extra: string[];
-	products: {
-		product_id: number;
-		meta?: string;
-		currency: string;
-		volume: number;
-		extra?: object;
-	}[];
+	products: WPCOMTransactionEndpointCartItem[];
 	tax: {
 		location: {
 			country_code: string;
@@ -56,16 +62,12 @@ export type WPCOMTransactionEndpointCart = {
 	};
 };
 
-export type WPCOMTransactionEndpointDomainDetails = {
-	firstName: string;
-	lastName: string;
-	email: string;
-	phone: string;
-	address_1: string;
-	city: string;
-	state: string;
-	countryCode: string;
-	postalCode: string;
+type WPCOMTransactionEndpointCartItem = {
+	product_id: number;
+	meta?: string;
+	currency: string;
+	volume: number;
+	extra?: CartItemExtra;
 };
 
 // Create cart object as required by the WPCOM transactions endpoint
@@ -77,6 +79,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode,
 	subdivisionCode,
 	items,
+	contactDetails,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -84,6 +87,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode: string;
 	subdivisionCode?: string;
 	items: WPCOMCartItem[];
+	contactDetails: DomainContactDetails;
 } ): WPCOMTransactionEndpointCart {
 	debug( 'creating cart from items', items );
 
@@ -91,16 +95,6 @@ export function createTransactionEndpointCartFromLineItems( {
 		( firstValue: string, item ) => firstValue || item.amount.currency,
 		''
 	);
-
-	const convertItem = ( item: WPCOMCartItem ) => {
-		return {
-			product_id: item.wpcom_meta?.product_id,
-			meta: item.wpcom_meta?.meta,
-			currency: item.amount.currency,
-			volume: item.wpcom_meta?.volume ?? 1,
-			extra: item.wpcom_meta?.extra,
-		};
-	};
 
 	return {
 		blog_id: siteId || '0',
@@ -112,7 +106,8 @@ export function createTransactionEndpointCartFromLineItems( {
 		extra: [],
 		products: items
 			.filter( ( product ) => ! getNonProductWPCOMCartItemTypes().includes( product.type ) )
-			.map( convertItem ),
+			.map( ( item ) => addRegistrationDataToGSuiteItem( item, contactDetails ) )
+			.map( createTransactionEndpointCartItemFromLineItem ),
 		tax: {
 			location: {
 				country_code: country,
@@ -121,6 +116,34 @@ export function createTransactionEndpointCartFromLineItems( {
 			},
 		},
 	};
+}
+
+function createTransactionEndpointCartItemFromLineItem(
+	item: WPCOMCartItem
+): WPCOMTransactionEndpointCartItem {
+	return {
+		product_id: item.wpcom_meta?.product_id,
+		meta: item.wpcom_meta?.meta,
+		currency: item.amount.currency,
+		volume: item.wpcom_meta?.volume ?? 1,
+		extra: item.wpcom_meta?.extra,
+	} as WPCOMTransactionEndpointCartItem;
+}
+
+function addRegistrationDataToGSuiteItem(
+	item: WPCOMCartItem,
+	contactDetails: DomainContactDetails
+): WPCOMCartItem {
+	if ( ! isGSuiteProductSlug( item.wpcom_meta?.product_slug ) ) {
+		return item;
+	}
+	return {
+		...item,
+		wpcom_meta: {
+			...item.wpcom_meta,
+			extra: { ...item.wpcom_meta.extra, google_apps_registration_data: contactDetails },
+		},
+	} as WPCOMCartItem;
 }
 
 export function createTransactionEndpointRequestPayloadFromLineItems( {
@@ -136,20 +159,31 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	paymentPartnerProcessorId,
 	storedDetailsId,
 	name,
+	email,
+	cancelUrl,
+	successUrl,
+	idealBank,
 }: {
 	siteId: string;
 	couponId?: string;
 	country: string;
 	postalCode: string;
 	subdivisionCode?: string;
-	domainDetails?: WPCOMTransactionEndpointDomainDetails;
+	domainDetails?: DomainContactDetails;
 	items: WPCOMCartItem[];
 	paymentMethodType: string;
-	paymentMethodToken: string;
+	paymentMethodToken?: string;
 	paymentPartnerProcessorId: string;
-	storedDetailsId: string;
+	storedDetailsId?: string;
 	name: string;
+	email?: string;
+	successUrl?: string;
+	cancelUrl?: string;
+	idealBank?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
+	const urlParams = new URLSearchParams( window.location.search );
+	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
+
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
 			siteId,
@@ -158,6 +192,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			postalCode,
 			subdivisionCode,
 			items: items.filter( ( item ) => item.type !== 'tax' ),
+			contactDetails: domainDetails || {},
 		} ),
 		domainDetails,
 		payment: {
@@ -166,10 +201,15 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			paymentPartner: paymentPartnerProcessorId,
 			storedDetailsId,
 			name,
+			email,
 			country,
 			postalCode,
 			zip: postalCode, // TODO: do we need this in addition to postalCode?
+			successUrl,
+			cancelUrl,
+			idealBank,
 		},
+		isWhiteGloveOffer: isWhiteGlove,
 	};
 }
 

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import {
 	capitalize,
 	deburr,
@@ -23,12 +23,15 @@ import {
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { Dialog } from '@automattic/components';
 import QueryLanguageNames from 'components/data/query-language-names';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
@@ -48,6 +51,8 @@ export class LanguagePickerModal extends PureComponent {
 		languages: PropTypes.array.isRequired,
 		selected: PropTypes.string,
 		countryCode: PropTypes.string,
+		showEmpathyModeControl: PropTypes.bool,
+		empathyMode: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,6 +62,8 @@ export class LanguagePickerModal extends PureComponent {
 		isVisible: false,
 		selected: 'en',
 		countryCode: '',
+		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
+		empathyMode: false,
 	};
 
 	constructor( props ) {
@@ -69,6 +76,7 @@ export class LanguagePickerModal extends PureComponent {
 			isSearchOpen: false,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
+			empathyMode: props.empathyMode,
 		};
 
 		this.languagesList = React.createRef();
@@ -313,8 +321,10 @@ export class LanguagePickerModal extends PureComponent {
 			return;
 		}
 
+		const hasModifierKey = event.altKey || event.ctrlKey || event.metaKey;
+
 		// Handle character input
-		if ( isPrintableCharacter && ! isSearchOpen ) {
+		if ( ! hasModifierKey && isPrintableCharacter && ! isSearchOpen ) {
 			event.preventDefault();
 
 			this.handleSearch( event.key );
@@ -361,9 +371,14 @@ export class LanguagePickerModal extends PureComponent {
 		}
 	};
 
+	handleEmpathyModeToggle = ( event ) => {
+		this.setState( { empathyMode: event.target.checked } );
+	};
+
 	handleSelectLanguage = () => {
-		const langSlug = this.state.selectedLanguageSlug;
-		this.props.onSelected( langSlug );
+		const { empathyMode, selectedLanguageSlug } = this.state;
+		const langSlug = selectedLanguageSlug;
+		this.props.onSelected( langSlug, empathyMode );
 		this.handleClose();
 	};
 
@@ -447,6 +462,32 @@ export class LanguagePickerModal extends PureComponent {
 		);
 	}
 
+	renderEmpathyModeCheckbox() {
+		const { showEmpathyModeControl } = this.props;
+
+		if ( ! showEmpathyModeControl ) {
+			return null;
+		}
+
+		const { empathyMode, selectedLanguageSlug } = this.state;
+		const isDefaultLanguageSelected = i18n.defaultLocaleSlug === selectedLanguageSlug;
+
+		return (
+			<div className="language-picker__modal-empathy-mode">
+				<FormLabel>
+					<FormCheckbox
+						checked={ empathyMode && ! isDefaultLanguageSelected }
+						disabled={ isDefaultLanguageSelected }
+						onChange={ this.handleEmpathyModeToggle }
+					/>
+					<span title="Pretend to use that language but display English where a translated exists">
+						Empathy mode
+					</span>
+				</FormLabel>
+			</div>
+		);
+	}
+
 	render() {
 		const { isVisible, translate } = this.props;
 		const { filter, search, isSearchOpen } = this.state;
@@ -491,6 +532,7 @@ export class LanguagePickerModal extends PureComponent {
 				</SectionNav>
 				{ this.renderLanguageList() }
 				{ this.renderSuggestedLanguages() }
+				{ this.renderEmpathyModeCheckbox() }
 			</Dialog>
 		);
 	}

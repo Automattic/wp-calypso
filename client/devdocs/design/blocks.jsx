@@ -42,8 +42,6 @@ import Theme from 'components/theme/docs/example';
 import HappinessSupport from 'components/happiness-support/docs/example';
 import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'blocks/plan-storage/docs/example';
-import UpgradeNudge from 'blocks/upgrade-nudge/docs/example';
-import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import DomainTip from 'blocks/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
@@ -163,8 +161,6 @@ export default class AppComponents extends React.Component {
 					<SiteIcon readmeFilePath="site-icon" />
 					<Theme />
 					<ThemesListExample />
-					<UpgradeNudge readmeFilePath="upgrade-nudge" />
-					<UpgradeNudgeExpanded readmeFilePath="upgrade-nudge-expanded" />
 					<PlanCompareCard />
 					<DomainTip />
 					<RelatedPostCard />

@@ -4,7 +4,8 @@
 		"composite": false,
 		"noEmit": true,
 		"emitDeclarationOnly": false,
-		"tsBuildInfoFile": null
+		"tsBuildInfoFile": null,
+		"importsNotUsedAsValues": "error"
 	},
 	"files": [ "index.tsx" ],
 	"include": []

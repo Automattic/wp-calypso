@@ -1,7 +1,7 @@
 
 
 .author-compact-profile {
-	font-size: 14px;
+	font-size: $font-body-small;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -27,7 +27,7 @@
 		.follow-button__label {
 			color: var( --color-primary );
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: inline-block;
 			}
 		}
@@ -99,7 +99,7 @@
 }
 
 .author-compact-profile__site-link.is-placeholder {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-left: 50px;
 		margin-right: 50px;
 	}

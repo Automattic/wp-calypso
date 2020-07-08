@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { CurrentUser, NewUser, NewUserErrorResponse } from './types';
-import { Action } from './actions';
+import type { CurrentUser, NewUser, NewUserErrorResponse } from './types';
+import type { Action } from './actions';
 
 export const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( state, action ) => {
 	switch ( action.type ) {

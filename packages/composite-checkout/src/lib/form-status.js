@@ -13,20 +13,26 @@ const debug = debugFactory( 'composite-checkout:form-status' );
 
 export function useFormStatus() {
 	const { formStatus, setFormStatus } = useContext( CheckoutContext );
-	return useMemo(
+	const formStatusActions = useMemo(
 		() => ( {
-			formStatus,
 			setFormLoading: () => setFormStatus( 'loading' ),
 			setFormReady: () => setFormStatus( 'ready' ),
 			setFormSubmitting: () => setFormStatus( 'submitting' ),
 			setFormValidating: () => setFormStatus( 'validating' ),
 			setFormComplete: () => setFormStatus( 'complete' ),
 		} ),
-		[ formStatus, setFormStatus ]
+		[ setFormStatus ]
+	);
+	return useMemo(
+		() => ( {
+			...formStatusActions,
+			formStatus,
+		} ),
+		[ formStatus, formStatusActions ]
 	);
 }
 
-export function useFormStatusManager( isLoading ) {
+export function useFormStatusManager( isLoading, isValidating ) {
 	const [ formStatus, dispatchFormStatus ] = useReducer(
 		formStatusReducer,
 		isLoading ? 'loading' : 'ready'
@@ -34,11 +40,13 @@ export function useFormStatusManager( isLoading ) {
 	const setFormStatus = useCallback( ( payload ) => {
 		return dispatchFormStatus( { type: 'FORM_STATUS_CHANGE', payload } );
 	}, [] );
+
 	useEffect( () => {
-		const newStatus = isLoading ? 'loading' : 'ready';
-		debug( `isLoading has changed to ${ isLoading }; setting form status to ${ newStatus }` );
+		const newStatus = getNewStatusFromProps( { isLoading, isValidating } );
+		debug( `props have changed; setting form status to ${ newStatus }` );
 		setFormStatus( newStatus );
-	}, [ isLoading, setFormStatus ] );
+	}, [ isLoading, isValidating, setFormStatus ] );
+
 	debug( `form status is ${ formStatus }` );
 	return [ formStatus, setFormStatus ];
 }
@@ -59,4 +67,14 @@ function validateStatus( status ) {
 	if ( ! validStatuses.includes( status ) ) {
 		throw new Error( `Invalid form status '${ status }'` );
 	}
+}
+
+function getNewStatusFromProps( { isLoading, isValidating } ) {
+	if ( isLoading ) {
+		return 'loading';
+	}
+	if ( isValidating ) {
+		return 'validating';
+	}
+	return 'ready';
 }

@@ -9,6 +9,7 @@ import {
 	CheckoutModal,
 	useFormStatus,
 	useEvents,
+	Button,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -16,9 +17,10 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import joinClasses from './join-classes';
-import Button from './button';
-import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
+import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
+import { isBusinessPlan } from 'lib/plans';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -33,10 +35,11 @@ function WPLineItem( {
 	className,
 	hasDeleteButton,
 	removeItem,
-	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
+	isSummary,
+	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -48,18 +51,42 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== 'ready';
 
-	const shouldShowVariantSelector = item.wpcom_meta && item.wpcom_meta.extra?.context === 'signup';
+	const isRenewal = item.wpcom_meta?.extra?.purchaseId;
+	// Show the variation picker when this is not a renewal
+	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
+	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
 
+	const productSlug = item.wpcom_meta?.product_slug;
+	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
+	const productName =
+		isBusinessPlanProduct && isWhiteGloveOffer
+			? `${ item.label } (with Expert guidance)`
+			: item.label;
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<LineItemTitle id={ itemSpanId } item={ item } />
-			<span aria-labelledby={ itemSpanId }>
-				<LineItemPrice lineItem={ item } />
+		<div
+			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
+			data-e2e-product-slug={ productSlug }
+			data-product-type={ item.type }
+		>
+			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
+				{ productName }
+			</LineItemTitle>
+			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
+				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
+			{ item.sublabel && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice item={ item } />
+					<DomainDiscountCallout item={ item } />
+				</LineItemMeta>
+			) }
+			{ isGSuite && <GSuiteUsersList item={ item } /> }
 			{ hasDeleteButton && formStatus === 'ready' && (
-				<React.Fragment>
+				<>
 					<DeleteButton
-						buttonState="borderless"
+						buttonType="borderless"
 						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );
@@ -96,13 +123,12 @@ function WPLineItem( {
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
-				</React.Fragment>
+				</>
 			) }
 
 			{ shouldShowVariantSelector && (
 				<ItemVariationPicker
 					selectedItem={ item }
-					variantRequestStatus={ variantRequestStatus }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
@@ -116,7 +142,8 @@ function WPLineItem( {
 WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
-	isSummaryVisible: PropTypes.bool,
+	isSummary: PropTypes.bool,
+	isWhiteGloveOffer: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
@@ -129,43 +156,15 @@ WPLineItem.propTypes = {
 	onChangePlanLength: PropTypes.func,
 };
 
-function LineItemTitle( { item, id } ) {
-	if ( isLineItemADomain( item ) ) {
-		return <LineItemDomainTitle item={ item } id={ id } />;
-	}
-	if ( item.type === 'domain_map' || item.type === 'offsite_redirect' ) {
-		return <LineItemDomainTitle item={ item } id={ id } />;
-	}
+function LineItemPrice( { item, isSummary } ) {
 	return (
-		<LineItemTitleUI>
-			<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
-		</LineItemTitleUI>
-	);
-}
-
-function LineItemDomainTitle( { item, id } ) {
-	const translate = useTranslate();
-	return (
-		<LineItemTitleUI>
-			<ProductTitleUI id={ id }>
-				{ item.label }: { item.sublabel }
-			</ProductTitleUI>
-			{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
-				<BundledDomainFreeUI>{ translate( 'First year free with your plan' ) }</BundledDomainFreeUI>
-			) }
-		</LineItemTitleUI>
-	);
-}
-
-function LineItemPrice( { lineItem } ) {
-	return (
-		<LineItemPriceUI>
-			{ lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ? (
+		<LineItemPriceUI isSummary={ isSummary }>
+			{ item.amount.value < item.wpcom_meta?.item_original_subtotal_integer ? (
 				<>
-					<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
+					<s>{ item.wpcom_meta?.item_original_subtotal_display }</s> { item.amount.displayValue }
 				</>
 			) : (
-				renderDisplayValueMarkdown( lineItem.amount.displayValue )
+				renderDisplayValueMarkdown( item.amount.displayValue )
 			) }
 		</LineItemPriceUI>
 	);
@@ -175,42 +174,71 @@ export const LineItemUI = styled( WPLineItem )`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal) };
-	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : theme.colors.textColor) };
-	font-size: ${( { total } ) => ( total ? '1.2em' : '1em') };
-	padding: ${( { total, isSummaryVisible, tax, subtotal } ) =>
-		isSummaryVisible || total || subtotal || tax ? '10px 0' : '24px 0'};
-	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
-		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
+	font-weight: ${ ( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal ) };
+	color: ${ ( { theme, total } ) =>
+		total ? theme.colors.textColorDark : theme.colors.textColor };
+	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
+	padding: ${ ( { total, tax, subtotal } ) => ( total || subtotal || tax ? '10px 0' : '20px 0' ) };
+	border-bottom: ${ ( { theme, total } ) =>
+		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
-	margin-right: ${( { total, tax, subtotal } ) => ( subtotal || total || tax ? '0' : '30px') };
+
+	.is-summary & {
+		padding: 10px 0;
+		border-bottom: 0;
+	}
 `;
 
-const LineItemTitleUI = styled.div`
+const LineItemMeta = styled.div`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	display: flex;
+	font-size: 14px;
+	justify-content: space-between;
+	width: 100%;
+`;
+
+const DiscountCalloutUI = styled.div`
+	color: ${ ( props ) => props.theme.colors.success };
+	text-align: right;
+
+	.rtl & {
+		text-align: left;
+	}
+`;
+
+const LineItemTitle = styled.div`
 	flex: 1;
 	word-break: break-word;
+	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
 `;
 
 const LineItemPriceUI = styled.span`
 	margin-left: 12px;
-`;
+	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
 
-const BundledDomainFreeUI = styled.div`
-	color: ${( props ) => props.theme.colors.success};
-`;
-
-const ProductTitleUI = styled.div`
-	flex: 1;
+	.rtl & {
+		margin-right: 12px;
+		margin-left: 0;
+	}
 `;
 
 const DeleteButton = styled( Button )`
 	position: absolute;
 	padding: 10px;
 	right: -50px;
-	top: 10px;
+	top: 7px;
 
 	:hover rect {
-		fill: ${( props ) => props.theme.colors.error};
+		fill: ${ ( props ) => props.theme.colors.error };
+	}
+
+	svg {
+		opacity: 1;
+	}
+
+	.rtl & {
+		right: auto;
+		left: -50px;
 	}
 `;
 
@@ -264,37 +292,45 @@ export function WPOrderReviewTotal( { total, className } ) {
 export function WPOrderReviewLineItems( {
 	items,
 	className,
-	isSummaryVisible,
+	isSummary,
 	removeItem,
 	removeCoupon,
-	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
+	isWhiteGloveOffer,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( ( item ) => (
-				<WPOrderReviewListItems key={ item.id }>
-					<LineItemUI
-						isSummaryVisible={ isSummaryVisible }
-						item={ item }
-						hasDeleteButton={ canItemBeDeleted( item ) }
-						removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
-						variantRequestStatus={ variantRequestStatus }
-						variantSelectOverride={ variantSelectOverride }
-						getItemVariants={ getItemVariants }
-						onChangePlanLength={ onChangePlanLength }
-					/>
-				</WPOrderReviewListItems>
-			) ) }
+			{ items
+				.filter( ( item ) => item.label ) // remove items without a label
+				.map( ( item ) => {
+					if ( isSummary && ! shouldLineItemBeShownWhenStepInactive( item ) ) {
+						return;
+					}
+
+					return (
+						<WPOrderReviewListItem key={ item.id }>
+							<LineItemUI
+								item={ item }
+								hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
+								removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
+								variantSelectOverride={ variantSelectOverride }
+								getItemVariants={ getItemVariants }
+								onChangePlanLength={ onChangePlanLength }
+								isSummary={ isSummary }
+								isWhiteGloveOffer={ isWhiteGloveOffer }
+							/>
+						</WPOrderReviewListItem>
+					);
+				} ) }
 		</WPOrderReviewList>
 	);
 }
 
 WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
-	isSummaryVisible: PropTypes.bool,
+	isSummary: PropTypes.bool,
 	removeItem: PropTypes.func,
 	removeCoupon: PropTypes.func,
 	items: PropTypes.arrayOf(
@@ -310,24 +346,42 @@ WPOrderReviewLineItems.propTypes = {
 };
 
 const WPOrderReviewList = styled.ul`
-	margin: -10px 0 10px 0;
-	padding: 0;
+	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	box-sizing: border-box;
+	margin: 20px 30px 20px 0;
+
+	.rtl & {
+		margin: 20px 0 20px 30px;
+	}
+
+	.is-summary & {
+		border-top: 0;
+		margin: 0;
+	}
 `;
 
-const WPOrderReviewListItems = styled.li`
+const WPOrderReviewListItem = styled.li`
 	margin: 0;
 	padding: 0;
 	display: block;
 	list-style: none;
-
-	:first-of-type .checkout-line-item {
-		padding-top: 10px;
-	}
-
-	:first-of-type button {
-		top: -3px;
-	}
 `;
+
+function GSuiteUsersList( { item } ) {
+	const users = item.wpcom_meta?.extra?.google_apps_users ?? [];
+	return (
+		<>
+			{ users.map( ( user, index ) => {
+				return (
+					<LineItemMeta key={ user.email }>
+						<div key={ user.email }>{ user.email }</div>
+						{ index === 0 && <GSuiteDiscountCallout item={ item } /> }
+					</LineItemMeta>
+				);
+			} ) }
+		</>
+	);
+}
 
 function returnModalCopy( product, translate, hasDomainsInCart ) {
 	const modalCopy = {};
@@ -369,11 +423,72 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [
-		'domain_redemption',
-		'tax',
-		'credits',
-		'wordpress-com-credits',
-	];
+	const itemTypesThatCannotBeDeleted = [ 'domain_redemption', 'tax', 'credits' ];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
+}
+
+function shouldLineItemBeShownWhenStepInactive( item ) {
+	const itemTypesToIgnore = [ 'tax' ];
+	return ! itemTypesToIgnore.includes( item.type );
+}
+
+function LineItemSublabelAndPrice( { item } ) {
+	const translate = useTranslate();
+	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
+	const isDomainMap = item.type === 'domain_map';
+	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
+
+	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period ) {
+		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
+			args: {
+				sublabel: item.sublabel,
+				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
+				monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+			},
+			comment: 'product type and monthly breakdown of total cost, separated by a colon',
+		} );
+	}
+	if (
+		( isDomainRegistration || isDomainMap || isGSuite ) &&
+		item.wpcom_meta?.months_per_bill_period === 12
+	) {
+		return translate( '%(sublabel)s: %(interval)s', {
+			args: {
+				sublabel: item.sublabel,
+				interval: translate( 'billed annually' ),
+			},
+			comment: 'product type and billing interval, separated by a colon',
+		} );
+	}
+	return item.sublabel || null;
+}
+
+function DomainDiscountCallout( { item } ) {
+	const translate = useTranslate();
+
+	const isFreeBundledDomainRegistration = item.wpcom_meta?.is_bundled && item.amount.value === 0;
+	if ( isFreeBundledDomainRegistration ) {
+		return <DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>;
+	}
+
+	const isFreeDomainMapping =
+		item.wpcom_meta?.product_slug === 'domain_map' && item.amount.value === 0;
+	if ( isFreeDomainMapping ) {
+		return <DiscountCalloutUI>{ translate( 'Free with your plan' ) }</DiscountCalloutUI>;
+	}
+
+	return null;
+}
+
+function GSuiteDiscountCallout( { item } ) {
+	const translate = useTranslate();
+	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
+	if (
+		isGSuite &&
+		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer &&
+		item.wpcom_meta?.is_sale_coupon_applied
+	) {
+		return <DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>;
+	}
+	return null;
 }

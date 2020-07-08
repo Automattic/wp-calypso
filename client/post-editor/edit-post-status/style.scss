@@ -14,10 +14,10 @@
 
 .edit-post-status__label-text {
 	color: var( --color-text );
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: 1.7;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		.info-popover {
 			display: none;
 		}
@@ -41,7 +41,7 @@
 
 .edit-post-status__full-date {
 	color: var( --color-text );
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: flex;
 	margin-bottom: 4px;
 	padding-right: 5px;
@@ -60,7 +60,7 @@
 	border-radius: 2px;
 	color: var( --color-text-inverted );
 	display: inline-block;
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 	margin-right: 4px;
 	overflow: hidden;
 	padding: 2px 6px;

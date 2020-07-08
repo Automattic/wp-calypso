@@ -45,6 +45,7 @@ import {
 	attachI18n,
 } from 'server/render';
 import stateCache from 'server/state-cache';
+import getBootstrappedUser from 'server/user-bootstrap';
 import { createReduxStore } from 'state';
 import { setStore } from 'state/redux-store';
 import initialReducer from 'state/reducer';
@@ -57,6 +58,7 @@ import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -261,10 +263,10 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
-	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
+	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
 	// called before route-specific middleware, so it's up to the cache *writes* in server
-	// render to make sure that Redux state and markup are only cached for whitelisted query args.
+	// render to make sure that Redux state and markup are only cached for specified query args.
 	const cacheKey = getNormalizedPath( request.path, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
@@ -315,6 +317,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		isRTL: config( 'rtl' ),
 		requestFrom: request.query.from,
 		isWCComConnect,
+		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang,
 		entrypoint: getFilesForEntrypoint( target, entrypoint ),
@@ -328,7 +331,9 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
 		useTranslationChunks:
-			config.isEnabled( 'use-translation-chunks' ) || flags.includes( 'use-translation-chunks' ),
+			config.isEnabled( 'use-translation-chunks' ) ||
+			flags.includes( 'use-translation-chunks' ) ||
+			request.query.hasOwnProperty( 'useTranslationChunks' ),
 	} );
 
 	context.app = {
@@ -386,12 +391,47 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
+function setUpLocalLanguageRevisions( req ) {
+	const targetFromRequest = getBuildTargetFromRequest( req );
+	const target = targetFromRequest === null ? 'fallback' : targetFromRequest;
+	const rootPath = path.join( __dirname, '..', '..', '..' );
+	const langRevisionsPath = path.join(
+		rootPath,
+		'public',
+		target,
+		'languages',
+		'lang-revisions.json'
+	);
+	const langPromise = fs.promises
+		.readFile( langRevisionsPath, 'utf8' )
+		.then( ( languageRevisions ) => {
+			req.context.languageRevisions = JSON.parse( languageRevisions );
+
+			return languageRevisions;
+		} )
+		.catch( ( error ) => {
+			console.error( 'Failed to read the language revision files.', error );
+
+			throw error;
+		} );
+
+	return langPromise;
+}
+
 function setUpLoggedOutRoute( req, res, next ) {
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	next();
+	const setupRequests = [];
+
+	if ( req.context.useTranslationChunks ) {
+		setupRequests.push( setUpLocalLanguageRevisions( req ) );
+	}
+
+	Promise.all( setupRequests )
+		.then( () => next() )
+		.catch( ( error ) => next( error ) );
 }
 
 function setUpLoggedInRoute( req, res, next ) {
@@ -403,30 +443,8 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	const setupRequests = [];
 
-	if ( config.isEnabled( 'use-translation-chunks' ) ) {
-		const target = getBuildTargetFromRequest( req );
-		const rootPath = path.join( __dirname, '..', '..', '..' );
-		const langRevisionsPath = path.join(
-			rootPath,
-			'public',
-			target,
-			'languages',
-			'lang-revisions.json'
-		);
-		const langPromise = fs.promises
-			.readFile( langRevisionsPath, 'utf8' )
-			.then( ( languageRevisions ) => {
-				req.context.languageRevisions = languageRevisions;
-
-				return languageRevisions;
-			} )
-			.catch( ( error ) => {
-				console.error( 'Failed to read the language revision files.', error );
-
-				throw error;
-			} );
-
-		setupRequests.push( langPromise );
+	if ( req.context.useTranslationChunks ) {
+		setupRequests.push( setUpLocalLanguageRevisions( req ) );
 	} else {
 		const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
 		const langPromise = superagent
@@ -461,13 +479,11 @@ function setUpLoggedInRoute( req, res, next ) {
 			return;
 		}
 
-		const user = require( 'server/user-bootstrap' );
-
 		start = new Date().getTime();
 
 		debug( 'Issuing API call to fetch user object' );
 
-		const userPromise = user( req )
+		const userPromise = getBootstrappedUser( req )
 			.then( ( data ) => {
 				const end = new Date().getTime() - start;
 
@@ -695,7 +711,7 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-module.exports = function () {
+export default function pages() {
 	const app = express();
 
 	app.set( 'views', __dirname );
@@ -704,14 +720,6 @@ module.exports = function () {
 	app.use( cookieParser() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
-
-	// Temporarily redirect cloud.jetpack.com to jetpack.com in the production enviroment
-	app.use( function ( req, res, next ) {
-		if ( 'jetpack-cloud-production' === calypsoEnv ) {
-			res.redirect( 'https://jetpack.com/' );
-		}
-		next();
-	} );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
@@ -828,7 +836,7 @@ module.exports = function () {
 		app.get( pathRegex, setupDefaultContext( entrypoint ), function ( req, res, next ) {
 			req.context.sectionName = section.name;
 
-			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
+			if ( ! entrypoint ) {
 				req.context.chunkFiles = getFilesForChunk( section.name, req );
 			} else {
 				req.context.chunkFiles = EMPTY_ASSETS;
@@ -937,11 +945,8 @@ module.exports = function () {
 		}
 
 		// Maybe not logged in, note that you need docker to test this properly
-		const user = require( 'server/user-bootstrap' );
-
 		debug( 'Issuing API call to fetch user object' );
-
-		user( req )
+		getBootstrappedUser( req )
 			.then( ( data ) => {
 				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 
@@ -951,7 +956,7 @@ module.exports = function () {
 				}
 
 				// Passed all checks, prepare support user session
-				return res.send(
+				res.send(
 					renderJsx( 'support-user', {
 						authorized: true,
 						supportUser: req.query.support_user,
@@ -967,15 +972,15 @@ module.exports = function () {
 					domain: '.wordpress.com',
 				} );
 
-				return res.send( renderJsx( 'support-user' ) );
+				res.send( renderJsx( 'support-user' ) );
 			} );
 	} );
 
-	// catchall to render 404 for all routes not whitelisted in client/sections
+	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );
 
 	// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
 	app.use( renderServerError() );
 
 	return app;
-};
+}

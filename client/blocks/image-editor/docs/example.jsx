@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -11,7 +10,7 @@ import { get } from 'lodash';
  */
 import ImageEditor from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { AspectRatios } from 'state/editor/image-editor/constants';
 
 class ImageEditorExample extends Component {
 	constructor() {

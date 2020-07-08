@@ -1,15 +1,14 @@
 === Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, jeryj, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski, nosolosw
+Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
-Tested up to: 5.3
-Stable tag: 1.0
+Tested up to: 5.4
+Stable tag: 1.12
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Enhances your page creation workflow within the Block Editor.
-
 
 == Description ==
 
@@ -40,6 +39,86 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.12 =
+* Experimental navigation sidebar in block editor, can be enabled in config or with a hook.
+* Default content included in the donation block can be edited.
+* Track when the launch button is clicked.
+
+= 1.11 =
+* Fix broken blocks in page layout picker preview in Firefox.
+* Add settings to the donation block.
+* Fix premium content block to ensure it is auto-selected when mounted.
+* Add fallback to donations block to set default products if none are already defined.
+* Fix block pattern preview viewport scaling.
+* Fix broken site editor page.
+* Add one time payment option to payment plans.
+* Add a general transform to premium content.
+* Fix custom font size in block patterns previews.
+
+= 1.10 =
+* Improvements to the premium blocks.
+* Add 10 new block patterns.
+* Post List Block: Fix deprecation note update button layout.
+
+= 1.9 =
+* Add Mailerlite subscriber widget.
+* When launching a site created via `/new`, save the post content.
+  Prevent lost content alert.
+* Update block pattern categories.
+* Fix text-domain of translated strings.
+
+= 1.8 =
+* Fix issue with Newspack blocks not loading assets.
+* Fix block-editor NUX issues.
+
+= 1.7 =
+* Save the post before navigation when launching a WordPress.com site.
+* Add handling for site launch on WordPress.com.
+* Performance improvements in the block editor.
+
+= 1.6 =
+* Remove the "Edit as HTML" options for the inner blocks of the Premium Content Block.
+* Remove plugin that notified users of the new location of Block Patterns.
+* Support for any UTF-8 character in the Premium Content block.
+* Fixed availability of Premium Content subscription email service.
+* Premium Content block styles adjusted to only load when block is used.
+* Hide Gutenberg's inserter (in favor of ours).
+* Use `require` (rather than `require_once`) for asset files.
+* Flag Premium Content blocks as paid to make clear they require a paid plan.
+* Onboarding: Fix the dimensions of the preview image.
+
+= 1.5 =
+* Global Styles: Fix a "Bad array access" error.
+* Remove default link colors from the editor (fixed in Gutenberg v8.1.0).
+* Add contextual tips to the Block Inserter Menu.
+* Add Premium Content Block success message on plan creation.
+* Rename Posts Carousel Block to Post Carousel Block.
+
+= 1.4 =
+* Update Premium Block Style and Behaviour
+* Support for Premium Content in email subscription and reader.
+* Add plugin to notify users of Block Patterns new location.
+* Add default link colors to the editor.
+
+= 1.3 =
+* Update Premium Content Block icon.
+* Add Showcase New Blocks module.
+* Add new patterns, and update pattern order.
+* Bump newspack-blocks version to 1.5.0.
+* Remove page layout preview from document settings.
+* Fixed Call To Action block pattern when CoBlocks, FSE and Layout Grid are active.
+
+= 1.2 =
+* New Post Carousel block.
+* New Premium Content block.
+* Update header button styling and full width block margins for Gutenberg v8.0.0.
+* Only load common module assets if they are required.
+* Remove loading of blank.css for Global Styles.
+
+= 1.1 =
+* New block patterns.
+* Performance and style improvements.
 
 = 1.0 =
 * Fix for site editor option override.

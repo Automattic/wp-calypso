@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { requestInlineHelpSearchResults } from 'state/inline-help/actions';
-import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/selectors';
+import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 
 class QueryInlineHelpSearch extends Component {
 	UNSAFE_componentWillMount() {
@@ -24,7 +24,7 @@ class QueryInlineHelpSearch extends Component {
 	}
 
 	request( props ) {
-		if ( props.requesting || ! props.query ) {
+		if ( props.requesting ) {
 			return;
 		}
 

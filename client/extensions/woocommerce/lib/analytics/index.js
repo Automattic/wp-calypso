@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import * as tracks from 'lib/analytics/tracks';
 import * as tracksUtils from './tracks-utils';
 import { isTestSite } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -23,5 +23,5 @@ export const tracksStore = {
 	},
 };
 
-export const recordTrack = tracksUtils.recordTrack( analytics.tracks, debug, tracksStore );
+export const recordTrack = tracksUtils.recordTrack( tracks, debug, tracksStore );
 export const bumpStat = tracksUtils.bumpMCStat( debug, tracksStore );

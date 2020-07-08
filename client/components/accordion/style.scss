@@ -86,8 +86,8 @@ $accordion-background-expanded: var( --color-surface );
 .accordion__title,
 .accordion__subtitle {
 	display: block;
-	font-size: 13px;
-	font-weight: 500;
+	font-size: $font-body-small;
+	font-weight: 600;
 	line-height: $accordion-subtitle-height;
 	transition: all 150ms ease-in;
 
@@ -101,7 +101,7 @@ $accordion-background-expanded: var( --color-surface );
 }
 
 .accordion__subtitle {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 	font-weight: 400;
 	white-space: nowrap;

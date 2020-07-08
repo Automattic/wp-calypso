@@ -12,7 +12,7 @@ import {
 	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
@@ -37,7 +37,9 @@ export const newPassword = ( state = null, action ) => {
 	}
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	newPassword,
 } );
+
+export default withStorageKey( 'applicationPasswords', combinedReducer );

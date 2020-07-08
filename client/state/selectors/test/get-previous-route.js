@@ -17,15 +17,13 @@ describe( 'getPreviousRoute()', () => {
 
 	test( 'should return previous route if one is found', () => {
 		const stateIn = {
-			ui: {
-				route: {
-					path: {
-						previous: '/hello',
-					},
-					query: {
-						previous: {
-							filter: 'hello',
-						},
+			route: {
+				path: {
+					previous: '/hello',
+				},
+				query: {
+					previous: {
+						filter: 'hello',
 					},
 				},
 			},

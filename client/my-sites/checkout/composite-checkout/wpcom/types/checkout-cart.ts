@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { CheckoutPaymentMethodSlug } from './checkout-payment-method-slug';
+import type { CartItemExtra } from 'lib/cart-values/types';
 
 /**
  * Amount object as used by composite-checkout. If that
@@ -35,13 +36,21 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		plan_length?: string;
 		product_id: number;
 		product_slug: string;
-		extra: object;
+		extra: CartItemExtra;
 		volume?: number;
+		item_original_cost_display: string;
+		item_original_cost_integer: number;
+		item_subtotal_monthly_cost_display: string;
+		item_subtotal_monthly_cost_integer: number;
+		item_original_subtotal_display: string;
+		item_original_subtotal_integer: number;
+		months_per_bill_period: null | number;
 		is_bundled?: boolean;
 		is_domain_registration?: boolean;
+		is_sale_coupon_applied?: boolean;
 		couponCode?: string;
-		product_cost_integer: number;
-		product_cost_display: string;
+		product_cost_integer?: number;
+		product_cost_display?: string;
 	};
 };
 
@@ -51,14 +60,22 @@ export type WPCOMCartCouponItem = CheckoutCartItem & {
 	};
 };
 
+export type WPCOMCartCreditsItem = CheckoutCartItem & {
+	wpcom_meta: {
+		credits_integer: number;
+		credits_display: string;
+	};
+};
+
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem | null;
 	total: CheckoutCartItem;
+	savings: CheckoutCartItem | null;
 	subtotal: CheckoutCartItem;
 	coupon: WPCOMCartCouponItem | null;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
-	credits: CheckoutCartItem;
+	credits: CheckoutCartItem | null;
 	couponCode: string | null;
 }
 
@@ -75,7 +92,7 @@ export const emptyWPCOMCart = {
 		} as CheckoutCartItemAmount,
 	} as CheckoutCartItem,
 	coupon: {
-		id: 'coupon-line-item',
+		id: 'coupon',
 		label: 'Coupon',
 		type: 'coupon',
 		amount: {
@@ -88,6 +105,7 @@ export const emptyWPCOMCart = {
 		},
 	} as WPCOMCartCouponItem,
 	total: {
+		id: 'total',
 		label: 'Total',
 		amount: {
 			value: 0,
@@ -95,7 +113,18 @@ export const emptyWPCOMCart = {
 			displayValue: '',
 		} as CheckoutCartItemAmount,
 	} as CheckoutCartItem,
+	savings: {
+		id: 'savings',
+		label: 'Savings',
+		type: 'savings',
+		amount: {
+			value: 0,
+			currency: '',
+			displayValue: '',
+		} as CheckoutCartItemAmount,
+	} as CheckoutCartItem,
 	subtotal: {
+		id: 'subtotal',
 		label: 'Subtotal',
 		amount: {
 			value: 0,
@@ -108,7 +137,7 @@ export const emptyWPCOMCart = {
 		id: 'Credits',
 		label: 'Credits',
 		type: 'credits',
-		amount: { value: 0, currency: 'USD', displayValue: '0' },
-	},
+		amount: { value: 0, currency: 'USD', displayValue: '0' } as CheckoutCartItemAmount,
+	} as CheckoutCartItem,
 	couponCode: null,
 } as WPCOMCart;

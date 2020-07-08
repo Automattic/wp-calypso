@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
 import { bindActionCreators } from 'redux';
@@ -21,7 +20,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import {
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SERVICE_AKISMET,
@@ -66,7 +65,7 @@ class PlansSetup extends React.Component {
 
 	trackConfigFinished = ( eventName, options = {} ) => {
 		if ( ! this.sentTracks ) {
-			analytics.tracks.recordEvent( eventName, {
+			recordTracksEvent( eventName, {
 				location: 'jetpackPluginSetup',
 				...options,
 			} );
@@ -75,15 +74,15 @@ class PlansSetup extends React.Component {
 	};
 
 	trackManualInstall = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manual_error' );
+		recordTracksEvent( 'calypso_plans_autoconfig_click_manual_error' );
 	};
 
 	trackManagePlans = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manage_plans' );
+		recordTracksEvent( 'calypso_plans_autoconfig_click_manage_plans' );
 	};
 
 	trackContactSupport = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_contact_support' );
+		recordTracksEvent( 'calypso_plans_autoconfig_click_contact_support' );
 	};
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
@@ -146,7 +145,7 @@ class PlansSetup extends React.Component {
 		if ( ! site || ! site.jetpack || ! site.canUpdateFiles || this.props.isFinished ) {
 			return;
 		}
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_user_interrupt' );
+		recordTracksEvent( 'calypso_plans_autoconfig_user_interrupt' );
 		const beforeUnloadText = this.props.translate( "We haven't finished installing your plugins." );
 		( event || window.event ).returnValue = beforeUnloadText;
 		return beforeUnloadText;
@@ -241,7 +240,7 @@ class PlansSetup extends React.Component {
 	};
 
 	renderPluginsPlaceholders = () => {
-		const placeholderCount = this.props.whitelist ? 1 : 2;
+		const placeholderCount = this.props.forSpecificPlugin ? 1 : 2;
 		return range( placeholderCount ).map( ( i ) => <PluginItem key={ 'placeholder-' + i } /> );
 	};
 
@@ -559,17 +558,17 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const selectedSite = getSelectedSite( state );
-		const whitelist = ownProps.whitelist || false;
+		const forSpecificPlugin = ownProps.forSpecificPlugin || false;
 
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId, whitelist ),
-			isFinished: isFinished( state, siteId, whitelist ),
-			plugins: getPluginsForSite( state, siteId, whitelist ),
-			activePlugin: getActivePlugin( state, siteId, whitelist ),
-			nextPlugin: getNextPlugin( state, siteId, whitelist ),
+			isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
+			isFinished: isFinished( state, siteId, forSpecificPlugin ),
+			plugins: getPluginsForSite( state, siteId, forSpecificPlugin ),
+			activePlugin: getActivePlugin( state, siteId, forSpecificPlugin ),
+			nextPlugin: getNextPlugin( state, siteId, forSpecificPlugin ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			sitesInitialized: hasInitializedSites( state ),

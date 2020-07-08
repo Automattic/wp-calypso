@@ -12,8 +12,8 @@ import edit from './edit';
 import './style.scss';
 
 registerBlockType( 'a8c/site-description', {
-	title: __( 'Site Description' ),
-	description: __( 'Site description, also known as the tagline.' ),
+	title: __( 'Site Description', 'full-site-editing' ),
+	description: __( 'Site description, also known as the tagline.', 'full-site-editing' ),
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
 			<path fill="none" d="M0 0h24v24H0z" />

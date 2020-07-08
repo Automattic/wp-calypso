@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { get, omit } from 'lodash';
-import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -163,6 +162,14 @@ export const isRegularAccount = ( authAccountType ) => authAccountType === 'regu
  */
 export const isPasswordlessAccount = ( authAccountType ) => authAccountType === 'passwordless';
 
+export function stringifyBody( bodyObj ) {
+	// Clone bodyObj, replacing null or undefined values with empty strings.
+	const body = Object.fromEntries(
+		Object.entries( bodyObj ?? {} ).map( ( [ key, val ] ) => [ key, val ?? '' ] )
+	);
+	return new globalThis.URLSearchParams( body ).toString();
+}
+
 export async function postLoginRequest( action, bodyObj ) {
 	const response = await window.fetch(
 		localizeUrl( `https://wordpress.com/wp-login.php?action=${ action }` ),
@@ -170,7 +177,7 @@ export async function postLoginRequest( action, bodyObj ) {
 			method: 'POST',
 			credentials: 'include',
 			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: stringify( bodyObj ),
+			body: stringifyBody( bodyObj ),
 		}
 	);
 

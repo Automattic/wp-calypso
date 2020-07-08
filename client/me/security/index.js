@@ -13,12 +13,20 @@ import {
 	accountRecovery,
 	connectedApplications,
 	password,
+	securityCheckup,
 	socialLogin,
 	twoStep,
 } from './controller';
 
 export default function () {
-	page( '/me/security', sidebar, password, makeLayout, clientRender );
+	const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
+
+	const mainPageFunction = useCheckupMenu ? securityCheckup : password;
+	page( '/me/security', sidebar, mainPageFunction, makeLayout, clientRender );
+
+	if ( useCheckupMenu ) {
+		page( '/me/security/password', sidebar, password, makeLayout, clientRender );
+	}
 
 	if ( config.isEnabled( 'signup/social-management' ) ) {
 		page( '/me/security/social-login', sidebar, socialLogin, makeLayout, clientRender );

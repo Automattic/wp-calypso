@@ -66,10 +66,13 @@ function SiteCreditEdit( {
 
 export default compose( [
 	withSiteOptions( {
-		siteTitleOption: { optionName: 'title', defaultValue: __( 'Site title loading…' ) },
+		siteTitleOption: {
+			optionName: 'title',
+			defaultValue: __( 'Site title loading…', 'full-site-editing' ),
+		},
 		footerCreditOption: {
 			optionName: 'footer_credit',
-			defaultValue: __( 'Footer credit loading…' ),
+			defaultValue: __( 'Footer credit loading…', 'full-site-editing' ),
 		},
 	} ),
 ] )( SiteCreditEdit );

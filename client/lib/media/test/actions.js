@@ -12,21 +12,9 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	DUMMY_API_RESPONSE,
-	DUMMY_BLOB_UPLOAD,
-	DUMMY_ITEM,
-	DUMMY_QUERY,
-	DUMMY_SITE_ID,
-	DUMMY_UPLOAD,
-	DUMMY_URL,
-} from './fixtures';
+import { DUMMY_API_RESPONSE, DUMMY_ITEM, DUMMY_QUERY, DUMMY_SITE_ID } from './fixtures';
 import { stubs } from './mocks/lib/wp';
-import { site } from './fixtures/site';
 
-jest.mock( 'lib/media/library-selected-store', () => ( {
-	getAll: () => [ require( './fixtures' ).DUMMY_ITEM ],
-} ) );
 jest.mock( 'lib/media/store', () => ( {
 	dispatchToken: require( 'dispatcher' ).register( () => {} ),
 	get: () => require( './fixtures' ).DUMMY_ITEM,
@@ -41,7 +29,7 @@ jest.mock( 'lib/impure-lodash', () => ( {
 			return false;
 		}
 
-		return require.requireActual( 'lodash' ).isPlainObject( obj );
+		return jest.requireActual( 'lodash' ).isPlainObject( obj );
 	},
 	uniqueId: () => 'media-1',
 } ) );
@@ -50,7 +38,7 @@ let mockReduxPostId = null;
 jest.mock( 'lib/redux-bridge', () => ( {
 	reduxGetState: () => ( {
 		media: { errors: {} },
-		ui: { editor: { postId: mockReduxPostId } },
+		editor: { postId: mockReduxPostId },
 	} ),
 	reduxDispatch: () => ( {} ),
 } ) );
@@ -102,48 +90,6 @@ describe( 'MediaActions', () => {
 		} );
 	} );
 
-	describe( '#fetch()', () => {
-		test( 'should call to the WordPress.com REST API', () => {
-			return new Promise( ( done ) => {
-				Dispatcher.handleViewAction.restore();
-				sandbox.stub( Dispatcher, 'handleViewAction' ).callsFake( function () {
-					expect( MediaActions._fetching ).to.have.all.keys( [
-						[ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join(),
-					] );
-				} );
-
-				MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-
-				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
-				expect( stubs.mediaGet ).to.have.been.calledOn( [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() );
-				process.nextTick( function () {
-					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-						type: 'RECEIVE_MEDIA_ITEM',
-						error: null,
-						siteId: DUMMY_SITE_ID,
-						data: DUMMY_API_RESPONSE,
-					} );
-
-					done();
-				} );
-			} );
-		} );
-
-		test( 'should not allow simultaneous request for the same item', () => {
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-
-			expect( stubs.mediaGet ).to.have.been.calledOnce;
-		} );
-
-		test( 'should allow simultaneous request for different items', () => {
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID + 1 );
-
-			expect( stubs.mediaGet ).to.have.been.calledTwice;
-		} );
-	} );
-
 	describe( '#fetchNextPage()', () => {
 		test( 'should call to the internal WordPress.com REST API', () => {
 			return new Promise( ( done ) => {
@@ -186,140 +132,6 @@ describe( 'MediaActions', () => {
 					} );
 
 					done();
-				} );
-			} );
-		} );
-	} );
-
-	describe( '#add()', () => {
-		test( 'should accept a single upload', () => {
-			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
-				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
-				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-					type: 'CREATE_MEDIA_ITEM',
-				} );
-			} );
-		} );
-
-		test( 'should accept an array of uploads', () => {
-			return MediaActions.add( site, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
-				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
-				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
-					type: 'CREATE_MEDIA_ITEM',
-				} );
-			} );
-		} );
-
-		test( 'should accept a file URL', () => {
-			return MediaActions.add( site, DUMMY_URL ).then( () => {
-				expect( stubs.mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
-			} );
-		} );
-
-		test( 'should accept a FileList of uploads', () => {
-			const uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
-			uploads.__proto__ = new window.FileList(); // eslint-disable-line no-proto
-			return MediaActions.add( site, uploads ).then( () => {
-				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
-				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
-					type: 'CREATE_MEDIA_ITEM',
-				} );
-			} );
-		} );
-
-		test( 'should accept a Blob object wrapper and pass it as "file" parameter', () => {
-			return MediaActions.add( site, DUMMY_BLOB_UPLOAD ).then( () => {
-				expect( stubs.mediaAdd ).to.have.been.calledWithMatch( {}, { file: DUMMY_BLOB_UPLOAD } );
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_MEDIA_ITEM',
-					siteId: DUMMY_SITE_ID,
-					id: 'media-1',
-					data: DUMMY_API_RESPONSE.media[ 0 ],
-				} );
-			} );
-		} );
-
-		test( 'should call to the WordPress.com REST API', () => {
-			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
-				expect( stubs.mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_MEDIA_ITEM',
-					siteId: DUMMY_SITE_ID,
-					id: 'media-1',
-					data: DUMMY_API_RESPONSE.media[ 0 ],
-				} );
-			} );
-		} );
-
-		test( 'should immediately receive a transient object', () => {
-			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
-				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-					type: 'CREATE_MEDIA_ITEM',
-					data: {
-						ID: 'media-1',
-						file: DUMMY_UPLOAD.name,
-						transient: true,
-					},
-				} );
-			} );
-		} );
-
-		test( 'should attach file upload to a post if one is being edited', () => {
-			mockReduxPostId = 200;
-
-			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
-				expect( stubs.mediaAdd ).to.have.been.calledWithMatch(
-					{},
-					{
-						file: DUMMY_UPLOAD,
-						parent_id: 200,
-					}
-				);
-			} );
-		} );
-
-		test( 'should attach URL upload to a post if one is being edited', () => {
-			mockReduxPostId = 200;
-
-			return MediaActions.add( site, DUMMY_URL ).then( () => {
-				expect( stubs.mediaAddUrls ).to.have.been.calledWithMatch(
-					{},
-					{
-						url: DUMMY_URL,
-						parent_id: 200,
-					}
-				);
-			} );
-		} );
-
-		test( 'should upload in series', () => {
-			// An awkward test, but the idea is that at the point at which
-			// handleServerAction is called for the first received media,
-			// only the first of the two items should have started uploading.
-			Dispatcher.handleServerAction.restore();
-			sandbox.stub( Dispatcher, 'handleServerAction' ).throws();
-
-			return MediaActions.add( site, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] )
-				.then( () => {
-					expect( Dispatcher.handleServerAction ).to.have.thrown;
-				} )
-				.catch( () => {
-					expect( stubs.mediaAdd ).to.have.been.calledOnce;
-				} );
-		} );
-	} );
-
-	describe( '#addExternal()', () => {
-		test( 'should accept an upload', () => {
-			return MediaActions.addExternal( site, [ DUMMY_UPLOAD ], 'external' ).then( () => {
-				expect( stubs.mediaAddExternal ).to.have.been.calledWithMatch( 'external', [
-					DUMMY_UPLOAD.guid,
-				] );
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_MEDIA_ITEM',
-					siteId: DUMMY_SITE_ID,
-					id: 'media-1',
-					data: DUMMY_API_RESPONSE.media[ 0 ],
 				} );
 			} );
 		} );
@@ -421,28 +233,6 @@ describe( 'MediaActions', () => {
 				type: 'REMOVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 				data: item,
-			} );
-		} );
-	} );
-
-	describe( '#clearValidationErrors()', () => {
-		test( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId', () => {
-			MediaActions.clearValidationErrors( DUMMY_SITE_ID );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
-				siteId: DUMMY_SITE_ID,
-				itemId: undefined,
-			} );
-		} );
-
-		test( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId and itemId', () => {
-			MediaActions.clearValidationErrors( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
-				siteId: DUMMY_SITE_ID,
-				itemId: DUMMY_ITEM.ID,
 			} );
 		} );
 	} );

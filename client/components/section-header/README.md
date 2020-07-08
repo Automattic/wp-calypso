@@ -39,3 +39,7 @@ This is the base component and acts as a wrapper for a section's (a list of card
 - `label` - *optional* (string) The text to be displayed in the header.
 - `popoverText` - *optional* (string) If entered, a support popover will appear to the right with this text.
 
+### General guidelines
+
+- Use clear and accurate labels.
+- Use sentence-style capitalization except when referring to an official/branded feature or service name (e.g. Simple Payments).

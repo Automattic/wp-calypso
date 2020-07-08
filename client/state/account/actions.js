@@ -1,12 +1,11 @@
 /**
  * Internal dependencies
  */
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
 
 import 'state/data-layer/wpcom/me/account/close';
-
-const user = userFactory();
+import 'state/account/init';
 
 export function closeAccount() {
 	return {
@@ -16,7 +15,7 @@ export function closeAccount() {
 
 export function closeAccountSuccess() {
 	return async ( dispatch ) => {
-		await user.clear();
+		await user().clear();
 		dispatch( {
 			type: ACCOUNT_CLOSE_SUCCESS,
 		} );

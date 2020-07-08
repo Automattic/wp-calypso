@@ -1,7 +1,7 @@
 .help .upwork-banner {
 	margin: 10px 10px 20px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 0 0 24px;
 	}
 }
@@ -44,16 +44,16 @@
 }
 
 .help__support-link-title {
-	font-size: 16px;
+	font-size: $font-body;
 	color: var( --color-primary );
-	@include breakpoint( '>660px' ) {
-		font-size: 21px;
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-title-small;
 	}
 }
 
 .help__support-link-content {
 	margin-bottom: 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-neutral-70 );
 }
 
@@ -74,6 +74,3 @@
 	height: 380px;
 	margin-bottom: 15px;
 }
-
-
-
