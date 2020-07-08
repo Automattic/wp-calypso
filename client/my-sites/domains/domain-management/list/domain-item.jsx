@@ -183,7 +183,7 @@ class DomainItem extends PureComponent {
 	renderActionItems() {
 		const { isLoadingDomainDetails, domainDetails } = this.props;
 
-		if ( isLoadingDomainDetails ) {
+		if ( isLoadingDomainDetails || ! domainDetails ) {
 			return (
 				<>
 					<div className="list__domain-transfer-lock list__action_item_placeholder" />
