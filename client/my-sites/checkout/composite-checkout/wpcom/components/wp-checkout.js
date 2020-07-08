@@ -519,11 +519,14 @@ function useUpdateCartLocationWhenPaymentMethodChanges(
 
 function SubmitButtonHeader() {
 	const translate = useTranslate();
+
+	const scrollToTOS = () => document.getElementById( 'checkout-terms' ).scrollIntoView();
+
 	return (
 		<SubmitButtonHeaderUI>
-			{ translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
+			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
 				components: {
-					a: <a href="#checkout-terms" />,
+					button: <button onClick={ scrollToTOS } />,
 				},
 			} ) }
 		</SubmitButtonHeaderUI>
@@ -542,6 +545,18 @@ const SubmitButtonHeaderUI = styled.div`
 
 		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 			display: none;
+		}
+	}
+
+	button {
+		color: ${ ( props ) => props.theme.colors.highlight };
+		display: inline;
+		font-size: 13px;
+		text-decoration: underline;
+		width: auto;
+
+		&:hover {
+			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
 	}
 `;

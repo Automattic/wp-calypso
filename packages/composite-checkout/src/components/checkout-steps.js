@@ -530,7 +530,7 @@ const SubmitButtonWrapperUI = styled.div`
 		left: auto;
 	}
 
-	button {
+	.checkout-button {
 		width: 100%;
 
 		.checkout__step-wrapper--last-step & {
@@ -821,7 +821,7 @@ function getStepNumberFromUrl() {
 		const stepNumber = parts.length > 1 ? parts[ 1 ] : 1;
 		return parseInt( stepNumber, 10 );
 	}
-	return null;
+	return 1;
 }
 
 function useChangeStepNumberForUrl( setActiveStepNumber ) {
@@ -838,7 +838,7 @@ function useChangeStepNumberForUrl( setActiveStepNumber ) {
 		window.addEventListener?.( 'hashchange', () => {
 			const newStepNumber = getStepNumberFromUrl();
 			debug( 'step number in url changed to', newStepNumber );
-			newStepNumber && isSubscribed && setActiveStepNumber( newStepNumber );
+			isSubscribed && setActiveStepNumber( newStepNumber );
 		} );
 		return () => ( isSubscribed = false );
 	}, [ setActiveStepNumber ] );
