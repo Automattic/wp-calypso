@@ -30,9 +30,10 @@ const LaunchSequence = [ LaunchStep.Privacy, LaunchStep.Domain, LaunchStep.Plan 
 
 interface Props {
 	step?: LaunchStepType;
+	onSubmit?: () => void;
 }
 
-const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Privacy } ) => {
+const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Privacy, onSubmit } ) => {
 	const initialSequence = LaunchSequence.indexOf( step );
 
 	const [ currentSequence, setCurrentSequence ] = React.useState( initialSequence );
@@ -50,20 +51,17 @@ const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Privacy }
 	};
 
 	const handleNextStep = () => {
-		let nextSequence = currentSequence + 1;
+		const nextSequence = currentSequence + 1;
 		const maxSequence = LaunchSequence.length - 1;
 		if ( nextSequence > maxSequence ) {
-			nextSequence = maxSequence;
+			onSubmit?.();
 		}
 		setCurrentSequence( nextSequence );
 	};
 
 	return (
 		<div className="nux-launch">
-			<CurrentLaunchStep
-				onPrevStep={ handlePrevStep }
-				onNextStep={ handleNextStep }
-			></CurrentLaunchStep>
+			<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
 		</div>
 	);
 };
