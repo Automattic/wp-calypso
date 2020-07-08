@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes } from 'lodash';
@@ -30,31 +30,21 @@ import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
  */
 const debug = debugFactory( 'calypso:inline-help' );
 
-class InlineHelpSearchCard extends Component {
-	static propTypes = {
-		onSelect: PropTypes.func.isRequired,
-		translate: PropTypes.func,
-		track: PropTypes.func,
-		query: PropTypes.string,
-		placeholder: PropTypes.string,
-		location: PropTypes.string,
-		selectedResult: PropTypes.object,
-	};
-
-	static defaultProps = {
-		translate: identity,
-		query: '',
-		location: 'inline-help-popover',
-		selectedResult: {},
-	};
-
-	constructor() {
-		super( ...arguments );
-
-		this.searchHelperHandler = this.searchHelperHandler.bind( this );
-	}
-
-	onKeyDown = ( event ) => {
+const InlineHelpSearchCard = ( {
+	selectPreviousResult,
+	selectNextResult,
+	selectedResultIndex,
+	selectedResult = {},
+	query = '',
+	onSelect,
+	track,
+	location = 'inline-help-popover',
+	setInlineHelpSearchQuery,
+	isSearching,
+	placeholder,
+	translate = identity,
+} ) => {
+	const onKeyDown = ( event ) => {
 		// ignore keyboard access when manipulating a text selection in input etc.
 		if ( event.getModifierState( 'Shift' ) ) {
 			return;
@@ -68,14 +58,12 @@ class InlineHelpSearchCard extends Component {
 
 		switch ( event.key ) {
 			case 'ArrowUp':
-				this.props.selectPreviousResult();
+				selectPreviousResult();
 				break;
 			case 'ArrowDown':
-				this.props.selectNextResult();
+				selectNextResult();
 				break;
 			case 'Enter': {
-				const { selectedResultIndex, selectedResult, query, onSelect, track } = this.props;
-
 				// check and catch admin section links.
 				const { support_type: supportType, link } = selectedResult;
 				if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
@@ -102,34 +90,42 @@ class InlineHelpSearchCard extends Component {
 		}
 	};
 
-	searchHelperHandler = ( searchQuery ) => {
+	const searchHelperHandler = ( searchQuery ) => {
 		const query = searchQuery.trim();
 
 		if ( query?.length ) {
 			debug( 'search query received: ', searchQuery );
-			this.props.track( 'calypso_inlinehelp_search', {
+			track( 'calypso_inlinehelp_search', {
 				search_query: searchQuery,
-				location: this.props.location,
+				location: location,
 			} );
 		}
 
 		// Set the query search
-		this.props.setInlineHelpSearchQuery( searchQuery );
+		setInlineHelpSearchQuery( searchQuery );
 	};
 
-	render() {
-		return (
-			<SearchCard
-				searching={ this.props.isSearching }
-				initialValue={ this.props.query }
-				onSearch={ this.searchHelperHandler }
-				onKeyDown={ this.onKeyDown }
-				placeholder={ this.props.placeholder || this.props.translate( 'Search for help…' ) }
-				delaySearch={ true }
-			/>
-		);
-	}
-}
+	return (
+		<SearchCard
+			searching={ isSearching }
+			initialValue={ query }
+			onSearch={ searchHelperHandler }
+			onKeyDown={ onKeyDown }
+			placeholder={ placeholder || translate( 'Search for help…' ) }
+			delaySearch={ true }
+		/>
+	);
+};
+
+InlineHelpSearchCard.propTypes = {
+	onSelect: PropTypes.func.isRequired,
+	translate: PropTypes.func,
+	track: PropTypes.func,
+	query: PropTypes.string,
+	placeholder: PropTypes.string,
+	location: PropTypes.string,
+	selectedResult: PropTypes.object,
+};
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
