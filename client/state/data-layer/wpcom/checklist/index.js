@@ -7,23 +7,12 @@ import { get, noop } from 'lodash';
  * Internal dependencies
  */
 import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
+import { SITE_CHECKLIST_KNOWN_TASKS } from 'my-sites/customer-home/cards/tasks/site-setup-list/get-task';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'state/checklist/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
-
-// A list of known tasks for the calypso client/my-sites/customer-home/cards/tasks/site-setup-list/get-task.js
-const knownTaskIds = [
-	'site_created',
-	'domain_verified',
-	'email_verified',
-	'blogname_set',
-	'mobile_app_installed',
-	'site_launched',
-	'front_page_updated',
-	'site_menu_updated',
-];
 
 // Transform the response to a data / schema calypso understands, eg filter out unknown tasks
 const fromApi = ( payload ) => {
@@ -43,7 +32,9 @@ const fromApi = ( payload ) => {
 		phase2: data.phase2,
 		segment: data.segment,
 		verticals: data.verticals,
-		tasks: data.tasks.filter( ( task ) => knownTaskIds.includes( task.id ) ),
+		tasks: data.tasks.filter( ( task ) =>
+			Object.values( SITE_CHECKLIST_KNOWN_TASKS ).includes( task.id )
+		),
 	};
 };
 
