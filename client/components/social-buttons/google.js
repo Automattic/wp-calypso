@@ -37,14 +37,12 @@ class GoogleLoginButton extends Component {
 		scope: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		uxMode: PropTypes.string,
-		label: PropTypes.string,
 	};
 
 	static defaultProps = {
 		scope: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
 		onClick: noop,
-		label: '',
 	};
 
 	state = {
@@ -222,12 +220,11 @@ class GoogleLoginButton extends Component {
 						<GoogleIcon isDisabled={ isDisabled } />
 
 						<span className="social-buttons__service-name">
-							{ this.props.label ||
-								this.props.translate( 'Continue with %(service)s', {
-									args: { service: 'Google' },
-									comment:
-										'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-								} ) }
+							{ this.props.translate( 'Continue with %(service)s', {
+								args: { service: 'Google' },
+								comment:
+									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+							} ) }
 						</span>
 					</button>
 				) }

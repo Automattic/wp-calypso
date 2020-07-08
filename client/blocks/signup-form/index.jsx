@@ -23,6 +23,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -769,14 +770,6 @@ class SignupForm extends Component {
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
 
-	getExplanation = () => {
-		return (
-			<p className="signup-form__terms-of-service-link signup-form__terms-of-service-link-is-explanation-text">
-				{ this.props.explanationText }
-			</p>
-		);
-	};
-
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ] );
@@ -859,16 +852,14 @@ class SignupForm extends Component {
 			? this.getLoginLink()
 			: localizeUrl( config( 'login_url' ), this.props.locale );
 
-		const loginTextByFlowName =
-			flowName === 'onboarding'
-				? translate( 'Log in to create a site for your existing account.' )
-				: translate( 'Already have a WordPress.com account?' );
-
-		const footerLoginText = this.props.footerLoginText || loginTextByFlowName;
 		return (
 			<>
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ logInUrl }>{ footerLoginText }</LoggedOutFormLinkItem>
+					<LoggedOutFormLinkItem href={ logInUrl }>
+						{ flowName === 'onboarding'
+							? translate( 'Log in to create a site for your existing account.' )
+							: translate( 'Already have a WordPress.com account?' ) }
+					</LoggedOutFormLinkItem>
 					{ this.props.oauth2Client && (
 						<LoggedOutFormBackLink
 							oauth2Client={ this.props.oauth2Client }
@@ -972,51 +963,27 @@ class SignupForm extends Component {
 				</div>
 			);
 		}
+
 		/*
-			AB Test: passwordlessAfterPlans
 
-			`<PasswordlessSignupForm />` is for the `onboarding-passwordless` flow.
+			AB Test: passwordlessSignup
 
-			We are testing whether a having a passwordless account creation after domain and plans, improves signup rate in the `onboarding` flow
+			`<PasswordlessSignupForm />` is for the `onboarding` flow.
+
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
-		const isPasswordlessAfterPlans = 'onboarding-passwordless' === this.props.flowName;
-
-		if ( isPasswordlessAfterPlans ) {
+		if (
+			( this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse' ) &&
+			'passwordless' === abtest( 'passwordlessSignup' )
+		) {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
 				? this.getLoginLink()
 				: localizeUrl( config( 'login_url' ), this.props.locale );
-			const textProps = pick( this.props, [
-				'submittingButtonText',
-				'defaultButtonText',
-				'headerText',
-				'subHeaderText',
-				'emailInputLabel',
-			] );
-
-			const isFreePlan = this.props.signupDependencies && ! this.props.signupDependencies.cartItem;
-			if ( isFreePlan ) {
-				textProps.submittingButtonText =
-					this.props.freeSubmittingButtonText || textProps.submittingButtonText;
-				textProps.defaultButtonText =
-					this.props.freeDefaultButtonText || textProps.defaultButtonText;
-			}
-
-			const socialTextProps = pick( this.props, [
-				'socialAlternativeText',
-				'socialTosText',
-				'socialGoogleLabel',
-				'socialAppleLabel',
-			] );
-
-			const renderTerms = this.props.explanationText
-				? this.getExplanation
-				: this.termsOfServiceLink;
 
 			return (
 				<div
 					className={ classNames( 'signup-form', this.props.className, {
 						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
-						'is-passwordless-after-plans': isPasswordlessAfterPlans,
 					} ) }
 				>
 					{ this.getNotice() }
@@ -1025,19 +992,17 @@ class SignupForm extends Component {
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
-						renderTerms={ renderTerms }
+						renderTerms={ this.termsOfServiceLink }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						recaptchaClientId={ this.props.recaptchaClientId }
-						{ ...textProps }
 					/>
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
-							{ ...socialTextProps }
 						/>
 					) }
 

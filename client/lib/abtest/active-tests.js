@@ -148,16 +148,6 @@ export default {
 		allowExistingUsers: false,
 		countryCodeTargets: [ 'US' ],
 	},
-	passwordlessAfterPlans: {
-		datestamp: '20200618',
-		variations: {
-			variantPasswordless: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'US' ],
-	},
 	showBusinessPlanBump: {
 		datestamp: '20200619',
 		variations: {
