@@ -105,6 +105,7 @@
 		"@wordpress/components": "*",
 		"@wordpress/compose": "*",
 		"@wordpress/data": "*",
+		"@wordpress/data-controls": "*",
 		"@wordpress/date": "*",
 		"@wordpress/dependency-extraction-webpack-plugin": "^2.6.0",
 		"@wordpress/dom-ready": "*",
