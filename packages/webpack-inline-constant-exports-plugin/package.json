@@ -7,7 +7,7 @@
 	"keywords": [
 		"Webpack"
 	],
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/webpack-inline-constant-exports-plugin",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/webpack-inline-constant-exports-plugin",
 	"publishConfig": {
 		"access": "public"
 	},

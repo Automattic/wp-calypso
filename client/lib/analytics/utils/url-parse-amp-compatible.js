@@ -21,7 +21,7 @@ function urlSafeBase64DecodeString( str ) {
 
 /**
  * Decodes a URL param encoded by AMP's linker.js
- * See also https://github.com/ampproject/amphtml/blob/master/extensions/amp-analytics/linker-id-receiving.md
+ * See also https://github.com/ampproject/amphtml/blob/HEAD/extensions/amp-analytics/linker-id-receiving.md
  *
  * @param {string} value Value to be decoded
  * @returns {null|object} null or and object containing key/value pairs

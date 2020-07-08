@@ -4,7 +4,7 @@
  *
  * The purpose of this code is to allow us to use core's Site Editor experiment
  * on Dotcom and Atomic. The corresponding core functionality is initialized here:
- * https://github.com/WordPress/gutenberg/blob/master/lib/edit-site-page.php
+ * https://github.com/WordPress/gutenberg/blob/HEAD/lib/edit-site-page.php
  *
  * We should aim to reuse as much of the core code as possible and use this to adjust it to some
  * specifics of our platforms, or in cases when we want to extend the default experience.

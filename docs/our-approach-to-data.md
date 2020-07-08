@@ -132,7 +132,7 @@ Do bear in mind that state is always modularized at the top level, though. Even 
 
 An action describes an intent to change the state of the application. When an action object is [dispatched](https://redux.js.org/api/store#dispatchaction) to an instance of a Redux store, the reducer function for that store is called with the action. Given the structure of our application state, specific subtrees can maintain their own state in response to any actions for which they are concerned.
 
-An action object should contain a `type` key describing the action. All action types are defined in [`state/action-types.js`](https://github.com/Automattic/wp-calypso/blob/master/client/state/action-types.js). For example, to describe the intent of changing the state to include a few new post objects, you might create an action with the type `POSTS_RECEIVE`. Any other relevant properties can be included in this object if they are needed by the reducer function handler.
+An action object should contain a `type` key describing the action. All action types are defined in [`state/action-types.js`](https://github.com/Automattic/wp-calypso/blob/HEAD/client/state/action-types.js). For example, to describe the intent of changing the state to include a few new post objects, you might create an action with the type `POSTS_RECEIVE`. Any other relevant properties can be included in this object if they are needed by the reducer function handler.
 
 As mentioned above, new actions should be added to `action-types.js`. Action types are considered global such that any state subtree's reducer can react to any action types dispatched through the system. The file should remain alphabetized, and we recommend suffixing the verb so that all actions within the same domain scope are in relative proximity. For example, rather than naming your actions `FETCH_POSTS` AND `RECEIVE_POSTS`, you should name them `POSTS_FETCH` AND `POSTS_RECEIVE`.
 
@@ -276,7 +276,7 @@ The benefits of query components are that they (a) are reusable, (b) take advant
 
 When creating a component that needs to consume data, we can simply include a query component as a child of that component.
 
-Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/master/client/components/data/query-posts) as an example of a query component. New query components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from legacy data components.
+Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/data/query-posts) as an example of a query component. New query components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from legacy data components.
 
 ### Selectors
 
@@ -290,7 +290,7 @@ let posts = getSitePosts( state, siteId );
 let posts = state.sites.sitePosts[ siteId ].map( ( postId ) => state.posts.items[ postId ] );
 ```
 
-In addition, following our modularized state approach (see [`client/state/README.md`](https://github.com/Automattic/wp-calypso/blob/master/client/state/README.md) for more details), we make sure to initialize the relevant portion of state by importing its `init` module. This is best handled in a dedicated selector module, rather than in individual connected components.
+In addition, following our modularized state approach (see [`client/state/README.md`](https://github.com/Automattic/wp-calypso/blob/HEAD/client/state/README.md) for more details), we make sure to initialize the relevant portion of state by importing its `init` module. This is best handled in a dedicated selector module, rather than in individual connected components.
 
 You'll note in the example above that the entire `state` object is passed to the selector. We've chosen to standardize on always sending the entire state object to any selector as the first parameter. This consistency should alleviate uncertainty in calling selectors, as you can always assume that it'll have a similar argument signature. More importantly, it's not uncommon for selectors to need to traverse different parts of the global state, as in the example above where we pull from both the `sites` and `posts` top-level state keys.
 

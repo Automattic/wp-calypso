@@ -19,7 +19,7 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-codemods#readme",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-codemods#readme",
 	"dependencies": {
 		"5to6-codemod": "^1.8.0",
 		"jscodeshift": "^0.9.0",

@@ -5,7 +5,7 @@ SpinnerLine
 
 <img src="https://cldup.com/cYmgv_L6r3.gif" alt="Demo" />
 
-__Please exercise caution in deciding to use a spinner in your component.__ A lone spinner is a poor user-experience and conveys little context to what the user should expect from the page. Refer to [the _Reactivity and Loading States_ guide](https://github.com/Automattic/wp-calypso/blob/master/docs/reactivity.md) for more information on building fast interfaces and making the most of data already available to use.
+__Please exercise caution in deciding to use a spinner in your component.__ A lone spinner is a poor user-experience and conveys little context to what the user should expect from the page. Refer to [the _Reactivity and Loading States_ guide](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/reactivity.md) for more information on building fast interfaces and making the most of data already available to use.
 
 ## Usage
 

@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file
  *
- * @see https://github.com/WordPress/gutenberg/blob/master/phpunit/bootstrap.php
+ * @see https://github.com/WordPress/gutenberg/blob/HEAD/phpunit/bootstrap.php
  *
  * @package FullSiteEditing
  */

@@ -63,4 +63,4 @@ The build process is:
 
 ## Window config
 
-Window config is taken directly from the [Electron BrowserWindow](https://github.com/atom/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions)
+Window config is taken directly from the [Electron BrowserWindow](https://github.com/atom/electron/blob/HEAD/docs/api/browser-window.md#new-browserwindowoptions)
