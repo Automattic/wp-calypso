@@ -33,7 +33,8 @@ import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edi
 import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customize-homepage-with-gutenberg';
 import getSiteUrl from 'state/selectors/get-site-url';
 import { addQueryArgs } from 'lib/route';
-
+import isSiteAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { themeHasAutoLoadingHomepage } from 'state/themes/selectors/theme-has-auto-loading-homepage';
 /**
  * Style dependencies
  */
@@ -294,16 +295,24 @@ export default connect(
 		// Note: Gutenberg buttons will only show if the homepage is a page.
 		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
 
+		const isAtomic = isSiteAtomic( state, siteId );
+		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId );
+
+		const customizeUrl =
+			isAtomic && hasAutoLoadingHomepage
+				? addQueryArgs(
+						{ 'new-homepage': true },
+						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId )
+				  )
+				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId );
+
 		return {
 			siteId,
 			siteUrl,
 			currentTheme,
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
-			customizeUrl: addQueryArgs(
-				{ 'new-homepage': true },
-				getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId )
-			),
+			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
