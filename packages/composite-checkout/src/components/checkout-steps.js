@@ -543,7 +543,7 @@ const SubmitButtonWrapperUI = styled.div`
 			position: relative;
 			border: 0;
 
-			button {
+			.checkout-button {
 				width: 100%;
 			}
 		}
