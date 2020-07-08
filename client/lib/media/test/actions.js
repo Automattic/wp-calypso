@@ -380,28 +380,6 @@ describe( 'MediaActions', () => {
 		} );
 	} );
 
-	describe( '#clearValidationErrors()', () => {
-		test( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId', () => {
-			MediaActions.clearValidationErrors( DUMMY_SITE_ID );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
-				siteId: DUMMY_SITE_ID,
-				itemId: undefined,
-			} );
-		} );
-
-		test( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId and itemId', () => {
-			MediaActions.clearValidationErrors( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
-				siteId: DUMMY_SITE_ID,
-				itemId: DUMMY_ITEM.ID,
-			} );
-		} );
-	} );
-
 	describe( '#sourceChanged()', () => {
 		test( 'should dispatch the `CHANGE_MEDIA_SOURCE` action with the specified siteId', () => {
 			MediaActions.sourceChanged( DUMMY_SITE_ID );

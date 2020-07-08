@@ -240,7 +240,7 @@ class PlansSetup extends React.Component {
 	};
 
 	renderPluginsPlaceholders = () => {
-		const placeholderCount = this.props.whitelist ? 1 : 2;
+		const placeholderCount = this.props.forSpecificPlugin ? 1 : 2;
 		return range( placeholderCount ).map( ( i ) => <PluginItem key={ 'placeholder-' + i } /> );
 	};
 
@@ -558,17 +558,17 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const selectedSite = getSelectedSite( state );
-		const whitelist = ownProps.whitelist || false;
+		const forSpecificPlugin = ownProps.forSpecificPlugin || false;
 
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId, whitelist ),
-			isFinished: isFinished( state, siteId, whitelist ),
-			plugins: getPluginsForSite( state, siteId, whitelist ),
-			activePlugin: getActivePlugin( state, siteId, whitelist ),
-			nextPlugin: getNextPlugin( state, siteId, whitelist ),
+			isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
+			isFinished: isFinished( state, siteId, forSpecificPlugin ),
+			plugins: getPluginsForSite( state, siteId, forSpecificPlugin ),
+			activePlugin: getActivePlugin( state, siteId, forSpecificPlugin ),
+			nextPlugin: getNextPlugin( state, siteId, forSpecificPlugin ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			sitesInitialized: hasInitializedSites( state ),

@@ -38,7 +38,7 @@ test/
 
 Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
 
-The only exception are `devDependencies` which _must be declared in the wp-calypso root `package.json`_. `devDependencies` of sub-packages in a monorepo are not reliably installed and cannot be relied on.
+It used to be that `devDependencies` needed to be added to the root `package.json` but since we moved to `yarn` workspaces we're able to add them as regular `devDependencies` within the package that uses them.
 
 ### A sample `package.json`
 
