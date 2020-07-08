@@ -10,6 +10,10 @@ import {
 import * as syncActions from 'state/media/actions';
 import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
 
+jest.mock( 'state/media/utils/is-file-list', () => ( {
+	isFileList: jest.fn(),
+} ) );
+
 jest.mock( 'state/media/thunks/create-transient-media-items', () => ( {
 	createTransientMediaItems: jest.fn(),
 } ) );

@@ -12,7 +12,8 @@ import {
 	dispatchFluxReceiveMediaItemSuccess,
 } from 'state/media/utils/flux-adapter';
 import { receiveMedia, successMediaItemRequest, failMediaItemRequest } from 'state/media/actions';
-import { createTransientMediaItems } from './create-transient-media-items';
+import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
+import { isFileList } from 'state/media/utils/is-file-list';
 
 /**
  * Add media items serially (one at a time) but dispatch creation
@@ -42,7 +43,8 @@ export const uploadMedia = (
 	onItemUploaded = noop,
 	onItemFailure = noop
 ) => async ( dispatch ) => {
-	files = castArray( files );
+	// https://stackoverflow.com/questions/25333488/why-isnt-the-filelist-object-an-array
+	files = isFileList( files ) ? Array.from( files ) : castArray( files );
 	const uploadedItems = [];
 
 	const transientItems = dispatch( createTransientMediaItems( files, site ) );
