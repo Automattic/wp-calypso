@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -107,18 +106,12 @@ class CancelPurchase extends React.Component {
 
 	renderFooterText = () => {
 		const { purchase } = this.props;
-		const { refundText, expiryDate, refundAmount, currencySymbol, currency } = purchase;
+		const { refundText, expiryDate, totalRefundText } = purchase;
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
-				const { precision } = getCurrencyDefaults( currency );
-				const fullRefundText =
-					currencySymbol +
-					parseFloat( refundAmount + this.props.includedDomainPurchase.costToUnbundle ).toFixed(
-						precision
-					);
 				return this.props.translate( '%(refundText)s to be refunded', {
-					args: { refundText: fullRefundText },
+					args: { refundText: totalRefundText },
 					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 				} );
 			}
