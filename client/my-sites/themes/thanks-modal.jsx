@@ -34,6 +34,7 @@ import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customi
 import getSiteUrl from 'state/selectors/get-site-url';
 import { addQueryArgs } from 'lib/route';
 import isSiteAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite } from 'state/sites/selectors';
 import { themeHasAutoLoadingHomepage } from 'state/themes/selectors/theme-has-auto-loading-homepage';
 /**
  * Style dependencies
@@ -296,10 +297,12 @@ export default connect(
 		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
 
 		const isAtomic = isSiteAtomic( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
 		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId );
 
+		// Atomic & Jetpack do not have auto-loading-homepage behavior, so we trigger the layout picker for them.
 		const customizeUrl =
-			isAtomic && hasAutoLoadingHomepage
+			( isAtomic || isJetpack ) && hasAutoLoadingHomepage
 				? addQueryArgs(
 						{ 'new-homepage': true },
 						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId )
