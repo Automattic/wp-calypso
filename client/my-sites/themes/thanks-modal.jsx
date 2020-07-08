@@ -190,7 +190,7 @@ class ThanksModal extends Component {
 			return translate( 'Activating theme…' );
 		}
 
-		const gutenbergContent = translate( 'Edit Homepage' );
+		const gutenbergContent = translate( 'Edit homepage' );
 		const customizerContent = (
 			<>
 				<Gridicon icon="external" />
@@ -208,7 +208,7 @@ class ThanksModal extends Component {
 	getViewSiteLabel = () => (
 		<span className="thanks-modal__button-customize">
 			<Gridicon icon="external" />
-			{ translate( 'View Site' ) }
+			{ translate( 'View site' ) }
 		</span>
 	);
 
