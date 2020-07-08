@@ -58,9 +58,13 @@ class PageTemplateModal extends Component {
 		const blocksByTemplateSlugs = reduce(
 			templates,
 			( prev, { slug, content } ) => {
-				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
-					: [];
+				if ( slug === 'current' ) {
+					prev[ slug ] = this.props.currentBlocks;
+				} else {
+					prev[ slug ] = content
+						? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
+						: [];
+				}
 				return prev;
 			},
 			{}
@@ -350,6 +354,8 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
+		const isCurrentPreview = templatesList[ 0 ]?.slug === 'current';
+
 		return (
 			<fieldset className="page-template-modal__list">
 				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
@@ -358,7 +364,7 @@ class PageTemplateModal extends Component {
 					templates={ filteredTemplatesList }
 					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }
-					useDynamicPreview={ false }
+					useDynamicPreview={ isCurrentPreview }
 					siteInformation={ this.props.siteInformation }
 					selectedTemplate={ this.state.previewedTemplate }
 				/>
