@@ -7,6 +7,7 @@ import type {
 	NewSiteSuccessResponse,
 	SiteDetails,
 	SiteError,
+	Cart,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -88,11 +89,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteId,
 	} );
 
-	/**
-	 * Launches a private site
-	 *
-	 * @param {string} siteId - ID of the site to be launched
-	 */
 	function* launchSite( siteId: number ) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteId }/launch`,
@@ -101,6 +97,26 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 		yield launchedSite( siteId );
 		return true;
+	}
+
+	// TODO: move getCart and setCart to a 'cart' data-store
+	function* getCart( siteId: number ) {
+		const success = yield wpcomRequest( {
+			path: '/me/shopping-cart/' + siteId,
+			apiVersion: '1.1',
+			method: 'GET',
+		} );
+		return success;
+	}
+
+	function* setCart( siteId: number, cartData: Cart ) {
+		const success = yield wpcomRequest( {
+			path: '/me/shopping-cart/' + siteId,
+			apiVersion: '1.1',
+			method: 'POST',
+			body: cartData,
+		} );
+		return success;
 	}
 
 	return {
@@ -114,6 +130,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		reset,
 		launchSite,
 		launchedSite,
+		getCart,
+		setCart,
 	};
 }
 
