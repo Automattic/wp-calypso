@@ -16,7 +16,7 @@ However we quickly run into the following problems:
 #### Problem: Subtrees may contain class instances
 
 Subtrees may contain class instances. In some cases this is expected, because certain branches have chosen to use
-Immutable.js. Other branches use specialized classes like [QueryManager](https://github.com/Automattic/wp-calypso/tree/master/client/lib/query-manager)
+Immutable.js. Other branches use specialized classes like [QueryManager](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/query-manager)
 whose instances are stored in Redux state. However, attempting to serialize class instances will throw errors while saving
 to browser storage.
 
@@ -164,7 +164,7 @@ const readerReducer = withStorageKey( 'reader', combineReducers( {
 ```
 
 When this `storageKey` property is encountered when dispatching the `SERIALIZE` action, the result of the serialization
-will be an instance of the [SerializationResult](https://github.com/Automattic/wp-calypso/tree/master/client/state/serialization-result.js) class that contains two serialized objects. One for `root` key, with the state that doesn't have a `storageKey` set,
+will be an instance of the [SerializationResult](https://github.com/Automattic/wp-calypso/tree/HEAD/client/state/serialization-result.js) class that contains two serialized objects. One for `root` key, with the state that doesn't have a `storageKey` set,
 and another one for `reader` key. Both objects will be stored as two distinct rows in the IndexedDB table.
 
 When booting Calypso, we initially load only the `root` stored state. The `reader` key is loaded and deserialized only

@@ -16,7 +16,7 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso-cli#readme",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso-cli#readme",
 	"dependencies": {
 		"commander": "^5.0.0",
 		"debug": "^4.0.0",

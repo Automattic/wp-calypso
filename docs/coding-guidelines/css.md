@@ -220,7 +220,7 @@ You can also define specific values for RTL like so:
   }
 ```
 
-You can find more details in the [RTLCSS documentation](https://github.com/MohammadYounes/rtlcss/blob/master/README.md).
+You can find more details in the [RTLCSS documentation](https://github.com/MohammadYounes/rtlcss/blob/HEAD/README.md).
 
 
 ## Positioning

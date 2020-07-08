@@ -1,4 +1,4 @@
-// The code in this file is copied entirely from https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/button/color-props.js
+// The code in this file is copied entirely from https://github.com/WordPress/gutenberg/blob/HEAD/packages/block-library/src/button/color-props.js
 /* eslint-disable */
 
 /**

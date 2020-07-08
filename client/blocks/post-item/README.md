@@ -13,7 +13,7 @@ function MyPostList() {
 }
 ```
 
-The component does not render a [query component](https://github.com/Automattic/wp-calypso/blob/master/docs/our-approach-to-data.md#query-components), so it's assumed that the post will already have been loaded into global state prior to rendering the component.
+The component does not render a [query component](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/our-approach-to-data.md#query-components), so it's assumed that the post will already have been loaded into global state prior to rendering the component.
 
 ## Props
 
