@@ -60,7 +60,7 @@ const ClassicGuide = () => {
 							content: (
 								<>
 									<h1 className="use-classic-block-guide__heading edit-post-welcome-guide__heading">
-										{ __( 'How to add the Classic block' ) }
+										{ __( 'Add the Classic block' ) }
 									</h1>
 									<p className="edit-post-welcome-guide__text">
 										{ createInterpolateElement(
