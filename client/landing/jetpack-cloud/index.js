@@ -9,14 +9,17 @@ import React from 'react';
  */
 import { translate } from 'i18n-calypso';
 import { makeLayout, render as clientRender } from 'controller';
-import { siteSelection, sites, navigation } from 'my-sites/controller';
+import { siteSelection, sites } from 'my-sites/controller';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Landing from './sections/landing';
 
 const selectionPrompt = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () =>
+		// When "text-transform: capitalize;" is active,
+		// (see rule for "".sites__select-heading strong")
+		// Jetpack.com displays as Jetpack.Com in some browsers (e.g., Chrome)
 		translate( 'Select a site to open {{strong}}Jetpack.com{{/strong}}', {
-			components: { strong: <strong /> },
+			components: { strong: <strong style={ { 'text-transform': 'none' } } /> },
 		} );
 	next();
 };
@@ -35,6 +38,6 @@ const landingController = ( context, next ) => {
 
 export default function () {
 	page( '/', siteSelection, redirectToPrimarySiteLanding );
-	page( '/landing', siteSelection, selectionPrompt, sites, navigation, makeLayout, clientRender );
+	page( '/landing', siteSelection, selectionPrompt, sites, makeLayout, clientRender );
 	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
 }
