@@ -385,9 +385,12 @@
 		}
 
 		.gridicon {
-			align-self: center;
-			margin-right: 8px;
+			align-self: baseline;
 			color: var( --color-neutral-light );
+			flex-shrink: 0;
+			margin-right: 8px;
+			position: relative;
+				top: 2px;
 		}
 
 		&:hover {
@@ -396,8 +399,6 @@
 			background: var( --color-neutral-0 );
 
 			.gridicon {
-				align-self: center;
-				margin-right: 8px;
 				color: var( --color-neutral );
 			}
 		}
