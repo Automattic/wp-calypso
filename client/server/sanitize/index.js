@@ -7,7 +7,7 @@
  * @returns {string} backslash escaped character.
  * @copyright (c) 2013, GoInstant Inc., a salesforce.com company.
  * @license See CREDITS.md.
- * @see https://github.com/goinstant/secure-filters/blob/master/lib/secure-filters.js
+ * @see https://github.com/goinstant/secure-filters/blob/HEAD/lib/secure-filters.js
  * @private
  */
 

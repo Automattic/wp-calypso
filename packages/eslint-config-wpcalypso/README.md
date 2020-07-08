@@ -1,6 +1,6 @@
 # Eslint config wpcalypso
 
-An ESLint configuration following WordPress.com's "Calypso" [JavaScript Coding Guidelines](https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines/javascript.md).
+An ESLint configuration following WordPress.com's "Calypso" [JavaScript Coding Guidelines](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/coding-guidelines/javascript.md).
 
 ## Usage
 

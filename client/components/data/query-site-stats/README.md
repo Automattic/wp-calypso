@@ -45,7 +45,7 @@ The site ID for which stats should be requested.
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The statType desired, see supported stats lists in [wpcom.js](https://github.com/Automattic/wpcom.js/blob/master/lib/runtime/site.get.js#L13-L29).
+The statType desired, see supported stats lists in [wpcom.js](https://github.com/Automattic/wpcom.js/blob/HEAD/lib/runtime/site.get.js#L13-L29).
 
 ### `query`
 

@@ -38,7 +38,7 @@ function getTextContentFromNode( node ) {
 		return node.value;
 	}
 
-	// template literals are specced at https://github.com/babel/babylon/blob/master/ast/spec.md
+	// template literals are specced at https://github.com/babel/babylon/blob/HEAD/ast/spec.md
 	if ( node.type === 'TemplateLiteral' ) {
 		return node.quasis
 			.map( function ( quasis ) {

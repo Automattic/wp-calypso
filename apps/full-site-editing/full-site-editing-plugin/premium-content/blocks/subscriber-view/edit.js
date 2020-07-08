@@ -30,7 +30,7 @@ function Edit( props ) {
 	return (
 		<Context.Consumer>
 			{ ( { selectedTab, stripeNudge } ) => (
-				/** @see https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/no-static-element-interactions.md#case-the-event-handler-is-only-being-used-to-capture-bubbled-events */
+				/** @see https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/no-static-element-interactions.md#case-the-event-handler-is-only-being-used-to-capture-bubbled-events */
 				// eslint-disable-next-line
 				<div hidden={ selectedTab.id === 'wall' } className={ selectedTab.className }>
 					{ stripeNudge }
