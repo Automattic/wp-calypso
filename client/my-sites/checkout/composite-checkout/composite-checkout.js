@@ -771,16 +771,16 @@ function CountrySelectMenu( {
 
 function useDetectedCountryCode() {
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
-	const [ haveUsedDetectedCountryCode, setHaveUsedDetectedCountryCode ] = useState( false );
+	const refHaveUsedDetectedCountryCode = useRef( false );
 
 	useEffect( () => {
 		// Dispatch exactly once
-		if ( ! haveUsedDetectedCountryCode ) {
+		if ( detectedCountryCode && ! refHaveUsedDetectedCountryCode.current ) {
 			debug( 'using detected country code "' + detectedCountryCode + '"' );
 			dispatch( 'wpcom' ).loadCountryCodeFromGeoIP( detectedCountryCode );
-			setHaveUsedDetectedCountryCode( true );
+			refHaveUsedDetectedCountryCode.current = true;
 		}
-	}, [ haveUsedDetectedCountryCode, detectedCountryCode ] );
+	}, [ detectedCountryCode ] );
 }
 
 function useCachedDomainContactDetails() {
