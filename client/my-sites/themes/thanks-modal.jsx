@@ -21,6 +21,7 @@ import {
 	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
+	isThemeGutenbergFirst,
 	isWpcomTheme,
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
@@ -113,6 +114,7 @@ class ThanksModal extends Component {
 		const {
 			activateGutenberg,
 			customizeUrl,
+			isGutenbergTheme,
 			isUsingClassicEditor,
 			shouldEditHomepageWithGutenberg,
 			siteId,
@@ -121,7 +123,7 @@ class ThanksModal extends Component {
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
 
-		if ( isUsingClassicEditor && shouldEditHomepageWithGutenberg ) {
+		if ( isUsingClassicEditor && isGutenbergTheme ) {
 			activateGutenberg( siteId, customizeUrl );
 		} else {
 			shouldEditHomepageWithGutenberg
@@ -170,8 +172,8 @@ class ThanksModal extends Component {
 
 	renderContent = () => {
 		const { name: themeName, author: themeAuthor } = this.props.currentTheme;
-		const { isUsingClassicEditor, shouldEditHomepageWithGutenberg } = this.props;
-		const shouldSwitchEditors = isUsingClassicEditor && shouldEditHomepageWithGutenberg;
+		const { isUsingClassicEditor, isGutenbergTheme } = this.props;
+		const shouldSwitchEditors = isUsingClassicEditor && isGutenbergTheme;
 
 		return (
 			<div>
@@ -304,6 +306,7 @@ export default connect(
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
+			isGutenbergTheme: isThemeGutenbergFirst( state, currentThemeId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 			isUsingClassicEditor: getSelectedEditor( state, siteId ) === 'classic',
 		};
