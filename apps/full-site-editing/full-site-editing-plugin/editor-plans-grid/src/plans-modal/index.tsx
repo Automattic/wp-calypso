@@ -8,14 +8,14 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import PlansGridFSE, { Props as PlansGridFSEProps } from '../plans-grid-fse';
+import PlansGridFSE from '../plans-grid-fse';
 import './styles.scss';
 
-interface Props extends PlansGridFSEProps {
+interface Props {
 	onClose: () => void;
 }
 
-const PlansModal: React.FunctionComponent< Props > = ( { onClose, ...props } ) => {
+const PlansModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	const header = (
 		<div>
 			{ /* eslint-disable @wordpress/i18n-text-domain */ }
@@ -38,7 +38,7 @@ const PlansModal: React.FunctionComponent< Props > = ( { onClose, ...props } ) =
 		>
 			{ header }
 			<div className="plans-grid-container">
-				<PlansGridFSE { ...props } />
+				<PlansGridFSE onSelect={ onClose } />
 			</div>
 		</Modal>
 	);

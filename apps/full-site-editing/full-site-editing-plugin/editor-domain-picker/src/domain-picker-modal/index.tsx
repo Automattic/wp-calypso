@@ -7,14 +7,14 @@ import { Modal } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import DomainPickerFSE, { Props as DomainPickerFSEProps } from '../domain-picker-fse';
+import DomainPickerFSE from '../domain-picker-fse';
 import './styles.scss';
 
-interface Props extends DomainPickerFSEProps {
+interface Props {
 	onClose: () => void;
 }
 
-const DomainPickerModal: React.FunctionComponent< Props > = ( { onClose, ...props } ) => {
+const DomainPickerModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	return (
 		<Modal
 			className="domain-picker-modal"
@@ -23,7 +23,7 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { onClose, ...prop
 			onRequestClose={ onClose }
 			title=""
 		>
-			<DomainPickerFSE { ...props } />
+			<DomainPickerFSE onSelect={ onClose } />
 		</Modal>
 	);
 };
