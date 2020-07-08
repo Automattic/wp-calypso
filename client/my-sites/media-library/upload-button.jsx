@@ -12,22 +12,21 @@ import page from 'page';
  * Internal dependencies
  */
 import { bumpStat } from 'lib/analytics/mc';
+import MediaActions from 'lib/media/actions';
 import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
 import { clearMediaItemErrors } from 'state/media/actions';
-import { addMedia } from 'state/media/thunks';
 
 /**
  * Style dependencies
  */
 import './upload-button.scss';
 
-export class MediaLibraryUploadButton extends React.Component {
+class MediaLibraryUploadButton extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		onAddMedia: PropTypes.func,
 		className: PropTypes.string,
-		addMedia: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -50,7 +49,7 @@ export class MediaLibraryUploadButton extends React.Component {
 	uploadFiles = ( event ) => {
 		if ( event.target.files && this.props.site ) {
 			this.props.clearMediaItemErrors( this.props.site.ID );
-			this.props.addMedia( event.target.files, this.props.site );
+			MediaActions.add( this.props.site, event.target.files );
 		}
 
 		this.formRef.current.reset();
@@ -97,4 +96,4 @@ export class MediaLibraryUploadButton extends React.Component {
 	}
 }
 
-export default connect( null, { addMedia, clearMediaItemErrors } )( MediaLibraryUploadButton );
+export default connect( null, { clearMediaItemErrors } )( MediaLibraryUploadButton );

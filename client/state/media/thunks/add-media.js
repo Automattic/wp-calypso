@@ -1,16 +1,19 @@
 /**
  * Internal dependencies
  */
-import { uploadMedia } from './upload-media';
+import { uploadMedia, uploadSingleMedia } from './upload-media';
 import { getFileUploader } from 'lib/media/utils';
 
 /**
  * Upload a single media item
  *
- * @param {object|object[]} file The file or files to upload
  * @param {object} site The site for which to upload the file(s)
+ * @param {object|object[]} file The file or files to upload
  */
-export const addMedia = ( file, site ) => ( dispatch ) => {
+export const addMedia = ( site, file ) => ( dispatch ) => {
 	const uploader = getFileUploader();
-	return dispatch( uploadMedia( file, site, uploader ) );
+
+	const action = Array.isArray( file ) ? uploadMedia : uploadSingleMedia;
+
+	return dispatch( action( file, site, uploader ) );
 };

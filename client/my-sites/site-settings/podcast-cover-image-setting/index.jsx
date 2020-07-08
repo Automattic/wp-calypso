@@ -91,12 +91,11 @@ class PodcastCoverImageSetting extends PureComponent {
 		this.onUploadStateChange( true );
 
 		try {
-			const file = {
+			const uploadedMedia = await this.props.addMedia( this.props.site, {
 				ID: transientMediaId,
 				fileContents: blob,
 				fileName,
-			};
-			const uploadedMedia = await this.props.addMedia( file, this.props.site );
+			} );
 			debug( 'upload media', uploadedMedia );
 			this.props.onSelect( uploadedMedia.ID, uploadedMedia.URL );
 		} finally {

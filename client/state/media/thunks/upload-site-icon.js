@@ -44,7 +44,7 @@ export const uploadSiteIcon = (
 
 	dispatch( updateSiteIcon( siteId, transientMediaId ) );
 	try {
-		const [ { ID: savedId } ] = await dispatch( addMedia( file, site ) );
+		const { ID: savedId } = await dispatch( addMedia( site, file ) );
 		dispatch( saveSiteSettings( siteId, { site_icon: savedId } ) );
 	} catch ( e ) {
 		dispatch( errorNotice( translate( 'An error occurred while uploading the file.' ) ) );
