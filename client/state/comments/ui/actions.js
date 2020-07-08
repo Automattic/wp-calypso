@@ -3,6 +3,8 @@
  */
 import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
 
+import 'state/comments/init';
+
 /**
  * Creates an action that updates the comments pagination for the given site and filters.
  *

@@ -14,7 +14,7 @@ import {
 	COMMENTS_TREE_SITE_REQUEST,
 } from 'state/action-types';
 import { combineReducers, keyedReducer } from 'state/utils';
-import { getFiltersKey } from 'state/ui/comments/utils';
+import { getFiltersKey } from 'state/comments/ui/utils';
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 
 const deepUpdateComments = ( state, comments, query ) => {
@@ -60,7 +60,7 @@ const sortAscending = function ( a, b ) {
 export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
-		case COMMENTS_DELETE:
+		case COMMENTS_DELETE: {
 			const query = action.refreshCommentListQuery
 				? action.refreshCommentListQuery
 				: get( action, 'meta.comment.commentsListQuery' );
@@ -93,6 +93,7 @@ export const queries = ( state = {}, action ) => {
 				return deepUpdateComments( state, sortedList, query );
 			}
 			return deepUpdateComments( state, without( comments, action.commentId ), query );
+		}
 		case COMMENTS_QUERY_UPDATE:
 			return isUndefined( get( action, 'query.page' ) )
 				? state
@@ -105,12 +106,13 @@ export const queries = ( state = {}, action ) => {
 export const pendingActions = function ( state = [], action ) {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
-		case COMMENTS_DELETE:
+		case COMMENTS_DELETE: {
 			const key = getRequestKey( action );
 			if ( has( action, 'meta.dataLayer.trackRequest' ) && state.indexOf( key ) === -1 ) {
 				return [ ...state, key ];
 			}
 			return state;
+		}
 		case COMMENTS_LIST_REQUEST:
 		case COMMENTS_TREE_SITE_REQUEST:
 			//ignore pending requests if we're looking at a fresh view
