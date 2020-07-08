@@ -11,7 +11,7 @@
 		"popup"
 	],
 	"author": "Automattic Inc.",
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/request-external-access",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/request-external-access",
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",

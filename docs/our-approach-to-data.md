@@ -276,7 +276,7 @@ The benefits of query components are that they (a) are reusable, (b) take advant
 
 When creating a component that needs to consume data, we can simply include a query component as a child of that component.
 
-Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/master/client/components/data/query-posts) as an example of a query component. New query components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from legacy data components.
+Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/data/query-posts) as an example of a query component. New query components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from legacy data components.
 
 ### Selectors
 

@@ -110,7 +110,7 @@ So that step rendering isn't constrained or hindered by Calypso's CSS (such as c
 [config]: https://github.com/Automattic/wp-calypso/blob/HEAD/client/layout/guided-tours/config.js
 [getChildContext]: https://github.com/Automattic/wp-calypso/blob/bc97ba292a5f6213f0cf0c35219472135c4f9b9f/client/layout/guided-tours/config-elements.js#L480
 [config elements]: https://github.com/Automattic/wp-calypso/blob/bc97ba292a5f6213f0cf0c35219472135c4f9b9f/client/layout/guided-tours/config-elements.js
-[actionLog]: https://github.com/Automattic/wp-calypso/tree/master/client/state/ui/action-log
+[actionLog]: https://github.com/Automattic/wp-calypso/tree/HEAD/client/state/ui/action-log
 [relevant types]: https://github.com/Automattic/wp-calypso/blob/b6d0d27438a16cf7c8700cf4ed8b70dbc42805e3/client/state/ui/action-log/reducer.js#L18
 [findEligibleTour]: https://github.com/Automattic/wp-calypso/blob/b6d0d27438a16cf7c8700cf4ed8b70dbc42805e3/client/state/ui/guided-tours/selectors/index.js#L175
 [positioning]: https://github.com/Automattic/wp-calypso/blob/HEAD/client/layout/guided-tours/positioning.js

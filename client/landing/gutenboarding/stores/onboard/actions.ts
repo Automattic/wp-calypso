@@ -124,7 +124,7 @@ export function* createSite( username: string, bearerToken?: string, isPublicSit
 			site_vertical_name: siteVertical?.label,
 			// untranslated vertical slug
 			// so we can match directories in
-			// https://github.com/Automattic/wp-calypso/tree/master/static/page-templates/verticals
+			// https://github.com/Automattic/wp-calypso/tree/HEAD/static/page-templates/verticals
 			// TODO: determine default vertical should user input match no official vertical
 			site_vertical_slug: siteVertical?.slug || 'football',
 			site_information: {
