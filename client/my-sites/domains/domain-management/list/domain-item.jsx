@@ -3,6 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import page from 'page';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -21,16 +22,17 @@ import { type as domainTypes } from 'lib/domains/constants';
 import { handleRenewNowClick } from 'lib/purchases';
 import { resolveDomainStatus } from 'lib/domains';
 import InfoPopover from 'components/info-popover';
+import { emailManagement } from 'my-sites/email/paths';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
+		currentRoute: PropTypes.string,
 		domain: PropTypes.object.isRequired,
 		domainDetails: PropTypes.object,
 		site: PropTypes.object,
 		isManagingAllSites: PropTypes.bool,
 		showCheckbox: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
-		onAddEmailClick: PropTypes.func.isRequired,
 		onToggle: PropTypes.func,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
@@ -58,9 +60,9 @@ class DomainItem extends PureComponent {
 	};
 
 	addEmailClick = ( event ) => {
-		const { domain, onAddEmailClick } = this.props;
+		const { currentRoute, domain, site } = this.props;
 		event.stopPropagation();
-		onAddEmailClick( domain );
+		page( emailManagement( site.slug, domain.domain, currentRoute ) );
 	};
 
 	renewDomain = ( event ) => {

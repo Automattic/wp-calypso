@@ -439,7 +439,14 @@ export class List extends React.Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { translate, selectedSite, renderAllSites, isDomainOnly, hasSingleSite } = this.props;
+		const {
+			currentRoute,
+			translate,
+			selectedSite,
+			renderAllSites,
+			isDomainOnly,
+			hasSingleSite,
+		} = this.props;
 
 		const domains =
 			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
@@ -449,6 +456,7 @@ export class List extends React.Component {
 		const domainListItems = domains.map( ( domain, index ) => (
 			<DomainItem
 				key={ `${ domain.name }-${ index }` }
+				currentRoute={ currentRoute }
 				domain={ { domain: domain.name } }
 				domainDetails={ domain }
 				site={ selectedSite }
