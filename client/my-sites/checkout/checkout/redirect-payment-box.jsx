@@ -28,7 +28,6 @@ import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
-import { addQueryArgs } from 'lib/url';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
@@ -155,10 +154,6 @@ export class RedirectPaymentBox extends PureComponent {
 			successUrl =
 				origin +
 				`/checkout/thank-you/${ this.props.selectedSite.slug }/pending?redirectTo=${ redirectPath }`;
-
-			if ( this.props.isWhiteGloveOffer ) {
-				cancelUrl = addQueryArgs( { type: 'white-glove' }, cancelUrl );
-			}
 		} else {
 			cancelUrl += 'no-site';
 			successUrl = origin + `/checkout/thank-you/no-site/pending?redirectTo=${ redirectPath }`;
@@ -177,7 +172,6 @@ export class RedirectPaymentBox extends PureComponent {
 			} ),
 			cart: this.props.cart,
 			domainDetails: this.props.transaction.domainDetails,
-			is_white_glove_offer: this.props.isWhiteGloveOffer,
 		};
 
 		// get the redirect URL from rest endpoint

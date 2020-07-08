@@ -173,7 +173,7 @@ export class SecurePaymentForm extends Component {
 	async submitTransaction( event ) {
 		event && event.preventDefault();
 
-		const { cart, transaction, isWhiteGloveOffer } = this.props;
+		const { cart, transaction } = this.props;
 
 		const origin = getLocationOrigin( window.location );
 		const successPath = this.props.redirectTo();
@@ -194,7 +194,6 @@ export class SecurePaymentForm extends Component {
 				cancelUrl,
 				stripe: transaction.stripe,
 				stripeConfiguration: transaction.stripeConfiguration,
-				isWhiteGloveOffer,
 			},
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
@@ -383,7 +382,6 @@ export class SecurePaymentForm extends Component {
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-					isWhiteGloveOffer={ this.props.isWhiteGloveOffer }
 				>
 					{ this.props.children }
 				</PayPalPaymentBox>
@@ -409,7 +407,6 @@ export class SecurePaymentForm extends Component {
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-					isWhiteGloveOffer={ this.props.isWhiteGloveOffer }
 				>
 					{ this.props.children }
 				</RedirectPaymentBox>

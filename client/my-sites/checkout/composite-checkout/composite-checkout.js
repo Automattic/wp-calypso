@@ -119,7 +119,6 @@ export default function CompositeCheckout( {
 	purchaseId,
 	cart,
 	couponCode: couponCodeFromUrl,
-	isWhiteGloveOffer,
 	isComingFromUpsell,
 } ) {
 	const translate = useTranslate();
@@ -225,7 +224,6 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
-		isWhiteGloveOffer,
 		hideNudge,
 	} );
 
@@ -479,75 +477,26 @@ export default function CompositeCheckout( {
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
 			alipay: ( transactionData ) =>
-				genericRedirectProcessor(
-					'alipay',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
 			p24: ( transactionData ) =>
-				genericRedirectProcessor(
-					'p24',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'p24', transactionData, getThankYouUrl, siteSlug ),
 			bancontact: ( transactionData ) =>
-				genericRedirectProcessor(
-					'bancontact',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'bancontact', transactionData, getThankYouUrl, siteSlug ),
 			giropay: ( transactionData ) =>
-				genericRedirectProcessor(
-					'giropay',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, siteSlug ),
 			wechat: ( transactionData ) =>
-				genericRedirectProcessor(
-					'wechat',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'wechat', transactionData, getThankYouUrl, siteSlug ),
 			ideal: ( transactionData ) =>
-				genericRedirectProcessor(
-					'ideal',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, siteSlug ),
 			sofort: ( transactionData ) =>
-				genericRedirectProcessor(
-					'sofort',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, siteSlug ),
 			eps: ( transactionData ) =>
-				genericRedirectProcessor(
-					'eps',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, siteSlug ),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) =>
-				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
+			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
 		} ),
-		[ couponItem, getThankYouUrl, isWhiteGloveOffer, siteSlug ]
+		[ couponItem, getThankYouUrl, siteSlug ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -608,7 +557,6 @@ export default function CompositeCheckout( {
 						isCartPendingUpdate={ isCartPendingUpdate }
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
-						isWhiteGloveOffer={ isWhiteGloveOffer }
 					/>
 				</CheckoutProvider>
 			</CartProvider>

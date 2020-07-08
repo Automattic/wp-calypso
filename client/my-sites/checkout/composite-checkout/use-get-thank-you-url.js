@@ -49,7 +49,6 @@ export function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
-	isWhiteGloveOffer,
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
@@ -154,9 +153,7 @@ export function getThankYouPageUrl( {
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
-	const displayModeParam = isWhiteGloveOffer
-		? { d: 'white-glove' }
-		: getDisplayModeParamFromCart( cart );
+	const displayModeParam = getDisplayModeParamFromCart( cart );
 	if ( isEligibleForSignupDestinationResult && signupDestination ) {
 		debug( 'is elligible for signup destination', signupDestination );
 		return getUrlWithQueryParam( signupDestination, displayModeParam );
@@ -344,7 +341,6 @@ export function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	product,
 	siteId,
-	isWhiteGloveOffer,
 	hideNudge,
 } ) {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
@@ -389,7 +385,6 @@ export function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			product,
 			isEligibleForSignupDestinationResult,
-			isWhiteGloveOffer,
 			hideNudge,
 			didPurchaseFail,
 			isTransactionResultEmpty,
@@ -406,7 +401,6 @@ export function useGetThankYouUrl( {
 		feature,
 		purchaseId,
 		cart,
-		isWhiteGloveOffer,
 		hideNudge,
 	] );
 	return getThankYouUrl;
