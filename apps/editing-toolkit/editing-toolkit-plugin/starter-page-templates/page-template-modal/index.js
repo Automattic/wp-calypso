@@ -355,6 +355,10 @@ class PageTemplateModal extends Component {
 		}
 
 		const isCurrentPreview = templatesList[ 0 ]?.slug === 'current';
+		// Skip rendering current preview if there is no page content.
+		if ( isCurrentPreview && ! blocksByTemplateSlug.current?.length ) {
+			return null;
+		}
 
 		return (
 			<fieldset className="page-template-modal__list">
