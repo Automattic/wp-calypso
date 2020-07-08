@@ -56,8 +56,12 @@ export interface SiteDetails {
 	name: string;
 	description: string;
 	URL: string;
+	launch_status: string;
 	options: {
 		created_at: string;
+	};
+	plan: {
+		is_free: boolean;
 	};
 }
 

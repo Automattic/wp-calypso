@@ -83,6 +83,26 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		type: 'RESET_RECEIVE_NEW_SITE_FAILED' as const,
 	} );
 
+	const launchedSite = ( siteId: number ) => ( {
+		type: 'LAUNCHED_SITE' as const,
+		siteId,
+	} );
+
+	/**
+	 * Launches a private site
+	 *
+	 * @param {string} siteId - ID of the site to be launched
+	 */
+	function* launchSite( siteId: number ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteId }/launch`,
+			apiVersion: '1.1',
+			method: 'post',
+		} );
+		yield launchedSite( siteId );
+		return true;
+	}
+
 	return {
 		fetchNewSite,
 		receiveNewSite,
@@ -92,6 +112,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSite,
 		receiveSiteFailed,
 		reset,
+		launchSite,
+		launchedSite,
 	};
 }
 
@@ -106,6 +128,7 @@ export type Action =
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
+			| ActionCreators[ 'launchedSite' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

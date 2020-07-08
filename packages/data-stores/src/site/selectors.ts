@@ -21,3 +21,7 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
 export const getSite = ( state: State, siteId: number ) => {
 	return state.sites[ siteId ];
 };
+
+export const isLaunched = ( state: State, siteId: number ) => {
+	return state.launchStatus[ siteId ];
+};
