@@ -22,7 +22,7 @@ import { addQueryArgs, externalRedirect } from 'lib/route';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { retrieveMobileRedirect, retrievePlan } from './persistence-utils';
+import { clearPlan, retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
@@ -92,6 +92,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
 				const currentPlan = retrievePlan();
+				clearPlan();
 				if ( currentPlan ) {
 					this.redirect( 'checkout', url, currentPlan );
 				} else {
