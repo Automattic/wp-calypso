@@ -29,6 +29,7 @@ import {
 	isJetpackProduct,
 	isPlan,
 } from 'lib/products-values';
+import { isJetpackSearch } from 'lib/products-values/constants';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -340,8 +341,7 @@ class RemovePurchase extends Component {
 				/>
 			);
 		}
-
-		if ( this.props.isAtomicSite ) {
+		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase.productSlug ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 
