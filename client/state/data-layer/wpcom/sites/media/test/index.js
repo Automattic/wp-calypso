@@ -21,23 +21,25 @@ import {
 
 describe( 'media request', () => {
 	test( 'should dispatch SUCCESS action when request completes', () => {
-		expect(
-			requestMediaSuccess(
-				{ siteId: 2916284, query: 'a=b' },
-				{ media: { ID: 10, title: 'media title' }, found: true }
-			)
-		).toEqual(
-			expect.arrayContaining( [
-				successMediaRequest( 2916284, 'a=b' ),
-				receiveMedia( 2916284, { ID: 10, title: 'media title' }, true, 'a=b' ),
-			] )
+		const dispatch = jest.fn();
+
+		requestMediaSuccess(
+			{ siteId: 2916284, query: 'a=b' },
+			{ media: { ID: 10, title: 'media title' }, found: true }
+		)( dispatch );
+
+		expect( dispatch ).toHaveBeenCalledWith( successMediaRequest( 2916284, 'a=b' ) );
+		expect( dispatch ).toHaveBeenCalledWith(
+			receiveMedia( 2916284, { ID: 10, title: 'media title' }, true, 'a=b' )
 		);
 	} );
 
 	test( 'should dispatch FAILURE action when request fails', () => {
-		expect( requestMediaError( { siteId: 2916284, query: 'a=b' } ) ).toEqual(
-			failMediaRequest( 2916284, 'a=b' )
-		);
+		const dispatch = jest.fn();
+
+		requestMediaError( { siteId: 2916284, query: 'a=b' } )( dispatch );
+
+		expect( dispatch ).toHaveBeenCalledWith( failMediaRequest( 2916284, 'a=b' ) );
 	} );
 
 	test( 'should dispatch http request', () => {
@@ -48,6 +50,7 @@ describe( 'media request', () => {
 						method: 'GET',
 						path: '/sites/2916284/media',
 						apiVersion: '1.1',
+						query: 'a=b',
 					},
 					{ siteId: 2916284, query: 'a=b' }
 				),

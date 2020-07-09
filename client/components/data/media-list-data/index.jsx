@@ -24,7 +24,7 @@ function getStateData( siteId ) {
 	};
 }
 
-class MediaListData extends React.Component {
+export class MediaListData extends React.Component {
 	static displayName = 'MediaListData';
 
 	static propTypes = {

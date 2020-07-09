@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MediaListData from 'components/data/media-list-data';
+import { MediaListData } from 'components/data/media-list-data';
 
 jest.mock( 'lib/media/actions', () => ( { setQuery: () => {}, fetchNextPage: () => {} } ) );
 jest.mock( 'lib/media/list-store', () => ( {
