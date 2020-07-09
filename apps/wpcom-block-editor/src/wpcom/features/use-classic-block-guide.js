@@ -87,10 +87,7 @@ const ClassicGuide = () => {
 
 const guideDismissed = globalThis.localStorage.getItem( storageKey );
 
-// Hard coding this value for now - query string can be passed in from client/gutenberg/editor/calypsoify-iframe.tsx
-parsedEditorUrl.query[ 'show-classic-block-guide' ] = true;
-
-if ( parsedEditorUrl.query[ 'show-classic-block-guide' ] && ! guideDismissed ) {
+if ( parsedEditorUrl.query[ 'in-editor-deprecation-group' ] && ! guideDismissed ) {
 	registerPlugin( 'wpcom-classic-block-editor-nux', {
 		render: () => <ClassicGuide />,
 	} );
