@@ -192,23 +192,7 @@ class Media extends Component {
 		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
 	};
 
-	onVideoEditorUpdatePoster = ( { ID, posterUrl } ) => {
-		const site = this.props.selectedSite;
-
-		// Photon does not support URLs with a querystring component.
-		const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
-
-		if ( site ) {
-			MediaActions.edit( site.ID, {
-				ID,
-				thumbnails: {
-					fmt_hd: urlBeforeQuery,
-					fmt_dvd: urlBeforeQuery,
-					fmt_std: urlBeforeQuery,
-				},
-			} );
-		}
-
+	onVideoEditorUpdatePoster = () => {
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
 	};
