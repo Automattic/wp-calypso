@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -32,6 +33,12 @@ import {
 	TASK_EARN_FEATURES,
 } from 'my-sites/customer-home/cards/constants';
 import { withPerformanceTrackerStop } from 'lib/performance-tracking';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
@@ -48,23 +55,29 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
 };
 
-const Primary = ( { cards } ) => {
+const Primary = ( { cards, renderCard } ) => {
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
 
-	return (
-		<>
-			{ cards.map(
-				( card, index ) =>
-					cardComponents[ card ] &&
-					React.createElement( cardComponents[ card ], {
-						key: index,
-						isIos: card === 'home-task-go-mobile-ios' ? true : null,
-					} )
-			) }
-		</>
-	);
+	return <>{ cards.map( renderCard ) }</>;
 };
 
-export default withPerformanceTrackerStop( Primary );
+export default connect( null, ( dispatch ) => ( {
+	renderCard: ( card, index ) =>
+		cardComponents[ card ] &&
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_customer_home_card_impression', {
+						card,
+					} ),
+					bumpStat( 'calypso_customer_home_card_impression', card )
+				),
+				React.createElement( cardComponents[ card ], {
+					key: index,
+					isIos: card === 'home-task-go-mobile-ios' ? true : null,
+				} )
+			)
+		),
+} ) )( withPerformanceTrackerStop( Primary ) );
