@@ -113,7 +113,7 @@ const SiteSetupList = ( {
 	const dispatch = useDispatch();
 
 	const isDomainUnverified =
-		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
+		tasks.filter( ( task ) => task.id === 'a' && ! task.isCompleted ).length > 0;
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
