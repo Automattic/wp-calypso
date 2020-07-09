@@ -701,6 +701,54 @@ jobs:
       - run: *desktop-notify-github-failure
       - slack/status: *desktop-notify-slack-failure
 
+  wp-desktop-linux:
+    <<: *desktop_defaults
+    shell: /bin/bash --login
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wp-calypso
+      - run: *update-node
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Linux
+          environment:
+            CSC_LINK: resource/certificates/win.p12
+          command: |
+                  set +e
+                  source $HOME/.nvm/nvm.sh
+                  nvm use
+
+                  yarn run build-desktop:app
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            yarn run test-desktop:e2e
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/linux-unpacked
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+
 workflows:
   version: 2
   calypso:
@@ -775,6 +823,9 @@ workflows:
     jobs:
       - wp-desktop-source
       - wp-desktop-mac:
+          requires:
+            - wp-desktop-source
+      - wp-desktop-linux:
           requires:
             - wp-desktop-source
 
