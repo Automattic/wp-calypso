@@ -149,16 +149,9 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { selectedSite, translate, domain } = this.props;
 
 		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
-		const {
-			isPrimary,
-			isPendingIcannVerification,
-			pendingTransfer,
-			pointsToWpcom,
-			registrationDate,
-		} = domain;
+		const { isPrimary, pendingTransfer, pointsToWpcom, registrationDate } = domain;
 
-		const activating =
-			isRecentlyRegistered( registrationDate ) && ! pendingTransfer;
+		const activating = isRecentlyRegistered( registrationDate ) && ! pendingTransfer;
 
 		if ( pointsToWpcom || activating ) {
 			return isPrimary
