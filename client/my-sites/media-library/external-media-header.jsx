@@ -15,7 +15,8 @@ import MediaLibraryScale from './scale';
 import { Card, Button } from '@automattic/components';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
-import { addExternalMedia, fetchNextMediaPage, changeMediaSource } from 'state/media/thunks';
+import { addExternalMedia, fetchNextMediaPage } from 'state/media/thunks';
+import { changeMediaSource } from 'state/media/actions';
 
 const DEBOUNCE_TIME = 250;
 
