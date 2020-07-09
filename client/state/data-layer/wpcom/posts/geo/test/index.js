@@ -34,7 +34,7 @@ describe( '#fetchPostGeoImageUrl', () => {
 
 describe( '#receiveSuccess', () => {
 	test( 'should dispatch `receivePostGeoImageUrl`', () => {
-		const action = requestPostGeoImageUrl( 12345678, 10, 'post' );
+		const action = requestPostGeoImageUrl( 12345678, 10, 12.121212, 123.123123 );
 
 		expect( receiveSuccess( action, successfulPostGeoMapResponse ) ).toEqual(
 			receivePostGeoImageUrl( {
