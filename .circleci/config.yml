@@ -215,10 +215,10 @@ references:
   desktop-restore-source-cache: &desktop-restore-source-cache
       name: Restore desktop cache
       keys:
-        - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+        - v6-desktop-{{ .Environment.CIRCLE_JOB }}-32D47EBD-EDFD-4475-B8FC-B600AF81755C
   desktop-save-source-cache: &desktop-save-source-cache
       name: Save desktop cache
-      key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+      key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-32D47EBD-EDFD-4475-B8FC-B600AF81755C
       paths: *desktop-cache-paths
   desktop-notify-github-success: &desktop-notify-github-success
       name: Notify Github Success
