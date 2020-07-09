@@ -99,48 +99,6 @@ describe( 'MediaActions', () => {
 		} );
 	} );
 
-	describe( '#fetch()', () => {
-		test( 'should call to the WordPress.com REST API', () => {
-			return new Promise( ( done ) => {
-				Dispatcher.handleViewAction.restore();
-				sandbox.stub( Dispatcher, 'handleViewAction' ).callsFake( function () {
-					expect( MediaActions._fetching ).to.have.all.keys( [
-						[ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join(),
-					] );
-				} );
-
-				MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-
-				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
-				expect( stubs.mediaGet ).to.have.been.calledOn( [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() );
-				process.nextTick( function () {
-					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-						type: 'RECEIVE_MEDIA_ITEM',
-						error: null,
-						siteId: DUMMY_SITE_ID,
-						data: DUMMY_API_RESPONSE,
-					} );
-
-					done();
-				} );
-			} );
-		} );
-
-		test( 'should not allow simultaneous request for the same item', () => {
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-
-			expect( stubs.mediaGet ).to.have.been.calledOnce;
-		} );
-
-		test( 'should allow simultaneous request for different items', () => {
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID + 1 );
-
-			expect( stubs.mediaGet ).to.have.been.calledTwice;
-		} );
-	} );
-
 	describe( '#fetchNextPage()', () => {
 		test( 'should call to the internal WordPress.com REST API', () => {
 			return new Promise( ( done ) => {
@@ -418,28 +376,6 @@ describe( 'MediaActions', () => {
 				type: 'REMOVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 				data: item,
-			} );
-		} );
-	} );
-
-	describe( '#clearValidationErrors()', () => {
-		test( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId', () => {
-			MediaActions.clearValidationErrors( DUMMY_SITE_ID );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
-				siteId: DUMMY_SITE_ID,
-				itemId: undefined,
-			} );
-		} );
-
-		test( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId and itemId', () => {
-			MediaActions.clearValidationErrors( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
-				siteId: DUMMY_SITE_ID,
-				itemId: DUMMY_ITEM.ID,
 			} );
 		} );
 	} );

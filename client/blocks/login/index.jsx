@@ -24,7 +24,7 @@ import {
 } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import { rebootAfterLogin } from 'state/login/actions';

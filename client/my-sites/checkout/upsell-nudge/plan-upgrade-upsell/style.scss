@@ -93,11 +93,11 @@ main.plan-upgrade-upsell.main {
 		margin-bottom: 1em;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 21px;
+			font-size: $font-title-small;
 		}
 	}
 	&__sub-header {
-		font-size: 21px;
+		font-size: $font-title-small;
 		font-weight: normal;
 		text-align: center;
 		line-height: 1.4;

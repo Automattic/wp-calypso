@@ -25,3 +25,4 @@ export const getSelectedDomain = ( state: State ) => state.domain;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch || getSelectedSiteTitle( state );
+export const getPlan = ( state: State ) => state.plan;

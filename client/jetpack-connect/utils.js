@@ -13,7 +13,12 @@ import { urlToSlug } from 'lib/url';
  * Internal dependencies
  */
 import { addQueryArgs, externalRedirect, untrailingslashit } from 'lib/route';
-import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from './constants';
+import {
+	JPC_PATH_PLANS,
+	JPC_PATH_REMOTE_INSTALL,
+	REMOTE_PATH_AUTH,
+	JPC_PATH_CHECKOUT,
+} from './constants';
 
 export function authQueryTransformer( queryObject ) {
 	return {
@@ -135,9 +140,10 @@ export function parseAuthorizationQuery( query ) {
  *
  * @param  {string}     type Redirect type
  * @param  {string}     url Site url
- * @returns {?object}          Redirect url
+ * @param  {?string}    product Product slug
+ * @returns {string}        Redirect url
  */
-export function redirect( type, url ) {
+export function redirect( type, url, product = null ) {
 	let urlRedirect = '';
 	const instr = '/jetpack/connect/instructions';
 
@@ -157,7 +163,12 @@ export function redirect( type, url ) {
 	}
 
 	if ( type === 'install_instructions' ) {
-		urlRedirect = addQueryArgs( { url: url }, instr );
+		urlRedirect = addQueryArgs( { url }, instr );
+		page.redirect( urlRedirect );
+	}
+
+	if ( type === 'checkout' ) {
+		urlRedirect = `${ JPC_PATH_CHECKOUT }/${ urlToSlug( url ) }/${ product }`;
 		page.redirect( urlRedirect );
 	}
 

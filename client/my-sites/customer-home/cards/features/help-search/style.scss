@@ -86,11 +86,18 @@ $min_results_height: 180px;
 			padding: 10px $card_padding_small;
 
 			// Ellipsis overflow handling
+			display: block;
 			flex: 1;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			margin-right: 8px;
 
+			.gridicon {
+				margin: 0 5px -3px 0;
+					position: relative;
+					top: 0;
+			}
 
 			&:hover,
 			&:focus {

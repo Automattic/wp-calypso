@@ -22,7 +22,7 @@ import { addQueryArgs, externalRedirect } from 'lib/route';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { retrieveMobileRedirect } from './persistence-utils';
+import { clearPlan, retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
@@ -90,6 +90,16 @@ const jetpackConnection = ( WrappedComponent ) => {
 				this.redirect( 'plans_selection', url );
 			}
 
+			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
+				const currentPlan = retrievePlan();
+				clearPlan();
+				if ( currentPlan ) {
+					this.redirect( 'checkout', url, currentPlan );
+				} else {
+					this.redirect( 'plans_selection', url );
+				}
+			}
+
 			if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
 				// eslint-disable-next-line react/no-did-update-set-state
 				this.setState( { waitingForSites: false } );
@@ -119,11 +129,11 @@ const jetpackConnection = ( WrappedComponent ) => {
 			} );
 		};
 
-		redirect = ( type, url ) => {
+		redirect = ( type, url, product ) => {
 			if ( ! this.state.redirecting ) {
 				this.setState( { redirecting: true } );
 
-				redirect( type, url );
+				redirect( type, url, product );
 			}
 		};
 

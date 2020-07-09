@@ -44,6 +44,7 @@ import {
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import getCountries from 'state/selectors/get-countries';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
@@ -322,6 +323,7 @@ export default function CompositeCheckout( {
 		updateContactDetailsCache
 	);
 
+	useDetectedCountryCode();
 	useCachedDomainContactDetails();
 
 	useDisplayErrors( errors, showErrorMessage );
@@ -336,7 +338,8 @@ export default function CompositeCheckout( {
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
-		getStoredCards || wpcomGetStoredCards
+		getStoredCards || wpcomGetStoredCards,
+		recordEvent
 	);
 	const {
 		canMakePayment: isApplePayAvailable,
@@ -546,7 +549,7 @@ export default function CompositeCheckout( {
 			paypal: ( transactionData ) =>
 				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
 		} ),
-		[ couponItem, getThankYouUrl, isWhiteGloveOffer ]
+		[ couponItem, getThankYouUrl, isWhiteGloveOffer, siteSlug ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -764,6 +767,20 @@ function CountrySelectMenu( {
 			/>
 		</FormFieldAnnotation>
 	);
+}
+
+function useDetectedCountryCode() {
+	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
+	const refHaveUsedDetectedCountryCode = useRef( false );
+
+	useEffect( () => {
+		// Dispatch exactly once
+		if ( detectedCountryCode && ! refHaveUsedDetectedCountryCode.current ) {
+			debug( 'using detected country code "' + detectedCountryCode + '"' );
+			dispatch( 'wpcom' ).loadCountryCodeFromGeoIP( detectedCountryCode );
+			refHaveUsedDetectedCountryCode.current = true;
+		}
+	}, [ detectedCountryCode ] );
 }
 
 function useCachedDomainContactDetails() {

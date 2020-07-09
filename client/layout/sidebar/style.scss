@@ -65,6 +65,7 @@
 .sidebar__menu-icon {
 	fill: var( --color-sidebar-gridicon-fill );
 	margin-right: 11px;
+	flex-shrink: 0;
 }
 
 // Checklist progress
@@ -107,11 +108,10 @@
 // various sections of Calypso.
 .sidebar__menu-link {
 	font-size: $font-body;
-	line-height: 1;
+	line-height: 1.2;
 	position: relative;
 	padding: 10px 16px 10px 20px;
 	box-sizing: border-box;
-	white-space: nowrap;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
@@ -180,6 +180,11 @@
 		right: 21px;
 		top: auto;
 	}
+}
+
+.sidebar__menu.is-togglable .sidebar__menu-link {
+	line-height: 1.5;
+	padding: 7px 16px 7px 20px;
 }
 
 .sidebar__menu-link-text {

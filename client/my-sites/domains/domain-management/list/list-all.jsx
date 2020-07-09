@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import LazyRender from 'react-lazily-render';
 
 /**
  * Internal dependencies
@@ -20,7 +21,11 @@ import DocumentHead from 'components/data/document-head';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import FormattedHeader from 'components/formatted-header';
-import { getAllDomains, getFlatDomainsList } from 'state/sites/domains/selectors';
+import {
+	getAllDomains,
+	getFlatDomainsList,
+	getAllRequestingSiteDomains,
+} from 'state/sites/domains/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
@@ -32,7 +37,8 @@ import { type as domainTypes } from 'lib/domains/constants';
 import QueryAllDomains from 'components/data/query-all-domains';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { emailManagement } from 'my-sites/email/paths';
+import { getUserPurchases } from 'state/purchases/selectors';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 
 /**
  * Style dependencies
@@ -47,6 +53,7 @@ class ListAll extends Component {
 		sites: PropTypes.object.isRequired,
 		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
+		requestingSiteDomains: PropTypes.object,
 	};
 
 	clickAddDomain = () => {
@@ -57,13 +64,7 @@ class ListAll extends Component {
 	handleDomainItemClick = ( domain ) => {
 		const { sites, currentRoute } = this.props;
 		const site = sites[ domain.blogId ];
-		page( getDomainManagementPath( domain.domain, domain.type, site.slug, currentRoute ) );
-	};
-
-	handleAddEmailClick = ( domain ) => {
-		const { sites, currentRoute } = this.props;
-		const site = sites[ domain.blogId ];
-		page( emailManagement( site.slug, domain.domain, currentRoute ) );
+		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
 	};
 
 	headerButtons() {
@@ -79,8 +80,8 @@ class ListAll extends Component {
 	}
 
 	isLoading() {
-		const { domainsList, requestingDomains, sites } = this.props;
-		return ! sites || ( requestingDomains && domainsList.length === 0 );
+		const { domainsList, requestingFlatDomains, sites } = this.props;
+		return ! sites || ( requestingFlatDomains && domainsList.length === 0 );
 	}
 
 	findDomainDetails( domainsDetails = [], domain = {} ) {
@@ -89,37 +90,47 @@ class ListAll extends Component {
 		);
 	}
 
+	renderDomainItem( domain ) {
+		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
+
+		return (
+			<>
+				{ domain?.blogId && <QuerySiteDomains siteId={ domain.blogId } /> }
+				<DomainItem
+					currentRoute={ currentRoute }
+					domain={ domain }
+					domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
+					site={ sites[ domain?.blogId ] }
+					isManagingAllSites={ true }
+					isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
+					onClick={ this.handleDomainItemClick }
+				/>
+			</>
+		);
+	}
+
 	renderDomainsList() {
 		if ( this.isLoading() ) {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { domainsList, sites, domainsDetails, canManageSitesMap } = this.props;
+		const { domainsList, canManageSitesMap } = this.props;
 
 		const domainListItems = domainsList
 			.filter(
 				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
 			) // filter on sites we can manage, that aren't `wpcom` type
 			.map( ( domain, index ) => (
-				<React.Fragment key={ `${ index }-${ domain.name }` }>
-					{ domain?.blogId && <QuerySiteDomains siteId={ domain.blogId } /> }
-					<DomainItem
-						domain={ domain }
-						domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
-						site={ sites[ domain?.blogId ] }
-						isManagingAllSites={ true }
-						showSite={ true }
-						onClick={ this.handleDomainItemClick }
-						onAddEmailClick={ this.handleAddEmailClick }
-					/>
-				</React.Fragment>
+				<LazyRender key={ `lazy-${ index }-${ domain.name }` }>
+					{ ( render ) => ( render ? this.renderDomainItem( domain ) : <ListItemPlaceholder /> ) }
+				</LazyRender>
 			) );
 
 		return [ <ListHeader key="list-header" />, ...domainListItems ];
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, user } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -129,6 +140,7 @@ class ListAll extends Component {
 				</div>
 				<div className="list-all__container">
 					<QueryAllDomains />
+					<QueryUserPurchases userId={ user.ID } />
 					<Main wideLayout>
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
@@ -149,14 +161,19 @@ const addDomainClick = () =>
 export default connect(
 	( state ) => {
 		const sites = keyBy( getVisibleSites( state ), 'ID' );
+		const user = getCurrentUser( state );
+		const purchases = keyBy( getUserPurchases( state, user?.ID ) || [], 'id' );
+
 		return {
 			canManageSitesMap: canCurrentUserForSites( state, keys( sites ), 'manage_options' ),
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
-			requestingDomains: isRequestingAllDomains( state ),
+			purchases,
+			requestingFlatDomains: isRequestingAllDomains( state ),
+			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
-			user: getCurrentUser( state ),
+			user,
 		};
 	},
 	( dispatch ) => {

@@ -48,7 +48,7 @@ import { getMessagePathForJITM } from 'lib/route';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import LayoutLoader from './loader';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 

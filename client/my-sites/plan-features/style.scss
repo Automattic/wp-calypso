@@ -259,13 +259,9 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__header-title {
-	font-size: 22px;
+	font-size: $font-title-small;
 	color: var( --color-primary );
 	line-height: 0.7;
-
-	@include breakpoint-deprecated( '<960px' ) {
-		font-size: 20px;
-	}
 }
 
 .plan-features__audience {

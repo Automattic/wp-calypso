@@ -30,6 +30,7 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { skipCurrentViewHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';
+import { SITE_CHECKLIST_KNOWN_TASKS } from 'my-sites/customer-home/cards/tasks/site-setup-list/get-task';
 import { getTask } from './get-task';
 
 /**
@@ -37,7 +38,7 @@ import { getTask } from './get-task';
  */
 import './style.scss';
 
-const startTask = ( dispatch, task, siteId ) => {
+const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
@@ -58,6 +59,10 @@ const startTask = ( dispatch, task, siteId ) => {
 
 	if ( task.actionDispatch ) {
 		dispatch( task.actionDispatch( ...task.actionDispatchArgs ) );
+	}
+
+	if ( task.actionAdvanceToNext ) {
+		advanceToNextIncompleteTask();
 	}
 };
 
@@ -103,17 +108,20 @@ const SiteSetupList = ( {
 	tasks,
 	taskUrls,
 	userEmail,
+	firstIncompleteTask,
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
-	const [ userSelectedTask, setUserSelectedTask ] = useState( false );
+	const [ taskIsManuallySelected, setTaskIsManuallySelected ] = useState( false );
 	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
 	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
 	const isDomainUnverified =
-		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
+		tasks.filter(
+			( task ) => task.id === SITE_CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED && ! task.isCompleted
+		).length > 0;
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
@@ -125,6 +133,15 @@ const SiteSetupList = ( {
 		}
 	}, [ currentTaskId, dispatch, tasks ] );
 
+	// If specified, then automatically complete the current task when viewed
+	// if it is not already complete.
+	useEffect( () => {
+		if ( currentTask?.completeOnView && ! currentTask?.isCompleted ) {
+			dispatch( requestSiteChecklistTaskUpdate( siteId, currentTask.id ) );
+			setTaskIsManuallySelected( true ); // force selected even though complete
+		}
+	}, [ currentTask, dispatch, siteId ] );
+
 	// Reset verification email state on first load.
 	useEffect( () => {
 		if ( isEmailUnverified ) {
@@ -134,18 +151,18 @@ const SiteSetupList = ( {
 
 	// Move to next task after completing current one, unless directly selected by the user.
 	useEffect( () => {
-		if ( userSelectedTask ) {
+		if ( taskIsManuallySelected ) {
 			return;
 		}
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
 				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
-				setUserSelectedTask( false );
+				setTaskIsManuallySelected( false );
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ currentTask, currentTaskId, userSelectedTask, tasks ] );
+	}, [ currentTask, currentTaskId, taskIsManuallySelected, tasks ] );
 
 	// Update current task.
 	useEffect( () => {
@@ -189,6 +206,10 @@ const SiteSetupList = ( {
 		return null;
 	}
 
+	const advanceToNextIncompleteTask = () => {
+		setCurrentTaskId( firstIncompleteTask.id );
+	};
+
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
@@ -218,7 +239,7 @@ const SiteSetupList = ( {
 							isCompleted={ task.isCompleted }
 							isCurrent={ task.id === currentTask.id }
 							onClick={ () => {
-								setUserSelectedTask( true );
+								setTaskIsManuallySelected( true );
 								setCurrentTaskId( task.id );
 								setCurrentDrillLayoutView( 'task' );
 							} }
@@ -248,22 +269,26 @@ const SiteSetupList = ( {
 							{ currentTask.description }
 						</p>
 						<div className="site-setup-list__task-actions task__actions">
-							<Button
-								className="site-setup-list__task-action task__action"
-								primary
-								onClick={ () => startTask( dispatch, currentTask, siteId ) }
-								disabled={
-									currentTask.isDisabled ||
-									( currentTask.isCompleted && currentTask.actionDisableOnComplete )
-								}
-							>
-								{ currentTask.actionText }
-							</Button>
+							{ currentTask.actionText && (
+								<Button
+									className="site-setup-list__task-action task__action"
+									primary
+									onClick={ () =>
+										startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+									}
+									disabled={
+										currentTask.isDisabled ||
+										( currentTask.isCompleted && currentTask.actionDisableOnComplete )
+									}
+								>
+									{ currentTask.actionText }
+								</Button>
+							) }
 							{ currentTask.isSkippable && ! currentTask.isCompleted && (
 								<Button
 									className="site-setup-list__task-skip task__skip is-link"
 									onClick={ () => {
-										setUserSelectedTask( false );
+										setTaskIsManuallySelected( false );
 										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
 									} }
 								>
@@ -307,5 +332,6 @@ export default connect( ( state ) => {
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
+		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 	};
 } )( SiteSetupList );

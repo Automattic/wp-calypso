@@ -719,6 +719,10 @@ export type ManagedContactDetailsUpdaters = {
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetailsErrors
 	) => ManagedContactDetails;
+	populateCountryCodeFromGeoIP: (
+		arg0: ManagedContactDetails,
+		arg1: string
+	) => ManagedContactDetails;
 	populateDomainFieldsFromCache: (
 		arg0: ManagedContactDetails,
 		arg1: PossiblyCompleteDomainContactDetails
@@ -789,6 +793,16 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		errors: ManagedContactDetailsErrors
 	): ManagedContactDetails => {
 		return setManagedContactDetailsErrors( errors, oldDetails );
+	},
+
+	populateCountryCodeFromGeoIP: (
+		oldDetails: ManagedContactDetails,
+		newCountryCode: string
+	): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			countryCode: setValueUnlessTouched( newCountryCode, oldDetails.countryCode ),
+		};
 	},
 
 	populateDomainFieldsFromCache: (

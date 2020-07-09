@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import 'a8c-fse-common-data-stores';
 
 /**
  * Internal dependencies

@@ -24,7 +24,7 @@ render() {
 );
 ```
 
-For more information about `PageViewTracker`, refer to [its own documentation](https://github.com/Automattic/wp-calypso/tree/master/client/lib/analytics/page-view-tracker).
+For more information about `PageViewTracker`, refer to [its own documentation](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/analytics/page-view-tracker).
 
 ### `recordPageView( path, title )` action
 

@@ -182,6 +182,25 @@ input[type='radio'].domain-management-list-item__radio {
 .domain-item__meta {
 	font-size: $font-body-small;
 	color: var( --color-text-subtle );
+
+	.info-popover {
+		vertical-align: middle;
+		margin-left: 1px;
+		transform: translateY( -1px );
+	}
+}
+
+
+.domain-item__status-info {
+	border-left: 3px solid var( --color-success-50 );
+}
+
+.domain-item__status-warning {
+	border-left: 3px solid var( --color-warning-40 );
+}
+
+.domain-item__status-alert {
+	border-left: 3px solid var( --color-error );
 }
 
 .domain-item__status {
@@ -244,4 +263,45 @@ input[type='radio'].domain-management-list-item__radio {
 
 .domain-item__icon {
 	fill: var( --color-text-subtle );
+}
+
+.domain-item__primary {
+	font-weight: 600;
+}
+
+.list__no-chevron .gridicon {
+	display: none;
+}
+
+.list__action_item_placeholder {
+	@include placeholder( --color-neutral-5 );
+}
+
+.list__domains-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		align-items: center;
+	}
+}
+
+.list__domains-header-buttons {
+	display: flex;
+
+	.popover-cart {
+		margin-right: 4px;
+	}
+
+	.popover-cart .header-button, .popover-cart .header-button:hover {
+		min-height: initial;
+		background: none;
+		color: var( --color-text );
+	}
+
+	.cart__count-badge .count {
+		top: -7px;
+		right: -3px;
+	}
 }

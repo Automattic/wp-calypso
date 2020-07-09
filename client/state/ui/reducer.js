@@ -10,8 +10,6 @@ import {
 import { combineReducers, withoutPersistence } from 'state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
-import comments from './comments/reducer';
-import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
 import editorDeprecationDialog from './editor-deprecation-dialog/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
@@ -20,7 +18,6 @@ import layoutFocus from './layout-focus/reducer';
 import masterbarVisibility from './masterbar-visibility/reducer';
 import mediaModal from './media-modal/reducer';
 import npsSurveyNotice from './nps-survey-notice/reducer';
-import oauth2Clients from './oauth2-clients/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import section from './section/reducer';
@@ -95,8 +92,6 @@ export const isNotificationsOpen = function ( state = false, { type } ) {
 const reducer = combineReducers( {
 	actionLog,
 	checkout,
-	comments,
-	dropZone,
 	editorDeprecationDialog,
 	guidedTour,
 	gutenbergOptInDialog,
@@ -109,7 +104,6 @@ const reducer = combineReducers( {
 	masterbarVisibility,
 	mediaModal,
 	npsSurveyNotice,
-	oauth2Clients,
 	postTypeList,
 	preview,
 	section,

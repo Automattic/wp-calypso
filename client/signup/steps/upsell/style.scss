@@ -61,7 +61,7 @@
 		margin-bottom: 1.4em;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 21px;
+			font-size: $font-title-small;
 		}
     }
 

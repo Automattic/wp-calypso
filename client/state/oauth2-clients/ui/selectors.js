@@ -1,13 +1,9 @@
 /**
- * External dependencies
- */
-
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getOAuth2Client } from 'state/oauth2-clients/selectors';
+
+import 'state/oauth2-clients/init';
 
 /**
  * Returns the ID of the current OAuth2 client.
@@ -16,7 +12,7 @@ import { getOAuth2Client } from 'state/oauth2-clients/selectors';
  * @returns {?number}        Current OAuth2 client ID
  */
 export function getCurrentOAuth2ClientId( state ) {
-	return get( state, 'ui.oauth2Clients.currentClientId' );
+	return state.oauth2Clients?.ui.currentClientId;
 }
 
 /**

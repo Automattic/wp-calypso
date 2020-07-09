@@ -348,6 +348,22 @@
 	}
 }
 
+.inline-help__results-title {
+	margin-top: 10px;
+
+	h2 {
+		font-weight: bold;
+		line-height: 1.4;
+		display: block;
+		padding: 8px 16px;
+		font-size: $font-body-small;
+
+		&:after {
+			content: ':';
+		}
+	}
+}
+
 .inline-help__results-item {
 	margin: 0;
 	font-size: $font-body-small;
@@ -362,13 +378,30 @@
 		text-decoration: underline;
 		font-weight: normal;
 		line-height: 1.4;
-		display: block;
+		display: flex;
 		padding: 8px 16px;
+
+		span {
+			flex-grow: 2;
+		}
+
+		.gridicon {
+			align-self: baseline;
+			color: var( --color-neutral-light );
+			flex-shrink: 0;
+			margin-right: 8px;
+			position: relative;
+				top: 2px;
+		}
 
 		&:hover {
 			cursor: pointer;
 			//color: var( --color-primary );
 			background: var( --color-neutral-0 );
+
+			.gridicon {
+				color: var( --color-neutral );
+			}
 		}
 	}
 
@@ -377,12 +410,21 @@
 		cursor: pointer;
 		color: var( --color-text-inverted );
 
+		&:hover,
+		&:focus {
+			background: none;
+
+			a {
+				color: var( --color-link-dark );
+			}
+		}
+
 		a {
 			color: var( --color-text-inverted );
-			&:hover,
-			&:focus {
-				background: none;
-			}
+		}
+
+		.gridicon {
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -398,11 +440,12 @@
 }
 
 .inline-help__empty-results {
-	padding: 16px 0 0;
+	padding: 8px 16px 0;
 	margin: 0;
 	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	font-style: italic;
+	text-align: left;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: $font-body;

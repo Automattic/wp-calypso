@@ -23,8 +23,8 @@ export const normalizeSettings = ( settings ) => {
 			case 'jetpack_portfolio_posts_per_page':
 				break;
 			case 'jetpack_protect_global_whitelist': {
-				const whitelist = get( settings[ key ], [ 'local' ], [] );
-				memo[ key ] = whitelist.join( '\n' );
+				const explicitlyAllowedIps = get( settings[ key ], [ 'local' ], [] );
+				memo[ key ] = explicitlyAllowedIps.join( '\n' );
 				break;
 			}
 			case 'infinite-scroll':

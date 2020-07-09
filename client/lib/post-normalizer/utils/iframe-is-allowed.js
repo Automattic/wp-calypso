@@ -9,10 +9,10 @@ import url from 'url';
  * them a free-er sandbox
  *
  * @param  {object} iframe the iframe to check
- * @returns {boolean} true if whitelisted
+ * @returns {boolean} true if allowed
  */
-export function iframeIsWhitelisted( iframe ) {
-	const iframeWhitelist = [
+export function iframeIsAllowed( iframe ) {
+	const allowedIframeHosts = [
 		'youtube.com',
 		'youtube-nocookie.com',
 		'videopress.com',
@@ -47,7 +47,7 @@ export function iframeIsWhitelisted( iframe ) {
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
-	return some( iframeWhitelist, function ( whitelistedSuffix ) {
-		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
+	return some( allowedIframeHosts, function ( allowedHost ) {
+		return endsWith( '.' + iframeSrc, '.' + allowedHost );
 	} );
 }

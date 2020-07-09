@@ -1,7 +1,7 @@
 .cancel-purchase__card {
 	h2 {
 		color: var( --color-neutral-70 );
-		font-size: 21px;
+		font-size: $font-title-small;
 		font-weight: 400;
 		margin-bottom: 20px;
 	}

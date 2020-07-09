@@ -4,6 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -16,6 +17,7 @@ import { bumpStat } from 'lib/analytics/mc';
 import FormTextInput from 'components/forms/form-text-input';
 import { ScreenReaderText } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
+import { clearMediaItemErrors } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -50,7 +52,7 @@ class MediaLibraryUploadUrl extends Component {
 			return;
 		}
 
-		MediaActions.clearValidationErrors( this.props.site.ID );
+		this.props.clearMediaItemErrors( this.props.site.ID );
 		MediaActions.add( this.props.site, this.state.value );
 
 		this.setState( { value: '', isError: false } );
@@ -91,11 +93,13 @@ class MediaLibraryUploadUrl extends Component {
 					onChange={ this.onChange }
 					onKeyDown={ this.onKeyDown }
 					isError={ this.state.isError }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus
 					required
 				/>
 
 				<div className="media-library__upload-url-button-group">
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<button type="submit" className="button is-primary">
 						{ translate( 'Upload', { context: 'verb' } ) }
 					</button>
@@ -110,4 +114,4 @@ class MediaLibraryUploadUrl extends Component {
 	}
 }
 
-export default localize( MediaLibraryUploadUrl );
+export default connect( null, { clearMediaItemErrors } )( localize( MediaLibraryUploadUrl ) );

@@ -18,7 +18,7 @@ import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { WPCOM_DEFAULTS } from 'lib/domains/nameservers';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { isSubdomain } from 'lib/domains';
+import { isSubdomain, resolveDomainStatus } from 'lib/domains';
 import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -38,56 +38,6 @@ import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 
 class MappedDomainType extends React.Component {
-	resolveStatus() {
-		const { domain, translate, moment } = this.props;
-		const { expiry } = domain;
-
-		if ( isExpiringSoon( domain, 30 ) ) {
-			const expiresMessage = translate( 'Expires in %(days)s', {
-				args: { days: moment.utc( expiry ).fromNow( true ) },
-			} );
-
-			if ( isExpiringSoon( domain, 5 ) ) {
-				return {
-					statusText: expiresMessage,
-					statusClass: 'status-error',
-					icon: 'info',
-				};
-			}
-
-			return {
-				statusText: expiresMessage,
-				statusClass: 'status-warning',
-				icon: 'info',
-			};
-		}
-
-		if (
-			( ! this.props.isJetpackSite || this.props.isSiteAutomatedTransfer ) &&
-			! domain.pointsToWpcom
-		) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		}
-
-		if ( hasPendingGSuiteUsers( domain ) ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-warning',
-				icon: 'info',
-			};
-		}
-
-		return {
-			statusText: translate( 'Active' ),
-			statusClass: 'status-success',
-			icon: 'check_circle',
-		};
-	}
-
 	renderSettingUpNameservers() {
 		const { domain, translate } = this.props;
 		if ( this.props.isJetpackSite && ! this.props.isSiteAutomatedTransfer ) {
@@ -261,7 +211,12 @@ class MappedDomainType extends React.Component {
 		const { domain, selectedSite, purchase, mappingPurchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = this.resolveStatus();
+		const { statusText, statusClass, icon } = resolveDomainStatus(
+			domain,
+			purchase,
+			this.props.isJetpackSite,
+			this.props.isSiteAutomatedTransfer
+		);
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
 		const newDomainManagementNavigation = config.isEnabled(

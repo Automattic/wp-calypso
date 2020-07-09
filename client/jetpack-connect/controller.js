@@ -51,6 +51,8 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 } from 'lib/products-values/constants';
 
 /**
@@ -66,6 +68,7 @@ const analyticsPageTitleByType = {
 	backup: 'Jetpack Daily Backup',
 	jetpack_search: 'Jetpack Search',
 	scan: 'Jetpack Scan Daily',
+	antispam: 'Jetpack Anti-Spam',
 };
 
 const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
@@ -80,6 +83,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			backup: PRODUCT_JETPACK_BACKUP_DAILY,
 			jetpack_search: PRODUCT_JETPACK_SEARCH,
 			scan: PRODUCT_JETPACK_SCAN,
+			antispam: PRODUCT_JETPACK_ANTI_SPAM,
 		},
 		monthly: {
 			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -89,6 +93,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			backup: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 			jetpack_search: PRODUCT_JETPACK_SEARCH_MONTHLY,
 			scan: PRODUCT_JETPACK_SCAN_MONTHLY,
+			antispam: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 		},
 	};
 

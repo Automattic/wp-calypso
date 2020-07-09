@@ -21,7 +21,7 @@ import {
 	isWooOAuth2Client,
 } from 'lib/oauth2-clients';
 import { addQueryArgs, getUrlParts } from 'lib/url';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -248,12 +248,18 @@ export class LoginLinks extends React.Component {
 		}
 
 		const queryArgs = { action: 'lostpassword' };
+
 		// If we got here coming from Jetpack Cloud login page, we want to go back
 		// to it after we finish the process
 		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.append( 'lostpassword_flow', true );
 			queryArgs.redirect_to = currentUrl.toString();
+
+			// This parameter tells WPCOM that we are coming from Jetpack.com,
+			// so it can present the user a Lost password page that works in
+			// the context of Jetpack.com.
+			queryArgs.client_id = this.props.oauth2Client.id;
 		}
 
 		return (

@@ -2,6 +2,8 @@
  * Internal dependencies
  */
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'state/action-types';
+import { combineReducers, withStorageKey } from 'state/utils';
+import ui from './ui/reducer';
 
 export const initialClientsData = {
 	930: {
@@ -63,7 +65,7 @@ export const initialClientsData = {
 	},
 };
 
-export default function oauth2Clients( state = initialClientsData, action ) {
+export function clients( state = initialClientsData, action ) {
 	switch ( action.type ) {
 		case OAUTH2_CLIENT_DATA_RECEIVE:
 			return {
@@ -77,3 +79,10 @@ export default function oauth2Clients( state = initialClientsData, action ) {
 			return state;
 	}
 }
+
+const combinedReducer = combineReducers( {
+	clients,
+	ui,
+} );
+
+export default withStorageKey( 'oauth2Clients', combinedReducer );

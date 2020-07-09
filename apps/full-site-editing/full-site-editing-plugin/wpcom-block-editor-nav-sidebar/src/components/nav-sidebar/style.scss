@@ -1,42 +1,35 @@
 @import '~@wordpress/base-styles/colors';
 @import '~@wordpress/base-styles/mixins';
 @import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/z-index';
 
 $sidebar-width: 272px;
 $border: 1px solid $light-gray-500;
 $transition-period: 200ms;
 
-.is-wpcom-block-editor-nav-sidebar-attached {
-	.edit-post-layout {
-		transition: margin-left $transition-period;
-		@include reduce-motion( 'transition' );
-	}
+.wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	// Use the same z-index as the <Modal> component
+	z-index: z-index( '.components-modal__header' );
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
+	@include reduce-motion( 'animation' );
 
-	.edit-post-fullscreen-mode-close {
-		transition: width $transition-period;
-		@include reduce-motion( 'transition' );
-	}
-
-	.edit-post-fullscreen-mode-close {
-		min-width: 0;
-	}
-}
-
-.is-wpcom-block-editor-nav-sidebar-opened {
-	.edit-post-layout {
-		margin-left: $sidebar-width;
-	}
-
-	.edit-post-fullscreen-mode-close {
-		width: 0;
+	&.is-fading-out {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-in reverse;
+		@include reduce-motion( 'animation' );
 	}
 }
 
-.is-wpcom-block-editor-nav-sidebar-close-hidden {
-	.edit-post-fullscreen-mode-close {
-		opacity: 0;
-		padding: 0;
-		pointer-events: none;
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__fade {
+	0% {
+		background-color: rgba( $black, 0 );
+	}
+	100% {
+		background-color: rgba( $black, 0.7 );
 	}
 }
 
@@ -44,49 +37,56 @@ $transition-period: 200ms;
 	box-sizing: border-box;
 	position: fixed;
 	top: 0;
-	left: -$sidebar-width;
 	bottom: 0;
 	width: $sidebar-width;
 	border-right: $border;
-	transition: left $transition-period;
-	@include reduce-motion( 'transition' );
+	background: $white;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-out;
+	@include reduce-motion( 'animation' );
 
-	&:not( [aria-hidden=true] ) {
+	&.is-sliding-left {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-in reverse;
+		@include reduce-motion( 'animation' );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__slide {
+	0% {
+		left: -$sidebar-width;
+	}
+	100% {
 		left: 0;
 	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
+	height: $header-height;
+	border-bottom: $border;
+	box-sizing: content-box;
+	display: flex;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
+	position: fixed;
 	top: 0;
 	left: 0;
-	position: fixed;
-	height: $header-height;
+	height: $header-height !important;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out forwards;
+	@include reduce-motion( 'animation' );
 
-	.components-button {
-		height: $header-height;
-		width: $header-height;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 0;
-		background: #32373d !important;
-		color: #fff !important;
-		box-shadow: none !important;
-
-		&.is-shrinking {
-			animation: wpcom-block-editor-nav-sidebar__shrink $transition-period normal forwards;
-			@include reduce-motion( 'animation' );
-		}
-		&.is-growing {
-			animation: wpcom-block-editor-nav-sidebar__grow $transition-period normal forwards;
-			@include reduce-motion( 'animation' );
-		}
+	&.is-growing {
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out reverse;
+		@include reduce-motion( 'animation' );
 	}
 }
 
-.wpcom-block-editor-nav-sidebar-nav-sidebar__header-space {
-	height: $header-height;
-	border-bottom: $border;
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__shrink {
+	0% {
+		transform: scale( 1 );
+	}
+	100% {
+		transform: scale( 0.55 );
+	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container {

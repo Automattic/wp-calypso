@@ -14,9 +14,22 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actio
 import { localizeUrl } from 'lib/i18n-utils';
 import { verifyEmail } from 'state/current-user/email-verification/actions';
 
+// A list of known tasks for the calypso client/state/data-layer/wpcom/checklist/index.js
+// You need to alter this object in case of adding / removing tasks
+export const SITE_CHECKLIST_KNOWN_TASKS = {
+	START_SITE_SETUP: 'start_site_setup',
+	DOMAIN_VERIFIED: 'domain_verified',
+	EMAIL_VERIFIED: 'email_verified',
+	BLOGNAME_SET: 'blogname_set',
+	MOBILE_APP_INSTALLED: 'mobile_app_installed',
+	SITE_LAUNCHED: 'site_launched',
+	FRONT_PAGE_UPDATED: 'front_page_updated',
+	SITE_MENU_UPDATED: 'site_menu_updated',
+};
+
 const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) => {
 	switch ( task.id ) {
-		case 'site_launched':
+		case SITE_CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			if ( isDomainUnverified ) {
 				return (
 					<>
@@ -48,9 +61,9 @@ const isTaskDisabled = (
 	{ emailVerificationStatus, isDomainUnverified, isEmailUnverified }
 ) => {
 	switch ( task.id ) {
-		case 'email_verified':
+		case SITE_CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			return 'requesting' === emailVerificationStatus || ! isEmailUnverified;
-		case 'site_launched':
+		case SITE_CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			return isDomainUnverified || isEmailUnverified;
 		default:
 			return false;
@@ -72,7 +85,23 @@ export const getTask = (
 ) => {
 	let taskData = {};
 	switch ( task.id ) {
-		case 'domain_verified':
+		case SITE_CHECKLIST_KNOWN_TASKS.START_SITE_SETUP:
+			taskData = {
+				timing: 1,
+				title: translate( 'Site created' ),
+				description: translate(
+					"Next, we'll guide you through setting up and launching your site."
+				),
+				actionText: 'Get started',
+				...( ! task.isCompleted && {
+					actionDispatch: requestSiteChecklistTaskUpdate,
+					actionDispatchArgs: [ siteId, task.id ],
+				} ),
+				actionAdvanceToNext: true,
+				completeOnView: true,
+			};
+			break;
+		case SITE_CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
 				timing: 2,
 				title:
@@ -91,7 +120,7 @@ export const getTask = (
 				actionText: translate( 'Verify' ),
 			};
 			break;
-		case 'email_verified':
+		case SITE_CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			taskData = {
 				timing: 1,
 				title: translate( 'Confirm your email address' ),
@@ -113,7 +142,7 @@ export const getTask = (
 				actionDispatchArgs: [ { showGlobalNotices: true } ],
 			};
 			break;
-		case 'blogname_set':
+		case SITE_CHECKLIST_KNOWN_TASKS.BLOGNAME_SET:
 			taskData = {
 				timing: 1,
 				title: translate( 'Name your site' ),
@@ -125,7 +154,7 @@ export const getTask = (
 				tour: 'checklistSiteTitle',
 			};
 			break;
-		case 'mobile_app_installed':
+		case SITE_CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
 				timing: 3,
 				title: translate( 'Get the WordPress app' ),
@@ -141,7 +170,7 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
-		case 'site_launched':
+		case SITE_CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			taskData = {
 				timing: 1,
 				title: translate( 'Launch your site' ),
@@ -154,7 +183,7 @@ export const getTask = (
 				actionDisableOnComplete: true,
 			};
 			break;
-		case 'front_page_updated':
+		case SITE_CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
 			taskData = {
 				timing: 20,
 				title: translate( 'Update your Home page' ),
@@ -165,7 +194,7 @@ export const getTask = (
 				actionUrl: taskUrls?.front_page_updated,
 			};
 			break;
-		case 'site_menu_updated':
+		case SITE_CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
 			taskData = {
 				timing: 10,
 				title: translate( 'Create a site menu' ),

@@ -17,9 +17,10 @@ import { preventWidows } from 'lib/formatting';
  */
 import './style.scss';
 
-const validTypeSizes = [ 54, 47, 36, 32, 24, 21, 16, 14, 11 ];
+//Sizes 47, 21, and 11 are deprecated; use the nearest equivalent
+const validTypeSizes = [ 54, 48, 47, 36, 32, 24, 21, 20, 16, 14, 12, 11 ];
 
-function CardHeading( { tagName = 'h1', size = 21, children } ) {
+function CardHeading( { tagName = 'h1', size = 20, children } ) {
 	const classNameObject = {};
 	classNameObject[ 'card-heading-' + size ] = includes( validTypeSizes, size );
 	const classes = classNames( 'card-heading', classNameObject );

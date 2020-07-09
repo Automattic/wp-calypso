@@ -8,16 +8,17 @@ import { isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
 import ImagePreloader from 'components/image-preloader';
-import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import Spinner from 'components/spinner';
 import { url } from 'lib/media/utils';
+import { fetchMediaItem } from 'state/media/thunks';
 
 export class ImageSelectorPreview extends Component {
 	static propTypes = {
@@ -80,7 +81,7 @@ export class ImageSelectorPreview extends Component {
 				id = parseInt( id, 10 );
 				const media = MediaStore.get( siteId, id );
 				if ( ! media ) {
-					MediaActions.fetch( siteId, id );
+					this.props.fetchMediaItem( siteId, id );
 				}
 			} );
 		} );
@@ -237,4 +238,4 @@ export class ImageSelectorPreview extends Component {
 	}
 }
 
-export default localize( ImageSelectorPreview );
+export default connect( null, { fetchMediaItem } )( localize( ImageSelectorPreview ) );

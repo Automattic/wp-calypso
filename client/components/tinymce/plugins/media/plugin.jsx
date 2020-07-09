@@ -31,7 +31,8 @@ import { getEditorRawContent, isEditorSaveBlocked } from 'state/editor/selectors
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
+import { fetchMediaItem } from 'state/media/thunks';
 
 /**
  * Module variables
@@ -414,7 +415,7 @@ function mediaButton( editor ) {
 	function initMediaModal() {
 		const selectedSite = getSelectedSiteFromState();
 		if ( selectedSite ) {
-			MediaActions.clearValidationErrors( selectedSite.ID );
+			dispatch( clearMediaItemErrors( selectedSite.ID ) );
 		}
 	}
 
@@ -481,7 +482,7 @@ function mediaButton( editor ) {
 			}
 			const image = MediaStore.get( siteId, imageId );
 
-			MediaActions.clearValidationErrors( siteId );
+			dispatch( clearMediaItemErrors( siteId ) );
 			renderModal(
 				{
 					visible: true,
@@ -718,7 +719,7 @@ function mediaButton( editor ) {
 
 			const media = MediaStore.get( selectedSite.ID, id );
 			if ( ! media ) {
-				MediaActions.fetch( selectedSite.ID, id );
+				store.dispatch( fetchMediaItem( selectedSite.ID, id ) );
 			}
 
 			return assign( { ID: id }, media );
@@ -781,7 +782,7 @@ function mediaButton( editor ) {
 			}
 
 			setTimeout( function () {
-				MediaActions.fetch( selectedSite.ID, parsed.media.ID );
+				store.dispatch( fetchMediaItem( selectedSite.ID, parsed.media.ID ) );
 			}, 0 );
 		} );
 	}

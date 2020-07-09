@@ -36,7 +36,7 @@ const LoadingContentWrapperUI = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	width: 100%;
 	box-sizing: border-box;
-	margin-bottom: ${ ( props ) => ( props.isLastStepActive ? '100px' : 0 ) };
+	margin-bottom: 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };

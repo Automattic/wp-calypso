@@ -44,7 +44,7 @@
 .reader-feed-header__site .reader-feed-header__site-title {
 	align-self: stretch;
 	font-family: $serif;
-	font-size: 21px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	max-height: 16px * 4;
 	overflow: hidden;

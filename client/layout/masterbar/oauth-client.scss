@@ -250,7 +250,7 @@
 			span {
 				background-color: transparent;
 				color: var( --color-text );
-				font-size: 20px;
+				font-size: $font-title-small;
 				font-weight: 600;
 			}
 		}
@@ -260,7 +260,7 @@
 
 			@include breakpoint-deprecated( '>660px' ) {
 				display: block;
-				font-size: 20px;
+				font-size: $font-title-small;
 				font-weight: 600;
 				margin: 0 0 30px;
 				text-align: center;
@@ -742,7 +742,7 @@
 	.login__form-header,
 	.signup-form__jetpack-cloud-wrapper h3 {
 		font-weight: 600;
-		font-size: 22px;
+		font-size: $font-title-small;
 		line-height: 32px;
 		margin-top: 16px;
 		margin-bottom: 8px;

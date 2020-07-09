@@ -75,7 +75,7 @@
 					font-size: 24px;
 				}
 				&.mobile-xl {
-					font-size: 20px;
+					font-size: $font-title-small;
 				}
 				&.mobile-xxl {
 					font-size: $font-body;
@@ -90,7 +90,7 @@
 					font-size: 24px;
 				}
 				&.desktop-xl {
-					font-size: 20px;
+					font-size: $font-title-small;
 				}
 				&.desktop-xxl {
 					font-size: $font-body;

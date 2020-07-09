@@ -148,7 +148,7 @@
 	clear: none;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 22px;
+		font-size: $font-title-small;
 		padding-right: 100px;
 	}
 }

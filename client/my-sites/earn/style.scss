@@ -7,3 +7,14 @@
 		width: auto;
 	}
 }
+
+.earn__placeholder-promo-card {
+    .promo-card:not( .is-primary ) {
+        & > * {
+            @include placeholder( --color-neutral-10 );
+            * {
+                visibility: hidden;
+            }
+        }
+    }
+}

@@ -70,8 +70,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 		initiatedInstalls: new Set< PluginSlug >(),
 	};
 
-	retries: number = 0;
-	tracksEventSent: boolean = false;
+	retries = 0;
+	tracksEventSent = false;
 
 	componentDidMount() {
 		this.requestInstallationStatus();

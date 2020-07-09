@@ -126,7 +126,6 @@
 }
 
 .reader-full-post__seen-button {
-	margin-right: 25px;
 	align-items: center;
 	box-sizing: border-box;
 	color: #646970;
@@ -136,6 +135,10 @@
 	padding: 4px;
 	position: relative;
 	user-select: none;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		top: 12px;
+	}
 }
 
 .reader-full-post__story {
@@ -354,7 +357,7 @@
 		height: 47px;
 		justify-content: flex-end;
 		position: fixed;
-		left: 0;
+		right: 60px;
 		top: 0;
 		width: 100%;
 		z-index: z-index( 'root', '.reader-full-post__sidebar-comment-like' );
@@ -362,8 +365,9 @@
 }
 
 .reader-full-post__sidebar .like-button {
+	margin-right: 18px;
+
 	@include breakpoint-deprecated( '<660px' ) {
-		margin-right: 60px;
 		top: 9px;
 	}
 

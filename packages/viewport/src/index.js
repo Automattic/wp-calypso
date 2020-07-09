@@ -33,7 +33,7 @@
 // - '<960px' is equivalent to `@media (max-width: 960px)`
 // - '480px-960px' is equivalent to `@media (max-width: 960px) and (min-width: 481px)`
 //
-// [1] https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines/css.md#media-queries
+// [1] https://github.com/Automattic/wp-calypso/blob/HEAD/docs/coding-guidelines/css.md#media-queries
 //
 
 // FIXME: We can't detect window size on the server, so until we have more intelligent detection,
