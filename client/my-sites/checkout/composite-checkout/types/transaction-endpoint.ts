@@ -25,8 +25,12 @@ export type WPCOMTransactionEndpoint = (
 export type WPCOMTransactionEndpointRequestPayload = {
 	cart: WPCOMTransactionEndpointCart;
 	payment: WPCOMTransactionEndpointPaymentDetails;
+<<<<<<< HEAD
 	domainDetails?: DomainContactDetails;
 	isWhiteGloveOffer: boolean;
+=======
+	domainDetails?: WPCOMTransactionEndpointDomainDetails;
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {
@@ -181,9 +185,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	cancelUrl?: string;
 	idealBank?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
-	const urlParams = new URLSearchParams( window.location.search );
-	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
-
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
 			siteId,
@@ -209,7 +210,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			cancelUrl,
 			idealBank,
 		},
-		isWhiteGloveOffer: isWhiteGlove,
 	};
 }
 

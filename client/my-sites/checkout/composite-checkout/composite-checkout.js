@@ -120,8 +120,11 @@ export default function CompositeCheckout( {
 	purchaseId,
 	cart,
 	couponCode: couponCodeFromUrl,
+<<<<<<< HEAD
 	isWhiteGloveOffer,
 	isComingFromUpsell,
+=======
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -226,8 +229,11 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
+<<<<<<< HEAD
 		isWhiteGloveOffer,
 		hideNudge,
+=======
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 	} );
 
 	const moment = useLocalizedMoment();
@@ -546,8 +552,7 @@ export default function CompositeCheckout( {
 				),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) =>
-				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
+			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
 		} ),
 		[ couponItem, getThankYouUrl, isWhiteGloveOffer, siteSlug ]
 	);
@@ -572,6 +577,7 @@ export default function CompositeCheckout( {
 			<QueryStoredCards />
 
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+<<<<<<< HEAD
 			<CartProvider cart={ responseCart }>
 				<CheckoutProvider
 					items={ itemsForCheckout }
@@ -614,6 +620,48 @@ export default function CompositeCheckout( {
 					/>
 				</CheckoutProvider>
 			</CartProvider>
+=======
+			<CheckoutProvider
+				locale={ 'en-us' }
+				items={ itemsForCheckout }
+				total={ total }
+				onPaymentComplete={ onPaymentComplete }
+				showErrorMessage={ showErrorMessage }
+				showInfoMessage={ showInfoMessage }
+				showSuccessMessage={ showSuccessMessage }
+				onEvent={ recordEvent }
+				paymentMethods={ paymentMethods }
+				paymentProcessors={ paymentProcessors }
+				registry={ defaultRegistry }
+				isLoading={
+					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
+				}
+				isValidating={ isCartPendingUpdate }
+			>
+				<WPCheckout
+					removeItem={ removeItem }
+					updateLocation={ updateLocation }
+					submitCoupon={ submitCoupon }
+					removeCoupon={ removeCoupon }
+					couponStatus={ couponStatus }
+					changePlanLength={ changeItemVariant }
+					siteId={ siteId }
+					siteUrl={ siteSlug }
+					CountrySelectMenu={ CountrySelectMenu }
+					countriesList={ countriesList }
+					StateSelect={ StateSelect }
+					renderDomainContactFields={ renderDomainContactFields }
+					variantSelectOverride={ variantSelectOverride }
+					getItemVariants={ getItemVariants }
+					responseCart={ responseCart }
+					addItemToCart={ addItemWithEssentialProperties }
+					subtotal={ subtotal }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					CheckoutTerms={ CheckoutTerms }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+				/>
+			</CheckoutProvider>
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 		</React.Fragment>
 	);
 }

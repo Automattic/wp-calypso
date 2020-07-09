@@ -85,8 +85,11 @@ class CheckoutContainer extends React.Component {
 			clearTransaction,
 			isComingFromGutenboarding,
 			isGutenboardingCreate,
+<<<<<<< HEAD
 			isWhiteGloveOffer,
 			isComingFromUpsell,
+=======
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -123,7 +126,6 @@ class CheckoutContainer extends React.Component {
 							upgradeIntent={ upgradeIntent }
 							hideNudge={ isComingFromGutenboarding || isComingFromUpsell }
 							returnToBlockEditor={ isComingFromGutenboarding || isGutenboardingCreate }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
 						>
 							{ this.props.children }
 						</Checkout>
@@ -131,10 +133,7 @@ class CheckoutContainer extends React.Component {
 
 					{ shouldShowCart && (
 						<CartData>
-							<SecondaryCart
-								selectedSite={ selectedSite }
-								isWhiteGloveOffer={ isWhiteGloveOffer }
-							/>
+							<SecondaryCart selectedSite={ selectedSite } />
 						</CartData>
 					) }
 				</div>

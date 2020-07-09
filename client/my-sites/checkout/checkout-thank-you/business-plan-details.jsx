@@ -32,6 +32,7 @@ function trackOnboardingButtonClick() {
 	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
+<<<<<<< HEAD
 const BusinessPlanDetails = ( {
 	selectedSite,
 	sitePlans,
@@ -43,14 +44,11 @@ const BusinessPlanDetails = ( {
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
 	);
 
+=======
+const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 	const plan = find( sitePlans.data, isBusiness );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
-	const whiteGloveQuickStartDescription =
-		'white-glove' === displayMode
-			? 'Schedule a one-on-one session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
-			: i18n.translate(
-					'Schedule a Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
-			  );
 
 	return (
 		<div>
@@ -77,7 +75,10 @@ const BusinessPlanDetails = ( {
 			<PurchaseDetail
 				icon={ <img alt="" src={ conciergeImage } /> }
 				title={ i18n.translate( 'Get personalized help' ) }
-				description={ whiteGloveQuickStartDescription }
+				description={ i18n.translate(
+					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
+						'your site and learn more about WordPress.com.'
+				) }
 				buttonText={ i18n.translate( 'Schedule a session' ) }
 				href={ `/me/concierge/${ selectedSite.slug }/book` }
 				onClick={ trackOnboardingButtonClick }

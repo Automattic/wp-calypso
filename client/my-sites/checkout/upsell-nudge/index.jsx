@@ -34,9 +34,7 @@ import {
 import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
 import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
-import { WhiteGlove } from './white-glove';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
-import { addQueryArgs } from 'lib/url';
 
 /**
  * Style dependencies
@@ -165,22 +163,10 @@ export class UpsellNudge extends React.Component {
 						handleClickDecline={ this.handleClickDecline }
 					/>
 				);
-
-			case 'white-glove':
-				return (
-					<WhiteGlove
-						currencyCode={ currencyCode }
-						planRawPrice={ planRawPrice }
-						translate={ translate }
-						isLoggedIn={ isLoggedIn }
-						siteSlug={ siteSlug }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-					/>
-				);
 		}
 	}
 
+<<<<<<< HEAD
 	getUrl( url, args ) {
 		return addQueryArgs(
 			{
@@ -191,6 +177,9 @@ export class UpsellNudge extends React.Component {
 	}
 
 	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
+=======
+	handleClickDecline = () => {
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
@@ -198,14 +187,14 @@ export class UpsellNudge extends React.Component {
 	};
 
 	handleClickAccept = ( buttonAction ) => {
-		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem, extra } = this.props;
+		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 
 		return siteSlug
-			? page( this.getUrl( `/checkout/${ upgradeItem }/${ siteSlug }`, extra ) )
+			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
 			: page( `/checkout/${ upgradeItem }` );
 	};
 }

@@ -49,10 +49,13 @@ export function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
+<<<<<<< HEAD
 	isWhiteGloveOffer,
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
+=======
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 } ) {
 	debug( 'starting getThankYouPageUrl' );
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
@@ -154,9 +157,7 @@ export function getThankYouPageUrl( {
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
-	const displayModeParam = isWhiteGloveOffer
-		? { d: 'white-glove' }
-		: getDisplayModeParamFromCart( cart );
+	const displayModeParam = getDisplayModeParamFromCart( cart );
 	if ( isEligibleForSignupDestinationResult && signupDestination ) {
 		debug( 'is elligible for signup destination', signupDestination );
 		return getUrlWithQueryParam( signupDestination, displayModeParam );
@@ -344,8 +345,11 @@ export function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	product,
 	siteId,
+<<<<<<< HEAD
 	isWhiteGloveOffer,
 	hideNudge,
+=======
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 } ) {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
@@ -389,10 +393,13 @@ export function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			product,
 			isEligibleForSignupDestinationResult,
+<<<<<<< HEAD
 			isWhiteGloveOffer,
 			hideNudge,
 			didPurchaseFail,
 			isTransactionResultEmpty,
+=======
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 		} );
 		debug( 'getThankYouUrl returned', url );
 		return url;

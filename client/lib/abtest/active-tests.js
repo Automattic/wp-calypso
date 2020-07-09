@@ -138,6 +138,7 @@ export default {
 		localeTargets: 'any',
 		allowExistingUsers: true,
 	},
+<<<<<<< HEAD
 	whiteGloveUpsell: {
 		datestamp: '20200623',
 		variations: {
@@ -167,4 +168,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+=======
+>>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 };
