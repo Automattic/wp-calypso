@@ -206,6 +206,7 @@ const BlockFramePreview = ( {
 				title={ __( 'Preview', 'full-site-editing' ) }
 				className={ classnames( 'editor-styles-wrapper', className ) }
 				style={ style }
+				tabIndex={ -1 }
 			>
 				{ iframeRef.current?.contentDocument?.body &&
 					createPortal(

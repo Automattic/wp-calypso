@@ -58,13 +58,9 @@ class PageTemplateModal extends Component {
 		const blocksByTemplateSlugs = reduce(
 			templates,
 			( prev, { slug, content } ) => {
-				if ( slug === 'current' ) {
-					prev[ slug ] = this.props.currentBlocks;
-				} else {
-					prev[ slug ] = content
-						? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
-						: [];
-				}
+				prev[ slug ] = content
+					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
+					: [];
 				return prev;
 			},
 			{}
@@ -333,12 +329,21 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		// The raw `templates` prop is not filtered to remove Templates that
-		// contain missing Blocks. Therefore we compare with the keys of the
-		// filtered templates from `getBlocksByTemplateSlugs()` and filter this
-		// list to match. This ensures that the list of Template thumbnails is
-		// filtered so that it does not include Templates that have missing Blocks.
-		const blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
+		let blocksByTemplateSlug;
+		const isCurrentPreview = templatesList[ 0 ]?.slug === 'current';
+
+		if ( isCurrentPreview ) {
+			blocksByTemplateSlug = {
+				current: this.props.currentBlocks,
+			};
+		} else {
+			// The raw `templates` prop is not filtered to remove Templates that
+			// contain missing Blocks. Therefore we compare with the keys of the
+			// filtered templates from `getBlocksByTemplateSlugs()` and filter this
+			// list to match. This ensures that the list of Template thumbnails is
+			// filtered so that it does not include Templates that have missing Blocks.
+			blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
+		}
 		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
 		const filterOutTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
@@ -354,7 +359,6 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		const isCurrentPreview = templatesList[ 0 ]?.slug === 'current';
 		// Skip rendering current preview if there is no page content.
 		if ( isCurrentPreview && ! blocksByTemplateSlug.current?.length ) {
 			return null;
