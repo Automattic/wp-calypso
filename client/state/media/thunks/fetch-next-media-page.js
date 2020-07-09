@@ -18,7 +18,7 @@ const debug = debugFactory( 'calypso:media' );
  *
  * @param {number} siteId site identifier
  */
-export const fetchNextPage = ( siteId ) => ( dispatch, getState ) => {
+export const fetchNextMediaPage = ( siteId ) => ( dispatch, getState ) => {
 	if ( isFetchingNextPage( getState(), siteId ) ) {
 		return;
 	}

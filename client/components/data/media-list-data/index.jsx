@@ -14,7 +14,7 @@ import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import passToChildren from 'lib/react-pass-to-children';
 import utils from './utils';
-import { fetchNextPage } from 'state/media/thunks';
+import { fetchNextMediaPage } from 'state/media/thunks';
 
 function getStateData( siteId ) {
 	return {
@@ -89,7 +89,7 @@ export class MediaListData extends React.Component {
 	};
 
 	fetchData = () => {
-		this.props.fetchNextPage( this.props.siteId );
+		this.props.fetchNextMediaPage( this.props.siteId );
 	};
 
 	updateStateData = () => {
@@ -106,4 +106,4 @@ export class MediaListData extends React.Component {
 	}
 }
 
-export default connect( null, { fetchNextPage } )( MediaListData );
+export default connect( null, { fetchNextMediaPage } )( MediaListData );
