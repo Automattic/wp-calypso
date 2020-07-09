@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
-import { CardCvcElement, CardExpiryElement } from 'react-stripe-elements';
+import { CardCvcElement } from 'react-stripe-elements';
 import { useEvents, useSelect, useDispatch } from '@automattic/composite-checkout';
 
 /**
@@ -19,6 +19,7 @@ import Spinner from 'my-sites/checkout/composite-checkout/wpcom/components/spinn
 import { isValid } from 'my-sites/checkout/composite-checkout/wpcom/types';
 import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
+import CreditCardExpiryField from './credit-card-expiry-field';
 import {
 	GridRow,
 	FieldRow,
@@ -38,7 +39,7 @@ export default function CreditCardFields() {
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
-	const { cardCvc: cardCvcError, cardExpiry: cardExpiryError } = useSelect( ( select ) =>
+	const { cardCvc: cardCvcError } = useSelect( ( select ) =>
 		select( 'credit-card' ).getCardDataErrors()
 	);
 	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
@@ -145,18 +146,14 @@ export default function CreditCardFields() {
 
 					<FieldRow gap="4%" columnWidths="48% 48%">
 						<LeftColumn>
-							<Label>
-								<LabelText>{ __( 'Expiry date' ) }</LabelText>
-								<StripeFieldWrapper className="expiration-date" hasError={ cardExpiryError }>
-									<CardExpiryElement
-										style={ stripeElementStyle }
-										onChange={ ( input ) => {
-											handleStripeFieldChange( input );
-										} }
-									/>
-								</StripeFieldWrapper>
-								{ cardExpiryError && <StripeErrorMessage>{ cardExpiryError }</StripeErrorMessage> }
-							</Label>
+							<CreditCardExpiryField
+								handleStripeFieldChange={ handleStripeFieldChange }
+								stripeElementStyle={ stripeElementStyle }
+								countryCode={ getFieldValue( 'countryCode' ) }
+								getErrorMessagesForField={ getErrorMessagesForField }
+								setFieldValue={ setFieldValue }
+								getFieldValue={ getFieldValue }
+							/>
 						</LeftColumn>
 						<RightColumn>
 							<Label>
