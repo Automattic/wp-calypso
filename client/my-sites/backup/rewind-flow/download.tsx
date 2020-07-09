@@ -77,6 +77,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const isDownloadInfoRequestComplete = downloadInfoRequest?.hasLoaded;
 	const isOtherDownloadInfo = downloadRewindId !== rewindId;
 	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== undefined;
+	const isDownloadURLNotReady = downloadUrl === undefined || downloadUrl === '';
 
 	const renderConfirm = () => (
 		<>
@@ -241,15 +242,15 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			return <Loading />;
 		} else if (
 			isOtherDownloadInfo ||
-			( downloadProgress === undefined && downloadUrl === undefined )
+			( downloadProgress === undefined && isDownloadURLNotReady )
 		) {
 			return renderConfirm();
-		} else if ( downloadProgress !== undefined && downloadUrl === undefined ) {
+		} else if ( downloadProgress !== undefined && isDownloadURLNotReady ) {
 			if ( ! userRequestedDownload ) {
 				setUserRequestedDownload( true );
 			}
 			return renderInProgress( downloadProgress );
-		} else if ( downloadUrl !== undefined ) {
+		} else if ( ! isDownloadURLNotReady ) {
 			return renderReady();
 		}
 		return renderError();
