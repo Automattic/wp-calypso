@@ -10,11 +10,13 @@ import { useSelector } from 'react-redux';
  */
 import { addQueryArgs } from '@wordpress/url';
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { preventWidows } from 'lib/formatting';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
+import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PromoCard from 'components/promo-section/promo-card';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -31,6 +33,8 @@ const trackEventName = 'calypso_jetpack_backup_upsell';
 export default function WPCOMUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, trackEventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 
 	return (
 		<Main className="backup__main backup__wpcom-upsell">
@@ -58,29 +62,39 @@ export default function WPCOMUpsellPage(): ReactElement {
 					) }
 				</p>
 
-				<div className="backup__wpcom-ctas">
-					<Button
-						className="backup__wpcom-cta backup__wpcom-realtime-cta"
-						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_realtime`, {
-							redirect_to: window.location.href,
-						} ) }
-						onClick={ onUpgradeClick }
-						selfTarget={ true }
-						primary
-					>
-						{ translate( 'Get real-time backups' ) }
-					</Button>
-					<Button
-						className="backup__wpcom-cta backup__wpcom-daily-cta"
-						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_daily`, {
-							redirect_to: window.location.href,
-						} ) }
-						onClick={ onUpgradeClick }
-						selfTarget={ true }
-					>
-						{ translate( 'Get daily backups' ) }
-					</Button>
-				</div>
+				{ ! isAdmin && (
+					<Notice
+						status="is-warning"
+						text={ translate( 'Only site administrators can upgrade to access Backup.' ) }
+						showDismiss={ false }
+					/>
+				) }
+
+				{ isAdmin && (
+					<div className="backup__wpcom-ctas">
+						<Button
+							className="backup__wpcom-cta backup__wpcom-realtime-cta"
+							href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_realtime`, {
+								redirect_to: window.location.href,
+							} ) }
+							onClick={ onUpgradeClick }
+							selfTarget={ true }
+							primary
+						>
+							{ translate( 'Get real-time backups' ) }
+						</Button>
+						<Button
+							className="backup__wpcom-cta backup__wpcom-daily-cta"
+							href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_daily`, {
+								redirect_to: window.location.href,
+							} ) }
+							onClick={ onUpgradeClick }
+							selfTarget={ true }
+						>
+							{ translate( 'Get daily backups' ) }
+						</Button>
+					</div>
+				) }
 			</PromoCard>
 		</Main>
 	);

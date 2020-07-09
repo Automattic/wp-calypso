@@ -26,6 +26,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
 import BackupPlaceholder from 'components/jetpack/backup-placeholder';
+import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';
 import BackupDelta from 'components/jetpack/backup-delta';
 import DailyBackupStatus from 'components/jetpack/daily-backup-status';
@@ -40,6 +41,7 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import ActivityCardList from 'components/activity-card-list';
+import canCurrentUser from 'state/selectors/can-current-user';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
@@ -256,8 +258,22 @@ class BackupsPage extends Component {
 		);
 	}
 
+	renderContent() {
+		const { isAdmin, isEmptyFilter, translate } = this.props;
+
+		if ( ! isAdmin ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/illustration-404.svg"
+					title={ translate( 'You are not authorized to view this page' ) }
+				/>
+			);
+		}
+
+		return isEmptyFilter ? this.renderMain() : this.renderBackupSearch();
+	}
+
 	render() {
-		const { isEmptyFilter } = this.props;
 		return (
 			<div
 				className={ classNames( 'backup__page', {
@@ -273,8 +289,7 @@ class BackupsPage extends Component {
 					{ ! isJetpackCloud() && (
 						<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
 					) }
-
-					{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
+					{ this.renderContent() }
 				</Main>
 			</div>
 		);
@@ -372,6 +387,7 @@ const mapStateToProps = ( state ) => {
 		allowRestore,
 		doesRewindNeedCredentials,
 		filter,
+		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 		isEmptyFilter: getIsEmptyFilter( filter ),
 		siteCapabilities,
 		logs: logs?.data ?? [],

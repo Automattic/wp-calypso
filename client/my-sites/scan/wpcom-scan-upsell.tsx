@@ -9,10 +9,12 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
+import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCTA from 'components/promo-section/promo-card/cta';
@@ -28,6 +30,8 @@ import './style.scss';
 export default function WPCOMScanUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 
 	return (
 		<Main className="scan scan__wpcom-upsell">
@@ -53,18 +57,29 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 							'to keep your site ahead of security threats.'
 					) }
 				</p>
-				<PromoCardCTA
-					cta={ {
-						text: translate( 'Get daily scanning' ),
-						action: {
-							url: addQueryArgs( `/checkout/${ siteSlug }/jetpack_scan`, {
-								redirect_to: window.location.href,
-							} ),
-							onClick: onUpgradeClick,
-							selfTarget: true,
-						},
-					} }
-				/>
+
+				{ ! isAdmin && (
+					<Notice
+						status="is-warning"
+						text={ translate( 'Only site administrators can upgrade to access daily scanning.' ) }
+						showDismiss={ false }
+					/>
+				) }
+
+				{ isAdmin && (
+					<PromoCardCTA
+						cta={ {
+							text: translate( 'Get daily scanning' ),
+							action: {
+								url: addQueryArgs( `/checkout/${ siteSlug }/jetpack_scan`, {
+									redirect_to: window.location.href,
+								} ),
+								onClick: onUpgradeClick,
+								selfTarget: true,
+							},
+						} }
+					/>
+				) }
 			</PromoCard>
 		</Main>
 	);
