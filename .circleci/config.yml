@@ -881,9 +881,9 @@ workflows:
   wp-desktop:
     jobs:
       - wp-desktop-source
-      - wp-desktop-mac:
-          requires:
-            - wp-desktop-source
+      # - wp-desktop-mac:
+      #     requires:
+      #       - wp-desktop-source
       - wp-desktop-linux:
           requires:
             - wp-desktop-source
