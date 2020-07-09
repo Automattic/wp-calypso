@@ -44,11 +44,10 @@ jest.mock( 'lib/redux-bridge', () => ( {
 } ) );
 
 describe( 'MediaActions', () => {
-	let MediaActions, sandbox, Dispatcher, MediaListStore, savedCreateObjectURL;
+	let MediaActions, sandbox, Dispatcher, savedCreateObjectURL;
 
 	beforeAll( function () {
 		Dispatcher = require( 'dispatcher' );
-		MediaListStore = require( '../list-store' );
 		MediaActions = require( '../actions' );
 	} );
 
@@ -86,53 +85,6 @@ describe( 'MediaActions', () => {
 				type: 'SET_MEDIA_QUERY',
 				siteId: DUMMY_SITE_ID,
 				query: DUMMY_QUERY,
-			} );
-		} );
-	} );
-
-	describe( '#fetchNextPage()', () => {
-		test( 'should call to the internal WordPress.com REST API', () => {
-			return new Promise( ( done ) => {
-				const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
-
-				MediaActions.fetchNextPage( DUMMY_SITE_ID );
-
-				expect( stubs.mediaList ).to.have.been.calledOn( DUMMY_SITE_ID );
-				process.nextTick( function () {
-					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-						type: 'RECEIVE_MEDIA_ITEMS',
-						error: null,
-						siteId: DUMMY_SITE_ID,
-						data: DUMMY_API_RESPONSE,
-						query: query,
-					} );
-
-					done();
-				} );
-			} );
-		} );
-
-		test( 'should call to the external WordPress.com REST API', () => {
-			return new Promise( ( done ) => {
-				MediaListStore._activeQueries[ DUMMY_SITE_ID ] = { query: { source: 'external' } };
-
-				const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
-
-				MediaActions.fetchNextPage( DUMMY_SITE_ID );
-
-				expect( stubs.mediaListExternal ).to.have.been.calledWithMatch( { source: 'external' } );
-
-				process.nextTick( function () {
-					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-						type: 'RECEIVE_MEDIA_ITEMS',
-						error: null,
-						siteId: DUMMY_SITE_ID,
-						data: DUMMY_API_RESPONSE,
-						query: query,
-					} );
-
-					done();
-				} );
 			} );
 		} );
 	} );

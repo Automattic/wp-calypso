@@ -8,6 +8,7 @@ import Gridicon from 'components/gridicon';
 import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import { Card, Button } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
-import { addExternalMedia } from 'state/media/thunks';
+import { addExternalMedia, fetchNextPage } from 'state/media/thunks';
 
 const DEBOUNCE_TIME = 250;
 
@@ -91,7 +92,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		const { ID } = this.props.site;
 
 		MediaActions.sourceChanged( ID );
-		MediaActions.fetchNextPage( ID );
+		this.props.fetchNextPage( ID );
 	}
 
 	onCopy = () => {
@@ -159,4 +160,6 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 }
 
-export default connect( null, { addExternalMedia } )( localize( MediaLibraryExternalHeader ) );
+export default connect( null, { addExternalMedia, fetchNextPage } )(
+	localize( MediaLibraryExternalHeader )
+);

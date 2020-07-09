@@ -9,16 +9,9 @@ const debug = debugFactory( 'calypso:media' );
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
 import MediaStore from './store';
-import MediaListStore from './list-store';
-import {
-	changeMediaSource,
-	failMediaRequest,
-	receiveMedia,
-	successMediaRequest,
-} from 'state/media/actions';
+import { changeMediaSource } from 'state/media/actions';
 
 /**
  * @typedef IMediaActions
@@ -41,43 +34,6 @@ MediaActions.setQuery = function ( siteId, query ) {
 		siteId: siteId,
 		query: query,
 	} );
-};
-
-MediaActions.fetchNextPage = function ( siteId ) {
-	if ( MediaListStore.isFetchingNextPage( siteId ) ) {
-		return;
-	}
-
-	Dispatcher.handleViewAction( {
-		type: 'FETCH_MEDIA_ITEMS',
-		siteId: siteId,
-	} );
-
-	const query = MediaListStore.getNextPageQuery( siteId );
-
-	const mediaReceived = ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_MEDIA_ITEMS',
-			error: error,
-			siteId: siteId,
-			data: data,
-			query: query,
-		} );
-		if ( error ) {
-			reduxDispatch( failMediaRequest( siteId, query, error ) );
-		} else {
-			reduxDispatch( successMediaRequest( siteId, query ) );
-			reduxDispatch( receiveMedia( siteId, data.media, data.found, query ) );
-		}
-	};
-
-	debug( 'Fetching media for %d using query %o', siteId, query );
-
-	if ( ! query.source ) {
-		wpcom.site( siteId ).mediaList( query, mediaReceived );
-	} else {
-		wpcom.undocumented().externalMediaList( query, mediaReceived );
-	}
 };
 
 MediaActions.edit = function ( siteId, item ) {
