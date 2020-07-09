@@ -113,7 +113,6 @@ export default function CheckoutSystemDecider( {
 
 	if ( 'composite-checkout' === checkoutVariant ) {
 		return (
-<<<<<<< HEAD
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
@@ -129,26 +128,10 @@ export default function CheckoutSystemDecider( {
 						feature={ selectedFeature }
 						plan={ plan }
 						cart={ cart }
-						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isComingFromUpsell={ isComingFromUpsell }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>
-=======
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-				<CompositeCheckout
-					siteSlug={ selectedSite?.slug }
-					siteId={ selectedSite?.ID }
-					product={ product }
-					purchaseId={ purchaseId }
-					couponCode={ couponCode }
-					redirectTo={ redirectTo }
-					feature={ selectedFeature }
-					plan={ plan }
-					cart={ cart }
-				/>
-			</StripeHookProvider>
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 		);
 	}
 

@@ -32,7 +32,6 @@ function trackOnboardingButtonClick() {
 	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
-<<<<<<< HEAD
 const BusinessPlanDetails = ( {
 	selectedSite,
 	sitePlans,
@@ -44,9 +43,6 @@ const BusinessPlanDetails = ( {
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
 	);
 
-=======
-const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 	const plan = find( sitePlans.data, isBusiness );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 

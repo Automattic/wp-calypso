@@ -19,11 +19,8 @@ import { useTranslate } from 'i18n-calypso';
 import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
-<<<<<<< HEAD
 import { isBusinessPlan } from 'lib/plans';
 import { isGSuiteProductSlug } from 'lib/gsuite';
-=======
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -58,17 +55,11 @@ function WPLineItem( {
 	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
 	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
 
-<<<<<<< HEAD
 	const productSlug = item.wpcom_meta?.product_slug;
 	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
-	const productName =
-		isBusinessPlanProduct && isWhiteGloveOffer
-			? `${ item.label } (with Expert guidance)`
-			: item.label;
+	const productName = isBusinessPlanProduct ? `${ item.label } (with Expert guidance)` : item.label;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-=======
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -302,11 +293,7 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-<<<<<<< HEAD
-	isWhiteGloveOffer,
-=======
 	couponStatus,
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>

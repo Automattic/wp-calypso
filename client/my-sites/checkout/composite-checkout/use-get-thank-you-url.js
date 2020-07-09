@@ -49,13 +49,9 @@ export function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
-<<<<<<< HEAD
-	isWhiteGloveOffer,
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
-=======
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 } ) {
 	debug( 'starting getThankYouPageUrl' );
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
@@ -345,11 +341,7 @@ export function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	product,
 	siteId,
-<<<<<<< HEAD
-	isWhiteGloveOffer,
 	hideNudge,
-=======
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 } ) {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
@@ -393,13 +385,9 @@ export function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			product,
 			isEligibleForSignupDestinationResult,
-<<<<<<< HEAD
-			isWhiteGloveOffer,
 			hideNudge,
 			didPurchaseFail,
 			isTransactionResultEmpty,
-=======
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 		} );
 		debug( 'getThankYouUrl returned', url );
 		return url;
@@ -413,7 +401,6 @@ export function useGetThankYouUrl( {
 		feature,
 		purchaseId,
 		cart,
-		isWhiteGloveOffer,
 		hideNudge,
 	] );
 	return getThankYouUrl;

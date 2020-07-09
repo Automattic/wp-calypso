@@ -85,11 +85,7 @@ class CheckoutContainer extends React.Component {
 			clearTransaction,
 			isComingFromGutenboarding,
 			isGutenboardingCreate,
-<<<<<<< HEAD
-			isWhiteGloveOffer,
 			isComingFromUpsell,
-=======
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;

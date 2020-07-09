@@ -166,20 +166,7 @@ export class UpsellNudge extends React.Component {
 		}
 	}
 
-<<<<<<< HEAD
-	getUrl( url, args ) {
-		return addQueryArgs(
-			{
-				...args,
-			},
-			url
-		);
-	}
-
 	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
-=======
-	handleClickDecline = () => {
->>>>>>> parent of f9bd012961... Create white glove AB test (#42783)
 		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
