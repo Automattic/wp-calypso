@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes } from 'lodash';
@@ -30,31 +30,36 @@ import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
  */
 const debug = debugFactory( 'calypso:inline-help' );
 
-class InlineHelpSearchCard extends Component {
-	static propTypes = {
-		onSelect: PropTypes.func.isRequired,
-		translate: PropTypes.func,
-		track: PropTypes.func,
-		query: PropTypes.string,
-		placeholder: PropTypes.string,
-		location: PropTypes.string,
-		selectedResult: PropTypes.object,
-	};
+const InlineHelpSearchCard = ( {
+	setPreviousResult,
+	setNextResult,
+	selectedResultIndex,
+	selectedResult = {},
+	query = '',
+	onSelect,
+	track,
+	location = 'inline-help-popover',
+	setSearchQuery,
+	isSearching,
+	placeholder,
+	translate = identity,
+} ) => {
+	const cardRef = useRef();
 
-	static defaultProps = {
-		translate: identity,
-		query: '',
-		location: 'inline-help-popover',
-		selectedResult: {},
-	};
+	// Focus in the input element.
+	useEffect( () => {
+		const inputElement = cardRef.current?.searchInput;
+		// Focuses only in the popover.
+		if ( location !== 'inline-help-popover' || ! inputElement ) {
+			return;
+		}
 
-	constructor() {
-		super( ...arguments );
+		const timerId = setTimeout( () => inputElement.focus(), 0 );
 
-		this.searchHelperHandler = this.searchHelperHandler.bind( this );
-	}
+		return () => window.clearTimeout( timerId );
+	}, [ cardRef, location ] );
 
-	onKeyDown = ( event ) => {
+	const onKeyDown = ( event ) => {
 		// ignore keyboard access when manipulating a text selection in input etc.
 		if ( event.getModifierState( 'Shift' ) ) {
 			return;
@@ -68,14 +73,12 @@ class InlineHelpSearchCard extends Component {
 
 		switch ( event.key ) {
 			case 'ArrowUp':
-				this.props.selectPreviousResult();
+				setPreviousResult();
 				break;
 			case 'ArrowDown':
-				this.props.selectNextResult();
+				setNextResult();
 				break;
 			case 'Enter': {
-				const { selectedResultIndex, selectedResult, query, onSelect, track } = this.props;
-
 				// check and catch admin section links.
 				const { support_type: supportType, link } = selectedResult;
 				if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
@@ -102,34 +105,43 @@ class InlineHelpSearchCard extends Component {
 		}
 	};
 
-	searchHelperHandler = ( searchQuery ) => {
-		const query = searchQuery.trim();
+	const searchHelperHandler = ( searchQuery ) => {
+		const inputQuery = searchQuery.trim();
 
-		if ( query?.length ) {
+		if ( inputQuery?.length ) {
 			debug( 'search query received: ', searchQuery );
-			this.props.track( 'calypso_inlinehelp_search', {
+			track( 'calypso_inlinehelp_search', {
 				search_query: searchQuery,
-				location: this.props.location,
+				location: location,
 			} );
 		}
 
 		// Set the query search
-		this.props.setInlineHelpSearchQuery( searchQuery );
+		setSearchQuery( searchQuery );
 	};
 
-	render() {
-		return (
-			<SearchCard
-				searching={ this.props.isSearching }
-				initialValue={ this.props.query }
-				onSearch={ this.searchHelperHandler }
-				onKeyDown={ this.onKeyDown }
-				placeholder={ this.props.placeholder || this.props.translate( 'Search for help…' ) }
-				delaySearch={ true }
-			/>
-		);
-	}
-}
+	return (
+		<SearchCard
+			ref={ cardRef }
+			searching={ isSearching }
+			initialValue={ query }
+			onSearch={ searchHelperHandler }
+			onKeyDown={ onKeyDown }
+			placeholder={ placeholder || translate( 'Search for help…' ) }
+			delaySearch={ true }
+		/>
+	);
+};
+
+InlineHelpSearchCard.propTypes = {
+	onSelect: PropTypes.func.isRequired,
+	translate: PropTypes.func,
+	track: PropTypes.func,
+	query: PropTypes.string,
+	placeholder: PropTypes.string,
+	location: PropTypes.string,
+	selectedResult: PropTypes.object,
+};
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
@@ -139,9 +151,9 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 const mapDispatchToProps = {
 	track: recordTracksEvent,
-	setInlineHelpSearchQuery,
-	selectNextResult,
-	selectPreviousResult,
+	setSearchQuery: setInlineHelpSearchQuery,
+	setNextResult: selectNextResult,
+	setPreviousResult: selectPreviousResult,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );
