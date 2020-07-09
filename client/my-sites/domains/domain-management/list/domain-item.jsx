@@ -230,7 +230,7 @@ class DomainItem extends PureComponent {
 			);
 		}
 
-		if ( ! isManagingAllSites && domainDetails.isWPCOMDomain ) {
+		if ( domainDetails.isWPCOMDomain ) {
 			return (
 				<div className="domain-item__meta">
 					{ translate( 'Free site address' ) }
