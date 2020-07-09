@@ -785,6 +785,7 @@ jobs:
 
                   # $env:CSC_KEY_PASSWORD=$env:WIN_CSC_KEY_PASSWORD
 
+                  $env:ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName="Automattic, Inc."'
                   yarn run build-desktop:app
       - run:
           name: Archive Unpacked Directories
