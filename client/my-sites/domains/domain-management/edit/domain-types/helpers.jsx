@@ -33,12 +33,6 @@ function DomainExpiryOrRenewal( { domain, isLoadingPurchase, moment, purchase, t
 
 	if ( domain.type === domainTypes.MAPPED && ! domain.expiry ) {
 		text = translate( 'Expires: Never' );
-	} else if ( domain.type === domainTypes.MAPPED && domain.bundledPlanSubscriptionId ) {
-		text = translate( 'Expires with your plan on %(expiry_date)s', {
-			args: {
-				expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-			},
-		} );
 	} else if ( domain.expired ) {
 		text = translate( 'Expired: %(expiry_date)s', {
 			args: {
@@ -52,9 +46,23 @@ function DomainExpiryOrRenewal( { domain, isLoadingPurchase, moment, purchase, t
 		! isExpiring( purchase ) &&
 		! shouldRenderExpiringCreditCard( purchase )
 	) {
-		text = translate( 'Renews: %(renewal_date)s', {
+		if ( domain.type === domainTypes.MAPPED && domain.bundledPlanSubscriptionId ) {
+			text = translate( 'Renews with your plan on %(renewal_date)s', {
+				args: {
+					renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
+				},
+			} );
+		} else {
+			text = translate( 'Renews: %(renewal_date)s', {
+				args: {
+					renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
+				},
+			} );
+		}
+	} else if ( domain.type === domainTypes.MAPPED && domain.bundledPlanSubscriptionId ) {
+		text = translate( 'Expires with your plan on %(expiry_date)s', {
 			args: {
-				renewal_date: moment.utc( domain.autoRenewalDate ).format( 'LL' ),
+				expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
 			},
 		} );
 	} else {
