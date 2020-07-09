@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
-import { CardCvcElement } from 'react-stripe-elements';
 import { useEvents, useSelect, useDispatch } from '@automattic/composite-checkout';
 
 /**
@@ -20,17 +19,14 @@ import { isValid } from 'my-sites/checkout/composite-checkout/wpcom/types';
 import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
+import CreditCardCvvField from './credit-card-cvv-field';
 import {
-	GridRow,
 	FieldRow,
 	Label,
 	LabelText,
-	StripeFieldWrapper,
-	StripeErrorMessage,
 	CreditCardFieldsWrapper,
 	CreditCardField,
 } from './form-layout-components';
-import CVVImage from './cvv-image';
 import CreditCardLoading from './credit-card-loading';
 
 export default function CreditCardFields() {
@@ -39,9 +35,6 @@ export default function CreditCardFields() {
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
-	const { cardCvc: cardCvcError } = useSelect( ( select ) =>
-		select( 'credit-card' ).getCardDataErrors()
-	);
 	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
@@ -156,25 +149,14 @@ export default function CreditCardFields() {
 							/>
 						</LeftColumn>
 						<RightColumn>
-							<Label>
-								<LabelText>{ __( 'Security code' ) }</LabelText>
-								<GridRow gap="4%" columnWidths="67% 29%">
-									<LeftColumn>
-										<StripeFieldWrapper className="cvv" hasError={ cardCvcError }>
-											<CardCvcElement
-												style={ stripeElementStyle }
-												onChange={ ( input ) => {
-													handleStripeFieldChange( input );
-												} }
-											/>
-										</StripeFieldWrapper>
-									</LeftColumn>
-									<RightColumn>
-										<CVVImage />
-									</RightColumn>
-								</GridRow>
-								{ cardCvcError && <StripeErrorMessage>{ cardCvcError }</StripeErrorMessage> }
-							</Label>
+							<CreditCardCvvField
+								handleStripeFieldChange={ handleStripeFieldChange }
+								stripeElementStyle={ stripeElementStyle }
+								countryCode={ getFieldValue( 'countryCode' ) }
+								getErrorMessagesForField={ getErrorMessagesForField }
+								setFieldValue={ setFieldValue }
+								getFieldValue={ getFieldValue }
+							/>
 						</RightColumn>
 					</FieldRow>
 				</FieldRow>
