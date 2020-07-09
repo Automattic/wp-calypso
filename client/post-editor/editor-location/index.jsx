@@ -231,7 +231,7 @@ class EditorLocation extends React.Component {
 				<EditorDrawerWell
 					icon="location"
 					label={ buttonText }
-					empty={ ! this.props.coordinates }
+					empty={ ! this.props.mapUrl }
 					onClick={ this.geolocate }
 					disabled={ this.state.locating }
 				>
