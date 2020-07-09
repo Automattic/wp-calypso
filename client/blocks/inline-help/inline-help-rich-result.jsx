@@ -119,7 +119,9 @@ class InlineHelpRichResult extends Component {
 
 const mapStateToProps = ( state, { result } ) => ( {
 	searchQuery: getSearchQuery( state ),
-	type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
+	type: get( result, RESULT_TYPE
+
+		, RESULT_ARTICLE ),
 	title: get( result, RESULT_TITLE ),
 	link: amendYouTubeLink( get( result, RESULT_LINK ) ),
 	description: get( result, RESULT_DESCRIPTION ),
