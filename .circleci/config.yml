@@ -802,7 +802,7 @@ jobs:
           shell: bash.exe
       - store_artifacts:
           when: always
-          path: desktop/release
+          path: desktop\release
       - persist_to_workspace:
           root: C:\Users\circleci\wp-calypso
           paths:
