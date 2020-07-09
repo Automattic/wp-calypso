@@ -203,13 +203,19 @@ This component's props are:
 - `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
 - `validatingButtonAriaLabel:? string`. Used for the `aria-label` attribute on the next step button when `isCompleteCallback` returns an unresolved Promise.
 
-## CheckoutArea
+## CheckoutStepArea
 
 Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects. Should be a direct child of [Checkout](#Checkout).
+
+This component's props are:
+
+- `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
 
 ## CheckoutStepBody
 
 A component that looks like a checkout step. Normally you don't need to use this directly, since [CheckoutStep](#CheckoutStep) creates this for you, but you can use it manually if you wish.
+
+This component's props are:
 
 - `stepId: string`. A unique ID for this step.
 - `isStepActive: boolean`. True if the step should be rendered as active. Renders `activeStepContent`.

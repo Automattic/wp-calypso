@@ -20,7 +20,7 @@ class CheckoutTerms extends React.Component {
 		const { cart } = this.props;
 		return (
 			<Fragment>
-				<div className="checkout__terms">
+				<div className="checkout__terms" id="checkout-terms">
 					<strong>
 						{ this.props.translate( 'By checking out:', {
 							comment:
