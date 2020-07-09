@@ -32,6 +32,17 @@ function fse_donations_block() {
 		array(),
 		filemtime( plugin_dir_path( __FILE__ ) . 'dist/donations.css' )
 	);
+
+	register_block_type(
+		'a8c/donations',
+		array(
+			'editor_script'   => 'jetpack-event-countdown',
+			'editor_style'    => 'jetpack-event-countdown-style',
+			'render_callback' => function( $attribs, $content ) {
+				return '<div class="wp-block-a8c-donations">Donations Placeholder</div>';
+			},
+		)
+	);
 }
 
 add_action( 'init', 'A8C\FSE\Earn\Donations\fse_donations_block' );
