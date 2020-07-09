@@ -126,7 +126,6 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 					autoComplete="off"
 					placeholder={ placeHolder }
 					autoCorrect="off"
-					// Unable to remove this instance due to it being a HotJar term: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
 					data-hj-whitelist
 				></TextControl>
 				<p className="site-title__input-hint">
