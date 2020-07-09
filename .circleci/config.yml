@@ -788,6 +788,7 @@ jobs:
 
                   $env:ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName="Automattic, Inc."'
                   yarn run build-desktop:app
+          shell: bash.exe
       - run:
           name: Archive Unpacked Directories
           command: |
