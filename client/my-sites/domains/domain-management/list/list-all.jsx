@@ -37,7 +37,6 @@ import { type as domainTypes } from 'lib/domains/constants';
 import QueryAllDomains from 'components/data/query-all-domains';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { emailManagement } from 'my-sites/email/paths';
 import { getUserPurchases } from 'state/purchases/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 
@@ -65,13 +64,7 @@ class ListAll extends Component {
 	handleDomainItemClick = ( domain ) => {
 		const { sites, currentRoute } = this.props;
 		const site = sites[ domain.blogId ];
-		page( getDomainManagementPath( domain.domain, domain.type, site.slug, currentRoute ) );
-	};
-
-	handleAddEmailClick = ( domain ) => {
-		const { sites, currentRoute } = this.props;
-		const site = sites[ domain.blogId ];
-		page( emailManagement( site.slug, domain.domain, currentRoute ) );
+		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
 	};
 
 	headerButtons() {
@@ -98,20 +91,19 @@ class ListAll extends Component {
 	}
 
 	renderDomainItem( domain ) {
-		const { sites, domainsDetails, requestingSiteDomains } = this.props;
+		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
 
 		return (
 			<>
 				{ domain?.blogId && <QuerySiteDomains siteId={ domain.blogId } /> }
 				<DomainItem
+					currentRoute={ currentRoute }
 					domain={ domain }
 					domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
 					site={ sites[ domain?.blogId ] }
 					isManagingAllSites={ true }
 					isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
-					showSite={ true }
 					onClick={ this.handleDomainItemClick }
-					onAddEmailClick={ this.handleAddEmailClick }
 				/>
 			</>
 		);

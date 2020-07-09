@@ -38,6 +38,11 @@ class PopoverCart extends React.Component {
 		closeSectionNavMobilePanel: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
 		pinned: PropTypes.bool.isRequired,
+		compact: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		compact: false,
 	};
 
 	toggleButtonRef = React.createRef();
@@ -101,6 +106,7 @@ class PopoverCart extends React.Component {
 				<div className={ classes }>
 					<HeaderButton
 						icon="cart"
+						compact={ this.props.compact }
 						label={ translate( 'Cart' ) }
 						ref={ this.toggleButtonRef }
 						onClick={ this.onToggle }
