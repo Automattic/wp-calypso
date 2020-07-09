@@ -509,7 +509,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud',
-		paths: [ '/', '/settings' ],
+		paths: [ '/', '/landing', '/settings' ],
 		module: 'landing/jetpack-cloud',
 		secondary: true,
 		group: 'jetpack-cloud',
