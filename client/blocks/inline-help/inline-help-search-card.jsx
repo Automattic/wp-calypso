@@ -158,7 +158,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 const mapDispatchToProps = {
 	track: recordTracksEvent,
-	seSearchQuery: setInlineHelpSearchQuery,
+	setSearchQuery: setInlineHelpSearchQuery,
 	setNextResult: selectNextResult,
 	setPreviousResult: selectPreviousResult,
 };
