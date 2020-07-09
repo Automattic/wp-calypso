@@ -132,7 +132,7 @@ export default function CompositeCheckout( {
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
 	const reduxDispatch = useDispatch();
-	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
+	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const showErrorMessage = useCallback(
 		( error ) => {
