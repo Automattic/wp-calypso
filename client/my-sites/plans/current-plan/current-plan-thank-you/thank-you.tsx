@@ -21,7 +21,6 @@ import { getSiteAdminUrl } from 'state/sites/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import versionCompare from 'lib/version-compare';
 
 import './style.scss';
 
@@ -44,7 +43,9 @@ const mapDispatchToProps = { recordTracksEvent, requestGuidedTour };
 
 export type ThankYouCtaType = React.FC< {
 	dismissUrl: string;
+	jetpackVersion: string;
 	recordThankYouClick: ( productName: string, value?: string ) => void;
+	siteAdminUrl: string;
 	startChecklistTour: () => void;
 } >;
 
@@ -55,7 +56,6 @@ type ExternalProps = {
 	showCalypsoIntro?: boolean;
 	showContinueButton?: boolean;
 	showHideMessage?: boolean;
-	showSearchRedirects?: boolean;
 	title?: TranslateResult;
 };
 
@@ -75,7 +75,6 @@ export const ThankYouCard: FC< Props > = ( {
 	showCalypsoIntro,
 	showContinueButton,
 	showHideMessage,
-	showSearchRedirects,
 	siteAdminUrl,
 	selectedSite,
 	title,
@@ -153,28 +152,13 @@ export const ThankYouCard: FC< Props > = ( {
 						</a>
 					</p>
 				) }
-				{ showSearchRedirects && (
-					<p className="current-plan-thank-you__followup">
-						<Button
-							primary
-							href={
-								jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
-									? siteAdminUrl + 'plugins.php'
-									: siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search'
-							}
-							onClick={ () => recordThankYouClick( 'search', 'customizer' ) }
-						>
-							{ jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
-								? translate( 'Update Jetpack' )
-								: translate( 'Try Search and customize it now' ) }
-						</Button>
-					</p>
-				) }
 				{ ThankYouCtaComponent && (
 					<p className="current-plan-thank-you__followup">
 						<ThankYouCtaComponent
 							dismissUrl={ dismissUrl }
+							jetpackVersion={ jetpackVersion }
 							recordThankYouClick={ recordThankYouClick }
+							siteAdminUrl={ siteAdminUrl }
 							startChecklistTour={ startChecklistTour }
 						/>
 					</p>
