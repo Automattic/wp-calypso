@@ -235,20 +235,20 @@ const SiteSetupList = ( {
 						const enhancedTask = getTask( task );
 
 						return (
-						<NavItem
-							key={ task.id }
-							taskId={ task.id }
-							text={ enhancedTask.label || enhancedTask.title }
-							isCompleted={ task.isCompleted }
-							isCurrent={ task.id === currentTask.id }
-							onClick={ () => {
-								setTaskIsManuallySelected( true );
-								setCurrentTaskId( task.id );
-								setCurrentDrillLayoutView( 'task' );
-							} }
-							showChevron={ useDrillLayout }
-						/>
-					) ) }
+							<NavItem
+								key={ task.id }
+								taskId={ task.id }
+								text={ enhancedTask.label || enhancedTask.title }
+								isCompleted={ task.isCompleted }
+								isCurrent={ task.id === currentTask.id }
+								onClick={ () => {
+									setTaskIsManuallySelected( true );
+									setCurrentTaskId( task.id );
+									setCurrentDrillLayoutView( 'task' );
+								} }
+								showChevron={ useDrillLayout }
+							/>
+						);
 					} ) }
 				</div>
 			) }
