@@ -34,6 +34,7 @@ export interface Props {
 	buttonLabel: string;
 	onButtonClick: () => void;
 	features: ReactNode;
+	isHighlighted?: boolean;
 }
 
 const JetpackProductCard: FunctionComponent< Props > = ( {
@@ -51,6 +52,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	buttonLabel,
 	onButtonClick,
 	features,
+	isHighlighted,
 } ) => {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
@@ -91,7 +93,11 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				{ badgeLabel && <div className="jetpack-product-card__badge">{ badgeLabel }</div> }
 			</header>
 			<div className="jetpack-product-card__body">
-				<Button className="jetpack-product-card__button" onClick={ onButtonClick }>
+				<Button
+					className="jetpack-product-card__button"
+					primary={ isHighlighted }
+					onClick={ onButtonClick }
+				>
 					{ buttonLabel }
 				</Button>
 				<p className="jetpack-product-card__description">{ description }</p>
