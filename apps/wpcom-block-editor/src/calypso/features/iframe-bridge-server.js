@@ -7,7 +7,7 @@
 import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
-import { createBlock, parse, rawHandler } from '@wordpress/blocks';
+import { createBlock, parse } from '@wordpress/blocks';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { registerPlugin } from '@wordpress/plugins';
@@ -25,45 +25,6 @@ import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editin
 import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
-
-/**
- *
- * Monitors Gutenberg for when an editor is opened with content originally authored in the classic editor.
- *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-async function triggerConversionPrompt( calypsoPort ) {
-	const { port1, port2 } = new MessageChannel();
-
-	const editorHasBlocks = await isEditorReadyWithBlocks();
-	if ( ! editorHasBlocks ) {
-		return;
-	}
-
-	const blocks = select( 'core/editor' ).getBlocks();
-	const eligible = blocks.length === 1 && blocks[ 0 ].name === 'core/freeform';
-
-	if ( ! eligible ) {
-		return;
-	}
-
-	calypsoPort.postMessage( { action: 'triggerConversionRequest' }, [ port2 ] );
-
-	port1.onmessage = ( { data: confirmed } ) => {
-		port1.close();
-
-		if ( confirmed !== true ) {
-			return;
-		}
-
-		dispatch( 'core/editor' ).replaceBlock(
-			blocks[ 0 ].clientId,
-			rawHandler( {
-				HTML: blocks[ 0 ].originalContent,
-			} )
-		);
-	};
-}
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
@@ -987,9 +948,6 @@ function initPort( message ) {
 
 		// Transmit draft ID to parent window once it has been assigned.
 		transmitDraftId( calypsoPort );
-
-		// Check if the "Convert to Blocks" prompt should be opened for this content.
-		triggerConversionPrompt( calypsoPort );
 
 		handlePostTrash( calypsoPort );
 

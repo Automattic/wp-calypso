@@ -42,7 +42,6 @@ import { editPost, trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
@@ -82,7 +81,6 @@ interface State {
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
-	isConversionPromptVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
@@ -104,7 +102,6 @@ enum EditorActions {
 	ViewPost = 'viewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
-	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
 	GetTemplateEditorUrl = 'getTemplateEditorUrl',
 	OpenTemplatePart = 'openTemplatePart',
@@ -124,14 +121,12 @@ class CalypsoifyIframe extends Component<
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
-		isConversionPromptVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
 	iframePort: MessagePort | null = null;
-	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
@@ -256,11 +251,6 @@ class CalypsoifyIframe extends Component<
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
-		}
-
-		if ( EditorActions.ConversionRequest === action ) {
-			this.conversionPort = ports[ 0 ];
-			this.setState( { isConversionPromptVisible: true } );
 		}
 
 		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
@@ -572,19 +562,6 @@ class CalypsoifyIframe extends Component<
 		this.props.navigate( navUrl );
 	};
 
-	handleConversionResponse = ( confirmed: boolean ) => {
-		this.setState( { isConversionPromptVisible: false } );
-
-		if ( ! this.conversionPort ) {
-			return;
-		}
-
-		this.conversionPort.postMessage( confirmed );
-
-		this.conversionPort.close();
-		this.conversionPort = null;
-	};
-
 	getStatsPath = () => {
 		const { postId } = this.props;
 		return postId ? '/block-editor/:post_type/:site/:post_id' : '/block-editor/:post_type/:site';
@@ -655,7 +632,6 @@ class CalypsoifyIframe extends Component<
 			multiple,
 			isIframeLoaded,
 			isPreviewVisible,
-			isConversionPromptVisible,
 			previewUrl,
 			postUrl,
 			editedPost,
@@ -672,11 +648,6 @@ class CalypsoifyIframe extends Component<
 					properties={ this.getStatsProps() }
 				/>
 				<EditorDocumentHead />
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<ConvertToBlocksDialog
-					showDialog={ isConversionPromptVisible }
-					handleResponse={ this.handleConversionResponse }
-				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
