@@ -54,7 +54,7 @@ import CrowdsignalSignupForm from './crowdsignal';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId } from 'state/analytics/actions';
 import { createSocialUserFailed } from 'state/login/actions';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import TextControl from 'extensions/woocommerce/components/text-control';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
