@@ -231,21 +231,25 @@ const SiteSetupList = ( {
 			{ ( ! useDrillLayout || currentDrillLayoutView === 'nav' ) && (
 				<div className="site-setup-list__nav">
 					{ ! useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
-					{ tasks.map( ( task ) => (
-						<NavItem
-							key={ task.id }
-							taskId={ task.id }
-							text={ getTask( task ).title }
-							isCompleted={ task.isCompleted }
-							isCurrent={ task.id === currentTask.id }
-							onClick={ () => {
-								setTaskIsManuallySelected( true );
-								setCurrentTaskId( task.id );
-								setCurrentDrillLayoutView( 'task' );
-							} }
-							showChevron={ useDrillLayout }
-						/>
-					) ) }
+					{ tasks.map( ( task ) => {
+						const enhancedTask = getTask( task );
+
+						return (
+							<NavItem
+								key={ task.id }
+								taskId={ task.id }
+								text={ enhancedTask.label || enhancedTask.title }
+								isCompleted={ task.isCompleted }
+								isCurrent={ task.id === currentTask.id }
+								onClick={ () => {
+									setTaskIsManuallySelected( true );
+									setCurrentTaskId( task.id );
+									setCurrentDrillLayoutView( 'task' );
+								} }
+								showChevron={ useDrillLayout }
+							/>
+						);
+					} ) }
 				</div>
 			) }
 			{ ( ! useDrillLayout || currentDrillLayoutView === 'task' ) && (
