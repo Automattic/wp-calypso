@@ -16,11 +16,7 @@ import { CONCIERGE_SUPPORT } from 'lib/url/support';
 
 class PrimaryHeader extends Component {
 	render() {
-		const { isWhiteGlove, translate } = this.props;
-
-		const headerText = isWhiteGlove
-			? 'WordPress.com one-on-one session scheduler'
-			: translate( 'WordPress.com Quick Start Session Scheduler' );
+		const { translate } = this.props;
 
 		return (
 			<Fragment>
@@ -37,7 +33,7 @@ class PrimaryHeader extends Component {
 						src={ '/calypso/images/illustrations/illustration-start.svg' }
 					/>
 					<FormattedHeader
-						headerText={ headerText }
+						headerText={ translate( 'WordPress.com Quick Start Session Scheduler' ) }
 						subHeaderText={ translate(
 							'Use the tool below to book your in-depth support session.'
 						) }
