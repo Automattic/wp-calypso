@@ -17,7 +17,7 @@ import {
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
-import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
+import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -528,6 +528,15 @@ export default function CompositeCheckout( {
 		product
 	);
 
+	const jetpackColors = isJetpackNotAtomic
+		? {
+				primary: '#008710',
+				primaryBorder: '#004515',
+				primaryOver: '#007117',
+		  }
+		: {};
+	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
+
 	return (
 		<React.Fragment>
 			<QuerySitePlans siteId={ siteId } />
@@ -553,6 +562,7 @@ export default function CompositeCheckout( {
 						isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
 					}
 					isValidating={ isCartPendingUpdate }
+					theme={ theme }
 				>
 					<WPCheckout
 						removeItem={ removeItem }
