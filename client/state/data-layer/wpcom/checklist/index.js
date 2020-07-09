@@ -7,16 +7,36 @@ import { get, noop } from 'lodash';
  * Internal dependencies
  */
 import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
+import { SITE_CHECKLIST_KNOWN_TASKS } from 'my-sites/customer-home/cards/tasks/site-setup-list/get-task';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'state/checklist/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-// The checklist API requests use the http_envelope query param, however on
-// desktop the envelope is not being unpacked for some reason. This conversion
-// ensures the payload has been unpacked.
-const fromApi = ( payload ) => get( payload, 'body', payload );
+// Transform the response to a data / schema calypso understands, eg filter out unknown tasks
+const fromApi = ( payload ) => {
+	// The checklist API requests use the http_envelope query param, however on
+	// desktop the envelope is not being unpacked for some reason. This conversion
+	// ensures the payload has been unpacked.
+	const data = get( payload, 'body', payload );
+
+	if ( ! data ) {
+		throw new TypeError( `Missing 'body' property on API response` );
+	}
+	if ( ! Array.isArray( data.tasks ) ) {
+		throw new TypeError( `API response needs array of tasks: found ${ typeof data.tasks }` );
+	}
+	return {
+		designType: data.designType,
+		phase2: data.phase2,
+		segment: data.segment,
+		verticals: data.verticals,
+		tasks: data.tasks.filter( ( task ) =>
+			Object.values( SITE_CHECKLIST_KNOWN_TASKS ).includes( task.id )
+		),
+	};
+};
 
 export const fetchChecklist = ( action ) =>
 	http(
@@ -33,24 +53,7 @@ export const fetchChecklist = ( action ) =>
 	);
 
 export const receiveChecklistSuccess = ( action, receivedChecklist ) => {
-	let checklist = receivedChecklist;
-
-	// Legacy object-based data format, let's convert it to the new array-based format and ultimately remove it.
-	if ( ! Array.isArray( receivedChecklist.tasks ) ) {
-		checklist = {
-			...receivedChecklist,
-			tasks: Object.keys( receivedChecklist.tasks ).map( ( taskId ) => {
-				const { completed, ...rest } = receivedChecklist.tasks[ taskId ];
-				return {
-					id: taskId,
-					isCompleted: completed,
-					...rest,
-				};
-			} ),
-		};
-	}
-
-	return receiveSiteChecklist( action.siteId, checklist );
+	return receiveSiteChecklist( action.siteId, receivedChecklist );
 };
 
 const dispatchChecklistRequest = dispatchRequest( {
