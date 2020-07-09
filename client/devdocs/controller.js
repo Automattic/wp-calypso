@@ -132,6 +132,13 @@ const devdocs = {
 		next();
 	},
 
+	illustrations: function ( context, next ) {
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/illustrations" />
+		);
+		next();
+	},
+
 	formStateExamples: function ( context, next ) {
 		context.primary = React.createElement( FormStateExamplesComponent, {
 			component: context.params.component,
