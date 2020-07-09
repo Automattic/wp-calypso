@@ -19,6 +19,12 @@ import {
 	EDUCATION_GUTENBERG,
 	EDUCATION_EARN,
 } from 'my-sites/customer-home/cards/constants';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -31,7 +37,7 @@ const cardComponents = {
 	[ EDUCATION_EARN ]: EducationEarn,
 };
 
-const LearnGrow = ( { cards } ) => {
+const LearnGrow = ( { cards, renderCard } ) => {
 	const translate = useTranslate();
 
 	if ( ! cards || ! cards.length ) {
@@ -43,15 +49,7 @@ const LearnGrow = ( { cards } ) => {
 			<h2 className="learn-grow__heading customer-home__section-heading">
 				{ translate( 'Learn and grow' ) }
 			</h2>
-			<Card className="learn-grow__content">
-				{ cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
-							key: index,
-						} )
-				) }
-			</Card>
+			<Card className="learn-grow__content">{ cards.map( renderCard ) }</Card>
 		</>
 	);
 };
@@ -65,4 +63,22 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( LearnGrow );
+const mapDispatchToProps = ( dispatch ) => ( {
+	renderCard: ( card, index ) =>
+		cardComponents[ card ] &&
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_customer_home_card_impression', {
+						card,
+					} ),
+					bumpStat( 'calypso_customer_home_card_impression', card )
+				),
+				React.createElement( cardComponents[ card ], {
+					key: index,
+				} )
+			)
+		),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( LearnGrow );
