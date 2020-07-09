@@ -31,15 +31,15 @@ import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 const debug = debugFactory( 'calypso:inline-help' );
 
 const InlineHelpSearchCard = ( {
-	selectPreviousResult,
-	selectNextResult,
+	setPreviousResult,
+	setNextResult,
 	selectedResultIndex,
 	selectedResult = {},
 	query = '',
 	onSelect,
 	track,
 	location = 'inline-help-popover',
-	setInlineHelpSearchQuery,
+	setSearchQuery,
 	isSearching,
 	placeholder,
 	translate = identity,
@@ -64,7 +64,7 @@ const InlineHelpSearchCard = ( {
 		const timerId = setTimeout( () => inputElement.focus(), 0 );
 
 		return () => window.clearTimeout( timerId );
-	}, [ cardRef ] );
+	}, [ cardRef, location ] );
 
 	const onKeyDown = ( event ) => {
 		// ignore keyboard access when manipulating a text selection in input etc.
@@ -80,10 +80,10 @@ const InlineHelpSearchCard = ( {
 
 		switch ( event.key ) {
 			case 'ArrowUp':
-				selectPreviousResult();
+				setPreviousResult();
 				break;
 			case 'ArrowDown':
-				selectNextResult();
+				setNextResult();
 				break;
 			case 'Enter': {
 				// check and catch admin section links.
@@ -113,9 +113,9 @@ const InlineHelpSearchCard = ( {
 	};
 
 	const searchHelperHandler = ( searchQuery ) => {
-		const query = searchQuery.trim();
+		const inputQuery = searchQuery.trim();
 
-		if ( query?.length ) {
+		if ( inputQuery?.length ) {
 			debug( 'search query received: ', searchQuery );
 			track( 'calypso_inlinehelp_search', {
 				search_query: searchQuery,
@@ -124,7 +124,7 @@ const InlineHelpSearchCard = ( {
 		}
 
 		// Set the query search
-		setInlineHelpSearchQuery( searchQuery );
+		setSearchQuery( searchQuery );
 	};
 
 	return (
@@ -158,9 +158,9 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 const mapDispatchToProps = {
 	track: recordTracksEvent,
-	setInlineHelpSearchQuery,
-	selectNextResult,
-	selectPreviousResult,
+	seSearchQuery: setInlineHelpSearchQuery,
+	setNextResult: selectNextResult,
+	setPreviousResult: selectPreviousResult,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );
