@@ -158,7 +158,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		} = domain;
 
 		const activating =
-			isRecentlyRegistered( registrationDate ) && ! pendingTransfer && ! isPendingIcannVerification;
+			isRecentlyRegistered( registrationDate ) && ! pendingTransfer;
 
 		if ( pointsToWpcom || activating ) {
 			return isPrimary
