@@ -113,10 +113,11 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  *
- * @param  {number}   siteFragment Site ID or slug
+ * @param {number} siteFragment Site ID or slug
+ * @param {boolean} forceWpcom explicitly get info from WPCOM vs Jetpack site
  * @returns {Function}              Action thunk
  */
-export function requestSite( siteFragment ) {
+export function requestSite( siteFragment, forceWpcom = false ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_REQUEST,
@@ -128,6 +129,7 @@ export function requestSite( siteFragment ) {
 			.get( {
 				apiVersion: '1.2',
 				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
+				force: forceWpcom ? 'wpcom' : undefined,
 			} )
 			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
@@ -147,6 +149,13 @@ export function requestSite( siteFragment ) {
 				} );
 			} )
 			.catch( ( error ) => {
+				if (
+					error?.status === 403 &&
+					error?.message === 'API calls to this blog have been disabled.' &&
+					! forceWpcom
+				) {
+					return dispatch( requestSite( siteFragment, true ) );
+				}
 				dispatch( {
 					type: SITE_REQUEST_FAILURE,
 					siteId: siteFragment,
