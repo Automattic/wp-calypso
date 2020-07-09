@@ -17,6 +17,7 @@ import { verifyEmail } from 'state/current-user/email-verification/actions';
 // A list of known tasks for the calypso client/state/data-layer/wpcom/checklist/index.js
 // You need to alter this object in case of adding / removing tasks
 export const SITE_CHECKLIST_KNOWN_TASKS = {
+	START_SITE_SETUP: 'start_site_setup',
 	DOMAIN_VERIFIED: 'domain_verified',
 	EMAIL_VERIFIED: 'email_verified',
 	BLOGNAME_SET: 'blogname_set',
@@ -84,7 +85,7 @@ export const getTask = (
 ) => {
 	let taskData = {};
 	switch ( task.id ) {
-		case 'start_site_setup':
+		case SITE_CHECKLIST_KNOWN_TASKS.START_SITE_SETUP:
 			taskData = {
 				timing: 1,
 				title: translate( 'Site created' ),
