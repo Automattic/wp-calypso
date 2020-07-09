@@ -736,6 +736,7 @@ jobs:
             set +e
             rm -rf desktop/release/github
             rm -rf desktop/release/linux-unpacked
+            rm -rf desktop/release/.icon-set
       - store_artifacts:
           when: always
           path: desktop/release
