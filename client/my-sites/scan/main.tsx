@@ -19,11 +19,13 @@ import SecurityIcon from 'components/jetpack/security-icon';
 import ScanPlaceholder from 'components/jetpack/scan-placeholder';
 import ScanThreats from 'components/jetpack/scan-threats';
 import { Scan, Site } from 'my-sites/scan/types';
+import EmptyContent from 'components/empty-content';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
 import getSiteScanIsInitial from 'state/selectors/get-site-scan-is-initial';
@@ -234,7 +236,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	render() {
-		const { siteId } = this.props;
+		const { isAdmin, siteId } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
 
 		if ( ! siteId ) {
@@ -249,15 +251,25 @@ class ScanPage extends Component< Props > {
 			>
 				<DocumentHead title="Scan" />
 				<SidebarNavigation />
-				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				{ ! isJetpackPlatform && (
 					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
 				) }
-				<ScanNavigation section={ 'scanner' } />
-				<Card>
-					<div className="scan__content">{ this.renderScanState() }</div>
-				</Card>
+				{ isAdmin && (
+					<>
+						<QueryJetpackScan siteId={ siteId } />
+						<ScanNavigation section={ 'scanner' } />
+						<Card>
+							<div className="scan__content">{ this.renderScanState() }</div>
+						</Card>
+					</>
+				) }
+				{ ! isAdmin && (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/illustration-404.svg"
+						title={ translate( 'You are not authorized to view this page' ) }
+					/>
+				) }
 			</Main>
 		);
 	}
@@ -277,6 +289,7 @@ export default connect(
 		const scanState = ( getSiteScanState( state, siteId ) as Scan ) ?? undefined;
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
+		const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 
 		return {
 			site,
@@ -285,6 +298,7 @@ export default connect(
 			scanState,
 			scanProgress,
 			isInitialScan,
+			isAdmin,
 		};
 	},
 	{
