@@ -34,10 +34,14 @@ export const receiveSuccess = ( { siteId, postId }, response ) =>
  */
 export const fetchPostGeoImageUrl = ( action ) => {
 	const { siteId, postId, latitude, longitude } = action;
+
+	const path = postId
+		? `/sites/${ siteId }/posts/${ postId }/map-url`
+		: `/sites/${ siteId }/posts/map-url`;
 	return http(
 		{
 			apiNamespace: 'wpcom/v2',
-			path: `/sites/${ siteId }/posts/${ postId }/map-url`,
+			path: path,
 			method: 'GET',
 			query: { latitude, longitude },
 		},

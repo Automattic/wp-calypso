@@ -30,6 +30,25 @@ describe( '#fetchPostGeoImageUrl', () => {
 			)
 		);
 	} );
+
+	test( 'should dispatch HTTP request to post map url endpoint when Post ID is null', () => {
+		const action = requestPostGeoImageUrl( 12345678, null, 12.121212, 123.123123 );
+
+		expect( fetchPostGeoImageUrl( action ) ).toMatchObject(
+			http(
+				{
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+					path: '/sites/12345678/posts/map-url',
+					query: {
+						latitude: 12.121212,
+						longitude: 123.123123,
+					},
+				},
+				action
+			)
+		);
+	} );
 } );
 
 describe( '#receiveSuccess', () => {
