@@ -107,6 +107,7 @@ import {
 import { isExternal, addQueryArgs } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { abtest } from 'lib/abtest';
+import isPrivateSite from 'state/selectors/is-private-site';
 
 /**
  * Style dependencies
@@ -291,7 +292,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug, product, cart, isJetpackNotAtomic } = this.props;
+		const { planSlug, product, cart, isJetpackNotAtomic, isPrivate } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -314,18 +315,25 @@ export class Checkout extends React.Component {
 		}
 
 		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
+			if ( isPrivate ) {
+				cartItem = null;
+			}
 			if ( isJetpackNotAtomic ) {
 				cartItem = product.includes( 'monthly' )
 					? jetpackProductItem( PRODUCT_JETPACK_SEARCH_MONTHLY )
 					: jetpackProductItem( PRODUCT_JETPACK_SEARCH );
 			}
 
-			if ( config.isEnabled( 'jetpack/wpcom-search-product' ) && ! isJetpackNotAtomic ) {
+			if (
+				config.isEnabled( 'jetpack/wpcom-search-product' ) &&
+				! isJetpackNotAtomic &&
+				! isPrivate
+			) {
 				cartItem = product.includes( 'monthly' )
 					? jetpackProductItem( PRODUCT_WPCOM_SEARCH_MONTHLY )
 					: jetpackProductItem( PRODUCT_WPCOM_SEARCH );
 			} else {
-				cartItem = ! isJetpackNotAtomic ? null : cartItem;
+				cartItem = ! isJetpackNotAtomic || ! isPrivate ? null : cartItem;
 			}
 		} else if ( JETPACK_PRODUCTS_LIST.includes( product ) && isJetpackNotAtomic ) {
 			cartItem = jetpackProductItem( product );
@@ -990,6 +998,7 @@ export default connect(
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),
+			isPrivate: isPrivateSite( state, selectedSiteId ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
 			isJetpackNotAtomic:
