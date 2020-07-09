@@ -79,7 +79,9 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to include in the download:' ) }</h4>
+			<h4 className="rewind-flow__cta">
+				{ translate( 'Choose the items you wish to include in the download:' ) }
+			</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
 			<RewindFlowNotice
 				gridicon="notice-outline"
