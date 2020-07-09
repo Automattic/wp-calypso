@@ -1,13 +1,10 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
-import { useTheme } from 'emotion-theming';
+import React, { useEffect } from 'react';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import { CardCvcElement, CardExpiryElement } from 'react-stripe-elements';
 import {
 	Button,
 	usePaymentProcessor,
@@ -18,7 +15,6 @@ import {
 	useFormStatus,
 	registerStore,
 	useSelect,
-	useDispatch,
 } from '@automattic/composite-checkout';
 
 /**
@@ -30,32 +26,13 @@ import {
 	SummaryDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom/components/summary-details';
 import {
-	LeftColumn,
-	RightColumn,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/ie-fallback';
-import {
 	VisaLogo,
 	MastercardLogo,
 	AmexLogo,
 } from 'my-sites/checkout/composite-checkout/wpcom/components/payment-logos';
 import PaymentLogo from 'my-sites/checkout/composite-checkout/wpcom/components/payment-logo';
 import { showStripeModalAuth } from 'lib/stripe';
-import Spinner from 'my-sites/checkout/composite-checkout/wpcom/components/spinner';
-import { isValid } from 'my-sites/checkout/composite-checkout/wpcom/types';
-import ContactFields from './contact-fields';
-import CreditCardNumberField from './credit-card-number-field';
-import {
-	GridRow,
-	FieldRow,
-	Label,
-	LabelText,
-	StripeFieldWrapper,
-	StripeErrorMessage,
-	CreditCardFieldsWrapper,
-	CreditCardField,
-} from './form-layout-components';
-import CVVImage from './cvv-image';
-import CreditCardLoading from './credit-card-loading';
+import CreditCardFields from './credit-card-fields';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -194,187 +171,9 @@ export function createCreditCardMethod( { store, stripe, stripeConfiguration } )
 				stripeConfiguration={ stripeConfiguration }
 			/>
 		),
-		inactiveContent: <StripeSummary />,
+		inactiveContent: <CreditCardSummary />,
 		getAriaLabel: ( __ ) => __( 'Credit Card' ),
 	};
-}
-
-function CreditCardFields() {
-	const { __ } = useI18n();
-	const theme = useTheme();
-	const onEvent = useEvents();
-	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
-	const { cardCvc: cardCvcError, cardExpiry: cardExpiryError } = useSelect( ( select ) =>
-		select( 'credit-card' ).getCardDataErrors()
-	);
-	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
-		'credit-card'
-	);
-	const [ shouldShowContactFields, setShowContactFields ] = useState( false );
-
-	const handleStripeFieldChange = ( input ) => {
-		setCardDataComplete( input.elementType, input.complete );
-		if ( input.elementType === 'cardNumber' ) {
-			changeBrand( input.brand );
-		}
-
-		if ( input.error && input.error.message ) {
-			onEvent( {
-				type: 'a8c_checkout_stripe_field_invalid_error',
-				payload: {
-					type: 'Stripe field error',
-					field: input.elementType,
-					message: input.error.message,
-				},
-			} );
-			setCardDataError( input.elementType, input.error.message );
-			return;
-		}
-		setCardDataError( input.elementType, null );
-	};
-
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
-	const { setFieldValue } = useDispatch( 'credit-card' );
-	const getField = ( key ) => fields[ key ] || {};
-	const getFieldValue = ( key ) => getField( key ).value ?? '';
-	const getErrorMessagesForField = ( key ) => {
-		// TODO: do actual validation
-		if ( ! isValid( getField( key ) ) ) {
-			return [ __( 'This field is required.' ) ];
-		}
-		return [];
-	};
-
-	const stripeElementStyle = {
-		base: {
-			fontSize: '16px',
-			color: theme.colors.textColor,
-			fontFamily: theme.fonts.body,
-			fontWeight: theme.weights.normal,
-			'::placeholder': {
-				color: theme.colors.placeHolderTextColor,
-			},
-		},
-		invalid: {
-			color: theme.colors.textColor,
-		},
-	};
-
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	return (
-		<StripeFields className="credit-card-form-fields">
-			{ ! isStripeFullyLoaded && <LoadingFields /> }
-
-			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
-				<CreditCardField
-					id="cardholder-name"
-					type="Text"
-					autoComplete="cc-name"
-					label={ __( 'Cardholder name' ) }
-					description={ __( "Enter your name as it's written on the card" ) }
-					value={ cardholderName?.value ?? '' }
-					onChange={ changeCardholderName }
-					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
-					errorMessage={ __( 'This field is required' ) }
-				/>
-
-				<FieldRow>
-					<Label>
-						<input
-							type="checkbox"
-							checked={ ! shouldShowContactFields }
-							onChange={ ( event ) => setShowContactFields( ! event.target.checked ) }
-						/>
-						<LabelText>{ __( 'Credit card address is the same as contact details' ) }</LabelText>
-					</Label>
-				</FieldRow>
-
-				{ shouldShowContactFields && (
-					<ContactFields
-						getField={ getField }
-						getFieldValue={ getFieldValue }
-						setFieldValue={ setFieldValue }
-						getErrorMessagesForField={ getErrorMessagesForField }
-					/>
-				) }
-
-				<FieldRow>
-					<CreditCardNumberField
-						setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
-						handleStripeFieldChange={ handleStripeFieldChange }
-						stripeElementStyle={ stripeElementStyle }
-						countryCode={ getFieldValue( 'countryCode' ) }
-						getErrorMessagesForField={ getErrorMessagesForField }
-						setFieldValue={ setFieldValue }
-						getFieldValue={ getFieldValue }
-					/>
-
-					<FieldRow gap="4%" columnWidths="48% 48%">
-						<LeftColumn>
-							<Label>
-								<LabelText>{ __( 'Expiry date' ) }</LabelText>
-								<StripeFieldWrapper className="expiration-date" hasError={ cardExpiryError }>
-									<CardExpiryElement
-										style={ stripeElementStyle }
-										onChange={ ( input ) => {
-											handleStripeFieldChange( input );
-										} }
-									/>
-								</StripeFieldWrapper>
-								{ cardExpiryError && <StripeErrorMessage>{ cardExpiryError }</StripeErrorMessage> }
-							</Label>
-						</LeftColumn>
-						<RightColumn>
-							<Label>
-								<LabelText>{ __( 'Security code' ) }</LabelText>
-								<GridRow gap="4%" columnWidths="67% 29%">
-									<LeftColumn>
-										<StripeFieldWrapper className="cvv" hasError={ cardCvcError }>
-											<CardCvcElement
-												style={ stripeElementStyle }
-												onChange={ ( input ) => {
-													handleStripeFieldChange( input );
-												} }
-											/>
-										</StripeFieldWrapper>
-									</LeftColumn>
-									<RightColumn>
-										<CVVImage />
-									</RightColumn>
-								</GridRow>
-								{ cardCvcError && <StripeErrorMessage>{ cardCvcError }</StripeErrorMessage> }
-							</Label>
-						</RightColumn>
-					</FieldRow>
-				</FieldRow>
-			</CreditCardFieldsWrapper>
-		</StripeFields>
-	);
-}
-
-const StripeFields = styled.div`
-	position: relative;
-`;
-
-const LoadingIndicator = styled( Spinner )`
-	position: absolute;
-	right: 15px;
-	top: 10px;
-
-	.rtl & {
-		right: auto;
-		left: 15px;
-	}
-`;
-
-function LoadingFields() {
-	return (
-		<React.Fragment>
-			<LoadingIndicator />
-			<CreditCardLoading />
-		</React.Fragment>
-	);
 }
 
 function CreditCardPayButton( { disabled, store, stripe, stripeConfiguration } ) {
@@ -489,7 +288,7 @@ function useShowStripeModalAuth( shouldShowModal, stripeConfiguration ) {
 	] );
 }
 
-function StripeSummary() {
+function CreditCardSummary() {
 	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
 	const brand = useSelect( ( select ) => select( 'credit-card' ).getBrand() );
 
@@ -543,4 +342,3 @@ function CreditCardLogos() {
 		</PaymentMethodLogos>
 	);
 }
-
