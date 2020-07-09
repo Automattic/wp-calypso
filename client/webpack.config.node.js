@@ -45,9 +45,8 @@ function getExternals() {
 	return [
 		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 		// with modules that are incompatible with webpack bundling.
-		//
 		nodeExternals( {
-			whitelist: [
+			allowlist: [
 				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
 				// non-JS asset imports that couldn't be processed by Node.js at runtime.
 				'@automattic/components',
