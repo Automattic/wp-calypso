@@ -886,9 +886,9 @@ workflows:
       # - wp-desktop-mac:
       #     requires:
       #       - wp-desktop-source
-      - wp-desktop-linux:
-          requires:
-            - wp-desktop-source
+      # - wp-desktop-linux:
+      #     requires:
+      #       - wp-desktop-source
       - wp-desktop-windows:
           requires:
             - wp-desktop-source
