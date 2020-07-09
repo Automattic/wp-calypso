@@ -210,9 +210,6 @@ module.exports = {
 					// Depends on https://github.com/Automattic/jetpack/blob/792b26b5539d07cc35fdd93567942f2ad481eef2/modules/protect/shared-functions.php#L74
 					'jetpack_protect_global_whitelist',
 
-					// Gutenboarding: https://github.com/Automattic/wp-calypso/issues/43996
-					'vertical-whitelist',
-
 					// These are WP.com errors that need coordination to change
 					// https://github.com/Automattic/wp-calypso/issues/43998
 					'site_blacklisted',
