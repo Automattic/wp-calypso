@@ -102,7 +102,7 @@ class AutoLoadingHomepageModal extends Component {
 					},
 					{
 						action: 'activeTheme',
-						label: translate( 'Yes, Activate %(themeName)s', {
+						label: translate( 'Yes, activate %(themeName)s', {
 							args: { themeName },
 						} ),
 						isPrimary: true,

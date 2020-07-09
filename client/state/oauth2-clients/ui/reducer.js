@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { startsWith } from 'lodash';
 
 /**

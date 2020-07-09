@@ -5,4 +5,3 @@ export { editMedia } from './edit-media';
 export { updateMedia } from './update-media';
 export { deleteMedia } from './delete-media';
 export { fetchMediaItem } from './fetch-media-item';
-export { addWoocommerceProductImage } from './add-woocommerce-product-image';

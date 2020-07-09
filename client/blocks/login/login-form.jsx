@@ -25,7 +25,7 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import {
 	formUpdate,
 	getAuthAccountType,

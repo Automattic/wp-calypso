@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
  */
 import { bumpStat } from 'lib/analytics/mc';
 import DropZone from 'components/drop-zone';
+import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 import { clearMediaItemErrors } from 'state/media/actions';
-import { addMedia } from 'state/media/thunks';
 
 class MediaLibraryDropZone extends React.Component {
 	static displayName = 'MediaLibraryDropZone';
@@ -25,7 +25,6 @@ class MediaLibraryDropZone extends React.Component {
 		fullScreen: PropTypes.bool,
 		onAddMedia: PropTypes.func,
 		trackStats: PropTypes.bool,
-		addMedia: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -40,7 +39,7 @@ class MediaLibraryDropZone extends React.Component {
 		}
 
 		this.props.clearMediaItemErrors( this.props.site.ID );
-		this.props.addMedia( files, this.props.site );
+		MediaActions.add( this.props.site, files );
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
@@ -67,7 +66,7 @@ class MediaLibraryDropZone extends React.Component {
 		// using the Array prototype. Safari may pass types as `null` which
 		// makes detection impossible, so we err on allowing the transfer.
 		//
-		// See: https://html.spec.whatwg.org/multipage/dnd.html#the-datatransfer-interface
+		// See: http://www.w3.org/html/wg/drafts/html/master/editing.html#the-datatransfer-interface
 		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
 	};
 
@@ -94,6 +93,4 @@ class MediaLibraryDropZone extends React.Component {
 	}
 }
 
-export default connect( null, { addMedia, clearMediaItemErrors } )(
-	localize( MediaLibraryDropZone )
-);
+export default connect( null, { clearMediaItemErrors } )( localize( MediaLibraryDropZone ) );

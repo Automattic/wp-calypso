@@ -11,7 +11,7 @@ import { getOAuth2Client } from '../selectors';
 describe( 'selectors', () => {
 	describe( 'getOAuth2Client()', () => {
 		test( 'should return null if empty state provided', () => {
-			const client = getOAuth2Client( { oauth2Clients: {} } );
+			const client = getOAuth2Client( { oauth2Clients: { clients: {} } } );
 
 			expect( client ).to.be.null;
 		} );
@@ -20,11 +20,13 @@ describe( 'selectors', () => {
 			const client = getOAuth2Client(
 				{
 					oauth2Clients: {
-						1: {
-							id: 1,
-							name: 'test',
-							title: 'WordPress.com Test Client',
-							url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
+						clients: {
+							1: {
+								id: 1,
+								name: 'test',
+								title: 'WordPress.com Test Client',
+								url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
+							},
 						},
 					},
 				},
@@ -38,11 +40,13 @@ describe( 'selectors', () => {
 			const client = getOAuth2Client(
 				{
 					oauth2Clients: {
-						1: {
-							id: 1,
-							name: 'test',
-							title: 'WordPress.com Test Client',
-							url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
+						clients: {
+							1: {
+								id: 1,
+								name: 'test',
+								title: 'WordPress.com Test Client',
+								url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
+							},
 						},
 					},
 				},
