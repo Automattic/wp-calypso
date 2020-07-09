@@ -438,11 +438,10 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
-								{ this.props.isFrontPage &&
-									this.renderTemplatesList(
-										currentTemplate,
-										__( 'Current', 'full-site-editing' )
-									) }
+								{ this.renderTemplatesList(
+									currentTemplate,
+									__( 'Current', 'full-site-editing' )
+								) }
 
 								{ this.props.isFrontPage &&
 									this.renderTemplatesList(
