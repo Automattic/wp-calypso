@@ -2,6 +2,8 @@
  * Internal dependencies
  */
 import { POST_GEO_IMAGE_RECEIVE, POST_GEO_IMAGE_REQUEST } from 'state/action-types';
+
+import 'state/data-layer/wpcom/posts/geo';
 /**
  * Action creator function: POST_GEO_IMAGE_RECEIVE
  *
@@ -19,8 +21,8 @@ export const receivePostGeoImageUrl = ( { map_url, longitude, latitude, siteId, 
 /**
  * Action creator function: POST_GEO_IMAGE_REQUEST
  *
- * @param {string} siteId of the post map url.
- * @param {string} postId of the post map url.
+ * @param {number} siteId of the post map url.
+ * @param {number|null} postId of the post map url.
  * @param {string} latitude latitude position coordinate.
  * @param {string} longitude longitude position coordinate.
  *
