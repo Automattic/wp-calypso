@@ -64,7 +64,7 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = ( dispatch ) => ( {
-	renderCard: ( card, index ) =>
+	renderCard: ( card ) =>
 		cardComponents[ card ] &&
 		dispatch(
 			withAnalytics(
@@ -75,7 +75,7 @@ const mapDispatchToProps = ( dispatch ) => ( {
 					bumpStat( 'calypso_customer_home_card_impression', card )
 				),
 				React.createElement( cardComponents[ card ], {
-					key: index,
+					key: card,
 				} )
 			)
 		),

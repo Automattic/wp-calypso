@@ -64,7 +64,7 @@ const Primary = ( { cards, renderCard } ) => {
 };
 
 export default connect( null, ( dispatch ) => ( {
-	renderCard: ( card, index ) =>
+	renderCard: ( card ) =>
 		cardComponents[ card ] &&
 		dispatch(
 			withAnalytics(
@@ -75,7 +75,7 @@ export default connect( null, ( dispatch ) => ( {
 					bumpStat( 'calypso_customer_home_card_impression', card )
 				),
 				React.createElement( cardComponents[ card ], {
-					key: index,
+					key: card,
 					isIos: card === 'home-task-go-mobile-ios' ? true : null,
 				} )
 			)

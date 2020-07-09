@@ -22,6 +22,12 @@ import {
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
 } from 'my-sites/customer-home/cards/constants';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: GoMobile,
@@ -31,7 +37,7 @@ const cardComponents = {
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
 };
 
-const ManageSite = ( { cards } ) => {
+const ManageSite = ( { cards, renderCard } ) => {
 	const translate = useTranslate();
 
 	if ( ! cards || ! cards.length ) {
@@ -43,13 +49,7 @@ const ManageSite = ( { cards } ) => {
 			<h2 className="manage-site__heading customer-home__section-heading">
 				{ translate( 'Manage your site' ) }
 			</h2>
-			{ cards.map(
-				( card, index ) =>
-					cardComponents[ card ] &&
-					React.createElement( cardComponents[ card ], {
-						key: index,
-					} )
-			) }
+			{ cards.map( renderCard ) }
 		</>
 	);
 };
@@ -63,4 +63,22 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( ManageSite );
+const mapDispatchToProps = ( dispatch ) => ( {
+	renderCard: ( card ) =>
+		cardComponents[ card ] &&
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_customer_home_card_impression', {
+						card,
+					} ),
+					bumpStat( 'calypso_customer_home_card_impression', card )
+				),
+				React.createElement( cardComponents[ card ], {
+					key: card,
+				} )
+			)
+		),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( ManageSite );
