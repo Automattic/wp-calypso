@@ -14,7 +14,7 @@ import { requestMedia } from 'state/media/actions';
 const debug = debugFactory( 'calypso:media' );
 
 /**
- * Redux thunk to edit a media item.
+ * Redux thunk to fetch next page of media items
  *
  * @param {number} siteId site identifier
  */
