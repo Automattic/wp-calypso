@@ -9,4 +9,4 @@ import './spoiler/editor';
 import './todo/editor';
 import './task';
 import './project-status';
-import './github-issue-template/editor';
+import './github-issue-template-button/editor';

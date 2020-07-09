@@ -3,12 +3,14 @@
  */
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
-import { TextControl, TextareaControl, Button } from '@wordpress/components';
+import { TextControl, TextareaControl, Button, CustomSelectControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { InspectorControls } from '@wordpress/block-editor';
 import { Fragment } from '@wordpress/element';
 
 const newGithubIssueUrl = require( 'new-github-issue-url' );
+
+import './editor.scss';
 
 const icon = (
 	<svg
@@ -34,6 +36,7 @@ registerBlockType( 'a8c/github-issue-template-button', {
 	attributes: {
 		userOrOrg: {
 			type: 'string',
+			default: 'automattic',
 		},
 		repo: {
 			type: 'string',
@@ -46,12 +49,22 @@ registerBlockType( 'a8c/github-issue-template-button', {
 		},
 		buttonLabel: {
 			type: 'string',
+			default: 'Create Issue',
+		},
+		alignment: {
+			type: 'string',
 		},
 	},
 	edit: ( props ) => {
 		const {
-			attributes: { userOrOrg, repo, title, body, buttonLabel },
+			attributes: { userOrOrg, repo, title, body, buttonLabel, alignment },
 		} = props;
+
+		const alignmentOptions = [
+			{ key: 'flex-start', name: 'Left' },
+			{ key: 'center', name: 'Center' },
+			{ key: 'flex-end', name: 'End' },
+		];
 
 		const onChangeUserOrOrg = ( newUserOrOrg ) => {
 			props.setAttributes( { userOrOrg: newUserOrOrg } );
@@ -73,25 +86,44 @@ registerBlockType( 'a8c/github-issue-template-button', {
 			props.setAttributes( { buttonLabel: newButtonLabel } );
 		};
 
+		const onChangeAlignment = ( control ) => {
+			props.setAttributes( { alignment: control.selectedItem.key } );
+		};
+
 		return (
 			<Fragment>
-				<Button isPrimary>
-					<Icon icon={ icon } />
-					&nbsp;{ buttonLabel || 'Create Issue' }
-				</Button>
+				<div className={ `wp-block-github-issue-template-button ${ alignment }` }>
+					<Button isPrimary>
+						<Icon icon={ icon } />
+						&nbsp;{ buttonLabel }
+					</Button>
+				</div>
 				<InspectorControls>
 					<TextControl
-						label="User or organization"
+						label={ __( 'User or Organization' ) }
 						onChange={ onChangeUserOrOrg }
 						value={ userOrOrg }
 					/>
-					<TextControl label="Repository name" onChange={ onChangeRepoName } value={ repo } />
-					<TextControl label="Issue title" onChange={ onChangeTitle } value={ title } />
-					<TextareaControl label="Issue body" onChange={ onChangeBody } value={ body } />
 					<TextControl
-						label="Button label (leave empty for default)"
+						label={ __( 'Repository Name' ) }
+						onChange={ onChangeRepoName }
+						value={ repo }
+					/>
+					<TextControl label={ __( 'Issue Title' ) } onChange={ onChangeTitle } value={ title } />
+					<TextareaControl label={ __( 'Issue body' ) } onChange={ onChangeBody } value={ body } />
+					<TextControl
+						label={ __( 'Button Label' ) }
 						onChange={ onChangeButtonLabel }
 						value={ buttonLabel }
+					/>
+					<CustomSelectControl
+						label={ __( 'Alignment' ) }
+						options={ alignmentOptions }
+						value={
+							alignmentOptions.find( ( option ) => option.key === alignment ) ||
+							alignmentOptions[ 0 ]
+						}
+						onChange={ onChangeAlignment }
 					/>
 				</InspectorControls>
 			</Fragment>
@@ -101,7 +133,7 @@ registerBlockType( 'a8c/github-issue-template-button', {
 		let url;
 
 		const {
-			attributes: { userOrOrg, repo, title, body, buttonLabel },
+			attributes: { userOrOrg, repo, title, body, buttonLabel, alignment },
 		} = props;
 
 		if ( repo ) {
@@ -114,11 +146,11 @@ registerBlockType( 'a8c/github-issue-template-button', {
 		}
 
 		return (
-			<div className="block" style="display: flex; align-items: center">
+			<div className="block" style={ `display: flex; justify-content: ${ alignment }` }>
 				<Icon icon={ icon } />
 				&nbsp;
 				<Button isPrimary href={ url || '' }>
-					{ buttonLabel || 'Create Issue' }
+					{ buttonLabel }
 				</Button>
 			</div>
 		);
