@@ -16,9 +16,6 @@ const debug = debugFactory( 'calypso:media' );
 /**
  * Redux thunk to edit a media item.
  *
- * Note: Temporarily this action will dispatch to the flux store, until
- * the flux store is removed.
- *
  * @param {number} siteId site identifier
  */
 export const fetchNextPage = ( siteId ) => ( dispatch, getState ) => {
@@ -26,6 +23,11 @@ export const fetchNextPage = ( siteId ) => ( dispatch, getState ) => {
 		return;
 	}
 
+	/*
+	 * @TODO: Temporarily this action will dispatch to the flux store, until
+	 * the flux store is removed. After we completely removed the flux store
+	 * it should be enough to just call the `requestMedia( ... )` action
+	 */
 	dispatchFluxFetchMediaItems( siteId );
 
 	const query = MediaListStore.getNextPageQuery( siteId );
