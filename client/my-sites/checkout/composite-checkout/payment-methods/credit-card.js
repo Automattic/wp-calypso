@@ -47,6 +47,7 @@ import useCountryList from 'my-sites/checkout/composite-checkout/wpcom/hooks/use
 import { isValid } from 'my-sites/checkout/composite-checkout/wpcom/types';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
+import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -65,6 +66,9 @@ export function createCreditCardPaymentMethodStore() {
 		changeCardholderName( payload ) {
 			return { type: 'CARDHOLDER_NAME_SET', payload };
 		},
+		setFieldValue( key, value ) {
+			return { type: 'FIELD_VALUE_SET', payload: { key, value } };
+		},
 	};
 
 	const selectors = {
@@ -82,7 +86,22 @@ export function createCreditCardPaymentMethodStore() {
 				( key ) => ! state.cardDataComplete[ key ]
 			);
 		},
+		getFields( state ) {
+			return state.fields;
+		},
 	};
+
+	function fieldReducer( state = {}, action ) {
+		switch ( action?.type ) {
+			case 'FIELD_VALUE_SET':
+				return {
+					...state,
+					[ action.payload.key ]: { value: action.payload.value, isTouched: true },
+				};
+			default:
+				return state;
+		}
+	}
 
 	function cardDataCompleteReducer(
 		state = {
@@ -109,32 +128,42 @@ export function createCreditCardPaymentMethodStore() {
 		}
 	}
 
-	const store = registerStore( 'stripe', {
+	function cardholderNameReducer( state = { value: '', isTouched: false }, action ) {
+		switch ( action?.type ) {
+			case 'CARDHOLDER_NAME_SET':
+				return { value: action.payload, isTouched: true };
+			default:
+				return state;
+		}
+	}
+
+	function brandReducer( state = null, action ) {
+		switch ( action?.type ) {
+			case 'BRAND_SET':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
+	const store = registerStore( 'credit-card', {
 		reducer(
 			state = {
+				fields: fieldReducer(),
 				cardDataErrors: cardDataErrorsReducer(),
 				cardDataComplete: cardDataCompleteReducer(),
-				cardholderName: { value: '', isTouched: false },
+				cardholderName: cardholderNameReducer(),
+				brand: brandReducer(),
 			},
 			action
 		) {
-			switch ( action.type ) {
-				case 'CARDHOLDER_NAME_SET':
-					return { ...state, cardholderName: { value: action.payload, isTouched: true } };
-				case 'BRAND_SET':
-					return { ...state, brand: action.payload };
-				case 'CARD_DATA_COMPLETE_SET':
-					return {
-						...state,
-						cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
-					};
-				case 'CARD_DATA_ERROR_SET':
-					return {
-						...state,
-						cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
-					};
-			}
-			return state;
+			return {
+				fields: fieldReducer( state.fields, action ),
+				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
+				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
+				cardholderName: cardholderNameReducer( state.cardholderName, action ),
+				brand: brandReducer( state.brand, action ),
+			};
 		},
 		actions,
 		selectors,
@@ -151,7 +180,7 @@ export function createCreditCardMethod( { store, stripe, stripeConfiguration } )
 			<CreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
 		submitButton: (
-			<StripePayButton
+			<CreditCardPayButton
 				store={ store }
 				stripe={ stripe }
 				stripeConfiguration={ stripeConfiguration }
@@ -167,15 +196,12 @@ function CreditCardFields() {
 	const theme = useTheme();
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
-	const brand = useSelect( ( select ) => select( 'stripe' ).getBrand() );
-	const {
-		cardNumber: cardNumberError,
-		cardCvc: cardCvcError,
-		cardExpiry: cardExpiryError,
-	} = useSelect( ( select ) => select( 'stripe' ).getCardDataErrors() );
+	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
+	const { cardCvc: cardCvcError, cardExpiry: cardExpiryError } = useSelect( ( select ) =>
+		select( 'credit-card' ).getCardDataErrors()
+	);
 	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
-		'stripe'
+		'credit-card'
 	);
 	const [ shouldShowContactFields, setShowContactFields ] = useState( false );
 
@@ -200,7 +226,19 @@ function CreditCardFields() {
 		setCardDataError( input.elementType, null );
 	};
 
-	const cardNumberStyle = {
+	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const { setFieldValue } = useDispatch( 'credit-card' );
+	const getField = ( key ) => fields[ key ] || {};
+	const getFieldValue = ( key ) => getField( key ).value ?? '';
+	const getErrorMessagesForField = ( key ) => {
+		// TODO: do actual validation
+		if ( ! isValid( getField( key ) ) ) {
+			return [ __( 'This field is required.' ) ];
+		}
+		return [];
+	};
+
+	const stripeElementStyle = {
 		base: {
 			fontSize: '16px',
 			color: theme.colors.textColor,
@@ -244,33 +282,33 @@ function CreditCardFields() {
 					</Label>
 				</FieldRow>
 
-				{ shouldShowContactFields && <ContactFields /> }
+				{ shouldShowContactFields && (
+					<ContactFields
+						getField={ getField }
+						getFieldValue={ getFieldValue }
+						setFieldValue={ setFieldValue }
+						getErrorMessagesForField={ getErrorMessagesForField }
+					/>
+				) }
 
 				<FieldRow>
-					<Label>
-						<LabelText>{ __( 'Card number' ) }</LabelText>
-						<StripeFieldWrapper className="number" hasError={ cardNumberError }>
-							<CardNumberElement
-								style={ cardNumberStyle }
-								onReady={ () => {
-									setIsStripeFullyLoaded( true );
-								} }
-								onChange={ ( input ) => {
-									handleStripeFieldChange( input );
-								} }
-							/>
-							<PaymentLogo brand={ brand } />
+					<CreditCardNumberField
+						setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
+						handleStripeFieldChange={ handleStripeFieldChange }
+						stripeElementStyle={ stripeElementStyle }
+						countryCode={ getFieldValue( 'countryCode' ) }
+						getErrorMessagesForField={ getErrorMessagesForField }
+						setFieldValue={ setFieldValue }
+						getFieldValue={ getFieldValue }
+					/>
 
-							{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
-						</StripeFieldWrapper>
-					</Label>
 					<FieldRow gap="4%" columnWidths="48% 48%">
 						<LeftColumn>
 							<Label>
 								<LabelText>{ __( 'Expiry date' ) }</LabelText>
 								<StripeFieldWrapper className="expiration-date" hasError={ cardExpiryError }>
 									<CardExpiryElement
-										style={ cardNumberStyle }
+										style={ stripeElementStyle }
 										onChange={ ( input ) => {
 											handleStripeFieldChange( input );
 										} }
@@ -286,7 +324,7 @@ function CreditCardFields() {
 									<LeftColumn>
 										<StripeFieldWrapper className="cvv" hasError={ cardCvcError }>
 											<CardCvcElement
-												style={ cardNumberStyle }
+												style={ stripeElementStyle }
 												onChange={ ( input ) => {
 													handleStripeFieldChange( input );
 												} }
@@ -427,10 +465,10 @@ function LoadingFields() {
 	);
 }
 
-function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
+function CreditCardPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
-	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
+	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
 	const { formStatus } = useFormStatus();
 	const {
 		transactionStatus,
@@ -540,8 +578,8 @@ function useShowStripeModalAuth( shouldShowModal, stripeConfiguration ) {
 }
 
 function StripeSummary() {
-	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
-	const brand = useSelect( ( select ) => select( 'stripe' ).getBrand() );
+	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
+	const brand = useSelect( ( select ) => select( 'credit-card' ).getBrand() );
 
 	return (
 		<SummaryDetails>
@@ -720,26 +758,12 @@ const CVVImage = styled( CVV )`
 	width: 100%;
 `;
 
-function ContactFields() {
+// TODO: move to own file
+function ContactFields( { getField, getFieldValue, setFieldValue, getErrorMessagesForField } ) {
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
 	const isDisabled = formStatus !== 'ready';
 	const countriesList = useCountryList( [] );
-
-	const [ ccInfo, setCcInfo ] = useState( {
-		countryCode: { value: '', isTouched: false },
-	} );
-	const getField = ( key ) => ccInfo[ key ];
-	const getFieldValue = ( key ) => getField( key )?.value ?? '';
-	const setFieldValue = ( key, value ) =>
-		setCcInfo( ( oldInfo ) => ( { ...oldInfo, [ key ]: { value, isTouched: true } } ) );
-	const getErrorMessagesForField = ( key ) => {
-		// TODO: do actual validation
-		if ( ! isValid( getField( key ) || {} ) ) {
-			return [ __( 'This field is required.' ) ];
-		}
-		return [];
-	};
 
 	return (
 		<div>
@@ -765,5 +789,62 @@ function ContactFields() {
 				/>
 			) }
 		</div>
+	);
+}
+
+// TODO: move to own file
+function CreditCardNumberField( {
+	setIsStripeFullyLoaded,
+	handleStripeFieldChange,
+	stripeElementStyle,
+	countryCode,
+	getErrorMessagesForField,
+	setFieldValue,
+	getFieldValue,
+} ) {
+	const { __ } = useI18n();
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== 'ready';
+	const brand = useSelect( ( select ) => select( 'credit-card' ).getBrand() );
+	const { cardNumber: cardNumberError } = useSelect( ( select ) =>
+		select( 'credit-card' ).getCardDataErrors()
+	);
+
+	if ( countryCode && shouldRenderAdditionalCountryFields( countryCode ) ) {
+		return (
+			<CreditCardNumberInput
+				isError={ getErrorMessagesForField( 'number' )?.length > 0 }
+				errorMessage={ getErrorMessagesForField( 'number' ) || [] }
+				inputMode="numeric"
+				label={ __( 'Card number' ) }
+				placeholder={ '•••• •••• •••• ••••' }
+				disabled={ isDisabled }
+				name="number"
+				onChange={ ( event ) => setFieldValue( 'number', event.target.value ) }
+				onBlur={ ( event ) => setFieldValue( 'number', event.target.value ) }
+				value={ getFieldValue( 'number' ) }
+				autoComplete="off"
+			/>
+		);
+	}
+
+	return (
+		<Label>
+			<LabelText>{ __( 'Card number' ) }</LabelText>
+			<StripeFieldWrapper className="number" hasError={ cardNumberError }>
+				<CardNumberElement
+					style={ stripeElementStyle }
+					onReady={ () => {
+						setIsStripeFullyLoaded( true );
+					} }
+					onChange={ ( input ) => {
+						handleStripeFieldChange( input );
+					} }
+				/>
+				<PaymentLogo brand={ brand } />
+
+				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
+			</StripeFieldWrapper>
+		</Label>
 	);
 }
