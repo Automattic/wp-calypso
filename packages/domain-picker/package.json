@@ -7,6 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:main": "src/index.tsx",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -25,8 +26,7 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist ../../.tsc-cache/packages__domain-picker*",
-		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
-		"prepublish": "check-npm-client && yarn run clean",
+		"build": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {

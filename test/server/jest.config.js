@@ -1,5 +1,6 @@
 module.exports = {
 	modulePaths: [ '<rootDir>/../test', '<rootDir>/server', '<rootDir>', '<rootDir>/extensions' ],
+	resolver: '@automattic/calypso-build/jest/calypso-resolver',
 	rootDir: '../../client',
 	roots: [ '<rootDir>/server' ],
 	testEnvironment: 'node',

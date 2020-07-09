@@ -9,6 +9,7 @@ module.exports = {
 		),
 	},
 	modulePaths: [ '<rootDir>/../test', '<rootDir>', '<rootDir>/extensions' ],
+	resolver: '@automattic/calypso-build/jest/calypso-resolver',
 	rootDir: '../../client',
 	testEnvironment: 'node',
 	transformIgnorePatterns: [

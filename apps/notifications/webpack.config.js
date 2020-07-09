@@ -52,6 +52,10 @@ function getWebpackConfig(
 
 	return {
 		...webpackConfig,
+		resolve: {
+			...webpackConfig.resolve,
+			mainFields: [ 'calypso:main', 'browser', 'module', 'main' ],
+		},
 		plugins: [
 			...webpackConfig.plugins,
 			new HtmlWebpackPlugin( {

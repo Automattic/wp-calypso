@@ -16,7 +16,7 @@ import type { WpcomClientCredentials } from '../shared-types';
 import { controls } from '../wpcom-request-controls';
 
 export * from './types';
-export { State };
+export type { State };
 
 let isRegistered = false;
 export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {

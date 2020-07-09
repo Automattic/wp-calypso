@@ -5,6 +5,7 @@ const path = require( 'path' );
 const { defaults } = require( 'jest-config' );
 
 module.exports = {
+	resolver: '@automattic/calypso-build/jest/calypso-resolver',
 	setupFilesAfterEnv: [
 		path.join( __dirname, 'jest', 'setup.js' ),
 		require.resolve( 'jest-enzyme' ),
