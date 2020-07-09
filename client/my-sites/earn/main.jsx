@@ -31,11 +31,6 @@ import ReferAFriendSection from './refer-a-friend';
 import { canAccessAds } from 'lib/ads/utils';
 import { isEnabled } from 'config';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class EarningsMain extends Component {
 	static propTypes = {
 		section: PropTypes.string,
