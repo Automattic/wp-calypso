@@ -48,19 +48,12 @@ const InlineHelpSearchCard = ( {
 
 	// Focus in the input element.
 	useEffect( () => {
+		const inputElement = cardRef.current?.searchInput;
 		// Focuses only in the popover.
-		if ( location !== 'inline-help-popover' ) {
+		if ( location !== 'inline-help-popover' || ! inputElement ) {
 			return;
 		}
 
-		if ( ! cardRef?.current ) {
-			return;
-		}
-
-		const inputElement = cardRef.current.searchInput;
-		if ( ! inputElement ) {
-			return;
-		}
 		const timerId = setTimeout( () => inputElement.focus(), 0 );
 
 		return () => window.clearTimeout( timerId );
