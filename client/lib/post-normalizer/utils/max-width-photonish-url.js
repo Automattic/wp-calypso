@@ -15,7 +15,7 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 
 	let urlParts = {};
 	try {
-		urlParts = getUrlParts( imageURL ); // true, true means allow protocol-less hosts and parse the querystring
+		urlParts = getUrlParts( imageURL );
 	} catch ( e ) {
 		/**
 		 * `url.parse` throws in a few places where it calls decodeURIComponent
