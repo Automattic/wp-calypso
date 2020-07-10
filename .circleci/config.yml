@@ -790,7 +790,7 @@ jobs:
           name: Build Desktop Windows
           command: |
                   # Use make for bash-like environment variable substitution
-                  $env:MSYS2_ARG_CONV_EXCL="*"
+                  $env:MSYS_NO_PATHCONV=1
                   make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName="Automattic, Inc."'
       - run:
           name: Archive Unpacked Directories
