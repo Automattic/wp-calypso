@@ -81,8 +81,9 @@ const fromApi = ( data ) => ( {
  */
 export const updateProgress = ( { siteId }, apiData ) => {
 	const [ latestDownloadableBackup ] = apiData;
+
 	if ( isEmpty( latestDownloadableBackup ) ) {
-		return;
+		return updateRewindBackupProgress( siteId );
 	}
 
 	const data = fromApi( latestDownloadableBackup );
