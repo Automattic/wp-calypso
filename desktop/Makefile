@@ -46,10 +46,8 @@ source:
 
 	@cd $(CALYPSO_DIR) && yarn run build-desktop:source
 
-# Note: cannot prepend prepend desktop/pacakge.json with full path: cannot be resolved on Windows.
-# Instead, cd to desktop directory within the subprocess.
-PACKAGE_ELECTRON_VERSION = $(shell cd $(DESKTOP_DIR) && node -e "console.log(require('./package.json').devDependencies.electron)")
-
+# Note: cannot prepend prepend desktop/package.json with full path: cannot be resolved on Windows.
+package: PACKAGE_ELECTRON_VERSION = $(shell cd $(DESKTOP_DIR) node -e "console.log(require('./package.json').devDependencies.electron)")
 package:
 	$(info Packaging app...)
 
