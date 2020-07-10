@@ -10,6 +10,7 @@ import JetpackProductCard from 'components/jetpack-product-card';
 import {
 	productCard,
 	highlightedProductCard,
+	ownedProductCard,
 	productCardWithProductTypeAndBadgeAndStartingPriceAndDiscount,
 	productCardWithLongTexts,
 	expandedProductCardWithCategoriesAndMore,
@@ -23,6 +24,9 @@ export default function JetpackProductCardExample() {
 			<br />
 			<h3>Highlighted Jetpack Product Card</h3>
 			<JetpackProductCard { ...highlightedProductCard } />
+			<br />
+			<h3>Owned Jetpack Product Card</h3>
+			<JetpackProductCard { ...ownedProductCard } />
 			<br />
 			<h3>Jetpack Product Card with Product Type, Badge, Starting Price and Discount</h3>
 			<JetpackProductCard { ...productCardWithProductTypeAndBadgeAndStartingPriceAndDiscount } />

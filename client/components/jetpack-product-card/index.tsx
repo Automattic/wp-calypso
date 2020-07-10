@@ -34,6 +34,7 @@ type OwnProps = {
 	buttonLabel: string;
 	onButtonClick: () => void;
 	isHighlighted?: boolean;
+	isOwned?: boolean;
 };
 
 export type Props = OwnProps & FeaturesProps;
@@ -53,6 +54,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	buttonLabel,
 	onButtonClick,
 	isHighlighted,
+	isOwned,
 	features,
 	isExpanded,
 } ) => {
@@ -63,7 +65,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	const isDiscounted = isFinite( discountedPrice );
 
 	return (
-		<div className={ classNames( className, 'jetpack-product-card' ) }>
+		<div className={ classNames( className, 'jetpack-product-card', { 'is-owned': isOwned } ) }>
 			<header className="jetpack-product-card__header">
 				<ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } />
 				<div className="jetpack-product-card__summary">

@@ -42,6 +42,12 @@ export const highlightedProductCard = {
 	isHighlighted: true,
 };
 
+export const ownedProductCard = {
+	...productCard,
+	badgeLabel: 'You own this',
+	isOwned: true,
+};
+
 export const productCardWithProductTypeAndBadgeAndStartingPriceAndDiscount = {
 	...productCard,
 	productType: 'Real-Time',

@@ -149,7 +149,7 @@ $jetpack-product-card-icon-size: 55px;
 	font-weight: 600;
 }
 
-.jetpack-product-card .jetpack-product-card__badge {
+.jetpack-product-card__badge {
 	$jetpack-product-card-badge-height: 24px;
 
 	position: absolute;
@@ -171,6 +171,11 @@ $jetpack-product-card-icon-size: 55px;
 	font-size: rem( 13px );
 	line-height: $jetpack-product-card-badge-height;
 	text-transform: uppercase;
+}
+
+.jetpack-product-card.is-owned .jetpack-product-card__badge {
+	background-color: var( --color-neutral-40 );
+	color: var( --color-text-inverted );
 }
 
 .jetpack-product-card__body {
