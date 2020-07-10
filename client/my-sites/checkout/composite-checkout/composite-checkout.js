@@ -228,6 +228,7 @@ export default function CompositeCheckout( {
 		siteId,
 		isWhiteGloveOffer,
 		hideNudge,
+		recordEvent,
 	} );
 
 	const moment = useLocalizedMoment();
