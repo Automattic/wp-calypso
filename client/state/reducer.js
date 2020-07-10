@@ -63,7 +63,6 @@ import simplePayments from './simple-payments/reducer';
 import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
-import siteSettings from './site-settings/reducer';
 import sites from './sites/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
@@ -129,7 +128,6 @@ const reducers = {
 	siteAddressChange,
 	siteKeyrings,
 	siteRoles,
-	siteSettings,
 	sites,
 	storedCards,
 	support,
