@@ -4,7 +4,7 @@
 import { forEach, startsWith, some, includes, filter } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
 import { maxWidthPhotonishURL } from './utils';
