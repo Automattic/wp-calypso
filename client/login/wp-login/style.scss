@@ -1,6 +1,6 @@
 @import 'jetpack-connect/colors.scss';
 @import 'woocommerce/components/text-control/style.scss';
-@import 'landing/gutenboarding/mixins.scss';
+@import '~@automattic/onboarding/styles/mixins';
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
@@ -423,7 +423,10 @@ $image-height: 47px;
 		top: 17px;
 	}
 
-	.wp-login__links a:hover, .wp-login__links a:active, .wp-login__links button:hover, .wp-login__links button:active {
+	.wp-login__links a:hover,
+	.wp-login__links a:active,
+	.wp-login__links button:hover,
+	.wp-login__links button:active {
 		color: #00a0d2;
 	}
 }
