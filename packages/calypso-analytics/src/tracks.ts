@@ -164,7 +164,7 @@ export function identifyUser( userData: any ): any {
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 }
 
-export function recordTracksEvent( eventName: string, eventProperties: any ) {
+export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {

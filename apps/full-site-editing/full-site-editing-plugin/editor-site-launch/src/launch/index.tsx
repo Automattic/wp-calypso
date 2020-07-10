@@ -7,13 +7,11 @@ import type { ValuesType } from 'utility-types';
 /**
  * Internal dependencies
  */
-import PrivacyStep from '../launch-steps/privacy-step';
 import DomainStep from '../launch-steps/domain-step';
 import PlanStep from '../launch-steps/plan-step';
 import './styles.scss';
 
 export const LaunchStep = {
-	Privacy: 'privacy',
 	Domain: 'domain',
 	Plan: 'plan',
 };
@@ -21,18 +19,18 @@ export const LaunchStep = {
 export type LaunchStepType = ValuesType< typeof LaunchStep >;
 
 const LaunchStepComponents = {
-	[ LaunchStep.Privacy ]: PrivacyStep,
 	[ LaunchStep.Domain ]: DomainStep,
 	[ LaunchStep.Plan ]: PlanStep,
 };
 
-const LaunchSequence = [ LaunchStep.Privacy, LaunchStep.Domain, LaunchStep.Plan ];
+const LaunchSequence = [ LaunchStep.Domain, LaunchStep.Plan ];
 
 interface Props {
 	step?: LaunchStepType;
+	onSubmit?: () => void;
 }
 
-const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Privacy } ) => {
+const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Domain, onSubmit } ) => {
 	const initialSequence = LaunchSequence.indexOf( step );
 
 	const [ currentSequence, setCurrentSequence ] = React.useState( initialSequence );
@@ -50,20 +48,17 @@ const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Privacy }
 	};
 
 	const handleNextStep = () => {
-		let nextSequence = currentSequence + 1;
+		const nextSequence = currentSequence + 1;
 		const maxSequence = LaunchSequence.length - 1;
 		if ( nextSequence > maxSequence ) {
-			nextSequence = maxSequence;
+			onSubmit?.();
 		}
 		setCurrentSequence( nextSequence );
 	};
 
 	return (
 		<div className="nux-launch">
-			<CurrentLaunchStep
-				onPrevStep={ handlePrevStep }
-				onNextStep={ handleNextStep }
-			></CurrentLaunchStep>
+			<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
 		</div>
 	);
 };

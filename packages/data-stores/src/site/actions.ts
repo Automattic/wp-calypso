@@ -7,6 +7,7 @@ import type {
 	NewSiteSuccessResponse,
 	SiteDetails,
 	SiteError,
+	Cart,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -83,6 +84,41 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		type: 'RESET_RECEIVE_NEW_SITE_FAILED' as const,
 	} );
 
+	const launchedSite = ( siteId: number ) => ( {
+		type: 'LAUNCHED_SITE' as const,
+		siteId,
+	} );
+
+	function* launchSite( siteId: number ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteId }/launch`,
+			apiVersion: '1.1',
+			method: 'post',
+		} );
+		yield launchedSite( siteId );
+		return true;
+	}
+
+	// TODO: move getCart and setCart to a 'cart' data-store
+	function* getCart( siteId: number ) {
+		const success = yield wpcomRequest( {
+			path: '/me/shopping-cart/' + siteId,
+			apiVersion: '1.1',
+			method: 'GET',
+		} );
+		return success;
+	}
+
+	function* setCart( siteId: number, cartData: Cart ) {
+		const success = yield wpcomRequest( {
+			path: '/me/shopping-cart/' + siteId,
+			apiVersion: '1.1',
+			method: 'POST',
+			body: cartData,
+		} );
+		return success;
+	}
+
 	return {
 		fetchNewSite,
 		receiveNewSite,
@@ -92,6 +128,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSite,
 		receiveSiteFailed,
 		reset,
+		launchSite,
+		launchedSite,
+		getCart,
+		setCart,
 	};
 }
 
@@ -106,6 +146,7 @@ export type Action =
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
+			| ActionCreators[ 'launchedSite' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

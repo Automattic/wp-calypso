@@ -2,45 +2,57 @@
  * External dependencies
  */
 import * as React from 'react';
-import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
+import { useSelect, useDispatch } from '@wordpress/data';
+import DomainPicker from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
  */
-import { useSite, useCurrentDomain } from '../hooks/use-current-domain';
+import { useSite, useCurrentDomainName } from '../hooks/use-current-domain';
+import { LAUNCH_STORE } from '../stores';
 
 const FLOW_ID = 'gutenboarding';
 
-export type Props = Partial< DomainPickerProps >;
+interface Props {
+	onSelect?: () => void;
+}
 
-const DomainPickerFSE: React.FunctionComponent< Props > = ( props ) => {
-	const [ domainSearch, setDomainSearch ] = React.useState( '' );
-
+const DomainPickerFSE: React.FunctionComponent< Props > = ( { onSelect } ) => {
 	const site = useSite();
-	const currentDomain = useCurrentDomain();
+
+	// TODO: add a new prop on domain Picker to display this value in a disabled state
+	const freeDomain = useCurrentDomainName();
+
+	const { domain, domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { setDomain, setDomainSearch } = useDispatch( LAUNCH_STORE );
 
 	const search = ( domainSearch.trim() || site?.name ) ?? '';
 
-	// TODO: This should go to the domain or launch store.
-	const [ domainName, setDomainName ] = React.useState( currentDomain );
+	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
+		setDomain( suggestion );
+		onSelect?.();
+	};
 
-	const handleDomainSelect = ( domain?: DomainSuggestions.DomainSuggestion ) => {
-		// TODO: store whole domain suggestion object here because it has product_id and other useful info
-		// that we need for the cart
-		setDomainName( domain?.domain_name );
+	const trackDomainSearchInteraction = ( query: string ) => {
+		recordTracksEvent( 'calypso_newsite_domain_search_blur', {
+			flow: FLOW_ID,
+			query,
+			where: 'editor_domain_modal',
+		} );
 	};
 
 	return (
 		<DomainPicker
 			analyticsFlowId={ FLOW_ID }
-			analyticsUiAlgo="editor_domain_modal"
 			initialDomainSearch={ search }
 			onSetDomainSearch={ setDomainSearch }
+			onDomainSearchBlur={ trackDomainSearchInteraction }
 			showDomainCategories
-			currentDomain={ domainName }
+			currentDomain={ domain?.domain_name || freeDomain }
 			onDomainSelect={ handleDomainSelect }
-			{ ...props }
+			analyticsUiAlgo="editor_domain_modal"
 		/>
 	);
 };

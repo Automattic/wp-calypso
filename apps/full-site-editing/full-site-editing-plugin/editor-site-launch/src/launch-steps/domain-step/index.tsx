@@ -17,10 +17,6 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 		onPrevStep?.();
 	};
 
-	const handleContinue = () => {
-		onNextStep?.();
-	};
-
 	return (
 		<LaunchStep className="nux-launch-domain-step">
 			<div className="nux-launch-step__header">
@@ -36,14 +32,10 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					<Button isTertiary onClick={ handleBack }>
 						{ __( 'Go back', 'full-site-editing' ) }
 					</Button>
-					<Button isPrimary onClick={ handleContinue }>
-						{ __( 'Continue', 'full-site-editing' ) }
-					</Button>
 				</div>
 			</div>
 			<div className="nux-launch-step__body">
-				{ /* TODO: When a domain is selected, it should advance to the next step */ }
-				<DomainPickerFSE />
+				<DomainPickerFSE onSelect={ onNextStep } />
 			</div>
 		</LaunchStep>
 	);

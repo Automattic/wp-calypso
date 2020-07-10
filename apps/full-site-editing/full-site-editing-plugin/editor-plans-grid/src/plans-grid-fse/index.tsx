@@ -2,31 +2,30 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useSelect, useDispatch } from '@wordpress/data';
+import PlansGrid from '@automattic/plans-grid';
+
+import type { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import PlansGrid, { Props as PlansGridProps } from '@automattic/plans-grid';
-import { useSelectedPlan } from '../hooks/use-selected-plan';
+import { LAUNCH_STORE } from '../stores';
 
-export type Props = Partial< PlansGridProps >;
+interface Props {
+	onSelect?: () => void;
+}
 
-const PlansGridFSE: React.FunctionComponent< Props > = ( { ...props } ) => {
-	// TODO: Get current domain from launch store.
-	const currentDomain = undefined;
+const PlansGridFSE: React.FunctionComponent< Props > = ( { onSelect } ) => {
+	const { domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { updatePlan } = useDispatch( LAUNCH_STORE );
 
-	const currentPlan = useSelectedPlan();
+	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
+		updatePlan( planSlug );
+		onSelect?.();
+	};
 
-	const handleSelect = ( plan ) => console.log( plan ); // eslint-disable-line no-console
-
-	return (
-		<PlansGrid
-			currentDomain={ currentDomain }
-			currentPlan={ currentPlan }
-			onPlanSelect={ handleSelect }
-			{ ...props }
-		/>
-	);
+	return <PlansGrid currentDomain={ domain } onPlanSelect={ handleSelect } />;
 };
 
 export default PlansGridFSE;

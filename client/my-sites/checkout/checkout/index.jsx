@@ -119,6 +119,7 @@ export class Checkout extends React.Component {
 		couponCode: PropTypes.string,
 		isJetpackNotAtomic: PropTypes.bool,
 		returnToBlockEditor: PropTypes.bool,
+		returnToHome: PropTypes.bool,
 		selectedFeature: PropTypes.string,
 		loadTrackingTool: PropTypes.func.isRequired,
 	};
@@ -340,7 +341,7 @@ export class Checkout extends React.Component {
 			return true;
 		}
 
-		const { selectedSiteSlug, transaction, returnToBlockEditor } = this.props;
+		const { selectedSiteSlug, transaction, returnToBlockEditor, returnToHome } = this.props;
 
 		if ( ! transaction ) {
 			return true;
@@ -378,6 +379,7 @@ export class Checkout extends React.Component {
 				this.props.upgradeIntent,
 				this.props.redirectTo,
 				returnToBlockEditor,
+				returnToHome,
 				this.props.previousRoute
 			);
 		}

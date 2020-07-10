@@ -33,8 +33,6 @@ const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 				...state,
 				prices: action.prices,
 			};
-		case 'RESET_PLAN':
-			return DEFAUlT_STATE;
 		default:
 			return state;
 	}

@@ -105,6 +105,7 @@
 		"@wordpress/components": "*",
 		"@wordpress/compose": "*",
 		"@wordpress/data": "*",
+		"@wordpress/data-controls": "*",
 		"@wordpress/date": "*",
 		"@wordpress/dependency-extraction-webpack-plugin": "^2.6.0",
 		"@wordpress/dom-ready": "*",
@@ -126,6 +127,7 @@
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0",
 		"react": "^16.12.0",
+		"redux": "^4.0.5",
 		"react-dom": "^16.12.0",
 		"utility-types": "^3.10.0"
 	},

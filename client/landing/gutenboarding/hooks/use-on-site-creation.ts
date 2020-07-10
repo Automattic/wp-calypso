@@ -9,7 +9,6 @@ import wp from '../../../lib/wp';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { PLANS_STORE } from '../stores/plans';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
@@ -66,7 +65,6 @@ export default function useOnSiteCreation() {
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
-	const { resetPlan } = useDispatch( PLANS_STORE );
 	const flowCompleteTrackingParams = {
 		isNewSite: !! newSite,
 		isNewUser: !! newUser,
@@ -102,7 +100,6 @@ export default function useOnSiteCreation() {
 						...cart,
 						products: [ ...cart.products, planProduct, domainProduct ],
 					} );
-					resetPlan();
 					resetOnboardStore();
 					setSelectedSite( newSite.blogid );
 
@@ -124,7 +121,6 @@ export default function useOnSiteCreation() {
 			}
 
 			recordOnboardingComplete( flowCompleteTrackingParams );
-			resetPlan();
 			resetOnboardStore();
 			setSelectedSite( newSite.blogid );
 
@@ -140,7 +136,6 @@ export default function useOnSiteCreation() {
 		newSite,
 		newUser,
 		resetOnboardStore,
-		resetPlan,
 		setIsRedirecting,
 		setSelectedSite,
 		flowCompleteTrackingParams,

@@ -2,9 +2,11 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
-import { Site } from '@automattic/data-stores';
 
-const SITES_STORE = Site.register( { client_id: '', client_secret: '' } );
+/**
+ * Internal dependencies
+ */
+import { SITE_STORE } from '../stores';
 
 declare global {
 	interface Window {
@@ -13,10 +15,10 @@ declare global {
 }
 
 export function useSite() {
-	return useSelect( ( select ) => select( SITES_STORE ).getSite( window._currentSiteId ) );
+	return useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
 }
 
-export function useCurrentDomain() {
+export function useCurrentDomainName() {
 	const site = useSite();
 	return ( site?.URL && new URL( site?.URL ).hostname ) || '';
 }
