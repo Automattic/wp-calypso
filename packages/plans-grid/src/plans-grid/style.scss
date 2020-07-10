@@ -21,7 +21,6 @@
 
 .plans-grid__details {
 	margin-top: 70px;
-	margin-bottom: 120px;
 }
 
 .plans-grid__details-container {
@@ -33,6 +32,9 @@
 
 		@include plans-grid-edge2edge-padding;
 	}
+	// this is needed on mobiles to uncover the CTA button
+	// without it, it's covered by the sticky bottom bar
+	padding-bottom: 120px;
 }
 
 .plans-grid__details-heading {
