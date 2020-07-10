@@ -636,12 +636,12 @@ jobs:
       - run: *update-node
       - run: *yarn-install
       - restore_cache: *desktop-restore-source-cache
-      # - run: *desktop-decrypt-assets
-      # - run:
-      #     name: Build Desktop Source
-      #     no_output_timeout: 15m
-      #     command: |
-      #       yarn run build-desktop:source
+      - run: *desktop-decrypt-assets
+      - run:
+          name: Build Desktop Source
+          no_output_timeout: 15m
+          command: |
+            yarn run build-desktop:source
       - save_cache: *desktop-save-source-cache
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
