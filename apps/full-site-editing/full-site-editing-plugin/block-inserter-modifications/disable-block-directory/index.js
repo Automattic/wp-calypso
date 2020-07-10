@@ -23,22 +23,25 @@ if ( isSimpleSite ) {
 		}
 	);
 
-	registerPlugin( 'disable-block-registry', {
-		render: () => (
-			<__experimentalInserterMenuExtension>
-				{ ( { hasResults } ) => {
-					if ( ! hasResults ) {
-						// We need to define our own 'no results' until we enable Block Directory.
-						return (
-							<div className="disable-block-directory__no-results">
-								{ /* translators: Displayed when block search returns no results. */ }
-								{ __( 'No results found.', 'full-site-editing' ) }
-							</div>
-						);
-					}
-					return null;
-				} }
-			</__experimentalInserterMenuExtension>
-		),
-	} );
+	// Check if the experimental slot is available before registering the plugin.
+	if ( typeof __experimentalInserterMenuExtension !== 'undefined' ) {
+		registerPlugin( 'disable-block-registry', {
+			render: () => (
+				<__experimentalInserterMenuExtension>
+					{ ( { hasResults } ) => {
+						if ( ! hasResults ) {
+							// We need to define our own 'no results' until we enable Block Directory.
+							return (
+								<div className="disable-block-directory__no-results">
+									{ /* translators: Displayed when block search returns no results. */ }
+									{ __( 'No results found.', 'full-site-editing' ) }
+								</div>
+							);
+						}
+						return null;
+					} }
+				</__experimentalInserterMenuExtension>
+			),
+		} );
+	}
 }
