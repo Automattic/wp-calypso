@@ -51,6 +51,7 @@ import ListHeader from './list-header';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
 
 /**
  * Style dependencies
@@ -458,7 +459,7 @@ export class List extends React.Component {
 	}
 
 	renderPrimaryDomain() {
-		const { domains, translate } = this.props;
+		const { domains, selectedSite, translate } = this.props;
 		const primaryDomain = find( domains, 'isPrimary' );
 
 		if ( this.isLoading() || ! primaryDomain ) {
@@ -485,7 +486,17 @@ export class List extends React.Component {
 				</div>
 			</CompactCard>,
 			<CompactCard className="list__item-primary-domain" key="primary-domain-content">
-				<div className="list__header-primary-domain-content">{ primaryDomain.name }</div>
+				<div className="list__header-primary-domain-content">
+					<ExternalLink
+						className="list__header-primary-domain-url"
+						href={ selectedSite.URL }
+						title={ translate( 'Launch your site' ) }
+						target="_blank"
+						icon={ true }
+					>
+						{ primaryDomain.name }
+					</ExternalLink>
+				</div>
 			</CompactCard>,
 		];
 	}
