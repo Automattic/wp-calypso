@@ -1,19 +1,5 @@
-// @see client/landing/gutenboarding/mixins.scss
-@font-face {
-	font-display: swap;
-	font-family: 'Recoleta';
-	font-weight: 400;
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
-}
-@mixin onboarding-font-recoleta {
-	font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
-	font-weight: 400;
-	letter-spacing: 0.2px;
-}
+@import '~@automattic/typography/styles/fonts';
+@import '~@automattic/onboarding/styles/mixins';
 
 $wpcom-modal-breakpoint: 660px;
 
