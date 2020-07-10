@@ -12,7 +12,7 @@ describe( 'resolveRelativePath()', () => {
 		expect( resolveRelativePath( undefined, undefined ) ).toBe( '/' );
 	} );
 
-	test( 'should return the base path when the relative path is ommitted', () => {
+	test( 'should return the base path when the relative path is omitted', () => {
 		expect( resolveRelativePath( '/foo', undefined ) ).toBe( '/foo' );
 	} );
 
