@@ -2,7 +2,7 @@
 	"name": "@automattic/typography",
 	"version": "1.0.0",
 	"description": "Typographic elements for WordPress.com products",
-	"main": "sass/fonts.scss",
+	"main": "styles/fonts.scss",
 	"keywords": [
 		"wordpress"
 	],
