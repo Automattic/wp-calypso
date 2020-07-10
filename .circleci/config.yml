@@ -778,19 +778,10 @@ jobs:
           name: Install Desktop Dependencies
           command: yarn run build-desktop:install-app-deps
       - run:
-          name: Import Codesigning Certificate
-          command: |
-                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
-                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
-                  #
-                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
-                  # package.json's `certificateSubjectName` to find the imported cert.
-                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
-      - run:
           name: Build Desktop Windows
           command: |
-                  # Use make for bash-like environment variable substitution
-                  make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName=""Automattic, Inc.""'
+                  $env:CSC_KEY_PASSWORD=$env:WIN_CSC_KEY_PASSWORD
+                  make -f desktop/Makefile package
       - run:
           name: Archive Unpacked Directories
           command: |
