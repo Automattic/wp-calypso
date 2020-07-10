@@ -175,5 +175,6 @@ export default {
 		},
 		defaultVariation: 'regular',
 		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };

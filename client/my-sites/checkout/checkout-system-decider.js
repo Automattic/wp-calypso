@@ -240,9 +240,9 @@ function getCheckoutVariant(
 		return 'composite-checkout';
 	}
 	// Add remaining users to new AB test with 10% holdout
-	if ( abtest( 'showCompositeCheckoutI18N' ) === 'composite' ) {
-		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
-		return 'composite-checkout';
+	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
+		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );
+		return 'control-variant';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );
