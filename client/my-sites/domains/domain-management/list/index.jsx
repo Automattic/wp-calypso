@@ -472,10 +472,7 @@ export class List extends React.Component {
 					{ translate( 'Primary domain' ) }
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
-							'Your primary domain is the address ' +
-								'visitors will see in their browser ' +
-								'when visiting your site. ' +
-								'All other custom domains redirect to the primary domain.'
+							'Your primary domain is the address visitors will see in their address bar when visiting your blog. All other domains will redirect to the primary domain.'
 						) }
 					</InfoPopover>
 				</div>
