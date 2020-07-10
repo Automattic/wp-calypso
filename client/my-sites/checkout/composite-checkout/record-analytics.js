@@ -123,13 +123,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'PAYMENT_METHOD_SELECT': {
-				reduxDispatch(
-					logStashEventAction(
-						'payment_method_select',
-						String( action.payload ),
-						'payment_method_select'
-					)
-				);
+				reduxDispatch( logStashEventAction( 'payment_method_select', String( action.payload ) ) );
 
 				// Need to convert to the slug format used in old checkout so events are comparable
 				const rawPaymentMethodSlug = String( action.payload );
@@ -398,11 +392,10 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 			case 'THANK_YOU_URL_GENERATED':
 				return reduxDispatch(
-					logStashEventAction(
-						'thank_you_url_generated',
-						String( action.payload ),
-						'thank you url generated'
-					)
+					logStashEventAction( 'thank_you_url_generated', 'thank you url generated', {
+						url: action.payload.url,
+						arguments: action.payload.arguments,
+					} )
 				);
 
 			default:
@@ -416,20 +409,22 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 	};
 }
 
-function logStashLoadErrorEventAction( type, payload, additionalData = {} ) {
-	return logStashEventAction( type, payload, 'composite checkout load error', additionalData );
+function logStashLoadErrorEventAction( type, errorMessage, additionalData = {} ) {
+	return logStashEventAction( type, 'composite checkout load error', {
+		...additionalData,
+		message: errorMessage,
+	} );
 }
 
-function logStashEventAction( type, payload, message, additionalData = {} ) {
+function logStashEventAction( type, message, dataForLog = {} ) {
 	return logToLogstash( {
 		feature: 'calypso_client',
-		message: message,
+		message,
 		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 		extra: {
 			env: config( 'env_id' ),
 			type,
-			message: payload,
-			...additionalData,
+			...dataForLog,
 		},
 	} );
 }
