@@ -790,6 +790,7 @@ jobs:
           name: Build Desktop Windows
           command: |
                   # Use make for bash-like environment variable substitution
+                  # Note: cd into desktop as ELECTRON_BUILDER_ARGS will not resolve correctly if we use make -f syntax from repo root.
                   cd desktop
                   make package ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName="Automattic, Inc."'
       - run:
