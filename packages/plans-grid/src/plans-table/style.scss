@@ -1,5 +1,6 @@
-@import '../base-styles.scss';
-@import '../mixins.scss';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/variables';
 @import '../variables.scss';
 
 .plans-table {
@@ -106,7 +107,7 @@
 
 	&.is-loading {
 		max-width: 60px;
-		@include placeholder();
+		@include onboarding-placeholder();
 	}
 }
 
@@ -177,7 +178,7 @@
 	font-size: $font-body-small;
 	line-height: 22px;
 	margin-top: 10px;
-	
+
 	// overwrite button styles
 	&.components-button.is-link {
 		text-decoration: none;
