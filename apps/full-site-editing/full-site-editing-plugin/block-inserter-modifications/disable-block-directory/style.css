@@ -1,0 +1,12 @@
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/variables';
+
+.disable-block-directory__no-results {
+	// Copy styles that are used for the Block Directory messages to stay consistent.
+	$no-result-padding: $grid-unit-20 * 7;
+	font-style: normal;
+	padding: 0;
+	margin: $no-result-padding 0;
+	text-align: center;
+	color: $dark-gray-400;
+}

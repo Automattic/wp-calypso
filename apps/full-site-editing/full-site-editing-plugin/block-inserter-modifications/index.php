@@ -70,5 +70,8 @@ function enqueue_block_inserter_modifications() {
 
 	enqueue_script( 'contextual-tips', true );
 	enqueue_style( 'contextual-tips', false );
+
+	enqueue_script( 'disable-block-directory', true );
+	enqueue_style( 'disable-block-directory', false );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_block_inserter_modifications', 0 );

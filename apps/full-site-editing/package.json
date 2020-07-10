@@ -70,6 +70,7 @@
 		"block-inserter-modifications": "check-npm-client && npm-run-all --parallel block-inserter-modifications-*",
 		"block-inserter-modifications-new-blocks-showcase": "check-npm-client && calypso-build --source='block-inserter-modifications/new-blocks-showcase'",
 		"block-inserter-modifications-contextual-tips": "check-npm-client && calypso-build --source='block-inserter-modifications/contextual-tips'",
+		"block-inserter-modifications-disable-block-directory": "check-npm-client && calypso-build --source='block-inserter-modifications/disable-block-directory'",
 		"dev:block-inserter-modifications": "check-npm-client && yarn run block-inserter-modifications",
 		"build:block-inserter-modifications": "check-npm-client && NODE_ENV=production yarn run block-inserter-modifications",
 		"wpcom-block-editor-nav-sidebar": "check-npm-client && calypso-build --source='wpcom-block-editor-nav-sidebar'",
