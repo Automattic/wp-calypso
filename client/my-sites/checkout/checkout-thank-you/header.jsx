@@ -342,6 +342,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 		event.preventDefault();
 		const { siteAdminUrl } = this.props;
 
+		if ( ! siteAdminUrl ) {
+			return;
+		}
+
 		this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
 			product_name: 'search',
 			value: 'Customizer',
