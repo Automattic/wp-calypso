@@ -37,7 +37,7 @@ const landingController = ( context, next ) => {
 };
 
 export default function () {
-	page( '/', siteSelection, redirectToPrimarySiteLanding );
-	page( '/landing', siteSelection, selectionPrompt, sites, makeLayout, clientRender );
 	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
+	page( '/landing', siteSelection, selectionPrompt, sites, makeLayout, clientRender );
+	page( '/', siteSelection, redirectToPrimarySiteLanding );
 }
