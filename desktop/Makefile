@@ -46,10 +46,12 @@ source:
 
 	@cd $(CALYPSO_DIR) && yarn run build-desktop:source
 
+PACKAGE_ELECTRON_VERSION := $(shell node -e "console.log(require('./package.json').devDependencies.electron)")
+
 package:
 	$(info Packaging app...)
 
-	@cd $(CALYPSO_DIR) && yarn run build-desktop:app
+	@npx electron-builder ${ELECTRON_BUILDER_ARGS} -c.electronVersion=$(PACKAGE_ELECTRON_VERSION) build --publish never
 
 e2e:
 	$(info Running end-to-end tests...)
