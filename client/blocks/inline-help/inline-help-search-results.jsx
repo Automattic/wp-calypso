@@ -34,6 +34,7 @@ function HelpSearchResults( {
 	hasAPIResults = false,
 	isSearching = false,
 	onSelect,
+	onAdminSectionSelect,
 	searchQuery = '',
 	searchResults = [],
 	selectedResult = {},
@@ -91,6 +92,7 @@ function HelpSearchResults( {
 			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
 				page( link );
+				onAdminSectionSelect( event )
 			}
 
 			return;
@@ -172,6 +174,7 @@ HelpSearchResults.propTypes = {
 	translate: PropTypes.func,
 	searchQuery: PropTypes.string,
 	onSelect: PropTypes.func.isRequired,
+	onAdminSectionSelect: PropTypes.func.isRequired,
 	hasAPIResults: PropTypes.bool,
 	searchResults: PropTypes.array,
 	selectedResultIndex: PropTypes.number,
