@@ -46,7 +46,7 @@ source:
 
 	@cd $(CALYPSO_DIR) && yarn run build-desktop:source
 
-PACKAGE_ELECTRON_VERSION := $(shell node -e "console.log(require('$(DESKTOP_DIR)/package.json').devDependencies.electron)")
+PACKAGE_ELECTRON_VERSION := $(shell node -e "console.log(require('./package.json').devDependencies.electron)")
 
 package:
 	$(info Packaging app...)
