@@ -21,6 +21,7 @@ import {
 	isPlan,
 	isSiteRedirect,
 } from 'lib/products-values';
+import { isGSuiteExtraLicenseProductSlug, isGSuiteProductSlug } from 'lib/gsuite';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
@@ -174,16 +175,21 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		if ( isGoogleApps( primaryPurchase ) ) {
+		if ( isGSuiteProductSlug( primaryPurchase.productSlug ) ) {
 			return preventWidows(
 				translate(
-					'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
-						"It's doing somersaults in excitement!",
+					'Your domain {{strong}}%(domainName)s{{/strong}} will be using G Suite very soon.',
 					{
 						args: { domainName: primaryPurchase.meta },
 						components: { strong: <strong /> },
 					}
 				)
+			);
+		}
+
+		if ( isGSuiteExtraLicenseProductSlug( primaryPurchase.productSlug ) ) {
+			return preventWidows(
+				translate( 'You will receive an email confirmation shortly for your purchase.' )
 			);
 		}
 

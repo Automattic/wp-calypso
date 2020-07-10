@@ -54,7 +54,7 @@ const BusinessPlanDetails = ( {
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{ googleAppsWasPurchased && <GoogleAppsDetails purchases={ purchases } /> }
 
 			{ shouldPromoteJetpack && (
 				<PurchaseDetail
