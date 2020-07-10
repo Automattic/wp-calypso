@@ -190,7 +190,8 @@ $jetpack-product-card-icon-size: 55px;
 	font-style: italic;
 }
 
-.jetpack-product-card__button {
+.jetpack-product-card__button,
+.jetpack-product-card__cancel {
 	width: 100%;
 	margin-bottom: 20px;
 }

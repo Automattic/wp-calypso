@@ -15,6 +15,7 @@ import {
 	productCardWithDiscount,
 	productCardWithLongTexts,
 	expandedProductCardWithCategoriesAndMore,
+	productCardWithCancelButton,
 } from '../fixture';
 
 export default function JetpackProductCardExample() {
@@ -40,6 +41,9 @@ export default function JetpackProductCardExample() {
 			<br />
 			<h3>Expanded Jetpack Product Card with Features Categories and More Link</h3>
 			<JetpackProductCard { ...expandedProductCardWithCategoriesAndMore } />
+			<br />
+			<h3>Jetpack Product Card with Cancel Button</h3>
+			<JetpackProductCard { ...productCardWithCancelButton } />
 		</div>
 	);
 }

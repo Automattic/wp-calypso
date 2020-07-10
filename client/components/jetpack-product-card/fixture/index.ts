@@ -89,3 +89,10 @@ export const expandedProductCardWithCategoriesAndMore = {
 		},
 	},
 };
+
+export const productCardWithCancelButton = {
+	...productCard,
+	buttonLabel: 'Yes, add Real-Time Scan',
+	cancelLabel: 'No, I do not want Scan',
+	onCancelClick: noop,
+};

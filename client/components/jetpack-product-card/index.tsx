@@ -34,6 +34,8 @@ type OwnProps = {
 	discountMessage?: string;
 	buttonLabel: string;
 	onButtonClick: () => void;
+	cancelLabel?: string;
+	onCancelClick?: () => void;
 	isHighlighted?: boolean;
 	isOwned?: boolean;
 };
@@ -55,6 +57,8 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	discountMessage,
 	buttonLabel,
 	onButtonClick,
+	cancelLabel,
+	onCancelClick,
 	isHighlighted,
 	isOwned,
 	features,
@@ -104,11 +108,16 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				) }
 				<Button
 					className="jetpack-product-card__button"
-					primary={ isHighlighted }
+					primary={ isHighlighted || !! cancelLabel }
 					onClick={ onButtonClick }
 				>
 					{ buttonLabel }
 				</Button>
+				{ cancelLabel && (
+					<Button className="jetpack-product-card__cancel" onClick={ onCancelClick }>
+						{ cancelLabel }
+					</Button>
+				) }
 				<p className="jetpack-product-card__description">{ description }</p>
 			</div>
 			<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
