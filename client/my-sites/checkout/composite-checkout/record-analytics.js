@@ -396,6 +396,15 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				return recordAddEvent( action.payload );
 			}
 
+			case 'THANK_YOU_URL_GENERATED':
+				return reduxDispatch(
+					logStashEventAction(
+						'thank_you_url_generated',
+						String( action.payload ),
+						'thank you url generated'
+					)
+				);
+
 			default:
 				debug( 'unknown checkout event', action );
 				return reduxDispatch(
