@@ -18,7 +18,7 @@ import { getSelectedSite } from 'state/ui/selectors';
  * @returns {object} the new Redux action
  * @see client/state/utils/withEnhancers
  */
-export default function enhanceWithSiteType( action, getState ) {
+export function enhanceWithSiteType( action, getState ) {
 	const site = getSelectedSite( getState() );
 
 	if ( site !== null ) {
