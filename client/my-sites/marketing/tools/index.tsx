@@ -17,6 +17,7 @@ import MarketingToolsHeader from './header';
 import { marketingConnections, marketingTraffic } from 'my-sites/marketing/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import earnIllustration from 'assets/images/customer-home/illustration--task-earn.svg';
 
 /**
  * Types
@@ -43,6 +44,12 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		recordTracksEvent( 'calypso_marketing_tools_boost_my_traffic_button_click' );
 
 		page( marketingTraffic( selectedSiteSlug ) );
+	};
+
+	const handleEarnClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_earn_button_click' );
+
+		page( `/earn/${ selectedSiteSlug }` );
 	};
 
 	const handleCreateALogoClick = () => {
@@ -80,6 +87,16 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					>
 						{ translate( 'Create a logo' ) }
 					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Build your community, following, and income with Earn tools' ) }
+					description={ translate(
+						'Increase engagement and income on your site by accepting payments for just about anything – physical and digital goods, services, donations, or access to exclusive content.'
+					) }
+					imagePath={ earnIllustration }
+				>
+					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
