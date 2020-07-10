@@ -634,7 +634,7 @@ jobs:
     steps:
       - checkout
       - run: *update-node
-      # - run: *yarn-install
+      - run: *yarn-install
       - restore_cache: *desktop-restore-source-cache
       # - run: *desktop-decrypt-assets
       # - run:
