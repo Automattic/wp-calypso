@@ -8,7 +8,7 @@
 import resolveRelativePath from '../resolve-relative-path';
 
 describe( 'resolveRelativePath()', () => {
-	test( 'should return `/` when both parameters are ommitted', () => {
+	test( 'should return `/` when both parameters are omitted', () => {
 		expect( resolveRelativePath( undefined, undefined ) ).toBe( '/' );
 	} );
 
