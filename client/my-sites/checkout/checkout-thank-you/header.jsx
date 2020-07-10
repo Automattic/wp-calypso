@@ -35,6 +35,11 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
+		isAtomic: PropTypes.bool,
+		siteAdminUrl: PropTypes.string,
+		displayMode: PropTypes.string,
+		upgradeIntent: PropTypes.string,
+		selectedSite: PropTypes.object,
 		isDataLoaded: PropTypes.bool.isRequired,
 		primaryPurchase: PropTypes.object,
 		hasFailedPurchases: PropTypes.bool,
@@ -42,6 +47,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		primaryCta: PropTypes.func,
 		purchases: PropTypes.array,
+		translate: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
 	};
 
 	getHeading() {
