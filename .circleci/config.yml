@@ -290,8 +290,7 @@ jobs:
       - run:
           name: Extract strings
           working_directory: wp-babel-makepot
-          command: npm start "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" -- --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso"
-      - run: mv ~/wp-calypso/wp-babel-makepot/build/bundle-strings.pot "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
+          command: npm start "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" -- --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso" --output "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
       - run:
           name: Build New Strings .pot
           when: always
