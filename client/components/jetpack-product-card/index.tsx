@@ -31,6 +31,7 @@ type OwnProps = {
 	withStartingPrice?: boolean;
 	billingTimeFrame: string;
 	badgeLabel?: string;
+	discountMessage?: string;
 	buttonLabel: string;
 	onButtonClick: () => void;
 	isHighlighted?: boolean;
@@ -51,6 +52,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	withStartingPrice,
 	billingTimeFrame,
 	badgeLabel,
+	discountMessage,
 	buttonLabel,
 	onButtonClick,
 	isHighlighted,
@@ -97,6 +99,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				{ badgeLabel && <div className="jetpack-product-card__badge">{ badgeLabel }</div> }
 			</header>
 			<div className="jetpack-product-card__body">
+				{ discountMessage && (
+					<p className="jetpack-product-card__discount-message">{ discountMessage }</p>
+				) }
 				<Button
 					className="jetpack-product-card__button"
 					primary={ isHighlighted }

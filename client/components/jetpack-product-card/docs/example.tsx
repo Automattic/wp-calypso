@@ -11,7 +11,8 @@ import {
 	productCard,
 	highlightedProductCard,
 	ownedProductCard,
-	productCardWithProductTypeAndBadgeAndStartingPriceAndDiscount,
+	productCardWithProductTypeAndBadge,
+	productCardWithDiscount,
 	productCardWithLongTexts,
 	expandedProductCardWithCategoriesAndMore,
 } from '../fixture';
@@ -28,13 +29,16 @@ export default function JetpackProductCardExample() {
 			<h3>Owned Jetpack Product Card</h3>
 			<JetpackProductCard { ...ownedProductCard } />
 			<br />
-			<h3>Jetpack Product Card with Product Type, Badge, Starting Price and Discount</h3>
-			<JetpackProductCard { ...productCardWithProductTypeAndBadgeAndStartingPriceAndDiscount } />
+			<h3>Jetpack Product Card with Product Type and Badge</h3>
+			<JetpackProductCard { ...productCardWithProductTypeAndBadge } />
+			<br />
+			<h3>Jetpack Product Card with Discount</h3>
+			<JetpackProductCard { ...productCardWithDiscount } />
 			<br />
 			<h3>Jetpack Product Card with Long Texts</h3>
 			<JetpackProductCard { ...productCardWithLongTexts } />
 			<br />
-			<h3>Expanded Jetpack Product Card with Categories and More Link</h3>
+			<h3>Expanded Jetpack Product Card with Features Categories and More Link</h3>
 			<JetpackProductCard { ...expandedProductCardWithCategoriesAndMore } />
 		</div>
 	);

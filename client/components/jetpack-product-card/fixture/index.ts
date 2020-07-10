@@ -48,12 +48,17 @@ export const ownedProductCard = {
 	isOwned: true,
 };
 
-export const productCardWithProductTypeAndBadgeAndStartingPriceAndDiscount = {
+export const productCardWithProductTypeAndBadge = {
 	...productCard,
 	productType: 'Real-Time',
+	badgeLabel: 'Best value',
+};
+
+export const productCardWithDiscount = {
+	...productCard,
 	discountedPrice: 25,
 	withStartingPrice: true,
-	badgeLabel: 'Best value',
+	discountMessage: 'Save $100 a year on Scan because you own backup',
 };
 
 export const productCardWithLongTexts = {

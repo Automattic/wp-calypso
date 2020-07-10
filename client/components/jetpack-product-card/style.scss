@@ -182,6 +182,14 @@ $jetpack-product-card-icon-size: 55px;
 	padding: 36px 16px 0;
 }
 
+.jetpack-product-card__discount-message {
+	margin: -20px 0 16px;
+
+	color: var( --color-success-40 );
+
+	font-style: italic;
+}
+
 .jetpack-product-card__button {
 	width: 100%;
 	margin-bottom: 20px;
