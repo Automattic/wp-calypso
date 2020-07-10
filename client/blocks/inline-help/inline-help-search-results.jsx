@@ -103,7 +103,7 @@ function HelpSearchResults( {
 	const selectCurrentResultIndex = ( index ) => () => selectSearchResult( index );
 
 	const renderHelpLink = (
-		{ link, key, description, title, support_type = SUPPORT_TYPE_API_HELP },
+		{ link, key, description, title, support_type = SUPPORT_TYPE_API_HELP, icon = 'domains' },
 		index
 	) => {
 		const addResultsSection = supportTypeRef?.current !== support_type || ! index;
@@ -127,7 +127,7 @@ function HelpSearchResults( {
 						tabIndex={ -1 }
 					>
 						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && (
-							<Gridicon icon="domains" size={ 18 } />
+							<Gridicon icon={ icon } size={ 18 } />
 						) }
 						<span>{ preventWidows( decodeEntities( title ) ) }</span>
 					</a>
