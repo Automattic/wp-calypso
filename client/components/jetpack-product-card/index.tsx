@@ -52,8 +52,8 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	badgeLabel,
 	buttonLabel,
 	onButtonClick,
-	features,
 	isHighlighted,
+	features,
 	isExpanded,
 } ) => {
 	const translate = useTranslate();

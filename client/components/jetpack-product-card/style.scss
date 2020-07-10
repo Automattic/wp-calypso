@@ -186,3 +186,51 @@ $jetpack-product-card-icon-size: 55px;
 	margin-bottom: 42px;
 	padding: 0 4px;
 }
+
+.jetpack-product-card__features-category {
+	margin: 8px 0 12px;
+	padding-bottom: 6px;
+
+	border-bottom: solid 1px var( --color-border-subtle );
+	color: var( --color-text-subtle );
+
+	font-weight: 600;
+}
+
+.jetpack-product-card__features-list {
+	margin: 0;
+
+	list-style-type: none;
+}
+
+.jetpack-product-card__features-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 0;
+}
+
+.jetpack-product-card__features-summary {
+	display: flex;
+	align-items: flex-start;
+}
+
+.jetpack-product-card__features-text {
+	flex: 1;
+	margin: 0 16px 0 0;
+}
+
+.jetpack-product-card__features-icon {
+	margin-right: 14px;
+
+	&.gridicons-checkmark {
+		fill: var( --color-primary-50 );
+	}
+}
+
+.jetpack-product-card__feature-more {
+	margin-top: 24px;
+	padding-top: 16px;
+
+	border-top: solid 1px var( --color-border-subtle );
+}
