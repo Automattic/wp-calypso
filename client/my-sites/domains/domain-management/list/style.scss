@@ -7,6 +7,27 @@
 	margin-bottom: 2px;
 }
 
+.list__header-primary-domain {
+	display: flex;
+
+	.list__header-primary-domain-info {
+		text-align: left;
+		flex: 1;
+	}
+
+	.list__header-primary-domain-buttons {
+		display: flex;
+	}
+}
+
+.domain-management-list__primary-domain {
+	margin-bottom: 24px;
+
+	.list__item-primary-domain {
+		font-size: 1.6rem;
+	}
+}
+
 .domain-management-list-item {
 	&.busy {
 		background-color: var( --color-neutral-0 );
