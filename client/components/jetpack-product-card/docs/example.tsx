@@ -55,7 +55,7 @@ export default function JetpackProductCardExample() {
 				features="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid quia, eum culpa maxime tempore soluta! Expedita, praesentium eaque nulla id placeat illo quibusdam rem nam ipsum. Labore nulla praesentium rerum?"
 			/>
 			<br />
-			<h3>HIghlighted Jetpack Product Card</h3>
+			<h3>Highlighted and Expanded Jetpack Product Card</h3>
 			<JetpackProductCard
 				iconSlug="jetpack_anti_spam"
 				productName="Security Bundle"
@@ -67,6 +67,7 @@ export default function JetpackProductCardExample() {
 				onButtonClick={ noop }
 				features="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid quia, eum culpa maxime tempore soluta! Expedita, praesentium eaque nulla id placeat illo quibusdam rem nam ipsum. Labore nulla praesentium rerum?"
 				isHighlighted
+				isExpanded
 			/>
 		</div>
 	);

@@ -11,7 +11,7 @@ import React, { useRef, FunctionComponent, ReactNode } from 'react';
  */
 import { Button, ProductIcon } from '@automattic/components';
 import PlanPrice from 'my-sites/plan-price';
-import JetpackProductCardFeatures from './features';
+import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
 
 /**
@@ -19,7 +19,7 @@ import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
  */
 import './style.scss';
 
-export interface Props {
+type OwnProps = {
 	className?: string;
 	iconSlug: string;
 	productName: string;
@@ -33,9 +33,10 @@ export interface Props {
 	badgeLabel?: string;
 	buttonLabel: string;
 	onButtonClick: () => void;
-	features: ReactNode;
 	isHighlighted?: boolean;
-}
+};
+
+export type Props = OwnProps & FeaturesProps;
 
 const JetpackProductCard: FunctionComponent< Props > = ( {
 	className,
@@ -53,6 +54,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	onButtonClick,
 	features,
 	isHighlighted,
+	isExpanded,
 } ) => {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
@@ -102,7 +104,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				</Button>
 				<p className="jetpack-product-card__description">{ description }</p>
 			</div>
-			<JetpackProductCardFeatures features={ features } />
+			<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
 		</div>
 	);
 };

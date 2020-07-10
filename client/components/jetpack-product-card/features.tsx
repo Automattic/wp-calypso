@@ -9,12 +9,16 @@ import React, { useState, useCallback, FunctionComponent, ReactNode } from 'reac
  */
 import FoldableCard from 'components/foldable-card';
 
-interface Props {
+export type Props = {
 	features: ReactNode;
-}
+	isExpanded?: boolean;
+};
 
-const JetpackProductCardFeatures: FunctionComponent< Props > = ( { features } ) => {
-	const [ isExpanded, setExpanded ] = useState( false );
+const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
+	features,
+	isExpanded: isExpandedByDefault,
+} ) => {
+	const [ isExpanded, setExpanded ] = useState( !! isExpandedByDefault );
 	const onOpen = useCallback( () => setExpanded( true ), [ setExpanded ] );
 	const onClose = useCallback( () => setExpanded( false ), [ setExpanded ] );
 	const translate = useTranslate();
@@ -23,6 +27,7 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( { features } ) 
 		<FoldableCard
 			header={ isExpanded ? translate( 'Hide features' ) : translate( 'Show features' ) }
 			clickableHeader
+			expanded={ isExpanded }
 			onOpen={ onOpen }
 			onClose={ onClose }
 		>
