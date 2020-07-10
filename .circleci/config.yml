@@ -786,7 +786,7 @@ jobs:
       - run:
           name: Build Desktop Windows
           command: |
-                  $env:ELECTRON_BUILDER_ARGS='--c.win.certificateSubjectName="Automattic, Inc."'
+                  npx electron-builder --c.win.certificateSubjectName="Automattic, Inc." build --publish never
                   yarn run build-desktop:app
       - run:
           name: Archive Unpacked Directories
