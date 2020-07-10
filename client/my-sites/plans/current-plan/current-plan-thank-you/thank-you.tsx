@@ -97,8 +97,9 @@ export const ThankYouCard: FC< Props > = ( {
 		( productName, value ) => {
 			dispatchRecordTracksEvent( 'calypso_jetpack_product_thankyou', {
 				product_name: productName,
-				value,
 				site: 'jetpack',
+				// We only want to track `value` if it's defined
+				...( value ? { value } : {} ),
 			} );
 		},
 		[ dispatchRecordTracksEvent ]
