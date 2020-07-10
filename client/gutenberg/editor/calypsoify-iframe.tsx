@@ -137,18 +137,22 @@ class CalypsoifyIframe extends Component<
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
+
+		const isDesktop = config.isEnabled( 'desktop' ); // Three seconds longer than we give the iframe to load
+		const timeoutMs = isDesktop ? 25000 : 8000;
+
 		this.waitForIframeToInit = setInterval( () => {
 			if ( this.props.shouldLoadIframe ) {
 				clearInterval( this.waitForIframeToInit );
 				this.waitForIframeToLoad = setTimeout( () => {
-					config.isEnabled( 'desktop' )
+					isDesktop
 						? this.props.notifyDesktopCannotOpenEditor(
 								this.props.site,
 								REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE,
 								this.props.iframeUrl
 						  )
 						: window.location.replace( this.props.iframeUrl );
-				}, 8000 ); // Three seconds longer than we give the iframe to load
+				}, timeoutMs );
 			}
 		}, 1000 );
 	}
