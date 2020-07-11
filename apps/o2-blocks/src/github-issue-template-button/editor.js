@@ -6,9 +6,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { TextControl, TextareaControl, Button, CustomSelectControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { InspectorControls } from '@wordpress/block-editor';
-import { Fragment } from '@wordpress/element';
-
-const newGithubIssueUrl = require( 'new-github-issue-url' );
+import * as newGithubIssueUrl from 'new-github-issue-url';
 
 import './editor.scss';
 
@@ -91,7 +89,7 @@ registerBlockType( 'a8c/github-issue-template-button', {
 		};
 
 		return (
-			<Fragment>
+			<>
 				<div className={ `wp-block-github-issue-template-button ${ alignment }` }>
 					<Button isPrimary>
 						<Icon icon={ icon } />
@@ -126,7 +124,7 @@ registerBlockType( 'a8c/github-issue-template-button', {
 						onChange={ onChangeAlignment }
 					/>
 				</InspectorControls>
-			</Fragment>
+			</>
 		);
 	},
 	save: ( props ) => {
