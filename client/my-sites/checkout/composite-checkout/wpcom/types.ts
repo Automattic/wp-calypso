@@ -67,6 +67,7 @@ import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
+	formatSignupValidationResponse,
 	isValid,
 	areRequiredFieldsNotEmpty,
 } from './types/wpcom-store-state';
@@ -123,6 +124,7 @@ export {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
+	formatSignupValidationResponse,
 	isValid,
 	areRequiredFieldsNotEmpty,
 	getProductSlug,

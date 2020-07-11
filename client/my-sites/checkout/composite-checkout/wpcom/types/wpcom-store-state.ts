@@ -18,6 +18,7 @@ import {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
+import { SignupValidationResponse } from './backend/signup-validation-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
 	firstName?: T;
@@ -271,7 +272,9 @@ export function flattenManagedContactDetailsShape< A, B >(
  */
 export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
 
-export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
+export type ManagedContactDetailsErrors = ManagedContactDetailsShape<
+	( string | Object )[] | undefined | string[]
+>;
 
 /*
  * Intermediate type used to represent update payloads
@@ -604,6 +607,32 @@ export function prepareGSuiteContactValidationRequest(
 			postalCode: details.postalCode?.value ?? '',
 			countryCode: details.countryCode?.value ?? '',
 		},
+	};
+}
+
+export function formatSignupValidationResponse(
+	response: SignupValidationResponse,
+	emailTakenLoginRedirect: string
+): ManagedContactDetailsErrors {
+	const emailResponse = response.messages?.email || {};
+	let emailErrorMessage = Object.values( emailResponse )[ 0 ] || '';
+
+	// let comp = '';
+	if ( emailResponse.hasOwnProperty( 'taken' ) ) {
+		emailErrorMessage += emailTakenLoginRedirect;
+	}
+
+	// console.log(emailErrorMessage);
+	// const translate = useTranslate();
+	// const string = i18n.translate( '{{a}}domain{{/a}}', {
+	// 	components: {
+	// 		a: <a></a>,
+	// 	}
+	// } );
+
+	return {
+		email: [ emailTakenLoginRedirect ],
+		// email: [ emailErrorMessage ],
 	};
 }
 

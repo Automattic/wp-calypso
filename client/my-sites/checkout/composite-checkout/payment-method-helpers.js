@@ -3,7 +3,7 @@
  */
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import { defaultRegistry } from '@automattic/composite-checkout';
 
@@ -214,24 +214,24 @@ function WordPressLogo() {
 	);
 }
 
-async function createAccountCallback( errorObj, response ) {
-	wp.loadToken( response.bearer_token );
-	const url = 'https://wordpress.com/wp-login.php';
-	const bodyObj = {
-		authorization: 'Bearer ' + response.bearer_token,
-		log: response.username,
-	};
+async function createAccountCallback( response ) {
+	try {
+		wp.loadToken( response.bearer_token );
+		const url = 'https://wordpress.com/wp-login.php';
+		const bodyObj = {
+			authorization: 'Bearer ' + response.bearer_token,
+			log: response.username,
+		};
 
-	const loginResponse = await globalThis.fetch( url, {
-		method: 'POST',
-		redirect: 'manual',
-		credentials: 'include',
-		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: stringifyBody( bodyObj ),
-	} );
-
-	if ( ! loginResponse.ok ) {
-		// TODO: handle login error
+		await globalThis.fetch( url, {
+			method: 'POST',
+			redirect: 'manual',
+			credentials: 'include',
+			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: stringifyBody( bodyObj ),
+		} );
+	} catch ( error ) {
+		throw new Error( error );
 	}
 }
 
@@ -243,43 +243,68 @@ async function createAccount() {
 
 	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
 
-	const response = await wp.undocumented().createUserAndSite(
-		{
-			email,
-			'g-recaptcha-error': undefined,
-			'g-recaptcha-response': undefined,
-			is_passwordless: true,
-			signup_flow_name: 'onboarding-new',
-			validate: false,
-			ab_test_variations: getSavedVariations(),
-			new_site_params: newSiteParams,
-		},
-		null
-	);
-	createAccountCallback( null, response );
-	return response;
+	try {
+		const response = await wp.undocumented().createUserAndSite(
+			{
+				email,
+				'g-recaptcha-error': undefined,
+				'g-recaptcha-response': undefined,
+				is_passwordless: true,
+				signup_flow_name: 'onboarding-new',
+				validate: false,
+				ab_test_variations: getSavedVariations(),
+				new_site_params: newSiteParams,
+			},
+			null
+		);
+
+		response.bearer_token && createAccountCallback( response );
+		return response;
+	} catch ( error ) {
+		const errorMessage = error?.message ? getErrorMessage( error ) : error;
+		throw new Error( errorMessage );
+	}
+}
+
+function getErrorMessage( { error, message } ) {
+	switch ( error ) {
+		case 'already_taken':
+		case 'already_active':
+		case 'email_exists':
+			return i18n.translate( 'An account with this email address already exists.' );
+		default:
+			return message;
+	}
 }
 
 export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	if ( isLoggedOutCart ) {
-		return createAccount().then( ( response ) => {
-			const siteId = get( response, 'blog_details.blogid', undefined );
-			const siteSlug = get( response, 'blog_details.site_slug', undefined );
-			const { dispatch } = defaultRegistry;
-			siteId && dispatch( 'wpcom' ).setSiteId( siteId );
-			siteSlug && dispatch( 'wpcom' ).setSiteSlug( siteSlug );
+		let response;
 
-			const newPayload = {
-				...payload,
-				cart: {
-					...payload.cart,
-					blog_id: siteId || '0',
-					cart_key: siteId || 'no-site',
-				},
-			};
+		try {
+			response = await createAccount();
+		} catch ( err ) {
+			throw err;
+		}
 
-			return wp.undocumented().transactions( newPayload );
-		} );
+		const siteIdFromResponse = get( response, 'blog_details.blogid', undefined );
+		const siteSlugFromResponse = get( response, 'blog_details.site_slug', undefined );
+		const { select, dispatch } = defaultRegistry;
+
+		siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
+		siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
+
+		const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
+		const newPayLoad = {
+			...payload,
+			cart: {
+				...payload.cart,
+				blog_id: siteId || '0',
+				cart_key: siteId || 'no-site',
+			},
+		};
+
+		return wp.undocumented().transactions( newPayLoad || payload );
 	}
 
 	return wp.undocumented().transactions( payload );

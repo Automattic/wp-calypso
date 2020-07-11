@@ -42,9 +42,11 @@ import {
 	handleContactValidationResult,
 	isContactValidationResponseValid,
 	getDomainValidationResult,
+	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'my-sites/checkout/composite-checkout/contact-validation';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import { login } from 'lib/paths';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -127,8 +129,48 @@ export default function WPCheckout( {
 		setShouldShowContactDetailsValidationErrors,
 	] = useState( false );
 
+	const emailTakenLoginRedirectMessage = ( emailAddress ) => {
+		const redirectTo = '/checkout/no-site?cart=no-user';
+		const loginUrl = login( { redirectTo, emailAddress } );
+		const loginRedirectMessage = translate( 'If this is you {{a}}log in now{{/a}}.', {
+			components: {
+				a: <a href={ loginUrl } />,
+			},
+		} );
+		return loginRedirectMessage;
+	};
+
 	const validateContactDetailsAndDisplayErrors = async () => {
 		debug( 'validating contact details with side effects' );
+		if ( isLoggedOutCart ) {
+			// const emailTakenLoginRedirect = translate( '{{a}}domain{{/a}}', {
+			// 	components: {
+			// 		a: <a href="https://google.com" />,
+			// 	}
+			// } );
+			const email = contactInfo.email?.value;
+			const emailTakenLoginRedirect = emailTakenLoginRedirectMessage( email );
+			const validationResult = await getSignupEmailValidationResult(
+				email,
+				emailTakenLoginRedirect
+			);
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod.id,
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			const isSignupValidationValid = isContactValidationResponseValid(
+				validationResult,
+				contactInfo
+			);
+
+			if ( ! isSignupValidationValid ) {
+				return false;
+			}
+		}
+
 		if ( isDomainFieldsVisible ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
@@ -285,8 +327,7 @@ export default function WPCheckout( {
 								// Touch the fields so they display validation errors
 								touchContactFields();
 								updateCartContactDetails();
-								// TODO: Refactor validateContactDetailsAndDisplayErrors() to accommodate isLoggedOutCart
-								return isLoggedOutCart || validateContactDetailsAndDisplayErrors();
+								return validateContactDetailsAndDisplayErrors( isLoggedOutCart );
 							} }
 							activeStepContent={
 								<WPContactForm

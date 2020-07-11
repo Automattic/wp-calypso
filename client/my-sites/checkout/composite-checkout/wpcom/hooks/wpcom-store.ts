@@ -93,6 +93,13 @@ export function useWpcomStore(
 		switch ( action.type ) {
 			case 'SET_SITE_ID':
 				return action.payload;
+			default:
+				return state;
+		}
+	}
+
+	function siteSlugReducer( state: string, action: WpcomStoreAction ): string {
+		switch ( action.type ) {
 			case 'SET_SITE_SLUG':
 				return action.payload;
 			default:
@@ -116,7 +123,7 @@ export function useWpcomStore(
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
-				siteSlug: siteIdReducer( checkedState.siteSlug, action ),
+				siteSlug: siteSlugReducer( checkedState.siteSlug, action ),
 				transactionResult: transactionResultReducer( checkedState.transactionResult, action ),
 			};
 		},

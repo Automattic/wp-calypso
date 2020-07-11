@@ -5,6 +5,7 @@ import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
+	formatSignupValidationResponse,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	areRequiredFieldsNotEmpty,
 } from 'my-sites/checkout/composite-checkout/wpcom';
@@ -33,6 +34,35 @@ const wpcomValidateDomainContactInformation = ( ...args ) =>
 			{ apiVersion: '1.2' }
 		);
 	} );
+async function wpcomValidateSignupEmail( ...args ) {
+	try {
+		const response = await wpcom.validateNewUser( ...args, null );
+		return response;
+	} catch ( error ) {
+		throw new Error( error );
+	}
+	// 	,
+	// 	( error, response ) => {
+	// 		if ( error ) {
+	// 			return reject( error );
+	// 		}
+	// 		resolve( response );
+	// 	}
+	// );
+}
+
+// const wpcomValidateSignupEmail = ( ...args ) =>
+// 	new Promise( ( resolve, reject ) => {
+// 		wpcom.validateNewUser(
+// 			...args,
+// 			( error, response ) => {
+// 				if ( error ) {
+// 					return reject( error );
+// 				}
+// 				resolve( response );
+// 			}
+// 		);
+// 	} );
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
@@ -92,6 +122,21 @@ export async function getDomainValidationResult( items, contactInfo ) {
 		.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
 	return wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
+}
+
+export async function getSignupEmailValidationResult( email, emailTakenLoginRedirect ) {
+	let response;
+	try {
+		response = await wpcomValidateSignupEmail( { email } );
+	} catch ( err ) {
+		throw err;
+	}
+
+	const validationResponse = {
+		...response,
+		messages: formatSignupValidationResponse( response, emailTakenLoginRedirect ),
+	};
+	return validationResponse;
 }
 
 export async function getGSuiteValidationResult( items, contactInfo ) {
