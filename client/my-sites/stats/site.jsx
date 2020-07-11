@@ -28,7 +28,7 @@ import StickyPanel from 'components/sticky-panel';
 import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
+import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
@@ -38,6 +38,7 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import EmptyContent from 'components/empty-content';
 import { activateModule } from 'state/jetpack/modules/actions';
+import canCurrentUser from 'state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import Banner from 'components/banner';
 import isVipSite from 'state/selectors/is-vip-site';
@@ -128,7 +129,7 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isVip } = this.props;
+		const { date, hasWordAds, siteId, slug, isAdmin, isJetpack, isVip } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -182,7 +183,7 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
-					{ ! isVip && (
+					{ ! isVip && isAdmin && ! hasWordAds && (
 						<Banner
 							className="stats__upsell-nudge"
 							icon="star"
@@ -338,7 +339,9 @@ export default connect(
 		const showEnableStatsModule =
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
+			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			isJetpack,
+			hasWordAds: getSiteOption( state, siteId, 'wordads' ),
 			siteId,
 			isVip,
 			slug: getSelectedSiteSlug( state ),
