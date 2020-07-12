@@ -1,0 +1,12 @@
+version: '3'
+services:
+    calypso:
+        build: 
+            context: .
+            dockerfile: ./Dockerfile.development
+        command: yarn start
+        ports:
+            - 3000:3000
+        working_dir: /calypso
+        volumes:
+            - .:/calypso:cached

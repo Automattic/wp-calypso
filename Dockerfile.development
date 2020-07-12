@@ -1,0 +1,14 @@
+FROM node:12.18.0
+LABEL maintainer="Automattic"
+
+WORKDIR    /calypso
+
+ENV        CONTAINER 'docker'
+ENV        PROGRESS=true
+
+# Build a "source" layer
+#
+# This layer is populated with up-to-date files from
+# Calypso development.
+COPY . /calypso/
+RUN yarn install
