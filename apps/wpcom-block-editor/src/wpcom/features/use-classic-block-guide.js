@@ -45,7 +45,7 @@ const ClassicGuide = () => {
 							content: (
 								<>
 									<h1 className="use-classic-block-guide__heading edit-post-welcome-guide__heading">
-										{ __( 'Say hello to the Classic block' ) }
+										{ __( 'Meet the Classic block' ) }
 									</h1>
 									<p className="edit-post-welcome-guide__text">
 										{ __(
@@ -65,7 +65,7 @@ const ClassicGuide = () => {
 									<p className="edit-post-welcome-guide__text">
 										{ createInterpolateElement(
 											__(
-												'To use the classic block, click on the <InserterIconImage /> at the top of the screen, search for Classic and insert the block.'
+												'To use the classic block, click on the <InserterIconImage /> button at the top of the screen, search for Classic and insert the block.'
 											),
 											{
 												InserterIconImage: (
