@@ -70,7 +70,7 @@
 		"browser-filesaver": "^1.1.1",
 		"browserslist-useragent": "^3.0.3",
 		"chalk": "^4.0.0",
-		"chrono-node": "^1.3.5",
+		"chrono-node": "^1.4.8",
 		"classnames": "^2.2.6",
 		"clipboard": "^2.0.6",
 		"component-closest": "^1.0.1",
