@@ -30,8 +30,8 @@
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/components": "^9.6.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@wordpress/components": "^9.6.0",
 		"classnames": "^2.2.6"
 	},
 	"devDependencies": {
