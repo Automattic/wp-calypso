@@ -54,7 +54,7 @@ import useCreatePaymentMethods from './use-create-payment-methods';
 import {
 	applePayProcessor,
 	freePurchaseProcessor,
-	stripeCardProcessor,
+	multiPartnerCardProcessor,
 	fullCreditsProcessor,
 	existingCardProcessor,
 	payPalProcessor,
@@ -518,7 +518,7 @@ export default function CompositeCheckout( {
 			'apple-pay': ( transactionData ) => applePayProcessor( transactionData, dataForProcessor ),
 			'free-purchase': ( transactionData ) =>
 				freePurchaseProcessor( transactionData, dataForProcessor ),
-			card: ( transactionData ) => stripeCardProcessor( transactionData, dataForProcessor ),
+			card: ( transactionData ) => multiPartnerCardProcessor( transactionData, dataForProcessor ),
 			alipay: ( transactionData ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForRedirectProcessor ),
 			p24: ( transactionData ) =>
