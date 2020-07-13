@@ -147,6 +147,19 @@ function createLanguagesDir() {
 	return languagesPaths.forEach( ( { publicPath } ) => mkdirp.sync( publicPath ) );
 }
 
+// Get module reference
+function getModuleRefenrece( module ) {
+	// Rewrite module from `packages/` to match references in POT
+	if ( module.indexOf( 'packages/' ) === 0 ) {
+		return module
+			.replace( /^packages\//, '' )
+			.replace( '/dist/esm/', '/src/' )
+			.replace( /\.\w+/, '' );
+	}
+
+	return module;
+}
+
 // Download languages revisions
 function downloadLanguagesRevions() {
 	return new Promise( ( resolve ) => {
@@ -264,7 +277,9 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 			const chunks = _.mapValues( chunksMap, ( modules ) => {
 				return _.chain( translationsFlatten )
 					.pickBy( ( { comments } ) =>
-						modules.some( ( module ) => ( comments.reference || '' ).includes( module ) )
+						modules.some( ( module ) => {
+							return ( comments.reference || '' ).includes( getModuleRefenrece( module ) );
+						} )
 					)
 					.keys()
 					.value();
