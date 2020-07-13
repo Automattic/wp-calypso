@@ -32,6 +32,7 @@ import { Button, Card } from '@automattic/components';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 import { getTaskList } from 'lib/checklist';
 import { settingsPath } from 'lib/jetpack/paths';
+import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
 
 /**
  * Style dependencies
@@ -178,7 +179,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 							completed={ isRewindActive }
 							href={ settingsPath( siteSlug ) }
 							onClick={ this.handleTaskStart( {
-								taskId: 'jetpack_backups',
+								taskId: CHECKLIST_KNOWN_TASKS.JETPACK_BACKUPS,
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
 							} ) }
 						/>
@@ -193,7 +194,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 							completed={ vaultpressFinished }
 							href="https://dashboard.vaultpress.com"
 							inProgress={ ! vaultpressFinished }
-							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
+							onClick={ this.handleTaskStart( { taskId: CHECKLIST_KNOWN_TASKS.JETPACK_BACKUPS } ) }
 						/>
 					) }
 
@@ -215,8 +216,8 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					) }
 
 					<Task
-						id="jetpack_monitor"
-						completed={ this.isComplete( 'jetpack_monitor' ) }
+						id={ CHECKLIST_KNOWN_TASKS.JETPACK_MONITOR }
+						completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_MONITOR ) }
 						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
 						completedTitle={ translate( 'You turned on Downtime Monitoring.' ) }
 						description={ translate(
@@ -225,15 +226,15 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						duration={ this.getDuration( 3 ) }
 						href={ `/settings/security/${ siteSlug }` }
 						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_monitor',
+							taskId: CHECKLIST_KNOWN_TASKS.JETPACK_MONITOR,
 							tourId: 'jetpackMonitoring',
 						} ) }
 						title={ translate( 'Downtime Monitoring' ) }
 					/>
 
 					<Task
-						id="jetpack_plugin_updates"
-						completed={ this.isComplete( 'jetpack_plugin_updates' ) }
+						id={ CHECKLIST_KNOWN_TASKS.JETPACK_PLUGIN_UPDATES }
+						completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_PLUGIN_UPDATES ) }
 						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
 						completedTitle={ translate( 'You turned on automatic plugin updates.' ) }
 						description={ translate(
@@ -242,15 +243,15 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						duration={ this.getDuration( 3 ) }
 						href={ `/plugins/manage/${ siteSlug }` }
 						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_plugin_updates',
+							taskId: CHECKLIST_KNOWN_TASKS.JETPACK_PLUGIN_UPDATES,
 							tourId: 'jetpackPluginUpdates',
 						} ) }
 						title={ translate( 'Automatic Plugin Updates' ) }
 					/>
 
 					<Task
-						id="jetpack_sign_in"
-						completed={ this.isComplete( 'jetpack_sign_in' ) }
+						id={ CHECKLIST_KNOWN_TASKS.JETPACK_SIGN_IN }
+						completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_SIGN_IN ) }
 						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
 						completedTitle={ translate( 'You completed your sign in preferences.' ) }
 						description={ translate(
@@ -259,15 +260,15 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						duration={ this.getDuration( 3 ) }
 						href={ `/settings/security/${ siteSlug }` }
 						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_sign_in',
+							taskId: CHECKLIST_KNOWN_TASKS.JETPACK_SIGN_IN,
 							tourId: 'jetpackSignIn',
 						} ) }
 						title={ translate( 'WordPress.com sign in' ) }
 					/>
 
 					<Task
-						id="jetpack_site_accelerator"
-						completed={ this.isComplete( 'jetpack_site_accelerator' ) }
+						id={ CHECKLIST_KNOWN_TASKS.JETPACK_SITE_ACCELERATOR }
+						completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_SITE_ACCELERATOR ) }
 						completedButtonText={ translate( 'Configure' ) }
 						completedTitle={ translate(
 							'Site accelerator is serving your images and static files through our global CDN.'
@@ -278,15 +279,15 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						duration={ this.getDuration( 1 ) }
 						href={ `/settings/performance/${ siteSlug }` }
 						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_site_accelerator',
+							taskId: CHECKLIST_KNOWN_TASKS.JETPACK_SITE_ACCELERATOR,
 							tourId: 'jetpackSiteAccelerator',
 						} ) }
 						title={ translate( 'Site Accelerator' ) }
 					/>
 
 					<Task
-						id="jetpack_lazy_images"
-						completed={ this.isComplete( 'jetpack_lazy_images' ) }
+						id={ CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES }
+						completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES ) }
 						completedButtonText={ translate( 'Upload images' ) }
 						completedTitle={ translate( 'Lazy load images is improving your site speed.' ) }
 						description={ translate(
@@ -294,12 +295,12 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						) }
 						duration={ this.getDuration( 1 ) }
 						href={
-							this.isComplete( 'jetpack_lazy_images' )
+							this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES )
 								? `/media/${ siteSlug }`
 								: `/settings/performance/${ siteSlug }`
 						}
 						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_lazy_images',
+							taskId: CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES,
 							tourId: 'jetpackLazyImages',
 						} ) }
 						title={ translate( 'Lazy Load Images' ) }
@@ -307,24 +308,24 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 
 					{ ( isPremium || isProfessional ) && (
 						<Task
-							id="jetpack_video_hosting"
+							id={ CHECKLIST_KNOWN_TASKS.JETPACK_VIDEO_HOSTING }
 							title={ translate( 'Video Hosting' ) }
 							description={ translate(
 								'Enable fast, high-definition, ad-free video hosting through our global CDN network.'
 							) }
-							completed={ this.isComplete( 'jetpack_video_hosting' ) }
+							completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_VIDEO_HOSTING ) }
 							completedButtonText={ translate( 'Upload videos' ) }
 							completedTitle={ translate(
 								'High-speed, high-definition, and ad-free video hosting is enabled.'
 							) }
 							duration={ this.getDuration( 3 ) }
 							href={
-								this.isComplete( 'jetpack_video_hosting' )
+								this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_VIDEO_HOSTING )
 									? `/media/videos/${ siteSlug }`
 									: `/settings/performance/${ siteSlug }`
 							}
 							onClick={ this.handleTaskStart( {
-								taskId: 'jetpack_video_hosting',
+								taskId: CHECKLIST_KNOWN_TASKS.JETPACK_VIDEO_HOSTING,
 								tourId: 'jetpackVideoHosting',
 							} ) }
 						/>
@@ -332,7 +333,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 
 					{ isProfessional && (
 						<Task
-							id="jetpack_search"
+							id={ CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH }
 							title={ translate( 'Enhanced Search' ) }
 							description={ translate(
 								'Activate an enhanced, customizable search to replace the default WordPress search feature.'
@@ -342,14 +343,14 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 								'The default WordPress search has been replaced by Enhanced Search.'
 							) }
 							duration={ this.getDuration( 1 ) }
-							completed={ this.isComplete( 'jetpack_search' ) }
+							completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH ) }
 							href={
-								this.isComplete( 'jetpack_search' )
+								this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH )
 									? this.props.widgetCustomizerPaneUrl
 									: `/settings/performance/${ siteSlug }`
 							}
 							onClick={ this.handleTaskStart( {
-								taskId: 'jetpack_search',
+								taskId: CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH,
 								tourId: 'jetpackSearch',
 							} ) }
 						/>

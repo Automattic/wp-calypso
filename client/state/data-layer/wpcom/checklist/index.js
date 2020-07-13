@@ -7,12 +7,30 @@ import { get, noop } from 'lodash';
  * Internal dependencies
  */
 import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
-import { SITE_CHECKLIST_KNOWN_TASKS } from 'my-sites/customer-home/cards/tasks/site-setup-list/get-task';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'state/checklist/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
+
+export const CHECKLIST_KNOWN_TASKS = {
+	START_SITE_SETUP: 'start_site_setup',
+	DOMAIN_VERIFIED: 'domain_verified',
+	EMAIL_VERIFIED: 'email_verified',
+	BLOGNAME_SET: 'blogname_set',
+	MOBILE_APP_INSTALLED: 'mobile_app_installed',
+	SITE_LAUNCHED: 'site_launched',
+	FRONT_PAGE_UPDATED: 'front_page_updated',
+	SITE_MENU_UPDATED: 'site_menu_updated',
+	JETPACK_BACKUPS: 'jetpack_backups',
+	JETPACK_MONITOR: 'jetpack_monitor',
+	JETPACK_PLUGIN_UPDATES: 'jetpack_plugin_updates',
+	JETPACK_SIGN_IN: 'jetpack_sign_in',
+	JETPACK_SITE_ACCELERATOR: 'jetpack_site_accelerator',
+	JETPACK_LAZY_IMAGES: 'jetpack_lazy_images',
+	JETPACK_VIDEO_HOSTING: 'jetpack_video_hosting',
+	JETPACK_SEARCH: 'jetpack_search',
+};
 
 // Transform the response to a data / schema calypso understands, eg filter out unknown tasks
 const fromApi = ( payload ) => {
@@ -24,16 +42,25 @@ const fromApi = ( payload ) => {
 	if ( ! data ) {
 		throw new TypeError( `Missing 'body' property on API response` );
 	}
+	// Legacy object-based data format for Jetpack tasks, let's convert it to the new array-based format and ultimately remove it.
 	if ( ! Array.isArray( data.tasks ) ) {
-		throw new TypeError( `API response needs array of tasks: found ${ typeof data.tasks }` );
+		data.tasks = Object.keys( data.tasks ).map( ( taskId ) => {
+			const { completed, ...rest } = data.tasks[ taskId ];
+			return {
+				id: taskId,
+				isCompleted: completed,
+				...rest,
+			};
+		} );
 	}
+
 	return {
 		designType: data.designType,
 		phase2: data.phase2,
 		segment: data.segment,
 		verticals: data.verticals,
 		tasks: data.tasks.filter( ( task ) =>
-			Object.values( SITE_CHECKLIST_KNOWN_TASKS ).includes( task.id )
+			Object.values( CHECKLIST_KNOWN_TASKS ).includes( task.id )
 		),
 	};
 };
