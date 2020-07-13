@@ -133,11 +133,8 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Displaying changed files
-      run: echo ${{ join( fromJson( steps.changes.outputs.all ) ) }}
-
     - name: Execute phpcs on changed files
-      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.all ), ' ' ) }}
+      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.modified ), ' ' ) }} ${{ join( fromJson( steps.changes.outputs.added ), ' ' ) }}
       if: ${{ steps.changes.outputs.all != '' }}
     
     - name: No changes found
