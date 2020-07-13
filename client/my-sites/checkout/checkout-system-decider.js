@@ -237,10 +237,20 @@ function getCheckoutVariant(
 		'concierge-session',
 		'ecommerce',
 		'ecommerce-2-years',
+		'jetpack_backup_daily',
+		'jetpack_backup_realtime',
+		'jetpack_personal',
+		'jetpack-personal',
+		'jetpack-personal-monthly',
+		'jetpack_scan',
+		'jetpack_search',
 		'personal',
 		'personal-2-years',
-		'premium',
+		'premium', // WordPress.com or Jetpack Premium Yearly
+		'premium-monthly', // Jetpack Premium Monthly
 		'premium-2-years',
+		'professional',
+		'professional-monthly',
 	];
 	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
