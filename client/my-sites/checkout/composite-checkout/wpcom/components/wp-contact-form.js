@@ -143,7 +143,6 @@ function TaxFields( {
 	updatePostalCode,
 	updateCountryCode,
 	isDisabled,
-	isLoggedOutCart,
 } ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
@@ -164,18 +163,6 @@ function TaxFields( {
 					isError={ postalCode.isTouched && ! isValid( postalCode ) }
 					errorMessage={ translate( 'This field is required.' ) }
 				/>
-				{ isLoggedOutCart && (
-					<Field
-						id={ section + '-signup-email' }
-						type="email"
-						label={ translate( 'Email' ) }
-						disabled={ isDisabled }
-						// onChange={ ( value ) => {
-						// 	updatePostalCode( value );
-						// } }
-						autoComplete={ section + ' email' }
-					/>
-				) }
 			</LeftColumn>
 
 			<RightColumn>
@@ -302,7 +289,13 @@ function RenderContactDetails( {
 } ) {
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
 	const domainNames = useDomainNamesInCart();
-	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
+	const {
+		updateDomainContactFields,
+		updateCountryCode,
+		updatePostalCode,
+		updateEmail,
+	} = useDispatch( 'wpcom' );
+	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
 	if ( isDomainFieldsVisible ) {
 		return (
@@ -346,6 +339,22 @@ function RenderContactDetails( {
 			<ContactDetailsFormDescription>
 				{ translate( 'Entering your billing information helps us prevent fraud.' ) }
 			</ContactDetailsFormDescription>
+
+			{ isLoggedOutCart && (
+				<Field
+					id="email"
+					type="email"
+					label={ translate( 'Email' ) }
+					disabled={ isDisabled }
+					onChange={ ( value ) => {
+						updateEmail( value );
+					} }
+					autoComplete="email"
+					isError={ email.isTouched && ! isValid( email ) }
+					errorMessage={ email.errors || [] }
+					description={ translate( "You'll use this email address to access your account later" ) }
+				/>
+			) }
 
 			<TaxFields
 				section="contact"

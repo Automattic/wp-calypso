@@ -26,6 +26,7 @@ type WpcomStoreAction =
 	| { type: 'SET_SITE_SLUG'; payload: string }
 	| { type: 'TRANSACTION_COMPLETE'; payload: object }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
+	| { type: 'UPDATE_EMAIL'; payload: string }
 	| { type: 'UPDATE_PHONE'; payload: string }
 	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
@@ -74,6 +75,8 @@ export function useWpcomStore(
 				return updaters.updatePhoneNumberCountry( state, action.payload );
 			case 'UPDATE_POSTAL_CODE':
 				return updaters.updatePostalCode( state, action.payload );
+			case 'UPDATE_EMAIL':
+				return updaters.updateEmail( state, action.payload );
 			case 'UPDATE_COUNTRY_CODE':
 				return updaters.updateCountryCode( state, action.payload );
 			case 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS':
@@ -161,6 +164,10 @@ export function useWpcomStore(
 
 			updatePostalCode( payload: string ): WpcomStoreAction {
 				return { type: 'UPDATE_POSTAL_CODE', payload };
+			},
+
+			updateEmail( payload: string ): WpcomStoreAction {
+				return { type: 'UPDATE_EMAIL', payload };
 			},
 
 			updateCountryCode( payload: string ): WpcomStoreAction {

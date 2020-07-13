@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-import {
-	prepareDomainContactValidationRequest,
-	prepareGSuiteContactValidationRequest,
-	formatDomainContactValidationResponse,
-	formatSignupValidationResponse,
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
-	areRequiredFieldsNotEmpty,
-} from 'my-sites/checkout/composite-checkout/wpcom';
+import { isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
-import wp from 'lib/wp';
 
 /**
  * Internal dependencies
  */
 import { isLineItemADomain } from 'my-sites/checkout/composite-checkout/wpcom/hooks/has-domains';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import {
+	prepareDomainContactValidationRequest,
+	prepareGSuiteContactValidationRequest,
+	formatDomainContactValidationResponse,
+	getSignupValidationErrorResponse,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	areRequiredFieldsNotEmpty,
+} from 'my-sites/checkout/composite-checkout/wpcom';
+import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
@@ -41,28 +42,7 @@ async function wpcomValidateSignupEmail( ...args ) {
 	} catch ( error ) {
 		throw new Error( error );
 	}
-	// 	,
-	// 	( error, response ) => {
-	// 		if ( error ) {
-	// 			return reject( error );
-	// 		}
-	// 		resolve( response );
-	// 	}
-	// );
 }
-
-// const wpcomValidateSignupEmail = ( ...args ) =>
-// 	new Promise( ( resolve, reject ) => {
-// 		wpcom.validateNewUser(
-// 			...args,
-// 			( error, response ) => {
-// 				if ( error ) {
-// 					return reject( error );
-// 				}
-// 				resolve( response );
-// 			}
-// 		);
-// 	} );
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
@@ -83,6 +63,7 @@ export function handleContactValidationResult( {
 			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
 		},
 	} );
+
 	if ( ! validationResult ) {
 		showErrorMessage(
 			translate( 'There was an error validating your contact information. Please contact support.' )
@@ -132,9 +113,18 @@ export async function getSignupEmailValidationResult( email, emailTakenLoginRedi
 		throw err;
 	}
 
+	const signupValidationErrorResponse = getSignupValidationErrorResponse(
+		response,
+		email,
+		emailTakenLoginRedirect
+	);
+
+	if ( isEmpty( signupValidationErrorResponse ) ) {
+		return response;
+	}
 	const validationResponse = {
 		...response,
-		messages: formatSignupValidationResponse( response, emailTakenLoginRedirect ),
+		messages: signupValidationErrorResponse,
 	};
 	return validationResponse;
 }

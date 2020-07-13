@@ -47,6 +47,7 @@ import {
 } from 'my-sites/checkout/composite-checkout/contact-validation';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import { login } from 'lib/paths';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -131,28 +132,26 @@ export default function WPCheckout( {
 
 	const emailTakenLoginRedirectMessage = ( emailAddress ) => {
 		const redirectTo = '/checkout/no-site?cart=no-user';
-		const loginUrl = login( { redirectTo, emailAddress } );
-		const loginRedirectMessage = translate( 'If this is you {{a}}log in now{{/a}}.', {
-			components: {
-				a: <a href={ loginUrl } />,
-			},
-		} );
+		const isNative = config.isEnabled( 'login/native-login-links' );
+		const loginUrl = login( { redirectTo, emailAddress, isNative } );
+		const loginRedirectMessage = translate(
+			'Choose a different email address. This one is not available. If this is you {{a}}log in now{{/a}}.',
+			{
+				components: {
+					a: <a href={ loginUrl } />,
+				},
+			}
+		);
 		return loginRedirectMessage;
 	};
 
 	const validateContactDetailsAndDisplayErrors = async () => {
 		debug( 'validating contact details with side effects' );
 		if ( isLoggedOutCart ) {
-			// const emailTakenLoginRedirect = translate( '{{a}}domain{{/a}}', {
-			// 	components: {
-			// 		a: <a href="https://google.com" />,
-			// 	}
-			// } );
 			const email = contactInfo.email?.value;
-			const emailTakenLoginRedirect = emailTakenLoginRedirectMessage( email );
 			const validationResult = await getSignupEmailValidationResult(
 				email,
-				emailTakenLoginRedirect
+				emailTakenLoginRedirectMessage
 			);
 			handleContactValidationResult( {
 				recordEvent: onEvent,

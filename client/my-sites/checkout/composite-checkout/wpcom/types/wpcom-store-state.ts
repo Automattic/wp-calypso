@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { isEmpty } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -272,9 +277,7 @@ export function flattenManagedContactDetailsShape< A, B >(
  */
 export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
 
-export type ManagedContactDetailsErrors = ManagedContactDetailsShape<
-	( string | Object )[] | undefined | string[]
->;
+export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
 
 /*
  * Intermediate type used to represent update payloads
@@ -610,29 +613,24 @@ export function prepareGSuiteContactValidationRequest(
 	};
 }
 
-export function formatSignupValidationResponse(
+export function getSignupValidationErrorResponse(
 	response: SignupValidationResponse,
-	emailTakenLoginRedirect: string
+	email: string,
+	emailTakenLoginRedirect: ( arg0: string ) => string
 ): ManagedContactDetailsErrors {
 	const emailResponse = response.messages?.email || {};
-	let emailErrorMessage = Object.values( emailResponse )[ 0 ] || '';
 
-	// let comp = '';
-	if ( emailResponse.hasOwnProperty( 'taken' ) ) {
-		emailErrorMessage += emailTakenLoginRedirect;
+	if ( isEmpty( emailResponse ) ) {
+		return emailResponse;
 	}
 
-	// console.log(emailErrorMessage);
-	// const translate = useTranslate();
-	// const string = i18n.translate( '{{a}}domain{{/a}}', {
-	// 	components: {
-	// 		a: <a></a>,
-	// 	}
-	// } );
+	const emailErrorMessageFromResponse = Object.values( emailResponse )[ 0 ] || '';
+	const errorMessage = emailResponse.hasOwnProperty( 'taken' )
+		? emailTakenLoginRedirect( email )
+		: emailErrorMessageFromResponse;
 
 	return {
-		email: [ emailTakenLoginRedirect ],
-		// email: [ emailErrorMessage ],
+		email: [ errorMessage ],
 	};
 }
 
@@ -737,6 +735,7 @@ export type ManagedContactDetailsUpdaters = {
 	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateDomainContactFields: (
 		arg0: ManagedContactDetails,
@@ -783,6 +782,13 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		return {
 			...oldDetails,
 			postalCode: touchIfDifferent( newPostalCode, oldDetails.postalCode ),
+		};
+	},
+
+	updateEmail: ( oldDetails: ManagedContactDetails, newEmail: string ): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			email: touchIfDifferent( newEmail, oldDetails.email ),
 		};
 	},
 
