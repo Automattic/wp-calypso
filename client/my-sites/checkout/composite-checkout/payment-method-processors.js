@@ -14,6 +14,8 @@ import {
 	wpcomPayPalExpress,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
+	submitEbanxCardTransaction,
+	submitDlocalCardTransaction,
 	submitStripeRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
@@ -121,6 +123,34 @@ export async function stripeCardProcessor(
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
+}
+
+export async function ebanxCardProcessor() {
+	// TODO
+	throw new Error( 'ebanxCardProcessor not implemented' );
+}
+
+export async function dlocalCardProcessor() {
+	// TODO
+	throw new Error( 'dlocalCardProcessor not implemented' );
+}
+
+export async function multiPartnerCardProcessor( submitData ) {
+	const paymentPartner = submitData.paymentPartner;
+
+	if ( paymentPartner === 'stripe' ) {
+		return stripeCardProcessor( submitData );
+	}
+
+	if ( paymentPartner === 'ebanx' ) {
+		return ebanxCardProcessor( submitData );
+	}
+
+	if ( paymentPartner === 'dlocal' ) {
+		return dlocalCardProcessor( submitData );
+	}
+
+	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
 }
 
 export async function existingCardProcessor(

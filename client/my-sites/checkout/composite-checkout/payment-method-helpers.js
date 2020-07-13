@@ -117,6 +117,14 @@ export async function submitStripeCardTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
+export async function submitEbanxCardTransaction( transactionData, submit ) {
+	// TODO
+}
+
+export async function submitDlocalCardTransaction( transactionData, submit ) {
+	// TODO
+}
+
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
 	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
 		?.name;
