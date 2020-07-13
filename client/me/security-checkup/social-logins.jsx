@@ -14,7 +14,7 @@ import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupSocialLogins extends React.Component {
 	static propTypes = {
-		socialConnections: PropTypes.number.isRequired,
+		socialConnectionCount: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
