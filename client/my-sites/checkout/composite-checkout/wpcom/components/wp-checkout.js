@@ -345,7 +345,12 @@ export default function WPCheckout( {
 								/>
 							}
 							completeStepContent={
-								<WPContactForm summary isComplete={ true } isActive={ false } />
+								<WPContactForm
+									summary
+									isComplete={ true }
+									isActive={ false }
+									isLoggedOutCart={ isLoggedOutCart }
+								/>
 							}
 							titleContent={ <ContactFormTitle /> }
 							editButtonText={ translate( 'Edit' ) }

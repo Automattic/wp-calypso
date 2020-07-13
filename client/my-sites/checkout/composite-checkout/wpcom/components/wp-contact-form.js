@@ -57,6 +57,7 @@ export default function WPContactForm( {
 			<ContactFormSummary
 				isDomainFieldsVisible={ isDomainFieldsVisible }
 				isGSuiteInCart={ isGSuiteInCart }
+				isLoggedOutCart={ isLoggedOutCart }
 			/>
 		);
 	}
@@ -190,11 +191,12 @@ TaxFields.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
+function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart, isLoggedOutCart } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
 	const showDomainContactSummary = isDomainFieldsVisible;
+	const showEmailSummary = isLoggedOutCart || showDomainContactSummary;
 
 	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
@@ -225,7 +227,7 @@ function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
 					) }
 
-					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
+					{ showEmailSummary && contactInfo.email.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 
