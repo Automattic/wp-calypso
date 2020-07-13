@@ -92,7 +92,7 @@ function HelpSearchResults( {
 			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
 				page( link );
-				onAdminSectionSelect( event )
+				onAdminSectionSelect( event );
 			}
 
 			return;
