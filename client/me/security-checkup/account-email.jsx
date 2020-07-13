@@ -55,7 +55,7 @@ class SecurityCheckupAccountEmail extends React.Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path={ '/me/account' }
+				path={ '/me/security/account-email' }
 				materialIcon={ icon }
 				text={ translate( 'Account Email' ) }
 				description={ description }

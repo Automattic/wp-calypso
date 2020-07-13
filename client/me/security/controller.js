@@ -15,6 +15,7 @@ import accountPasswordData from 'lib/account-password-data';
 import SocialLoginComponent from 'me/social-login';
 import ConnectedAppsComponent from 'me/connected-applications';
 import AccountRecoveryComponent from 'me/security-account-recovery';
+import SecurityAccountEmail from 'me/security-account-email';
 import SecurityCheckupComponent from 'me/security-checkup';
 import { getSocialServiceFromClientId } from 'lib/login';
 
@@ -50,6 +51,11 @@ export function connectedApplications( context, next ) {
 		userSettings: userSettings,
 		path: context.path,
 	} );
+	next();
+}
+
+export function accountEmail( context, next ) {
+	context.primary = React.createElement( SecurityAccountEmail, { path: context.path } );
 	next();
 }
 

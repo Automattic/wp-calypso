@@ -10,6 +10,7 @@ import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 import { sidebar } from 'me/controller';
 import {
+	accountEmail,
 	accountRecovery,
 	connectedApplications,
 	password,
@@ -26,6 +27,7 @@ export default function () {
 
 	if ( useCheckupMenu ) {
 		page( '/me/security/password', sidebar, password, makeLayout, clientRender );
+		page( '/me/security/account-email', sidebar, accountEmail, makeLayout, clientRender );
 	}
 
 	if ( config.isEnabled( 'signup/social-management' ) ) {
