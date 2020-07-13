@@ -69,13 +69,11 @@ const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDial
 								location="customer-home"
 								placeholder={ translate( 'Search support articles' ) }
 							/>
-							<div aria-live="polite">
-								<HelpSearchResults
-									onSelect={ openResultView }
-									searchQuery={ searchQuery }
-									placeholderLines={ 5 }
-								/>
-							</div>
+							<HelpSearchResults
+								onSelect={ openResultView }
+								searchQuery={ searchQuery }
+								placeholderLines={ 5 }
+							/>
 						</div>
 					</div>
 				</div>

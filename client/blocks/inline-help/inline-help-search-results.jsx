@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { identity, isEmpty, noop } from 'lodash';
 import { connect } from 'react-redux';
@@ -43,8 +43,6 @@ function HelpSearchResults( {
 	placeholderLines,
 	track,
 } ) {
-	const supportTypeRef = useRef( searchResults?.[ 0 ]?.support_type );
-
 	function getTitleBySectionType( type, query = '' ) {
 		let title = '';
 		switch ( type ) {
@@ -157,9 +155,6 @@ function HelpSearchResults( {
 
 	const renderSearchResults = () => {
 		if ( isSearching && ! searchResults.length ) {
-			// reset current section reference.
-			supportTypeRef.current = null;
-
 			// search, but no results so far
 			return <PlaceholderLines lines={ placeholderLines } />;
 		}
@@ -184,7 +179,7 @@ function HelpSearchResults( {
 	return (
 		<>
 			<QueryInlineHelpSearch query={ searchQuery } />
-			{ renderSearchResults() }
+			<div aria-live="polite">{ renderSearchResults() }</div>
 		</>
 	);
 }
