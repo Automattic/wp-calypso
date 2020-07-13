@@ -7,8 +7,8 @@
 		"colors": true
 	},
 	"updater": {
-		"downloadUrl": "https://github.com/Automattic/wp-desktop/releases",
-		"apiUrl": "https://api.github.com/repos/Automattic/wp-desktop/releases",
+		"downloadUrl": "https://github.com/Automattic/wp-calypso/releases",
+		"apiUrl": "https://api.github.com/repos/Automattic/wp-calypso/releases",
 		"delay": 2000,
 		"interval": 600000
 	}

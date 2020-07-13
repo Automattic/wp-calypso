@@ -1,4 +1,4 @@
-const pkg = require( '../../../package.json' );
+const pkg = require( '../../../../desktop/package.json' );
 const config = require( '../../config.json' );
 
 // Merge in some details from package.json
