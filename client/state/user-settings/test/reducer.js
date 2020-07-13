@@ -7,8 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { settings, unsavedSettings } from '../reducer';
+import reducer, { fetchingSettings, settings, unsavedSettings } from '../reducer';
 import {
+	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_SAVE,
 	USER_SETTINGS_UPDATE,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
@@ -17,7 +19,37 @@ import {
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'settings', 'unsavedSettings' ] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'fetchingSettings',
+			'settings',
+			'unsavedSettings',
+		] );
+	} );
+
+	describe( 'fetchingSettings', () => {
+		test( 'should default to false', () => {
+			const state = fetchingSettings( undefined, {} );
+
+			expect( state ).to.eql( false );
+		} );
+
+		test( 'should be set to false when receiving update', () => {
+			const state = fetchingSettings( true, { type: USER_SETTINGS_UPDATE } );
+
+			expect( state ).to.eql( false );
+		} );
+
+		test( 'should be set to true when requesting data', () => {
+			const state = fetchingSettings( false, { type: USER_SETTINGS_REQUEST } );
+
+			expect( state ).to.eql( true );
+		} );
+
+		test( 'should be set to true when saving data', () => {
+			const state = fetchingSettings( false, { type: USER_SETTINGS_SAVE } );
+
+			expect( state ).to.eql( true );
+		} );
 	} );
 
 	describe( 'settings', () => {
