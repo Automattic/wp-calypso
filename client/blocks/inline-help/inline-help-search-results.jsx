@@ -3,7 +3,7 @@
  */
 import React, { useRef, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { identity, isEmpty } from 'lodash';
+import { identity, isEmpty, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -34,6 +34,7 @@ function HelpSearchResults( {
 	hasAPIResults = false,
 	isSearching = false,
 	onSelect,
+	onAdminSectionSelect = noop,
 	searchQuery = '',
 	searchResults = [],
 	selectedResult = {},
@@ -91,6 +92,7 @@ function HelpSearchResults( {
 			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
 				page( link );
+				onAdminSectionSelect( event );
 			}
 
 			return;
@@ -103,7 +105,7 @@ function HelpSearchResults( {
 	const selectCurrentResultIndex = ( index ) => () => selectSearchResult( index );
 
 	const renderHelpLink = (
-		{ link, key, description, title, support_type = SUPPORT_TYPE_API_HELP },
+		{ link, key, description, title, support_type = SUPPORT_TYPE_API_HELP, icon = 'domains' },
 		index
 	) => {
 		const addResultsSection = supportTypeRef?.current !== support_type || ! index;
@@ -127,7 +129,7 @@ function HelpSearchResults( {
 						tabIndex={ -1 }
 					>
 						{ support_type === SUPPORT_TYPE_ADMIN_SECTION && (
-							<Gridicon icon="domains" size={ 18 } />
+							<Gridicon icon={ icon } size={ 18 } />
 						) }
 						<span>{ preventWidows( decodeEntities( title ) ) }</span>
 					</a>
@@ -172,6 +174,7 @@ HelpSearchResults.propTypes = {
 	translate: PropTypes.func,
 	searchQuery: PropTypes.string,
 	onSelect: PropTypes.func.isRequired,
+	onAdminSectionSelect: PropTypes.func,
 	hasAPIResults: PropTypes.bool,
 	searchResults: PropTypes.array,
 	selectedResultIndex: PropTypes.number,

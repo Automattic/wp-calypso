@@ -358,7 +358,7 @@
 		padding: 8px 16px;
 		font-size: $font-body-small;
 
-		&:after {
+		&::after {
 			content: ':';
 		}
 	}
