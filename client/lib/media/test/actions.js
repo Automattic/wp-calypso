@@ -88,18 +88,4 @@ describe( 'MediaActions', () => {
 			} );
 		} );
 	} );
-
-	describe( '#edit()', () => {
-		const item = { ID: 100, description: 'Example' };
-
-		test( 'should immediately edit the existing item', () => {
-			MediaActions.edit( DUMMY_SITE_ID, item );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'RECEIVE_MEDIA_ITEM',
-				siteId: DUMMY_SITE_ID,
-				data: assign( {}, DUMMY_ITEM, item ),
-			} );
-		} );
-	} );
 } );

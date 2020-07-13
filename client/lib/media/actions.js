@@ -32,14 +32,4 @@ MediaActions.setQuery = function ( siteId, query ) {
 	} );
 };
 
-MediaActions.edit = function ( siteId, item ) {
-	const newItem = assign( {}, MediaStore.get( siteId, item.ID ), item );
-
-	Dispatcher.handleViewAction( {
-		type: 'RECEIVE_MEDIA_ITEM',
-		siteId: siteId,
-		data: newItem,
-	} );
-};
-
 export default MediaActions;
