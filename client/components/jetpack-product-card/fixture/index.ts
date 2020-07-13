@@ -30,6 +30,7 @@ export const productCard = {
 	subheadline: 'Get all of the essential security tools',
 	description:
 		'Enjoy the peace of mind of complete site protection. This bundle includes everything you need to keep your site backed up, free of spam and one-step ahead of threats. Options available: Real-Time or Daily',
+	currencyCode: 'USD',
 	originalPrice: 30,
 	billingTimeFrame: 'per month, billed yearly',
 	buttonLabel: 'Get the Security Bundle',

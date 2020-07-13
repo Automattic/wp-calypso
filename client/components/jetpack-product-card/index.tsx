@@ -26,6 +26,7 @@ type OwnProps = {
 	productType?: string;
 	subheadline: string;
 	description: ReactNode;
+	currencyCode: string;
 	originalPrice: number;
 	discountedPrice?: number;
 	withStartingPrice?: boolean;
@@ -49,6 +50,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	productType,
 	subheadline,
 	description,
+	currencyCode,
 	originalPrice,
 	discountedPrice,
 	withStartingPrice,
@@ -94,8 +96,14 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 							{ withStartingPrice && (
 								<span className="jetpack-product-card__from">{ translate( 'from' ) }</span>
 							) }
-							<PlanPrice rawPrice={ originalPrice } original={ isDiscounted } />
-							{ isDiscounted && <PlanPrice rawPrice={ discountedPrice } discounted /> }
+							<PlanPrice
+								rawPrice={ originalPrice }
+								original={ isDiscounted }
+								currencyCode={ currencyCode }
+							/>
+							{ isDiscounted && (
+								<PlanPrice rawPrice={ discountedPrice } discounted currencyCode={ currencyCode } />
+							) }
 						</span>
 						<span className="jetpack-product-card__billing-time-frame">{ billingTimeFrame }</span>
 					</div>
