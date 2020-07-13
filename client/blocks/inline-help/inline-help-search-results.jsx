@@ -3,7 +3,7 @@
  */
 import React, { useRef, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { identity, isEmpty } from 'lodash';
+import { identity, isEmpty, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -34,7 +34,7 @@ function HelpSearchResults( {
 	hasAPIResults = false,
 	isSearching = false,
 	onSelect,
-	onAdminSectionSelect,
+	onAdminSectionSelect = noop,
 	searchQuery = '',
 	searchResults = [],
 	selectedResult = {},
@@ -174,7 +174,7 @@ HelpSearchResults.propTypes = {
 	translate: PropTypes.func,
 	searchQuery: PropTypes.string,
 	onSelect: PropTypes.func.isRequired,
-	onAdminSectionSelect: PropTypes.func.isRequired,
+	onAdminSectionSelect: PropTypes.func,
 	hasAPIResults: PropTypes.bool,
 	searchResults: PropTypes.array,
 	selectedResultIndex: PropTypes.number,
