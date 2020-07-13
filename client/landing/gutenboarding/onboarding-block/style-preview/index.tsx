@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { useSelect } from '@wordpress/data';
-import { Title, SubTitle } from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import FontSelect from './font-select';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
-import ActionButtons, { BackButton, NextButton } from '../../components/action-buttons';
 import type { Viewport } from './types';
 
 /**

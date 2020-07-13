@@ -7,7 +7,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import DomainPicker from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
-import { Title, SubTitle } from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -17,7 +17,6 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { FLOW_ID } from '../../constants';
-import ActionButtons, { BackButton } from '../../components/action-buttons';
 
 /**
  * Style dependencies

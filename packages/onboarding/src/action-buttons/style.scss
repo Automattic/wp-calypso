@@ -1,7 +1,6 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../mixins.scss';
-@import '../../variables.scss';
-@import '../../_z-index.scss';
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+@import '../../styles/z-index.scss';
 
 .action-buttons {
 	padding: 0 20px;
@@ -15,7 +14,7 @@
 	justify-content: space-between;
 	display: flex;
 	align-items: center;
-	z-index: gutenboarding-z-index( '.gutenboarding__footer' );
+	z-index: onboarding-z-index( '.onboarding__footer' );
 
 	@include break-small {
 		padding: 0;
