@@ -29,12 +29,17 @@
 		"prepublish": "check-npm-client && yarn run clean",
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"@wordpress/components": "^9.6.0",
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"classnames": "^2.2.6"
+	},
 	"devDependencies": {
 		"@wordpress/base-styles": "^1.8.0",
 		"copyfiles": "^2.3.0"
 	},
 	"peerDependencies": {
+		"@wordpress/i18n": "^3.10.0",
 		"react": "^16.8"
 	},
 	"private": true
