@@ -11,5 +11,5 @@ import { get } from 'lodash';
  * @returns {boolean} pending email state
  */
 export default function isPendingEmailChange( state ) {
-	return get( state, 'userSettings.settings.new_user_email', null );
+	return !! get( state, 'userSettings.settings.new_user_email', null );
 }
