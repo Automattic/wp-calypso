@@ -526,6 +526,10 @@ export class List extends React.Component {
 				site={ selectedSite }
 				isManagingAllSites={ false }
 				onClick={ this.goToEditDomainRoot }
+				isBusy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
+				disabled={ this.state.settingPrimaryDomain }
+				selectionIndex={ index }
+				onMakePrimaryClick={ this.handleUpdatePrimaryDomain }
 			/>
 		) );
 

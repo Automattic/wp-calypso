@@ -23,26 +23,33 @@ import { handleRenewNowClick } from 'lib/purchases';
 import { resolveDomainStatus } from 'lib/domains';
 import InfoPopover from 'components/info-popover';
 import { emailManagement } from 'my-sites/email/paths';
+import Spinner from 'components/spinner';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
 		currentRoute: PropTypes.string,
+		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
 		domainDetails: PropTypes.object,
 		site: PropTypes.object,
 		isManagingAllSites: PropTypes.bool,
+		isBusy: PropTypes.bool,
 		showCheckbox: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
+		onMakePrimaryClick: PropTypes.func,
 		onToggle: PropTypes.func,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
+		selectionIndex: PropTypes.number,
 	};
 
 	static defaultProps = {
+		disabled: false,
 		isManagingAllSites: false,
 		showCheckbox: false,
 		onToggle: null,
 		isLoadingDomainDetails: false,
+		isBusy: false,
 	};
 
 	handleClick = () => {
@@ -60,8 +67,11 @@ class DomainItem extends PureComponent {
 	};
 
 	addEmailClick = ( event ) => {
-		const { currentRoute, domain, site } = this.props;
+		const { currentRoute, disabled, domain, site } = this.props;
 		event.stopPropagation();
+		if ( disabled ) {
+			return;
+		}
 		page( emailManagement( site.slug, domain.domain, currentRoute ) );
 	};
 
@@ -70,6 +80,16 @@ class DomainItem extends PureComponent {
 
 		const { purchase, site } = this.props;
 		handleRenewNowClick( purchase, site.slug );
+	};
+
+	makePrimary = ( event ) => {
+		const { domainDetails, selectionIndex, onMakePrimaryClick } = this.props;
+
+		event.stopPropagation();
+
+		if ( onMakePrimaryClick ) {
+			onMakePrimaryClick( selectionIndex, domainDetails );
+		}
 	};
 
 	canRenewDomain() {
@@ -123,13 +143,19 @@ class DomainItem extends PureComponent {
 	}
 
 	renderOptionsButton() {
-		const { domainDetails, isManagingAllSites, translate } = this.props;
+		const { disabled, domainDetails, isBusy, isManagingAllSites, translate } = this.props;
 
 		return (
 			<div className="list__domain-options">
-				<EllipsisMenu onClick={ this.stopPropagation } toggleTitle={ translate( 'Options' ) }>
+				<EllipsisMenu
+					disabled={ disabled || isBusy }
+					onClick={ this.stopPropagation }
+					toggleTitle={ translate( 'Options' ) }
+				>
 					{ ! isManagingAllSites && ! domainDetails.isPrimary && (
-						<PopoverMenuItem icon="domains">{ translate( 'Make primary domain' ) }</PopoverMenuItem>
+						<PopoverMenuItem icon="domains" onClick={ this.makePrimary }>
+							{ translate( 'Make primary domain' ) }
+						</PopoverMenuItem>
 					) }
 					{ this.canRenewDomain() && (
 						<PopoverMenuItem icon="refresh" onClick={ this.renewDomain }>
@@ -249,6 +275,18 @@ class DomainItem extends PureComponent {
 		return null;
 	}
 
+	renderOverlay() {
+		if ( this.props.isBusy ) {
+			return (
+				<div className="domain-item__overlay">
+					<Spinner className="domain-item__spinner" size={ 20 } />
+				</div>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
 		const { domain, domainDetails, isManagingAllSites, showCheckbox } = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
@@ -277,6 +315,7 @@ class DomainItem extends PureComponent {
 					{ this.renderSiteMeta() }
 				</div>
 				{ this.renderActionItems() }
+				{ this.renderOverlay() }
 			</CompactCard>
 		);
 	}
