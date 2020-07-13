@@ -355,7 +355,8 @@ input[type='radio'].domain-management-list-item__radio {
 	display: flex;
 	align-items: center;
 
-	.domain-item__spinner {
+	.domain-item__busy-message {
+		font-size: $font-body-small;
 		margin-left: auto;
 	}
 }

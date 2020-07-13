@@ -527,6 +527,9 @@ export class List extends React.Component {
 				isManagingAllSites={ false }
 				onClick={ this.goToEditDomainRoot }
 				isBusy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
+				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
+					context: 'Shows up when the primary domain is changing and the user is waiting',
+				} ) }
 				disabled={ this.state.settingPrimaryDomain }
 				selectionIndex={ index }
 				onMakePrimaryClick={ this.handleUpdatePrimaryDomain }

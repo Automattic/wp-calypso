@@ -27,6 +27,7 @@ import Spinner from 'components/spinner';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
+		busyMessage: PropTypes.string,
 		currentRoute: PropTypes.string,
 		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
@@ -275,10 +276,17 @@ class DomainItem extends PureComponent {
 		return null;
 	}
 
+	busyMessage() {
+		if ( this.props.isBusy && this.props.busyMessage ) {
+			return <div className="domain-item__busy-message">{ this.props.busyMessage }</div>;
+		}
+	}
+
 	renderOverlay() {
 		if ( this.props.isBusy ) {
 			return (
 				<div className="domain-item__overlay">
+					{ this.busyMessage() }
 					<Spinner className="domain-item__spinner" size={ 20 } />
 				</div>
 			);
