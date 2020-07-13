@@ -395,6 +395,8 @@
 	height: auto;
 	max-width: 48px;
 	max-height: 48px;
+	overflow: hidden;
+	font-size: $font-body-small;
 }
 
 .activity-log-item__activity-media .is-full-width {
