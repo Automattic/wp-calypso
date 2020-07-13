@@ -338,48 +338,6 @@ describe( 'MediaActions', () => {
 		} );
 	} );
 
-	describe( '#delete()', () => {
-		const item = { ID: 100 };
-
-		test( 'should accept a single item', () => {
-			MediaActions.delete( DUMMY_SITE_ID, item );
-			expect( stubs.mediaDelete ).to.have.been.calledOnce;
-		} );
-
-		test( 'should accept an array of items', () => {
-			MediaActions.delete( DUMMY_SITE_ID, [ item, item ] );
-			expect( stubs.mediaDelete ).to.have.been.calledTwice;
-		} );
-
-		test( 'should call to the WordPress.com REST API', () => {
-			return new Promise( ( done ) => {
-				MediaActions.delete( DUMMY_SITE_ID, item );
-
-				expect( stubs.mediaDelete ).to.have.been.calledOn( [ DUMMY_SITE_ID, item.ID ].join() );
-				process.nextTick( function () {
-					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-						type: 'REMOVE_MEDIA_ITEM',
-						error: null,
-						siteId: DUMMY_SITE_ID,
-						data: DUMMY_API_RESPONSE,
-					} );
-
-					done();
-				} );
-			} );
-		} );
-
-		test( 'should immediately remove the item', () => {
-			MediaActions.delete( DUMMY_SITE_ID, item );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'REMOVE_MEDIA_ITEM',
-				siteId: DUMMY_SITE_ID,
-				data: item,
-			} );
-		} );
-	} );
-
 	describe( '#sourceChanged()', () => {
 		test( 'should dispatch the `CHANGE_MEDIA_SOURCE` action with the specified siteId', () => {
 			MediaActions.sourceChanged( DUMMY_SITE_ID );

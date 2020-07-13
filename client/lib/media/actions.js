@@ -18,7 +18,6 @@ import MediaListStore from './list-store';
 import {
 	changeMediaSource,
 	createMediaItem,
-	deleteMedia,
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
@@ -246,39 +245,6 @@ MediaActions.update = function ( siteId, item, editMediaFile = false ) {
 				error: error,
 				siteId: siteId,
 				data: editMediaFile ? { ...data, isDirty: true } : data,
-			} );
-		} );
-};
-
-MediaActions.delete = function ( siteId, item ) {
-	if ( Array.isArray( item ) ) {
-		item.forEach( MediaActions.delete.bind( null, siteId ) );
-		return;
-	}
-
-	Dispatcher.handleViewAction( {
-		type: 'REMOVE_MEDIA_ITEM',
-		siteId: siteId,
-		data: item,
-	} );
-
-	reduxDispatch( deleteMedia( siteId, item.ID ) );
-
-	debug( 'Deleting media from %d by ID %d', siteId, item.ID );
-	wpcom
-		.site( siteId )
-		.media( item.ID )
-		.delete( function ( error, data ) {
-			Dispatcher.handleServerAction( {
-				type: 'REMOVE_MEDIA_ITEM',
-				error: error,
-				siteId: siteId,
-				data: data,
-			} );
-			// also refetch storage limits
-			Dispatcher.handleServerAction( {
-				type: 'FETCH_MEDIA_LIMITS',
-				siteId: siteId,
 			} );
 		} );
 };
