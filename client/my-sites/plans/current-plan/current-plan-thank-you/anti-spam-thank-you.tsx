@@ -27,9 +27,10 @@ const AntiSpamProductThankYou = (): ReactElement => {
 			title={ translate( 'Say goodbye to spam!' ) }
 			ThankYouCtaComponent={ ThankYouCta }
 		>
+			<p>{ translate( "We're setting up Jetpack Anti-Spam for you right now." ) }</p>
 			<p>
 				{ translate(
-					'Jetpack Anti-Spam is now active on your site and catching all spam. Enjoy more peace of mind and a better experience for your visitors.'
+					"In no time you'll be able to enjoy more peace of mind and provide a better experience to your visitors."
 				) }
 			</p>
 		</ThankYou>
