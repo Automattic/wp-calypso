@@ -57,6 +57,10 @@ export class AuthFormHeader extends Component {
 	getHeaderText() {
 		const { translate, partnerSlug, isWoo, wooDnaConfig } = this.props;
 
+		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
+			return wooDnaConfig.getServiceName();
+		}
+
 		let host = '';
 		switch ( partnerSlug ) {
 			case 'dreamhost':
@@ -92,10 +96,6 @@ export class AuthFormHeader extends Component {
 				default:
 					return translate( 'Connecting your store' );
 			}
-		}
-
-		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
-			return wooDnaConfig.getServiceName();
 		}
 
 		switch ( currentState ) {
