@@ -3,8 +3,8 @@
  */
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { isFinite } from 'lodash';
-import React, { useRef, FunctionComponent, ReactNode } from 'react';
+import { isFinite, isNumber } from 'lodash';
+import React, { createElement, useRef, FunctionComponent, ReactNode } from 'react';
 
 /**
  * Internal dependencies
@@ -25,6 +25,7 @@ type OwnProps = {
 	iconSlug: string;
 	productName: string;
 	productType?: string;
+	headingLevel?: number;
 	subheadline: string;
 	description: ReactNode;
 	currencyCode: string;
@@ -49,6 +50,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	iconSlug,
 	productName,
 	productType,
+	headingLevel,
 	subheadline,
 	description,
 	currencyCode,
@@ -72,6 +74,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	const isHeaderWrapped = useFlexboxWrapDetection( priceEl );
 
 	const isDiscounted = isFinite( discountedPrice );
+	const parsedHeadingLevel = isNumber( headingLevel )
+		? Math.min( Math.max( Math.floor( headingLevel ), 1 ), 6 )
+		: 2;
 
 	return (
 		<div className={ classNames( className, 'jetpack-product-card', { 'is-owned': isOwned } ) }>
@@ -79,15 +84,19 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				<ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } />
 				<div className="jetpack-product-card__summary">
 					<div className="jetpack-product-card__headings">
-						<h1 className="jetpack-product-card__product-name">
-							{ preventWidows( productName ) }
-							{ productType && (
-								<span className="jetpack-product-card__product-type">
-									{ ' ' }
-									{ preventWidows( productType ) }
-								</span>
-							) }
-						</h1>
+						{ createElement(
+							`h${ parsedHeadingLevel }`,
+							{ className: 'jetpack-product-card__product-name' },
+							<>
+								{ preventWidows( productName ) }
+								{ productType && (
+									<span className="jetpack-product-card__product-type">
+										{ ' ' }
+										{ preventWidows( productType ) }
+									</span>
+								) }
+							</>
+						) }
 						<p className="jetpack-product-card__subheadline">{ preventWidows( subheadline ) }</p>
 					</div>
 					<div
