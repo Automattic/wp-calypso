@@ -52,8 +52,7 @@ interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug;
 	isFreePlan: boolean;
-	isJetpack: boolean;
-	isAtomicSite: boolean;
+	isJetpackNotAtomic: boolean;
 	isLoading: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
@@ -70,8 +69,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
 	isFreePlan,
-	isJetpack,
-	isAtomicSite,
+	isJetpackNotAtomic,
 	isLoading,
 	hasSimplePayments,
 	hasWordAds,
@@ -136,10 +134,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
 				  )
 				: translate(
-						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
+						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a %(planNames)s plan{{/em}}.',
 						{
 							components: {
 								em: <em />,
+							},
+							args: {
+								planNames: isJetpackNotAtomic
+									? 'Premium or Professional'
+									: 'Premium, Business, or eCommerce',
 							},
 						}
 				  );
@@ -150,10 +153,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work.'
 				  )
 				: translate(
-						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
+						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a %(planNames)s plan{{/em}}.',
 						{
 							components: {
 								em: <em />,
+							},
+							args: {
+								planNames: isJetpackNotAtomic
+									? 'Premium or Professional'
+									: 'Premium, Business, or eCommerce',
 							},
 						}
 				  );
@@ -374,8 +382,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPeerReferralsCard = () => {
-		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
-
 		if ( isJetpackNotAtomic ) {
 			return;
 		}
@@ -453,10 +459,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
 			  )
 			: translate(
-					'Make money each time someone visits your site by displaying advertisements on all your posts and pages. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
+					'Make money each time someone visits your site by displaying advertisements on all your posts and pages. {{em}}Available only with a %(planNames)s plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
+						},
+						args: {
+							planNames: isJetpackNotAtomic
+								? 'Premium or Professional'
+								: 'Premium, Business, or eCommerce',
 						},
 					}
 			  );
@@ -536,8 +547,8 @@ export default connect< ConnectedProps, {}, {} >(
 			siteId,
 			selectedSiteSlug,
 			isFreePlan,
-			isJetpack: isJetpackSite( state, siteId ),
-			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			isJetpackNotAtomic:
+				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ),
 			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
