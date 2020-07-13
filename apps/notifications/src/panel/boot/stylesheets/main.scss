@@ -47,6 +47,7 @@
 		cursor: pointer;
 		font-size: inherit;
 		outline: none;
+		margin: 0;
 		padding: 0;
 
 		&[disabled] {
@@ -308,7 +309,7 @@
 		transform: translateY( -50% );
 
 		h2 {
-			font: 300 21px/24px $sans;
+			font: 400 21px/24px $sans;
 			margin-bottom: 4px;
 		}
 
