@@ -91,7 +91,10 @@ class SecurityAccountEmail extends React.Component {
 							isSubmitting={ this.isSubmitting }
 							successNotice={ this.props.successNotice }
 						/>
-						<FormButton isSubmitting={ this.isSubmitting() } disabled={ ! this.canSubmit() }>
+						<FormButton
+							isSubmitting={ this.isSubmitting() }
+							disabled={ ! this.canSubmit() && ! this.isSubmitting() }
+						>
 							{ this.isSubmitting()
 								? translate( 'Updating…' )
 								: translate( 'Update account email' ) }

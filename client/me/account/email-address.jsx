@@ -17,6 +17,7 @@ import FormTextValidation from 'components/forms/form-input-validation';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import getUnsavedUserSettings from 'state/selectors/get-unsaved-user-settings';
 import getUserSetting from 'state/selectors/get-user-setting';
 import isPendingEmailChange from 'state/selectors/is-pending-email-change';
@@ -49,7 +50,9 @@ class AccountSettingsEmailAddress extends React.Component {
 		};
 		this.cancelEmailChange = this.cancelEmailChange.bind( this );
 		this.updateEmailAddress = this.updateEmailAddress.bind( this );
-		props.emailValidationListener && props.emailValidationListener( false );
+		// Flag the address as invalid if it is unchanged.
+		props.emailValidationListener &&
+			props.emailValidationListener( this.isEmailAddressUnchanged( props ) );
 	}
 
 	getEmailAddress( props ) {
@@ -62,7 +65,7 @@ class AccountSettingsEmailAddress extends React.Component {
 		if ( props.unsavedUserSettings && props.unsavedUserSettings.user_email ) {
 			return props.unsavedUserSettings.user_email;
 		}
-		return props.userEmailAddress;
+		return props.originalEmailAddress;
 	}
 
 	getPendingEmailAddress( props ) {
@@ -126,13 +129,29 @@ class AccountSettingsEmailAddress extends React.Component {
 		const emailValidationError =
 			( '' === value && 'empty' ) || ( ! emailValidator.validate( value ) && 'invalid' ) || false;
 		this.setState( { emailValidationError } );
-		emailValidationListener && emailValidationListener( false !== emailValidationError );
-
 		if ( userSettings ) {
 			userSettings.updateSetting( 'user_email', value );
 		} else {
 			this.props.setUserSetting( 'user_email', value );
 		}
+		const newEmailIsInvalid =
+			false !== emailValidationError || this.isEmailAddressUnchanged( this.props, value );
+		emailValidationListener && emailValidationListener( newEmailIsInvalid );
+	}
+
+	isEmailAddressUnchanged( props, newEmailAddress ) {
+		const originalEmailAddress = props.userSettings
+			? props.userSettings.getOriginalSetting( 'user_email' )
+			: props.originalEmailAddress;
+		let emailToCompare;
+		if ( newEmailAddress ) {
+			emailToCompare = newEmailAddress;
+		} else if ( props.userSettings ) {
+			emailToCompare = props.userSettings.getSetting( 'user_email' );
+		} else {
+			emailToCompare = props.workingEmailAddress;
+		}
+		return originalEmailAddress === emailToCompare;
 	}
 
 	checkCancelEmailChangeSuccess() {
@@ -240,9 +259,10 @@ class AccountSettingsEmailAddress extends React.Component {
 export default connect(
 	( state ) => ( {
 		hasPendingEmailChange: isPendingEmailChange( state ),
-		pendingEmailAddress: getUserSetting( state, 'new_user_email' ),
+		originalEmailAddress: getOriginalUserSetting( state, 'user_email' ),
+		pendingEmailAddress: getOriginalUserSetting( state, 'new_user_email' ),
 		unsavedUserSettings: getUnsavedUserSettings( state ),
-		userEmailAddress: getUserSetting( state, 'user_email' ),
+		workingEmailAddress: getUserSetting( state, 'user_email' ),
 	} ),
 	{ cancelPendingEmailChange, setUserSetting }
 )( localize( AccountSettingsEmailAddress ) );
