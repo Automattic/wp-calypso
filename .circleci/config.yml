@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@3.4.2
+  win: circleci/windows@2.2.0
 
 references:
   defaults: &defaults
@@ -701,6 +702,119 @@ jobs:
       - run: *desktop-notify-github-failure
       - slack/status: *desktop-notify-slack-failure
 
+  wp-desktop-linux:
+    <<: *desktop_defaults
+    shell: /bin/bash --login
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wp-calypso
+      - run: *update-node
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Linux
+          environment:
+            CSC_LINK: resource/certificates/win.p12
+          command: |
+                  set +e
+                  source $HOME/.nvm/nvm.sh
+                  nvm use
+
+                  yarn run build-desktop:app
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            yarn run test-desktop:e2e
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/linux-unpacked
+            rm -rf desktop/release/.icon-set
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+
+  wp-desktop-windows:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\wp-calypso
+    environment:
+      CSC_LINK: C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12
+      CSC_FOR_PULL_REQUEST: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: C:\Users\circleci\wp-calypso
+      - run:
+          name: Install Node Version
+          command: |
+                  $NODE_VERSION = Get-Content .nvmrc
+                  nvm install $NODE_VERSION
+                  nvm use $NODE_VERSION
+      - run:
+          name: Install Yarn
+          command: npm install -g yarn
+      - run:
+          name: Install Make
+          command: cinst make
+      - run:
+          name: Install Desktop Dependencies
+          command: yarn run build-desktop:install-app-deps
+      - run:
+          name: Import Codesigning Certificate
+          command: |
+                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
+                  #
+                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
+                  # package.json's `certificateSubjectName` to find the imported cert.
+                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      - run:
+          name: Build Desktop Windows
+          command: |
+                  # Use make for bash-like environment variable substitution
+                  # Note: cd into desktop as ELECTRON_BUILDER_ARGS will not resolve correctly if we use make -f syntax from repo root.
+                  cd desktop
+                  make package ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName="Automattic, Inc."'
+      - run:
+          name: Archive Unpacked Directories
+          command: |
+            tar -zcf desktop/release/win-unpacked-x64.tar.gz desktop/release/win-unpacked
+            tar -zcf desktop/release/win-unpacked-ia32.tar.gz desktop/release/win-ia32-unpacked
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/win-unpacked
+            rm -rf desktop/release/win-ia32-unpacked
+          shell: bash.exe
+      - store_artifacts:
+          when: always
+          path: desktop\release
+      - persist_to_workspace:
+          root: C:\Users\circleci\wp-calypso
+          paths:
+            - desktop\release
+
 workflows:
   version: 2
   calypso:
@@ -775,6 +889,12 @@ workflows:
     jobs:
       - wp-desktop-source
       - wp-desktop-mac:
+          requires:
+            - wp-desktop-source
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-source
+      - wp-desktop-windows:
           requires:
             - wp-desktop-source
 
