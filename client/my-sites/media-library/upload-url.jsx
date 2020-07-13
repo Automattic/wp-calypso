@@ -16,8 +16,8 @@ import { localize } from 'i18n-calypso';
 import { bumpStat } from 'lib/analytics/mc';
 import FormTextInput from 'components/forms/form-text-input';
 import { ScreenReaderText } from '@automattic/components';
-import MediaActions from 'lib/media/actions';
 import { clearMediaItemErrors } from 'state/media/actions';
+import { addMedia } from 'state/media/thunks';
 
 /**
  * Style dependencies
@@ -30,6 +30,7 @@ class MediaLibraryUploadUrl extends Component {
 		site: PropTypes.object,
 		onAddMedia: PropTypes.func,
 		onClose: PropTypes.func,
+		addMedia: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -53,7 +54,7 @@ class MediaLibraryUploadUrl extends Component {
 		}
 
 		this.props.clearMediaItemErrors( this.props.site.ID );
-		MediaActions.add( this.props.site, this.state.value );
+		this.props.addMedia( this.state.value, this.props.site );
 
 		this.setState( { value: '', isError: false } );
 		this.props.onAddMedia();
@@ -114,4 +115,6 @@ class MediaLibraryUploadUrl extends Component {
 	}
 }
 
-export default connect( null, { clearMediaItemErrors } )( localize( MediaLibraryUploadUrl ) );
+export default connect( null, { addMedia, clearMediaItemErrors } )(
+	localize( MediaLibraryUploadUrl )
+);
