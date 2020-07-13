@@ -49,7 +49,7 @@ class AccountSettingsEmailAddress extends React.Component {
 		};
 		this.cancelEmailChange = this.cancelEmailChange.bind( this );
 		this.updateEmailAddress = this.updateEmailAddress.bind( this );
-		props.emailValidationListener && props.emailValidationListener( true );
+		props.emailValidationListener && props.emailValidationListener( false );
 	}
 
 	getEmailAddress( props ) {
@@ -126,7 +126,7 @@ class AccountSettingsEmailAddress extends React.Component {
 		const emailValidationError =
 			( '' === value && 'empty' ) || ( ! emailValidator.validate( value ) && 'invalid' ) || false;
 		this.setState( { emailValidationError } );
-		emailValidationListener && emailValidationListener( ! emailValidationError );
+		emailValidationListener && emailValidationListener( false !== emailValidationError );
 
 		if ( userSettings ) {
 			userSettings.updateSetting( 'user_email', value );

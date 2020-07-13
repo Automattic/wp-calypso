@@ -34,15 +34,15 @@ class SecurityAccountEmail extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			emailIsValid: true,
+			emailIsInvalid: true,
 		};
 		this.isSubmitting = this.isSubmitting.bind( this );
 		this.setEmailValidationState = this.setEmailValidationState.bind( this );
 		this.submitEmailForm = this.submitEmailForm.bind( this );
 	}
 
-	setEmailValidationState( emailIsValid ) {
-		this.setState( { emailIsValid } );
+	setEmailValidationState( emailIsInvalid ) {
+		this.setState( { emailIsInvalid } );
 	}
 
 	isSubmitting() {
@@ -50,7 +50,7 @@ class SecurityAccountEmail extends React.Component {
 	}
 
 	canSubmit() {
-		return this.state.emailIsValid && ! this.props.isPendingEmailChange;
+		return ! this.state.emailIsInvalid && ! this.props.isPendingEmailChange;
 	}
 
 	submitEmailForm( event ) {
