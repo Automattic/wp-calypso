@@ -1,13 +1,7 @@
 /**
- * External dependencies
- */
-import { assign } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import MediaStore from './store';
 
 /**
  * @typedef IMediaActions

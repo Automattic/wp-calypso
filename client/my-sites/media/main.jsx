@@ -24,7 +24,6 @@ import getMediaItem from 'state/selectors/get-media-item';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
-import MediaActions from 'lib/media/actions';
 import { getMimeType } from 'lib/media/utils';
 import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
