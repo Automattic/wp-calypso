@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, includes } from 'lodash';
-import page from 'page';
+import { identity } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -15,9 +14,7 @@ import debugFactory from 'debug';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
 import getInlineHelpCurrentlySelectedLink from 'state/inline-help/selectors/get-inline-help-currently-selected-link';
-import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
 import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
-import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
 import { setInlineHelpSearchQuery } from 'state/inline-help/actions';
 
 /**
@@ -26,12 +23,7 @@ import { setInlineHelpSearchQuery } from 'state/inline-help/actions';
 const debug = debugFactory( 'calypso:inline-help' );
 
 const InlineHelpSearchCard = ( {
-	setPreviousResult,
-	setNextResult,
-	selectedResultIndex,
-	selectedResult = {},
 	query = '',
-	onSelect,
 	track,
 	location = 'inline-help-popover',
 	setSearchQuery,
@@ -82,20 +74,16 @@ const InlineHelpSearchCard = ( {
 };
 
 InlineHelpSearchCard.propTypes = {
-	onSelect: PropTypes.func,
 	translate: PropTypes.func,
 	track: PropTypes.func,
 	query: PropTypes.string,
 	placeholder: PropTypes.string,
 	location: PropTypes.string,
-	selectedResult: PropTypes.object,
 };
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
 	selectedLink: getInlineHelpCurrentlySelectedLink( state ),
-	selectedResultIndex: getSelectedResultIndex( state ),
-	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 } );
 const mapDispatchToProps = {
 	track: recordTracksEvent,
