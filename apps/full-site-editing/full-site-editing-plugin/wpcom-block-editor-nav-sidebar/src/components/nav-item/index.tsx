@@ -44,14 +44,9 @@ export default function NavItem( { item, postType, selected, statusLabel }: NavI
 				href={ editUrl }
 				target={ applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) }
 			>
-				<div className="wpcom-block-editor-nav-item__title-container">
-					<div className={ titleClasses }>
-						{ item.title?.raw ||
-							_x( 'Untitled', 'post title for posts with no title', 'full-site-editing' ) }
-					</div>
-					{ item.slug && (
-						<div className="wpcom-block-editor-nav-item__slug">{ `/${ item.slug }/` }</div>
-					) }
+				<div className={ titleClasses }>
+					{ item.title?.raw ||
+						_x( 'Untitled', 'post title for posts with no title', 'full-site-editing' ) }
 				</div>
 				{ statusLabel && <div className="wpcom-block-editor-nav-item__label">{ statusLabel }</div> }
 			</Button>
