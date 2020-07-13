@@ -5,8 +5,7 @@ import * as React from 'react';
 import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useHistory } from 'react-router-dom';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -14,10 +13,9 @@ import { useHistory } from 'react-router-dom';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
-import { ChangeLocaleContextConsumer, ChangeLocaleFunction } from '../../components/locale-context';
-import { usePath, useCurrentStep, Step } from '../../path';
-import { Button } from '@wordpress/components';
+import { useCurrentStep, Step } from '../../path';
 import { isEnabled } from '../../../../config';
+import Link from '../link';
 
 /**
  * Style dependencies
@@ -27,11 +25,8 @@ import './style.scss';
 const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
 	const currentStep = useCurrentStep();
-	const history = useHistory();
-	const makePath = usePath();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const { setSiteLanguage } = useDispatch( ONBOARD_STORE );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
@@ -54,31 +49,14 @@ const Header: React.FunctionComponent = () => {
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
 
-	// todo: just for testing purposes, replace with the actual language picker
-	const handleChangeLocale = ( changeLocale: ChangeLocaleFunction ) => {
-		if ( i18nLocale === 'en' ) {
-			history.push( makePath( Step[ currentStep ], 'ar' ) );
-			setSiteLanguage( 'ar' );
-			changeLocale( 'ar' );
-		} else {
-			history.push( makePath( Step[ currentStep ], 'en' ) );
-			setSiteLanguage( 'en' );
-			changeLocale( 'en' );
-		}
-	};
-
 	const changeLocaleButton = () => {
 		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
 			return (
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-language">
-					<ChangeLocaleContextConsumer>
-						{ ( changeLocale ) => (
-							<Button onClick={ () => handleChangeLocale( changeLocale ) }>
-								<span>{ __( 'Site Language' ) } </span>
-								<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
-							</Button>
-						) }
-					</ChangeLocaleContextConsumer>
+					<Link to={ Step.LanguageModal }>
+						<span>{ __( 'Site Language' ) } </span>
+						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
+					</Link>
 				</div>
 			);
 		}
