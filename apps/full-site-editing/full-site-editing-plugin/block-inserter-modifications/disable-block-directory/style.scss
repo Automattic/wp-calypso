@@ -9,4 +9,8 @@
 	margin: $no-result-padding 0;
 	text-align: center;
 	color: $dark-gray-400;
+
+	svg {
+		fill: $light-gray-800;
+	}
 }
