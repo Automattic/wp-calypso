@@ -93,7 +93,7 @@ class SecurityAccountEmail extends React.Component {
 						/>
 						<FormButton
 							isSubmitting={ this.isSubmitting() }
-							disabled={ ! this.canSubmit() && ! this.isSubmitting() }
+							disabled={ ! this.canSubmit() || this.isSubmitting() }
 						>
 							{ this.isSubmitting()
 								? translate( 'Updating…' )
