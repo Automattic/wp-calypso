@@ -8,6 +8,7 @@ import React, { FunctionComponent } from 'react';
  */
 import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
+import { preventWidows } from 'lib/formatting';
 import { FeaturesItem } from './types';
 
 export type Props = {
@@ -23,9 +24,9 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( { item } ) 
 		<li className="jetpack-product-card__features-item">
 			<div className="jetpack-product-card__features-summary">
 				<Gridicon className="jetpack-product-card__features-icon" icon={ icon || DEFAULT_ICON } />
-				<p className="jetpack-product-card__features-text">{ text }</p>
+				<p className="jetpack-product-card__features-text">{ preventWidows( text ) }</p>
 			</div>
-			{ description && <InfoPopover>{ description }</InfoPopover> }
+			{ description && <InfoPopover>{ preventWidows( description ) }</InfoPopover> }
 		</li>
 	);
 };

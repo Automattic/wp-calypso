@@ -10,6 +10,7 @@ import React, { useRef, FunctionComponent, ReactNode } from 'react';
  * Internal dependencies
  */
 import { Button, ProductIcon } from '@automattic/components';
+import { preventWidows } from 'lib/formatting';
 import PlanPrice from 'my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
@@ -79,12 +80,15 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				<div className="jetpack-product-card__summary">
 					<div className="jetpack-product-card__headings">
 						<h1 className="jetpack-product-card__product-name">
-							{ productName }
+							{ preventWidows( productName ) }
 							{ productType && (
-								<span className="jetpack-product-card__product-type"> { productType }</span>
+								<span className="jetpack-product-card__product-type">
+									{ ' ' }
+									{ preventWidows( productType ) }
+								</span>
 							) }
 						</h1>
-						<p className="jetpack-product-card__subheadline">{ subheadline }</p>
+						<p className="jetpack-product-card__subheadline">{ preventWidows( subheadline ) }</p>
 					</div>
 					<div
 						className={ classNames( 'jetpack-product-card__price', {
@@ -112,7 +116,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 			</header>
 			<div className="jetpack-product-card__body">
 				{ discountMessage && (
-					<p className="jetpack-product-card__discount-message">{ discountMessage }</p>
+					<p className="jetpack-product-card__discount-message">
+						{ preventWidows( discountMessage ) }
+					</p>
 				) }
 				<Button
 					className="jetpack-product-card__button"
