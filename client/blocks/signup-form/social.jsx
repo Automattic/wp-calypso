@@ -88,11 +88,12 @@ class SocialSignupForm extends Component {
 		const host = typeof window !== 'undefined' && window.location.host;
 		const redirectUri = `https://${ host }/start/user`;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
-		const alternativeText =
-			this.props.socialAlternativeText || this.props.translate( 'Or create an account using:' );
+
 		return (
 			<div className="signup-form__social">
-				{ ! this.props.compact && <p>{ preventWidows( alternativeText ) }</p> }
+				{ ! this.props.compact && (
+					<p>{ preventWidows( this.props.translate( 'Or create an account using:' ) ) }</p>
+				) }
 
 				<div className="signup-form__social-buttons">
 					<GoogleLoginButton
@@ -101,7 +102,6 @@ class SocialSignupForm extends Component {
 						uxMode={ uxMode }
 						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'google' ) }
-						label={ this.props.socialGoogleLabel }
 						socialServiceResponse={
 							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 						}
@@ -113,30 +113,28 @@ class SocialSignupForm extends Component {
 						uxMode={ uxModeApple }
 						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'apple' ) }
-						label={ this.props.socialAppleLabel }
 						socialServiceResponse={
 							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 						}
 					/>
 
 					<p className="signup-form__social-buttons-tos">
-						{ this.props.socialTosText ||
-							this.props.translate(
-								"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-									' are creating an account and you agree to our' +
-									' {{a}}Terms of Service{{/a}}.',
-								{
-									components: {
-										a: (
-											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							) }
+						{ this.props.translate(
+							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
+								' are creating an account and you agree to our' +
+								' {{a}}Terms of Service{{/a}}.',
+							{
+								components: {
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
 					</p>
 				</div>
 			</div>

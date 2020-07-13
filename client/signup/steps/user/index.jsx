@@ -439,12 +439,9 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
-				fallbackHeaderText={
-					this.props.fallbackHeaderText || this.props.translate( 'Create your account.' )
-				}
 				subHeaderText={ this.state.subHeaderText }
-				fallbackSubHeaderText={ this.props.fallbackSubHeaderText }
 				positionInFlow={ this.props.positionInFlow }
+				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
 			/>
 		);

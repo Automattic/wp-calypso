@@ -155,7 +155,6 @@ class PasswordlessSignupForm extends Component {
 		this.submitStep( {
 			username,
 			bearer_token: response.bearer_token,
-			marketing_price_group: response?.marketing_price_group ?? '',
 		} );
 	};
 
@@ -239,13 +238,9 @@ class PasswordlessSignupForm extends Component {
 				</LoggedOutFormFooter>
 			);
 		}
-
-		const defaultButtonText =
-			this.props.defaultButtonText || this.props.translate( 'Create your account' );
-		const submittingButtonText =
-			this.props.submittingButtonText || this.props.translate( 'Creating Your Account…' );
-
-		const submitButtonText = isSubmitting ? submittingButtonText : defaultButtonText;
+		const submitButtonText = isSubmitting
+			? this.props.translate( 'Creating Your Account…' )
+			: this.props.translate( 'Create your account' );
 		return (
 			<LoggedOutFormFooter>
 				<Button
@@ -269,12 +264,11 @@ class PasswordlessSignupForm extends Component {
 		const { translate } = this.props;
 		const { errorMessages, isSubmitting } = this.state;
 
-		const emailInputLabel = this.props.emailInputLabel || translate( 'Enter your email address' );
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="email">{ emailInputLabel }</FormLabel>
+						<FormLabel htmlFor="email">{ translate( 'Enter your email address' ) }</FormLabel>
 						<FormTextInput
 							autoCapitalize={ 'off' }
 							className="signup-form__passwordless-email"
