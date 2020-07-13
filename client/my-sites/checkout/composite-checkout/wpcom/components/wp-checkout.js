@@ -231,7 +231,7 @@ export default function WPCheckout( {
 					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
-			<CheckoutStepArea>
+			<CheckoutStepArea submitButtonHeader={ <SubmitButtonHeader /> }>
 				<CheckoutStepBody
 					onError={ onReviewError }
 					className="wp-checkout__review-order-step"
@@ -516,3 +516,47 @@ function useUpdateCartLocationWhenPaymentMethodChanges(
 		}
 	}, [ activePaymentMethod, updateCartContactDetails ] );
 }
+
+function SubmitButtonHeader() {
+	const translate = useTranslate();
+
+	const scrollToTOS = () => document.getElementById( 'checkout-terms' ).scrollIntoView();
+
+	return (
+		<SubmitButtonHeaderUI>
+			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
+				components: {
+					button: <button onClick={ scrollToTOS } />,
+				},
+			} ) }
+		</SubmitButtonHeaderUI>
+	);
+}
+
+const SubmitButtonHeaderUI = styled.div`
+	display: none;
+	font-size: 13px;
+	margin-top: -5px;
+	margin-bottom: 10px;
+	text-align: center;
+
+	.checkout__step-wrapper--last-step & {
+		display: block;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+			display: none;
+		}
+	}
+
+	button {
+		color: ${ ( props ) => props.theme.colors.highlight };
+		display: inline;
+		font-size: 13px;
+		text-decoration: underline;
+		width: auto;
+
+		&:hover {
+			color: ${ ( props ) => props.theme.colors.highlightOver };
+		}
+	}
+`;

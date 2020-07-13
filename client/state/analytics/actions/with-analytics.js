@@ -16,6 +16,4 @@ const joinAnalytics = ( analytics, action ) =>
 		  }
 		: merge( {}, action, { meta: { analytics: mergedMetaData( analytics, action ) } } );
 
-const withAnalytics = curry( joinAnalytics );
-
-export default withAnalytics;
+export const withAnalytics = curry( joinAnalytics );

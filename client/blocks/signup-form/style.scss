@@ -91,30 +91,6 @@
 	}
 }
 
-.signup-form.is-showing-recaptcha-tos {
-	.signup-form__terms-of-service-link {
-		margin: 25px 0 0;
-	}
-}
-
-.signup-form.is-passwordless-after-plans {
-	.social-buttons__button {
-		background: none;
-		border: none;
-		width: 50%;
-		box-shadow: none;
-		float: left;
-		color: var( --color-text-inverted );
-		text-decoration: underline;
-		margin-bottom: 30px;
-	}
-	.signup-form__social-buttons-tos {
-		font-size: 12px;
-		margin: 5px 0;
-		clear: both;
-	}
-}
-
 // Replace recaptcha badge with ToS text and space
 // everything out a little more.
 @media ( max-width: 660px ) {

@@ -76,12 +76,17 @@ export function getExitCheckoutUrl(
 	upgradeIntent,
 	redirectTo,
 	returnToBlockEditor,
+	returnToHome,
 	previousPath
 ) {
 	let url = '/plans/';
 
 	if ( returnToBlockEditor ) {
 		return `/block-editor/page/${ siteSlug }/home`;
+	}
+
+	if ( returnToHome ) {
+		return `/home/${ siteSlug }`;
 	}
 
 	if ( hasRenewalItem( cart ) ) {

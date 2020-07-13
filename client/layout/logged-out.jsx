@@ -16,7 +16,7 @@ import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/oauth2-clients/ui/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';

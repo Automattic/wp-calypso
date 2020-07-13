@@ -22,7 +22,7 @@ import flows from 'signup/config/flows';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -439,12 +439,9 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
-				fallbackHeaderText={
-					this.props.fallbackHeaderText || this.props.translate( 'Create your account.' )
-				}
 				subHeaderText={ this.state.subHeaderText }
-				fallbackSubHeaderText={ this.props.fallbackSubHeaderText }
 				positionInFlow={ this.props.positionInFlow }
+				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
 			/>
 		);

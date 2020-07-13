@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -150,42 +149,6 @@ export function generateSteps( {
 			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
-			},
-		},
-
-		'user-passwordless': {
-			stepName: 'user-passwordless',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
-			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
-				// Flow is to be use on English locale only, no need to translate labels
-				fallbackHeaderText: "Let's do this",
-				fallbackSubHeaderText: "You're one step away to get going with your site",
-				submittingButtonText: 'Go to Checkout »',
-				defaultButtonText: 'Go to Checkout »',
-				freeSubmittingButtonText: 'Continue »',
-				freeDefaultButtonText: 'Continue »',
-				emailInputLabel: 'Your email address',
-
-				// Used translations to insert html
-				explanationText:
-					"You'll be able to log in to your account using this address. You can also set a password later.",
-				socialAlternativeText: 'Or continue using:',
-
-				// Used translations to insert html
-				socialTosText: i18n.translate(
-					'By proceeding, you agree to our {{a}}Terms of Service{{/a}}.',
-					{
-						components: {
-							a: <a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
-						},
-					}
-				),
-				footerLoginText: 'Already have an account? Log in',
-				socialGoogleLabel: 'Google',
-				socialAppleLabel: 'Apple',
 			},
 		},
 

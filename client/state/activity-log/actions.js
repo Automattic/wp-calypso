@@ -225,6 +225,11 @@ export function getRewindBackupProgress( siteId ) {
 	return {
 		type: REWIND_BACKUP_PROGRESS_REQUEST,
 		siteId,
+		meta: {
+			dataLayer: {
+				trackRequest: true,
+			},
+		},
 	};
 }
 
@@ -232,8 +237,8 @@ export function getRewindBackupProgress( siteId ) {
  * Update the status of the backup creation with its progress.
  *
  * @param  {string|number} siteId     The site ID
- * @param  {number}        downloadId Id of the backup being created.
- * @param  {number}        progress   Number from 0 to 100 that indicates the progress of the backup creation.
+ * @param  {?number}        downloadId Id of the backup being created.
+ * @param  {?number}        progress   Number from 0 to 100 that indicates the progress of the backup creation.
  * @returns {object}                   Action object
  */
 export function updateRewindBackupProgress( siteId, downloadId, progress ) {

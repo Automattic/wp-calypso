@@ -72,13 +72,23 @@ export const sites: Reducer< { [ key: number ]: SiteDetails | undefined }, Actio
 	return state;
 };
 
+export const launchStatus: Reducer< { [ key: number ]: boolean }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'LAUNCHED_SITE' ) {
+		return { ...state, [ action.siteId ]: true };
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
 	isFetching: isFetchingSite,
 } );
 
-const reducer = combineReducers( { newSite, sites } );
+const reducer = combineReducers( { newSite, sites, launchStatus } );
 
 export type State = ReturnType< typeof reducer >;
 

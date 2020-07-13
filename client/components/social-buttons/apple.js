@@ -36,14 +36,12 @@ class AppleLoginButton extends Component {
 		scope: PropTypes.string,
 		uxMode: PropTypes.oneOf( [ 'redirect', 'popup' ] ),
 		socialServiceResponse: PropTypes.object,
-		label: PropTypes.string,
 	};
 
 	static defaultProps = {
 		onClick: noop,
 		scope: 'name email',
 		uxMode: 'popup',
-		label: '',
 	};
 
 	appleClient = null;
@@ -153,12 +151,11 @@ class AppleLoginButton extends Component {
 						<AppleIcon isDisabled={ isDisabled } />
 
 						<span className="social-buttons__service-name">
-							{ this.props.label ||
-								this.props.translate( 'Continue with %(service)s', {
-									args: { service: 'Apple' },
-									comment:
-										'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-								} ) }
+							{ this.props.translate( 'Continue with %(service)s', {
+								args: { service: 'Apple' },
+								comment:
+									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+							} ) }
 						</span>
 					</button>
 				) }

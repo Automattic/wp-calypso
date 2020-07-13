@@ -39,6 +39,7 @@ import { withoutHttp } from 'lib/url';
 import RemovePurchase from 'me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import { isRecentlyRegistered } from 'lib/domains/utils';
 
 import './style.scss';
 
@@ -148,22 +149,22 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { selectedSite, translate, domain } = this.props;
 
 		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
-		const { pointsToWpcom, isPrimary } = domain;
+		const { isPrimary, pendingTransfer, pointsToWpcom, registrationDate } = domain;
 
-		if ( pointsToWpcom && isPrimary ) {
-			return translate( 'Destination: primary domain for %(wpcomUrl)s', {
-				args: {
-					wpcomUrl,
-				},
-			} );
-		}
+		const activating = isRecentlyRegistered( registrationDate ) && ! pendingTransfer;
 
-		if ( pointsToWpcom && ! isPrimary ) {
-			return translate( 'Destination: %(wpcomUrl)s', {
-				args: {
-					wpcomUrl,
-				},
-			} );
+		if ( pointsToWpcom || activating ) {
+			return isPrimary
+				? translate( 'Destination: primary domain for %(wpcomUrl)s', {
+						args: {
+							wpcomUrl,
+						},
+				  } )
+				: translate( 'Destination: %(wpcomUrl)s', {
+						args: {
+							wpcomUrl,
+						},
+				  } );
 		}
 
 		return translate( 'Destination: external service' );

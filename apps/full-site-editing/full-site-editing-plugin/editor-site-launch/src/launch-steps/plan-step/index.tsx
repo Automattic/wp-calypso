@@ -12,9 +12,9 @@ import LaunchStep, { Props as LaunchStepProps } from '../../launch-step';
 import PlansGridFSE from '../../../../editor-plans-grid/src/plans-grid-fse';
 import './styles.scss';
 
-const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep } ) => {
+const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const handleBack = () => {
-		onPrevStep && onPrevStep();
+		onPrevStep?.();
 	};
 
 	return (
@@ -36,7 +36,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep } ) 
 				</div>
 			</div>
 			<div className="nux-launch-step__body">
-				<PlansGridFSE />
+				<PlansGridFSE onSelect={ onNextStep } />
 			</div>
 		</LaunchStep>
 	);

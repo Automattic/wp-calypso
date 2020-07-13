@@ -84,7 +84,6 @@ export default {
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
-			context.pathname.indexOf( 'onboarding-passwordless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.params.flowName === 'user' ||
@@ -113,22 +112,6 @@ export default {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
 						window.location.replace( window.location.origin + '/new' + window.location.search );
-					} else if (
-						-1 === context.pathname.indexOf( 'free' ) &&
-						-1 === context.pathname.indexOf( 'personal' ) &&
-						-1 === context.pathname.indexOf( 'premium' ) &&
-						-1 === context.pathname.indexOf( 'business' ) &&
-						-1 === context.pathname.indexOf( 'ecommerce' ) &&
-						'variantPasswordless' === abtest( 'passwordlessAfterPlans', countryCode )
-					) {
-						const stepName = getStepName( context.params );
-						const stepSectionName = getStepSectionName( context.params );
-						const urlWithoutLocale = getStepUrl(
-							'onboarding-passwordless',
-							stepName,
-							stepSectionName
-						);
-						window.location = urlWithoutLocale;
 					} else {
 						removeWhiteBackground();
 						next();

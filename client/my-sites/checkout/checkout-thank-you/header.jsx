@@ -21,6 +21,7 @@ import {
 	isPlan,
 	isSiteRedirect,
 } from 'lib/products-values';
+import { isGSuiteExtraLicenseProductSlug, isGSuiteProductSlug } from 'lib/gsuite';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
@@ -34,6 +35,11 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
+		isAtomic: PropTypes.bool,
+		siteAdminUrl: PropTypes.string,
+		displayMode: PropTypes.string,
+		upgradeIntent: PropTypes.string,
+		selectedSite: PropTypes.object,
 		isDataLoaded: PropTypes.bool.isRequired,
 		primaryPurchase: PropTypes.object,
 		hasFailedPurchases: PropTypes.bool,
@@ -41,6 +47,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		primaryCta: PropTypes.func,
 		purchases: PropTypes.array,
+		translate: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
 	};
 
 	getHeading() {
@@ -54,7 +63,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Some items failed.' );
 		}
 
-		if ( purchases && purchases[ 0 ].productType === 'search' ) {
+		if ( purchases?.length > 0 && purchases[ 0 ].productType === 'search' ) {
 			return translate( 'Welcome to Jetpack Search!' );
 		}
 
@@ -91,7 +100,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Some of the items in your cart could not be added.' );
 		}
 
-		if ( purchases && purchases[ 0 ].productType === 'search' ) {
+		if ( purchases?.length > 0 && purchases[ 0 ].productType === 'search' ) {
 			return (
 				<div>
 					<p>{ translate( 'We are currently indexing your site.' ) }</p>
@@ -174,16 +183,21 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		if ( isGoogleApps( primaryPurchase ) ) {
+		if ( isGSuiteProductSlug( primaryPurchase.productSlug ) ) {
 			return preventWidows(
 				translate(
-					'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
-						"It's doing somersaults in excitement!",
+					'Your domain {{strong}}%(domainName)s{{/strong}} will be using G Suite very soon.',
 					{
 						args: { domainName: primaryPurchase.meta },
 						components: { strong: <strong /> },
 					}
 				)
+			);
+		}
+
+		if ( isGSuiteExtraLicenseProductSlug( primaryPurchase.productSlug ) ) {
+			return preventWidows(
+				translate( 'You will receive an email confirmation shortly for your purchase.' )
 			);
 		}
 
@@ -328,6 +342,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 		event.preventDefault();
 		const { siteAdminUrl } = this.props;
 
+		if ( ! siteAdminUrl ) {
+			return;
+		}
+
 		this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
 			product_name: 'search',
 			value: 'Customizer',
@@ -407,7 +425,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		return (
 			primaryPurchase &&
 			isDomainRegistration( primaryPurchase ) &&
-			purchases.filter( isDomainRegistration ).length === 1
+			purchases?.filter( isDomainRegistration ).length === 1
 		);
 	}
 
@@ -423,7 +441,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		} = this.props;
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
-		const isSearch = purchases && purchases[ 0 ].productType === 'search';
+		const isSearch = purchases?.length > 0 && purchases[ 0 ].productType === 'search';
 
 		if ( isSearch ) {
 			return (
@@ -555,8 +573,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 export default connect(
 	( state, ownProps ) => ( {
 		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
-		isAtomic: isAtomicSite( state, ownProps.selectedSite.ID ),
-		siteAdminUrl: getSiteAdminUrl( state, ownProps.selectedSite.ID ),
+		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
+		siteAdminUrl: getSiteAdminUrl( state, ownProps.selectedSite?.ID ),
 	} ),
 	{
 		recordStartTransferClickInThankYou,

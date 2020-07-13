@@ -24,8 +24,18 @@ export default function () {
 	const isLoggedOut = ! user.get();
 	const locale = getLanguageRouteParam( 'locale' );
 
+	const planTypeString = [
+		'personal',
+		'premium',
+		'pro',
+		'backup',
+		'scan',
+		'realtimebackup',
+		'antispam',
+	].join( '|' );
+
 	page(
-		'/jetpack/connect/:type(personal|premium|pro|backup|scan|realtimebackup)/:interval(yearly|monthly)?',
+		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?`,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,
@@ -134,7 +144,7 @@ export default function () {
 	);
 
 	page(
-		`/jetpack/connect/:type(personal|premium|pro|backup|scan|realtimebackup)?/${ locale }`,
+		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,

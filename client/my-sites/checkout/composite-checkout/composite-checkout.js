@@ -44,6 +44,7 @@ import {
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import getCountries from 'state/selectors/get-countries';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
@@ -227,6 +228,7 @@ export default function CompositeCheckout( {
 		siteId,
 		isWhiteGloveOffer,
 		hideNudge,
+		recordEvent,
 	} );
 
 	const moment = useLocalizedMoment();
@@ -322,6 +324,7 @@ export default function CompositeCheckout( {
 		updateContactDetailsCache
 	);
 
+	useDetectedCountryCode();
 	useCachedDomainContactDetails();
 
 	useDisplayErrors( errors, showErrorMessage );
@@ -765,6 +768,20 @@ function CountrySelectMenu( {
 			/>
 		</FormFieldAnnotation>
 	);
+}
+
+function useDetectedCountryCode() {
+	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
+	const refHaveUsedDetectedCountryCode = useRef( false );
+
+	useEffect( () => {
+		// Dispatch exactly once
+		if ( detectedCountryCode && ! refHaveUsedDetectedCountryCode.current ) {
+			debug( 'using detected country code "' + detectedCountryCode + '"' );
+			dispatch( 'wpcom' ).loadCountryCodeFromGeoIP( detectedCountryCode );
+			refHaveUsedDetectedCountryCode.current = true;
+		}
+	}, [ detectedCountryCode ] );
 }
 
 function useCachedDomainContactDetails() {

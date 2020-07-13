@@ -27,6 +27,12 @@
 	}
 }
 
+.rewind-flow__icon-placeholder {
+	@include placeholder( --color-neutral-light );
+	height: 48px;
+	width: 48px;
+}
+
 .rewind-flow__title-placeholder {
 	@include placeholder( --color-neutral-light );
 	font-size: $font-title-small;
@@ -161,12 +167,15 @@ a.rewind-flow-notice__title-warning:visited {
 	font-size: initial;
 	color: var( --color-link );
 
-	&:hover, &:active, &:focus {
+	&:hover,
+	&:active,
+	&:focus {
 		background: initial;
 		color: var( --color-link-dark );
 	}
 
-	&:hover, &:active {
+	&:hover,
+	&:active {
 		outline: initial;
 	}
 

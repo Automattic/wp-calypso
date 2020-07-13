@@ -43,16 +43,18 @@ export const backupProgress = keyedReducer( 'siteId', ( state = undefined, actio
 			};
 
 		case REWIND_BACKUP_UPDATE_PROGRESS:
-			return {
-				backupPoint: action.backupPoint,
-				downloadId: action.downloadId,
-				progress: action.progress,
-				rewindId: action.rewindId,
-				startedAt: action.startedAt,
-				downloadCount: action.downloadCount,
-				validUntil: action.validUntil,
-				url: action.url,
-			};
+			return ! action.rewindId
+				? null
+				: {
+						backupPoint: action.backupPoint,
+						downloadId: action.downloadId,
+						progress: action.progress,
+						rewindId: action.rewindId,
+						startedAt: action.startedAt,
+						downloadCount: action.downloadCount,
+						validUntil: action.validUntil,
+						url: action.url,
+				  };
 
 		case REWIND_BACKUP_UPDATE_ERROR:
 			return {

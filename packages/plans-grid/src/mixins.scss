@@ -82,15 +82,17 @@
 	}
 }
 
-
 @mixin plans-grid-edge2edge-padding {
-	padding: 0 $gutenboarding-block-margin-mobile;
+	padding-left: $gutenboarding-block-margin-mobile;
+	padding-right: $gutenboarding-block-margin-mobile;
 
 	@include break-small {
-		padding: 0 $gutenboarding-block-margin-small;
+		padding-left: $gutenboarding-block-margin-small;
+		padding-right: $gutenboarding-block-margin-small;
 	}
 
 	@include break-medium {
-		padding: 0 $gutenboarding-block-margin-medium;
+		padding-left: $gutenboarding-block-margin-medium;
+		padding-right: $gutenboarding-block-margin-medium;
 	}
 }

@@ -346,6 +346,7 @@ export function useGetThankYouUrl( {
 	siteId,
 	isWhiteGloveOffer,
 	hideNudge,
+	recordEvent,
 } ) {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
@@ -361,23 +362,7 @@ export function useGetThankYouUrl( {
 		const orderId = transactionResult.order_id;
 		const isTransactionResultEmpty = isEmpty( transactionResult );
 
-		debug( 'getThankYouUrl called with', {
-			siteSlug,
-			adminUrl,
-			receiptId,
-			orderId,
-			redirectTo,
-			purchaseId,
-			feature,
-			cart,
-			isJetpackNotAtomic,
-			product,
-			isEligibleForSignupDestinationResult,
-			hideNudge,
-			didPurchaseFail,
-			isTransactionResultEmpty,
-		} );
-		const url = getThankYouPageUrl( {
+		const getThankYouPageUrlArguments = {
 			siteSlug,
 			adminUrl,
 			receiptId,
@@ -393,10 +378,17 @@ export function useGetThankYouUrl( {
 			hideNudge,
 			didPurchaseFail,
 			isTransactionResultEmpty,
-		} );
+		};
+		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
+		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 		debug( 'getThankYouUrl returned', url );
+		recordEvent( {
+			type: 'THANK_YOU_URL_GENERATED',
+			payload: { arguments: getThankYouPageUrlArguments, url },
+		} );
 		return url;
 	}, [
+		recordEvent,
 		isEligibleForSignupDestinationResult,
 		siteSlug,
 		adminUrl,

@@ -19,7 +19,7 @@ interface Props {
 	buttonLink: TranslateResult;
 	buttonText?: TranslateResult;
 	headerText: TranslateResult;
-	iconComponent: ReactChild;
+	iconComponent?: ReactChild;
 	onClick?: () => void;
 }
 

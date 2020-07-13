@@ -3,6 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import page from 'page';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -20,17 +21,18 @@ import { withoutHttp } from 'lib/url';
 import { type as domainTypes } from 'lib/domains/constants';
 import { handleRenewNowClick } from 'lib/purchases';
 import { resolveDomainStatus } from 'lib/domains';
+import InfoPopover from 'components/info-popover';
+import { emailManagement } from 'my-sites/email/paths';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
+		currentRoute: PropTypes.string,
 		domain: PropTypes.object.isRequired,
 		domainDetails: PropTypes.object,
 		site: PropTypes.object,
 		isManagingAllSites: PropTypes.bool,
-		showSite: PropTypes.bool,
 		showCheckbox: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
-		onAddEmailClick: PropTypes.func.isRequired,
 		onToggle: PropTypes.func,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
@@ -38,14 +40,13 @@ class DomainItem extends PureComponent {
 
 	static defaultProps = {
 		isManagingAllSites: false,
-		showSite: false,
 		showCheckbox: false,
 		onToggle: null,
 		isLoadingDomainDetails: false,
 	};
 
 	handleClick = () => {
-		this.props.onClick( this.props.domain );
+		this.props.onClick( this.props.domainDetails );
 	};
 
 	stopPropagation = ( event ) => {
@@ -59,9 +60,9 @@ class DomainItem extends PureComponent {
 	};
 
 	addEmailClick = ( event ) => {
-		const { domain, onAddEmailClick } = this.props;
+		const { currentRoute, domain, site } = this.props;
 		event.stopPropagation();
-		onAddEmailClick( domain );
+		page( emailManagement( site.slug, domain.domain, currentRoute ) );
 	};
 
 	renewDomain = ( event ) => {
@@ -80,6 +81,45 @@ class DomainItem extends PureComponent {
 			[ domainTypes.WPCOM, domainTypes.TRANSFER ].indexOf( domainDetails.type ) === -1 &&
 			! domainDetails.bundledPlanSubscriptionId
 		);
+	}
+
+	renderCheckmark( present ) {
+		return present ? <Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" /> : null;
+	}
+
+	renderMinus() {
+		return <Gridicon className="domain-item__icon" size={ 18 } icon="minus" />;
+	}
+
+	renderTransferLock() {
+		const { domainDetails } = this.props;
+		if ( domainDetails?.type === domainTypes.REGISTERED ) {
+			return this.renderCheckmark( domainDetails?.isLocked );
+		}
+
+		return this.renderMinus();
+	}
+
+	renderAutoRenew() {
+		const { domainDetails } = this.props;
+		switch ( domainDetails?.type ) {
+			case domainTypes.WPCOM:
+			case domainTypes.TRANSFER:
+				return this.renderMinus();
+			default:
+				return domainDetails?.bundledPlanSubscriptionId
+					? this.renderMinus()
+					: this.renderCheckmark( domainDetails?.isAutoRenewing );
+		}
+	}
+
+	renderPrivacy() {
+		const { domainDetails } = this.props;
+		if ( domainDetails?.type === domainTypes.REGISTERED ) {
+			return this.renderCheckmark( domainDetails?.privateDomain );
+		}
+
+		return this.renderMinus();
 	}
 
 	renderOptionsButton() {
@@ -104,6 +144,10 @@ class DomainItem extends PureComponent {
 
 	renderEmail( domainDetails ) {
 		const { translate } = this.props;
+
+		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
+			return this.renderMinus();
+		}
 
 		if ( hasGSuiteWithUs( domainDetails ) ) {
 			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
@@ -139,7 +183,7 @@ class DomainItem extends PureComponent {
 	renderActionItems() {
 		const { isLoadingDomainDetails, domainDetails } = this.props;
 
-		if ( isLoadingDomainDetails ) {
+		if ( isLoadingDomainDetails || ! domainDetails ) {
 			return (
 				<>
 					<div className="list__domain-transfer-lock list__action_item_placeholder" />
@@ -153,24 +197,9 @@ class DomainItem extends PureComponent {
 
 		return (
 			<>
-				<div className="list__domain-transfer-lock">
-					{ domainDetails?.isLocked && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
-				<div className="list__domain-privacy">
-					{ domainDetails?.privateDomain && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
-				<div className="list__domain-auto-renew">
-					{ domainDetails?.bundledPlanSubscriptionId && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="minus" />
-					) }
-					{ ! domainDetails?.bundledPlanSubscriptionId && domainDetails?.isAutoRenewing && (
-						<Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" />
-					) }
-				</div>
+				<div className="list__domain-transfer-lock">{ this.renderTransferLock() }</div>
+				<div className="list__domain-privacy">{ this.renderPrivacy() }</div>
+				<div className="list__domain-auto-renew">{ this.renderAutoRenew() }</div>
 				<div className="list__domain-email">{ this.renderEmail( domainDetails ) }</div>
 				{ this.renderOptionsButton() }
 			</>
@@ -184,11 +213,50 @@ class DomainItem extends PureComponent {
 		return withoutHttp( site.URL );
 	}
 
+	renderSiteMeta() {
+		const { domainDetails, isManagingAllSites, site, translate } = this.props;
+
+		if ( isManagingAllSites ) {
+			return (
+				<div className="domain-item__meta">
+					{ translate( 'Site: %(siteName)s', {
+						args: {
+							siteName: this.getSiteName( site ),
+						},
+						comment:
+							'%(siteName)s is the site name and URL or just the URL used to identify a site',
+					} ) }
+				</div>
+			);
+		}
+
+		if ( domainDetails.isWPCOMDomain ) {
+			return (
+				<div className="domain-item__meta">
+					{ translate( 'Free site address' ) }
+
+					<InfoPopover iconSize={ 18 }>
+						{ translate(
+							'Your WordPress.com site comes with a free address using a WordPress.com subdomain. As ' +
+								'an alternative to using the free subdomain, you can instead use a custom domain ' +
+								'name for your site, for example: yourgroovydomain.com.'
+						) }
+					</InfoPopover>
+				</div>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
-		const { domain, showSite, site, showCheckbox, domainDetails, translate } = this.props;
+		const { domain, domainDetails, isManagingAllSites, showCheckbox } = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
+		const domainTitleClass = classNames( 'domain-item__title', {
+			'domain-item__primary': ! isManagingAllSites && domainDetails?.isPrimary,
+		} );
 
 		return (
 			<CompactCard className={ rowClasses } onClick={ this.handleClick }>
@@ -201,22 +269,12 @@ class DomainItem extends PureComponent {
 				) }
 				<div className="list__domain-link">
 					<div className="domain-item__status">
-						<div className="domain-item__title">{ domain.domain }</div>
+						<div className={ domainTitleClass }>{ domain.domain }</div>
 						{ listStatusText && (
 							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
 						) }
 					</div>
-					{ showSite && (
-						<div className="domain-item__meta">
-							{ translate( 'Site: %(siteName)s', {
-								args: {
-									siteName: this.getSiteName( site ),
-								},
-								comment:
-									'%(siteName)s is the site name and URL or just the URL used to identify a site',
-							} ) }
-						</div>
-					) }
+					{ this.renderSiteMeta() }
 				</div>
 				{ this.renderActionItems() }
 			</CompactCard>

@@ -17,7 +17,11 @@ import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
 import Notice from 'components/notice';
 import RemoveButton from 'components/remove-button';
-import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
+import {
+	updatePostMetadata,
+	deletePostMetadata,
+	requestPostGeoImageUrl,
+} from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/editor/selectors';
 import { getSitePost, getEditedPost } from 'state/posts/selectors';
@@ -66,6 +70,8 @@ class EditorLocation extends React.Component {
 			geo_longitude: longitude,
 			geo_public: '1',
 		} );
+
+		this.props.requestPostGeoImageUrl( this.props.siteId, this.props.postId, latitude, longitude );
 
 		this.props.recordEditorStat( 'location_geolocate_success' );
 
@@ -145,6 +151,13 @@ class EditorLocation extends React.Component {
 			geo_address: result.formatted_address,
 			geo_public: '1',
 		} );
+
+		this.props.requestPostGeoImageUrl(
+			this.props.siteId,
+			this.props.postId,
+			toGeoString( result.geometry.location.lat() ),
+			toGeoString( result.geometry.location.lng() )
+		);
 	};
 
 	renderCurrentLocation = () => {
@@ -218,7 +231,7 @@ class EditorLocation extends React.Component {
 				<EditorDrawerWell
 					icon="location"
 					label={ buttonText }
-					empty={ ! this.props.coordinates }
+					empty={ ! this.props.mapUrl }
 					onClick={ this.geolocate }
 					disabled={ this.state.locating }
 				>
@@ -264,6 +277,7 @@ export default connect(
 	},
 	{
 		updatePostMetadata,
+		requestPostGeoImageUrl,
 		deletePostMetadata,
 		recordEditorStat,
 		recordEditorEvent,

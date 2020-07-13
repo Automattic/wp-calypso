@@ -18,7 +18,6 @@ import MediaListStore from './list-store';
 import {
 	changeMediaSource,
 	createMediaItem,
-	deleteMedia,
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
@@ -190,97 +189,6 @@ MediaActions.edit = function ( siteId, item ) {
 		siteId: siteId,
 		data: newItem,
 	} );
-};
-
-MediaActions.update = function ( siteId, item, editMediaFile = false ) {
-	if ( Array.isArray( item ) ) {
-		item.forEach( MediaActions.update.bind( null, siteId ) );
-		return;
-	}
-
-	const mediaId = item.ID;
-	const newItem = assign( {}, MediaStore.get( siteId, mediaId ), item );
-
-	// Let's update the media modal immediately
-	// with a fake transient media item
-	const updateAction = {
-		type: 'RECEIVE_MEDIA_ITEM',
-		siteId,
-		data: newItem,
-	};
-
-	if ( item.media ) {
-		// Show a fake transient media item that can be rendered into the list immediately,
-		// even before the media has persisted to the server
-		updateAction.data = {
-			...newItem,
-			...createTransientMedia( item.media ),
-			ID: mediaId,
-		};
-	} else if ( editMediaFile && item.media_url ) {
-		updateAction.data = {
-			...newItem,
-			...createTransientMedia( item.media_url ),
-			ID: mediaId,
-		};
-	}
-
-	if ( editMediaFile && updateAction.data ) {
-		// We need this to show a transient (edited) image in post/page editor after it has been edited there.
-		updateAction.data.isDirty = true;
-	}
-
-	debug( 'Updating media for %o by ID %o to %o', siteId, mediaId, updateAction );
-	Dispatcher.handleViewAction( updateAction );
-
-	reduxDispatch( receiveMedia( siteId, updateAction.data ) );
-
-	const method = editMediaFile ? 'edit' : 'update';
-
-	wpcom
-		.site( siteId )
-		.media( item.ID )
-		[ method ]( item, function ( error, data ) {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_MEDIA_ITEM',
-				error: error,
-				siteId: siteId,
-				data: editMediaFile ? { ...data, isDirty: true } : data,
-			} );
-		} );
-};
-
-MediaActions.delete = function ( siteId, item ) {
-	if ( Array.isArray( item ) ) {
-		item.forEach( MediaActions.delete.bind( null, siteId ) );
-		return;
-	}
-
-	Dispatcher.handleViewAction( {
-		type: 'REMOVE_MEDIA_ITEM',
-		siteId: siteId,
-		data: item,
-	} );
-
-	reduxDispatch( deleteMedia( siteId, item.ID ) );
-
-	debug( 'Deleting media from %d by ID %d', siteId, item.ID );
-	wpcom
-		.site( siteId )
-		.media( item.ID )
-		.delete( function ( error, data ) {
-			Dispatcher.handleServerAction( {
-				type: 'REMOVE_MEDIA_ITEM',
-				error: error,
-				siteId: siteId,
-				data: data,
-			} );
-			// also refetch storage limits
-			Dispatcher.handleServerAction( {
-				type: 'FETCH_MEDIA_LIMITS',
-				siteId: siteId,
-			} );
-		} );
 };
 
 MediaActions.sourceChanged = function ( siteId ) {

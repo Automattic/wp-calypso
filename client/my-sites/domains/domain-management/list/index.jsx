@@ -46,6 +46,10 @@ import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
+import DomainItem from './domain-item';
+import ListHeader from './list-header';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 /**
  * Style dependencies
  */
@@ -73,6 +77,7 @@ export class List extends React.Component {
 		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
+		isPopoverCartVisible: false,
 	};
 
 	isLoading() {
@@ -137,6 +142,75 @@ export class List extends React.Component {
 		);
 	}
 
+	renderOldDesign() {
+		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
+
+		return (
+			<>
+				{ ! this.props.renderAllSites && (
+					<FormattedHeader
+						brandFont
+						className="domain-management__page-heading"
+						headerText={ this.props.translate( 'Site Domains' ) }
+						align="left"
+					/>
+				) }
+				{ ! this.props.renderAllSites && (
+					<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+				) }
+				{ ! this.props.renderAllSites && this.domainWarnings() }
+
+				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
+
+				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
+
+				<div className="domain-management-list__items">{ this.listItems() }</div>
+
+				<DomainToPlanNudge />
+			</>
+		);
+	}
+
+	togglePopoverCart = () => {
+		this.setState( {
+			isPopoverCartVisible: ! this.state.isPopoverCartVisible,
+		} );
+	};
+
+	renderNewDesign() {
+		return (
+			<>
+				<div className="list__domains-header">
+					<FormattedHeader
+						brandFont
+						className="domain-management__page-heading"
+						headerText={ this.props.translate( 'Site Domains' ) }
+						align="left"
+					/>
+					<div className="list__domains-header-buttons">
+						<PopoverCart
+							cart={ this.props.cart }
+							selectedSite={ this.props.selectedSite }
+							visible={ this.state.isPopoverCartVisible }
+							pinned={ false }
+							path={ this.props.currentRoute }
+							onToggle={ this.togglePopoverCart }
+							closeSectionNavMobilePanel={ noop }
+							compact
+						/>
+						{ this.addDomainButton() }
+					</div>
+				</div>
+
+				{ this.domainWarnings() }
+				{ this.domainCreditsInfoNotice() }
+
+				<div className="domain-management-list__items">{ this.listNewItems() }</div>
+				<DomainToPlanNudge />
+			</>
+		);
+	}
+
 	render() {
 		if ( ! this.props.userCanManageOptions ) {
 			if ( this.props.renderAllSites ) {
@@ -181,33 +255,15 @@ export class List extends React.Component {
 		}
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
-		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
-				{ ! this.props.renderAllSites && (
-					<FormattedHeader
-						brandFont
-						className="domain-management__page-heading"
-						headerText={ this.props.translate( 'Site Domains' ) }
-						align="left"
-					/>
-				) }
-				{ ! this.props.renderAllSites && (
-					<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
-				) }
-				{ ! this.props.renderAllSites && this.domainWarnings() }
-
-				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
-
-				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
-
-				<div className="domain-management-list__items">{ this.listItems() }</div>
-
-				<DomainToPlanNudge />
+				{ ! this.props.renderAllSites && config.isEnabled( 'manage/all-domains' )
+					? this.renderNewDesign()
+					: this.renderOldDesign() }
 			</Main>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -396,6 +452,55 @@ export class List extends React.Component {
 			! domain.isWPCOMDomain &&
 			! domain.isWpcomStagingDomain
 		);
+	}
+
+	listNewItems() {
+		if ( this.isLoading() ) {
+			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
+		}
+
+		const {
+			currentRoute,
+			translate,
+			selectedSite,
+			renderAllSites,
+			isDomainOnly,
+			hasSingleSite,
+		} = this.props;
+
+		const domains =
+			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
+				? this.filterOutWpcomDomains( this.props.domains )
+				: this.props.domains;
+
+		const domainListItems = domains.map( ( domain, index ) => (
+			<DomainItem
+				key={ `${ domain.name }-${ index }` }
+				currentRoute={ currentRoute }
+				domain={ { domain: domain.name } }
+				domainDetails={ domain }
+				site={ selectedSite }
+				isManagingAllSites={ false }
+				onClick={ this.goToEditDomainRoot }
+			/>
+		) );
+
+		const manageAllDomainsLink = hasSingleSite ? null : (
+			<CompactCard
+				className="list__no-chevron"
+				key="manage-all-domains"
+				href={ domainManagementRoot() }
+			>
+				{ translate( 'Manage all your domains' ) }
+			</CompactCard>
+		);
+
+		return [
+			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
+			<ListHeader key="domains-header" />,
+			...domainListItems,
+			manageAllDomainsLink,
+		];
 	}
 
 	listItems() {

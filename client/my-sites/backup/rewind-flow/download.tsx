@@ -11,12 +11,12 @@ import { noop } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
-import { rewindBackup } from 'state/activity-log/actions';
+import { getRewindBackupProgress, rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
-import getBackupDownloadId from 'state/selectors/get-backup-download-id';
-import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
-import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
+import getBackupProgress from 'state/selectors/get-backup-progress';
+import getRequest from 'state/selectors/get-request';
+import Loading from './loading';
 import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
@@ -28,6 +28,14 @@ interface Props {
 	rewindId: string;
 	siteId: number;
 	siteUrl: string;
+}
+
+// Future Work: Centralize typing
+interface BackupProgress {
+	downloadId: number;
+	progress?: number;
+	rewindId: string;
+	url?: string;
 }
 
 const BackupDownloadFlow: FunctionComponent< Props > = ( {
@@ -42,10 +50,19 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const [ userRequestedDownload, setUserRequestedDownload ] = useState( false );
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 
-	const downloadId = useSelector( ( state ) => getBackupDownloadId( state, siteId, rewindId ) );
-	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId, rewindId ) );
-	const downloadProgress = useSelector( ( state ) =>
-		getBackupDownloadProgress( state, siteId, rewindId )
+	const backupProgress = useSelector( ( state ) =>
+		getBackupProgress( state, siteId )
+	) as BackupProgress | null;
+
+	const downloadId = backupProgress?.downloadId;
+	const downloadUrl = backupProgress?.url;
+	const downloadProgress =
+		backupProgress && backupProgress.progress !== undefined && ! isNaN( backupProgress.progress )
+			? backupProgress.progress
+			: undefined;
+	const downloadRewindId = backupProgress?.rewindId;
+	const downloadInfoRequest = useSelector( ( state ) =>
+		getRequest( state, getRewindBackupProgress( siteId ) )
 	);
 
 	const requestDownload = useCallback(
@@ -56,6 +73,11 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		requestDownload,
 		'calypso_jetpack_backup_download_click'
 	);
+
+	const isDownloadInfoRequestComplete = downloadInfoRequest?.hasLoaded;
+	const isOtherDownloadInfo = downloadRewindId !== rewindId;
+	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== undefined;
+	const isDownloadURLNotReady = downloadUrl === undefined || downloadUrl === '';
 
 	const renderConfirm = () => (
 		<>
@@ -91,14 +113,20 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				className="rewind-flow__primary-button"
 				primary
 				onClick={ trackedRequestDownload }
-				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
+				disabled={
+					isOtherDownloadInProgress ||
+					Object.values( rewindConfig ).every( ( setting ) => ! setting )
+				}
+				busy={ isOtherDownloadInProgress }
 			>
-				{ translate( 'Create downloadable file' ) }
+				{ isOtherDownloadInProgress
+					? translate( 'Another downloadable file is being created' )
+					: translate( 'Create downloadable file' ) }
 			</Button>
 		</>
 	);
 
-	const renderInProgress = () => (
+	const renderInProgress = ( percent: number ) => (
 		<>
 			<div className="rewind-flow__header">
 				<img
@@ -109,7 +137,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title">
 				{ translate( 'Currently creating a downloadable backup of your site' ) }
 			</h3>
-			<ProgressBar percent={ downloadProgress } />
+			<ProgressBar percent={ percent } />
 			<p className="rewind-flow__info">
 				{ translate(
 					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
@@ -210,14 +238,19 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	);
 
 	const render = () => {
-		if ( downloadProgress === null && downloadUrl === null ) {
+		if ( ! isDownloadInfoRequestComplete ) {
+			return <Loading />;
+		} else if (
+			isOtherDownloadInfo ||
+			( downloadProgress === undefined && isDownloadURLNotReady )
+		) {
 			return renderConfirm();
-		} else if ( downloadProgress !== null && downloadUrl === null ) {
+		} else if ( downloadProgress !== undefined && isDownloadURLNotReady ) {
 			if ( ! userRequestedDownload ) {
 				setUserRequestedDownload( true );
 			}
-			return renderInProgress();
-		} else if ( downloadUrl !== null ) {
+			return renderInProgress( downloadProgress );
+		} else if ( ! isDownloadURLNotReady ) {
 			return renderReady();
 		}
 		return renderError();
@@ -225,7 +258,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
+			<QueryRewindBackupStatus
+				downloadId={ downloadProgress !== undefined ? downloadId : undefined }
+				siteId={ siteId }
+			/>
 			{ render() }
 		</>
 	);

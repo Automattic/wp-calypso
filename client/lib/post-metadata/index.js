@@ -4,12 +4,6 @@
 
 import { find } from 'lodash';
 import { getThemeIdFromStylesheet } from 'state/themes/utils';
-import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
-import config from 'config';
 
 /**
  * Module variables
@@ -163,32 +157,8 @@ const PostMetadata = {
 		if ( ! coordinates ) {
 			return;
 		}
-		const latitude = coordinates[ 0 ].toFixed( 6 );
-		const longitude = coordinates[ 1 ].toFixed( 6 );
 
-		if (
-			latitude === post?.geo?.latitude?.toFixed( 6 ) &&
-			longitude === post?.geo?.longitude?.toFixed( 6 )
-		) {
-			const staticImage = post?.geo?.map_url;
-			if ( staticImage ) {
-				return staticImage;
-			}
-		}
-
-		if ( latitude && longitude ) {
-			const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
-
-			return (
-				GOOGLE_MAPS_BASE_URL +
-				stringify( {
-					markers: coordinates.join( ',' ),
-					zoom: 8,
-					size: '400x300',
-					key: config( 'google_maps_and_places_api_key' ),
-				} )
-			);
-		}
+		return post?.geo?.map_url;
 	},
 
 	/**

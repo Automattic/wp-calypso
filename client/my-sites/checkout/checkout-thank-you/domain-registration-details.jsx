@@ -63,7 +63,7 @@ const DomainRegistrationDetails = ( {
 					/>
 				) }
 
-				{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+				{ googleAppsWasPurchased && <GoogleAppsDetails purchases={ purchases } /> }
 			</div>
 
 			<PurchaseDetail

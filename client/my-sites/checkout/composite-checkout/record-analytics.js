@@ -88,7 +88,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 			case 'STEP_LOAD_ERROR':
 				reduxDispatch(
-					logStashEventAction( 'step_load', String( action.payload.message ), {
+					logStashLoadErrorEventAction( 'step_load', String( action.payload.message ), {
 						stepId: action.payload.stepId,
 					} )
 				);
@@ -101,7 +101,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'SUBMIT_BUTTON_LOAD_ERROR':
-				reduxDispatch( logStashEventAction( 'submit_button_load', String( action.payload ) ) );
+				reduxDispatch(
+					logStashLoadErrorEventAction( 'submit_button_load', String( action.payload ) )
+				);
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_submit_button_load_error', {
@@ -110,7 +112,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'PAYMENT_METHOD_LOAD_ERROR':
-				reduxDispatch( logStashEventAction( 'payment_method_load', String( action.payload ) ) );
+				reduxDispatch(
+					logStashLoadErrorEventAction( 'payment_method_load', String( action.payload ) )
+				);
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_method_load_error', {
@@ -120,12 +124,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 			case 'PAYMENT_METHOD_SELECT': {
 				reduxDispatch(
-					logStashEventAction(
-						'payment_method_select',
-						String( action.payload ),
-						{},
-						'payment_method_select'
-					)
+					logStashEventAction( 'payment_method_select', { newMethodId: String( action.payload ) } )
 				);
 
 				// Need to convert to the slug format used in old checkout so events are comparable
@@ -140,7 +139,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			}
 
 			case 'PAGE_LOAD_ERROR':
-				reduxDispatch( logStashEventAction( 'page_load', String( action.payload ) ) );
+				reduxDispatch( logStashLoadErrorEventAction( 'page_load', String( action.payload ) ) );
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
@@ -393,6 +392,14 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				return recordAddEvent( action.payload );
 			}
 
+			case 'THANK_YOU_URL_GENERATED':
+				return reduxDispatch(
+					logStashEventAction( 'thank you url generated', {
+						url: action.payload.url,
+						arguments: action.payload.arguments,
+					} )
+				);
+
 			default:
 				debug( 'unknown checkout event', action );
 				return reduxDispatch(
@@ -404,16 +411,22 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 	};
 }
 
-function logStashEventAction( type, payload, additionalData = {}, message ) {
+function logStashLoadErrorEventAction( errorType, errorMessage, additionalData = {} ) {
+	return logStashEventAction( 'composite checkout load error', {
+		...additionalData,
+		type: errorType,
+		message: errorMessage,
+	} );
+}
+
+function logStashEventAction( message, dataForLog = {} ) {
 	return logToLogstash( {
 		feature: 'calypso_client',
-		message: message ?? 'composite checkout load error',
+		message,
 		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 		extra: {
 			env: config( 'env_id' ),
-			type,
-			message: payload,
-			...additionalData,
+			...dataForLog,
 		},
 	} );
 }

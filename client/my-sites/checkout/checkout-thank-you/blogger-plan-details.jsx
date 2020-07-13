@@ -20,7 +20,7 @@ const BloggerPlanDetails = ( { selectedSite, sitePlans, purchases } ) => {
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{ googleAppsWasPurchased && <GoogleAppsDetails purchases={ purchases } /> }
 
 			<CustomDomainPurchaseDetail
 				onlyBlogDomain={ true }

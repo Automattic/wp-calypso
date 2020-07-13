@@ -192,7 +192,7 @@ const sections = [
 		name: 'purchase-product',
 		paths: [ '/purchase-product' ],
 		module: 'my-sites/purchase-product',
-		secondary: false,
+		secondary: true,
 		enableLoggedOut: true,
 	},
 	{
@@ -509,7 +509,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud',
-		paths: [ '/', '/settings' ],
+		paths: [ '/', '/landing', '/settings' ],
 		module: 'landing/jetpack-cloud',
 		secondary: true,
 		group: 'jetpack-cloud',

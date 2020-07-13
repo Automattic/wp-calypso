@@ -4,107 +4,107 @@
 		{
 			"title": "bowen",
 			"defaults": "bowen",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "edison",
 			"defaults": "edison",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "cassel",
 			"defaults": "cassel",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "vesta",
 			"defaults": "vesta",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "reynolds",
 			"defaults": "reynolds",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "easley",
 			"defaults": "easley",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "camdem",
 			"defaults": "camdem",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "overton",
 			"defaults": "overton",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "doyle",
 			"defaults": "doyle",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "brice",
 			"defaults": "brice",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "coutoire",
 			"defaults": "coutoire",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "barnsbury",
 			"defaults": "barnsbury",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "alves",
 			"defaults": "alves",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "mayland",
 			"defaults": "mayland",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "rivington",
 			"defaults": "rivington",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "maywood",
 			"defaults": "maywood",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "balasana",
 			"defaults": "balasana",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "stratford",
 			"defaults": "stratford",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "rockfield",
 			"defaults": "rockfield",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "leven",
 			"defaults": "leven",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		},
 		{
 			"title": "gibbs",
 			"defaults": "gibbs",
-			"vertical-whitelist": []
+			"allowed-verticals": []
 		}
 	],
 	"themes": [

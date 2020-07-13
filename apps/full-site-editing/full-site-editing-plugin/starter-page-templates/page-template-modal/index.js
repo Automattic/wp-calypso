@@ -487,11 +487,11 @@ class PageTemplateModal extends Component {
 				>
 					<Button
 						isPrimary
-						isLarge
 						disabled={ isEmpty( previewedTemplate ) || isLoading }
 						onClick={ this.handleConfirmation }
 					>
 						{ sprintf(
+							/* translators: %s is name of a page layout. Eg: Dalston or Blank. */
 							__( 'Use %s layout', 'full-site-editing' ),
 							this.getTitleByTemplateSlug( previewedTemplate )
 						) }
