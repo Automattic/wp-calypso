@@ -427,6 +427,7 @@ export default function CompositeCheckout( {
 					}
 					onContactDetailsChange={ updateDomainContactFields }
 					getIsFieldDisabled={ getIsFieldDisabled }
+					isLoggedOutCart={ isLoggedOutCart }
 				/>
 				{ tlds.includes( 'ca' ) && (
 					<RegistrantExtraInfoForm
