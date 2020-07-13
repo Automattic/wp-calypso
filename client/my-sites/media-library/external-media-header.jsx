@@ -98,7 +98,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		const { site, selectedItems, source, onSourceChange } = this.props;
 
 		onSourceChange( '', () => {
-			this.props.addExternalMedia( site, selectedItems, source );
+			this.props.addExternalMedia( selectedItems, site, source );
 		} );
 	};
 
