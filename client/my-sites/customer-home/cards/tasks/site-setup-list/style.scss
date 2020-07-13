@@ -9,7 +9,7 @@
 	.site-setup-list__nav {
 		width: 328px;
 		flex-shrink: 0;
-		border-right: 1px solid var( --color-border-subtle );
+		border-left: 1px solid var( --color-border-subtle );
 
 		@include breakpoint-deprecated( '<1280px' ) {
 			width: 260px;
