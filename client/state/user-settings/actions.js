@@ -32,14 +32,23 @@ export const fetchUserSettings = () => ( {
 } );
 
 /**
+ * Documentation for onError callback that can be supplied to some of the actions below.
+ *
+ * @callback userSettingsOnErrorCallback
+ * @param {object} error
+ */
+
+/**
  * Post settings to WordPress.com API at /me/settings endpoint
  *
  * @param {object} settingsOverride - default settings object
+ * @param {userSettingsOnErrorCallback} onError - callback to invoke if an error occurs
  * @returns {object} Action object
  */
-export const saveUserSettings = ( settingsOverride ) => ( {
+export const saveUserSettings = ( settingsOverride, onError ) => ( {
 	type: USER_SETTINGS_SAVE,
-	settingsOverride,
+	onError,
+	settingsOverride: settingsOverride || false,
 } );
 
 /**
@@ -53,9 +62,16 @@ export const updateUserSettings = ( settingValues ) => ( {
 	settingValues,
 } );
 
-export const cancelPendingEmailChange = () => ( {
+/**
+ * Returns an action object signalling a pending email change should be cancelled.
+ *
+ * @param {userSettingsOnErrorCallback} onError - callback to invoke if an error occurs.
+ * @returns {object} Action object
+ */
+export const cancelPendingEmailChange = ( onError ) => ( {
 	type: USER_SETTINGS_SAVE,
 	settingsOverride: { user_email_change_pending: false },
+	onError,
 } );
 
 export const clearUnsavedUserSettings = ( settingNames = null ) => ( {
