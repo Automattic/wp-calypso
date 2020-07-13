@@ -156,7 +156,14 @@ function HelpSearchResults( {
 	const renderSearchResults = () => {
 		if ( isSearching && ! searchResults.length ) {
 			// search, but no results so far
-			return <PlaceholderLines lines={ placeholderLines } />;
+			return (
+				<>
+					<div className="inline-help__visually-hidden">
+						{ translate( 'Loading search results' ) }
+					</div>
+					<PlaceholderLines lines={ placeholderLines } />
+				</>
+			);
 		}
 
 		return (

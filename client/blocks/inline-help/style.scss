@@ -337,6 +337,7 @@
 	}
 }
 
+
 .inline-help__results {
 
 	padding: 8px 0;
@@ -475,6 +476,10 @@
 	&::after {
 		content: '\00a0';
 	}
+}
+
+.inline-help__visually-hidden {
+	@include hide-content-accessibly;
 }
 
 @keyframes inline-help__results-placeholder-loading {
