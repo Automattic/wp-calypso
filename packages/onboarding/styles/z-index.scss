@@ -23,7 +23,7 @@
 //
 // Usage:
 // .environment-badge {
-//     z-index: gutenboarding-z-index( '.environment-badge' );
+//     z-index: onboarding-z-index( '.environment-badge' );
 // }
 //
 // For a refresher on stacking contexts see:
@@ -31,11 +31,10 @@
 // ==========================================================================
 
 $z-layers: (
-	'.vertical-select__suggestions-wrapper': 2,
-	'.gutenboarding__header': 30,
-	'.gutenboarding__footer': 30,
+	'.onboarding__header': 30,
+	'.onboarding__footer': 30,
 );
 
-@function gutenboarding-z-index( $keys... ) {
+@function onboarding-z-index( $keys... ) {
 	@return map-get( $z-layers, $keys... );
 }
