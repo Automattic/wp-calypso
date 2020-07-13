@@ -143,16 +143,14 @@ function WpcomBlockEditorNavSidebar() {
 						onClick={ dismissSidebar }
 					/>
 				</div>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container">
-					<Button
-						href={ closeUrl }
-						className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
-						icon={ chevronLeft }
-						onClick={ handleClose }
-					>
-						{ closeLabel }
-					</Button>
-				</div>
+				<Button
+					href={ closeUrl }
+					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
+					icon={ chevronLeft }
+					onClick={ handleClose }
+				>
+					{ closeLabel }
+				</Button>
 				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
 					{ items.map( ( item ) => (
 						<NavItem

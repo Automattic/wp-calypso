@@ -9,24 +9,19 @@
 	height: auto;
 	margin: 0;
 	padding: ($panel-padding / 2) $panel-padding;
-	border-radius: $radius-block-ui;
 	text-align: initial;
+	color: $white;
+
+	&:hover {
+		color: $white;
+	}
 
 	&.is-selected {
-		background: $black;
-		color: $white;
+		background: $dark-gray-700;
 
 		.wpcom-block-editor-nav-item__label {
 			background: $dark-gray-500;
 		}
-	}
-
-	&:not( .is-selected ):hover {
-		background: $light-gray-400;
-	}
-
-	&:not( .is-selected ) .wpcom-block-editor-nav-item__slug {
-		color: $dark-gray-300;
 	}
 }
 
@@ -43,6 +38,6 @@
 	display: inline-block;
 	padding: 4px;
 	border-radius: $radius-round-rectangle;
-	background: $light-gray-600;
+	background: $dark-gray-500;
 	font-weight: 600;
 }

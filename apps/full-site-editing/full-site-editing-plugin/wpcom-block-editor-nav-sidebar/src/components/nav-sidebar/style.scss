@@ -4,7 +4,6 @@
 @import '~@wordpress/base-styles/z-index';
 
 $sidebar-width: 272px;
-$border: 1px solid $light-gray-500;
 $transition-period: 200ms;
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
@@ -39,8 +38,7 @@ $transition-period: 200ms;
 	top: 0;
 	bottom: 0;
 	width: $sidebar-width;
-	border-right: $border;
-	background: $white;
+	background: $black;
 	display: flex;
 	flex-direction: column;
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-out;
@@ -63,7 +61,6 @@ $transition-period: 200ms;
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
 	height: $header-height;
-	border-bottom: $border;
 	box-sizing: content-box;
 	display: flex;
 	flex: $header-height 0 0;
@@ -92,19 +89,16 @@ $transition-period: 200ms;
 	}
 }
 
-.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container {
-	border-bottom: $border;
-}
-
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
 	height: 46px;
 	width: 100%;
 	font-weight: 600;
 	border: none !important;
 	box-shadow: none !important;
+	color: $white;
 
 	&:hover {
-		text-decoration: underline;
+		color: $white;
 	}
 }
 
@@ -113,10 +107,6 @@ $transition-period: 200ms;
 	margin: 0;
 	overflow-y: scroll;
 	flex: 1;
-
-	li {
-		margin: 4px 8px;
-	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
