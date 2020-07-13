@@ -123,12 +123,12 @@ class DomainItem extends PureComponent {
 	}
 
 	renderOptionsButton() {
-		const { isManagingAllSites, translate } = this.props;
+		const { domainDetails, isManagingAllSites, translate } = this.props;
 
 		return (
 			<div className="list__domain-options">
 				<EllipsisMenu onClick={ this.stopPropagation } toggleTitle={ translate( 'Options' ) }>
-					{ ! isManagingAllSites && (
+					{ ! isManagingAllSites && ! domainDetails.isPrimary && (
 						<PopoverMenuItem icon="domains">{ translate( 'Make primary domain' ) }</PopoverMenuItem>
 					) }
 					{ this.canRenewDomain() && (
