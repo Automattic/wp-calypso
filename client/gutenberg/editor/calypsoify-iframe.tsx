@@ -138,9 +138,10 @@ class CalypsoifyIframe extends Component<
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
-		const isDesktop = config.isEnabled( 'desktop' ); // Three seconds longer than we give the iframe to load
-		const timeoutMs = isDesktop ? 25000 : 8000;
-
+		const isDesktop = config.isEnabled( 'desktop' );
+		// If the iframe fails to load for some reson, eg. an unexpected auth loop, this timeout
+		// provides a redirect to wpadmin for web users - this should now be a rare occurance with
+		// a 3rd party cookie auth issue fix in place https://github.com/Automattic/jetpack/pull/16167
 		this.waitForIframeToInit = setInterval( () => {
 			if ( this.props.shouldLoadIframe ) {
 				clearInterval( this.waitForIframeToInit );
@@ -152,7 +153,7 @@ class CalypsoifyIframe extends Component<
 								this.props.iframeUrl
 						  )
 						: window.location.replace( this.props.iframeUrl );
-				}, timeoutMs );
+				}, 25000 );
 			}
 		}, 1000 );
 	}
