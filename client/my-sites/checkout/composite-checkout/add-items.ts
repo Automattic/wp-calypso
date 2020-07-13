@@ -66,7 +66,8 @@ export function createItemToAddToCart( {
 
 	if (
 		( productAlias?.startsWith( 'jetpack_backup' ) ||
-			productAlias?.startsWith( 'jetpack_search' ) ) &&
+			productAlias?.startsWith( 'jetpack_search' ) ||
+			productAlias?.startsWith( 'jetpack_scan' ) ) &&
 		isJetpackNotAtomic &&
 		product_id
 	) {
