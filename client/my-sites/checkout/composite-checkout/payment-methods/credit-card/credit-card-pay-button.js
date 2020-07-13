@@ -45,33 +45,48 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 			disabled={ disabled }
 			onClick={ () => {
 				if ( isCreditCardFormValid( store, __ ) ) {
-					debug( 'submitting stripe payment' );
-					setTransactionPending();
-					onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
-					submitTransaction( {
-						stripe,
-						name: cardholderName?.value,
-						items,
-						total,
-						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( stripeResponse?.message?.payment_intent_client_secret ) {
-								debug( 'stripe transaction requires auth' );
-								setTransactionAuthorizing( stripeResponse );
-								return;
-							}
-							if ( stripeResponse?.redirect_url ) {
-								debug( 'stripe transaction requires redirect' );
-								setTransactionRedirecting( stripeResponse.redirect_url );
-								return;
-							}
-							debug( 'stripe transaction is successful' );
-							setTransactionComplete();
+					const paymentPartner = store.paymentPartner;
+					if ( paymentPartner === 'stripe' ) {
+						debug( 'submitting stripe payment' );
+						setTransactionPending();
+						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
+						submitTransaction( {
+							stripe,
+							name: cardholderName?.value,
+							items,
+							total,
+							stripeConfiguration,
 						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+							.then( ( stripeResponse ) => {
+								if ( stripeResponse?.message?.payment_intent_client_secret ) {
+									debug( 'stripe transaction requires auth' );
+									setTransactionAuthorizing( stripeResponse );
+									return;
+								}
+								if ( stripeResponse?.redirect_url ) {
+									debug( 'stripe transaction requires redirect' );
+									setTransactionRedirecting( stripeResponse.redirect_url );
+									return;
+								}
+								debug( 'stripe transaction is successful' );
+								setTransactionComplete();
+							} )
+							.catch( ( error ) => {
+								setTransactionError( error.message );
+							} );
+						return;
+					}
+					if ( paymentPartner === 'ebanx' ) {
+						// TODO
+						throw new Error( 'ebanx handler not implemented' );
+					}
+					if ( paymentPartner === 'dlocal' ) {
+						// TODO
+						throw new Error( 'dlocal handler not implemented' );
+					}
+					throw new Error(
+						'Unrecognized payment partner in submit handler: "' + paymentPartner + '"'
+					);
 				}
 			} }
 			buttonType="primary"
