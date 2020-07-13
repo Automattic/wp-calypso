@@ -5,7 +5,7 @@ import getSiteTaskList from 'state/selectors/get-site-task-list';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 import { getSiteFrontPage } from 'state/sites/selectors';
-import { SITE_CHECKLIST_KNOWN_TASKS } from 'my-sites/customer-home/cards/tasks/site-setup-list/get-task';
+import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
 
 /**
  * Checks whether the tasklist has been completed.
@@ -43,7 +43,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 			return true;
 		}
 
-		if ( SITE_CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED === task.id && ! hasFrontPageSet ) {
+		if ( CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED === task.id && ! hasFrontPageSet ) {
 			return true;
 		}
 

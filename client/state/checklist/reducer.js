@@ -9,6 +9,7 @@ import {
 	SITE_CHECKLIST_TASK_UPDATE,
 } from 'state/action-types';
 import { items as itemSchemas } from './schema';
+import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
 
 const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,
@@ -18,13 +19,13 @@ const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 } );
 
 const moduleTaskMap = {
-	'lazy-images': 'jetpack_lazy_images',
-	monitor: 'jetpack_monitor',
+	'lazy-images': CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES,
+	monitor: CHECKLIST_KNOWN_TASKS.JETPACK_MONITOR,
 	// Both photon and photon-cdn mark the Site Accelerator Task as completed
-	photon: 'jetpack_site_accelerator',
-	'photon-cdn': 'jetpack_site_accelerator',
-	search: 'jetpack_search',
-	videopress: 'jetpack_video_hosting',
+	photon: CHECKLIST_KNOWN_TASKS.JETPACK_SITE_ACCELERATOR,
+	'photon-cdn': CHECKLIST_KNOWN_TASKS.JETPACK_SITE_ACCELERATOR,
+	search: CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH,
+	videopress: CHECKLIST_KNOWN_TASKS.JETPACK_VIDEO_HOSTING,
 };
 
 const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
