@@ -126,7 +126,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				siteSlug={ this.props.siteSlug }
 				user={ users[ 0 ] }
 				isCompact={ false }
-				cta={ translate( 'Get started' ) }
+				cta={ translate( 'Finish setup' ) }
 			/>
 		);
 
@@ -135,11 +135,14 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				<>
 					<p>
 						{ translate(
-							'%(email)s is almost ready! Complete the setup to activate your new email address.',
+							'Your email {{strong}}%(email)s{{/strong}} is almost ready! Complete the setup to activate your new email address.',
 							{
 								args: {
 									email: emails,
 									comment: '%(email)s will be an email address',
+								},
+								components: {
+									strong: <strong />,
 								},
 							}
 						) }
@@ -153,7 +156,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 			<>
 				<p>
 					{ translate(
-						'%(emails)s are almost ready! Complete the setup to activate your new email addresses.',
+						'Your emails {{strong}}%(emails)s{{/strong}} are almost ready! Complete the setup to activate your new email addresses.',
 						{
 							args: {
 								emails: emails,
@@ -161,6 +164,9 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 							comment:
 								'%(emails)s will be a list of email addresses separated by a comma, ' +
 								'e.g. test@example.com, test2@example.com',
+							components: {
+								strong: <strong />,
+							},
 						}
 					) }
 				</p>
