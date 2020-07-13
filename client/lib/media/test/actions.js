@@ -294,50 +294,6 @@ describe( 'MediaActions', () => {
 		} );
 	} );
 
-	describe( '#update()', () => {
-		const item = { ID: 100, description: 'Example' };
-
-		test( 'should accept a single item', () => {
-			MediaActions.update( DUMMY_SITE_ID, item );
-			expect( stubs.mediaUpdate ).to.have.been.calledOnce;
-		} );
-
-		test( 'should accept an array of items', () => {
-			MediaActions.update( DUMMY_SITE_ID, [ item, item ] );
-			expect( stubs.mediaUpdate ).to.have.been.calledTwice;
-		} );
-
-		test( 'should immediately update the existing item', () => {
-			MediaActions.update( DUMMY_SITE_ID, item );
-
-			expect( stubs.mediaUpdate ).to.have.been.calledWithMatch( item );
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'RECEIVE_MEDIA_ITEM',
-				siteId: DUMMY_SITE_ID,
-				data: assign( {}, DUMMY_ITEM, item ),
-			} );
-		} );
-
-		test( 'should call to the WordPress.com REST API', () => {
-			return new Promise( ( done ) => {
-				MediaActions.update( DUMMY_SITE_ID, item );
-
-				expect( stubs.mediaUpdate ).to.have.been.calledWithMatch( item );
-
-				process.nextTick( function () {
-					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-						type: 'RECEIVE_MEDIA_ITEM',
-						error: null,
-						siteId: DUMMY_SITE_ID,
-						data: DUMMY_API_RESPONSE,
-					} );
-
-					done();
-				} );
-			} );
-		} );
-	} );
-
 	describe( '#sourceChanged()', () => {
 		test( 'should dispatch the `CHANGE_MEDIA_SOURCE` action with the specified siteId', () => {
 			MediaActions.sourceChanged( DUMMY_SITE_ID );
