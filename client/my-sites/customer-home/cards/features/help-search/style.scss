@@ -59,9 +59,9 @@ $min_results_height: 180px;
 
 		.gridicon {
 			fill: var( --color-text-inverted );
-			margin: 1px 0 0 1px;
 			height: 24px;
 			width: 24px;
+			transform: translate( 1px, 1px );
 		}
 	}
 
