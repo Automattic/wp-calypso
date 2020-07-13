@@ -53,7 +53,7 @@ references:
   # When we split tests, different nodes will receive a different set of tests so each node's
   # cache should be unique.
   #
-  # Finally, we cache on the branch and revision, falling back to master. This should give us
+  # Finally, we cache on the branch and revision, falling back to origin/HEAD. This should give us
   # pretty good "nearest neighbor" primer for the Jest cache.
   #
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -62,7 +62,7 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
@@ -78,7 +78,7 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
   save-terser-cache: &save-terser-cache
     name: Save Terser cache
@@ -92,7 +92,7 @@ references:
   # By including the `.git` directory in the cache, we can speed things up by only needing to update
   # the local repository.
   #
-  # We cache on the branch and revision, falling back to master, or any recent cache.
+  # We cache on the branch and revision, falling back to origin/HEAD, or any recent cache.
   #
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-git-cache: &restore-git-cache
@@ -100,11 +100,11 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git
-  update-git-master: &update-git-master
-    name: Update master branch
-    command: git fetch --force origin master
+  update-git: &update-git
+    name: Update all branches
+    command: git fetch --force origin
   save-git-cache: &save-git-cache
     name: Save git cache
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
@@ -170,7 +170,7 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
   save-babel-client-cache: &save-babel-client-cache
     name: Save Babel Client Cache
@@ -260,7 +260,7 @@ jobs:
       # repo
       - restore_cache: *restore-git-cache
       - checkout
-      - run: *update-git-master
+      - run: *update-git
       - save_cache: *save-git-cache
       - run: *update-node
       # npm dependencies
@@ -309,7 +309,7 @@ jobs:
             # We may not have files to lint which returns non-0 exit
             # Ensure this does not cause job failure (see `|| exit 0`)
             FILES_TO_LINT=$(
-              git diff --name-only --diff-filter=d origin/master... \
+              git diff --name-only --diff-filter=d origin... \
                 | grep -E '^(client/|server/|packages/)'            \
                 | grep -E '\.[jt]sx?$'
             ) || exit 0
@@ -507,7 +507,7 @@ jobs:
   #
   # Expected usage:
   #   - After setup
-  #   - Only on branches (!master)
+  #   - Only on branches (not the primary branch)
   #
   prime-calypso-live:
     docker:
