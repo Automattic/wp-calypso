@@ -180,7 +180,7 @@ class AccountSettingsEmailAddress extends React.Component {
 			}
 			unsaved_email = userSettings.getSetting( 'user_email' );
 		} else {
-			if ( ! unsavedUserSettings || ! unsavedUserSettings.user_email ) {
+			if ( ! unsavedUserSettings || typeof unsavedUserSettings.user_email !== 'string' ) {
 				return null;
 			}
 			unsaved_email = unsavedUserSettings.user_email;
@@ -192,13 +192,14 @@ class AccountSettingsEmailAddress extends React.Component {
 
 		let notice;
 		switch ( this.state.emailValidationError ) {
+			case 'empty':
+				notice = translate( 'Email address can not be empty.' );
+				break;
 			case 'invalid':
+			default:
 				notice = translate( '%(email)s is not a valid email address.', {
 					args: { email: unsaved_email },
 				} );
-				break;
-			case 'empty':
-				notice = translate( 'Email address can not be empty.' );
 				break;
 		}
 
