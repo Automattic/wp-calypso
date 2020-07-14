@@ -13,23 +13,14 @@ import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
 
 import { getProductsList } from './get-products-list';
+import { getProductBySlug } from './get-product-by-slug';
 
 import 'state/products-list/init';
 
 export { isProductsListFetching } from './is-products-list-fetching';
 export { getProductsList } from './get-products-list';
 export { getAvailableProductsList } from './get-available-products-list';
-
-/**
- * Retrieves the product with the specified slug.
- *
- * @param {object} state - global state tree
- * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
- * @returns {?object} the corresponding product, or null if not found
- */
-export function getProductBySlug( state, productSlug ) {
-	return get( state, [ 'productsList', 'items', productSlug ], null );
-}
+export { getProductBySlug } from './get-product-by-slug';
 
 /**
  * Returns the display price of the specified product.
