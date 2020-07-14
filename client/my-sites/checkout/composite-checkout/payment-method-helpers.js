@@ -301,6 +301,7 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 				...payload.cart,
 				blog_id: siteId || '0',
 				cart_key: siteId || 'no-site',
+				create_new_blog: siteId ? false : true,
 			},
 		};
 

@@ -985,7 +985,7 @@ export default connect(
 			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
-			selectedSiteSlug: getSelectedSiteSlug( state ) || '',
+			selectedSiteSlug: getSelectedSiteSlug( state ),
 			isNewlyCreatedSite: isNewSite( state, selectedSiteId ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),

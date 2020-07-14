@@ -284,8 +284,7 @@ export default function CompositeCheckout( {
 			}
 
 			if (
-				( ! isLoggedOutCart &&
-					responseCart.create_new_blog &&
+				( responseCart.create_new_blog &&
 					Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
 					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
 				( isDomainOnly && hasPlan( responseCart ) && ! siteId )

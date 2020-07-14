@@ -76,7 +76,7 @@ function TransactionFlow( initialData, onStep ) {
 	paymentHandler.call( this );
 }
 
-TransactionFlow.prototype._pushStep = async function ( options ) {
+TransactionFlow.prototype._pushStep = function ( options ) {
 	const defaults = {
 		first: false,
 		last: false,

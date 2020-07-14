@@ -185,8 +185,6 @@ export class SecurePaymentForm extends Component {
 			transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
-		const email = get( this.props.transaction, 'newCardFormFields.email', null );
-
 		submit(
 			{
 				cart,
@@ -197,7 +195,6 @@ export class SecurePaymentForm extends Component {
 				stripe: transaction.stripe,
 				stripeConfiguration: transaction.stripeConfiguration,
 				isWhiteGloveOffer,
-				email,
 			},
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
