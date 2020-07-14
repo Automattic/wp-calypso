@@ -318,6 +318,7 @@ export class Checkout extends React.Component {
 			if ( isPrivate ) {
 				cartItem = null;
 			}
+
 			if ( isJetpackNotAtomic ) {
 				cartItem = product.includes( 'monthly' )
 					? jetpackProductItem( PRODUCT_JETPACK_SEARCH_MONTHLY )
@@ -333,7 +334,7 @@ export class Checkout extends React.Component {
 					? jetpackProductItem( PRODUCT_WPCOM_SEARCH_MONTHLY )
 					: jetpackProductItem( PRODUCT_WPCOM_SEARCH );
 			} else {
-				cartItem = ! isJetpackNotAtomic || ! isPrivate ? null : cartItem;
+				cartItem = ! isJetpackNotAtomic || isPrivate ? null : cartItem;
 			}
 		} else if ( JETPACK_PRODUCTS_LIST.includes( product ) && isJetpackNotAtomic ) {
 			cartItem = jetpackProductItem( product );
