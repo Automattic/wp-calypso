@@ -180,8 +180,7 @@ class ThanksModal extends Component {
 				{ promptSwitchingEditors && (
 					<p className="thanks-modal__gutenberg-prompt">
 						{ translate(
-							'This theme is intended to work with the Block Editor, so we recommend activating that first. ' +
-								'{{supportLink/}}.',
+							'This theme is intended to work with the new WordPress editor. We recommend activating that first. {{supportLink/}}.',
 							{
 								components: {
 									supportLink: (
