@@ -148,7 +148,7 @@ function createLanguagesDir() {
 }
 
 // Get module reference
-function getModuleRefenrece( module ) {
+function getModuleReference( module ) {
 	// Rewrite module from `packages/` to match references in POT
 	if ( module.indexOf( 'packages/' ) === 0 ) {
 		return module
@@ -297,7 +297,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				const strings = new Set();
 
 				modules.forEach( ( modulePath ) => {
-					modulePath = getModuleRefenrece( modulePath );
+					modulePath = getModuleReference( modulePath );
 					const key = /\.\w+/.test( modulePath )
 						? modulePath
 						: Object.keys( translationsByRef ).find( ( ref ) => ref.indexOf( modulePath ) === 0 );
