@@ -939,32 +939,32 @@ workflows:
       - wp-desktop-source:
           filters:
             tags:
-              only: /desktop\/.*
+              only: /desktop\/.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
           filters:
             tags:
-              only: /desktop\/.*
+              only: /desktop\/.*/
       - wp-desktop-linux:
           requires:
             - wp-desktop-source
           filters:
             tags:
-              only: /desktop\/.*
+              only: /desktop\/.*/
       - wp-desktop-windows:
           requires:
             - wp-desktop-source
           filters:
             tags:
-              only: /desktop\/.*
+              only: /desktop\/.*/
   wp-desktop-publish:
     when: << pipeline.git.tag >>
     jobs:
       - wp-desktop-source:
         filters:
           tags:
-            only: /desktop\/.*
+            only: /desktop\/.*/
 
   calypso-nightly:
     jobs:
