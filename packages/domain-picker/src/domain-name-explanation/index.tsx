@@ -19,10 +19,10 @@ export const DomainNameExplanationImage: FunctionComponent = () => {
 			<rect x="8" y="8" width="25" height="25" rx="5" fill="#fff" />
 			<rect x="40" y="8" width="25" height="25" rx="5" fill="#fff" />
 			<rect x="72" y="8" width="300" height="25" rx="5" fill="#fff" />
-			<text x="80" y="26" fontFamily="roboto" fill="#999">
+			<text x="80" y="26" fill="#999">
 				https://
 			</text>
-			<text x="133" y="26" fontFamily="roboto" fill="#515151">
+			<text x="133" y="26" fill="#515151">
 				example.com
 			</text>
 		</svg>
