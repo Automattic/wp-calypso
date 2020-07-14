@@ -98,6 +98,7 @@
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
+		"@automattic/typography": "^1.0.0",
 		"@wordpress/api-fetch": "*",
 		"@wordpress/base-styles": "1.9.0",
 		"@wordpress/block-editor": "*",
@@ -127,8 +128,8 @@
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0",
 		"react": "^16.12.0",
-		"redux": "^4.0.5",
 		"react-dom": "^16.12.0",
+		"redux": "^4.0.5",
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
