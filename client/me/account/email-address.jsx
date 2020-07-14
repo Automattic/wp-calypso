@@ -68,6 +68,13 @@ class AccountSettingsEmailAddress extends React.Component {
 		return props.originalEmailAddress;
 	}
 
+	getOriginalEmailAddress( props ) {
+		if ( props.userSettings ) {
+			return props.userSettings.getOriginalSetting( 'user_email' );
+		}
+		return props.originalEmailAddress;
+	}
+
 	getPendingEmailAddress( props ) {
 		if ( props.userSettings ) {
 			if ( props.userSettings.isPendingEmailChange() ) {
@@ -239,7 +246,11 @@ class AccountSettingsEmailAddress extends React.Component {
 			<FormFieldset>
 				<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
 				<FormTextInput
-					disabled={ this.hasPendingEmailChange( this.props ) || isSubmitting() }
+					disabled={
+						this.hasPendingEmailChange( this.props ) ||
+						isSubmitting() ||
+						null === this.getOriginalEmailAddress( this.props )
+					}
 					id="user_email"
 					name="user_email"
 					isError={ !! this.state.emailValidationError }

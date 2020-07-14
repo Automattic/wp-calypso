@@ -17,6 +17,7 @@ import FormButton from 'components/forms/form-button';
 import HeaderCake from 'components/header-cake';
 import isFetchingUserSettings from 'state/selectors/is-fetching-user-settings';
 import isPendingEmailChange from 'state/selectors/is-pending-email-change';
+import isSavingUserSettings from 'state/selectors/is-saving-user-settings';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -46,11 +47,15 @@ class SecurityAccountEmail extends React.Component {
 	}
 
 	isSubmitting() {
-		return this.props.isFetchingUserSettings;
+		return this.props.isSavingUserSettings;
 	}
 
 	canSubmit() {
-		return ! this.state.emailIsInvalid && ! this.props.isPendingEmailChange;
+		return (
+			! this.props.isFetchingUserSettings &&
+			! this.state.emailIsInvalid &&
+			! this.props.isPendingEmailChange
+		);
 	}
 
 	submitEmailForm( event ) {
@@ -81,7 +86,11 @@ class SecurityAccountEmail extends React.Component {
 					{ translate( 'Account Email' ) }
 				</HeaderCake>
 
-				<QueryUserSettings />
+				<QueryUserSettings
+					onError={ this.props.errorNotice(
+						translate( 'There was a problem getting your email address' )
+					) }
+				/>
 				<Card className="security-account-email__settings">
 					<form onSubmit={ this.submitEmailForm }>
 						<AccountSettingsEmailAddress
@@ -109,6 +118,7 @@ export default connect(
 	( state ) => ( {
 		isFetchingUserSettings: isFetchingUserSettings( state ),
 		isPendingEmailChange: isPendingEmailChange( state ),
+		isSavingUserSettings: isSavingUserSettings( state ),
 	} ),
 	{ errorNotice, saveUserSettings, successNotice }
 )( localize( SecurityAccountEmail ) );
