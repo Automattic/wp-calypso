@@ -1,5 +1,3 @@
-
-
 // Styles targeted at story content
 @import './_content.scss';
 
@@ -151,6 +149,71 @@
 
 	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: -35px;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-weight: 700; /* Taken from http://calypso.localhost:3000/read/blogs/159889361/posts/984 */
+		/* margin-bottom: 5px;
+		margin-top: 5px;  Taken from http://calypso.localhost:3000/read/blogs/159889361/posts/984 */
+
+		margin-bottom: 15px; /* visually more appealing margin? */
+		margin-top: 30px; /* visually more appealing margin? */
+		line-height: 1.1; /* added to deal with overlapping text issues (https://css-tricks.com/almanac/properties/l/line-height/) */
+	}
+
+	h1 {
+		/* font-size: 8.4rem; original rem from http://calypso.localhost:3000/read/blogs/159889361/posts/984 */
+		/* font-size: 4.2rem; estimated best rem without changing root size */
+		font-size: 54px; /* Taken from: wp-calypso/client/components/card-heading/style.scss */
+		font-weight: 800; /* Taken from http://calypso.localhost:3000/read/blogs/159889361/posts/984 */
+	}
+
+	h2 {
+		/* font-size: 4.8rem; */
+		/* font-size: 2.4rem; */
+		font-size: 47px;
+	}
+
+	h3 {
+		/* font-size: 4rem; */
+		/* font-size: 2rem; */
+		font-size: 36px;
+	}
+
+	h4 {
+		/* font-size: 3.2rem; */
+		/* font-size: 1.6rem; */
+		font-size: 32px;
+	}
+
+	h5 {
+		/* font-size: 2.4rem; */
+		/* font-size: 1.2rem; */
+		font-size: 24px;
+	}
+
+	h6 {
+		/* font-size: 1.8rem; */
+		/* font-size: 0.9rem; */
+		font-size: 21px;
+	}
+
+	.has-text-align-center {
+		/* justify-content: center; */
+		text-align: center;
+	}
+	.has-text-align-left {
+		/* justify-content: flex-start; */
+		text-align: left;
+	}
+	.has-text-align-right {
+		/* justify-content: flex-end; */
+		text-align: right;
 	}
 }
 
@@ -461,6 +524,7 @@
 
 	.reader-full-post__header-title-link {
 		display: block;
+		font-family: $sans;
 	}
 
 	.reader-full-post__header-title-link,
