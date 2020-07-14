@@ -50,9 +50,9 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await acquireIntentPage.goToNextStep();
 		} );
 
-		step( 'Can see Domains Page and select free suggestion item', async function () {
+		step( 'Can see Domains Page and skip selecting a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.clickFreeSuggestionItem();
+			await domainsPage.skipStep();
 		} );
 
 		step( 'Can see Design Selector and select a random free design', async function () {
