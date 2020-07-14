@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { pickBy, get, max } from 'lodash';
+import { get, max } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,10 +18,7 @@ import 'state/products-list/init';
 
 export { isProductsListFetching } from './is-products-list-fetching';
 export { getProductsList } from './get-products-list';
-
-export function getAvailableProductsList( state ) {
-	return pickBy( state.productsList.items, ( product ) => product.available );
-}
+export { getAvailableProductsList } from './get-available-products-list';
 
 /**
  * Retrieves the product with the specified slug.
