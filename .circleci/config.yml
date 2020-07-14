@@ -928,31 +928,31 @@ workflows:
 #           test-flags: '-W -S $CIRCLE_SHA1'
 #           test-target: 'WOO'
 #           slack-webhook: '$SLACK_WOO'
-  wp-desktop:
-    unless: << pipeline.git.tag >>
-    jobs:
-      - wp-desktop-source:
-          filters:
-            tags:
-              only: /desktop\/.*/
-      - wp-desktop-mac:
-          requires:
-            - wp-desktop-source
-          filters:
-            tags:
-              only: /desktop\/.*/
-      - wp-desktop-linux:
-          requires:
-            - wp-desktop-source
-          filters:
-            tags:
-              only: /desktop\/.*/
-      - wp-desktop-windows:
-          requires:
-            - wp-desktop-source
-          filters:
-            tags:
-              only: /desktop\/.*/
+  # wp-desktop:
+  #   unless: << pipeline.git.tag >>
+  #   jobs:
+  #     - wp-desktop-source:
+  #         filters:
+  #           tags:
+  #             only: /desktop\/.*/
+  #     - wp-desktop-mac:
+  #         requires:
+  #           - wp-desktop-source
+  #         filters:
+  #           tags:
+  #             only: /desktop\/.*/
+  #     - wp-desktop-linux:
+  #         requires:
+  #           - wp-desktop-source
+  #         filters:
+  #           tags:
+  #             only: /desktop\/.*/
+  #     - wp-desktop-windows:
+  #         requires:
+  #           - wp-desktop-source
+  #         filters:
+  #           tags:
+  #             only: /desktop\/.*/
   wp-desktop-release:
     when: << pipeline.git.tag >>
     jobs:
