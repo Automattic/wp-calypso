@@ -37,6 +37,7 @@ class SecurityAccountEmail extends React.Component {
 		this.state = {
 			emailIsInvalid: true,
 		};
+		this.showFetchError = this.showFetchError.bind( this );
 		this.isSubmitting = this.isSubmitting.bind( this );
 		this.setEmailValidationState = this.setEmailValidationState.bind( this );
 		this.submitEmailForm = this.submitEmailForm.bind( this );
@@ -58,16 +59,20 @@ class SecurityAccountEmail extends React.Component {
 		);
 	}
 
+	showFetchError() {
+		this.props.errorNotice(
+			this.props.translate( 'There was a problem getting your email address.' )
+		);
+	}
+
 	submitEmailForm( event ) {
 		event.preventDefault();
+		const { errorNotice: displayErrorNotice, translate } = this.props;
 
 		this.setState( { isSubmitting: true } );
 
-		this.props.saveUserSettings( null, function ( error ) {
-			const errorMessage = error.message
-				? error.message
-				: this.props.translate( 'There was a problem updating your email address.' );
-			this.props.errorNotice( errorMessage );
+		this.props.saveUserSettings( null, () => {
+			displayErrorNotice( translate( 'There was a problem updating your email address.' ) );
 		} );
 	}
 
@@ -86,11 +91,7 @@ class SecurityAccountEmail extends React.Component {
 					{ translate( 'Account Email' ) }
 				</HeaderCake>
 
-				<QueryUserSettings
-					onError={ this.props.errorNotice(
-						translate( 'There was a problem getting your email address' )
-					) }
-				/>
+				<QueryUserSettings onError={ this.showFetchError } />
 				<Card className="security-account-email__settings">
 					<form onSubmit={ this.submitEmailForm }>
 						<AccountSettingsEmailAddress
