@@ -52,7 +52,7 @@ class EditorFeaturedImagePreviewContainer extends React.Component {
 			}
 
 			defer( () => {
-				this.props.fetch( this.props.siteId, this.props.itemId );
+				this.props.fetchMediaItem( this.props.siteId, this.props.itemId );
 			} );
 		} );
 	};
