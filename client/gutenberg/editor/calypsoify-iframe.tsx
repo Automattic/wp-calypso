@@ -347,8 +347,8 @@ class CalypsoifyIframe extends Component<
 					post: translate( 'View all posts' ),
 				},
 				createPostLabels: {
-					page: translate( 'Create new page' ),
-					post: translate( 'Create new post' ),
+					page: translate( 'Add new page' ),
+					post: translate( 'Add new post' ),
 				},
 			} );
 		}
