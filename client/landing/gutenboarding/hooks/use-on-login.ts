@@ -37,6 +37,7 @@ export default function useOnSignup() {
 		currentUser,
 		isCreatingSite,
 		newSite,
+		i18nLocale,
 		shouldTriggerCreate,
 		shouldSiteBePublic,
 	] );

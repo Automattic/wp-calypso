@@ -82,7 +82,7 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 
 	React.useEffect( () => {
 		loadInitalLocale();
-	}, [] );
+	} );
 
 	// fixme: Exposes the changeLocale function for demonstration purposes
 	window.updateLocale = changeLocale;

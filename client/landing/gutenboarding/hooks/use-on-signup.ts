@@ -36,5 +36,5 @@ export default function useOnSignup() {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
 			handleCreateSite( newUser.username, newUser.bearerToken, shouldSiteBePublic );
 		}
-	}, [ newSite, newUser, handleCreateSite, shouldSiteBePublic ] );
+	}, [ newSite, newUser, i18nLocale, handleCreateSite, shouldSiteBePublic ] );
 }

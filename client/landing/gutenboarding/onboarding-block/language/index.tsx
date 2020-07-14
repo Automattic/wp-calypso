@@ -5,14 +5,13 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
+import { ActionButtons, BackButton, Title } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
-import ActionButtons, { BackButton } from '../../components/action-buttons';
-import { Title } from '../../components/titles';
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
-import { languages, Language } from '../../../../languages.js';
+import { languages, Language } from '../../../../languages';
 import {
 	LANGUAGE_GROUPS,
 	DEFAULT_LANGUAGE_GROUP,
