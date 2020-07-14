@@ -834,29 +834,23 @@ jobs:
             - run:
                 name: Publish Github Release
                 command: |
-                  if [[ $VERSION == desktop* ]]; then
+                  SHORT_VERSION=${VERSION#"desktop/"}
 
-                    SHORT_VERSION=${VERSION#"desktop/"}
+                  echo "Publishing draft release for wp-desktop v$SHORT_VERSION..."
 
-                    echo "Publishing draft release for wp-desktop v$SHORT_VERSION..."
+                  NAME="WP-Desktop $SHORT_VERSION"
 
-                    NAME="WP-Desktop $SHORT_VERSION"
+                  ghr \
+                    --token $GH_TOKEN \
+                    --username $CIRCLE_PROJECT_USERNAME \
+                    --repository $CIRCLE_PROJECT_REPONAME \
+                    --commitish $CIRCLE_SHA1 \
+                    --name $NAME \
+                    --delete \
+                    --draft \
+                    $VERSION desktop/release/
 
-                    ghr \
-                      --token $GH_TOKEN \
-                      --username $CIRCLE_PROJECT_USERNAME \
-                      --repository $CIRCLE_PROJECT_REPONAME \
-                      --commitish $CIRCLE_SHA1 \
-                      --name $NAME \
-                      --delete \
-                      --draft \
-                      $VERSION desktop/release/
-
-                    echo "Publish complete"
-
-                  else
-                    echo "Not a desktop release tag, skipping publish"
-                  fi
+                  echo "Publish complete"
       - unless:
           condition: << pipeline.git.tag >>
           steps:
