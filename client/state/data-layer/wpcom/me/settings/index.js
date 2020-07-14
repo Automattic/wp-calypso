@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { isEmpty, keys, mapValues, noop } from 'lodash';
+import { isEmpty, isFunction, keys, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -80,8 +80,8 @@ export const finishUserSettingsSave = ( { settingsOverride }, data ) => ( dispat
 	userLib().fetch();
 };
 
-export const handleUserSettingsSaveError = ( action, error ) => {
-	if ( ! action.onError ) {
+export const handleUserSettingsError = ( action, error ) => {
+	if ( ! isFunction( action.onError ) ) {
 		return;
 	}
 	action.onError( error );
@@ -92,7 +92,7 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 		dispatchRequest( {
 			fetch: requestUserSettings,
 			onSuccess: storeFetchedUserSettings,
-			onError: noop,
+			onError: handleUserSettingsError,
 			fromApi,
 		} ),
 	],
@@ -100,7 +100,7 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 		dispatchRequest( {
 			fetch: saveUserSettings,
 			onSuccess: finishUserSettingsSave,
-			onError: handleUserSettingsSaveError,
+			onError: handleUserSettingsError,
 			fromApi,
 		} ),
 	],

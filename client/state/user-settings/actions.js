@@ -23,20 +23,22 @@ import 'state/data-layer/wpcom/me/settings';
 const debug = debugFactory( 'calypso:user:settings' );
 
 /**
- * Fetch user settings from WordPress.com API and store them in UserSettings instance
- *
- * @returns {object} Action object
- */
-export const fetchUserSettings = () => ( {
-	type: USER_SETTINGS_REQUEST,
-} );
-
-/**
  * Documentation for onError callback that can be supplied to some of the actions below.
  *
  * @callback userSettingsOnErrorCallback
  * @param {object} error
  */
+
+/**
+ * Fetch user settings from WordPress.com API and store them in UserSettings instance
+ *
+ * @param {userSettingsOnErrorCallback} onError - callback to invoke if an error occurs
+ * @returns {object} Action object
+ */
+export const fetchUserSettings = ( onError ) => ( {
+	type: USER_SETTINGS_REQUEST,
+	onError,
+} );
 
 /**
  * Post settings to WordPress.com API at /me/settings endpoint
