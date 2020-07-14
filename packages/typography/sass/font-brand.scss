@@ -1,3 +1,5 @@
+@import './font-family';
+
 @font-face {
 	font-display: swap;
 	font-family: 'Recoleta';
@@ -6,7 +8,6 @@
 	url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' );
 }
 
-$serif: 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 $brand-serif: 'Recoleta', $serif;
 
 .wp-brand-font {
