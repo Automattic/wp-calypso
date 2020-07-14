@@ -26,13 +26,17 @@ const DomainPickerFSE: React.FunctionComponent< Props > = ( { onSelect } ) => {
 	const freeDomain = useCurrentDomainName();
 
 	const { domain, domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const { setDomain, setDomainSearch } = useDispatch( LAUNCH_STORE );
+	const { setDomain, unsetDomain, setDomainSearch } = useDispatch( LAUNCH_STORE );
 
 	const search = ( domainSearch.trim() || site?.name ) ?? '';
 
 	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
 		setDomain( suggestion );
 		onSelect?.();
+	};
+
+	const handleExistingSubdomainSelect = () => {
+		unsetDomain();
 	};
 
 	const trackDomainSearchInteraction = ( query: string ) => {
@@ -50,7 +54,9 @@ const DomainPickerFSE: React.FunctionComponent< Props > = ( { onSelect } ) => {
 			onSetDomainSearch={ setDomainSearch }
 			onDomainSearchBlur={ trackDomainSearchInteraction }
 			currentDomain={ domain?.domain_name || freeDomain }
+			existingSubdomain={ freeDomain }
 			onDomainSelect={ handleDomainSelect }
+			onExistingSubdomainSelect={ handleExistingSubdomainSelect }
 			analyticsUiAlgo="editor_domain_modal"
 		/>
 	);

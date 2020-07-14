@@ -265,3 +265,8 @@
 	width: 220px;
 	padding-right: 30px;
 }
+
+.domain-picker__change-subdomain-tip {
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-40 );
+}

@@ -42,6 +42,8 @@ export interface Props {
 	 */
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 
+	onExistingSubdomainSelect?: ( existingSubdomain: string ) => void;
+
 	/** Paid omain suggestions to show when the picker isn't expanded */
 	quantity?: number;
 
@@ -52,6 +54,8 @@ export interface Props {
 	onDomainSearchBlur: ( value: string ) => void;
 
 	currentDomain?: string;
+
+	existingSubdomain?: string;
 
 	/** The flow where the Domain Picker is used. Eg: Gutenboarding */
 	analyticsFlowId: string;
@@ -70,6 +74,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	header,
 	showDomainCategories,
 	onDomainSelect,
+	onExistingSubdomainSelect,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
 	onDomainSearchBlur,
@@ -78,6 +83,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	initialDomainSearch = '',
 	onSetDomainSearch,
 	currentDomain,
+	existingSubdomain,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
@@ -100,7 +106,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	) as DomainSuggestion[] | undefined;
 
 	const domainSuggestions = allDomainSuggestions?.slice(
-		0,
+		existingSubdomain ? 1 : 0,
 		isExpanded ? quantityExpanded : quantity
 	);
 
@@ -126,7 +132,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	}, [ allDomainSuggestions, setBaseRailcarId ] );
 
 	const handleItemRender = (
-		suggestion: DomainSuggestion,
+		domain: string,
 		railcarId: string,
 		uiPosition: number,
 		isRecommended: boolean
@@ -134,8 +140,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		const fetchAlgo = `/domains/search/${ domainSuggestionVendor }/${ analyticsFlowId }${
 			domainCategory ? '/' + domainCategory : ''
 		}`;
-
-		const domain = suggestion.domain_name;
 
 		recordTrainTracksRender( {
 			uiAlgo: `/${ analyticsFlowId }/${ analyticsUiAlgo }`,
@@ -179,19 +183,49 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					) }
 					<div className="domain-picker__suggestion-sections">
 						<div className="domain-picker__suggestion-item-group">
-							{ domainSuggestions?.map( ( suggestion, i ) => (
+							{ domainSuggestions && existingSubdomain && (
 								<SuggestionItem
-									key={ suggestion.domain_name }
-									suggestion={ suggestion }
-									railcarId={ baseRailcarId ? `${ baseRailcarId }${ i }` : undefined }
-									isRecommended={ i === 1 }
+									key={ existingSubdomain }
+									domain={ existingSubdomain }
+									cost="Free"
+									isFree
+									isExistingSubdomain
+									railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
 									onRender={ () =>
-										handleItemRender( suggestion, `${ baseRailcarId }${ i }`, i, i === 1 )
+										handleItemRender( existingSubdomain, `${ baseRailcarId }${ 0 }`, 0, false )
 									}
-									selected={ currentDomain === suggestion.domain_name }
-									onSelect={ onDomainSelect }
+									selected={ currentDomain === existingSubdomain }
+									onSelect={ () => {
+										onExistingSubdomainSelect?.( existingSubdomain );
+									} }
 								/>
-							) ) ?? times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+							) }
+							{ domainSuggestions?.map( ( suggestion, i ) => {
+								const index = existingSubdomain ? i + 1 : i;
+								const isRecommended = index === 1;
+								return (
+									<SuggestionItem
+										key={ suggestion.domain_name }
+										domain={ suggestion.domain_name }
+										cost={ suggestion.cost }
+										isFree={ suggestion.is_free }
+										isRecommended={ isRecommended }
+										railcarId={ baseRailcarId ? `${ baseRailcarId }${ index }` : undefined }
+										onRender={ () =>
+											handleItemRender(
+												suggestion.domain_name,
+												`${ baseRailcarId }${ index }`,
+												index,
+												isRecommended
+											)
+										}
+										onSelect={ () => {
+											onDomainSelect( suggestion );
+										} }
+										selected={ currentDomain === suggestion.domain_name }
+									/>
+								);
+							} ) ?? times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 						</div>
 
 						{ ! isExpanded &&
