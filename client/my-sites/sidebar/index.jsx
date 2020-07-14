@@ -399,9 +399,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	jetpack() {
-		const { isJetpackSectionOpen, path } = this.props;
+		const { canUserManageOptions, isJetpackSectionOpen, path } = this.props;
 
 		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
+		if ( ! canUserManageOptions ) {
 			return null;
 		}
 

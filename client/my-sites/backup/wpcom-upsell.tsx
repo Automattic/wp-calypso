@@ -14,12 +14,14 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { isFreePlan } from 'lib/plans';
 import FormattedHeader from 'components/formatted-header';
+import Notice from 'components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCTA from 'components/promo-section/promo-card/cta';
 import useTrackCallback from 'lib/jetpack/use-track-callback';
 import Gridicon from 'components/gridicon';
 import { getSitePlan } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
 import { preventWidows } from 'lib/formatting';
@@ -48,6 +50,7 @@ export default function WPCOMUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, trackEventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
+	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
 
 	return (
@@ -75,16 +78,25 @@ export default function WPCOMUpsellPage(): ReactElement {
 						)
 					) }
 				</p>
-				<PromoCardCTA
-					cta={ {
-						text: translate( 'Upgrade to Business Plan' ),
-						action: {
-							url: `/checkout/${ siteSlug }/business`,
-							onClick: onUpgradeClick,
-							selfTarget: true,
-						},
-					} }
-				/>
+				{ ! isAdmin && (
+					<Notice
+						status="is-warning"
+						text={ translate( 'Only site administrators can upgrade to the Business plan.' ) }
+						showDismiss={ false }
+					/>
+				) }
+				{ isAdmin && (
+					<PromoCardCTA
+						cta={ {
+							text: translate( 'Upgrade to Business Plan' ),
+							action: {
+								url: `/checkout/${ siteSlug }/business`,
+								onClick: onUpgradeClick,
+								selfTarget: true,
+							},
+						} }
+					/>
+				) }
 			</PromoCard>
 
 			{ isFreePlan( planSlug ) && (
