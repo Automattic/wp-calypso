@@ -923,8 +923,8 @@ export const PLANS_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'{{strong}}Best for organizations:{{/strong}}' +
-					'The most powerful WordPress sites: real-time backups, ' +
-					'enhanced search, and unlimited premium themes.',
+					'The most powerful WordPress sites: real-time backups ' +
+					'and unlimited premium themes.',
 				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
@@ -994,8 +994,8 @@ export const PLANS_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'{{strong}}Best for organizations:{{/strong}}' +
-					'The most powerful WordPress sites: real-time backups, ' +
-					'enhanced search, and unlimited premium themes.',
+					'The most powerful WordPress sites: real-time backups ' +
+					'and unlimited premium themes.',
 				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
