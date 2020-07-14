@@ -317,7 +317,7 @@ export class DomainDetailsFormContainer extends PureComponent {
 		return (
 			<div>
 				<QueryContactDetailsCache />
-				{ this.props.isLoggedOutCart || this.props.contactDetails ? (
+				{ this.props.contactDetails ? (
 					<DomainDetailsForm { ...this.props } />
 				) : (
 					<SecurePaymentFormPlaceholder />

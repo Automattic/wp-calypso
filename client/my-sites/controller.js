@@ -270,8 +270,14 @@ function onSelectedSiteAvailable( context, basePath ) {
 function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
 
+	let filteredPathName = contextPath.split( '/no-site' )[ 0 ];
+
+	if ( context.querystring ) {
+		filteredPathName = `${ filteredPathName }?${ context.querystring }`;
+	}
+
 	// This path sets the URL to be visited once a site is selected
-	const basePath = contextPath === '/sites' ? '/home' : contextPath;
+	const basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
 
 	recordPageView( contextPath, sitesPageTitleForAnalytics );
 
@@ -310,13 +316,13 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 export function noSite( context, next ) {
 	const { getState } = getStore( context );
 	const currentUser = getCurrentUser( getState() );
-	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
+	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 
-	if ( hasOneSite ) {
+	if ( hasSite ) {
 		siteSelection( context, next );
-	} else {
-		context.store.dispatch( setSelectedSiteId( null ) );
 	}
+
+	context.store.dispatch( setSelectedSiteId( null ) );
 
 	return next();
 }

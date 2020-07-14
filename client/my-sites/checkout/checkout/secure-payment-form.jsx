@@ -173,7 +173,7 @@ export class SecurePaymentForm extends Component {
 	async submitTransaction( event ) {
 		event && event.preventDefault();
 
-		const { cart, transaction, isWhiteGloveOffer, isLoggedOutCart } = this.props;
+		const { cart, transaction, isWhiteGloveOffer } = this.props;
 
 		const origin = getLocationOrigin( window.location );
 		const successPath = this.props.redirectTo();
@@ -198,7 +198,6 @@ export class SecurePaymentForm extends Component {
 				stripeConfiguration: transaction.stripeConfiguration,
 				isWhiteGloveOffer,
 				email,
-				isLoggedOutCart,
 			},
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
@@ -208,9 +207,9 @@ export class SecurePaymentForm extends Component {
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
-		const { isJetpack, siteIsPrivate, isLoggedOutCart } = this.props;
+		const { isJetpack, siteIsPrivate } = this.props;
 
-		if ( ! isLoggedOutCart && ( isJetpack || ! siteIsPrivate ) ) {
+		if ( isJetpack || ! siteIsPrivate ) {
 			return;
 		}
 
@@ -336,7 +335,6 @@ export class SecurePaymentForm extends Component {
 					onSubmit={ this.handlePaymentBoxSubmit }
 					transactionStep={ this.props.transaction.step }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-					isLoggedOutCart={ this.props.isLoggedOutCart }
 				>
 					{ this.props.children }
 				</CreditCardPaymentBox>
@@ -364,7 +362,6 @@ export class SecurePaymentForm extends Component {
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-					isLoggedOutCart={ this.props.isLoggedOutCart }
 				>
 					{ this.props.children }
 				</StripeElementsPaymentBox>

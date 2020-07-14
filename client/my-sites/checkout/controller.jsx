@@ -28,10 +28,15 @@ import userFactory from 'lib/user';
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	const isDisallowedForSitePicker =
+		context.pathname.includes( '/checkout/no-site' ) &&
+		( isLoggedOut || 'no-user' !== context.query.cart );
 
-	if ( ! selectedSite && ! context.pathname.includes( '/checkout/no-site' ) ) {
+	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
 		sites( context, next );
 		return;
 	}
@@ -55,12 +60,10 @@ export function checkout( context, next ) {
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
-	const user = userFactory();
-	const isLoggedOut = ! user.get();
 	const isLoggedOutCart = isLoggedOut && context.pathname.includes( '/checkout/no-site' );
 
 	context.primary = (
-		<CartData isLoggedOutCart={ isLoggedOutCart }>
+		<CartData>
 			<CheckoutSystemDecider
 				product={ product }
 				purchaseId={ purchaseId }

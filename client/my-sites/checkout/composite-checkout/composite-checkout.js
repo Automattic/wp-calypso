@@ -20,6 +20,7 @@ import {
 	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -101,7 +102,7 @@ const wpcom = wp.undocumented();
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
 const wpcomGetCart = ( ...args ) => {
-	if ( 'no-user' === args[ 0 ] ) {
+	if ( ! isEmpty( args[ 1 ] ) ) {
 		return Promise.resolve( args[ 1 ] );
 	}
 

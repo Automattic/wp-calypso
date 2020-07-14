@@ -37,7 +37,6 @@ class NewCardForm extends Component {
 				eventFormName="Checkout Form"
 				onFieldChange={ this.handleFieldChange }
 				getErrorMessage={ this.getErrorMessage }
-				isLoggedOutCart={ this.props.isLoggedOutCart }
 			/>
 		);
 	};

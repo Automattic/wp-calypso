@@ -171,7 +171,7 @@ CartSynchronizer.prototype._pollFromLocalStorage = function () {
 		const initialCart = {
 			cart_key: this._cartKey,
 			products: [],
-			temporary: true,
+			temporary: 'no-user' === this._cartKey,
 		};
 		this._latestValue = changeFunction( initialCart );
 	}
