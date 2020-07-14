@@ -815,6 +815,55 @@ jobs:
           paths:
             - desktop\release
 
+  wp-desktop-publish:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /home/circleci/wp-calypso
+    environment:
+      VERSION: << pipeline.git.tag >>
+    steps:
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - checkout
+            - attach_workspace:
+                at: /home/circleci/wp-calypso
+            - run:
+                name: Install Dependencies
+                command: go get github.com/tcnksm/ghr
+            - run:
+                name: Publish Github Release
+                command: |
+                  if [[ $VERSION == desktop* ]]; then
+
+                    SHORT_VERSION=${VERSION#"desktop/"}
+
+                    echo "Publishing draft release for wp-desktop v$SHORT_VERSION..."
+
+                    NAME="WP-Desktop $SHORT_VERSION"
+
+                    ghr \
+                      --token $GH_TOKEN \
+                      --username $CIRCLE_PROJECT_USERNAME \
+                      --repository $CIRCLE_PROJECT_REPONAME \
+                      --commitish $CIRCLE_SHA1 \
+                      --name $NAME \
+                      --delete \
+                      --draft \
+                      $VERSION desktop/release/
+
+                    echo "Publish complete"
+
+                  else
+                    echo "Not a desktop release tag, skipping publish"
+                  fi
+      - unless:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Skip Publish
+                command: echo "Not on a tag, skipping publish"
+
 workflows:
   version: 2
   calypso:
@@ -887,16 +936,35 @@ workflows:
           slack-webhook: '$SLACK_WOO'
   wp-desktop:
     jobs:
-      - wp-desktop-source
+      - wp-desktop-source:
+          filters:
+            tags:
+              only: /desktop\/.*
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
+          filters:
+            tags:
+              only: /desktop\/.*
       - wp-desktop-linux:
           requires:
             - wp-desktop-source
+          filters:
+            tags:
+              only: /desktop\/.*
       - wp-desktop-windows:
           requires:
             - wp-desktop-source
+          filters:
+            tags:
+              only: /desktop\/.*
+  wp-desktop-publish:
+    when: << pipeline.git.tag >>
+    jobs:
+      - wp-desktop-source:
+        filters:
+          tags:
+            only: /desktop\/.*
 
   calypso-nightly:
     jobs:
