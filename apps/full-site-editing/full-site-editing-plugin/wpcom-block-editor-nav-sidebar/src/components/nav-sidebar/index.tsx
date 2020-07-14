@@ -133,10 +133,7 @@ function WpcomBlockEditorNavSidebar() {
 					<Button
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
-							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button',
-							{
-								'is-growing': isClosing,
-							}
+							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
 						) }
 						icon={ wordpress }
 						iconSize={ 36 }

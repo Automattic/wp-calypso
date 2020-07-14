@@ -38,7 +38,7 @@ $transition-period: 200ms;
 	top: 0;
 	bottom: 0;
 	width: $sidebar-width;
-	background: $black;
+	background: #23282e; // WP-admin gray to match the close button background color
 	display: flex;
 	flex-direction: column;
 	box-shadow: -5px 0 20px $black;
@@ -72,22 +72,6 @@ $transition-period: 200ms;
 	top: 0;
 	left: 0;
 	height: $header-height !important;
-	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out forwards;
-	@include reduce-motion( 'animation' );
-
-	&.is-growing {
-		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out reverse;
-		@include reduce-motion( 'animation' );
-	}
-}
-
-@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__shrink {
-	0% {
-		transform: scale( 1 );
-	}
-	100% {
-		transform: scale( 0.55 );
-	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
@@ -112,22 +96,4 @@ $transition-period: 200ms;
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
 	margin: 8px;
-}
-
-@keyframes wpcom-block-editor-nav-sidebar__shrink {
-	0% {
-		transform: scale( 1 );
-	}
-	100% {
-		transform: scale( 0.55 );
-	}
-}
-
-@keyframes wpcom-block-editor-nav-sidebar__grow {
-	0% {
-		transform: scale( 0.55 );
-	}
-	100% {
-		transform: scale( 1 );
-	}
 }
