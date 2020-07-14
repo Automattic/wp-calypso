@@ -952,13 +952,21 @@ workflows:
           filters:
             tags:
               only: /desktop\/.*/
-  wp-desktop-publish:
+  wp-desktop-release:
     when: << pipeline.git.tag >>
     jobs:
       - wp-desktop-source:
         filters:
           tags:
             only: /desktop\/.*/
+      - wp-desktop-publish:
+          requires:
+            - wp-desktop-mac
+            - wp-desktop-linux
+            - wp-desktop-windows
+          filters:
+            tags:
+              only: /desktop\/.*/
 
   calypso-nightly:
     jobs:
