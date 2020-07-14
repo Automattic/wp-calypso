@@ -139,6 +139,11 @@
 			border-color: var( --studio-blue-30 );
 			background-color: var( --studio-blue-30 );
 
+			// wp-admin's forms.css uses ::before on radio button
+			&::before {
+				display: none;
+			}
+
 			&::after {
 				content: '';
 				width: 12px;
