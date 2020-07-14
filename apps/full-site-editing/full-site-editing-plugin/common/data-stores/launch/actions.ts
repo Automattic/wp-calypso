@@ -14,6 +14,10 @@ export const setDomain = ( domain: DomainSuggestions.DomainSuggestion ) => ( {
 	domain,
 } );
 
+export const unsetDomain = () => ( {
+	type: 'UNSET_DOMAIN' as const,
+} );
+
 export const setDomainSearch = ( domainSearch: string ) => ( {
 	type: 'SET_DOMAIN_SEARCH' as const,
 	domainSearch,
@@ -38,4 +42,6 @@ export function* launchSite() {
 	}
 }
 
-export type LaunchAction = ReturnType< typeof setDomain | typeof setDomainSearch | typeof setPlan >;
+export type LaunchAction = ReturnType<
+	typeof setDomain | typeof unsetDomain | typeof setDomainSearch | typeof setPlan
+>;
