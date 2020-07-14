@@ -43,6 +43,7 @@
 		"uuid": "^7.0.2"
 	},
 	"devDependencies": {
+		"@automattic/typography": "^1.0.0",
 		"@wordpress/base-styles": "^1.8.0"
 	},
 	"peerDependencies": {
