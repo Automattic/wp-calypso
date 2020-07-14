@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ import {
 	WritingFlow,
 } from '@wordpress/block-editor';
 import { registerCoreBlocks } from '@wordpress/block-library';
-import type { BlockInstance } from '@wordpress/blocks';
+import { BlockInstance, serialize } from '@wordpress/blocks';
 
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/block-editor/build-style/style.css';
@@ -30,6 +30,12 @@ import '@wordpress/block-library/build-style/theme.css';
 registerCoreBlocks();
 
 export const BlockPlayground: FunctionComponent = () => {
+	useEffect( () => {
+		import(
+			/* webpackChunkName: "dev-docs-block-playground" */ '../../../apps/o2-blocks/src/editor.js'
+		);
+	}, [] );
+
 	const [ blocks, setBlocks ] = useState< BlockInstance[] >( [] );
 
 	return (
@@ -44,6 +50,7 @@ export const BlockPlayground: FunctionComponent = () => {
 					</WritingFlow>
 				</BlockEditorProvider>
 			</div>
+			<pre>{ serialize( blocks ) }</pre>
 		</Main>
 	);
 };

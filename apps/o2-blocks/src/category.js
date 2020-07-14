@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { getCategories, setCategories } from '@wordpress/blocks';
 
 setCategories( [

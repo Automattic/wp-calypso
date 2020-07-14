@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { Path, SVG } from '@wordpress/components';
 
 export default (

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
 import { map, unescape } from 'lodash';
