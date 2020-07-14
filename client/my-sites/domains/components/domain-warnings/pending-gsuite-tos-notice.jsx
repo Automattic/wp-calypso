@@ -130,43 +130,19 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 			/>
 		);
 
-		if ( users.length === 1 ) {
-			return (
-				<>
-					<p>
-						{ translate(
-							'Your email {{strong}}%(email)s{{/strong}} is almost ready! Complete the setup to activate your new email address.',
-							{
-								args: {
-									email: emails,
-									comment: '%(email)s will be an email address',
-								},
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
-					{ button }
-				</>
-			);
-		}
-
 		return (
 			<>
 				<p>
 					{ translate(
-						'Your emails {{strong}}%(emails)s{{/strong}} are almost ready! Complete the setup to activate your new email addresses.',
+						'Your mailbox {{strong}}%(emails)s{{/strong}} is almost ready! Complete the setup to activate your new email address.',
+						'Your mailboxes {{strong}}%(emails)s{{/strong}} are almost ready! Complete the setup to activate your new email addresses.',
 						{
-							args: {
-								emails: emails,
-							},
+							count: users.length,
+							args: { emails },
 							comment:
 								'%(emails)s will be a list of email addresses separated by a comma, ' +
 								'e.g. test@example.com, test2@example.com',
-							components: {
-								strong: <strong />,
-							},
+							components: { strong },
 						}
 					) }
 				</p>
