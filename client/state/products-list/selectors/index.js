@@ -21,23 +21,7 @@ export { isProductsListFetching } from './is-products-list-fetching';
 export { getProductsList } from './get-products-list';
 export { getAvailableProductsList } from './get-available-products-list';
 export { getProductBySlug } from './get-product-by-slug';
-
-/**
- * Returns the display price of the specified product.
- *
- * @param {object} state - global state tree
- * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
- * @returns {?string} the display price formatted in the user's currency (eg 'A$29.00'), or null otherwise
- */
-export function getProductDisplayCost( state, productSlug ) {
-	const product = getProductBySlug( state, productSlug );
-
-	if ( ! product ) {
-		return null;
-	}
-
-	return product.cost_display;
-}
+export { getProductDisplayCost } from './get-product-display-cost';
 
 /**
  * Returns the price of the specified product.
