@@ -20,8 +20,19 @@ import { combineReducers, withoutPersistence } from 'state/utils';
 export const fetchingSettings = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
 		case USER_SETTINGS_REQUEST:
+			return true;
+		case USER_SETTINGS_SAVE:
+		case USER_SETTINGS_UPDATE:
+			return false;
+	}
+	return state;
+} );
+
+export const savingSettings = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
 		case USER_SETTINGS_SAVE:
 			return true;
+		case USER_SETTINGS_REQUEST:
 		case USER_SETTINGS_UPDATE:
 			return false;
 	}
@@ -57,6 +68,7 @@ export const unsavedSettings = ( state = {}, action ) => {
 
 export default combineReducers( {
 	fetchingSettings,
+	savingSettings,
 	settings,
 	unsavedSettings,
 } );
