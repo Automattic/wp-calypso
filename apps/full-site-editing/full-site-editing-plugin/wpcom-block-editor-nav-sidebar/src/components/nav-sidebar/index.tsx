@@ -199,7 +199,7 @@ function useNavItems(): Post[] {
 
 		const items =
 			select( 'core' ).getEntityRecords( 'postType', currentPostType, {
-				_fields: 'id,slug,status,title',
+				_fields: 'id,status,title',
 				exclude: [ currentPostId ],
 				orderby: 'modified',
 				per_page: 10,
