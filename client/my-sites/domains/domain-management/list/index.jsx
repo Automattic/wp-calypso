@@ -530,9 +530,11 @@ export class List extends React.Component {
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
 				} ) }
-				disabled={ this.state.settingPrimaryDomain }
+				disabled={ this.state.settingPrimaryDomain || this.state.changePrimaryDomainModeEnabled }
+				enableSelection={ this.state.changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
 				selectionIndex={ index }
 				onMakePrimaryClick={ this.handleUpdatePrimaryDomain }
+				onSelect={ this.handleUpdatePrimaryDomain }
 			/>
 		) );
 

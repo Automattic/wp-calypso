@@ -13,6 +13,7 @@ import classNames from 'classnames';
  */
 import { Button, CompactCard } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormRadio from 'components/forms/form-radio';
 import DomainNotice from 'my-sites/domains/domain-management/components/domain-notice';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -38,10 +39,12 @@ class DomainItem extends PureComponent {
 		showCheckbox: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
 		onMakePrimaryClick: PropTypes.func,
+		onSelect: PropTypes.func,
 		onToggle: PropTypes.func,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
+		enableSelection: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -53,8 +56,12 @@ class DomainItem extends PureComponent {
 		isBusy: false,
 	};
 
-	handleClick = () => {
-		this.props.onClick( this.props.domainDetails );
+	handleClick = ( e ) => {
+		if ( this.props.enableSelection ) {
+			this.onSelect( e );
+		} else {
+			this.props.onClick( this.props.domainDetails );
+		}
 	};
 
 	stopPropagation = ( event ) => {
@@ -91,6 +98,12 @@ class DomainItem extends PureComponent {
 		if ( onMakePrimaryClick ) {
 			onMakePrimaryClick( selectionIndex, domainDetails );
 		}
+	};
+
+	onSelect = ( event ) => {
+		const { domainDetails, selectionIndex, onSelect } = this.props;
+		event.stopPropagation();
+		onSelect( selectionIndex, domainDetails );
 	};
 
 	canRenewDomain() {
@@ -296,7 +309,7 @@ class DomainItem extends PureComponent {
 	}
 
 	render() {
-		const { domain, domainDetails, isManagingAllSites, showCheckbox } = this.props;
+		const { domain, domainDetails, isManagingAllSites, showCheckbox, enableSelection } = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
@@ -312,6 +325,9 @@ class DomainItem extends PureComponent {
 						onChange={ this.onToggle }
 						onClick={ this.stopPropagation }
 					/>
+				) }
+				{ enableSelection && (
+					<FormRadio className="domain-item__checkbox" onClick={ this.onSelect } />
 				) }
 				<div className="list__domain-link">
 					<div className="domain-item__status">
