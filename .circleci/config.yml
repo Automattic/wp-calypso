@@ -278,19 +278,11 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run: sudo apt-get install gettext
-      - run:
-          name: Checkout wp-babel-makepot
-          command: git clone --depth 1 https://github.com/Automattic/wp-babel-makepot.git
-      - run:
-          name: Build wp-babel-makepot
-          working_directory: wp-babel-makepot
-          command: npm ci
       - run: *setup-results-and-artifacts
       - run:
           name: Extract strings
           working_directory: wp-babel-makepot
-          command: npm start "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" -- --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso" --output "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
+          command: npx https://github.com/Automattic/wp-babel-makepot "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" -- --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso" --output "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
       - run:
           name: Build New Strings .pot
           when: always
