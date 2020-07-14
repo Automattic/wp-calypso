@@ -20,6 +20,7 @@ import {
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
+	MEDIA_SET_NEXT_PAGE_HANDLE,
 	MEDIA_SOURCE_CHANGE,
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
@@ -477,6 +478,17 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 			return {
 				...state,
 				[ siteId ]: omit( state[ siteId ], [ `items[${ mediaId }]` ] ),
+			};
+		}
+
+		case MEDIA_SET_NEXT_PAGE_HANDLE: {
+			const { siteId, mediaRequestMeta } = action;
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, state[ siteId ], {
+					nextPageHandle: mediaRequestMeta?.next_page ?? null,
+				} ),
 			};
 		}
 	}
