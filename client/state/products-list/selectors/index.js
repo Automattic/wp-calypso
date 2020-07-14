@@ -12,13 +12,12 @@ import { getPlanRawPrice } from 'state/plans/selectors';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
 
+import { getProductsList } from './get-products-list';
+
 import 'state/products-list/init';
 
 export { isProductsListFetching } from './is-products-list-fetching';
-
-export function getProductsList( state ) {
-	return state.productsList.items;
-}
+export { getProductsList } from './get-products-list';
 
 export function getAvailableProductsList( state ) {
 	return pickBy( state.productsList.items, ( product ) => product.available );
