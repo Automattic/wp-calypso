@@ -1,5 +1,6 @@
 @import '~@automattic/calypso-color-schemes';
 @import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/fonts';
 
 .domain-picker__empty-state {
 	display: flex;
@@ -164,8 +165,15 @@
 
 .domain-picker__suggestion-item-name {
 	flex-grow: 1;
-	margin-right: 24px;
 	letter-spacing: 0.4px;
+
+	.domain-picker__suggestion-item:not( .is-free ) & {
+		margin-right: 0;
+
+		@include break-mobile {
+			margin-right: 24px;
+		}
+	}
 
 	.domain-picker__domain-name {
 		word-break: break-word; // use hyphens if any to break domain name
