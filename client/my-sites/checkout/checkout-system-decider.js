@@ -5,7 +5,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import wp from 'lib/wp';
-import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { CheckoutErrorBoundary, defaultRegistry } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import cookie from 'cookie';
 
@@ -23,6 +23,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
 import { abtest } from 'lib/abtest';
+import { initGoogleRecaptcha } from 'lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -124,6 +125,20 @@ export default function CheckoutSystemDecider( {
 	}
 
 	if ( 'composite-checkout' === checkoutVariant ) {
+		isLoggedOutCart &&
+			initGoogleRecaptcha(
+				'g-recaptcha',
+				'calypso/signup/pageLoad',
+				config( 'google_recaptcha_site_key' )
+			).then( ( result ) => {
+				if ( ! result ) {
+					return;
+				}
+
+				const { dispatch } = defaultRegistry;
+				dispatch( 'wpcom' ).setRecaptchaClientId( result.clientId );
+			} );
+
 		let siteSlug = selectedSite?.slug;
 
 		if ( ! siteSlug ) {
@@ -131,27 +146,30 @@ export default function CheckoutSystemDecider( {
 		}
 
 		return (
-			<CheckoutErrorBoundary
-				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-				onError={ logCheckoutError }
-			>
-				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-					<CompositeCheckout
-						siteSlug={ siteSlug }
-						siteId={ selectedSite?.ID }
-						product={ product }
-						purchaseId={ purchaseId }
-						couponCode={ couponCode }
-						redirectTo={ redirectTo }
-						feature={ selectedFeature }
-						plan={ plan }
-						cart={ cart }
-						isWhiteGloveOffer={ isWhiteGloveOffer }
-						isComingFromUpsell={ isComingFromUpsell }
-						isLoggedOutCart={ isLoggedOutCart }
-					/>
-				</StripeHookProvider>
-			</CheckoutErrorBoundary>
+			<>
+				<CheckoutErrorBoundary
+					errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+					onError={ logCheckoutError }
+				>
+					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+						<CompositeCheckout
+							siteSlug={ siteSlug }
+							siteId={ selectedSite?.ID }
+							product={ product }
+							purchaseId={ purchaseId }
+							couponCode={ couponCode }
+							redirectTo={ redirectTo }
+							feature={ selectedFeature }
+							plan={ plan }
+							cart={ cart }
+							isWhiteGloveOffer={ isWhiteGloveOffer }
+							isComingFromUpsell={ isComingFromUpsell }
+							isLoggedOutCart={ isLoggedOutCart }
+						/>
+					</StripeHookProvider>
+				</CheckoutErrorBoundary>
+				<div id="g-recaptcha"></div>
+			</>
 		);
 	}
 

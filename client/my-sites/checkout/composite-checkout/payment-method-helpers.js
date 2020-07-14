@@ -21,6 +21,7 @@ import {
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { getSavedVariations } from 'lib/abtest';
 import { stringifyBody } from 'state/login/utils';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
@@ -235,15 +236,36 @@ async function createAccountCallback( response ) {
 	}
 }
 
-async function createAccount( email ) {
+async function createAccount( select ) {
 	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+
+	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
+	const emailValue = email.value;
+	const recaptchaClientId = select( 'wpcom' )?.getRecaptchaClientId();
+	const isRecaptchaLoaded = typeof recaptchaClientId === 'number';
+
+	let recaptchaToken = undefined;
+	let recaptchaError = undefined;
+
+	if ( isRecaptchaLoaded ) {
+		recaptchaToken = await recordGoogleRecaptchaAction(
+			recaptchaClientId,
+			'calypso/signup/formSubmit'
+		);
+
+		if ( ! recaptchaToken ) {
+			recaptchaError = 'recaptcha_failed';
+		}
+	} else {
+		recaptchaError = 'recaptcha_didnt_load';
+	}
 
 	try {
 		const response = await wp.undocumented().createUserAndSite(
 			{
-				email,
-				'g-recaptcha-error': undefined,
-				'g-recaptcha-response': undefined,
+				email: emailValue,
+				'g-recaptcha-error': recaptchaError,
+				'g-recaptcha-response': recaptchaToken || undefined,
 				is_passwordless: true,
 				signup_flow_name: 'onboarding-new',
 				validate: false,
@@ -274,35 +296,30 @@ function getErrorMessage( { error, message } ) {
 
 export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	if ( isLoggedOutCart ) {
-		let response;
 		const { select, dispatch } = defaultRegistry;
-		const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
-		const emailValue = email.value;
 
-		try {
-			response = await createAccount( emailValue );
-		} catch ( err ) {
-			throw err;
-		}
+		return createAccount( select ).then( ( response ) => {
+			const siteIdFromResponse = get( response, 'blog_details.blogid', undefined );
+			const siteSlugFromResponse = get( response, 'blog_details.site_slug', undefined );
 
-		const siteIdFromResponse = get( response, 'blog_details.blogid', undefined );
-		const siteSlugFromResponse = get( response, 'blog_details.site_slug', undefined );
+			siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
+			siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
 
-		siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
-		siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
+			// If the account is already created(as happens when we are reprocessing after a transaction error), then
+			// the create account response will not have a site ID, so we fetch from state.
+			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
+			const newPayLoad = {
+				...payload,
+				cart: {
+					...payload.cart,
+					blog_id: siteId || '0',
+					cart_key: siteId || 'no-site',
+					create_new_blog: siteId ? false : true,
+				},
+			};
 
-		const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
-		const newPayLoad = {
-			...payload,
-			cart: {
-				...payload.cart,
-				blog_id: siteId || '0',
-				cart_key: siteId || 'no-site',
-				create_new_blog: siteId ? false : true,
-			},
-		};
-
-		return wp.undocumented().transactions( newPayLoad || payload );
+			return wp.undocumented().transactions( newPayLoad || payload );
+		} );
 	}
 
 	return wp.undocumented().transactions( payload );
@@ -310,10 +327,12 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 
 export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
 	if ( isLoggedOutCart ) {
-		return createAccount().then( ( response ) => {
+		const { select, dispatch } = defaultRegistry;
+
+		return createAccount( select ).then( ( response ) => {
 			const siteId = get( response, 'blog_details.blogid', undefined );
 			const siteSlug = get( response, 'blog_details.site_slug', undefined );
-			const { dispatch } = defaultRegistry;
+
 			siteId && dispatch( 'wpcom' ).setSiteId( siteId );
 			siteSlug && dispatch( 'wpcom' ).setSiteSlug( siteSlug );
 
