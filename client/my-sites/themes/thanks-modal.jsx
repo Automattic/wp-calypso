@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
+import InlineSupportLink from 'components/inline-support-link';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
 import {
@@ -26,9 +27,8 @@ import {
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestSite } from 'state/sites/actions';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import { setSelectedEditor } from 'state/selected-editor/actions';
+import { requestSite } from 'state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customize-homepage-with-gutenberg';
 import getSiteUrl from 'state/selectors/get-site-url';
@@ -110,26 +110,13 @@ class ThanksModal extends Component {
 		page( this.props.detailsUrl );
 	};
 
-	primaryAction = () => {
-		const {
-			activateGutenberg,
-			customizeUrl,
-			isGutenbergTheme,
-			isUsingClassicEditor,
-			shouldEditHomepageWithGutenberg,
-			siteId,
-		} = this.props;
+	goToCustomizer = () => {
+		const { customizeUrl, shouldEditHomepageWithGutenberg } = this.props;
 
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
 
-		if ( isUsingClassicEditor && isGutenbergTheme ) {
-			activateGutenberg( siteId, customizeUrl );
-		} else {
-			shouldEditHomepageWithGutenberg
-				? page( customizeUrl )
-				: window.open( customizeUrl, '_blank' );
-		}
+		shouldEditHomepageWithGutenberg ? page( customizeUrl ) : window.open( customizeUrl, '_blank' );
 	};
 
 	renderThemeInfo = () => {
@@ -173,7 +160,7 @@ class ThanksModal extends Component {
 	renderContent = () => {
 		const { name: themeName, author: themeAuthor } = this.props.currentTheme;
 		const { isUsingClassicEditor, isGutenbergTheme } = this.props;
-		const shouldSwitchEditors = isUsingClassicEditor && isGutenbergTheme;
+		const promptSwitchingEditors = isUsingClassicEditor && isGutenbergTheme;
 
 		return (
 			<div>
@@ -181,7 +168,7 @@ class ThanksModal extends Component {
 					{ translate( 'Thanks for choosing {{br/}} %(themeName)s', {
 						args: { themeName },
 						components: {
-							br: shouldSwitchEditors ? null : <br />,
+							br: promptSwitchingEditors ? null : <br />,
 						},
 					} ) }
 				</h1>
@@ -190,10 +177,23 @@ class ThanksModal extends Component {
 						args: { themeAuthor },
 					} ) }
 				</span>
-				{ shouldSwitchEditors && (
-					<p className="thanks-modal__gutenberg-warning">
+				{ promptSwitchingEditors && (
+					<p className="thanks-modal__gutenberg-prompt">
 						{ translate(
-							'This theme is intended to work with the Block Editor, so we recommend activating that first.'
+							'This theme is intended to work with the Block Editor, so we recommend activating that first. ' +
+								'{{supportLink/}}.',
+							{
+								components: {
+									supportLink: (
+										<InlineSupportLink
+											supportPostId={ 167510 }
+											supportLink="https://wordpress.com/support/replacing-the-older-wordpress-com-editor-with-the-wordpress-block-editor/"
+											showIcon={ false }
+											text={ translate( 'Learn more' ) }
+										/>
+									),
+								},
+							}
 						) }
 					</p>
 				) }
@@ -210,15 +210,12 @@ class ThanksModal extends Component {
 	};
 
 	getEditSiteLabel = () => {
-		const { isUsingClassicEditor, shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
 		if ( ! hasActivated ) {
 			return translate( 'Activating theme…' );
 		}
 
-		const gutenbergContent = isUsingClassicEditor
-			? translate( 'Activate the Block Editor and edit homepage' )
-			: translate( 'Edit homepage' );
-
+		const gutenbergContent = translate( 'Edit homepage' );
 		const customizerContent = (
 			<>
 				<Gridicon icon="external" />
@@ -265,7 +262,7 @@ class ThanksModal extends Component {
 				label: this.getEditSiteLabel(),
 				isPrimary: true,
 				disabled: ! hasActivated,
-				onClick: this.primaryAction,
+				onClick: this.goToCustomizer,
 			},
 		];
 	};
@@ -306,15 +303,13 @@ export default connect(
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
+			isUsingClassicEditor: getSelectedEditor( state, siteId ) === 'classic',
 			isGutenbergTheme: isThemeGutenbergFirst( state, currentThemeId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
-			isUsingClassicEditor: getSelectedEditor( state, siteId ) === 'classic',
 		};
 	},
 	( dispatch ) => {
 		return {
-			activateGutenberg: ( siteId, customizeUrl ) =>
-				dispatch( setSelectedEditor( siteId, 'gutenberg', customizeUrl ) ),
 			clearActivated: ( siteId ) => dispatch( clearActivated( siteId ) ),
 			refreshSite: ( siteId ) => dispatch( requestSite( siteId ) ),
 		};
