@@ -87,7 +87,6 @@ class SecurityAccountEmail extends React.Component {
 						<AccountSettingsEmailAddress
 							emailValidationListener={ this.setEmailValidationState }
 							errorNotice={ this.props.errorNotice }
-							//focusHandler={ this.getFocusHandler( 'Email Address Field' ) }
 							isSubmitting={ this.isSubmitting }
 							successNotice={ this.props.successNotice }
 						/>

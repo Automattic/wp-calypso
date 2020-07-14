@@ -62,7 +62,7 @@ class AccountSettingsEmailAddress extends React.Component {
 		if ( props.userSettings ) {
 			return props.userSettings.getSetting( 'user_email' );
 		}
-		if ( props.unsavedUserSettings && props.unsavedUserSettings.user_email ) {
+		if ( props.unsavedUserSettings && typeof props.unsavedUserSettings.user_email === 'string' ) {
 			return props.unsavedUserSettings.user_email;
 		}
 		return props.originalEmailAddress;
