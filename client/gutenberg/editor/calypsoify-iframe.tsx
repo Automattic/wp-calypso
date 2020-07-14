@@ -30,6 +30,7 @@ import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
@@ -734,7 +735,7 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( inEditorDeprecationGroup( state ) ) {
+	if ( inEditorDeprecationGroup( state ) && 'classic' === getSelectedEditor( state, siteId ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
