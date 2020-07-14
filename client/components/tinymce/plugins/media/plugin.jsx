@@ -31,7 +31,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
 import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
-import { fetchMediaItem, clearMediaItemDirtyStatus } from 'state/media/thunks';
+import { fetchMediaItem } from 'state/media/thunks';
 
 /**
  * Module variables
@@ -386,8 +386,6 @@ function mediaButton( editor ) {
 		// After editing an image, we need to update them in a post/page. If we updated all instances
 		// of the edited image, we dispatch an action which marks the image media object not dirty.
 		if ( lastDirtyImage && lastDirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
-			dispatch( clearMediaItemDirtyStatus( selectedSite.ID, lastDirtyImage.ID ) );
-
 			// We also need to reset the counter of post/page images to update so if another image is
 			// edited and marked dirty, we can set the counter to correct number.
 			numOfImagesToUpdate = null;
