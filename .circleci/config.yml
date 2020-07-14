@@ -929,6 +929,7 @@ workflows:
           test-target: 'WOO'
           slack-webhook: '$SLACK_WOO'
   wp-desktop:
+    unless: << pipeline.git.tag >>
     jobs:
       - wp-desktop-source:
           filters:
