@@ -122,6 +122,13 @@ const devdocs = {
 		next();
 	},
 
+	blockPlayground: function ( context, next ) {
+		context.primary = (
+			<AsyncLoad require="./block-playground" component={ context.params.component } />
+		);
+		next();
+	},
+
 	typography: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad component={ context.params.component } require="./design/typography" />
