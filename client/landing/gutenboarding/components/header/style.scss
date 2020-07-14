@@ -51,7 +51,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 	}
 }
 
-.gutenboarding__header-site-language {
+.gutenboarding__header-language-section {
 	margin-right: 15px;
 }
 
@@ -71,7 +71,8 @@ $padding--gutenboarding__header: $grid-unit-10;
 
 	&--compact {
 		.gutenboarding__header-domain-section,
-		.gutenboarding__header-plan-section {
+		.gutenboarding__header-plan-section,
+		.gutenboarding__header-language-section {
 			visibility: hidden;
 		}
 	}

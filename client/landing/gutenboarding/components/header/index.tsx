@@ -43,6 +43,7 @@ const Header: React.FunctionComponent = () => {
 		'DomainsModal',
 		'Plans',
 		'PlansModal',
+		'LanguageModal',
 		'CreateSite',
 	].includes( currentStep );
 
@@ -52,7 +53,7 @@ const Header: React.FunctionComponent = () => {
 	const changeLocaleButton = () => {
 		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
 			return (
-				<div className="gutenboarding__header-section-item gutenboarding__header-site-language">
+				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
 					<Link to={ Step.LanguageModal }>
 						<span>{ __( 'Site Language' ) } </span>
 						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>

@@ -17,9 +17,12 @@ import {
 	LANGUAGE_GROUPS,
 	DEFAULT_LANGUAGE_GROUP,
 } from '../../../../components/language-picker/constants';
+
 /**
  * Style dependencies
  */
+import './style.scss';
+
 const LanguageStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const [ filter, setFilter ] = React.useState< string >( DEFAULT_LANGUAGE_GROUP );
@@ -58,13 +61,11 @@ const LanguageStep: React.FunctionComponent = () => {
 				setFilter( languageGroup.id );
 			};
 			return (
-				<Button
-					key={ languageGroup.id }
-					className={ isSelected ? 'selected' : '' }
-					onClick={ onClick }
-				>
-					{ languageGroup.name( __ ) }
-				</Button>
+				<div key={ languageGroup.id }>
+					<Button onClick={ onClick } className={ 'language__language-group' }>
+						<span className={ isSelected ? 'selected' : '' }>{ languageGroup.name( __ ) }</span>
+					</Button>
+				</div>
 			);
 		} );
 	};
@@ -73,10 +74,14 @@ const LanguageStep: React.FunctionComponent = () => {
 		<ChangeLocaleContextConsumer>
 			{ ( changeLocale ) => (
 				<div className="gutenboarding-page language">
-					<div>
+					<div className="language__heading">
 						<Title>{ __( 'Select your site language' ) }</Title>
+						<ActionButtons>
+							<BackButton onClick={ goBack } />
+						</ActionButtons>
 					</div>
-					<div>
+					<div className="language__regions-label">{ __( 'regions' ) }</div>
+					<div className="language__page-content">
 						<div className="language__category-filters">{ renderCategoryButtons() }</div>
 						<div className="language__language-buttons">
 							{ getFilteredLanguages().map( ( language: Language ) => (
@@ -94,10 +99,6 @@ const LanguageStep: React.FunctionComponent = () => {
 							) ) }
 						</div>
 					</div>
-
-					<ActionButtons>
-						<BackButton onClick={ goBack } />
-					</ActionButtons>
 				</div>
 			) }
 		</ChangeLocaleContextConsumer>
