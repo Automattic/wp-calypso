@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import { get, max } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getPlanRawPrice } from 'state/plans/selectors';
 import { getTermDuration } from 'lib/plans/constants';
 
 import { getProductsList } from './get-products-list';
-import { getPlanPrice } from './get-plan-price';
 import { planSlugToPlanProduct } from './plan-slug-to-plan-product';
+import { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';
 
 import 'state/products-list/init';
 
@@ -23,36 +22,7 @@ export { getProductDisplayCost } from './get-product-display-cost';
 export { getProductCost } from './get-product-cost';
 export { getPlanPrice } from './get-plan-price';
 export { planSlugToPlanProduct } from './plan-slug-to-plan-product';
-
-/**
- * Computes a full and monthly price for a given plan, based on it's slug/constant
- *
- * @param {object} state Current redux state
- * @param {number} siteId Site ID to consider
- * @param {object} planObject Plan object returned by getPlan() from lib/plans
- * @param {number} credits The number of free credits in cart
- * @param {object} couponDiscounts Absolute values of any discounts coming from a discount coupon
- * @returns {object} Object with a full and monthly price
- */
-export const computeFullAndMonthlyPricesForPlan = (
-	state,
-	siteId,
-	planObject,
-	credits,
-	couponDiscounts
-) => {
-	const couponDiscount = couponDiscounts[ planObject.getProductId() ] || 0;
-
-	return {
-		priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
-		priceFull: getPlanPrice( state, siteId, planObject, false ),
-		priceFinal: max( [
-			getPlanPrice( state, siteId, planObject, false ) - credits - couponDiscount,
-			0,
-		] ),
-		priceMonthly: getPlanPrice( state, siteId, planObject, true ),
-	};
-};
+export { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';
 
 /**
  * Turns a list of plan slugs into a list of plan objects, corresponding
