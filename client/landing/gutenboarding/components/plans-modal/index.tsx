@@ -7,6 +7,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import PlansGrid from '@automattic/plans-grid';
+import { Title, SubTitle, ActionButtons } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -14,8 +15,6 @@ import PlansGrid from '@automattic/plans-grid';
 import { PLANS_STORE } from '../../stores/plans';
 import { useTrackModal } from '../../hooks/use-track-modal';
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
-import ActionButtons from '../action-buttons';
-import { Title, SubTitle } from '../titles';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 /**

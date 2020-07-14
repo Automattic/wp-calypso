@@ -4,13 +4,14 @@
 import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import type { Plans, DomainSuggestions } from '@automattic/data-stores';
+import { Title } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
-import { Title } from '../titles';
 import PlansTable from '../plans-table';
 import PlansDetails from '../plans-details';
+
 /**
  * Style dependencies
  */

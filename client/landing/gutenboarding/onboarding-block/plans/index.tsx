@@ -7,6 +7,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import PlansGrid from '@automattic/plans-grid';
 import type { Plans } from '@automattic/data-stores';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -16,8 +17,6 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
-import ActionButtons, { BackButton } from '../../components/action-buttons';
-import { Title, SubTitle } from '../../components/titles';
 import { Step, usePath } from '../../path';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 

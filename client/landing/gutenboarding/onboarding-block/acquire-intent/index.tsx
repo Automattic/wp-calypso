@@ -4,6 +4,7 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { NextButton, SkipButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -19,7 +20,6 @@ import { recordSiteTitleSkip } from '../../lib/analytics';
  * Style dependencies
  */
 import './style.scss';
-import { NextButton, SkipButton } from 'landing/gutenboarding/components/action-buttons';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { getSelectedSiteTitle } = useSelect( ( select ) => select( STORE_KEY ) );

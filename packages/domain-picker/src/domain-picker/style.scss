@@ -1,5 +1,5 @@
-@import '../styles/placeholder.scss'; // Contains the placeholder mixin
-@import '../styles/mixins';
+@import '~@automattic/calypso-color-schemes';
+@import '~@automattic/onboarding/styles/mixins';
 
 .domain-picker__empty-state {
 	display: flex;
@@ -75,7 +75,7 @@
 }
 
 .domain-picker__suggestion-item {
-	@include domain-picker-package-medium-text;
+	@include onboarding-medium-text;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -160,7 +160,7 @@
 	}
 
 	&.placeholder {
-		@include placeholder();
+		@include onboarding-placeholder();
 		max-width: 30%;
 		margin-right: auto; // position the placeholder to the left overriding justify-content: space-between
 	}
@@ -207,7 +207,7 @@
 	}
 
 	&.placeholder {
-		@include placeholder();
+		@include onboarding-placeholder();
 		min-width: 64px;
 	}
 }

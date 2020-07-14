@@ -9,7 +9,7 @@
 
 	@include break-small {
 		// Full height comes from viewport heigh - header - some space for the preview's box-shadow (20px)
-		height: calc( 100vh - #{$gutenboarding-header-height + 20px} );
+		height: calc( 100vh - #{$onboarding-header-height + 20px} );
 	}
 }
 
@@ -57,7 +57,7 @@
 }
 
 .style-preview__content {
-	padding-bottom: $gutenboarding-footer-height + 28px;
+	padding-bottom: $onboarding-footer-height + 28px;
 	display: flex; // needed for IE
 
 	@include break-small {

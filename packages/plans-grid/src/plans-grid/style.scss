@@ -1,6 +1,23 @@
-@import '../base-styles.scss';
-@import '../mixins.scss';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
 @import '../variables.scss';
+
+@mixin plans-grid-edge2edge-padding {
+	padding-left: $onboarding-block-margin-mobile;
+	padding-right: $onboarding-block-margin-mobile;
+
+	@include break-small {
+		padding-left: $onboarding-block-margin-small;
+		padding-right: $onboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		padding-left: $onboarding-block-margin-medium;
+		padding-right: $onboarding-block-margin-medium;
+	}
+}
 
 .plans-grid {
 	// Space to accomadate sticky footer
@@ -12,7 +29,6 @@
 }
 
 .plans-grid__header {
-	// @TODO: replace with a generic component
 	@include onboarding-heading-padding;
 	display: flex;
 	justify-content: space-between;

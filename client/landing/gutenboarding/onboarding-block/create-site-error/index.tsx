@@ -13,7 +13,7 @@ import { useI18n } from '@automattic/react-i18n';
 import Link from '../../components/link';
 import { localizeUrl } from 'lib/i18n-utils';
 import { SITE_STORE } from '../../stores/site';
-import { Title, SubTitle } from '../../components/titles';
+import { Title, SubTitle } from '@automattic/onboarding';
 
 /**
  * Style dependencies
