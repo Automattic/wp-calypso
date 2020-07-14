@@ -7,9 +7,9 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import isFetchingNextPage from 'state/selectors/is-fetching-next-page';
-import MediaListStore from 'lib/media/list-store';
 import { dispatchFluxFetchMediaItems } from 'state/media/utils/flux-adapter';
 import { requestMedia } from 'state/media/actions';
+import getNextPageQuery from 'state/selectors/get-next-page-query';
 
 const debug = debugFactory( 'calypso:media' );
 
@@ -30,7 +30,7 @@ export const fetchNextMediaPage = ( siteId ) => ( dispatch, getState ) => {
 	 */
 	dispatchFluxFetchMediaItems( siteId );
 
-	const query = MediaListStore.getNextPageQuery( siteId );
+	const query = getNextPageQuery( getState(), siteId );
 
 	debug( 'Fetching media for %d using query %o', siteId, query );
 
