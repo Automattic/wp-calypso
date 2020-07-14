@@ -49,7 +49,6 @@ import { unseenCount as notificationsUnseenCount } from './notifications';
 import npsSurvey from './nps-survey/reducer';
 import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
-import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
 import postTypes from './post-types/reducer';
@@ -115,7 +114,6 @@ const reducers = {
 	npsSurvey,
 	orderTransactions,
 	pageTemplates,
-	plans,
 	plugins,
 	postFormats,
 	postTypes,
