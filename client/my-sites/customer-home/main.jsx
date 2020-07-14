@@ -29,7 +29,6 @@ import { getHomeLayout } from 'state/selectors/get-home-layout';
 import Primary from 'my-sites/customer-home/locations/primary';
 import Secondary from 'my-sites/customer-home/locations/secondary';
 import Tertiary from 'my-sites/customer-home/locations/tertiary';
-import Experiment, { LoadingVariations, DefaultVariation, Variation } from 'components/experiment';
 
 /**
  * Style dependencies
@@ -80,16 +79,7 @@ const Home = ( {
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			{ siteId && <QueryHomeLayout siteId={ siteId } isDev={ isDev } forcedView={ forcedView } /> }
 			<SidebarNavigation />
-			<Experiment name="user_home_test">
-				<LoadingVariations>
-					{ /* Normally, we'd load variations before this page could be visible. However, we'll just pretend
-					     we did that so users have an unchanged experience.
-					   */ }
-					{ header }
-				</LoadingVariations>
-				<DefaultVariation name="control">{ header }</DefaultVariation>
-				<Variation name="treatment">{ header }</Variation>
-			</Experiment>
+			{ header }
 			{ layout ? (
 				<>
 					<Primary cards={ layout.primary } />
