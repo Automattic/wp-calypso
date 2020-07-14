@@ -32,7 +32,12 @@ class SimplePaymentsView extends Component {
 			<div className="wpview-content wpview-type-simple-payments">
 				<QuerySimplePayments siteId={ siteId } productId={ productId } />
 				<QuerySitePlans siteId={ siteId } />
-				{ product && <QueryMedia siteId={ siteId } mediaId={ product.featuredImageId } /> }
+				{ product && (
+					<QueryMedia
+						siteId={ siteId }
+						mediaId={ product.featuredImageId === '' ? 0 : parseInt( product.featuredImageId ) }
+					/>
+				) }
 				{ this.renderContent() }
 			</div>
 		);
