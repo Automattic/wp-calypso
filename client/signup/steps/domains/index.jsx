@@ -686,6 +686,12 @@ class DomainsStep extends React.Component {
 			}
 		}
 
+		// Use a generic back action when landing directly on domain.
+		if ( 'domain' === flowName ) {
+			backUrl = 'javascript:history.back()';
+			backLabelText = translate( 'Back' );
+		}
+
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 		const showSkip = isDomainStepSkippable( flowName );
