@@ -37,6 +37,7 @@ import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
+import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 
@@ -86,6 +87,10 @@ class CurrentPlan extends Component {
 
 		if ( startsWith( product, 'jetpack_scan' ) ) {
 			return <ScanProductThankYou />;
+		}
+
+		if ( startsWith( product, 'jetpack_anti_spam' ) ) {
+			return <AntiSpamProductThankYou />;
 		}
 
 		if ( startsWith( product, 'jetpack_search' ) ) {
