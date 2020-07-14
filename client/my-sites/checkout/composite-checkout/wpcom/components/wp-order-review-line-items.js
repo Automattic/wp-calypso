@@ -19,7 +19,6 @@ import { useTranslate } from 'i18n-calypso';
 import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
-import { isBusinessPlan } from 'lib/plans';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -39,7 +38,6 @@ function WPLineItem( {
 	getItemVariants,
 	onChangePlanLength,
 	isSummary,
-	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -57,11 +55,7 @@ function WPLineItem( {
 	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
 
 	const productSlug = item.wpcom_meta?.product_slug;
-	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
-	const productName =
-		isBusinessPlanProduct && isWhiteGloveOffer
-			? `${ item.label } (with Expert guidance)`
-			: item.label;
+	const productName = item.label;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -143,7 +137,6 @@ WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummary: PropTypes.bool,
-	isWhiteGloveOffer: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
@@ -298,7 +291,6 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	isWhiteGloveOffer,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -319,7 +311,6 @@ export function WPOrderReviewLineItems( {
 								getItemVariants={ getItemVariants }
 								onChangePlanLength={ onChangePlanLength }
 								isSummary={ isSummary }
-								isWhiteGloveOffer={ isWhiteGloveOffer }
 							/>
 						</WPOrderReviewListItem>
 					);

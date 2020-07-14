@@ -129,7 +129,6 @@ export default function CheckoutSystemDecider( {
 						feature={ selectedFeature }
 						plan={ plan }
 						cart={ cart }
-						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isComingFromUpsell={ isComingFromUpsell }
 					/>
 				</StripeHookProvider>
