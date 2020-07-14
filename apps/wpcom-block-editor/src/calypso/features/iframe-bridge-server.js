@@ -749,7 +749,6 @@ function getGutenboardingStatus( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getNavSidebarLabels( calypsoPort ) {
-	let allPostsLabels = null;
 	let createPostLabels = null;
 
 	const { port1, port2 } = new MessageChannel();
@@ -761,15 +760,8 @@ function getNavSidebarLabels( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		allPostsLabels = data.allPostsLabels;
 		createPostLabels = data.createPostLabels;
 	};
-
-	addFilter(
-		'a8c.WpcomBlockEditorNavSidebar.allPostsLabel',
-		'wpcom-block-editor/getNavSidebarLabels',
-		( label, postType ) => ( allPostsLabels && allPostsLabels[ postType ] ) || label
-	);
 
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.createPostLabel',
@@ -800,22 +792,6 @@ function getCalypsoUrlInfo( calypsoPort ) {
 		origin = data.origin;
 		siteSlug = data.siteSlug;
 	};
-
-	addFilter(
-		'a8c.WpcomBlockEditorNavSidebar.allPostsUrl',
-		'wpcom-block-editor/getSiteSlug',
-		( url, postType ) => {
-			if ( origin && siteSlug ) {
-				if ( postType === 'page' ) {
-					return `${ origin }/pages/${ siteSlug }`;
-				} else if ( postType === 'post' ) {
-					return `${ origin }/posts/${ siteSlug }`;
-				}
-			}
-
-			return url;
-		}
-	);
 
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.createPostUrl',

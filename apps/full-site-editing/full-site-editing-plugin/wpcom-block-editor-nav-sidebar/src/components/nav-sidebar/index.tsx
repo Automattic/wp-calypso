@@ -22,7 +22,6 @@ import { compose } from '@wordpress/compose';
  */
 import { STORE_KEY } from '../../constants';
 import CreatePage from '../create-page';
-import ViewAllPosts from '../view-all-posts';
 import NavItem from '../nav-item';
 import { Post } from '../../types';
 import './style.scss';
@@ -161,7 +160,6 @@ function WpcomBlockEditorNavSidebar() {
 				</ul>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons">
 					<CreatePage postType={ postType } />
-					<ViewAllPosts postType={ postType } />
 				</div>
 			</div>
 		</IsolatedEventContainer>
