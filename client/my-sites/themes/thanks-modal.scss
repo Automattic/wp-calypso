@@ -48,9 +48,15 @@
 		+ span {
 			display: block;
 			text-align: center;
-			color: var( --color-neutral-20 );
+			color: var( --color-text-subtle );
 			margin-top: 0.3em;
 		}
+	}
+
+	.thanks-modal__gutenberg-prompt {
+		color: var( --color-text-subtle );
+		font-size: 14px;
+		margin-top: 12px;
 	}
 
 	ul {
