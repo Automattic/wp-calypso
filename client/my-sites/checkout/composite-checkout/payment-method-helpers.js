@@ -235,12 +235,7 @@ async function createAccountCallback( response ) {
 	}
 }
 
-async function createAccount() {
-	// TODO: Fetch email from store
-	const email =
-		document.getElementById( 'contact-signup-email' )?.value ||
-		document.getElementById( 'email' ).value;
-
+async function createAccount( email ) {
 	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
 
 	try {
@@ -280,16 +275,18 @@ function getErrorMessage( { error, message } ) {
 export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	if ( isLoggedOutCart ) {
 		let response;
+		const { select, dispatch } = defaultRegistry;
+		const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
+		const emailValue = email.value;
 
 		try {
-			response = await createAccount();
+			response = await createAccount( emailValue );
 		} catch ( err ) {
 			throw err;
 		}
 
 		const siteIdFromResponse = get( response, 'blog_details.blogid', undefined );
 		const siteSlugFromResponse = get( response, 'blog_details.site_slug', undefined );
-		const { select, dispatch } = defaultRegistry;
 
 		siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
 		siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
@@ -327,6 +324,7 @@ export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
 					...payload.cart,
 					blog_id: siteId || '0',
 					cart_key: siteId || 'no-site',
+					create_new_blog: siteId ? false : true,
 				},
 			};
 
