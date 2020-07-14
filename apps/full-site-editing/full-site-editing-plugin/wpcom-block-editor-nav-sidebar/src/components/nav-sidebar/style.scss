@@ -41,6 +41,7 @@ $transition-period: 200ms;
 	background: $black;
 	display: flex;
 	flex-direction: column;
+	box-shadow: -5px 0 20px $black;
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-out;
 	@include reduce-motion( 'animation' );
 
