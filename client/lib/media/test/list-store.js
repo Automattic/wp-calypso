@@ -84,9 +84,7 @@ describe( 'MediaListStore', () => {
 					type: 'RECEIVE_MEDIA_ITEMS',
 					siteId: DUMMY_SITE_ID,
 					data: DUMMY_MEDIA_RESPONSE,
-					query: MediaListStore.getNextPageQuery(
-						action && action.siteId ? action.siteId : DUMMY_SITE_ID
-					),
+					query: {},
 				},
 				action
 			),
@@ -199,53 +197,6 @@ describe( 'MediaListStore', () => {
 			dispatchReceiveMediaItems( { data: { media: [] } } );
 
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.eql( [] );
-		} );
-	} );
-
-	describe( '#getNextPageQuery()', () => {
-		test( 'should include default parameters if no query provided', () => {
-			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql(
-				MediaListStore.DEFAULT_QUERY
-			);
-		} );
-
-		test( 'should include page_handle if the previous response included next_page meta', () => {
-			dispatchReceiveMediaItems();
-
-			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( {
-				number: MediaListStore.DEFAULT_QUERY.number,
-				page_handle: DUMMY_MEDIA_RESPONSE.meta.next_page,
-			} );
-		} );
-
-		test( 'should preserve the query from the previous request', () => {
-			const query = { mime_type: 'audio/' };
-			dispatchSetQuery( { query: query } );
-			dispatchFetchMedia();
-			dispatchReceiveMediaItems();
-
-			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql(
-				assign(
-					{
-						number: MediaListStore.DEFAULT_QUERY.number,
-						page_handle: DUMMY_MEDIA_RESPONSE.meta.next_page,
-					},
-					query
-				)
-			);
-		} );
-
-		test( 'should reset the page handle when the query changes', () => {
-			const query = { mime_type: 'audio/' };
-			dispatchReceiveMediaItems();
-			dispatchSetQuery( { query: query } );
-
-			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql(
-				assign( {}, query, {
-					number: MediaListStore.DEFAULT_QUERY.number,
-					page_handle: undefined,
-				} )
-			);
 		} );
 	} );
 
