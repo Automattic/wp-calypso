@@ -4,9 +4,9 @@ const path = require( 'path' );
 const { notarize } = require( 'electron-notarize' );
 
 const APP_ID = 'com.automattic.wordpress';
-const NOTARIZATION_ASC_PROVIDER = 'AutomatticInc';
 const NOTARIZATION_ID = process.env.WPDESKTOP_NOTARIZATION_ID;
 const NOTARIZATION_PWD = process.env.WPDESKTOP_NOTARIZATION_PWD;
+const NOTARIZATION_ASC_PROVIDER = process.env.APPLE_DEVELOPER_SHORT_NAME;
 
 const circleTag = process.env.CIRCLE_TAG;
 const shouldNotarize =
