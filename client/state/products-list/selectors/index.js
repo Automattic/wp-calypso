@@ -14,9 +14,7 @@ import { getTermDuration } from 'lib/plans/constants';
 
 import 'state/products-list/init';
 
-export function isProductsListFetching( state ) {
-	return state.productsList.isFetching;
-}
+export { isProductsListFetching } from './is-products-list-fetching';
 
 export function getProductsList( state ) {
 	return state.productsList.items;
