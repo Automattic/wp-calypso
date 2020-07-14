@@ -5,6 +5,7 @@
 import { assign, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import passToChildren from 'lib/react-pass-to-children';
 import utils from './utils';
+import { fetchNextMediaPage } from 'state/media/thunks';
 
 function getStateData( siteId ) {
 	return {
@@ -22,7 +24,7 @@ function getStateData( siteId ) {
 	};
 }
 
-export default class extends React.Component {
+export class MediaListData extends React.Component {
 	static displayName = 'MediaListData';
 
 	static propTypes = {
@@ -87,7 +89,7 @@ export default class extends React.Component {
 	};
 
 	fetchData = () => {
-		MediaActions.fetchNextPage( this.props.siteId );
+		this.props.fetchNextMediaPage( this.props.siteId );
 	};
 
 	updateStateData = () => {
@@ -103,3 +105,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default connect( null, { fetchNextMediaPage } )( MediaListData );
