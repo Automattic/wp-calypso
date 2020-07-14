@@ -21,6 +21,7 @@ import {
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
+	MEDIA_SET_NEXT_PAGE_HANDLE,
 	MEDIA_SOURCE_CHANGE,
 	MEDIA_ITEM_UPDATE,
 	MEDIA_ITEM_EDIT,
@@ -292,5 +293,20 @@ export function setMediaLibrarySelectedItems( siteId, media ) {
 		type: MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 		media,
 		siteId,
+	};
+}
+
+/**
+ * Returns an action object used in signallying that a new next page handle
+ * needs to be set based on the metadata from a media request.
+ *
+ * @param {number} siteId Site ID
+ * @param {object} mediaRequestMeta The `meta` object from a media request data
+ */
+export function setNextPageHandle( siteId, mediaRequestMeta ) {
+	return {
+		type: MEDIA_SET_NEXT_PAGE_HANDLE,
+		siteId,
+		mediaRequestMeta,
 	};
 }
