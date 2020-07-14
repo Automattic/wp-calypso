@@ -136,10 +136,8 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		subtotal: subtotalItem,
 		credits: credits_integer > 0 ? creditsLineItem : null,
 		allowedPaymentMethods: allowed_payment_methods
-			.filter( ( slug ) => {
-				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
-			} ) // TODO: stop returning this from the server
 			.map( readWPCOMPaymentMethodClass )
+			.filter( Boolean )
 			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
 			.filter( Boolean ),
 		couponCode: coupon,
