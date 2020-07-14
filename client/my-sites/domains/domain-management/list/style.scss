@@ -122,7 +122,7 @@
 	}
 }
 
-.domain-management-list-item__upsell {
+.domain-management-list-item__upsell, .domain-item__upsell {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -357,6 +357,10 @@ input[type='radio'].domain-management-list-item__radio {
 
 	.domain-item__busy-message {
 		font-size: $font-body-small;
+		margin-left: auto;
+	}
+
+	.domain-item__upsell {
 		margin-left: auto;
 	}
 }

@@ -25,6 +25,7 @@ import { resolveDomainStatus } from 'lib/domains';
 import InfoPopover from 'components/info-popover';
 import { emailManagement } from 'my-sites/email/paths';
 import Spinner from 'components/spinner';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -41,6 +42,8 @@ class DomainItem extends PureComponent {
 		onMakePrimaryClick: PropTypes.func,
 		onSelect: PropTypes.func,
 		onToggle: PropTypes.func,
+		onUpgradeClick: PropTypes.func,
+		shouldUpgradeToMakePrimary: PropTypes.boolean,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
@@ -114,6 +117,20 @@ class DomainItem extends PureComponent {
 			domainDetails.currentUserCanManage &&
 			[ domainTypes.WPCOM, domainTypes.TRANSFER ].indexOf( domainDetails.type ) === -1 &&
 			! domainDetails.bundledPlanSubscriptionId
+		);
+	}
+
+	upgradeToMakePrimary() {
+		const { translate } = this.props;
+
+		return (
+			<div className="domain-item__upsell">
+				<span>{ translate( 'Upgrade to a paid plan to make this your primary domain' ) }</span>
+				<Button primary onClick={ this.props.onUpgradeClick }>
+					{ translate( 'Upgrade' ) }
+				</Button>
+				<TrackComponentView eventName="calypso_domain_management_list_change_primary_upgrade_impression" />
+			</div>
 		);
 	}
 
@@ -296,11 +313,21 @@ class DomainItem extends PureComponent {
 	}
 
 	renderOverlay() {
-		if ( this.props.isBusy ) {
+		const { enableSelection, isBusy, shouldUpgradeToMakePrimary } = this.props;
+		if ( isBusy ) {
 			return (
 				<div className="domain-item__overlay">
 					{ this.busyMessage() }
 					<Spinner className="domain-item__spinner" size={ 20 } />
+				</div>
+			);
+		}
+
+		if ( enableSelection && shouldUpgradeToMakePrimary ) {
+			return (
+				// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+				<div className="domain-item__overlay" onClick={ this.stopPropagation }>
+					{ this.upgradeToMakePrimary() }
 				</div>
 			);
 		}
