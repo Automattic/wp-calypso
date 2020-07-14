@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-
 import { pickBy, get, max } from 'lodash';
 
 /**
  * Internal dependencies
  */
-
 import { abtest } from 'lib/abtest';
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
+
+import 'state/products-list/init';
 
 export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
