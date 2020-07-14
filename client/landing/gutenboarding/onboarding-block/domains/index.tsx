@@ -7,7 +7,14 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import DomainPicker from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
-import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import {
+	Title,
+	SubTitle,
+	ActionButtons,
+	BackButton,
+	NextButton,
+	SkipButton,
+} from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -64,7 +71,6 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
 		setDomain( suggestion );
-		handleNext();
 	};
 
 	const header = (
@@ -75,6 +81,12 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			</div>
 			<ActionButtons>
 				<BackButton onClick={ handleBack } />
+				{ ! isModal &&
+					( domain ? (
+						<NextButton onClick={ handleNext } />
+					) : (
+						<SkipButton onClick={ handleNext } />
+					) ) }
 			</ActionButtons>
 		</div>
 	);

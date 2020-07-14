@@ -14,8 +14,8 @@ export default class DomainsPage extends AsyncBaseContainer {
 		super( driver, By.css( '.domains' ) );
 	}
 
-	async clickFreeSuggestionItem() {
-		const freeSuggestionItemSelector = By.css( '.domain-picker__suggestion-item.is-free' );
-		return await driverHelper.clickWhenClickable( this.driver, freeSuggestionItemSelector );
+	async skipStep() {
+		const skipButtonSelector = By.css( '.action-buttons__skip' );
+		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
 	}
 }

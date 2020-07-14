@@ -179,42 +179,19 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					) }
 					<div className="domain-picker__suggestion-sections">
 						<div className="domain-picker__suggestion-item-group">
-							<p className="domain-picker__suggestion-group-label">{ __( 'Sub-domain' ) }</p>
-							{ domainSuggestions?.[ 0 ] ? (
+							{ domainSuggestions?.map( ( suggestion, i ) => (
 								<SuggestionItem
-									key={ domainSuggestions[ 0 ].domain_name }
-									suggestion={ domainSuggestions[ 0 ] }
-									railcarId={ baseRailcarId ? `${ baseRailcarId }1` : undefined }
+									key={ suggestion.domain_name }
+									suggestion={ suggestion }
+									railcarId={ baseRailcarId ? `${ baseRailcarId }${ i }` : undefined }
+									isRecommended={ i === 1 }
 									onRender={ () =>
-										handleItemRender( domainSuggestions[ 0 ], `${ baseRailcarId }1`, 0, false )
+										handleItemRender( suggestion, `${ baseRailcarId }${ i }`, i, i === 1 )
 									}
-									selected={ currentDomain === domainSuggestions[ 0 ].domain_name }
+									selected={ currentDomain === suggestion.domain_name }
 									onSelect={ onDomainSelect }
 								/>
-							) : (
-								<SuggestionItemPlaceholder />
-							) }
-						</div>
-						<div className="domain-picker__suggestion-item-group">
-							{ ! domainSuggestions ||
-							( domainSuggestions?.length && domainSuggestions?.length > 1 ) ? (
-								<p className="domain-picker__suggestion-group-label">{ __( 'Custom domains' ) }</p>
-							) : null }
-							{ domainSuggestions
-								?.slice( 1 )
-								.map( ( suggestion, i ) => (
-									<SuggestionItem
-										key={ suggestion.domain_name }
-										suggestion={ suggestion }
-										railcarId={ baseRailcarId ? `${ baseRailcarId }${ i }` : undefined }
-										isRecommended={ i === 0 }
-										onRender={ () =>
-											handleItemRender( suggestion, `${ baseRailcarId }${ i }`, i, i === 0 )
-										}
-										selected={ currentDomain === suggestion.domain_name }
-										onSelect={ onDomainSelect }
-									/>
-								) ) ?? times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+							) ) ?? times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 						</div>
 
 						{ ! isExpanded &&
