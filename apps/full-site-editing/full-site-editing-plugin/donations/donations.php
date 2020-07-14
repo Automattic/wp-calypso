@@ -58,7 +58,7 @@ function fse_donations_block() {
 			'script'    => 'a8c-donations',
 			'render_callback' => function( $attributes, $content ) {
 				global $wp;
-				$button_url = add_query_arg(
+				$button_url_once = add_query_arg(
 					array(
 						'blog'     => esc_attr( get_blog_id() ),
 						'plan'     => esc_attr( $attributes[ 'oneTimePlanId' ] ), //TODO: also render other plans
@@ -70,9 +70,35 @@ function fse_donations_block() {
 					),
 					'https://subscribe.wordpress.com/memberships/'
 				);
+				$button_url_monthly = add_query_arg(
+					array(
+						'blog'     => esc_attr( get_blog_id() ),
+						'plan'     => esc_attr( $attributes[ 'monthlyPlanId' ] ), //TODO: also render other plans
+						'lang'     => esc_attr( get_locale() ),
+						'pid'      => esc_attr( get_the_ID() ), // Needed for analytics purposes.
+						'redirect' => esc_attr( rawurlencode( home_url( $wp->request ) ) ), // Needed for redirect back in case of redirect-based flow.
+						'amount'   => esc_attr( 11.11 ),
+						//'customAmount' => esc_attr( true ),
+					),
+					'https://subscribe.wordpress.com/memberships/'
+				);
+				$button_url_yearly = add_query_arg(
+					array(
+						'blog'     => esc_attr( get_blog_id() ),
+						'plan'     => esc_attr( $attributes[ 'annuallyPlanId' ] ), //TODO: also render other plans
+						'lang'     => esc_attr( get_locale() ),
+						'pid'      => esc_attr( get_the_ID() ), // Needed for analytics purposes.
+						'redirect' => esc_attr( rawurlencode( home_url( $wp->request ) ) ), // Needed for redirect back in case of redirect-based flow.
+						'amount'   => esc_attr( 22.22 ),
+						'customAmount' => esc_attr( true ),
+					),
+					'https://subscribe.wordpress.com/memberships/'
+				);
 				return sprintf(
-					'<div class="wp-block-a8c-donations"><a role="button" href="%1$s">Donation Placeholder</a></div>',
-					$button_url
+					'<div class="wp-block-a8c-donations"><a role="button" href="%1$s">Donation Once Placeholder</a><a role="button" href="%2$s">Donation Monthly Placeholder</a><a role="button" href="%3$s">Donation Yearly Placeholder</a></div>',
+					$button_url_once,
+					$button_url_monthly,
+					$button_url_yearly
 				);
 			},
 		)
