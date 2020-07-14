@@ -525,7 +525,7 @@ export class List extends React.Component {
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
-				onClick={ this.goToEditDomainRoot }
+				onClick={ this.state.settingPrimaryDomain ? noop : this.goToEditDomainRoot }
 				isBusy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
