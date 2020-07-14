@@ -149,10 +149,10 @@ export default {
 		countryCodeTargets: [ 'US' ],
 	},
 	showBusinessPlanBump: {
-		datestamp: '20200619',
+		datestamp: '20300619',
 		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
+			variantShowPlanBump: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
