@@ -269,20 +269,48 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 			},
 			{}
 		);
+		const translationsByRef = Object.keys( translationsFlatten ).reduce( ( acc, key ) => {
+			const originalRef = translationsFlatten[ key ].comments.reference;
+
+			if ( ! originalRef ) {
+				return acc;
+			}
+
+			const refs = originalRef.split( '\n' ).map( ( ref ) => ref.replace( /:\d+/, '' ) );
+
+			refs.forEach( ( ref ) => {
+				if ( typeof acc[ ref ] === 'undefined' ) {
+					acc[ ref ] = [];
+				}
+
+				acc[ ref ].push( key );
+			} );
+			return acc;
+		}, {} );
 
 		const languageRevisionsHashes = {};
 
 		languagesPaths.map( ( { chunksMapPath, publicPath } ) => {
 			const chunksMap = require( path.join( '..', chunksMapPath ) );
+
 			const chunks = _.mapValues( chunksMap, ( modules ) => {
-				return _.chain( translationsFlatten )
-					.pickBy( ( { comments } ) =>
-						modules.some( ( module ) => {
-							return ( comments.reference || '' ).includes( getModuleRefenrece( module ) );
-						} )
-					)
-					.keys()
-					.value();
+				const strings = new Set();
+
+				modules.forEach( ( modulePath ) => {
+					modulePath = getModuleRefenrece( modulePath );
+					const key = /\.\w+/.test( modulePath )
+						? modulePath
+						: Object.keys( translationsByRef ).find( ( ref ) => ref.indexOf( modulePath ) === 0 );
+
+					if ( ! key ) {
+						return;
+					}
+
+					const stringsFromModule = translationsByRef[ key ] || [];
+					stringsFromModule.forEach( ( string ) => strings.add( string ) );
+				} );
+
+				return [ ...strings ];
 			} );
 
 			downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
