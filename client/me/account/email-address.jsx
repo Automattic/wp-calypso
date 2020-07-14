@@ -180,17 +180,17 @@ class AccountSettingsEmailAddress extends React.Component {
 	renderEmailValidation() {
 		const { translate, unsavedUserSettings, userSettings } = this.props;
 
-		let unsaved_email;
+		let unsavedEmail;
 		if ( userSettings ) {
 			if ( ! userSettings.isSettingUnsaved( 'user_email' ) ) {
 				return null;
 			}
-			unsaved_email = userSettings.getSetting( 'user_email' );
+			unsavedEmail = userSettings.getSetting( 'user_email' );
 		} else {
 			if ( ! unsavedUserSettings || typeof unsavedUserSettings.user_email !== 'string' ) {
 				return null;
 			}
-			unsaved_email = unsavedUserSettings.user_email;
+			unsavedEmail = unsavedUserSettings.user_email;
 		}
 
 		if ( ! this.state.emailValidationError ) {
@@ -205,7 +205,7 @@ class AccountSettingsEmailAddress extends React.Component {
 			case 'invalid':
 			default:
 				notice = translate( '%(email)s is not a valid email address.', {
-					args: { email: unsaved_email },
+					args: { email: unsavedEmail },
 				} );
 				break;
 		}
