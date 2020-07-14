@@ -6,13 +6,12 @@ import { get, max } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { getPlanRawPrice } from 'state/plans/selectors';
-import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
 
 import { getProductsList } from './get-products-list';
 import { getPlanPrice } from './get-plan-price';
+import { planSlugToPlanProduct } from './plan-slug-to-plan-product';
 
 import 'state/products-list/init';
 
@@ -23,23 +22,7 @@ export { getProductBySlug } from './get-product-by-slug';
 export { getProductDisplayCost } from './get-product-display-cost';
 export { getProductCost } from './get-product-cost';
 export { getPlanPrice } from './get-plan-price';
-
-/**
- * Computes a plan object and a related product object based on plan slug/constant
- *
- * @param {Array[]} products A list of products
- * @param {string} planSlug Plan constant/slug
- * @returns {object} Object with a related plan and product objects
- */
-export const planSlugToPlanProduct = ( products, planSlug ) => {
-	const plan = getPlan( planSlug );
-	const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
-	return {
-		planSlug,
-		plan: planConstantObj,
-		product: products[ planSlug ],
-	};
-};
+export { planSlugToPlanProduct } from './plan-slug-to-plan-product';
 
 /**
  * Computes a full and monthly price for a given plan, based on it's slug/constant
