@@ -27,6 +27,9 @@
 
 .wpcom-block-editor-nav-item__title {
 	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	&.is-untitled {
 		font-style: italic;
@@ -40,4 +43,5 @@
 	border-radius: $radius-round-rectangle;
 	background: $dark-gray-500;
 	font-weight: 600;
+	margin-left: 4px;
 }
