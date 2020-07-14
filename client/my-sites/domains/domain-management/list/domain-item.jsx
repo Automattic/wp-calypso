@@ -120,6 +120,17 @@ class DomainItem extends PureComponent {
 		);
 	}
 
+	canSetAsPrimary() {
+		const { domainDetails, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
+		return (
+			! isManagingAllSites &&
+			domainDetails &&
+			domainDetails.canSetAsPrimary &&
+			! domainDetails.isPrimary &&
+			! shouldUpgradeToMakePrimary
+		);
+	}
+
 	upgradeToMakePrimary() {
 		const { translate } = this.props;
 
@@ -174,7 +185,7 @@ class DomainItem extends PureComponent {
 	}
 
 	renderOptionsButton() {
-		const { disabled, domainDetails, isBusy, isManagingAllSites, translate } = this.props;
+		const { disabled, isBusy, translate } = this.props;
 
 		return (
 			<div className="list__domain-options">
@@ -183,7 +194,7 @@ class DomainItem extends PureComponent {
 					onClick={ this.stopPropagation }
 					toggleTitle={ translate( 'Options' ) }
 				>
-					{ ! isManagingAllSites && ! domainDetails.isPrimary && (
+					{ this.canSetAsPrimary() && (
 						<PopoverMenuItem icon="domains" onClick={ this.makePrimary }>
 							{ translate( 'Make primary domain' ) }
 						</PopoverMenuItem>
