@@ -126,7 +126,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				siteSlug={ this.props.siteSlug }
 				user={ users[ 0 ] }
 				isCompact={ false }
-				cta={ translate( 'Finish setup' ) }
+				cta={ translate( 'Finish Setup' ) }
 			/>
 		);
 
