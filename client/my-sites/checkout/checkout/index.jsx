@@ -313,18 +313,17 @@ export class Checkout extends React.Component {
 		if ( startsWith( product, 'concierge-session' ) ) {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
-
+		// Search product
 		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
-			if ( isPrivate ) {
-				cartItem = null;
-			}
+			cartItem = null;
+			// is site JP
 			if ( isJetpackNotAtomic ) {
 				cartItem = product.includes( 'monthly' )
 					? jetpackProductItem( PRODUCT_JETPACK_SEARCH_MONTHLY )
 					: jetpackProductItem( PRODUCT_JETPACK_SEARCH );
 			}
-
-			if (
+			// is site WPCOM
+			else if (
 				config.isEnabled( 'jetpack/wpcom-search-product' ) &&
 				! isJetpackNotAtomic &&
 				! isPrivate
@@ -332,10 +331,10 @@ export class Checkout extends React.Component {
 				cartItem = product.includes( 'monthly' )
 					? jetpackProductItem( PRODUCT_WPCOM_SEARCH_MONTHLY )
 					: jetpackProductItem( PRODUCT_WPCOM_SEARCH );
-			} else {
-				cartItem = ! isJetpackNotAtomic || ! isPrivate ? null : cartItem;
 			}
-		} else if ( JETPACK_PRODUCTS_LIST.includes( product ) && isJetpackNotAtomic ) {
+		}
+		// non-Search product
+		else if ( JETPACK_PRODUCTS_LIST.includes( product ) && isJetpackNotAtomic ) {
 			cartItem = jetpackProductItem( product );
 		}
 
