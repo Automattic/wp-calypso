@@ -13,7 +13,6 @@ import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
 
 import { getProductsList } from './get-products-list';
-import { getProductBySlug } from './get-product-by-slug';
 
 import 'state/products-list/init';
 
@@ -22,23 +21,7 @@ export { getProductsList } from './get-products-list';
 export { getAvailableProductsList } from './get-available-products-list';
 export { getProductBySlug } from './get-product-by-slug';
 export { getProductDisplayCost } from './get-product-display-cost';
-
-/**
- * Returns the price of the specified product.
- *
- * @param {object} state - global state tree
- * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
- * @returns {?number} the price formatted in the user's currency (e.g. '29.15'), or null otherwise
- */
-export function getProductCost( state, productSlug ) {
-	const product = getProductBySlug( state, productSlug );
-
-	if ( ! product ) {
-		return null;
-	}
-
-	return product.cost;
-}
+export { getProductCost } from './get-product-cost';
 
 /**
  * Computes a price based on plan slug/constant, including any discounts available.
