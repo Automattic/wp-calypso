@@ -7,12 +7,12 @@ import { get, max } from 'lodash';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
 
 import { getProductsList } from './get-products-list';
+import { getPlanPrice } from './get-plan-price';
 
 import 'state/products-list/init';
 
@@ -22,22 +22,7 @@ export { getAvailableProductsList } from './get-available-products-list';
 export { getProductBySlug } from './get-product-by-slug';
 export { getProductDisplayCost } from './get-product-display-cost';
 export { getProductCost } from './get-product-cost';
-
-/**
- * Computes a price based on plan slug/constant, including any discounts available.
- *
- * @param {object} state Current redux state
- * @param {number} siteId Site ID to consider
- * @param {object} planObject Plan object returned by getPlan() from lib/plans
- * @param {boolean} isMonthly Flag - should return a monthly price?
- * @returns {number} Requested price
- */
-export const getPlanPrice = ( state, siteId, planObject, isMonthly ) => {
-	return (
-		getPlanDiscountedRawPrice( state, siteId, planObject.getStoreSlug(), { isMonthly } ) ||
-		getPlanRawPrice( state, planObject.getProductId(), isMonthly )
-	);
-};
+export { getPlanPrice } from './get-plan-price';
 
 /**
  * Computes a plan object and a related product object based on plan slug/constant
