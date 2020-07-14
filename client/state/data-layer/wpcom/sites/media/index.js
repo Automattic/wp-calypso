@@ -90,7 +90,8 @@ export function requestMedia( action ) {
 
 	const { siteId, query } = action;
 
-	const path = query.source ? `/meta/external-media/${ query.source }` : `/sites/${ siteId }/media`;
+	const path =
+		query && query.source ? `/meta/external-media/${ query.source }` : `/sites/${ siteId }/media`;
 
 	return [
 		http(
