@@ -15,6 +15,7 @@ import {
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
+	setNextPageHandle,
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'state/media/actions';
@@ -23,15 +24,18 @@ describe( 'media request', () => {
 	test( 'should dispatch SUCCESS action when request completes', () => {
 		const dispatch = jest.fn();
 
+		const meta = Symbol( 'media request meta' );
+
 		requestMediaSuccess(
 			{ siteId: 2916284, query: 'a=b' },
-			{ media: { ID: 10, title: 'media title' }, found: true }
+			{ media: { ID: 10, title: 'media title' }, found: true, meta }
 		)( dispatch );
 
 		expect( dispatch ).toHaveBeenCalledWith( successMediaRequest( 2916284, 'a=b' ) );
 		expect( dispatch ).toHaveBeenCalledWith(
 			receiveMedia( 2916284, { ID: 10, title: 'media title' }, true, 'a=b' )
 		);
+		expect( dispatch ).toHaveBeenCalledWith( setNextPageHandle( 2916284, meta ) );
 	} );
 
 	test( 'should dispatch FAILURE action when request fails', () => {
