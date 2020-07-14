@@ -8,6 +8,7 @@ import isNil from 'lodash/isNil';
  */
 import getTransientMediaItem from 'state/selectors/get-transient-media-item';
 import getMediaItemServerIdFromTransientId from 'state/selectors/get-media-item-server-id-from-transient-id';
+import getMediaQueryManager from 'state/selectors/get-media-query-manager';
 
 /**
  * Returns a media object by site ID, media ID, or null if not known.
@@ -31,13 +32,13 @@ export default function getMediaItem( state, siteId, mediaId ) {
 	// be a server ID rather than a transient ID
 	const serverId = getMediaItemServerIdFromTransientId( state, siteId, mediaId ) ?? mediaId;
 
-	const queries = state.media.queries[ siteId ];
+	const queryManager = getMediaQueryManager( state, siteId );
 
-	if ( ! queries ) {
+	if ( ! queryManager ) {
 		return null;
 	}
 
-	const media = queries.getItem( serverId ) || null;
+	const media = queryManager.getItem( serverId ) || null;
 	if ( media === null ) {
 		return null;
 	}
