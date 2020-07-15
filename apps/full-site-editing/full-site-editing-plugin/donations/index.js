@@ -81,7 +81,7 @@ const settings = {
 			default: __( 'Donate yearly', 'full-site-editing' ),
 		},
 	},
-	category: 'common',
+	category: 'widgets',
 	icon: (
 		<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path

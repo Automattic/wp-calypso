@@ -28,5 +28,5 @@ addFilter(
 
 registerBlockType( blockName, {
 	...settings,
-	category: 'layout',
+	category: 'widgets',
 } );

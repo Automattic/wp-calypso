@@ -11,6 +11,7 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies
  */
 import edit from './edit';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 import './style.scss';
 import './site-logo';
 
@@ -20,7 +21,7 @@ if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 		__experimentalDisplayName: 'label',
 		description: __( 'Display a Template Part.', 'full-site-editing' ),
 		icon: 'layout',
-		category: 'layout',
+		category: getCategoryWithFallbacks( 'design', 'layout' ),
 		attributes: {
 			templateId: { type: 'number' },
 			className: { type: 'string' },

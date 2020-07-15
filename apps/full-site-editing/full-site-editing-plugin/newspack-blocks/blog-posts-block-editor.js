@@ -31,7 +31,7 @@ addFilter(
 registerBlockType( blockName, {
 	...settings,
 	title: __( 'Blog Posts', 'full-site-editing' ),
-	category: 'layout',
+	category: 'widgets',
 } );
 
 registerQueryStore( blockName );
