@@ -156,7 +156,7 @@ function premium_content_current_visitor_can_access( $attributes, $block ) {
 		$selected_plan_id = (int) $attributes['selectedPlanId'];
 	}
 
-	if ( isset( $block->context['premium-content/planId'] ) ) {
+	if ( isset( $block ) && isset( $block->context['premium-content/planId'] ) ) {
 		$selected_plan_id = (int) $block->context['premium-content/planId'];
 	}
 
@@ -217,7 +217,7 @@ function premium_content_container_render( $attributes, $content ) {
  *
  * @return string Content to render.
  */
-function premium_content_block_logged_out_view_render( $attributes, $content, $block ) {
+function premium_content_block_logged_out_view_render( $attributes, $content, $block = null ) {
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
@@ -246,7 +246,7 @@ function premium_content_block_logged_out_view_render( $attributes, $content, $b
  *
  * @return string Final content to render.
  */
-function premium_content_block_subscriber_view_render( $attributes, $content, $block ) {
+function premium_content_block_subscriber_view_render( $attributes, $content, $block = null ) {
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
