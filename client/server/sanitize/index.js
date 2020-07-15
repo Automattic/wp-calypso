@@ -47,7 +47,7 @@ function jsSlashEncoder( charStr ) {
  * @returns {string} JSON serialized string
  **/
 exports.jsonStringifyForHtml = function ( value ) {
-	const jsonInHtmlFilter = /[^\x22,\-.0-9:A-Z[\x5C]_a-z{}]/g;
+	const jsonInHtmlFilter = /[^\x22,\-.0-9:A-Z[\x5C\]_a-z{}]/g;
 	const cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
 	return (
 		JSON.stringify( value )
