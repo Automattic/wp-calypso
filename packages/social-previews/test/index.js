@@ -12,7 +12,36 @@ describe( 'Facebook previews', () => {
 		expect( Facebook ).not.toBe( undefined );
 	} );
 
-	it( 'should render image only when provided', () => {
+	it( 'should display a (hard) truncated title', () => {
+		const wrapper = shallow(
+			<Facebook title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
+		);
+
+		const titleEl = wrapper.find( '.facebook-preview__title' );
+		expect( titleEl.exists() ).toBeTruthy();
+		expect( titleEl.text() ).toEqual(
+			"I am the very model of a modern Major-General, I've information vegetable, anima…"
+		);
+		const titleTextNoEllipsis = titleEl.text().replace( '…', '' );
+		expect( titleTextNoEllipsis ).toHaveLength( 80 );
+	} );
+
+	it( 'should display a (hard) truncated description', () => {
+		const wrapper = shallow(
+			<Facebook description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+		);
+
+		const descEl = wrapper.find( '.facebook-preview__description' );
+		expect( descEl.exists() ).toBeTruthy();
+		expect( descEl.text() ).toEqual(
+			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
+		);
+
+		const descTextNoEllipsis = descEl.text().replace( '…', '' );
+		expect( descTextNoEllipsis ).toHaveLength( 200 );
+	} );
+
+	it( 'should display image only when provided', () => {
 		const wrapperNoImage = shallow( <Facebook /> );
 		const wrapperWithImage = shallow( <Facebook image={ DUMMY_IMAGE_SRC } /> );
 
