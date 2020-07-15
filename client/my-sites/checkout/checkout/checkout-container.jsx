@@ -87,6 +87,7 @@ class CheckoutContainer extends React.Component {
 			isGutenboardingCreate,
 			isWhiteGloveOffer,
 			isComingFromUpsell,
+			infoMessage,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -125,6 +126,7 @@ class CheckoutContainer extends React.Component {
 							returnToBlockEditor={ isGutenboardingCreate }
 							returnToHome={ isComingFromGutenboarding }
 							isWhiteGloveOffer={ isWhiteGloveOffer }
+							infoMessage={ infoMessage }
 						>
 							{ this.props.children }
 						</Checkout>

@@ -2,11 +2,25 @@
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { FEATURE_SPAM_AKISMET_PLUS } from 'lib/plans/constants';
+import {
+	FEATURE_SPAM_AKISMET_PLUS,
+	JETPACK_PLANS,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+} from 'lib/plans/constants';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	JETPACK_ANTI_SPAM_PRODUCTS,
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 } from 'lib/products-values/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import isSiteWPCOM from 'state/selectors/is-site-wpcom';
@@ -62,5 +76,49 @@ export default function isProductConflictingWithSite(
 		case PRODUCT_JETPACK_ANTI_SPAM_MONTHLY:
 			return isAntiSpamConflicting( state, siteId );
 	}
+	return null;
+}
+
+export function isPlanIncludingSiteBackup(
+	state: AppState,
+	siteId: number | null,
+	productSlug: string
+): boolean | null {
+	// TODO: use createSelector
+	// value_bundle
+
+	if ( ! siteId || ! JETPACK_PLANS.includes( productSlug ) ) {
+		return null;
+	}
+
+	const hasDailyBackup = hasSiteProduct( state, siteId, [
+		PRODUCT_JETPACK_BACKUP_DAILY,
+		PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	] );
+	const hasRealTimeBackup = hasSiteProduct( state, siteId, [
+		PRODUCT_JETPACK_BACKUP_REALTIME,
+		PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	] );
+
+	if ( ! hasDailyBackup && ! hasRealTimeBackup ) {
+		return false;
+	}
+
+	switch ( productSlug ) {
+		case PLAN_JETPACK_FREE:
+			return false;
+		case PLAN_JETPACK_PERSONAL:
+		case PLAN_JETPACK_PERSONAL_MONTHLY:
+		case PLAN_JETPACK_PREMIUM:
+		case PLAN_JETPACK_PREMIUM_MONTHLY:
+			if ( hasRealTimeBackup ) {
+				return false;
+			}
+			return true;
+		case PLAN_JETPACK_BUSINESS:
+		case PLAN_JETPACK_BUSINESS_MONTHLY:
+			return true;
+	}
+
 	return null;
 }

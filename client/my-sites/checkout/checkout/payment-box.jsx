@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
+import Notice from 'components/notice';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import { recordTracksEvent } from 'lib/analytics/tracks';
@@ -176,6 +177,7 @@ export class PaymentBox extends PureComponent {
 					},
 			  } )
 			: this.props.translate( 'Loading…' );
+		const infoMessage = this.props.infoMessage;
 
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
@@ -185,6 +187,11 @@ export class PaymentBox extends PureComponent {
 
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
+						{ infoMessage && (
+							<Notice status="is-info" showDismiss={ false }>
+								{ this.props.infoMessage }
+							</Notice>
+						) }
 						<div className={ contentClass }>{ this.props.children }</div>
 					</div>
 				</Card>

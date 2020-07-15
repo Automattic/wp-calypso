@@ -318,6 +318,7 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="credit-card"
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
 				<QueryPaymentCountries />
@@ -346,6 +347,7 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="credit-card"
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
 				<QueryPaymentCountries />
@@ -373,6 +375,7 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="paypal"
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
 				<QueryPaymentCountries />
@@ -398,6 +401,7 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ paymentType }
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
 				<QueryPaymentCountries />
@@ -424,6 +428,7 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ 'wechat' }
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
 				<QueryPaymentCountries />
@@ -447,6 +452,7 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="web-payment"
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
 				<WebPaymentBox

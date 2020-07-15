@@ -7,6 +7,7 @@ import debugFactory from 'debug';
 import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { isFunction } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -14,12 +15,15 @@ import { useTranslate } from 'i18n-calypso';
 import CheckoutContainer from './checkout/checkout-container';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
+import { getPlans } from 'lib/plans';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
+import { isPlanIncludingSiteBackup } from 'state/sites/products/conflicts';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -43,10 +47,19 @@ export default function CheckoutSystemDecider( {
 	cart,
 	isWhiteGloveOffer,
 } ) {
+	const productPlan = Object.values( getPlans() ).find(
+		( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === product
+	);
+
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isIncludingSiteBackup = useSelector( ( state ) =>
+		productPlan ? isPlanIncludingSiteBackup( state, siteId, productPlan.getStoreSlug() ) : null
+	);
+
 	const reduxDispatch = useDispatch();
 	const checkoutVariant = getCheckoutVariant(
 		cart,
@@ -154,6 +167,7 @@ export default function CheckoutSystemDecider( {
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
 			isWhiteGloveOffer={ isWhiteGloveOffer }
+			infoMessage={ isIncludingSiteBackup ? 'You currently own...' : null }
 		/>
 	);
 }
