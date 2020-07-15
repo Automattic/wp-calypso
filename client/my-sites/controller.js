@@ -320,11 +320,10 @@ export function noSite( context, next ) {
 
 	if ( hasSite ) {
 		siteSelection( context, next );
+	} else {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return next();
 	}
-
-	context.store.dispatch( setSelectedSiteId( null ) );
-
-	return next();
 }
 
 /*
