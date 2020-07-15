@@ -20,6 +20,7 @@ import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-u
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -177,30 +178,24 @@ function getCheckoutVariant(
 		return 'composite-checkout';
 	}
 
+	// Disable for Brazil and India
+	if ( countryCode?.toLowerCase() === 'br' || countryCode?.toLowerCase() === 'in' ) {
+		debug(
+			'shouldShowCompositeCheckout false because country is not allowed',
+			countryCode?.toLowerCase()
+		);
+		return 'disallowed-geo';
+	}
+
 	// Disable if this is a jetpack site
 	if ( isJetpack && ! isAtomic ) {
 		debug( 'shouldShowCompositeCheckout false because jetpack site' );
 		return 'jetpack-site';
 	}
-	// Disable for non-USD
-	if ( cart.currency !== 'USD' ) {
-		debug( 'shouldShowCompositeCheckout false because currency is not USD' );
-		return 'disallowed-currency';
-	}
 	// Disable for jetpack plans
 	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) ) ) {
 		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
 		return 'jetpack-product';
-	}
-	// Disable for non-EN
-	if ( ! locale?.toLowerCase().startsWith( 'en' ) ) {
-		debug( 'shouldShowCompositeCheckout false because locale is not EN' );
-		return 'disallowed-locale';
-	}
-	// Disable for non-US
-	if ( countryCode?.toLowerCase() !== 'us' ) {
-		debug( 'shouldShowCompositeCheckout false because country is not US' );
-		return 'disallowed-geo';
 	}
 
 	// If the URL is adding a product, only allow things already supported.
@@ -233,6 +228,21 @@ function getCheckoutVariant(
 			productSlug
 		);
 		return 'disallowed-product';
+	}
+
+	// Removes users from initial AB test
+	if (
+		cart.currency === 'USD' &&
+		countryCode?.toLowerCase() === 'us' &&
+		locale?.toLowerCase().startsWith( 'en' )
+	) {
+		debug( 'shouldShowCompositeCheckout true' );
+		return 'composite-checkout';
+	}
+	// Add remaining users to new AB test with 10% holdout
+	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
+		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );
+		return 'control-variant';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );
