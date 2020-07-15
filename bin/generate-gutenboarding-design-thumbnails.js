@@ -63,7 +63,7 @@ async function run() {
 	await Promise.all(
 		designs.featured.map( async ( design ) => {
 			const url = getDesignUrl( design );
-			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
+			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }`;
 
 			// Fix `reynolds_rockfield2_rockfield.jpg` first section becoming super tall
 			// @TODO: fix at the source since this will be an issue with mshots API, too.
@@ -82,10 +82,11 @@ async function run() {
 				width: viewportWidth,
 			} );
 
-			console.log( `Resizing and saving to ${ file }` );
-			const image = await sharp( screenshot );
-			return await image.metadata().then( ( metadata ) => {
-				return image
+			let image = await sharp( screenshot );
+
+			console.log( `Resizing and saving to ${ file }.webp` );
+			await image.metadata().then( ( metadata ) => {
+				image
 					.extract( {
 						// Ensure we're not extracting taller area than screenshot actaully is
 						height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
@@ -95,7 +96,24 @@ async function run() {
 					} )
 					.resize( outputWidth )
 					.webp() // default quality is 80
-					.toFile( file );
+					.toFile( `${ file }.webp` );
+			} );
+
+			image = await sharp( screenshot );
+			console.log( `Resizing and saving to ${ file }.jpg` );
+
+			await image.metadata().then( ( metadata ) => {
+				return image
+					.extract( {
+						// Ensure we're not extracting taller area than screenshot actaully is
+						height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
+						left: 0,
+						top: 0,
+						width: metadata.width,
+					} )
+					.resize( outputWidth )
+					.jpeg( { quality: 72 } )
+					.toFile( `${ file }.jpg` );
 			} );
 		} )
 	);
