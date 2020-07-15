@@ -71,6 +71,7 @@ export const requestMarkAsUnseen = ( { feedId, feedUrl, feedItemIds, globalIds }
 	feedId,
 	feedUrl,
 	feedItemIds,
+	source: SOURCE_READER_WEB,
 	globalIds,
 } );
 

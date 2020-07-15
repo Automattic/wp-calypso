@@ -13,6 +13,7 @@ const toApi = ( action ) => {
 	return {
 		feed_id: action.feedId,
 		feed_item_ids: action.feedItemIds,
+		source: action.source,
 	};
 };
 
