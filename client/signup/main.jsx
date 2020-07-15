@@ -243,14 +243,18 @@ class Signup extends React.Component {
 	}
 
 	completeP2FlowAfterLoggingIn() {
+		if ( ! this.props.progress ) {
+			return;
+		}
+
 		const p2SiteStep = this.props.progress[ 'p2-site' ];
 
 		if (
-			user() &&
-			user().get() &&
 			this.props.progress.user &&
 			p2SiteStep &&
-			p2SiteStep.status === 'pending'
+			p2SiteStep.status === 'pending' &&
+			user() &&
+			user().get()
 		) {
 			// By removing and adding the p2-site step, we trigger the `SignupFlowController` store listener
 			// to process the signup flow.
