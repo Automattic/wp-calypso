@@ -62,13 +62,12 @@ const LanguageStep: React.FunctionComponent = () => {
 			return (
 				<div key={ languageGroup.id }>
 					<Button onClick={ onClick } className={ 'language__language-group' }>
-						<span className={ isSelected ? 'selected' : '' }>{ languageGroup.name( __ ) }</span>
+						<span className={ isSelected ? 'is-selected' : '' }>{ languageGroup.name( __ ) }</span>
 					</Button>
 				</div>
 			);
 		} );
 	};
-
 	return (
 		<ChangeLocaleContextConsumer>
 			{ ( changeLocale ) => (

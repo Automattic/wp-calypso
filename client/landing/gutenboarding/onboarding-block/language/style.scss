@@ -12,7 +12,7 @@
 
 .language__language-group > span {
 	padding-bottom: 4px;
-	&.selected {
+	&.is-selected {
 		padding-bottom: 2px;
 		border-bottom: 2px solid var( --mainColor );
 	}
