@@ -94,7 +94,7 @@ async function run() {
 						width: metadata.width,
 					} )
 					.resize( outputWidth )
-					.jpeg( { quality: 72 } )
+					.webp() // default quality is 80
 					.toFile( file );
 			} );
 		} )

@@ -23,7 +23,7 @@ export const getDesignImageUrl = ( design: Design ) => {
 	// https://github.com/Automattic/wp-calypso/issues/40564
 	if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
 		// When we update the static images, bump the version for cache busting
-		return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.jpg?v=2`;
+		return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.webp?v=1`;
 	}
 
 	const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
