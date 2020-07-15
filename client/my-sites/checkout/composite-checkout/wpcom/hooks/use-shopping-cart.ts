@@ -253,7 +253,9 @@ function shoppingCartHookReducer(
 }
 
 function removeItemFromLocalStorage( productSlug: string ) {
-	const cartItemsFromLocalStorage = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) );
+	const cartItemsFromLocalStorage = JSON.parse(
+		window.localStorage.getItem( 'shoppingCart' ) || '{}'
+	);
 
 	if ( ! isEmpty( cartItemsFromLocalStorage ) ) {
 		const newCart = cartItemsFromLocalStorage.filter(

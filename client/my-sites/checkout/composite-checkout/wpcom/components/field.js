@@ -86,7 +86,7 @@ Field.propTypes = {
 	placeholder: PropTypes.string,
 	tabIndex: PropTypes.string,
 	description: PropTypes.string,
-	errorMessage: PropTypes.array,
+	errorMessage: PropTypes.string,
 	autoComplete: PropTypes.string,
 	disabled: PropTypes.bool,
 };
