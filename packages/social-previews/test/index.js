@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Facebook, Twitter } from '../src';
+import { Facebook, Twitter, Reader } from '../src';
 
 describe( 'Facebook previews', () => {
 	it( 'should expose a Facebook preview component', () => {
@@ -14,3 +14,11 @@ describe( 'Twitter previews', () => {
 		expect( Twitter ).not.toBe( undefined );
 	} );
 } );
+
+/* eslint-disable jest/no-disabled-tests */
+describe.skip( 'Reader previews', () => {
+	it( 'should expose a Reader preview component', () => {
+		expect( Reader ).not.toBe( undefined );
+	} );
+} );
+/* eslint-enable jest/no-disabled-tests */
