@@ -44,7 +44,6 @@ import jitm from './jitm/reducer';
 import media from './media/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
-import notificationSettings from './notification-settings/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import npsSurvey from './nps-survey/reducer';
 import orderTransactions from './order-transactions/reducer';
@@ -110,7 +109,6 @@ const reducers = {
 	media,
 	mySites,
 	notices,
-	notificationSettings,
 	notificationsUnseenCount,
 	npsSurvey,
 	orderTransactions,
