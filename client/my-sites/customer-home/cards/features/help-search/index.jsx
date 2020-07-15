@@ -29,13 +29,7 @@ import './style.scss';
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
-const HelpSearch = ( {
-	searchQuery,
-	hideInlineHelpUI,
-	showInlineHelpUI,
-	selectedResult,
-	openDialog,
-} ) => {
+const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDialog } ) => {
 	const translate = useTranslate();
 
 	// When the Customer Home Support is shown we must hide the
@@ -47,17 +41,17 @@ const HelpSearch = ( {
 		return () => showInlineHelpUI();
 	}, [ hideInlineHelpUI, showInlineHelpUI ] );
 
-	const openResultView = ( event ) => {
+	const openResultView = ( event, result ) => {
 		event.preventDefault();
 
 		// Edge case if no search result is selected
-		if ( ! selectedResult ) {
+		if ( ! result ) {
 			return;
 		}
 
 		// Grab properties using constants for safety
-		const resultPostId = get( selectedResult, RESULT_POST_ID );
-		const resultLink = amendYouTubeLink( get( selectedResult, RESULT_LINK ) );
+		const resultPostId = get( result, RESULT_POST_ID );
+		const resultLink = amendYouTubeLink( get( result, RESULT_LINK ) );
 
 		openDialog( { postId: resultPostId, actionUrl: resultLink } );
 	};
