@@ -81,6 +81,16 @@ describe( 'Facebook previews', () => {
 			expect( urlEl.text() ).not.toContain( '|' );
 		} );
 	} );
+
+	describe( 'Styling hooks', () => {
+		it( 'should append a classname with the correct "type" to the root element when provided', () => {
+			const wrapper = shallow( <Facebook type="article" /> );
+
+			const rootEl = wrapper.find( '.facebook-preview' );
+
+			expect( rootEl.hasClass( 'facebook-preview__article' ) ).toBeTruthy();
+		} );
+	} );
 } );
 
 describe( 'Twitter previews', () => {
