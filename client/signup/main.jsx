@@ -52,7 +52,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { submitSignupStep, removeStep } from 'state/signup/progress/actions';
+import { submitSignupStep, removeStep, addStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -77,6 +77,7 @@ import {
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'signup/p2-processing-screen';
+import user from 'lib/user';
 
 /**
  * Style dependencies
@@ -169,6 +170,8 @@ class Signup extends React.Component {
 
 		this.updateShouldShowLoadingScreen();
 
+		this.completeP2FlowAfterLoggingIn();
+
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
 			// Resume from the current window location
 			return;
@@ -234,6 +237,21 @@ class Signup extends React.Component {
 		if ( this.props.stepName !== prevProps.stepName ) {
 			this.maybeShowSitePreview();
 			this.preloadNextStep();
+		}
+	}
+
+	completeP2FlowAfterLoggingIn() {
+		const p2SiteStep = this.props.progress[ 'p2-site' ];
+
+		if (
+			user() &&
+			user().get() &&
+			this.props.progress.user &&
+			p2SiteStep &&
+			p2SiteStep.status === 'pending'
+		) {
+			this.props.removeStep( p2SiteStep );
+			this.props.addStep( p2SiteStep );
 		}
 	}
 
@@ -665,5 +683,6 @@ export default connect(
 		loadTrackingTool,
 		showSitePreview,
 		hideSitePreview,
+		addStep,
 	}
 )( Signup );
