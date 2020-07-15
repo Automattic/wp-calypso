@@ -50,6 +50,9 @@ import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
+import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
+
 /**
  * Style dependencies
  */
@@ -205,6 +208,7 @@ export class List extends React.Component {
 				{ this.domainWarnings() }
 				{ this.domainCreditsInfoNotice() }
 
+				<div className="domain-management-list__primary-domain">{ this.renderPrimaryDomain() }</div>
 				<div className="domain-management-list__items">{ this.listNewItems() }</div>
 				<DomainToPlanNudge />
 			</>
@@ -452,6 +456,46 @@ export class List extends React.Component {
 			! domain.isWPCOMDomain &&
 			! domain.isWpcomStagingDomain
 		);
+	}
+
+	renderPrimaryDomain() {
+		const { domains, selectedSite, translate } = this.props;
+		const primaryDomain = find( domains, 'isPrimary' );
+
+		if ( this.isLoading() || ! primaryDomain ) {
+			return <ListItemPlaceholder />;
+		}
+
+		return [
+			<CompactCard className="list__header-primary-domain" key="primary-domain-header">
+				<div className="list__header-primary-domain-info">
+					{ translate( 'Primary domain' ) }
+					<InfoPopover iconSize={ 18 }>
+						{ translate(
+							'Your primary domain is the address visitors will see in their address bar when visiting your blog. All other domains will redirect to the primary domain.'
+						) }
+					</InfoPopover>
+				</div>
+				<div className="list__header-primary-domain-buttons">
+					<Button compact className="list__change-primary-domain">
+						{ translate( 'Change primary domain' ) }
+					</Button>
+				</div>
+			</CompactCard>,
+			<CompactCard className="list__item-primary-domain" key="primary-domain-content">
+				<div className="list__header-primary-domain-content">
+					<ExternalLink
+						className="list__header-primary-domain-url"
+						href={ selectedSite.URL }
+						title={ translate( 'Launch your site' ) }
+						target="_blank"
+						icon={ true }
+					>
+						{ primaryDomain.name }
+					</ExternalLink>
+				</div>
+			</CompactCard>,
+		];
 	}
 
 	listNewItems() {
