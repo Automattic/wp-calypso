@@ -1,1 +1,1 @@
-// Silence is golden
+export { default as Facebook } from './facebook-preview';
