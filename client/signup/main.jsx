@@ -170,6 +170,8 @@ class Signup extends React.Component {
 
 		this.updateShouldShowLoadingScreen();
 
+		// Only applies to the P2 signup flow (/start/p2) and only after logging in to
+		// a WP.com account during the signup flow.
 		this.completeP2FlowAfterLoggingIn();
 
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
@@ -250,6 +252,8 @@ class Signup extends React.Component {
 			p2SiteStep &&
 			p2SiteStep.status === 'pending'
 		) {
+			// By removing and adding the p2-site step, we trigger the `SignupFlowController` store listener
+			// to process the signup flow.
 			this.props.removeStep( p2SiteStep );
 			this.props.addStep( p2SiteStep );
 		}
