@@ -229,7 +229,7 @@ function getCheckoutVariant(
 	// products via URL, so we list those slugs here. Renewals use actual slugs,
 	// so they do not need to go through this check.
 	const isRenewal = !! purchaseId;
-	const pseudoSlugsToAllow = [
+	let pseudoSlugsToAllow = [
 		'blogger',
 		'blogger-2-years',
 		'business',
@@ -237,6 +237,12 @@ function getCheckoutVariant(
 		'concierge-session',
 		'ecommerce',
 		'ecommerce-2-years',
+		'personal',
+		'personal-2-years',
+		'premium', // WordPress.com or Jetpack Premium Yearly
+		'premium-2-years',
+	];
+	const jetpackPseudoSlugsToAllow = [
 		'jetpack_backup_daily',
 		'jetpack_backup_realtime',
 		'jetpack_personal',
@@ -244,14 +250,13 @@ function getCheckoutVariant(
 		'jetpack-personal-monthly',
 		'jetpack_scan',
 		'jetpack_search',
-		'personal',
-		'personal-2-years',
-		'premium', // WordPress.com or Jetpack Premium Yearly
-		'premium-monthly', // Jetpack Premium Monthly
-		'premium-2-years',
+		'premium-monthly',
 		'professional',
 		'professional-monthly',
 	];
+	if ( config( 'env_id' ) !== 'production' ) {
+		pseudoSlugsToAllow = [ ...pseudoSlugsToAllow, ...jetpackPseudoSlugsToAllow ];
+	}
 	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
 		! isRenewal &&
