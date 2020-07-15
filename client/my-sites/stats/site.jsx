@@ -192,8 +192,9 @@ class StatsSite extends Component {
 								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
 							) }
 							href={ `/earn/${ slug }` }
-							tracksImpressionName="calypso_earn_banner_on_stats_impression"
-							tracksClickName="calypso__earn_banner_on_stats_cta_click"
+							event="stats_earn_nudge"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
 							showIcon={ true }
 							jetpack={ false }
 						/>
