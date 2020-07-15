@@ -410,7 +410,15 @@ export function siteSelection( context, next ) {
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) ).then( () => {
-			const freshSiteId = getSiteId( getState(), siteFragment );
+			let freshSiteId = getSiteId( getState(), siteFragment );
+
+			if ( ! freshSiteId ) {
+				const wpcomStagingFragment = siteFragment.replace(
+					/\b.wordpress.com/,
+					'.wpcomstaging.com'
+				);
+				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+			}
 
 			if ( freshSiteId ) {
 				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
