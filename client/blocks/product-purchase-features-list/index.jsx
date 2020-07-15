@@ -23,7 +23,6 @@ import { PLANS_LIST } from 'lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
-import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
 import CustomCSS from './custom-css';
 import VideoAudioPosts from './video-audio-posts';
@@ -78,7 +77,6 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
@@ -118,7 +116,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
-				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
@@ -150,7 +147,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
-				<GoogleVouchers selectedSite={ selectedSite } />
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
