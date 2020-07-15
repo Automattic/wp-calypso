@@ -330,31 +330,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 							} ) }
 						/>
 					) }
-
-					{ isProfessional && (
-						<Task
-							id={ CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH }
-							title={ translate( 'Enhanced Search' ) }
-							description={ translate(
-								'Activate an enhanced, customizable search to replace the default WordPress search feature.'
-							) }
-							completedButtonText={ translate( 'Add search widget' ) }
-							completedTitle={ translate(
-								'The default WordPress search has been replaced by Enhanced Search.'
-							) }
-							duration={ this.getDuration( 1 ) }
-							completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH ) }
-							href={
-								this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH )
-									? this.props.widgetCustomizerPaneUrl
-									: `/settings/performance/${ siteSlug }`
-							}
-							onClick={ this.handleTaskStart( {
-								taskId: CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH,
-								tourId: 'jetpackSearch',
-							} ) }
-						/>
-					) }
 				</Checklist>
 			</Fragment>
 		);
