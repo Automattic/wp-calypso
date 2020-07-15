@@ -355,7 +355,9 @@ export default function CompositeCheckout( {
 	).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
-	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart );
+	const cartEmptyRedirectUrl = isLoggedOutCart ? '/start' : `/plans/${ siteSlug || '' }`;
+
+	useRedirectIfCartEmpty( items, cartEmptyRedirectUrl, isLoadingCart );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
