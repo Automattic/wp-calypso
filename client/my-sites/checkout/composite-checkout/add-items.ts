@@ -13,6 +13,7 @@ import {
 	themeItem,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import type { RequestCartProduct } from './wpcom/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:add-items' );
@@ -65,9 +66,8 @@ export function createItemToAddToCart( {
 	}
 
 	if (
-		( productAlias?.startsWith( 'jetpack_backup' ) ||
-			productAlias?.startsWith( 'jetpack_search' ) ||
-			productAlias?.startsWith( 'jetpack_scan' ) ) &&
+		productAlias &&
+		JETPACK_PRODUCTS_LIST.includes( productAlias ) &&
 		isJetpackNotAtomic &&
 		product_id
 	) {
