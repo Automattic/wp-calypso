@@ -53,6 +53,34 @@ describe( 'Facebook previews', () => {
 		expect( imageEl.exists() ).toBeTruthy();
 		expect( imageEl.html() ).toContain( `src="${ DUMMY_IMAGE_SRC }"` );
 	} );
+
+	describe( 'Preview url display', () => {
+		it( 'should display a protocol-less url and author if provided', () => {
+			const wrapper = shallow( <Facebook url="https://wordpress.com" author="Jane Doe" /> );
+
+			const urlEl = wrapper.find( '.facebook-preview__url' );
+			expect( urlEl.exists() ).toBeTruthy();
+			expect( urlEl.text() ).toEqual( 'wordpress.com | Jane Doe' );
+		} );
+
+		it( 'should display a protocol-less url only (with no separator) when author is not provided', () => {
+			const wrapper = shallow( <Facebook url="https://wordpress.com" /> );
+
+			const urlEl = wrapper.find( '.facebook-preview__url' );
+			expect( urlEl.exists() ).toBeTruthy();
+			expect( urlEl.text() ).toEqual( 'wordpress.com' );
+			expect( urlEl.text() ).not.toContain( '|' );
+		} );
+
+		it( 'should display the author only (with no separator) when a url is not provided', () => {
+			const wrapper = shallow( <Facebook author="Jane Doe" /> );
+
+			const urlEl = wrapper.find( '.facebook-preview__url' );
+			expect( urlEl.exists() ).toBeTruthy();
+			expect( urlEl.text() ).toEqual( 'Jane Doe' );
+			expect( urlEl.text() ).not.toContain( '|' );
+		} );
+	} );
 } );
 
 describe( 'Twitter previews', () => {
