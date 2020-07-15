@@ -9,10 +9,9 @@ import { button as icon } from '@wordpress/icons';
  */
 import edit from './edit';
 import save from './save';
-import { getCategoryWithFallbacks } from '../../../block-helpers';
 
 const name = 'premium-content/buttons';
-const category = getCategoryWithFallbacks( 'design', 'layout' );
+const category = 'design';
 
 const settings = {
 	name,
