@@ -137,7 +137,7 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function ( context, next ) {
-		const currentUrl = url.parse( location.href );
+		const currentUrl = url.parse( window.location.href );
 		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 		if ( ! getCurrentUserId( context.store.getState() ) ) {
 			context.primary = React.createElement( EmptyContent, {
