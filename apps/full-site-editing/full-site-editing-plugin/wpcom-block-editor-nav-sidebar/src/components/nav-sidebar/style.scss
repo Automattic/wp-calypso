@@ -77,11 +77,12 @@ $transition-period: 200ms;
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
 	height: 46px;
 	width: 100%;
-	font-weight: 600;
 	border: none !important;
 	box-shadow: none !important;
 	color: $white;
 	flex-shrink: 0;
+	padding: 8px 11px !important;
+	margin: 14px 0;
 
 	&:hover {
 		color: $white;

@@ -8,7 +8,7 @@ import {
 	IsolatedEventContainer,
 	withConstrainedTabbing,
 } from '@wordpress/components';
-import { chevronLeft, wordpress } from '@wordpress/icons';
+import { arrowLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get } from 'lodash';
@@ -200,7 +200,7 @@ function WpcomBlockEditorNavSidebar() {
 				<Button
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
-					icon={ chevronLeft }
+					icon={ arrowLeft }
 					onClick={ handleClose }
 				>
 					{ closeLabel }
