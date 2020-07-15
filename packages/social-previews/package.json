@@ -9,10 +9,9 @@
         "wordpress",
         "social",
         "seo",
-        "search",
+        "search"
 	],
 	"author": "Automattic Inc.",
-	"contributors": [],
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"repository": {
