@@ -88,6 +88,12 @@ $transition-period: 200ms;
 	}
 }
 
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading {
+	padding: $panel-padding;
+	font-size: $big-font-size;
+	color: $white;
+}
+
 .wpcom-block-editor-nav-sidebar-nav-sidebar__page-list {
 	padding: 0;
 	margin: 0;

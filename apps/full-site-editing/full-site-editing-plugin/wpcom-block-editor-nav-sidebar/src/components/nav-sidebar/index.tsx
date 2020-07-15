@@ -136,6 +136,13 @@ function WpcomBlockEditorNavSidebar() {
 		}
 	};
 
+	let listHeading = get( postType, [ 'labels', 'name' ] );
+	listHeading = applyFilters(
+		'a8c.WpcomBlockEditorNavSidebar.listHeading',
+		listHeading,
+		postType.slug
+	);
+
 	const dismissSidebar = () => {
 		if ( isOpen && ! isClosing ) {
 			toggleSidebar();
@@ -198,6 +205,9 @@ function WpcomBlockEditorNavSidebar() {
 				>
 					{ closeLabel }
 				</Button>
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading">
+					{ listHeading }
+				</div>
 				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
 					{ items.map( ( item, index ) => (
 						<NavItem

@@ -750,6 +750,7 @@ function getGutenboardingStatus( calypsoPort ) {
  */
 function getNavSidebarLabels( calypsoPort ) {
 	let createPostLabels = null;
+	let listHeadings = null;
 
 	const { port1, port2 } = new MessageChannel();
 	calypsoPort.postMessage(
@@ -761,12 +762,19 @@ function getNavSidebarLabels( calypsoPort ) {
 	);
 	port1.onmessage = ( { data } ) => {
 		createPostLabels = data.createPostLabels;
+		listHeadings = data.listHeadings;
 	};
 
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.createPostLabel',
 		'wpcom-block-editor/getNavSidebarLabels',
 		( label, postType ) => ( createPostLabels && createPostLabels[ postType ] ) || label
+	);
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.listHeading',
+		'wpcom-block-editor/getNavSidebarLabels',
+		( label, postType ) => ( listHeadings && listHeadings[ postType ] ) || label
 	);
 }
 

@@ -350,6 +350,10 @@ class CalypsoifyIframe extends Component<
 					page: translate( 'Add new page' ),
 					post: translate( 'Add new post' ),
 				},
+				listHeadings: {
+					page: translate( 'Recent Pages' ),
+					post: translate( 'Recent Posts' ),
+				},
 			} );
 		}
 
