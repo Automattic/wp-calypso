@@ -71,8 +71,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 
 	&--compact {
 		.gutenboarding__header-domain-section,
-		.gutenboarding__header-plan-section,
-		.gutenboarding__header-language-section {
+		.gutenboarding__header-plan-section {
 			visibility: hidden;
 		}
 	}
