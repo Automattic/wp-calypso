@@ -16,6 +16,15 @@
 		color: $white;
 	}
 
+	&:focus {
+		color: $white;
+		border: 1px solid $white;
+		box-shadow: none !important;
+		outline: none !important;
+		border-radius: 0;
+		padding: ( ( $panel-padding / 2 ) - 1 ) ( $panel-padding - 1 );
+	}
+
 	&.is-selected {
 		background: $dark-gray-600;
 

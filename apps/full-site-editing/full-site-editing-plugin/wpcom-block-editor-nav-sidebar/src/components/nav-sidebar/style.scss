@@ -87,6 +87,15 @@ $transition-period: 200ms;
 	&:hover {
 		color: $white;
 	}
+
+	&:focus {
+		color: $white;
+		border: 1px solid $white !important;
+		box-shadow: none !important;
+		outline: none !important;
+		border-radius: 0;
+		padding: 7px 10px !important;
+	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading {
