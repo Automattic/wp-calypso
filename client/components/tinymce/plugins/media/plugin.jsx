@@ -530,8 +530,9 @@ function mediaButton( editor ) {
 				return;
 			}
 
-			// Attempt to find media in Flux store
+			// Attempt to find media in Redux store
 			const media = getMediaItem( getState(), selectedSite.ID, parsed.media.ID );
+
 			if ( media && media.caption ) {
 				content = media.caption;
 			} else {
@@ -598,8 +599,9 @@ function mediaButton( editor ) {
 			parsed.media.caption = editor.dom.$( '.wp-caption-dd', caption ).text();
 		}
 
-		// Attempt to find media in Flux store
+		// Attempt to find media in Redux store
 		let media = assign( {}, getMediaItem( getState(), selectedSite.ID, parsed.media.ID ) );
+
 		delete media.caption;
 		media = assign( {}, parsed.media, media );
 
