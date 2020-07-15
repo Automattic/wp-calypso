@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useLayoutEffect, useRef } from '@wordpress/element';
+import { useLayoutEffect, useRef, useEffect, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	Button as OriginalButton,
@@ -61,6 +61,57 @@ function WpcomBlockEditorNavSidebar() {
 
 		prevIsOpen.current = isOpen;
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
+
+	const [ isListScrolling, setIsListScrolling ] = useState( false );
+
+	const observer = useRef< IntersectionObserver >();
+	const itemRefs = useRef< ( HTMLElement | null )[] >( [] );
+
+	const containerMount = ( el: HTMLDivElement | null ) => {
+		if ( el ) {
+			el.focus();
+		}
+
+		if ( observer.current ) {
+			observer.current.disconnect();
+		}
+
+		if ( ! window.IntersectionObserver ) {
+			return;
+		}
+
+		observer.current = new window.IntersectionObserver(
+			( entries ) => {
+				// If every iten is currently visible, then we're not scrolling
+				const notScrolling = entries.every( ( entry ) => entry.isIntersecting );
+				setIsListScrolling( ! notScrolling );
+			},
+			{
+				root: el,
+				threshold: [ 1 ], // We want to fire the above callback when an entry isn't 100% visible
+			}
+		);
+	};
+
+	const itemMount = ( el: HTMLElement | null, itemIndex: number ) => {
+		itemRefs.current[ itemIndex ] = el;
+	};
+
+	useEffect( () => {
+		if ( ! observer.current ) {
+			return;
+		}
+
+		observer.current.disconnect();
+
+		const nonSparse = itemRefs.current.filter( Boolean ) as HTMLElement[];
+
+		// We only need to observe the first and last item in the list, might be better for performance
+		const firstItem = nonSparse[ 0 ];
+		const lastItem = nonSparse[ nonSparse.length - 1 ];
+		if ( firstItem ) observer.current.observe( firstItem );
+		if ( lastItem ) observer.current.observe( lastItem );
+	}, [ items ] );
 
 	if ( ! postType ) {
 		// Still loading
@@ -124,7 +175,7 @@ function WpcomBlockEditorNavSidebar() {
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
-				ref={ ( el ) => el && el.focus() }
+				ref={ containerMount }
 				role="dialog"
 				tabIndex={ -1 }
 			>
@@ -148,17 +199,22 @@ function WpcomBlockEditorNavSidebar() {
 					{ closeLabel }
 				</Button>
 				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-					{ items.map( ( item ) => (
+					{ items.map( ( item, index ) => (
 						<NavItem
 							key={ item.id }
 							item={ item }
 							postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
 							selected={ item.id === selectedItemId }
 							statusLabel={ statusLabels[ item.status ] }
+							ref={ ( el ) => itemMount( el, index ) }
 						/>
 					) ) }
 				</ul>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons">
+				<div
+					className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons', {
+						'is-list-scrolling': isListScrolling,
+					} ) }
+				>
 					<CreatePage postType={ postType } />
 				</div>
 			</div>
