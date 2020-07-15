@@ -171,7 +171,11 @@ class MasterbarLoggedIn extends React.Component {
 
 		if ( isCheckout === true ) {
 			let closeUrl = siteSlug ? '/plans/' + siteSlug : '/plans';
-			if ( '' !== previousPath && previousPath !== window.location.href ) {
+			if (
+				'' !== previousPath &&
+				previousPath !== window.location.href &&
+				'/checkout/no-site' !== previousPath
+			) {
 				closeUrl = previousPath;
 			}
 
