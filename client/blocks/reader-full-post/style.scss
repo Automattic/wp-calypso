@@ -150,44 +150,6 @@
 	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: -35px;
 	}
-
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		font-weight: 700;
-		margin-bottom: 15px;
-		margin-top: 30px;
-		line-height: 1.1;
-		text-align: left;
-	}
-
-	h1 {
-		font-size: 54px;
-		font-weight: 800;
-	}
-
-	h2 {
-		font-size: 47px;
-	}
-
-	h3 {
-		font-size: 36px;
-	}
-
-	h4 {
-		font-size: 32px;
-	}
-
-	h5 {
-		font-size: 24px;
-	}
-
-	h6 {
-		font-size: 21px;
-	}
 }
 
 .reader-full-post__story-content {
