@@ -16,6 +16,18 @@ interface AvailableDesigns {
 
 const availableDesigns: Readonly< AvailableDesigns > = availableDesignsConfig;
 
+function getCanUseWebP() {
+	if ( typeof window !== 'undefined' ) {
+		const elem = document.createElement( 'canvas' );
+		if ( !! elem.getContext && elem.getContext( '2d' ) ) {
+			return elem.toDataURL( 'image/webp' ).indexOf( 'data:image/webp' ) === 0;
+		}
+	}
+	return false;
+}
+
+const canUseWebP = getCanUseWebP();
+
 export const getDesignImageUrl = ( design: Design ) => {
 	// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
 	// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
@@ -23,7 +35,9 @@ export const getDesignImageUrl = ( design: Design ) => {
 	// https://github.com/Automattic/wp-calypso/issues/40564
 	if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
 		// When we update the static images, bump the version for cache busting
-		return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.webp?v=1`;
+		return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${
+			design.theme
+		}.${ canUseWebP ? 'webp' : 'jpeg' }?v=1`;
 	}
 
 	const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
