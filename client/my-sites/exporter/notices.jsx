@@ -13,7 +13,7 @@ import CompletePurchaseNotice from './guided-transfer-card/complete-purchase-not
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { CALYPSO_CONTACT } from 'lib/url/support';
-import { getExportingState } from 'state/exporter/selectors';
+import { getExportingState, getDownloadUrl } from 'state/exporter/selectors';
 import { isGuidedTransferAwaitingPurchase } from 'state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { States } from 'state/exporter/constants';
@@ -70,7 +70,7 @@ class Notices extends Component {
 const mapStateToProps = ( state ) => ( {
 	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
 	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
-	exportDownloadURL: state.exporter.downloadURL,
+	exportDownloadURL: getDownloadUrl( state ),
 	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase(
 		state,
 		getSelectedSiteId( state )

@@ -24,7 +24,6 @@ import documentHead from './document-head/reducer';
 import emailForwarding from './email-forwarding/reducer';
 import embeds from './embeds/reducer';
 import experiments from './experiments/reducer';
-import exporter from './exporter/reducers';
 import gsuiteUsers from './gsuite-users/reducer';
 import gutenbergOptInOut from './gutenberg-opt-in-out/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
@@ -89,7 +88,6 @@ const reducers = {
 	emailForwarding,
 	embeds,
 	experiments,
-	exporter,
 	gsuiteUsers,
 	gutenbergOptInOut,
 	happinessEngineers,
