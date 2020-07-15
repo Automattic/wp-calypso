@@ -1,0 +1,38 @@
+{
+	"name": "@automattic/social-preview",
+	"version": "1.0.0",
+	"description": "A suite of components to generate previews for a post for both social and search engines",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"keywords": [
+        "wordpress",
+        "social",
+        "seo",
+        "search",
+	],
+	"author": "Automattic Inc.",
+	"contributors": [],
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/social-preview"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "check-npm-client && npx rimraf dist",
+		"prepublish": "check-npm-client && yarn run clean",
+		"prepare": "check-npm-client && transpile"
+	}
+}
