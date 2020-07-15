@@ -1,0 +1,17 @@
+.quick-start-video .card {
+	@include breakpoint-deprecated( '>480px' ) {
+		padding: 16px 24px;
+	}
+}
+
+.customer-home__main .quick-start-video .card-heading {
+	margin-bottom: 4px;
+}
+
+.quick-start-video .inline-support-link {
+	margin-left: 4px;
+}
+
+.quick-start-video__all {
+	font-size: $font-body-small;
+}
