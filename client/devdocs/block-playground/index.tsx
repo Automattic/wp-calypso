@@ -31,9 +31,7 @@ registerCoreBlocks();
 
 export const BlockPlayground: FunctionComponent = () => {
 	useEffect( () => {
-		import(
-			/* webpackChunkName: "dev-docs-block-playground" */ '../../../apps/o2-blocks/src/editor.js'
-		);
+		import( /* webpackChunkName: "o2-blocks" */ '../../../apps/o2-blocks/src/editor.js' );
 	}, [] );
 
 	const [ blocks, setBlocks ] = useState< BlockInstance[] >( [] );
