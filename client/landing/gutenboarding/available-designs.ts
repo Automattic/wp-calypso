@@ -57,12 +57,12 @@ export function prefetchDesignThumbs() {
 }
 
 export function getAvailableDesigns(
-	includeEdgeDesigns: boolean = isEnabled( 'gutenboarding/edge-templates' ),
+	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ) {
 	let designs = availableDesigns;
 
-	if ( ! includeEdgeDesigns ) {
+	if ( ! includeAlphaDesigns ) {
 		designs = {
 			...designs,
 			featured: designs.featured.filter( ( design ) => ! design.is_alpha ),

@@ -11,7 +11,6 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_alpha": true,
 			"is_fse": true
 		},
 		{
@@ -25,7 +24,6 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_alpha": true,
 			"is_fse": true
 		},
 		{
@@ -158,8 +156,7 @@
 				"base": "Chivo"
 			},
 			"categories": [ "featured", "business" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Alves",
@@ -171,8 +168,7 @@
 				"base": "Montserrat"
 			},
 			"categories": [ "featured", "non-profit", "charity" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Mayland",
@@ -184,8 +180,7 @@
 				"base": "Cabin"
 			},
 			"categories": [ "featured", "portfolio" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Rivington",
@@ -197,8 +192,7 @@
 				"base": "Montserrat"
 			},
 			"categories": [ "featured", "real estate listing" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Maywood",
@@ -210,8 +204,7 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "restaurant, small business" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Balasana",
@@ -223,8 +216,7 @@
 				"base": "Chivo"
 			},
 			"categories": [ "featured", "restaurant, small business" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Stratford",
@@ -236,8 +228,7 @@
 				"base": "Open Sans"
 			},
 			"categories": [ "featured", "school" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Rockfield",
@@ -249,8 +240,7 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Coutoire",
@@ -262,8 +252,7 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "portfolio" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Leven",
@@ -275,8 +264,7 @@
 				"base": "Open Sans"
 			},
 			"categories": [ "featured", "portfolio", "small business" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		},
 		{
 			"title": "Gibbs",
@@ -288,8 +276,7 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
-			"is_premium": false,
-			"is_alpha": true
+			"is_premium": false
 		}
 	]
 }

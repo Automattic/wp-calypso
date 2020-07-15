@@ -66,7 +66,7 @@
 		"gdpr-banner": false,
 		"google-my-business": true,
 		"google-drive": true,
-		"gutenboarding/edge-templates": true,
+		"gutenboarding/alpha-templates": true,
 		"help": true,
 		"help/courses": true,
 		"home/layout-dev": true,
