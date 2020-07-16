@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { isEmpty } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -18,6 +23,7 @@ import {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
+import { SignupValidationResponse } from './backend/signup-validation-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
 	firstName?: T;
@@ -604,6 +610,27 @@ export function prepareGSuiteContactValidationRequest(
 			postalCode: details.postalCode?.value ?? '',
 			countryCode: details.countryCode?.value ?? '',
 		},
+	};
+}
+
+export function getSignupValidationErrorResponse(
+	response: SignupValidationResponse,
+	email: string,
+	emailTakenLoginRedirect: ( arg0: string ) => string
+): ManagedContactDetailsErrors {
+	const emailResponse = response.messages?.email || {};
+
+	if ( isEmpty( emailResponse ) ) {
+		return emailResponse;
+	}
+
+	const emailErrorMessageFromResponse = Object.values( emailResponse )[ 0 ] || '';
+	const errorMessage = emailResponse.hasOwnProperty( 'taken' )
+		? emailTakenLoginRedirect( email )
+		: emailErrorMessageFromResponse;
+
+	return {
+		email: [ errorMessage ],
 	};
 }
 
