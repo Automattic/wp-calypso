@@ -28,46 +28,31 @@ const LaunchModal: React.FunctionComponent< Props > = ( {
 	onSubmit,
 	step,
 	isLaunching,
-} ) => {
-	const [ isOpen, setOpen ] = React.useState( true );
-
-	const handleClose = () => {
-		setOpen( false );
-		onClose?.();
-	};
-
-	return (
-		<>
-			{ isOpen && (
-				<Modal
-					className="nux-launch-modal"
-					overlayClassName="nux-launch-modal-overlay"
-					bodyOpenClassName="has-nux-launch-modal"
-					onRequestClose={ handleClose }
-					title=""
+} ) => (
+	<Modal
+		className="nux-launch-modal"
+		overlayClassName="nux-launch-modal-overlay"
+		bodyOpenClassName="has-nux-launch-modal"
+		onRequestClose={ () => onClose?.() }
+		title=""
+	>
+		<div className="nux-launch-modal-header">
+			<div className="nux-launch-modal-header__wp-logo">
+				<Icon icon={ wordpress } size={ 36 } />
+			</div>
+			{ onClose && (
+				<Button
+					isLink
+					className="nux-launch-modal-header__close-button"
+					onClick={ onClose }
+					aria-label={ __( 'Close dialog', 'full-site-editing' ) }
 				>
-					<div className="nux-launch-modal-header">
-						<div className="nux-launch-modal-header__wp-logo">
-							<Icon icon={ wordpress } size={ 36 } />
-						</div>
-						<Button
-							isLink
-							className="nux-launch-modal-header__close-button"
-							onClick={ onClose }
-							aria-label={ __( 'Close dialog', 'full-site-editing' ) }
-						>
-							<Icon icon={ close } size={ 24 } />
-						</Button>
-					</div>
-					{ isLaunching ? (
-						'launch animation'
-					) : (
-						<Launch step={ step } onSubmit={ onSubmit }></Launch>
-					) }
-				</Modal>
+					<Icon icon={ close } size={ 24 } />
+				</Button>
 			) }
-		</>
-	);
-};
+		</div>
+		{ isLaunching ? 'launch animation' : <Launch step={ step } onSubmit={ onSubmit }></Launch> }
+	</Modal>
+);
 
 export default LaunchModal;
