@@ -7,6 +7,7 @@ import {
 	Button as OriginalButton,
 	IsolatedEventContainer,
 	withConstrainedTabbing,
+	ExternalLink,
 } from '@wordpress/components';
 import { arrowLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
@@ -20,7 +21,7 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { STORE_KEY, SITE_HOME_HOST_NAME, SITE_HOME_URL, SITE_TITLE } from '../../constants';
+import { STORE_KEY, SITE_HOME_URL } from '../../constants';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
 import { Post } from '../../types';
@@ -35,14 +36,15 @@ const Button = ( {
 
 function WpcomBlockEditorNavSidebar() {
 	const { toggleSidebar, setSidebarClosing } = useDispatch( STORE_KEY );
-	const [ isOpen, isClosing, postType, selectedItemId ] = useSelect( ( select ) => {
-		const { getPostType } = select( 'core' ) as any;
+	const [ isOpen, isClosing, postType, selectedItemId, siteTitle ] = useSelect( ( select ) => {
+		const { getPostType, getSite } = select( 'core' ) as any;
 
 		return [
 			select( STORE_KEY ).isSidebarOpened(),
 			select( STORE_KEY ).isSidebarClosing(),
 			getPostType( select( 'core/editor' ).getCurrentPostType() ),
 			select( 'core/editor' ).getCurrentPostId(),
+			getSite()?.title,
 		];
 	} );
 
@@ -201,8 +203,10 @@ function WpcomBlockEditorNavSidebar() {
 						onClick={ dismissSidebar }
 					/>
 					<p className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
-						<span>{ SITE_TITLE }</span>
-						<a href={ SITE_HOME_URL }>{ SITE_HOME_HOST_NAME }</a>
+						<span>{ siteTitle }</span>
+						<ExternalLink href={ SITE_HOME_URL }>
+							{ __( 'Visit site', 'full-site-editing' ) }
+						</ExternalLink>
 					</p>
 				</div>
 				<Button
