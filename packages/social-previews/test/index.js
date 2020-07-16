@@ -5,7 +5,7 @@ import React from 'react';
 import { Facebook, Twitter, Reader, Search } from '../src';
 import { shallow } from 'enzyme';
 
-const DUMMY_IMAGE_SRC = 'https://wordpress.com/someimagehere';
+const IMAGE_SRC_FIXTURE = 'https://wordpress.com/someimagehere';
 
 describe( 'Facebook previews', () => {
 	it( 'should expose a Facebook preview component', () => {
@@ -43,7 +43,7 @@ describe( 'Facebook previews', () => {
 
 	it( 'should display image only when provided', () => {
 		const wrapperNoImage = shallow( <Facebook /> );
-		const wrapperWithImage = shallow( <Facebook image={ DUMMY_IMAGE_SRC } /> );
+		const wrapperWithImage = shallow( <Facebook image={ IMAGE_SRC_FIXTURE } /> );
 
 		// No image
 		expect( wrapperNoImage.find( 'img[alt="Facebook Preview Thumbnail"]' ).exists() ).toBeFalsy();
@@ -51,7 +51,7 @@ describe( 'Facebook previews', () => {
 		// Has image
 		const imageEl = wrapperWithImage.find( 'img[alt="Facebook Preview Thumbnail"]' );
 		expect( imageEl.exists() ).toBeTruthy();
-		expect( imageEl.html() ).toContain( `src="${ DUMMY_IMAGE_SRC }"` );
+		expect( imageEl.html() ).toContain( `src="${ IMAGE_SRC_FIXTURE }"` );
 	} );
 
 	describe( 'Preview url display', () => {
@@ -124,7 +124,7 @@ describe( 'Twitter previews', () => {
 
 	it( 'should display image only when provided', () => {
 		const wrapperNoImage = shallow( <Twitter /> );
-		const wrapperWithImage = shallow( <Twitter image={ DUMMY_IMAGE_SRC } /> );
+		const wrapperWithImage = shallow( <Twitter image={ IMAGE_SRC_FIXTURE } /> );
 
 		// No image
 		expect( wrapperNoImage.find( '.twitter-preview__image' ).exists() ).toBeFalsy();
@@ -132,7 +132,7 @@ describe( 'Twitter previews', () => {
 		// Has image
 		const imageEl = wrapperWithImage.find( '.twitter-preview__image' );
 		expect( imageEl.exists() ).toBeTruthy();
-		expect( imageEl.html() ).toContain( `style="background-image:url(${ DUMMY_IMAGE_SRC })"` );
+		expect( imageEl.html() ).toContain( `style="background-image:url(${ IMAGE_SRC_FIXTURE })"` );
 	} );
 
 	it( 'should display a protocol-less url only (with no separator) when author is not provided', () => {
