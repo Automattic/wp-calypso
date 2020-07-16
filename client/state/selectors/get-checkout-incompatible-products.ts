@@ -6,7 +6,7 @@ import { translate, TranslateResult } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { DefaultRootState } from 'react-redux';
+import type { AppState } from 'types';
 import type { CartValue, CartItemValue } from 'lib/cart-values/types';
 import { isJetpackBackup, isJetpackScan } from 'lib/products-values';
 import { isJetpackSiteMultiSite } from 'state/sites/selectors';
@@ -18,15 +18,8 @@ type IncompatibleProducts = {
 	content: TranslateResult;
 };
 
-/**
- * Returns whether a checkout cart has incompatible products with a site.
- *
- * @param {DefaultRootState} state  Global state tree
- * @param {number} siteId  ID of a site
- * @param {CartValue} cart A checkout cart
- */
 export default function getCheckoutIncompatibleProducts(
-	state: DefaultRootState,
+	state: AppState,
 	siteId: number | null,
 	cart: CartValue
 ): IncompatibleProducts | null {
