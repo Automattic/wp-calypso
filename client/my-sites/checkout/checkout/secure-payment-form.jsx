@@ -584,7 +584,11 @@ export default connect(
 			presaleChatAvailable: isPresalesChatAvailable( state ),
 			selectedSiteId,
 			siteIsPrivate: isPrivateSite( state, selectedSiteId ),
-			incompatibleProducts: getCheckoutIncompatibleProducts( state, selectedSiteId, props.cart ),
+			incompatibleProducts: getCheckoutIncompatibleProducts(
+				state,
+				selectedSiteId,
+				props.cart.products
+			),
 		};
 	},
 	{ saveSiteSettings }

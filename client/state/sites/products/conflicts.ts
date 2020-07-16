@@ -22,7 +22,7 @@ import { isJetpackSiteMultiSite, hasSiteProduct } from 'state/sites/selectors';
  * Type dependencies
  */
 import type { AppState } from 'types';
-import type { CartValue, CartItemValue } from 'lib/cart-values/types';
+import type { CartItemValue } from 'lib/cart-values/types';
 
 /**
  * Checks if Jetpack Anti-Spam is conflicting with a site's current products.
@@ -84,14 +84,14 @@ type IncompatibleProducts = {
  *
  * @param {AppState} state  Global state tree
  * @param {number} siteId  ID of a site
- * @param {CartValue} cart A checkout cart
+ * @param {CartItemValue} productsInCart A list of products of a checkout cart
  */
 export function getCheckoutIncompatibleProducts(
 	state: AppState,
 	siteId: number | null,
-	cart: CartValue
+	productsInCart: CartItemValue[]
 ): IncompatibleProducts | null {
-	if ( ! siteId || cart.products.length === 0 ) {
+	if ( ! siteId || productsInCart.length === 0 ) {
 		return null;
 	}
 
@@ -100,7 +100,7 @@ export function getCheckoutIncompatibleProducts(
 	// Multisites shouldn't be allowed to purchase Jetpack Backup or Scan because
 	// they are not supported at this time.
 	if ( isMultisite ) {
-		const incompatibleProducts = cart.products.filter(
+		const incompatibleProducts = productsInCart.filter(
 			( p ): p is CartItemValue => isJetpackBackup( p ) || isJetpackScan( p )
 		);
 
