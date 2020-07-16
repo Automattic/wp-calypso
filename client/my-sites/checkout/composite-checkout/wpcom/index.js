@@ -18,6 +18,7 @@ import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
+	getSignupValidationErrorResponse,
 	isCompleteAndValid,
 	areRequiredFieldsNotEmpty,
 } from './types';
@@ -39,6 +40,7 @@ export {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
+	getSignupValidationErrorResponse,
 	areDomainsInLineItems,
 	isCompleteAndValid,
 	areRequiredFieldsNotEmpty,
