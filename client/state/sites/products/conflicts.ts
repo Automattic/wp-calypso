@@ -1,8 +1,14 @@
 /**
+ * External dependencies
+ */
+import { translate, TranslateResult } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
 import { FEATURE_SPAM_AKISMET_PLUS } from 'lib/plans/constants';
+import { isJetpackBackup, isJetpackScan } from 'lib/products-values';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
@@ -10,12 +16,13 @@ import {
 } from 'lib/products-values/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import isSiteWPCOM from 'state/selectors/is-site-wpcom';
-import { hasSiteProduct } from 'state/sites/selectors';
+import { isJetpackSiteMultiSite, hasSiteProduct } from 'state/sites/selectors';
 
 /**
  * Type dependencies
  */
 import type { AppState } from 'types';
+import type { CartValue, CartItemValue } from 'lib/cart-values/types';
 
 /**
  * Checks if Jetpack Anti-Spam is conflicting with a site's current products.
@@ -62,5 +69,75 @@ export default function isProductConflictingWithSite(
 		case PRODUCT_JETPACK_ANTI_SPAM_MONTHLY:
 			return isAntiSpamConflicting( state, siteId );
 	}
+	return null;
+}
+
+type IncompatibleProducts = {
+	products: CartItemValue[];
+	reason: string;
+	blockCheckout: boolean;
+	content: TranslateResult;
+};
+
+/**
+ * Returns whether a checkout cart has incompatible products with a site.
+ *
+ * @param {AppState} state  Global state tree
+ * @param {number} siteId  ID of a site
+ * @param {CartValue} cart A checkout cart
+ */
+export function getCheckoutIncompatibleProducts(
+	state: AppState,
+	siteId: number | null,
+	cart: CartValue
+): IncompatibleProducts | null {
+	if ( ! siteId || cart.products.length === 0 ) {
+		return null;
+	}
+
+	const isMultisite = isJetpackSiteMultiSite( state, siteId );
+
+	// Multisites shouldn't be allowed to purchase Jetpack Backup or Scan because
+	// they are not supported at this time.
+	if ( isMultisite ) {
+		const incompatibleProducts = cart.products.filter(
+			( p ): p is CartItemValue => isJetpackBackup( p ) || isJetpackScan( p )
+		);
+
+		if ( incompatibleProducts.length === 0 ) {
+			return null;
+		}
+
+		let content;
+		if ( incompatibleProducts.length === 1 ) {
+			content = translate(
+				"We're sorry, %(productName)s is not compatible with multisite WordPress installations at this time.",
+				{
+					args: {
+						productName: incompatibleProducts[ 0 ].product_name,
+					},
+				}
+			);
+		} else {
+			content = translate(
+				"We're sorry, %(productName1)s and %(productName2)s are not compatible with multisite WordPress installations at this time.",
+				{
+					args: {
+						productName1: incompatibleProducts[ 0 ].product_name,
+						productName2: incompatibleProducts[ 1 ].product_name,
+					},
+				}
+			);
+		}
+		return {
+			products: incompatibleProducts,
+			reason: 'multisite-incompatibility',
+			blockCheckout: true,
+			content,
+		};
+	}
+
+	// We can add other rules here.
+
 	return null;
 }

@@ -30,7 +30,7 @@ import {
 	newStripeCardPayment,
 	storedCardPayment,
 } from 'lib/transaction/payments';
-import getCheckoutIncompatibleProducts from 'state/selectors/get-checkout-incompatible-products';
+import { getCheckoutIncompatibleProducts } from 'state/sites/products/conflicts';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
