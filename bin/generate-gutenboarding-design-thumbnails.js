@@ -82,38 +82,29 @@ async function run() {
 				width: viewportWidth,
 			} );
 
-			let image = await sharp( screenshot );
-
-			console.log( `Resizing and saving to ${ file }.webp` );
-			await image.metadata().then( ( metadata ) => {
-				image
-					.extract( {
-						// Ensure we're not extracting taller area than screenshot actaully is
-						height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
-						left: 0,
-						top: 0,
-						width: metadata.width,
+			[ 'webp', 'jpg' ].forEach( async ( extension ) => {
+				let image = await sharp( screenshot );
+				console.log( `Resizing and saving to ${ file }.${ extension }` );
+				return await image
+					.metadata()
+					.then( ( metadata ) => {
+						image = image
+							.extract( {
+								// Ensure we're not extracting taller area than screenshot actaully is
+								height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
+								left: 0,
+								top: 0,
+								width: metadata.width,
+							} )
+							.resize( outputWidth );
+						if ( extension === 'webp' ) {
+							image = image.webp(); // default quality is 80
+						} else {
+							image = image.jpeg( { quality: 72 } );
+						}
+						image.toFile( `${ file }.${ extension }` );
 					} )
-					.resize( outputWidth )
-					.webp() // default quality is 80
-					.toFile( `${ file }.webp` );
-			} );
-
-			image = await sharp( screenshot );
-			console.log( `Resizing and saving to ${ file }.jpg` );
-
-			await image.metadata().then( ( metadata ) => {
-				return image
-					.extract( {
-						// Ensure we're not extracting taller area than screenshot actaully is
-						height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
-						left: 0,
-						top: 0,
-						width: metadata.width,
-					} )
-					.resize( outputWidth )
-					.jpeg( { quality: 72 } )
-					.toFile( `${ file }.jpg` );
+					.catch( ( error ) => console.log( error ) );
 			} );
 		} )
 	);
