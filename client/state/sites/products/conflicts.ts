@@ -79,46 +79,63 @@ export default function isProductConflictingWithSite(
 	return null;
 }
 
-export function isPlanIncludingSiteBackup(
-	state: AppState,
-	siteId: number | null,
-	productSlug: string
-): boolean | null {
-	// TODO: use createSelector
-	// value_bundle
+/**
+ * Check if a Jetpack plan is including a Backup product a site might already have.
+ *
+ * @param {AppState} state The redux state.
+ * @param {number} siteId The site ID.
+ * @param {string} planSlug The plan slug.
+ * @returns {boolean|null} True if the plan includes the Backup product, or null when it's unable to be determined.
+ */
+export const isPlanIncludingSiteBackup = createSelector(
+	( state: AppState, siteId: number | null, planSlug: string ): boolean | null => {
+		if ( ! siteId || ! JETPACK_PLANS.includes( planSlug ) ) {
+			return null;
+		}
 
-	if ( ! siteId || ! JETPACK_PLANS.includes( productSlug ) ) {
-		return null;
-	}
+		const hasDailyBackup = hasSiteProduct( state, siteId, [
+			PRODUCT_JETPACK_BACKUP_DAILY,
+			PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+		] );
+		const hasRealTimeBackup = hasSiteProduct( state, siteId, [
+			PRODUCT_JETPACK_BACKUP_REALTIME,
+			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+		] );
 
-	const hasDailyBackup = hasSiteProduct( state, siteId, [
-		PRODUCT_JETPACK_BACKUP_DAILY,
-		PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-	] );
-	const hasRealTimeBackup = hasSiteProduct( state, siteId, [
-		PRODUCT_JETPACK_BACKUP_REALTIME,
-		PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-	] );
-
-	if ( ! hasDailyBackup && ! hasRealTimeBackup ) {
-		return false;
-	}
-
-	switch ( productSlug ) {
-		case PLAN_JETPACK_FREE:
+		if ( ! hasDailyBackup && ! hasRealTimeBackup ) {
 			return false;
-		case PLAN_JETPACK_PERSONAL:
-		case PLAN_JETPACK_PERSONAL_MONTHLY:
-		case PLAN_JETPACK_PREMIUM:
-		case PLAN_JETPACK_PREMIUM_MONTHLY:
-			if ( hasRealTimeBackup ) {
-				return false;
-			}
-			return true;
-		case PLAN_JETPACK_BUSINESS:
-		case PLAN_JETPACK_BUSINESS_MONTHLY:
-			return true;
-	}
+		}
 
-	return null;
-}
+		switch ( planSlug ) {
+			case PLAN_JETPACK_FREE:
+				return false;
+			case PLAN_JETPACK_PERSONAL:
+			case PLAN_JETPACK_PERSONAL_MONTHLY:
+			case PLAN_JETPACK_PREMIUM:
+			case PLAN_JETPACK_PREMIUM_MONTHLY:
+				if ( hasRealTimeBackup ) {
+					return false;
+				}
+				return true;
+			case PLAN_JETPACK_BUSINESS:
+			case PLAN_JETPACK_BUSINESS_MONTHLY:
+				return true;
+		}
+
+		return false;
+	},
+	[
+		( state: AppState, siteId: number | null, planSlug: string ) => [
+			siteId,
+			planSlug,
+			hasSiteProduct( state, siteId, [
+				PRODUCT_JETPACK_BACKUP_DAILY,
+				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+			] ),
+			hasSiteProduct( state, siteId, [
+				PRODUCT_JETPACK_BACKUP_REALTIME,
+				PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+			] ),
+		],
+	]
+);
