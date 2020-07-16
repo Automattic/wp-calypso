@@ -1,7 +1,9 @@
-.wp-block-github-issue-template-button {
+.wp-block {
   display: flex;
 
-  &.flex-start { justify-content: flex-start }
-  &.center { justify-content: center; }
-  &.flex-end { justify-content: flex-end; }
+  &[data-align] { height: auto; }
+  &[data-align] > * { float: none; }
+  &[data-align='left'] { justify-content: flex-start }
+  &[data-align='center'] { justify-content: center }
+  &[data-align='right'] { justify-content: flex-end }
 }
