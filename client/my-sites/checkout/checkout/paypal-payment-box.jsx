@@ -160,6 +160,8 @@ export class PaypalPaymentBox extends React.Component {
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
+		const hasCartIncompatibleProducts = this.props.incompatibleProducts?.length > 0;
+
 		return (
 			<React.Fragment>
 				<form onSubmit={ this.redirectToPayPal }>
@@ -198,7 +200,11 @@ export class PaypalPaymentBox extends React.Component {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary"
-									disabled={ this.state.formDisabled || cart.hasPendingServerUpdates }
+									disabled={
+										this.state.formDisabled ||
+										cart.hasPendingServerUpdates ||
+										hasCartIncompatibleProducts
+									}
 								>
 									{ this.renderButtonText() }
 								</button>

@@ -387,6 +387,7 @@ export class SecurePaymentForm extends Component {
 	}
 
 	renderPayPalPaymentBox() {
+		const incompatibleProducts = this.getIncompatibleProducts();
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
@@ -394,7 +395,7 @@ export class SecurePaymentForm extends Component {
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ this.getIncompatibleProducts() }
+				incompatibleProducts={ incompatibleProducts }
 			>
 				<QueryPaymentCountries />
 				<PayPalPaymentBox
@@ -405,6 +406,7 @@ export class SecurePaymentForm extends Component {
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
 					isWhiteGloveOffer={ this.props.isWhiteGloveOffer }
+					incompatibleProducts={ incompatibleProducts }
 				>
 					{ this.props.children }
 				</PayPalPaymentBox>
