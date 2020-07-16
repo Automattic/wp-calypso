@@ -8680,6 +8680,11 @@ comment-parser@^0.7.2:
   resolved "https://registry.yarnpkg.com/comment-parser/-/comment-parser-0.7.2.tgz#baf6d99b42038678b81096f15b630d18142f4b8a"
   integrity sha512-4Rjb1FnxtOcv9qsfuaNuVsmmVn4ooVoBHzYfyKteiXwIU84PClyGA5jASoFMwPV93+FPh9spwueXauxFJZkGAg==
 
+comment-parser@^0.7.5:
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/comment-parser/-/comment-parser-0.7.5.tgz#06db157a3b34addf8502393743e41897e2c73059"
+  integrity sha512-iH9YA35ccw94nx5244GVkpyC9eVTsL71jZz6iz5w6RIf79JLF2AsXHXq9p6Oaohyl3sx5qSMnGsWUDFIAfWL4w==
+
 commondir@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
@@ -11250,20 +11255,6 @@ eslint-plugin-jest@^23.8.2:
   dependencies:
     "@typescript-eslint/experimental-utils" "^2.5.0"
 
-eslint-plugin-jsdoc@^18.11.0:
-  version "18.11.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-18.11.0.tgz#724e6aa35f01c7f80629b2e313b007422cc159af"
-  integrity sha512-24J2+eK2ZHZ1KvpKcoOEir2k4xJKfPzZ1JC9PToi8y8Tn59T8TVVSNRTTRzsDdiaQeIbehApB3KxqIfJG8o7hg==
-  dependencies:
-    comment-parser "^0.7.2"
-    debug "^4.1.1"
-    jsdoctypeparser "^6.1.0"
-    lodash "^4.17.15"
-    object.entries-ponyfill "^1.0.1"
-    regextras "^0.7.0"
-    semver "^6.3.0"
-    spdx-expression-parse "^3.0.0"
-
 eslint-plugin-jsdoc@^22.1.0:
   version "22.2.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-22.2.0.tgz#b89159e01ed8eeee4f6512101e96cac6a2999461"
@@ -11276,6 +11267,19 @@ eslint-plugin-jsdoc@^22.1.0:
     regextras "^0.7.0"
     semver "^6.3.0"
     spdx-expression-parse "^3.0.0"
+
+eslint-plugin-jsdoc@^29.2.0:
+  version "29.2.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-29.2.0.tgz#40b1da463847750fe5aafea7182145c4108e0ab7"
+  integrity sha512-B1a8LWPkkxyxIp4y3pnRQR18j03Wp+V9gDE7IjQG/MvWAzp5gqXM0q71gXRAZMvWUjujAsNg8B9v1csl+/zkvw==
+  dependencies:
+    comment-parser "^0.7.5"
+    debug "^4.1.1"
+    jsdoctypeparser "^8.0.0"
+    lodash "^4.17.15"
+    regextras "^0.7.1"
+    semver "^7.3.2"
+    spdx-expression-parse "^3.0.1"
 
 eslint-plugin-jsx-a11y@^6.2.3:
   version "6.2.3"
@@ -16236,6 +16240,11 @@ jsdoctypeparser@^6.1.0:
   resolved "https://registry.yarnpkg.com/jsdoctypeparser/-/jsdoctypeparser-6.1.0.tgz#acfb936c26300d98f1405cb03e20b06748e512a8"
   integrity sha512-UCQBZ3xCUBv/PLfwKAJhp6jmGOSLFNKzrotXGNgbKhWvz27wPsCsVeP7gIcHPElQw2agBmynAitXqhxR58XAmA==
 
+jsdoctypeparser@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/jsdoctypeparser/-/jsdoctypeparser-8.0.0.tgz#a04a944539d3f86e30040c1ece6f6730f865f81a"
+  integrity sha512-eLCs6s4JqN8TjFJfgdiLHRvogLhOAJz+5RIA2FtoMe6ZDyuvghvppnlIToqAEnVbxRqLMrfnNXpW8FpmR6IMBw==
+
 jsdom@^11.5.1:
   version "11.12.0"
   resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-11.12.0.tgz#1a80d40ddd378a1de59656e9e6dc5a3ba8657bc8"
@@ -19037,11 +19046,6 @@ object.defaults@^1.1.0:
     array-slice "^1.0.0"
     for-own "^1.0.0"
     isobject "^3.0.0"
-
-object.entries-ponyfill@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/object.entries-ponyfill/-/object.entries-ponyfill-1.0.1.tgz#29abdf77cbfbd26566dd1aa24e9d88f65433d256"
-  integrity sha1-Kavfd8v70mVm3RqiTp2I9lQz0lY=
 
 object.entries@^1.1.0, object.entries@^1.1.1:
   version "1.1.1"
@@ -22530,6 +22534,11 @@ regextras@^0.7.0:
   resolved "https://registry.yarnpkg.com/regextras/-/regextras-0.7.0.tgz#2298bef8cfb92b1b7e3b9b12aa8f69547b7d71e4"
   integrity sha512-ds+fL+Vhl918gbAUb0k2gVKbTZLsg84Re3DI6p85Et0U0tYME3hyW4nMK8Px4dtDaBA2qNjvG5uWyW7eK5gfmw==
 
+regextras@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/regextras/-/regextras-0.7.1.tgz#be95719d5f43f9ef0b9fa07ad89b7c606995a3b2"
+  integrity sha512-9YXf6xtW+qzQ+hcMQXx95MOvfqXFgsKDZodX3qZB0x2n5Z94ioetIITsBtvJbiOyxa/6s9AtyweBLCdPmPko/w==
+
 registry-auth-token@^4.0.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/registry-auth-token/-/registry-auth-token-4.1.1.tgz#40a33be1e82539460f94328b0f7f0f84c16d9479"
@@ -24032,6 +24041,14 @@ spdx-expression-parse@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/spdx-expression-parse/-/spdx-expression-parse-3.0.0.tgz#99e119b7a5da00e05491c9fa338b7904823b41d0"
   integrity sha512-Yg6D3XpRD4kkOmTpdgbUiEJFKghJH03fiC1OPll5h/0sO6neh2jqRDVHOQ4o/LMea0tgCkbMgea5ip/e+MkWyg==
+  dependencies:
+    spdx-exceptions "^2.1.0"
+    spdx-license-ids "^3.0.0"
+
+spdx-expression-parse@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/spdx-expression-parse/-/spdx-expression-parse-3.0.1.tgz#cf70f50482eefdc98e3ce0a6833e4a53ceeba679"
+  integrity sha512-cbqHunsQWnJNE6KhVSMsMeH5H/L9EpymbzqTQ3uLwNCLZ1Q481oWaofqH7nO6V07xlXwY6PhQdQ2IedWx/ZK4Q==
   dependencies:
     spdx-exceptions "^2.1.0"
     spdx-license-ids "^3.0.0"
