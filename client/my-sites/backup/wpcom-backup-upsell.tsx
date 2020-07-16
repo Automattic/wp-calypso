@@ -4,12 +4,12 @@
 import React, { ReactElement, FunctionComponent } from 'react';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { addQueryArgs } from '@wordpress/url';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from '@wordpress/url';
-import { Button } from '@automattic/components';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { preventWidows } from 'lib/formatting';
