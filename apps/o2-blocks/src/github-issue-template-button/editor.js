@@ -40,7 +40,7 @@ const Button = ( props ) => (
 
 const GithubButton = ( props ) => (
 	<Button { ...props }>
-		<Icon icon={ icon } style={ { marginRight: '10px' } } />
+		<Icon icon={ icon } style={ { marginRight: '5px' } } />
 	</Button>
 );
 
