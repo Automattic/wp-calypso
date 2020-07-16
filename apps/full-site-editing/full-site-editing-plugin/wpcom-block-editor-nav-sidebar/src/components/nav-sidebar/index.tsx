@@ -20,7 +20,7 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../constants';
+import { STORE_KEY, SITE_HOME_HOST_NAME, SITE_HOME_URL, SITE_TITLE } from '../../constants';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
 import { Post } from '../../types';
@@ -200,6 +200,10 @@ function WpcomBlockEditorNavSidebar() {
 						iconSize={ 36 }
 						onClick={ dismissSidebar }
 					/>
+					<p className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
+						<span>{ SITE_TITLE }</span>
+						<a href={ SITE_HOME_URL }>{ SITE_HOME_HOST_NAME }</a>
+					</p>
 				</div>
 				<Button
 					href={ closeUrl }

@@ -59,6 +59,17 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 			plugins_url( 'dist/', __FILE__ )
 		);
 
+		wp_localize_script(
+			'wpcom-block-editor-nav-sidebar-script',
+			'wpcomBlockEditorNavSidebar',
+			array(
+				'assetsUrl' => plugins_url( 'dist/', __FILE__ ),
+				'homeHost'  => parse_url( home_url() ),
+				'homeUrl'   => home_url(),
+				'siteTitle' => esc_html( get_bloginfo( 'name' ) ),
+			)
+		);
+
 		$style_path = 'dist/wpcom-block-editor-nav-sidebar' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		wp_enqueue_style(
 			'wpcom-block-editor-nav-sidebar-style',
