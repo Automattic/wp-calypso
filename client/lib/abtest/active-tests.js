@@ -167,4 +167,13 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	reskinSignupFlow: {
+		datestamp: '20200720',
+		variations: {
+			reskinned: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
