@@ -47,12 +47,13 @@ export function getPlan( planKey ) {
  * Find a plan by its path slug
  *
  * @param {string} pathSlug Path slug
+ * @param {string?} group Group to search in
  * @returns {object} The plan
  */
-export function getPlanByPathSlug( pathSlug ) {
-	return Object.values( PLANS_LIST ).find(
-		( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug
-	);
+export function getPlanByPathSlug( pathSlug, group ) {
+	return Object.values( PLANS_LIST )
+		.filter( ( p ) => ( group ? p.group === group : true ) )
+		.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {

@@ -17,7 +17,8 @@ import DuplicateProductNoticeContent from './checkout/duplicate-product-notice-c
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
-import { PRODUCT_JETPACK_BACKUP } from 'lib/products-values/constants';
+import { GROUP_JETPACK } from 'lib/plans/constants';
+import { isJetpackBackup } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
@@ -49,15 +50,14 @@ export default function CheckoutSystemDecider( {
 	isWhiteGloveOffer,
 } ) {
 	const siteId = selectedSite?.ID;
-	const productPlan = getPlanByPathSlug( product );
-	console.log( productPlan );
+	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
 	const isIncludingSiteBackup = useSelector( ( state ) =>
-		productPlan ? isPlanIncludingSiteBackup( state, siteId, productPlan.getStoreSlug() ) : null
+		jetpackPlan ? isPlanIncludingSiteBackup( state, siteId, jetpackPlan.getStoreSlug() ) : null
 	);
 	const products = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const reduxDispatch = useDispatch();
@@ -66,9 +66,7 @@ export default function CheckoutSystemDecider( {
 	let duplicateBackupNotice;
 
 	if ( isIncludingSiteBackup && selectedSite ) {
-		const backupProduct =
-			isArray( products ) &&
-			products.find( ( p ) => p.productSlug.includes( PRODUCT_JETPACK_BACKUP ) );
+		const backupProduct = isArray( products ) && products.find( isJetpackBackup );
 
 		duplicateBackupNotice = backupProduct && (
 			<DuplicateProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
