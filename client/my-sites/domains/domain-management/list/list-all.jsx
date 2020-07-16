@@ -39,6 +39,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getUserPurchases } from 'state/purchases/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import { hasAllSitesList } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -80,8 +81,8 @@ class ListAll extends Component {
 	}
 
 	isLoading() {
-		const { domainsList, requestingFlatDomains, sites } = this.props;
-		return ! sites || ( requestingFlatDomains && domainsList.length === 0 );
+		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
+		return ! hasAllSitesLoaded || ( requestingFlatDomains && domainsList.length === 0 );
 	}
 
 	findDomainDetails( domainsDetails = [], domain = {} ) {
@@ -92,6 +93,7 @@ class ListAll extends Component {
 
 	renderDomainItem( domain ) {
 		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
+		const domainDetails = this.findDomainDetails( domainsDetails, domain );
 
 		return (
 			<>
@@ -99,10 +101,12 @@ class ListAll extends Component {
 				<DomainItem
 					currentRoute={ currentRoute }
 					domain={ domain }
-					domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
+					domainDetails={ domainDetails }
 					site={ sites[ domain?.blogId ] }
 					isManagingAllSites={ true }
-					isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
+					isLoadingDomainDetails={
+						! domainDetails && ( requestingSiteDomains[ domain?.blogId ] ?? false )
+					}
 					onClick={ this.handleDomainItemClick }
 				/>
 			</>
@@ -173,6 +177,7 @@ export default connect(
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
+			hasAllSitesLoaded: hasAllSitesList( state ),
 			user,
 		};
 	},
