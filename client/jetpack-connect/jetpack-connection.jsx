@@ -68,11 +68,17 @@ const jetpackConnection = ( WrappedComponent ) => {
 		goBack = () => page.back();
 
 		processJpSite = ( url ) => {
+			this.setState( { url }, this.continueProcess1 );
+		};
+
+		continueProcess1 = () => {
+			const status = this.getStatus( this.state.url );
+			this.setState( { status }, this.continueProcess2 );
+		};
+
+		continueProcess2 = () => {
 			const { isMobileAppFlow, skipRemoteInstall, forceRemoteInstall } = this.props;
-
-			const status = this.getStatus( url );
-
-			this.setState( { url, status } );
+			const { status, url } = this.state;
 
 			if (
 				status === NOT_CONNECTED_JETPACK &&
