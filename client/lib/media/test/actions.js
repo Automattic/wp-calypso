@@ -102,15 +102,4 @@ describe( 'MediaActions', () => {
 			} );
 		} );
 	} );
-
-	describe( '#sourceChanged()', () => {
-		test( 'should dispatch the `CHANGE_MEDIA_SOURCE` action with the specified siteId', () => {
-			MediaActions.sourceChanged( DUMMY_SITE_ID );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CHANGE_MEDIA_SOURCE',
-				siteId: DUMMY_SITE_ID,
-			} );
-		} );
-	} );
 } );
