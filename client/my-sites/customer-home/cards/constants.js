@@ -7,6 +7,7 @@ export const FEATURE_GO_MOBILE = 'home-feature-go-mobile';
 export const FEATURE_QUICK_START = 'home-feature-quick-start';
 export const FEATURE_STATS = 'home-feature-stats';
 export const FEATURE_SUPPORT = 'home-feature-support';
+export const FEATURE_WELCOME_VIDEO = 'home-feature-welcome-video';
 export const NOTICE_CELEBRATE_SITE_CREATION = 'home-notice-celebrate-site-creation';
 export const NOTICE_CELEBRATE_SITE_LAUNCH = 'home-notice-celebrate-site-launch';
 export const NOTICE_CELEBRATE_SITE_MIGRATION = 'home-notice-celebrate-site-migration';
