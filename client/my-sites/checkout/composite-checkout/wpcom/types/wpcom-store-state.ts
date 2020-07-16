@@ -708,6 +708,7 @@ export type ManagedContactDetailsUpdaters = {
 	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateDomainContactFields: (
 		arg0: ManagedContactDetails,
@@ -754,6 +755,13 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		return {
 			...oldDetails,
 			postalCode: touchIfDifferent( newPostalCode, oldDetails.postalCode ),
+		};
+	},
+
+	updateEmail: ( oldDetails: ManagedContactDetails, newEmail: string ): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			email: touchIfDifferent( newEmail, oldDetails.email ),
 		};
 	},
 
