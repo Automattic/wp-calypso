@@ -28,6 +28,7 @@ import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
+import IncompatibleProductMessage from './incompatible-product-message';
 import { addQueryArgs } from 'lib/url';
 
 export class RedirectPaymentBox extends PureComponent {
@@ -372,6 +373,9 @@ export class RedirectPaymentBox extends PureComponent {
 								/>
 							) }
 						</div>
+						{ this.props.incompatibleProducts && (
+							<IncompatibleProductMessage content={ this.props.content } />
+						) }
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />
