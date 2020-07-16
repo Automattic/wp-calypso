@@ -210,9 +210,7 @@ export class WechatPaymentBox extends Component {
 							) }
 						</div>
 
-						{ this.props.incompatibleProducts && (
-							<IncompatibleProductMessage content={ this.props.incompatibleProducts.content } />
-						) }
+						<IncompatibleProductMessage incompatibleProducts={ this.props.incompatibleProducts } />
 					</div>
 				</form>
 

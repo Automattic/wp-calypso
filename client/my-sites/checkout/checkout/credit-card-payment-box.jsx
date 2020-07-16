@@ -179,9 +179,7 @@ class CreditCardPaymentBox extends React.Component {
 						/>
 					) }
 				</div>
-				{ incompatibleProducts && (
-					<IncompatibleProductMessage content={ incompatibleProducts.content } />
-				) }
+				<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
 			</>
 		);
 	};

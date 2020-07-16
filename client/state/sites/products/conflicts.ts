@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { translate, TranslateResult } from 'i18n-calypso';
-
-/**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
@@ -72,11 +67,10 @@ export default function isProductConflictingWithSite(
 	return null;
 }
 
-type IncompatibleProducts = {
+export type IncompatibleProducts = {
 	products: CartItemValue[];
 	reason: string;
 	blockCheckout: boolean;
-	content: TranslateResult;
 };
 
 /**
@@ -108,32 +102,10 @@ export function getCheckoutIncompatibleProducts(
 			return null;
 		}
 
-		let content;
-		if ( incompatibleProducts.length === 1 ) {
-			content = translate(
-				"We're sorry, %(productName)s is not compatible with multisite WordPress installations at this time.",
-				{
-					args: {
-						productName: incompatibleProducts[ 0 ].product_name,
-					},
-				}
-			);
-		} else {
-			content = translate(
-				"We're sorry, %(productName1)s and %(productName2)s are not compatible with multisite WordPress installations at this time.",
-				{
-					args: {
-						productName1: incompatibleProducts[ 0 ].product_name,
-						productName2: incompatibleProducts[ 1 ].product_name,
-					},
-				}
-			);
-		}
 		return {
 			products: incompatibleProducts,
 			reason: 'multisite-incompatibility',
 			blockCheckout: true,
-			content,
 		};
 	}
 

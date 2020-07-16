@@ -32,9 +32,7 @@ export class CreditsPaymentBox extends React.Component {
 		return (
 			<React.Fragment>
 				<form onSubmit={ this.props.onSubmit }>
-					{ incompatibleProducts && (
-						<IncompatibleProductNotice content={ incompatibleProducts.content } />
-					) }
+					<IncompatibleProductNotice incompatibleProducts={ incompatibleProducts } />
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-section">
 						<WordPressLogo size={ 52 } />
@@ -78,9 +76,7 @@ export class CreditsPaymentBox extends React.Component {
 							/>
 						) }
 					</div>
-					{ incompatibleProducts && (
-						<IncompatibleProductMessage content={ incompatibleProducts.content } />
-					) }
+					<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
 				</form>
 
 				<CartCoupon cart={ cart } />

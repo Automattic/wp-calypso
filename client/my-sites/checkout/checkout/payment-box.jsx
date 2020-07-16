@@ -187,9 +187,7 @@ export class PaymentBox extends PureComponent {
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
 						<div className={ contentClass }>
-							{ this.props.incompatibleProducts && (
-								<IncompatibleProductNotice content={ this.props.incompatibleProducts.content } />
-							) }
+							<IncompatibleProductNotice incompatibleProducts={ this.props.incompatibleProducts } />
 							{ this.props.children }
 						</div>
 					</div>

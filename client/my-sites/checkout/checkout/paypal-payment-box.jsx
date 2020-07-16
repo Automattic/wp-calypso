@@ -221,9 +221,7 @@ export class PaypalPaymentBox extends React.Component {
 								<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
 							) }
 						</div>
-						{ incompatibleProducts && (
-							<IncompatibleProductMessage content={ incompatibleProducts.content } />
-						) }
+						<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />
