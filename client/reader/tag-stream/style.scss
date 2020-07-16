@@ -123,3 +123,8 @@
 .is-reader-page .main .tag-stream__empty-content {
 	margin-top: 15px;
 }
+
+// Overrides default 720px width
+.is-reader-page .tag-stream__main.main {
+	max-width: 800px;
+}

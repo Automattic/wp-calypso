@@ -113,7 +113,7 @@ class TagStream extends React.Component {
 
 		if ( tag && tag.error ) {
 			return (
-				<ReaderMain>
+				<ReaderMain className="tag-stream__main">
 					<QueryReaderFollowedTags />
 					<QueryReaderTag tag={ this.props.decodedTagSlug } />
 					{ this.props.showBack && <HeaderBack /> }
@@ -123,7 +123,7 @@ class TagStream extends React.Component {
 						showFollow={ false }
 						showBack={ this.props.showBack }
 					/>
-					<EmptyContent />
+					{ emptyContent }
 				</ReaderMain>
 			);
 		}
