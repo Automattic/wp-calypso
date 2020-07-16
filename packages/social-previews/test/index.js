@@ -168,7 +168,7 @@ describe( 'Search previews', () => {
 	} );
 
 	describe( 'Title truncation', () => {
-		it( 'should display title if short enough ', () => {
+		it( 'should display entire title if short enough ', () => {
 			const wrapper = shallow( <Search title="I am the very model of a modern Major-General" /> );
 
 			const titleEl = wrapper.find( '.search-preview__title' );
@@ -204,6 +204,50 @@ describe( 'Search previews', () => {
 			);
 			const titleElNoEllipsis = titleEl.text().replace( '…', '' );
 			expect( titleElNoEllipsis ).toHaveLength( 63 );
+		} );
+	} );
+
+	describe( 'Snippet truncation', () => {
+		it( 'should display entire snippet if short enough ', () => {
+			const wrapper = shallow(
+				<Search snippet="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical." />
+			);
+
+			const snippetEl = wrapper.find( '.search-preview__snippet' );
+			expect( snippetEl.exists() ).toBeTruthy();
+			expect( snippetEl.text() ).toEqual(
+				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical."
+			);
+			expect( snippetEl.text().length ).toBeLessThanOrEqual( 160 );
+		} );
+
+		it( 'should truncate snippet at suitable space character where possible', () => {
+			const snippetUpperBound = 160 + 10;
+			const wrapper = shallow(
+				<Search snippet="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+			);
+
+			const snippetEl = wrapper.find( '.search-preview__snippet' );
+			expect( snippetEl.exists() ).toBeTruthy();
+			expect( snippetEl.text() ).toEqual(
+				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From…"
+			);
+			const rawSnippetText = snippetEl.text().replace( '…', '' );
+			expect( rawSnippetText.length ).toBeLessThanOrEqual( snippetUpperBound );
+		} );
+
+		it( 'should hard truncate snippet as last resort', () => {
+			const wrapper = shallow(
+				<Search snippet="IamtheverymodelofamodernMajor-General,I'veinformationvegetable,animal,andmineral.IknowthekingsofEngland,andIquotethefightshistorical,FromMarathontoWaterloo,inordercategorical;I'mverywellacquainted,too,withmattersmathematical,Iunderstandequations,boththesimpleandquadratical;AboutbinomialtheoremI'mteemingwithaloto'news,Withmanycheerfulfactsaboutthesquareofthehypotenuse." />
+			);
+
+			const snippetEl = wrapper.find( '.search-preview__snippet' );
+			expect( snippetEl.exists() ).toBeTruthy();
+			expect( snippetEl.text() ).toEqual(
+				"IamtheverymodelofamodernMajor-General,I'veinformationvegetable,animal,andmineral.IknowthekingsofEngland,andIquotethefightshistorical,FromMarathontoWaterloo,inor…"
+			);
+			const snippetElNoEllipsis = snippetEl.text().replace( '…', '' );
+			expect( snippetElNoEllipsis ).toHaveLength( 160 );
 		} );
 	} );
 
