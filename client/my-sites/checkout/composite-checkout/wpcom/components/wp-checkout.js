@@ -578,4 +578,20 @@ const CheckoutNoticeWrapper = styled.div`
 	.notice {
 		margin-bottom: 0;
 	}
+
+	.notice.is-info .notice__icon-wrapper-drop {
+		background-color: var( --color-accent-40 );
+	}
+
+	.notice__text .checkout__duplicate-notice-link {
+		margin-left: 20px;
+
+		color: var( --color-neutral-10 );
+
+		text-decoration: none;
+
+		&:visited {
+			color: var( --color-neutral-10 );
+		}
+	}
 `;
