@@ -39,6 +39,7 @@ export class RedirectPaymentBox extends PureComponent {
 		countriesList: PropTypes.array.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		incompatibleProducts: PropTypes.array,
 	};
 
 	eventFormName = 'Checkout Form';
@@ -323,6 +324,7 @@ export class RedirectPaymentBox extends PureComponent {
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
+		const hasCartIncompatibleProducts = this.props.incompatibleProducts?.length > 0;
 
 		return (
 			<React.Fragment>
@@ -348,7 +350,7 @@ export class RedirectPaymentBox extends PureComponent {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary "
-									disabled={ this.state.formDisabled }
+									disabled={ this.state.formDisabled || hasCartIncompatibleProducts }
 								>
 									{ this.renderButtonText() }
 								</button>
