@@ -14,7 +14,7 @@ $transition-period: 200ms;
 	right: 0;
 	bottom: 0;
 	// Use the same z-index as the <Modal> component
-	z-index: z-index( '.components-modal__header' );
+	z-index: z-index( '.interface-interface-skeleton__header' );
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
 	@include reduce-motion( 'animation' );
 
