@@ -82,6 +82,12 @@ function premium_content_block_init() {
 		array(),
 		filemtime( "$dir/$style_css" )
 	);
+
+	// Determine required `context` key based on Gutenberg version.
+	$deprecated = function_exists( 'gutenberg_get_post_from_context' );
+	$provides   = $deprecated ? 'providesContext' : 'provides_context';
+	$uses       = $deprecated ? 'context' : 'uses_context';
+
 	register_block_type(
 		'premium-content/container',
 		array(
@@ -89,7 +95,7 @@ function premium_content_block_init() {
 			'editor_style'    => 'premium-content-editor',
 			'style'           => 'premium-content-frontend',
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_container_render',
-			'providesContext' => array(
+			$provides         => array(
 				'premium-content/planId' => 'selectedPlanId',
 			),
 		)
@@ -98,7 +104,7 @@ function premium_content_block_init() {
 		'premium-content/subscriber-view',
 		array(
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_block_subscriber_view_render',
-			'context'         => array( 'premium-content/planId' ),
+			$uses             => array( 'premium-content/planId' ),
 		)
 	);
 	register_block_type(
@@ -107,7 +113,7 @@ function premium_content_block_init() {
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_block_logged_out_view_render',
 			'script'          => 'premium-content-frontend',
 			'style'           => 'premium-content-frontend',
-			'context'         => array( 'premium-content/planId' ),
+			$uses             => array( 'premium-content/planId' ),
 		)
 	);
 	register_block_type(
