@@ -10,14 +10,14 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { authTokenRedirectPath } from './paths';
+import { setCurrentUser } from 'state/current-user/actions';
 import config from 'config';
 import Connect from './connect';
 import GetToken from './get-token';
 import userModule from 'lib/user';
 import wpcom from 'lib/wp';
-import { setCurrentUser } from 'state/current-user/actions';
-
-import { authTokenRedirectPath } from './paths';
+import { startJetpackCloudSupportSession } from 'lib/jetpack/support-session';
 
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
@@ -99,4 +99,9 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 	} );
 
 	next();
+};
+
+export const handleSupportSession: PageJS.Callback = () => {
+	startJetpackCloudSupportSession();
+	window.location.replace( '/' );
 };

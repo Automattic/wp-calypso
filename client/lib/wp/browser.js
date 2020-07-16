@@ -14,12 +14,14 @@ import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket
 import * as oauthToken from 'lib/oauth-token';
 import wpcomXhrWrapper from 'lib/wpcom-xhr-wrapper';
 import wpcomProxyRequest from 'wpcom-proxy-request';
+import { inJetpackCloudSupportSession } from 'lib/jetpack/support-session';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 const debug = debugFactory( 'calypso:wp' );
 
 let wpcom;
 
-if ( config.isEnabled( 'oauth' ) ) {
+if ( config.isEnabled( 'oauth' ) && ! ( isJetpackCloud() && inJetpackCloudSupportSession() ) ) {
 	wpcom = wpcomUndocumented( oauthToken.getToken(), wpcomXhrWrapper );
 } else {
 	wpcom = wpcomUndocumented( wpcomProxyRequest );
