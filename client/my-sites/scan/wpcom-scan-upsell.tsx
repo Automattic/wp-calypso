@@ -57,7 +57,7 @@ const ScanVPActiveBody: FunctionComponent = () => {
 			<p>
 				{ preventWidows(
 					translate(
-						'Your site is already backed up by VaultPress. You can find a link to your VaultPress dashboard below.'
+						'Your site is already protected by VaultPress. You can find a link to your VaultPress dashboard below.'
 					)
 				) }
 			</p>
