@@ -892,4 +892,3 @@ export function addOrRemoveFromProgressStore( stepName, defaultDependencies, nex
 		nextProps.removeStep( { stepName } );
 	}
 }
-
