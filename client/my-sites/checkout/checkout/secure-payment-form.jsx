@@ -282,6 +282,7 @@ export class SecurePaymentForm extends Component {
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
 				presaleChatAvailable={ this.props.presaleChatAvailable }
+				infoMessage={ this.props.infoMessage }
 			>
 				{ this.props.children }
 			</CreditsPaymentBox>
@@ -294,6 +295,7 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
+				infoMessage={ this.props.infoMessage }
 			/>
 		);
 	}
@@ -306,6 +308,7 @@ export class SecurePaymentForm extends Component {
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				transactionStep={ this.props.transaction.step }
+				infoMessage={ this.props.infoMessage }
 			/>
 		);
 	}

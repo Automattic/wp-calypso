@@ -79,7 +79,11 @@ export class CreditsPaymentBox extends React.Component {
 
 	render() {
 		return (
-			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure payment' ) }>
+			<PaymentBox
+				classSet="credits-payment-box"
+				title={ this.props.translate( 'Secure payment' ) }
+				infoMessage={ this.props.infoMessage }
+			>
 				{ this.content() }
 			</PaymentBox>
 		);
