@@ -97,6 +97,51 @@ describe( 'Twitter previews', () => {
 	it( 'should expose a Twitter preview component', () => {
 		expect( Twitter ).not.toBe( undefined );
 	} );
+
+	it( 'should display a untruncated title', () => {
+		const wrapper = shallow(
+			<Twitter title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
+		);
+
+		const titleEl = wrapper.find( '.twitter-preview__title' );
+		expect( titleEl.exists() ).toBeTruthy();
+		expect( titleEl.text() ).toEqual(
+			"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral."
+		);
+	} );
+
+	it( 'should display a untruncated description', () => {
+		const wrapper = shallow(
+			<Twitter description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+		);
+
+		const descEl = wrapper.find( '.twitter-preview__description' );
+		expect( descEl.exists() ).toBeTruthy();
+		expect( descEl.text() ).toEqual(
+			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+		);
+	} );
+
+	it( 'should display image only when provided', () => {
+		const wrapperNoImage = shallow( <Twitter /> );
+		const wrapperWithImage = shallow( <Twitter image={ DUMMY_IMAGE_SRC } /> );
+
+		// No image
+		expect( wrapperNoImage.find( '.twitter-preview__image' ).exists() ).toBeFalsy();
+
+		// Has image
+		const imageEl = wrapperWithImage.find( '.twitter-preview__image' );
+		expect( imageEl.exists() ).toBeTruthy();
+		expect( imageEl.html() ).toContain( `style="background-image:url(${ DUMMY_IMAGE_SRC })"` );
+	} );
+
+	it( 'should display a protocol-less url only (with no separator) when author is not provided', () => {
+		const wrapper = shallow( <Twitter url="https://wordpress.com" /> );
+
+		const urlEl = wrapper.find( '.twitter-preview__url' );
+		expect( urlEl.exists() ).toBeTruthy();
+		expect( urlEl.text() ).toEqual( 'wordpress.com' );
+	} );
 } );
 
 describe( 'Search previews', () => {
