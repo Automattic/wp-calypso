@@ -57,6 +57,8 @@ class ListAll extends Component {
 		requestingSiteDomains: PropTypes.object,
 	};
 
+	renderedQuerySiteDomains = {};
+
 	clickAddDomain = () => {
 		this.props.addDomainClick();
 		page( domainAddNew( '' ) );
@@ -91,13 +93,25 @@ class ListAll extends Component {
 		);
 	}
 
-	renderDomainItem( domain ) {
+	renderQuerySiteDomainsOnce( blogId ) {
+		if ( this.renderedQuerySiteDomains[ blogId ] ) {
+			return null;
+		}
+		this.renderedQuerySiteDomains[ blogId ] = true;
+		return <QuerySiteDomains siteId={ blogId } />;
+	}
+
+	renderDomainItem( domain, index ) {
 		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
 		const domainDetails = this.findDomainDetails( domainsDetails, domain );
 
 		return (
-			<>
-				{ domain?.blogId && <QuerySiteDomains siteId={ domain.blogId } /> }
+			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
+				{ domain?.blogId && (
+					<LazyRender>
+						{ ( render ) => ( render ? this.renderQuerySiteDomainsOnce( domain.blogId ) : null ) }
+					</LazyRender>
+				) }
 				<DomainItem
 					currentRoute={ currentRoute }
 					domain={ domain }
@@ -109,7 +123,7 @@ class ListAll extends Component {
 					}
 					onClick={ this.handleDomainItemClick }
 				/>
-			</>
+			</React.Fragment>
 		);
 	}
 
@@ -124,11 +138,9 @@ class ListAll extends Component {
 			.filter(
 				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
 			) // filter on sites we can manage, that aren't `wpcom` type
-			.map( ( domain, index ) => (
-				<LazyRender key={ `lazy-${ index }-${ domain.name }` }>
-					{ ( render ) => ( render ? this.renderDomainItem( domain ) : <ListItemPlaceholder /> ) }
-				</LazyRender>
-			) );
+			.map( ( domain, index ) => {
+				return this.renderDomainItem( domain, index );
+			} );
 
 		return [ <ListHeader key="list-header" />, ...domainListItems ];
 	}
