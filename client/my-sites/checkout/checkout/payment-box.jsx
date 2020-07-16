@@ -24,6 +24,7 @@ import {
 	WEB_PAYMENT_BASIC_CARD_METHOD,
 	WEB_PAYMENT_APPLE_PAY_METHOD,
 } from 'lib/web-payment';
+import IncompatibleProductNotice from './incompatible-product-notice';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -177,6 +178,9 @@ export class PaymentBox extends PureComponent {
 			  } )
 			: this.props.translate( 'Loading…' );
 
+		const incompatibleProducts = this.props.incompatibleProducts || [];
+		const hasIncompatibleProducts = incompatibleProducts.length > 0;
+
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
@@ -185,7 +189,12 @@ export class PaymentBox extends PureComponent {
 
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
-						<div className={ contentClass }>{ this.props.children }</div>
+						<div className={ contentClass }>
+							{ hasIncompatibleProducts && (
+								<IncompatibleProductNotice incompatibleProducts={ incompatibleProducts } />
+							) }
+							{ this.props.children }
+						</div>
 					</div>
 				</Card>
 			</div>

@@ -337,6 +337,7 @@ export class SecurePaymentForm extends Component {
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
+				incompatibleProducts={ this.getIncompatibleProducts() }
 			>
 				<QueryPaymentCountries />
 				<CreditCardPaymentBox
@@ -365,6 +366,7 @@ export class SecurePaymentForm extends Component {
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
+				incompatibleProducts={ this.getIncompatibleProducts() }
 			>
 				<QueryPaymentCountries />
 				<StripeElementsPaymentBox

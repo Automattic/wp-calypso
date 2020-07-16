@@ -149,7 +149,7 @@ class CreditCardPaymentBox extends React.Component {
 
 		return (
 			<div className={ paymentButtonClasses }>
-				<PayButton cart={ cart } transactionStep={ transactionStep } />
+				<PayButton cart={ cart } transactionStep={ transactionStep } notAllowed={ true } />
 
 				<div className="checkout__secure-payment">
 					<div className="checkout__secure-payment-content">
