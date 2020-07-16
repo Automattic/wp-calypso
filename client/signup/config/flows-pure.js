@@ -125,6 +125,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'onboarding-new': {
+			steps: [ 'domains', 'plans-new', 'user-new' ],
+			destination: getSignupDestination,
+			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
+			lastModified: '2020-06-26',
+			showRecaptcha: true,
+		},
+
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,

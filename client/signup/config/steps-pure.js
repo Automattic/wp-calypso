@@ -37,6 +37,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	addOrRemoveFromProgressStore = noop,
+	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -152,6 +153,29 @@ export function generateSteps( {
 			},
 		},
 
+		'user-new': {
+			stepName: 'user-new',
+			apiRequestFunction: createAccount,
+			fulfilledStepCallback: maybeRemoveStepForUserlessCheckout,
+			providesToken: true,
+			dependencies: [ 'cartItem', 'domainItem' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'allowUnauthenticated',
+			],
+			optionalDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'allowUnauthenticated',
+			],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
@@ -165,6 +189,12 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-new': {
+			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
