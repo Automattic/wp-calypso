@@ -88,6 +88,7 @@ export class JetpackConnectNotices extends Component {
 
 		switch ( noticeType ) {
 			case NOT_EXISTS:
+				noticeValues.userCanRetry = true;
 				return noticeValues;
 
 			case SITE_BLOCKED:
