@@ -6,10 +6,9 @@ import fs from 'fs';
 import path from 'path';
 import { stringify } from 'qs';
 import crypto from 'crypto';
-import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { endsWith, get, includes, pick, snakeCase, split } from 'lodash';
+import { get, includes, snakeCase } from 'lodash';
 import bodyParser from 'body-parser';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -18,13 +17,11 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
  * Internal dependencies
  */
 import config from 'config';
-import sanitize from 'server/sanitize';
-import utils from 'server/bundler/utils';
 import { pathToRegExp } from 'utils';
 import sections from 'sections';
 import isSectionEnabled from 'sections-filter';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
-import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
+import { serverRouter } from 'server/isomorphic-routing';
 import {
 	serverRender,
 	renderJsx,
@@ -32,197 +29,24 @@ import {
 	attachHead,
 	attachI18n,
 } from 'server/render';
-import stateCache from 'server/state-cache';
 import getBootstrappedUser from 'server/user-bootstrap';
-import { createReduxStore } from 'state';
-import { setStore } from 'state/redux-store';
-import initialReducer from 'state/reducer';
-import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
+import { LOCALE_SET } from 'state/action-types';
 import { setCurrentUser } from 'state/current-user/actions';
 import { login } from 'lib/paths';
 import { logSectionResponse } from './analytics';
 import analytics from 'server/lib/analytics';
-import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { filterLanguageRevisions } from 'lib/i18n-utils';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareAssets from '../middleware/assets.js';
+import middlewareLoggedInContext from '../middleware/logged-in.js';
+import middlewareLocaleSubdomain from '../middleware/locale-subdomain.js';
+import middlewareDefaultContext from '../middleware/context';
 
 const debug = debugFactory( 'calypso:pages' );
 
-const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
-
-const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
-
-const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
-	if ( ! file.hash ) {
-		file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
-	}
-	result[ file.path ] = utils.getUrl( file.path, file.hash );
-	return result;
-}, {} );
-
-// TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
-function getInitialServerState( serializedServerState ) {
-	// Bootstrapped state from a server-render
-	const serverState = initialReducer( serializedServerState, { type: DESERIALIZE } );
-	return pick( serverState, Object.keys( serializedServerState ) );
-}
-
-function getCurrentBranchName() {
-	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
-function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
-/*
- * Look at the request headers and determine if the request is logged in or logged out or if
- * it's a support session. Set `req.context.isLoggedIn` and `req.context.isSupportSession` flags
- * accordingly. The handler is called very early (immediately after parsing the cookies) and
- * all following handlers (including the locale and redirect ones) can rely on the context values.
- */
-function setupLoggedInContext( req, res, next ) {
-	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
-	const isLoggedIn = !! req.cookies.wordpress_logged_in;
-
-	req.context = {
-		...req.context,
-		isSupportSession,
-		isLoggedIn,
-	};
-
-	next();
-}
-
-function getDefaultContext( request, entrypoint = 'entry-main' ) {
-	let initialServerState = {};
-	let lang = config( 'i18n_default_locale_slug' );
-	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
-	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
-	// called before route-specific middleware, so it's up to the cache *writes* in server
-	// render to make sure that Redux state and markup are only cached for specified query args.
-	const cacheKey = getNormalizedPath( request.path, request.query );
-	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
-	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
-
-	if ( cacheKey ) {
-		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
-		initialServerState = getInitialServerState( serializeCachedServerState );
-	}
-
-	// We assign request.context.lang in the handleLocaleSubdomains()
-	// middleware function if we detect a language slug in subdomain
-	if ( request.context && request.context.lang ) {
-		lang = request.context.lang;
-	}
-
-	const target = request.getTarget();
-
-	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
-	const isWCComConnect =
-		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
-		request.query[ 'wccom-from' ] &&
-		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
-
-	const reduxStore = createReduxStore( initialServerState );
-	setStore( reduxStore );
-
-	const flags = ( request.query.flags || '' ).split( ',' );
-	const context = Object.assign( {}, request.context, {
-		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
-		compileDebug: process.env.NODE_ENV === 'development',
-		user: false,
-		env: calypsoEnv,
-		sanitize: sanitize,
-		isRTL: config( 'rtl' ),
-		requestFrom: request.query.from,
-		isWCComConnect,
-		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
-		badge: false,
-		lang,
-		entrypoint: request.getFilesForEntrypoint( entrypoint ),
-		manifest: request.getAssets().manifests.manifest,
-		faviconURL: config( 'favicon_url' ),
-		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
-		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
-		devDocsURL: '/devdocs',
-		store: reduxStore,
-		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
-		target: target || 'fallback',
-		useTranslationChunks:
-			config.isEnabled( 'use-translation-chunks' ) ||
-			flags.includes( 'use-translation-chunks' ) ||
-			request.query.hasOwnProperty( 'useTranslationChunks' ),
-	} );
-
-	context.app = {
-		// use ipv4 address when is ipv4 mapped address
-		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isDebug,
-		staticUrls: staticFilesUrls,
-	};
-
-	if ( calypsoEnv === 'wpcalypso' ) {
-		context.badge = calypsoEnv;
-		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		// this is for calypso.live, so that branchName can be available while rendering the page
-		if ( request.query.branch ) {
-			context.branchName = request.query.branch;
-		}
-	}
-
-	if ( calypsoEnv === 'horizon' ) {
-		context.badge = 'feedback';
-		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
-	}
-
-	if ( calypsoEnv === 'stage' ) {
-		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-	}
-
-	if ( calypsoEnv === 'development' ) {
-		context.badge = 'dev';
-		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.branchName = getCurrentBranchName();
-		context.commitChecksum = getCurrentCommitShortChecksum();
-	}
-
-	if ( calypsoEnv === 'jetpack-cloud-stage' ) {
-		context.badge = 'jetpack-cloud-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-	}
-
-	if ( calypsoEnv === 'jetpack-cloud-development' ) {
-		context.badge = 'jetpack-cloud-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.branchName = getCurrentBranchName();
-		context.commitChecksum = getCurrentCommitShortChecksum();
-	}
-
-	return context;
-}
-
-const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, entrypoint );
-	next();
-};
 
 function setUpLocalLanguageRevisions( req ) {
 	const targetFromRequest = req.getTarget();
@@ -517,44 +341,6 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
 	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
 };
 
-/**
- * Sets language properties to context if
- * a WordPress.com language slug is detected in the hostname
- *
- * @param {object} req Express request object
- * @param {object} res Express response object
- * @param {Function} next a callback to call when done
- * @returns {Function|undefined} res.redirect if not logged in
- */
-function handleLocaleSubdomains( req, res, next ) {
-	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
-		? split( req.hostname, '.' )[ 0 ]
-		: null;
-
-	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
-		// Retrieve the language object for the RTL information.
-		const language = getLanguage( langSlug );
-
-		// Switch locales only in a logged-out state.
-		if ( language && ! req.context.isLoggedIn ) {
-			req.context = {
-				...req.context,
-				lang: language.langSlug,
-				isRTL: !! language.rtl,
-			};
-		} else {
-			// Strip the langSlug and redirect using hostname
-			// so that the user's locale preferences take priority.
-			const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-			const port = process.env.PORT || config( 'port' ) || '';
-			const hostname = req.hostname.substr( langSlug.length + 1 );
-			const redirectUrl = `${ protocol }://${ hostname }:${ port }${ req.path }`;
-			return res.redirect( redirectUrl );
-		}
-	}
-	next();
-}
-
 export default function pages() {
 	const app = express();
 
@@ -564,8 +350,9 @@ export default function pages() {
 	app.use( cookieParser() );
 	app.use( middlewareBuildTarget( calypsoEnv ) );
 	app.use( middlewareAssets() );
-	app.use( setupLoggedInContext );
-	app.use( handleLocaleSubdomains );
+	app.use( middlewareLoggedInContext() );
+	app.use( middlewareLocaleSubdomain() );
+	app.use( middlewareDefaultContext( calypsoEnv ) );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
@@ -656,30 +443,28 @@ export default function pages() {
 	} );
 
 	// Landing pages for domains-related emails
-	app.get(
-		'/domain-services/:action',
-		setupDefaultContext( 'entry-domains-landing' ),
-		( req, res ) => {
-			const ctx = req.context;
-			attachBuildTimestamp( ctx );
-			attachHead( ctx );
-			attachI18n( ctx );
+	app.get( '/domain-services/:action', ( req, res ) => {
+		req.setDefaultContext( 'entry-domains-landing' );
+		const ctx = req.context;
+		attachBuildTimestamp( ctx );
+		attachHead( ctx );
+		attachI18n( ctx );
 
-			ctx.clientData = config.clientData;
-			ctx.domainsLandingData = {
-				action: get( req, [ 'params', 'action' ], 'unknown-action' ),
-				query: get( req, 'query', {} ),
-			};
+		ctx.clientData = config.clientData;
+		ctx.domainsLandingData = {
+			action: get( req, [ 'params', 'action' ], 'unknown-action' ),
+			query: get( req, 'query', {} ),
+		};
 
-			const pageHtml = renderJsx( 'domains-landing', ctx );
-			res.send( pageHtml );
-		}
-	);
+		const pageHtml = renderJsx( 'domains-landing', ctx );
+		res.send( pageHtml );
+	} );
 
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
-		app.get( pathRegex, setupDefaultContext( entrypoint ), function ( req, res, next ) {
+		app.get( pathRegex, function ( req, res, next ) {
+			req.setDefaultContext( entrypoint );
 			req.context.sectionName = section.name;
 
 			if ( ! entrypoint ) {
@@ -749,17 +534,25 @@ export default function pages() {
 		}
 	);
 
-	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
-		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
-		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
-		const isWpcom = wpcomRe.test( primaryBlogUrl );
+	app.get(
+		'/browsehappy',
+		( req, res, next ) => {
+			req.setDefaultContext();
+			next();
+		},
+		setUpRoute,
+		function ( req, res ) {
+			const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
+			const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
+			const isWpcom = wpcomRe.test( primaryBlogUrl );
 
-		req.context.dashboardUrl = isWpcom
-			? primaryBlogUrl + '/wp-admin'
-			: 'https://dashboard.wordpress.com/wp-admin/';
+			req.context.dashboardUrl = isWpcom
+				? primaryBlogUrl + '/wp-admin'
+				: 'https://dashboard.wordpress.com/wp-admin/';
 
-		res.send( renderJsx( 'browsehappy', req.context ) );
-	} );
+			res.send( renderJsx( 'browsehappy', req.context ) );
+		}
+	);
 
 	app.get( '/support-user', function ( req, res ) {
 		// Do not iframe
