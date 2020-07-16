@@ -3,7 +3,9 @@
  */
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
+import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -17,6 +19,9 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	prepareDomainContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
+import { getSavedVariations } from 'lib/abtest';
+import { stringifyBody } from 'state/login/utils';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
@@ -79,12 +84,12 @@ export async function submitApplePayPayment( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function submitPayPalExpressRequest( transactionData, submit ) {
+export async function submitPayPalExpressRequest( transactionData, submit, isLoggedOutCart ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, isLoggedOutCart );
 }
 
 export function getDomainDetails( select ) {
@@ -96,7 +101,7 @@ export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-export async function submitStripeCardTransaction( transactionData, submit ) {
+export async function submitStripeCardTransaction( transactionData, submit, isLoggedOutCart ) {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
@@ -104,7 +109,7 @@ export async function submitStripeCardTransaction( transactionData, submit ) {
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, isLoggedOutCart );
 }
 
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
@@ -201,11 +206,142 @@ function WordPressLogo() {
 	);
 }
 
-export async function wpcomTransaction( payload ) {
+async function createAccountCallback( response ) {
+	try {
+		wp.loadToken( response.bearer_token );
+		const url = 'https://wordpress.com/wp-login.php';
+		const bodyObj = {
+			authorization: 'Bearer ' + response.bearer_token,
+			log: response.username,
+		};
+
+		await globalThis.fetch( url, {
+			method: 'POST',
+			redirect: 'manual',
+			credentials: 'include',
+			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: stringifyBody( bodyObj ),
+		} );
+	} catch ( error ) {
+		throw new Error( error );
+	}
+}
+
+async function createAccount( select ) {
+	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+
+	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
+	const emailValue = email.value;
+	const recaptchaClientId = select( 'wpcom' )?.getRecaptchaClientId();
+	const isRecaptchaLoaded = typeof recaptchaClientId === 'number';
+
+	let recaptchaToken = undefined;
+	let recaptchaError = undefined;
+
+	if ( isRecaptchaLoaded ) {
+		recaptchaToken = await recordGoogleRecaptchaAction(
+			recaptchaClientId,
+			'calypso/signup/formSubmit'
+		);
+
+		if ( ! recaptchaToken ) {
+			recaptchaError = 'recaptcha_failed';
+		}
+	} else {
+		recaptchaError = 'recaptcha_didnt_load';
+	}
+
+	try {
+		const response = await wp.undocumented().createUserAndSite(
+			{
+				email: emailValue,
+				'g-recaptcha-error': recaptchaError,
+				'g-recaptcha-response': recaptchaToken || undefined,
+				is_passwordless: true,
+				signup_flow_name: 'onboarding-new',
+				validate: false,
+				ab_test_variations: getSavedVariations(),
+				new_site_params: newSiteParams,
+			},
+			null
+		);
+
+		response.bearer_token && createAccountCallback( response );
+		return response;
+	} catch ( error ) {
+		const errorMessage = error?.message ? getErrorMessage( error ) : error;
+		throw new Error( errorMessage );
+	}
+}
+
+function getErrorMessage( { error, message } ) {
+	switch ( error ) {
+		case 'already_taken':
+		case 'already_active':
+		case 'email_exists':
+			return i18n.translate( 'An account with this email address already exists.' );
+		default:
+			return message;
+	}
+}
+
+export async function wpcomTransaction( payload, isLoggedOutCart ) {
+	if ( isLoggedOutCart ) {
+		const { select, dispatch } = defaultRegistry;
+
+		return createAccount( select ).then( ( response ) => {
+			const siteIdFromResponse = get( response, 'blog_details.blogid', undefined );
+			const siteSlugFromResponse = get( response, 'blog_details.site_slug', undefined );
+
+			siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
+			siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
+
+			// If the account is already created(as happens when we are reprocessing after a transaction error), then
+			// the create account response will not have a site ID, so we fetch from state.
+			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
+			const newPayLoad = {
+				...payload,
+				cart: {
+					...payload.cart,
+					blog_id: siteId || '0',
+					cart_key: siteId || 'no-site',
+					create_new_blog: siteId ? false : true,
+				},
+			};
+
+			return wp.undocumented().transactions( newPayLoad || payload );
+		} );
+	}
+
 	return wp.undocumented().transactions( payload );
 }
 
-export async function wpcomPayPalExpress( payload ) {
+export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
+	if ( isLoggedOutCart ) {
+		const { select, dispatch } = defaultRegistry;
+
+		return createAccount( select ).then( ( response ) => {
+			const siteId = get( response, 'blog_details.blogid', undefined );
+			const siteSlug = get( response, 'blog_details.site_slug', undefined );
+
+			siteId && dispatch( 'wpcom' ).setSiteId( siteId );
+			siteSlug && dispatch( 'wpcom' ).setSiteSlug( siteSlug );
+
+			const newPayload = {
+				...payload,
+				siteId,
+				cart: {
+					...payload.cart,
+					blog_id: siteId || '0',
+					cart_key: siteId || 'no-site',
+					create_new_blog: siteId ? false : true,
+				},
+			};
+
+			return wp.undocumented().paypalExpressUrl( newPayload );
+		} );
+	}
+
 	return wp.undocumented().paypalExpressUrl( payload );
 }
 
