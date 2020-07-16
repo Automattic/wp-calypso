@@ -21,7 +21,6 @@ import connectedApplications from './connected-applications/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
-import emailForwarding from './email-forwarding/reducer';
 import embeds from './embeds/reducer';
 import experiments from './experiments/reducer';
 import exporter from './exporter/reducers';
@@ -86,7 +85,6 @@ const reducers = {
 	currentUser,
 	dataRequests,
 	documentHead,
-	emailForwarding,
 	embeds,
 	experiments,
 	exporter,
