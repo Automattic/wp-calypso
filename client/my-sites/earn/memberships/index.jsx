@@ -114,7 +114,7 @@ class MembershipsSection extends Component {
 									br: <br />,
 									a: (
 										<ExternalLink
-											href="https://wordpress.com/support/recurring-payments-button/#related-fees"
+											href="https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees"
 											icon={ true }
 										/>
 									),
@@ -217,13 +217,13 @@ class MembershipsSection extends Component {
 				{ Object.values( this.props.subscribers ).length === 0 && (
 					<Card>
 						{ this.props.translate(
-							"You haven't added any subscribers. {{a}}Learn more{{/a}} about recurring payments.",
+							"You haven't added any subscribers. {{a}}Learn more{{/a}} about payments.",
 							{
 								components: {
 									a: (
 										<a
 											href={ localizeUrl(
-												'https://wordpress.com/support/recurring-payments-button/'
+												'https://wordpress.com/support/wordpress-editor/blocks/payments/'
 											) }
 											target="_blank"
 											rel="noreferrer noopener"
@@ -299,7 +299,7 @@ class MembershipsSection extends Component {
 				<CompactCard href={ '/earn/payments-plans/' + this.props.siteSlug }>
 					<QueryMembershipProducts siteId={ this.props.siteId } />
 					<div className="memberships__module-products-title">
-						{ this.props.translate( 'Recurring Payments plans' ) }
+						{ this.props.translate( 'Payment plans' ) }
 					</div>
 					<div className="memberships__module-products-list">
 						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />
@@ -319,7 +319,7 @@ class MembershipsSection extends Component {
 							{ this.props.translate( 'Disconnect Stripe Account' ) }
 						</p>
 						<p className="memberships__settings-section-desc">
-							{ this.props.translate( 'Disconnect Recurring Payments from your Stripe account' ) }
+							{ this.props.translate( 'Disconnect Payments from your Stripe account' ) }
 						</p>
 					</div>
 				</CompactCard>
@@ -331,7 +331,7 @@ class MembershipsSection extends Component {
 							action: 'cancel',
 						},
 						{
-							label: this.props.translate( 'Disconnect Recurring Payments from Stripe' ),
+							label: this.props.translate( 'Disconnect Payments from Stripe' ),
 							isPrimary: true,
 							action: 'disconnect',
 						},
@@ -341,12 +341,12 @@ class MembershipsSection extends Component {
 					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
 					<p>
 						{ this.props.translate(
-							'Do you want to disconnect Recurring Payments from your Stripe account?'
+							'Do you want to disconnect Payments from your Stripe account?'
 						) }
 					</p>
 					<Notice
 						text={ this.props.translate(
-							'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
+							'Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
 							{
 								components: {
 									br: <br />,
@@ -459,7 +459,7 @@ class MembershipsSection extends Component {
 					>
 						<NoticeAction
 							href={ localizeUrl(
-								'https://wordpress.com/support/recurring-payments-button/#stripe-account-connected'
+								'https://wordpress.com/support/wordpress-editor/blocks/payments/#stripe-account-connected'
 							) }
 							icon="external"
 						>
@@ -497,7 +497,7 @@ class MembershipsSection extends Component {
 									'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
 									{
 										components: {
-											link: <a href="/support/recurring-payments-button/" />,
+											link: <a href="/support/wordpress-editor/blocks/payments/" />,
 										},
 									}
 								)
@@ -594,9 +594,7 @@ class MembershipsSection extends Component {
 			return this.renderOnboarding(
 				<Notice
 					status="is-warning"
-					text={ this.props.translate(
-						'Only site administrators can edit Recurring Payments settings.'
-					) }
+					text={ this.props.translate( 'Only site administrators can edit Payments settings.' ) }
 					showDismiss={ false }
 				/>
 			);
