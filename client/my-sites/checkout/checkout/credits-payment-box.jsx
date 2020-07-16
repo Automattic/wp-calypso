@@ -18,18 +18,24 @@ import CartToggle from './cart-toggle';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
+import IncompatibleProductMessage from './incompatible-product-message';
+import IncompatibleProductNotice from './incompatible-product-notice';
 
 export class CreditsPaymentBox extends React.Component {
 	content = () => {
-		const { cart, transactionStep, presaleChatAvailable } = this.props;
+		const { cart, transactionStep, presaleChatAvailable, incompatibleProducts = [] } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
+		const hasCartIncompatibleProducts = incompatibleProducts.length > 0;
 
 		return (
 			<React.Fragment>
 				<form onSubmit={ this.props.onSubmit }>
+					{ hasCartIncompatibleProducts > 0 && (
+						<IncompatibleProductNotice incompatibleProducts={ this.props.incompatibleProducts } />
+					) }
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-section">
 						<WordPressLogo size={ 52 } />
@@ -60,7 +66,11 @@ export class CreditsPaymentBox extends React.Component {
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-actions">
-						<PayButton cart={ this.props.cart } transactionStep={ transactionStep } />
+						<PayButton
+							cart={ this.props.cart }
+							transactionStep={ transactionStep }
+							notAllowed={ hasCartIncompatibleProducts }
+						/>
 						{ showPaymentChatButton && (
 							<PaymentChatButton
 								paymentType="credits"
@@ -69,6 +79,9 @@ export class CreditsPaymentBox extends React.Component {
 							/>
 						) }
 					</div>
+					{ hasCartIncompatibleProducts && (
+						<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
+					) }
 				</form>
 
 				<CartCoupon cart={ cart } />

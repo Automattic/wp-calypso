@@ -33,7 +33,7 @@ import {
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import {
 	isPaidForFullyInCredits,
 	isFree,
@@ -50,6 +50,7 @@ import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { isWpComEcommercePlan } from 'lib/plans';
 import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
+import { isJetpackBackup, isJetpackScan } from 'lib/products-values';
 import { isExternal } from 'lib/url';
 
 /**
@@ -64,6 +65,7 @@ export class SecurePaymentForm extends Component {
 		handleCheckoutExternalRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		isMultisite: PropTypes.bool,
 	};
 
 	state = { userSelectedPaymentBox: null };
@@ -152,6 +154,21 @@ export class SecurePaymentForm extends Component {
 		}
 
 		return null;
+	}
+
+	getIncompatibleProducts() {
+		const { cart, isMultisite } = this.props;
+		if ( cart.products.length === 0 ) {
+			return [];
+		}
+
+		const incompatibleProducts = [];
+
+		if ( isMultisite ) {
+			return cart.products.filter( ( p ) => isJetpackBackup( p ) || isJetpackScan( p ) );
+		}
+
+		return incompatibleProducts;
 	}
 
 	handlePaymentBoxSubmit = ( event ) => {
@@ -283,6 +300,7 @@ export class SecurePaymentForm extends Component {
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
 				presaleChatAvailable={ this.props.presaleChatAvailable }
+				incompatibleProducts={ this.getIncompatibleProducts() }
 			>
 				{ this.props.children }
 			</CreditsPaymentBox>
@@ -565,6 +583,7 @@ export default connect(
 		return {
 			countriesList: getCountries( state, 'payments' ),
 			isJetpack: isJetpackSite( state, selectedSiteId ),
+			isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
 			presaleChatAvailable: isPresalesChatAvailable( state ),
 			selectedSiteId,
 			siteIsPrivate: isPrivateSite( state, selectedSiteId ),
