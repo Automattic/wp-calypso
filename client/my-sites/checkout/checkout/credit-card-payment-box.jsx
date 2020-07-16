@@ -85,14 +85,13 @@ class CreditCardPaymentBox extends React.Component {
 		isStripeLoading: PropTypes.bool,
 		stripeLoadingError: PropTypes.object,
 		stripeConfiguration: PropTypes.object,
-		incompatibleProducts: PropTypes.array,
+		incompatibleProducts: PropTypes.object,
 	};
 
 	static defaultProps = {
 		cards: [],
 		initialCard: null,
 		onSubmit: noop,
-		incompatibleProducts: [],
 	};
 
 	constructor( props ) {
@@ -156,15 +155,13 @@ class CreditCardPaymentBox extends React.Component {
 			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';
 
-		const hasCartIncompatibleProducts = incompatibleProducts.length > 0;
-
 		return (
 			<>
 				<div className={ paymentButtonClasses }>
 					<PayButton
 						cart={ cart }
 						transactionStep={ transactionStep }
-						notAllowed={ hasCartIncompatibleProducts }
+						notAllowed={ incompatibleProducts?.blockCheckout }
 					/>
 
 					<div className="checkout__secure-payment">
@@ -182,8 +179,8 @@ class CreditCardPaymentBox extends React.Component {
 						/>
 					) }
 				</div>
-				{ hasCartIncompatibleProducts && (
-					<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
+				{ incompatibleProducts && (
+					<IncompatibleProductMessage content={ incompatibleProducts.content } />
 				) }
 			</>
 		);

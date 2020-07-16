@@ -159,16 +159,45 @@ export class SecurePaymentForm extends Component {
 	getIncompatibleProducts() {
 		const { cart, isMultisite } = this.props;
 		if ( cart.products.length === 0 ) {
-			return [];
+			return null;
 		}
-
-		const incompatibleProducts = [];
 
 		if ( isMultisite ) {
-			return cart.products.filter( ( p ) => isJetpackBackup( p ) || isJetpackScan( p ) );
+			const incompatibleProducts = cart.products.filter(
+				( p ) => isJetpackBackup( p ) || isJetpackScan( p )
+			);
+			if ( incompatibleProducts.length > 0 ) {
+				let content;
+				if ( incompatibleProducts.length === 1 ) {
+					content = this.props.translate(
+						"We're sorry, %(productName)s is not compatible with multisite WordPress installations at this time.",
+						{
+							args: {
+								productName: incompatibleProducts[ 0 ].product_name,
+							},
+						}
+					);
+				} else {
+					content = this.props.translate(
+						"We're sorry, %(productName1)s and %(productName2)s are not compatible with multisite WordPress installations at this time.",
+						{
+							args: {
+								productName1: incompatibleProducts[ 0 ].product_name,
+								productName2: incompatibleProducts[ 1 ].product_name,
+							},
+						}
+					);
+				}
+				return {
+					products: incompatibleProducts,
+					reason: 'multisite-incompatibility',
+					content,
+					blockCheckout: true,
+				};
+			}
 		}
 
-		return incompatibleProducts;
+		return null;
 	}
 
 	handlePaymentBoxSubmit = ( event ) => {

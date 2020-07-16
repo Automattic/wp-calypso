@@ -155,13 +155,11 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const { cart, translate } = this.props;
+		const { cart, incompatibleProducts, translate } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
-
-		const hasCartIncompatibleProducts = this.props.incompatibleProducts?.length > 0;
 
 		return (
 			<React.Fragment>
@@ -204,7 +202,7 @@ export class PaypalPaymentBox extends React.Component {
 									disabled={
 										this.state.formDisabled ||
 										cart.hasPendingServerUpdates ||
-										hasCartIncompatibleProducts
+										incompatibleProducts?.blockCheckout
 									}
 								>
 									{ this.renderButtonText() }
@@ -223,10 +221,8 @@ export class PaypalPaymentBox extends React.Component {
 								<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
 							) }
 						</div>
-						{ hasCartIncompatibleProducts && (
-							<IncompatibleProductMessage
-								incompatibleProducts={ this.props.incompatibleProducts }
-							/>
+						{ incompatibleProducts && (
+							<IncompatibleProductMessage content={ incompatibleProducts.content } />
 						) }
 					</div>
 				</form>

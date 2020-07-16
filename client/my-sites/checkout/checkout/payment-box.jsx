@@ -178,9 +178,6 @@ export class PaymentBox extends PureComponent {
 			  } )
 			: this.props.translate( 'Loading…' );
 
-		const incompatibleProducts = this.props.incompatibleProducts || [];
-		const hasIncompatibleProducts = incompatibleProducts.length > 0;
-
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
@@ -190,8 +187,8 @@ export class PaymentBox extends PureComponent {
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
 						<div className={ contentClass }>
-							{ hasIncompatibleProducts && (
-								<IncompatibleProductNotice incompatibleProducts={ incompatibleProducts } />
+							{ this.props.incompatibleProducts && (
+								<IncompatibleProductNotice content={ this.props.incompatibleProducts.content } />
 							) }
 							{ this.props.children }
 						</div>

@@ -23,18 +23,17 @@ import IncompatibleProductNotice from './incompatible-product-notice';
 
 export class CreditsPaymentBox extends React.Component {
 	content = () => {
-		const { cart, transactionStep, presaleChatAvailable, incompatibleProducts = [] } = this.props;
+		const { cart, transactionStep, presaleChatAvailable, incompatibleProducts } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
-		const hasCartIncompatibleProducts = incompatibleProducts.length > 0;
 
 		return (
 			<React.Fragment>
 				<form onSubmit={ this.props.onSubmit }>
-					{ hasCartIncompatibleProducts > 0 && (
-						<IncompatibleProductNotice incompatibleProducts={ this.props.incompatibleProducts } />
+					{ incompatibleProducts && (
+						<IncompatibleProductNotice content={ incompatibleProducts.content } />
 					) }
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-section">
@@ -69,7 +68,7 @@ export class CreditsPaymentBox extends React.Component {
 						<PayButton
 							cart={ this.props.cart }
 							transactionStep={ transactionStep }
-							notAllowed={ hasCartIncompatibleProducts }
+							notAllowed={ incompatibleProducts?.blockCheckout }
 						/>
 						{ showPaymentChatButton && (
 							<PaymentChatButton
@@ -79,8 +78,8 @@ export class CreditsPaymentBox extends React.Component {
 							/>
 						) }
 					</div>
-					{ hasCartIncompatibleProducts && (
-						<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
+					{ incompatibleProducts && (
+						<IncompatibleProductMessage content={ incompatibleProducts.content } />
 					) }
 				</form>
 
