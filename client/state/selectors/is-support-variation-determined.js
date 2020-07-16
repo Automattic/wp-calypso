@@ -11,6 +11,7 @@ import {
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import isDirectlyFailed from 'state/selectors/is-directly-failed';
 import isDirectlyReady from 'state/selectors/is-directly-ready';
+import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
 import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 
 /**
@@ -27,7 +28,8 @@ export default function isSupportVariationDetermined( state ) {
 		! isHappychatUserEligible( state ) ||
 		! isHappyChatConnecting;
 
-	const directlyIsReadyOrFailed = isDirectlyFailed( state ) || isDirectlyReady( state );
+	const directlyIsReadyOrFailed =
+		isDirectlyFailed( state ) || isDirectlyUninitialized( state ) || isDirectlyReady( state );
 
 	return ticketReadyOrError && happychatReadyOrDisabled && directlyIsReadyOrFailed;
 }
