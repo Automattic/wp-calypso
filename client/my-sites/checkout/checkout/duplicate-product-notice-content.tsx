@@ -44,7 +44,7 @@ const DuplicateProductNoticeContent: FunctionComponent< Props > = ( { product, s
 				) }
 			</p>
 			<a className="checkout__duplicate-notice-link" href={ subscriptionUrl }>
-				{ translate( 'Manage Subscription' ) }
+				{ translate( 'Manage subscription' ) }
 			</a>
 		</div>
 	);
