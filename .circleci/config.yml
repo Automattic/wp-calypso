@@ -130,8 +130,6 @@ references:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
 
   yarn-install: &yarn-install
-    environment:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
     command: |
       source "$HOME/.nvm/nvm.sh"
