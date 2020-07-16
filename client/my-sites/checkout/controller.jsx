@@ -30,7 +30,7 @@ export function checkout( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
-	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+	if ( ! selectedSite && ! context.pathname.includes( '/checkout/no-site' ) ) {
 		sites( context, next );
 		return;
 	}
