@@ -30,7 +30,7 @@ export class TwitterPreview extends PureComponent {
 					<div className="twitter-preview__body">
 						<div className="twitter-preview__title">{ title }</div>
 						<div className="twitter-preview__description">{ description }</div>
-						<div className="twitter-preview__url">{ baseDomain( url ) }</div>
+						<div className="twitter-preview__url">{ baseDomain( url || '' ) }</div>
 					</div>
 				</div>
 			</div>
