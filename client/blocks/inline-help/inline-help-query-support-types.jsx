@@ -58,11 +58,10 @@ class QueryInlineHelpSupportTypes extends Component {
 	};
 
 	render() {
-		const { currentUserEmail } = this.props;
 		return (
 			<React.Fragment>
 				<QueryTicketSupportConfiguration />
-				{ currentUserEmail && <QuerySupportHistory email={ currentUserEmail } /> }
+				<QuerySupportHistory email={ this.props.currentUserEmail } />
 				<QueryLanguageNames />
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 			</React.Fragment>
