@@ -6,11 +6,18 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
+import {
+	__experimentalAlignmentHookSettingsProvider,
+	__experimentalBlock,
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
 import Context from '../container/context';
+import SubmitButtons from './submit-buttons';
+
+const supportsDecoupledBlocks = __experimentalAlignmentHookSettingsProvider && __experimentalBlock;
 
 /**
  * Block edit function
@@ -27,7 +34,18 @@ import Context from '../container/context';
  *
  * @param { Props } props Properties
  */
-function Edit( { selectContainerBlock } ) {
+function Edit( props ) {
+	const {
+		selectContainerBlock,
+		subscribeButtonText,
+		loginButtonText,
+		backgroundButtonColor,
+		textButtonColor,
+		customBackgroundButtonColor,
+		customTextButtonColor,
+		setAttributes,
+	} = props;
+
 	useEffect( () => {
 		// Selects the container block on mount.
 		//
@@ -36,6 +54,34 @@ function Edit( { selectContainerBlock } ) {
 		setTimeout( selectContainerBlock, 0 );
 	}, [] );
 
+	const buttons = (
+		<SubmitButtons
+			{ ...{
+				attributes: {
+					subscribeButtonText,
+					loginButtonText,
+					backgroundButtonColor,
+					textButtonColor,
+					customBackgroundButtonColor,
+					customTextButtonColor,
+				},
+				setAttributes,
+			} }
+		/>
+	);
+	const template = [
+		[ 'core/heading', { content: __( 'Subscribe to get access', 'full-site-editing' ), level: 3 } ],
+		[
+			'core/paragraph',
+			{
+				content: __( 'Read more of this content when you subscribe today.', 'full-site-editing' ),
+			},
+		],
+	];
+
+	if ( supportsDecoupledBlocks ) {
+		template.push( [ 'premium-content/buttons' ] );
+	}
 	return (
 		<Context.Consumer>
 			{ ( { selectedTab, stripeNudge } ) => (
@@ -43,25 +89,8 @@ function Edit( { selectContainerBlock } ) {
 				// eslint-disable-next-line
 				<div hidden={ selectedTab.id === 'premium' } className={ selectedTab.className }>
 					{ stripeNudge }
-					<InnerBlocks
-						templateLock={ false }
-						template={ [
-							[
-								'core/heading',
-								{ content: __( 'Subscribe to get access', 'full-site-editing' ), level: 3 },
-							],
-							[
-								'core/paragraph',
-								{
-									content: __(
-										'Read more of this content when you subscribe today.',
-										'full-site-editing'
-									),
-								},
-							],
-							[ 'premium-content/buttons' ],
-						] }
-					/>
+					<InnerBlocks templateLock={ false } template={ template } />
+					{ ! supportsDecoupledBlocks && buttons }
 				</div>
 			) }
 		</Context.Consumer>
