@@ -16,17 +16,19 @@ interface AvailableDesigns {
 
 const availableDesigns: Readonly< AvailableDesigns > = availableDesignsConfig;
 
-function getCanUseWebP() {
-	if ( typeof window !== 'undefined' ) {
-		const elem = document.createElement( 'canvas' );
-		if ( elem.getContext?.( '2d' ) ) {
-			return elem.toDataURL( 'image/webp' ).indexOf( 'data:image/webp' ) === 0;
-		}
-	}
-	return false;
-}
+// TODO: work out why webp images were 404ing in production
+//
+// function getCanUseWebP() {
+// 	if ( typeof window !== 'undefined' ) {
+// 		const elem = document.createElement( 'canvas' );
+// 		if ( elem.getContext?.( '2d' ) ) {
+// 			return elem.toDataURL( 'image/webp' ).indexOf( 'data:image/webp' ) === 0;
+// 		}
+// 	}
+// 	return false;
+// }
 
-const canUseWebP = getCanUseWebP();
+// const canUseWebP = getCanUseWebP();
 
 export const getDesignImageUrl = ( design: Design ) => {
 	// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
