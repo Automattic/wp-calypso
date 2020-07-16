@@ -374,7 +374,7 @@ export class RedirectPaymentBox extends PureComponent {
 							) }
 						</div>
 						{ this.props.incompatibleProducts && (
-							<IncompatibleProductMessage content={ this.props.content } />
+							<IncompatibleProductMessage content={ this.props.incompatibleProducts.content } />
 						) }
 					</div>
 				</form>

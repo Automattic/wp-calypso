@@ -447,6 +447,7 @@ export class SecurePaymentForm extends Component {
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
+					incompatibleProducts={ this.props.incompatibleProducts }
 				>
 					{ this.props.children }
 				</WechatPaymentBox>
