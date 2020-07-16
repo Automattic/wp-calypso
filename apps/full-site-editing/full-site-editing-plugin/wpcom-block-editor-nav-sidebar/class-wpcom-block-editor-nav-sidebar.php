@@ -63,7 +63,7 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 			'wpcom-block-editor-nav-sidebar-script',
 			'wpcomBlockEditorNavSidebar',
 			array(
-				'homeUrl' => home_url()
+				'homeUrl' => home_url(),
 			)
 		);
 
