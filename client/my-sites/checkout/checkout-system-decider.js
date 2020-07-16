@@ -155,6 +155,7 @@ export default function CheckoutSystemDecider( {
 						cart={ cart }
 						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isComingFromUpsell={ isComingFromUpsell }
+						infoMessage={ duplicateBackupNotice }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>

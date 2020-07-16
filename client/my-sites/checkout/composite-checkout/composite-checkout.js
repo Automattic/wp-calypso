@@ -122,6 +122,7 @@ export default function CompositeCheckout( {
 	couponCode: couponCodeFromUrl,
 	isWhiteGloveOffer,
 	isComingFromUpsell,
+	infoMessage,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -612,6 +613,7 @@ export default function CompositeCheckout( {
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
 						isWhiteGloveOffer={ isWhiteGloveOffer }
+						infoMessage={ infoMessage }
 					/>
 				</CheckoutProvider>
 			</CartProvider>
