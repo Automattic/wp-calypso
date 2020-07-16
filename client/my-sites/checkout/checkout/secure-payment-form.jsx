@@ -30,10 +30,11 @@ import {
 	newStripeCardPayment,
 	storedCardPayment,
 } from 'lib/transaction/payments';
+import getCheckoutIncompatibleProducts from 'state/selectors/get-checkout-incompatible-products';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
-import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isPaidForFullyInCredits,
 	isFree,
@@ -50,7 +51,6 @@ import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { isWpComEcommercePlan } from 'lib/plans';
 import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
-import { isJetpackBackup, isJetpackScan } from 'lib/products-values';
 import { isExternal } from 'lib/url';
 
 /**
@@ -150,50 +150,6 @@ export class SecurePaymentForm extends Component {
 		for ( i = 0; i < paymentMethods.length; i++ ) {
 			if ( isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
 				return paymentMethods[ i ];
-			}
-		}
-
-		return null;
-	}
-
-	getIncompatibleProducts() {
-		const { cart, isMultisite } = this.props;
-		if ( cart.products.length === 0 ) {
-			return null;
-		}
-
-		if ( isMultisite ) {
-			const incompatibleProducts = cart.products.filter(
-				( p ) => isJetpackBackup( p ) || isJetpackScan( p )
-			);
-			if ( incompatibleProducts.length > 0 ) {
-				let content;
-				if ( incompatibleProducts.length === 1 ) {
-					content = this.props.translate(
-						"We're sorry, %(productName)s is not compatible with multisite WordPress installations at this time.",
-						{
-							args: {
-								productName: incompatibleProducts[ 0 ].product_name,
-							},
-						}
-					);
-				} else {
-					content = this.props.translate(
-						"We're sorry, %(productName1)s and %(productName2)s are not compatible with multisite WordPress installations at this time.",
-						{
-							args: {
-								productName1: incompatibleProducts[ 0 ].product_name,
-								productName2: incompatibleProducts[ 1 ].product_name,
-							},
-						}
-					);
-				}
-				return {
-					products: incompatibleProducts,
-					reason: 'multisite-incompatibility',
-					content,
-					blockCheckout: true,
-				};
 			}
 		}
 
@@ -329,7 +285,7 @@ export class SecurePaymentForm extends Component {
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
 				presaleChatAvailable={ this.props.presaleChatAvailable }
-				incompatibleProducts={ this.getIncompatibleProducts() }
+				incompatibleProducts={ this.props.incompatibleProducts }
 			>
 				{ this.props.children }
 			</CreditsPaymentBox>
@@ -366,7 +322,7 @@ export class SecurePaymentForm extends Component {
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ this.getIncompatibleProducts() }
+				incompatibleProducts={ this.props.incompatibleProducts }
 			>
 				<QueryPaymentCountries />
 				<CreditCardPaymentBox
@@ -388,7 +344,7 @@ export class SecurePaymentForm extends Component {
 	}
 
 	renderStripeElementsPaymentBox() {
-		const incompatibleProducts = this.getIncompatibleProducts();
+		const incompatibleProducts = this.props.incompatibleProducts;
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
@@ -418,7 +374,7 @@ export class SecurePaymentForm extends Component {
 	}
 
 	renderPayPalPaymentBox() {
-		const incompatibleProducts = this.getIncompatibleProducts();
+		const incompatibleProducts = this.props.incompatibleProducts;
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
@@ -446,7 +402,7 @@ export class SecurePaymentForm extends Component {
 	}
 
 	renderRedirectPaymentBox( paymentType ) {
-		const incompatibleProducts = this.getIncompatibleProducts();
+		const incompatibleProducts = this.props.incompatibleProducts;
 		return (
 			<PaymentBox
 				classSet="redirect-payment-box"
@@ -482,7 +438,7 @@ export class SecurePaymentForm extends Component {
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ 'wechat' }
 				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ this.getIncompatibleProducts() }
+				incompatibleProducts={ this.props.incompatibleProducts }
 			>
 				<QueryPaymentCountries />
 				<WechatPaymentBox
@@ -506,7 +462,7 @@ export class SecurePaymentForm extends Component {
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="web-payment"
 				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ this.getIncompatibleProducts() }
+				incompatibleProducts={ this.props.incompatibleProducts }
 			>
 				<WebPaymentBox
 					cart={ this.props.cart }
@@ -618,16 +574,16 @@ export class SecurePaymentForm extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
 			countriesList: getCountries( state, 'payments' ),
 			isJetpack: isJetpackSite( state, selectedSiteId ),
-			isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
 			presaleChatAvailable: isPresalesChatAvailable( state ),
 			selectedSiteId,
 			siteIsPrivate: isPrivateSite( state, selectedSiteId ),
+			incompatibleProducts: getCheckoutIncompatibleProducts( state, selectedSiteId, props.cart ),
 		};
 	},
 	{ saveSiteSettings }
