@@ -96,7 +96,7 @@ export function applePayProcessor( submitData ) {
 	return pending;
 }
 
-export async function stripeCardProcessor( submitData ) {
+export async function stripeCardProcessor( submitData, isLoggedOutCart ) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
 		...submitData,
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -112,7 +112,8 @@ export async function stripeCardProcessor( submitData ) {
 			domainDetails: getDomainDetails( select ),
 			paymentMethodToken,
 		},
-		wpcomTransaction
+		wpcomTransaction,
+		isLoggedOutCart
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -191,7 +192,13 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem, isWhiteGloveOffer ) {
+export async function payPalProcessor(
+	submitData,
+	getThankYouUrl,
+	couponItem,
+	isWhiteGloveOffer,
+	isLoggedOutCart
+) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const query = isWhiteGloveOffer ? { type: 'white-glove' } : {};
 	const successUrl = formatUrl( {
@@ -220,7 +227,8 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem, i
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
 		},
-		wpcomPayPalExpress
+		wpcomPayPalExpress,
+		isLoggedOutCart
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
