@@ -53,6 +53,7 @@ import userFactory from 'lib/user';
 import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
 import { requestUnseenStatusAny } from 'state/reader-ui/seen-posts/actions';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 const debug = debugFactory( 'calypso' );
 
@@ -132,12 +133,7 @@ const oauthTokenMiddleware = () => {
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
 				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const isJetpackCloud = [
-					'jetpack-cloud-development',
-					'jetpack-cloud-stage',
-					'jetpack-cloud-production',
-				].includes( config( 'env_id' ) );
-				const redirectPath = isDesktop || isJetpackCloud ? config( 'login_url' ) : '/authorize';
+				const redirectPath = isDesktop || isJetpackCloud() ? config( 'login_url' ) : '/authorize';
 
 				const currentPath = window.location.pathname;
 				// In the context of Jetpack Cloud, if the user isn't authorized, we want
