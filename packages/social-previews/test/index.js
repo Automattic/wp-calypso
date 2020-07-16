@@ -142,6 +142,16 @@ describe( 'Twitter previews', () => {
 		expect( urlEl.exists() ).toBeTruthy();
 		expect( urlEl.text() ).toEqual( 'wordpress.com' );
 	} );
+
+	describe( 'Styling hooks', () => {
+		it( 'should append a classname with the correct "type" to the root element when provided', () => {
+			const wrapper = shallow( <Twitter type="article" /> );
+
+			const innerEl = wrapper.find( '.twitter-preview > div' );
+
+			expect( innerEl.hasClass( 'twitter-preview__article' ) ).toBeTruthy();
+		} );
+	} );
 } );
 
 describe( 'Search previews', () => {
