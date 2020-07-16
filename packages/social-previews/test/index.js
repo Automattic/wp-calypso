@@ -154,7 +154,7 @@ describe( 'Twitter previews', () => {
 	} );
 } );
 
-describe.only( 'Search previews', () => {
+describe( 'Search previews', () => {
 	it( 'should expose a Search preview component', () => {
 		expect( Search ).not.toBe( undefined );
 	} );
@@ -205,6 +205,24 @@ describe.only( 'Search previews', () => {
 			const titleElNoEllipsis = titleEl.text().replace( '…', '' );
 			expect( titleElNoEllipsis ).toHaveLength( 63 );
 		} );
+	} );
+
+	it( 'should display truncated url ', () => {
+		const downArrowChar = '▾';
+		const wrapper = shallow(
+			<Search url="https://wordpress.com/alongpathnameheretoensuretruncationoccursbutitdoesneedtobequitelongtomakethathappen" />
+		);
+
+		const urlEl = wrapper.find( '.search-preview__url' );
+		expect( urlEl.exists() ).toBeTruthy();
+		expect( urlEl.text() ).toEqual(
+			'https://wordpress.com/alongpathnameheretoensuretruncationoccursbutitdoesneedtob' +
+				'…' +
+				' ' +
+				downArrowChar
+		);
+		const urlTextRaw = urlEl.text().replace( '…', '' ).replace( downArrowChar, '' ).trimEnd();
+		expect( urlTextRaw ).toHaveLength( 79 );
 	} );
 } );
 
