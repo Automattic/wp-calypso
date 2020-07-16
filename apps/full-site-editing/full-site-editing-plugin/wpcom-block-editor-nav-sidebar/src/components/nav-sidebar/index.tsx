@@ -82,9 +82,9 @@ function WpcomBlockEditorNavSidebar() {
 
 		observer.current = new window.IntersectionObserver(
 			( entries ) => {
-				// If every iten is currently visible, then we're not scrolling
-				const notScrolling = entries.every( ( entry ) => entry.isIntersecting );
-				setIsListScrolling( ! notScrolling );
+				// If every item is currently visible, then we're not scrolling
+				const isScrolling = entries.some( ( entry ) => ! entry.isIntersecting );
+				setIsListScrolling( isScrolling );
 			},
 			{
 				root: el,
@@ -111,7 +111,7 @@ function WpcomBlockEditorNavSidebar() {
 		const lastItem = nonSparse[ nonSparse.length - 1 ];
 		if ( firstItem ) observer.current.observe( firstItem );
 		if ( lastItem ) observer.current.observe( lastItem );
-	}, [ items ] );
+	}, [ items, itemRefs, observer ] );
 
 	if ( ! postType ) {
 		// Still loading
@@ -123,11 +123,15 @@ function WpcomBlockEditorNavSidebar() {
 		return null;
 	}
 
-	let closeUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
-	closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', closeUrl );
+	const defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+	const closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', defaultCloseUrl );
 
-	let closeLabel = get( postType, [ 'labels', 'all_items' ], __( 'Back', 'full-site-editing' ) );
-	closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', closeLabel );
+	const defaultCloseLabel = get(
+		postType,
+		[ 'labels', 'all_items' ],
+		__( 'Back', 'full-site-editing' )
+	);
+	const closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', defaultCloseLabel );
 
 	const handleClose = ( e: React.MouseEvent ) => {
 		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
@@ -136,10 +140,10 @@ function WpcomBlockEditorNavSidebar() {
 		}
 	};
 
-	let listHeading = get( postType, [ 'labels', 'name' ] );
-	listHeading = applyFilters(
+	const defaultListHeading = get( postType, [ 'labels', 'name' ] );
+	const listHeading = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.listHeading',
-		listHeading,
+		defaultListHeading,
 		postType.slug
 	);
 
