@@ -10,11 +10,21 @@ import { useSelector } from 'react-redux';
  * Internal Dependencies
  */
 import { getSitePurchases } from 'state/purchases/selectors';
+import { Site } from '@automattic/data-stores/dist/types';
 
-// TODO: update types
+type Product = {
+	productSlug: string;
+	productName: string;
+};
+
+type Site = {
+	ID: number;
+	slug: string;
+};
+
 type Props = {
-	product: any;
-	selectedSite: any;
+	product: Product;
+	selectedSite: Site;
 };
 
 const DuplicateProductNoticeContent: FunctionComponent< Props > = ( { product, selectedSite } ) => {
