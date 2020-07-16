@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { isFunction, isArray } from 'lodash';
+import { isArray } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -16,7 +16,7 @@ import CheckoutContainer from './checkout/checkout-container';
 import DuplicateProductNoticeContent from './checkout/duplicate-product-notice-content';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
-import { getPlans } from 'lib/plans';
+import { getPlanByPathSlug } from 'lib/plans';
 import { PRODUCT_JETPACK_BACKUP } from 'lib/products-values/constants';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
@@ -49,9 +49,8 @@ export default function CheckoutSystemDecider( {
 	isWhiteGloveOffer,
 } ) {
 	const siteId = selectedSite?.ID;
-	const productPlan = Object.values( getPlans() ).find(
-		( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === product
-	);
+	const productPlan = getPlanByPathSlug( product );
+	console.log( productPlan );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );

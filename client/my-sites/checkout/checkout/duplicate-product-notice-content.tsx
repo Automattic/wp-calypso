@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
  * Internal Dependencies
  */
 import { getSitePurchases } from 'state/purchases/selectors';
-import { Site } from '@automattic/data-stores/dist/types';
 
 type Product = {
 	productSlug: string;
