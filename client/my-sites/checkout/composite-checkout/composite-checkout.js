@@ -623,6 +623,7 @@ export default function CompositeCheckout( {
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
 						isWhiteGloveOffer={ isWhiteGloveOffer }
+						isLoggedOutCart={ isLoggedOutCart }
 					/>
 				</CheckoutProvider>
 			</CartProvider>
