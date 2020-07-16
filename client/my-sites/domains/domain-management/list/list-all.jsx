@@ -39,6 +39,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getUserPurchases } from 'state/purchases/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import { hasAllSitesList } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -55,6 +56,8 @@ class ListAll extends Component {
 		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
 	};
+
+	renderedQuerySiteDomains = {};
 
 	clickAddDomain = () => {
 		this.props.addDomainClick();
@@ -80,8 +83,8 @@ class ListAll extends Component {
 	}
 
 	isLoading() {
-		const { domainsList, requestingFlatDomains, sites } = this.props;
-		return ! sites || ( requestingFlatDomains && domainsList.length === 0 );
+		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
+		return ! hasAllSitesLoaded || ( requestingFlatDomains && domainsList.length === 0 );
 	}
 
 	findDomainDetails( domainsDetails = [], domain = {} ) {
@@ -90,22 +93,37 @@ class ListAll extends Component {
 		);
 	}
 
-	renderDomainItem( domain ) {
+	renderQuerySiteDomainsOnce( blogId ) {
+		if ( this.renderedQuerySiteDomains[ blogId ] ) {
+			return null;
+		}
+		this.renderedQuerySiteDomains[ blogId ] = true;
+		return <QuerySiteDomains siteId={ blogId } />;
+	}
+
+	renderDomainItem( domain, index ) {
 		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
+		const domainDetails = this.findDomainDetails( domainsDetails, domain );
 
 		return (
-			<>
-				{ domain?.blogId && <QuerySiteDomains siteId={ domain.blogId } /> }
+			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
+				{ domain?.blogId && (
+					<LazyRender>
+						{ ( render ) => ( render ? this.renderQuerySiteDomainsOnce( domain.blogId ) : null ) }
+					</LazyRender>
+				) }
 				<DomainItem
 					currentRoute={ currentRoute }
 					domain={ domain }
-					domainDetails={ this.findDomainDetails( domainsDetails, domain ) }
+					domainDetails={ domainDetails }
 					site={ sites[ domain?.blogId ] }
 					isManagingAllSites={ true }
-					isLoadingDomainDetails={ requestingSiteDomains[ domain?.blogId ] ?? false }
+					isLoadingDomainDetails={
+						! domainDetails && ( requestingSiteDomains[ domain?.blogId ] ?? false )
+					}
 					onClick={ this.handleDomainItemClick }
 				/>
-			</>
+			</React.Fragment>
 		);
 	}
 
@@ -120,11 +138,9 @@ class ListAll extends Component {
 			.filter(
 				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
 			) // filter on sites we can manage, that aren't `wpcom` type
-			.map( ( domain, index ) => (
-				<LazyRender key={ `lazy-${ index }-${ domain.name }` }>
-					{ ( render ) => ( render ? this.renderDomainItem( domain ) : <ListItemPlaceholder /> ) }
-				</LazyRender>
-			) );
+			.map( ( domain, index ) => {
+				return this.renderDomainItem( domain, index );
+			} );
 
 		return [ <ListHeader key="list-header" />, ...domainListItems ];
 	}
@@ -173,6 +189,7 @@ export default connect(
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
+			hasAllSitesLoaded: hasAllSitesList( state ),
 			user,
 		};
 	},

@@ -53,7 +53,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { submitSignupStep, removeStep } from 'state/signup/progress/actions';
+import { submitSignupStep, removeStep, addStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -79,6 +79,7 @@ import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'signup/p2-processing-screen';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import user from 'lib/user';
 
 /**
  * Style dependencies
@@ -171,6 +172,10 @@ class Signup extends React.Component {
 
 		this.updateShouldShowLoadingScreen();
 
+		// Only applies to the P2 signup flow (/start/p2) and only after logging in to
+		// a WP.com account during the signup flow.
+		this.completeP2FlowAfterLoggingIn();
+
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
 			// Resume from the current window location
 			return;
@@ -236,6 +241,27 @@ class Signup extends React.Component {
 		if ( this.props.stepName !== prevProps.stepName ) {
 			this.maybeShowSitePreview();
 			this.preloadNextStep();
+		}
+	}
+
+	completeP2FlowAfterLoggingIn() {
+		if ( ! this.props.progress ) {
+			return;
+		}
+
+		const p2SiteStep = this.props.progress[ 'p2-site' ];
+
+		if (
+			this.props.progress.user &&
+			p2SiteStep &&
+			p2SiteStep.status === 'pending' &&
+			user() &&
+			user().get()
+		) {
+			// By removing and adding the p2-site step, we trigger the `SignupFlowController` store listener
+			// to process the signup flow.
+			this.props.removeStep( p2SiteStep );
+			this.props.addStep( p2SiteStep );
 		}
 	}
 
@@ -682,5 +708,6 @@ export default connect(
 		loadTrackingTool,
 		showSitePreview,
 		hideSitePreview,
+		addStep,
 	}
 )( Signup );

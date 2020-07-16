@@ -2,15 +2,23 @@
  * External dependencies
  */
 import { get } from 'lodash';
-import { Button } from '@wordpress/components';
+import { Button as OriginalButton } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { plus } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
+
+const Button = ( {
+	children,
+	...rest
+}: OriginalButton.Props & { icon?: any; iconSize?: number } ) => (
+	<OriginalButton { ...rest }>{ children }</OriginalButton>
+);
 
 interface Props {
 	postType: { slug: string };
@@ -41,6 +49,7 @@ export default function CreatePage( { postType }: Props ) {
 			isPrimary
 			className="wpcom-block-editor-nav-sidebar-create-page"
 			href={ url }
+			icon={ plus }
 		>
 			{ label }
 		</Button>
