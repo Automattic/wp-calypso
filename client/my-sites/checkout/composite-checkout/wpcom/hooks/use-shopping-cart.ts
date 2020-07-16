@@ -391,6 +391,8 @@ type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-li
  * @param showAddCouponSuccessMessage
  *     Takes a coupon code and displays a translated notice that
  *     the coupon was successfully applied.
+ * @param cartFromLocalStorage
+ *		The shopping cart response built from localstorage.
  * @param onEvent
  *     Optional callback that takes a ReactStandardAction object for analytics.
  * @returns ShoppingCartManager
@@ -401,8 +403,9 @@ export function useShoppingCart(
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
 	setCart: ( arg0: string, arg1: RequestCart ) => Promise< ResponseCart >,
-	getCart: ( arg0: string ) => Promise< ResponseCart >,
+	getCart: ( arg0: string, arg1: ResponseCart ) => Promise< ResponseCart >,
 	showAddCouponSuccessMessage: ( arg0: string ) => void,
+	cartFromLocalStorage: ResponseCart,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): ShoppingCartManager {
 	const cartKeyString: string = cartKey || 'no-site';
@@ -410,7 +413,12 @@ export function useShoppingCart(
 		cartKeyString,
 		setCart,
 	] );
-	const getServerCart = useCallback( () => getCart( cartKeyString ), [ cartKeyString, getCart ] );
+
+	const responseCartFromLocalStorage = convertRawResponseCartToResponseCart( cartFromLocalStorage );
+	const getServerCart = useCallback( () => getCart( cartKeyString, responseCartFromLocalStorage ), [
+		cartKeyString,
+		getCart,
+	] );
 
 	const [ hookState, hookDispatch ] = useReducer(
 		shoppingCartHookReducer,
