@@ -14,7 +14,7 @@ $markup = '
 <!-- /wp:spacer -->
 
 <!-- wp:paragraph {"style":{"typography":{"fontSize":72,"lineHeight":"0.9"}}} -->
-<p style="line-height:.9;font-size:72px;"><p style="line-height:.9;font-size:72px;"><strong>%1$s<br>%2$s<br>%3$s </strong><br><strong>%4$s<br>%5$s<br>%6$s<br>%7$s<br>%8$s<br>%9$s</strong></p></p>
+<p style="line-height:.9;font-size:72px;"></p><p style="line-height:.9;font-size:72px;"><strong>%1$s<br>%2$s<br>%3$s </strong><br><strong>%4$s<br>%5$s<br>%6$s<br>%7$s<br>%8$s<br>%9$s</strong></p><p></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:spacer {"height":20} -->
@@ -26,10 +26,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'List', 'full-site-editing' ),
-	'categories' => array( 'list', 'text' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'List', 'full-site-editing' ),
+	'categories'    => array( 'list', 'text' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'BETH SILVA', 'full-site-editing' ),
 		esc_html__( 'CHRISTINE RUSSELL', 'full-site-editing' ),
