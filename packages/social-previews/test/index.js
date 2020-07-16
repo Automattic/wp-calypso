@@ -154,9 +154,57 @@ describe( 'Twitter previews', () => {
 	} );
 } );
 
-describe( 'Search previews', () => {
+describe.only( 'Search previews', () => {
 	it( 'should expose a Search preview component', () => {
 		expect( Search ).not.toBe( undefined );
+	} );
+
+	it( 'should display a header', () => {
+		const wrapper = shallow( <Search /> );
+
+		const headingEl = wrapper.find( '.search-preview__header' );
+		expect( headingEl.exists() ).toBeTruthy();
+		expect( headingEl.text() ).toEqual( 'Search Preview' );
+	} );
+
+	describe( 'Title truncation', () => {
+		it( 'should display title if short enough ', () => {
+			const wrapper = shallow( <Search title="I am the very model of a modern Major-General" /> );
+
+			const titleEl = wrapper.find( '.search-preview__title' );
+			expect( titleEl.exists() ).toBeTruthy();
+			expect( titleEl.text() ).toEqual( 'I am the very model of a modern Major-General' );
+			const titleElNoEllipsis = titleEl.text().replace( '…', '' );
+			expect( titleElNoEllipsis.length ).toBeLessThanOrEqual( 63 );
+		} );
+
+		it( 'should truncate title at suitable space character where possible', () => {
+			const wrapper = shallow(
+				<Search title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
+			);
+
+			const titleEl = wrapper.find( '.search-preview__title' );
+			expect( titleEl.exists() ).toBeTruthy();
+			expect( titleEl.text() ).toEqual(
+				"I am the very model of a modern Major-General, I've information…"
+			);
+			const titleElNoEllipsis = titleEl.text().replace( '…', '' );
+			expect( titleElNoEllipsis.length ).toBeLessThanOrEqual( 63 );
+		} );
+
+		it( 'should hard truncate title as last resort', () => {
+			const wrapper = shallow(
+				<Search title="IamtheverymodelofamodernMajorGeneralIveinformationvegetableanimalandmineral." />
+			);
+
+			const titleEl = wrapper.find( '.search-preview__title' );
+			expect( titleEl.exists() ).toBeTruthy();
+			expect( titleEl.text() ).toEqual(
+				'IamtheverymodelofamodernMajorGeneralIveinformationvegetableanim…'
+			);
+			const titleElNoEllipsis = titleEl.text().replace( '…', '' );
+			expect( titleElNoEllipsis ).toHaveLength( 63 );
+		} );
 	} );
 } );
 
