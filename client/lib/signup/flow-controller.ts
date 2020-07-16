@@ -58,6 +58,7 @@ interface Step {
 	optionalDependencies?: string[];
 	providesToken?: boolean;
 	stepName: string;
+	allowUnauthenticated?: boolean;
 }
 
 const steps: Record< string, Step > = untypedSteps;
@@ -277,10 +278,15 @@ export default class SignupFlowController {
 		);
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
+		const allowUnauthenticated = get(
+			getSignupDependencyStore( this._reduxStore.getState() ),
+			'allowUnauthenticated',
+			false
+		);
 
 		return (
 			dependenciesSatisfied &&
-			( providesToken || this._canMakeAuthenticatedRequests() ) &&
+			( allowUnauthenticated || providesToken || this._canMakeAuthenticatedRequests() ) &&
 			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
 		);
 	}
