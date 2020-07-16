@@ -16,7 +16,6 @@ import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
-import { CreditCardPaymentBox } from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
 import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import WechatPaymentBox from './wechat-payment-box';
@@ -308,35 +307,6 @@ export class SecurePaymentForm extends Component {
 				selectedSite={ this.props.selectedSite }
 				transactionStep={ this.props.transaction.step }
 			/>
-		);
-	}
-
-	renderCreditCardPaymentBox() {
-		return (
-			<PaymentBox
-				classSet="credit-card-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod="credit-card"
-				infoMessage={ this.props.infoMessage }
-				onSelectPaymentMethod={ this.selectPaymentBox }
-			>
-				<QueryPaymentCountries />
-				<CreditCardPaymentBox
-					translate={ this.props.translate }
-					cards={ this.props.cards }
-					transaction={ this.props.transaction }
-					cart={ this.props.cart }
-					countriesList={ this.props.countriesList }
-					initialCard={ this.getInitialCard() }
-					selectedSite={ this.props.selectedSite }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
-				>
-					{ this.props.children }
-				</CreditCardPaymentBox>
-			</PaymentBox>
 		);
 	}
 
