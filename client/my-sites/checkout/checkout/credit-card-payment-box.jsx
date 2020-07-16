@@ -29,6 +29,7 @@ import { ProgressBar } from '@automattic/components';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
+import IncompatibleProductMessage from './incompatible-product-message';
 import { withStripeProps } from 'lib/stripe';
 import { setStripeObject } from 'lib/transaction/actions';
 
@@ -84,12 +85,14 @@ class CreditCardPaymentBox extends React.Component {
 		isStripeLoading: PropTypes.bool,
 		stripeLoadingError: PropTypes.object,
 		stripeConfiguration: PropTypes.object,
+		incompatibleProducts: PropTypes.array,
 	};
 
 	static defaultProps = {
 		cards: [],
 		initialCard: null,
 		onSubmit: noop,
+		incompatibleProducts: [],
 	};
 
 	constructor( props ) {
@@ -140,32 +143,49 @@ class CreditCardPaymentBox extends React.Component {
 	};
 
 	paymentButtons = () => {
-		const { cart, transactionStep, translate, presaleChatAvailable } = this.props,
+		const {
+				cart,
+				incompatibleProducts,
+				transactionStep,
+				translate,
+				presaleChatAvailable,
+			} = this.props,
 			hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 			),
 			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';
 
+		const hasCartIncompatibleProducts = incompatibleProducts.length > 0;
+
 		return (
-			<div className={ paymentButtonClasses }>
-				<PayButton cart={ cart } transactionStep={ transactionStep } notAllowed={ true } />
-
-				<div className="checkout__secure-payment">
-					<div className="checkout__secure-payment-content">
-						<Gridicon icon="lock" />
-						{ translate( 'Secure payment' ) }
-					</div>
-				</div>
-
-				{ showPaymentChatButton && (
-					<PaymentChatButton
-						paymentType="credits"
+			<>
+				<div className={ paymentButtonClasses }>
+					<PayButton
 						cart={ cart }
 						transactionStep={ transactionStep }
+						notAllowed={ hasCartIncompatibleProducts }
 					/>
+
+					<div className="checkout__secure-payment">
+						<div className="checkout__secure-payment-content">
+							<Gridicon icon="lock" />
+							{ translate( 'Secure payment' ) }
+						</div>
+					</div>
+
+					{ showPaymentChatButton && (
+						<PaymentChatButton
+							paymentType="credits"
+							cart={ cart }
+							transactionStep={ transactionStep }
+						/>
+					) }
+				</div>
+				{ hasCartIncompatibleProducts && (
+					<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
 				) }
-			</div>
+			</>
 		);
 	};
 

@@ -359,6 +359,7 @@ export class SecurePaymentForm extends Component {
 	}
 
 	renderStripeElementsPaymentBox() {
+		const incompatibleProducts = this.getIncompatibleProducts();
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
@@ -366,7 +367,7 @@ export class SecurePaymentForm extends Component {
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ this.getIncompatibleProducts() }
+				incompatibleProducts={ incompatibleProducts }
 			>
 				<QueryPaymentCountries />
 				<StripeElementsPaymentBox
@@ -379,6 +380,7 @@ export class SecurePaymentForm extends Component {
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
+					incompatibleProducts={ incompatibleProducts }
 				>
 					{ this.props.children }
 				</StripeElementsPaymentBox>

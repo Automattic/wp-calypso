@@ -27,6 +27,7 @@ import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 import { addQueryArgs } from 'lib/url';
+import IncompatibleProductMessage from './incompatible-product-message';
 
 const wpcom = wp.undocumented();
 
@@ -222,6 +223,11 @@ export class PaypalPaymentBox extends React.Component {
 								<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
 							) }
 						</div>
+						{ hasCartIncompatibleProducts && (
+							<IncompatibleProductMessage
+								incompatibleProducts={ this.props.incompatibleProducts }
+							/>
+						) }
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />
