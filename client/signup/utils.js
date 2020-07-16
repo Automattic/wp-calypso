@@ -120,8 +120,8 @@ export function getValueFromProgressStore( { signupProgress, stepName, fieldName
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
 }
 
-export function getDestination( destination, dependencies, flowName ) {
-	return flows.filterDestination( destination, dependencies, flowName );
+export function getDestination( destination, dependencies, flowName, localeSlug ) {
+	return flows.filterDestination( destination, dependencies, flowName, localeSlug );
 }
 
 export function getThemeForDesignType( designType ) {
