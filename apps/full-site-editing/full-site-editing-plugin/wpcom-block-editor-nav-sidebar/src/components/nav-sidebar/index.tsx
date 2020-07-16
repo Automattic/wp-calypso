@@ -62,7 +62,7 @@ function WpcomBlockEditorNavSidebar() {
 		prevIsOpen.current = isOpen;
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
-	const [ isListScrolling, setIsListScrolling ] = useState( false );
+	const [ isScrollbarPresent, setIsScrollbarPresent ] = useState( false );
 
 	const observer = useRef< IntersectionObserver >();
 	const itemRefs = useRef< ( HTMLElement | null )[] >( [] );
@@ -82,9 +82,9 @@ function WpcomBlockEditorNavSidebar() {
 
 		observer.current = new window.IntersectionObserver(
 			( entries ) => {
-				// If every item is currently visible, then we're not scrolling
-				const isScrolling = entries.some( ( entry ) => ! entry.isIntersecting );
-				setIsListScrolling( isScrolling );
+				// If one item isn't currently visible, then the scrollbar isn't present
+				const isPresent = entries.some( ( entry ) => ! entry.isIntersecting );
+				setIsScrollbarPresent( isPresent );
 			},
 			{
 				root: el,
@@ -226,7 +226,7 @@ function WpcomBlockEditorNavSidebar() {
 				</ul>
 				<div
 					className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons', {
-						'is-list-scrolling': isListScrolling,
+						'is-scrollbar-present': isScrollbarPresent,
 					} ) }
 				>
 					<CreatePage postType={ postType } />

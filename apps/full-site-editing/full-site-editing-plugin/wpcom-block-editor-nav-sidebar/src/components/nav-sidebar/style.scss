@@ -111,7 +111,7 @@ $transition-period: 100ms;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
-	&.is-list-scrolling {
+	&.is-scrollbar-present {
 		border-top: 1px solid $dark-gray-600;
 	}
 }
