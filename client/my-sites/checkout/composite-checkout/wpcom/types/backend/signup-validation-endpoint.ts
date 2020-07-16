@@ -7,10 +7,10 @@
 export type SignupValidationResponse = {
 	success: boolean;
 	messages: {
-		first_name?: Object;
-		last_name?: Object;
-		email?: Object;
-		username?: Object;
-		password?: Object;
+		first_name?: string[];
+		last_name?: string[];
+		email?: string[];
+		username?: string[];
+		password?: string[];
 	};
 };
