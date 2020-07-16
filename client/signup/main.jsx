@@ -80,6 +80,7 @@ import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'signup/p2-processing-screen';
 import user from 'lib/user';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -640,9 +641,10 @@ class Signup extends React.Component {
 		}
 
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
+		const reskinnedClass = this.props.isReskinned ? 'is-reskinned' : '';
 
 		return (
-			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+			<div className={ `signup is-${ kebabCase( this.props.flowName ) } ${ reskinnedClass }` }>
 				<DocumentHead title={ this.props.pageTitle } />
 				{ ! isWPForTeamsFlow( this.props.flowName ) && (
 					<SignupHeader
@@ -679,6 +681,9 @@ export default connect(
 			'props.showSiteMockups',
 			false
 		);
+		const isReskinned =
+			'onboarding' === ownProps.flowName && 'reskinned' === abtest( 'reskinSignupFlow' );
+
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ) // this is intentional, not a mistake
@@ -697,6 +702,7 @@ export default connect(
 			shouldStepShowSitePreview,
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
+			isReskinned,
 		};
 	},
 	{
