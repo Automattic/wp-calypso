@@ -32,8 +32,11 @@ export function checkout( context, next ) {
 	const isLoggedOut = ! user.get();
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	const isDisallowedForSitePicker =
+		context.pathname.includes( '/checkout/no-site' ) &&
+		( isLoggedOut || 'no-user' !== context.query.cart );
 
-	if ( ! selectedSite && ! context.pathname.includes( '/checkout/no-site' ) ) {
+	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
 		sites( context, next );
 		return;
 	}
