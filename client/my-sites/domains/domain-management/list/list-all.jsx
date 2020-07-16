@@ -103,7 +103,7 @@ class ListAll extends Component {
 	renderDomainItem( domain, index ) {
 		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
 
-		const content = (
+		return (
 			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
 				{ domain?.blogId && (
 					<LazyRender>
@@ -121,8 +121,6 @@ class ListAll extends Component {
 				/>
 			</React.Fragment>
 		);
-
-		return content;
 	}
 
 	renderDomainsList() {
