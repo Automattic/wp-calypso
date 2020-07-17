@@ -13,18 +13,8 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		return imageURL;
 	}
 
-	let urlParts = {};
-	let urlType;
-	try {
-		urlParts = getUrlParts( imageURL );
-		urlType = determineUrlType( imageURL );
-	} catch ( e ) {
-		/**
-		 * `url.parse` throws in a few places where it calls decodeURIComponent
-		 *
-		 * @see e.g. https://github.com/Automattic/wp-calypso/issues/18645
-		 */
-	}
+	const urlParts = getUrlParts( imageURL );
+	const urlType = determineUrlType( imageURL );
 
 	// Return the unformatted imageURL for path-relative or path-absolute URLs.
 	if ( ! urlParts.host ) {
