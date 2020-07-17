@@ -533,132 +533,82 @@ class MembershipsSection extends Component {
 	}
 
 	renderOnboarding( cta ) {
-		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		const { translate } = this.props;
 
-		if ( isPayments ) {
-			return (
-				<Card>
-					<div className="memberships__onboarding-wrapper">
-						<div className="memberships__onboarding-column-info">
-							<h2 className="memberships__onboarding-header">
-								{ preventWidows( translate( 'Accept payments on your website.' ) ) }
-							</h2>
-							<p className="memberships__onboarding-paragraph">
-								{ preventWidows(
-									translate(
-										'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more.'
-									)
-								) }
-							</p>
-							<p className="memberships__onboarding-paragraph">
-								{ preventWidows(
-									translate(
-										'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
-										{
-											components: {
-												link: <a href="/support/recurring-payments-button/" />,
-											},
-										}
-									)
-								) }
-							</p>
-							<p className="memberships__onboarding-paragraph">{ cta }</p>
-							<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
-								{ preventWidows(
-									translate(
-										'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
-									)
-								) }
-							</p>
-						</div>
-						<div className="memberships__onboarding-column-image">
-							<img src={ paymentsImage } aria-hidden="true" alt="" />
-						</div>
-					</div>
-					<div className="memberships__onboarding-benefits">
-						<div>
-							<h3>{ translate( 'Payments for anything' ) }</h3>
-							{ preventWidows(
-								translate(
-									'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
-								)
-							) }
-						</div>
-						<div>
-							<h3>{ translate( 'Flexibile options' ) }</h3>
-							{ preventWidows(
-								translate(
-									'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
-								)
-							) }
-						</div>
-						<div>
-							<h3>{ translate( "You're in control" ) }</h3>
-							{ preventWidows(
-								translate(
-									'You choose which content requires payment. Easily manage subscribers and payment plans.'
-								)
-							) }
-						</div>
-						<div>
-							<h3>{ translate( 'Global payments' ) }</h3>
-							{ preventWidows(
-								translate(
-									'Collect payments in 135 countries to reach customers around the world.'
-								)
-							) }
-						</div>
-					</div>
-				</Card>
-			);
-		}
-
 		return (
-			<div className="memberships__onboarding-wrapper">
-				<div className="memberships__onboarding-column-info">
-					<div className="memberships__onboarding-header">
-						{ preventWidows( translate( 'Introducing Recurring Payments.' ) ) }
+			<Card>
+				<div className="memberships__onboarding-wrapper">
+					<div className="memberships__onboarding-column-info">
+						<h2 className="memberships__onboarding-header">
+							{ preventWidows( translate( 'Accept payments on your website.' ) ) }
+						</h2>
+						<p className="memberships__onboarding-paragraph">
+							{ preventWidows(
+								translate(
+									'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more.'
+								)
+							) }
+						</p>
+						<p className="memberships__onboarding-paragraph">
+							{ preventWidows(
+								translate(
+									'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
+									{
+										components: {
+											link: (
+												<a href="https://wordpress.com/support/wordpress-editor/blocks/payments/#setting-up-payments" />
+											),
+										},
+									}
+								)
+							) }
+						</p>
+						<p className="memberships__onboarding-paragraph">{ cta }</p>
+						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
+							{ preventWidows(
+								translate(
+									'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
+								)
+							) }
+						</p>
 					</div>
-					<p className="memberships__onboarding-paragraph">
-						{ translate(
-							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
-						) }{ ' ' }
-						<ExternalLink
-							href="https://wordpress.com/support/recurring-payments-button/"
-							icon={ true }
-						>
-							{ translate( 'Learn more.' ) }
-						</ExternalLink>
-					</p>
-					{ cta }
-					<div className="memberships__onboarding-benefits">
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ translate( 'Add multiple subscription options' ) }
-						</div>
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ translate( 'Collect recurring revenue' ) }
-						</div>
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ translate( 'Collect payments in 135 countries' ) }
-						</div>
-						<div>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ translate( 'Easily manage subscribers' ) }
-						</div>
+					<div className="memberships__onboarding-column-image">
+						<img src={ paymentsImage } aria-hidden="true" alt="" />
 					</div>
 				</div>
-				<div className="memberships__onboarding-column-image">
-					<img
-						src="/calypso/images/recurring-payments/checkout-form-gradient.png"
-						aria-hidden="true"
-						alt=""
-					/>
+				<div className="memberships__onboarding-benefits">
+					<div>
+						<h3>{ translate( 'Payments for anything' ) }</h3>
+						{ preventWidows(
+							translate(
+								'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
+							)
+						) }
+					</div>
+					<div>
+						<h3>{ translate( 'Flexibile options' ) }</h3>
+						{ preventWidows(
+							translate(
+								'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
+							)
+						) }
+					</div>
+					<div>
+						<h3>{ translate( "You're in control" ) }</h3>
+						{ preventWidows(
+							translate(
+								'You choose which content requires payment. Easily manage subscribers and payment plans.'
+							)
+						) }
+					</div>
+					<div>
+						<h3>{ translate( 'Global payments' ) }</h3>
+						{ preventWidows(
+							translate( 'Collect payments in 135 countries to reach customers around the world.' )
+						) }
+					</div>
 				</div>
-			</div>
+			</Card>
 		);
 	}
 
