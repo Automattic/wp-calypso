@@ -48,6 +48,17 @@ import { resolveDomainStatus } from 'lib/domains';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 class RegisteredDomainType extends React.Component {
+	renderDomainOnly() {
+		const { translate } = this.props;
+		return (
+			<div>
+				{ translate(
+					'Your domain is registered but not pointing to any services. You can connect it to a WordPress.com site or change your name servers to point it somewhere else.'
+				) }
+			</div>
+		);
+	}
+
 	renderExpired() {
 		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
 		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
@@ -332,6 +343,7 @@ class RegisteredDomainType extends React.Component {
 						isLoadingPurchase={ isLoadingPurchase }
 						domain={ domain }
 					/>
+					{ this.renderDomainOnly() }
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 					{ this.renderOutboundTransferInProgress() }
