@@ -25,12 +25,16 @@ import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
-export function useStoredCards( getStoredCards, onEvent ) {
+export function useStoredCards( getStoredCards, onEvent, isLoggedOutCart ) {
 	const [ state, dispatch ] = useReducer( storedCardsReducer, {
 		storedCards: [],
 		isLoading: true,
 	} );
+
 	useEffect( () => {
+		if ( isLoggedOutCart ) {
+			return;
+		}
 		let isSubscribed = true;
 		async function fetchStoredCards() {
 			debug( 'fetching stored cards' );
@@ -51,6 +55,11 @@ export function useStoredCards( getStoredCards, onEvent ) {
 
 		return () => ( isSubscribed = false );
 	}, [ getStoredCards, onEvent ] );
+
+	if ( isLoggedOutCart ) {
+		return { ...state, isLoading: false };
+	}
+
 	return state;
 }
 
