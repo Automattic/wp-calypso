@@ -477,8 +477,18 @@ export class List extends React.Component {
 					</InfoPopover>
 				</div>
 				<div className="list__header-primary-domain-buttons">
-					<Button compact className="list__change-primary-domain">
-						{ translate( 'Change primary domain' ) }
+					<Button
+						compact
+						className="list__change-primary-domain"
+						onClick={
+							this.state.changePrimaryDomainModeEnabled
+								? this.disableChangePrimaryDomainMode
+								: this.enableChangePrimaryDomainMode
+						}
+					>
+						{ this.state.changePrimaryDomainModeEnabled
+							? translate( 'Abort primary domain change' )
+							: translate( 'Change primary domain' ) }
 					</Button>
 				</div>
 			</CompactCard>,
