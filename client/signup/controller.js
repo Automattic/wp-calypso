@@ -127,8 +127,14 @@ export default {
 					) {
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
-						const urlWithoutLocale = getStepUrl( 'onboarding-new', stepName, stepSectionName );
-						window.location = urlWithoutLocale;
+						const localeFromParams = context.params.lang;
+						const urlWithLocale = getStepUrl(
+							'onboarding-new',
+							stepName,
+							stepSectionName,
+							localeFromParams
+						);
+						window.location = urlWithLocale;
 					} else {
 						removeWhiteBackground();
 						next();
