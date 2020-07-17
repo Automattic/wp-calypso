@@ -36,7 +36,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 		);
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.components-form-file-upload + button' )
+			By.css( '.components-form-file-upload > button' )
 		);
 		await this.driver.switchTo().defaultContent();
 		return await driverHelper.waitTillPresentAndDisplayed(
