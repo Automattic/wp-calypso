@@ -1,12 +1,16 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { some, endsWith } from 'lodash';
-import url from 'url';
 
 /**
- * Determines if an iframe is from a source we trust.  We allow these to be the featured media and also give
- * them a free-er sandbox
+ * Internal dependencies
+ */
+import { getUrlParts } from 'lib/url';
+
+/**
+ * Determines if an iframe is from a source we trust. We allow these to be the featured media and also give
+ * them a freer sandbox
  *
  * @param  {object} iframe the iframe to check
  * @returns {boolean} true if allowed
@@ -45,7 +49,7 @@ export function iframeIsAllowed( iframe ) {
 		'icloud.com',
 		'read.amazon.com',
 	];
-	const hostName = iframe.src && url.parse( iframe.src ).hostname;
+	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
 	return some( allowedIframeHosts, function ( allowedHost ) {
 		return endsWith( '.' + iframeSrc, '.' + allowedHost );

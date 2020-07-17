@@ -1,7 +1,7 @@
 /**
- * External Dependencies
+ * Internal dependencies
  */
-import url from 'url';
+import { getUrlParts, getUrlFromParts } from 'lib/url';
 
 const IMAGE_SCALE_FACTOR =
 	typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ? 2 : 1;
@@ -13,9 +13,9 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		return imageURL;
 	}
 
-	let parsedURL = {};
+	let urlParts = {};
 	try {
-		parsedURL = url.parse( imageURL, true, true ); // true, true means allow protocol-less hosts and parse the querystring
+		urlParts = getUrlParts( imageURL );
 	} catch ( e ) {
 		/**
 		 * `url.parse` throws in a few places where it calls decodeURIComponent
@@ -24,34 +24,31 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		 */
 	}
 
-	if ( ! parsedURL.host ) {
+	if ( ! urlParts.host ) {
 		return imageURL;
 	}
 
-	const isGravatar = parsedURL.host.indexOf( 'gravatar.com' ) !== -1;
+	const isGravatar = urlParts.host.indexOf( 'gravatar.com' ) !== -1;
 
-	delete parsedURL.search;
+	delete urlParts.search;
 	// strip other sizing params
 	for ( const param of [ 'h', 'crop', 'resize', 'fit' ] ) {
-		delete parsedURL.query[ param ];
+		urlParts.searchParams.delete( param );
 	}
 
 	const sizeParam = isGravatar ? 's' : 'w';
-	parsedURL.query[ sizeParam ] = width * IMAGE_SCALE_FACTOR;
+	urlParts.searchParams.set( sizeParam, width * IMAGE_SCALE_FACTOR );
 
 	if ( ! isGravatar ) {
 		// gravatar doesn't support these, only photon / files.wordpress
-		parsedURL.query.quality = DEFAULT_PHOTON_QUALITY;
-		parsedURL.query.strip = 'info'; // strip all exif data, leave ICC intact
+		urlParts.searchParams.set( 'quality', DEFAULT_PHOTON_QUALITY );
+		urlParts.searchParams.set( 'strip', 'info' ); // strip all exif data, leave ICC intact
 	}
 
 	// make a new query object with keys in a known order
-	parsedURL.query = Object.keys( parsedURL.query )
-		.sort()
-		.reduce( ( memo, key ) => {
-			memo[ key ] = parsedURL.query[ key ];
-			return memo;
-		}, {} );
+	const sortedKeys = Array.from( urlParts.searchParams.keys() ).sort();
+	const sortedParams = new URLSearchParams();
+	sortedKeys.forEach( ( key ) => sortedParams.set( key, urlParts.searchParams.get( key ) ) );
 
-	return url.format( parsedURL );
+	return getUrlFromParts( { ...urlParts, searchParams: sortedParams } ).href;
 }
