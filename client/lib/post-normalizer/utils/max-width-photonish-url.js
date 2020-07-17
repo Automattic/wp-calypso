@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts, getUrlFromParts } from 'lib/url';
+import { format, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
 
 const IMAGE_SCALE_FACTOR =
 	typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ? 2 : 1;
@@ -13,20 +13,15 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		return imageURL;
 	}
 
-	let urlParts = {};
-	try {
-		urlParts = getUrlParts( imageURL );
-	} catch ( e ) {
-		/**
-		 * `url.parse` throws in a few places where it calls decodeURIComponent
-		 *
-		 * @see e.g. https://github.com/Automattic/wp-calypso/issues/18645
-		 */
-	}
+	const urlParts = getUrlParts( imageURL );
+	const urlType = determineUrlType( imageURL );
 
+	// Return the unformatted imageURL for path-relative or path-absolute URLs.
 	if ( ! urlParts.host ) {
 		return imageURL;
 	}
+
+	// From this point on, we should only have absolute and scheme-relative URLs.
 
 	const isGravatar = urlParts.host.indexOf( 'gravatar.com' ) !== -1;
 
@@ -50,5 +45,19 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 	const sortedParams = new URLSearchParams();
 	sortedKeys.forEach( ( key ) => sortedParams.set( key, urlParts.searchParams.get( key ) ) );
 
-	return getUrlFromParts( { ...urlParts, searchParams: sortedParams } ).href;
+	const extendedUrl = getUrlFromParts( {
+		...urlParts,
+		// Provide a protocol if one is missing. This is the case for some image ads.
+		protocol: urlParts.protocol || 'https:',
+		// Override original search params.
+		searchParams: sortedParams,
+	} ).href;
+
+	try {
+		// Format back to original URL type (e.g. scheme-relative).
+		return format( extendedUrl, urlType );
+	} catch {
+		// Something failed in the formatting, so return just return the full extended URL.
+		return extendedUrl;
+	}
 }
