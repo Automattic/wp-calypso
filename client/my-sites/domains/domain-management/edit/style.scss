@@ -53,6 +53,9 @@
 	.status-success {
 		@include domain_status_color( #008a20 );
 	}
+	.status-parked {
+		@include domain_status_color( #787C82 );
+	}
 	.status-pending {
 		@include domain_status_color( #3582C4 );
 	}
