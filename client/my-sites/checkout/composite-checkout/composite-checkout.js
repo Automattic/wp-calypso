@@ -359,7 +359,8 @@ export default function CompositeCheckout( {
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
-		recordEvent
+		recordEvent,
+		isLoggedOutCart
 	);
 	const {
 		canMakePayment: isApplePayAvailable,
