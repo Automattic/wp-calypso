@@ -10,7 +10,7 @@ import { pick } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
@@ -46,35 +46,9 @@ import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import { resolveDomainStatus } from 'lib/domains';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import DomainOnlyCta from '../domain-only-cta';
 
 class RegisteredDomainType extends React.Component {
-	renderDomainOnly() {
-		const { domain, translate } = this.props;
-		if (
-			domain.pendingTransfer ||
-			domain.expired ||
-			isRecentlyRegistered( domain.registrationDate ) ||
-			isExpiringSoon( domain, 30 ) ||
-			! domain.currentUserCanManage
-		) {
-			return null;
-		}
-
-		return (
-			<div>
-				<p>
-					{ translate(
-						'Your domain is registered but not pointing to any services. You can connect it to a WordPress.com site or change your name servers to point it somewhere else.'
-					) }
-				</p>
-				<div className="domain-types__button-row">
-					<Button primary>{ translate( 'Connect to a WordPress.com site' ) }</Button>
-					<Button borderless>{ translate( 'Change name servers' ) }</Button>
-				</div>
-			</div>
-		);
-	}
-
 	renderExpired() {
 		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
 		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
@@ -362,7 +336,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 					{ this.renderOutboundTransferInProgress() }
-					{ this.renderDomainOnly() }
+					<DomainOnlyCta domain={ domain } selectedSiteSlug={ selectedSite.slug } />
 					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">

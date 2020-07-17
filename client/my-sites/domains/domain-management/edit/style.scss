@@ -49,6 +49,27 @@
 	}
 }
 
+.domain-only-cta__button-row {
+	margin: 17px 0;
+
+	button {
+		padding: 8px 34px;
+		font-size: $font-body-small;
+		font-weight: normal;
+
+		&.is-primary {
+			box-sizing: border-box;
+			box-shadow: 0 1px 0 var( --studio-pink-80 );
+			border-radius: 3px;
+		}
+
+		&.is-borderless {
+			color: var( --studio-wordpress-blue-50 );
+			margin-left: 29px;
+		}
+	}
+}
+
 .domain-types__container {
 	.status-success {
 		@include domain_status_color( #008a20 );
@@ -180,19 +201,6 @@
 				flex-basis: 100%;
 				margin: 0;
 				padding: 16px 24px;
-			}
-		}
-	}
-
-	.domain-types__button-row {
-		margin: 17px 0;
-
-		button {
-			padding: 8px 34px;
-			font-size: $font-body-small;
-
-			&.is-borderless {
-				color: var( --studio-wordpress-blue-50 );
 			}
 		}
 	}
