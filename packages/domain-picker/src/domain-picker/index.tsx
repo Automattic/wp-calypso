@@ -44,7 +44,7 @@ export interface Props {
 
 	onExistingSubdomainSelect?: ( existingSubdomain: string ) => void;
 
-	/** Paid omain suggestions to show when the picker isn't expanded */
+	/** Paid domain suggestions to show when the picker isn't expanded */
 	quantity?: number;
 
 	/** Domain suggestions to show when the picker is expanded */
@@ -183,7 +183,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					) }
 					<div className="domain-picker__suggestion-sections">
 						<div className="domain-picker__suggestion-item-group">
-							{ domainSuggestions && existingSubdomain && (
+							{ existingSubdomain && (
 								<SuggestionItem
 									key={ existingSubdomain }
 									domain={ existingSubdomain }
