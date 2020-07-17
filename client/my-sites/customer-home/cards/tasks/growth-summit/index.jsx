@@ -14,7 +14,7 @@ const GrowthSummit = () => {
 	return (
 		<Task
 			title="The WordPress.com Growth Summit"
-			description="Learn how to build and grow your site, from start to scale. Come join us for this exclusive two-day virtual event August 11-13."
+			description="Learn how to build and grow your site, from start to scale. Come join us for this exclusive two-day virtual event, August 11-13."
 			actionText="Register today for 20% off!"
 			actionUrl="http://www.wordpress.com/growth-summit/"
 			actionTarget="_blank"
