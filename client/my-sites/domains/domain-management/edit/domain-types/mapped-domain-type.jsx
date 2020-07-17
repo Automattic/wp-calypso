@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -214,8 +215,7 @@ class MappedDomainType extends React.Component {
 		const { statusText, statusClass, icon } = resolveDomainStatus(
 			domain,
 			purchase,
-			this.props.isJetpackSite,
-			this.props.isSiteAutomatedTransfer
+			pick( this.props, [ 'isJetpackSite', 'isSiteAutomatedTransfer' ] )
 		);
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
