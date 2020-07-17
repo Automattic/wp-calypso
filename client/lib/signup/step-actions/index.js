@@ -282,7 +282,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		state,
 	} );
 
-	if ( isEmpty( bearerToken ) ) {
+	if ( isEmpty( bearerToken ) && 'onboarding-new' === flowToCheck ) {
 		return saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
 	}
 
