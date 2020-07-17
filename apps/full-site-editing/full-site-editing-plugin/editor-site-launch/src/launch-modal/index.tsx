@@ -40,16 +40,16 @@ const LaunchModal: React.FunctionComponent< Props > = ( {
 			<div className="nux-launch-modal-header__wp-logo">
 				<Icon icon={ wordpress } size={ 36 } />
 			</div>
-			{ onClose && (
-				<Button
-					isLink
-					className="nux-launch-modal-header__close-button"
-					onClick={ onClose }
-					aria-label={ __( 'Close dialog', 'full-site-editing' ) }
-				>
-					<Icon icon={ close } size={ 24 } />
-				</Button>
-			) }
+
+			<Button
+				isLink
+				className="nux-launch-modal-header__close-button"
+				onClick={ onClose }
+				aria-label={ __( 'Close dialog', 'full-site-editing' ) }
+				disabled={ ! onClose }
+			>
+				<Icon icon={ close } size={ 24 } />
+			</Button>
 		</div>
 		{ isLaunching ? 'launch animation' : <Launch step={ step } onSubmit={ onSubmit }></Launch> }
 	</Modal>
