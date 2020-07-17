@@ -115,7 +115,7 @@
 		"immutable": "^3.8.2",
 		"inherits": "^2.0.4",
 		"is-my-json-valid": "^2.20.0",
-		"jquery": "^1.12.3",
+		"jquery": "^3.5.1",
 		"js-yaml": "^3.14.0",
 		"keymaster": "^1.6.2",
 		"lodash": "^4.17.15",
