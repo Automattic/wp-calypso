@@ -16,8 +16,7 @@ import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 export function resolveDomainStatus(
 	domain,
 	purchase = null,
-	isJetpackSite = null,
-	isSiteAutomatedTransfer = null
+	{ isJetpackSite = null, isSiteAutomatedTransfer = null, isDomainOnlySite = false }
 ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
@@ -147,6 +146,14 @@ export function resolveDomainStatus(
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
 					icon: 'info',
+				};
+			}
+
+			if ( isDomainOnlySite ) {
+				return {
+					statusText: translate( 'Parked' ),
+					statusClass: 'status-parked',
+					icon: 'download_done',
 				};
 			}
 
