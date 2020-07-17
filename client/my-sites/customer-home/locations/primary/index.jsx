@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 
 /**
  * Internal dependencies
@@ -32,6 +32,8 @@ import {
 	TASK_EARN_FEATURES,
 } from 'my-sites/customer-home/cards/constants';
 import { withPerformanceTrackerStop } from 'lib/performance-tracking';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { connect } from 'react-redux';
 
 const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
@@ -48,7 +50,13 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
 };
 
-const Primary = ( { cards } ) => {
+const Primary = ( { cards, trackCards } ) => {
+	useEffect( () => {
+		if ( cards && cards.length ) {
+			trackCards( cards );
+		}
+	}, [ cards, trackCards ] );
+
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
@@ -67,4 +75,17 @@ const Primary = ( { cards } ) => {
 	);
 };
 
-export default withPerformanceTrackerStop( Primary );
+const trackCardImpressions = ( cards ) => {
+	const analyticsEvents = cards.reduce( ( events, card ) => {
+		return [
+			...events,
+			recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
+			bumpStat( 'calypso_customer_home_card_impression', card ),
+		];
+	}, [] );
+	return composeAnalytics( ...analyticsEvents );
+};
+
+export default withPerformanceTrackerStop(
+	connect( null, { trackCards: trackCardImpressions } )( Primary )
+);
