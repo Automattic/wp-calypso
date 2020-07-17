@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +45,7 @@ import OutboundTransferConfirmation from '../../components/outbound-transfer-con
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import { resolveDomainStatus } from 'lib/domains';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 class RegisteredDomainType extends React.Component {
 	renderExpired() {
@@ -289,7 +291,11 @@ class RegisteredDomainType extends React.Component {
 		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase );
+		const { statusText, statusClass, icon } = resolveDomainStatus(
+			domain,
+			purchase,
+			pick( this.props, 'isDomainOnlySite' )
+		);
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
 		const newDomainManagementNavigation = config.isEnabled(
@@ -376,9 +382,10 @@ export default connect(
 			: null;
 
 		return {
-			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
+			isDomainOnlySite: isDomainOnlySite( state, ownProps.selectedSite.ID ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},
