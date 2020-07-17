@@ -205,9 +205,11 @@ function WpcomBlockEditorNavSidebar() {
 				</div>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
 					<h2>{ siteTitle }</h2>
-					<ExternalLink href={ SITE_HOME_URL }>
-						{ __( 'Visit site', 'full-site-editing' ) }
-					</ExternalLink>
+					{ SITE_HOME_URL && (
+						<ExternalLink href={ SITE_HOME_URL }>
+							{ __( 'Visit site', 'full-site-editing' ) }
+						</ExternalLink>
+					) }
 				</div>
 				<Button
 					href={ closeUrl }
