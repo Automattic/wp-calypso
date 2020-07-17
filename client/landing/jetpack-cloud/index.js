@@ -10,7 +10,7 @@ import React from 'react';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { makeLayout, render as clientRender } from 'controller';
 import { siteSelection, sites } from 'my-sites/controller';
-import { startJetpackCloudSupportSession } from 'lib/jetpack/support-session';
+import { startJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
 import { translate } from 'i18n-calypso';
 import Landing from './sections/landing';
 
@@ -38,7 +38,7 @@ const landingController = ( context, next ) => {
 };
 
 export const handleSupportSession = () => {
-	startJetpackCloudSupportSession();
+	startJetpackCloudOAuthOverride();
 	window.location.replace( '/' );
 };
 

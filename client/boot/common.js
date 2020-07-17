@@ -54,7 +54,7 @@ import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
 import { requestUnseenStatusAny } from 'state/reader-ui/seen-posts/actions';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { inJetpackCloudSupportSession } from 'lib/jetpack/support-session';
+import { inJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
 
 const debug = debugFactory( 'calypso' );
 
@@ -135,7 +135,7 @@ const oauthTokenMiddleware = () => {
 			if (
 				getToken() === false &&
 				! isValidSection &&
-				! ( isJetpackCloud() && inJetpackCloudSupportSession() )
+				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
 			) {
 				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
 				const redirectPath = isDesktop || isJetpackCloud() ? config( 'login_url' ) : '/authorize';
