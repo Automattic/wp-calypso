@@ -293,7 +293,7 @@ export function convertRawResponseCartToResponseCart(
 		...rawResponseCart,
 		// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}
 		tax: {
-			location: Array.isArray( rawResponseCart.tax?.location ) ? {} : rawResponseCart.tax.location,
+			location: Array.isArray( rawResponseCart.tax?.location ) ? {} : rawResponseCart.tax?.location,
 			display_taxes: rawResponseCart.tax?.display_taxes,
 		},
 		// Add uuid to products returned by the server
