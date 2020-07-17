@@ -234,5 +234,4 @@ export default {
 		allowExistingUsers: false,
 		countryCodeTargets: [ 'US' ],
 	},
-	
 };
