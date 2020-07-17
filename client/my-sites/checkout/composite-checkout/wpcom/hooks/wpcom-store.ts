@@ -224,6 +224,10 @@ export function useWpcomStore(
 			getContactInfo( state: WpcomStoreState ): ManagedContactDetails {
 				return state.contactDetails;
 			},
+
+			getRecaptchaClientId( state: WpcomStoreState ): number {
+				return state.recaptchaClientId;
+			},
 		},
 	} );
 }
