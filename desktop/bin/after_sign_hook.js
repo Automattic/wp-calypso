@@ -9,8 +9,7 @@ const NOTARIZATION_PWD = process.env.WPDESKTOP_NOTARIZATION_PWD;
 const NOTARIZATION_ASC_PROVIDER = process.env.APPLE_DEVELOPER_SHORT_NAME;
 
 const circleTag = process.env.CIRCLE_TAG;
-const shouldNotarize =
-	process.platform === 'darwin' && !! circleTag && circleTag.startsWith( 'desktop' );
+const shouldNotarize = process.platform === 'darwin' && !! circleTag;
 
 function elapsed( start ) {
 	const now = new Date();
@@ -30,7 +29,7 @@ module.exports = async function ( context ) {
 	const appName = path.basename( app );
 
 	const start = new Date();
-	console.log( `  • notarizing ${ appName }...` );
+	console.log( `  • notarizing ${ appName }...` ); // eslint-disable-line no-console
 	await notarize( {
 		appBundleId: APP_ID,
 		appPath: app,
@@ -38,5 +37,5 @@ module.exports = async function ( context ) {
 		appleIdPassword: NOTARIZATION_PWD,
 		ascProvider: NOTARIZATION_ASC_PROVIDER,
 	} );
-	console.log( `  • done notarizing ${ appName }, took ${ elapsed( start ) }` );
+	console.log( `  • done notarizing ${ appName }, took ${ elapsed( start ) }` ); // eslint-disable-line no-console
 };
