@@ -935,25 +935,25 @@ workflows:
       - wp-desktop-source:
           filters:
             tags:
-              only: /.*/
+              only: /v.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
           filters:
             tags:
-              only: /.*/
+              only: /v.*/
       - wp-desktop-linux:
           requires:
             - wp-desktop-source
           filters:
             tags:
-              only: /.*/
+              only: /v.*/
       - wp-desktop-windows:
           requires:
             - wp-desktop-source
           filters:
             tags:
-              only: /.*/
+              only: /v.*/
       - wp-desktop-publish:
           requires:
             - wp-desktop-mac
@@ -961,7 +961,7 @@ workflows:
             - wp-desktop-windows
           filters:
             tags:
-              only: /.*/
+              only: /v.*/
 
   calypso-nightly:
     jobs:
