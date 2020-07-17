@@ -217,7 +217,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					recordTracksEvent( 'calypso_checkout_composite_add_coupon_clicked', {} )
 				);
 
-			case 'STEP_NUMBER_CHANGED':
+			case 'STEP_NUMBER_CHANGED': {
 				if ( action.payload.stepNumber === 2 && action.payload.previousStepNumber === 1 ) {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
@@ -232,6 +232,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						step: action.payload.stepNumber,
 					} )
 				);
+			}
 
 			case 'STRIPE_TRANSACTION_BEGIN': {
 				reduxDispatch(
@@ -244,6 +245,24 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+					} )
+				);
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
+				);
+			}
+
+			case 'EBANX_TRANSACTION_BEGIN': {
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_form_submit', {
+						credits: null,
+						payment_method: 'WPCOM_Billing_Ebanx',
+					} )
+				);
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
+						credits: null,
+						payment_method: 'WPCOM_Billing_Ebanx',
 					} )
 				);
 				return reduxDispatch(
