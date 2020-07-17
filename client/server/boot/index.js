@@ -16,6 +16,7 @@ import config from 'server/config';
 import api from 'server/api';
 import pages from 'server/pages';
 import pwa from 'server/pwa';
+import createProxyMiddleware from 'http-proxy-middleware';
 
 /**
  * Returns the server HTTP request handler "app".
@@ -32,6 +33,9 @@ export default function setup() {
 	app.use( userAgent.express() );
 
 	if ( 'development' === process.env.NODE_ENV ) {
+		// use de.wordpress.com to prevent an infinite-loop
+		app.use( '/wp-login.php', createProxyMiddleware( { target: 'https://de.wordpress.com' } ) );
+
 		require( 'server/bundler' )( app );
 
 		// setup logger
