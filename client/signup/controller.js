@@ -43,6 +43,7 @@ import { requestGeoLocation } from 'state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
 import Experiment, { DefaultVariation, Variation } from 'components/experiment';
+import user from 'lib/user';
 
 /**
  * Constants
@@ -116,6 +117,7 @@ export default {
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
 						window.location.replace( window.location.origin + '/new' + window.location.search );
 					} else if (
+						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
 						-1 === context.pathname.indexOf( 'personal' ) &&
 						-1 === context.pathname.indexOf( 'premium' ) &&
