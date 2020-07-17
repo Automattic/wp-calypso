@@ -24,6 +24,7 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
 	| { type: 'TRANSACTION_COMPLETE'; payload: object }
+	| { type: 'SET_RECAPTCHA_CLIENT_ID'; payload: number }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_EMAIL'; payload: string }
 	| { type: 'UPDATE_PHONE'; payload: string }
@@ -100,6 +101,15 @@ export function useWpcomStore(
 		}
 	}
 
+	function recaptchaClientIdReducer( state: number, action: WpcomStoreAction ): number {
+		switch ( action.type ) {
+			case 'SET_RECAPTCHA_CLIENT_ID':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	function transactionResultReducer( state: object, action: WpcomStoreAction ): object {
 		switch ( action.type ) {
 			case 'TRANSACTION_COMPLETE':
@@ -116,6 +126,7 @@ export function useWpcomStore(
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
+				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),
 				transactionResult: transactionResultReducer( checkedState.transactionResult, action ),
 			};
 		},
@@ -133,6 +144,10 @@ export function useWpcomStore(
 
 			setTransactionResponse( payload: object ): WpcomStoreAction {
 				return { type: 'TRANSACTION_COMPLETE', payload };
+			},
+
+			setRecaptchaClientId( payload: number ): WpcomStoreAction {
+				return { type: 'SET_RECAPTCHA_CLIENT_ID', payload };
 			},
 
 			updateDomainContactFields( payload: DomainContactDetails ): WpcomStoreAction {
