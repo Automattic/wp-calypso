@@ -139,10 +139,17 @@ class P2Site extends React.Component {
 
 						timesValidationFailed++;
 
-						messages.site = {
-							[ error.error ]: error.message,
-						};
+						if ( error.error === 'blog_title_invalid' ) {
+							messages.siteTitle = {
+								[ error.error ]: error.message,
+							};
+						} else {
+							messages.site = {
+								[ error.error ]: error.message,
+							};
+						}
 					}
+
 					onComplete( null, messages );
 				}
 			);
