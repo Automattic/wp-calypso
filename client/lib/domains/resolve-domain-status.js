@@ -16,7 +16,7 @@ import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 export function resolveDomainStatus(
 	domain,
 	purchase = null,
-	{ isJetpackSite = null, isSiteAutomatedTransfer = null, isDomainOnlySite = false }
+	{ isJetpackSite = null, isSiteAutomatedTransfer = null, isDomainOnlySite = false } = {}
 ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
