@@ -136,7 +136,7 @@ export default function CheckoutSystemDecider( {
 				}
 
 				const { dispatch } = defaultRegistry;
-				dispatch( 'wpcom' ).setRecaptchaClientId( result.clientId );
+				dispatch( 'wpcom' ).setRecaptchaClientId( parseInt( result.clientId ) );
 			} );
 
 		let siteSlug = selectedSite?.slug;
