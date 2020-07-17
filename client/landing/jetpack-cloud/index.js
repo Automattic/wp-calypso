@@ -37,7 +37,7 @@ const landingController = ( context, next ) => {
 	next();
 };
 
-export const handleSupportSession = () => {
+export const handleOAuthOverride = () => {
 	startJetpackCloudOAuthOverride();
 	window.location.replace( '/' );
 };
@@ -45,6 +45,6 @@ export const handleSupportSession = () => {
 export default function () {
 	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
 	page( '/landing', siteSelection, selectionPrompt, sites, makeLayout, clientRender );
-	page( '/request-type-switch', handleSupportSession );
+	page( '/oauth-override', handleOAuthOverride );
 	page( '/', siteSelection, redirectToPrimarySiteLanding );
 }
