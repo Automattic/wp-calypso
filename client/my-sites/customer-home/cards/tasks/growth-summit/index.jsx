@@ -13,7 +13,7 @@ import growthSummitIllustration from 'assets/images/customer-home/illustration--
 const GrowthSummit = () => {
 	return (
 		<Task
-			title="The Official WordPress.com Growth Summit"
+			title="The WordPress.com Growth Summit"
 			description="Learn how to build and grow your site, from start to scale. Come join us for this exclusive two-day virtual event August 11-13."
 			actionText="Register today for 20% off!"
 			actionUrl="http://www.wordpress.com/growth-summit/"
