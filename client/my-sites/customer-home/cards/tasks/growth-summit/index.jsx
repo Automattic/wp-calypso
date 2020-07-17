@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,11 +12,15 @@ import { TASK_GROWTH_SUMMIT } from 'my-sites/customer-home/cards/constants';
 import growthSummitIllustration from 'assets/images/customer-home/illustration--growth-summit.svg';
 
 const GrowthSummit = () => {
+	const translate = useTranslate();
+
 	return (
 		<Task
-			title="The WordPress.com Growth Summit"
-			description="Learn how to build and grow your site, from start to scale. Come join us for this exclusive two-day virtual event, August 11-13."
-			actionText="Register today for 20% off!"
+			title={ translate( 'The WordPress.com Growth Summit' ) }
+			description={ translate(
+				'Learn how to build and grow your site, from start to scale. Come join us for this exclusive two-day virtual event, August 11-13.'
+			) }
+			actionText={ translate( 'Register today for 20% off!' ) }
 			actionUrl="http://www.wordpress.com/growth-summit/"
 			actionTarget="_blank"
 			completeOnStart={ false }
