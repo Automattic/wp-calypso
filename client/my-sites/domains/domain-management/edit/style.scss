@@ -184,6 +184,19 @@
 		}
 	}
 
+	.domain-types__button-row {
+		margin: 17px 0;
+
+		button {
+			padding: 8px 34px;
+			font-size: $font-body-small;
+
+			&.is-borderless {
+				color: var( --studio-wordpress-blue-50 );
+			}
+		}
+	}
+
 	.subscription-settings {
 		margin-top: 0;
 	}
