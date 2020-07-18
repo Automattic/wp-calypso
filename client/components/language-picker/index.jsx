@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, isString, noop } from 'lodash';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -155,7 +156,7 @@ export class LanguagePicker extends PureComponent {
 			return this.renderPlaceholder();
 		}
 
-		const { disabled, translate } = this.props;
+		const { disabled } = this.props;
 		const langName = language.name;
 		const { langCode, langSubcode } = getLanguageCodeLabels( language.langSlug );
 
@@ -177,9 +178,9 @@ export class LanguagePicker extends PureComponent {
 					<div className="language-picker__name">
 						<div className="language-picker__name-inner">
 							<div className="language-picker__name-label">{ langName }</div>
-							<div className="language-picker__name-change">{ translate( 'Change' ) }</div>
 						</div>
 					</div>
+					<Gridicon icon="chevron-down" />
 				</button>
 				{ this.renderModal( language.langSlug ) }
 			</Fragment>

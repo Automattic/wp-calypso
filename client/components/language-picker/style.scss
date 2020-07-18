@@ -6,7 +6,7 @@
 	display: flex;
 	flex: 1 0 auto;
 	font-size: $font-body-small;
-	height: 64px;
+	height: 48px;
 	align-items: stretch;
 	cursor: pointer;
 	transition: border-color 150ms ease-in-out;
@@ -19,15 +19,11 @@
 
 	&[disabled] {
 		cursor: default;
+		color: var( --color-neutral-0 );
 
 		&,
 		.language-picker__icon {
 			border-color: var( --color-neutral-0 );
-		}
-
-		&,
-		.language-picker__name-change {
-			color: var( --color-neutral-0 );
 		}
 	}
 
@@ -66,6 +62,14 @@
 			background-color: var( --color-neutral-0 );
 		}
 	}
+	.gridicons-chevron-down {
+		align-self: center;
+		color: var( --color-neutral-20 );
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin-right: 10px;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
+	}
 }
 
 .language-picker__icon {
@@ -86,10 +90,12 @@
 }
 
 .language-picker__name {
-	flex: auto;
+	flex: 1 0 auto;
 	margin: 4px 16px;
 	display: flex;
 	align-items: center;
+	position: relative;
+	width: 0;
 }
 
 .language-picker__name-inner {
@@ -98,10 +104,10 @@
 }
 
 .language-picker__name-label {
+	overflow: hidden;
 	white-space: nowrap;
-}
 
-.language-picker__name-change {
-	text-transform: uppercase;
-	color: var( --color-text-subtle );
+	&::after {
+		@include long-content-fade( $color: var( --color-surface-rgb ) );
+	}
 }
