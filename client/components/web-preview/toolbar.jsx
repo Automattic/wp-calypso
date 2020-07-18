@@ -175,7 +175,7 @@ class PreviewToolbar extends Component {
 							href={ editUrl }
 							onClick={ this.handleEditorWebPreviewEdit }
 						>
-							{ translate( 'Edit' ) }
+							{ translate( 'Edit Homepage' ) }
 						</Button>
 					) }
 					{ showExternal && (
