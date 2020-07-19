@@ -21,6 +21,7 @@ import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
 import { showStripeModalAuth } from '../stripe';
 import {
+	useAllPaymentMethods,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useMessages,
@@ -527,9 +528,16 @@ function isCreditCardFormValid( store, __ ) {
 
 function CreditCardLabel() {
 	const { __ } = useI18n();
+	const allPaymentMethods = useAllPaymentMethods();
+	const hasExistingCard = allPaymentMethods.filter( ( paymentMethod ) =>
+		paymentMethod.id.startsWith( 'existingCard-' )
+	);
+	const labelText = hasExistingCard
+		? __( 'Use a New Credit/Debit Card' )
+		: __( 'Credit or debit card' );
 	return (
 		<React.Fragment>
-			<span>{ __( 'Credit or debit card' ) }</span>
+			<span>{ labelText }</span>
 			<CreditCardLogos />
 		</React.Fragment>
 	);
