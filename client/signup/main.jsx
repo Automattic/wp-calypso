@@ -189,10 +189,14 @@ class Signup extends React.Component {
 			this.setState( { resumingStep: destinationStep } );
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
 		}
+
+		if ( this.props.isReskinned ) {
+			this.addCssClassToBodyForReskinnedFlow();
+		}
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { stepName, flowName, progress } = nextProps;
+		const { stepName, flowName, progress, isReskinned } = nextProps;
 
 		if ( this.props.stepName !== stepName ) {
 			this.removeFulfilledSteps( nextProps );
@@ -208,6 +212,10 @@ class Signup extends React.Component {
 
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
+		}
+
+		if ( isReskinned && ! this.props.isReskinned ) {
+			this.addCssClassToBodyForReskinnedFlow();
 		}
 	}
 
@@ -624,6 +632,14 @@ class Signup extends React.Component {
 		}
 	}
 
+	/**
+	 * Temporary hack for adding a css class to the body
+	 * for a user who is assigned to the reskinned group of reskinSignupFlow a/b test.
+	 */
+	addCssClassToBodyForReskinnedFlow() {
+		document.body.classList.add( 'is-white-signup' );
+	}
+
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
@@ -641,10 +657,9 @@ class Signup extends React.Component {
 		}
 
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-		const reskinnedClass = this.props.isReskinned ? 'is-reskinned' : '';
 
 		return (
-			<div className={ `signup is-${ kebabCase( this.props.flowName ) } ${ reskinnedClass }` }>
+			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
 				{ ! isWPForTeamsFlow( this.props.flowName ) && (
 					<SignupHeader
