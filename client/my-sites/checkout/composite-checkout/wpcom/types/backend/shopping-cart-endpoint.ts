@@ -297,7 +297,7 @@ export function convertRawResponseCartToResponseCart(
 			display_taxes: rawResponseCart?.tax.display_taxes,
 		},
 		// Add uuid to products returned by the server
-		products: rawResponseCart.products.map( ( product, index ) => {
+		products: rawResponseCart?.products.map( ( product, index ) => {
 			return {
 				...product,
 				uuid: index.toString(),
