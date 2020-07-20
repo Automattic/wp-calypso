@@ -4,6 +4,7 @@
 .onboarding-title {
 	@include onboarding-heading-text-mobile;
 	color: var( --mainColor );
+	margin: 0;
 
 	@include break-mobile {
 		@include onboarding-heading-text-tablet;
@@ -17,9 +18,10 @@
 .onboarding-subtitle {
 	@include onboarding-large-text;
 	font-family: $default-font;
+	font-weight: normal;
 	letter-spacing: 0.2px;
 	color: var( --studio-gray-60 );
-	margin-top: 5px;
+	margin: 5px 0 0;
 	max-width: 550px;
 
 	@include break-small {
