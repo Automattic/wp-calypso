@@ -67,6 +67,22 @@ $transition-period: 100ms;
 	flex: $header-height 0 0;
 }
 
+.wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
+    padding: 8px 16px;
+	margin-top: 14px;
+
+	h2 {
+		color: $white;
+		margin: 0;
+		font-size: $big-font-size;
+		line-height: $default-line-height;
+	}
+
+	a {
+		color: $light-gray-800;
+	}
+}
+
 .wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
 	position: fixed;
 	top: 0;

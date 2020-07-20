@@ -30,6 +30,7 @@ import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
 import getSiteScanIsInitial from 'state/selectors/get-site-scan-is-initial';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
+import isRequestingJetpackScan from 'state/selectors/is-requesting-jetpack-scan';
 import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'lib/jetpack/contact-support-url';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
@@ -51,6 +52,7 @@ interface Props {
 	scanState?: Scan;
 	scanProgress?: number;
 	isInitialScan?: boolean;
+	isRequestingScan: boolean;
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
@@ -59,6 +61,7 @@ interface Props {
 	applySiteOffset: applySiteOffsetType;
 	dispatchRecordTracksEvent: Function;
 	dispatchScanRun: Function;
+	isAdmin: boolean;
 }
 
 class ScanPage extends Component< Props > {
@@ -206,9 +209,13 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanState() {
-		const { site, scanState } = this.props;
-		if ( ! scanState || ! site ) {
+		const { site, scanState, isRequestingScan } = this.props;
+		if ( isRequestingScan || ! site ) {
 			return <ScanPlaceholder />;
+		}
+
+		if ( ! scanState ) {
+			return this.renderScanError();
 		}
 
 		const { state, mostRecent, threats } = scanState;
@@ -288,6 +295,7 @@ export default connect(
 		const siteUrl = getSiteUrl( state, siteId ) ?? undefined;
 		const scanState = ( getSiteScanState( state, siteId ) as Scan ) ?? undefined;
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
+		const isRequestingScan = isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
 		const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 
@@ -298,6 +306,7 @@ export default connect(
 			scanState,
 			scanProgress,
 			isInitialScan,
+			isRequestingScan,
 			isAdmin,
 		};
 	},

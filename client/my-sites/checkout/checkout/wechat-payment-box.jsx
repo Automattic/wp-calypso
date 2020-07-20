@@ -31,6 +31,7 @@ import RecentRenewals from './recent-renewals';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import CheckoutTerms from './checkout-terms';
+import IncompatibleProductMessage from './incompatible-product-message';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -47,6 +48,7 @@ export class WechatPaymentBox extends Component {
 		redirectUrl: PropTypes.string,
 		orderId: PropTypes.number,
 		isMobile: PropTypes.bool,
+		incompatibleProducts: PropTypes.object,
 	};
 
 	state = { name: '', errorMessage: '' };
@@ -185,7 +187,11 @@ export class WechatPaymentBox extends Component {
 									type="submit"
 									className="checkout__payment-button-button button is-primary button-pay pay-button__button"
 									busy={ this.props.pending }
-									disabled={ this.props.pending || this.props.failure }
+									disabled={
+										this.props.pending ||
+										this.props.failure ||
+										this.props.incompatibleProducts?.blockCheckout
+									}
 								>
 									{ translate( 'Pay %(price)s with WeChat Pay', {
 										args: { price: cart.total_cost_display },
@@ -203,6 +209,8 @@ export class WechatPaymentBox extends Component {
 								<PaymentChatButton paymentType={ paymentType } cart={ cart } />
 							) }
 						</div>
+
+						<IncompatibleProductMessage incompatibleProducts={ this.props.incompatibleProducts } />
 					</div>
 				</form>
 

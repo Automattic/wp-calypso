@@ -25,7 +25,7 @@ const alignmentHooksSetting = {
 };
 
 function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
-	const planId = context[ 'premium-content/planId' ];
+	const planId = context ? context[ 'premium-content/planId' ] : null;
 
 	const template = [
 		[

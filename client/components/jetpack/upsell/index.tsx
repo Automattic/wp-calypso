@@ -16,7 +16,7 @@ import './style.scss';
 
 interface Props {
 	bodyText: TranslateResult;
-	buttonLink: TranslateResult;
+	buttonLink?: TranslateResult;
 	buttonText?: TranslateResult;
 	headerText: TranslateResult;
 	iconComponent?: ReactChild;
