@@ -44,6 +44,8 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Change the category of FSE blocks from legacy to the updated ones (https://github.com/Automattic/wp-calypso/issues/43198).
 * Add a helper function that can be used to assign categories with older fallbacks.
 * Add support for TypeScript tests.
+* Update visual style of navigation sidebar.
+* Fix navigation sidebar dismiss button in IE.
 
 = 1.12 =
 * Experimental navigation sidebar in block editor, can be enabled in config or with a hook.
