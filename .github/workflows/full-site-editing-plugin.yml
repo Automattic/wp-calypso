@@ -14,6 +14,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@HEAD
 
+    - name: Run composer
+      uses: nick-zh/composer-php@HEAD
+      with:
+        action: 'install'
+
     # https://github.com/actions/cache/blob/HEAD/examples.md#node---lerna
     - name: Restore node_modules cache
       id: cache
@@ -27,11 +32,6 @@ jobs:
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile # Not needed when restoring from cache.
-
-    - name: Run composer
-      uses: nick-zh/composer-php@HEAD
-      with:
-        action: 'install'
 
     - name: Build packages
       if: steps.cache.outputs.cache-hit == 'true'
