@@ -109,7 +109,7 @@ main.white-glove.main {
 	&__content-right {
 		font-family: 'Recoleta', Georgia, 'Times New Roman', Times, serif;
 		color: #117ac9;
-		font-size: 25px;
+		font-size: $font-title-medium;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			width: 400px;
