@@ -116,11 +116,19 @@ class CurrentPlan extends Component {
 			shouldShowDomainWarnings,
 			showJetpackChecklist,
 			showThankYou,
+			currentPlan,
 			translate,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
+
+		let ensureShowThankYou = showThankYou;
+
+		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
+			// Ensure that we don't have to show the card for Free plan
+			ensureShowThankYou = false;
+		}
 
 		const planConstObj = getPlan( currentPlanSlug ),
 			planFeaturesHeader = translate( '%(planName)s plan features', {
@@ -144,12 +152,14 @@ class CurrentPlan extends Component {
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<Dialog
-					baseClassName="current-plan__dialog dialog__content dialog__backdrop"
-					isVisible={ showThankYou }
-				>
-					{ this.renderThankYou() }
-				</Dialog>
+				{ ensureShowThankYou && (
+					<Dialog
+						baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+						isVisible={ ensureShowThankYou }
+					>
+						{ this.renderThankYou() }
+					</Dialog>
+				) }
 
 				<PlansNavigation path={ path } />
 
