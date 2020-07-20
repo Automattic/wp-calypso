@@ -27,6 +27,7 @@ import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getLanguage } from 'lib/i18n-utils';
+import SelectOptGroups from 'components/forms/select-opt-groups';
 
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
@@ -128,6 +129,39 @@ class CalendarCard extends Component {
 		this.props.onSubmit( this.state.selectedTime );
 	};
 
+	getSelectOptGroup( times ) {
+		let morningTimes = {
+			label: 'Morning',
+			options: [],
+		};
+		let afternoonTimes = {
+			label: 'Afternoon',
+			options: [],
+		};
+		let eveningTimes = {
+			label: 'Evening',
+			options: [],
+		};
+
+		times.map( ( time ) => {
+			const hour = this.withTimezone( time ).format( 'HH' );
+			console.log( hour );
+
+			if ( hour > 0 ) {
+				eveningTimes.options.push( {
+					label: this.withTimezone( time ).format( 'LT z' ),
+					value: time,
+				} );
+			}
+		} );
+
+		const options = [ eveningTimes ];
+
+		console.log( options );
+
+		return options;
+	}
+
 	render() {
 		const {
 			actionText,
@@ -162,18 +196,27 @@ class CalendarCard extends Component {
 					<FormLabel htmlFor="concierge-start-time">
 						{ translate( 'Choose a starting time' ) }
 					</FormLabel>
-					<FormSelect
+					{ /* <FormSelect
 						id="concierge-start-time"
 						disabled={ disabled }
 						onChange={ this.onChange }
 						value={ this.state.selectedTime }
 					>
-						{ times.map( ( time ) => (
-							<option value={ time } key={ time }>
-								{ this.withTimezone( time ).format( 'LT z' ) }
-							</option>
-						) ) }
-					</FormSelect>
+						{ times.map( ( time ) => {
+							const currentTimegroup = this.getTimeGroup( time );
+							
+							if ( timeOptgroup !== currentTimegroup ) {
+								return <optgroup label={ ${ currentTimegroup } }>;
+							} 
+						
+							return (
+								<option value={ time } key={ time }>
+									{ this.withTimezone( time ).format( 'LT z' ) }
+								</option>
+							)
+	 					} ) }
+					</FormSelect> */ }
+					<SelectOptGroups name="example" optGroups={ this.getSelectOptGroup( times ) } />
 					<FormSettingExplanation>{ description }</FormSettingExplanation>
 				</FormFieldset>
 

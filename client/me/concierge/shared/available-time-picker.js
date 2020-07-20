@@ -52,6 +52,10 @@ class AvailableTimePicker extends Component {
 		} = this.props;
 		const availability = groupAvailableTimesByDate( availableTimes, timezone );
 
+		availability.map( ( { date, times } ) => {
+			console.log( times );
+		} );
+
 		return (
 			<div>
 				{ availability.map( ( { date, times } ) => (
