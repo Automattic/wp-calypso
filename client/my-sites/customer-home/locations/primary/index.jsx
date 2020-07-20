@@ -13,6 +13,7 @@ import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
 import DeprecateEditor from 'my-sites/customer-home/cards/tasks/deprecate-editor';
 import GoMobile from 'my-sites/customer-home/cards/tasks/go-mobile';
 import EarnFeatures from 'my-sites/customer-home/cards/tasks/earn-features';
+import GrowthSummit from 'my-sites/customer-home/cards/tasks/growth-summit';
 import CelebrateSiteCreation from 'my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'my-sites/customer-home/cards/notices/celebrate-site-migration';
@@ -30,6 +31,7 @@ import {
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_WEBINARS,
 	TASK_EARN_FEATURES,
+	TASK_GROWTH_SUMMIT,
 } from 'my-sites/customer-home/cards/constants';
 import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
@@ -42,6 +44,7 @@ const cardComponents = {
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
+	[ TASK_GROWTH_SUMMIT ]: GrowthSummit,
 	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
