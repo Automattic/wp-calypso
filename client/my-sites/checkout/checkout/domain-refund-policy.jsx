@@ -27,17 +27,17 @@ class DomainRefundPolicy extends React.Component {
 	};
 
 	/**
-	 * @returns {[]} Returns an array of renderable policies.
+	 * @returns {{}} Returns an object of renderable policies with unique keys.
 	 */
 	getApplicablePolicies = () => {
-		const policies = [];
+		let policies = {};
 
 		if ( hasNewDomainRegistration( this.props.cart ) ) {
-			policies.push( this.renderNewPolicy() );
+			policies = { ...policies, ...this.renderNewPolicy() };
 		}
 
 		if ( hasDomainRenewal( this.props.cart ) ) {
-			policies.push( this.renderRenewalPolicy() );
+			policies = { ...policies, ...this.renderRenewalPolicy() };
 		}
 
 		return policies;
@@ -73,11 +73,11 @@ class DomainRefundPolicy extends React.Component {
 			);
 		}
 
-		return message;
+		return { newDomainPolicy: message };
 	};
 
 	renderRenewalPolicy = () => {
-		return this.props.translate(
+		const message = this.props.translate(
 			'Please note: to receive a {{refundsSupportPage}}refund for a domain renewal{{/refundsSupportPage}}, you must {{cancelDomainSupportPage}}cancel your domain{{/cancelDomainSupportPage}} within 96 hours of the renewal transaction. Canceling the domain means it will be deleted and you may not be able to recover it.',
 			{
 				components: {
@@ -100,6 +100,8 @@ class DomainRefundPolicy extends React.Component {
 				},
 			}
 		);
+
+		return { renewalPolicy: message };
 	};
 
 	render() {
@@ -109,16 +111,12 @@ class DomainRefundPolicy extends React.Component {
 
 		const policies = this.getApplicablePolicies();
 
-		return (
-			<>
-				{ policies.map( ( policy, index ) => (
-					<div className="checkout__domain-refund-policy" key={ index }>
-						<Gridicon icon="info-outline" size={ 18 } />
-						<p>{ policy }</p>
-					</div>
-				) ) }
-			</>
-		);
+		return Object.entries( policies ).map( ( [ name, message ] ) => (
+			<div className="checkout__domain-refund-policy" key={ 'refund-policy-' + name }>
+				<Gridicon icon="info-outline" size={ 18 } />
+				<p>{ message }</p>
+			</div>
+		) );
 	}
 }
 
