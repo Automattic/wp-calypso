@@ -2,7 +2,11 @@
  * Internal dependencies
  */
 import React from 'react';
-import { Facebook, Twitter, Reader, Search } from '../src';
+import {
+	FacebookPreview as Facebook,
+	TwitterPreview as Twitter,
+	SearchPreview as Search,
+} from '../src';
 import { shallow } from 'enzyme';
 
 const IMAGE_SRC_FIXTURE = 'https://wordpress.com/someimagehere';
@@ -269,11 +273,3 @@ describe( 'Search previews', () => {
 		expect( urlTextRaw ).toHaveLength( 79 );
 	} );
 } );
-
-/* eslint-disable jest/no-disabled-tests */
-describe.skip( 'Reader previews', () => {
-	it( 'should expose a Reader preview component', () => {
-		expect( Reader ).not.toBe( undefined );
-	} );
-} );
-/* eslint-enable jest/no-disabled-tests */

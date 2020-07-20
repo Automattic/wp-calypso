@@ -1,6 +1,6 @@
-export { default as Facebook } from './facebook-preview';
-export { default as Twitter } from './twitter-preview';
-export { default as Search } from './search-preview';
+export { default as FacebookPreview } from './facebook-preview';
+export { default as TwitterPreview } from './twitter-preview';
+export { default as SearchPreview } from './search-preview';
 
 // TODO: fix dependency issues and restore
 // export { default as Reader } from './reader-preview';
