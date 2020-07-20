@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
