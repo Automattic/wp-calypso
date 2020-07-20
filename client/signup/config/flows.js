@@ -15,7 +15,8 @@ import { addQueryArgs } from 'lib/url';
 function getCheckoutUrl( dependencies, localeSlug ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
-	if ( 'no-site' === dependencies.siteSlug ) {
+	// Append the locale slug for the userless checkout page.
+	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
 		checkoutURL += `/${ localeSlug }`;
 	}
 
