@@ -32,7 +32,8 @@ class Jetpack_Token_Subscription_Service extends Token_Subscription_Service {
 	 * @inheritDoc
 	 */
 	function get_key() {
-		$token = Manager::get_access_token();
+		$connection = new Manager();
+		$token      = $connection->get_access_token();
 		if ( ! isset( $token->secret ) ) {
 			return false;
 		}

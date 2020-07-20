@@ -2,16 +2,12 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:media' );
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import { reduxDispatch } from 'lib/redux-bridge';
 import MediaStore from './store';
-import { changeMediaSource } from 'state/media/actions';
 
 /**
  * @typedef IMediaActions
@@ -44,15 +40,6 @@ MediaActions.edit = function ( siteId, item ) {
 		siteId: siteId,
 		data: newItem,
 	} );
-};
-
-MediaActions.sourceChanged = function ( siteId ) {
-	debug( 'Media data source changed' );
-	Dispatcher.handleViewAction( {
-		type: 'CHANGE_MEDIA_SOURCE',
-		siteId,
-	} );
-	reduxDispatch( changeMediaSource( siteId ) );
 };
 
 export default MediaActions;
