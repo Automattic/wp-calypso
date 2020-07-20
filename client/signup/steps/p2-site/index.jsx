@@ -124,7 +124,7 @@ class P2Site extends React.Component {
 					blog_title: fields.siteTitle,
 					validate: true,
 				},
-				function ( error, response ) {
+				( error, response ) => {
 					debug( error, response );
 
 					if ( error && error.message ) {
@@ -139,10 +139,19 @@ class P2Site extends React.Component {
 
 						timesValidationFailed++;
 
-						messages.site = {
-							[ error.error ]: error.message,
-						};
+						if ( error.error === 'blog_title_invalid' ) {
+							messages.siteTitle = {
+								[ error.error ]: this.props.translate(
+									'Please enter a valid team or project name.'
+								),
+							};
+						} else {
+							messages.site = {
+								[ error.error ]: error.message,
+							};
+						}
 					}
+
 					onComplete( null, messages );
 				}
 			);
