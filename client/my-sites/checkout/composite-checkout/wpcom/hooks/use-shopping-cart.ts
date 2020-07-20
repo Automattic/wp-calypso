@@ -3,6 +3,7 @@
  */
 import { useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
 import debugFactory from 'debug';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -391,8 +392,8 @@ type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-li
  * @param showAddCouponSuccessMessage
  *     Takes a coupon code and displays a translated notice that
  *     the coupon was successfully applied.
- * @param cartFromLocalStorage
- *		The shopping cart response built from localstorage.
+ * @param cartRawResponse
+ *		The shopping cart response either fetched from localstorage(userless checkout) or saved cart for the user.
  * @param onEvent
  *     Optional callback that takes a ReactStandardAction object for analytics.
  * @returns ShoppingCartManager
@@ -403,9 +404,9 @@ export function useShoppingCart(
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
 	setCart: ( arg0: string, arg1: RequestCart ) => Promise< ResponseCart >,
-	getCart: ( arg0: string, arg1: ResponseCart ) => Promise< ResponseCart >,
+	getCart: ( arg0: string, arg1: ResponseCart | null ) => Promise< ResponseCart >,
 	showAddCouponSuccessMessage: ( arg0: string ) => void,
-	cartFromLocalStorage: ResponseCart,
+	cartRawResponse: ResponseCart,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): ShoppingCartManager {
 	const cartKeyString: string = cartKey || 'no-site';
@@ -414,8 +415,10 @@ export function useShoppingCart(
 		setCart,
 	] );
 
-	const responseCartFromLocalStorage = convertRawResponseCartToResponseCart( cartFromLocalStorage );
-	const getServerCart = useCallback( () => getCart( cartKeyString, responseCartFromLocalStorage ), [
+	const cartResponseConverted = isEmpty( cartRawResponse )
+		? null
+		: convertRawResponseCartToResponseCart( cartRawResponse );
+	const getServerCart = useCallback( () => getCart( cartKeyString, cartResponseConverted ), [
 		cartKeyString,
 		getCart,
 	] );

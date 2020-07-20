@@ -28,7 +28,8 @@
 		"layout/support-article-dialog": false,
 		"oauth": true,
 		"realtime-site-count": true,
-		"site-indicator": false
+		"site-indicator": false,
+		"support-user": true
 	},
 	"enable_all_sections": false,
 	"sections": {

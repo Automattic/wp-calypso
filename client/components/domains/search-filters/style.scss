@@ -113,7 +113,7 @@
 	// Increase specificity to override button styles in signup
 	body.is-section-signup .layout & {
 		.search-filters__tld-button {
-			/*rtl:ignore*/
+			/*!rtl:ignore*/
 			direction: ltr;
 		}
 

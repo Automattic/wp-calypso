@@ -7,10 +7,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { translate } from 'i18n-calypso';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { makeLayout, render as clientRender } from 'controller';
 import { siteSelection, sites } from 'my-sites/controller';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { startJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
+import { translate } from 'i18n-calypso';
 import Landing from './sections/landing';
 
 const selectionPrompt = ( context, next ) => {
@@ -36,8 +37,14 @@ const landingController = ( context, next ) => {
 	next();
 };
 
+export const handleOAuthOverride = () => {
+	startJetpackCloudOAuthOverride();
+	window.location.replace( '/' );
+};
+
 export default function () {
 	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
 	page( '/landing', siteSelection, selectionPrompt, sites, makeLayout, clientRender );
+	page( '/oauth-override', handleOAuthOverride );
 	page( '/', siteSelection, redirectToPrimarySiteLanding );
 }
