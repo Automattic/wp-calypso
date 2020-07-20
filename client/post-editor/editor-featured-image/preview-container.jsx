@@ -29,7 +29,9 @@ class EditorFeaturedImagePreviewContainer extends React.Component {
 	componentDidUpdate( prevProps ) {
 		const { siteId, itemId } = this.props;
 		if ( siteId !== prevProps.siteId || itemId !== prevProps.itemId ) {
-			this.props.fetchMediaItem( siteId, itemId );
+			if ( ! this.props.image ) {
+				this.props.fetchMediaItem( siteId, itemId );
+			}
 			this.props.onImageChange( itemId );
 		}
 	}
