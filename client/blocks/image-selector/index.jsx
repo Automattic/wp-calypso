@@ -60,7 +60,6 @@ export class ImageSelector extends Component {
 		if ( imageIds ) {
 			this.props.setMediaLibrarySelectedItems(
 				siteId,
-				// this action only cares about the ID so there's no reason to retrieve the full image object from the store
 				imageIds.map( ( ID ) => ( { ID } ) )
 			);
 		}
