@@ -40,6 +40,7 @@ const ActivityCardActionBar: FunctionComponent< Props > = ( {
 				onClick={ toggleMenu }
 				ref={ actionMenuRef }
 			>
+				{ translate( '@todo: remove after testing' ) }
 				<span>{ translate( 'Actions' ) }</span>
 				<Gridicon icon="add" className="activity-card__actions-icon" />
 			</Button>
