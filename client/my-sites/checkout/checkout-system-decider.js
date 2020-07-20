@@ -43,6 +43,7 @@ export default function CheckoutSystemDecider( {
 	clearTransaction,
 	cart,
 	isWhiteGloveOffer,
+	isLoggedOutCart,
 } ) {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
@@ -132,6 +133,7 @@ export default function CheckoutSystemDecider( {
 						cart={ cart }
 						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isComingFromUpsell={ isComingFromUpsell }
+						isLoggedOutCart={ isLoggedOutCart }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>
