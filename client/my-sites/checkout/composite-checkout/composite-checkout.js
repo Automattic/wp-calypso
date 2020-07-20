@@ -92,7 +92,7 @@ import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/
 import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
 import { CartProvider } from './cart-provider';
 
-const debug = debugFactory( 'calypso:composite-checkout' );
+const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
 const { select, dispatch, registerStore } = defaultRegistry;
 

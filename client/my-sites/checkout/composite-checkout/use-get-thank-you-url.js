@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
 
 const { select } = defaultRegistry;
-const debug = debugFactory( 'calypso:composite-checkout-thank-you' );
+const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
 /**
  * Internal dependencies
