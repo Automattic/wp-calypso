@@ -108,7 +108,7 @@ export async function getDomainValidationResult( items, contactInfo ) {
 export async function getSignupEmailValidationResult( email, emailTakenLoginRedirect ) {
 	let response;
 	try {
-		response = await wpcomValidateSignupEmail( { email } );
+		response = await wpcomValidateSignupEmail( { email, is_from_userless_checkout: true } );
 	} catch ( err ) {
 		throw err;
 	}

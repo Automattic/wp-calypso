@@ -121,12 +121,18 @@ export default {
 						-1 === context.pathname.indexOf( 'premium' ) &&
 						-1 === context.pathname.indexOf( 'business' ) &&
 						-1 === context.pathname.indexOf( 'ecommerce' ) &&
-						'variantUserless' === abtest( 'userlessCheckout' )
+						'variantUserless' === abtest( 'userlessCheckout', countryCode )
 					) {
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
-						const urlWithoutLocale = getStepUrl( 'onboarding-new', stepName, stepSectionName );
-						window.location = urlWithoutLocale;
+						const localeFromParams = context.params.lang;
+						const urlWithLocale = getStepUrl(
+							'onboarding-new',
+							stepName,
+							stepSectionName,
+							localeFromParams
+						);
+						window.location = urlWithLocale;
 					} else {
 						removeWhiteBackground();
 						next();
