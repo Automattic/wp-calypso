@@ -37,7 +37,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteRedirectLocation } from 'state/domains/site-redirect/selectors';
 import { withoutHttp } from 'lib/url';
 import getCurrentRoute from 'state/selectors/get-current-route';
-import { localizeUrl } from 'lib/i18n-utils';
+import { SITE_REDIRECT } from 'lib/url/support';
 
 /**
  * Style dependencies
@@ -155,9 +155,7 @@ class SiteRedirect extends React.Component {
 										{
 											components: {
 												learnMoreLink: (
-													<a
-														href={ localizeUrl( 'https://wordpress.com/support/site-redirect/' ) }
-													/>
+													<a href={ SITE_REDIRECT } target="_blank" rel="noopener noreferrer" />
 												),
 											},
 										}
