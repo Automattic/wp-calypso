@@ -123,7 +123,7 @@ export default {
 						-1 === context.pathname.indexOf( 'premium' ) &&
 						-1 === context.pathname.indexOf( 'business' ) &&
 						-1 === context.pathname.indexOf( 'ecommerce' ) &&
-						'variantUserless' === abtest( 'userlessCheckout' )
+						'variantUserless' === abtest( 'userlessCheckout', countryCode )
 					) {
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
