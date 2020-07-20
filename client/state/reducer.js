@@ -46,7 +46,6 @@ import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import notificationSettings from './notification-settings/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
-import npsSurvey from './nps-survey/reducer';
 import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
@@ -112,7 +111,6 @@ const reducers = {
 	notices,
 	notificationSettings,
 	notificationsUnseenCount,
-	npsSurvey,
 	orderTransactions,
 	pageTemplates,
 	plans,

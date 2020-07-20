@@ -17,7 +17,6 @@ import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
 import masterbarVisibility from './masterbar-visibility/reducer';
 import mediaModal from './media-modal/reducer';
-import npsSurveyNotice from './nps-survey-notice/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import section from './section/reducer';
@@ -103,7 +102,6 @@ const reducer = combineReducers( {
 	layoutFocus,
 	masterbarVisibility,
 	mediaModal,
-	npsSurveyNotice,
 	postTypeList,
 	preview,
 	section,
