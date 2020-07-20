@@ -255,6 +255,18 @@ describe( 'Search previews', () => {
 		} );
 	} );
 
+	it( 'should allow for "description" prop to be used in place of "snippet" to maintain consistency with other components ', () => {
+		const wrapper = shallow(
+			<Search description="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical." />
+		);
+
+		const snippetEl = wrapper.find( '.search-preview__snippet' );
+		expect( snippetEl.exists() ).toBeTruthy();
+		expect( snippetEl.text() ).toEqual(
+			"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical."
+		);
+	} );
+
 	it( 'should display truncated url ', () => {
 		const downArrowChar = '▾';
 		const wrapper = shallow(

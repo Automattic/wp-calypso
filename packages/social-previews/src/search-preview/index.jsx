@@ -29,8 +29,14 @@ const googleSnippet = firstValid(
 
 const googleUrl = hardTruncation( 79 );
 
-export default function SearchPreview( { snippet, title, url } ) {
+export default function SearchPreview( { snippet, title, url, description } ) {
 	const translate = useTranslate();
+
+	// Enable description prop to provide consistency with other components within the
+	// package which use `description`.
+	if ( description ) {
+		snippet = description;
+	}
 
 	return (
 		<div className="search-preview">
