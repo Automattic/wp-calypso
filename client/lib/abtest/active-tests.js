@@ -175,5 +175,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
+		countryCodeTargets: [ 'US' ],
 	},
 };
