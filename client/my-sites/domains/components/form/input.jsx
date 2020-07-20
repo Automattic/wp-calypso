@@ -120,7 +120,7 @@ export default class Input extends React.Component {
 				{ this.props.errorMessage && (
 					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />
 				) }
-				{ this.props.description && (
+				{ this.props.description && ! this.props.errorMessage && (
 					<FormSettingExplanation>{ this.props.description }</FormSettingExplanation>
 				) }
 			</div>
