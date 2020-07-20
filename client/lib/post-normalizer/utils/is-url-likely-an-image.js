@@ -1,8 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { some, endsWith } from 'lodash';
-import url from 'url';
+
+/**
+ * Internal dependencies
+ */
+import { getUrlParts } from 'lib/url';
 
 /** Determine if url is likely pointed to an image
  *
@@ -14,6 +18,6 @@ export function isUrlLikelyAnImage( uri ) {
 		return false;
 	}
 
-	const withoutQuery = url.parse( uri ).pathname;
+	const withoutQuery = getUrlParts( uri ).pathname;
 	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ( ext ) => endsWith( withoutQuery, ext ) );
 }

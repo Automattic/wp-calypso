@@ -54,7 +54,7 @@ export function useStoredCards( getStoredCards, onEvent, isLoggedOutCart ) {
 			} );
 
 		return () => ( isSubscribed = false );
-	}, [ getStoredCards, onEvent ] );
+	}, [ getStoredCards, onEvent, isLoggedOutCart ] );
 
 	if ( isLoggedOutCart ) {
 		return { ...state, isLoading: false };

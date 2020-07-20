@@ -1,7 +1,7 @@
 /**
  * Prevent widows by replacing spaces between the last `wordsToKeep` words in the text with non-breaking spaces
  *
- * @param  {string} text        the text to work on
+ * @param  {string|@i18n-calypso/TranslateResult} text the text to work on
  * @param  {number} wordsToKeep the number of words to keep together
  * @returns {string}             the widow-prevented string
  */

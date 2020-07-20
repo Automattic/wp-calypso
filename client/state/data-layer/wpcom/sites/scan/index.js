@@ -49,15 +49,16 @@ export const formatScanThreat = ( threat ) => ( {
 const formatScanStateRawResponse = ( {
 	state,
 	threats,
-	credentials,
 	most_recent: mostRecent,
 	current,
 	...rest
 } ) => {
+	if ( ! threats ) {
+		threats = [];
+	}
 	return {
 		state,
 		threats: threats.map( formatScanThreat ),
-		credentials,
 		mostRecent: mostRecent
 			? {
 					...omit( mostRecent, [ 'is_initial' ] ),

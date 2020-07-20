@@ -103,10 +103,24 @@ export default class Typography extends React.PureComponent {
 					<h2>Brand Typography</h2>
 
 					<p>
-						We use Recoleta sparingly to add our brand's flavor to select headings. Since this font
-						is not compatible with some languages, we use a special class that targets specific
-						locales, and falls back to the <code>$serif</code> stack when necessary.
+						We use Recoleta sparingly to add our brand's flavor to select headings. In general,
+						Recoleta should be used for main page titles (linked from the main sidebar navigation)
+						and no more than one main heading per page. It looks best at sizes 24px or greater, or{ ' ' }
+						<code>$font-title-medium</code> in our type scale.
 					</p>
+
+					<p>Recoleta should not be used for UI elements, such as buttons or navigation.</p>
+
+					<p>
+						Since Recoleta is not compatible with some languages, we use a special class that
+						targets specific locales, and falls back to the <code>$serif</code> stack when
+						necessary.
+					</p>
+
+					<Card className="design__typography-brand-example">
+						<h2>Quick foxes jump nightly above wizards.</h2>
+						<h3>Pack my box with five dozen liquor jugs</h3>
+					</Card>
 
 					<h3>How to use:</h3>
 

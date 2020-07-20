@@ -182,6 +182,9 @@ export class WebPreviewContent extends Component {
 
 	setIframeUrl = ( iframeUrl ) => {
 		if ( ! this.iframe || ( ! this.props.showPreview && this.props.isModalWindow ) ) {
+			if ( this.state.iframeUrl !== 'about:blank' ) {
+				this.setState( { iframeUrl: 'about:blank' } );
+			}
 			return;
 		}
 
