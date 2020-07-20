@@ -28,6 +28,7 @@ import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
+import IncompatibleProductMessage from './incompatible-product-message';
 import { addQueryArgs } from 'lib/url';
 
 export class RedirectPaymentBox extends PureComponent {
@@ -39,6 +40,7 @@ export class RedirectPaymentBox extends PureComponent {
 		countriesList: PropTypes.array.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		incompatibleProducts: PropTypes.object,
 	};
 
 	eventFormName = 'Checkout Form';
@@ -348,7 +350,9 @@ export class RedirectPaymentBox extends PureComponent {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary "
-									disabled={ this.state.formDisabled }
+									disabled={
+										this.state.formDisabled || this.props.incompatibleProducts?.blockCheckout
+									}
 								>
 									{ this.renderButtonText() }
 								</button>
@@ -369,6 +373,7 @@ export class RedirectPaymentBox extends PureComponent {
 								/>
 							) }
 						</div>
+						<IncompatibleProductMessage incompatibleProducts={ this.props.incompatibleProducts } />
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />

@@ -30,6 +30,19 @@ const BackupsUpsellIcon: FunctionComponent = () => (
 	</div>
 );
 
+const BackupsMultisiteBody: FunctionComponent = () => {
+	const translate = useTranslate();
+	return (
+		<Upsell
+			headerText={ translate( 'WordPress multi-sites are not supported' ) }
+			bodyText={ translate(
+				"We're sorry, Jetpack Backup is not compatible with multisite WordPress installations at this time."
+			) }
+			iconComponent={ <BackupsUpsellIcon /> }
+		/>
+	);
+};
+
 const BackupsVPActiveBody: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -64,14 +77,26 @@ const BackupsUpsellBody: FunctionComponent = () => {
 	);
 };
 
-const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason } ) => (
-	<Main className="backup-upsell">
-		<DocumentHead title="Backup" />
-		<SidebarNavigation />
-		<div className="backup-upsell__content">
-			{ 'vp_active_on_site' === reason ? <BackupsVPActiveBody /> : <BackupsUpsellBody /> }
-		</div>
-	</Main>
-);
+const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason } ) => {
+	let body;
+	switch ( reason ) {
+		case 'vp_active_on_site':
+			body = <BackupsVPActiveBody />;
+			break;
+		case 'multisite_not_supported':
+			body = <BackupsMultisiteBody />;
+			break;
+		default:
+			body = <BackupsUpsellBody />;
+			break;
+	}
+	return (
+		<Main className="backup-upsell">
+			<DocumentHead title="Backup" />
+			<SidebarNavigation />
+			<div className="backup-upsell__content">{ body }</div>
+		</Main>
+	);
+};
 
 export default BackupsUpsellPage;

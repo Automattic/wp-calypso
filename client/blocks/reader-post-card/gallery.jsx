@@ -36,12 +36,15 @@ const PostGallery = ( { post, children, isDiscover } ) => {
 			w: READER_CONTENT_WIDTH / imagesToDisplay.length,
 		} );
 		const safeCssUrl = cssSafeUrl( imageUrl );
-		const imageStyle = {
-			backgroundImage: 'url(' + safeCssUrl + ')',
-			backgroundSize: 'cover',
-			backgroundPosition: '50% 50%',
-			backgroundRepeat: 'no-repeat',
-		};
+		let imageStyle = { background: 'none' };
+		if ( safeCssUrl ) {
+			imageStyle = {
+				backgroundImage: 'url(' + safeCssUrl + ')',
+				backgroundSize: 'cover',
+				backgroundPosition: '50% 50%',
+				backgroundRepeat: 'no-repeat',
+			};
+		}
 		return (
 			<li key={ `post-${ post.ID }-image-${ index }` } className="reader-post-card__gallery-item">
 				<div className="reader-post-card__gallery-image" style={ imageStyle } />

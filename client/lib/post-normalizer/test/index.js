@@ -428,6 +428,15 @@ describe( 'index', () => {
 			);
 		} );
 
+		test( 'handles scheme-relative images', () => {
+			const post = {
+				URL: 'http://example.wordpress.com/2015/01/my-post/',
+				content: '<img src="//example.wordpress/example.jpg">',
+			};
+			const normalized = withContentDOM( [ makeImagesSafe() ] )( post );
+			expect( normalized.content ).toBe( '<img src="//example.wordpress/example.jpg-SAFE">' );
+		} );
+
 		test( 'can route all images through photon if a size is specified', () => {
 			const post = {
 				content:
@@ -437,6 +446,17 @@ describe( 'index', () => {
 			expect( normalized.content ).toBe(
 				'<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
 					'<img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">'
+			);
+		} );
+
+		test( 'can route scheme-relative images through photon if a size is specified', () => {
+			const post = {
+				content: '<img src="//example.com/example.jpg"><img src="//example.com/example2.jpg">',
+			};
+			const normalized = withContentDOM( [ makeImagesSafe( 400 ) ] )( post );
+			expect( normalized.content ).toBe(
+				'<img src="//example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
+					'<img src="//example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">'
 			);
 		} );
 
