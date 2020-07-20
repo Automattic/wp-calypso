@@ -11,11 +11,19 @@ import { useSelector } from 'react-redux';
  */
 import { Button } from '@automattic/components';
 import { isExpiringSoon } from 'lib/domains/utils';
-import { domainManagementNameServers } from 'my-sites/domains/paths';
+import {
+	domainManagementNameServers,
+	domainManagementTransferToOtherSite,
+} from 'my-sites/domains/paths';
 import getCurrentRoute from 'state/selectors/get-current-route';
 
 const DomainOnlyCta = ( { domain, selectedSiteSlug, translate } ) => {
 	const currentRoute = useSelector( getCurrentRoute );
+	const handleConnectToWPSiteClick = useCallback(
+		() =>
+			page( domainManagementTransferToOtherSite( selectedSiteSlug, domain.name, currentRoute ) ),
+		[ domain.name, selectedSiteSlug, currentRoute ]
+	);
 	const handleChangeNameServersClick = useCallback(
 		() => page( domainManagementNameServers( selectedSiteSlug, domain.name, currentRoute ) ),
 		[ domain.name, selectedSiteSlug, currentRoute ]
@@ -39,7 +47,9 @@ const DomainOnlyCta = ( { domain, selectedSiteSlug, translate } ) => {
 					) }
 				</p>
 				<div className="domain-only-cta__button-row">
-					<Button primary>{ translate( 'Connect to a WordPress.com site' ) }</Button>
+					<Button primary onClick={ handleConnectToWPSiteClick }>
+						{ translate( 'Connect to a WordPress.com site' ) }
+					</Button>
 					<Button borderless onClick={ handleChangeNameServersClick }>
 						{ translate( 'Change name servers' ) }
 					</Button>
