@@ -19,7 +19,6 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import MediaListData from 'components/data/media-list-data';
-import MediaActions from 'lib/media/actions';
 import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_RESIZER,
@@ -39,7 +38,7 @@ import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions
 import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { withoutNotice } from 'state/notices/actions';
-import { clearMediaErrors } from 'state/media/actions';
+import { clearMediaErrors, changeMediaSource } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -92,7 +91,7 @@ export class MediaLibraryContent extends React.Component {
 		) {
 			// We have transitioned from an invalid Google status to a valid one - migration is complete
 			// Force a refresh of the list - this won't happen automatically as we've cached our previous failed query.
-			MediaActions.sourceChanged( this.props.site.ID );
+			this.props.changeMediaSource( this.props.site.ID );
 		}
 	}
 
@@ -255,7 +254,7 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	retryList = () => {
-		MediaActions.sourceChanged( this.props.site.ID );
+		this.props.changeMediaSource( this.props.site.ID );
 	};
 
 	renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) {
@@ -468,6 +467,7 @@ export default connect(
 			dispatch( deleteKeyring() );
 		},
 		clearMediaErrors,
+		changeMediaSource,
 	},
 	null,
 	{ pure: false }

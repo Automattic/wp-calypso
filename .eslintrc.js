@@ -135,6 +135,11 @@ module.exports = {
 						importNames: [ 'Dashicon', 'Icon' ],
 						message: 'Please use `@wordpress/icons` instead.',
 					},
+					// Use `lib/url` instead of Node's 'url'.
+					{
+						name: 'url',
+						message: "Please use 'lib/url' instead.",
+					},
 				],
 			},
 		],

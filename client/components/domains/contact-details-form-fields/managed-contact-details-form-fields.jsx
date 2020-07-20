@@ -170,6 +170,9 @@ export class ManagedContactDetailsFormFields extends Component {
 							Input,
 							{
 								label: translate( 'Email' ),
+								description: translate(
+									"You'll use this email address to access your account later"
+								),
 							},
 							{
 								customErrorMessage: this.props.contactDetailsErrors?.email,

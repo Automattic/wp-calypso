@@ -9,6 +9,10 @@ import { mergeWith } from 'lodash';
 import apiFetch from '@wordpress/api-fetch';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 import { _x } from '@wordpress/i18n';
+import {
+	__experimentalAlignmentHookSettingsProvider,
+	__experimentalBlock,
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -18,6 +22,10 @@ import * as subscriberView from './blocks/subscriber-view';
 import * as loggedOutView from './blocks/logged-out-view';
 import * as buttons from './blocks/buttons';
 import * as loginButton from './blocks/login-button';
+
+const supportsDecoupledBlocks = !! (
+	__experimentalAlignmentHookSettingsProvider && __experimentalBlock
+);
 
 /**
  * Function to register an individual block.
@@ -129,5 +137,7 @@ export const registerPremiumContentBlocks = () => {
 	[ container, loggedOutView, subscriberView, buttons, loginButton ].forEach( registerBlock );
 };
 
-registerPremiumContentBlocks();
-configurePremiumContentBlocks();
+if ( supportsDecoupledBlocks ) {
+	registerPremiumContentBlocks();
+	configurePremiumContentBlocks();
+}
