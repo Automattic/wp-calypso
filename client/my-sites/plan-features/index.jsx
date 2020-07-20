@@ -15,7 +15,6 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
@@ -28,7 +27,6 @@ import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plan
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import { getDiscountByName } from 'lib/discounts';
@@ -43,7 +41,6 @@ import {
 	getPlanClass,
 } from 'lib/plans';
 import {
-	getCurrentPlan,
 	getPlanDiscountedRawPrice,
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
@@ -75,59 +72,8 @@ import PlanFeaturesScroller from './scroller';
  * Style dependencies
  */
 import './style.scss';
-import { Dialog } from '@automattic/components';
-
-const defaultState = {
-	checkoutUrl: '/checkout',
-	settingPublic: false,
-	showingSiteLaunchDialog: false,
-	choosingPlanSlug: '',
-};
 
 export class PlanFeatures extends Component {
-	state = { ...defaultState };
-
-	setDefaultState = () => {
-		this.setState( defaultState );
-	};
-
-	onLaunchDialogClose = async ( action ) => {
-		const { currentSitePlanSlug, siteId } = this.props;
-		const { checkoutUrl, choosingPlanSlug } = this.state;
-
-		if ( action !== 'continue' ) {
-			this.setDefaultState();
-			return;
-		}
-
-		this.setState( { settingPublic: true } );
-
-		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
-			current_plan: currentSitePlanSlug,
-			upgrading_to: choosingPlanSlug,
-		} );
-
-		try {
-			const setPublicResult = await this.props.saveSiteSettings( siteId, {
-				blog_public: 1,
-			} );
-			if ( ! get( setPublicResult, [ 'updated', 'blog_public' ] ) ) {
-				this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_failed', {
-					current_plan: currentSitePlanSlug,
-					upgrading_to: choosingPlanSlug,
-				} );
-			}
-		} catch ( e ) {}
-
-		page( checkoutUrl );
-	};
-
-	UNSAFE_componentWillReceiveProps( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
-			this.setDefaultState();
-		}
-	}
-
 	render() {
 		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
@@ -159,7 +105,6 @@ export class PlanFeatures extends Component {
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
-					{ this.renderSiteLaunchDialog() }
 					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
 						<PlanFeaturesScroller
@@ -220,46 +165,6 @@ export class PlanFeatures extends Component {
 				{ activeDiscount.plansPageNoticeText }
 			</Notice>,
 			bannerContainer
-		);
-	}
-
-	renderSiteLaunchDialog() {
-		const { currentSitePlanSlug, translate } = this.props;
-		const { choosingPlanSlug, settingPublic, showingSiteLaunchDialog } = this.state;
-
-		if ( ! showingSiteLaunchDialog ) {
-			return null;
-		}
-
-		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_shown', {
-			current_plan: currentSitePlanSlug,
-			upgrading_to: choosingPlanSlug,
-		} );
-
-		return (
-			<Dialog
-				additionalClassNames="plan-features__upgrade-launch-dialog"
-				isVisible
-				buttons={ [
-					{ action: 'cancel', disabled: settingPublic, label: translate( 'Cancel' ) },
-					{
-						action: 'continue',
-						disabled: settingPublic,
-						label: translate( "Let's do it!" ),
-						isPrimary: true,
-					},
-				] }
-				onClose={ this.onLaunchDialogClose }
-			>
-				<h1>{ translate( 'Site Privacy' ) }</h1>
-				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
-				<p>{ translate( 'Upgrading to this plan makes your site visible to the public.' ) }</p>
-				<InlineSupportLink
-					showIcon={ false }
-					supportLink="https://wordpress.com/support/settings/privacy-settings/"
-					supportPostId={ 1507 }
-				/>
-			</Dialog>
 		);
 	}
 
@@ -888,7 +793,6 @@ export default connect(
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
 		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
-		const currentPlanObj = getCurrentPlan( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -1010,7 +914,6 @@ export default connect(
 
 		return {
 			canPurchase,
-			currentSitePlanSlug: get( currentPlanObj, 'productSlug', null ),
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
@@ -1029,7 +932,6 @@ export default connect(
 	},
 	{
 		recordTracksEvent,
-		saveSiteSettings,
 	}
 )( localize( PlanFeatures ) );
 

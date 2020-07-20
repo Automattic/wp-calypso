@@ -53,13 +53,14 @@ const DUMMY_VIDEO_MEDIA = [
 ];
 
 describe( 'EditorMediaModal', () => {
-	let spy, deleteMedia, onClose, setMediaLibrarySelectedItems, baseProps;
+	let spy, deleteMedia, onClose, setMediaLibrarySelectedItems, changeMediaSource, baseProps;
 
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
 		deleteMedia = sandbox.stub();
 		onClose = sandbox.stub();
 		setMediaLibrarySelectedItems = sandbox.stub();
+		changeMediaSource = sandbox.stub();
 		baseProps = {
 			setMediaLibrarySelectedItems,
 			site: DUMMY_SITE,
@@ -67,6 +68,7 @@ describe( 'EditorMediaModal', () => {
 			translate,
 			onClose,
 			deleteMedia,
+			changeMediaSource,
 		};
 	} );
 

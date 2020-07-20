@@ -160,7 +160,7 @@ CartSynchronizer.prototype._poll = function () {
 };
 
 CartSynchronizer.prototype._pollFromLocalStorage = function () {
-	const newCartItemsToAdd = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) );
+	const newCartItemsToAdd = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) || '[]' );
 	const addtoCart = flow( ...newCartItemsToAdd.map( ( cartItem ) => addCartItem( cartItem ) ) );
 
 	const changeFunction = ( cart ) => {
