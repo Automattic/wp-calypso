@@ -94,9 +94,7 @@ const CartStore = {
 		_synchronizer = cartSynchronizer( _cartKey, wpcom );
 		_synchronizer.on( 'change', emitChange );
 
-		const urlParams = new URLSearchParams( window.location.search );
-		const shouldPollFromLocalStorage =
-			'no-user' === newCartKey || 'no-user' === urlParams.get( 'cart' );
+		const shouldPollFromLocalStorage = 'no-user' === newCartKey;
 
 		_poller = shouldPollFromLocalStorage
 			? PollerPool.add( CartStore, _synchronizer._pollFromLocalStorage.bind( _synchronizer ) )

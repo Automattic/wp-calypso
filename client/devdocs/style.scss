@@ -466,10 +466,20 @@ $devdocs-max-width: 720px;
 	}
 }
 
+.design__typography-brand-example {
+	@extend .wp-brand-font;
+
+	h2 {
+		margin-top: 16px;
+	}
+}
+
 .design__typography-code-example {
 	font-family: $code;
 	font-size: $font-body;
 }
+
+
 
 .design__typography-modular-scale {
 	max-width: 400px;

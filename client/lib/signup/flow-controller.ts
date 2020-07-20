@@ -35,7 +35,7 @@ import { resetSignup, updateDependencies } from 'state/signup/actions';
 import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
 
 interface Dependencies {
-	[ other: string ]: any;
+	[ other: string ]: string[];
 }
 
 interface Flow {
@@ -46,7 +46,7 @@ interface Flow {
 
 interface Step {
 	apiRequestFunction?: (
-		callback: ( errors: any, providedDependencies: Dependencies ) => void,
+		callback: ( errors: Record< string, string >[], providedDependencies: Dependencies ) => void,
 		dependenciesFound: Dependencies,
 		step: Step,
 		reduxStore: Store
