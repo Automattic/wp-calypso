@@ -243,9 +243,9 @@ function shoppingCartHookReducer(
 			}
 			debug( 'cart location is the same; not updating' );
 			return state;
-		default:
-			return state;
 	}
+
+	return state;
 }
 
 function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {
@@ -400,8 +400,8 @@ export function useShoppingCart(
 	canInitializeCart: boolean,
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
-	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >,
-	getCart: ( cartKey: string ) => Promise< ResponseCart >,
+	setCart: ( arg0: string, arg1: RequestCart ) => Promise< ResponseCart >,
+	getCart: ( arg0: string ) => Promise< ResponseCart >,
 	showAddCouponSuccessMessage: ( arg0: string ) => void,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): ShoppingCartManager {
@@ -410,7 +410,6 @@ export function useShoppingCart(
 		cartKeyString,
 		setCart,
 	] );
-
 	const getServerCart = useCallback( () => getCart( cartKeyString ), [ cartKeyString, getCart ] );
 
 	const [ hookState, hookDispatch ] = useReducer(
@@ -460,7 +459,7 @@ export function useShoppingCart(
 				payload: requestCartProductToAdd,
 			} );
 		},
-		[ onEvent ]
+		[]
 	);
 
 	const removeItem: ( arg0: string ) => void = useCallback( ( uuidToRemove ) => {
@@ -518,8 +517,8 @@ function useInitializeCartFromServer(
 	canInitializeCart: boolean,
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
-	getCart: () => Promise< ResponseCart >,
-	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
+	getServerCart: () => Promise< ResponseCart >,
+	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartHookAction ) => void,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): void {
@@ -541,7 +540,7 @@ function useInitializeCartFromServer(
 		isInitialized.current = true;
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
 
-		getCart()
+		getServerCart()
 			.then( ( response ) => {
 				if ( productsToAdd?.length || couponToAdd ) {
 					debug(
@@ -565,7 +564,7 @@ function useInitializeCartFromServer(
 					if ( couponToAdd ) {
 						responseCart = addCouponToResponseCart( responseCart, couponToAdd );
 					}
-					return setCart( convertResponseCartToRequestCart( responseCart ) );
+					return setServerCart( convertResponseCartToRequestCart( responseCart ) );
 				}
 				return response;
 			} )
@@ -582,6 +581,7 @@ function useInitializeCartFromServer(
 				} );
 			} )
 			.catch( ( error ) => {
+				// TODO: figure out what to do here
 				debug( 'error while initializing cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
 				onEvent?.( {
@@ -594,17 +594,17 @@ function useInitializeCartFromServer(
 		canInitializeCart,
 		hookDispatch,
 		onEvent,
-		getCart,
+		getServerCart,
 		productsToAdd,
 		couponToAdd,
-		setCart,
+		setServerCart,
 	] );
 }
 
 function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
 	responseCart: ResponseCart,
-	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
+	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartHookAction ) => void,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): void {
@@ -619,7 +619,7 @@ function useCartUpdateAndRevalidate(
 		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
 
 		// We need to add is_update so that we don't add a plan automatically when the cart gets updated (DWPO).
-		setCart( { ...requestCart, is_update: true } )
+		setServerCart( { ...requestCart, is_update: true } )
 			.then( ( response ) => {
 				debug( 'updated cart is', response );
 				hookDispatch( {
@@ -637,7 +637,7 @@ function useCartUpdateAndRevalidate(
 					payload: { type: 'SET_SERVER_CART_ERROR', message: error },
 				} );
 			} );
-	}, [ setCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
+	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
 }
 
 function useShowAddCouponSuccessMessage(
