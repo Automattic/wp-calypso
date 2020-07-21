@@ -351,7 +351,8 @@ export function siteSelection( context, next ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 
 		const redirectToPrimary = ( primarySiteSlug ) => {
-			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
+			const pathname = context.pathname.replace( /\/?$/, '/' ); // append trailing slash if not present
+			let redirectPath = `${ pathname }${ primarySiteSlug }`;
 			if ( context.querystring ) {
 				redirectPath += `?${ context.querystring }`;
 			}
