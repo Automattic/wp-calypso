@@ -62,6 +62,10 @@ const Collection = ( {
 	let showCounter = 0;
 	const summary = [];
 
+	const scroll = () => {
+		window.scrollTo( 0, 0 );
+	};
+
 	const examples = React.Children.map( children, ( example ) => {
 		if ( ! example || ! shouldShowInstance( example, filter, component ) ) {
 			return null;
@@ -112,12 +116,14 @@ const Collection = ( {
 
 	return (
 		<div className="design__collection">
-			{ showCounter > 1 && filter && (
-				<div className="design__instance-links">
-					<span className="design__instance-links-label">Results:</span>
-					{ summary }
-				</div>
-			) }
+			<button onClick={ scroll() } onKeyPress={ scroll() }>
+				{ showCounter > 1 && filter && (
+					<div className="design__instance-links">
+						<span className="design__instance-links-label">Results:</span>
+						{ summary }
+					</div>
+				) }
+			</button>
 
 			{ /* Load first chunk, lazy load all others as needed. */ }
 
