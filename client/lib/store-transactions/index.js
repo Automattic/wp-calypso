@@ -446,7 +446,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 	}
 }
 
-function createEbanxToken( requestType, cardDetails ) {
+export async function createEbanxToken( requestType, cardDetails ) {
 	debug( 'creating token with ebanx' );
 
 	return new Promise( function ( resolve, reject ) {
