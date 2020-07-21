@@ -33,6 +33,25 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
 	const [ allPlansExpanded, setAllPlansExpanded ] = useState( false );
 
+	// Easier to hardcode 'premium' than to access data stores
+	const defaultExpandedPlans = [ 'premium' ];
+	const [ expandedPlans, setExpandedPlans ] = useState( defaultExpandedPlans );
+
+	// When user manually opens all the plans, this ensure "Show all plans" button
+	// is automatically switched into "Collapse all plans" button.
+	const handleToggle = ( slug: string, isExpanded: boolean ) => {
+		const updatedExpandedPlans = isExpanded
+			? [ ...expandedPlans, slug ]
+			: expandedPlans.filter( ( s ) => s !== slug );
+		setExpandedPlans( updatedExpandedPlans );
+		setAllPlansExpanded( updatedExpandedPlans.length >= supportedPlans.length );
+	};
+
+	const handleToggleExpandAll = () => {
+		allPlansExpanded && setExpandedPlans( defaultExpandedPlans );
+		setAllPlansExpanded( ! allPlansExpanded );
+	};
+
 	return (
 		<div className="plans-table">
 			{ supportedPlans.map(
@@ -51,7 +70,8 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							isSelected={ plan.storeSlug === selectedPlanSlug }
 							onSelect={ onPlanSelect }
 							onPickDomainClick={ onPickDomainClick }
-							onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
+							onToggle={ handleToggle }
+							onToggleExpandAll={ handleToggleExpandAll }
 						></PlanItem>
 					)
 			) }
