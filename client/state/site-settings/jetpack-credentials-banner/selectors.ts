@@ -9,6 +9,8 @@ import { DefaultRootState } from 'react-redux';
 import { getPreference } from 'state/preferences/selectors';
 import { Preference } from 'my-sites/site-settings/jetpack-credentials-banner/types';
 
+import 'state/site-settings/init';
+
 const MAX_BANNER_VIEWS = 10;
 const NINETY_DAYS_IN_MILLISECONDS = 90 * 24 * 60 * 60 * 1000;
 export const JETPACK_CREDENTIALS_BANNER_PREFERENCE = 'backup-scan-security-settings-moved';
