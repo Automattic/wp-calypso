@@ -10,6 +10,16 @@ import meta from './meta';
 import { ButtonRow, makeTour, Quit, Link, Step, Tour } from 'layout/guided-tours/config-elements';
 import { localizeUrl } from 'lib/i18n-utils';
 
+const CONNECT_BUTTON_SELECTOR = '.sharing-service.not-connected .button.is-compact';
+
+// Wait until the desired DOM element appears. Check every 125ms.
+// This function is a Redux action creator, hence the two arrows.
+const waitForConnectButton = () => async () => {
+	while ( ! document.querySelector( CONNECT_BUTTON_SELECTOR ) ) {
+		await new Promise( ( resolve ) => setTimeout( resolve, 125 ) );
+	}
+};
+
 export const marketingConnectionsTour = makeTour(
 	<Tour { ...meta }>
 		<Step
@@ -19,7 +29,9 @@ export const marketingConnectionsTour = makeTour(
 			style={ {
 				marginLeft: '-24px',
 			} }
-			target={ '.sharing-service.not-connected .button.is-compact' }
+			wait={ waitForConnectButton }
+			target={ CONNECT_BUTTON_SELECTOR }
+			keepRepositioning={ true }
 		>
 			{ ( { translate } ) => (
 				<>

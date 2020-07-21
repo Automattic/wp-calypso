@@ -120,7 +120,7 @@ export default class Step extends Component< Props, State > {
 			this.watchTarget();
 		} );
 		if ( this.props.keepRepositioning ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
+			this.repositionInterval = setInterval( this.onScrollOrResize, 700 );
 		}
 	}
 
@@ -144,7 +144,7 @@ export default class Step extends Component< Props, State > {
 		if ( ! nextProps.keepRepositioning ) {
 			clearInterval( this.repositionInterval );
 		} else if ( ! this.repositionInterval ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
+			this.repositionInterval = setInterval( this.onScrollOrResize, 700 );
 		}
 	}
 
