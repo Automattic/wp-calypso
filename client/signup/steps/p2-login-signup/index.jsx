@@ -4,17 +4,41 @@
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import P2StepWrapper from 'signup/p2-step-wrapper';
 import { Button } from '@automattic/components';
+import { login } from 'lib/paths';
+import { getStepUrl } from 'signup/utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+function getOriginUrl() {
+	return (
+		window.location.protocol +
+		'//' +
+		window.location.hostname +
+		( window.location.port ? ':' + window.location.port : '' )
+	);
+}
+
+function getRedirectToAfterLoginUrl( { flowName } ) {
+	return getOriginUrl() + getStepUrl( flowName, 'p2-site' );
+}
+
+function getLoginLink( { flowName, locale } ) {
+	return login( {
+		redirectTo: getRedirectToAfterLoginUrl( { flowName } ),
+		isNative: true,
+		locale: locale,
+	} );
+}
 
 function P2LoginSignup( {
 	flowName,
@@ -23,6 +47,7 @@ function P2LoginSignup( {
 	goToNextStep,
 	submitSignupStep,
 	goToStep,
+	locale,
 	progress: {
 		'p2-site': { siteTitle, site },
 	},
@@ -58,7 +83,17 @@ function P2LoginSignup( {
 					) }
 				</div>
 				<div className="p2-login-signup__actions">
-					<Button primary className="p2-login-signup__login-btn">
+					<Button
+						primary
+						className="p2-login-signup__login-btn"
+						onClick={ () => {
+							submitSignupStep( {
+								stepName: stepName,
+							} );
+
+							page( getLoginLink( { flowName, locale } ) );
+						} }
+					>
 						Log in with WordPress.com
 					</Button>
 					<Button
