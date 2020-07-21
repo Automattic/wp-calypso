@@ -470,7 +470,7 @@ export function useShoppingCart(
 				payload: requestCartProductToAdd,
 			} );
 		},
-		[]
+		[ onEvent ]
 	);
 
 	const removeItem: ( arg0: string ) => void = useCallback( ( uuidToRemove ) => {
