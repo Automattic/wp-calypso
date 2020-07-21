@@ -19,7 +19,6 @@ import { useTranslate } from 'i18n-calypso';
 import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
-import { isBusinessPlan } from 'lib/plans';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -56,8 +55,6 @@ function WPLineItem( {
 	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
 
 	const productSlug = item.wpcom_meta?.product_slug;
-	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
-	const productName = isBusinessPlanProduct ? `${ item.label } (with Expert guidance)` : item.label;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -293,7 +290,6 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	couponStatus,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
