@@ -7,6 +7,8 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+// eslint-disable-next-line no-restricted-imports
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -104,7 +106,7 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'signup/utils';
-import { isExternal, addQueryArgs, format as formatUrl, getUrlParts as parseUrl } from 'lib/url';
+import { isExternal, addQueryArgs } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { abtest } from 'lib/abtest';
 import isPrivateSite from 'state/selectors/is-private-site';

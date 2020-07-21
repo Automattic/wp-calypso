@@ -19,7 +19,8 @@ import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { format as formatUrl, getUrlParts as parseUrl } from 'lib/url';
+// eslint-disable-next-line no-restricted-imports
+import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl, getSiteProducts } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
