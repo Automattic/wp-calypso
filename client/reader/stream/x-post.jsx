@@ -21,6 +21,7 @@ import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import Emojify from 'components/emojify';
 import { getUrlParts } from 'lib/url';
+import config from 'config';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -166,10 +167,12 @@ class CrossPost extends PureComponent {
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
 
+		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
 		const articleClasses = classnames( {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
+			'is-seen': isSeen,
 		} );
 
 		// Remove the x-post text from the title.
