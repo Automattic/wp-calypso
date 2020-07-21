@@ -31,7 +31,16 @@ runAll( commands, runOptions )
 	.then( () => {
 		console.log( 'Finished running commands!' );
 	} )
-	.catch( () => {
+	.catch( ( e ) => {
 		console.log( 'The build errored.' );
+		const tasks = e.results;
+		if ( Array.isArray( tasks ) ) {
+			const didNewspackSyncFail = tasks.some(
+				( task ) => task.name === 'build:newspack-blocks' && task.code !== 0
+			);
+			if ( didNewspackSyncFail ) {
+				console.log( 'You may need to run `composer install` from wp-calypso root.' );
+			}
+		}
 		process.exit( 1 );
 	} );
