@@ -12,7 +12,7 @@ import config from 'config';
 import Stream from 'reader/stream';
 import { Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
-import { requestMarkAllAsSeenSection } from 'state/reader/seen-posts/actions';
+import { requestMarkAllAsSeen } from 'state/reader/seen-posts/actions';
 import { SECTION_A8C_FOLLOWING } from 'state/reader/seen-posts/constants';
 import { AUTOMATTIC_ORG_ID } from 'state/reader/organizations/constants';
 import { getReaderOrganizationFeedsInfo } from 'state/reader/organizations/selectors';
@@ -23,9 +23,7 @@ const A8CFollowing = ( props ) => {
 
 	const markAllAsSeen = ( feedsInfo ) => {
 		const { feedIds, feedUrls } = feedsInfo;
-		dispatch(
-			requestMarkAllAsSeenSection( { identifier: SECTION_A8C_FOLLOWING, feedIds, feedUrls } )
-		);
+		dispatch( requestMarkAllAsSeen( { identifier: SECTION_A8C_FOLLOWING, feedIds, feedUrls } ) );
 	};
 
 	return (

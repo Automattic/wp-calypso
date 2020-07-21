@@ -293,7 +293,7 @@ export class FullPostView extends React.Component {
 		this.props.requestMarkAsSeen( {
 			feedId: post.feed_ID,
 			feedUrl: post.feed_URL,
-			feedItemIds: [ post.feed_item_id ],
+			feedItemIds: [ post.feed_item_ID ],
 			globalIds: [ post.global_ID ],
 		} );
 	};
@@ -303,7 +303,7 @@ export class FullPostView extends React.Component {
 		this.props.requestMarkAsUnseen( {
 			feedId: post.feed_ID,
 			feedUrl: post.feed_URL,
-			feedItemIds: [ post.feed_item_id ],
+			feedItemIds: [ post.feed_item_ID ],
 			globalIds: [ post.global_ID ],
 		} );
 	};
