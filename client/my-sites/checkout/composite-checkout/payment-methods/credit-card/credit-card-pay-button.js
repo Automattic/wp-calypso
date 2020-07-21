@@ -181,22 +181,68 @@ function useShowStripeModalAuth( shouldShowModal, stripeConfiguration ) {
 }
 
 function isCreditCardFormValid( store, __ ) {
-	const cardholderName = store.selectors.getCardholderName( store.getState() );
-	const errors = store.selectors.getCardDataErrors( store.getState() );
-	const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
-	const areThereErrors = Object.keys( errors ).some( ( errorKey ) => errors[ errorKey ] );
-	if ( ! cardholderName?.value.length ) {
-		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCardholderName( '' ) );
+	debug( 'validating credit card fields' );
+	const paymentPartner = store.selectors.getPaymentPartner( store.getState() );
+
+	switch ( paymentPartner ) {
+		case 'stripe': {
+			const cardholderName = store.selectors.getCardholderName( store.getState() );
+			if ( ! cardholderName?.value.length ) {
+				// Touch the field so it displays a validation error
+				store.dispatch( store.actions.changeCardholderName( '' ) );
+			}
+			const errors = store.selectors.getCardDataErrors( store.getState() );
+			const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
+			const areThereErrors = Object.keys( errors ).some( ( errorKey ) => errors[ errorKey ] );
+
+			if ( incompleteFieldKeys.length > 0 ) {
+				// Show "this field is required" for each incomplete field
+				incompleteFieldKeys.map( ( key ) =>
+					store.dispatch( store.actions.setCardDataError( key, __( 'This field is required' ) ) )
+				);
+			}
+			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
+				return false;
+			}
+			return true;
+		}
+
+		case 'ebanx': {
+			// Touch fields so that we show errors
+			store.dispatch( store.actions.touchAllFields() );
+			let isValid = true;
+
+			// Validate TIN
+			const documentErrorMessage = validateBrazilianTIN(
+				store.selectors.getFields( store.getState() )?.document?.value,
+				__
+			);
+			if ( documentErrorMessage !== '' ) {
+				isValid = false;
+				store.dispatch( store.actions.setFieldError( 'document', documentErrorMessage ) );
+			}
+			return isValid;
+		}
+
+		default: {
+			throw new RangeError( 'Unexpected payment partner "' + paymentPartner + '"' );
+		}
 	}
-	if ( incompleteFieldKeys.length > 0 ) {
-		// Show "this field is required" for each incomplete field
-		incompleteFieldKeys.map( ( key ) =>
-			store.dispatch( store.actions.setCardDataError( key, __( 'This field is required' ) ) )
-		);
+}
+
+// @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Brazil-TIN.pdf
+export function validateBrazilianTIN( taxId = '', __ = ( string ) => string ) {
+	if ( ! ( typeof taxId === 'string' || taxId instanceof String ) ) {
+		throw new TypeError( 'taxId must be a string.' );
 	}
-	if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
-		return false;
+
+	// TODO: decide whether to do a luhn check here
+	const patternCPF = /^\d\d\d\.\d\d\d\.\d\d\d-\d\d$/;
+	const patternCPNJ = /^\d\d\.\d\d\d\.\d\d\d\/\d\d\d\d-\d\d$/;
+
+	if ( ! patternCPF.test( taxId ) && ! patternCPNJ.test( taxId ) ) {
+		return __( 'Must be an 11 digit CPF or a 14 digit CPNJ.' );
 	}
-	return true;
+
+	return '';
 }
