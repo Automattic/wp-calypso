@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { filter } from 'lodash';
 
 /**
@@ -11,6 +10,8 @@ import config from 'config';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
 import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
+
+import 'state/sharing/init';
 
 /**
  * Returns an object of service objects.
