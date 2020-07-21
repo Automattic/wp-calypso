@@ -14,7 +14,7 @@ That functionality has been replaced with the native `URL` and `URLSearchParams`
 globals both in Node and in browsers (Calypso polyfills this functionality where needed).
 
 Unfortunately, `URL` and `URLSearchParams` offer limited functionality compared to Node's `url`, with
-the main difference being that they're only able to handle absolute URLs (e.g. `http://example.com),
+the main difference being that they're only able to handle absolute URLs (e.g. `http://example.com`),
 and not partial URLs (e.g., `//example.com`, `/path`).
 
 `lib/url` is a collection of utilities built on top of `URL` and `URLSearchParams`, which aim to
