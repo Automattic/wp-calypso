@@ -215,7 +215,7 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+			<CheckoutSummaryAreaUI className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
 					<CheckoutSummaryTitle>
 						<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
@@ -230,7 +230,7 @@ export default function WPCheckout( {
 					<WPCheckoutOrderSummary />
 					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
-			</CheckoutSummaryArea>
+			</CheckoutSummaryAreaUI>
 			<CheckoutStepArea submitButtonHeader={ <SubmitButtonHeader /> }>
 				<CheckoutStepBody
 					onError={ onReviewError }
@@ -346,6 +346,12 @@ export default function WPCheckout( {
 	);
 }
 
+const CheckoutSummaryAreaUI = styled( CheckoutSummaryArea )`
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		position: relative;
+	}
+`;
+
 const CheckoutSummaryTitleLink = styled.button`
 	background: ${ ( props ) => props.theme.colors.background };
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -426,6 +432,7 @@ const CheckoutSummaryBody = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
+		position: fixed;
 	}
 `;
 
