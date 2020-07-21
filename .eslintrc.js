@@ -138,7 +138,8 @@ module.exports = {
 					// Use `lib/url` instead of Node's 'url'.
 					{
 						name: 'url',
-						message: "Please use 'lib/url' instead.",
+						message:
+							"Node's `url` is deprecated. Please consider migrating to `lib/url` (see `client/lib/url/README.md`).",
 					},
 				],
 			},
