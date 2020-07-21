@@ -17,7 +17,6 @@ import { reducer as httpData } from 'state/data-layer/http-data';
 import accountRecovery from './account-recovery/reducer';
 import activityLog from './activity-log/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
-import connectedApplications from './connected-applications/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
@@ -43,14 +42,11 @@ import jitm from './jitm/reducer';
 import media from './media/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
-import notificationSettings from './notification-settings/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
-import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
-import productsList from './products-list/reducer';
 import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
@@ -59,11 +55,9 @@ import simplePayments from './simple-payments/reducer';
 import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
-import siteSettings from './site-settings/reducer';
 import sites from './sites/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
-import timezones from './timezones/reducer';
 import ui from './ui/reducer';
 import userDevices from './user-devices/reducer';
 import userProfileLinks from './profile-links/reducer';
@@ -77,7 +71,6 @@ const reducers = {
 	accountRecovery,
 	activityLog,
 	atomicTransfer,
-	connectedApplications,
 	currentUser,
 	dataRequests,
 	documentHead,
@@ -104,14 +97,11 @@ const reducers = {
 	media,
 	mySites,
 	notices,
-	notificationSettings,
 	notificationsUnseenCount,
 	orderTransactions,
 	pageTemplates,
-	plans,
 	plugins,
 	postFormats,
-	productsList,
 	receipts,
 	rewind,
 	selectedEditor,
@@ -120,11 +110,9 @@ const reducers = {
 	siteAddressChange,
 	siteKeyrings,
 	siteRoles,
-	siteSettings,
 	sites,
 	storedCards,
 	support,
-	timezones,
 	ui,
 	userDevices,
 	userProfileLinks,
