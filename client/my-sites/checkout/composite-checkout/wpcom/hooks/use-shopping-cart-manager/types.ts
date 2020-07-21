@@ -12,7 +12,6 @@ export interface ShoppingCartManagerArguments {
 	couponToAdd: string | null;
 	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
-	showAddCouponSuccessMessage: ( message: string ) => void;
 	onEvent?: ( action: ReactStandardAction ) => void;
 }
 
@@ -91,7 +90,6 @@ export type ShoppingCartAction =
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
-	| { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartError };
 
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
@@ -110,8 +108,6 @@ export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR
  *     * variantRequestStatus
  *         Used to allow updating the view immediately upon a variant
  *         change request.
- *     * shouldShowNotification
- *         Used to trigger calypso notification side effects on render
  */
 export type ShoppingCartState = {
 	responseCart: ResponseCart;
@@ -119,7 +115,4 @@ export type ShoppingCartState = {
 	cacheStatus: CacheStatus;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
-	shouldShowNotification: {
-		didAddCoupon: boolean;
-	};
 };

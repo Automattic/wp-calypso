@@ -17,7 +17,6 @@ import {
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
-import useShowAddCouponSuccessMessage from './use-show-add-coupon-success-message';
 
 export default function useShoppingCartManager( {
 	cartKey,
@@ -26,7 +25,6 @@ export default function useShoppingCartManager( {
 	couponToAdd,
 	setCart,
 	getCart,
-	showAddCouponSuccessMessage,
 	onEvent,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
 	const cartKeyString: string = cartKey || 'no-site';
@@ -43,7 +41,6 @@ export default function useShoppingCartManager( {
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
 	const variantSelectOverride = hookState.variantSelectOverride;
-	const shouldShowNotification = hookState.shouldShowNotification;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useInitializeCartFromServer(
@@ -59,13 +56,6 @@ export default function useShoppingCartManager( {
 
 	// Asynchronously re-validate when the cache is dirty.
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
-
-	useShowAddCouponSuccessMessage(
-		shouldShowNotification.didAddCoupon,
-		responseCart,
-		showAddCouponSuccessMessage,
-		hookDispatch
-	);
 
 	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
 		( requestCartProductToAdd ) => {
