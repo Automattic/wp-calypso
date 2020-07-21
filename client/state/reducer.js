@@ -36,7 +36,6 @@ import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import imports from './imports/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
-import invites from './invites/reducer';
 import jetpackProductInstall from './jetpack-product-install/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -46,15 +45,12 @@ import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import notificationSettings from './notification-settings/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
-import npsSurvey from './nps-survey/reducer';
 import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
-import postTypes from './post-types/reducer';
 import productsList from './products-list/reducer';
-import pushNotifications from './push-notifications/reducer';
 import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
@@ -73,7 +69,6 @@ import userDevices from './user-devices/reducer';
 import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
 import users from './users/reducer';
-import wordads from './wordads/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
@@ -102,7 +97,6 @@ const reducers = {
 	importerNux,
 	imports,
 	inlineSupportArticle,
-	invites,
 	jetpackProductInstall,
 	jetpackRemoteInstall,
 	jetpackSync,
@@ -112,15 +106,12 @@ const reducers = {
 	notices,
 	notificationSettings,
 	notificationsUnseenCount,
-	npsSurvey,
 	orderTransactions,
 	pageTemplates,
 	plans,
 	plugins,
 	postFormats,
-	postTypes,
 	productsList,
-	pushNotifications,
 	receipts,
 	rewind,
 	selectedEditor,
@@ -139,7 +130,6 @@ const reducers = {
 	userProfileLinks,
 	userSettings,
 	users,
-	wordads,
 };
 
 export default combineReducers( reducers );

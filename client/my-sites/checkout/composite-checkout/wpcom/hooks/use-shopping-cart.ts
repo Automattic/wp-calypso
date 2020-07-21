@@ -29,7 +29,7 @@ import {
 } from '../types';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
-const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
+const debug = debugFactory( 'calypso:composite-checkout:shopping-cart-manager' );
 
 /**
  *     * responseCart

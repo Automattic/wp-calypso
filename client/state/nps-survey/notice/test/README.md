@@ -2,5 +2,5 @@ NPS Survey Notice Testing
 =========================
 
 ```
-yarn run test-client -- --grep "state ui nps-survey-notice"
+yarn test-client client/state/nps-survey/notice
 ```

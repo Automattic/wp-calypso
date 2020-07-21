@@ -11,8 +11,8 @@ import { isNpsSurveyDialogShowing } from '../selectors';
 describe( 'isNpsSurveyDialogShowing', () => {
 	test( 'should return true if the NPS survey dialog is showing', () => {
 		const isShowing = isNpsSurveyDialogShowing( {
-			ui: {
-				npsSurveyNotice: {
+			npsSurvey: {
+				notice: {
 					isNpsSurveyDialogShowing: true,
 				},
 			},
@@ -23,8 +23,8 @@ describe( 'isNpsSurveyDialogShowing', () => {
 
 	test( 'should return false if the NPS survey dialog is not showing', () => {
 		const isShowing = isNpsSurveyDialogShowing( {
-			ui: {
-				npsSurveyNotice: {
+			npsSurvey: {
+				notice: {
 					isNpsSurveyDialogShowing: false,
 				},
 			},

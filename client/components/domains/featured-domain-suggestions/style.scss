@@ -83,7 +83,7 @@
 		margin-bottom: 0.25em;
 
 		@include breakpoint-deprecated( '>480px' ) {
-			font-size: 24px;
+			font-size: $font-title-medium;
 			margin-bottom: 0.125em;
 		}
 	}
