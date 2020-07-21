@@ -20,6 +20,8 @@ function P2LoginSignup( {
 	flowName,
 	stepName,
 	positionInFlow,
+	goToNextStep,
+	submitSignupStep,
 	goToStep,
 	progress: {
 		'p2-site': { siteTitle, site },
@@ -38,7 +40,14 @@ function P2LoginSignup( {
 				<div className="p2-login-signup__site-part">
 					<h3 className="p2-login-signup__site-title">{ siteTitle }</h3>
 					<div className="p2-login-signup__blog-name">{ `${ site }.p2.blog` }</div>
-					<a href="#" className="p2-login-signup__change-details-link">
+					<a
+						href="/nowhere"
+						className="p2-login-signup__change-details-link"
+						onClick={ ( e ) => {
+							e.preventDefault();
+							goToStep( 'p2-site' );
+						} }
+					>
 						{ translate( 'Change details' ) }
 					</a>
 				</div>
@@ -52,7 +61,17 @@ function P2LoginSignup( {
 					<Button primary className="p2-login-signup__login-btn">
 						Log in with WordPress.com
 					</Button>
-					<Button>Sign up to WordPress.com</Button>
+					<Button
+						onClick={ () => {
+							submitSignupStep( {
+								stepName: stepName,
+							} );
+
+							goToNextStep();
+						} }
+					>
+						Sign up to WordPress.com
+					</Button>
 				</div>
 			</div>
 		</P2StepWrapper>
