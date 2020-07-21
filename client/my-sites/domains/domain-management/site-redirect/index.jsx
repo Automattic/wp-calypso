@@ -37,6 +37,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteRedirectLocation } from 'state/domains/site-redirect/selectors';
 import { withoutHttp } from 'lib/url';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import { SITE_REDIRECT } from 'lib/url/support';
 
 /**
  * Style dependencies
@@ -148,7 +149,17 @@ class SiteRedirect extends React.Component {
 								/>
 
 								<p className="site-redirect__explanation">
-									{ translate( 'All domains on this site will redirect here.' ) }
+									{ translate(
+										'All domains on this site will redirect here as long as this domain is set as your primary domain. ' +
+											'{{learnMoreLink}}Learn more{{/learnMoreLink}}',
+										{
+											components: {
+												learnMoreLink: (
+													<a href={ SITE_REDIRECT } target="_blank" rel="noopener noreferrer" />
+												),
+											},
+										}
+									) }
 								</p>
 							</FormFieldset>
 
