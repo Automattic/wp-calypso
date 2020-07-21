@@ -599,6 +599,7 @@ function useInitializeCartFromServer(
 	}, [
 		cacheStatus,
 		canInitializeCart,
+		cartRawResponse,
 		hookDispatch,
 		onEvent,
 		getServerCart,
