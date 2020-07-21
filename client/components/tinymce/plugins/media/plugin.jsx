@@ -14,7 +14,6 @@ import closest from 'component-closest';
  * Internal dependencies
  */
 import * as MediaConstants from 'lib/media/constants';
-import MediaActions from 'lib/media/actions';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
 import MediaMarkup from 'post-editor/media-modal/markup';
@@ -388,8 +387,6 @@ function mediaButton( editor ) {
 		// After editing an image, we need to update them in a post/page. If we updated all instances
 		// of the edited image, we dispatch an action which marks the image media object not dirty.
 		if ( lastDirtyImage && lastDirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
-			MediaActions.edit( selectedSite.ID, { ...lastDirtyImage, isDirty: false } );
-
 			// We also need to reset the counter of post/page images to update so if another image is
 			// edited and marked dirty, we can set the counter to correct number.
 			numOfImagesToUpdate = null;
