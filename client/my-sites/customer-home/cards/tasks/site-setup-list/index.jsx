@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +12,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
 import CardHeading from 'components/card-heading';
 import Spinner from 'components/spinner';
 import { getTaskList } from 'lib/checklist';
@@ -30,6 +29,7 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { skipCurrentViewHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';
+import CurrentTaskItem from './current-task-item';
 import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
 
@@ -114,7 +114,6 @@ const SiteSetupList = ( {
 	const [ currentTask, setCurrentTask ] = useState( null );
 	const [ taskIsManuallySelected, setTaskIsManuallySelected ] = useState( false );
 	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
-	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
@@ -215,94 +214,71 @@ const SiteSetupList = ( {
 			{ isLoading && <Spinner /> }
 			{ useDrillLayout && (
 				<CardHeading>
-					<>
-						{ currentDrillLayoutView === 'task' && (
-							<Gridicon
-								icon="chevron-left"
-								size={ 18 }
-								className="site-setup-list__nav-back"
-								onClick={ () => setCurrentDrillLayoutView( 'nav' ) }
-							/>
-						) }
-						{ translate( 'Site setup' ) }
-					</>
+					<>{ translate( 'Site setup' ) }</>
 				</CardHeading>
 			) }
-			{ ( ! useDrillLayout || currentDrillLayoutView === 'task' ) && (
-				<div className="site-setup-list__task task">
-					<div className="site-setup-list__task-text task__text">
-						{ currentTask.isCompleted ? (
-							<Badge type="info" className="site-setup-list__task-badge task__badge">
-								{ translate( 'Complete' ) }
-							</Badge>
-						) : (
-							<div className="site-setup-list__task-timing task__timing">
-								<Gridicon icon="time" size={ 18 } />
-								{ translate( '%d minute', '%d minutes', {
-									count: currentTask.timing,
-									args: [ currentTask.timing ],
-								} ) }
-							</div>
-						) }
-						<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
-						<p className="site-setup-list__task-description task__description">
-							{ currentTask.description }
-						</p>
-						<div className="site-setup-list__task-actions task__actions">
-							{ currentTask.actionText && (
-								<Button
-									className="site-setup-list__task-action task__action"
-									primary
-									onClick={ () =>
-										startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
-									}
-									disabled={
-										currentTask.isDisabled ||
-										( currentTask.isCompleted && currentTask.actionDisableOnComplete )
-									}
-								>
-									{ currentTask.actionText }
-								</Button>
-							) }
-							{ currentTask.isSkippable && ! currentTask.isCompleted && (
-								<Button
-									className="site-setup-list__task-skip task__skip is-link"
-									onClick={ () => {
-										setTaskIsManuallySelected( false );
-										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
-									} }
-								>
-									{ translate( 'Skip for now' ) }
-								</Button>
-							) }
-						</div>
-					</div>
-				</div>
+			{ ! useDrillLayout && (
+				<CurrentTaskItem
+					currentTask={ currentTask }
+					skipTask={ () => skipTask( dispatch, currentTask, tasks, siteId, setIsLoading ) }
+					startTask={ () =>
+						startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+					}
+					setTaskIsManuallySelected={ setTaskIsManuallySelected }
+				/>
 			) }
-			{ ( ! useDrillLayout || currentDrillLayoutView === 'nav' ) && (
-				<div className="site-setup-list__nav">
-					{ ! useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
-					{ tasks.map( ( task ) => {
-						const enhancedTask = getTask( task );
 
-						return (
-							<NavItem
-								key={ task.id }
-								taskId={ task.id }
-								text={ enhancedTask.label || enhancedTask.title }
-								isCompleted={ task.isCompleted }
-								isCurrent={ task.id === currentTask.id }
-								onClick={ () => {
-									setTaskIsManuallySelected( true );
-									setCurrentTaskId( task.id );
-									setCurrentDrillLayoutView( 'task' );
-								} }
-								showChevron={ useDrillLayout }
+			<div className="site-setup-list__nav">
+				{ ! useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
+				{ tasks.map( ( task ) => {
+					const enhancedTask = getTask( task );
+					const isCurrent = task.id === currentTask.id;
+					const isCompleted = task.isCompleted;
+
+					return useDrillLayout && isCurrent ? (
+						<div
+							className={ classnames( 'nav-item', {
+								'is-current': isCurrent,
+							} ) }
+						>
+							<div className="nav-item__status">
+								{ isCompleted ? (
+									<Gridicon className="nav-item__complete" icon="checkmark" size={ 18 } />
+								) : (
+									<div className="nav-item__pending" />
+								) }
+							</div>
+							<CurrentTaskItem
+								currentTask={ currentTask }
+								skipTask={ () => skipTask( dispatch, currentTask, tasks, siteId, setIsLoading ) }
+								startTask={ () =>
+									startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+								}
+								setTaskIsManuallySelected={ setTaskIsManuallySelected }
 							/>
-						);
-					} ) }
-				</div>
-			) }
+							{ useDrillLayout &&
+								( isCurrent ? (
+									<Gridicon className="nav-item__chevron" icon="chevron-up" size={ 18 } />
+								) : (
+									<Gridicon className="nav-item__chevron" icon="chevron-down" size={ 18 } />
+								) ) }
+						</div>
+					) : (
+						<NavItem
+							key={ task.id }
+							taskId={ task.id }
+							text={ enhancedTask.label || enhancedTask.title }
+							isCompleted={ isCompleted }
+							isCurrent={ isCurrent }
+							onClick={ () => {
+								setTaskIsManuallySelected( true );
+								setCurrentTaskId( task.id );
+							} }
+							useDrillLayout={ useDrillLayout }
+						/>
+					);
+				} ) }
+			</div>
 		</Card>
 	);
 };

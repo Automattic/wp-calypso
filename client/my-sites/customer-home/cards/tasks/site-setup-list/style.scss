@@ -27,7 +27,7 @@
 		align-items: center;
 	}
 
-	.nav-item {
+	button.nav-item {
 		display: flex;
 		align-items: center;
 		padding: 16px 24px;
@@ -55,6 +55,20 @@
 			@include breakpoint-deprecated( '<960px' ) {
 				background-color: transparent;
 			}
+		}
+	}
+
+	div.nav-item {
+		display: flex;
+		align-items: flex-start;
+		padding: 16px 24px;
+		border-bottom: 1px solid var( --color-border-subtle );
+		transition: all 0.1s;
+		&:last-child {
+			border-bottom: none;
+		}
+		.task .task__text {
+			padding: 0;
 		}
 	}
 
