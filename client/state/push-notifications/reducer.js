@@ -7,7 +7,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import { settingsSchema, systemSchema } from './schema';
 
 import {
@@ -134,7 +134,9 @@ const settings = withSchemaValidation( settingsSchema, ( state = { enabled: fals
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	settings,
 	system,
 } );
+
+export default withStorageKey( 'pushNotifications', combinedReducer );

@@ -17,7 +17,7 @@
 	}
 
 	@include breakpoint-deprecated( '<960px' ) {
-		font-size: 24px;
+		font-size: $font-title-medium;
 	}
 }
 

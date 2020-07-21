@@ -21,7 +21,7 @@
 	text-align: center;
 
 	h2 {
-		font-size: 24px;
+		font-size: $font-title-medium;
 
 		span {
 			display: block;
@@ -36,7 +36,7 @@
 
 .dashboard__manage-has-orders {
 	h2 {
-		font-size: 24px;
+		font-size: $font-title-medium;
 		line-height: 1.2em;
 		margin-bottom: 16px;
 	}
@@ -97,7 +97,7 @@
 
 			.dashboard__process-orders-value {
 				display: block;
-				font-size: 24px;
+				font-size: $font-title-medium;
 			}
 
 			&.dashboard__process-orders-revenue .dashboard__process-orders-value {
