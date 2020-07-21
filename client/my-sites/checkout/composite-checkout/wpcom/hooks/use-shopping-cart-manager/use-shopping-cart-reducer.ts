@@ -132,7 +132,6 @@ function shoppingCartReducer(
 		case 'RECEIVE_UPDATED_RESPONSE_CART': {
 			const response = action.updatedResponseCart;
 			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
-			const didAddCoupon = newCouponStatus === 'applied';
 
 			return {
 				...state,
@@ -140,20 +139,8 @@ function shoppingCartReducer(
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
 				variantRequestStatus: 'valid', // TODO: what if the variant doesn't actually change?
-				shouldShowNotification: {
-					...state.shouldShowNotification,
-					didAddCoupon,
-				},
 			};
 		}
-		case 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE':
-			return {
-				...state,
-				shouldShowNotification: {
-					...state.shouldShowNotification,
-					didAddCoupon: false,
-				},
-			};
 		case 'RAISE_ERROR':
 			switch ( action.error ) {
 				case 'GET_SERVER_CART_ERROR':
@@ -188,9 +175,6 @@ function getInitialShoppingCartState(): ShoppingCartState {
 		couponStatus: 'fresh',
 		variantRequestStatus: 'fresh',
 		variantSelectOverride: [],
-		shouldShowNotification: {
-			didAddCoupon: false,
-		},
 	};
 }
 
