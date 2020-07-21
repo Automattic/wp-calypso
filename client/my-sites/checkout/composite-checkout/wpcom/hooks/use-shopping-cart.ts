@@ -243,9 +243,9 @@ function shoppingCartHookReducer(
 			}
 			debug( 'cart location is the same; not updating' );
 			return state;
+		default:
+			return state;
 	}
-
-	return state;
 }
 
 function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {
@@ -391,8 +391,6 @@ type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-li
  * @param showAddCouponSuccessMessage
  *     Takes a coupon code and displays a translated notice that
  *     the coupon was successfully applied.
- * @param cartRawResponse
- *		The shopping cart response either fetched from localstorage(userless checkout) or saved cart for the user.
  * @param onEvent
  *     Optional callback that takes a ReactStandardAction object for analytics.
  * @returns ShoppingCartManager
@@ -402,10 +400,9 @@ export function useShoppingCart(
 	canInitializeCart: boolean,
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
-	setCart: ( arg0: string, arg1: RequestCart ) => Promise< ResponseCart >,
-	getCart: ( arg0: string ) => Promise< ResponseCart >,
+	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >,
+	getCart: ( cartKey: string ) => Promise< ResponseCart >,
 	showAddCouponSuccessMessage: ( arg0: string ) => void,
-	cartRawResponse: ResponseCart,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): ShoppingCartManager {
 	const cartKeyString: string = cartKey || 'no-site';
@@ -434,7 +431,6 @@ export function useShoppingCart(
 		canInitializeCart,
 		productsToAdd,
 		couponToAdd,
-		cartRawResponse,
 		getServerCart,
 		setServerCart,
 		hookDispatch,
@@ -522,9 +518,8 @@ function useInitializeCartFromServer(
 	canInitializeCart: boolean,
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
-	cartRawResponse: ResponseCart | null,
-	getServerCart: () => Promise< ResponseCart >,
-	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
+	getCart: () => Promise< ResponseCart >,
+	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartHookAction ) => void,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): void {
@@ -546,8 +541,7 @@ function useInitializeCartFromServer(
 		isInitialized.current = true;
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
 
-		const cartPromise = cartRawResponse ? Promise.resolve( cartRawResponse ) : getServerCart();
-		cartPromise
+		getCart()
 			.then( ( response ) => {
 				if ( productsToAdd?.length || couponToAdd ) {
 					debug(
@@ -571,7 +565,7 @@ function useInitializeCartFromServer(
 					if ( couponToAdd ) {
 						responseCart = addCouponToResponseCart( responseCart, couponToAdd );
 					}
-					return setServerCart( convertResponseCartToRequestCart( responseCart ) );
+					return setCart( convertResponseCartToRequestCart( responseCart ) );
 				}
 				return response;
 			} )
@@ -588,7 +582,6 @@ function useInitializeCartFromServer(
 				} );
 			} )
 			.catch( ( error ) => {
-				// TODO: figure out what to do here
 				debug( 'error while initializing cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
 				onEvent?.( {
@@ -599,20 +592,19 @@ function useInitializeCartFromServer(
 	}, [
 		cacheStatus,
 		canInitializeCart,
-		cartRawResponse,
 		hookDispatch,
 		onEvent,
-		getServerCart,
+		getCart,
 		productsToAdd,
 		couponToAdd,
-		setServerCart,
+		setCart,
 	] );
 }
 
 function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
 	responseCart: ResponseCart,
-	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
+	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartHookAction ) => void,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): void {
@@ -627,7 +619,7 @@ function useCartUpdateAndRevalidate(
 		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
 
 		// We need to add is_update so that we don't add a plan automatically when the cart gets updated (DWPO).
-		setServerCart( { ...requestCart, is_update: true } )
+		setCart( { ...requestCart, is_update: true } )
 			.then( ( response ) => {
 				debug( 'updated cart is', response );
 				hookDispatch( {
@@ -645,7 +637,7 @@ function useCartUpdateAndRevalidate(
 					payload: { type: 'SET_SERVER_CART_ERROR', message: error },
 				} );
 			} );
-	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
+	}, [ setCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
 }
 
 function useShowAddCouponSuccessMessage(

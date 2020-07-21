@@ -149,6 +149,7 @@ export default function CheckoutSystemDecider( {
 						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isComingFromUpsell={ isComingFromUpsell }
 						isLoggedOutCart={ isLoggedOutCart }
+						getCart={ isLoggedOutCart ? () => Promise.new( cart ) : null }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>

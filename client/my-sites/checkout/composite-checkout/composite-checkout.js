@@ -216,7 +216,6 @@ export default function CompositeCheckout( {
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
 		showAddCouponSuccessMessage,
-		cart,
 		recordEvent
 	);
 
