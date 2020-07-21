@@ -5,7 +5,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import wp from 'lib/wp';
-import { CheckoutErrorBoundary, defaultRegistry } from '@automattic/composite-checkout';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import cookie from 'cookie';
 
@@ -70,6 +70,7 @@ export default function CheckoutSystemDecider( {
 		isAtomic
 	);
 	const translate = useTranslate();
+	const { setRecaptchaClientId } = useDispatch( 'wpcom' );
 
 	useEffect( () => {
 		if ( product ) {
@@ -101,6 +102,22 @@ export default function CheckoutSystemDecider( {
 		}
 	}, [ reduxDispatch, checkoutVariant, product ] );
 
+	useEffect( () => {
+		if ( 'composite-checkout' === checkoutVariant && isLoggedOutCart ) {
+			initGoogleRecaptcha(
+				'g-recaptcha',
+				'calypso/checkout/pageLoad',
+				config( 'google_recaptcha_site_key' )
+			).then( ( result ) => {
+				if ( ! result ) {
+					return;
+				}
+
+				setRecaptchaClientId( parseInt( result.clientId ) );
+			} );
+		}
+	} );
+
 	const logCheckoutError = useCallback(
 		( error ) => {
 			reduxDispatch(
@@ -125,20 +142,6 @@ export default function CheckoutSystemDecider( {
 	}
 
 	if ( 'composite-checkout' === checkoutVariant ) {
-		isLoggedOutCart &&
-			initGoogleRecaptcha(
-				'g-recaptcha',
-				'calypso/signup/pageLoad',
-				config( 'google_recaptcha_site_key' )
-			).then( ( result ) => {
-				if ( ! result ) {
-					return;
-				}
-
-				const { dispatch } = defaultRegistry;
-				dispatch( 'wpcom' ).setRecaptchaClientId( parseInt( result.clientId ) );
-			} );
-
 		let siteSlug = selectedSite?.slug;
 
 		if ( ! siteSlug ) {
