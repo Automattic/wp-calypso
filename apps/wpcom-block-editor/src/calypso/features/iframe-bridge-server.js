@@ -877,9 +877,9 @@ function handleUncaughtErrors( calypsoPort ) {
 async function handleEditorLoaded( calypsoPort ) {
 	await isEditorReadyWithBlocks();
 
-	const parentPageId = getQueryArg( window.location.href, 'parent_post' );
-	if ( parentPageId && parentPageId > 0 ) {
-		dispatch( 'core/editor' ).editPost( { parent: parentPageId } );
+	const parentPostId = getQueryArg( window.location.href, 'parent_post' );
+	if ( parentPostId && parentPostId > 0 ) {
+		dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
 	}
 
 	const isNew = select( 'core/editor' ).isCleanNewPost();
