@@ -26,6 +26,8 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
+	const paymentPartner = useSelect( ( select ) => select( 'credit-card' ).getPaymentPartner() );
+	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const { formStatus } = useFormStatus();
 	const {
 		transactionStatus,
@@ -45,7 +47,6 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 			disabled={ disabled }
 			onClick={ () => {
 				if ( isCreditCardFormValid( store, __ ) ) {
-					const paymentPartner = store.paymentPartner;
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
 						setTransactionPending();
@@ -56,6 +57,7 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 							items,
 							total,
 							stripeConfiguration,
+							paymentPartner,
 						} )
 							.then( ( stripeResponse ) => {
 								if ( stripeResponse?.message?.payment_intent_client_secret ) {
@@ -77,8 +79,37 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 						return;
 					}
 					if ( paymentPartner === 'ebanx' ) {
-						// TODO
-						throw new Error( 'ebanx handler not implemented' );
+						debug( 'submitting ebanx payment' );
+						setTransactionPending();
+						onEvent( { type: 'EBANX_TRANSACTION_BEGIN' } );
+						submitTransaction( {
+							name: cardholderName?.value || '',
+							countryCode: fields?.countryCode?.value || '',
+							number: fields?.number?.value || '',
+							cvv: fields?.cvv?.value || '',
+							'expiration-date': fields[ 'expiration-date' ]?.value || '',
+							state: fields?.state?.value || '',
+							city: fields?.city?.value || '',
+							postalCode: fields[ 'postal-code' ]?.value || '',
+							address: fields[ 'address-1' ]?.value || '',
+							streetNumber: fields[ 'street-number' ]?.value || '',
+							phoneNumber: fields[ 'phone-number' ]?.value || '',
+							document: fields?.document?.value || '', // Taxpayer Identification Number
+							items,
+							total,
+							paymentPartner,
+						} )
+							.then( ( ebanxResponse ) => {
+								// TODO
+								debug( 'ebanx transaction is successful', ebanxResponse );
+								setTransactionComplete();
+							} )
+							.catch( ( error ) => {
+								// TODO
+								debug( 'ebanx transaction error', error );
+								setTransactionError( error );
+							} );
+						return;
 					}
 					if ( paymentPartner === 'dlocal' ) {
 						// TODO
