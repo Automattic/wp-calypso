@@ -118,11 +118,18 @@ export async function submitStripeCardTransaction( transactionData, submit ) {
 }
 
 export async function submitEbanxCardTransaction( transactionData, submit ) {
-	// TODO
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		...transactionData,
+		paymentMethodToken: transactionData.paymentMethodToken.token,
+		paymentMethodType: 'WPCOM_Billing_Ebanx',
+	} );
+	debug( 'sending ebanx transaction', formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
 export async function submitDlocalCardTransaction( transactionData, submit ) {
 	// TODO
+	debug( 'dlocal card transaction submit not implemented', transactionData, submit );
 }
 
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
