@@ -35,7 +35,7 @@
 	line-height: 1.2em;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 24px;
+		font-size: $font-title-medium;
 		padding: 0;
 		margin: 0 0 5px;
 	}

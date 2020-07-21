@@ -175,8 +175,8 @@ export class PayButton extends React.Component {
 				<Button
 					type="submit"
 					className="checkout__pay-button-button button is-primary button-pay pay-button__button"
-					busy={ buttonState.disabled }
-					disabled={ buttonState.disabled }
+					busy={ buttonState.disabled && ! this.props.notAllowed }
+					disabled={ buttonState.disabled || this.props.notAllowed }
 				>
 					{ buttonState.text }
 				</Button>

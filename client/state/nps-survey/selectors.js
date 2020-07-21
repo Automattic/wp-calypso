@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
@@ -9,6 +8,8 @@ import { get } from 'lodash';
  */
 import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
 import { getSectionName } from 'state/ui/selectors';
+
+import 'state/nps-survey/init';
 
 const ALLOWED_SECTION_NAMES = [
 	'discover',

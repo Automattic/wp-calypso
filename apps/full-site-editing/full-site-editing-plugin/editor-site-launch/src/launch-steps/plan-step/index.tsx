@@ -2,8 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -20,20 +20,18 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 	return (
 		<LaunchStep className="nux-launch-plan-step">
 			<div className="nux-launch-step__header">
-				<div className="nux-launch-step__heading">
-					<h1 className="nux-launch-step__title">{ __( 'Choose a plan', 'full-site-editing' ) }</h1>
-					<p className="nux-launch-step__subtitle">
+				<div>
+					<Title>{ __( 'Choose a plan', 'full-site-editing' ) }</Title>
+					<SubTitle>
 						{ __(
 							'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.',
 							'full-site-editing'
 						) }
-					</p>
+					</SubTitle>
 				</div>
-				<div className="nux-launch-step__actions">
-					<Button isTertiary onClick={ handleBack }>
-						{ __( 'Go back', 'full-site-editing' ) }
-					</Button>
-				</div>
+				<ActionButtons>
+					<BackButton onClick={ handleBack } />
+				</ActionButtons>
 			</div>
 			<div className="nux-launch-step__body">
 				<PlansGridFSE onSelect={ onNextStep } />

@@ -3,6 +3,7 @@
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -27,7 +28,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const history = useHistory();
 	const currentStep = useCurrentStep();
 	const siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
-
+	const { i18nLocale } = useI18n();
 	// If the user enters a site title on Intent Capture step we are showing Domains step next.
 	// Else, we're showing Domains step before Plans step.
 	let steps = siteTitle
@@ -41,7 +42,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, undefined, shouldSiteBePublic )
+			? createSite( currentUser.username, i18nLocale, undefined, shouldSiteBePublic )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps

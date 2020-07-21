@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { useLayoutEffect, useRef } from '@wordpress/element';
+import { useLayoutEffect, useRef, useEffect, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	Button as OriginalButton,
 	IsolatedEventContainer,
 	withConstrainedTabbing,
+	ExternalLink,
 } from '@wordpress/components';
-import { chevronLeft, wordpress } from '@wordpress/icons';
+import { arrowLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get } from 'lodash';
@@ -20,9 +21,8 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../constants';
+import { STORE_KEY, SITE_HOME_URL } from '../../constants';
 import CreatePage from '../create-page';
-import ViewAllPosts from '../view-all-posts';
 import NavItem from '../nav-item';
 import { Post } from '../../types';
 import './style.scss';
@@ -36,14 +36,15 @@ const Button = ( {
 
 function WpcomBlockEditorNavSidebar() {
 	const { toggleSidebar, setSidebarClosing } = useDispatch( STORE_KEY );
-	const [ isOpen, isClosing, postType, selectedItemId ] = useSelect( ( select ) => {
-		const { getPostType } = select( 'core' ) as any;
+	const [ isOpen, isClosing, postType, selectedItemId, siteTitle ] = useSelect( ( select ) => {
+		const { getPostType, getSite } = select( 'core' ) as any;
 
 		return [
 			select( STORE_KEY ).isSidebarOpened(),
 			select( STORE_KEY ).isSidebarClosing(),
 			getPostType( select( 'core/editor' ).getCurrentPostType() ),
 			select( 'core/editor' ).getCurrentPostId(),
+			getSite()?.title,
 		];
 	} );
 
@@ -63,6 +64,57 @@ function WpcomBlockEditorNavSidebar() {
 		prevIsOpen.current = isOpen;
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
+	const [ isScrollbarPresent, setIsScrollbarPresent ] = useState( false );
+
+	const observer = useRef< IntersectionObserver >();
+	const itemRefs = useRef< ( HTMLElement | null )[] >( [] );
+
+	const containerMount = ( el: HTMLDivElement | null ) => {
+		if ( el ) {
+			el.focus();
+		}
+
+		if ( observer.current ) {
+			observer.current.disconnect();
+		}
+
+		if ( ! window.IntersectionObserver ) {
+			return;
+		}
+
+		observer.current = new window.IntersectionObserver(
+			( entries ) => {
+				// If one item isn't currently visible, then the scrollbar isn't present
+				const isPresent = entries.some( ( entry ) => ! entry.isIntersecting );
+				setIsScrollbarPresent( isPresent );
+			},
+			{
+				root: el,
+				threshold: [ 1 ], // We want to fire the above callback when an entry isn't 100% visible
+			}
+		);
+	};
+
+	const itemMount = ( el: HTMLElement | null, itemIndex: number ) => {
+		itemRefs.current[ itemIndex ] = el;
+	};
+
+	useEffect( () => {
+		if ( ! observer.current ) {
+			return;
+		}
+
+		observer.current.disconnect();
+
+		const nonSparse = itemRefs.current.filter( Boolean ) as HTMLElement[];
+
+		// We only need to observe the first and last item in the list, might be better for performance
+		const firstItem = nonSparse[ 0 ];
+		const lastItem = nonSparse[ nonSparse.length - 1 ];
+		if ( firstItem ) observer.current.observe( firstItem );
+		if ( lastItem ) observer.current.observe( lastItem );
+	}, [ items, itemRefs, observer ] );
+
 	if ( ! postType ) {
 		// Still loading
 		return null;
@@ -73,11 +125,15 @@ function WpcomBlockEditorNavSidebar() {
 		return null;
 	}
 
-	let closeUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
-	closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', closeUrl );
+	const defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+	const closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', defaultCloseUrl );
 
-	let closeLabel = get( postType, [ 'labels', 'all_items' ], __( 'Back', 'full-site-editing' ) );
-	closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', closeLabel );
+	const defaultCloseLabel = get(
+		postType,
+		[ 'labels', 'all_items' ],
+		__( 'Back', 'full-site-editing' )
+	);
+	const closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', defaultCloseLabel );
 
 	const handleClose = ( e: React.MouseEvent ) => {
 		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
@@ -85,6 +141,13 @@ function WpcomBlockEditorNavSidebar() {
 			doAction( 'a8c.wpcom-block-editor.closeEditor' );
 		}
 	};
+
+	const defaultListHeading = get( postType, [ 'labels', 'name' ] );
+	const listHeading = applyFilters(
+		'a8c.WpcomBlockEditorNavSidebar.listHeading',
+		defaultListHeading,
+		postType.slug
+	);
 
 	const dismissSidebar = () => {
 		if ( isOpen && ! isClosing ) {
@@ -125,7 +188,7 @@ function WpcomBlockEditorNavSidebar() {
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
-				ref={ ( el ) => el && el.focus() }
+				ref={ containerMount }
 				role="dialog"
 				tabIndex={ -1 }
 			>
@@ -133,40 +196,50 @@ function WpcomBlockEditorNavSidebar() {
 					<Button
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
-							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button',
-							{
-								'is-growing': isClosing,
-							}
+							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
 						) }
 						icon={ wordpress }
 						iconSize={ 36 }
 						onClick={ dismissSidebar }
 					/>
 				</div>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container">
-					<Button
-						href={ closeUrl }
-						className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
-						icon={ chevronLeft }
-						onClick={ handleClose }
-					>
-						{ closeLabel }
-					</Button>
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
+					<h2>{ siteTitle }</h2>
+					{ SITE_HOME_URL && (
+						<ExternalLink href={ SITE_HOME_URL }>
+							{ __( 'Visit site', 'full-site-editing' ) }
+						</ExternalLink>
+					) }
+				</div>
+				<Button
+					href={ closeUrl }
+					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
+					icon={ arrowLeft }
+					onClick={ handleClose }
+				>
+					{ closeLabel }
+				</Button>
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading">
+					{ listHeading }
 				</div>
 				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-					{ items.map( ( item ) => (
+					{ items.map( ( item, index ) => (
 						<NavItem
 							key={ item.id }
 							item={ item }
 							postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
 							selected={ item.id === selectedItemId }
 							statusLabel={ statusLabels[ item.status ] }
+							ref={ ( el ) => itemMount( el, index ) }
 						/>
 					) ) }
 				</ul>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons">
+				<div
+					className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons', {
+						'is-scrollbar-present': isScrollbarPresent,
+					} ) }
+				>
 					<CreatePage postType={ postType } />
-					<ViewAllPosts postType={ postType } />
 				</div>
 			</div>
 		</IsolatedEventContainer>

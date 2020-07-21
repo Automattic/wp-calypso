@@ -47,13 +47,24 @@ function FormattedHeader( {
 }
 
 FormattedHeader.propTypes = {
+	id: PropTypes.string,
+	className: PropTypes.string,
 	brandFont: PropTypes.bool,
-	headerText: PropTypes.node,
-	subHeaderText: PropTypes.node,
+	headerText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
+	subHeaderText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
-	align: PropTypes.string,
-	brandFont: PropTypes.bool,
+	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
+};
+
+FormattedHeader.defaultProps = {
+	id: '',
+	className: '',
+	brandFont: false,
+	subHeaderText: '',
+	compactOnMobile: false,
+	isSecondary: false,
+	align: 'center',
 };
 
 export default FormattedHeader;

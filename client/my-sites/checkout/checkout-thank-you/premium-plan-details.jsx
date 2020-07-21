@@ -11,18 +11,15 @@ import { useTranslate } from 'i18n-calypso';
  */
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import GoogleVoucherDetails from './google-voucher';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { isPremium, isGoogleApps } from 'lib/products-values';
 import { newPost } from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
-import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
 /**
  * Image dependencies
  */
 import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
-import googleAdwordsImage from 'assets/images/illustrations/adwords-google.svg';
 import advertisingRemovedImage from 'assets/images/upgrades/removed-advertising.svg';
 import customizeThemeImage from 'assets/images/upgrades/customize-theme.svg';
 import mediaPostImage from 'assets/images/upgrades/media-post.svg';
@@ -77,24 +74,6 @@ const PremiumPlanDetails = ( {
 				) }
 				buttonText={ translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug }
-			/>
-
-			<QuerySiteVouchers siteId={ selectedSite.ID } />
-			<PurchaseDetail
-				id="google-credits"
-				icon={
-					<img alt={ translate( 'Google AdWords Illustration' ) } src={ googleAdwordsImage } />
-				}
-				title={ translate( 'Google Ads credit' ) }
-				description={ translate(
-					'Use a %(cost)s credit with Google to bring traffic to your most important Posts and Pages.',
-					{
-						args: {
-							cost: '$100',
-						},
-					}
-				) }
-				body={ <GoogleVoucherDetails selectedSite={ selectedSite } /> }
 			/>
 
 			{ ! selectedFeature && (

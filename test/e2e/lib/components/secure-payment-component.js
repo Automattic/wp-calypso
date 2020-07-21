@@ -356,7 +356,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async removeFromCart() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'button.cart__remove-item' )
+			By.css( 'button.cart__remove-item,button svg[aria-labelledby*="checkout-delete-button-0"]' )
 		);
 	}
 

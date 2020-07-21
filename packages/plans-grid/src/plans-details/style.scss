@@ -2,8 +2,13 @@
 @import '~@wordpress/base-styles/mixins';
 @import '~@automattic/typography/styles/variables';
 
+.plans-grid__details-heading {
+	margin-bottom: 20px;
+}
+
 .plans-details__table {
 	width: 100%;
+	border-spacing: 0;
 
 	th,
 	td {
@@ -39,6 +44,13 @@
 		padding-top: 5px;
 		padding-bottom: 5px;
 		border-bottom: 1px solid #eaeaeb;
+		text-align: left;
+	}
+
+	thead & {
+		th:not( :first-child ) {
+			text-align: center;
+		}
 	}
 }
 
@@ -46,9 +58,18 @@
 	th,
 	td {
 		font-size: $font-body-small;
+		font-weight: normal;
 		line-height: 17px;
 		letter-spacing: 0.2px;
 		border-bottom: 1px solid #eaeaeb;
 		vertical-align: middle;
+	}
+
+	th {
+		text-align: left;
+	}
+
+	td {
+		text-align: center;
 	}
 }

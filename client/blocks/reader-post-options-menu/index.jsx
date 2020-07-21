@@ -162,11 +162,11 @@ class ReaderPostOptionsMenu extends React.Component {
 		}
 
 		const feedId = post.feed_ID;
-		let feedItemIds = [ post.ID ];
+		let feedItemIds = [ post.feed_item_ID ];
 		let globalIds = [ post.global_ID ];
 
 		if ( size( posts ) ) {
-			feedItemIds = map( posts, 'ID' );
+			feedItemIds = map( posts, 'feed_item_ID' );
 			globalIds = map( posts, 'global_ID' );
 		}
 
@@ -188,11 +188,11 @@ class ReaderPostOptionsMenu extends React.Component {
 		}
 
 		const feedId = post.feed_ID;
-		let feedItemIds = [ post.ID ];
+		let feedItemIds = [ post.feed_item_ID ];
 		let globalIds = [ post.global_ID ];
 
 		if ( size( posts ) ) {
-			feedItemIds = map( posts, 'ID' );
+			feedItemIds = map( posts, 'feed_item_ID' );
 			globalIds = map( posts, 'global_ID' );
 		}
 

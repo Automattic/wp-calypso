@@ -315,6 +315,19 @@
 		@include clear-fix;
 	}
 
+	.payment-box-multisite {
+		display: flex;
+		align-items: flex-start;
+		font-size: $font-body-extra-small;
+		font-style: italic;
+		color: var( --color-error-40 );
+		margin-top: 16px;
+
+		p {
+			margin: 0 0 0 8px;
+		}
+	}
+
 	.credit-card-payment-box {
 		.payment-box-sections {
 			background-color: var( --color-surface );

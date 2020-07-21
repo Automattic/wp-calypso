@@ -64,7 +64,7 @@
 
 .checkout-thank-you__features-header {
 	color: var( --color-neutral-50 );
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	line-height: 32px;
 	margin: 48px 48px 24px;
@@ -169,7 +169,7 @@
 }
 
 .checkout-thank-you__header-heading {
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	margin: 24px 0 8px;
 }

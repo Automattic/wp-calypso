@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	SITE_SETTINGS_RECEIVE,
@@ -16,6 +15,7 @@ import {
 import { normalizeSettings } from './utils';
 
 import 'state/data-layer/wpcom/sites/homepage';
+import 'state/site-settings/init';
 
 /**
  * Returns an action object to be used in signalling that site settings have been received.

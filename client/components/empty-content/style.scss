@@ -23,7 +23,7 @@
 	font-size: 34px;
 
 	@include breakpoint-deprecated( '<660px' ) {
-		font-size: 24px;
+		font-size: $font-title-medium;
 	}
 }
 
@@ -58,7 +58,7 @@
 		font-size: 30px;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 24px;
+			font-size: $font-title-medium;
 		}
 	}
 }

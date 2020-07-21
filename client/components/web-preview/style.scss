@@ -304,7 +304,7 @@ a.web-preview__external.button {
 .web-preview__loading-message strong {
 	color: var( --color-text-subtle );
 	display: block;
-	font-size: 24px;
+	font-size: $font-title-medium;
 	margin-bottom: 5px;
 }
 

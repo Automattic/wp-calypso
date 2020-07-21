@@ -29,11 +29,10 @@ import useOnLogin from './hooks/use-on-login';
 
 registerBlockType( name, settings );
 
-export function Gutenboard() {
+const Gutenboard: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-
-	useOnSignup();
 	useOnLogin();
+	useOnSignup();
 	useOnSiteCreation();
 	usePageViewTracksEvents();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
@@ -106,4 +105,6 @@ export function Gutenboard() {
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-}
+};
+
+export default Gutenboard;

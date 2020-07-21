@@ -73,6 +73,7 @@ class P2Site extends React.Component {
 			debounceWait: VALIDATION_DELAY_AFTER_FIELD_CHANGES,
 			hideFieldErrorsOnChange: true,
 			initialState: initialState,
+			skipSanitizeAndValidateOnFieldChange: true,
 		} );
 
 		this.state = {
@@ -116,34 +117,47 @@ class P2Site extends React.Component {
 			};
 		}
 
-		wpcom.undocumented().sitesNew(
-			{
-				blog_name: `${ fields.site }.p2.blog`,
-				blog_title: fields.siteTitle,
-				validate: true,
-			},
-			function ( error, response ) {
-				debug( error, response );
+		if ( ! isEmpty( fields.site ) ) {
+			wpcom.undocumented().sitesNew(
+				{
+					blog_name: `${ fields.site }.p2.blog`,
+					blog_title: fields.siteTitle,
+					validate: true,
+				},
+				( error, response ) => {
+					debug( error, response );
 
-				if ( error && error.message ) {
-					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
-						siteUrlsSearched.push( fields.site );
+					if ( error && error.message ) {
+						if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
+							siteUrlsSearched.push( fields.site );
 
-						recordTracksEvent( 'calypso_signup_wp_for_teams_site_url_validation_failed', {
-							error: error.error,
-							site_url: fields.site,
-						} );
+							recordTracksEvent( 'calypso_signup_wp_for_teams_site_url_validation_failed', {
+								error: error.error,
+								site_url: fields.site,
+							} );
+						}
+
+						timesValidationFailed++;
+
+						if ( error.error === 'blog_title_invalid' ) {
+							messages.siteTitle = {
+								[ error.error ]: this.props.translate(
+									'Please enter a valid team or project name.'
+								),
+							};
+						} else {
+							messages.site = {
+								[ error.error ]: error.message,
+							};
+						}
 					}
 
-					timesValidationFailed++;
-
-					messages.site = {
-						[ error.error ]: error.message,
-					};
+					onComplete( null, messages );
 				}
-				onComplete( null, messages );
-			}
-		);
+			);
+		} else if ( ! isEmpty( messages ) ) {
+			onComplete( null, messages );
+		}
 	};
 
 	setFormState = ( state ) => {
@@ -190,7 +204,6 @@ class P2Site extends React.Component {
 
 	handleBlur = () => {
 		this.formStateController.sanitize();
-		this.formStateController.validate();
 		this.save();
 	};
 

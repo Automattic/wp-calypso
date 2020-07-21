@@ -20,6 +20,8 @@ import {
 	INVITE_RESEND_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+import 'state/invites/init';
+
 /**
  * Triggers a network request to fetch invites for the specified site.
  *

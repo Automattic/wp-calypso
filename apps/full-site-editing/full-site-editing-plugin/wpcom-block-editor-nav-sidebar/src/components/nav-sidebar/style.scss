@@ -4,8 +4,7 @@
 @import '~@wordpress/base-styles/z-index';
 
 $sidebar-width: 272px;
-$border: 1px solid $light-gray-500;
-$transition-period: 200ms;
+$transition-period: 100ms;
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
 	position: fixed;
@@ -13,8 +12,8 @@ $transition-period: 200ms;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	// Use the same z-index as the <Modal> component
-	z-index: z-index( '.components-modal__header' );
+	// Use the same z-index as the edit-post-layout header
+	z-index: z-index( '.interface-interface-skeleton__header' );
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
 	@include reduce-motion( 'animation' );
 
@@ -39,10 +38,10 @@ $transition-period: 200ms;
 	top: 0;
 	bottom: 0;
 	width: $sidebar-width;
-	border-right: $border;
-	background: $white;
+	background: #23282e; // WP-admin gray to match the close button background color
 	display: flex;
 	flex-direction: column;
+	box-shadow: -5px 0 20px $black;
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-out;
 	@include reduce-motion( 'animation' );
 
@@ -63,10 +62,25 @@ $transition-period: 200ms;
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
 	height: $header-height;
-	border-bottom: $border;
 	box-sizing: content-box;
 	display: flex;
 	flex: $header-height 0 0;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
+    padding: 8px 16px;
+	margin-top: 14px;
+
+	h2 {
+		color: $white;
+		margin: 0;
+		font-size: $big-font-size;
+		line-height: $default-line-height;
+	}
+
+	a {
+		color: $light-gray-800;
+	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
@@ -74,69 +88,46 @@ $transition-period: 200ms;
 	top: 0;
 	left: 0;
 	height: $header-height !important;
-	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out forwards;
-	@include reduce-motion( 'animation' );
-
-	&.is-growing {
-		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__shrink $transition-period ease-in-out reverse;
-		@include reduce-motion( 'animation' );
-	}
-}
-
-@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__shrink {
-	0% {
-		transform: scale( 1 );
-	}
-	100% {
-		transform: scale( 0.55 );
-	}
-}
-
-.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container {
-	border-bottom: $border;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
 	height: 46px;
 	width: 100%;
-	font-weight: 600;
 	border: none !important;
 	box-shadow: none !important;
+	color: $white;
+	flex-shrink: 0;
+	padding: 8px 11px !important;
+	margin: 14px 0;
 
 	&:hover {
-		text-decoration: underline;
+		color: $white;
 	}
+
+	&:focus {
+		color: $white;
+		border: 1px solid $white !important;
+		box-shadow: none !important;
+		outline: none !important;
+		border-radius: 0;
+		padding: 7px 10px !important;
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading {
+	padding: $panel-padding;
+	font-size: $big-font-size;
+	color: $white;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__page-list {
 	padding: 0;
 	margin: 0;
-	overflow-y: scroll;
-	flex: 1;
-
-	li {
-		margin: 4px 8px;
-	}
+	overflow-y: auto;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
-	margin: 8px;
-}
-
-@keyframes wpcom-block-editor-nav-sidebar__shrink {
-	0% {
-		transform: scale( 1 );
-	}
-	100% {
-		transform: scale( 0.55 );
-	}
-}
-
-@keyframes wpcom-block-editor-nav-sidebar__grow {
-	0% {
-		transform: scale( 0.55 );
-	}
-	100% {
-		transform: scale( 1 );
+	&.is-scrollbar-present {
+		border-top: 1px solid $dark-gray-600;
 	}
 }
