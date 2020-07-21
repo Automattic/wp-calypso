@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/post-types/init';
+
+/**
  * Returns the known post types for a site.
  *
  * @param  {object}  state  Global state tree

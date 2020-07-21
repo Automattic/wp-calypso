@@ -9,7 +9,7 @@
 }
 
 .plugin-ratings__rating-stars {
-	font-size: 24px;
+	font-size: $font-title-medium;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		display: inline-block;

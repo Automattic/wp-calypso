@@ -40,7 +40,7 @@
 	word-wrap: break-word;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 24px;
+		font-size: $font-title-medium;
 		line-height: 1.416;
 	}
 }

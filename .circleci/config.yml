@@ -756,8 +756,6 @@ jobs:
       name: win/default
     working_directory: C:\Users\circleci\wp-calypso
     environment:
-      CSC_LINK: C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12
-      CSC_FOR_PULL_REQUEST: true
     steps:
       - checkout
       - attach_workspace:
@@ -777,22 +775,26 @@ jobs:
       - run:
           name: Install Desktop Dependencies
           command: yarn run build-desktop:install-app-deps
-      - run:
-          name: Import Codesigning Certificate
-          command: |
-                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
-                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
-                  #
-                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
-                  # package.json's `certificateSubjectName` to find the imported cert.
-                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Import Codesigning Certificate
+                command: |
+                        # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+                        # Ref: https://travis-ci.community/t/codesigning-on-windows/
+                        #
+                        # Fix: Import .p12 into the local certificate store. Sign Tool will use
+                        # package.json's `certificateSubjectName` to find the imported cert.
+                        $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
+                        Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
           name: Build Desktop Windows
           command: |
                   # Use make for bash-like environment variable substitution
-                  # Note: cd into desktop as ELECTRON_BUILDER_ARGS will not resolve correctly if we use make -f syntax from repo root.
-                  cd desktop
-                  make package ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName="Automattic, Inc."'
+
+                  If ( $env:CIRCLE_TAG ) { $env:ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName=""Automattic, Inc.""' }
+                  make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$env:ELECTRON_BUILDER_ARGS
       - run:
           name: Archive Unpacked Directories
           command: |
@@ -814,6 +816,36 @@ jobs:
           root: C:\Users\circleci\wp-calypso
           paths:
             - desktop\release
+
+  wp-desktop-publish:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /home/circleci/wp-calypso
+    environment:
+      VERSION: << pipeline.git.tag >>
+    steps:
+      - attach_workspace:
+          at: /home/circleci/wp-calypso
+      - run:
+          name: Install Dependencies
+          command: go get github.com/tcnksm/ghr
+      - run:
+          name: Publish Github Release
+          command: |
+            echo "Publishing draft release for wp-desktop $VERSION..."
+            NAME="WP-Desktop ${VERSION#?}"
+
+            ghr \
+              --token "${GH_TOKEN}" \
+              --username "${CIRCLE_PROJECT_USERNAME}" \
+              --repository "${CIRCLE_PROJECT_REPONAME}" \
+              --commitish "${CIRCLE_SHA1}" \
+              --name "${NAME}" \
+              --delete \
+              --draft \
+              "${VERSION}" desktop/release/
+
+            echo "Publish complete"
 
 workflows:
   version: 2
@@ -897,6 +929,39 @@ workflows:
       - wp-desktop-windows:
           requires:
             - wp-desktop-source
+  wp-desktop-release:
+    when: << pipeline.git.tag >>
+    jobs:
+      - wp-desktop-source:
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-source
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-source
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-source
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-publish:
+          requires:
+            - wp-desktop-mac
+            - wp-desktop-linux
+            - wp-desktop-windows
+          filters:
+            tags:
+              only: /v.*/
 
   calypso-nightly:
     jobs:

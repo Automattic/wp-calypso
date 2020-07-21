@@ -102,7 +102,7 @@
 	.ellipsis-menu {
 		.ellipsis-menu__toggle.button.is-borderless {
 			cursor: pointer;
-			font-size: 24px;
+			font-size: $font-title-medium;
 			color: var( --color-text-subtle );
 			padding: 15px 24px;
 			min-width: 24px;

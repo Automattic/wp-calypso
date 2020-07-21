@@ -49,7 +49,7 @@ import { isGSuiteProductSlug } from 'lib/gsuite';
 import { login } from 'lib/paths';
 import config from 'config';
 
-const debug = debugFactory( 'calypso:wp-checkout' );
+const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();

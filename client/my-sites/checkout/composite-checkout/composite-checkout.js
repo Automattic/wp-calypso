@@ -93,7 +93,7 @@ import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/
 import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
 import { CartProvider } from './cart-provider';
 
-const debug = debugFactory( 'calypso:composite-checkout' );
+const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
 const { select, dispatch, registerStore } = defaultRegistry;
 
@@ -140,7 +140,9 @@ export default function CompositeCheckout( {
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
 	const reduxDispatch = useDispatch();
-	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
+	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
+		createAnalyticsEventHandler,
+	] );
 
 	const showErrorMessage = useCallback(
 		( error ) => {
