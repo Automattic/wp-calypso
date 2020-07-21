@@ -71,6 +71,7 @@ interface Props {
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
+	parentPageId: T.PostId;
 }
 
 interface State {
@@ -709,6 +710,7 @@ const mapStateToProps = (
 		postType,
 		duplicatePostId,
 		fseParentPageId,
+		parentPageId,
 		creatingNewHomepage,
 		editorType = 'post',
 	}: Props
@@ -725,6 +727,7 @@ const mapStateToProps = (
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
 		fse_parent_post: fseParentPageId != null && fseParentPageId,
+		parent_post: parentPageId != null && parentPageId,
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
@@ -785,6 +788,7 @@ const mapStateToProps = (
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
+		parentPageId,
 	};
 };
 
