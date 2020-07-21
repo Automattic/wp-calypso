@@ -25,8 +25,8 @@ export default function useInitializeCartFromServer(
 	canInitializeCart: boolean,
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
-	getServerCart: () => Promise< ResponseCart >,
-	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
+	getCart: () => Promise< ResponseCart >,
+	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartAction ) => void,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): void {
@@ -48,7 +48,7 @@ export default function useInitializeCartFromServer(
 		isInitialized.current = true;
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
 
-		getServerCart()
+		getCart()
 			.then( ( response ) => {
 				if ( productsToAdd?.length || couponToAdd ) {
 					debug(
@@ -72,7 +72,7 @@ export default function useInitializeCartFromServer(
 					if ( couponToAdd ) {
 						responseCart = addCouponToResponseCart( responseCart, couponToAdd );
 					}
-					return setServerCart( convertResponseCartToRequestCart( responseCart ) );
+					return setCart( convertResponseCartToRequestCart( responseCart ) );
 				}
 				return response;
 			} )
@@ -102,9 +102,9 @@ export default function useInitializeCartFromServer(
 		canInitializeCart,
 		hookDispatch,
 		onEvent,
-		getServerCart,
+		getCart,
 		productsToAdd,
 		couponToAdd,
-		setServerCart,
+		setCart,
 	] );
 }
