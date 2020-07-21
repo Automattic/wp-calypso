@@ -37,7 +37,6 @@
 		"editor-site-launch": "check-npm-client && calypso-build --source='editor-site-launch'",
 		"dev:editor-site-launch": "check-npm-client && yarn run editor-site-launch",
 		"build:editor-site-launch": "check-npm-client && NODE_ENV=production yarn run editor-site-launch",
-		"prenewspack-blocks": "npm run sync:newspack-blocks -- --nodemodules",
 		"newspack-blocks": "check-npm-client && npm-run-all --parallel newspack-blocks-*",
 		"newspack-blog-posts-block-editor": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-editor'",
 		"newspack-blog-posts-block-view": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-view'",
