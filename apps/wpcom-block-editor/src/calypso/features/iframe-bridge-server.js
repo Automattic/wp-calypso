@@ -744,96 +744,6 @@ function getGutenboardingStatus( calypsoPort ) {
 }
 
 /**
- * Hooks the nav sidebar to change some of its button labels and behaviour.
- *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function getNavSidebarLabels( calypsoPort ) {
-	let createPostLabels = null;
-	let listHeadings = null;
-
-	const { port1, port2 } = new MessageChannel();
-	calypsoPort.postMessage(
-		{
-			action: 'getNavSidebarLabels',
-			payload: {},
-		},
-		[ port2 ]
-	);
-	port1.onmessage = ( { data } ) => {
-		createPostLabels = data.createPostLabels;
-		listHeadings = data.listHeadings;
-	};
-
-	addFilter(
-		'a8c.WpcomBlockEditorNavSidebar.createPostLabel',
-		'wpcom-block-editor/getNavSidebarLabels',
-		( label, postType ) => ( createPostLabels && createPostLabels[ postType ] ) || label
-	);
-
-	addFilter(
-		'a8c.WpcomBlockEditorNavSidebar.listHeading',
-		'wpcom-block-editor/getNavSidebarLabels',
-		( label, postType ) => ( listHeadings && listHeadings[ postType ] ) || label
-	);
-}
-
-/**
- * Retrieves info to allow the bridge to build calypso urls. Hook parts of
- * the editor that use this info.
- *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function getCalypsoUrlInfo( calypsoPort ) {
-	let origin = null;
-	let siteSlug = null;
-
-	const { port1, port2 } = new MessageChannel();
-	calypsoPort.postMessage(
-		{
-			action: 'getCalypsoUrlInfo',
-			payload: {},
-		},
-		[ port2 ]
-	);
-	port1.onmessage = ( { data } ) => {
-		origin = data.origin;
-		siteSlug = data.siteSlug;
-	};
-
-	addFilter(
-		'a8c.WpcomBlockEditorNavSidebar.createPostUrl',
-		'wpcom-block-editor/getSiteSlug',
-		( url, postType ) => {
-			if ( origin && siteSlug && ( postType === 'page' || postType === 'post' ) ) {
-				return `${ origin }/block-editor/${ postType }/${ siteSlug }`;
-			}
-
-			return url;
-		}
-	);
-
-	addFilter(
-		'a8c.WpcomBlockEditorNavSidebar.editPostUrl',
-		'wpcom-block-editor/getSiteSlug',
-		( url, postId, postType ) => {
-			if ( origin && siteSlug && ( postType === 'page' || postType === 'post' ) ) {
-				return `${ origin }/block-editor/${ postType }/${ siteSlug }/${ postId }`;
-			}
-
-			return url;
-		}
-	);
-
-	// All links should open outside the iframe
-	addFilter(
-		'a8c.WpcomBlockEditorNavSidebar.linkTarget',
-		'wpcom-block-editor/getSiteSlug',
-		() => '_parent'
-	);
-}
-
-/**
  * Passes uncaught errors in window.onerror to Calypso for logging.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
@@ -964,10 +874,6 @@ function initPort( message ) {
 		getCloseButtonUrl( calypsoPort );
 
 		getGutenboardingStatus( calypsoPort );
-
-		getNavSidebarLabels( calypsoPort );
-
-		getCalypsoUrlInfo( calypsoPort );
 
 		handleUncaughtErrors( calypsoPort );
 
