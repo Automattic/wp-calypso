@@ -13,10 +13,12 @@ import ThankYou, { ThankYouCtaType } from './thank-you';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const ThankYouCta: ThankYouCtaType = ( { dismissUrl, recordThankYouClick } ) => {
+const ThankYouCta: ThankYouCtaType = ( { siteAdminUrl, recordThankYouClick } ) => {
 	const translate = useTranslate();
+	const jetpackDashboard = siteAdminUrl + 'admin.php?page=jetpack#/dashboard';
+
 	return (
-		<Button primary href={ dismissUrl } onClick={ () => recordThankYouClick( 'anti-spam' ) }>
+		<Button primary href={ jetpackDashboard } onClick={ () => recordThankYouClick( 'anti-spam' ) }>
 			{ translate( 'Go back to your site' ) }
 		</Button>
 	);
@@ -41,11 +43,7 @@ const AntiSpamProductThankYou = ( { installProgress } ): ReactElement => {
 					) }
 				</p>
 				{ ! isInstalled && (
-					<ProgressBar
-						isPulsing={ ! isInstalled }
-						total={ 100 }
-						value={ Math.max( installProgress, 10 ) }
-					/>
+					<ProgressBar isPulsing={ true } total={ 100 } value={ Math.max( installProgress, 10 ) } />
 				) }
 			</>
 		</ThankYou>
