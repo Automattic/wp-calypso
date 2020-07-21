@@ -5,6 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { endsWith, get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
+/* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 /**
