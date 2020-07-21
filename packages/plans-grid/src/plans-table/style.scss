@@ -199,7 +199,10 @@ ul.plan-item__feature-item-group {
 	text-align: right;
 	position: relative;
 	top: -4px;
-	right: -8px;
+
+	@include break-medium {
+		right: -8px;
+	}
 }
 
 .plan-item.is-open .plan-item__dropdown-chevron {
