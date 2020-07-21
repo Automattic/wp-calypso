@@ -94,7 +94,7 @@ function P2LoginSignup( {
 							page( getLoginLink( { flowName, locale } ) );
 						} }
 					>
-						Log in with WordPress.com
+						{ translate( 'Log in with WordPress.com' ) }
 					</Button>
 					<Button
 						onClick={ () => {
@@ -105,7 +105,7 @@ function P2LoginSignup( {
 							goToNextStep();
 						} }
 					>
-						Sign up to WordPress.com
+						{ translate( 'Sign up to WordPress.com' ) }
 					</Button>
 				</div>
 			</div>
