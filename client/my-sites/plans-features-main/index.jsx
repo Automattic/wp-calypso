@@ -253,7 +253,6 @@ export class PlansFeaturesMain extends Component {
 		} else if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
 			];
