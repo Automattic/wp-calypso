@@ -102,7 +102,7 @@ class ListAll extends Component {
 	}
 
 	renderDomainItem( domain, index ) {
-		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
+		const { currentRoute, domainsDetails, purchases, sites, requestingSiteDomains } = this.props;
 		const domainDetails = this.findDomainDetails( domainsDetails, domain );
 
 		return (
@@ -122,6 +122,7 @@ class ListAll extends Component {
 						! domainDetails && ( requestingSiteDomains[ domain?.blogId ] ?? false )
 					}
 					onClick={ this.handleDomainItemClick }
+					purchase={ purchases[ domainDetails?.subscriptionId ] }
 				/>
 			</React.Fragment>
 		);
