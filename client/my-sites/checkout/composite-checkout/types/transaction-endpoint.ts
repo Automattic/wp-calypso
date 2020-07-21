@@ -14,7 +14,7 @@ import type {
 import type { CartItemExtra } from 'lib/cart-values/types';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
-const debug = debugFactory( 'calypso:transaction-endpoint' );
+const debug = debugFactory( 'calypso:composite-checkout:transaction-endpoint' );
 
 export type WPCOMTransactionEndpoint = (
 	_: WPCOMTransactionEndpointRequestPayload

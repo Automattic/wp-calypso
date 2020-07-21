@@ -733,6 +733,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_SCAN_DAILY,
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_ANTI_SPAM,
+			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -800,6 +802,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_SCAN_DAILY,
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_ANTI_SPAM,
+			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -848,6 +852,8 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_ANTI_SPAM,
+			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -895,6 +901,8 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_ANTI_SPAM,
+			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -963,6 +971,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 			constants.FEATURE_JETPACK_SCAN_DAILY,
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_ANTI_SPAM,
+			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -1032,6 +1042,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_GOOGLE_MY_BUSINESS,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+			constants.FEATURE_JETPACK_ANTI_SPAM,
+			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,

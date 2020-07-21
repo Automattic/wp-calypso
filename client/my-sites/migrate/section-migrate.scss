@@ -234,7 +234,7 @@
 
 .migrate__section-header {
 	.formatted-header__title {
-		font-size: 24px;
+		font-size: $font-title-medium;
 		@include breakpoint-deprecated('>660px') {
 			font-size: 32px;
 		}

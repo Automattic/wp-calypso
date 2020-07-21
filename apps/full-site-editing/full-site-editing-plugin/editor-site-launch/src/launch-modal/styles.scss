@@ -1,3 +1,7 @@
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/z-index';
+
 .nux-launch-modal-overlay {
 	&.components-modal__screen-overlay {
 		background: none;
@@ -22,10 +26,45 @@
 	}
 
 	.components-modal__header {
-		margin: 0;
+		display: none;
 	}
 
 	.components-modal__content {
 		padding: 0;
+	}
+}
+
+// This mimics WP's modal header.
+.nux-launch-modal-header {
+	position: sticky;
+	top: 0;
+	z-index: z-index( '.components-modal__header' );
+	height: $header-height;
+	border-bottom: 1px solid var( --studio-gray-5 );
+	padding: 24px;
+	margin: 0 -24px 24px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	background: var( --studio-white );
+}
+
+.nux-launch-modal-header__wp-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60px;
+	height: 60px;
+}
+
+.nux-launch-modal-header__close-button.components-button.is-link {
+	width: 60px;
+	height: 60px;
+	justify-content: center;
+	color: var( --studio-gray-50 );
+
+	&:hover {
+		color: var( --studio-gray-40 );
 	}
 }

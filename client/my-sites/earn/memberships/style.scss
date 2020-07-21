@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .memberships__module-header {
 	background: var( --color-surface );
 	height: 40px;
@@ -18,44 +21,80 @@
 }
 
 .memberships__onboarding-wrapper {
-	flex-direction: row;
 	display: flex;
-	padding-top: 30px;
+	flex-direction: row;
+	@include break-medium {
+		padding: 8px;
+	}
 }
 
 .memberships__onboarding-column-info {
-	flex: 1;
-	padding-left: 10px;
-	padding-right: 10px;
+	@include break-medium {
+		width: 66%;
+	}
 }
 .memberships__onboarding-column-image {
 	display: none;
-	@include breakpoint-deprecated( '>800px' ) {
+	@include break-medium {
+		flex: 2;
 		display: block;
-		flex: 1;
-		padding-left: 10px;
-		padding-right: 10px;
+		text-align: center;
+		padding-top: 8px;
 	}
 }
 
 .memberships__onboarding-header {
-	font-size: 24px;
-	margin-bottom: 24px;
+	@extend .wp-brand-font;
+	font-size: $font-title-medium;
+	/* identical to box height */
+	margin-bottom: 8px;
+
+	@include break-medium {
+		font-size: $font-title-large;
+	}
 }
 .memberships__onboarding-paragraph {
 	font-size: $font-body;
-	margin-bottom: 24px;
-	color: var( --color-text-subtle );
+	color: var( --color-text );
+
+	.button {
+		margin-top: 16px;
+	}
+}
+.memberships__onboarding-paragraph-disclaimer {
+	font-size: $font-body-small;
 }
 .memberships__onboarding-benefits {
 	color: var( --color-text-subtle );
-	margin-top: 24px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	border-top: 1px solid var( --color-neutral-5 );
+	padding-top: 8px;
+
+	@include break-medium {
+		padding-top: 16px;
+		margin: 0 8px;
+	}
 }
 .memberships__onboarding-benefits > div {
-	line-height: 24px;
+	margin: 16px 0;
+	flex-basis: 100%;
+	color: var( --color-text-subtle );
+
+	@include break-small {
+		flex-basis: 48%;
+	}
+
+	@include break-medium {
+		margin: 16px 0;
+	}
 }
-.memberships__onboarding-benefits > div > svg {
-	margin-right: 12px;
+.memberships__onboarding-benefits > div > h3 {
+	@extend .wp-brand-font;
+	font-size: $font-title-small;
+	line-height: 27px;
+	color: var( --color-text );
 }
 
 .memberships__earnings-breakdown-list {
@@ -106,7 +145,7 @@
 .memberships__earnings-breakdown-value {
 	width: 100%;
 	display: block;
-	font-size: 25px;
+	font-size: $font-title-medium;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		width: auto;

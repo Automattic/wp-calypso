@@ -30,7 +30,7 @@ import {
 } from '../types';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
-const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
+const debug = debugFactory( 'calypso:composite-checkout:shopping-cart-manager' );
 
 /**
  *     * responseCart
@@ -470,7 +470,7 @@ export function useShoppingCart(
 				payload: requestCartProductToAdd,
 			} );
 		},
-		[]
+		[ onEvent ]
 	);
 
 	const removeItem: ( arg0: string ) => void = useCallback( ( uuidToRemove ) => {
