@@ -404,18 +404,27 @@ class DomainItem extends PureComponent {
 		return null;
 	}
 
-	busyMessage() {
-		if ( this.props.isBusy && this.props.busyMessage ) {
-			return <div className="domain-item__busy-message">{ this.props.busyMessage }</div>;
+	busyMessage( message ) {
+		if ( message ) {
+			return <div className="domain-item__busy-message">{ message }</div>;
 		}
 	}
 
 	renderOverlay() {
-		const { enableSelection, isBusy, shouldUpgradeToMakePrimary } = this.props;
-		if ( isBusy ) {
+		const {
+			enableSelection,
+			isBusy,
+			busyMessage,
+			shouldUpgradeToMakePrimary,
+			translate,
+		} = this.props;
+
+		if ( isBusy || this.state.isTogglingAutoRenew ) {
 			return (
 				<div className="domain-item__overlay">
-					{ this.busyMessage() }
+					{ this.busyMessage(
+						this.state.isTogglingAutoRenew ? translate( 'Toggling auto-renew' ) : busyMessage
+					) }
 					<Spinner className="domain-item__spinner" size={ 20 } />
 				</div>
 			);
@@ -442,13 +451,13 @@ class DomainItem extends PureComponent {
 					planName={ site.plan.product_name_short }
 					purchase={ purchase }
 					siteDomain={ site.slug }
-					onClose={ () => {} }
+					onClose={ this.closeDialogs }
 					onConfirm={ this.toggleAutoRenew }
 				/>
 				<AutoRenewPaymentMethodDialog
 					isVisible={ this.state.showPaymentMethodDialog }
 					purchase={ purchase }
-					onClose={ () => {} }
+					onClose={ this.closeDialogs }
 					onAddClick={ this.goToUpdatePaymentMethod }
 				/>
 			</>
@@ -465,29 +474,32 @@ class DomainItem extends PureComponent {
 		} );
 
 		return (
-			<CompactCard className={ rowClasses } onClick={ this.handleClick }>
-				{ showCheckbox && (
-					<FormCheckbox
-						className="domain-item__checkbox"
-						onChange={ this.onToggle }
-						onClick={ this.stopPropagation }
-					/>
-				) }
-				{ enableSelection && (
-					<FormRadio className="domain-item__checkbox" onClick={ this.onSelect } />
-				) }
-				<div className="list__domain-link">
-					<div className="domain-item__status">
-						<div className={ domainTitleClass }>{ domain.domain }</div>
-						{ listStatusText && (
-							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
-						) }
+			<>
+				<CompactCard className={ rowClasses } onClick={ this.handleClick }>
+					{ showCheckbox && (
+						<FormCheckbox
+							className="domain-item__checkbox"
+							onChange={ this.onToggle }
+							onClick={ this.stopPropagation }
+						/>
+					) }
+					{ enableSelection && (
+						<FormRadio className="domain-item__checkbox" onClick={ this.onSelect } />
+					) }
+					<div className="list__domain-link">
+						<div className="domain-item__status">
+							<div className={ domainTitleClass }>{ domain.domain }</div>
+							{ listStatusText && (
+								<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
+							) }
+						</div>
+						{ this.renderSiteMeta() }
 					</div>
-					{ this.renderSiteMeta() }
-				</div>
-				{ this.renderActionItems() }
-				{ this.renderOverlay() }
-			</CompactCard>
+					{ this.renderActionItems() }
+					{ this.renderOverlay() }
+				</CompactCard>
+				{ this.canRenewDomain() && this.renderDialogs() }
+			</>
 		);
 	}
 }
