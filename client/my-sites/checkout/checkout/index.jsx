@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -43,6 +42,7 @@ import {
 	isJetpackScanSlug,
 	isJetpackBackupSlug,
 	isJetpackCloudProductSlug,
+	isJetpackAntiSpamSlug,
 } from 'lib/products-values';
 import {
 	JETPACK_PRODUCTS_LIST,
@@ -104,7 +104,7 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'signup/utils';
-import { isExternal, addQueryArgs } from 'lib/url';
+import { isExternal, addQueryArgs, format as formatUrl, getUrlParts as parseUrl } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { abtest } from 'lib/abtest';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -422,13 +422,21 @@ export class Checkout extends React.Component {
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
 			const isJetpackProduct = product && isJetpackProductSlug( product );
+			const isJetpackAntiSpam = product && isJetpackAntiSpamSlug( product );
+
+			let installQuery = '&install=all';
+
+			if ( isJetpackAntiSpam ) {
+				installQuery = '&install=akismet';
+			}
+
 			// If we just purchased a Jetpack product, redirect to the my plans page.
 			if ( isJetpackNotAtomic && isJetpackProduct ) {
-				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }${ installQuery }`;
 			}
 			// If we just purchased a Jetpack plan (not a Jetpack product), redirect to the Jetpack onboarding plugin install flow.
 			if ( isJetpackNotAtomic ) {
-				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you${ installQuery }`;
 			}
 
 			return selectedFeature && isValidFeatureKey( selectedFeature )
