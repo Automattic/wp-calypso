@@ -3,7 +3,6 @@
  */
 import { useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
 import debugFactory from 'debug';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -404,7 +403,7 @@ export function useShoppingCart(
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
 	setCart: ( arg0: string, arg1: RequestCart ) => Promise< ResponseCart >,
-	getCart: ( arg0: string, arg1: ResponseCart | null ) => Promise< ResponseCart >,
+	getCart: ( arg0: string ) => Promise< ResponseCart >,
 	showAddCouponSuccessMessage: ( arg0: string ) => void,
 	cartRawResponse: ResponseCart,
 	onEvent?: ( arg0: ReactStandardAction ) => void
@@ -415,13 +414,7 @@ export function useShoppingCart(
 		setCart,
 	] );
 
-	const cartResponseConverted = isEmpty( cartRawResponse )
-		? null
-		: convertRawResponseCartToResponseCart( cartRawResponse );
-	const getServerCart = useCallback( () => getCart( cartKeyString, cartResponseConverted ), [
-		cartKeyString,
-		getCart,
-	] );
+	const getServerCart = useCallback( () => getCart( cartKeyString ), [ cartKeyString, getCart ] );
 
 	const [ hookState, hookDispatch ] = useReducer(
 		shoppingCartHookReducer,
@@ -441,6 +434,7 @@ export function useShoppingCart(
 		canInitializeCart,
 		productsToAdd,
 		couponToAdd,
+		cartRawResponse,
 		getServerCart,
 		setServerCart,
 		hookDispatch,
@@ -528,6 +522,7 @@ function useInitializeCartFromServer(
 	canInitializeCart: boolean,
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
+	cartRawResponse: ResponseCart | null,
 	getServerCart: () => Promise< ResponseCart >,
 	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartHookAction ) => void,
@@ -551,7 +546,8 @@ function useInitializeCartFromServer(
 		isInitialized.current = true;
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
 
-		getServerCart()
+		const cartPromise = cartRawResponse ? Promise.resolve( cartRawResponse ) : getServerCart();
+		cartPromise
 			.then( ( response ) => {
 				if ( productsToAdd?.length || couponToAdd ) {
 					debug(
