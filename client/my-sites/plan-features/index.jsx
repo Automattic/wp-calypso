@@ -611,7 +611,7 @@ export class PlanFeatures extends Component {
 				key={ index }
 				description={ description }
 				hideInfoPopover={ feature.hideInfoPopover }
-				hideGridicon={ this.props.withScroll }
+				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
 			>
 				<span className="plan-features__item-info">
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>

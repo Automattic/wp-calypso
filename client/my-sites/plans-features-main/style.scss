@@ -100,3 +100,44 @@
 	line-height: 1.35;
 	color: var( --color-text-subtle );
 }
+
+body.is-section-signup.is-white-signup .plans-features-main {
+	.plans-features-main__banner-content {
+		box-shadow: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.is-free-plan {
+			padding: 12px 32px;
+			margin-left: 12px;
+			border-radius: 4px;
+			font-weight: 400;
+		}
+	}
+
+	.plan-features__header {
+		border-top: 1px solid #e2e4e7;
+		border-left: 1px solid #e2e4e7;
+		border-right: 1px solid #e2e4e7;
+		border-bottom: none;
+	}
+
+	.plan-features__table-item {
+		border-left: 1px solid #e2e4e7;
+		border-right: 1px solid #e2e4e7;
+	}
+
+	.plan-features__pricing {
+		border-top: none;
+	}
+
+	.plan-features__row {
+		border-top: none;
+		border-bottom: none;
+	}
+
+	.plan-features__item-checkmark {
+		fill: #00a32a;
+	}
+}
