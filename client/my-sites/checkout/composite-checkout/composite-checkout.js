@@ -76,7 +76,6 @@ import {
 	hasPlan,
 } from 'lib/cart-values/cart-items';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryStoredCards from 'components/data/query-stored-cards';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryPlans from 'components/data/query-plans';
 import QueryProducts from 'components/data/query-products-list';
@@ -576,8 +575,6 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			{ ! isLoggedOutCart && <QueryStoredCards /> }
-
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 			<CartProvider cart={ responseCart }>
 				<CheckoutProvider
