@@ -133,7 +133,6 @@ export default function CompositeCheckout( {
 	const hideNudge = isComingFromUpsell;
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
-		createAnalyticsEventHandler,
 		reduxDispatch,
 	] );
 
