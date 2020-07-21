@@ -141,7 +141,7 @@ jobs:
       run: echo "No changes found to check!"
       if: ${{ steps.changes.outputs.all == '' }}
 
-  phpcs:
+  newspack-blocks:
     name: Check newspack-blocks sync
     needs: build
     runs-on: ubuntu-latest
