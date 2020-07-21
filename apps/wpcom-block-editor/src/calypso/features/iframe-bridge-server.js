@@ -22,7 +22,7 @@ import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editin
 /**
  * Internal dependencies
  */
-import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
+import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -877,12 +877,6 @@ function handleUncaughtErrors( calypsoPort ) {
 async function handleEditorLoaded( calypsoPort ) {
 	await isEditorReadyWithBlocks();
 
-	const postType = select( 'core/editor' ).getCurrentPostType();
-	const parentPostId = getQueryArg( window.location.href, 'parent_post' );
-	if ( 'page' === postType && parentPostId && parentPostId > 0 ) {
-		dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
-	}
-
 	const isNew = select( 'core/editor' ).isCleanNewPost();
 	const blocks = select( 'core/block-editor' ).getBlocks();
 
@@ -896,6 +890,20 @@ async function handleEditorLoaded( calypsoPort ) {
 			},
 		} );
 	} );
+
+	preselectParentPage();
+}
+
+async function preselectParentPage() {
+	const postType = select( 'core/editor' ).getCurrentPostType();
+	const parentPostId = parseInt( getQueryArg( window.location.href, 'parent_post' ) );
+	if ( 'page' === postType && parentPostId && parentPostId > 0 ) {
+		const pages = await getPages();
+		const isValidParentId = pages.some( ( page ) => page.id === parentPostId );
+		if ( isValidParentId ) {
+			dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
+		}
+	}
 }
 
 function initPort( message ) {
