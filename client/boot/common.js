@@ -52,7 +52,7 @@ import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
-import { requestUnseenStatus } from 'state/ui/reader/seen-posts/actions';
+import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
 
