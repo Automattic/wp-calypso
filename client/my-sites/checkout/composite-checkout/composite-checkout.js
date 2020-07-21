@@ -92,6 +92,7 @@ import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
 import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './wpcom/lib/translate-cart';
 import useShoppingCartManager from './wpcom/hooks/use-shopping-cart-manager';
+import useShowAddCouponSuccessMessage from './wpcom/hooks/use-show-add-coupon-success-message';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -207,7 +208,6 @@ export default function CompositeCheckout( {
 		couponToAdd: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
 		getCart: getCart || wpcomGetCart,
-		showAddCouponSuccessMessage,
 		onEvent: recordEvent,
 	} );
 
@@ -220,6 +220,12 @@ export default function CompositeCheckout( {
 		subtotal,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
+
+	useShowAddCouponSuccessMessage(
+		couponStatus === 'applied',
+		couponItem?.wpcom_meta?.couponCode ?? '',
+		showAddCouponSuccessMessage
+	);
 
 	const errors = responseCart.messages?.errors ?? [];
 
