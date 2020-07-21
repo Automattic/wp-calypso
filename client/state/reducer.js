@@ -48,7 +48,6 @@ import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
-import productsList from './products-list/reducer';
 import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
@@ -105,7 +104,6 @@ const reducers = {
 	pageTemplates,
 	plugins,
 	postFormats,
-	productsList,
 	receipts,
 	rewind,
 	selectedEditor,
