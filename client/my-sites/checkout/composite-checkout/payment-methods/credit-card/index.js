@@ -43,6 +43,15 @@ export function createCreditCardPaymentMethodStore() {
 		setFieldValue( key, value ) {
 			return { type: 'FIELD_VALUE_SET', payload: { key, value } };
 		},
+		setFieldError( key, message ) {
+			return { type: 'FIELD_ERROR_SET', payload: { key, message } };
+		},
+		touchAllFields() {
+			return { type: 'TOUCH_ALL_FIELDS' };
+		},
+		setShowContactFields( payload ) {
+			return { type: 'SHOW_CONTACT_FIELDS_SET', payload };
+		},
 	};
 
 	const selectors = {
@@ -63,6 +72,12 @@ export function createCreditCardPaymentMethodStore() {
 		getFields( state ) {
 			return state.fields;
 		},
+		getShowContactFields( state ) {
+			return state.showContactFields || false;
+		},
+		getPaymentPartner( state ) {
+			return state.paymentPartner;
+		},
 	};
 
 	function fieldReducer( state = {}, action ) {
@@ -70,8 +85,26 @@ export function createCreditCardPaymentMethodStore() {
 			case 'FIELD_VALUE_SET':
 				return {
 					...state,
-					[ action.payload.key ]: { value: action.payload.value, isTouched: true },
+					[ action.payload.key ]: { value: action.payload.value, isTouched: true, errors: [] },
 				};
+			case 'FIELD_ERROR_SET': {
+				return {
+					...state,
+					[ action.payload.key ]: {
+						...state[ action.payload.key ],
+						errors: [ action.payload.message ],
+					},
+				};
+			}
+			case 'TOUCH_ALL_FIELDS': {
+				return Object.entries( state ).reduce( ( obj, [ key, value ] ) => {
+					obj[ key ] = {
+						value: value.value,
+						isTouched: true,
+					};
+					return obj;
+				}, {} );
+			}
 			default:
 				return state;
 		}
@@ -120,13 +153,25 @@ export function createCreditCardPaymentMethodStore() {
 		}
 	}
 
+	function showContactFieldsReducer( state = null, action ) {
+		switch ( action?.type ) {
+			case 'SHOW_CONTACT_FIELDS_SET':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	function shouldUseEbanx( state = null ) {
-		// TODO
+		if ( state?.fields?.countryCode?.value === 'BR' ) {
+			return true;
+		}
 		return false;
 	}
 
 	function shouldUseDlocal( state = null ) {
 		// TODO
+		debug( 'dlocal decider not implemented', state );
 		return false;
 	}
 
@@ -154,6 +199,7 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataComplete: cardDataCompleteReducer(),
 				cardholderName: cardholderNameReducer(),
 				brand: brandReducer(),
+				showContactFields: showContactFieldsReducer(),
 			},
 			action
 		) {
@@ -163,6 +209,7 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 				cardholderName: cardholderNameReducer( state.cardholderName, action ),
 				brand: brandReducer( state.brand, action ),
+				showContactFields: showContactFieldsReducer( state.showContactFields, action ),
 			} );
 		},
 		actions,
