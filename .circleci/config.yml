@@ -275,8 +275,7 @@ jobs:
   translate:
     <<: *defaults
     steps:
-      - checkout
-      - run: *setup-results-and-artifacts
+      - prepare
       - run:
           name: Extract strings
           working_directory: wp-babel-makepot
@@ -872,7 +871,9 @@ workflows:
       - build-wpcom-block-editor:
           requires:
             - setup
-      - translate
+      - translate:
+          requires:
+            - setup
       - lint:
           requires:
             - setup
