@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
+import { find, findIndex, get, identity, isEmpty, keyBy, noop, times } from 'lodash';
 import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
@@ -52,6 +52,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
+import { getSitePurchases } from 'state/purchases/selectors';
 
 /**
  * Style dependencies
@@ -520,6 +521,7 @@ export class List extends React.Component {
 			renderAllSites,
 			isDomainOnly,
 			hasSingleSite,
+			purchases,
 		} = this.props;
 
 		const domains =
@@ -547,6 +549,7 @@ export class List extends React.Component {
 				onSelect={ this.handleUpdatePrimaryDomain }
 				onUpgradeClick={ this.goToPlans }
 				shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
+				purchase={ purchases[ domain.subscriptionId ] }
 			/>
 		) );
 
@@ -667,6 +670,7 @@ export default connect(
 		const selectedSite = get( ownProps, 'selectedSite', null );
 		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
 		const siteCount = get( getSites( state ), 'length', 0 );
+		const purchases = keyBy( getSitePurchases( state, siteId ) || [], 'id' );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
@@ -679,6 +683,7 @@ export default connect(
 			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
+			purchases,
 		};
 	},
 	( dispatch ) => {

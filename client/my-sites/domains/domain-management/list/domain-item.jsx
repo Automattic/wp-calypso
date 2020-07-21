@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
 import Gridicon from 'components/gridicon';
@@ -20,12 +21,20 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import { withoutHttp } from 'lib/url';
 import { type as domainTypes } from 'lib/domains/constants';
-import { handleRenewNowClick } from 'lib/purchases';
+import { isRechargeable, handleRenewNowClick } from 'lib/purchases';
 import { resolveDomainStatus } from 'lib/domains';
 import InfoPopover from 'components/info-popover';
 import { emailManagement } from 'my-sites/email/paths';
 import Spinner from 'components/spinner';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import AutoRenewDisablingDialog from 'me/purchases/manage-purchase/auto-renew-toggle/auto-renew-disabling-dialog';
+import AutoRenewPaymentMethodDialog from 'me/purchases/manage-purchase/auto-renew-toggle/auto-renew-payment-method-dialog';
+import { getEditCardDetailsPath } from 'me/purchases/utils';
+import { disableAutoRenew, enableAutoRenew } from 'lib/purchases/actions';
+import { fetchUserPurchases } from 'state/purchases/actions';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { createNotice } from 'state/notices/actions';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -43,11 +52,13 @@ class DomainItem extends PureComponent {
 		onSelect: PropTypes.func,
 		onToggle: PropTypes.func,
 		onUpgradeClick: PropTypes.func,
-		shouldUpgradeToMakePrimary: PropTypes.boolean,
+		shouldUpgradeToMakePrimary: PropTypes.bool,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
 		enableSelection: PropTypes.bool,
+		fetchUserPurchases: PropTypes.func,
+		fetchSiteDomains: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -57,6 +68,12 @@ class DomainItem extends PureComponent {
 		onToggle: null,
 		isLoadingDomainDetails: false,
 		isBusy: false,
+	};
+
+	state = {
+		showAutoRenewDisablingDialog: false,
+		showPaymentMethodDialog: false,
+		isTogglingAutoRenew: false,
 	};
 
 	handleClick = ( e ) => {
@@ -107,6 +124,69 @@ class DomainItem extends PureComponent {
 		const { domainDetails, selectionIndex, onSelect } = this.props;
 		event.stopPropagation();
 		onSelect( selectionIndex, domainDetails );
+	};
+
+	closeDialogs = () => {
+		this.setState( {
+			showAutoRenewDisablingDialog: false,
+			showPaymentMethodDialog: false,
+		} );
+	};
+
+	onToggleAutoRenewClick = ( event ) => {
+		const { domainDetails } = this.props;
+		event.stopPropagation();
+
+		if ( domainDetails.isAutoRenewing ) {
+			this.setState( { showAutoRenewDisablingDialog: true } );
+		} else {
+			this.toggleAutoRenew();
+		}
+	};
+
+	toggleAutoRenew = () => {
+		const { currentUserId, domainDetails, purchase, site, translate } = this.props;
+		const isEnabling = ! domainDetails.isAutoRenewing;
+
+		if ( isEnabling && ! isRechargeable( purchase ) ) {
+			this.setState( { showPaymentMethodDialog: true } );
+		} else {
+			this.setState( { isTogglingAutoRenew: true } );
+		}
+
+		const updateAutoRenew = isEnabling ? enableAutoRenew : disableAutoRenew;
+
+		updateAutoRenew( purchase.id, ( success ) => {
+			this.setState( { isTogglingAutoRenew: false } );
+
+			if ( success ) {
+				this.props.fetchUserPurchases( currentUserId );
+				this.props.fetchSiteDomains( site.ID );
+
+				if ( ! isEnabling ) {
+					this.props.createNotice(
+						'is-success',
+						translate( 'Auto-renewal has been turned off successfully.' ),
+						{ duration: 4000 }
+					);
+				}
+
+				return;
+			}
+
+			this.props.createNotice(
+				'is-error',
+				isEnabling
+					? translate( "We've failed to enable auto-renewal for you. Please try again." )
+					: translate( "We've failed to disable auto-renewal for you. Please try again." )
+			);
+		} );
+	};
+
+	goToUpdatePaymentMethod = () => {
+		const { site, purchase } = this.props;
+		this.closeDialogs();
+		page( getEditCardDetailsPath( site.slug, purchase ) );
 	};
 
 	canRenewDomain() {
@@ -185,7 +265,7 @@ class DomainItem extends PureComponent {
 	}
 
 	renderOptionsButton() {
-		const { disabled, isBusy, translate } = this.props;
+		const { disabled, domainDetails, isBusy, translate } = this.props;
 
 		return (
 			<div className="list__domain-options">
@@ -202,6 +282,13 @@ class DomainItem extends PureComponent {
 					{ this.canRenewDomain() && (
 						<PopoverMenuItem icon="refresh" onClick={ this.renewDomain }>
 							{ translate( 'Renew now' ) }
+						</PopoverMenuItem>
+					) }
+					{ this.canRenewDomain() && (
+						<PopoverMenuItem icon="sync" onClick={ this.onToggleAutoRenewClick }>
+							{ domainDetails.isAutoRenewing
+								? translate( 'Turn off auto-renew' )
+								: translate( 'Turn on auto-renew' ) }
 						</PopoverMenuItem>
 					) }
 					<PopoverMenuItem icon="pencil">{ translate( 'Edit settings' ) }</PopoverMenuItem>
@@ -346,6 +433,28 @@ class DomainItem extends PureComponent {
 		return null;
 	}
 
+	renderDialogs() {
+		const { site, purchase } = this.props;
+		return (
+			<>
+				<AutoRenewDisablingDialog
+					isVisible={ this.state.showAutoRenewDisablingDialog }
+					planName={ site.plan.product_name_short }
+					purchase={ purchase }
+					siteDomain={ site.slug }
+					onClose={ () => {} }
+					onConfirm={ this.toggleAutoRenew }
+				/>
+				<AutoRenewPaymentMethodDialog
+					isVisible={ this.state.showPaymentMethodDialog }
+					purchase={ purchase }
+					onClose={ () => {} }
+					onAddClick={ this.goToUpdatePaymentMethod }
+				/>
+			</>
+		);
+	}
+
 	render() {
 		const { domain, domainDetails, isManagingAllSites, showCheckbox, enableSelection } = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
@@ -383,4 +492,9 @@ class DomainItem extends PureComponent {
 	}
 }
 
-export default localize( DomainItem );
+export default connect(
+	( state ) => {
+		return { currentUserId: getCurrentUserId( state ) };
+	},
+	{ createNotice, fetchSiteDomains, fetchUserPurchases }
+)( localize( DomainItem ) );
