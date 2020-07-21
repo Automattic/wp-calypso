@@ -142,6 +142,7 @@ export default function CompositeCheckout( {
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
 		createAnalyticsEventHandler,
+		reduxDispatch,
 	] );
 
 	const showErrorMessage = useCallback(
