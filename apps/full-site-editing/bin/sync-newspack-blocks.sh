@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+EXIT_CODE=0
+
 # sed -i behaves differently between macos and linux platforms.
 # See https://stackoverflow.com/a/51060063
 # To use this, do `sed "${sedi[@]}" -e $sed_expression`
@@ -129,7 +131,12 @@ echo -n "eslint --fix: "
 npx eslint . --fix > /dev/null 2>&1
 echo "done"
 echo -n "phpcbf: "
-../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || echo '!! There was an error executing phpcbf'
+../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
+
+if [ "$PHPCBF_ERRORED" = 1 ] ; then
+    echo '!! There was an error executing phpcbf'
+	EXIT_CODE=1
+fi
 
 if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json
@@ -150,3 +157,5 @@ then
 		echo
 	fi
 fi
+
+exit $EXIT_CODE
