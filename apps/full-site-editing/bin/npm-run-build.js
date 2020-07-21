@@ -4,6 +4,7 @@
 /* eslint-disable import/no-nodejs-modules */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
+/* eslint-disable no-process-exit */
 
 const runAll = require( 'npm-run-all' );
 
@@ -26,6 +27,11 @@ const runOptions = {
 	printLabel: true,
 };
 
-runAll( commands, runOptions ).then( () => {
-	console.log( 'Finished running commands!' );
-} );
+runAll( commands, runOptions )
+	.then( () => {
+		console.log( 'Finished running commands!' );
+	} )
+	.catch( () => {
+		console.log( 'The build errored.' );
+		process.exit( 1 );
+	} );
