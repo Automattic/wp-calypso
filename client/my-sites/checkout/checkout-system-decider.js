@@ -5,7 +5,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import wp from 'lib/wp';
-import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { CheckoutErrorBoundary, defaultRegistry } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import cookie from 'cookie';
 
@@ -70,7 +70,6 @@ export default function CheckoutSystemDecider( {
 		isAtomic
 	);
 	const translate = useTranslate();
-	const { setRecaptchaClientId } = useDispatch( 'wpcom' );
 
 	useEffect( () => {
 		if ( product ) {
@@ -113,10 +112,11 @@ export default function CheckoutSystemDecider( {
 					return;
 				}
 
-				setRecaptchaClientId( parseInt( result.clientId ) );
+				const { dispatch } = defaultRegistry;
+				dispatch( 'wpcom' ).setRecaptchaClientId( parseInt( result.clientId ) );
 			} );
 		}
-	} );
+	}, [ cart, cart.currency ] );
 
 	const logCheckoutError = useCallback(
 		( error ) => {
