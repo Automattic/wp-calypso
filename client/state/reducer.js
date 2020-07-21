@@ -46,7 +46,6 @@ import notificationSettings from './notification-settings/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
-import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
 import productsList from './products-list/reducer';
@@ -104,7 +103,6 @@ const reducers = {
 	notificationsUnseenCount,
 	orderTransactions,
 	pageTemplates,
-	plans,
 	plugins,
 	postFormats,
 	productsList,
