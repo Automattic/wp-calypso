@@ -48,12 +48,12 @@
 
 	.task__title {
 		@extend .wp-brand-font;
-		font-size: 28px;
+		font-size: $font-title-large;
 		line-height: 36px;
 		margin-bottom: 4px;
 
 		@include breakpoint-deprecated( '>800px' ) {
-			font-size: 32px;
+			font-size: $font-title-large;
 			line-height: 40px;
 		}
 	}

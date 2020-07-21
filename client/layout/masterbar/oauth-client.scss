@@ -234,7 +234,7 @@
 			margin-top: 0;
 
 			@include breakpoint-deprecated( '>480px' ) {
-				font-size: 32px;
+				font-size: $font-title-large;
 				margin-bottom: 65px;
 			}
 		}

@@ -21,12 +21,12 @@
 		}
 
 		h1 {
-			font-size: 28px;
+			font-size: $font-title-large;
 			height: auto;
 			line-height: 1.2;
 
 			@include breakpoint-deprecated( '>660px' ) {
-				font-size: 32px;
+				font-size: $font-title-large;
 			}
 		}
 

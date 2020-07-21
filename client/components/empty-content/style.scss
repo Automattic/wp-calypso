@@ -55,7 +55,7 @@
 	}
 
 	.empty-content__title {
-		font-size: 30px;
+		font-size: $font-title-large;
 
 		@include breakpoint-deprecated( '<660px' ) {
 			font-size: $font-title-medium;

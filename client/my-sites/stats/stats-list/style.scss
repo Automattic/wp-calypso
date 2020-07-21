@@ -649,12 +649,12 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
-		font-size: 32px;
+		font-size: $font-title-large;
 		margin-right: 10px;
 	}
 
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .stats-list__icon {
-		font-size: 32px;
+		font-size: $font-title-large;
 		line-height: 32px;
 		width: 32px;
 		height: 32px;

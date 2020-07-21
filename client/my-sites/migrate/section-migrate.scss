@@ -236,7 +236,7 @@
 	.formatted-header__title {
 		font-size: $font-title-medium;
 		@include breakpoint-deprecated('>660px') {
-			font-size: 32px;
+			font-size: $font-title-large;
 		}
 	}
 
