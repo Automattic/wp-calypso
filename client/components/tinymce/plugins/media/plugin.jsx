@@ -33,6 +33,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
 import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
 import { fetchMediaItem } from 'state/media/thunks';
+import getMediaItem from 'state/selectors/get-media-item';
 
 /**
  * Module variables
@@ -180,7 +181,7 @@ function mediaButton( editor ) {
 
 			// Let's get the media object counterpart of an image in post/page editor.
 			// This media object contains the latest changes to the media file.
-			const media = MediaStore.get( selectedSite.ID, current.media.ID );
+			const media = getMediaItem( getState(), selectedSite.ID, current.media.ID );
 
 			let mediaHasCaption = false;
 			let captionNode = null;
@@ -480,7 +481,7 @@ function mediaButton( editor ) {
 			if ( ! imageId ) {
 				return;
 			}
-			const image = MediaStore.get( siteId, imageId );
+			const image = getMediaItem( getState(), siteId, imageId );
 
 			dispatch( clearMediaItemErrors( siteId ) );
 			renderModal(
@@ -529,8 +530,9 @@ function mediaButton( editor ) {
 				return;
 			}
 
-			// Attempt to find media in Flux store
-			const media = MediaStore.get( selectedSite.ID, parsed.media.ID );
+			// Attempt to find media in Redux store
+			const media = getMediaItem( getState(), selectedSite.ID, parsed.media.ID );
+
 			if ( media && media.caption ) {
 				content = media.caption;
 			} else {
@@ -597,8 +599,9 @@ function mediaButton( editor ) {
 			parsed.media.caption = editor.dom.$( '.wp-caption-dd', caption ).text();
 		}
 
-		// Attempt to find media in Flux store
-		let media = assign( {}, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
+		// Attempt to find media in Redux store
+		let media = assign( {}, getMediaItem( getState(), selectedSite.ID, parsed.media.ID ) );
+
 		delete media.caption;
 		media = assign( {}, parsed.media, media );
 
@@ -649,7 +652,7 @@ function mediaButton( editor ) {
 		const parsed = deserialize( event.element );
 		const media = assign(
 			{ width: Infinity, height: Infinity },
-			MediaStore.get( selectedSite.ID, parsed.media.ID )
+			getMediaItem( getState(), selectedSite.ID, parsed.media.ID )
 		);
 		const currentRatio = computeRatio( parsed.media, media );
 
@@ -717,7 +720,7 @@ function mediaButton( editor ) {
 		gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
 			id = parseInt( id, 10 );
 
-			const media = MediaStore.get( selectedSite.ID, id );
+			const media = getMediaItem( getState(), selectedSite.ID, id );
 			if ( ! media ) {
 				store.dispatch( fetchMediaItem( selectedSite.ID, id ) );
 			}
@@ -777,7 +780,7 @@ function mediaButton( editor ) {
 		( event.content.match( REGEXP_IMG ) || [] ).forEach( function ( img ) {
 			const parsed = deserialize( img );
 
-			if ( ! parsed.media.ID || MediaStore.get( selectedSite.ID, parsed.media.ID ) ) {
+			if ( ! parsed.media.ID || getMediaItem( getState(), selectedSite.ID, parsed.media.ID ) ) {
 				return;
 			}
 
