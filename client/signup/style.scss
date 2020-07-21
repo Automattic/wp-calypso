@@ -443,3 +443,61 @@ body.is-section-signup.is-new-launch-flow .layout:not( .dops ):not( .is-wccom-oa
 		color: var( --color-text );
 	}
 }
+
+/**
+ * Common styles for reskinSignupFlow a/b test
+ */
+body.is-section-signup.is-white-signup .signup.is-onboarding {
+	$gray-100: #101517;
+	$gray-60: #50575e;
+	$gray-50: #646970;
+	$breakpoint-mobile: 660px;
+
+	.signup-header .wordpress-logo {
+		position: absolute;
+		left: 16px;
+		top: 12px;
+		fill: var( --color-text );
+		transform-origin: 0 0;
+	}
+
+	.flow-progress-indicator {
+		color: var( --color-text );
+		font-weight: normal;
+	}
+
+	.navigation-link.button.back {
+		svg {
+			display: none;
+		}
+
+		color: $gray-50;
+		top: 12px;
+		left: 50px;
+		text-decoration: underline;
+		font-weight: normal;
+	}
+
+	.formatted-header {
+		.formatted-header__title {
+			@include onboarding-font-recoleta;
+			color: $gray-100;
+			letter-spacing: 0.2px;
+			font-size: 42px;
+
+			@media screen and ( max-width: $breakpoint-mobile ) {
+				font-size: 26px;
+			}
+		}
+
+		.formatted-header__subtitle {
+			color: $gray-60;
+		}
+	}
+
+	button.is-primary {
+		background: #117ac9;
+		// box-shadow: unset;
+		border: 0;
+	}
+}
