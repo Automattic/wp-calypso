@@ -3,12 +3,15 @@
  */
 import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, ProgressBar } from '@automattic/components';
 import ThankYou, { ThankYouCtaType } from './thank-you';
+import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ThankYouCta: ThankYouCtaType = ( { dismissUrl, recordThankYouClick } ) => {
 	const translate = useTranslate();
@@ -19,22 +22,41 @@ const ThankYouCta: ThankYouCtaType = ( { dismissUrl, recordThankYouClick } ) => 
 	);
 };
 
-const AntiSpamProductThankYou = (): ReactElement => {
+const AntiSpamProductThankYou = ( { installProgress } ): ReactElement => {
 	const translate = useTranslate();
+	const isInstalled = installProgress === 100;
+
 	return (
 		<ThankYou
 			illustration="/calypso/images/illustrations/thankYou.svg"
 			title={ translate( 'Say goodbye to spam!' ) }
-			ThankYouCtaComponent={ ThankYouCta }
+			showHideMessage={ ! isInstalled }
+			ThankYouCtaComponent={ isInstalled && ThankYouCta }
 		>
-			<p>{ translate( "We're setting up Jetpack Anti-Spam for you right now." ) }</p>
-			<p>
-				{ translate(
-					"In no time you'll be able to enjoy more peace of mind and provide a better experience to your visitors."
+			<>
+				<p>{ translate( "We're setting up Jetpack Anti-Spam for you right now." ) }</p>
+				<p>
+					{ translate(
+						"In no time you'll be able to enjoy more peace of mind and provide a better experience to your visitors."
+					) }
+				</p>
+				{ ! isInstalled && (
+					<ProgressBar
+						isPulsing={ ! isInstalled }
+						total={ 100 }
+						value={ Math.max( installProgress, 10 ) }
+					/>
 				) }
-			</p>
+			</>
 		</ThankYou>
 	);
 };
 
-export default AntiSpamProductThankYou;
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const installProgress = siteId && getJetpackProductInstallProgress( state, siteId );
+
+	return {
+		installProgress,
+	};
+} )( AntiSpamProductThankYou );
