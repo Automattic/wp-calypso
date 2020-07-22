@@ -876,7 +876,6 @@ function handleUncaughtErrors( calypsoPort ) {
 
 async function handleEditorLoaded( calypsoPort ) {
 	await isEditorReadyWithBlocks();
-
 	const isNew = select( 'core/editor' ).isCleanNewPost();
 	const blocks = select( 'core/block-editor' ).getBlocks();
 
@@ -895,14 +894,20 @@ async function handleEditorLoaded( calypsoPort ) {
 }
 
 async function preselectParentPage() {
-	const postType = select( 'core/editor' ).getCurrentPostType();
 	const parentPostId = parseInt( getQueryArg( window.location.href, 'parent_post' ) );
-	if ( 'page' === postType && parentPostId && parentPostId > 0 ) {
-		const pages = await getPages();
-		const isValidParentId = pages.some( ( page ) => page.id === parentPostId );
-		if ( isValidParentId ) {
-			dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
-		}
+	if ( ! parentPostId || isNaN( parseInt( parentPostId ) ) ) {
+		return;
+	}
+
+	const postType = select( 'core/editor' ).getCurrentPostType();
+	if ( 'page' !== postType ) {
+		return;
+	}
+
+	const pages = await getPages();
+	const isValidParentId = pages.some( ( page ) => page.id === parentPostId );
+	if ( isValidParentId ) {
+		dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
 	}
 }
 
