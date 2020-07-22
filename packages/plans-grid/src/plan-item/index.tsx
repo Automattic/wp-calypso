@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
@@ -21,6 +21,11 @@ const ChevronDown = (
 		<path d="M0 0 L8 0 L4 4 L0 0" fill="currentColor" />
 	</svg>
 );
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const SPACE_BAR_KEYCODE = 32;
 
@@ -90,130 +95,120 @@ function domainMessageStateMachine(
 export interface Props {
 	slug: string;
 	name: string;
+	description: string;
 	price: string;
 	features: Array< string >;
 	domain?: DomainSuggestions.DomainSuggestion;
-	isPopular?: boolean;
+	badge?: string;
 	isFree?: boolean;
+	isOpen?: boolean;
+	isPrimary?: boolean;
 	isSelected?: boolean;
 	onSelect: ( slug: string ) => void;
 	onPickDomainClick?: () => void;
-	onToggle?: ( slug: string, isExpanded: boolean ) => void;
-	onToggleExpandAll?: () => void;
-	allPlansExpanded: boolean;
+	onToggle?: ( slug: string, isOpen: boolean ) => void;
 }
 
 const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
 	name,
+	description,
 	price,
-	isPopular = false,
-	isFree = false,
-	domain,
 	features,
+	domain,
+	badge,
+	isFree = false,
+	isOpen = false,
+	isPrimary = false,
 	onSelect,
 	onPickDomainClick,
 	onToggle,
-	onToggleExpandAll,
-	allPlansExpanded,
 } ) => {
 	const { __ } = useI18n();
-
-	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
 
 	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
-	useEffect( () => {
-		setIsExpanded( allPlansExpanded );
-	}, [ allPlansExpanded ] );
-
-	const isOpen = allPlansExpanded || isPopular || isExpanded;
-
 	const handleToggle = () => {
-		setIsExpanded( ! isExpanded );
-		onToggle?.( slug, ! isExpanded );
+		onToggle?.( slug, ! isOpen );
 	};
 
 	return (
-		<div className={ classNames( 'plan-item', { 'is-popular': isPopular, 'is-open': isOpen } ) }>
-			{ isPopular && (
+		<div
+			className={ classNames( 'plan-item', {
+				'is-open': isOpen,
+				'is-primary': isPrimary,
+				'has-badge': !! badge,
+			} ) }
+		>
+			{ badge && (
 				<div className="plan-item__badge">
-					<span>{ __( 'Popular' ) }</span>
+					<span>{ badge }</span>
 				</div>
 			) }
-			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
+			<div className="plan-item__viewport">
 				<div className="plan-item__details">
 					<div
 						tabIndex={ 0 }
 						role="button"
 						onClick={ handleToggle }
 						onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && handleToggle() }
-						className="plan-item__summary"
+						className="plan-item__header"
 					>
 						<div className="plan-item__heading">
 							<div className="plan-item__name">{ name }</div>
+							<div className="plan-item__description">{ description }</div>
 						</div>
-						{ ! isFree && (
-							<div className="plan-item__price">
-								<div
-									className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }
-								>
-									{ price || nbsp }
-								</div>
-								<div className="plan-item__price-note">{ __( '/mo' ) }</div>
+						<div className="plan-item__price">
+							<div className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }>
+								{ price || nbsp }
+								<span>{ __( '/mo' ) }</span>
 							</div>
-						) }
+							<div className="plan-item__price-note">
+								{ isFree ? __( 'free forever' ) : __( 'per month, billed annually' ) }
+							</div>
+						</div>
 						{ ! isOpen && <div className="plan-item__dropdown-chevron">{ ChevronDown }</div> }
 					</div>
-					<div hidden={ ! isOpen }>
-						<div className="plan-item__actions">
-							<Button
-								className="plan-item__select-button"
-								onClick={ () => {
-									onSelect( slug );
-								} }
-								isPrimary
-								isLarge
-							>
-								<span>{ __( 'Select' ) }</span>
-							</Button>
-						</div>
-
-						<div className="plan-item__features">
-							<ul className="plan-item__feature-item-group">
-								<li className="plan-item__feature-item plan-item__domain">
-									{ domainMessage && (
-										<Button
-											className={ domainMessage.className }
-											onClick={ onPickDomainClick }
-											isLink
-										>
-											{ domainMessage.icon }
-											{ domainMessage.domainMessage }
-										</Button>
-									) }
+					<div className="plan-item__actions" hidden={ ! isOpen }>
+						<Button
+							className="plan-item__select-button"
+							onClick={ () => {
+								onSelect( slug );
+							} }
+							isPrimary
+							isLarge
+						>
+							<span>{ __( 'Select' ) }</span>
+						</Button>
+					</div>
+					<div className="plan-item__features" hidden={ ! isOpen }>
+						<ul className="plan-item__feature-item-group">
+							<li className="plan-item__feature-item plan-item__domain">
+								{ domainMessage && (
+									<Button
+										className={ domainMessage.className }
+										onClick={ onPickDomainClick }
+										isLink
+									>
+										{ domainMessage.icon }
+										{ domainMessage.domainMessage }
+									</Button>
+								) }
+							</li>
+							{ features.map( ( feature, i ) => (
+								<li key={ i } className="plan-item__feature-item">
+									<span>
+										{ TickIcon } { feature }
+									</span>
 								</li>
-								{ features.map( ( feature, i ) => (
-									<li key={ i } className="plan-item__feature-item">
-										<span>
-											{ TickIcon } { feature }
-										</span>
-									</li>
-								) ) }
-							</ul>
-						</div>
+							) ) }
+						</ul>
 					</div>
 				</div>
 			</div>
-
-			{ isPopular && (
-				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
-					{ allPlansExpanded ? __( 'Collapse all plans' ) : __( 'Show all plans' ) }
-				</Button>
-			) }
 		</div>
 	);
 };
