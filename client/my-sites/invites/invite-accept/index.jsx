@@ -26,6 +26,7 @@ import NoticeAction from 'components/notice/notice-action';
 import userUtils from 'lib/user/utils';
 import LocaleSuggestions from 'components/locale-suggestions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import DocumentHead from 'components/data/document-head';
 
 /**
  * Style dependencies
@@ -220,24 +221,38 @@ class InviteAccept extends React.Component {
 		const { invite } = this.state;
 		const { user } = this.props;
 
+		const title = 'Join Site';
+		const siteTitle = ( invite && invite.site && invite.site.title ) || 'site';
+		const role = ( invite && invite.role ) || 'member';
+		const description = `Join ${ siteTitle } as ${ role }`;
+		const metas = [
+			{ name: 'description', property: 'og:description', content: description },
+			{ property: 'og:title', content: title },
+			{ property: 'og:type', content: 'website' },
+			{ property: 'og:site_name', content: 'WordPress.com' },
+		];
+
 		return (
-			<div className="invite-accept">
-				{ this.localeSuggestions() }
-				<div className={ formClasses }>
-					{ this.isMatchEmailError() && user && (
-						<Notice
-							text={ this.props.translate( 'This invite is only valid for %(email)s.', {
-								args: { email: invite.sentTo },
-							} ) }
-							status="is-error"
-							showDismiss={ false }
-						>
-							{ this.renderNoticeAction() }
-						</Notice>
-					) }
-					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
+			<React.Fragment>
+				<DocumentHead title={ title } meta={ metas } />
+				<div className="invite-accept">
+					{ this.localeSuggestions() }
+					<div className={ formClasses }>
+						{ this.isMatchEmailError() && user && (
+							<Notice
+								text={ this.props.translate( 'This invite is only valid for %(email)s.', {
+									args: { email: invite.sentTo },
+								} ) }
+								status="is-error"
+								showDismiss={ false }
+							>
+								{ this.renderNoticeAction() }
+							</Notice>
+						) }
+						{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
+					</div>
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	}
 }
