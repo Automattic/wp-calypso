@@ -170,9 +170,7 @@ export class LanguagePicker extends PureComponent {
 				>
 					<div className="language-picker__icon">
 						<div className="language-picker__icon-inner">
-							{ langCode }
-							{ langSubcode && <br /> }
-							{ langSubcode }
+							{ langSubcode ? `${ langCode } ${ langSubcode }` : langCode }
 						</div>
 					</div>
 					<div className="language-picker__name">
@@ -180,7 +178,7 @@ export class LanguagePicker extends PureComponent {
 							<div className="language-picker__name-label">{ langName }</div>
 						</div>
 					</div>
-					<Gridicon icon="chevron-down" />
+					<Gridicon icon="chevron-down" size="20" />
 				</button>
 				{ this.renderModal( language.langSlug ) }
 			</Fragment>
