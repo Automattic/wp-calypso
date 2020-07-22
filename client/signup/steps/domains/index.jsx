@@ -689,7 +689,7 @@ class DomainsStep extends React.Component {
 		// Override Back link if source parameter is found below
 		const backUrlSourceOverrides = {
 			'business-name-generator': '/business-name-generator',
-			'domains': '/domains',
+			domains: '/domains',
 		};
 		const source = get( this.props, 'queryObject.source' );
 
