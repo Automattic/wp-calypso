@@ -33,7 +33,7 @@ function applyPrecision( cost, precision ) {
  * @param {string} domainName - domain name
  * @returns {boolean} - true if G Suite is allowed, false otherwise
  */
-function canDomainAddGSuite( domainName ) {
+export function canDomainAddGSuite( domainName ) {
 	if ( endsWith( domainName, '.wpcomstaging.com' ) ) {
 		return false;
 	}
@@ -65,7 +65,7 @@ function formatPrice( cost, currencyCode, options = {} ) {
  * @param {string} defaultValue - value to return when the price can't be determined
  * @returns {string} - the yearly price formatted (e.g. '$99.99'), otherwise the default value
  */
-function getAnnualPrice( cost, currencyCode, defaultValue = '-' ) {
+export function getAnnualPrice( cost, currencyCode, defaultValue = '-' ) {
 	if ( ! isNumber( cost ) && ! isString( currencyCode ) ) {
 		return defaultValue;
 	}
@@ -84,7 +84,7 @@ function getAnnualPrice( cost, currencyCode, defaultValue = '-' ) {
  * @param {Array} domains - list of domain objects
  * @returns {string} - the name of the first eligible domain found
  */
-function getEligibleGSuiteDomain( selectedDomainName, domains ) {
+export function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 	if ( selectedDomainName && canDomainAddGSuite( selectedDomainName ) ) {
 		return selectedDomainName;
 	}
@@ -104,7 +104,7 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
  * @param {Array} domains - list of domain objects
  * @returns {Array} - the list of domains that are eligible for G Suite
  */
-function getGSuiteSupportedDomains( domains ) {
+export function getGSuiteSupportedDomains( domains ) {
 	return domains.filter( function ( domain ) {
 		if ( hasGSuiteWithAnotherProvider( domain ) ) {
 			return false;
@@ -121,7 +121,7 @@ function getGSuiteSupportedDomains( domains ) {
 	} );
 }
 
-function getGSuiteMailboxCount( domain ) {
+export function getGSuiteMailboxCount( domain ) {
 	return get( domain, 'googleAppsSubscription.totalUserCount', 0 );
 }
 
@@ -132,7 +132,7 @@ function getGSuiteMailboxCount( domain ) {
  * @param {string} domain - domain name
  * @returns {string} - ToS url redirect
  */
-function getLoginUrlWithTOSRedirect( email, domain ) {
+export function getLoginUrlWithTOSRedirect( email, domain ) {
 	return (
 		'https://accounts.google.com/AccountChooser?' +
 		`Email=${ encodeURIComponent( email ) }` +
@@ -151,7 +151,7 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
  * @param {string} defaultValue - value to return when the price can't be determined
  * @returns {string} - the monthly price rounded to the nearest tenth (e.g. '$8.40'), otherwise the default value
  */
-function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
+export function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
 	if ( ! isNumber( cost ) && ! isString( currencyCode ) ) {
 		return defaultValue;
 	}
@@ -165,7 +165,7 @@ function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
  * @param {object} domain - domain object
  * @returns {boolean} - true if the domain is under our management, false otherwise
  */
-function hasGSuiteWithUs( domain ) {
+export function hasGSuiteWithUs( domain ) {
 	const defaultValue = '';
 	const domainStatus = get( domain, 'googleAppsSubscription.status', defaultValue );
 	return ! includes( [ defaultValue, 'no_subscription', 'other_provider' ], domainStatus );
@@ -177,7 +177,7 @@ function hasGSuiteWithUs( domain ) {
  * @param {object} domain - domain object
  * @returns {boolean} - true if the domain is with another provider, false otherwise
  */
-function hasGSuiteWithAnotherProvider( domain ) {
+export function hasGSuiteWithAnotherProvider( domain ) {
 	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
 
 	return 'other_provider' === domainStatus;
@@ -189,7 +189,7 @@ function hasGSuiteWithAnotherProvider( domain ) {
  * @param {Array} domains - list of domain objects
  * @returns {boolean} - Does list of domains contain a G Suited supported domain
  */
-function hasGSuiteSupportedDomain( domains ) {
+export function hasGSuiteSupportedDomain( domains ) {
 	return getGSuiteSupportedDomains( domains ).length > 0;
 }
 
@@ -199,7 +199,7 @@ function hasGSuiteSupportedDomain( domains ) {
  * @param {object} domain - domain object
  * @returns {boolean} - Does domain have pending G Suite users
  */
-function hasPendingGSuiteUsers( domain ) {
+export function hasPendingGSuiteUsers( domain ) {
 	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
 }
 
@@ -209,7 +209,7 @@ function hasPendingGSuiteUsers( domain ) {
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to G Suite Basic or Business, false otherwise
  */
-function isGSuiteProductSlug( productSlug ) {
+export function isGSuiteProductSlug( productSlug ) {
 	return [ GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG ].includes( productSlug );
 }
 
@@ -219,7 +219,7 @@ function isGSuiteProductSlug( productSlug ) {
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to an extra license, false otherwise
  */
-function isGSuiteExtraLicenseProductSlug( productSlug ) {
+export function isGSuiteExtraLicenseProductSlug( productSlug ) {
 	return productSlug === GSUITE_EXTRA_LICENSE_SLUG;
 }
 
@@ -229,7 +229,7 @@ function isGSuiteExtraLicenseProductSlug( productSlug ) {
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to any G Suite product, false otherwise
  */
-function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
+export function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
 	return isGSuiteProductSlug( productSlug ) || isGSuiteExtraLicenseProductSlug( productSlug );
 }
 
@@ -238,26 +238,8 @@ function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
  *
  * @returns {boolean} true if the user is allowed to purchase G Suite, false otherwise
  */
-function canUserPurchaseGSuite() {
+export function canUserPurchaseGSuite() {
 	const user = userFactory();
 
 	return get( user.get(), 'is_valid_google_apps_country', false );
 }
-
-export {
-	canDomainAddGSuite,
-	canUserPurchaseGSuite,
-	getAnnualPrice,
-	getEligibleGSuiteDomain,
-	getGSuiteMailboxCount,
-	getGSuiteSupportedDomains,
-	getLoginUrlWithTOSRedirect,
-	getMonthlyPrice,
-	hasGSuiteSupportedDomain,
-	hasGSuiteWithAnotherProvider,
-	hasGSuiteWithUs,
-	hasPendingGSuiteUsers,
-	isGSuiteExtraLicenseProductSlug,
-	isGSuiteOrExtraLicenseProductSlug,
-	isGSuiteProductSlug,
-};
