@@ -271,7 +271,7 @@ function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
 	try {
 		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItems ) );
 	} catch ( e ) {
-		throw new Error( 'An unexpected error occured while saving your cart: ' + e );
+		throw new Error( 'An unexpected error occured while saving your cart' );
 	}
 }
 
