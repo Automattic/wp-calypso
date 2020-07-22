@@ -62,10 +62,12 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryLanguageNames from 'components/data/query-language-names';
 import getInlineHelpSupportVariation, {
+	SUPPORT_CHAT_OVERFLOW,
 	SUPPORT_DIRECTLY,
+	SUPPORT_FORUM,
 	SUPPORT_HAPPYCHAT,
 	SUPPORT_TICKET,
-	SUPPORT_FORUM,
+	SUPPORT_UPWORK_TICKET,
 } from 'state/selectors/get-inline-help-support-variation';
 
 /**
@@ -185,7 +187,7 @@ class HelpContact extends React.Component {
 
 	submitKayakoTicket = ( contactForm ) => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
-		const { currentUserLocale } = this.props;
+		const { currentUserLocale, supportVariation } = this.props;
 
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
@@ -203,6 +205,7 @@ class HelpContact extends React.Component {
 			kayakoMessage,
 			currentUserLocale,
 			this.props.clientSlug,
+			supportVariation === SUPPORT_CHAT_OVERFLOW,
 			( error ) => {
 				if ( error ) {
 					// TODO: bump a stat here
@@ -369,7 +372,9 @@ class HelpContact extends React.Component {
 					showQASuggestions: true,
 				};
 			}
+			case SUPPORT_CHAT_OVERFLOW:
 			case SUPPORT_TICKET:
+			case SUPPORT_UPWORK_TICKET:
 				return {
 					onSubmit: this.submitKayakoTicket,
 					buttonLabel: isSubmitting ? translate( 'Sending email' ) : translate( 'Email us' ),
