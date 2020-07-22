@@ -11,6 +11,7 @@ import { AppState } from 'types';
 import { getVariationForUser, isLoading } from 'state/experiments/selectors';
 import QueryExperiments from 'components/data/query-experiments';
 import { ExperimentProps } from './experiment-props';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 export { default as Variation } from './variation';
 export { default as DefaultVariation } from './default-variation';
@@ -23,6 +24,12 @@ export { default as LoadingVariations } from './loading-variations';
  */
 export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
 	const { isLoading: loading, variation, children } = props;
+
+	recordTracksEvent( 'calypso_experiment_rendered', {
+		variation: props.variation,
+		experiment_name: props.variation,
+	} );
+
 	return (
 		<>
 			<QueryExperiments />
