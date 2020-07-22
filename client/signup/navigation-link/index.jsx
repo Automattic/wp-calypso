@@ -38,7 +38,7 @@ export class NavigationLink extends Component {
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
-		rel: PropTypes.string
+		rel: PropTypes.string,
 	};
 
 	static defaultProps = {
