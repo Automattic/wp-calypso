@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -15,7 +14,7 @@ import {
 	EXPORT_FAILURE,
 	SET_MEDIA_EXPORT_DATA,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 import { States } from './constants';
 
 export function selectedPostType( state = null, action ) {
@@ -147,7 +146,7 @@ export function mediaExportUrl( state = null, action ) {
 	return state;
 }
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	selectedPostType,
 	selectedAdvancedSettings,
 	exportingState,
@@ -156,3 +155,5 @@ export default combineReducers( {
 	downloadURL,
 	mediaExportUrl,
 } );
+
+export default withStorageKey( 'exporter', combinedReducer );
