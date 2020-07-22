@@ -481,28 +481,29 @@
 	// -----------------------------------
 	.redirect-payment-box,
 	.wechat-payment-box {
-		 .checkout__payment-box-section {
-			 .checkout__checkout-field {
-				 padding: 0 15px 15px;
-			 }
+		.checkout__payment-box-section {
+			.checkout__checkout-field {
+				padding: 0 15px 15px;
+			}
 
-			 .checkout__country-payment-fields {
-				 .checkout__checkout-field {
-					 padding-left: 0;
-					 flex-basis: calc( 100% - 30px );
-				 }
-				 .checkout__checkout-field.pan, .checkout__checkout-field.gstin {
-					 flex-basis: calc( 50% - 30px );
-					 .form-label {
-						 max-height: 21px;
-					 }
-				 }
+			.checkout__country-payment-fields {
+				.checkout__checkout-field {
+					padding-left: 0;
+					flex-basis: calc( 100% - 30px );
+				}
+				.checkout__checkout-field.pan,
+				.checkout__checkout-field.gstin {
+					flex-basis: calc( 50% - 30px );
+					.form-label {
+						max-height: 21px;
+					}
+				}
 
-				 .checkout__pan-number-popover svg {
-					 max-height: 16px;
-				 }
-			 }
-		 }
+				.checkout__pan-number-popover svg {
+					max-height: 16px;
+				}
+			}
+		}
 	}
 
 	// Credits Payment Box
@@ -1234,6 +1235,36 @@
 	}
 	.checkout__site-created-image {
 		height: 40px;
+	}
+}
+
+.checkout .notice {
+	margin: 36px 0;
+}
+
+.checkout .notice.is-info .notice__icon-wrapper-drop {
+	background-color: var( --color-accent-40 );
+}
+
+.checkout__duplicate-notice {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.checkout__duplicate-notice-message {
+	max-width: 600px;
+}
+
+.checkout .notice__text .checkout__duplicate-notice-link {
+	margin-left: 20px;
+
+	color: var( --color-neutral-10 );
+
+	text-decoration: none;
+
+	&:visited {
+		color: var( --color-neutral-10 );
 	}
 }
 
