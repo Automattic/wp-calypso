@@ -200,7 +200,7 @@ export default class Step extends Component< Props, State > {
 					return;
 				}
 
-				const targetEl = document.querySelector( `[data-tip-target="${ target }"]` );
+				const targetEl = targetForSlug( target );
 				if ( ! targetEl ) {
 					onTargetDisappear( {
 						quit: () => this.context.quit( this.context ),
@@ -337,7 +337,7 @@ export default class Step extends Component< Props, State > {
 	}
 
 	onScrollOrResize = () => {
-		if ( ! this.isUpdatingPosition ) {
+		if ( this.mounted && ! this.isUpdatingPosition ) {
 			window.requestAnimationFrame( () => {
 				this.setStepPosition( this.props );
 				this.isUpdatingPosition = false;
@@ -352,7 +352,7 @@ export default class Step extends Component< Props, State > {
 
 		// Reinitialize scrolling behaviour when step changes
 		if ( nextName !== name ) {
-			this.setState( { hasScrolled: false } );
+			this.safeSetState( { hasScrolled: false } );
 		}
 	}
 
@@ -364,7 +364,7 @@ export default class Step extends Component< Props, State > {
 			shouldScrollTo,
 			scrollContainer: this.scrollContainer,
 		} );
-		this.setState( ( state ) => ( {
+		this.safeSetState( ( state ) => ( {
 			stepPos,
 			hasScrolled: ! state.hasScrolled && scrollDiff > 0,
 		} ) );

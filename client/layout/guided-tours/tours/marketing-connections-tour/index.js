@@ -20,6 +20,8 @@ const waitForConnectButton = () => async () => {
 	}
 };
 
+const handleDisappear = ( { quit } ) => quit();
+
 export const marketingConnectionsTour = makeTour(
 	<Tour { ...meta }>
 		<Step
@@ -31,6 +33,7 @@ export const marketingConnectionsTour = makeTour(
 			} }
 			wait={ waitForConnectButton }
 			target={ CONNECT_BUTTON_SELECTOR }
+			onTargetDisappear={ handleDisappear }
 			keepRepositioning={ true }
 		>
 			{ ( { translate } ) => (
