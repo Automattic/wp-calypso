@@ -43,12 +43,13 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useDrillLayou
 			<div className="nav-item__text">
 				<h6>{ text }</h6>
 			</div>
-			{ useDrillLayout &&
-				( isCurrent ? (
-					<Gridicon className="nav-item__chevron" icon="chevron-up" size={ 18 } />
-				) : (
-					<Gridicon className="nav-item__chevron" icon="chevron-down" size={ 18 } />
-				) ) }
+			{ useDrillLayout && (
+				<Gridicon
+					className="nav-item__chevron"
+					icon={ isCurrent ? 'chevron-up' : 'chevron-down' }
+					size={ 18 }
+				/>
+			) }
 		</button>
 	);
 };
