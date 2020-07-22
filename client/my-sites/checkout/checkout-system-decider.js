@@ -51,7 +51,6 @@ export default function CheckoutSystemDecider( {
 	upgradeIntent,
 	clearTransaction,
 	cart,
-	isWhiteGloveOffer,
 	isLoggedOutCart,
 } ) {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -165,9 +164,9 @@ export default function CheckoutSystemDecider( {
 							feature={ selectedFeature }
 							plan={ plan }
 							cart={ cart }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
 							isComingFromUpsell={ isComingFromUpsell }
 							isLoggedOutCart={ isLoggedOutCart }
+							getCart={ isLoggedOutCart ? () => Promise.resolve( cart ) : null }
 						/>
 					</StripeHookProvider>
 				</CheckoutErrorBoundary>
@@ -192,7 +191,6 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
-			isWhiteGloveOffer={ isWhiteGloveOffer }
 		/>
 	);
 }

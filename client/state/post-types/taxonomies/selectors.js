@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { find, get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/post-types/init';
 
 /**
  * Returns true if a network request is in-progress for the specified site ID,

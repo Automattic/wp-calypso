@@ -19,7 +19,9 @@ import {
 	NOTIFICATION_SETTINGS_TOGGLE_SETTING,
 } from 'state/action-types';
 import { successNotice, errorNotice } from 'state/notices/actions';
+
 import 'state/data-layer/wpcom/me/notification/settings';
+import 'state/notification-settings/init';
 
 /**
  * Returns an action object to signal the request of the current user notification settings.

@@ -52,7 +52,7 @@ import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
-import { requestUnseenStatusAny } from 'state/reader-ui/seen-posts/actions';
+import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
 
@@ -360,7 +360,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	const state = reduxStore.getState();
 	// get reader unread status
 	if ( config.isEnabled( 'reader/seen-posts' ) ) {
-		reduxStore.dispatch( requestUnseenStatusAny() );
+		reduxStore.dispatch( requestUnseenStatus() );
 	}
 
 	if ( config.isEnabled( 'happychat' ) ) {

@@ -17,11 +17,9 @@ import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
 import masterbarVisibility from './masterbar-visibility/reducer';
 import mediaModal from './media-modal/reducer';
-import npsSurveyNotice from './nps-survey-notice/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import section from './section/reducer';
-import themeSetup from './theme-setup/reducers';
 
 /**
  * Tracks the currently selected site ID.
@@ -103,13 +101,11 @@ const reducer = combineReducers( {
 	layoutFocus,
 	masterbarVisibility,
 	mediaModal,
-	npsSurveyNotice,
 	postTypeList,
 	preview,
 	section,
 	selectedSiteId,
 	siteSelectionInitialized,
-	themeSetup,
 } );
 
 export default reducer;

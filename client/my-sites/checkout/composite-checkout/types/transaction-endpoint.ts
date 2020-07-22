@@ -14,7 +14,7 @@ import type {
 import type { CartItemExtra } from 'lib/cart-values/types';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
-const debug = debugFactory( 'calypso:transaction-endpoint' );
+const debug = debugFactory( 'calypso:composite-checkout:transaction-endpoint' );
 
 export type WPCOMTransactionEndpoint = (
 	_: WPCOMTransactionEndpointRequestPayload
@@ -26,7 +26,6 @@ export type WPCOMTransactionEndpointRequestPayload = {
 	cart: WPCOMTransactionEndpointCart;
 	payment: WPCOMTransactionEndpointPaymentDetails;
 	domainDetails?: DomainContactDetails;
-	isWhiteGloveOffer: boolean;
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {
@@ -181,9 +180,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	cancelUrl?: string;
 	idealBank?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
-	const urlParams = new URLSearchParams( window.location.search );
-	const isWhiteGlove = urlParams.get( 'type' ) === 'white-glove';
-
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
 			siteId,
@@ -209,7 +205,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			cancelUrl,
 			idealBank,
 		},
-		isWhiteGloveOffer: isWhiteGlove,
 	};
 }
 

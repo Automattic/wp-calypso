@@ -19,11 +19,11 @@ const I18nContext = React.createContext< I18nReact >( makeContextValue() );
 interface Props {
 	localeData?: LocaleData;
 }
+
 export const I18nProvider: React.FunctionComponent< Props > = ( { children, localeData } ) => {
 	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData ), [
 		localeData,
 	] );
-
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
 

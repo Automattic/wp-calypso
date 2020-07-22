@@ -3,6 +3,8 @@
  */
 import { get } from 'lodash';
 
+import 'state/connected-applications/init';
+
 /**
  * Returns the connected applications of the current user.
  *
