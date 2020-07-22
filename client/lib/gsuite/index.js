@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { endsWith, get, sortBy, includes } from 'lodash';
+import { get, sortBy, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
-import { canUserPurchaseGSuite } from './can-user-purchase-gsuite';
+import { canDomainAddGSuite } from './can-domain-add-gsuite';
 
 export { getAnnualPrice } from './get-annual-price';
 export { getMonthlyPrice } from './get-monthly-price';
@@ -18,20 +18,7 @@ export {
 } from './gsuite-product-slug';
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { canUserPurchaseGSuite } from './can-user-purchase-gsuite';
-
-/**
- * Determines whether G Suite is allowed for the specified domain.
- *
- * @param {string} domainName - domain name
- * @returns {boolean} - true if G Suite is allowed, false otherwise
- */
-export function canDomainAddGSuite( domainName ) {
-	if ( endsWith( domainName, '.wpcomstaging.com' ) ) {
-		return false;
-	}
-
-	return canUserPurchaseGSuite();
-}
+export { canDomainAddGSuite } from './can-domain-add-gsuite';
 
 /**
  * Retrieves the first domain that is eligible to G Suite in this order:
