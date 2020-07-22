@@ -16,11 +16,13 @@
 
 	.sidebar__menu .count {
 		position: relative;
+		flex-shrink: 0;
 		top: 0;
 		margin-left: auto;
 		box-sizing: border-box;
 		padding: 4px 6px;
 		line-height: 1;
+		min-width: 22px;
 		background-color: var( --color-sidebar-menu-hover-background );
 		border-color: var( --color-sidebar-menu-hover-background );
 		outline-color: var( --color-sidebar-menu-hover-background );
