@@ -8,6 +8,19 @@ At the current time there are components to display previews for a:
 - Twitter post.
 - Google Search result.
 
+## Prerequisites
+
+Your application must be able to load Sass/SCSS files. You may implement this
+however you like.
+
+- In a wp-calypso or jetpack environment, Sass loading is already provided.
+- If you're using create-react-app, you may install `node-sass` or [read the
+  CRA documentation on
+  sass](https://create-react-app.dev/docs/adding-a-sass-stylesheet/) for more
+  info.
+- If you're using your own webpack config, [read the webpack documentation on
+  adding a sass-loader](https://webpack.js.org/loaders/sass-loader/).
+
 ## Usage
 
 Here's a simple usage example using the preview component for Facebook:

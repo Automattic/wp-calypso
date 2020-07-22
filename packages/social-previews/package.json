@@ -45,7 +45,6 @@
 		"enzyme": "^3.11.0"
 	},
 	"peerDependencies": {
-		"react": "^16.12.0",
-		"node-sass": ">= 4.x"
+		"react": "^16.12.0"
 	}
 }
