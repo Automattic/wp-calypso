@@ -154,6 +154,7 @@ export default function CheckoutSystemDecider( {
 						plan={ plan }
 						cart={ cart }
 						isComingFromUpsell={ isComingFromUpsell }
+						infoMessage={ duplicateBackupNotice }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>

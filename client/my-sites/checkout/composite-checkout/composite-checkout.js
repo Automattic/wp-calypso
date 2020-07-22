@@ -121,6 +121,7 @@ export default function CompositeCheckout( {
 	cart,
 	couponCode: couponCodeFromUrl,
 	isComingFromUpsell,
+	infoMessage,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -560,6 +561,7 @@ export default function CompositeCheckout( {
 						isCartPendingUpdate={ isCartPendingUpdate }
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
+						infoMessage={ infoMessage }
 					/>
 				</CheckoutProvider>
 			</CartProvider>
