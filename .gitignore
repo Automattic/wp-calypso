@@ -49,7 +49,6 @@ yarn-error.log
 /client/server/devdocs/search-index.js
 /client/server/devdocs/components-usage-stats.json
 /client/server/devdocs/proptypes-index.json
-/client/server/bundler/assets*.json
 /client/languages/languages-meta.json
 
 *.rdb
