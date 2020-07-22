@@ -145,7 +145,7 @@ registerBlockType( 'a8c/github-issue-template-button', {
 			} );
 
 			return (
-				<div className={ `align${ align }` }>
+				<div style={ { display: 'flex', justifyContent: align, alignItems: 'center' } }>
 					<GithubButton label={ buttonLabel } url={ url } />
 				</div>
 			);
