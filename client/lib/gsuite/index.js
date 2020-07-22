@@ -9,6 +9,7 @@ import { get, sortBy } from 'lodash';
 import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
 import { canDomainAddGSuite } from './can-domain-add-gsuite';
 import { hasGSuiteWithUs } from './has-gsuite-with-us';
+import { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
 
 export { getAnnualPrice } from './get-annual-price';
 export { getMonthlyPrice } from './get-monthly-price';
@@ -22,6 +23,7 @@ export { canUserPurchaseGSuite } from './can-user-purchase-gsuite';
 export { canDomainAddGSuite } from './can-domain-add-gsuite';
 export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
 export { hasGSuiteWithUs } from './has-gsuite-with-us';
+export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
 
 /**
  * Retrieves the first domain that is eligible to G Suite in this order:
@@ -69,18 +71,6 @@ export function getGSuiteSupportedDomains( domains ) {
 
 		return canDomainAddGSuite( domain.name );
 	} );
-}
-
-/**
- * Given a domain object, does that domain have G Suite with another provider.
- *
- * @param {object} domain - domain object
- * @returns {boolean} - true if the domain is with another provider, false otherwise
- */
-export function hasGSuiteWithAnotherProvider( domain ) {
-	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
-
-	return 'other_provider' === domainStatus;
 }
 
 /**
