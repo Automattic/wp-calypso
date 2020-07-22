@@ -438,7 +438,8 @@ export function createAccount(
 			( response && response.user_id ) ||
 			userData.ID;
 
-		const email = ( response && response.email ) || ( userData && userData.email );
+		const email =
+			( response && response.email ) || ( userData && ( userData.email || userData.user_email ) );
 
 		const registrationUserData = {
 			ID: userId,
