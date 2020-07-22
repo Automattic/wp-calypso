@@ -9,6 +9,8 @@
  * @blame: dmsnell
 */
 
+@import '../variables.scss';
+
 .facebook-preview {
 	border: none;
 	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.15 ) inset, 0 1px 4px rgba( 0, 0, 0, 0.1 );
