@@ -7,7 +7,7 @@ import { endsWith, get, sortBy, includes } from 'lodash';
  * Internal dependencies
  */
 import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
-import userFactory from 'lib/user';
+import { canUserPurchaseGSuite } from './can-user-purchase-gsuite';
 
 export { getAnnualPrice } from './get-annual-price';
 export { getMonthlyPrice } from './get-monthly-price';
@@ -17,6 +17,7 @@ export {
 	isGSuiteProductSlug,
 } from './gsuite-product-slug';
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
+export { canUserPurchaseGSuite } from './can-user-purchase-gsuite';
 
 /**
  * Determines whether G Suite is allowed for the specified domain.
@@ -126,15 +127,4 @@ export function hasGSuiteSupportedDomain( domains ) {
  */
 export function hasPendingGSuiteUsers( domain ) {
 	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
-}
-
-/**
- * Determines whether G Suite can be purchased by the user based on their country.
- *
- * @returns {boolean} true if the user is allowed to purchase G Suite, false otherwise
- */
-export function canUserPurchaseGSuite() {
-	const user = userFactory();
-
-	return get( user.get(), 'is_valid_google_apps_country', false );
 }
