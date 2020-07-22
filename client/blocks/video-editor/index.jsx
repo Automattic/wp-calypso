@@ -82,6 +82,7 @@ class VideoEditor extends Component {
 
 	/**
 	 * Updates the poster by selecting a particular frame of the video.
+	 *
 	 * @param {number} currentTime - Time at which to capture the frame
 	 */
 	updatePoster = ( currentTime ) => {
@@ -93,7 +94,7 @@ class VideoEditor extends Component {
 		const guid = get( media, 'videopress_guid', null );
 
 		if ( guid ) {
-			this.props.updatePoster( guid, { atTime: currentTime } );
+			this.props.updatePoster( guid, { atTime: currentTime }, { mediaId: media.ID } );
 		}
 	};
 
@@ -115,6 +116,7 @@ class VideoEditor extends Component {
 
 	/**
 	 * Uploads an image to use as the poster for the video.
+	 *
 	 * @param {object} file - Uploaded image
 	 */
 	uploadImage = ( file ) => {
@@ -126,7 +128,7 @@ class VideoEditor extends Component {
 		const guid = get( media, 'videopress_guid', null );
 
 		if ( guid ) {
-			this.props.updatePoster( guid, { file } );
+			this.props.updatePoster( guid, { file }, { mediaId: media.ID } );
 		}
 	};
 

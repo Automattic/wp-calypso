@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get, find } from 'lodash';
 
 /**
@@ -9,6 +8,8 @@ import { get, find } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import { calculateMonthlyPriceForPlan } from 'lib/plans';
+
+import 'state/plans/init';
 
 /**
  * Return WordPress plans getting from state object

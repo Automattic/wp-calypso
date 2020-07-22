@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get, orderBy } from 'lodash';
 
 /**
@@ -9,6 +8,8 @@ import { get, orderBy } from 'lodash';
  */
 import { enrichPublicizeActionsWithConnections } from 'state/selectors/utils/';
 import createSelector from 'lib/create-selector';
+
+import 'state/sharing/init';
 
 const getScheduledActions = ( state, siteId, postId ) =>
 	orderBy(

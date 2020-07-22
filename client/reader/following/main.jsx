@@ -23,7 +23,7 @@ import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import SectionHeader from 'components/section-header';
-import { requestMarkAllAsSeenSection } from 'state/reader/seen-posts/actions';
+import { requestMarkAllAsSeen } from 'state/reader/seen-posts/actions';
 import { SECTION_FOLLOWING } from 'state/reader/seen-posts/constants';
 import { getReaderOrganizationFeedsInfo } from 'state/reader/organizations/selectors';
 import { NO_ORG_ID } from 'state/reader/organizations/constants';
@@ -62,7 +62,7 @@ const FollowingStream = ( props ) => {
 
 	const markAllAsSeen = ( feedsInfo ) => {
 		const { feedIds, feedUrls } = feedsInfo;
-		dispatch( requestMarkAllAsSeenSection( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
+		dispatch( requestMarkAllAsSeen( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

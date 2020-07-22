@@ -12,8 +12,7 @@ import {
 	READER_POST_SEEN,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
-	READER_SEEN_MARK_ALL_AS_SEEN_SECTION_RECEIVE,
-	READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'state/reader/action-types';
 import { combineReducers } from 'state/utils';
 
@@ -31,8 +30,7 @@ export function items( state = {}, action ) {
 			return { ...state, ...keyBy( posts, 'global_ID' ) };
 
 		case READER_SEEN_MARK_AS_SEEN_RECEIVE:
-		case READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE:
-		case READER_SEEN_MARK_ALL_AS_SEEN_SECTION_RECEIVE:
+		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE:
 			forEach( action.globalIds, ( globalId ) => {
 				state[ globalId ] = { ...state[ globalId ], is_seen: true };
 			} );

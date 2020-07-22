@@ -16,14 +16,12 @@ import PurchaseDetail from 'components/purchase-detail';
  */
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
 
-export default localize( ( { isWpcomPlan, translate, link, isWhiteGlove, onClick = noop } ) => {
-	const title = isWhiteGlove ? 'One-on-one session' : translate( 'Quick Start session' );
-
+export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img alt="" src={ conciergeImage } /> }
-				title={ title }
+				title={ translate( 'Quick Start session' ) }
 				description={
 					isWpcomPlan
 						? translate(
