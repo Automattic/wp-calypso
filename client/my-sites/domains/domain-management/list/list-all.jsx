@@ -40,6 +40,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getUserPurchases } from 'state/purchases/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { hasAllSitesList } from 'state/sites/selectors';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Style dependencies
@@ -69,6 +70,15 @@ class ListAll extends Component {
 		const site = sites[ domain.blogId ];
 		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
 	};
+
+	state = {
+		firstRender: true,
+	};
+
+	componentDidMount() {
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { firstRender: false } );
+	}
 
 	headerButtons() {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
@@ -145,26 +155,45 @@ class ListAll extends Component {
 		return [ <ListHeader key="list-header" />, ...domainListItems ];
 	}
 
-	render() {
-		const { translate, user } = this.props;
+	renderContent() {
+		const { domainsList, requestingFlatDomains, translate, user } = this.props;
+		if ( this.state.firstRender ) {
+			return <QueryAllDomains />;
+		}
+
+		if ( requestingFlatDomains || domainsList.length > 0 ) {
+			return (
+				<>
+					<div className="list-all__heading">
+						<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
+						<div className="list-all__heading-buttons">{ this.headerButtons() }</div>
+					</div>
+					<div className="list-all__container">
+						<QueryAllDomains />
+						<QueryUserPurchases userId={ user.ID } />
+						<Main wideLayout>
+							<SidebarNavigation />
+							<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
+							<div className="list-all__items">{ this.renderDomainsList() }</div>
+						</Main>
+					</div>
+				</>
+			);
+		}
 
 		return (
-			<Main wideLayout>
-				<div className="list-all__heading">
-					<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
-					<div className="list-all__heading-buttons">{ this.headerButtons() }</div>
-				</div>
-				<div className="list-all__container">
-					<QueryAllDomains />
-					<QueryUserPurchases userId={ user.ID } />
-					<Main wideLayout>
-						<SidebarNavigation />
-						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
-						<div className="list-all__items">{ this.renderDomainsList() }</div>
-					</Main>
-				</div>
-			</Main>
+			<EmptyContent
+				title={ translate( 'Your next big idea starts here' ) }
+				line={ translate( 'Find the domain that defines you' ) }
+				action={ translate( 'Start your search' ) }
+				actionURL="/domains"
+				illustration="/calypso/images/illustrations/domains-blank-slate.svg"
+			/>
 		);
+	}
+
+	render() {
+		return <Main wideLayout>{ this.renderContent() }</Main>;
 	}
 }
 
