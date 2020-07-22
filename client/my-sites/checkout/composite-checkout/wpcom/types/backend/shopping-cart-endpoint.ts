@@ -217,14 +217,6 @@ export function convertResponseCartToRequestCart( {
 	} as RequestCart;
 }
 
-export function getProductSlug( cart: ResponseCart, uuidToRemove: string ): string {
-	const filteredProduct = cart.products.filter( ( product ) => {
-		return product.uuid === uuidToRemove;
-	} );
-
-	return filteredProduct[ 0 ].product_slug as string;
-}
-
 export function removeItemFromResponseCart(
 	cart: ResponseCart,
 	uuidToRemove: string
