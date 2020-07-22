@@ -662,8 +662,8 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 		},
 
-		'p2-login-signup': {
-			stepName: 'p2-login-signup',
+		'p2-details': {
+			stepName: 'p2-details',
 		},
 
 		'p2-site': {

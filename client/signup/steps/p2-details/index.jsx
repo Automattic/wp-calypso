@@ -40,7 +40,7 @@ function getLoginLink( { flowName, locale } ) {
 	} );
 }
 
-function P2LoginSignup( {
+function P2Details( {
 	flowName,
 	stepName,
 	positionInFlow,
@@ -61,13 +61,13 @@ function P2LoginSignup( {
 			positionInFlow={ positionInFlow }
 			headerText={ translate( "We're almost finished! Your P2 will be:" ) }
 		>
-			<div className="p2-login-signup">
-				<div className="p2-login-signup__site-part">
-					<h3 className="p2-login-signup__site-title">{ siteTitle }</h3>
-					<div className="p2-login-signup__blog-name">{ `${ site }.p2.blog` }</div>
+			<div className="p2-details">
+				<div className="p2-details__site-part">
+					<h3 className="p2-details__site-title">{ siteTitle }</h3>
+					<div className="p2-details__blog-name">{ `${ site }.p2.blog` }</div>
 					<a
 						href="/nowhere"
-						className="p2-login-signup__change-details-link"
+						className="p2-details__change-details-link"
 						onClick={ ( e ) => {
 							e.preventDefault();
 							goToStep( 'p2-site' );
@@ -76,16 +76,16 @@ function P2LoginSignup( {
 						{ translate( 'Change details' ) }
 					</a>
 				</div>
-				<div className="p2-login-signup__description">
+				<div className="p2-details__description">
 					{ translate(
 						'P2 is powered by WordPress.com: log in with your account (or create a new one) ' +
 							'to continue.'
 					) }
 				</div>
-				<div className="p2-login-signup__actions">
+				<div className="p2-details__actions">
 					<Button
 						primary
-						className="p2-login-signup__login-btn"
+						className="p2-details__login-btn"
 						onClick={ () => {
 							submitSignupStep( {
 								stepName: stepName,
@@ -113,10 +113,10 @@ function P2LoginSignup( {
 	);
 }
 
-P2LoginSignup.propTypes = {
+P2Details.propTypes = {
 	flowName: PropTypes.string.isRequired,
 	stepName: PropTypes.string.isRequired,
 	positionInFlow: PropTypes.number.isRequired,
 };
 
-export default P2LoginSignup;
+export default P2Details;

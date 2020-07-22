@@ -65,7 +65,7 @@ const stepNameToModuleName = {
 	'domains-with-preview': 'domains',
 	'site-title-with-preview': 'site-title',
 	passwordless: 'passwordless',
-	'p2-login-signup': 'p2-login-signup',
+	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
 	'upsell-plan': 'upsell',
 };
