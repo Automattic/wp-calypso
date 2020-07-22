@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { find } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Stream from 'reader/stream';
 import DocumentHead from 'components/data/document-head';
@@ -20,6 +20,7 @@ import { getReaderTags, getReaderFollowedTags } from 'state/reader/tags/selector
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';
+import ReaderMain from 'reader/components/reader-main';
 
 /**
  * Style dependencies
@@ -112,7 +113,7 @@ class TagStream extends React.Component {
 
 		if ( tag && tag.error ) {
 			return (
-				<React.Fragment>
+				<ReaderMain className="tag-stream__main">
 					<QueryReaderFollowedTags />
 					<QueryReaderTag tag={ this.props.decodedTagSlug } />
 					{ this.props.showBack && <HeaderBack /> }
@@ -122,8 +123,8 @@ class TagStream extends React.Component {
 						showFollow={ false }
 						showBack={ this.props.showBack }
 					/>
-					<EmptyContent />
-				</React.Fragment>
+					{ emptyContent }
+				</ReaderMain>
 			);
 		}
 

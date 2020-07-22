@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+// eslint-disable-next-line no-restricted-imports
 import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
@@ -43,6 +44,7 @@ import {
 	isJetpackScanSlug,
 	isJetpackBackupSlug,
 	isJetpackCloudProductSlug,
+	isJetpackAntiSpamSlug,
 } from 'lib/products-values';
 import {
 	JETPACK_PRODUCTS_LIST,
@@ -422,13 +424,21 @@ export class Checkout extends React.Component {
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
 			const isJetpackProduct = product && isJetpackProductSlug( product );
+			const isJetpackAntiSpam = product && isJetpackAntiSpamSlug( product );
+
+			let installQuery = '&install=all';
+
+			if ( isJetpackAntiSpam ) {
+				installQuery = '&install=akismet';
+			}
+
 			// If we just purchased a Jetpack product, redirect to the my plans page.
 			if ( isJetpackNotAtomic && isJetpackProduct ) {
-				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }${ installQuery }`;
 			}
 			// If we just purchased a Jetpack plan (not a Jetpack product), redirect to the Jetpack onboarding plugin install flow.
 			if ( isJetpackNotAtomic ) {
-				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you${ installQuery }`;
 			}
 
 			return selectedFeature && isValidFeatureKey( selectedFeature )
@@ -644,10 +654,6 @@ export class Checkout extends React.Component {
 			displayModeParam = { d: 'concierge' };
 		}
 
-		if ( this.props.isWhiteGloveOffer ) {
-			displayModeParam = { d: 'white-glove' };
-		}
-
 		if ( this.props.isEligibleForSignupDestination ) {
 			return this.getUrlWithQueryParam( signupDestination, displayModeParam );
 		}
@@ -795,7 +801,6 @@ export class Checkout extends React.Component {
 			productsList,
 			setHeaderText,
 			userCountryCode,
-			isWhiteGloveOffer,
 		} = this.props;
 
 		if ( this.isLoading() ) {
@@ -828,7 +833,6 @@ export class Checkout extends React.Component {
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
-				isWhiteGloveOffer={ isWhiteGloveOffer }
 			>
 				{ this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>

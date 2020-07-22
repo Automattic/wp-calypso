@@ -103,7 +103,6 @@ export default function WPCheckout( {
 	subtotal,
 	isCartPendingUpdate,
 	showErrorMessageBriefly,
-	isWhiteGloveOffer,
 	isLoggedOutCart,
 } ) {
 	const translate = useTranslate();
@@ -292,7 +291,6 @@ export default function WPCheckout( {
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
@@ -302,7 +300,6 @@ export default function WPCheckout( {
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
 							siteUrl={ siteUrl }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
 						/>
 					}
 					editButtonText={ translate( 'Edit' ) }

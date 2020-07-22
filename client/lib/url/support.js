@@ -87,6 +87,7 @@ export const SETTING_PRIMARY_DOMAIN = `${ root }/domains/#set-a-primary-address`
 export const SETTING_UP_PREMIUM_SERVICES = `${ root }/setting-up-premium-services`;
 export const STRONG_PASSWORD = `${ root }/selecting-a-strong-password/`;
 export const SHARING = `${ root }/sharing`;
+export const SITE_REDIRECT = `${ root }/site-redirect`;
 export const START = `${ root }/start`;
 export const STATS_CLICKS = `${ root }/stats/#clicks`;
 export const STATS_REFERRERS = `${ root }/stats/#referrers`;

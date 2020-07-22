@@ -548,6 +548,8 @@ function handleCloseEditor( calypsoPort ) {
 		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
+	handleCloseInLegacyEditors( dispatchAction );
+
 	if ( isNavSidebarPresent() ) {
 		return;
 	}
@@ -588,6 +590,19 @@ function handleCloseEditor( calypsoPort ) {
 			);
 		},
 	} );
+}
+
+// The close button is generally overridden using the <MainDashboardButton> slot API
+// which was introduced in Gutenberg 8.2. In older editors we still need to override
+// the click handler so that the link will open in the parent frame instead of the
+// iframe. If this happens to be a newer version of the editor the <MainDashboardButton>
+// in `handleCloseEditor()` will end up overriding these chanages.
+function handleCloseInLegacyEditors( handleClose ) {
+	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a'; // support for Gutenberg plugin < v7.7
+	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
+	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
+	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
+	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, handleClose );
 }
 
 /**
