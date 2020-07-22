@@ -32,6 +32,14 @@ export default class Illustrations extends React.PureComponent {
 									<Illustration path="app-banner-editor.svg" />
 								</td>
 							</tr>
+							<tr>
+								<td>
+									<Illustration path="app-banner-notifications.svg" />
+								</td>
+								<td>
+									<Illustration path="app-banner-reader.svg" />
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>

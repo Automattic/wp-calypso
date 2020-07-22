@@ -3,13 +3,8 @@
  */
 import React from 'react';
 
-const Illustration = React.forwardRef( ( props, ref ) => {
-	const { width = 200, height, path, alt, className, ...otherProps } = props;
+export const Illustration = ( { width = 200, height, path, alt, className, ...otherProps } ) => {
 	const src = require( 'assets/images/illustrations/' + path );
-
-	if ( ! src ) {
-		return;
-	}
 
 	return (
 		<img
@@ -18,10 +13,9 @@ const Illustration = React.forwardRef( ( props, ref ) => {
 			className={ className }
 			height={ height }
 			width={ width }
-			ref={ ref }
 			{ ...otherProps }
 		/>
 	);
-} );
+};
 
 export default React.memo( Illustration );
