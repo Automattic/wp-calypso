@@ -32,7 +32,9 @@ runAll( commands, runOptions )
 		console.log( 'Finished running commands!' );
 	} )
 	.catch( ( e ) => {
-		console.log( 'The build errored.' );
+		process.exitCode = 1;
+		console.log( 'The build failed.' );
+		console.log( `Reported build error: ${ e.message }` );
 		const tasks = e.results;
 		if ( Array.isArray( tasks ) ) {
 			const didNewspackSyncFail = tasks.some(
@@ -42,5 +44,4 @@ runAll( commands, runOptions )
 				console.log( 'You may need to run `composer install` from wp-calypso root.' );
 			}
 		}
-		process.exit( 1 );
 	} );
