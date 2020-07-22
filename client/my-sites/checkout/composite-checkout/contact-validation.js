@@ -36,12 +36,7 @@ const wpcomValidateDomainContactInformation = ( ...args ) =>
 		);
 	} );
 async function wpcomValidateSignupEmail( ...args ) {
-	try {
-		const response = await wpcom.validateNewUser( ...args, null );
-		return response;
-	} catch ( error ) {
-		throw new Error( error );
-	}
+	return wpcom.validateNewUser( ...args, null );
 }
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;

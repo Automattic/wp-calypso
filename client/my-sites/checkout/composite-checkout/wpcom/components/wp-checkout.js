@@ -134,7 +134,7 @@ export default function WPCheckout( {
 		const isNative = config.isEnabled( 'login/native-login-links' );
 		const loginUrl = login( { redirectTo, emailAddress, isNative } );
 		const loginRedirectMessage = translate(
-			'Choose a different email address. This one is not available. If this is you {{a}}log in now{{/a}}.',
+			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
 			{
 				components: {
 					a: <a href={ loginUrl } />,
@@ -147,7 +147,7 @@ export default function WPCheckout( {
 	const validateContactDetailsAndDisplayErrors = async () => {
 		debug( 'validating contact details with side effects' );
 		if ( isLoggedOutCart ) {
-			const email = contactInfo.email?.value;
+			const email = contactInfo.email?.value ?? '';
 			const validationResult = await getSignupEmailValidationResult(
 				email,
 				emailTakenLoginRedirectMessage
@@ -196,6 +196,22 @@ export default function WPCheckout( {
 	};
 	const validateContactDetails = async () => {
 		debug( 'validating contact details' );
+		if ( isLoggedOutCart ) {
+			const email = contactInfo.email?.value ?? '';
+			const validationResult = await getSignupEmailValidationResult(
+				email,
+				emailTakenLoginRedirectMessage
+			);
+			const isSignupValidationValid = isContactValidationResponseValid(
+				validationResult,
+				contactInfo
+			);
+
+			if ( ! isSignupValidationValid ) {
+				return false;
+			}
+		}
+
 		if ( isDomainFieldsVisible ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
