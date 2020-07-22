@@ -43,7 +43,7 @@ class DomainItem extends PureComponent {
 		onSelect: PropTypes.func,
 		onToggle: PropTypes.func,
 		onUpgradeClick: PropTypes.func,
-		shouldUpgradeToMakePrimary: PropTypes.boolean,
+		shouldUpgradeToMakePrimary: PropTypes.bool,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
