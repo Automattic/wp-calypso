@@ -71,6 +71,10 @@ $jetpack-product-card-icon-size: 55px;
 	justify-content: space-between;
 }
 
+.jetpack-product-card__headings {
+	margin-right: 16px;
+}
+
 .jetpack-product-card__product-name {
 	margin-bottom: 6px;
 
@@ -94,14 +98,10 @@ $jetpack-product-card-icon-size: 55px;
 }
 
 .jetpack-product-card__price {
-	margin: -4px 0 20px 16px;
+	margin: -4px 0 20px;
 
-	&.is-left-aligned {
-		margin-left: 0;
-
-		& .jetpack-product-card__raw-price {
-			justify-content: flex-start;
-		}
+	&.is-left-aligned .jetpack-product-card__raw-price {
+		justify-content: flex-start;
 	}
 }
 
