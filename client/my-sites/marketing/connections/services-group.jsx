@@ -14,6 +14,7 @@ import {
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
 } from 'state/sharing/services/selectors';
+import { getExpandedService } from 'state/sharing/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
@@ -113,5 +114,5 @@ SharingServicesGroup.defaultProps = {
 export default connect( ( state, { type } ) => ( {
 	isFetching: isKeyringServicesFetching( state ),
 	services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type ),
-	expandedService: state.sharing.expandedService,
+	expandedService: getExpandedService( state ),
 } ) )( SharingServicesGroup );

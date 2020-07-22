@@ -1,10 +1,9 @@
 /**
  * Internal dependencies
  */
-
 import { CONNECTIONS_SET_EXPANDED_SERVICE } from 'state/action-types';
 import keyring from './keyring/reducer';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 import publicize from './publicize/reducer';
 import services from './services/reducer';
 
@@ -17,9 +16,11 @@ export const expandedService = withoutPersistence( ( state = '', action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	keyring,
 	publicize,
 	services,
 	expandedService,
 } );
+
+export default withStorageKey( 'sharing', combinedReducer );

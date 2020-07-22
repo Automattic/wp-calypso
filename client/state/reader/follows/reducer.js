@@ -25,8 +25,7 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
-	READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE,
-	READER_SEEN_MARK_ALL_AS_SEEN_SECTION_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'state/reader/action-types';
 import { SERIALIZE } from 'state/action-types';
 import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
@@ -289,17 +288,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			};
 		}
 
-		case READER_SEEN_MARK_ALL_AS_SEEN_FEED_RECEIVE: {
-			const urlKey = prepareComparableUrl( action.feedUrl );
-			const existingEntry = state[ urlKey ];
-			if ( ! existingEntry ) {
-				return state;
-			}
-
-			return { ...state, [ urlKey ]: merge( {}, existingEntry, { unseen_count: 0 } ) };
-		}
-
-		case READER_SEEN_MARK_ALL_AS_SEEN_SECTION_RECEIVE: {
+		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE: {
 			forEach( action.feedUrls, ( feedUrl ) => {
 				const urlKey = prepareComparableUrl( feedUrl );
 				state[ urlKey ] = { ...state[ urlKey ], unseen_count: 0 };
