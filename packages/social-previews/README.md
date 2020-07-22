@@ -7,7 +7,7 @@ At the current time there are components to display previews for a:
 
 * Facebook post.
 * Twitter post.
-* Search result.
+* Google Search result.
 
 ## Usage
 Here's a simple usage example using the preview component for Facebook:
