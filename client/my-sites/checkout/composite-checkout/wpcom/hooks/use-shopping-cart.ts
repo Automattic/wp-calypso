@@ -26,7 +26,6 @@ import {
 	WPCOMCartCouponItem,
 	CheckoutCartItem,
 	CartLocation,
-	getProductSlug,
 } from '../types';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
@@ -103,7 +102,6 @@ function shoppingCartHookReducer(
 		case 'REMOVE_CART_ITEM': {
 			const uuidToRemove = action.uuidToRemove;
 			debug( 'removing item from cart with uuid', uuidToRemove );
-			removeItemFromLocalStorage( getProductSlug( state.responseCart, uuidToRemove ) );
 
 			return {
 				...state,
@@ -203,6 +201,12 @@ function shoppingCartHookReducer(
 			const response = action.updatedResponseCart;
 			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
 			const didAddCoupon = newCouponStatus === 'applied';
+			const cartKey = response.cart_key;
+			const productSlugsInCart = response.products.map( ( product ) => product.product_slug );
+
+			if ( cartKey === 'no-user' ) {
+				removeItemFromLocalStorage( productSlugsInCart );
+			}
 
 			return {
 				...state,
@@ -251,21 +255,23 @@ function shoppingCartHookReducer(
 	return state;
 }
 
-function removeItemFromLocalStorage( productSlug: string ) {
+function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
 	const cartItemsFromLocalStorage = JSON.parse(
 		window.localStorage.getItem( 'shoppingCart' ) || '[]'
 	);
 
-	if ( ! isEmpty( cartItemsFromLocalStorage ) ) {
-		const newCart = cartItemsFromLocalStorage.filter(
-			( product ) => product.product_slug !== productSlug
-		);
+	if ( ! Array.isArray( cartItemsFromLocalStorage ) ) {
+		return;
+	}
 
-		try {
-			window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCart ) );
-		} catch ( e ) {
-			throw new Error( 'An unexpected error occured while saving your cart: ' + e );
-		}
+	const newCartItems = cartItemsFromLocalStorage.filter( ( product ) =>
+		productSlugsInCart.includes( product.product_slug )
+	);
+
+	try {
+		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItems ) );
+	} catch ( e ) {
+		throw new Error( 'An unexpected error occured while saving your cart: ' + e );
 	}
 }
 
