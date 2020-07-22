@@ -111,7 +111,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		// Set the lang to FR if user languages is French, otherwise leave EN
-		if ( this.props.userWpcomLang && this.props.userWpcomLang.match( /^fr-?/i ) ) {
+		if ( this.props.userWpcomLang?.match( /^fr-?/i ) ) {
 			defaultValues.lang = 'FR';
 		}
 
