@@ -13,7 +13,7 @@ import { firstValid, hardTruncation, shortEnough, truncatedAtSpace } from '../he
 import './style.scss';
 
 const TITLE_LENGTH = 63;
-const SNIPPET_LENGTH = 160;
+const DESCRIPTION_LENGTH = 160;
 
 const googleTitle = firstValid(
 	shortEnough( TITLE_LENGTH ),
@@ -21,22 +21,16 @@ const googleTitle = firstValid(
 	hardTruncation( TITLE_LENGTH )
 );
 
-const googleSnippet = firstValid(
-	shortEnough( SNIPPET_LENGTH ),
-	truncatedAtSpace( SNIPPET_LENGTH - 80, SNIPPET_LENGTH + 10 ),
-	hardTruncation( SNIPPET_LENGTH )
+const googleDescription = firstValid(
+	shortEnough( DESCRIPTION_LENGTH ),
+	truncatedAtSpace( DESCRIPTION_LENGTH - 80, DESCRIPTION_LENGTH + 10 ),
+	hardTruncation( DESCRIPTION_LENGTH )
 );
 
 const googleUrl = hardTruncation( 79 );
 
-export default function SearchPreview( { snippet, title, url, description } ) {
+export default function SearchPreview( { description, title, url } ) {
 	const translate = useTranslate();
-
-	// Enable description prop to provide consistency with other components within the
-	// package which use `description`.
-	if ( description ) {
-		snippet = description;
-	}
 
 	return (
 		<div className="search-preview">
@@ -44,7 +38,9 @@ export default function SearchPreview( { snippet, title, url, description } ) {
 			<div className="search-preview__display">
 				<div className="search-preview__title">{ googleTitle( title ) }</div>
 				<div className="search-preview__url">{ googleUrl( url ) } ▾</div>
-				<div className="search-preview__snippet">{ googleSnippet( snippet || '' ) }</div>
+				<div className="search-preview__description">
+					{ googleDescription( description || '' ) }
+				</div>
 			</div>
 		</div>
 	);
@@ -53,11 +49,11 @@ export default function SearchPreview( { snippet, title, url, description } ) {
 SearchPreview.propTypes = {
 	title: PropTypes.string,
 	url: PropTypes.string,
-	snippet: PropTypes.string,
+	description: PropTypes.string,
 };
 
 SearchPreview.defaultProps = {
 	title: '',
 	url: '',
-	snippet: '',
+	description: '',
 };

@@ -211,60 +211,48 @@ describe( 'Search previews', () => {
 		} );
 	} );
 
-	describe( 'Snippet truncation', () => {
-		it( 'should display entire snippet if short enough ', () => {
+	describe( 'Description truncation', () => {
+		it( 'should display entire description if short enough ', () => {
 			const wrapper = shallow(
-				<Search snippet="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical." />
+				<Search description="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical." />
 			);
 
-			const snippetEl = wrapper.find( '.search-preview__snippet' );
-			expect( snippetEl.exists() ).toBeTruthy();
-			expect( snippetEl.text() ).toEqual(
+			const descriptionEl = wrapper.find( '.search-preview__description' );
+			expect( descriptionEl.exists() ).toBeTruthy();
+			expect( descriptionEl.text() ).toEqual(
 				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical."
 			);
-			expect( snippetEl.text().length ).toBeLessThanOrEqual( 160 );
+			expect( descriptionEl.text().length ).toBeLessThanOrEqual( 160 );
 		} );
 
-		it( 'should truncate snippet at suitable space character where possible', () => {
-			const snippetUpperBound = 160 + 10;
+		it( 'should truncate description at suitable space character where possible', () => {
+			const descriptionUpperBound = 160 + 10;
 			const wrapper = shallow(
-				<Search snippet="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+				<Search description="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 			);
 
-			const snippetEl = wrapper.find( '.search-preview__snippet' );
-			expect( snippetEl.exists() ).toBeTruthy();
-			expect( snippetEl.text() ).toEqual(
+			const descriptionEl = wrapper.find( '.search-preview__description' );
+			expect( descriptionEl.exists() ).toBeTruthy();
+			expect( descriptionEl.text() ).toEqual(
 				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From…"
 			);
-			const rawSnippetText = snippetEl.text().replace( '…', '' );
-			expect( rawSnippetText.length ).toBeLessThanOrEqual( snippetUpperBound );
+			const rawDescriptionText = descriptionEl.text().replace( '…', '' );
+			expect( rawDescriptionText.length ).toBeLessThanOrEqual( descriptionUpperBound );
 		} );
 
-		it( 'should hard truncate snippet as last resort', () => {
+		it( 'should hard truncate description as last resort', () => {
 			const wrapper = shallow(
-				<Search snippet="IamtheverymodelofamodernMajor-General,I'veinformationvegetable,animal,andmineral.IknowthekingsofEngland,andIquotethefightshistorical,FromMarathontoWaterloo,inordercategorical;I'mverywellacquainted,too,withmattersmathematical,Iunderstandequations,boththesimpleandquadratical;AboutbinomialtheoremI'mteemingwithaloto'news,Withmanycheerfulfactsaboutthesquareofthehypotenuse." />
+				<Search description="IamtheverymodelofamodernMajor-General,I'veinformationvegetable,animal,andmineral.IknowthekingsofEngland,andIquotethefightshistorical,FromMarathontoWaterloo,inordercategorical;I'mverywellacquainted,too,withmattersmathematical,Iunderstandequations,boththesimpleandquadratical;AboutbinomialtheoremI'mteemingwithaloto'news,Withmanycheerfulfactsaboutthesquareofthehypotenuse." />
 			);
 
-			const snippetEl = wrapper.find( '.search-preview__snippet' );
-			expect( snippetEl.exists() ).toBeTruthy();
-			expect( snippetEl.text() ).toEqual(
+			const descriptionEl = wrapper.find( '.search-preview__description' );
+			expect( descriptionEl.exists() ).toBeTruthy();
+			expect( descriptionEl.text() ).toEqual(
 				"IamtheverymodelofamodernMajor-General,I'veinformationvegetable,animal,andmineral.IknowthekingsofEngland,andIquotethefightshistorical,FromMarathontoWaterloo,inor…"
 			);
-			const snippetElNoEllipsis = snippetEl.text().replace( '…', '' );
-			expect( snippetElNoEllipsis ).toHaveLength( 160 );
+			const descriptionElNoEllipsis = descriptionEl.text().replace( '…', '' );
+			expect( descriptionElNoEllipsis ).toHaveLength( 160 );
 		} );
-	} );
-
-	it( 'should allow for "description" prop to be used in place of "snippet" to maintain consistency with other components ', () => {
-		const wrapper = shallow(
-			<Search description="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical." />
-		);
-
-		const snippetEl = wrapper.find( '.search-preview__snippet' );
-		expect( snippetEl.exists() ).toBeTruthy();
-		expect( snippetEl.text() ).toEqual(
-			"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical."
-		);
 	} );
 
 	it( 'should display truncated url ', () => {
