@@ -76,7 +76,7 @@ import getPreviousRoute from 'state/selectors/get-previous-route';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
-import { abtest } from 'lib/abtest';
+import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -628,10 +628,7 @@ export default connect(
 			currentPlan,
 		} );
 
-		const isReskinned =
-			props.isInSignup &&
-			'onboarding' === props.flowName &&
-			'reskinned' === abtest( 'reskinSignupFlow' );
+		const isReskinned = 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
