@@ -8,6 +8,6 @@ import { get } from 'lodash';
  */
 import 'state/posts/init';
 
-export default function isPostRevisionsDialogVisible( state ) {
+export function isPostRevisionsDialogVisible( state ) {
 	return get( state, 'posts.revisions.ui.isDialogVisible', false );
 }

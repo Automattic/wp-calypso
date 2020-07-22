@@ -7,12 +7,12 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getPostRevisions from 'state/selectors/get-post-revisions';
-import getPostRevisionsDiff from 'state/selectors/get-post-revisions-diff';
+import { getPostRevisions } from 'state/posts/selectors/get-post-revisions';
+import { getPostRevisionsDiff } from 'state/posts/selectors/get-post-revisions-diff';
 
 import 'state/posts/init';
 
-const getPostRevisionsComparisons = createSelector(
+export const getPostRevisionsComparisons = createSelector(
 	( state, siteId, postId ) => {
 		const revisions = getPostRevisions( state, siteId, postId );
 
@@ -32,5 +32,3 @@ const getPostRevisionsComparisons = createSelector(
 	},
 	( state ) => [ state.posts.revisions.diffs ]
 );
-
-export default getPostRevisionsComparisons;

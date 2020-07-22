@@ -8,8 +8,6 @@ import { get } from 'lodash';
  */
 import 'state/posts/init';
 
-const getPostRevisionsDiffView = ( state ) => {
+export function getPostRevisionsDiffView( state ) {
 	return get( state, 'posts.revisions.ui.diffView', 'unified' );
-};
-
-export default getPostRevisionsDiffView;
+}

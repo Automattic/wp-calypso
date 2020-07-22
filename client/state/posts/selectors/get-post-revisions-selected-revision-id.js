@@ -8,7 +8,6 @@ import { get } from 'lodash';
  */
 import 'state/posts/init';
 
-const getPostRevisionsSelectedRevisionId = ( state ) => {
+export function getPostRevisionsSelectedRevisionId( state ) {
 	return get( state, 'posts.revisions.selection.revisionId' );
-};
-export default getPostRevisionsSelectedRevisionId;
+}

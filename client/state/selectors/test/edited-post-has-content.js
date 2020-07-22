@@ -6,8 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import editedPostHasContent from 'state/selectors/edited-post-has-content';
-import { isEmptyContent } from '../edited-post-has-content';
+import {
+	editedPostHasContent,
+	isEmptyContent,
+} from 'state/posts/selectors/edited-post-has-content';
 import PostQueryManager from 'lib/query-manager/post';
 
 describe( 'editedPostHasContent()', () => {
