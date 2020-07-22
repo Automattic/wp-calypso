@@ -464,9 +464,12 @@ class HelpContact extends React.Component {
 		// 2. The support request isn't sent to the forums. Because forum support
 		//    requests are sent to the language specific forums (for popular languages)
 		//    we don't tell the user that support is only offered in English.
+		// 3. The support request isn't sent to Upwork. This is support given in
+		//    the user's language.
 		const showHelpLanguagePrompt =
 			config( 'livechat_support_locales' ).indexOf( currentUserLocale ) === -1 &&
-			SUPPORT_FORUM !== variationSlug;
+			SUPPORT_FORUM !== variationSlug &&
+			SUPPORT_UPWORK_TICKET !== variationSlug;
 
 		return {
 			compact: this.props.compact,
