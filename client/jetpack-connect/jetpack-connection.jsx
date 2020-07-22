@@ -45,7 +45,6 @@ const debug = debugModule( 'calypso:jetpack-connect:main' );
 const jetpackConnection = ( WrappedComponent ) => {
 	class JetpackConnection extends Component {
 		state = {
-			status: '',
 			url: '',
 			redirecting: false,
 			waitingForSites: true,
@@ -72,7 +71,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 			const status = this.getStatus( url );
 
-			this.setState( { url, status } );
+			this.setState( { url } );
 
 			if (
 				status === NOT_CONNECTED_JETPACK &&
@@ -187,13 +186,15 @@ const jetpackConnection = ( WrappedComponent ) => {
 		}
 
 		renderNotices = () => {
+			const status = this.getStatus( this.state.url );
+
 			return ! this.isCurrentUrlFetching() &&
 				this.isCurrentUrlFetched() &&
 				! this.props.jetpackConnectSite.isDismissed &&
-				this.state.status ? (
+				status ? (
 				<JetpackConnectNotices
-					noticeType={ this.state.status }
-					onDismissClick={ IS_DOT_COM === this.state.status ? this.goBack : this.dismissUrl }
+					noticeType={ status }
+					onDismissClick={ IS_DOT_COM === status ? this.goBack : this.dismissUrl }
 					url={ this.state.url }
 					onTerminalError={ this.props.isMobileAppFlow ? this.redirectToMobileApp : null }
 				/>
@@ -273,11 +274,12 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 		render() {
 			const props = this.props.locale ? this.props : omit( this.props, 'locale' );
+			const status = this.getStatus( this.state.url );
 
 			return (
 				<WrappedComponent
 					processJpSite={ this.processJpSite }
-					status={ this.state.status }
+					status={ status }
 					renderFooter={ this.renderFooter }
 					renderNotices={ this.renderNotices }
 					isCurrentUrlFetching={ this.isCurrentUrlFetching() }
