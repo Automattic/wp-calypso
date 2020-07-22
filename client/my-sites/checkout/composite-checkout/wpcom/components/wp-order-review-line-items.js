@@ -4,13 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import {
-	renderDisplayValueMarkdown,
-	CheckoutModal,
-	useFormStatus,
-	useEvents,
-	Button,
-} from '@automattic/composite-checkout';
+import { CheckoutModal, useFormStatus, useEvents, Button } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -149,14 +143,18 @@ WPLineItem.propTypes = {
 };
 
 function LineItemPrice( { item, isSummary } ) {
+	const originalAmount = item.wpcom_meta?.item_original_subtotal_display;
+	const isDiscounted =
+		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer && originalAmount;
+	const actualAmount = item.amount.displayValue;
 	return (
 		<LineItemPriceUI isSummary={ isSummary }>
-			{ item.amount.value < item.wpcom_meta?.item_original_subtotal_integer ? (
+			{ isDiscounted ? (
 				<>
-					<s>{ item.wpcom_meta?.item_original_subtotal_display }</s> { item.amount.displayValue }
+					<s>{ originalAmount }</s> { actualAmount }
 				</>
 			) : (
-				renderDisplayValueMarkdown( item.amount.displayValue )
+				actualAmount
 			) }
 		</LineItemPriceUI>
 	);
