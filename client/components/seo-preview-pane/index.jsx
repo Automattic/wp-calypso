@@ -113,7 +113,7 @@ const GoogleSite = ( site, frontPageMetaDescription ) => (
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
-		snippet={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
+		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 	/>
 );
 
@@ -121,7 +121,7 @@ const GooglePost = ( site, post, frontPageMetaDescription ) => (
 	<SearchPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
-		snippet={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
+		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 	/>
 );
 

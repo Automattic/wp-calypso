@@ -18,12 +18,15 @@ import 'state/editor/init';
  * @param {object} params  Poster data
  * @param {number} [params.atTime]  Number of seconds into the video at which to get the poster
  * @param {object} [params.file]  An image to attach to the video
+ * @param {object} meta Relevant meta data like site id and media id
+ * @param {string} [meta.mediaId] Media identifier
  * @returns {object} Action object
  */
-export const updatePoster = ( videoId, params ) => ( {
+export const updatePoster = ( videoId, params, meta ) => ( {
 	type: VIDEO_EDITOR_UPDATE_POSTER,
 	videoId,
 	params,
+	meta,
 } );
 
 /**

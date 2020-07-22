@@ -317,7 +317,9 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 		return (
 			<Fragment>
-				<Interval period={ PLUGIN_KEY_REFETCH_INTERVAL } onTick={ this.fetchPluginKeys } />
+				{ progressComplete !== 100 && (
+					<Interval period={ PLUGIN_KEY_REFETCH_INTERVAL } onTick={ this.fetchPluginKeys } />
+				) }
 				{ hasErrorInstalling && (
 					<Notice
 						status="is-error"

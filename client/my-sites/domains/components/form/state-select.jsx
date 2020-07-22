@@ -77,7 +77,7 @@ class StateSelect extends PureComponent {
 		const validationId = `validation-field-${ this.props.name }`;
 
 		return (
-			<div>
+			<>
 				{ countryCode && <QueryCountryStates countryCode={ countryCode } /> }
 				{ isEmpty( countryStates ) ? (
 					<Input inputRef={ this.inputRef } { ...this.props } />
@@ -113,7 +113,7 @@ class StateSelect extends PureComponent {
 						) }
 					</div>
 				) }
-			</div>
+			</>
 		);
 	}
 }

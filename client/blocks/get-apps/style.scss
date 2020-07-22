@@ -163,7 +163,7 @@
 	padding: 0 24px;
 
 	@include breakpoint-deprecated('>480px') {
-		font-size: 24px;
+		font-size: $font-title-medium;
 	}
 }
 

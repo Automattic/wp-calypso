@@ -24,7 +24,7 @@ import getUserSetting from 'state/selectors/get-user-setting';
 import { isFollowing } from 'state/reader/follows/selectors';
 import QueryUserSettings from 'components/data/query-user-settings';
 import Gridicon from 'components/gridicon';
-import { requestMarkAllAsSeenFeed } from 'state/reader/seen-posts/actions';
+import { requestMarkAllAsSeen } from 'state/reader/seen-posts/actions';
 
 /**
  * Style dependencies
@@ -51,11 +51,11 @@ class FeedHeader extends Component {
 		return null;
 	};
 
-	markAsSeen = () => {
-		this.props.requestMarkAllAsSeenFeed( {
+	markAllAsSeen = () => {
+		this.props.requestMarkAllAsSeen( {
 			identifier: this.props.streamKey,
-			feedId: this.props.feed.feed_ID,
-			feedUrl: this.props.feed.URL,
+			feedIds: [ this.props.feed.feed_ID ],
+			feedUrls: [ this.props.feed.URL ],
 		} );
 	};
 
@@ -104,7 +104,7 @@ class FeedHeader extends Component {
 
 							{ config.isEnabled( 'reader/seen-posts' ) && feed && (
 								<button
-									onClick={ this.markAsSeen }
+									onClick={ this.markAllAsSeen }
 									className="reader-feed-header__seen-button"
 									disabled={ feed.unseen_count === 0 }
 								>
@@ -155,5 +155,5 @@ export default connect(
 		following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 	} ),
-	{ requestMarkAllAsSeenFeed }
+	{ requestMarkAllAsSeen }
 )( localize( FeedHeader ) );

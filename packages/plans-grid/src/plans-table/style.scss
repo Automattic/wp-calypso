@@ -79,6 +79,10 @@
 	font-size: $font-body-small;
 }
 
+ul.plan-item__feature-item-group {
+	margin: 0;
+}
+
 .plan-item__mobile-expand-all-plans {
 	// increase specificity
 	&.components-button.is-link {
@@ -95,9 +99,11 @@
 	text-align: center;
 	text-transform: uppercase;
 	color: white;
-	padding: 4.5px;
+	padding: 0 5px;
 	font-size: $font-body-extra-small;
 	margin-top: -24px;
+	height: 24px;
+	line-height: 24px;
 }
 
 .plan-item__price-amount {

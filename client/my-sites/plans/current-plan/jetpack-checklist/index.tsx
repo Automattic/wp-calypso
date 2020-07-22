@@ -19,14 +19,16 @@ import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+// eslint-disable-next-line no-restricted-imports
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
+import { getSiteSlug, getCustomizerUrl, getSiteProducts } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
+import { isJetpackAntiSpam } from 'lib/products-values';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { Button, Card } from '@automattic/components';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
@@ -124,6 +126,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 			isPaidPlan,
 			isPremium,
 			isProfessional,
+			hasAntiSpam,
 			productInstallStatus,
 			rewindState,
 			siteId,
@@ -137,10 +140,12 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
 		const isRewindUnavailable = rewindState === 'unavailable';
 
+		const hasJetpackProductInstallation = isPaidPlan || hasAntiSpam;
+
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
+				{ hasJetpackProductInstallation && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
 				{ isPaidPlan && <QueryRewindState siteId={ siteId } /> }
 				<JetpackProductInstall />
 
@@ -198,7 +203,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						/>
 					) }
 
-					{ isPaidPlan && productInstallStatus && (
+					{ hasJetpackProductInstallation && productInstallStatus && (
 						<Task
 							id="jetpack_akismet"
 							title={ translate( "We're automatically turning on Anti-spam." ) }
@@ -336,49 +341,56 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
-		const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
-		const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
+function mapStateToProps( state ) {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
+	const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
 
-		// Link to "My Plan" page in Jetpack
-		let wpAdminUrl = get( site, 'options.admin_url' );
-		wpAdminUrl = wpAdminUrl
-			? formatUrl( {
-					...parseUrl( wpAdminUrl + 'admin.php' ),
-					query: { page: 'jetpack' },
-					hash: '/my-plan',
-			  } )
-			: undefined;
+	// Link to "My Plan" page in Jetpack
+	let wpAdminUrl = get( site, 'options.admin_url' );
+	wpAdminUrl = wpAdminUrl
+		? formatUrl( {
+				...parseUrl( wpAdminUrl + 'admin.php' ),
+				query: { page: 'jetpack' },
+				hash: '/my-plan',
+		  } )
+		: undefined;
 
-		const planSlug = getSitePlanSlug( state, siteId );
-		const isPremium = !! planSlug && isPremiumPlan( planSlug );
-		const isProfessional = ! isPremium && !! planSlug && isBusinessPlan( planSlug );
-		const isPaidPlan = isPremium || isProfessional || isSiteOnPaidPlan( state, siteId );
+	const planSlug = getSitePlanSlug( state, siteId );
+	const isPremium = !! planSlug && isPremiumPlan( planSlug );
+	const isProfessional = ! isPremium && !! planSlug && isBusinessPlan( planSlug );
+	const isPaidPlan = isPremium || isProfessional || isSiteOnPaidPlan( state, siteId );
 
-		return {
-			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
-			vaultpressFinished:
-				productInstallStatus &&
-				includes( [ 'installed', 'skipped' ], productInstallStatus.vaultpress_status ),
-			widgetCustomizerPaneUrl: siteId ? getCustomizerUrl( state, siteId, 'widgets' ) : null,
-			isPremium,
-			isProfessional,
-			isPaidPlan,
-			rewindState,
-			productInstallStatus,
-			siteId,
-			siteSlug: getSiteSlug( state, siteId ),
-			taskStatuses: get( getSiteChecklist( state, siteId ), 'tasks' ),
-			wpAdminUrl,
-		};
-	},
-	{
-		recordTracksEvent,
-		requestGuidedTour,
-	}
-);
+	const siteProducts = getSiteProducts( state, siteId );
+	const hasAntiSpam =
+		siteProducts && siteProducts.filter( ( product ) => isJetpackAntiSpam( product ) ).length > 0;
 
-export default connectComponent( localize( withTrackingTool( 'HotJar' )( JetpackChecklist ) ) );
+	return {
+		akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
+		vaultpressFinished:
+			productInstallStatus &&
+			includes( [ 'installed', 'skipped' ], productInstallStatus.vaultpress_status ),
+		widgetCustomizerPaneUrl: siteId ? getCustomizerUrl( state, siteId, 'widgets' ) : null,
+		isPremium,
+		isProfessional,
+		isPaidPlan,
+		hasAntiSpam,
+		rewindState,
+		productInstallStatus,
+		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
+		taskStatuses: get( getSiteChecklist( state, siteId ), 'tasks' ),
+		wpAdminUrl,
+	};
+}
+
+const mapDispatchToProps = {
+	recordTracksEvent,
+	requestGuidedTour,
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( withTrackingTool( 'HotJar' )( JetpackChecklist ) ) );

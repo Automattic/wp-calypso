@@ -5,7 +5,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import wp from 'lib/wp';
-import { CheckoutErrorBoundary, defaultRegistry } from '@automattic/composite-checkout';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import cookie from 'cookie';
 
@@ -23,7 +23,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
 import { abtest } from 'lib/abtest';
-import { initGoogleRecaptcha } from 'lib/analytics/recaptcha';
+import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -51,7 +51,6 @@ export default function CheckoutSystemDecider( {
 	upgradeIntent,
 	clearTransaction,
 	cart,
-	isWhiteGloveOffer,
 	isLoggedOutCart,
 } ) {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -125,20 +124,6 @@ export default function CheckoutSystemDecider( {
 	}
 
 	if ( 'composite-checkout' === checkoutVariant ) {
-		isLoggedOutCart &&
-			initGoogleRecaptcha(
-				'g-recaptcha',
-				'calypso/signup/pageLoad',
-				config( 'google_recaptcha_site_key' )
-			).then( ( result ) => {
-				if ( ! result ) {
-					return;
-				}
-
-				const { dispatch } = defaultRegistry;
-				dispatch( 'wpcom' ).setRecaptchaClientId( parseInt( result.clientId ) );
-			} );
-
 		let siteSlug = selectedSite?.slug;
 
 		if ( ! siteSlug ) {
@@ -162,13 +147,13 @@ export default function CheckoutSystemDecider( {
 							feature={ selectedFeature }
 							plan={ plan }
 							cart={ cart }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
 							isComingFromUpsell={ isComingFromUpsell }
 							isLoggedOutCart={ isLoggedOutCart }
+							getCart={ isLoggedOutCart ? () => Promise.resolve( cart ) : null }
 						/>
 					</StripeHookProvider>
 				</CheckoutErrorBoundary>
-				<div id="g-recaptcha"></div>
+				{ isLoggedOutCart && <Recaptcha /> }
 			</>
 		);
 	}
@@ -189,7 +174,6 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
-			isWhiteGloveOffer={ isWhiteGloveOffer }
 		/>
 	);
 }
