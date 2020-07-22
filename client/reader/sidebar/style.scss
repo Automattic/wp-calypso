@@ -20,7 +20,6 @@
 		margin-left: auto;
 		box-sizing: border-box;
 		padding: 4px 6px;
-		min-width: 22px;
 		line-height: 1;
 		background-color: var( --color-sidebar-menu-hover-background );
 		border-color: var( --color-sidebar-menu-hover-background );
@@ -44,6 +43,7 @@
 	.sidebar__menu-item-siteicon {
 		margin-right: 15px;
 		position: relative;
+		flex-shrink: 0;
 	}
 
 	.sidebar__separator {
