@@ -16,6 +16,8 @@ export { getTld } from './get-tld';
 export { getTopLevelOfTld } from './get-top-level-of-tld';
 export { getUnformattedDomainPrice } from './get-unformatted-domain-price';
 export { getUnformattedDomainSalePrice } from './get-unformatted-domain-sale-price';
+export { isDomainUpdateable } from './is-domain-updateable';
+export { isDomainInGracePeriod } from './is-domain-in-grace-period';
 export { isHstsRequired } from './is-hsts-required';
 export { isSubdomain } from './is-subdomain';
 export {
