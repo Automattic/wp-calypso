@@ -25,7 +25,8 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"oauth": false,
-		"site-indicator": false
+		"site-indicator": false,
+		"support-user": true
 	},
 	"enable_all_sections": false,
 	"sections": {

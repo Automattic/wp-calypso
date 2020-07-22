@@ -23,7 +23,6 @@
 .memberships__onboarding-wrapper {
 	display: flex;
 	flex-direction: row;
-
 	@include break-medium {
 		padding: 8px;
 	}
@@ -91,13 +90,13 @@
 		margin: 16px 0;
 	}
 }
-
 .memberships__onboarding-benefits > div > h3 {
 	@extend .wp-brand-font;
 	font-size: $font-title-small;
 	line-height: 27px;
 	color: var( --color-text );
 }
+
 .memberships__earnings-breakdown-list {
 	margin: 0;
 }
@@ -146,7 +145,7 @@
 .memberships__earnings-breakdown-value {
 	width: 100%;
 	display: block;
-	font-size: 25px;
+	font-size: $font-title-medium;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		width: auto;

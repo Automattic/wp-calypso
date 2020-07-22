@@ -62,7 +62,7 @@
 .ads__earnings-breakdown-value {
 	width: 100%;
 	display: block;
-	font-size: 25px;
+	font-size: $font-title-medium;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		width: auto;

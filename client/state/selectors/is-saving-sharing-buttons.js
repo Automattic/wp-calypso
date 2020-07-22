@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/sharing/init';
 
 /**
  * Returns true if we are saving the sharing buttons for the specified site ID, false otherwise.

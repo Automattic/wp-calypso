@@ -24,13 +24,12 @@ import getMediaItem from 'state/selectors/get-media-item';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
-import MediaActions from 'lib/media/actions';
 import { getMimeType } from 'lib/media/utils';
 import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
 import { editMedia, deleteMedia } from 'state/media/thunks';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { setMediaLibrarySelectedItems, changeMediaSource } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -192,23 +191,7 @@ class Media extends Component {
 		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
 	};
 
-	onVideoEditorUpdatePoster = ( { ID, posterUrl } ) => {
-		const site = this.props.selectedSite;
-
-		// Photon does not support URLs with a querystring component.
-		const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
-
-		if ( site ) {
-			MediaActions.edit( site.ID, {
-				ID,
-				thumbnails: {
-					fmt_hd: urlBeforeQuery,
-					fmt_dvd: urlBeforeQuery,
-					fmt_std: urlBeforeQuery,
-				},
-			} );
-		}
-
+	onVideoEditorUpdatePoster = () => {
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
 	};
@@ -282,7 +265,7 @@ class Media extends Component {
 			this.onFilterChange( '' );
 		}
 
-		MediaActions.sourceChanged( this.props.selectedSite.ID );
+		this.props.changeMediaSource( this.props.selectedSite.ID );
 		this.setState( { source }, cb );
 	};
 
@@ -446,6 +429,9 @@ const mapStateToProps = ( state, { mediaId, site } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { editMedia, deleteMedia, setMediaLibrarySelectedItems } )(
-	localize( Media )
-);
+export default connect( mapStateToProps, {
+	editMedia,
+	deleteMedia,
+	setMediaLibrarySelectedItems,
+	changeMediaSource,
+} )( localize( Media ) );

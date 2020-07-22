@@ -7,7 +7,9 @@ import {
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
 } from 'state/action-types';
+
 import 'state/data-layer/wpcom/plans';
+import 'state/plans/init';
 
 /**
  * Action creator function: RECEIVE

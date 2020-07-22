@@ -47,7 +47,7 @@ import {
 } from 'my-sites/checkout/composite-checkout/contact-validation';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
-const debug = debugFactory( 'calypso:wp-checkout' );
+const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -101,8 +101,7 @@ export default function WPCheckout( {
 	subtotal,
 	isCartPendingUpdate,
 	showErrorMessageBriefly,
-	isWhiteGloveOffer,
-	infoMessage,
+	infoMessage
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -259,7 +258,6 @@ export default function WPCheckout( {
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
@@ -269,7 +267,6 @@ export default function WPCheckout( {
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
 							siteUrl={ siteUrl }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
 						/>
 					}
 					editButtonText={ translate( 'Edit' ) }

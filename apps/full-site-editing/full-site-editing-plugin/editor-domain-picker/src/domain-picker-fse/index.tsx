@@ -49,7 +49,6 @@ const DomainPickerFSE: React.FunctionComponent< Props > = ( { onSelect } ) => {
 			initialDomainSearch={ search }
 			onSetDomainSearch={ setDomainSearch }
 			onDomainSearchBlur={ trackDomainSearchInteraction }
-			showDomainCategories
 			currentDomain={ domain?.domain_name || freeDomain }
 			onDomainSelect={ handleDomainSelect }
 			analyticsUiAlgo="editor_domain_modal"

@@ -16,7 +16,7 @@
 
 		@include breakpoint-deprecated( '<660px' ) {
 			margin: 7px 0 3px;
-			font-size: 24px;
+			font-size: $font-title-medium;
 			line-height: 32px;
 		}
 	}

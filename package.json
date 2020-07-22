@@ -110,6 +110,8 @@
 		"poststart": "check-npm-client && run-p -s start-build-if-web start-build-if-desktop build-packages:watch",
 		"start-fallback": "check-npm-client && DEV_TARGET=fallback yarn run start",
 		"start-jetpack-cloud": "check-npm-client && CALYPSO_ENV=jetpack-cloud-development yarn start",
+		"start-jetpack-cloud-p": "check-npm-client && PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run build-server",
+		"poststart-jetpack-cloud-p": "check-npm-client && PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run start-build-web",
 		"reformat-files": "check-npm-client && ./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx,json,ts,tsx}\"",
 		"start-build-do": "check-npm-client && node ${NODE_ARGS:---max_old_space_size=8192} build/bundle.js",
 		"start-build-fallback": "check-npm-client && BROWSERSLIST_ENV=defaults yarn run start-build-do",

@@ -32,6 +32,8 @@ import {
 import { getState as getImporterState } from 'lib/importer/store';
 import { prefetchmShotsPreview } from 'lib/mshots';
 
+import 'state/imports/init';
+
 const sortAndStringify = ( items ) => items.slice( 0 ).sort().join( ', ' );
 
 export const startSiteImporterImport = () => ( {

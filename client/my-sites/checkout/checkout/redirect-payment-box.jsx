@@ -28,7 +28,7 @@ import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
-import { addQueryArgs } from 'lib/url';
+import IncompatibleProductMessage from './incompatible-product-message';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
@@ -39,6 +39,7 @@ export class RedirectPaymentBox extends PureComponent {
 		countriesList: PropTypes.array.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		incompatibleProducts: PropTypes.object,
 	};
 
 	eventFormName = 'Checkout Form';
@@ -155,10 +156,6 @@ export class RedirectPaymentBox extends PureComponent {
 			successUrl =
 				origin +
 				`/checkout/thank-you/${ this.props.selectedSite.slug }/pending?redirectTo=${ redirectPath }`;
-
-			if ( this.props.isWhiteGloveOffer ) {
-				cancelUrl = addQueryArgs( { type: 'white-glove' }, cancelUrl );
-			}
 		} else {
 			cancelUrl += 'no-site';
 			successUrl = origin + `/checkout/thank-you/no-site/pending?redirectTo=${ redirectPath }`;
@@ -177,7 +174,6 @@ export class RedirectPaymentBox extends PureComponent {
 			} ),
 			cart: this.props.cart,
 			domainDetails: this.props.transaction.domainDetails,
-			is_white_glove_offer: this.props.isWhiteGloveOffer,
 		};
 
 		// get the redirect URL from rest endpoint
@@ -348,7 +344,9 @@ export class RedirectPaymentBox extends PureComponent {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary "
-									disabled={ this.state.formDisabled }
+									disabled={
+										this.state.formDisabled || this.props.incompatibleProducts?.blockCheckout
+									}
 								>
 									{ this.renderButtonText() }
 								</button>
@@ -369,6 +367,7 @@ export class RedirectPaymentBox extends PureComponent {
 								/>
 							) }
 						</div>
+						<IncompatibleProductMessage incompatibleProducts={ this.props.incompatibleProducts } />
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />

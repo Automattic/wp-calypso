@@ -8,6 +8,8 @@ import { get, find, indexOf, values } from 'lodash';
  */
 import treeSelect from '@automattic/tree-select';
 
+import 'state/invites/init';
+
 /**
  * Returns true if currently requesting invites for the given site, or false
  * otherwise.

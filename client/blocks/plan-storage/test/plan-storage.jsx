@@ -45,7 +45,6 @@ describe( 'PlanStorage basic tests', () => {
 		const storage = shallow( <PlanStorage { ...props } /> );
 		const bar = storage.find( 'Localized(PlanStorageBar)' );
 		assert.lengthOf( bar, 1 );
-		assert.equal( bar.props().siteSlug, props.siteSlug );
 		assert.equal( bar.props().sitePlanSlug, props.sitePlanSlug );
 		assert.equal( bar.props().mediaStorage, props.mediaStorage );
 	} );

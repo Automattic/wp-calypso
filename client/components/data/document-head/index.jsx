@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,7 +9,8 @@ import { debounce, isEqual } from 'lodash';
 /**
  * Internal dependencies.
  */
-import { getDocumentHeadTitle, getDocumentHeadFormattedTitle } from 'state/document-head/selectors';
+import { getDocumentHeadTitle } from 'state/document-head/selectors/get-document-head-title';
+import { getDocumentHeadFormattedTitle } from 'state/document-head/selectors/get-document-head-formatted-title';
 import {
 	setDocumentHeadTitle as setTitle,
 	setDocumentHeadLink as setLink,

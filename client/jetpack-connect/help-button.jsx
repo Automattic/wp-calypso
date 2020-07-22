@@ -24,7 +24,7 @@ export default function JetpackConnectHelpButton( { label, url } ) {
 	return (
 		<LoggedOutFormLinkItem
 			className="jetpack-connect__help-button"
-			href={ url || 'https://jetpack.com/contact-support' }
+			href={ url || 'https://jetpack.com/contact-support?hpi=1' }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ recordClick }

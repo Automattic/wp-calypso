@@ -82,6 +82,7 @@
 	align-items: center;
 	width: 100%;
 	min-height: 36px + ( 10px * 2 ) + ( 1px * 2 ); // button height + padding height + border height
+	background: var( --studio-white );
 	border: 1px solid var( --studio-gray-5 );
 	padding: 10px 14px;
 	margin: 0;

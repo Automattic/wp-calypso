@@ -40,7 +40,7 @@ import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { editMedia, deleteMedia, addExternalMedia } from 'state/media/thunks';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { setMediaLibrarySelectedItems, changeMediaSource } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaModalDialog from './dialog';
@@ -130,7 +130,7 @@ export class EditorMediaModal extends Component {
 
 			if ( nextProps.source && this.state.source !== nextProps.source && nextProps.site ) {
 				// Signal that we're coming from another data source
-				MediaActions.sourceChanged( nextProps.site.ID );
+				this.props.changeMediaSource( nextProps.site.ID );
 			}
 		} else {
 			this.props.resetView();
@@ -166,7 +166,7 @@ export class EditorMediaModal extends Component {
 		const { site } = this.props;
 
 		// Trigger the action to clear pointers/selected items
-		MediaActions.sourceChanged( site.ID );
+		this.props.changeMediaSource( site.ID );
 
 		// Change our state back to WordPress
 		this.setState(
@@ -346,23 +346,7 @@ export class EditorMediaModal extends Component {
 		this.props.onImageEditorDoneHook();
 	};
 
-	handleUpdatePoster = ( { ID, posterUrl } ) => {
-		const { site } = this.props;
-
-		// Photon does not support URLs with a querystring component.
-		const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
-
-		if ( site ) {
-			MediaActions.edit( site.ID, {
-				ID,
-				thumbnails: {
-					fmt_hd: urlBeforeQuery,
-					fmt_dvd: urlBeforeQuery,
-					fmt_std: urlBeforeQuery,
-				},
-			} );
-		}
-
+	handleUpdatePoster = () => {
 		this.props.setView( ModalViews.DETAIL );
 	};
 
@@ -421,7 +405,7 @@ export class EditorMediaModal extends Component {
 	};
 
 	onSourceChange = ( source ) => {
-		MediaActions.sourceChanged( this.props.site.ID );
+		this.props.changeMediaSource( this.props.site.ID );
 		this.setState( {
 			source,
 			search: undefined,
@@ -658,5 +642,6 @@ export default connect(
 		editMedia,
 		setMediaLibrarySelectedItems,
 		addExternalMedia,
+		changeMediaSource,
 	}
 )( localize( EditorMediaModal ) );

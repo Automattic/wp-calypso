@@ -138,23 +138,23 @@ export default {
 		localeTargets: 'any',
 		allowExistingUsers: true,
 	},
-	whiteGloveUpsell: {
-		datestamp: '20200623',
-		variations: {
-			variantShowOffer: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-		countryCodeTargets: [ 'US' ],
-	},
 	showBusinessPlanBump: {
-		datestamp: '20200619',
+		datestamp: '20300619',
 		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
+			variantShowPlanBump: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	showCompositeCheckoutI18N: {
+		datestamp: '20200710',
+		variations: {
+			composite: 90,
+			regular: 10,
+		},
+		defaultVariation: 'regular',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };

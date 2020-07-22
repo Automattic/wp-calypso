@@ -144,12 +144,14 @@ class CurrentPlan extends Component {
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<Dialog
-					baseClassName="current-plan__dialog dialog__content dialog__backdrop"
-					isVisible={ showThankYou }
-				>
-					{ this.renderThankYou() }
-				</Dialog>
+				{ showThankYou && (
+					<Dialog
+						baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+						isVisible={ showThankYou }
+					>
+						{ this.renderThankYou() }
+					</Dialog>
+				) }
 
 				<PlansNavigation path={ path } />
 

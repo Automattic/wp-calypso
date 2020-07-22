@@ -55,18 +55,30 @@ export class PlanStorage extends Component {
 		const planHasTopStorageSpace =
 			isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
 
-		return (
-			<div className={ classNames( className, 'plan-storage' ) }>
+		const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
+
+		const planStorageComponents = (
+			<>
 				<QueryMediaStorage siteId={ siteId } />
 				<PlanStorageBar
-					siteSlug={ siteSlug }
 					sitePlanSlug={ sitePlanSlug }
 					mediaStorage={ this.props.mediaStorage }
-					displayUpgradeLink={ canUserUpgrade && ! planHasTopStorageSpace }
+					displayUpgradeLink={ displayUpgradeLink }
 				>
 					{ this.props.children }
 				</PlanStorageBar>
-			</div>
+			</>
+		);
+
+		if ( displayUpgradeLink ) {
+			return (
+				<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
+					{ planStorageComponents }
+				</a>
+			);
+		}
+		return (
+			<div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>
 		);
 	}
 }

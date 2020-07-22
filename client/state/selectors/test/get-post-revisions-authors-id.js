@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPostRevisionsAuthorsId from 'state/selectors/get-post-revisions-authors-id';
+import { getPostRevisionsAuthorsId } from 'state/posts/selectors/get-post-revisions-authors-id';
 
 describe( 'getPostRevisionsAuthorsId', () => {
 	test( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {

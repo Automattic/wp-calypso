@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import PrimaryHeader from './primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
-import isSiteWhiteGlove from 'state/selectors/is-site-white-glove';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 
 class NoAvailableTimes extends Component {
@@ -20,11 +19,10 @@ class NoAvailableTimes extends Component {
 	}
 
 	render() {
-		const { isWhiteGlove, translate } = this.props;
-
+		const { translate } = this.props;
 		return (
 			<div>
-				<PrimaryHeader isWhiteGlove={ isWhiteGlove } />
+				<PrimaryHeader />
 				<Card>
 					<h2 className="shared__no-available-times-heading">
 						{ translate( 'Sorry, all upcoming sessions are full.' ) }
@@ -56,7 +54,4 @@ class NoAvailableTimes extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( { isWhiteGlove: isSiteWhiteGlove( state, ownProps.site.ID ) } ),
-	{ recordTracksEvent }
-)( localize( NoAvailableTimes ) );
+export default connect( null, { recordTracksEvent } )( localize( NoAvailableTimes ) );
