@@ -142,26 +142,32 @@ class ListAll extends Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { domainsList, canManageSitesMap } = this.props;
-
-		const domainListItems = domainsList
-			.filter(
-				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
-			) // filter on sites we can manage, that aren't `wpcom` type
-			.map( ( domain, index ) => {
-				return this.renderDomainItem( domain, index );
-			} );
+		const domainListItems = this.filteredDomains().map( ( domain, index ) => {
+			return this.renderDomainItem( domain, index );
+		} );
 
 		return [ <ListHeader key="list-header" />, ...domainListItems ];
 	}
 
+	filteredDomains() {
+		const { domainsList, canManageSitesMap } = this.props;
+		if ( ! domainsList ) {
+			return [];
+		}
+
+		// filter on sites we can manage, that aren't `wpcom` type
+		return domainsList.filter(
+			( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
+		);
+	}
+
 	renderContent() {
-		const { domainsList, requestingFlatDomains, translate, user } = this.props;
+		const { requestingFlatDomains, translate, user } = this.props;
 		if ( this.state.firstRender ) {
 			return <QueryAllDomains />;
 		}
 
-		if ( requestingFlatDomains || domainsList.length > 0 ) {
+		if ( requestingFlatDomains || this.filteredDomains().length > 0 ) {
 			return (
 				<>
 					<div className="list-all__heading">
