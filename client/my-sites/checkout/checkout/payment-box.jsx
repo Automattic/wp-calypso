@@ -189,11 +189,11 @@ export class PaymentBox extends PureComponent {
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
 						<div className={ contentClass }>
-              { infoMessage && (
-							  <Notice status="is-info" showDismiss={ false }>
-								  { this.props.infoMessage }
-							  </Notice>
-						  ) }
+							{ infoMessage && (
+								<Notice status="is-info" showDismiss={ false }>
+									{ this.props.infoMessage }
+								</Notice>
+							) }
 							<IncompatibleProductNotice incompatibleProducts={ this.props.incompatibleProducts } />
 							{ this.props.children }
 						</div>
