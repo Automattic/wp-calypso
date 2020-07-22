@@ -46,7 +46,11 @@ function domainMessageStateMachine(
 ) {
 	const states = {
 		NO_DOMAIN: {
-			FREE_PLAN: null,
+			FREE_PLAN: {
+				className: 'plan-item__domain-summary is-free',
+				icon: CrossIcon,
+				domainMessage: __( 'Custom domain not included' ),
+			},
 			PAID_PLAN: {
 				className: 'plan-item__domain-summary is-cta',
 				icon: TickIcon,
@@ -59,7 +63,11 @@ function domainMessageStateMachine(
 			},
 		},
 		FREE_DOMAIN: {
-			FREE_PLAN: null,
+			FREE_PLAN: {
+				className: 'plan-item__domain-summary is-free',
+				icon: CrossIcon,
+				domainMessage: __( 'Custom domain not included' ),
+			},
 			PAID_PLAN: {
 				className: 'plan-item__domain-summary is-cta',
 				icon: TickIcon,
