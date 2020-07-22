@@ -1,26 +1,26 @@
-Social Previews
-========
+# Social Previews
 
 This package contains low level components that can be used to display an _approximation_ of how a given post might like look when viewed on various social media / search platforms.
 
 At the current time there are components to display previews for a:
 
-* Facebook post.
-* Twitter post.
-* Google Search result.
+- Facebook post.
+- Twitter post.
+- Google Search result.
 
 ## Usage
+
 Here's a simple usage example using the preview component for Facebook:
 
 ```js
 import { FacebookPreview } from '@automattic/social-previews';
 
 <Facebook
-    title="Five for the Future"
-    description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
-    url="https://wordpress.org/five-for-the-future/"
-    author="Matt Mullenweg"
-/>
+	title="Five for the Future"
+	description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
+	url="https://wordpress.org/five-for-the-future/"
+	author="Matt Mullenweg"
+/>;
 ```
 
 Here is another example using the Search result component:
@@ -29,20 +29,20 @@ Here is another example using the Search result component:
 import { SearchPreview } from '@automattic/social-previews';
 
 <SearchPreview
-    title="Five for the Future"
-    description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
-    url="https://wordpress.org/five-for-the-future/"
-    author="Matt Mullenweg"
-/>
+	title="Five for the Future"
+	description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
+	url="https://wordpress.org/five-for-the-future/"
+	author="Matt Mullenweg"
+/>;
 ```
 
 ## Properties
 
 There are a number of common properties used across all components:
 
-* `title` - the title of the post being previewed.
-* `description` - a longer description of the post being previewed.
-* `url` - the full URL of the post being previewed.
+- `title` - the title of the post being previewed.
+- `description` - a longer description of the post being previewed.
+- `url` - the full URL of the post being previewed.
 
 In addition each individual component accepts optional additional properties that may be specific to their given platform (eg: `image`, `author`...etc).
 
