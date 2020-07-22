@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import { useShouldSiteBePublic } from './use-selected-plan';
  **/
 
 export default function useOnSignup() {
+	const { i18nLocale } = useI18n();
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
@@ -25,7 +27,7 @@ export default function useOnSignup() {
 
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string, isPublicSite?: boolean ) => {
-			createSite( username, bearerToken, isPublicSite );
+			createSite( username, i18nLocale, bearerToken, isPublicSite );
 		},
 		[ createSite ]
 	);
@@ -34,5 +36,5 @@ export default function useOnSignup() {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
 			handleCreateSite( newUser.username, newUser.bearerToken, shouldSiteBePublic );
 		}
-	}, [ newSite, newUser, handleCreateSite, shouldSiteBePublic ] );
+	}, [ newSite, newUser, i18nLocale, handleCreateSite, shouldSiteBePublic ] );
 }

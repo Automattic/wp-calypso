@@ -20,6 +20,7 @@ import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import Plans from './plans';
 import Domains from './domains';
+import Language from './language';
 
 import './colors.scss';
 import './style.scss';
@@ -110,6 +111,10 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 
 				<Route path={ makePath( Step.PlansModal ) }>
 					<Plans isModal />
+				</Route>
+
+				<Route path={ makePath( Step.LanguageModal ) }>
+					<Language />
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>{ createSiteOrError() }</Route>

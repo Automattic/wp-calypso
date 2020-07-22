@@ -36,12 +36,7 @@ const wpcomValidateDomainContactInformation = ( ...args ) =>
 		);
 	} );
 async function wpcomValidateSignupEmail( ...args ) {
-	try {
-		const response = await wpcom.validateNewUser( ...args, null );
-		return response;
-	} catch ( error ) {
-		throw new Error( error );
-	}
+	return wpcom.validateNewUser( ...args, null );
 }
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
@@ -106,13 +101,7 @@ export async function getDomainValidationResult( items, contactInfo ) {
 }
 
 export async function getSignupEmailValidationResult( email, emailTakenLoginRedirect ) {
-	let response;
-	try {
-		response = await wpcomValidateSignupEmail( { email, is_from_userless_checkout: true } );
-	} catch ( err ) {
-		throw err;
-	}
-
+	const response = await wpcomValidateSignupEmail( { email, is_from_userless_checkout: true } );
 	const signupValidationErrorResponse = getSignupValidationErrorResponse(
 		response,
 		email,

@@ -24,7 +24,7 @@
 }
 
 .activity-log-switch__header-header {
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	text-align: center;
 	padding: 12px 24px 48px;
@@ -47,7 +47,7 @@
 
 .activity-log-switch__features-header {
 	color: var( --color-neutral-50 );
-	font-size: 24px;
+	font-size: $font-title-medium;
 	line-height: 32px;
 	margin: 48px 48px 24px;
 }

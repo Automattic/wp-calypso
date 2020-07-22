@@ -3,7 +3,6 @@
  */
 import { useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
 import debugFactory from 'debug';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +30,7 @@ import {
 } from '../types';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
-const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
+const debug = debugFactory( 'calypso:composite-checkout:shopping-cart-manager' );
 
 /**
  *     * responseCart
@@ -413,8 +412,6 @@ type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-li
  * @param showAddCouponSuccessMessage
  *     Takes a coupon code and displays a translated notice that
  *     the coupon was successfully applied.
- * @param cartRawResponse
- *		The shopping cart response either fetched from localstorage(userless checkout) or saved cart for the user.
  * @param onEvent
  *     Optional callback that takes a ReactStandardAction object for analytics.
  * @returns ShoppingCartManager
@@ -425,9 +422,8 @@ export function useShoppingCart(
 	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
 	setCart: ( arg0: string, arg1: RequestCart ) => Promise< ResponseCart >,
-	getCart: ( arg0: string, arg1: ResponseCart | null ) => Promise< ResponseCart >,
+	getCart: ( arg0: string ) => Promise< ResponseCart >,
 	showAddCouponSuccessMessage: ( arg0: string ) => void,
-	cartRawResponse: ResponseCart,
 	onEvent?: ( arg0: ReactStandardAction ) => void
 ): ShoppingCartManager {
 	const cartKeyString: string = cartKey || 'no-site';
@@ -435,14 +431,7 @@ export function useShoppingCart(
 		cartKeyString,
 		setCart,
 	] );
-
-	const cartResponseConverted = isEmpty( cartRawResponse )
-		? null
-		: convertRawResponseCartToResponseCart( cartRawResponse );
-	const getServerCart = useCallback( () => getCart( cartKeyString, cartResponseConverted ), [
-		cartKeyString,
-		getCart,
-	] );
+	const getServerCart = useCallback( () => getCart( cartKeyString ), [ cartKeyString, getCart ] );
 
 	const [ hookState, hookDispatch ] = useReducer(
 		shoppingCartHookReducer,

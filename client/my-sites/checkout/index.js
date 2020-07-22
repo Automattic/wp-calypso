@@ -130,14 +130,6 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
-
-		page(
-			'/checkout/:site/offer-white-glove',
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
 	}
 
 	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );

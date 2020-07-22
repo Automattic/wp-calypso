@@ -477,8 +477,18 @@ export class List extends React.Component {
 					</InfoPopover>
 				</div>
 				<div className="list__header-primary-domain-buttons">
-					<Button compact className="list__change-primary-domain">
-						{ translate( 'Change primary domain' ) }
+					<Button
+						compact
+						className="list__change-primary-domain"
+						onClick={
+							this.state.changePrimaryDomainModeEnabled
+								? this.disableChangePrimaryDomainMode
+								: this.enableChangePrimaryDomainMode
+						}
+					>
+						{ this.state.changePrimaryDomainModeEnabled
+							? translate( 'Abort primary domain change' )
+							: translate( 'Change primary domain' ) }
 					</Button>
 				</div>
 			</CompactCard>,
@@ -525,7 +535,18 @@ export class List extends React.Component {
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
-				onClick={ this.goToEditDomainRoot }
+				onClick={ this.state.settingPrimaryDomain ? noop : this.goToEditDomainRoot }
+				isBusy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
+				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
+					context: 'Shows up when the primary domain is changing and the user is waiting',
+				} ) }
+				disabled={ this.state.settingPrimaryDomain || this.state.changePrimaryDomainModeEnabled }
+				enableSelection={ this.state.changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
+				selectionIndex={ index }
+				onMakePrimaryClick={ this.handleUpdatePrimaryDomain }
+				onSelect={ this.handleUpdatePrimaryDomain }
+				onUpgradeClick={ this.goToPlans }
+				shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
 			/>
 		) );
 
