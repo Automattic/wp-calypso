@@ -138,21 +138,11 @@ export default {
 		localeTargets: 'any',
 		allowExistingUsers: true,
 	},
-	whiteGloveUpsell: {
-		datestamp: '20200623',
-		variations: {
-			variantShowOffer: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-		countryCodeTargets: [ 'US' ],
-	},
 	showBusinessPlanBump: {
-		datestamp: '20200619',
+		datestamp: '20300619',
 		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
+			variantShowPlanBump: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

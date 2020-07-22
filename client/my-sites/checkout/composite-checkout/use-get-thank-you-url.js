@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
 
 const { select } = defaultRegistry;
-const debug = debugFactory( 'calypso:composite-checkout-thank-you' );
+const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
 /**
  * Internal dependencies
@@ -49,7 +49,6 @@ export function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
-	isWhiteGloveOffer,
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
@@ -154,9 +153,7 @@ export function getThankYouPageUrl( {
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
-	const displayModeParam = isWhiteGloveOffer
-		? { d: 'white-glove' }
-		: getDisplayModeParamFromCart( cart );
+	const displayModeParam = getDisplayModeParamFromCart( cart );
 	if ( isEligibleForSignupDestinationResult && signupDestination ) {
 		debug( 'is eligible for signup destination', signupDestination );
 		return getUrlWithQueryParam( signupDestination, displayModeParam );
@@ -344,7 +341,6 @@ export function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	product,
 	siteId,
-	isWhiteGloveOffer,
 	hideNudge,
 	recordEvent,
 } ) {
@@ -378,7 +374,6 @@ export function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			product,
 			isEligibleForSignupDestinationResult,
-			isWhiteGloveOffer,
 			hideNudge,
 			didPurchaseFail,
 			isTransactionResultEmpty,
@@ -402,7 +397,6 @@ export function useGetThankYouUrl( {
 		feature,
 		purchaseId,
 		cart,
-		isWhiteGloveOffer,
 		hideNudge,
 	] );
 	return getThankYouUrl;

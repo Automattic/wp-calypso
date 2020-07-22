@@ -6,13 +6,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { assign } from 'lodash';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { DUMMY_API_RESPONSE, DUMMY_ITEM, DUMMY_QUERY, DUMMY_SITE_ID } from './fixtures';
+import { DUMMY_API_RESPONSE, DUMMY_QUERY, DUMMY_SITE_ID } from './fixtures';
 import { stubs } from './mocks/lib/wp';
 
 jest.mock( 'lib/media/store', () => ( {
@@ -85,20 +84,6 @@ describe( 'MediaActions', () => {
 				type: 'SET_MEDIA_QUERY',
 				siteId: DUMMY_SITE_ID,
 				query: DUMMY_QUERY,
-			} );
-		} );
-	} );
-
-	describe( '#edit()', () => {
-		const item = { ID: 100, description: 'Example' };
-
-		test( 'should immediately edit the existing item', () => {
-			MediaActions.edit( DUMMY_SITE_ID, item );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'RECEIVE_MEDIA_ITEM',
-				siteId: DUMMY_SITE_ID,
-				data: assign( {}, DUMMY_ITEM, item ),
 			} );
 		} );
 	} );
