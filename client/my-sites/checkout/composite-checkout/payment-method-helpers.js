@@ -4,7 +4,6 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
@@ -216,24 +215,20 @@ function WordPressLogo() {
 }
 
 async function createAccountCallback( response ) {
-	try {
-		wp.loadToken( response.bearer_token );
-		const url = 'https://wordpress.com/wp-login.php';
-		const bodyObj = {
-			authorization: 'Bearer ' + response.bearer_token,
-			log: response.username,
-		};
+	wp.loadToken( response.bearer_token );
+	const url = 'https://wordpress.com/wp-login.php';
+	const bodyObj = {
+		authorization: 'Bearer ' + response.bearer_token,
+		log: response.username,
+	};
 
-		await globalThis.fetch( url, {
-			method: 'POST',
-			redirect: 'manual',
-			credentials: 'include',
-			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: stringifyBody( bodyObj ),
-		} );
-	} catch ( error ) {
-		throw new Error( error );
-	}
+	return await globalThis.fetch( url, {
+		method: 'POST',
+		redirect: 'manual',
+		credentials: 'include',
+		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: stringifyBody( bodyObj ),
+	} );
 }
 
 async function createAccount( select ) {
@@ -299,8 +294,8 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 		const { select, dispatch } = defaultRegistry;
 
 		return createAccount( select ).then( ( response ) => {
-			const siteIdFromResponse = get( response, 'blog_details.blogid', undefined );
-			const siteSlugFromResponse = get( response, 'blog_details.site_slug', undefined );
+			const siteIdFromResponse = response?.blog_details?.blogid;
+			const siteSlugFromResponse = response?.blog_details?.site_slug;
 
 			siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
 			siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
@@ -308,7 +303,7 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then
 			// the create account response will not have a site ID, so we fetch from state.
 			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
-			const newPayLoad = {
+			const newPayload = {
 				...payload,
 				cart: {
 					...payload.cart,
@@ -318,7 +313,7 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 				},
 			};
 
-			return wp.undocumented().transactions( newPayLoad || payload );
+			return wp.undocumented().transactions( newPayload );
 		} );
 	}
 
@@ -330,8 +325,8 @@ export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
 		const { select, dispatch } = defaultRegistry;
 
 		return createAccount( select ).then( ( response ) => {
-			const siteId = get( response, 'blog_details.blogid', undefined );
-			const siteSlug = get( response, 'blog_details.site_slug', undefined );
+			const siteId = response?.blog_details?.blogid;
+			const siteSlug = response?.blog_details?.site_slug;
 
 			siteId && dispatch( 'wpcom' ).setSiteId( siteId );
 			siteSlug && dispatch( 'wpcom' ).setSiteSlug( siteSlug );

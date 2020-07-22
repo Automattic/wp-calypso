@@ -358,7 +358,7 @@ export function useGetThankYouUrl( {
 		const orderId = transactionResult.order_id;
 		const isTransactionResultEmpty = isEmpty( transactionResult );
 
-		if ( isEmpty( siteSlug ) || 'no-user' === siteSlug ) {
+		if ( siteSlug === 'no-user' || ! siteSlug ) {
 			siteSlug = select( 'wpcom' ).getSiteSlug();
 		}
 
