@@ -21,34 +21,37 @@
 		text-align: left;
 	}
 
+	/*
+	Not sure this code is needed presumably we don't have h1 in content?
 	h1 {
 		font-size: 54px;
 		margin: 0 0 16px;
 	}
+	*/
 
 	h2 {
-		font-size: $font-title-medium;
+		font-size: $font-title-large;
 		font-weight: 700;
 		margin: 0 0 8px;
 	}
 
 	h3 {
-		font-size: $font-title-small;
+		font-size: $font-title-medium;
 		font-weight: 700;
 		margin: 0 0 8px;
 	}
 
 	h4 {
-		font-size: 32px;
+		font-size: $font-title-small;
 		margin: 0 0 8px;
 	}
 
 	h5 {
-		font-size: 24px;
+		font-size: $font-body;
 	}
 
 	h6 {
-		font-size: 21px;
+		font-size: $font-body-small;
 	}
 
 	p,
