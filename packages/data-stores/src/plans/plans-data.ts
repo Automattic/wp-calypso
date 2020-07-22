@@ -37,7 +37,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 
 	[ PLAN_PERSONAL ]: {
 		title: translate( 'Personal' ) as string,
-		description: translate( 'Best for Personal Use' ) as string,
+		description: translate( 'Best for personal use' ) as string,
 		productId: 1009,
 		storeSlug: PLAN_PERSONAL,
 		pathSlug: 'personal',
@@ -56,7 +56,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 
 	[ PLAN_BUSINESS ]: {
 		title: translate( 'Business' ) as string,
-		description: translate( 'Best for Small Businesses' ) as string,
+		description: translate( 'Best for small businesses' ) as string,
 		productId: 1008,
 		storeSlug: PLAN_BUSINESS,
 		pathSlug: 'business',
@@ -65,7 +65,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 
 	[ PLAN_ECOMMERCE ]: {
 		title: translate( 'eCommerce' ) as string,
-		description: translate( 'Best for Online Stores' ) as string,
+		description: translate( 'Best for online stores' ) as string,
 		productId: 1011,
 		storeSlug: PLAN_ECOMMERCE,
 		pathSlug: 'ecommerce',
