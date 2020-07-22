@@ -276,6 +276,11 @@
 		line-height: 1.8;
 	}
 
+	.wp-block-table th {
+		font-weight: bold;
+		background: var( --color-neutral-0 );
+	}
+
 	.wp-block-button__link,
 	.wp-block-button__link:hover {
 		color: inherit;
