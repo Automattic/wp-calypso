@@ -212,11 +212,7 @@ const SiteSetupList = ( {
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
-			{ useDrillLayout && (
-				<CardHeading>
-					<>{ translate( 'Site setup' ) }</>
-				</CardHeading>
-			) }
+			{ useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
 			{ ! useDrillLayout && (
 				<CurrentTaskItem
 					currentTask={ currentTask }
