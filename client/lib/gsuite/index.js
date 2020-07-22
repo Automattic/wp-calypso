@@ -24,6 +24,7 @@ export { canDomainAddGSuite } from './can-domain-add-gsuite';
 export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
 export { hasGSuiteWithUs } from './has-gsuite-with-us';
 export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
+export { hasPendingGSuiteUsers } from './has-pending-gsuite-users';
 
 /**
  * Retrieves the first domain that is eligible to G Suite in this order:
@@ -81,14 +82,4 @@ export function getGSuiteSupportedDomains( domains ) {
  */
 export function hasGSuiteSupportedDomain( domains ) {
 	return getGSuiteSupportedDomains( domains ).length > 0;
-}
-
-/**
- * Does a domain have pending G Suite Users
- *
- * @param {object} domain - domain object
- * @returns {boolean} - Does domain have pending G Suite users
- */
-export function hasPendingGSuiteUsers( domain ) {
-	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
 }
