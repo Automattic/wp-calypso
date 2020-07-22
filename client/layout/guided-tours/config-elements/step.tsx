@@ -50,6 +50,7 @@ interface AcceptedProps {
 	style?: CSSProperties;
 	target?: string;
 	wait?: Function;
+	waitForTarget?: boolean;
 	when?: Function;
 }
 
@@ -60,6 +61,7 @@ interface DefaultProps {
 interface State {
 	initialized: boolean;
 	hasScrolled: boolean;
+	seenTarget: boolean;
 	stepPos?: Coordinate;
 }
 
@@ -87,6 +89,7 @@ export default class Step extends Component< Props, State > {
 	state: State = {
 		initialized: false,
 		hasScrolled: false,
+		seenTarget: false,
 	};
 
 	/**
@@ -185,7 +188,7 @@ export default class Step extends Component< Props, State > {
 	watchTarget() {
 		if (
 			! this.props.target ||
-			! this.props.onTargetDisappear ||
+			( ! this.props.onTargetDisappear && ! this.props.waitForTarget ) ||
 			typeof window === 'undefined' ||
 			typeof window.MutationObserver === 'undefined'
 		) {
@@ -194,9 +197,9 @@ export default class Step extends Component< Props, State > {
 
 		if ( ! this.observer ) {
 			this.observer = new window.MutationObserver( () => {
-				const { target, onTargetDisappear } = this.props;
+				const { target, onTargetDisappear, waitForTarget } = this.props;
 
-				if ( ! target || ! onTargetDisappear ) {
+				if ( ! target || ( ! waitForTarget && ! onTargetDisappear ) ) {
 					return;
 				}
 
@@ -206,6 +209,8 @@ export default class Step extends Component< Props, State > {
 						quit: () => this.context.quit( this.context ),
 						next: () => this.skipToNext( this.props, this.context ),
 					} );
+				} else {
+					this.safeSetState( { seenTarget: true } );
 				}
 			} );
 			this.observer.observe( document.body, { childList: true, subtree: true } );
@@ -373,7 +378,7 @@ export default class Step extends Component< Props, State > {
 	render() {
 		// `children` is a render prop where the value is not the usual JSX markup,
 		// but a React component to render, i.e., function or a class.
-		const { when, children: ContentComponent } = this.props;
+		const { when, children: ContentComponent, target, waitForTarget } = this.props;
 		const { isLastStep } = this.context;
 
 		if ( ! this.state.initialized ) {
@@ -387,6 +392,10 @@ export default class Step extends Component< Props, State > {
 		}
 
 		if ( when && ! this.context.isValid( when ) ) {
+			return null;
+		}
+
+		if ( target && waitForTarget && ! this.state.seenTarget ) {
 			return null;
 		}
 

@@ -12,14 +12,6 @@ import { localizeUrl } from 'lib/i18n-utils';
 
 const CONNECT_BUTTON_SELECTOR = '.sharing-service.not-connected .button.is-compact';
 
-// Wait until the desired DOM element appears. Check every 125ms.
-// This function is a Redux action creator, hence the two arrows.
-const waitForConnectButton = () => async () => {
-	while ( ! document.querySelector( CONNECT_BUTTON_SELECTOR ) ) {
-		await new Promise( ( resolve ) => setTimeout( resolve, 125 ) );
-	}
-};
-
 const handleDisappear = ( { quit } ) => quit();
 
 export const marketingConnectionsTour = makeTour(
@@ -31,7 +23,7 @@ export const marketingConnectionsTour = makeTour(
 			style={ {
 				marginLeft: '-24px',
 			} }
-			wait={ waitForConnectButton }
+			waitForTarget={ true }
 			target={ CONNECT_BUTTON_SELECTOR }
 			onTargetDisappear={ handleDisappear }
 			keepRepositioning={ true }
