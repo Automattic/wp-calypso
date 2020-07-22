@@ -5,13 +5,14 @@
 	width: 300px;
 	display: flex;
 	flex: 1 0 auto;
-	font-size: $font-body-small;
-	height: 48px;
+	font-size: $font-body;
+	height: 40px;
 	align-items: stretch;
 	cursor: pointer;
 	transition: border-color 150ms ease-in-out;
 	text-align: left;
 	line-height: inherit;
+	color: var( --color-neutral-70 );
 
 	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
@@ -19,19 +20,17 @@
 
 	&[disabled] {
 		cursor: default;
-		color: var( --color-neutral-0 );
+		color: var( --color-neutral-40 );
 
-		&,
-		.language-picker__icon {
-			border-color: var( --color-neutral-0 );
+		.gridicons-chevron-down {
+			color: var( --color-neutral-0 );
 		}
 	}
 
 	&:not( [disabled] ) {
 		&:hover {
-			&,
-			.language-picker__icon {
-				border-color: var( --color-neutral-20 );
+			.gridicons-chevron-down {
+				color: var( --color-neutral-30 );
 			}
 		}
 
@@ -45,6 +44,10 @@
 
 			&:hover {
 				box-shadow: 0 0 0 2px var( --color-primary-20 );
+			}
+
+			.gridicons-chevron-down {
+				color: var( --color-neutral-70 );
 			}
 		}
 	}
@@ -62,13 +65,13 @@
 			background-color: var( --color-neutral-0 );
 		}
 	}
+
 	.gridicons-chevron-down {
 		align-self: center;
-		color: var( --color-neutral-20 );
+		color: var( --color-neutral-10 );
 		flex-grow: 0;
 		flex-shrink: 0;
 		margin-right: 10px;
-		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
 	}
 }
 
@@ -85,8 +88,8 @@
 
 .language-picker__icon-inner {
 	text-transform: uppercase;
-	font-weight: 600;
 	line-height: 1;
+	white-space: nowrap;
 }
 
 .language-picker__name {
@@ -99,7 +102,6 @@
 }
 
 .language-picker__name-inner {
-	font-weight: 600;
 	overflow: hidden;
 }
 
