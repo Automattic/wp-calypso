@@ -54,17 +54,9 @@
 
 	button {
 		padding: 8px 34px;
-		font-size: $font-body-small;
-		font-weight: normal;
-
-		&.is-primary {
-			box-sizing: border-box;
-			box-shadow: 0 1px 0 var( --studio-pink-80 );
-			border-radius: 3px;
-		}
 
 		&.is-borderless {
-			color: var( --studio-wordpress-blue-50 );
+			color: var( --color-link );
 			margin-left: 29px;
 		}
 	}
