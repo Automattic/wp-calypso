@@ -66,12 +66,20 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 		goBack = () => page.back();
 
+		// HACK: We wrap _processJpSite here so that this.state.url
+		// is consistent/up-to-date for all downstream calls.
+		// Calling _processJpSite in setState's callback guarantees
+		// it will only be executed after the state has been changed.
+		//
+		// TODO: Come back and simplify state management for this component.
 		processJpSite = ( url ) => {
+			this.setState( { url }, () => this._processJpSite( url ) );
+		};
+
+		_processJpSite = ( url ) => {
 			const { isMobileAppFlow, skipRemoteInstall, forceRemoteInstall } = this.props;
 
 			const status = this.getStatus( url );
-
-			this.setState( { url } );
 
 			if (
 				status === NOT_CONNECTED_JETPACK &&
