@@ -23,7 +23,6 @@ import embeds from './embeds/reducer';
 import experiments from './experiments/reducer';
 import gsuiteUsers from './gsuite-users/reducer';
 import gutenbergOptInOut from './gutenberg-opt-in-out/reducer';
-import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import help from './help/reducer';
 import home from './home/reducer';
@@ -72,7 +71,6 @@ const reducers = {
 	experiments,
 	gsuiteUsers,
 	gutenbergOptInOut,
-	happinessEngineers,
 	happychat,
 	help,
 	home,
