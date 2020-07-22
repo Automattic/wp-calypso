@@ -347,7 +347,7 @@ export default function CompositeCheckout( {
 
 	const cartEmptyRedirectUrl = isLoggedOutCart ? '/start' : `/plans/${ siteSlug || '' }`;
 
-	useRedirectIfCartEmpty( items, cartEmptyRedirectUrl, isLoadingCart );
+	useRedirectIfCartEmpty( items, cartEmptyRedirectUrl, isLoadingCart, isLoggedOutCart );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
@@ -615,7 +615,7 @@ function isNotCouponError( error ) {
 	return ! couponErrorCodes.includes( error.code );
 }
 
-function useRedirectIfCartEmpty( items, redirectUrl, isLoading ) {
+function useRedirectIfCartEmpty( items, redirectUrl, isLoading, isLoggedOutCart ) {
 	const [ prevItemsLength, setPrevItemsLength ] = useState( 0 );
 
 	useEffect( () => {
@@ -625,11 +625,17 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading ) {
 	useEffect( () => {
 		if ( prevItemsLength > 0 && items.length === 0 ) {
 			debug( 'cart has become empty; redirecting...' );
+			if ( isLoggedOutCart ) {
+				window.localStorage.removeItem( 'siteParams' );
+			}
 			page.redirect( redirectUrl );
 			return;
 		}
 		if ( ! isLoading && items.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
+			if ( isLoggedOutCart ) {
+				window.localStorage.removeItem( 'siteParams' );
+			}
 			page.redirect( redirectUrl );
 			return;
 		}
