@@ -511,12 +511,7 @@ export default function CompositeCheckout( {
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>
-				payPalProcessor(
-					transactionData,
-					getThankYouUrl,
-					couponItem,
-					isLoggedOutCart
-				),
+				payPalProcessor( transactionData, getThankYouUrl, couponItem, isLoggedOutCart ),
 		} ),
 		[ couponItem, getThankYouUrl, siteSlug ]
 	);

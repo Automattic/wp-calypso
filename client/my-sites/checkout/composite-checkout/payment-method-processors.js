@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { defaultRegistry } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -186,12 +186,7 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor(
-	submitData,
-	getThankYouUrl,
-	couponItem,
-	isLoggedOutCart
-) {
+export async function payPalProcessor( submitData, getThankYouUrl, couponItem, isLoggedOutCart ) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const successUrl = formatUrl( {
 		protocol,
