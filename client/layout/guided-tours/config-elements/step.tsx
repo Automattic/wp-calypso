@@ -122,9 +122,6 @@ export default class Step extends Component< Props, State > {
 			window.addEventListener( 'resize', this.onScrollOrResize );
 			this.watchTarget();
 		} );
-		if ( this.props.keepRepositioning ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 700 );
-		}
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
@@ -144,11 +141,6 @@ export default class Step extends Component< Props, State > {
 			this.setStepPosition( nextProps, shouldScrollTo );
 			this.watchTarget();
 		} );
-		if ( ! nextProps.keepRepositioning ) {
-			clearInterval( this.repositionInterval );
-		} else if ( ! this.repositionInterval ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 700 );
-		}
 	}
 
 	componentWillUnmount() {
@@ -160,7 +152,6 @@ export default class Step extends Component< Props, State > {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		}
 		this.unwatchTarget();
-		clearInterval( this.repositionInterval );
 	}
 
 	/*
@@ -187,8 +178,9 @@ export default class Step extends Component< Props, State > {
 
 	watchTarget() {
 		if (
-			! this.props.target ||
-			( ! this.props.onTargetDisappear && ! this.props.waitForTarget ) ||
+			( ! this.props.keepRepositioning &&
+				( ! this.props.target ||
+					( ! this.props.onTargetDisappear && ! this.props.waitForTarget ) ) ) ||
 			typeof window === 'undefined' ||
 			typeof window.MutationObserver === 'undefined'
 		) {
@@ -197,7 +189,11 @@ export default class Step extends Component< Props, State > {
 
 		if ( ! this.observer ) {
 			this.observer = new window.MutationObserver( () => {
-				const { target, onTargetDisappear, waitForTarget } = this.props;
+				const { target, onTargetDisappear, waitForTarget, keepRepositioning } = this.props;
+
+				if ( keepRepositioning ) {
+					this.onScrollOrResize();
+				}
 
 				if ( ! target || ( ! waitForTarget && ! onTargetDisappear ) ) {
 					return;
