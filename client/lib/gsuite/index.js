@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { endsWith, get, isNumber, isString, sortBy, includes } from 'lodash';
+import { endsWith, get, sortBy, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,11 +11,11 @@ import {
 	GSUITE_BUSINESS_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from 'lib/gsuite/constants';
-import { formatPrice } from 'lib/gsuite/utils/format-price';
 import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
 import userFactory from 'lib/user';
 
 export { getAnnualPrice } from './get-annual-price';
+export { getMonthlyPrice } from './get-monthly-price';
 
 /**
  * Determines whether G Suite is allowed for the specified domain.
@@ -99,22 +99,6 @@ export function getLoginUrlWithTOSRedirect( email, domain ) {
 			`https://admin.google.com/${ domain }/AcceptTermsOfService?continue=https://mail.google.com/mail/u/${ email }`
 		) }`
 	);
-}
-
-/**
- * Computes and formats the monthly price from the specified yearly price.
- *
- * @param {number} cost - yearly cost (e.g. '99.99')
- * @param {string} currencyCode - code of the currency (e.g. 'USD')
- * @param {string} defaultValue - value to return when the price can't be determined
- * @returns {string} - the monthly price rounded to the nearest tenth (e.g. '$8.40'), otherwise the default value
- */
-export function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
-	if ( ! isNumber( cost ) && ! isString( currencyCode ) ) {
-		return defaultValue;
-	}
-
-	return formatPrice( cost / 12, currencyCode, { precision: 1 } );
 }
 
 /**
