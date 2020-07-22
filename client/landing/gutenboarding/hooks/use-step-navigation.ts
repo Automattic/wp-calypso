@@ -46,13 +46,12 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps
-	const { domain, hasUsedPlansStep } = useSelect( ( select ) =>
+	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const plan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 
-	// remove Domains step only if it's at the end
-	if ( ! siteTitle && domain ) {
+	if ( domain && ! hasUsedDomainsStep ) {
 		steps = steps.filter( ( step ) => step !== Step.Domains );
 	}
 	if ( plan && ! hasUsedPlansStep ) {
@@ -64,8 +63,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const nextStepPath =
 		currentStepIndex < steps.length - 1 ? makePath( steps[ currentStepIndex + 1 ] ) : '';
 
-	// Plans and Domains step are skipped if plan/domain is already selected.
-	const isLastStep = currentStepIndex === steps.length - 1 || currentStepIndex === -1; // final step could have been removed because of selection
+	const isLastStep = currentStepIndex === steps.length - 1;
 
 	const handleBack = () => history.push( previousStepPath );
 	const handleNext = () => ( isLastStep ? handleSiteCreation() : history.push( nextStepPath ) );

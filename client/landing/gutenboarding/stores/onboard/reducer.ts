@@ -124,6 +124,16 @@ const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action
 	return state;
 };
 
+const hasUsedDomainsStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_DOMAINS_STEP' ) {
+		return action.hasUsedDomainsStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
 		return action.hasUsedPlansStep;
@@ -159,6 +169,7 @@ const reducer = combineReducers( {
 	domainSearch,
 	domainCategory,
 	isRedirecting,
+	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	pageLayouts,
 	selectedFonts,
