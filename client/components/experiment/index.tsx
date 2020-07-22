@@ -25,10 +25,9 @@ export { default as LoadingVariations } from './loading-variations';
 export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
 	const { isLoading: loading, variation, children } = props;
 
-	recordTracksEvent( 'calypso_experiment_rendered', {
-		variation: props.variation,
-		experiment_name: props.variation,
-	} );
+	// we deliberately don't include any props/information about the experiment. This event is not intended to be used
+	// in an experiment as an exposure event.
+	recordTracksEvent( 'calypso_experiment_rendered', {} );
 
 	return (
 		<>
