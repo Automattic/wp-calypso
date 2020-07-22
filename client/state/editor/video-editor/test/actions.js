@@ -19,12 +19,14 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const videoId = 'dummy-videoId';
 			const params = { atTime: 1 };
-			const action = updatePoster( videoId, params );
+			const meta = { mediaId: 123456 };
+			const action = updatePoster( videoId, params, meta );
 
 			expect( action ).to.eql( {
 				type: VIDEO_EDITOR_UPDATE_POSTER,
 				videoId,
 				params,
+				meta,
 			} );
 		} );
 	} );

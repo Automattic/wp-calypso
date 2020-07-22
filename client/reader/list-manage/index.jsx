@@ -170,7 +170,13 @@ function ReaderListEdit( props ) {
 										'You can export this list to use on other services. The file will be in OPML format.'
 									) }
 								</p>
-								<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
+								<ReaderExportButton
+									exportType={ READER_EXPORT_TYPE_LIST }
+									listId={ list.ID }
+									filename={ `reader-list-${ props.slug
+										.replace( /[^a-z0-9]/gi, '-' )
+										.toLowerCase() }.opml` }
+								/>
 							</Card>
 						) }
 					</>

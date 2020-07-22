@@ -15,7 +15,7 @@ import {
 	pick,
 	startsWith,
 } from 'lodash';
-import { parse as parseURL } from 'url';
+import { parse as parseURL } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies

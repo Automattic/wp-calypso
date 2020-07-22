@@ -13,6 +13,7 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_SCAN_PRODUCTS,
+	JETPACK_ANTI_SPAM_PRODUCTS,
 } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 import {
@@ -227,11 +228,22 @@ export function isJetpackScanSlug( productSlug ) {
 	return JETPACK_SCAN_PRODUCTS.includes( productSlug );
 }
 
+export function isJetpackAntiSpamSlug( productSlug ) {
+	return JETPACK_ANTI_SPAM_PRODUCTS.includes( productSlug );
+}
+
 export function isJetpackScan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return isJetpackScanSlug( product.product_slug );
+}
+
+export function isJetpackAntiSpam( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isJetpackAntiSpamSlug( product.product_slug );
 }
 
 export function isJetpackCloudProductSlug( productSlug ) {

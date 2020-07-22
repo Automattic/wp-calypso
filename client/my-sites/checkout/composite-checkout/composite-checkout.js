@@ -20,7 +20,6 @@ import {
 	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -77,7 +76,6 @@ import {
 	hasPlan,
 } from 'lib/cart-values/cart-items';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryStoredCards from 'components/data/query-stored-cards';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryPlans from 'components/data/query-plans';
 import QueryProducts from 'components/data/query-products-list';
@@ -101,13 +99,7 @@ const wpcom = wp.undocumented();
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
-const wpcomGetCart = ( ...args ) => {
-	if ( ! isEmpty( args[ 1 ] ) ) {
-		return Promise.resolve( args[ 1 ] );
-	}
-
-	return wpcom.getCart( ...args );
-};
+const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 
@@ -127,7 +119,6 @@ export default function CompositeCheckout( {
 	purchaseId,
 	cart,
 	couponCode: couponCodeFromUrl,
-	isWhiteGloveOffer,
 	isComingFromUpsell,
 	isLoggedOutCart,
 } ) {
@@ -141,7 +132,7 @@ export default function CompositeCheckout( {
 	const hideNudge = isComingFromUpsell;
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
-		createAnalyticsEventHandler,
+		reduxDispatch,
 	] );
 
 	const showErrorMessage = useCallback(
@@ -224,9 +215,7 @@ export default function CompositeCheckout( {
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
 		showAddCouponSuccessMessage,
-		cart,
-		recordEvent,
-		isLoggedOutCart
+		recordEvent
 	);
 
 	const getThankYouUrl = useGetThankYouUrl( {
@@ -238,7 +227,6 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
-		isWhiteGloveOffer,
 		hideNudge,
 		recordEvent,
 	} );
@@ -496,75 +484,26 @@ export default function CompositeCheckout( {
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
 			alipay: ( transactionData ) =>
-				genericRedirectProcessor(
-					'alipay',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
 			p24: ( transactionData ) =>
-				genericRedirectProcessor(
-					'p24',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'p24', transactionData, getThankYouUrl, siteSlug ),
 			bancontact: ( transactionData ) =>
-				genericRedirectProcessor(
-					'bancontact',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'bancontact', transactionData, getThankYouUrl, siteSlug ),
 			giropay: ( transactionData ) =>
-				genericRedirectProcessor(
-					'giropay',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, siteSlug ),
 			wechat: ( transactionData ) =>
-				genericRedirectProcessor(
-					'wechat',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'wechat', transactionData, getThankYouUrl, siteSlug ),
 			ideal: ( transactionData ) =>
-				genericRedirectProcessor(
-					'ideal',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, siteSlug ),
 			sofort: ( transactionData ) =>
-				genericRedirectProcessor(
-					'sofort',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, siteSlug ),
 			eps: ( transactionData ) =>
-				genericRedirectProcessor(
-					'eps',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, siteSlug ),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) =>
-				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
+			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
 		} ),
-		[ couponItem, getThankYouUrl, isWhiteGloveOffer, siteSlug ]
+		[ couponItem, getThankYouUrl, siteSlug ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -584,8 +523,6 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			{ ! isLoggedOutCart && <QueryStoredCards /> }
-
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 			<CartProvider cart={ responseCart }>
 				<CheckoutProvider
@@ -625,7 +562,6 @@ export default function CompositeCheckout( {
 						isCartPendingUpdate={ isCartPendingUpdate }
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
-						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isLoggedOutCart={ isLoggedOutCart }
 					/>
 				</CheckoutProvider>

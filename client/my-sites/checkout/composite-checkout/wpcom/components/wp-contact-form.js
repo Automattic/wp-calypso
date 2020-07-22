@@ -85,6 +85,18 @@ export default function WPContactForm( {
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
+
+	.form-input-validation {
+		padding: 6px 6px 11px;
+	}
+
+	.form-input-validation .gridicon {
+		float: none;
+		margin-left: 0;
+		width: 18px;
+		vertical-align: text-top;
+		height: 18px;
+	}
 `;
 
 const FormField = styled( Field )`
