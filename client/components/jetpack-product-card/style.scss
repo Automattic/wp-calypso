@@ -81,6 +81,7 @@ $jetpack-product-card-icon-size: 55px;
 
 .jetpack-product-card__product-type {
 	font-style: italic;
+	font-weight: 400;
 }
 
 .jetpack-product-card__subheadline {
@@ -190,8 +191,7 @@ $jetpack-product-card-icon-size: 55px;
 	font-style: italic;
 }
 
-.jetpack-product-card__button,
-.jetpack-product-card__cancel {
+.jetpack-product-card .button {
 	width: 100%;
 	margin-bottom: 20px;
 }
