@@ -800,8 +800,7 @@ export class Checkout extends React.Component {
 			cards,
 			productsList,
 			setHeaderText,
-			userCountryCode
-			isWhiteGloveOffer,
+			userCountryCode,
 			infoMessage,
 		} = this.props;
 
@@ -835,7 +834,6 @@ export class Checkout extends React.Component {
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
-				isWhiteGloveOffer={ isWhiteGloveOffer }
 				infoMessage={ infoMessage }
 			>
 				{ this.renderSubscriptionLengthPicker() }

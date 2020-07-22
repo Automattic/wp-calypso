@@ -176,7 +176,6 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
-			isWhiteGloveOffer={ isWhiteGloveOffer }
 			infoMessage={ duplicateBackupNotice }
 		/>
 	);

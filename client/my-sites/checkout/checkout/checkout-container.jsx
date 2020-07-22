@@ -124,7 +124,6 @@ class CheckoutContainer extends React.Component {
 							hideNudge={ isComingFromGutenboarding || isComingFromUpsell }
 							returnToBlockEditor={ isGutenboardingCreate }
 							returnToHome={ isComingFromGutenboarding }
-							isWhiteGloveOffer={ isWhiteGloveOffer }
 							infoMessage={ infoMessage }
 						>
 							{ this.props.children }
