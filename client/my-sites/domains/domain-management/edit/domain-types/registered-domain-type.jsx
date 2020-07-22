@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,7 +44,7 @@ import OutboundTransferConfirmation from '../../components/outbound-transfer-con
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import { resolveDomainStatus } from 'lib/domains';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import getSiteIsDomainOnly from 'state/selectors/is-domain-only-site';
 import DomainOnlyCta from '../domain-only-cta';
 
 class RegisteredDomainType extends React.Component {
@@ -289,14 +288,12 @@ class RegisteredDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase, isDomainOnlySite } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus(
-			domain,
-			purchase,
-			pick( this.props, 'isDomainOnlySite' )
-		);
+		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
+			isDomainOnlySite,
+		} );
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
 		const newDomainManagementNavigation = config.isEnabled(
@@ -336,7 +333,9 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 					{ this.renderOutboundTransferInProgress() }
-					<DomainOnlyCta domain={ domain } selectedSiteSlug={ selectedSite.slug } />
+					{ isDomainOnlySite && (
+						<DomainOnlyCta domain={ domain } selectedSiteSlug={ selectedSite.slug } />
+					) }
 					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
@@ -384,7 +383,7 @@ export default connect(
 			: null;
 
 		return {
-			isDomainOnlySite: isDomainOnlySite( state, ownProps.selectedSite.ID ),
+			isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
