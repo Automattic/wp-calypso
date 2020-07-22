@@ -9,8 +9,9 @@ import React from 'react';
  */
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
+import Illustration from 'components/illustration';
 
-export default class Illustration extends React.PureComponent {
+export default class Illustrations extends React.PureComponent {
 	static displayName = 'Illustrations';
 
 	render() {
@@ -21,12 +22,18 @@ export default class Illustration extends React.PureComponent {
 				<div className="design__illustrations-content devdocs__doc-content">
 					<h1>Illustrations</h1>
 
-					<h2>Interface Typography</h2>
-					<p>
-						We use sans-serif system fonts with weights of 400 or greater as the default for UI.
-						This includes UI elements like buttons, notices, and navigation. System fonts improve
-						the page-rendering speed.
-					</p>
+					<table className="design__illustrations-table">
+						<tbody>
+							<tr>
+								<td>
+									<Illustration path="adwords-google.svg" />
+								</td>
+								<td>
+									<Illustration path="app-banner-editor.svg" />
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</Main>
 		);
