@@ -23,6 +23,7 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { errorNotice } from 'state/notices/actions';
 import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
+import DocumentHead from 'components/data/document-head';
 
 /**
  * Module variables
@@ -153,12 +154,22 @@ class InviteAcceptLoggedOut extends React.Component {
 	};
 
 	render() {
+		const title = 'Join Site';
+		const description = `Join ${ this.props.invite.site.title } as ${ this.props.invite.role }`;
+		const metas = [
+			{ name: 'description', property: 'og:description', content: description },
+			{ property: 'og:title', content: title },
+			{ property: 'og:type', content: 'website' },
+			{ property: 'og:site_name', content: 'WordPress.com' },
+		];
+
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
 			return this.renderSignInLinkOnly();
 		}
 
 		return (
 			<div>
+				<DocumentHead title={ title } meta={ metas } />
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.state.submitting }
