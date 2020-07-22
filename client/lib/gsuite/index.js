@@ -19,6 +19,7 @@ export {
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { canUserPurchaseGSuite } from './can-user-purchase-gsuite';
 export { canDomainAddGSuite } from './can-domain-add-gsuite';
+export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
 
 /**
  * Retrieves the first domain that is eligible to G Suite in this order:
@@ -66,10 +67,6 @@ export function getGSuiteSupportedDomains( domains ) {
 
 		return canDomainAddGSuite( domain.name );
 	} );
-}
-
-export function getGSuiteMailboxCount( domain ) {
-	return get( domain, 'googleAppsSubscription.totalUserCount', 0 );
 }
 
 /**
