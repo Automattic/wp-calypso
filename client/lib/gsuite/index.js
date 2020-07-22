@@ -15,6 +15,8 @@ import { formatPrice } from 'lib/gsuite/utils/format-price';
 import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
 import userFactory from 'lib/user';
 
+export { getAnnualPrice } from './get-annual-price';
+
 /**
  * Determines whether G Suite is allowed for the specified domain.
  *
@@ -27,22 +29,6 @@ export function canDomainAddGSuite( domainName ) {
 	}
 
 	return canUserPurchaseGSuite();
-}
-
-/**
- * Formats the specified yearly price.
- *
- * @param {number} cost - yearly cost (e.g. '99.99')
- * @param {string} currencyCode - code of the currency (e.g. 'USD')
- * @param {string} defaultValue - value to return when the price can't be determined
- * @returns {string} - the yearly price formatted (e.g. '$99.99'), otherwise the default value
- */
-export function getAnnualPrice( cost, currencyCode, defaultValue = '-' ) {
-	if ( ! isNumber( cost ) && ! isString( currencyCode ) ) {
-		return defaultValue;
-	}
-
-	return formatPrice( cost, currencyCode );
 }
 
 /**
