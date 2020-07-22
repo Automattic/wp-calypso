@@ -27,17 +27,17 @@ class DomainRefundPolicy extends React.Component {
 	};
 
 	/**
-	 * @returns {[]} Returns an array of renderable policies.
+	 * @returns {{}} Returns an object of renderable policies with unique keys.
 	 */
 	getApplicablePolicies = () => {
-		const policies = [];
+		let policies = {};
 
 		if ( hasNewDomainRegistration( this.props.cart ) ) {
-			policies.push( this.renderNewPolicy() );
+			policies = { ...policies, newDomain: this.renderNewPolicy() };
 		}
 
 		if ( hasDomainRenewal( this.props.cart ) ) {
-			policies.push( this.renderRenewalPolicy() );
+			policies = { ...policies, renewal: this.renderRenewalPolicy() };
 		}
 
 		return policies;
@@ -109,16 +109,12 @@ class DomainRefundPolicy extends React.Component {
 
 		const policies = this.getApplicablePolicies();
 
-		return (
-			<>
-				{ policies.map( ( policy, index ) => (
-					<div className="checkout__domain-refund-policy" key={ index }>
-						<Gridicon icon="info-outline" size={ 18 } />
-						<p>{ policy }</p>
-					</div>
-				) ) }
-			</>
-		);
+		return Object.entries( policies ).map( ( [ name, message ] ) => (
+			<div className="checkout__domain-refund-policy" key={ 'domain-refund-policy-' + name }>
+				<Gridicon icon="info-outline" size={ 18 } />
+				<p>{ message }</p>
+			</div>
+		) );
 	}
 }
 

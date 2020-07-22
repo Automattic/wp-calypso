@@ -21,7 +21,6 @@ export const SITE_REQUEST_FIELDS = [
 	'is_fse_active',
 	'is_fse_eligible',
 	'is_core_site_editor_enabled',
-	'is_white_glove',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [

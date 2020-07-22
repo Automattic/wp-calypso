@@ -18,7 +18,7 @@
 
 	.mailchimp__getting-started-list-header {
 		font-weight: 400;
-		font-size: 24px;
+		font-size: $font-title-medium;
 		line-height: 1.2em;
 		margin-bottom: 16px;
 	}
@@ -120,7 +120,7 @@
 }
 
 .mailchimp__setup-dialog-title {
-	font-size: 24px;
+	font-size: $font-title-medium;
 }
 
 .setup-steps__login-title {

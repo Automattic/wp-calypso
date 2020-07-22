@@ -24,6 +24,8 @@ import {
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 } from 'state/action-types';
 
+import 'state/nps-survey/init';
+
 const debug = debugFactory( 'calypso:nps-survey' );
 
 export function setNpsSurveyEligibility( isEligible ) {

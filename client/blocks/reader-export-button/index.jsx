@@ -26,10 +26,12 @@ import './style.scss';
 class ReaderExportButton extends React.Component {
 	static propTypes = {
 		exportType: PropTypes.oneOf( [ READER_EXPORT_TYPE_SUBSCRIPTIONS, READER_EXPORT_TYPE_LIST ] ),
+		filename: PropTypes.string,
 		listId: PropTypes.number, // only when exporting a list
 	};
 
 	static defaultProps = {
+		filename: 'reader-export.opml',
 		exportType: READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	};
 
@@ -64,15 +66,8 @@ class ReaderExportButton extends React.Component {
 			return;
 		}
 
-		let filename;
-		if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
-			filename = 'wpcom-reader-list.opml';
-		} else {
-			filename = 'wpcom-subscriptions.opml';
-		}
-
 		const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } ); // eslint-disable-line no-undef
-		saveAs( blob, filename );
+		saveAs( blob, this.props.filename );
 	};
 
 	render() {

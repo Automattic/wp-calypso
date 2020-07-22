@@ -3,9 +3,9 @@
  */
 import * as React from 'react';
 import classnames from 'classnames';
+import { useI18n } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -13,7 +13,9 @@ import { useI18n } from '@automattic/react-i18n';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
-import { useCurrentStep } from '../../path';
+import { useCurrentStep, Step } from '../../path';
+import { isEnabled } from '../../../../config';
+import Link from '../link';
 
 /**
  * Style dependencies
@@ -21,8 +23,7 @@ import { useCurrentStep } from '../../path';
 import './style.scss';
 
 const Header: React.FunctionComponent = () => {
-	const { __ } = useI18n();
-
+	const { __, i18nLocale } = useI18n();
 	const currentStep = useCurrentStep();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
@@ -42,11 +43,26 @@ const Header: React.FunctionComponent = () => {
 		'DomainsModal',
 		'Plans',
 		'PlansModal',
+		'LanguageModal',
 		'CreateSite',
 	].includes( currentStep );
 
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
+
+	const changeLocaleButton = () => {
+		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
+			return (
+				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
+					<Link to={ Step.LanguageModal }>
+						<span>{ __( 'Site Language' ) } </span>
+						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
+					</Link>
+				</div>
+			);
+		}
+		return null;
+	};
 
 	return (
 		<div
@@ -88,6 +104,7 @@ const Header: React.FunctionComponent = () => {
 						)
 					}
 				</div>
+				{ changeLocaleButton() }
 				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
 					<PlansButton />
 				</div>
