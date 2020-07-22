@@ -32,7 +32,6 @@ import home from './home/reducer';
 import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
-import imports from './imports/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import jetpackProductInstall from './jetpack-product-install/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
@@ -85,7 +84,6 @@ const reducers = {
 	i18n,
 	immediateLogin,
 	importerNux,
-	imports,
 	inlineSupportArticle,
 	jetpackProductInstall,
 	jetpackRemoteInstall,
