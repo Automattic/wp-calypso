@@ -228,6 +228,7 @@ class HelpContact extends React.Component {
 
 				recordTracksEvent( 'calypso_help_contact_submit', {
 					ticket_type: 'kayako',
+					support_variation: supportVariation,
 					site_plan_product_id: site ? site.plan.product_id : null,
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
 				} );
