@@ -654,10 +654,6 @@ export class Checkout extends React.Component {
 			displayModeParam = { d: 'concierge' };
 		}
 
-		if ( this.props.isWhiteGloveOffer ) {
-			displayModeParam = { d: 'white-glove' };
-		}
-
 		if ( this.props.isEligibleForSignupDestination ) {
 			return this.getUrlWithQueryParam( signupDestination, displayModeParam );
 		}
@@ -804,7 +800,7 @@ export class Checkout extends React.Component {
 			cards,
 			productsList,
 			setHeaderText,
-			userCountryCode,
+			userCountryCode
 			isWhiteGloveOffer,
 			infoMessage,
 		} = this.props;

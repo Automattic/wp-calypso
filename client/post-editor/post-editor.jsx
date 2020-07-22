@@ -57,7 +57,7 @@ import {
 	isEditedPostDirty,
 } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import editedPostHasContent from 'state/selectors/edited-post-has-content';
+import { editedPostHasContent } from 'state/posts/selectors/edited-post-has-content';
 import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
 import isVipSite from 'state/selectors/is-vip-site';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';

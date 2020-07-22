@@ -85,7 +85,6 @@ class CheckoutContainer extends React.Component {
 			clearTransaction,
 			isComingFromGutenboarding,
 			isGutenboardingCreate,
-			isWhiteGloveOffer,
 			isComingFromUpsell,
 			infoMessage,
 		} = this.props;
@@ -134,10 +133,7 @@ class CheckoutContainer extends React.Component {
 
 					{ shouldShowCart && (
 						<CartData>
-							<SecondaryCart
-								selectedSite={ selectedSite }
-								isWhiteGloveOffer={ isWhiteGloveOffer }
-							/>
+							<SecondaryCart selectedSite={ selectedSite } />
 						</CartData>
 					) }
 				</div>

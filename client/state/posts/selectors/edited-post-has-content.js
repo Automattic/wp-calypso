@@ -6,7 +6,7 @@ import { some, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getEditedPost } from 'state/posts/selectors';
+import { getEditedPost } from 'state/posts/selectors/get-edited-post';
 import { getEditorRawContent } from 'state/editor/selectors';
 
 import 'state/posts/init';
@@ -36,7 +36,7 @@ export function isEmptyContent( content ) {
  * @param  {number}  postId Post ID
  * @returns {boolean}        Whether the edited post has content or not
  */
-export default function editedPostHasContent( state, siteId, postId ) {
+export function editedPostHasContent( state, siteId, postId ) {
 	const editedPost = getEditedPost( state, siteId, postId );
 
 	if ( ! editedPost ) {

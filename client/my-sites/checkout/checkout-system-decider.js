@@ -48,7 +48,6 @@ export default function CheckoutSystemDecider( {
 	upgradeIntent,
 	clearTransaction,
 	cart,
-	isWhiteGloveOffer,
 } ) {
 	const siteId = selectedSite?.ID;
 	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
@@ -154,7 +153,6 @@ export default function CheckoutSystemDecider( {
 						feature={ selectedFeature }
 						plan={ plan }
 						cart={ cart }
-						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isComingFromUpsell={ isComingFromUpsell }
 					/>
 				</StripeHookProvider>
