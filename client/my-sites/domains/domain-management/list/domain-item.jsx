@@ -89,10 +89,12 @@ class DomainItem extends PureComponent {
 	addEmailClick = ( event ) => {
 		const { addEmailClick, currentRoute, disabled, domain, site } = this.props;
 		event.stopPropagation();
+
+		addEmailClick( domain ); // analytics/tracks
+
 		if ( disabled ) {
 			return;
 		}
-		addEmailClick(); // analytics/tracks
 		page( emailManagement( site.slug, domain.domain, currentRoute ) );
 	};
 
@@ -438,14 +440,21 @@ class DomainItem extends PureComponent {
 	}
 }
 
-const addEmailClick = () =>
+const addEmailClick = ( domain ) =>
 	composeAnalytics(
-		recordGoogleEvent( 'Domain Management', 'Clicked "Add Email" Button in List/ListAll' ),
-		recordTracksEvent( 'calypso_domain_management_list_add_email_click' )
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Add Email" Button in DomainItem',
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_domain_item_add_email_click', {
+			section: domain.type,
+		} )
 	);
 
 export default connect( null, ( dispatch ) => {
 	return {
-		addEmailClick: () => dispatch( addEmailClick() ),
+		addEmailClick: ( domain ) => dispatch( addEmailClick( domain ) ),
 	};
 } )( localize( DomainItem ) );
