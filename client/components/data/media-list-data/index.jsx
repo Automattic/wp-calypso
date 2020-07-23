@@ -109,4 +109,8 @@ export class MediaListData extends React.Component {
 	}
 }
 
+MediaListData.defaultProps = {
+	setQuery: () => {},
+};
+
 export default connect( null, { fetchNextMediaPage, setQuery } )( MediaListData );
