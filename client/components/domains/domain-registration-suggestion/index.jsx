@@ -14,6 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DomainSuggestion from 'components/domains/domain-suggestion';
+import formatCurrency from '@automattic/format-currency';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
@@ -46,7 +47,12 @@ class DomainRegistrationSuggestion extends React.Component {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
 			cost: PropTypes.string,
+			is_premium: PropTypes.bool,
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
+			premium_price: PropTypes.shape( {
+				currency: PropTypes.string,
+				price: PropTypes.number,
+			} ),
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -82,6 +88,9 @@ class DomainRegistrationSuggestion extends React.Component {
 				resultSuffix = '#recommended';
 			} else if ( this.props.suggestion.isBestAlternative ) {
 				resultSuffix = '#best-alternative';
+			}
+			if ( this.props.suggestion.is_premium ) {
+				resultSuffix += ( resultSuffix === '' ? '#' : '' ) + '+premium';
 			}
 
 			this.props.recordTracksEvent( 'calypso_traintracks_render', {
@@ -371,20 +380,31 @@ class DomainRegistrationSuggestion extends React.Component {
 }
 
 const mapStateToProps = ( state, props ) => {
+	const isPremium = get( props, 'suggestion.is_premium', false );
+	const premiumPrice = get( props, 'suggestion.premium_price' );
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
 
-	return {
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros ),
-		productSaleCost: getDomainSalePrice(
+	let productCost, productSaleCost;
+	if ( isPremium && premiumPrice ) {
+		productCost = formatCurrency( premiumPrice.price, premiumPrice.currency, { stripZeros } );
+		productSaleCost = null;
+	} else {
+		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
 			currentUserCurrencyCode,
 			stripZeros
-		),
+		);
+	}
+
+	return {
+		showHstsNotice: isHstsRequired( productSlug, productsList ),
+		productCost,
+		productSaleCost,
 	};
 };
 
