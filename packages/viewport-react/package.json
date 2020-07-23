@@ -22,7 +22,11 @@
 		"@wordpress/compose": "^3.7.0"
 	},
 	"peerDependencies": {
-		"react": "^16.0.0"
+		"react": "^16.13.1",
+		"react-dom": "^16.12.0"
+	},
+	"devDependencies": {
+		"regenerator-runtime": "^0.13.4"
 	},
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
