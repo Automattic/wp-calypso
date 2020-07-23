@@ -39,6 +39,7 @@ export default function useShoppingCartManager( {
 	const responseCart: ResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
+	const loadingError: string = hookState.loadingError;
 	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
 	const variantSelectOverride = hookState.variantSelectOverride;
 
@@ -106,6 +107,7 @@ export default function useShoppingCartManager( {
 
 	return {
 		isLoading: cacheStatus === 'fresh',
+		loadingError: cacheStatus === 'error' ? loadingError : null,
 		isPendingUpdate: cacheStatus !== 'valid',
 		addItem,
 		removeItem,

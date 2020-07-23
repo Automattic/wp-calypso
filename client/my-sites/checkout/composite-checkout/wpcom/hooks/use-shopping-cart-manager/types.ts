@@ -22,6 +22,7 @@ export interface VariantSelectOverride {
 
 export interface ShoppingCartManager {
 	isLoading: boolean;
+	loadingError: string | null;
 	isPendingUpdate: boolean;
 	addItem: ( arg0: RequestCartProduct ) => void;
 	removeItem: ( arg0: string ) => void;
@@ -90,7 +91,7 @@ export type ShoppingCartAction =
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
-	| { type: 'RAISE_ERROR'; error: ShoppingCartError };
+	| { type: 'RAISE_ERROR'; error: ShoppingCartError; message: string };
 
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 

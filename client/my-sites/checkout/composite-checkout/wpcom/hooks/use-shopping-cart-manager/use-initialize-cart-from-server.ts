@@ -91,7 +91,7 @@ export default function useInitializeCartFromServer(
 			.catch( ( error ) => {
 				// TODO: figure out what to do here
 				debug( 'error while initializing cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR', message: error } );
 				onEvent?.( {
 					type: 'CART_ERROR',
 					payload: { type: 'GET_SERVER_CART_ERROR', message: error },
