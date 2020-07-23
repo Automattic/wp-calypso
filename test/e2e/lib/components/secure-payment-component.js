@@ -304,6 +304,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async waitForCouponToBeRemoved() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
+			await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( '[data-e2e-cart-is-loading="true"]' )
+			);
+
 			return await driverHelper.waitTillNotPresent(
 				this.driver,
 				By.css( '#checkout-line-item-coupon-line-item' )
