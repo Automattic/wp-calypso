@@ -34,7 +34,7 @@
 .features__item.components-button.is-tertiary {
 	border: 1px solid var( --studio-gray-5 );
 	border-radius: 4px;
-	width: calc( 25% - 24px );
+	width: calc( 100% - 24px );
 	height: auto;
 	min-height: 96px;
 	margin: 12px;
@@ -65,6 +65,14 @@
 		.features__item-description {
 			color: var( --studio-blue-40 );
 		}
+	}
+
+	@include break-small {
+		width: calc( 50% - 24px );
+	}
+
+	@include break-xlarge {
+		width: calc( 25% - 24px );
 	}
 }
 
