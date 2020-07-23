@@ -37,7 +37,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import { getSuggestionsPremiumLevel, getSuggestionsVendor } from 'lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 
 /**
@@ -207,6 +207,7 @@ class DomainSearch extends Component {
 								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
+								premiumLevel={ getSuggestionsPremiumLevel() }
 								vendor={ getSuggestionsVendor() }
 							/>
 						</EmailVerificationGate>
