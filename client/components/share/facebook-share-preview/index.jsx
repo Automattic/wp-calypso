@@ -10,7 +10,7 @@ import { isNull } from 'lodash';
 /**
  * Internal dependencies
  */
-import { FacebookPreview } from '@automattic/social-previews';
+import FacebookPreview from 'components/seo/facebook-preview';
 
 /**
  * Style dependencies
