@@ -31,7 +31,12 @@ import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
-import { requestMarkAsSeen, requestMarkAsUnseen } from 'state/reader/seen-posts/actions';
+import {
+	requestMarkAsSeen,
+	requestMarkAsUnseen,
+	requestMarkAsSeenBlog,
+	requestMarkAsUnseenBlog,
+} from 'state/reader/seen-posts/actions';
 
 /**
  * Style dependencies
@@ -162,20 +167,34 @@ class ReaderPostOptionsMenu extends React.Component {
 		}
 
 		const feedId = post.feed_ID;
+		let postIds = [ post.ID ];
 		let feedItemIds = [ post.feed_item_ID ];
 		let globalIds = [ post.global_ID ];
 
 		if ( size( posts ) ) {
+			postIds = map( posts, 'ID' );
 			feedItemIds = map( posts, 'feed_item_ID' );
 			globalIds = map( posts, 'global_ID' );
 		}
 
-		this.props.requestMarkAsSeen( {
-			feedId,
-			feedUrl: post.feed_URL,
-			feedItemIds,
-			globalIds,
-		} );
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsSeen( {
+				feedId,
+				feedUrl: post.feed_URL,
+				feedItemIds,
+				globalIds,
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsSeenBlog( {
+				feedId,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds,
+				globalIds,
+			} );
+		}
 
 		this.onMenuToggle();
 	};
@@ -188,20 +207,34 @@ class ReaderPostOptionsMenu extends React.Component {
 		}
 
 		const feedId = post.feed_ID;
+		let postIds = [ post.ID ];
 		let feedItemIds = [ post.feed_item_ID ];
 		let globalIds = [ post.global_ID ];
 
 		if ( size( posts ) ) {
+			postIds = map( posts, 'ID' );
 			feedItemIds = map( posts, 'feed_item_ID' );
 			globalIds = map( posts, 'global_ID' );
 		}
 
-		this.props.requestMarkAsUnseen( {
-			feedId,
-			feedUrl: post.feed_URL,
-			feedItemIds,
-			globalIds,
-		} );
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsUnseen( {
+				feedId,
+				feedUrl: post.feed_URL,
+				feedItemIds,
+				globalIds,
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsUnseenBlog( {
+				feedId,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds,
+				globalIds,
+			} );
+		}
 
 		this.onMenuToggle();
 	};
@@ -337,5 +370,7 @@ export default connect(
 		blockSite,
 		requestMarkAsSeen,
 		requestMarkAsUnseen,
+		requestMarkAsSeenBlog,
+		requestMarkAsUnseenBlog,
 	}
 )( localize( ReaderPostOptionsMenu ) );

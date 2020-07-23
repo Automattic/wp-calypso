@@ -65,7 +65,12 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
-import { requestMarkAsSeen, requestMarkAsUnseen } from 'state/reader/seen-posts/actions';
+import {
+	requestMarkAsSeen,
+	requestMarkAsUnseen,
+	requestMarkAsSeenBlog,
+	requestMarkAsUnseenBlog,
+} from 'state/reader/seen-posts/actions';
 import Gridicon from 'components/gridicon';
 import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
@@ -290,22 +295,47 @@ export class FullPostView extends React.Component {
 
 	markAsSeen = () => {
 		const { post } = this.props;
-		this.props.requestMarkAsSeen( {
-			feedId: post.feed_ID,
-			feedUrl: post.feed_URL,
-			feedItemIds: [ post.feed_item_ID ],
-			globalIds: [ post.global_ID ],
-		} );
+
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsSeen( {
+				feedId: post.feed_ID,
+				feedUrl: post.feed_URL,
+				feedItemIds: [ post.feed_item_ID ],
+				globalIds: [ post.global_ID ],
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsSeenBlog( {
+				feedId: post.feed_ID,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds: [ post.ID ],
+				globalIds: [ post.global_ID ],
+			} );
+		}
 	};
 
 	markAsUnseen = () => {
 		const { post } = this.props;
-		this.props.requestMarkAsUnseen( {
-			feedId: post.feed_ID,
-			feedUrl: post.feed_URL,
-			feedItemIds: [ post.feed_item_ID ],
-			globalIds: [ post.global_ID ],
-		} );
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsUnseen( {
+				feedId: post.feed_ID,
+				feedUrl: post.feed_URL,
+				feedItemIds: [ post.feed_item_ID ],
+				globalIds: [ post.global_ID ],
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsUnseenBlog( {
+				feedId: post.feed_ID,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds: [ post.ID ],
+				globalIds: [ post.global_ID ],
+			} );
+		}
 	};
 
 	renderMarkAsSenButton = () => {
@@ -568,5 +598,7 @@ export default connect(
 		unlikePost,
 		requestMarkAsSeen,
 		requestMarkAsUnseen,
+		requestMarkAsSeenBlog,
+		requestMarkAsUnseenBlog,
 	}
 )( FullPostView );
