@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AppState } from 'types';
 
@@ -23,11 +23,20 @@ export { default as LoadingVariations } from './loading-variations';
  * @param props The properties that describe the experiment
  */
 export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
-	const { isLoading: loading, variation, children } = props;
+	const { isLoading: loading, variation, children, name: experimentName } = props;
+	const [ eventFired, setEventFired ] = useState< boolean >( false );
+	useEffect( () => {
+		setEventFired( true );
+	}, [] );
 
-	// we deliberately don't include any props/information about the experiment. This event is not intended to be used
-	// in an experiment as an exposure event.
-	recordTracksEvent( 'calypso_experiment_rendered', {} );
+	if ( ! eventFired ) {
+		// Do to how tracks works, we need to always fire an event immediately to generate an anonid. This event is here
+		// to guarantee that we have an anonid if the browser needs one.
+
+		recordTracksEvent( 'calypso_experiment_rendered', {
+			experimentName,
+		} );
+	}
 
 	return (
 		<>
