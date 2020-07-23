@@ -12,7 +12,6 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
-	renderDisplayValueMarkdown,
 	useDispatch,
 	useEvents,
 	useFormStatus,
@@ -101,7 +100,7 @@ export default function WPCheckout( {
 	subtotal,
 	isCartPendingUpdate,
 	showErrorMessageBriefly,
-	infoMessage
+	infoMessage,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -224,7 +223,7 @@ export default function WPCheckout( {
 						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
 					</CheckoutSummaryTitle>
 					<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+						{ total.amount.displayValue }
 					</CheckoutSummaryTitlePrice>
 				</CheckoutSummaryTitleLink>
 				<CheckoutSummaryBody>
