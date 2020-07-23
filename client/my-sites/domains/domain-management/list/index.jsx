@@ -84,6 +84,10 @@ export class List extends React.Component {
 		isPopoverCartVisible: false,
 	};
 
+	componentDidMount() {
+		this.props.listView();
+	}
+
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
 	}
@@ -402,14 +406,18 @@ export class List extends React.Component {
 		} );
 	}
 
-	handleUpdatePrimaryDomain = ( index, domain ) => {
+	handleUpdatePrimaryDomainOptionClick = ( index, domain ) => {
+		return this.handleUpdatePrimaryDomain( index, domain, 'item_option_click' );
+	};
+
+	handleUpdatePrimaryDomain = ( index, domain, mode = 'item_select_legacy' ) => {
 		const { translate } = this.props;
 
 		if ( this.state.settingPrimaryDomain ) {
 			return;
 		}
 
-		this.props.changePrimary( domain );
+		this.props.changePrimary( domain, mode );
 		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } ),
 			currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
 
@@ -554,7 +562,7 @@ export class List extends React.Component {
 				disabled={ this.state.settingPrimaryDomain || this.state.changePrimaryDomainModeEnabled }
 				enableSelection={ this.state.changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
 				selectionIndex={ index }
-				onMakePrimaryClick={ this.handleUpdatePrimaryDomain }
+				onMakePrimaryClick={ this.handleUpdatePrimaryDomainOptionClick }
 				onSelect={ this.handleUpdatePrimaryDomain }
 				onUpgradeClick={ this.goToPlans }
 				shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
@@ -634,6 +642,8 @@ export class List extends React.Component {
 	};
 }
 
+const listView = () => recordTracksEvent( 'calypso_domain_management_list_site_view' );
+
 const addDomainClick = () =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in List' ),
@@ -658,7 +668,7 @@ const disablePrimaryDomainMode = () =>
 const upsellUpgradeClick = () =>
 	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
 
-const changePrimary = ( domain ) =>
+const changePrimary = ( domain, mode ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -668,6 +678,7 @@ const changePrimary = ( domain ) =>
 		),
 		recordTracksEvent( 'calypso_domain_management_list_change_primary_domain_click', {
 			section: domain.type,
+			mode,
 		} )
 	);
 
@@ -700,11 +711,12 @@ export default connect(
 						cta_name: 'domain_info_notice',
 					} )
 				),
+			listView: () => dispatch( listView() ),
 			setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
 			addDomainClick: () => dispatch( addDomainClick() ),
 			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
 			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
-			changePrimary: ( domain ) => dispatch( changePrimary( domain ) ),
+			changePrimary: ( domain, mode ) => dispatch( changePrimary( domain, mode ) ),
 			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),
