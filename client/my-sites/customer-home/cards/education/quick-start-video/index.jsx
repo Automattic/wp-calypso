@@ -16,44 +16,38 @@ import { localizeUrl } from 'lib/i18n-utils';
 /**
  * Style dependencies
  */
+import quickStartVideoImage from 'assets/images/customer-home/quick-start-video-ss.png';
 import './style.scss';
 
-export const QuickStartVid = () => {
+export const QuickStartVideo = () => {
 	const translate = useTranslate();
 
 	return (
 		<div className="quick-start-video">
 			<h2 className="quick-start-video__heading customer-home__section-heading">
-				{ translate( 'Stats at a glance' ) }
+				{ translate( 'Watch this video to get started' ) }
 			</h2>
 			<Card>
 				<div>
-					{ translate( 'Launch your site to see a snapshot of traffic and insights.' ) }
 					<InlineSupportLink
 						supportPostId={ 4454 }
 						supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
 						showIcon={ false }
-						text={ translate( 'Learn about stats.' ) }
-						tracksEvent="calypso_customer_home_stats_support_page_view"
+						showText={ true }
+						tracksEvent="calypso_customer_home_education"
 						statsGroup="calypso_customer_home"
-						statsName="stats_learn_more"
-					/>
+						tracksOptions={ {
+							url,
+							card_name: "QuickStartVideo",
+						} }
+						statsName="QuickStartVideo" 
+					>
+						<img src={ quickStartVideoImage } />
+					</InlineSupportLink>
 				</div>
 			</Card>
 		</div>
 	);
 };
 
-// const mapStateToProps = ( state ) => {
-// 	// const siteId = getSelectedSiteId( state );
-// 	// const siteSlug = getSelectedSiteSlug( state );
-// 	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
-
-// 	return {
-// 		// isSiteUnlaunched,
-// 		// siteId,
-// 		// siteSlug,
-// 	};
-// };
-
-export default QuickStartVid;
+export default QuickStartVideo;
