@@ -208,7 +208,7 @@ export default function CompositeCheckout( {
 		loadingError,
 		addItem,
 	} = useShoppingCart(
-		siteSlug,
+		siteId,
 		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsForCart,
 		couponCodeFromUrl,
