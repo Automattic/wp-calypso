@@ -11,9 +11,7 @@ import { compact, find, get, identity, overSome } from 'lodash';
  */
 import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'components/seo/reader-preview';
-import FacebookPreview from 'components/seo/facebook-preview';
-import TwitterPreview from 'components/seo/twitter-preview';
-import SearchPreview from 'components/seo/search-preview';
+import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import VerticalMenu from 'components/vertical-menu';
 import PostMetadata from 'lib/post-metadata';
 import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
