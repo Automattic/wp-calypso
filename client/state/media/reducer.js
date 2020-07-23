@@ -22,6 +22,7 @@ import {
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_SET_NEXT_PAGE_HANDLE,
 	MEDIA_SOURCE_CHANGE,
+	MEDIA_SET_QUERY,
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
@@ -489,6 +490,15 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 				[ siteId ]: merge( {}, state[ siteId ], {
 					nextPageHandle: mediaRequestMeta?.next_page ?? null,
 				} ),
+			};
+		}
+
+		case MEDIA_SET_QUERY: {
+			const { siteId, query } = action;
+
+			return {
+				...state,
+				[ siteId ]: { ...state[ siteId ], query },
 			};
 		}
 	}
