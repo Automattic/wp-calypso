@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import getMediaQueryManager from 'state/selectors/get-media-query-manager';
 import getNextPageHandle from 'state/selectors/get-next-page-handle';
 
 const DEFAULT_QUERY = Object.freeze( { number: 20 } );
@@ -13,14 +12,14 @@ const DEFAULT_QUERY = Object.freeze( { number: 20 } );
  * @param {number} siteId The site ID
  */
 export default function getNextPageQuery( state, siteId ) {
-	const queryManager = getMediaQueryManager( state, siteId );
-	if ( ! queryManager ) {
+	if ( ! ( siteId in state.media.fetching ) ) {
 		return DEFAULT_QUERY;
 	}
 
-	const currentQuery = queryManager.options.query;
+	const currentQuery = state.media.fetching[ siteId ]?.query ?? null;
 
 	return {
+		...DEFAULT_QUERY,
 		...currentQuery,
 		page_handle: getNextPageHandle( state, siteId ),
 	};
