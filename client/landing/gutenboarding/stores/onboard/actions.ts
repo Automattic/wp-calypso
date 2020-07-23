@@ -87,6 +87,11 @@ export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 	isRedirecting,
 } );
 
+export const setHasUsedDomainsStep = ( hasUsedDomainsStep: boolean ) => ( {
+	type: 'SET_HAS_USED_DOMAINS_STEP' as const,
+	hasUsedDomainsStep,
+} );
+
 export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
 	type: 'SET_HAS_USED_PLANS_STEP' as const,
 	hasUsedPlansStep,
@@ -168,6 +173,7 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainCategory
 	| typeof setFonts
 	| typeof setIsRedirecting
+	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
