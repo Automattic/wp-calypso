@@ -75,10 +75,10 @@ class InlineHelpRichResult extends Component {
 		);
 
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData );
-		this.props.closePopover();
 
 		if ( type === RESULT_TOUR ) {
 			event.preventDefault();
+			this.props.closePopover();
 			this.props.requestGuidedTour( tour );
 		} else if ( type === RESULT_VIDEO ) {
 			event.preventDefault();
