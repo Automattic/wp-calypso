@@ -26,6 +26,7 @@ import {
 	MEDIA_ITEM_UPDATE,
 	MEDIA_ITEM_EDIT,
 	MEDIA_ITEM_DELETE,
+	MEDIA_SET_QUERY,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/media';
@@ -308,5 +309,20 @@ export function setNextPageHandle( siteId, mediaRequestMeta ) {
 		type: MEDIA_SET_NEXT_PAGE_HANDLE,
 		siteId,
 		mediaRequestMeta,
+	};
+}
+
+/**
+ * Returns an action object used in signallying that a new next page handle
+ * needs to be set based on the metadata from a media request.
+ *
+ * @param {number} siteId Site ID
+ * @param {object} query query object
+ */
+export function setQuery( siteId, query ) {
+	return {
+		type: MEDIA_SET_QUERY,
+		siteId,
+		query,
 	};
 }
