@@ -43,6 +43,7 @@ import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import SupportArticleDialog from 'blocks/support-article-dialog/docs/example';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -249,6 +250,7 @@ class InlineHelpPopover extends Component {
 				position="top left"
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
+				ignoreContext={ SupportArticleDialog }
 			>
 				{ this.renderPopoverContent() }
 				{ this.renderPopoverFooter() }
