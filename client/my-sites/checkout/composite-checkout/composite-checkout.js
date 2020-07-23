@@ -205,6 +205,7 @@ export default function CompositeCheckout( {
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 		variantSelectOverride,
 		responseCart,
+		loadingError,
 		addItem,
 	} = useShoppingCart(
 		siteSlug,
@@ -326,7 +327,7 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails();
 
-	useDisplayErrors( errors, showErrorMessage );
+	useDisplayErrors( [ ...errors, loadingError ].filter( Boolean ), showErrorMessage );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
@@ -335,7 +336,12 @@ export default function CompositeCheckout( {
 	).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
-	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart, errors );
+	useRedirectIfCartEmpty(
+		items,
+		`/plans/${ siteSlug || '' }`,
+		isLoadingCart,
+		[ ...errors, loadingError ].filter( Boolean )
+	);
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
