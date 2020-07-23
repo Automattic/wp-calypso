@@ -483,21 +483,33 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 42px;
+			font-size: 2.6rem;
 
 			@media screen and ( max-width: $breakpoint-mobile ) {
-				font-size: 26px;
+				max-width: 328px;
+				font-size: 1.6rem;
+				text-align: left;
+				padding: 0 16px;
+				margin: 0 auto;
 			}
 		}
 
 		.formatted-header__subtitle {
 			color: $gray-60;
+
+			@media screen and ( max-width: $breakpoint-mobile ) {
+				max-width: 328px;
+				font-size: 0.875rem;
+				text-align: left;
+				padding: 0 16px;
+				margin: 0 auto;
+			}
 		}
 	}
 
 	button.is-primary {
 		background: #117ac9;
-		// box-shadow: unset;
+		box-shadow: none;
 		border: 0;
 	}
 }
