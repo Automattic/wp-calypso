@@ -26,6 +26,7 @@ import useTrackCallback from 'lib/jetpack/use-track-callback';
  * Asset dependencies
  */
 import JetpackBackupSVG from 'assets/images/illustrations/jetpack-backup.svg';
+import VaultPressLogo from './vaultpress-logo.svg';
 import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
@@ -50,17 +51,11 @@ const BackupVPActiveBody: FunctionComponent = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_backup_vaultpress_click' );
 	return (
 		<PromoCard
-			title={ preventWidows( translate( 'Your site has VaultPress' ) ) }
-			image={ { path: JetpackBackupErrorSVG } }
+			title={ preventWidows( translate( 'Your backups are powered by VaultPress' ) ) }
+			image={ <img src={ VaultPressLogo } width="155" alt="VaultPress logo" /> }
 			isPrimary
 		>
-			<p>
-				{ preventWidows(
-					translate(
-						'Your site is already backed up by VaultPress. You can find a link to your VaultPress dashboard below.'
-					)
-				) }
-			</p>
+			<p>{ preventWidows( translate( 'You can access them on your VaultPress Dashboard.' ) ) }</p>
 			<div className="backup__wpcom-ctas">
 				<Button
 					className="backup__wpcom-cta backup__wpcom-realtime-cta"
@@ -69,7 +64,7 @@ const BackupVPActiveBody: FunctionComponent = () => {
 					selfTarget={ true }
 					primary
 				>
-					{ translate( 'Visit Dashboard' ) }
+					{ translate( 'See my backups on VaultPress.com' ) }
 				</Button>
 			</div>
 		</PromoCard>
