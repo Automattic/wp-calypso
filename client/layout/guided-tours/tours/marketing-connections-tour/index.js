@@ -19,7 +19,7 @@ export const marketingConnectionsTour = makeTour(
 		<Step
 			arrow="right-middle"
 			name="init"
-			placement="beside"
+			placement="left"
 			style={ {
 				marginLeft: '-24px',
 			} }
