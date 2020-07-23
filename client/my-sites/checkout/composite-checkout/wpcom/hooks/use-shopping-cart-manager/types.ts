@@ -6,7 +6,7 @@ import { ResponseCart, RequestCart, RequestCartProduct, CartLocation } from '../
 export type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export interface ShoppingCartManagerArguments {
-	cartKey: string | null;
+	cartKey: string | number | null;
 	canInitializeCart: boolean;
 	productsToAdd: RequestCartProduct[] | null;
 	couponToAdd: string | null;
