@@ -1,5 +1,5 @@
 /**
- * @file Enforce external, internal dependencies docblocks
+ * @file Enforce external, internal, WordPress dependencies docblocks
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -9,13 +9,13 @@
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const ERROR_MESSAGE = 'Missing external, internal dependencies docblocks';
-const RX_DOCBLOCK = /\/\*\*\n \* (Ex|In)ternal dependencies\s*\n \*\//i;
+const ERROR_MESSAGE = 'Missing external, internal, WordPress dependencies docblocks';
+const RX_DOCBLOCK = /\/\*\*\n \* ((Ex|In)ternal|WordPress) dependencies\s*\n \*\//i;
 
 module.exports = {
 	meta: {
 		docs: {
-			description: 'Enforce external, internal dependencies docblocks',
+			description: 'Enforce external, internal, WordPress dependencies docblocks',
 			category: 'Stylistic Issues',
 		},
 	},
