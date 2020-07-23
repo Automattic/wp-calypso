@@ -28,7 +28,7 @@ $illustration-height: 250px;
 		height: auto;
 
 		h1 {
-			font-size: $font-title-large;
+			font-size: $font-title-medium;
 			font-weight: 400;
 			height: auto;
 			line-height: 1.2;
@@ -37,6 +37,7 @@ $illustration-height: 250px;
 
 			@include break-small {
 				margin-top: unset;
+				font-size: $font-title-large;
 			}
 		}
 	}
