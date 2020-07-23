@@ -45,7 +45,10 @@ export default function WPCheckoutOrderSummary() {
 	const isCartUpdating = 'validating' === formStatus;
 
 	return (
-		<CheckoutSummaryCardUI className={ isCartUpdating ? 'is-loading' : '' }>
+		<CheckoutSummaryCardUI
+			className={ isCartUpdating ? 'is-loading' : '' }
+			data-e2e-cart-is-loading={ isCartUpdating }
+		>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
