@@ -23,7 +23,7 @@ import 'state/jetpack-connect/init';
 const _fetching = {};
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
-export function checkUrl( url, isUrlOnSites, isPurchasingSearch ) {
+export function checkUrl( url, isUrlOnSites, allowWPCOMSite ) {
 	return ( dispatch ) => {
 		if ( _fetching[ url ] ) {
 			return;
@@ -74,7 +74,7 @@ export function checkUrl( url, isUrlOnSites, isPurchasingSearch ) {
 				let errorCode = null;
 				let instructionsType = null;
 				let isSearch = true;
-				if ( isPurchasingSearch ) {
+				if ( allowWPCOMSite ) {
 					isSearch = false;
 				}
 				if ( data && data.isWordPressDotCom && isSearch ) {
