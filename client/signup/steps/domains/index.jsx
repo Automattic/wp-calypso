@@ -66,6 +66,7 @@ class DomainsStep extends React.Component {
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
+		premiumLevel: PropTypes.number,
 		queryObject: PropTypes.object,
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
@@ -467,6 +468,7 @@ class DomainsStep extends React.Component {
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerUnavailableOption={ ! this.props.isDomainOnly }
 				isDomainOnly={ this.props.isDomainOnly }
+				premiumLevel={ this.props.premiumLevel }
 				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom={ includeWordPressDotCom }
