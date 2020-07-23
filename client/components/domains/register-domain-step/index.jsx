@@ -148,6 +148,7 @@ class RegisterDomainStep extends React.Component {
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
 		deemphasiseTlds: PropTypes.array,
+		premiumLevel: PropTypes.number,
 		recordFiltersSubmit: PropTypes.func.isRequired,
 		recordFiltersReset: PropTypes.func.isRequired,
 		vertical: PropTypes.string,
@@ -163,6 +164,7 @@ class RegisterDomainStep extends React.Component {
 		onAddMapping: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
+		premiumLevel: 0,
 		vendor: getSuggestionsVendor(),
 		showExampleSuggestions: false,
 	};
@@ -735,7 +737,7 @@ class RegisterDomainStep extends React.Component {
 			.catch( noop );
 	};
 
-	preCheckDomainAvailability = ( domain ) => {
+	preCheckDomainAvailability = ( domain, isKnownPremium = false ) => {
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{
@@ -745,8 +747,11 @@ class RegisterDomainStep extends React.Component {
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
+					const treatAsAvailable =
+						status === domainAvailability.AVAILABLE ||
+						( isKnownPremium && status === domainAvailability.AVAILABLE_PREMIUM );
 					resolve( {
-						status: status !== domainAvailability.AVAILABLE ? status : null,
+						status: treatAsAvailable ? null : status,
 						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
 					} );
 				}
@@ -786,7 +791,13 @@ class RegisterDomainStep extends React.Component {
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 					} = domainAvailability;
-					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+					// TODO: This may need to be cleaned up, as manually typed in premium domains for other TLDs
+					// could easily creep in.
+					const availableStatuses =
+						config.isEnabled( 'domains/premium-domain-purchases' ) && this.props.premiumLevel > 0
+							? [ AVAILABLE, AVAILABLE_PREMIUM, UNKNOWN ]
+							: [ AVAILABLE, UNKNOWN ];
+					const isDomainAvailable = includes( availableStatuses, status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
 
@@ -836,12 +847,16 @@ class RegisterDomainStep extends React.Component {
 
 	getDomainsSuggestions = ( domain, timestamp ) => {
 		const suggestionQuantity = SUGGESTION_QUANTITY - this.getFreeSubdomainSuggestionsQuantity();
+		const premiumLevel = config.isEnabled( 'domains/premium-domain-purchases' )
+			? this.props.premiumLevel
+			: 0;
 
 		const query = {
 			query: domain,
 			quantity: suggestionQuantity,
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
+			premium: premiumLevel,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: this.props.vendor,
 			vertical: this.props.vertical,
@@ -1149,11 +1164,15 @@ class RegisterDomainStep extends React.Component {
 
 	onAddDomain = ( suggestion ) => {
 		const domain = get( suggestion, 'domain_name' );
+		const isPremium = get( suggestion, 'is_premium', false );
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			this.setState( { pendingCheckSuggestion: suggestion } );
 
-			this.preCheckDomainAvailability( domain )
+			this.preCheckDomainAvailability(
+				domain,
+				isPremium && config.isEnabled( 'domains/premium-domain-purchases' )
+			)
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
