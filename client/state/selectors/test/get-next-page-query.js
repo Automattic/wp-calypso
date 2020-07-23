@@ -15,7 +15,7 @@ describe( 'getNextPageQuery', () => {
 	it( 'should return the default query when no query manager exists', () => {
 		const state = {
 			media: {
-				queries: {},
+				fetching: {},
 			},
 		};
 
@@ -32,7 +32,12 @@ describe( 'getNextPageQuery', () => {
 						[ siteId ]: queryManager,
 					},
 					fetching: {
-						[ siteId ]: { nextPageHandle },
+						[ siteId ]: {
+							nextPageHandle,
+							query: {
+								number: 55,
+							},
+						},
 					},
 				},
 			};
