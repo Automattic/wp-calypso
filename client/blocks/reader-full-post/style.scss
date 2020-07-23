@@ -246,14 +246,14 @@
 				height: 32px !important;
 				width: 32px !important;
 				line-height: 32px !important;
-				font-size: $font-title-large !important;
+				font-size: 32px !important;
 
 				.gridicon {
 					@include breakpoint-deprecated( '<660px' ) {
 						height: 32px !important;
 						width: 32px !important;
 						line-height: 32px !important;
-						font-size: $font-title-large !important;
+						font-size: 32px !important;
 					}
 				}
 			}
