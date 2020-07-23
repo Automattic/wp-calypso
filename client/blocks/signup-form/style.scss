@@ -112,3 +112,145 @@
 		}
 	}
 }
+
+.signup-form.is-horizontal {
+	$breakpoint-mobile: 660px;
+	$separator-style: 1px solid #eaeaeb;
+
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 50px;
+
+	.logged-out-form,
+	.signup-form__social {
+		width: calc( 50% - 30px );
+		max-width: 408px;
+		padding: 0 16px;
+		box-shadow: none;
+
+		@media screen and ( max-width: $breakpoint-mobile ) {
+			width: unset;
+		}
+	}
+
+	.signup-form__social p {
+		text-align: left;
+	}
+
+	.signup-form__social > p {
+		display: none;
+	}
+
+	.signup-form__separator {
+		position: relative;
+		display: flex;
+		width: 60px;
+		align-items: center;
+		justify-content: center;
+
+		@media screen and ( max-width: $breakpoint-mobile ) {
+			width: calc( 100% - 32px );
+			margin: 20px auto;
+		}
+
+		&::before {
+			position: absolute;
+			content: '';
+			border-left: $separator-style;
+			top: 0;
+			left: 50%;
+			height: 100%;
+
+			@media screen and ( max-width: $breakpoint-mobile ) {
+				border-left: 0;
+				border-top: $separator-style;
+				top: 50%;
+				left: 0;
+				height: 0;
+				width: 100%;
+			}
+		}
+	}
+
+	.signup-form__separator-text {
+		background: var( --studio-white );
+		text-transform: uppercase;
+		text-align: center;
+		padding: 24px 0;
+		font-size: 12px;
+		z-index: 1;
+
+		@media screen and ( max-width: $breakpoint-mobile ) {
+			padding: 0 24px;
+		}
+	}
+
+	.signup-form__social-buttons {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		justify-content: center;
+	}
+
+	.social-buttons__button {
+		border: 0;
+		box-shadow: none;
+		text-align: left;
+		padding-left: 0;
+
+		@media screen and ( max-width: $breakpoint-mobile ) {
+			text-align: center;
+			margin-bottom: 5px;
+		}
+
+		> svg {
+			border: 1px solid #e2e4e7;
+			padding: 12px;
+			border-radius: 24px;
+		}
+	}
+
+	.social-buttons__service-name {
+		margin-left: 12px;
+	}
+
+	p.signup-form__social-buttons-tos {
+		font-size: 0.75rem;
+
+		@media screen and ( max-width: $breakpoint-mobile ) {
+			max-width: 408px;
+			text-align: center;
+			padding: 0 16px;
+		}
+	}
+
+	> .logged-out-form__links {
+		max-width: 100%;
+		margin-top: 30px;
+
+		@media screen and ( max-width: $breakpoint-mobile ) {
+			margin-top: 0;
+
+			&::before, &::after {
+				content: '';
+				display: block;
+				margin: 40px auto 24px;
+				border: 0;
+				padding: 0;
+				border-top: $separator-style;
+				width: 90px;
+			}
+		}
+	}
+
+	.signup-form__recaptcha-tos {
+		padding: 0 16px;
+		margin: 0 auto;
+
+		.logged-out-form__links {
+			&::before {
+				content: none;
+			}
+		}
+	}
+}

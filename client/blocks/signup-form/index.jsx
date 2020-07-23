@@ -107,6 +107,7 @@ class SignupForm extends Component {
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		showRecaptchaToS: PropTypes.bool,
+		horizontal: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -119,6 +120,7 @@ class SignupForm extends Component {
 		flowName: '',
 		isSocialSignupEnabled: false,
 		showRecaptchaToS: false,
+		horizontal: false,
 	};
 
 	state = {
@@ -1015,6 +1017,7 @@ class SignupForm extends Component {
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
 					'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
+					'is-horizontal': this.props.horizontal,
 				} ) }
 			>
 				{ this.getNotice() }
@@ -1028,6 +1031,12 @@ class SignupForm extends Component {
 
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
+
+				{ this.props.horizontal && (
+					<div className="signup-form__separator">
+						<span className="signup-form__separator-text">{ this.props.translate( 'or' ) }</span>
+					</div>
+				) }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm
