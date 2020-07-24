@@ -45,7 +45,7 @@ import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import { resolveDomainStatus } from 'lib/domains';
 import getSiteIsDomainOnly from 'state/selectors/is-domain-only-site';
-import DomainOnlyCta from '../domain-only-cta';
+import DomainOnlyNotice from '../domain-only-notice';
 
 class RegisteredDomainType extends React.Component {
 	renderExpired() {
@@ -167,6 +167,15 @@ class RegisteredDomainType extends React.Component {
 				) }
 			</div>
 		);
+	}
+
+	renderDomainOnlyNotice() {
+		const { domain, selectedSite, isDomainOnlySite } = this.props;
+		if ( isDomainOnlySite ) {
+			return <DomainOnlyNotice domain={ domain } selectedSiteSlug={ selectedSite.slug } />;
+		}
+
+		return null;
 	}
 
 	renderPendingGSuiteTosNotice() {
@@ -333,9 +342,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 					{ this.renderOutboundTransferInProgress() }
-					{ isDomainOnlySite && (
-						<DomainOnlyCta domain={ domain } selectedSiteSlug={ selectedSite.slug } />
-					) }
+					{ this.renderDomainOnlyNotice() }
 					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">

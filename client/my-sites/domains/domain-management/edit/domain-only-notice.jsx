@@ -17,7 +17,7 @@ import {
 } from 'my-sites/domains/paths';
 import getCurrentRoute from 'state/selectors/get-current-route';
 
-const DomainOnlyCta = ( { domain, selectedSiteSlug, translate } ) => {
+const DomainOnlyNotice = ( { domain, selectedSiteSlug, translate } ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const handleConnectToWPSiteClick = useCallback(
 		() =>
@@ -46,7 +46,7 @@ const DomainOnlyCta = ( { domain, selectedSiteSlug, translate } ) => {
 						'Your domain is registered but not pointing to any services. You can connect it to a WordPress.com site or change your name servers to point it somewhere else.'
 					) }
 				</p>
-				<div className="domain-only-cta__button-row">
+				<div className="domain-only-notice__button-row">
 					<Button primary onClick={ handleConnectToWPSiteClick }>
 						{ translate( 'Connect to a WordPress.com site' ) }
 					</Button>
@@ -59,4 +59,4 @@ const DomainOnlyCta = ( { domain, selectedSiteSlug, translate } ) => {
 	);
 };
 
-export default localize( DomainOnlyCta );
+export default localize( DomainOnlyNotice );
