@@ -85,12 +85,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			</div>
 			<ActionButtons>
 				<BackButton onClick={ handleBack } />
-				{ ! isModal &&
-					( domain ? (
-						<NextButton onClick={ handleNext } />
-					) : (
-						<SkipButton onClick={ handleNext } />
-					) ) }
+				{ domain ? <NextButton onClick={ handleNext } /> : <SkipButton onClick={ handleNext } /> }
 			</ActionButtons>
 		</div>
 	);
