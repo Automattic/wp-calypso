@@ -19,6 +19,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import { Step, usePath } from '../../path';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
+import useRecommendedPlan from '../../hooks/use-recommended-plan';
 
 type PlanSlug = Plans.PlanSlug;
 
@@ -52,6 +53,8 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	} ) );
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
+
+	const recommendedPlan = useRecommendedPlan();
 
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handlePlanSelect = ( planSlug: PlanSlug ) => {
@@ -90,6 +93,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		<div className="gutenboarding-page plans">
 			<PlansGrid
 				header={ header }
+				recommendedPlan={ recommendedPlan }
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }

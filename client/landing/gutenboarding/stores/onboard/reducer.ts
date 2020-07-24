@@ -164,6 +164,18 @@ const plan: Reducer< Plans.Plan | undefined, OnboardAction > = ( state, action )
 	return state;
 };
 
+const selectedFeatures: Reducer< string[], OnboardAction > = ( state = [], action ) => {
+	if ( action.type === 'ADD_FEATURE' ) {
+		return [ ...state, action.featureId ];
+	}
+
+	if ( action.type === 'REMOVE_FEATURE' ) {
+		return state.filter( ( id ) => id !== action.featureId );
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -179,6 +191,7 @@ const reducer = combineReducers( {
 	siteVertical,
 	showSignupDialog,
 	plan,
+	selectedFeatures,
 } );
 
 export type State = ReturnType< typeof reducer >;

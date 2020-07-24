@@ -164,6 +164,16 @@ export function* createSite(
 	return success;
 }
 
+export const addFeature = ( featureId: string ) => ( {
+	type: 'ADD_FEATURE' as const,
+	featureId,
+} );
+
+export const removeFeature = ( featureId: string ) => ( {
+	type: 'REMOVE_FEATURE' as const,
+	featureId,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof resetFonts
 	| typeof resetOnboardStore
@@ -182,4 +192,6 @@ export type OnboardAction = ReturnType<
 	| typeof togglePageLayout
 	| typeof setShowSignupDialog
 	| typeof setPlan
+	| typeof addFeature
+	| typeof removeFeature
 >;
