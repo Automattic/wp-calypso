@@ -48,6 +48,7 @@ import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import { PRODUCT_WPCOM_SEARCH_MONTHLY } from 'lib/products-values/constants';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -82,6 +83,11 @@ class PurchaseMeta extends Component {
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return translate( 'Free with Plan' );
+		}
+
+		// define term for Jetpack Search products for which plan.term is undefined
+		if ( purchase.productSlug === PRODUCT_WPCOM_SEARCH_MONTHLY ) {
+			period = translate( 'month' );
 		}
 
 		if ( plan && plan.term ) {
