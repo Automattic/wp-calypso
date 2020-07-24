@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
 import classNames from 'classnames';
 import '../types-patch';
-import { useViewportMatch } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -22,6 +21,11 @@ const ChevronDown = (
 		<path d="M0 0 L8 0 L4 4 L0 0" fill="currentColor" />
 	</svg>
 );
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const SPACE_BAR_KEYCODE = 32;
 
@@ -42,7 +46,11 @@ function domainMessageStateMachine(
 ) {
 	const states = {
 		NO_DOMAIN: {
-			FREE_PLAN: null,
+			FREE_PLAN: {
+				className: 'plan-item__domain-summary is-free',
+				icon: CrossIcon,
+				domainMessage: __( 'Custom domain not included' ),
+			},
 			PAID_PLAN: {
 				className: 'plan-item__domain-summary is-cta',
 				icon: TickIcon,
@@ -55,7 +63,11 @@ function domainMessageStateMachine(
 			},
 		},
 		FREE_DOMAIN: {
-			FREE_PLAN: null,
+			FREE_PLAN: {
+				className: 'plan-item__domain-summary is-free',
+				icon: CrossIcon,
+				domainMessage: __( 'Custom domain not included' ),
+			},
 			PAID_PLAN: {
 				className: 'plan-item__domain-summary is-cta',
 				icon: TickIcon,
@@ -91,115 +103,120 @@ function domainMessageStateMachine(
 export interface Props {
 	slug: string;
 	name: string;
+	description: string;
 	price: string;
 	features: Array< string >;
 	domain?: DomainSuggestions.DomainSuggestion;
-	isPopular?: boolean;
+	badge?: string;
 	isFree?: boolean;
+	isOpen?: boolean;
+	isPrimary?: boolean;
 	isSelected?: boolean;
 	onSelect: ( slug: string ) => void;
 	onPickDomainClick?: () => void;
-	onToggleExpandAll?: () => void;
-	allPlansExpanded: boolean;
+	onToggle?: ( slug: string, isOpen: boolean ) => void;
 }
 
 const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
 	name,
+	description,
 	price,
-	isPopular = false,
-	isFree = false,
-	domain,
 	features,
+	domain,
+	badge,
+	isFree = false,
+	isOpen = false,
+	isPrimary = false,
 	onSelect,
 	onPickDomainClick,
-	onToggleExpandAll,
-	allPlansExpanded,
+	onToggle,
 } ) => {
 	const { __ } = useI18n();
-
-	const [ isOpenInternalState, setIsOpenInternalState ] = useState( false );
-
-	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
 
 	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
-	useEffect( () => {
-		setIsOpenInternalState( allPlansExpanded );
-	}, [ allPlansExpanded ] );
-
-	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
+	const handleToggle = () => {
+		onToggle?.( slug, ! isOpen );
+	};
 
 	return (
-		<div className={ classNames( 'plan-item', { 'is-popular': isPopular, 'is-open': isOpen } ) }>
-			{ isPopular && <span className="plan-item__badge">{ __( 'Popular' ) }</span> }
-			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
+		<div
+			className={ classNames( 'plan-item', {
+				'is-open': isOpen,
+				'is-primary': isPrimary,
+				'has-badge': !! badge,
+			} ) }
+		>
+			{ badge && (
+				<div className="plan-item__badge">
+					<span>{ badge }</span>
+				</div>
+			) }
+			<div className="plan-item__viewport">
 				<div className="plan-item__details">
 					<div
 						tabIndex={ 0 }
 						role="button"
-						onClick={ () => setIsOpenInternalState( ( open ) => ! open ) }
-						onKeyDown={ ( e ) =>
-							e.keyCode === SPACE_BAR_KEYCODE && setIsOpenInternalState( ( open ) => ! open )
-						}
-						className="plan-item__summary"
+						onClick={ handleToggle }
+						onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && handleToggle() }
+						className="plan-item__header"
 					>
 						<div className="plan-item__heading">
 							<div className="plan-item__name">{ name }</div>
+							<div className="plan-item__description">{ description }</div>
 						</div>
 						<div className="plan-item__price">
 							<div className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }>
 								{ price || nbsp }
+								<span>{ __( '/mo' ) }</span>
+							</div>
+							<div className="plan-item__price-note">
+								{ isFree ? __( 'free forever' ) : __( 'per month, billed annually' ) }
 							</div>
 						</div>
 						{ ! isOpen && <div className="plan-item__dropdown-chevron">{ ChevronDown }</div> }
 					</div>
-					<div hidden={ ! isOpen }>
-						<div className="plan-item__price-note">
-							{ isFree ? __( 'free forever' ) : __( 'per month, billed yearly' ) }
-						</div>
-
-						<div className="plan-item__actions">
-							<Button
-								className="plan-item__select-button"
-								onClick={ () => {
-									onSelect( slug );
-								} }
-								isPrimary
-								isLarge
-							>
-								<span>{ __( 'Choose' ) }</span>
-							</Button>
-						</div>
-						<div className="plan-item__domain">
-							{ domainMessage && (
-								<Button className={ domainMessage.className } onClick={ onPickDomainClick } isLink>
-									{ domainMessage.icon }
-									{ domainMessage.domainMessage }
-								</Button>
-							) }
-						</div>
-						<div className="plan-item__features">
-							<ul className="plan-item__feature-item-group">
-								{ features.map( ( feature, i ) => (
-									<li key={ i } className="plan-item__feature-item">
+					<div className="plan-item__actions" hidden={ ! isOpen }>
+						<Button
+							className="plan-item__select-button"
+							onClick={ () => {
+								onSelect( slug );
+							} }
+							isPrimary
+							isLarge
+						>
+							<span>{ __( 'Select' ) }</span>
+						</Button>
+					</div>
+					<div className="plan-item__features" hidden={ ! isOpen }>
+						<ul className="plan-item__feature-item-group">
+							<li className="plan-item__feature-item plan-item__domain">
+								{ domainMessage && (
+									<Button
+										className={ domainMessage.className }
+										onClick={ onPickDomainClick }
+										isLink
+									>
+										{ domainMessage.icon }
+										{ domainMessage.domainMessage }
+									</Button>
+								) }
+							</li>
+							{ features.map( ( feature, i ) => (
+								<li key={ i } className="plan-item__feature-item">
+									<span>
 										{ TickIcon } { feature }
-									</li>
-								) ) }
-							</ul>
-						</div>
+									</span>
+								</li>
+							) ) }
+						</ul>
 					</div>
 				</div>
 			</div>
-
-			{ isPopular && ! isDesktop && (
-				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
-					{ allPlansExpanded ? __( 'Collapse all plans' ) : __( 'Expand all plans' ) }
-				</Button>
-			) }
 		</div>
 	);
 };
