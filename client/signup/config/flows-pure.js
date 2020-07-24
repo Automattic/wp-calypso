@@ -286,6 +286,21 @@ export function generateFlows( {
 		lastModified: '2019-06-21',
 	};
 
+	flows[ 'add-domain' ] = {
+		steps: [
+			'domain-only',
+			'site-or-domain',
+			'site-picker',
+			'themes',
+			'plans-site-selected',
+			'user',
+		],
+		destination: getThankYouNoSiteDestination,
+		description: 'An experimental approach for WordPress.com/domains',
+		disallowResume: true,
+		lastModified: '2019-06-21',
+	};
+
 	flows[ 'site-selected' ] = {
 		steps: [ 'themes-site-selected', 'plans-site-selected' ],
 		destination: getSiteDestination,
