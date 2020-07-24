@@ -79,7 +79,6 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 						{ recommendedPlan && (
 							<div className="plans-table__recommend-hint">
 								<Icon icon={ tip } size={ 16 } />
-								{ /* translators: The "it" here refers to the site title. */ }
 								<span>{ __( 'Based on the features you selected.' ) }</span>
 							</div>
 						) }
