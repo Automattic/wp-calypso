@@ -22,6 +22,7 @@ import {
 import PaymentLogo from 'my-sites/checkout/composite-checkout/wpcom/components/payment-logo';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
+import { maskField } from 'lib/checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -85,7 +86,15 @@ export function createCreditCardPaymentMethodStore() {
 			case 'FIELD_VALUE_SET':
 				return {
 					...state,
-					[ action.payload.key ]: { value: action.payload.value, isTouched: true, errors: [] },
+					[ action.payload.key ]: {
+						value: maskField(
+							action.payload.key,
+							state[ action.payload.key ],
+							action.payload.value
+						),
+						isTouched: true,
+						errors: [],
+					},
 				};
 			case 'FIELD_ERROR_SET': {
 				return {
