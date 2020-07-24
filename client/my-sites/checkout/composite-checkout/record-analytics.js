@@ -160,6 +160,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					logStashEventAction( 'calypso_checkout_composite_cart_error', {
 						type: action.payload.type,
 						message: action.payload.message,
+						cart: action.payload.cart,
 					} )
 				);
 

@@ -637,10 +637,9 @@ function useCartUpdateAndRevalidate(
 			.catch( ( error ) => {
 				debug( 'error while fetching cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR', message: error } );
-				// TODO: log the request (at least the products) so we can see why it failed
 				onEvent?.( {
 					type: 'CART_ERROR',
-					payload: { type: 'SET_SERVER_CART_ERROR', message: error },
+					payload: { type: 'SET_SERVER_CART_ERROR', message: error, cart: requestCart },
 				} );
 			} );
 	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
