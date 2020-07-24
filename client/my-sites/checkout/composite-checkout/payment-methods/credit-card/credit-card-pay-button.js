@@ -19,6 +19,7 @@ import {
  * Internal dependencies
  */
 import { showStripeModalAuth } from 'lib/stripe';
+import { validatePaymentDetails } from 'lib/checkout/validation';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -212,15 +213,26 @@ function isCreditCardFormValid( store, __ ) {
 			store.dispatch( store.actions.touchAllFields() );
 			let isValid = true;
 
-			// Validate TIN
-			const documentErrorMessage = validateBrazilianTIN(
-				store.selectors.getFields( store.getState() )?.document?.value,
-				__
+			const rawState = store.selectors.getFields( store.getState() );
+			const cardholderName = store.selectors.getCardholderName( store.getState() );
+			const validationResults = validatePaymentDetails(
+				Object.entries( {
+					...rawState,
+					country: rawState.countryCode,
+					name: cardholderName,
+				} ).reduce( ( accum, [ key, managedValue ] ) => {
+					accum[ key ] = managedValue?.value;
+					return accum;
+				}, {} )
 			);
-			if ( documentErrorMessage !== '' ) {
-				isValid = false;
-				store.dispatch( store.actions.setFieldError( 'document', documentErrorMessage ) );
-			}
+			Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
+				errors.map( ( error ) => {
+					isValid = false;
+					store.dispatch( store.actions.setFieldError( key, error ) );
+					// TODO: set the error on cardholderName (it's not in the fields object)
+				} );
+			} );
+			debug( 'ebanx card details validation results: ', validationResults );
 			return isValid;
 		}
 
@@ -228,21 +240,4 @@ function isCreditCardFormValid( store, __ ) {
 			throw new RangeError( 'Unexpected payment partner "' + paymentPartner + '"' );
 		}
 	}
-}
-
-// @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Brazil-TIN.pdf
-export function validateBrazilianTIN( taxId = '', __ = ( string ) => string ) {
-	if ( ! ( typeof taxId === 'string' || taxId instanceof String ) ) {
-		throw new TypeError( 'taxId must be a string.' );
-	}
-
-	// TODO: decide whether to do a luhn check here
-	const patternCPF = /^\d\d\d\.\d\d\d\.\d\d\d-\d\d$/;
-	const patternCPNJ = /^\d\d\.\d\d\d\.\d\d\d\/\d\d\d\d-\d\d$/;
-
-	if ( ! patternCPF.test( taxId ) && ! patternCPNJ.test( taxId ) ) {
-		return __( 'Must be an 11 digit CPF or a 14 digit CPNJ.' );
-	}
-
-	return '';
 }

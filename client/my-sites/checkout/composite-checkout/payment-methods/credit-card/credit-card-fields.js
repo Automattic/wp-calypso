@@ -121,6 +121,7 @@ export default function CreditCardFields() {
 					description={ __( "Enter your name as it's written on the card" ) }
 					value={ cardholderName?.value ?? '' }
 					onChange={ changeCardholderName }
+					// TODO: use the error property of cardholderName here
 					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
 					errorMessage={ __( 'This field is required' ) }
 					disabled={ isDisabled }
