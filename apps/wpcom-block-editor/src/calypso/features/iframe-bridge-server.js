@@ -22,7 +22,7 @@ import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editin
 /**
  * Internal dependencies
  */
-import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
+import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -889,6 +889,26 @@ async function handleEditorLoaded( calypsoPort ) {
 			},
 		} );
 	} );
+
+	preselectParentPage();
+}
+
+async function preselectParentPage() {
+	const parentPostId = parseInt( getQueryArg( window.location.href, 'parent_post' ) );
+	if ( ! parentPostId || isNaN( parseInt( parentPostId ) ) ) {
+		return;
+	}
+
+	const postType = select( 'core/editor' ).getCurrentPostType();
+	if ( 'page' !== postType ) {
+		return;
+	}
+
+	const pages = await getPages();
+	const isValidParentId = pages.some( ( page ) => page.id === parentPostId );
+	if ( isValidParentId ) {
+		dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
+	}
 }
 
 function initPort( message ) {
