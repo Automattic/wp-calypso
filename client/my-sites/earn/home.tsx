@@ -141,8 +141,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							},
 							args: {
 								planNames: isJetpackNotAtomic
-									? 'Premium or Professional'
-									: 'Premium, Business, or eCommerce',
+									? translate( 'Premium or Professional', { context: 'plan names' } )
+									: translate( 'Premium, Business, or eCommerce', { context: 'plan names' } ),
 							},
 						}
 				  );
@@ -160,8 +160,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							},
 							args: {
 								planNames: isJetpackNotAtomic
-									? 'Premium or Professional'
-									: 'Premium, Business, or eCommerce',
+									? translate( 'Premium or Professional', { context: 'plan names' } )
+									: translate( 'Premium, Business, or eCommerce', { context: 'plan names' } ),
 							},
 						}
 				  );
@@ -466,8 +466,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 						args: {
 							planNames: isJetpackNotAtomic
-								? 'Premium or Professional'
-								: 'Premium, Business, or eCommerce',
+								? translate( 'Premium or Professional', { context: 'plan names' } )
+								: translate( 'Premium, Business, or eCommerce', { context: 'plan names' } ),
 						},
 					}
 			  );
