@@ -18,6 +18,7 @@ import {
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
 	TYPE_FREE,
+	PLAN_BUSINESS_ONBOARDING_EXPIRE,
 } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
@@ -36,10 +37,11 @@ import JetpackPublicize from './jetpack-publicize';
 import MobileApps from './mobile-apps';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
+import { withLocalizedMoment } from 'components/localized-moment';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { hasDomainCredit, getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
@@ -94,10 +96,22 @@ export class ProductPurchaseFeaturesList extends Component {
 		const {
 			isPlaceholder,
 			plan,
+			currentPlan,
 			planHasDomainCredit,
 			selectedSite,
 			showCustomizerFeature,
 		} = this.props;
+
+		const subscribedDateMoment = this.props.moment( currentPlan.subscribedDate );
+		const firstRenewalDateMoment = this.props.moment( currentPlan.subscribedDate ).add( '1', 'year' );
+		const businessOnboardingExpiration = new Date( PLAN_BUSINESS_ONBOARDING_EXPIRE );
+		const now = new Date();
+
+		const isSubscribedBeforeExpiration = subscribedDateMoment.diff( businessOnboardingExpiration ) < 0;
+		const isNotRenewed = firstRenewalDateMoment.diff( now ) > 0;
+
+		const isBusinessOnboardingAvailable = isSubscribedBeforeExpiration && isNotRenewed;
+
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -106,11 +120,13 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<BusinessOnboarding
-					isWpcomPlan
-					onClick={ this.handleBusinessOnboardingClick }
-					link={ `/me/concierge/${ selectedSite.slug }/book` }
-				/>
+				{ isBusinessOnboardingAvailable && (
+					<BusinessOnboarding
+						isWpcomPlan
+						onClick={ this.handleBusinessOnboardingClick }
+						link={ `/me/concierge/${ selectedSite.slug }/book` }
+					/>
+				) }
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
@@ -325,9 +341,10 @@ export default connect(
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+			currentPlan: getCurrentPlan( state, selectedSiteId ),
 		};
 	},
 	{
 		recordTracksEvent,
 	}
-)( ProductPurchaseFeaturesList );
+)( withLocalizedMoment( ProductPurchaseFeaturesList ) );
