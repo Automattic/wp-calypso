@@ -446,7 +446,7 @@
 	max-width: 750px;
 
 	@include breakpoint-deprecated( '>960px' ) {
-		font-size: 36px;
+		font-size: $font-headline-small;
 		line-height: 46px;
 	}
 
