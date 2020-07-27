@@ -9,22 +9,10 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import {
-	defaults,
-	endsWith,
-	get,
-	includes,
-	pick,
-	flatten,
-	groupBy,
-	intersection,
-	snakeCase,
-	split,
-} from 'lodash';
+import { endsWith, get, includes, pick, intersection, snakeCase, split } from 'lodash';
 import bodyParser from 'body-parser';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import { matchesUA } from 'browserslist-useragent';
 
 /**
  * Internal dependencies
@@ -60,6 +48,9 @@ import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
+import middlewareBuildTarget from '../middleware/build-target.js';
+import middlewareAssets from '../middleware/assets.js';
+
 const debug = debugFactory( 'calypso:pages' );
 
 const SERVER_BASE_PATH = '/public';
@@ -89,113 +80,6 @@ function getInitialServerState( serializedServerState ) {
 	const serverState = initialReducer( serializedServerState, { type: DESERIALIZE } );
 	return pick( serverState, Object.keys( serializedServerState ) );
 }
-
-/**
- * Checks whether a user agent is included in the browser list for an environment.
- *
- * @param {string} userAgentString The user agent string.
- * @param {string} environment The `browserslist` environment.
- *
- * @returns {boolean} Whether the user agent is included in the browser list.
- */
-function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
-	return matchesUA( userAgentString, {
-		env: environment,
-		ignorePatch: true,
-		ignoreMinor: true,
-		allowHigherVersions: true,
-	} );
-}
-
-function getBuildTargetFromRequest( request ) {
-	const isDevelopment = process.env.NODE_ENV === 'development';
-	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
-
-	const devTarget = process.env.DEV_TARGET || 'evergreen';
-	const uaTarget = isUAInBrowserslist( request.useragent.source, 'evergreen' )
-		? 'evergreen'
-		: 'fallback';
-
-	// Did the user force fallback, via query parameter?
-	const prodTarget = request.query.forceFallback ? 'fallback' : uaTarget;
-
-	let target = isDevelopment ? devTarget : prodTarget;
-
-	if ( isDesktop ) {
-		target = 'fallback';
-	}
-
-	return target === 'fallback' ? null : target;
-}
-
-const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );
-function getAssetsPath( target ) {
-	const result = path.join(
-		ASSETS_PATH,
-		target ? `assets-${ target }.json` : 'assets-fallback.json'
-	);
-	return result;
-}
-
-const cachedAssets = {};
-const getAssets = ( target ) => {
-	if ( ! cachedAssets[ target ] ) {
-		cachedAssets[ target ] = JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
-	}
-	return cachedAssets[ target ];
-};
-
-const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
-
-const getAssetType = ( asset ) => {
-	if ( asset.endsWith( '.rtl.css' ) ) {
-		return 'css.rtl';
-	}
-	if ( asset.endsWith( '.css' ) ) {
-		return 'css.ltr';
-	}
-
-	return 'js';
-};
-
-const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
-
-const getFilesForChunk = ( chunkName, request ) => {
-	const target = getBuildTargetFromRequest( request );
-
-	const assets = getAssets( target );
-
-	function getChunkByName( _chunkName ) {
-		return assets.chunks.find( ( chunk ) => chunk.names.some( ( name ) => name === _chunkName ) );
-	}
-
-	function getChunkById( chunkId ) {
-		return assets.chunks.find( ( chunk ) => chunk.id === chunkId );
-	}
-
-	const chunk = getChunkByName( chunkName );
-	if ( ! chunk ) {
-		console.warn( 'cannot find the chunk ' + chunkName );
-		console.warn( 'available chunks:' );
-		assets.chunks.forEach( ( c ) => {
-			console.log( '    ' + c.id + ': ' + c.names.join( ',' ) );
-		} );
-		return EMPTY_ASSETS;
-	}
-
-	const allTheFiles = chunk.files.concat(
-		flatten( chunk.siblings.map( ( sibling ) => getChunkById( sibling ).files ) )
-	);
-
-	return groupAssetsByType( allTheFiles );
-};
-
-const getFilesForEntrypoint = ( target, name ) => {
-	const entrypointAssets = getAssets( target ).entrypoints[ name ].assets.filter(
-		( asset ) => ! asset.startsWith( 'manifest' )
-	);
-	return groupAssetsByType( entrypointAssets );
-};
 
 function getCurrentBranchName() {
 	try {
@@ -295,7 +179,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		lang = request.context.lang;
 	}
 
-	const target = getBuildTargetFromRequest( request );
+	const target = request.getTarget();
 
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
@@ -320,8 +204,8 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang,
-		entrypoint: getFilesForEntrypoint( target, entrypoint ),
-		manifest: getAssets( target ).manifests.manifest,
+		entrypoint: request.getFilesForEntrypoint( entrypoint ),
+		manifest: request.getAssets().manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
@@ -392,7 +276,7 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 };
 
 function setUpLocalLanguageRevisions( req ) {
-	const targetFromRequest = getBuildTargetFromRequest( req );
+	const targetFromRequest = req.getTarget();
 	const target = targetFromRequest === null ? 'fallback' : targetFromRequest;
 	const rootPath = path.join( __dirname, '..', '..', '..' );
 	const langRevisionsPath = path.join(
@@ -650,7 +534,7 @@ function setUpRoute( req, res, next ) {
 const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	const ctx = {
 		faviconURL: config( 'favicon_url' ),
-		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
+		entrypoint: req.getFilesForEntrypoint( entrypoint ),
 	};
 
 	res.status( 404 ).send( renderJsx( '404', ctx ) );
@@ -667,7 +551,7 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
 
 	const ctx = {
 		faviconURL: config( 'favicon_url' ),
-		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
+		entrypoint: req.getFilesForEntrypoint( entrypoint ),
 	};
 
 	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
@@ -718,6 +602,8 @@ export default function pages() {
 
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
+	app.use( middlewareBuildTarget( calypsoEnv ) );
+	app.use( middlewareAssets() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
@@ -837,9 +723,9 @@ export default function pages() {
 			req.context.sectionName = section.name;
 
 			if ( ! entrypoint ) {
-				req.context.chunkFiles = getFilesForChunk( section.name, req );
+				req.context.chunkFiles = req.getFilesForChunk( section.name );
 			} else {
-				req.context.chunkFiles = EMPTY_ASSETS;
+				req.context.chunkFiles = req.getEmptyAssets();
 			}
 
 			if ( section.secondary && req.context ) {
