@@ -22,6 +22,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
 import { localizeUrl } from 'lib/i18n-utils';
+import InlineSupportLink from 'components/inline-support-link';
 
 /**
  * Style dependencies
@@ -140,11 +141,17 @@ class CustomContentTypes extends Component {
 		const { translate } = this.props;
 		const fieldLabel = translate( 'Testimonials' );
 		const fieldDescription = translate(
-			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
+			'Add, organize, and display {{link /}}. If your theme doesn’t support testimonials yet, ' +
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					link: <a href={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) } />,
+					link: (
+						<InlineSupportLink
+							supportLink={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) }
+							supportPostId={ 97757 }
+							text={ translate( 'testimonials' ) }
+						/>
+					),
 				},
 			}
 		);
@@ -156,11 +163,17 @@ class CustomContentTypes extends Component {
 		const { translate } = this.props;
 		const fieldLabel = translate( 'Portfolio projects' );
 		const fieldDescription = translate(
-			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
+			'Add, organize, and display {{link /}}. If your theme doesn’t support portfolio projects yet, ' +
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					link: <a href={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) } />,
+					link: (
+						<InlineSupportLink
+							supportLink={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) }
+							supportPostId={ 84808 }
+							text={ translate( 'portfolio projects' ) }
+						/>
+					),
 				},
 			}
 		);
