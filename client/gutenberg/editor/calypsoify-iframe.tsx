@@ -210,8 +210,7 @@ class CalypsoifyIframe extends Component<
 		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
-				const image = MediaStore.get( siteId, data.imageId );
-				this.props.setMediaLibrarySelectedItems( siteId, [ image ] );
+				this.props.setMediaLibrarySelectedItems( siteId, [ { ID: data.imageId } ] );
 			}
 
 			this.setState( {
