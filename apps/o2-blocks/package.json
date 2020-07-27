@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "^3.18.0",
+		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/block-editor": "^4.3.3",
 		"@wordpress/blocks": "^6.20.3",
 		"@wordpress/components": "^10.0.3",
