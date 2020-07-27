@@ -22,6 +22,9 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 import { isDefaultLocale, addLocaleToPath } from 'lib/i18n-utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
@@ -152,7 +155,40 @@ class MasterbarLoggedOut extends React.Component {
 	}
 
 	render() {
-		const { title } = this.props;
+		const { title, sectionName, siteSlug, translate } = this.props;
+		const isCheckout = sectionName === 'checkout';
+
+		if ( isCheckout === true ) {
+			const closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
+
+			return (
+				<Masterbar>
+					<div className="masterbar__secure-checkout">
+						<Item
+							url={ closeUrl }
+							icon="cross"
+							className="masterbar__close-button"
+							onClick={ this.clickClose }
+							tooltip={ translate( 'Close Checkout' ) }
+							tipTarget="close"
+						/>
+						<Item className="masterbar__item-logo">
+							<WordPressLogo className="masterbar__wpcom-logo" />
+							<WordPressWordmark className="masterbar__wpcom-wordmark" />
+						</Item>
+						<span className="masterbar__secure-checkout-text">
+							{ translate( 'Secure checkout' ) }
+						</span>
+					</div>
+					<Item className="masterbar__item-title">{ title }</Item>
+					<div className="masterbar__login-links">
+						{ this.renderSignupItem() }
+						{ this.renderLoginItem() }
+					</div>
+				</Masterbar>
+			);
+		}
+
 		return (
 			<Masterbar>
 				<Item className="masterbar__item-logo">
@@ -169,7 +205,13 @@ class MasterbarLoggedOut extends React.Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	currentQuery: getCurrentQueryArguments( state ),
-	currentRoute: getCurrentRoute( state ),
-} ) )( localize( MasterbarLoggedOut ) );
+export default connect( ( state ) => {
+	const currentSelectedSiteId = getSelectedSiteId( state );
+	const siteId = currentSelectedSiteId || getPrimarySiteId( state );
+
+	return {
+		currentQuery: getCurrentQueryArguments( state ),
+		currentRoute: getCurrentRoute( state ),
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+} )( localize( MasterbarLoggedOut ) );
