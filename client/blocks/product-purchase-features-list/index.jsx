@@ -102,15 +102,10 @@ export class ProductPurchaseFeaturesList extends Component {
 			showCustomizerFeature,
 		} = this.props;
 
-		const subscribedDateMoment = this.props.moment( currentPlan.subscribedDate );
-		const firstRenewalDateMoment = this.props.moment( currentPlan.subscribedDate ).add( '1', 'year' );
-		const businessOnboardingExpiration = new Date( PLAN_BUSINESS_ONBOARDING_EXPIRE );
-		const now = new Date();
+		const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
+		const businessOnboardingExpiration = this.props.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE ).add( '1', 'year' );
 
-		const isSubscribedBeforeExpiration = subscribedDateMoment.diff( businessOnboardingExpiration ) < 0;
-		const isNotRenewed = firstRenewalDateMoment.diff( now ) > 0;
-
-		const isBusinessOnboardingAvailable = isSubscribedBeforeExpiration && isNotRenewed;
+		const isBusinessOnboardingAvailable = businessOnboardingExpiration.diff( expiryDateMoment ) > 0;
 
 		return (
 			<Fragment>
