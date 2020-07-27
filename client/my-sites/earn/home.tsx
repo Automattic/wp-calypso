@@ -16,8 +16,10 @@ import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
+import EmptyContent from 'components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
@@ -71,6 +73,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isFreePlan,
 	isJetpack,
 	isAtomicSite,
+	isUserAdmin,
 	isLoading,
 	hasSimplePayments,
 	hasWordAds,
@@ -462,6 +465,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		] ),
 	};
 
+	if ( ! isUserAdmin ) {
+		return (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ translate( 'You are not authorized to view this page' ) }
+			/>
+		);
+	}
+
 	return (
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
@@ -496,6 +508,7 @@ export default connect< ConnectedProps, {}, {} >(
 			isFreePlan,
 			isJetpack: isJetpackSite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
