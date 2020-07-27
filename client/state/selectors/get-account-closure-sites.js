@@ -8,15 +8,13 @@ import { userCan } from 'lib/site/utils';
 
 /**
  * Get all the sites which are deleted after account closure
+ * (WordPress.com sites which the user is the owner of)
  *
  * @param {object} state  Global state tree
  * @returns {Array}        Array of site objects
  */
-
-// activate_wordads is the only capability that returns true exclusively for the site owner
-// See here: https://github.com/Automattic/jetpack/blob/2e190a1ffe33df32f19a0632d5e6f34589e79035/sal/class.json-api-site-base.php#L424
 export default createSelector( ( state ) =>
 	getSites( state ).filter(
-		( site ) => ! isJetpackSite( state, site.ID ) && userCan( 'activate_wordads', site )
+		( site ) => ! isJetpackSite( state, site.ID ) && userCan( 'own_site', site )
 	)
 );
