@@ -38,14 +38,14 @@
 		"@babel/runtime": "^7.8.4",
 		"@emotion/core": "^10.0.27",
 		"@emotion/styled": "^10.0.27",
-		"@wordpress/i18n": "^3.9.0",
+		"@wordpress/i18n": "^3.14.0",
 		"debug": "^4.1.1",
 		"emotion-theming": "^10.0.27",
 		"prop-types": "^15.7.2",
 		"react-stripe-elements": "^4.0.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.6",
+		"@wordpress/data": "^4.22",
 		"react": "^16.8"
 	},
 	"private": true
