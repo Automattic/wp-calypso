@@ -449,8 +449,14 @@ function setUpCSP( req, res, next ) {
 			'https://www.google-analytics.com',
 			'https://amplifypixel.outbrain.com',
 			'https://img.youtube.com',
+			'localhost:8888',
 		],
-		'frame-src': [ "'self'", 'https://public-api.wordpress.com', 'https://accounts.google.com/' ],
+		'frame-src': [
+			"'self'",
+			'https://public-api.wordpress.com',
+			'https://accounts.google.com/',
+			'https://jetpack.com',
+		],
 		'font-src': [
 			"'self'",
 			'*.wp.com',
@@ -458,7 +464,12 @@ function setUpCSP( req, res, next ) {
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
-		'connect-src': [ "'self'", 'https://*.wordpress.com/', 'https://*.wp.com' ],
+		'connect-src': [
+			"'self'",
+			'https://*.wordpress.com/',
+			'https://*.wp.com',
+			'https://wordpress.com',
+		],
 		'report-uri': [ '/cspreport' ],
 	};
 
