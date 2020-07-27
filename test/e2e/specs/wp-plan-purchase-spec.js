@@ -141,7 +141,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 		step( 'Remove from cart', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
-			return await securePaymentComponent.removeFromCart();
+			return await securePaymentComponent.removeBusinessPlan();
 		} );
 	} );
 
