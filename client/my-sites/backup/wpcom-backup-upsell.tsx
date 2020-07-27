@@ -61,7 +61,6 @@ const BackupVPActiveBody: FunctionComponent = () => {
 					className="backup__wpcom-cta backup__wpcom-realtime-cta"
 					href="https://dashboard.vaultpress.com"
 					onClick={ onUpgradeClick }
-					selfTarget={ true }
 					primary
 				>
 					{ translate( 'See my backups on VaultPress.com' ) }
@@ -108,7 +107,6 @@ const BackupUpsellBody: FunctionComponent = () => {
 							redirect_to: window.location.href,
 						} ) }
 						onClick={ onUpgradeClick }
-						selfTarget={ true }
 						primary
 					>
 						{ translate( 'Get real-time backups' ) }
@@ -119,7 +117,6 @@ const BackupUpsellBody: FunctionComponent = () => {
 							redirect_to: window.location.href,
 						} ) }
 						onClick={ onUpgradeClick }
-						selfTarget={ true }
 					>
 						{ translate( 'Get daily backups' ) }
 					</Button>
