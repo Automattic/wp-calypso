@@ -102,10 +102,16 @@ export class ProductPurchaseFeaturesList extends Component {
 			showCustomizerFeature,
 		} = this.props;
 
-		const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
-		const businessOnboardingExpiration = this.props.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE ).add( '1', 'year' );
+		let isBusinessOnboardingAvailable = false;
 
-		const isBusinessOnboardingAvailable = businessOnboardingExpiration.diff( expiryDateMoment ) > 0;
+		if ( currentPlan ) {
+			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
+			const businessOnboardingExpiration = this.props
+				.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE )
+				.add( '1', 'year' );
+
+			isBusinessOnboardingAvailable = businessOnboardingExpiration.diff( expiryDateMoment ) > 0;
+		}
 
 		return (
 			<Fragment>
