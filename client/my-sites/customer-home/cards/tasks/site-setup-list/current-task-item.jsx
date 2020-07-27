@@ -11,7 +11,13 @@ import Badge from 'components/badge';
  */
 import Gridicon from 'components/gridicon';
 
-const CurrentTaskItem = ( { currentTask, skipTask, startTask, setTaskIsManuallySelected } ) => {
+const CurrentTaskItem = ( {
+	currentTask,
+	skipTask,
+	startTask,
+	setTaskIsManuallySelected,
+	useDrillLayout,
+} ) => {
 	return (
 		<div className="site-setup-list__task task">
 			<div className="site-setup-list__task-text task__text">
@@ -28,7 +34,9 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, setTaskIsManuallyS
 						} ) }
 					</div>
 				) }
-				<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
+				{ useDrillLayout ? null : (
+					<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
+				) }
 				<p className="site-setup-list__task-description task__description">
 					{ currentTask.description }
 				</p>

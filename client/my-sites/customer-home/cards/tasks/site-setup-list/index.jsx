@@ -15,7 +15,6 @@ import classnames from 'classnames';
 import CardHeading from 'components/card-heading';
 import Spinner from 'components/spinner';
 import { getTaskList } from 'lib/checklist';
-import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
@@ -231,47 +230,32 @@ const SiteSetupList = ( {
 					const isCurrent = task.id === currentTask.id;
 					const isCompleted = task.isCompleted;
 
-					return useDrillLayout && isCurrent ? (
-						<div
-							className={ classnames( 'nav-item', {
-								'is-current': isCurrent,
-							} ) }
-						>
-							<div className="nav-item__status">
-								{ isCompleted ? (
-									<Gridicon className="nav-item__complete" icon="checkmark" size={ 18 } />
-								) : (
-									<div className="nav-item__pending" />
-								) }
-							</div>
-							<CurrentTaskItem
-								currentTask={ currentTask }
-								skipTask={ () => skipTask( dispatch, currentTask, tasks, siteId, setIsLoading ) }
-								startTask={ () =>
-									startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
-								}
-								setTaskIsManuallySelected={ setTaskIsManuallySelected }
+					return (
+						<>
+							<NavItem
+								key={ task.id }
+								taskId={ task.id }
+								text={ enhancedTask.label || enhancedTask.title }
+								isCompleted={ isCompleted }
+								isCurrent={ isCurrent }
+								onClick={ () => {
+									setTaskIsManuallySelected( true );
+									setCurrentTaskId( task.id );
+								} }
+								useDrillLayout={ useDrillLayout }
 							/>
-							{ useDrillLayout &&
-								( isCurrent ? (
-									<Gridicon className="nav-item__chevron" icon="chevron-up" size={ 18 } />
-								) : (
-									<Gridicon className="nav-item__chevron" icon="chevron-down" size={ 18 } />
-								) ) }
-						</div>
-					) : (
-						<NavItem
-							key={ task.id }
-							taskId={ task.id }
-							text={ enhancedTask.label || enhancedTask.title }
-							isCompleted={ isCompleted }
-							isCurrent={ isCurrent }
-							onClick={ () => {
-								setTaskIsManuallySelected( true );
-								setCurrentTaskId( task.id );
-							} }
-							useDrillLayout={ useDrillLayout }
-						/>
+							{ useDrillLayout && isCurrent ? (
+								<CurrentTaskItem
+									currentTask={ currentTask }
+									skipTask={ () => skipTask( dispatch, currentTask, tasks, siteId, setIsLoading ) }
+									startTask={ () =>
+										startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+									}
+									useDrillLayout={ useDrillLayout }
+									setTaskIsManuallySelected={ setTaskIsManuallySelected }
+								/>
+							) : null }
+						</>
 					);
 				} ) }
 			</div>
