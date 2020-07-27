@@ -467,7 +467,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						args: {
 							planNames: isJetpackNotAtomic
 								? translate( 'Premium or Professional', { comment: 'plan names' } )
-								: translate( 'Premium, Business, or eCommerce', { context: 'plan names' } ),
+								: translate( 'Premium, Business, or eCommerce', { comment: 'plan names' } ),
 						},
 					}
 			  );
