@@ -106,24 +106,24 @@ const Collection = ( {
 
 		return (
 			<div>
-				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
-					{ example }
-				</DocsExampleWrapper>
-				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
+				<button onClick={ scroll } onKeyPress={ scroll }>
+					<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
+						{ example }
+					</DocsExampleWrapper>
+					{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
+				</button>
 			</div>
 		);
 	} );
 
 	return (
 		<div className="design__collection">
-			<button onClick={ scroll() } onKeyPress={ scroll() }>
-				{ showCounter > 1 && filter && (
-					<div className="design__instance-links">
-						<span className="design__instance-links-label">Results:</span>
-						{ summary }
-					</div>
-				) }
-			</button>
+			{ showCounter > 1 && filter && (
+				<div className="design__instance-links">
+					<span className="design__instance-links-label">Results:</span>
+					{ summary }
+				</div>
+			) }
 
 			{ /* Load first chunk, lazy load all others as needed. */ }
 
