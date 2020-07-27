@@ -161,15 +161,14 @@ function CheckoutSummaryPlanFeatures() {
 
 	return (
 		<>
-			{ planFeatures &&
-				planFeatures.map( ( feature, index ) => {
-					return (
-						<CheckoutSummaryFeaturesListItem key={ index }>
-							<WPCheckoutCheckIcon />
-							{ feature }
-						</CheckoutSummaryFeaturesListItem>
-					);
-				} ) }
+			{ planFeatures.filter( Boolean ).map( ( feature ) => {
+				return (
+					<CheckoutSummaryFeaturesListItem key={ String( feature ) }>
+						<WPCheckoutCheckIcon />
+						{ feature }
+					</CheckoutSummaryFeaturesListItem>
+				);
+			} ) }
 		</>
 	);
 }
