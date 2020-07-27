@@ -1,10 +1,13 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A suite of components to generate previews for a post for both social and search engines",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"sideEffects": false,
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
 	"keywords": [
         "wordpress",
         "social",
