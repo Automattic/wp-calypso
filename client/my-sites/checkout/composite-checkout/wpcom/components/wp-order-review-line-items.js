@@ -73,6 +73,7 @@ function WPLineItem( {
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
+						className="checkout-line-item__remove-product"
 						buttonType="borderless"
 						disabled={ isDisabled }
 						onClick={ () => {

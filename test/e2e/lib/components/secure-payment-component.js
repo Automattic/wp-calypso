@@ -358,10 +358,13 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		return this.waitForCouponToBeRemoved();
 	}
 
-	async removeFromCart() {
+	async removeBusinessPlan() {
+		const productSlug = this.businessPlanSlug;
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'button.cart__remove-item,button svg[aria-labelledby*="checkout-delete-button-0"]' )
+			By.css(
+				`button.cart__remove-item,.checkout-line-item[data-e2e-product-slug="${ productSlug }"] button.checkout-line-item__remove-product`
+			)
 		);
 	}
 
