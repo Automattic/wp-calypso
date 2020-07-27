@@ -360,6 +360,35 @@ class ActivityLog extends Component {
 		);
 	}
 
+	renderBackupStatus() {
+		if ( this.props.rewindState?.state !== 'provisioning' ) {
+			return;
+		}
+
+		const { supportsRealtimeBackup, translate } = this.props;
+
+		const provisioningText = supportsRealtimeBackup
+			? translate(
+					"We're currently backing up your site for the first time, " +
+						"and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes in real time."
+			  )
+			: translate(
+					"We're currently backing up your site for the first time, " +
+						"and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes every day."
+			  );
+
+		return (
+			<Banner
+				icon="history"
+				disableHref
+				title={ translate( 'Your backup is underway' ) }
+				description={ provisioningText }
+			/>
+		);
+	}
+
 	getActivityLog() {
 		const {
 			enableRewind,
@@ -373,7 +402,6 @@ class ActivityLog extends Component {
 			isAtomic,
 			isJetpack,
 			isIntroDismissed,
-			supportsRealtimeBackup,
 		} = this.props;
 
 		const disableRestore =
@@ -410,16 +438,6 @@ class ActivityLog extends Component {
 			};
 		} )();
 
-		const provisioningText = supportsRealtimeBackup
-			? translate(
-					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
-						"After this initial backup, we'll save future changes in real time."
-			  )
-			: translate(
-					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
-						"After this initial backup, we'll save future changes every day."
-			  );
-
 		return (
 			<>
 				{ siteId && 'active' === rewindState.state && (
@@ -447,14 +465,7 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				{ 'provisioning' === rewindState.state && (
-					<Banner
-						icon="history"
-						disableHref
-						title={ translate( 'Your backup is underway' ) }
-						description={ provisioningText }
-					/>
-				) }
+				{ this.renderBackupStatus() }
 				<IntroBanner siteId={ siteId } />
 				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
