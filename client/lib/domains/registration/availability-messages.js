@@ -97,6 +97,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				}
 			);
 			break;
+		case domainAvailability.CONFLICTING_CNAME_EXISTS:
+			message = translate(
+				'There is an existing CNAME for {{strong}}%(domain)s{{/strong}}. If you want to map this subdomain, you should remove the conflicting CNAME DNS record first.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: <a rel="noopener noreferrer" href={ domainTransferIn( site, domain ) } />,
+					},
+				}
+			);
+			break;
 		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
