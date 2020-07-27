@@ -58,6 +58,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		getIsFieldDisabled: PropTypes.func,
 		userCountryCode: PropTypes.string,
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
+		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		translate: PropTypes.func,
 	};
@@ -71,6 +72,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		getIsFieldDisabled: () => {},
 		onContactDetailsChange: () => {},
 		needsOnlyGoogleAppsDetails: false,
+		needsAlternateEmailForGSuite: false,
 		hasCountryStates: false,
 		translate: ( x ) => x,
 		userCountryCode: 'US',
@@ -366,7 +368,7 @@ export class ManagedContactDetailsFormFields extends Component {
 						}
 					) }
 				</div>
-				{ this.props.needsOnlyGoogleAppsDetails && this.renderAlternateEmailFieldForGSuite() }
+				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
 				{ this.props.needsOnlyGoogleAppsDetails ? (
 					<GSuiteFields
