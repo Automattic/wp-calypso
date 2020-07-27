@@ -318,7 +318,6 @@ const getPlanBusinessDetails = () => ( {
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_WORDADS_INSTANT,
 			constants.FEATURE_VIDEO_UPLOADS,
-			constants.FEATURE_BUSINESS_ONBOARDING,
 			constants.FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_THEMES,
