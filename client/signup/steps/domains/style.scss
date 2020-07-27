@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .domains__step-section-wrapper {
 	margin: 0 auto;
 	max-width: 720px;
@@ -37,6 +40,83 @@
 		.register-domain-step__search-card,
 		.search.is-open.has-focus {
 			border-radius: 0;
+		}
+	}
+}
+
+/**
+ * Styles for design reskin
+ * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
+ */
+body.is-section-signup.is-white-signup {
+
+	$accent-blue: #117ac9;
+	$light-white: #f3f4f5;
+
+	.signup__step.is-domains .formatted-header {
+		margin-bottom: 30px;
+	}
+
+	.domains__step-content {
+		.search.is-open.has-focus {
+			box-shadow: 0 0 0 2px  $accent-blue;
+		}
+		.register-domain-step__search-card {
+			background: $light-white;
+			box-shadow: none;
+			margin: 20px;
+
+			@include break-mobile {
+				margin: initial;
+			}
+		}
+		.search__input {
+			background:  $light-white;
+		}
+		.search.is-open .search__input-fade.ltr::before {
+			display: none;
+		}
+		.search__open-icon {
+			transform: scaleX( -1 );
+		}
+		.search__close-icon {
+			display: none;
+		}
+	}
+
+	.search-filters__dropdown-filters {
+		border: none;
+
+		&.search-filters__dropdown-filters--is-open {
+			box-shadow: none;
+		}
+
+		.button {
+			flex-direction: row;
+
+			&:hover, &:focus {
+				box-shadow: none;
+			}
+
+			.search-filters__dropdown-filters-button-text {
+				padding-left: 6px;
+			}
+		}
+	}
+
+	.search-filters__popover {
+		width: calc( 100vw - 40px );
+
+		@include break-mobile {
+			width: 28em;
+		}
+
+		.button.is-primary {
+			background: $accent-blue;
+			border-color: $accent-blue;
+		}
+		.popover__arrow {
+			display: none;
 		}
 	}
 }

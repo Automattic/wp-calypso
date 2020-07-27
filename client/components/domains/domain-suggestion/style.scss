@@ -252,3 +252,76 @@
 		}
 	}
 }
+
+body.is-section-signup.is-white-signup {
+	.featured-domain-suggestions {
+		.domain-registration-suggestion__title {
+			@import '~@automattic/typography/styles/fonts';
+			@import '~@automattic/onboarding/styles/mixins';
+			@include onboarding-font-recoleta;
+			font-size: 1.625rem;
+		}
+	}
+
+	.domain-registration-suggestion__progress-bar {
+		.badge {
+			background-color: var( --color-neutral-100 );
+			border-radius: 2px;
+		}
+	}
+
+	.domain-suggestion {
+		&:not( .featured-domain-suggestion ) {
+			transition: none;
+
+			.domain-suggestion__content {
+				@include breakpoint-deprecated( '>660px' ) {
+					&.domain-suggestion__content-domain-copy-test {
+						justify-content: space-between;
+					}
+				}
+			}
+
+			.domain-product-price__free-text {
+				color: var( --color-neutral-60 );
+				font-size: $font-body-small;
+			}
+
+			.domain-product-price__price {
+				color: var( --color-neutral-40 );
+			}
+
+			&.is-clickable:hover {
+				background: var( --color-primary-0 );
+				box-shadow: 0 0 0 1px var( --color-primary-40 );
+
+				.domain-suggestion__action {
+					display: block;
+				}
+
+				.domain-product-price {
+					display: none;
+				}
+			}
+
+			&:not( .domain-transfer-suggestion ) {
+				.domain-suggestion__action {
+					display: none;
+				}
+			}
+	
+			&.domain-transfer-suggestion {
+				$cod-grey: #2b2d2f;
+
+				.domain-suggestion__action {
+					color: $cod-grey;
+					text-decoration-line: underline;
+				}
+				.domain-suggestion__chevron {
+					fill: $cod-grey;
+					margin-left: 0;
+				}
+			}
+		}
+	}
+}

@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .free-domain-explainer__title {
 
     color: var( --color-text );
@@ -24,5 +27,26 @@
         margin-left: 0.3em;
         text-decoration: underline;
         vertical-align: baseline;
+    }
+}
+
+body.is-section-signup.is-white-signup {
+    .free-domain-explainer {
+        @include break-mobile {
+            margin-bottom: 1em;
+        }
+
+        .free-domain-explainer__subtitle {
+            color: var( --color-neutral-60 );
+            font-size: 1rem;
+            margin-bottom: 0;
+
+            .free-domain-explainer__subtitle-link {
+                display: block;
+                color: var( --color-neutral-60 );
+                font-weight: 400;
+                margin: 0;
+            }
+        }
     }
 }
