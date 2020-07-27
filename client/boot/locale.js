@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { getLanguageSlugs, isDefaultLocale, isMagnificentLocale } from 'lib/i18n-utils';
+import { getLanguageSlugs, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils';
 import {
 	loadUserUndeployedTranslations,
 	getLanguageManifestFile,
@@ -89,7 +89,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 
 	const shouldUseFallbackLocale =
 		currentUser?.use_fallback_for_incomplete_languages &&
-		! isMagnificentLocale( currentUser.localeSlug );
+		isTranslatedIncompletely( currentUser.localeSlug );
 	const userLocaleSlug = shouldUseFallbackLocale
 		? config( 'i18n_default_locale_slug' )
 		: currentUser.localeSlug;

@@ -337,3 +337,13 @@ export function filterLanguageRevisions( languageRevisions ) {
 export function isMagnificentLocale( locale ) {
 	return config( 'magnificent_non_en_locales' ).includes( locale );
 }
+
+/**
+ * Checks if provided locale is translated incompletely (is missing essential translations).
+ *
+ * @param   {string}  locale Locale slug
+ * @returns {boolean} Whether provided locale is flagged as translated incompletely.
+ */
+export function isTranslatedIncompletely( locale ) {
+	return getLanguage( locale )?.isTranslatedIncompletely === true;
+}

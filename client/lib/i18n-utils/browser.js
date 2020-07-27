@@ -19,6 +19,7 @@ export {
 	filterLanguageRevisions,
 	translationExists,
 	isMagnificentLocale,
+	isTranslatedIncompletely,
 } from './utils';
 
 export const getLocaleSlug = () => i18n.getLocaleSlug();
