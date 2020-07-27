@@ -345,7 +345,12 @@ export default function CompositeCheckout( {
 	).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
-	const cartEmptyRedirectUrl = isLoggedOutCart ? '/start' : `/plans/${ siteSlug || '' }`;
+	let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
+
+	if ( isLoggedOutCart ) {
+		const siteSlugLoggedOutCart = select( 'wpcom' )?.getSiteSlug();
+		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
+	}
 
 	useRedirectIfCartEmpty( items, cartEmptyRedirectUrl, isLoadingCart, isLoggedOutCart );
 
@@ -627,6 +632,8 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading, isLoggedOutCart 
 			debug( 'cart has become empty; redirecting...' );
 			if ( isLoggedOutCart ) {
 				window.localStorage.removeItem( 'siteParams' );
+				window.location = redirectUrl;
+				return;
 			}
 			page.redirect( redirectUrl );
 			return;
@@ -635,6 +642,8 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading, isLoggedOutCart 
 			debug( 'cart is empty and not still loading; redirecting...' );
 			if ( isLoggedOutCart ) {
 				window.localStorage.removeItem( 'siteParams' );
+				window.location = redirectUrl;
+				return;
 			}
 			page.redirect( redirectUrl );
 			return;
