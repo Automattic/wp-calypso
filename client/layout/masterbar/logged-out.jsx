@@ -7,6 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
+import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -22,9 +23,7 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 import { isDefaultLocale, addLocaleToPath } from 'lib/i18n-utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
@@ -153,19 +152,24 @@ class MasterbarLoggedOut extends React.Component {
 			</Item>
 		);
 	}
+	clickClose = () => {
+		const { select } = defaultRegistry;
+		const siteSlug = select( 'wpcom' )?.getSiteSlug();
+		const closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
+		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
+		window.location = closeUrl;
+	};
 
 	render() {
-		const { title, sectionName, siteSlug, translate } = this.props;
+		const { title, sectionName, translate } = this.props;
 		const isCheckout = sectionName === 'checkout';
 
 		if ( isCheckout === true ) {
-			const closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
-
 			return (
 				<Masterbar>
 					<div className="masterbar__secure-checkout">
 						<Item
-							url={ closeUrl }
+							url={ '#' }
 							icon="cross"
 							className="masterbar__close-button"
 							onClick={ this.clickClose }
@@ -205,13 +209,12 @@ class MasterbarLoggedOut extends React.Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const currentSelectedSiteId = getSelectedSiteId( state );
-	const siteId = currentSelectedSiteId || getPrimarySiteId( state );
-
-	return {
-		currentQuery: getCurrentQueryArguments( state ),
-		currentRoute: getCurrentRoute( state ),
-		siteSlug: getSiteSlug( state, siteId ),
-	};
-} )( localize( MasterbarLoggedOut ) );
+export default connect(
+	( state ) => (
+		{
+			currentQuery: getCurrentQueryArguments( state ),
+			currentRoute: getCurrentRoute( state ),
+		},
+		{ recordTracksEvent }
+	)
+)( localize( MasterbarLoggedOut ) );
