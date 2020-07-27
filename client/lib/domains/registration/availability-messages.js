@@ -104,7 +104,6 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainTransferIn( site, domain ) } />,
 					},
 				}
 			);
