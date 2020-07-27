@@ -14,7 +14,10 @@ export const getSuggestionsVendor = ( isSignup = false ) => {
 	if ( isSignup ) {
 		return 'variation4_front';
 	}
-	return 'variation7_front';
+	if ( config.isEnabled( 'domains/premium-domain-purchases' ) ) {
+		return 'variation7_front';
+	}
+	return 'variation2_front';
 };
 
 /**
