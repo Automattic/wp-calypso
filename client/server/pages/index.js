@@ -505,7 +505,7 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			'https://public-api.wordpress.com',
 			'https://accounts.google.com/',
-			'jetpack.com',
+			'https://jetpack.com',
 		],
 		'font-src': [
 			"'self'",
