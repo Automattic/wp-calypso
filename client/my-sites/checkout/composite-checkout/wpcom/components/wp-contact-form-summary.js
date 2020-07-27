@@ -52,10 +52,9 @@ export default function WPContactFormSummary( { showDomainContactSummary, isLogg
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 
-					<AlternateEmailSummary
+					{ isGSuiteInCart && <AlternateEmailSummary
 						contactInfo={ contactInfo }
 						showDomainContactSummary={ showDomainContactSummary }
-						isGSuiteInCart={ isGSuiteInCart }
 					/>
 
 					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
@@ -97,10 +96,7 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
-function AlternateEmailSummary( { contactInfo, showDomainContactSummary, isGSuiteInCart } ) {
-	if ( ! isGSuiteInCart && ! showDomainContactSummary ) {
-		return null;
-	}
+function AlternateEmailSummary( { contactInfo, showDomainContactSummary } ) {
 	if ( ! contactInfo.alternateEmail.value?.length ) {
 		return null;
 	}
