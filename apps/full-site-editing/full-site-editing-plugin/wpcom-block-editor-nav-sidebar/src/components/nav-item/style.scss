@@ -8,7 +8,7 @@
 	width: 100%;
 	height: auto;
 	margin: 0;
-	padding: ( $panel-padding / 2 ) $panel-padding;
+	padding: ( $grid-unit-20 / 2 ) $grid-unit-20;
 	text-align: initial;
 	color: $white;
 
@@ -23,7 +23,7 @@
 		box-shadow: none !important;
 		outline: none !important;
 		border-radius: 0;
-		padding: ( ( $panel-padding / 2 ) - 1 ) ( $panel-padding - 1 );
+		padding: ( ( $grid-unit-20 / 2 ) - 1 ) ( $grid-unit-20 - 1 );
 	}
 
 	&.is-selected {

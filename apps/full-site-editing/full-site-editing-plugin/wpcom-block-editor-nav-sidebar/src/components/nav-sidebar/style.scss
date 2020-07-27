@@ -68,7 +68,7 @@ $transition-period: 100ms;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
-    padding: 8px 16px;
+	padding: 8px 16px;
 	margin-top: 14px;
 
 	h2 {
@@ -116,7 +116,7 @@ $transition-period: 100ms;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading {
-	padding: $panel-padding;
+	padding: $grid-unit-20;
 	font-size: $big-font-size;
 	color: $white;
 }
