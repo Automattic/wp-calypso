@@ -22,7 +22,7 @@ const PlansModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 			<h1 className="wp-brand-font">{ __( 'Choose a plan' ) }</h1>
 			<p>
 				{ __(
-					'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
+					'Pick a plan that’s right for you. There’s no risk, you can cancel for a full refund within 30 days.'
 				) }
 			</p>
 		</div>

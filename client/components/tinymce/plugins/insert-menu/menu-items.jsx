@@ -93,11 +93,7 @@ menuItems.push( {
 	item: (
 		<GridiconButton
 			icon={ <Gridicon icon="money" /> }
-			label={
-				config.isEnabled( 'earn/rename-payment-blocks' )
-					? i18n.translate( 'Pay with PayPal' )
-					: i18n.translate( 'Payment button' )
-			}
+			label={ i18n.translate( 'Pay with PayPal' ) }
 			e2e="payment-button"
 		/>
 	),

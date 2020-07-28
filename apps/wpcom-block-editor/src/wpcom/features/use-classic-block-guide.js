@@ -48,8 +48,13 @@ const ClassicGuide = () => {
 										{ __( 'Meet the Classic block' ) }
 									</h1>
 									<p className="edit-post-welcome-guide__text">
-										{ __(
-											'The block editor is now the default editor for all your sites, but you can still use the Classic block, if you prefer.'
+										{ createInterpolateElement(
+											__(
+												'The <a>block editor</a> is now the default editor for all your sites, but you can still use the Classic block, if you prefer.'
+											),
+											{
+												a: <a href={ 'https://wordpress.com/support/wordpress-editor/' } />,
+											}
 										) }
 									</p>
 								</>

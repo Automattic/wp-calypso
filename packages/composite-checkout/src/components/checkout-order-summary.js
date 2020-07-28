@@ -8,13 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import {
-	CheckoutSummaryCard,
-	useLineItems,
-	useLineItemsOfType,
-	useTotal,
-	renderDisplayValueMarkdown,
-} from '../public-api';
+import { CheckoutSummaryCard, useLineItems, useLineItemsOfType, useTotal } from '../public-api';
 
 export default function CheckoutOrderSummaryStep() {
 	const [ items ] = useLineItems();
@@ -45,9 +39,7 @@ export function CheckoutOrderSummaryStepTitle() {
 	return (
 		<CheckoutSummaryStepTitle>
 			<span>{ __( 'You are all set to check out' ) }</span>
-			<CheckoutSummaryStepTotal>
-				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
-			</CheckoutSummaryStepTotal>
+			<CheckoutSummaryStepTotal>{ total.amount.displayValue }</CheckoutSummaryStepTotal>
 		</CheckoutSummaryStepTitle>
 	);
 }
@@ -73,12 +65,12 @@ export function CheckoutOrderSummary() {
 				{ taxes.map( ( tax ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
 						<span>{ tax.label }</span>
-						<span>{ renderDisplayValueMarkdown( tax.amount.displayValue ) }</span>
+						<span>{ tax.amount.displayValue }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
 				<CheckoutSummaryTotal>
 					<span>{ __( 'Total' ) }</span>
-					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
+					<span>{ total.amount.displayValue }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
 		</CheckoutSummaryCard>

@@ -28,6 +28,10 @@ import {
 import { appStates } from 'state/imports/constants';
 import { createReducerStore } from 'lib/store';
 
+// This library unfortunately relies on global Redux state directly.
+// Because of this, we need to ensure that the relevant portion of state is initialized.
+import 'state/imports/init';
+
 /**
  * Module variables
  */
