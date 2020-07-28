@@ -493,7 +493,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		}
 	}
 
-	button.is-primary {
+	button.is-primary:not( .is-busy ) {
 		background: #117ac9;
 		box-shadow: none;
 		border: 0;
