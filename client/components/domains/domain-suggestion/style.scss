@@ -271,6 +271,8 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domain-suggestion {
+		$accent-blue: #117ac9;
+
 		&:not( .featured-domain-suggestion ) {
 			transition: none;
 
@@ -279,6 +281,12 @@ body.is-section-signup.is-white-signup {
 					&.domain-suggestion__content-domain-copy-test {
 						justify-content: space-between;
 					}
+				}
+			}
+
+			.domain-registration-suggestion__domain-title {
+				.domain-registration-suggestion__domain-title-tld {
+					color: $accent-blue;
 				}
 			}
 

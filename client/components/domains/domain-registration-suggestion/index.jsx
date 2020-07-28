@@ -32,6 +32,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
+import { getABTestVariation } from 'lib/abtest';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -185,6 +186,34 @@ class DomainRegistrationSuggestion extends React.Component {
 		);
 	}
 
+	/**
+	 * Splits a domain into name and tld. Everything after the "first dot"
+	 * becomes the tld. This is not very comprehensive since there can be
+	 * subdomains which would fail this test. However, for our purpose of
+	 * highlighting the TLD in domain suggestions, this is good enough.
+	 *
+	 * @param {string} domain The domain to be parsed
+	 */
+	getDomainParts( domain ) {
+		const parts = domain.split( '.' );
+		const name = parts[ 0 ];
+		const tld = `.${ parts.slice( 1 ).join( '.' ) }`;
+		return {
+			name,
+			tld,
+		};
+	}
+
+	renderDomainParts( domain ) {
+		const { name, tld } = this.getDomainParts( domain );
+		return (
+			<div className="domain-registration-suggestion__domain-title">
+				<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
+				<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+			</div>
+		);
+	}
+
 	renderDomain() {
 		const {
 			isFeatured,
@@ -192,6 +221,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			productSaleCost,
 			suggestion: { domain_name: domain },
 			translate,
+			isReskinned,
 		} = this.props;
 
 		let isAvailable = false;
@@ -201,7 +231,11 @@ class DomainRegistrationSuggestion extends React.Component {
 			isAvailable = true;
 		}
 
-		const title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+		if ( isReskinned ) {
+			title = this.renderDomainParts( domain );
+		}
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
 		const saleBadgeText = translate( 'Sale', {
 			comment: 'Shown next to a domain that has a special discounted sale price',
@@ -385,6 +419,7 @@ const mapStateToProps = ( state, props ) => {
 			currentUserCurrencyCode,
 			stripZeros
 		),
+		isReskinned: 'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
 	};
 };
 
