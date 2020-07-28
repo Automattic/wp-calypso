@@ -11,7 +11,6 @@ import { useSelector, useDispatch, useStore } from 'react-redux';
 import {
 	WPCheckout,
 	useWpcomStore,
-	FormFieldAnnotation,
 	areDomainsInLineItems,
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
