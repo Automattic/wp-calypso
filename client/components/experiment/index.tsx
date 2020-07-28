@@ -26,15 +26,16 @@ export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
 	const { isLoading: loading, variation, children, name: experimentName } = props;
 	const [ eventFired, setEventFired ] = useState< boolean >( false );
 	useEffect( () => {
+		// set the event fired so we only fire the event after rendering once.
 		setEventFired( true );
 	}, [] );
 
 	if ( ! eventFired ) {
-		// Do to how tracks works, we need to always fire an event immediately to generate an anonid. This event is here
+		// Due to how tracks works, we need to always fire an event immediately to generate an anonid. This event is here
 		// to guarantee that we have an anonid if the browser needs one.
 
 		recordTracksEvent( 'calypso_experiment_rendered', {
-			experimentName,
+			experiment_name: experimentName,
 		} );
 	}
 
