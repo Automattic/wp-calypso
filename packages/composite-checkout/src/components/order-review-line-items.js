@@ -9,7 +9,6 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { renderDisplayValueMarkdown } from '../public-api';
 
 export function OrderReviewSection( { children, className } ) {
 	return (
@@ -32,9 +31,7 @@ function LineItem( { item, className } ) {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<span id={ itemSpanId }>{ item.label }</span>
-			<span aria-labelledby={ itemSpanId }>
-				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
-			</span>
+			<span aria-labelledby={ itemSpanId }>{ item.amount.displayValue }</span>
 		</div>
 	);
 }

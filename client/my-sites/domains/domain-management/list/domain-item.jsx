@@ -21,9 +21,16 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import { withoutHttp } from 'lib/url';
 import { type as domainTypes } from 'lib/domains/constants';
 import { handleRenewNowClick } from 'lib/purchases';
-import { resolveDomainStatus } from 'lib/domains';
+import { resolveDomainStatus, isDomainInGracePeriod, isDomainUpdateable } from 'lib/domains';
 import InfoPopover from 'components/info-popover';
 import { emailManagement } from 'my-sites/email/paths';
+import {
+	domainManagementContactsPrivacy,
+	domainManagementNameServers,
+	domainManagementTransfer,
+	domainManagementDns,
+	domainManagementSecurity,
+} from 'my-sites/domains/paths';
 import Spinner from 'components/spinner';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -43,7 +50,7 @@ class DomainItem extends PureComponent {
 		onSelect: PropTypes.func,
 		onToggle: PropTypes.func,
 		onUpgradeClick: PropTypes.func,
-		shouldUpgradeToMakePrimary: PropTypes.boolean,
+		shouldUpgradeToMakePrimary: PropTypes.bool,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
@@ -185,7 +192,7 @@ class DomainItem extends PureComponent {
 	}
 
 	renderOptionsButton() {
-		const { disabled, isBusy, translate } = this.props;
+		const { disabled, isBusy, site, domain, domainDetails, currentRoute, translate } = this.props;
 
 		return (
 			<div className="list__domain-options">
@@ -205,6 +212,51 @@ class DomainItem extends PureComponent {
 						</PopoverMenuItem>
 					) }
 					<PopoverMenuItem icon="pencil">{ translate( 'Edit settings' ) }</PopoverMenuItem>
+					{ domain.type === domainTypes.MAPPED && (
+						<PopoverMenuItem
+							icon="list-unordered"
+							href={ domainManagementDns( site.slug, domain.domain, currentRoute ) }
+						>
+							{ translate( 'DNS Records' ) }
+						</PopoverMenuItem>
+					) }
+					{ domain.type === domainTypes.REGISTERED &&
+						( isDomainUpdateable( domainDetails ) || isDomainInGracePeriod( domainDetails ) ) && (
+							<PopoverMenuItem
+								icon="domains"
+								href={ domainManagementNameServers( site.slug, domain.domain, currentRoute ) }
+							>
+								{ translate( 'Name servers' ) }
+							</PopoverMenuItem>
+						) }
+					{ domain.type === domainTypes.REGISTERED &&
+						( isDomainUpdateable( domainDetails ) || isDomainInGracePeriod( domainDetails ) ) && (
+							<PopoverMenuItem
+								icon="reader"
+								href={ domainManagementContactsPrivacy( site.slug, domain.domain, currentRoute ) }
+							>
+								{ translate( 'Contact information' ) }
+							</PopoverMenuItem>
+						) }
+					{ domain.type === domainTypes.REGISTERED &&
+						! ( domainDetails?.expired && ! isDomainInGracePeriod( domainDetails ) ) && (
+							<PopoverMenuItem
+								icon="reply"
+								href={ domainManagementTransfer( site.slug, domain.domain, currentRoute ) }
+							>
+								{ translate( 'Transfer domain' ) }
+							</PopoverMenuItem>
+						) }
+					{ [ domainTypes.REGISTERED, domainTypes.MAPPED ].includes( domain.type ) &&
+						domainDetails?.pointsToWpcom &&
+						domainDetails?.sslStatus && (
+							<PopoverMenuItem
+								icon="lock"
+								href={ domainManagementSecurity( site.slug, domain.domain, currentRoute ) }
+							>
+								{ translate( 'Security' ) }
+							</PopoverMenuItem>
+						) }
 				</EllipsisMenu>
 			</div>
 		);

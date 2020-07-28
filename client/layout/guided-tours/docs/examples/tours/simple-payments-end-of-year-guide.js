@@ -21,7 +21,6 @@ import {
 	Link,
 } from 'layout/guided-tours/config-elements';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
-import { isEnabled } from 'config';
 import { localizeUrl } from 'lib/i18n-utils';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
@@ -69,16 +68,8 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 						<Next step="add-new-page">{ translate( 'Get started!' ) }</Next>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>
 					</ButtonRow>
-					<Link
-						href={
-							isEnabled( 'earn/rename-payment-blocks' )
-								? localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' )
-								: localizeUrl( 'https://wordpress.com/support/simple-payments/' )
-						}
-					>
-						{ isEnabled( 'earn/rename-payment-blocks' )
-							? translate( 'Learn more about Pay with PayPal.' )
-							: translate( 'Learn more about Simple Payments.' ) }
+					<Link href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' ) }>
+						{ translate( 'Learn more about Pay with PayPal.' ) }
 					</Link>
 				</Fragment>
 			) }

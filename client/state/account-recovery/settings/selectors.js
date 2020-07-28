@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import 'state/account-recovery/init';
+
 export const isAccountRecoverySettingsReady = ( state ) => {
 	return state.accountRecovery.settings.isReady;
 };

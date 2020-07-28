@@ -90,13 +90,14 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
 						{ supportedPlans.map( ( plan ) => (
 							<td key={ plan.storeSlug }>
 								<Button
+									className="plans-details__select-button"
 									onClick={ () => {
 										onSelect( plan.storeSlug );
 									} }
 									isPrimary
 									isLarge
 								>
-									<span>{ __( 'Choose' ) }</span>
+									<span>{ __( 'Select' ) }</span>
 								</Button>
 							</td>
 						) ) }

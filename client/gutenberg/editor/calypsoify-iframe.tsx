@@ -5,6 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { endsWith, get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
+/* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 /**
@@ -71,6 +72,7 @@ interface Props {
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
+	parentPostId: T.PostId;
 }
 
 interface State {
@@ -208,8 +210,7 @@ class CalypsoifyIframe extends Component<
 		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
-				const image = MediaStore.get( siteId, data.imageId );
-				this.props.setMediaLibrarySelectedItems( siteId, [ image ] );
+				this.props.setMediaLibrarySelectedItems( siteId, [ { ID: data.imageId } ] );
 			}
 
 			this.setState( {
@@ -709,6 +710,7 @@ const mapStateToProps = (
 		postType,
 		duplicatePostId,
 		fseParentPageId,
+		parentPostId,
 		creatingNewHomepage,
 		editorType = 'post',
 	}: Props
@@ -725,6 +727,7 @@ const mapStateToProps = (
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
 		fse_parent_post: fseParentPageId != null && fseParentPageId,
+		parent_post: parentPostId != null && parentPostId,
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
@@ -785,6 +788,7 @@ const mapStateToProps = (
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
+		parentPostId,
 	};
 };
 

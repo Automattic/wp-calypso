@@ -47,6 +47,7 @@ import {
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
+	domainManagementRoot,
 } from 'my-sites/domains/paths';
 import {
 	emailManagement,
@@ -180,6 +181,12 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		}
 		return pathFactory( slug, slug );
 	} );
+
+	domainManagementPaths = domainManagementPaths.concat(
+		allPaths.map( ( pathFactory ) => {
+			return pathFactory( slug, slug, domainManagementRoot() );
+		} )
+	);
 
 	if ( primaryDomain && slug !== primaryDomain.name ) {
 		domainManagementPaths = domainManagementPaths.concat(
@@ -365,8 +372,9 @@ export function siteSelection( context, next ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 
 		const redirectToPrimary = ( primarySiteSlug ) => {
-			const pathName = context.pathname.split( '/no-site' )[ 0 ];
-			let redirectPath = `${ pathName }/${ primarySiteSlug }`;
+			const pathname = context.pathname.replace( /\/?$/, '/' ); // append trailing slash if not present
+			let pathNameSplit = pathname.split( '/no-site' )[ 0 ];
+			let redirectPath = `${ pathNameSplit }${ primarySiteSlug }`;
 			if ( context.querystring ) {
 				redirectPath += `?${ context.querystring }`;
 			}

@@ -23,5 +23,8 @@
 	},
 	"publishConfig": {
 		"access": "public"
+	},
+	"devDependencies": {
+		"regenerator-runtime": "^0.13.4"
 	}
 }

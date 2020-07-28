@@ -12,6 +12,7 @@ export type PlanAction = {
 
 export interface Plan {
 	title: string;
+	description: string;
 	productId: number;
 	storeSlug: PlanSlug;
 	pathSlug: string;

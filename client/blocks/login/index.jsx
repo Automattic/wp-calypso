@@ -421,6 +421,15 @@ class Login extends Component {
 			userEmail,
 		} = this.props;
 
+		if ( socialConnect ) {
+			return (
+				<AsyncLoad
+					require="blocks/login/social-connect-prompt"
+					onSuccess={ this.handleValidLogin }
+				/>
+			);
+		}
+
 		if ( twoFactorEnabled ) {
 			return (
 				<AsyncLoad
@@ -433,15 +442,6 @@ class Login extends Component {
 					handleValid2FACode={ this.handleValid2FACode }
 					rebootAfterLogin={ this.rebootAfterLogin }
 					switchTwoFactorAuthType={ this.handleTwoFactorRequested }
-				/>
-			);
-		}
-
-		if ( socialConnect ) {
-			return (
-				<AsyncLoad
-					require="blocks/login/social-connect-prompt"
-					onSuccess={ this.handleValidLogin }
 				/>
 			);
 		}
