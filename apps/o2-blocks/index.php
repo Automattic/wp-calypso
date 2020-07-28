@@ -26,7 +26,20 @@ function a8c_editor_assets() {
 		array( 'wp-edit-blocks' ),
 		$assets['version']
 	);
+}
 
+function a8c_view_assets() {
+	if ( !is_admin() ) {
+		$assets = require( plugin_dir_path( __FILE__ ) . 'dist/view.asset.php' );
+
+		wp_enqueue_style(
+			'a8c-blocks-block-view-css',
+			plugins_url( 'dist/view.css', __FILE__ ),
+			array(),
+			$assets['version']
+		);
+	}
 }
 
 add_action( 'enqueue_block_editor_assets', 'a8c_editor_assets' );
+add_action( 'wp_enqueue_scripts', 'a8c_view_assets' );

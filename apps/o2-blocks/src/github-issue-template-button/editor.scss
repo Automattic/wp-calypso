@@ -1,9 +1,0 @@
-.wp-block {
-  display: flex;
-
-  &[data-align] { height: auto; }
-  &[data-align] > * { float: none; }
-  &[data-align='left'] { justify-content: flex-start }
-  &[data-align='center'] { justify-content: center }
-  &[data-align='right'] { justify-content: flex-end }
-}
