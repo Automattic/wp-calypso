@@ -55,3 +55,15 @@ export const isEditorReadyWithBlocks = async () =>
 			}
 		} );
 	} );
+
+export const getPages = async () =>
+	new Promise( ( resolve ) => {
+		const unsubscribe = subscribe( () => {
+			const pages = select( 'core' ).getEntityRecords( 'postType', 'page', { per_page: -1 } );
+
+			if ( pages !== null ) {
+				unsubscribe();
+				resolve( pages );
+			}
+		} );
+	} );

@@ -170,7 +170,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					value={ domainSearch }
 				/>
 			</div>
-			{ domainSearch.trim() ? (
+			{ domainSearch.trim()?.length > 1 ? (
 				<div className="domain-picker__body">
 					{ showDomainCategories && (
 						<div className="domain-picker__aside">

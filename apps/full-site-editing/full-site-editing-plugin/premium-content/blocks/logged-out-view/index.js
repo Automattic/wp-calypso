@@ -18,9 +18,9 @@ const name = 'premium-content/logged-out-view';
 const category = getCategoryWithFallbacks( 'design', 'common' );
 /**
  * @typedef {object} Attributes
- *
  * @typedef {import('@wordpress/blocks').BlockConfiguration<Attributes>} BlockConfiguration
  * @type {BlockConfiguration}
+ * @property
  */
 const settings = {
 	name,

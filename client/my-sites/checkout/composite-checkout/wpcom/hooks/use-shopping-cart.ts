@@ -50,6 +50,7 @@ const debug = debugFactory( 'calypso:composite-checkout:shopping-cart-manager' )
  */
 type ShoppingCartHookState = {
 	responseCart: ResponseCart;
+	loadingError: string;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
 	variantRequestStatus: VariantRequestStatus;
@@ -62,6 +63,7 @@ type ShoppingCartHookState = {
 const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 	return {
 		responseCart: emptyResponseCart,
+		loadingError: '',
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
 		variantRequestStatus: 'fresh',
@@ -89,7 +91,7 @@ type ShoppingCartHookAction =
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
 	| { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' }
-	| { type: 'RAISE_ERROR'; error: ShoppingCartHookError };
+	| { type: 'RAISE_ERROR'; error: ShoppingCartHookError; message: string };
 
 type ShoppingCartHookError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 
@@ -228,6 +230,7 @@ function shoppingCartHookReducer(
 					return {
 						...state,
 						cacheStatus: 'error',
+						loadingError: action.message,
 					};
 				default:
 					return state;
@@ -290,6 +293,7 @@ function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart
  */
 export interface ShoppingCartManager {
 	isLoading: boolean;
+	loadingError: string | null;
 	isPendingUpdate: boolean;
 	allowedPaymentMethods: string[];
 	items: WPCOMCartItem[];
@@ -420,6 +424,7 @@ export function useShoppingCart(
 	const responseCart: ResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
+	const loadingError: string = hookState.loadingError;
 	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
 	const variantSelectOverride = hookState.variantSelectOverride;
 	const shouldShowNotification = hookState.shouldShowNotification;
@@ -488,6 +493,7 @@ export function useShoppingCart(
 
 	return {
 		isLoading: cacheStatus === 'fresh',
+		loadingError: cacheStatus === 'error' ? loadingError : null,
 		isPendingUpdate: cacheStatus !== 'valid',
 		items: cart.items,
 		tax: cart.tax,
@@ -583,7 +589,7 @@ function useInitializeCartFromServer(
 			.catch( ( error ) => {
 				// TODO: figure out what to do here
 				debug( 'error while initializing cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR', message: error } );
 				onEvent?.( {
 					type: 'CART_ERROR',
 					payload: { type: 'GET_SERVER_CART_ERROR', message: error },
@@ -630,7 +636,7 @@ function useCartUpdateAndRevalidate(
 			} )
 			.catch( ( error ) => {
 				debug( 'error while fetching cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR', message: error } );
 				// TODO: log the request (at least the products) so we can see why it failed
 				onEvent?.( {
 					type: 'CART_ERROR',

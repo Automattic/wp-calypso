@@ -29,7 +29,7 @@ import {
 
 import { shouldShowLikes } from 'reader/like-helper';
 import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
-import isLikedPost from 'state/selectors/is-liked-post';
+import { isLikedPost } from 'state/posts/selectors/is-liked-post';
 import ListEnd from 'components/list-end';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';

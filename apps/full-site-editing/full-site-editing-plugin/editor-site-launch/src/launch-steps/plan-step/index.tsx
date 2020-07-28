@@ -21,7 +21,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 		<LaunchStep className="nux-launch-plan-step">
 			<div className="nux-launch-step__header">
 				<div>
-					<Title>{ __( 'Choose a plan', 'full-site-editing' ) }</Title>
+					<Title>{ __( 'Select a plan', 'full-site-editing' ) }</Title>
 					<SubTitle>
 						{ __(
 							'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.',

@@ -100,7 +100,8 @@ $transition-period: 100ms;
 	padding: 8px 11px !important;
 	margin: 14px 0;
 
-	&:hover {
+	&:hover,
+	&:not( [aria-disabled='true'] ):active {
 		color: $white;
 	}
 

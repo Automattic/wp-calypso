@@ -21,7 +21,7 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { STORE_KEY, SITE_HOME_URL } from '../../constants';
+import { STORE_KEY, SITE_HOME_URL, POST_IDS_TO_EXCLUDE } from '../../constants';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
 import { Post } from '../../types';
@@ -273,7 +273,7 @@ function useNavItems(): Post[] {
 		const items =
 			select( 'core' ).getEntityRecords( 'postType', currentPostType, {
 				_fields: 'id,status,title',
-				exclude: [ currentPostId ],
+				exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],
 				orderby: 'modified',
 				per_page: 10,
 				status: statusFilter,
