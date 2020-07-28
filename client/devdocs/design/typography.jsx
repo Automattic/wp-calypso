@@ -237,7 +237,7 @@ export default class Typography extends React.PureComponent {
 									<code>$font-title-small</code>
 								</td>
 								<td>20</td>
-								<td>1.313</td>
+								<td>1.25</td>
 							</tr>
 							<tr>
 								<td>
@@ -258,7 +258,7 @@ export default class Typography extends React.PureComponent {
 									<code>$font-body-extra-small</code>
 								</td>
 								<td>12</td>
-								<td>0.667</td>
+								<td>0.75</td>
 							</tr>
 						</tbody>
 					</table>
