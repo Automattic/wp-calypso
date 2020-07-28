@@ -737,6 +737,10 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
 
 	if ( isPurchasingItem ) {
+		if ( includes( flows.excludedSteps, stepName ) ) {
+			return;
+		}
+
 		submitSignupStep(
 			{ stepName },
 			{ bearer_token: null, username: null, marketing_price_group: null }
@@ -748,6 +752,9 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 		if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 			flows.excludeStep( stepName );
 		}
+	} else if ( includes( flows.excludedSteps, stepName ) ) {
+		flows.resetExcludedStep( stepName );
+		nextProps.removeStep( { stepName } );
 	}
 }
 
