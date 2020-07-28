@@ -415,11 +415,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
-			By.css( '.editor-post-publish-panel__header-published' )
+			By.css( '.post-publish-panel__postpublish-header' )
 		);
 		return await driverHelper.verifyTextPresent(
 			this.driver,
-			By.css( '.editor-post-publish-panel__header-published' ),
+			By.css( '.post-publish-panel__postpublish-header' ),
 			'Scheduled'
 		);
 	}

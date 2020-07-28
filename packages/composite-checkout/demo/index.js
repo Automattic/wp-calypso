@@ -46,7 +46,7 @@ const initialItems = [
 		subLabel: 'example.com',
 		id: 'wpcom-domain',
 		type: 'domain',
-		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
+		amount: { currency: 'USD', value: 0, displayValue: '$0' },
 	},
 ];
 

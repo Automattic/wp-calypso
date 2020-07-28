@@ -61,7 +61,7 @@ class ListHeader extends React.PureComponent {
 						) }
 					</InfoPopover>
 				</div>
-				<div className="list__domain-options">{ translate( 'Options' ) }</div>
+				<div className="list__domain-options"></div>
 			</CompactCard>
 		);
 	}

@@ -295,6 +295,9 @@ input[type='radio'].domain-management-list-item__radio {
 	width: 65px;
 	font-size: $font-body-small;
 	text-align: center;
+	button {
+		width: 100%;
+	}
 }
 
 .domain-item__icon {

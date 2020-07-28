@@ -15,7 +15,6 @@ import {
 	pick,
 	startsWith,
 } from 'lodash';
-import { parse as parseURL } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -33,6 +32,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'lib/cart-values/cart-items';
+import { getUrlParts } from 'lib/url';
 
 // State actions and selectors
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -248,7 +248,7 @@ function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSitePara
 		siteSlug: 'no-site',
 	};
 
-	return defer( () => callback( undefined, providedDependencies ) );
+	callback( undefined, providedDependencies );
 }
 
 export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
@@ -283,7 +283,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} );
 
 	if ( isEmpty( bearerToken ) && 'onboarding-new' === flowToCheck ) {
-		return saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
+		saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
+		return;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
@@ -291,7 +292,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			callback( error );
 			return;
 		}
-		const parsedBlogURL = parseURL( response.blog_details.url );
+
+		const parsedBlogURL = getUrlParts( response.blog_details.url );
 
 		const siteSlug = parsedBlogURL.hostname;
 		const siteId = response.blog_details.blogid;
@@ -500,7 +502,8 @@ export function createAccount(
 			( response && response.user_id ) ||
 			userData.ID;
 
-		const email = ( response && response.email ) || ( userData && userData.user_email );
+		const email =
+			( response && response.email ) || ( userData && ( userData.email || userData.user_email ) );
 
 		const registrationUserData = {
 			ID: userId,
@@ -592,7 +595,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		let providedDependencies, siteSlug;
 
 		if ( response && response.blog_details ) {
-			const parsedBlogURL = parseURL( response.blog_details.url );
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
 			siteSlug = parsedBlogURL.hostname;
 
 			providedDependencies = { siteSlug };
@@ -629,7 +632,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 		let providedDependencies, siteSlug;
 
 		if ( response && response.blog_details ) {
-			const parsedBlogURL = parseURL( response.blog_details.url );
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
 			siteSlug = parsedBlogURL.hostname;
 
 			providedDependencies = { siteSlug };
@@ -700,6 +703,10 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
 
 	if ( isPurchasingItem ) {
+		if ( includes( flows.excludedSteps, stepName ) ) {
+			return;
+		}
+
 		submitSignupStep(
 			{ stepName },
 			{ bearer_token: null, username: null, marketing_price_group: null }
@@ -711,6 +718,9 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 		if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 			flows.excludeStep( stepName );
 		}
+	} else if ( includes( flows.excludedSteps, stepName ) ) {
+		flows.resetExcludedStep( stepName );
+		nextProps.removeStep( { stepName } );
 	}
 }
 
