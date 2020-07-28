@@ -298,7 +298,7 @@ export function generateFlows( {
 		destination: getThankYouNoSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		disallowResume: true,
-		lastModified: '2019-06-21',
+		lastModified: '2020-07-27',
 	};
 
 	flows[ 'site-selected' ] = {
