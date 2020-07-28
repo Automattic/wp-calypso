@@ -170,12 +170,9 @@ export default function CheckoutSystemDecider( {
 						plan={ plan }
 						cart={ cart }
 						isComingFromUpsell={ isComingFromUpsell }
-<<<<<<< HEAD
 						isLoggedOutCart={ isLoggedOutCart }
 						getCart={ isLoggedOutCart ? () => Promise.resolve( cart ) : null }
-=======
 						infoMessage={ duplicateBackupNotice }
->>>>>>> add/new-signup-flow-userless-checkout-1
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>
