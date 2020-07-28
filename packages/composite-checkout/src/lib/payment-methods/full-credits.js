@@ -14,7 +14,6 @@ import {
 	usePaymentProcessor,
 	useLineItems,
 	useEvents,
-	renderDisplayValueMarkdown,
 } from '../../public-api';
 import { useFormStatus } from '../form-status';
 
@@ -83,10 +82,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf(
-			__( 'Pay %s with WordPress.com Credits' ),
-			renderDisplayValueMarkdown( total.amount.displayValue )
-		);
+		return sprintf( __( 'Pay %s with WordPress.com Credits' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
 }

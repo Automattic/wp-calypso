@@ -62,10 +62,12 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryLanguageNames from 'components/data/query-language-names';
 import getInlineHelpSupportVariation, {
+	SUPPORT_CHAT_OVERFLOW,
 	SUPPORT_DIRECTLY,
+	SUPPORT_FORUM,
 	SUPPORT_HAPPYCHAT,
 	SUPPORT_TICKET,
-	SUPPORT_FORUM,
+	SUPPORT_UPWORK_TICKET,
 } from 'state/selectors/get-inline-help-support-variation';
 
 /**
@@ -185,7 +187,7 @@ class HelpContact extends React.Component {
 
 	submitKayakoTicket = ( contactForm ) => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
-		const { currentUserLocale } = this.props;
+		const { currentUserLocale, supportVariation } = this.props;
 
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
@@ -203,6 +205,7 @@ class HelpContact extends React.Component {
 			kayakoMessage,
 			currentUserLocale,
 			this.props.clientSlug,
+			supportVariation === SUPPORT_CHAT_OVERFLOW,
 			( error ) => {
 				if ( error ) {
 					// TODO: bump a stat here
@@ -225,6 +228,7 @@ class HelpContact extends React.Component {
 
 				recordTracksEvent( 'calypso_help_contact_submit', {
 					ticket_type: 'kayako',
+					support_variation: supportVariation,
 					site_plan_product_id: site ? site.plan.product_id : null,
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
 				} );
@@ -369,7 +373,9 @@ class HelpContact extends React.Component {
 					showQASuggestions: true,
 				};
 			}
+			case SUPPORT_CHAT_OVERFLOW:
 			case SUPPORT_TICKET:
+			case SUPPORT_UPWORK_TICKET:
 				return {
 					onSubmit: this.submitKayakoTicket,
 					buttonLabel: isSubmitting ? translate( 'Sending email' ) : translate( 'Email us' ),
@@ -459,9 +465,12 @@ class HelpContact extends React.Component {
 		// 2. The support request isn't sent to the forums. Because forum support
 		//    requests are sent to the language specific forums (for popular languages)
 		//    we don't tell the user that support is only offered in English.
+		// 3. The support request isn't sent to Upwork. This is support given in
+		//    the user's language.
 		const showHelpLanguagePrompt =
 			config( 'livechat_support_locales' ).indexOf( currentUserLocale ) === -1 &&
-			SUPPORT_FORUM !== variationSlug;
+			SUPPORT_FORUM !== variationSlug &&
+			SUPPORT_UPWORK_TICKET !== variationSlug;
 
 		return {
 			compact: this.props.compact,

@@ -52,6 +52,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
+import { getAllCartItems } from 'lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -180,6 +181,25 @@ export class List extends React.Component {
 		} );
 	};
 
+	renderCart() {
+		if ( isEmpty( getAllCartItems( this.props.cart ) ) ) {
+			return null;
+		}
+
+		return (
+			<PopoverCart
+				cart={ this.props.cart }
+				selectedSite={ this.props.selectedSite }
+				visible={ this.state.isPopoverCartVisible }
+				pinned={ false }
+				path={ this.props.currentRoute }
+				onToggle={ this.togglePopoverCart }
+				closeSectionNavMobilePanel={ noop }
+				compact
+			/>
+		);
+	}
+
 	renderNewDesign() {
 		return (
 			<>
@@ -191,16 +211,7 @@ export class List extends React.Component {
 						align="left"
 					/>
 					<div className="list__domains-header-buttons">
-						<PopoverCart
-							cart={ this.props.cart }
-							selectedSite={ this.props.selectedSite }
-							visible={ this.state.isPopoverCartVisible }
-							pinned={ false }
-							path={ this.props.currentRoute }
-							onToggle={ this.togglePopoverCart }
-							closeSectionNavMobilePanel={ noop }
-							compact
-						/>
+						{ this.renderCart() }
 						{ this.addDomainButton() }
 					</div>
 				</div>

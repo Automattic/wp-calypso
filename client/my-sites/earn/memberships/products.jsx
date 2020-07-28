@@ -21,7 +21,6 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
-import { isEnabled } from 'config';
 
 class MembershipsProductsSection extends Component {
 	state = {
@@ -68,16 +67,12 @@ class MembershipsProductsSection extends Component {
 			<div>
 				<QueryMembershipProducts siteId={ this.props.siteId } />
 				<HeaderCake backHref={ '/earn/payments/' + this.props.siteSlug }>
-					{ isEnabled( 'earn/rename-payment-blocks' )
-						? this.props.translate( 'Payment plans' )
-						: this.props.translate( 'Recurring Payments plans' ) }
+					{ this.props.translate( 'Payment plans' ) }
 				</HeaderCake>
 
 				<SectionHeader>
 					<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
-						{ isEnabled( 'earn/rename-payment-blocks' )
-							? this.props.translate( 'Add a new payment plan' )
-							: this.props.translate( 'Add new plan' ) }
+						{ this.props.translate( 'Add a new payment plan' ) }
 					</Button>
 				</SectionHeader>
 				{ this.props.products.map( ( product ) => (

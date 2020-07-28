@@ -45,7 +45,11 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
 
-	const { setDomain, setDomainSearch } = useDispatch( ONBOARD_STORE );
+	const { setDomain, setDomainSearch, setHasUsedDomainsStep } = useDispatch( ONBOARD_STORE );
+
+	React.useEffect( () => {
+		! isModal && setHasUsedDomainsStep( true );
+	}, [] );
 
 	// Keep a copy of the selected domain locally so it's available when the component is unmounting
 	const selectedDomainRef = React.useRef< string | undefined >();

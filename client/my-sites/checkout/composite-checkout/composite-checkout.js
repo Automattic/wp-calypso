@@ -121,6 +121,7 @@ export default function CompositeCheckout( {
 	couponCode: couponCodeFromUrl,
 	isComingFromUpsell,
 	isLoggedOutCart,
+	infoMessage,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -206,9 +207,10 @@ export default function CompositeCheckout( {
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 		variantSelectOverride,
 		responseCart,
+		loadingError,
 		addItem,
 	} = useShoppingCart(
-		siteSlug,
+		isLoggedOutCart ? siteSlug : siteId,
 		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsForCart,
 		couponCodeFromUrl,
@@ -336,7 +338,7 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails();
 
-	useDisplayErrors( errors, showErrorMessage );
+	useDisplayErrors( [ ...errors, loadingError ].filter( Boolean ), showErrorMessage );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
@@ -352,7 +354,13 @@ export default function CompositeCheckout( {
 		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
 	}
 
-	useRedirectIfCartEmpty( items, cartEmptyRedirectUrl, isLoadingCart, isLoggedOutCart );
+	useRedirectIfCartEmpty(
+		items,
+		cartEmptyRedirectUrl,
+		isLoadingCart,
+		[ ...errors, loadingError ].filter( Boolean ),
+		isLoggedOutCart
+	);
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
@@ -581,6 +589,7 @@ export default function CompositeCheckout( {
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
 						isLoggedOutCart={ isLoggedOutCart }
+						infoMessage={ infoMessage }
 					/>
 				</CheckoutProvider>
 			</CartProvider>
@@ -620,25 +629,9 @@ function isNotCouponError( error ) {
 	return ! couponErrorCodes.includes( error.code );
 }
 
-function useRedirectIfCartEmpty( items, redirectUrl, isLoading, isLoggedOutCart ) {
-	const [ prevItemsLength, setPrevItemsLength ] = useState( 0 );
-
+function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors, isLoggedOutCart ) {
 	useEffect( () => {
-		setPrevItemsLength( items.length );
-	}, [ items ] );
-
-	useEffect( () => {
-		if ( prevItemsLength > 0 && items.length === 0 ) {
-			debug( 'cart has become empty; redirecting...' );
-			if ( isLoggedOutCart ) {
-				window.localStorage.removeItem( 'siteParams' );
-				window.location = redirectUrl;
-				return;
-			}
-			page.redirect( redirectUrl );
-			return;
-		}
-		if ( ! isLoading && items.length === 0 ) {
+		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
 			if ( isLoggedOutCart ) {
 				window.localStorage.removeItem( 'siteParams' );
@@ -648,7 +641,7 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading, isLoggedOutCart 
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, prevItemsLength, isLoading ] );
+	}, [ redirectUrl, items, isLoading, errors ] );
 }
 
 function useCountryList( overrideCountryList ) {

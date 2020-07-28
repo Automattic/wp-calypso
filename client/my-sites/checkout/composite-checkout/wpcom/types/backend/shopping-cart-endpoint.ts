@@ -297,10 +297,10 @@ export function convertRawResponseCartToResponseCart(
 			display_taxes: rawResponseCart.tax.display_taxes,
 		},
 		// Add uuid to products returned by the server
-		products: rawResponseCart.products.map( ( product, index ) => {
+		products: rawResponseCart.products.map( ( product ) => {
 			return {
 				...product,
-				uuid: index.toString(),
+				uuid: product.product_slug + lastUUID++,
 			};
 		} ),
 	} as ResponseCart;
