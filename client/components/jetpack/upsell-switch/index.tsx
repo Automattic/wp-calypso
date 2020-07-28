@@ -126,8 +126,7 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 		if (
 			UI_STATE_LOADED === uiState &&
 			! atomicSite &&
-			! hasProduct &&
-			( ! state || state === 'unavailable' )
+			( ! state || state === 'unavailable' || ! hasProduct )
 		) {
 			setUpsell( true );
 		}

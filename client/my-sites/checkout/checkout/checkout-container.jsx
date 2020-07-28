@@ -86,6 +86,7 @@ class CheckoutContainer extends React.Component {
 			isComingFromGutenboarding,
 			isGutenboardingCreate,
 			isComingFromUpsell,
+			infoMessage,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -123,6 +124,7 @@ class CheckoutContainer extends React.Component {
 							hideNudge={ isComingFromGutenboarding || isComingFromUpsell }
 							returnToBlockEditor={ isGutenboardingCreate }
 							returnToHome={ isComingFromGutenboarding }
+							infoMessage={ infoMessage }
 						>
 							{ this.props.children }
 						</Checkout>

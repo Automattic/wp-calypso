@@ -15,7 +15,6 @@ import {
 	pick,
 	startsWith,
 } from 'lodash';
-import { parse as parseURL } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -33,6 +32,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'lib/cart-values/cart-items';
+import { getUrlParts } from 'lib/url';
 
 // State actions and selectors
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -291,7 +291,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			callback( error );
 			return;
 		}
-		const parsedBlogURL = parseURL( response.blog_details.url );
+
+		const parsedBlogURL = getUrlParts( response.blog_details.url );
 
 		const siteSlug = parsedBlogURL.hostname;
 		const siteId = response.blog_details.blogid;
@@ -500,7 +501,8 @@ export function createAccount(
 			( response && response.user_id ) ||
 			userData.ID;
 
-		const email = ( response && response.email ) || ( userData && userData.user_email );
+		const email =
+			( response && response.email ) || ( userData && ( userData.email || userData.user_email ) );
 
 		const registrationUserData = {
 			ID: userId,
@@ -592,7 +594,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		let providedDependencies, siteSlug;
 
 		if ( response && response.blog_details ) {
-			const parsedBlogURL = parseURL( response.blog_details.url );
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
 			siteSlug = parsedBlogURL.hostname;
 
 			providedDependencies = { siteSlug };
@@ -629,7 +631,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 		let providedDependencies, siteSlug;
 
 		if ( response && response.blog_details ) {
-			const parsedBlogURL = parseURL( response.blog_details.url );
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
 			siteSlug = parsedBlogURL.hostname;
 
 			providedDependencies = { siteSlug };

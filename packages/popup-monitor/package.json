@@ -34,5 +34,8 @@
 	},
 	"dependencies": {
 		"lodash": "^4.17.15"
+	},
+	"devDependencies": {
+		"chai": "^4.2.0"
 	}
 }

@@ -1,15 +1,17 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import { get } from 'lodash';
+import createSelector from 'lib/create-selector';
 
-/**
- * Returns true if media is being requested for a specified site ID and query.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @returns {boolean}           True if media is being requested
- */
-export default function isFetchingNextPage( state, siteId ) {
-	return get( state.media.fetching, [ siteId, 'nextPage' ], false );
-}
+export default createSelector(
+	/**
+	 * Returns true if media is being requested for a specified site ID and query.
+	 *
+	 * @param {object} state The state object
+	 * @param {number} siteId Site ID
+	 * @returns {boolean}           True if media is being requested
+	 */
+	( state, siteId ) => get( state.media.fetching, [ siteId, 'nextPage' ], false ),
+	[ ( state, siteId ) => state.media.fetching?.[ siteId ] ]
+);

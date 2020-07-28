@@ -22,7 +22,7 @@ import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editin
 /**
  * Internal dependencies
  */
-import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
+import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -595,12 +595,18 @@ function handleCloseEditor( calypsoPort ) {
 // The close button is generally overridden using the <MainDashboardButton> slot API
 // which was introduced in Gutenberg 8.2. In older editors we still need to override
 // the click handler so that the link will open in the parent frame instead of the
-// iframe. If this happens to be a newer version of the editor the <MainDashboardButton>
-// in `handleCloseEditor()` will end up overriding these chanages.
+// iframe. We try not to add the click handler if <MainDashboardButton> has been used.
 function handleCloseInLegacyEditors( handleClose ) {
-	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a'; // support for Gutenberg plugin < v7.7
-	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
+	// Selects close buttons in Gutenberg plugin < v7.7
+	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a';
+
+	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
+	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
+	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
+	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
+
 	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
+
 	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
 	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, handleClose );
 }
@@ -751,7 +757,6 @@ function getGutenboardingStatus( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const { isGutenboarding, frankenflowUrl } = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
-		calypsoifyGutenberg.isFseGutenboarding = isGutenboarding;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
 		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
@@ -884,6 +889,26 @@ async function handleEditorLoaded( calypsoPort ) {
 			},
 		} );
 	} );
+
+	preselectParentPage();
+}
+
+async function preselectParentPage() {
+	const parentPostId = parseInt( getQueryArg( window.location.href, 'parent_post' ) );
+	if ( ! parentPostId || isNaN( parseInt( parentPostId ) ) ) {
+		return;
+	}
+
+	const postType = select( 'core/editor' ).getCurrentPostType();
+	if ( 'page' !== postType ) {
+		return;
+	}
+
+	const pages = await getPages();
+	const isValidParentId = pages.some( ( page ) => page.id === parentPostId );
+	if ( isValidParentId ) {
+		dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
+	}
 }
 
 function initPort( message ) {

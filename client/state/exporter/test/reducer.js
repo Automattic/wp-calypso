@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { selectedAdvancedSettings, advancedSettings, fetchingAdvancedSettings } from '../reducers';
+import { selectedAdvancedSettings, advancedSettings, fetchingAdvancedSettings } from '../reducer';
 import { SAMPLE_ADVANCED_SETTINGS, SAMPLE_ADVANCED_SETTINGS_EMPTY } from './data';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,

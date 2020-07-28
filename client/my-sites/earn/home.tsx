@@ -16,8 +16,10 @@ import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
+import EmptyContent from 'components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
@@ -30,7 +32,6 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/a
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
 import { localizeUrl } from 'lib/i18n-utils';
-import { isEnabled } from 'config';
 
 /**
  * Image dependencies
@@ -72,6 +73,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isFreePlan,
 	isJetpack,
 	isAtomicSite,
+	isUserAdmin,
 	isLoading,
 	hasSimplePayments,
 	hasWordAds,
@@ -104,16 +106,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		const supportLink = isEnabled( 'earn/rename-payment-blocks' )
-			? localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/' )
-			: localizeUrl(
-					'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/'
-			  );
+		const supportLink = localizeUrl(
+			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
+		);
 		const cta = hasSimplePayments
 			? {
-					text: isEnabled( 'earn/rename-payment-blocks' )
-						? translate( 'Learn how to get started' )
-						: translate( 'Add one-time payments' ),
+					text: translate( 'Learn how to get started' ),
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
@@ -128,36 +126,19 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const learnMoreLink = hasSimplePayments
 			? null
 			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
-		let title, body;
-		if ( isEnabled( 'earn/rename-payment-blocks' ) ) {
-			title = translate( 'Collect PayPal payments' );
-			body = hasSimplePayments
-				? translate(
-						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
-				  )
-				: translate(
-						'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
-						{
-							components: {
-								em: <em />,
-							},
-						}
-				  );
-		} else {
-			title = translate( 'Collect one-time payments' );
-			body = hasSimplePayments
-				? translate(
-						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work.'
-				  )
-				: translate(
-						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
-						{
-							components: {
-								em: <em />,
-							},
-						}
-				  );
-		}
+		const title = translate( 'Collect PayPal payments' );
+		const body = hasSimplePayments
+			? translate(
+					'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
+			  )
+			: translate(
+					'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
+			  );
 		return {
 			title,
 			body,
@@ -177,7 +158,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
-		const isPayments = isEnabled( 'earn/rename-payment-blocks' );
 		const cta = isFreePlan
 			? {
 					text: translate( 'Unlock this feature' ),
@@ -187,46 +167,27 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: isPayments
-						? translate( 'Collect payments' )
-						: translate( 'Collect recurring payments' ),
+					text: translate( 'Collect payments' ),
 					action: () => {
 						trackCtaButton( 'recurring-payments' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
-		const hasConnectionTitle = isPayments
-			? translate( 'Manage payments' )
-			: translate( 'Manage recurring payments' );
-		const noConnectionTitle = isPayments
-			? translate( 'Collect payments' )
-			: translate( 'Collect recurring payments' );
+		const hasConnectionTitle = translate( 'Manage payments' );
+		const noConnectionTitle = translate( 'Collect payments' );
 		const title = hasConnectedAccount ? hasConnectionTitle : noConnectionTitle;
 
-		const hasConnectionBody = isPayments
-			? translate(
-					"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
-			  )
-			: translate(
-					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
-			  );
-		const noConnectionBody = isPayments
-			? translate(
-					'Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  )
-			: translate(
-					'Accept ongoing and automated credit card payments for subscriptions, memberships, services, and donations. {{em}}Available with any paid plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  );
+		const hasConnectionBody = translate(
+			"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
+		);
+		const noConnectionBody = translate(
+			'Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
+			{
+				components: {
+					em: <em />,
+				},
+			}
+		);
 
 		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
@@ -504,6 +465,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		] ),
 	};
 
+	if ( ! isUserAdmin ) {
+		return (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ translate( 'You are not authorized to view this page' ) }
+			/>
+		);
+	}
+
 	return (
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
@@ -538,6 +508,7 @@ export default connect< ConnectedProps, {}, {} >(
 			isFreePlan,
 			isJetpack: isJetpackSite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
