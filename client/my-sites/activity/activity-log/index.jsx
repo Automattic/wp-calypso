@@ -362,7 +362,7 @@ class ActivityLog extends Component {
 		);
 	}
 
-	renderBackupStatus() {
+	renderFirstBackupStatus() {
 		const mostRecentBackup = this.props.rewindBackups && this.props.rewindBackups[ 0 ];
 		const isFirstBackup = this.props.rewindBackups?.length === 1;
 		if ( ! isFirstBackup || mostRecentBackup?.status !== 'started' ) {
@@ -470,7 +470,7 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				{ this.renderBackupStatus() }
+				{ this.renderFirstBackupStatus() }
 				<IntroBanner siteId={ siteId } />
 				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
