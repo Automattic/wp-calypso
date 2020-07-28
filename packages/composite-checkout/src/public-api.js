@@ -25,7 +25,6 @@ import {
 	OrderReviewSection,
 } from './components/order-review-line-items';
 import CheckoutModal from './components/checkout-modal';
-import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
 import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import {
@@ -123,7 +122,6 @@ export {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	registerStore,
-	renderDisplayValueMarkdown,
 	useAllPaymentMethods,
 	useDispatch,
 	useEvents,

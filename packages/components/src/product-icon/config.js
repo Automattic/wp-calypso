@@ -33,6 +33,7 @@ export const paths = {
 	'wpcom-personal': wpcomPersonal,
 	'wpcom-premium': wpcomPremium,
 	'wpcom-search': jetpackSearch,
+	'wpcom-search_monthly': jetpackSearch,
 };
 
 export const iconToProductSlugMap = {
@@ -49,7 +50,12 @@ export const iconToProductSlugMap = {
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
-	'jetpack-search': [ 'jetpack_search', 'jetpack_search_monthly', 'wpcom_search' ],
+	'jetpack-search': [
+		'jetpack_search',
+		'jetpack_search_monthly',
+		'wpcom_search',
+		'wpcom_search_monthly',
+	],
 	'jetpack-anti-spam': [ 'jetpack_anti_spam', 'jetpack_anti_spam_monthly' ],
 };
 

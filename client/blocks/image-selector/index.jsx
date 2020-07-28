@@ -15,7 +15,6 @@ import ImageSelectorPreview from './preview';
 import ImageSelectorDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import MediaModal from 'post-editor/media-modal';
-import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
@@ -59,8 +58,10 @@ export class ImageSelector extends Component {
 		const { siteId, imageIds } = this.props;
 
 		if ( imageIds ) {
-			const images = imageIds.map( ( imageId ) => MediaStore.get( siteId, imageId ) );
-			this.props.setMediaLibrarySelectedItems( siteId, images );
+			this.props.setMediaLibrarySelectedItems(
+				siteId,
+				imageIds.map( ( ID ) => ( { ID } ) )
+			);
 		}
 
 		this.setState( {

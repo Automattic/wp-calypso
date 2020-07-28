@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import type { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import type { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
+import Features from './features';
 import Plans from './plans';
 import Domains from './domains';
 import Language from './language';
@@ -95,6 +97,10 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 
 				<Route path={ makePath( Step.Style ) }>
 					{ canUseStyleStep() ? <StylePreview /> : redirectToLatestStep }
+				</Route>
+
+				<Route path={ makePath( Step.Features ) }>
+					{ isEnabled( 'gutenboarding/feature-picker' ) ? <Features /> : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.Domains ) }>

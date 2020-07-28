@@ -141,13 +141,15 @@
 
 		.cart__total-label {
 			display: table-cell;
-			width: auto;
+			width: 100%;
+			word-break: keep-all;
 		}
 
 		.cart__total-amount {
 			display: table-cell;
 			text-align: right;
-			width: 100%;
+			width: auto;
+			white-space: nowrap;
 		}
 
 		.cart__total-amount.last-cell {

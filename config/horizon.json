@@ -36,7 +36,6 @@
 		"domains/new-status-design/auto-renew": true,
 		"domains/new-status-design/new-options": true,
 		"domains/new-status-design/security-option": true,
-		"earn/rename-payment-blocks": true,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,

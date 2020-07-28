@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, get, includes, pick, values } from 'lodash';
+import { difference, get, includes, pick, values, isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,6 +41,19 @@ export function getPlan( planKey ) {
 		}
 	}
 	return PLANS_LIST[ planKey ];
+}
+
+/**
+ * Find a plan by its path slug
+ *
+ * @param {string} pathSlug Path slug
+ * @param {string?} group Group to search in
+ * @returns {object} The plan
+ */
+export function getPlanByPathSlug( pathSlug, group ) {
+	return Object.values( PLANS_LIST )
+		.filter( ( p ) => ( group ? p.group === group : true ) )
+		.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {

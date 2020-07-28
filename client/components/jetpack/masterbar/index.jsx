@@ -8,7 +8,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { getDocumentHeadTitle } from 'state/document-head/selectors';
+import { getDocumentHeadTitle } from 'state/document-head/selectors/get-document-head-title';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { useSelector } from 'react-redux';
 import Item from 'layout/masterbar/item';

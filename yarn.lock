@@ -7990,6 +7990,14 @@ chalk@^4.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
+chalk@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.0.tgz#4e14870a618d9e2edd97dd8345fd9d9dc315646a"
+  integrity sha512-qwx12AxXe2Q5xQ43Ac//I6v5aXTipYrSESdOgzrN+9XjgEpyjpKuvSGaN4qE93f7TQTlerQQ8S+EQ0EyDoVL1A==
+  dependencies:
+    ansi-styles "^4.1.0"
+    supports-color "^7.1.0"
+
 change-case@^3.0.1:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/change-case/-/change-case-3.1.0.tgz#0e611b7edc9952df2e8513b27b42de72647dd17e"
@@ -24800,7 +24808,7 @@ swap-case@^1.1.0:
     lower-case "^1.1.1"
     upper-case "^1.1.1"
 
-swiper@4.5.1:
+swiper@4.5.1, swiper@^4.5.1:
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/swiper/-/swiper-4.5.1.tgz#ed43998e780ceb478610079c8d23fd425eca636f"
   integrity sha512-se6I7PWWu950NAMXXT+ENtF/6SVb8mPyO+bTfNxbQBILSeLqsYp3Ndap+YOA0EczOIUlea274PKejT6gKZDseA==
@@ -25772,10 +25780,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.8.3:
-  version "3.8.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.8.3.tgz#409eb8544ea0335711205869ec458ab109ee1061"
-  integrity sha512-MYlEfn5VrLNsgudQTVJeNaQFUAI7DkhnOjdpAp4T+ku1TfQClewlbSuTVHiA+8skNBgaf02TL/kLOvig4y3G8w==
+typescript@^3.9.7:
+  version "3.9.7"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.7.tgz#98d600a5ebdc38f40cb277522f12dc800e9e25fa"
+  integrity sha512-BLbiRkiBzAwsjut4x/dsibSTB6yWpwT5qWmC2OfuCg3GgVQCSgMs4vEctYPhsaGtd0AeuuHMkjZ2h2WG8MSzRw==
 
 typeson-registry@^1.0.0-alpha.20:
   version "1.0.0-alpha.35"

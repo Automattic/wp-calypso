@@ -59,13 +59,11 @@ function receiveSingle( siteId, item, itemId ) {
 }
 
 function removeSingle( siteId, item ) {
-	let index;
-
 	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;
 	}
 
-	index = MediaListStore._media[ siteId ].indexOf( item.ID );
+	const index = MediaListStore._media[ siteId ].indexOf( item.ID );
 	if ( -1 !== index ) {
 		MediaListStore._media[ siteId ].splice( index, 1 );
 	}
@@ -132,13 +130,13 @@ function sourceHasDate( source ) {
 }
 
 MediaListStore.isItemMatchingQuery = function ( siteId, item ) {
-	let query, matches;
+	let matches;
 
 	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		return true;
 	}
 
-	query = omit( MediaListStore._activeQueries[ siteId ].query, SAME_QUERY_IGNORE_PARAMS );
+	const query = omit( MediaListStore._activeQueries[ siteId ].query, SAME_QUERY_IGNORE_PARAMS );
 
 	if ( ! Object.keys( query ).length ) {
 		return true;
@@ -216,13 +214,6 @@ MediaListStore.hasNextPage = function ( siteId ) {
 	return (
 		! ( siteId in MediaListStore._activeQueries ) ||
 		null !== MediaListStore._activeQueries[ siteId ].nextPageHandle
-	);
-};
-
-MediaListStore.isFetchingNextPage = function ( siteId ) {
-	return (
-		siteId in MediaListStore._activeQueries &&
-		MediaListStore._activeQueries[ siteId ].isFetchingNextPage
 	);
 };
 

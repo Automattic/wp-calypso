@@ -265,6 +265,22 @@
 		border-color: var( --color-neutral-10 );
 	}
 
+	.wp-block-table table {
+		border-collapse: collapse;
+	}
+
+	.wp-block-table td,
+	.wp-block-table th {
+		border: 1px solid var( --color-neutral-10 );
+		font-size: 1em;
+		line-height: 1.8;
+	}
+
+	.wp-block-table th {
+		font-weight: bold;
+		background: var( --color-neutral-0 );
+	}
+
 	.wp-block-button__link,
 	.wp-block-button__link:hover {
 		color: inherit;
