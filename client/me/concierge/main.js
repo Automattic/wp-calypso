@@ -27,6 +27,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-times';
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
+import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions';
 import getUserSettings from 'state/selectors/get-user-settings';
 import { getSite } from 'state/sites/selectors';
 import NoAvailableTimes from './shared/no-available-times';
@@ -80,7 +81,8 @@ export class ConciergeMain extends Component {
 			userSettings,
 			nextAppointment,
 			rescheduling,
-		} = this.props;
+			hasAvailableConciergeSessions,
+	} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
 		const Skeleton = this.props.skeleton;
@@ -142,4 +144,5 @@ export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteSlug ),
 	scheduleId: getConciergeScheduleId( state ),
 	userSettings: getUserSettings( state ),
+	hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
 } ) )( ConciergeMain );

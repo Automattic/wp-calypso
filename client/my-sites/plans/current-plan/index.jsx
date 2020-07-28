@@ -49,6 +49,8 @@ import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-yo
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 import { getSitePurchases } from 'state/purchases/selectors';
+import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions';
+import QueryConciergeInitial from 'components/data/query-concierge-initial';
 
 /**
  * Style dependencies
@@ -83,9 +85,9 @@ class CurrentPlan extends Component {
 	}
 
 	isLoading() {
-		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
-
-		return ! selectedSite || isRequestingPlans;
+		const { selectedSite, isRequestingSitePlans: isRequestingPlans, hasAvailableConciergeSessions } = this.props;
+		console.log('hasAvailableConciergeSessions', hasAvailableConciergeSessions);
+		return ! selectedSite || isRequestingPlans || hasAvailableConciergeSessions === null;
 	}
 
 	renderThankYou() {
@@ -159,6 +161,7 @@ class CurrentPlan extends Component {
 					headerText={ translate( 'Plans' ) }
 					align="left"
 				/>
+				{ selectedSiteId && <QueryConciergeInitial siteId={ selectedSiteId } /> }
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<QuerySitePurchases siteId={ selectedSiteId } />
@@ -258,5 +261,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
+		hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
 	};
 } )( localize( CurrentPlan ) );

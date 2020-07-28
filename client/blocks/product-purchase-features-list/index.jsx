@@ -45,7 +45,7 @@ import { hasDomainCredit, getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-
+import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions';
 /**
  * Style dependencies
  */
@@ -100,11 +100,13 @@ export class ProductPurchaseFeaturesList extends Component {
 			planHasDomainCredit,
 			selectedSite,
 			showCustomizerFeature,
+			hasAvailableConciergeSessions,
 		} = this.props;
 
 		let isBusinessOnboardingAvailable = false;
 
-		if ( currentPlan ) {
+		// TODO: remove this and just have isBusinessOnboardingAvailable = hasAvailableConciergeSessions once free QS sessions are actually removed from Business Plan
+		if ( currentPlan && hasAvailableConciergeSessions ) {
 			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
 			const businessOnboardingExpiration = this.props
 				.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE )
@@ -343,6 +345,7 @@ export default connect(
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
+			hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
 		};
 	},
 	{
