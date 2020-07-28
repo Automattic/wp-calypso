@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, compact } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -251,11 +251,13 @@ export class PlansFeaturesMain extends Component {
 		if ( plansFromProps.length ) {
 			plans = plansFromProps;
 		} else if ( group === GROUP_JETPACK ) {
-			plans = [
+			plans = compact( [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
+				isEnabled( 'plans/personal-plan' ) &&
+					findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
-			];
+			] );
 		} else {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
