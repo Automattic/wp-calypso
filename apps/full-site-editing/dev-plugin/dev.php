@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: WordPress.com Editor Toolkit Development
- * Description: Overrides for Editor Toolkit development.
+ * Plugin Name: WordPress.com Editing Toolkit Development
+ * Description: Overrides for Editing Toolkit development.
  * Version: dev
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
