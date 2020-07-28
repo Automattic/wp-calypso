@@ -15,6 +15,9 @@ namespace A8C\FSE;
 
 use A8C\FSE\EarnDev\SubscriptionService\Mock_SubscriptionService;
 
+/**
+ * Load mock paywall for development.
+ */
 function premium_content_dev_paywall() {
 	include_once __DIR__ . '/premium-content/class-mock-subscription-service.php';
 	return new Mock_SubscriptionService();
