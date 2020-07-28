@@ -2043,13 +2043,20 @@ Undocumented.prototype.getDirectlyConfiguration = function ( fn ) {
 	);
 };
 
-Undocumented.prototype.submitKayakoTicket = function ( subject, message, locale, client, fn ) {
+Undocumented.prototype.submitKayakoTicket = function (
+	subject,
+	message,
+	locale,
+	client,
+	isChatOverflow,
+	fn
+) {
 	debug( 'submitKayakoTicket' );
 
 	return this.wpcom.req.post(
 		{
 			path: '/help/tickets/kayako/new',
-			body: { subject, message, locale, client },
+			body: { subject, message, locale, client, is_chat_overflow: isChatOverflow },
 		},
 		fn
 	);

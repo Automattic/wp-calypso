@@ -12,7 +12,12 @@ import Gridicon from 'components/gridicon';
 import config from 'config';
 import { addQueryArgs } from '@wordpress/url';
 import { withLocalizedMoment } from 'components/localized-moment';
-import { getDomainTypeText, isSubdomain } from 'lib/domains';
+import {
+	getDomainTypeText,
+	isSubdomain,
+	isDomainUpdateable,
+	isDomainInGracePeriod,
+} from 'lib/domains';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import MaterialIcon from 'components/material-icon';
@@ -78,23 +83,11 @@ const DomainManagementNavigationItem = function ( props ) {
 };
 
 class DomainManagementNavigationEnhanced extends React.Component {
-	isDomainInNormalState() {
-		const { domain } = this.props;
-		const { expired, pendingTransfer } = domain;
-		return ! pendingTransfer && ! expired;
-	}
-
-	isDomainInGracePeriod() {
-		const { domain, moment } = this.props;
-		const { expiry } = domain;
-		return moment().subtract( 18, 'days' ) <= moment( expiry );
-	}
-
 	getEmail() {
 		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { emailForwardsCount } = domain;
 
-		if ( ! this.isDomainInNormalState() ) {
+		if ( ! isDomainUpdateable( domain ) ) {
 			return null;
 		}
 
@@ -173,7 +166,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getNameServers() {
 		const { translate, domain, currentRoute, selectedSite } = this.props;
 
-		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
+		if ( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) ) {
 			return null;
 		}
 
@@ -208,7 +201,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { privateDomain, privacyAvailable } = domain;
 
-		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
+		if ( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) ) {
 			return null;
 		}
 
@@ -235,7 +228,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { moment, selectedSite, translate, domain, currentRoute } = this.props;
 		const { expired, isLocked, transferAwayEligibleAt } = domain;
 
-		if ( expired && ! this.isDomainInGracePeriod() ) {
+		if ( expired && ! isDomainInGracePeriod( domain ) ) {
 			return null;
 		}
 

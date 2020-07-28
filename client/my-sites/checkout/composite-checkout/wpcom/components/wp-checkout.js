@@ -12,7 +12,6 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
-	renderDisplayValueMarkdown,
 	useDispatch,
 	useEvents,
 	useFormStatus,
@@ -28,6 +27,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import Notice from 'components/notice';
 import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -101,6 +101,7 @@ export default function WPCheckout( {
 	isCartPendingUpdate,
 	showErrorMessageBriefly,
 	isLoggedOutCart,
+	infoMessage,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -223,7 +224,7 @@ export default function WPCheckout( {
 						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
 					</CheckoutSummaryTitle>
 					<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+						{ total.amount.displayValue }
 					</CheckoutSummaryTitlePrice>
 				</CheckoutSummaryTitleLink>
 				<CheckoutSummaryBody>
@@ -232,6 +233,13 @@ export default function WPCheckout( {
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
 			<CheckoutStepArea submitButtonHeader={ <SubmitButtonHeader /> }>
+				{ infoMessage && (
+					<CheckoutNoticeWrapper>
+						<Notice status="is-info" showDismiss={ false }>
+							{ infoMessage }
+						</Notice>
+					</CheckoutNoticeWrapper>
+				) }
 				<CheckoutStepBody
 					onError={ onReviewError }
 					className="wp-checkout__review-order-step"
@@ -561,6 +569,32 @@ const SubmitButtonHeaderUI = styled.div`
 
 		&:hover {
 			color: ${ ( props ) => props.theme.colors.highlightOver };
+		}
+	}
+`;
+
+const CheckoutNoticeWrapper = styled.div`
+	padding: 32px 32px 20px;
+
+	border-bottom: solid 1px var( --color-border-subtle );
+
+	.notice {
+		margin-bottom: 0;
+	}
+
+	.notice.is-info .notice__icon-wrapper-drop {
+		background-color: var( --color-accent-40 );
+	}
+
+	.notice__text .checkout__duplicate-notice-link {
+		margin-left: 20px;
+
+		color: var( --color-neutral-10 );
+
+		text-decoration: none;
+
+		&:visited {
+			color: var( --color-neutral-10 );
 		}
 	}
 `;

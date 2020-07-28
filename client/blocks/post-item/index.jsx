@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
@@ -17,7 +16,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
+import { canCurrentUserEditPost } from 'state/posts/selectors/can-current-user-edit-post';
 import {
 	isSharePanelOpen,
 	isMultiSelectEnabled,

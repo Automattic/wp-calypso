@@ -20,7 +20,6 @@ function getStateData( siteId ) {
 	return {
 		media: MediaListStore.getAll( siteId ),
 		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
-		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId ),
 	};
 }
 

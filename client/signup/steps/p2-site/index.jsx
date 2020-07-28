@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, map } from 'lodash';
+import { includes, isEmpty, map, deburr } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -90,7 +90,9 @@ class P2Site extends React.Component {
 		if ( ! domain ) {
 			return domain;
 		}
-		return domain.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
+		return deburr( domain )
+			.replace( /[^a-zA-Z0-9]/g, '' )
+			.toLowerCase();
 	};
 
 	sanitize = ( fields, onComplete ) => {

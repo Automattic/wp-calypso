@@ -44,7 +44,9 @@ export default function WPCheckoutOrderReview( {
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
-			{ domainUrl && <DomainURL>{ translate( 'Site: %s', { args: domainUrl } ) }</DomainURL> }
+			{ domainUrl && 'no-user' !== domainUrl && (
+				<DomainURL>{ translate( 'Site: %s', { args: domainUrl } ) }</DomainURL>
+			) }
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems

@@ -17,19 +17,19 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
-import wpcom from 'lib/wp';
 import { connect } from 'react-redux';
+import wpcom from 'wp-calypso/lib/wp';
+import { recordTracksEvent } from 'wp-calypso/lib/analytics/tracks';
+import config from 'wp-calypso/config';
+import { recordTracksEvent as recordTracksEventAction } from 'wp-calypso/state/analytics/actions';
+import getCurrentLocaleSlug from 'wp-calypso/state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'wp-calypso/state/selectors/get-current-locale-variant';
+import { setUnseenCount } from 'wp-calypso/state/notifications';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import config from 'config';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
-import { setUnseenCount } from 'state/notifications';
 
 /**
  * Style dependencies

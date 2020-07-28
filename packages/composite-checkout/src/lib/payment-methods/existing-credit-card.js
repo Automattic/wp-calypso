@@ -15,7 +15,6 @@ import {
 	useMessages,
 	useLineItems,
 	useEvents,
-	renderDisplayValueMarkdown,
 	useTransactionStatus,
 	usePaymentProcessor,
 } from '../../public-api';
@@ -213,7 +212,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf( __( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
+		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
 }

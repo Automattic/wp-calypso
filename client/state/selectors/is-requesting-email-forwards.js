@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/email-forwarding/init';
+
+/**
  *
  * @param  {object} state  Global state tree
  * @param  {string} domainName the domain name of the forwards

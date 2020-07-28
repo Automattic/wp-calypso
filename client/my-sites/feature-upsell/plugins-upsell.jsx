@@ -29,7 +29,6 @@ import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
 import { hasFeature } from 'state/sites/plans/selectors';
 import redirectIf from './redirect-if';
-import { isEnabled } from 'config';
 
 /*
  * This is just for english audience and is not translated on purpose, remember to add
@@ -73,9 +72,7 @@ class PluginsUpsellComponent extends Component {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const { price } = this.props;
-		const simplePaymentsName = isEnabled( 'earn/rename-payment-blocks' )
-			? 'Pay with PayPal'
-			: 'Simple Payments';
+		const simplePaymentsName = 'Pay with PayPal';
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell__main is-plugins">
 				{ ! price && (

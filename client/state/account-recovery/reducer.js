@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 import settings from './settings/reducer';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
@@ -23,7 +22,9 @@ const isFetchingSettings = withoutPersistence( ( state = false, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	settings,
 	isFetchingSettings,
 } );
+
+export default withStorageKey( 'accountRecovery', combinedReducer );

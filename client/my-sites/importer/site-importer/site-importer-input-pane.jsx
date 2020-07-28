@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, noop, flowRight, has, get, trim, sortBy, reverse } from 'lodash';
+import { includes, isEmpty, noop, flowRight, has, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
 
@@ -34,6 +34,13 @@ import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { appStates } from 'state/imports/constants';
 import { cancelImport, setUploadStartState } from 'lib/importer/actions';
+import {
+	getError,
+	getImportData,
+	getImportStage,
+	getValidatedSiteUrl,
+	isLoading as isLoadingSelector,
+} from 'state/imports/site-importer/selectors';
 
 /**
  * Style dependencies
@@ -285,21 +292,13 @@ class SiteImporterInputPane extends React.Component {
 
 export default flowRight(
 	connect(
-		( state ) => {
-			const { isLoading, error, importData, importStage, validatedSiteUrl } = get(
-				state,
-				'imports.siteImporter',
-				{}
-			);
-
-			return {
-				isLoading,
-				error,
-				importData,
-				importStage,
-				validatedSiteUrl,
-			};
-		},
+		( state ) => ( {
+			error: getError( state ),
+			importData: getImportData( state ),
+			importStage: getImportStage( state ),
+			isLoading: isLoadingSelector( state ),
+			validatedSiteUrl: getValidatedSiteUrl( state ),
+		} ),
 		{
 			recordTracksEvent,
 			setSelectedEditor,
