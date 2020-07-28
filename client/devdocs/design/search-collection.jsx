@@ -106,12 +106,15 @@ const Collection = ( {
 
 		return (
 			<div>
-				<button onClick={ scroll } onKeyPress={ scroll }>
-					<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
-						{ example }
-					</DocsExampleWrapper>
-					{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
-				</button>
+				<DocsExampleWrapper
+					name={ exampleName }
+					unique={ !! component }
+					url={ exampleLink }
+					pageScroll={ scroll }
+				>
+					{ example }
+				</DocsExampleWrapper>
+				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 			</div>
 		);
 	} );
