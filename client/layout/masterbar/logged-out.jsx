@@ -161,8 +161,7 @@ class MasterbarLoggedOut extends React.Component {
 	};
 
 	render() {
-		const { title, sectionName, translate } = this.props;
-		const isCheckout = sectionName === 'checkout';
+		const { title, isCheckout, translate } = this.props;
 
 		if ( isCheckout === true ) {
 			return (
