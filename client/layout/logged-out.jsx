@@ -122,6 +122,7 @@ const LayoutLoggedOut = ( {
 					id="notices"
 					notices={ notices.list }
 				/>
+				<AsyncLoad require="blocks/inline-help" placeholder={ null } />
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
