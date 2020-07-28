@@ -389,5 +389,8 @@
 			"pre-commit": "yarn run -s install-if-no-packages && node bin/pre-commit-hook.js",
 			"pre-push": "yarn run -s install-if-no-packages && node bin/pre-push-hook.js"
 		}
+	},
+	"devDependencies": {
+		"eslint-nibble": "^5.1.0"
 	}
 }

@@ -11,4 +11,5 @@ module.exports = {
 	'jsx-gridicon-size': require( './jsx-gridicon-size' ),
 	'post-message-no-wildcard-targets': require( './post-message-no-wildcard-targets' ),
 	'redux-no-bound-selectors': require( './redux-no-bound-selectors' ),
+	'no-pacakge-relative-imports': require( './no-package-relative-imports' ),
 };
