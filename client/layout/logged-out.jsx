@@ -58,6 +58,7 @@ const LayoutLoggedOut = ( {
 } ) => {
 	const sectionGroup = get( section, 'group', null );
 	const sectionName = get( section, 'name', null );
+	const isCheckout = sectionName === 'checkout';
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -105,7 +106,7 @@ const LayoutLoggedOut = ( {
 		masterbar = (
 			<MasterbarLoggedOut
 				title={ section.title }
-				sectionName={ section.name }
+				isCheckout={ isCheckout }
 				redirectUri={ redirectUri }
 			/>
 		);
