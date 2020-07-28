@@ -15,7 +15,10 @@ export class ContactFormBlockComponent extends GutenbergBlockComponent {
 	}
 
 	async _postInit() {
-		return await driverHelper.clickWhenClickable( this.driver, By.css( '.components-button.block-editor-block-variation-picker__variation' ) );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.components-button.block-editor-block-variation-picker__variation' )
+		);
 	}
 
 	async openEditSettings() {
@@ -25,7 +28,7 @@ export class ContactFormBlockComponent extends GutenbergBlockComponent {
 
 	async insertEmail( email ) {
 		const emailSelector = By.css(
-			'.jetpack-contact-form__popover .components-base-control:nth-child(1) .components-text-control__input'
+			'.jetpack-contact-form__popover .components-base-control:nth-of-type(1) .components-text-control__input'
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, emailSelector );
 
@@ -35,7 +38,7 @@ export class ContactFormBlockComponent extends GutenbergBlockComponent {
 
 	async insertSubject( subject ) {
 		const subjectSelector = By.css(
-			'.jetpack-contact-form__popover .components-base-control:nth-child(2) .components-text-control__input'
+			'.jetpack-contact-form__popover .components-base-control:nth-of-type(2) .components-text-control__input'
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, subjectSelector );
 

@@ -17,5 +17,8 @@
 	"license": "GPL-2.0-or-later",
 	"publishConfig": {
 		"access": "public"
+	},
+	"devDependencies": {
+		"rimraf": "^3.0.0"
 	}
 }

@@ -52,7 +52,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	if ( ! lastNonEditorRoute || ! postType || doesRouteMatch( /^\/home\/?/ ) ) {
 		return {
 			url: `/home/${ getSiteSlug( state, siteId ) }`,
-			label: translate( 'Home' ),
+			label: translate( 'My Home' ),
 		};
 	}
 
