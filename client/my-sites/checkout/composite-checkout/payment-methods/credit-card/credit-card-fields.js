@@ -28,6 +28,8 @@ import {
 	CreditCardField,
 } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
+import { paymentMethodClassName } from 'lib/cart-values';
+import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
 
 export default function CreditCardFields() {
 	const { __ } = useI18n();
@@ -39,6 +41,10 @@ export default function CreditCardFields() {
 		'credit-card'
 	);
 	const [ shouldShowContactFields, setShowContactFields ] = useState( false );
+	const cart = useCart();
+	const shouldShowContactFieldCheckbox = cart?.allowed_payment_methods?.includes(
+		paymentMethodClassName( 'ebanx' )
+	);
 
 	const handleStripeFieldChange = ( input ) => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -106,16 +112,18 @@ export default function CreditCardFields() {
 					errorMessage={ __( 'This field is required' ) }
 				/>
 
-				<FieldRow>
-					<Label>
-						<input
-							type="checkbox"
-							checked={ ! shouldShowContactFields }
-							onChange={ ( event ) => setShowContactFields( ! event.target.checked ) }
-						/>
-						<LabelText>{ __( 'Credit card address is the same as contact details' ) }</LabelText>
-					</Label>
-				</FieldRow>
+				{ shouldShowContactFieldCheckbox && (
+					<FieldRow>
+						<Label>
+							<input
+								type="checkbox"
+								checked={ ! shouldShowContactFields }
+								onChange={ ( event ) => setShowContactFields( ! event.target.checked ) }
+							/>
+							<LabelText>{ __( 'Credit card address is the same as contact details' ) }</LabelText>
+						</Label>
+					</FieldRow>
+				) }
 
 				{ shouldShowContactFields && (
 					<ContactFields
