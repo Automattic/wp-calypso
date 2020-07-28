@@ -29,7 +29,7 @@ import {
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
-import getVisibleSites from 'state/selectors/get-visible-sites';
+import getSites from 'state/selectors/get-sites';
 import isRequestingAllDomains from 'state/selectors/is-requesting-all-domains';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
@@ -176,7 +176,7 @@ const addDomainClick = () =>
 
 export default connect(
 	( state ) => {
-		const sites = keyBy( getVisibleSites( state ), 'ID' );
+		const sites = keyBy( getSites( state ), 'ID' );
 		const user = getCurrentUser( state );
 		const purchases = keyBy( getUserPurchases( state, user?.ID ) || [], 'id' );
 

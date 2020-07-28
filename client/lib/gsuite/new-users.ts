@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
  * Internal dependencies
  */
 import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
-import { hasGSuiteWithUs } from '.';
+import { hasGSuiteWithUs } from './has-gsuite-with-us';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -126,7 +126,7 @@ const validateOverallEmail = (
 const validateOverallEmailAgainstExistingEmails = (
 	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
 	{ value: domain }: GSuiteNewUserField,
-	existingGSuiteUsers: []
+	existingGSuiteUsers: [  ]
 ): GSuiteNewUserField => ( {
 	value: mailBox,
 	error:
@@ -216,7 +216,7 @@ const validateUsers = (
 
 const validateAgainstExistingUsers = (
 	{ uuid, domain, mailBox, firstName, lastName }: GSuiteNewUser,
-	existingGSuiteUsers: []
+	existingGSuiteUsers: [  ]
 ) => ( {
 	uuid,
 	firstName,

@@ -21,6 +21,7 @@ import SortedGrid from 'components/sorted-grid';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getPreference } from 'state/preferences/selectors';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import isFetchingNextPage from 'state/selectors/is-fetching-next-page';
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -37,7 +38,7 @@ export class MediaLibraryList extends React.Component {
 		mediaScale: PropTypes.number.isRequired,
 		thumbnailType: PropTypes.string,
 		mediaHasNextPage: PropTypes.bool,
-		mediaFetchingNextPage: PropTypes.bool,
+		isFetchingNextPage: PropTypes.bool,
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
@@ -48,7 +49,7 @@ export class MediaLibraryList extends React.Component {
 		containerWidth: 0,
 		rowPadding: 10,
 		mediaHasNextPage: false,
-		mediaFetchingNextPage: false,
+		isFetchingNextPage: false,
 		mediaOnFetchNextPage: noop,
 		single: false,
 		scrollable: false,
@@ -242,7 +243,7 @@ export class MediaLibraryList extends React.Component {
 				items={ this.props.media || [] }
 				itemsPerRow={ this.getItemsPerRow() }
 				lastPage={ ! this.props.mediaHasNextPage }
-				fetchingNextPage={ this.props.mediaFetchingNextPage }
+				fetchingNextPage={ this.props.isFetchingNextPage }
 				guessedItemHeight={ this.getMediaItemHeight() }
 				fetchNextPage={ onFetchNextPage }
 				getItemRef={ this.getItemRef }
@@ -258,6 +259,7 @@ export default connect(
 	( state, { site } ) => ( {
 		mediaScale: getPreference( state, 'mediaScale' ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
+		isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
 	} ),
 	{ setMediaLibrarySelectedItems }
 )( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

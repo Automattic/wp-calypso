@@ -11,7 +11,6 @@ import { invoke } from 'lodash';
 import * as constants from './constants';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
-import { isEnabled } from 'config';
 
 export const FEATURES_LIST = {
 	[ constants.FEATURE_BLANK ]: {
@@ -104,13 +103,9 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () => {
-			isEnabled( 'earn/rename-payment-blocks' )
-				? i18n.translate(
-						'Including unlimited premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
-				  )
-				: i18n.translate(
-						'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.'
-				  );
+			return i18n.translate(
+				'Including unlimited premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+			);
 		},
 	},
 
@@ -483,10 +478,7 @@ export const FEATURES_LIST = {
 	},
 	[ constants.FEATURE_SIMPLE_PAYMENTS ]: {
 		getSlug: () => constants.FEATURE_SIMPLE_PAYMENTS,
-		getTitle: () =>
-			isEnabled( 'earn/rename-payment-blocks' )
-				? i18n.translate( 'Pay with PayPal' )
-				: i18n.translate( 'Simple Payments' ),
+		getTitle: () => i18n.translate( 'Pay with PayPal' ),
 		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
 	[ constants.FEATURE_NO_BRANDING ]: {
@@ -541,13 +533,9 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_WORDADS_INSTANT,
 		getTitle: () => i18n.translate( 'Site monetization' ),
 		getDescription: () =>
-			isEnabled( 'earn/rename-payment-blocks' )
-				? i18n.translate(
-						'Earn money on your site by displaying ads and collecting payments or donations.'
-				  )
-				: i18n.translate(
-						'Earn money on your site by displaying ads and collecting recurring payments or donations.'
-				  ),
+			i18n.translate(
+				'Earn money on your site by displaying ads and collecting payments or donations.'
+			),
 	},
 
 	[ constants.FEATURE_WP_SUBDOMAIN ]: {

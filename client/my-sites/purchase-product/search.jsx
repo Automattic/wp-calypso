@@ -75,7 +75,7 @@ export class SearchPurchase extends Component {
 
 	UNSAFE_componentWillMount() {
 		if ( this.props.url ) {
-			this.checkUrl( cleanUrl( this.props.url ) );
+			this.checkUrl( cleanUrl( this.props.url ), true );
 		}
 		if ( ! this.props.isLoggedIn ) {
 			this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
@@ -115,8 +115,8 @@ export class SearchPurchase extends Component {
 		this.getCandidateSites( url );
 	};
 
-	checkUrl( url ) {
-		return this.props.checkUrl( url, !! this.props.getJetpackSiteByUrl( url ) );
+	checkUrl( url, isSearch ) {
+		return this.props.checkUrl( url, !! this.props.getJetpackSiteByUrl( url ), isSearch );
 	}
 
 	handleUrlSubmit = () => {
@@ -129,7 +129,7 @@ export class SearchPurchase extends Component {
 		if ( this.props.isRequestingSites ) {
 			this.setState( { waitingForSites: true } );
 		} else {
-			this.checkUrl( this.state.currentUrl );
+			this.checkUrl( this.state.currentUrl, true );
 		}
 	};
 

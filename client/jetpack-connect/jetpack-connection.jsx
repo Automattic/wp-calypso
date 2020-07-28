@@ -103,7 +103,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
 				// eslint-disable-next-line react/no-did-update-set-state
 				this.setState( { waitingForSites: false } );
-				this.checkUrl( url );
+				this.checkUrl( url, status === IS_DOT_COM_GET_SEARCH );
 			}
 
 			if (
@@ -164,8 +164,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 			);
 		}
 
-		checkUrl( url ) {
-			return this.props.checkUrl( url, !! this.props.getJetpackSiteByUrl( url ) );
+		checkUrl( url, isSearch ) {
+			return this.props.checkUrl( url, !! this.props.getJetpackSiteByUrl( url ), isSearch );
 		}
 
 		checkProperty( propName ) {

@@ -9,7 +9,7 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
+import { useLineItems } from '../public-api';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
@@ -45,7 +45,7 @@ function LineItem( { item, className } ) {
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<span>•</span>
 			<span>{ item.label }</span>
-			<span>{ renderDisplayValueMarkdown( item.amount.displayValue ) }</span>
+			<span>{ item.amount.displayValue }</span>
 		</div>
 	);
 }

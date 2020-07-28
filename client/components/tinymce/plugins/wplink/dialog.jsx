@@ -12,7 +12,6 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import { deserialize } from 'lib/media-serialization';
-import MediaStore from 'lib/media/store';
 import { url as mediaUrl } from 'lib/media/utils';
 import { Dialog } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
@@ -26,6 +25,7 @@ import { getSitePosts } from 'state/posts/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import Gridicon from 'components/gridicon';
+import { getMediaItem } from 'state/media/thunks';
 
 /**
  * Module variables
@@ -162,7 +162,7 @@ class LinkDialog extends React.Component {
 			parsedImage = deserialize( selectedNode );
 			if ( this.props.site && parsedImage.media.ID ) {
 				knownImage =
-					MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
+					this.props.getMediaItem( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
 				return mediaUrl( knownImage, {
 					size: 'full',
 				} );
@@ -371,5 +371,5 @@ export default connect(
 			sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null,
 		};
 	},
-	{ recordEditorEvent, recordEditorStat }
+	{ recordEditorEvent, recordEditorStat, getMediaItem }
 )( localize( LinkDialog ) );
