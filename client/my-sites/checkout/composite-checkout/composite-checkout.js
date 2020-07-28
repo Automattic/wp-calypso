@@ -90,6 +90,7 @@ import { translateResponseCartToWPCOMCart } from './wpcom/lib/translate-cart';
 import useShoppingCartManager from './wpcom/hooks/use-shopping-cart-manager';
 import useShowAddCouponSuccessMessage from './wpcom/hooks/use-show-add-coupon-success-message';
 import useCountryList from './wpcom/hooks/use-country-list';
+import { colors } from '@automattic/color-studio';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -530,9 +531,14 @@ export default function CompositeCheckout( {
 
 	const jetpackColors = isJetpackNotAtomic
 		? {
-				primary: '#008710',
-				primaryBorder: '#004515',
-				primaryOver: '#007117',
+				primary: colors[ 'Jetpack Green' ],
+				primaryBorder: colors[ 'Jetpack Green 80' ],
+				primaryOver: colors[ 'Jetpack Green 60' ],
+				success: colors[ 'Jetpack Green' ],
+				discount: colors[ 'Jetpack Green' ],
+				highlight: colors[ 'Blue 50' ],
+				highlightBorder: colors[ 'Blue 80' ],
+				highlightOver: colors[ 'Blue 60' ],
 		  }
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
