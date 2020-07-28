@@ -263,6 +263,8 @@ async function createAccount( select ) {
 		recaptchaError = 'recaptcha_didnt_load';
 	}
 
+	const blogName = newSiteParams?.blog_name;
+
 	try {
 		const response = await wp.undocumented().createUserAndSite(
 			{
@@ -270,6 +272,7 @@ async function createAccount( select ) {
 				'g-recaptcha-error': recaptchaError,
 				'g-recaptcha-response': recaptchaToken || undefined,
 				is_passwordless: true,
+				extra: { username_hint: blogName },
 				signup_flow_name: 'onboarding-new',
 				validate: false,
 				ab_test_variations: getSavedVariations(),
