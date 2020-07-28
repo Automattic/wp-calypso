@@ -49,7 +49,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		font-size: 26px;
+		font-size: $font-title-medium;
 	}
 }
 
@@ -66,7 +66,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		font-size: 24px;
+		font-size: $font-title-medium;
 	}
 
 	&.is-bold {
@@ -159,7 +159,7 @@ $feature-upsell-break-at: '1040px';
 			flex-basis: calc( 100% - 250px );
 			order: 1;
 			line-height: 1.25;
-			font-size: 26px;
+			font-size: $font-title-medium;
 			padding-right: 30px;
 			@include breakpoint-deprecated( '<1280px' ) {
 				font-size: $font-title-small;
@@ -212,12 +212,12 @@ $feature-upsell-break-at: '1040px';
 		}
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 26px;
+			font-size: $font-title-medium;
 		}
 	}
 
 	&-header.is-title {
-		font-size: 24px;
+		font-size: $font-title-medium;
 		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
 		@include breakpoint-deprecated( '<1280px' ) {
@@ -342,7 +342,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-name {
-		font-size: 24px;
+		font-size: $font-title-medium;
 		font-weight: 600;
 		color: var( --color-neutral-60 );
 		@include breakpoint-deprecated( '<1280px' ) {

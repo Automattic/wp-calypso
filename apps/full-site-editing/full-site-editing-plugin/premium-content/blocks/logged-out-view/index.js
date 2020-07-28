@@ -4,6 +4,7 @@
 import edit from './edit';
 import save from './save';
 import deprecated from './deprecated';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 
 /**
  * WordPress dependencies
@@ -14,12 +15,12 @@ import { __ } from '@wordpress/i18n';
 import { registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
 
 const name = 'premium-content/logged-out-view';
-const category = 'common';
+const category = getCategoryWithFallbacks( 'design', 'common' );
 /**
  * @typedef {object} Attributes
- *
  * @typedef {import('@wordpress/blocks').BlockConfiguration<Attributes>} BlockConfiguration
  * @type {BlockConfiguration}
+ * @property
  */
 const settings = {
 	name,

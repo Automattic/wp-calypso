@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
 
@@ -33,6 +32,8 @@ import {
 } from './utils';
 import { registerServerWorker } from 'lib/service-worker';
 import { recordTracksEvent, bumpStat } from 'state/analytics/actions';
+
+import 'state/push-notifications/init';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const serviceWorkerOptions = {
@@ -143,7 +144,7 @@ export function fetchAndLoadServiceWorker() {
 
 export function deactivateSubscription() {
 	return ( dispatch ) => {
-		navigator.serviceWorker
+		window.navigator.serviceWorker
 			.getRegistration( serviceWorkerOptions )
 			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager

@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
+// eslint-disable-next-line no-restricted-imports
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
 import { ProgressBar } from '@automattic/components';
@@ -399,9 +400,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	jetpack() {
-		const { isJetpackSectionOpen, path } = this.props;
+		const { canUserManageOptions, isJetpackSectionOpen, path } = this.props;
 
 		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
+		if ( ! canUserManageOptions ) {
 			return null;
 		}
 
@@ -857,6 +862,15 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
+	canViewAdminSections = () => {
+		const { isAllSitesView, canUserManageOptions, canUserManagePlugins } = this.props;
+
+		return (
+			( ! isAllSitesView && canUserManageOptions ) ||
+			( isAllSitesView && ( canUserManageOptions || canUserManagePlugins ) )
+		);
+	};
+
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
 			return (
@@ -926,7 +940,7 @@ export class MySitesSidebar extends Component {
 				<QueryRewindState siteId={ this.props.siteId } />
 				<QueryScanState siteId={ this.props.siteId } />
 
-				{ tools && (
+				{ tools && this.canViewAdminSections() && (
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_TOOLS ) }
 						expanded={ this.props.isToolsSectionOpen }
@@ -941,19 +955,21 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) }
 
-				<ExpandableSidebarMenu
-					onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
-					expanded={ this.props.isManageSectionOpen }
-					title={ this.props.translate( 'Manage' ) }
-					materialIcon="settings"
-				>
-					<ul>
-						{ this.hosting() }
-						{ this.upgrades() }
-						{ this.users() }
-						{ this.siteSettings() }
-					</ul>
-				</ExpandableSidebarMenu>
+				{ this.canViewAdminSections() && (
+					<ExpandableSidebarMenu
+						onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
+						expanded={ this.props.isManageSectionOpen }
+						title={ this.props.translate( 'Manage' ) }
+						materialIcon="settings"
+					>
+						<ul>
+							{ this.hosting() }
+							{ this.upgrades() }
+							{ this.users() }
+							{ this.siteSettings() }
+						</ul>
+					</ExpandableSidebarMenu>
+				) }
 
 				{ this.wpAdmin() }
 			</div>
@@ -1046,6 +1062,7 @@ function mapStateToProps( state ) {
 		scanState: getScanState( state, siteId ),
 		rewindState: getRewindState( state, siteId ),
 		isCloudEligible: isJetpackCloudEligible( state, siteId ),
+		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
 	};
 }
 

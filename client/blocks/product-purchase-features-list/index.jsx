@@ -23,7 +23,6 @@ import { PLANS_LIST } from 'lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
-import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
 import CustomCSS from './custom-css';
 import VideoAudioPosts from './video-audio-posts';
@@ -44,7 +43,6 @@ import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import isSiteWhiteGlove from 'state/selectors/is-site-white-glove';
 
 /**
  * Style dependencies
@@ -78,7 +76,6 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
@@ -113,12 +110,10 @@ export class ProductPurchaseFeaturesList extends Component {
 					isWpcomPlan
 					onClick={ this.handleBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
-					isWhiteGlove={ this.props.isWhiteGlove }
 				/>
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
-				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
@@ -150,7 +145,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
-				<GoogleVouchers selectedSite={ selectedSite } />
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
@@ -331,7 +325,6 @@ export default connect(
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
-			isWhiteGlove: isSiteWhiteGlove( state, selectedSiteId ),
 		};
 	},
 	{

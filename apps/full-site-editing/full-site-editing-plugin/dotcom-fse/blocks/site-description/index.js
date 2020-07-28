@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './edit';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 import './style.scss';
 
 registerBlockType( 'a8c/site-description', {
@@ -20,7 +21,7 @@ registerBlockType( 'a8c/site-description', {
 			<path d="M4 9h16v2H4V9zm0 4h10v2H4v-2z" />
 		</svg>
 	),
-	category: 'layout',
+	category: getCategoryWithFallbacks( 'design', 'layout' ),
 	supports: {
 		align: [ 'wide', 'full' ],
 		html: false,

@@ -56,7 +56,7 @@ export function resolveDomainStatus(
 			if ( hasPendingGSuiteUsers( domain ) ) {
 				return {
 					statusText: translate( 'Action required' ),
-					statusClass: 'status-warning',
+					statusClass: 'status-error',
 					icon: 'info',
 				};
 			}
@@ -145,7 +145,7 @@ export function resolveDomainStatus(
 			if ( hasPendingGSuiteUsers( domain ) ) {
 				return {
 					statusText: translate( 'Action required' ),
-					statusClass: 'status-warning',
+					statusClass: 'status-error',
 					icon: 'info',
 				};
 			}

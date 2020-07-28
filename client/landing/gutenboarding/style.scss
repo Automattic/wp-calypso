@@ -41,7 +41,7 @@ $admin-sidebar-width-collapsed: 0;
 		display: none;
 	}
 	@include break-small {
-		padding-top: $gutenboarding-header-height;
+		padding-top: $onboarding-header-height;
 	}
 }
 

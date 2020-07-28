@@ -12,13 +12,14 @@ import { addFilter } from '@wordpress/hooks';
  */
 import edit from './edit';
 import save from './save';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 import './style.scss';
 
 registerBlockType( 'a8c/post-content', {
 	title: __( 'Content', 'full-site-editing' ),
 	description: __( 'The page content.', 'full-site-editing' ),
 	icon: 'layout',
-	category: 'layout',
+	category: getCategoryWithFallbacks( 'design', 'layout' ),
 	supports: {
 		align: [ 'full' ],
 		anchor: false,

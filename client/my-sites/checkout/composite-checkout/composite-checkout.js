@@ -92,7 +92,7 @@ import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/
 import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
 import { CartProvider } from './cart-provider';
 
-const debug = debugFactory( 'calypso:composite-checkout' );
+const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
 const { select, dispatch, registerStore } = defaultRegistry;
 
@@ -120,8 +120,8 @@ export default function CompositeCheckout( {
 	purchaseId,
 	cart,
 	couponCode: couponCodeFromUrl,
-	isWhiteGloveOffer,
 	isComingFromUpsell,
+	infoMessage,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -205,9 +205,10 @@ export default function CompositeCheckout( {
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 		variantSelectOverride,
 		responseCart,
+		loadingError,
 		addItem,
 	} = useShoppingCart(
-		siteSlug,
+		siteId,
 		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsForCart,
 		couponCodeFromUrl,
@@ -226,7 +227,6 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
-		isWhiteGloveOffer,
 		hideNudge,
 		recordEvent,
 	} );
@@ -327,7 +327,7 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails();
 
-	useDisplayErrors( errors, showErrorMessage );
+	useDisplayErrors( [ ...errors, loadingError ].filter( Boolean ), showErrorMessage );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
@@ -336,7 +336,12 @@ export default function CompositeCheckout( {
 	).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
-	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart );
+	useRedirectIfCartEmpty(
+		items,
+		`/plans/${ siteSlug || '' }`,
+		isLoadingCart,
+		[ ...errors, loadingError ].filter( Boolean )
+	);
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
@@ -482,75 +487,26 @@ export default function CompositeCheckout( {
 			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
 			alipay: ( transactionData ) =>
-				genericRedirectProcessor(
-					'alipay',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
 			p24: ( transactionData ) =>
-				genericRedirectProcessor(
-					'p24',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'p24', transactionData, getThankYouUrl, siteSlug ),
 			bancontact: ( transactionData ) =>
-				genericRedirectProcessor(
-					'bancontact',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'bancontact', transactionData, getThankYouUrl, siteSlug ),
 			giropay: ( transactionData ) =>
-				genericRedirectProcessor(
-					'giropay',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, siteSlug ),
 			wechat: ( transactionData ) =>
-				genericRedirectProcessor(
-					'wechat',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'wechat', transactionData, getThankYouUrl, siteSlug ),
 			ideal: ( transactionData ) =>
-				genericRedirectProcessor(
-					'ideal',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, siteSlug ),
 			sofort: ( transactionData ) =>
-				genericRedirectProcessor(
-					'sofort',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, siteSlug ),
 			eps: ( transactionData ) =>
-				genericRedirectProcessor(
-					'eps',
-					transactionData,
-					getThankYouUrl,
-					isWhiteGloveOffer,
-					siteSlug
-				),
+				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, siteSlug ),
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) =>
-				payPalProcessor( transactionData, getThankYouUrl, couponItem, isWhiteGloveOffer ),
+			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
 		} ),
-		[ couponItem, getThankYouUrl, isWhiteGloveOffer, siteSlug ]
+		[ couponItem, getThankYouUrl, siteSlug ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -611,7 +567,7 @@ export default function CompositeCheckout( {
 						isCartPendingUpdate={ isCartPendingUpdate }
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
-						isWhiteGloveOffer={ isWhiteGloveOffer }
+						infoMessage={ infoMessage }
 					/>
 				</CheckoutProvider>
 			</CartProvider>
@@ -651,25 +607,14 @@ function isNotCouponError( error ) {
 	return ! couponErrorCodes.includes( error.code );
 }
 
-function useRedirectIfCartEmpty( items, redirectUrl, isLoading ) {
-	const [ prevItemsLength, setPrevItemsLength ] = useState( 0 );
-
+function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors ) {
 	useEffect( () => {
-		setPrevItemsLength( items.length );
-	}, [ items ] );
-
-	useEffect( () => {
-		if ( prevItemsLength > 0 && items.length === 0 ) {
-			debug( 'cart has become empty; redirecting...' );
-			page.redirect( redirectUrl );
-			return;
-		}
-		if ( ! isLoading && items.length === 0 ) {
+		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, prevItemsLength, isLoading ] );
+	}, [ redirectUrl, items, isLoading, errors ] );
 }
 
 function useCountryList( overrideCountryList ) {

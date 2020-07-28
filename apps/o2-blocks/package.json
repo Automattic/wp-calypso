@@ -22,12 +22,17 @@
 		"build": "check-npm-client && calypso-build editor='./src/editor.js' --env.WP"
 	},
 	"dependencies": {
+		"@wordpress/api-fetch": "^3.15.0",
 		"@wordpress/block-editor": "^3.11.0",
 		"@wordpress/blocks": "^6.16.0",
 		"@wordpress/components": "^9.6.0",
+		"@wordpress/data": "^4.18.0",
 		"@wordpress/editor": "^9.16.0",
 		"@wordpress/element": "^2.14.0",
+		"@wordpress/hooks": "^2.8.0",
 		"@wordpress/i18n": "^3.12.0",
-		"classnames": "^2.2.6"
+		"classnames": "^2.2.6",
+		"lodash": "^4.17.15",
+		"moment": "^2.26.0"
 	}
 }

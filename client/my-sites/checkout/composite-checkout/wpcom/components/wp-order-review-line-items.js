@@ -4,13 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import {
-	renderDisplayValueMarkdown,
-	CheckoutModal,
-	useFormStatus,
-	useEvents,
-	Button,
-} from '@automattic/composite-checkout';
+import { CheckoutModal, useFormStatus, useEvents, Button } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -19,7 +13,6 @@ import { useTranslate } from 'i18n-calypso';
 import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
-import { isBusinessPlan } from 'lib/plans';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -39,7 +32,6 @@ function WPLineItem( {
 	getItemVariants,
 	onChangePlanLength,
 	isSummary,
-	isWhiteGloveOffer,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -57,11 +49,6 @@ function WPLineItem( {
 	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
 
 	const productSlug = item.wpcom_meta?.product_slug;
-	const isBusinessPlanProduct = productSlug && isBusinessPlan( productSlug );
-	const productName =
-		isBusinessPlanProduct && isWhiteGloveOffer
-			? `${ item.label } (with Expert guidance)`
-			: item.label;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -71,7 +58,7 @@ function WPLineItem( {
 			data-product-type={ item.type }
 		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ productName }
+				{ item.label }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice item={ item } isSummary={ isSummary } />
@@ -86,6 +73,7 @@ function WPLineItem( {
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
+						className="checkout-line-item__remove-product"
 						buttonType="borderless"
 						disabled={ isDisabled }
 						onClick={ () => {
@@ -143,7 +131,6 @@ WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummary: PropTypes.bool,
-	isWhiteGloveOffer: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
@@ -157,14 +144,18 @@ WPLineItem.propTypes = {
 };
 
 function LineItemPrice( { item, isSummary } ) {
+	const originalAmount = item.wpcom_meta?.item_original_subtotal_display;
+	const isDiscounted =
+		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer && originalAmount;
+	const actualAmount = item.amount.displayValue;
 	return (
 		<LineItemPriceUI isSummary={ isSummary }>
-			{ item.amount.value < item.wpcom_meta?.item_original_subtotal_integer ? (
+			{ isDiscounted ? (
 				<>
-					<s>{ item.wpcom_meta?.item_original_subtotal_display }</s> { item.amount.displayValue }
+					<s>{ originalAmount }</s> { actualAmount }
 				</>
 			) : (
-				renderDisplayValueMarkdown( item.amount.displayValue )
+				actualAmount
 			) }
 		</LineItemPriceUI>
 	);
@@ -298,7 +289,6 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	isWhiteGloveOffer,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -319,7 +309,6 @@ export function WPOrderReviewLineItems( {
 								getItemVariants={ getItemVariants }
 								onChangePlanLength={ onChangePlanLength }
 								isSummary={ isSummary }
-								isWhiteGloveOffer={ isWhiteGloveOffer }
 							/>
 						</WPOrderReviewListItem>
 					);

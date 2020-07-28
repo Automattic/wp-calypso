@@ -3,6 +3,7 @@
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -27,12 +28,13 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const history = useHistory();
 	const currentStep = useCurrentStep();
 	const siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
-
+	const { i18nLocale } = useI18n();
 	// If the user enters a site title on Intent Capture step we are showing Domains step next.
 	// Else, we're showing Domains step before Plans step.
-	let steps = siteTitle
-		? [ Step.IntentGathering, Step.Domains, Step.DesignSelection, Step.Style, Step.Plans ]
-		: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
+	let steps =
+		siteTitle?.length > 1
+			? [ Step.IntentGathering, Step.Domains, Step.DesignSelection, Step.Style, Step.Plans ]
+			: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -41,17 +43,16 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, undefined, shouldSiteBePublic )
+			? createSite( currentUser.username, i18nLocale, undefined, shouldSiteBePublic )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps
-	const { domain, hasUsedPlansStep } = useSelect( ( select ) =>
+	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const plan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 
-	// remove Domains step only if it's at the end
-	if ( ! siteTitle && domain ) {
+	if ( domain && ! hasUsedDomainsStep ) {
 		steps = steps.filter( ( step ) => step !== Step.Domains );
 	}
 	if ( plan && ! hasUsedPlansStep ) {
@@ -63,8 +64,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const nextStepPath =
 		currentStepIndex < steps.length - 1 ? makePath( steps[ currentStepIndex + 1 ] ) : '';
 
-	// Plans and Domains step are skipped if plan/domain is already selected.
-	const isLastStep = currentStepIndex === steps.length - 1 || currentStepIndex === -1; // final step could have been removed because of selection
+	const isLastStep = currentStepIndex === steps.length - 1;
 
 	const handleBack = () => history.push( previousStepPath );
 	const handleNext = () => ( isLastStep ? handleSiteCreation() : history.push( nextStepPath ) );

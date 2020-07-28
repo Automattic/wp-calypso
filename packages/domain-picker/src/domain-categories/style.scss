@@ -1,7 +1,6 @@
-@import '../styles/mixins';
+@import '~@wordpress/base-styles/breakpoints';
 
 .domain-categories {
-
 	@media ( max-width: $break-mobile ) {
 		margin-bottom: 20px;
 

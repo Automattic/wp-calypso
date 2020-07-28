@@ -33,6 +33,7 @@ import {
 	dispatchFluxRemoveMediaItemError,
 	dispatchFluxRequestMediaItemSuccess,
 	dispatchFluxRequestMediaItemError,
+	dispatchFluxRequestMediaItemsSuccess,
 } from 'state/media/utils/flux-adapter';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -87,24 +88,34 @@ export const editMedia = ( action ) => {
 export function requestMedia( action ) {
 	log( 'Request media for site %d using query %o', action.siteId, action.query );
 
+	const { siteId, query } = action;
+
+	const path =
+		query && query.source ? `/meta/external-media/${ query.source }` : `/sites/${ siteId }/media`;
+
 	return [
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ action.siteId }/media`,
+				path,
 				apiVersion: '1.1',
+				query,
 			},
 			action
 		),
 	];
 }
 
-export const requestMediaSuccess = ( { siteId, query }, { media, found } ) => [
-	receiveMedia( siteId, media, found, query ),
-	successMediaRequest( siteId, query ),
-];
+export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch ) => {
+	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
+	dispatch( successMediaRequest( siteId, query ) );
 
-export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
+	dispatchFluxRequestMediaItemsSuccess( siteId, data, query );
+};
+
+export const requestMediaError = ( { siteId, query } ) => ( dispatch ) => {
+	dispatch( failMediaRequest( siteId, query ) );
+};
 
 export function requestMediaItem( action ) {
 	const { mediaId, query, siteId } = action;

@@ -16,13 +16,28 @@ interface AvailableDesigns {
 
 const availableDesigns: Readonly< AvailableDesigns > = availableDesignsConfig;
 
+function getCanUseWebP() {
+	if ( typeof window !== 'undefined' ) {
+		const elem = document.createElement( 'canvas' );
+		if ( elem.getContext?.( '2d' ) ) {
+			return elem.toDataURL( 'image/webp' ).indexOf( 'data:image/webp' ) === 0;
+		}
+	}
+	return false;
+}
+
+const canUseWebP = getCanUseWebP();
+
 export const getDesignImageUrl = ( design: Design ) => {
 	// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
 	// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
 	// https://github.com/Automattic/mShots/issues/16
 	// https://github.com/Automattic/wp-calypso/issues/40564
 	if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
-		return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
+		// When we update the static images, bump the version for cache busting
+		return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${
+			design.theme
+		}.${ canUseWebP ? 'webp' : 'jpg' }?v=2`;
 	}
 
 	const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
@@ -56,12 +71,12 @@ export function prefetchDesignThumbs() {
 }
 
 export function getAvailableDesigns(
-	includeEdgeDesigns: boolean = isEnabled( 'gutenboarding/edge-templates' ),
+	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ) {
 	let designs = availableDesigns;
 
-	if ( ! includeEdgeDesigns ) {
+	if ( ! includeAlphaDesigns ) {
 		designs = {
 			...designs,
 			featured: designs.featured.filter( ( design ) => ! design.is_alpha ),

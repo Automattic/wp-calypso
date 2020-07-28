@@ -5,6 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { endsWith, get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
+/* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 /**
@@ -30,6 +31,7 @@ import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
@@ -70,6 +72,7 @@ interface Props {
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
+	parentPostId: T.PostId;
 }
 
 interface State {
@@ -207,8 +210,7 @@ class CalypsoifyIframe extends Component<
 		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
-				const image = MediaStore.get( siteId, data.imageId );
-				this.props.setMediaLibrarySelectedItems( siteId, [ image ] );
+				this.props.setMediaLibrarySelectedItems( siteId, [ { ID: data.imageId } ] );
 			}
 
 			this.setState( {
@@ -346,8 +348,12 @@ class CalypsoifyIframe extends Component<
 					post: translate( 'View all posts' ),
 				},
 				createPostLabels: {
-					page: translate( 'Create new page' ),
-					post: translate( 'Create new post' ),
+					page: translate( 'Add new page' ),
+					post: translate( 'Add new post' ),
+				},
+				listHeadings: {
+					page: translate( 'Recent Pages' ),
+					post: translate( 'Recent Posts' ),
 				},
 			} );
 		}
@@ -704,6 +710,7 @@ const mapStateToProps = (
 		postType,
 		duplicatePostId,
 		fseParentPageId,
+		parentPostId,
 		creatingNewHomepage,
 		editorType = 'post',
 	}: Props
@@ -720,6 +727,7 @@ const mapStateToProps = (
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
 		fse_parent_post: fseParentPageId != null && fseParentPageId,
+		parent_post: parentPostId != null && parentPostId,
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
@@ -734,7 +742,7 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( inEditorDeprecationGroup( state ) ) {
+	if ( inEditorDeprecationGroup( state ) && 'classic' === getSelectedEditor( state, siteId ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
@@ -780,6 +788,7 @@ const mapStateToProps = (
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
+		parentPostId,
 	};
 };
 

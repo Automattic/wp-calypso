@@ -1,20 +1,17 @@
-@import '~@automattic/typography/sass/fonts';
+@import '~@automattic/typography/styles/fonts';
+@import '~@automattic/onboarding/styles/mixins';
 
 .nux-launch-step {
-	// TODO: container padding/margin with mobile breakpoints goes here.
-	padding: 88px;
+	@include onboarding-block-margin;
 }
 
 .nux-launch-step__header {
 	display: flex;
-	align-items: baseline;
+	justify-content: space-between;
+	align-items: center;
+	@include onboarding-heading-padding;
 }
 
 .nux-launch-step__heading {
 	flex-grow: 1;
-
-	h1 {
-		@extend .wp-brand-font;
-		font-size: 42px;
-	}
 }

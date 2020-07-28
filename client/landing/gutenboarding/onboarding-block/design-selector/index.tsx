@@ -5,12 +5,12 @@ import { Tooltip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import React from 'react';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { SubTitle, Title } from '../../components/titles';
 
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
@@ -18,7 +18,6 @@ import Badge from '../../components/badge';
 import designs, { getDesignImageUrl } from '../../available-designs';
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
 import type { Design } from '../../stores/onboard/types';
-import ActionButtons, { BackButton } from '../../components/action-buttons';
 
 /**
  * Style dependencies

@@ -99,5 +99,21 @@ export const dispatchFluxFetchMediaItem = ( siteId, mediaId ) => {
 	} );
 };
 
+export const dispatchFluxFetchMediaItems = ( siteId ) => {
+	Dispatcher.handleViewAction( {
+		type: 'FETCH_MEDIA_ITEMS',
+		siteId: siteId,
+	} );
+};
+
+export const dispatchFluxRequestMediaItemsSuccess = ( siteId, data, query ) => {
+	Dispatcher.handleServerAction( {
+		type: 'RECEIVE_MEDIA_ITEMS',
+		siteId,
+		data,
+		query,
+	} );
+};
+
 export const dispatchFluxFetchMediaLimits = ( siteId ) =>
 	Dispatcher.handleServerAction( { type: 'FETCH_MEDIA_LIMITS', siteId } );

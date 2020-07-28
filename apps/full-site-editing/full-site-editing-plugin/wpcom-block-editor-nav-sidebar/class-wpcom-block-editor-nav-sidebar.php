@@ -59,6 +59,23 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 			plugins_url( 'dist/', __FILE__ )
 		);
 
+		$post_ids_to_exclude = array();
+
+		// Only exclude page_for_posts when a static page is being used as the front page, because
+		// page_for_posts can be a valid id even when showing a traditional blog page on front.
+		if ( 'page' === get_option( 'show_on_front' ) ) {
+			$post_ids_to_exclude[] = get_option( 'page_for_posts' );
+		}
+
+		wp_localize_script(
+			'wpcom-block-editor-nav-sidebar-script',
+			'wpcomBlockEditorNavSidebar',
+			array(
+				'homeUrl'          => home_url(),
+				'postIdsToExclude' => $post_ids_to_exclude,
+			)
+		);
+
 		$style_path = 'dist/wpcom-block-editor-nav-sidebar' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		wp_enqueue_style(
 			'wpcom-block-editor-nav-sidebar-style',

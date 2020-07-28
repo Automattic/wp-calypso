@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import classnames from 'classnames';
-import url from 'url';
 import { localize } from 'i18n-calypso';
 import closest from 'component-closest';
 import { get, forEach, uniqBy } from 'lodash';
@@ -21,6 +20,8 @@ import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import Emojify from 'components/emojify';
+import { getUrlParts } from 'lib/url';
+import config from 'config';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -80,7 +81,7 @@ class CrossPost extends PureComponent {
 	};
 
 	getSiteNameFromURL = ( siteURL ) => {
-		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
+		return siteURL && `+${ getUrlParts( siteURL ).hostname.split( '.' )[ 0 ] }`;
 	};
 
 	getDescription = ( authorFirstName ) => {
@@ -166,10 +167,12 @@ class CrossPost extends PureComponent {
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
 
+		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
 		const articleClasses = classnames( {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
+			'is-seen': isSeen,
 		} );
 
 		// Remove the x-post text from the title.

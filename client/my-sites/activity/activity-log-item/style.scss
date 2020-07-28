@@ -391,10 +391,13 @@
 	background-color: var( --color-neutral-10 );
 }
 .activity-log-item__activity-media .is-thumbnail {
+	display: inline-block;
 	width: auto;
 	height: auto;
 	max-width: 48px;
 	max-height: 48px;
+	overflow: hidden;
+	font-size: $font-body-small;
 }
 
 .activity-log-item__activity-media .is-full-width {

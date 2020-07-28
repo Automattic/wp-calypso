@@ -409,135 +409,6 @@ describe( 'initial-state', () => {
 					expect( state._timestamp ).toBeUndefined();
 				} );
 			} );
-
-			describe( 'with empty persisted signup state for logged in user, and persisted state for logged out user', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
-
-				const _timestamp = Date.now();
-				const storedState = {
-					'redux-state-logged-out:signup': {
-						dependencyStore: {
-							siteType: 'blog',
-							siteTitle: 'Logged out test title',
-						},
-						progress: {
-							'logged-out-step': {
-								stepName: 'logged-out-step',
-								status: 'completed',
-							},
-						},
-						_timestamp,
-					},
-				};
-				const serverState = {};
-
-				beforeAll( async () => {
-					isEnabled.enablePersistRedux();
-					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getAllStoredItems' )
-						.mockResolvedValue( storedState );
-
-					await loadAllState();
-					state = getInitialState( combineReducers( { signup: signupReducer } ) );
-				} );
-
-				afterAll( () => {
-					window.initialReduxState = null;
-					isEnabled.disablePersistRedux();
-					consoleErrorSpy.mockRestore();
-					getStoredItemSpy.mockRestore();
-				} );
-
-				test( 'builds initial state without errors', () => {
-					expect( consoleErrorSpy ).not.toHaveBeenCalled();
-				} );
-
-				test( 'builds initial signup state from logged out state', () => {
-					expect( state.signup.dependencyStore ).toEqual(
-						storedState[ 'redux-state-logged-out:signup' ].dependencyStore
-					);
-					expect( state.signup.progress ).toEqual(
-						storedState[ 'redux-state-logged-out:signup' ].progress
-					);
-				} );
-
-				test( 'does not add timestamp to initial state', () => {
-					expect( state._timestamp ).toBeUndefined();
-				} );
-			} );
-
-			describe( 'with existing persisted signup state for logged in user, and persisted state for logged out user', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
-
-				const _timestamp = Date.now();
-				const storedState = {
-					'redux-state-123456789:signup': {
-						dependencyStore: {
-							siteType: 'blog',
-							siteTitle: 'Logged in test title',
-						},
-						progress: {
-							'logged-in-step': {
-								stepName: 'logged-in-step',
-								status: 'completed',
-							},
-						},
-						_timestamp,
-					},
-					'redux-state-logged-out:signup': {
-						dependencyStore: {
-							siteType: 'blog',
-							siteTitle: 'Logged out test title',
-						},
-						progress: {
-							'logged-out-step': {
-								stepName: 'logged-out-step',
-								status: 'completed',
-							},
-						},
-						_timestamp,
-					},
-				};
-				const serverState = {};
-
-				beforeAll( async () => {
-					isEnabled.enablePersistRedux();
-					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getAllStoredItems' )
-						.mockResolvedValue( storedState );
-
-					await loadAllState();
-					state = getInitialState( combineReducers( { signup: signupReducer } ) );
-				} );
-
-				afterAll( () => {
-					window.initialReduxState = null;
-					isEnabled.disablePersistRedux();
-					consoleErrorSpy.mockRestore();
-					getStoredItemSpy.mockRestore();
-				} );
-
-				test( 'builds initial state without errors', () => {
-					expect( consoleErrorSpy ).not.toHaveBeenCalled();
-				} );
-
-				test( 'builds initial signup state from logged in state', () => {
-					expect( state.signup.dependencyStore ).toEqual(
-						storedState[ 'redux-state-123456789:signup' ].dependencyStore
-					);
-					expect( state.signup.progress ).toEqual(
-						storedState[ 'redux-state-123456789:signup' ].progress
-					);
-				} );
-
-				test( 'does not add timestamp to initial state', () => {
-					expect( state._timestamp ).toBeUndefined();
-				} );
-			} );
 		} );
 	} );
 
@@ -716,6 +587,131 @@ describe( 'initial-state', () => {
 
 			test( 'builds initial state using saved state', () => {
 				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
+			} );
+		} );
+
+		describe( 'with empty persisted signup state for logged in user, and persisted state for logged out user', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const _timestamp = Date.now();
+			const storedState = {
+				'redux-state-logged-out:signup': {
+					dependencyStore: {
+						siteType: 'blog',
+						siteTitle: 'Logged out test title',
+					},
+					progress: {
+						'logged-out-step': {
+							stepName: 'logged-out-step',
+							status: 'completed',
+						},
+					},
+					_timestamp,
+				},
+			};
+			const serverState = {};
+
+			beforeAll( async () => {
+				isEnabled.enablePersistRedux();
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( storedState );
+
+				await loadAllState();
+				state = getStateFromCache( signupReducer, 'signup' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				isEnabled.disablePersistRedux();
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'builds initial signup state from logged out state', () => {
+				expect( state.dependencyStore ).toEqual(
+					storedState[ 'redux-state-logged-out:signup' ].dependencyStore
+				);
+				expect( state.progress ).toEqual( storedState[ 'redux-state-logged-out:signup' ].progress );
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+		} );
+
+		describe( 'with existing persisted signup state for logged in user, and persisted state for logged out user', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const _timestamp = Date.now();
+			const storedState = {
+				'redux-state-123456789:signup': {
+					dependencyStore: {
+						siteType: 'blog',
+						siteTitle: 'Logged in test title',
+					},
+					progress: {
+						'logged-in-step': {
+							stepName: 'logged-in-step',
+							status: 'completed',
+						},
+					},
+					_timestamp,
+				},
+				'redux-state-logged-out:signup': {
+					dependencyStore: {
+						siteType: 'blog',
+						siteTitle: 'Logged out test title',
+					},
+					progress: {
+						'logged-out-step': {
+							stepName: 'logged-out-step',
+							status: 'completed',
+						},
+					},
+					_timestamp,
+				},
+			};
+			const serverState = {};
+
+			beforeAll( async () => {
+				isEnabled.enablePersistRedux();
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( storedState );
+
+				await loadAllState();
+				state = getStateFromCache( signupReducer, 'signup' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				isEnabled.disablePersistRedux();
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'builds initial signup state from logged in state', () => {
+				expect( state.dependencyStore ).toEqual(
+					storedState[ 'redux-state-123456789:signup' ].dependencyStore
+				);
+				expect( state.progress ).toEqual( storedState[ 'redux-state-123456789:signup' ].progress );
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
 			} );
 		} );
 	} );

@@ -6,7 +6,7 @@
 .design-selector {
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
-	padding-bottom: $gutenboarding-footer-height;
+	padding-bottom: $onboarding-footer-height;
 
 	.design-selector__header {
 		@include onboarding-heading-padding;

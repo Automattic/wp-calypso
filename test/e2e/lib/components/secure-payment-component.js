@@ -304,6 +304,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async waitForCouponToBeRemoved() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
+			await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( '[data-e2e-cart-is-loading="true"]' )
+			);
+
 			return await driverHelper.waitTillNotPresent(
 				this.driver,
 				By.css( '#checkout-line-item-coupon-line-item' )
@@ -353,10 +358,13 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		return this.waitForCouponToBeRemoved();
 	}
 
-	async removeFromCart() {
+	async removeBusinessPlan() {
+		const productSlug = this.businessPlanSlug;
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'button.cart__remove-item' )
+			By.css(
+				`button.cart__remove-item,.checkout-line-item[data-e2e-product-slug="${ productSlug }"] button.checkout-line-item__remove-product`
+			)
 		);
 	}
 

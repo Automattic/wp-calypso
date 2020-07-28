@@ -17,6 +17,7 @@ import {
 	CheckoutCartItem,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+	WPCOMPaymentMethodClass,
 } from '../types';
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'lib/products-values';
 
@@ -136,15 +137,14 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		subtotal: subtotalItem,
 		credits: credits_integer > 0 ? creditsLineItem : null,
 		allowedPaymentMethods: allowed_payment_methods
-			.filter( ( slug ) => {
-				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
-			} ) // TODO: stop returning this from the server
 			.map( readWPCOMPaymentMethodClass )
-			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
-			.filter( Boolean ),
+			.filter( ( Boolean as WPCOMPaymentMethodClass ) as ExcludesNull )
+			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod ),
 		couponCode: coupon,
 	};
 }
+
+type ExcludesNull = < T >( x: T | null ) => x is T;
 
 function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartProduct ): boolean {
 	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.

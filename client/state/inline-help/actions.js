@@ -9,8 +9,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_SELECT_RESULT,
-	INLINE_HELP_SELECT_NEXT_RESULT,
-	INLINE_HELP_SELECT_PREVIOUS_RESULT,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
@@ -176,32 +174,6 @@ export function showQandAOnInlineHelpContactForm() {
 	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
-		} );
-	};
-}
-
-/**
- * Selects the next result in the inline help results list.
- *
- * @returns {Function}        Action thunk
- */
-export function selectNextResult() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_SELECT_NEXT_RESULT,
-		} );
-	};
-}
-
-/**
- * Selects the previous result in the inline help results list.
- *
- * @returns {Function}        Action thunk
- */
-export function selectPreviousResult() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_SELECT_PREVIOUS_RESULT,
 		} );
 	};
 }

@@ -2,7 +2,7 @@
 @import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../variables.scss';
-@import '../../_z-index.scss';
+@import '~@automattic/onboarding/styles/z-index';
 
 $margin-left--gutenboarding__header-section-item: 13px; // matches design
 $padding--gutenboarding__header: $grid-unit-10;
@@ -35,9 +35,9 @@ $padding--gutenboarding__header: $grid-unit-10;
 	align-items: center;
 	justify-content: space-between;
 	border-bottom: 1px solid $light-gray-500;
-	height: $gutenboarding-header-height;
+	height: $onboarding-header-height;
 	background: $white;
-	z-index: gutenboarding-z-index( '.gutenboarding__header' );
+	z-index: onboarding-z-index( '.onboarding__header' );
 	left: 0;
 	right: 0;
 	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
@@ -49,6 +49,18 @@ $padding--gutenboarding__header: $grid-unit-10;
 	@include break-small {
 		position: fixed;
 	}
+}
+
+.gutenboarding__header-language-section {
+	margin-right: 15px;
+}
+
+.gutenboarding__header-site-language-badge {
+	display: inline-block;
+	padding: 1px 8px;
+	margin: 0 4px;
+	border: 1px solid $light-gray-500;
+	text-transform: uppercase;
 }
 
 .gutenboarding__header-section {

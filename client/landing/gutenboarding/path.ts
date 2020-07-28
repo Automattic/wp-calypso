@@ -17,6 +17,7 @@ export const Step = {
 	IntentGathering: undefined,
 	DesignSelection: 'design',
 	Style: 'style',
+	Features: 'features',
 	Signup: 'signup',
 	Login: 'login',
 	CreateSite: 'create-site',
@@ -24,6 +25,7 @@ export const Step = {
 	Plans: 'plans',
 	DomainsModal: 'domains-modal',
 	PlansModal: 'plans-modal',
+	LanguageModal: 'language-modal',
 } as const;
 
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.

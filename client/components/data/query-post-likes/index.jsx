@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { requestPostLikes } from 'state/posts/likes/actions';
-import getPostLikeLastUpdated from 'state/selectors/get-post-like-last-updated';
-import getPostLikes from 'state/selectors/get-post-likes';
+import { getPostLikeLastUpdated } from 'state/posts/selectors/get-post-like-last-updated';
+import { getPostLikes } from 'state/posts/selectors/get-post-likes';
 import { Interval } from 'lib/interval';
 
 class QueryPostLikes extends Component {

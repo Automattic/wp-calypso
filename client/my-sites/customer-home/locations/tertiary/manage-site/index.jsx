@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -22,6 +22,7 @@ import {
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
 } from 'my-sites/customer-home/cards/constants';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: GoMobile,
@@ -31,8 +32,14 @@ const cardComponents = {
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
 };
 
-const ManageSite = ( { cards } ) => {
+const ManageSite = ( { cards, trackCards } ) => {
 	const translate = useTranslate();
+
+	useEffect( () => {
+		if ( cards && cards.length ) {
+			trackCards( cards );
+		}
+	}, [ cards, trackCards ] );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -63,4 +70,15 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( ManageSite );
+const trackCardImpressions = ( cards ) => {
+	const analyticsEvents = cards.reduce( ( events, card ) => {
+		return [
+			...events,
+			recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
+			bumpStat( 'calypso_customer_home_card_impression', card ),
+		];
+	}, [] );
+	return composeAnalytics( ...analyticsEvents );
+};
+
+export default connect( mapStateToProps, { trackCards: trackCardImpressions } )( ManageSite );

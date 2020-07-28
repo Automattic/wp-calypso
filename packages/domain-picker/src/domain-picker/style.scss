@@ -1,5 +1,6 @@
-@import '../styles/placeholder.scss'; // Contains the placeholder mixin
-@import '../styles/mixins';
+@import '~@automattic/calypso-color-schemes';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/fonts';
 
 .domain-picker__empty-state {
 	display: flex;
@@ -75,12 +76,13 @@
 }
 
 .domain-picker__suggestion-item {
-	@include domain-picker-package-medium-text;
+	@include onboarding-medium-text;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	width: 100%;
 	min-height: 36px + ( 10px * 2 ) + ( 1px * 2 ); // button height + padding height + border height
+	background: var( --studio-white );
 	border: 1px solid var( --studio-gray-5 );
 	padding: 10px 14px;
 	margin: 0;
@@ -91,31 +93,6 @@
 
 	&.placeholder {
 		cursor: default;
-	}
-
-	&.is-selected {
-		background: var( --studio-blue-0 );
-		border-color: var( --studio-blue-40 );
-		z-index: 2;
-	}
-
-	&:hover,
-	&:focus {
-		&:not( .placeholder ) {
-			background: var( --studio-blue-0 );
-			border-color: var( --studio-blue-40 );
-			z-index: 2;
-		}
-
-		// Fade between price and select button only happens on desktop view.
-		@include break-small {
-			.domain-picker__suggestion-item-select-button {
-				opacity: 1;
-			}
-			.domain-picker__price {
-				opacity: 0;
-			}
-		}
 	}
 
 	&:first-of-type {
@@ -148,19 +125,63 @@
 			opacity: 1;
 		}
 	}
+
+	input[type='radio'].domain-picker__suggestion-radio-button {
+		width: 16px;
+		height: 16px;
+		min-width: 16px; // prevents long domain from squishing the radio button
+		padding: 0;
+		margin: 1px 12px 0 0;
+		vertical-align: middle;
+		position: relative;
+
+		&:checked {
+			border-color: var( --studio-blue-30 );
+			background-color: var( --studio-blue-30 );
+
+			&::after {
+				content: '';
+				width: 12px;
+				height: 12px;
+				border: 2px solid white;
+				border-radius: 50%;
+				position: absolute;
+				margin: 0;
+				background: transparent;
+			}
+
+			&:focus {
+				border-color: var( --studio-blue-30 );
+				box-shadow: 0 0 0 1px var( --studio-blue-30 );
+			}
+		}
+
+		&:not( :disabled ):focus,
+		&:not( :disabled ):hover {
+			border-color: var( --studio-blue-30 );
+			box-shadow: 0 0 0 1px var( --studio-blue-30 );
+		}
+	}
 }
 
 .domain-picker__suggestion-item-name {
 	flex-grow: 1;
-	margin-right: 24px;
 	letter-spacing: 0.4px;
+
+	.domain-picker__suggestion-item:not( .is-free ) & {
+		margin-right: 0;
+
+		@include break-mobile {
+			margin-right: 24px;
+		}
+	}
 
 	.domain-picker__domain-name {
 		word-break: break-word; // use hyphens if any to break domain name
 	}
 
 	&.placeholder {
-		@include placeholder();
+		@include onboarding-placeholder();
 		max-width: 30%;
 		margin-right: auto; // position the placeholder to the left overriding justify-content: space-between
 	}
@@ -207,70 +228,22 @@
 	}
 
 	&.placeholder {
-		@include placeholder();
+		@include onboarding-placeholder();
 		min-width: 64px;
 	}
 }
 
-.domain-picker__price-long {
+.domain-picker__price-inclusive {
+	color: var( --studio-green-40 );
 	display: none;
+
 	@include break-small {
 		display: inline;
 	}
 }
 
-.domain-picker__price-short {
-	display: inline;
-	@include break-small {
-		display: none;
-	}
-}
-
 .domain-picker__price-cost {
 	text-decoration: line-through;
-}
-
-.domain-picker__suggestion-item-select-button {
-	display: flex;
-	align-items: center;
-	height: 36px;
-
-	span {
-		display: none;
-	}
-
-	svg {
-		fill: var( --studio-blue-50 );
-		margin-left: 10px;
-		margin-right: -2px;
-	}
-
-	@include break-small {
-		// We're mocking the look of a button,
-		// this is not an actual button.
-		background: $blue-medium-focus;
-		color: var( --studio-white );
-		border-radius: 2px;
-		padding: 0 12px;
-		opacity: 0;
-		transition: opacity 200ms ease-in-out;
-
-		// Overlaps price for transition purpose
-		position: absolute;
-		right: 14px;
-
-		&:hover {
-			background: mix( black, $blue-medium-focus, 10% );
-		}
-
-		span {
-			display: inline-block;
-		}
-
-		svg {
-			display: none;
-		}
-	}
 }
 
 .domain-picker__body {

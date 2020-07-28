@@ -31,6 +31,7 @@
 	},
 	"dependencies": {
 		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@automattic/onboarding": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@wordpress/components": "^9.6.0",
 		"@wordpress/compose": "^3.16.0",
@@ -42,6 +43,7 @@
 		"uuid": "^7.0.2"
 	},
 	"devDependencies": {
+		"@automattic/typography": "^1.0.0",
 		"@wordpress/base-styles": "^1.8.0"
 	},
 	"peerDependencies": {

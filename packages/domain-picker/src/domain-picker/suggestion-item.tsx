@@ -7,8 +7,6 @@ import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
-import { Icon, arrowRight } from '@wordpress/icons';
-import { createInterpolateElement } from '@wordpress/element';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
@@ -63,15 +61,20 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<button
-			type="button"
+		<label
 			className={ classnames( 'domain-picker__suggestion-item', {
 				'is-free': suggestion.is_free,
 				'is-selected': selected,
 			} ) }
-			onClick={ onDomainSelect }
-			id={ labelId }
 		>
+			<input
+				aria-labelledby={ labelId }
+				className="domain-picker__suggestion-radio-button"
+				type="radio"
+				name="domain-picker-suggestion-option"
+				onChange={ onDomainSelect }
+				checked={ selected }
+			/>
 			<div className="domain-picker__suggestion-item-name">
 				<span className="domain-picker__domain-name">{ domainName }</span>
 				<span className="domain-picker__domain-tld">{ domainTld }</span>
@@ -85,22 +88,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				} ) }
 			>
 				{ suggestion.is_free ? (
-					__( 'Included in free plan' )
+					__( 'Free' )
 				) : (
 					<>
-						<span className="domain-picker__price-long">
-							{ createInterpolateElement(
-								sprintf(
-									/* translators: %s is the price with currency. Eg: $15/year. */
-									__( 'Included in paid plan, <strikethrough>%s/year</strikethrough>' ),
-									suggestion.cost
-								),
-								{
-									strikethrough: <span className="domain-picker__price-cost"></span>,
-								}
-							) }
-						</span>
-						<span className="domain-picker__price-short domain-picker__price-cost">
+						<span className="domain-picker__price-inclusive"> { __( 'Included in plans' ) } </span>
+						<span className="domain-picker__price-cost">
 							{
 								/* translators: %s is the price with currency. Eg: $15/year. */
 								sprintf( __( '%s/year' ), suggestion.cost )
@@ -109,11 +101,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					</>
 				) }
 			</div>
-			<div className="domain-picker__suggestion-item-select-button">
-				<span>{ __( 'Select' ) }</span>
-				<Icon icon={ arrowRight } size={ 18 } />
-			</div>
-		</button>
+		</label>
 	);
 };
 

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import Dispatcher from 'dispatcher';
 import { includes, partial } from 'lodash';
 import wpLib from 'lib/wp';
@@ -31,6 +30,10 @@ import {
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
 import { reduxDispatch } from 'lib/redux-bridge';
+
+// This library unfortunately relies on global Redux state directly, by e.g. creating actions.
+// Because of this, we need to ensure that the relevant portion of state is initialized.
+import 'state/imports/init';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 

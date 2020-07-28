@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './edit';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 import './style.scss';
 
 registerBlockType( 'a8c/site-credit', {
@@ -18,7 +19,7 @@ registerBlockType( 'a8c/site-credit', {
 		'full-site-editing'
 	),
 	icon: 'wordpress-alt',
-	category: 'layout',
+	category: getCategoryWithFallbacks( 'design', 'layout' ),
 	supports: {
 		align: [ 'wide', 'full' ],
 		html: false,

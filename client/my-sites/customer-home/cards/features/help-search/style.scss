@@ -59,9 +59,9 @@ $min_results_height: 180px;
 
 		.gridicon {
 			fill: var( --color-text-inverted );
-			margin: 1px 0 0 1px;
 			height: 24px;
 			width: 24px;
+			transform: translate( 1px, 1px );
 		}
 	}
 
@@ -111,7 +111,7 @@ $min_results_height: 180px;
 		}
 	}
 
-	.inline-help__results-list {
+	.inline-help__results {
 		margin: #{$search_results_top_spacing + 1px } #{-$card_padding_small} 0;
 		min-height: $min_results_height;
 		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;

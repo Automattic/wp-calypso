@@ -19,7 +19,7 @@ export function useDomainSuggestions(
 
 	return useSelect(
 		( select ) => {
-			if ( ! domainSearch ) {
+			if ( ! domainSearch || domainSearch.length < 2 ) {
 				return;
 			}
 			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {

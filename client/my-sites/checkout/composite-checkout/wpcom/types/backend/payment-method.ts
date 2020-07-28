@@ -105,9 +105,9 @@ export interface WPCOMBillingWebPayment {
  *
  * @param slug Name of one of the payment method classes on WPCOM
  *
- * @returns Typed payment method slug
+ * @returns Typed payment method slug or null
  */
-export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodClass {
+export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodClass | null {
 	switch ( slug ) {
 		case 'WPCOM_Billing_WPCOM':
 		case 'WPCOM_Billing_Ebanx':
@@ -127,8 +127,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodC
 		case 'WPCOM_Billing_Web_Payment':
 			return { name: slug };
 	}
-
-	throw new Error( `Unrecognized payment method class name: "${ slug }"` );
+	return null;
 }
 
 /**

@@ -27,9 +27,8 @@
 		"esModuleInterop": false,
 
 		// Some type helpers from our webpack/
-		"types": [ "fse" ],
-		"typeRoots": [ "./typings", "./node_modules", "../../node_modules" ],
-
+		"types": [ "fse", "jest" ],
+		"typeRoots": [ "./typings", "./node_modules/@types", "../../node_modules/@types" ],
 		// Preserve JSX, allows compatibility with wp-element jsx babel transforms
 		"jsx": "preserve"
 	},

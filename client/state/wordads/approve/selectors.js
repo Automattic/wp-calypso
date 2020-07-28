@@ -1,10 +1,15 @@
 /**
+ * Internal dependencies
+ */
+import 'state/wordads/init';
+
+/**
  * Returns true if we're currently requesting WordAds approval
  *
+ * @param   {object} state  Global State
  * @param {number} siteId Site Id
  * @returns {boolean}       requesting state
  */
-
 export function isRequestingWordAdsApproval( state, siteId ) {
 	return !! state.wordads.approve.requesting[ siteId ];
 }

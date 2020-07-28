@@ -22,13 +22,14 @@ use( plugins.persistence, persistOptions );
 registerStore< State >( STORE_KEY, {
 	actions,
 	controls,
-	reducer: reducer as any,
+	reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 	selectors,
 	persist: [
 		'domain',
 		'domainSearch',
 		'siteTitle',
 		'siteVertical',
+		'hasUsedDomainsStep',
 		'hasUsedPlansStep',
 		'pageLayouts',
 		'selectedDesign',

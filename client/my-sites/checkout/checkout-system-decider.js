@@ -7,19 +7,26 @@ import debugFactory from 'debug';
 import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { isArray } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import CheckoutContainer from './checkout/checkout-container';
+import DuplicateProductNoticeContent from './checkout/duplicate-product-notice-content';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
+import { getPlanByPathSlug } from 'lib/plans';
+import { GROUP_JETPACK } from 'lib/plans/constants';
+import { isJetpackBackup } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getSiteProducts } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
+import { isPlanIncludingSiteBackup } from 'state/sites/products/conflicts';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -41,13 +48,31 @@ export default function CheckoutSystemDecider( {
 	upgradeIntent,
 	clearTransaction,
 	cart,
-	isWhiteGloveOffer,
 } ) {
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
+	const siteId = selectedSite?.ID;
+	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
+
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const isIncludingSiteBackup = useSelector( ( state ) =>
+		jetpackPlan ? isPlanIncludingSiteBackup( state, siteId, jetpackPlan.getStoreSlug() ) : null
+	);
+	const products = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const reduxDispatch = useDispatch();
+	const translate = useTranslate();
+
+	let duplicateBackupNotice;
+
+	if ( isIncludingSiteBackup && selectedSite ) {
+		const backupProduct = isArray( products ) && products.find( isJetpackBackup );
+
+		duplicateBackupNotice = backupProduct && (
+			<DuplicateProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
+		);
+	}
+
 	const checkoutVariant = getCheckoutVariant(
 		cart,
 		countryCode,
@@ -57,7 +82,6 @@ export default function CheckoutSystemDecider( {
 		isJetpack,
 		isAtomic
 	);
-	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( product ) {
@@ -129,8 +153,8 @@ export default function CheckoutSystemDecider( {
 						feature={ selectedFeature }
 						plan={ plan }
 						cart={ cart }
-						isWhiteGloveOffer={ isWhiteGloveOffer }
 						isComingFromUpsell={ isComingFromUpsell }
+						infoMessage={ duplicateBackupNotice }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>
@@ -153,7 +177,7 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
-			isWhiteGloveOffer={ isWhiteGloveOffer }
+			infoMessage={ duplicateBackupNotice }
 		/>
 	);
 }
@@ -177,30 +201,24 @@ function getCheckoutVariant(
 		return 'composite-checkout';
 	}
 
+	// Disable for Brazil and India
+	if ( countryCode?.toLowerCase() === 'br' || countryCode?.toLowerCase() === 'in' ) {
+		debug(
+			'shouldShowCompositeCheckout false because country is not allowed',
+			countryCode?.toLowerCase()
+		);
+		return 'disallowed-geo';
+	}
+
 	// Disable if this is a jetpack site
 	if ( isJetpack && ! isAtomic ) {
 		debug( 'shouldShowCompositeCheckout false because jetpack site' );
 		return 'jetpack-site';
 	}
-	// Disable for non-USD
-	if ( cart.currency !== 'USD' ) {
-		debug( 'shouldShowCompositeCheckout false because currency is not USD' );
-		return 'disallowed-currency';
-	}
 	// Disable for jetpack plans
 	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) ) ) {
 		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
 		return 'jetpack-product';
-	}
-	// Disable for non-EN
-	if ( ! locale?.toLowerCase().startsWith( 'en' ) ) {
-		debug( 'shouldShowCompositeCheckout false because locale is not EN' );
-		return 'disallowed-locale';
-	}
-	// Disable for non-US
-	if ( countryCode?.toLowerCase() !== 'us' ) {
-		debug( 'shouldShowCompositeCheckout false because country is not US' );
-		return 'disallowed-geo';
 	}
 
 	// If the URL is adding a product, only allow things already supported.
@@ -233,6 +251,21 @@ function getCheckoutVariant(
 			productSlug
 		);
 		return 'disallowed-product';
+	}
+
+	// Removes users from initial AB test
+	if (
+		cart.currency === 'USD' &&
+		countryCode?.toLowerCase() === 'us' &&
+		locale?.toLowerCase().startsWith( 'en' )
+	) {
+		debug( 'shouldShowCompositeCheckout true' );
+		return 'composite-checkout';
+	}
+	// Add remaining users to new AB test with 10% holdout
+	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
+		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );
+		return 'control-variant';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );

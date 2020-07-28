@@ -23,18 +23,12 @@ import { createStripePaymentMethod } from 'lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
 
-export function genericRedirectProcessor(
-	paymentMethodId,
-	submitData,
-	getThankYouUrl,
-	isWhiteGloveOffer,
-	siteSlug
-) {
+export function genericRedirectProcessor( paymentMethodId, submitData, getThankYouUrl, siteSlug ) {
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
 		true
 	);
-	const cancelUrlQuery = isWhiteGloveOffer ? { type: 'white-glove' } : {};
+	const cancelUrlQuery = {};
 	const redirectToSuccessUrl = formatUrl( {
 		protocol,
 		hostname,
@@ -191,9 +185,8 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem, isWhiteGloveOffer ) {
+export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-	const query = isWhiteGloveOffer ? { type: 'white-glove' } : {};
 	const successUrl = formatUrl( {
 		protocol,
 		hostname,
@@ -205,7 +198,6 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem, i
 		hostname,
 		port,
 		pathname,
-		query,
 	} );
 
 	const pending = submitPayPalExpressRequest(

@@ -1,98 +1,89 @@
 /**
+ * External dependencies
+ */
+import { castArray, noop, zip } from 'lodash';
+
+/**
  * Internal dependencies
  */
-import { createTransientMedia, validateMediaItem } from 'lib/media/utils';
-import { getTransientDate } from 'state/media/utils/transient-date';
 import {
-	dispatchFluxCreateMediaItem,
 	dispatchFluxFetchMediaLimits,
 	dispatchFluxReceiveMediaItemError,
 	dispatchFluxReceiveMediaItemSuccess,
 } from 'state/media/utils/flux-adapter';
-import {
-	createMediaItem,
-	receiveMedia,
-	successMediaItemRequest,
-	failMediaItemRequest,
-	setMediaItemErrors,
-} from 'state/media/actions';
-import { serially } from 'state/media/thunks/serially';
+import { receiveMedia, successMediaItemRequest, failMediaItemRequest } from 'state/media/actions';
+import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
+import { isFileList } from 'state/media/utils/is-file-list';
 
 /**
- * Add a single media item. Allow passing in the transient date so
- * that consumers can upload in series. Use a safe default for when
+ * Add media items serially (one at a time) but dispatch creation
+ * for all at the start. Use a safe default for when
  * only a single item is being uploaded.
  *
- * Restrict this function to purely a single media item.
+ * This function swallows errors and behaves differently from a Promise.all.
+ * Where Promise.all will fail on a single failed promise, this function
+ * swallows all errors and depends on the `onItemFailure` and redux store's
+ * handling of errors. It then returns only the list of successful uploads.
  *
  * Note: Temporarily this action will dispatch to the flux store, until
  * the flux store is removed.
  *
- * @param {object} file The file to upload
+ * @param {object|object[]} files The file to upload
  * @param {object} site The site to add the media to
  * @param {Function} uploader The file uploader to use
- * @param {string?} transientDate Date for the transient item
- * @returns {import('redux-thunk').ThunkAction<Promise<object>, any, any, any>} A thunk resolving with the uploaded media item
+ * @param {Function?} onItemUploaded Optional function to call when upload for an individual item succeeds
+ * @param {Function?} onItemFailure Optional function to be called when upload for an individual item fails
+ * @returns {import('redux-thunk').ThunkAction<Promise<object[]>, any, any, any>} A thunk resolving
+ * with the uploaded media items.
  */
-export const uploadSingleMedia = (
-	file,
+export const uploadMedia = (
+	files,
 	site,
 	uploader,
-	transientDate = getTransientDate()
+	onItemUploaded = noop,
+	onItemFailure = noop
 ) => async ( dispatch ) => {
-	const transientMedia = {
-		date: transientDate,
-		...createTransientMedia( file ),
-	};
+	// https://stackoverflow.com/questions/25333488/why-isnt-the-filelist-object-an-array
+	files = isFileList( files ) ? Array.from( files ) : castArray( files );
+	const uploadedItems = [];
 
-	if ( file.ID ) {
-		transientMedia.ID = file.ID;
-	}
-
+	const transientItems = dispatch( createTransientMediaItems( files, site ) );
 	const { ID: siteId } = site;
 
-	dispatchFluxCreateMediaItem( transientMedia, site );
+	await zip( files, transientItems ).reduce( async ( previousUpload, [ file, transientMedia ] ) => {
+		if ( ! transientMedia ) {
+			// there was an error creating the transient media so just move on to the next one
+			return previousUpload;
+		}
 
-	const errors = validateMediaItem( site, transientMedia );
-	if ( errors?.length ) {
-		dispatch( setMediaItemErrors( siteId, transientMedia.ID, errors ) );
-		// throw rather than silently escape so consumers know the upload failed based on Promise resolution rather than state having to re-derive the failure themselves from state
-		throw errors;
-	}
+		await previousUpload;
 
-	dispatch( createMediaItem( site, transientMedia ) );
+		try {
+			const {
+				media: [ uploadedMedia ],
+				found,
+			} = await uploader( file, siteId );
+			const uploadedMediaWithTransientId = {
+				...uploadedMedia,
+				transientId: transientMedia.ID,
+			};
 
-	try {
-		const {
-			media: [ uploadedMedia ],
-			found,
-		} = await uploader( file, siteId );
+			dispatchFluxReceiveMediaItemSuccess( transientMedia.ID, siteId, uploadedMedia );
 
-		dispatchFluxReceiveMediaItemSuccess( transientMedia.ID, siteId, uploadedMedia );
+			dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
+			dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
-		dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
-		dispatch(
-			receiveMedia(
-				siteId,
-				{
-					...uploadedMedia,
-					transientId: transientMedia.ID,
-				},
-				found
-			)
-		);
+			dispatchFluxFetchMediaLimits( siteId );
 
-		dispatchFluxFetchMediaLimits( siteId );
+			onItemUploaded( uploadedMediaWithTransientId, file );
+			uploadedItems.push( uploadedMediaWithTransientId );
+		} catch ( error ) {
+			dispatchFluxReceiveMediaItemError( transientMedia.ID, siteId, error );
 
-		return uploadedMedia;
-	} catch ( error ) {
-		dispatchFluxReceiveMediaItemError( transientMedia.ID, siteId, error );
+			dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
+			onItemFailure( file );
+		}
+	}, Promise.resolve() );
 
-		dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
-		// no need to dispatch `deleteMedia` as `createMediaItem` won't have added it to the MediaQueryManager which tracks instances.
-		// rethrow so consumers know the upload failed
-		throw error;
-	}
+	return uploadedItems;
 };
-
-export const uploadMedia = serially( uploadSingleMedia );

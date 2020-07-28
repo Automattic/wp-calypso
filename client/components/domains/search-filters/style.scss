@@ -43,6 +43,7 @@
 
 		.search-filters__dropdown-filters-button-text {
 			line-height: 1.2;
+			white-space: nowrap;
 
 			@include breakpoint-deprecated( '<660px' ) {
 				display: none;
@@ -89,8 +90,6 @@
 	}
 }
 
-
-
 .search-filters__buttons {
 	display: flex;
 	flex-flow: row;
@@ -114,6 +113,11 @@
 
 	// Increase specificity to override button styles in signup
 	body.is-section-signup .layout & {
+		.search-filters__tld-button {
+			/*!rtl:ignore*/
+			direction: ltr;
+		}
+
 		button.search-filters__tld-button,
 		button.search-filters__popover-button {
 			font-size: $font-body-small;

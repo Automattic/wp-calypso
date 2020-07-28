@@ -125,7 +125,6 @@ class EarningsMain extends Component {
 		switch ( this.props.section ) {
 			case 'payments':
 				return translate( 'Payments' );
-
 			case 'ads-earnings':
 			case 'ads-settings':
 				return translate( 'Ads' );

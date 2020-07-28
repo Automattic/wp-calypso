@@ -8,8 +8,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SELECT_RESULT,
-	INLINE_HELP_SELECT_NEXT_RESULT,
-	INLINE_HELP_SELECT_PREVIOUS_RESULT,
 	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
@@ -112,33 +110,6 @@ export const search = withoutPersistence(
 					...state,
 					selectedResult: action.resultIndex,
 				};
-			case INLINE_HELP_SELECT_NEXT_RESULT: {
-				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-					return {
-						...state,
-						selectedResult: ( state.selectedResult + 1 ) % state.items[ state.searchQuery ].length,
-					};
-				}
-
-				return {
-					...state,
-					selectedResult: -1,
-				};
-			}
-			case INLINE_HELP_SELECT_PREVIOUS_RESULT: {
-				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-					const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
-					return {
-						...state,
-						selectedResult: newResult < 0 ? state.items[ state.searchQuery ].length - 1 : newResult,
-					};
-				}
-
-				return {
-					...state,
-					selectedResult: -1,
-				};
-			}
 		}
 
 		return state;

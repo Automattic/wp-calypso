@@ -71,7 +71,6 @@ export function checkout( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				upgradeIntent={ context.query.intent }
 				clearTransaction={ false }
-				isWhiteGloveOffer={ 'white-glove' === context.query.type }
 			/>
 		</CartData>
 	);
@@ -162,7 +161,7 @@ export function gsuiteNudge( context, next ) {
 export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	let upsellType, upgradeItem, extra;
+	let upsellType, upgradeItem;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
 		upsellType = 'concierge-quickstart-session';
@@ -173,10 +172,6 @@ export function upsellNudge( context, next ) {
 	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
 		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
-	} else if ( context.path.includes( 'offer-white-glove' ) ) {
-		upsellType = 'white-glove';
-		upgradeItem = 'business';
-		extra = { type: 'white-glove' };
 	}
 
 	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
@@ -192,7 +187,6 @@ export function upsellNudge( context, next ) {
 				receiptId={ Number( receiptId ) }
 				upsellType={ upsellType }
 				upgradeItem={ upgradeItem }
-				extra={ extra }
 			/>
 		</CheckoutContainer>
 	);

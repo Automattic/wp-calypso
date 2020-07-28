@@ -24,6 +24,7 @@
 		"@automattic/lasagna": "^0.6.1",
 		"@automattic/load-script": "^1.0.0",
 		"@automattic/material-design-icons": "^1.0.0",
+		"@automattic/onboarding": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/popup-monitor": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",

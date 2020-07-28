@@ -22,7 +22,6 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryMedia from 'components/data/query-media';
 import { getCurrentPlan, hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
-import { isEnabled } from 'config';
 
 class SimplePaymentsView extends Component {
 	render() {
@@ -32,7 +31,12 @@ class SimplePaymentsView extends Component {
 			<div className="wpview-content wpview-type-simple-payments">
 				<QuerySimplePayments siteId={ siteId } productId={ productId } />
 				<QuerySitePlans siteId={ siteId } />
-				{ product && <QueryMedia siteId={ siteId } mediaId={ product.featuredImageId } /> }
+				{ product && (
+					<QueryMedia
+						siteId={ siteId }
+						mediaId={ product.featuredImageId === '' ? 0 : parseInt( product.featuredImageId ) }
+					/>
+				) }
 				{ this.renderContent() }
 			</div>
 		);
@@ -52,9 +56,7 @@ class SimplePaymentsView extends Component {
 						<Gridicon icon="cross" />
 					</div>
 					<p className="wpview-type-simple-payments__unsupported-message">
-						{ isEnabled( 'earn/rename-payment-blocks' )
-							? translate( "Your plan doesn't include Pay with PayPal" )
-							: translate( "Your plan doesn't include Simple Payments" ) }
+						{ translate( "Your plan doesn't include Pay with PayPal" ) }
 					</p>
 				</div>
 			);

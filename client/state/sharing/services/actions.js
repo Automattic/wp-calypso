@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	KEYRING_SERVICES_RECEIVE,
@@ -10,6 +9,8 @@ import {
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
+
+import 'state/sharing/init';
 
 /**
  * Triggers a network request for Keyring services.

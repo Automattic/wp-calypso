@@ -18,7 +18,7 @@ import './index.scss';
 interface CalypsoifyWindow extends Window {
 	calypsoifyGutenberg?: {
 		frankenflowUrl?: string;
-		isFseGutenboarding?: boolean;
+		isGutenboarding?: boolean;
 		[ key: string ]: unknown;
 	};
 }
@@ -34,7 +34,7 @@ let handled = false;
 function updateEditor() {
 	if (
 		handled ||
-		! window?.calypsoifyGutenberg?.isFseGutenboarding ||
+		! window?.calypsoifyGutenberg?.isGutenboarding ||
 		! window?.calypsoifyGutenberg?.frankenflowUrl
 	) {
 		return;

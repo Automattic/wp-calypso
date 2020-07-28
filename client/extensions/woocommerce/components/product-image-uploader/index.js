@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { head, find, noop, trim, uniqueId } from 'lodash';
+import { head, noop, trim, uniqueId } from 'lodash';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
@@ -18,9 +18,8 @@ import { errorNotice as errorNoticeAction } from 'state/notices/actions';
 import DropZone from 'components/drop-zone';
 import FilePicker from 'components/file-picker';
 import getMediaErrors from 'state/selectors/get-media-errors';
-import MediaActions from 'lib/media/actions';
-import { filterItemsByMimePrefix, isItemBeingUploaded } from 'lib/media/utils';
-import MediaStore from 'lib/media/store';
+import { filterItemsByMimePrefix } from 'lib/media/utils';
+import { addWoocommerceProductImage } from 'state/media/thunks';
 
 class ProductImageUploader extends Component {
 	static propTypes = {
@@ -34,6 +33,7 @@ class ProductImageUploader extends Component {
 		onUpload: PropTypes.func,
 		onError: PropTypes.func,
 		onFinish: PropTypes.func,
+		addWoocommerceProductImage: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -43,6 +43,7 @@ class ProductImageUploader extends Component {
 		onUpload: noop,
 		onError: noop,
 		onFinish: noop,
+		addWoocommerceProductImage: noop,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -52,7 +53,8 @@ class ProductImageUploader extends Component {
 		this._isMounted = false;
 	}
 
-	showError = ( media, transientId ) => {
+	showError = ( media ) => {
+		const { ID: transientId } = media;
 		const { mediaValidationErrors, onError, errorNotice, translate } = this.props;
 
 		onError( {
@@ -139,51 +141,13 @@ class ProductImageUploader extends Component {
 
 		onSelect( filesToUpload );
 
-		const transientIds = filesToUpload.map( ( file ) => {
-			return file.ID;
-		} );
-
-		const uploadedIds = [];
-		const handleUpload = () => {
-			const transientId = head( transientIds );
-			const media = MediaStore.get( site.ID, transientId );
-			const isUploadInProgress = media && isItemBeingUploaded( media );
-
-			// File has finished uploading or failed.
-			if ( ! isUploadInProgress ) {
-				// Stop uploading and don't push events if they navigated away
-				if ( ! this._isMounted ) {
-					MediaStore.off( 'change', handleUpload );
-					return;
-				}
-
-				if ( media ) {
-					const file = find( filesToUpload, ( f ) => f.ID === transientId );
-					if ( media.URL ) {
-						onUpload( {
-							ID: media.ID,
-							transientId,
-							URL: media.URL,
-							placeholder: file.preview,
-						} );
-						uploadedIds.push( transientId );
-					} else {
-						this.showError( media, transientId );
-					}
-				} else {
-					this.showError( media, transientId );
-				}
-
-				transientIds.shift();
-				if ( transientIds.length === 0 ) {
-					MediaStore.off( 'change', handleUpload );
-					onFinish( uploadedIds );
-				}
-			}
-		};
-
-		MediaStore.on( 'change', handleUpload );
-		MediaActions.add( site, filesToUpload );
+		this.props.addWoocommerceProductImage(
+			filesToUpload,
+			site,
+			onUpload,
+			this.showError,
+			onFinish
+		);
 	};
 
 	renderCompactUploader() {
@@ -270,6 +234,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { errorNotice: errorNoticeAction } )(
-	localize( ProductImageUploader )
-);
+export default connect( mapStateToProps, {
+	errorNotice: errorNoticeAction,
+	addWoocommerceProductImage,
+} )( localize( ProductImageUploader ) );

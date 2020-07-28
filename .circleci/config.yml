@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@3.4.2
+  win: circleci/windows@2.2.0
 
 references:
   defaults: &defaults
@@ -52,7 +53,7 @@ references:
   # When we split tests, different nodes will receive a different set of tests so each node's
   # cache should be unique.
   #
-  # Finally, we cache on the branch and revision, falling back to master. This should give us
+  # Finally, we cache on the branch and revision, falling back to origin/HEAD. This should give us
   # pretty good "nearest neighbor" primer for the Jest cache.
   #
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -61,7 +62,7 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
@@ -77,7 +78,7 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
   save-terser-cache: &save-terser-cache
     name: Save Terser cache
@@ -91,7 +92,7 @@ references:
   # By including the `.git` directory in the cache, we can speed things up by only needing to update
   # the local repository.
   #
-  # We cache on the branch and revision, falling back to master, or any recent cache.
+  # We cache on the branch and revision, falling back to origin/HEAD, or any recent cache.
   #
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-git-cache: &restore-git-cache
@@ -99,11 +100,11 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git
-  update-git-master: &update-git-master
-    name: Update master branch
-    command: git fetch --force origin master
+  update-git: &update-git
+    name: Update all branches
+    command: git fetch --force origin
   save-git-cache: &save-git-cache
     name: Save git cache
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
@@ -169,7 +170,7 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
   save-babel-client-cache: &save-babel-client-cache
     name: Save Babel Client Cache
@@ -192,12 +193,12 @@ references:
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
   desktop-install-app-deps: &desktop-install-app-deps
-      name: Install Desktop Dependencies
-      command: |
-        source "$HOME/.nvm/nvm.sh"
-        nvm use
-        npm install -g yarn
-        yarn run build-desktop:install-app-deps
+    name: Install Desktop Dependencies
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
     - desktop/build
     - desktop/client
@@ -212,26 +213,26 @@ references:
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-restore-source-cache: &desktop-restore-source-cache
-      name: Restore desktop cache
-      keys:
-        - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+    name: Restore desktop cache
+    keys:
+      - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
   desktop-save-source-cache: &desktop-save-source-cache
-      name: Save desktop cache
-      key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
-      paths: *desktop-cache-paths
+    name: Save desktop cache
+    key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+    paths: *desktop-cache-paths
   desktop-notify-github-success: &desktop-notify-github-success
-      name: Notify Github Success
-      when: on_success
-      command: cd desktop && yarn ci:github:dismiss-review
+    name: Notify Github Success
+    when: on_success
+    command: cd desktop && yarn ci:github:dismiss-review
   desktop-notify-github-failure: &desktop-notify-github-failure
-      name: Notify Github Failure
-      when: on_fail
-      command: cd desktop && yarn ci:github:add-review
+    name: Notify Github Failure
+    when: on_fail
+    command: cd desktop && yarn ci:github:add-review
   desktop-notify-slack-failure: &desktop-notify-slack-failure
-      webhook: '$SLACK_WP_DESKTOP_E2E'
-      fail_only: true
-      mentions: '$CIRCLE_USERNAME'
-      failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
+    webhook: '$SLACK_WP_DESKTOP_E2E'
+    fail_only: true
+    mentions: '$CIRCLE_USERNAME'
+    failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
   prepare:
@@ -259,7 +260,7 @@ jobs:
       # repo
       - restore_cache: *restore-git-cache
       - checkout
-      - run: *update-git-master
+      - run: *update-git
       - save_cache: *save-git-cache
       - run: *update-node
       # npm dependencies
@@ -271,60 +272,14 @@ jobs:
           paths:
             - wp-calypso
 
-  typecheck-strict:
+  translate:
     <<: *defaults
-    parallelism: 1
     steps:
       - prepare
       - run:
-          name: TypeScript strict typecheck of individual subprojects
-          command: yarn run tsc --project client/landing/gutenboarding
-
-  lint-and-translate:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Lint Config Keys
-          when: always
-          command: yarn run lint:config-defaults
-      - run:
-          name: Lint yarn.lock
-          when: always
-          command: |
-            yarn
-            DIRTY_FILES=$(git status --porcelain 2>/dev/null)
-            if [[ ! -z "$DIRTY_FILES" ]]; then
-              echo "Repository contains uncommitted changes: "
-              echo "$DIRTY_FILES"
-              echo "You need to checkout the branch, run 'yarn' and commit those files."
-              exit 1
-            fi
-      - run:
-          name: Lint Client and Server
-          when: always
-          command: |
-            # We may not have files to lint which returns non-0 exit
-            # Ensure this does not cause job failure (see `|| exit 0`)
-            FILES_TO_LINT=$(
-              git diff --name-only --diff-filter=d origin/master... \
-                | grep -E '^(client/|server/|packages/)'            \
-                | grep -E '\.[jt]sx?$'
-            ) || exit 0
-
-            if [[ ! -z $FILES_TO_LINT ]]; then
-              ./node_modules/.bin/eslint                                \
-                --format junit                                          \
-                --output-file "$CIRCLE_TEST_REPORTS/eslint/results.xml" \
-                $FILES_TO_LINT
-            fi
-      - run:
-          name: Build calypso-strings.pot
-          when: always
-          command: |
-            yarn run translate
-            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
+          name: Extract strings
+          working_directory: wp-babel-makepot
+          command: npx https://github.com/Automattic/wp-babel-makepot "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso" --output "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
       - run:
           name: Build New Strings .pot
           when: always
@@ -355,6 +310,55 @@ jobs:
                       "vcs_type": "github"
                     }
                   }'
+
+  typecheck-strict:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: TypeScript strict typecheck of individual subprojects
+          command: yarn run tsc --project client/landing/gutenboarding
+
+  lint:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Lint Config Keys
+          when: always
+          command: yarn run lint:config-defaults
+      - run:
+          name: Lint yarn.lock
+          when: always
+          command: |
+            yarn
+            DIRTY_FILES=$(git status --porcelain 2>/dev/null)
+            if [[ ! -z "$DIRTY_FILES" ]]; then
+              echo "Repository contains uncommitted changes: "
+              echo "$DIRTY_FILES"
+              echo "You need to checkout the branch, run 'yarn' and commit those files."
+              exit 1
+            fi
+      - run:
+          name: Lint Client and Server
+          when: always
+          command: |
+            # We may not have files to lint which returns non-0 exit
+            # Ensure this does not cause job failure (see `|| exit 0`)
+            FILES_TO_LINT=$(
+              git diff --name-only --diff-filter=d origin... \
+                | grep -E '^(client/|server/|packages/)'            \
+                | grep -E '\.[jt]sx?$'
+            ) || exit 0
+
+            if [[ ! -z $FILES_TO_LINT ]]; then
+              ./node_modules/.bin/eslint                                \
+                --format junit                                          \
+                --output-file "$CIRCLE_TEST_REPORTS/eslint/results.xml" \
+                $FILES_TO_LINT
+            fi
 
   build-notifications:
     <<: *defaults
@@ -506,7 +510,7 @@ jobs:
   #
   # Expected usage:
   #   - After setup
-  #   - Only on branches (!master)
+  #   - Only on branches (not the primary branch)
   #
   prime-calypso-live:
     docker:
@@ -650,7 +654,7 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: "10.1.0"
+      xcode: '10.1.0'
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     steps:
@@ -666,11 +670,11 @@ jobs:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
           command: |
-                  set +e
-                  source $HOME/.nvm/nvm.sh
-                  nvm use
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
 
-                  yarn run build-desktop:app
+            yarn run build-desktop:app
       - run:
           name: e2e Tests
           command: |
@@ -701,6 +705,151 @@ jobs:
       - run: *desktop-notify-github-failure
       - slack/status: *desktop-notify-slack-failure
 
+  wp-desktop-linux:
+    <<: *desktop_defaults
+    shell: /bin/bash --login
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wp-calypso
+      - run: *update-node
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Linux
+          environment:
+            CSC_LINK: resource/certificates/win.p12
+          command: |
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
+
+            yarn run build-desktop:app
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            yarn run test-desktop:e2e
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/linux-unpacked
+            rm -rf desktop/release/.icon-set
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+
+  wp-desktop-windows:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\wp-calypso
+    environment:
+    steps:
+      - checkout
+      - attach_workspace:
+          at: C:\Users\circleci\wp-calypso
+      - run:
+          name: Install Node Version
+          command: |
+            $NODE_VERSION = Get-Content .nvmrc
+            nvm install $NODE_VERSION
+            nvm use $NODE_VERSION
+      - run:
+          name: Install Yarn
+          command: npm install -g yarn
+      - run:
+          name: Install Make
+          command: cinst make
+      - run:
+          name: Install Desktop Dependencies
+          command: yarn run build-desktop:install-app-deps
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Import Codesigning Certificate
+                command: |
+                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
+                  #
+                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
+                  # package.json's `certificateSubjectName` to find the imported cert.
+                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
+                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      - run:
+          name: Build Desktop Windows
+          command: |
+            # Use make for bash-like environment variable substitution
+
+            If ( $env:CIRCLE_TAG ) { $env:ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName=""Automattic, Inc.""' }
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$env:ELECTRON_BUILDER_ARGS
+      - run:
+          name: Archive Unpacked Directories
+          command: |
+            tar -zcf desktop/release/win-unpacked-x64.tar.gz desktop/release/win-unpacked
+            tar -zcf desktop/release/win-unpacked-ia32.tar.gz desktop/release/win-ia32-unpacked
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/win-unpacked
+            rm -rf desktop/release/win-ia32-unpacked
+          shell: bash.exe
+      - store_artifacts:
+          when: always
+          path: desktop\release
+      - persist_to_workspace:
+          root: C:\Users\circleci\wp-calypso
+          paths:
+            - desktop\release
+
+  wp-desktop-publish:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /home/circleci/wp-calypso
+    environment:
+      VERSION: << pipeline.git.tag >>
+    steps:
+      - attach_workspace:
+          at: /home/circleci/wp-calypso
+      - run:
+          name: Install Dependencies
+          command: go get github.com/tcnksm/ghr
+      - run:
+          name: Publish Github Release
+          command: |
+            echo "Publishing draft release for wp-desktop $VERSION..."
+            NAME="WP-Desktop ${VERSION#?}"
+
+            ghr \
+              --token "${GH_TOKEN}" \
+              --username "${CIRCLE_PROJECT_USERNAME}" \
+              --repository "${CIRCLE_PROJECT_REPONAME}" \
+              --commitish "${CIRCLE_SHA1}" \
+              --name "${NAME}" \
+              --delete \
+              --draft \
+              "${VERSION}" desktop/release/
+
+            echo "Publish complete"
+
 workflows:
   version: 2
   calypso:
@@ -722,7 +871,10 @@ workflows:
       - build-wpcom-block-editor:
           requires:
             - setup
-      - lint-and-translate:
+      - translate:
+          requires:
+            - setup
+      - lint:
           requires:
             - setup
       - test-client:
@@ -748,10 +900,10 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-#      - test-e2e-canary:
-#          requires:
-#            - wait-calypso-live
-#          test-flags: '-C -S $CIRCLE_SHA1'
+      #      - test-e2e-canary:
+      #          requires:
+      #            - wait-calypso-live
+      #          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
@@ -777,7 +929,45 @@ workflows:
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
-
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-source
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-source
+  wp-desktop-release:
+    when: << pipeline.git.tag >>
+    jobs:
+      - wp-desktop-source:
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-source
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-source
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-source
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-publish:
+          requires:
+            - wp-desktop-mac
+            - wp-desktop-linux
+            - wp-desktop-windows
+          filters:
+            tags:
+              only: /v.*/
   calypso-nightly:
     jobs:
       - setup

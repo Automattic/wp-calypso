@@ -4,7 +4,7 @@
 .gutenboarding-page.domains {
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
-	padding-bottom: $gutenboarding-footer-height + 28px;
+	padding-bottom: $onboarding-footer-height + 28px;
 
 	.domains__header {
 		@include onboarding-heading-padding;

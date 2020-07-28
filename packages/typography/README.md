@@ -12,7 +12,7 @@ yarn add @automattic/typography
 
 Import the Sass file:
 
-`@import '~@automattic/typography/sass/fonts';`
+`@import '~@automattic/typography/styles/fonts';`
 
 Then apply the class name `wp-brand-font` to any elements that should display with Recoleta:
 

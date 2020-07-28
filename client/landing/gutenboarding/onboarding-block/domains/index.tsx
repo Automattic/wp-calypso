@@ -7,6 +7,14 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import DomainPicker from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import {
+	Title,
+	SubTitle,
+	ActionButtons,
+	BackButton,
+	NextButton,
+	SkipButton,
+} from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -16,8 +24,6 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { FLOW_ID } from '../../constants';
-import ActionButtons, { BackButton } from '../../components/action-buttons';
-import { Title, SubTitle } from '../../components/titles';
 
 /**
  * Style dependencies
@@ -39,7 +45,11 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
 
-	const { setDomain, setDomainSearch } = useDispatch( ONBOARD_STORE );
+	const { setDomain, setDomainSearch, setHasUsedDomainsStep } = useDispatch( ONBOARD_STORE );
+
+	React.useEffect( () => {
+		! isModal && setHasUsedDomainsStep( true );
+	}, [] );
 
 	// Keep a copy of the selected domain locally so it's available when the component is unmounting
 	const selectedDomainRef = React.useRef< string | undefined >();
@@ -65,7 +75,6 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
 		setDomain( suggestion );
-		handleNext();
 	};
 
 	const header = (
@@ -76,6 +85,12 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			</div>
 			<ActionButtons>
 				<BackButton onClick={ handleBack } />
+				{ ! isModal &&
+					( domain ? (
+						<NextButton onClick={ handleNext } />
+					) : (
+						<SkipButton onClick={ handleNext } />
+					) ) }
 			</ActionButtons>
 		</div>
 	);

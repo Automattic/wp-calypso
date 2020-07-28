@@ -255,12 +255,7 @@ function getInitialPersistedState( initialReducer ) {
 	const storageKeys = [ ...initialReducer.getStorageKeys() ];
 
 	function loadReducerState( { storageKey, reducer } ) {
-		let storedState = getStateFromPersistence( reducer, storageKey, false );
-
-		if ( ! storedState && storageKey === 'signup' ) {
-			storedState = getStateFromPersistence( reducer, storageKey, true );
-			debug( 'fetched signup state from logged out state', storedState );
-		}
+		const storedState = getStateFromPersistence( reducer, storageKey, false );
 
 		if ( storedState ) {
 			initialStoredState = initialReducer( initialStoredState, {
@@ -292,8 +287,8 @@ function getStateFromPersistence( reducer, subkey, forceLoggedOutUser = false ) 
 // between server and local persisted data.
 // This function handles both legacy and modularized Redux state.
 // `loadAllState` must have completed first.
-export function getStateFromCache( reducer, subkey, forceLoggedOutUser = false ) {
-	const reduxStateKey = getPersistenceKey( subkey, forceLoggedOutUser );
+export function getStateFromCache( reducer, subkey ) {
+	let reduxStateKey = getPersistenceKey( subkey, false );
 
 	let serverState = null;
 
@@ -301,7 +296,15 @@ export function getStateFromCache( reducer, subkey, forceLoggedOutUser = false )
 		serverState = window.initialReduxState?.[ subkey ] ?? null;
 	}
 
-	const persistedState = stateCache[ reduxStateKey ] ?? null;
+	let persistedState = stateCache[ reduxStateKey ] ?? null;
+
+	// Special case for handling signup flows where the user logs in halfway through.
+	if ( ! persistedState && subkey === 'signup' ) {
+		reduxStateKey = getPersistenceKey( subkey, true );
+		persistedState = stateCache[ reduxStateKey ] ?? null;
+
+		debug( 'fetched signup state from logged out state', persistedState );
+	}
 
 	// Default to server state, if it exists.
 	let useServerState = serverState !== null;
