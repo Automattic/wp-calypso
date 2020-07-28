@@ -98,18 +98,6 @@ describe( 'MySitesSidebar', () => {
 			);
 		} );
 
-		test( 'Should return null item if user can not use store on this site (nudge-a-palooza disabled)', () => {
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'upsell/nudge-a-palooza' );
-			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: false,
-				...defaultProps,
-			} );
-			const Store = () => Sidebar.store();
-
-			const wrapper = shallow( <Store /> );
-			expect( wrapper.html() ).toEqual( null );
-		} );
-
 		test( 'Should return null item if user who can upgrade can not use store on this site (control a/b group)', () => {
 			abtest.mockImplementation( () => 'control' );
 			const Sidebar = new MySitesSidebar( {
