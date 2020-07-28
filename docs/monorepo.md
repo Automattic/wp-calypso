@@ -44,8 +44,8 @@ It used to be that `devDependencies` needed to be added to the root `package.jso
 
 ### dependencies
 
-Running the following in your `wp-calypso` root <br/>
-`yarn workspace @automattic/{{your-package}} run prepare && npx @yarnpkg/doctor packages/{{your-package}}` <br/>
+Running the following in your `wp-calypso` root  
+`yarn workspace @automattic/{{your-package}} run prepare && npx @yarnpkg/doctor packages/{{your-package}}`  
 will output all the unmet dependencies.
 
 ### sideEffects
