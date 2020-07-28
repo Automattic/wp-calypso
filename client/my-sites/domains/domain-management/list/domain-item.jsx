@@ -87,10 +87,10 @@ class DomainItem extends PureComponent {
 	};
 
 	addEmailClick = ( event ) => {
-		const { addEmailClick, currentRoute, disabled, domain, site } = this.props;
+		const { trackAddEmailClick, currentRoute, disabled, domain, site } = this.props;
 		event.stopPropagation();
 
-		addEmailClick( domain ); // analytics/tracks
+		trackAddEmailClick( domain ); // analytics/tracks
 
 		if ( disabled ) {
 			return;
@@ -440,11 +440,11 @@ class DomainItem extends PureComponent {
 	}
 }
 
-const addEmailClick = ( domain ) =>
+const trackAddEmailClick = ( domain ) =>
 	recordTracksEvent( 'calypso_domain_management_domain_item_add_email_click', {
 		section: domain.type,
 	} );
 
 export default connect( null, {
-	addEmailClick,
+	trackAddEmailClick,
 } )( localize( DomainItem ) );
