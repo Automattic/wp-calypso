@@ -67,12 +67,12 @@
 .domain-picker__suggestion-group-label {
 	margin: 0;
 	margin-top: 1.5em;
-	margin-bottom: 1em;
+	margin-bottom: 0.5em;
 	text-transform: uppercase;
-	color: var( --studio-gray-20 );
+	color: var( --studio-gray-40 );
 	font-size: 12px;
-	font-weight: 400;
 	letter-spacing: 1px;
+	font-weight: bold;
 }
 
 .domain-picker__suggestion-item {

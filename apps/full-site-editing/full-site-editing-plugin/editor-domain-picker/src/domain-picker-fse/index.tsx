@@ -58,6 +58,7 @@ const DomainPickerFSE: React.FunctionComponent< Props > = ( { onSelect } ) => {
 			onDomainSelect={ handleDomainSelect }
 			onExistingSubdomainSelect={ handleExistingSubdomainSelect }
 			analyticsUiAlgo="editor_domain_modal"
+			segregateFreeAndPaid
 		/>
 	);
 };
