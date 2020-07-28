@@ -1,4 +1,4 @@
-const { getDockerConfig } = require( '../lib' );
+const { getDockerConfig, isDockerInstalled } = require( '../lib' );
 
 module.exports = {
 	title: 'CPUs allocated',
@@ -8,6 +8,10 @@ module.exports = {
 		if ( process.platform !== 'darwin' ) {
 			ignore( 'This evaluation only works in OSX' );
 			return;
+		}
+
+		if ( ! ( await isDockerInstalled() ) ) {
+			ignore( 'Docker is not installed' );
 		}
 
 		const { cpus } = await getDockerConfig();

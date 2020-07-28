@@ -1,4 +1,4 @@
-const { getDockerConfig } = require( '../lib' );
+const { getDockerConfig, isDockerInstalled } = require( '../lib' );
 
 module.exports = {
 	title: 'Memory allocated',
@@ -7,6 +7,11 @@ module.exports = {
 	test: async ( { pass, fail, ignore } ) => {
 		if ( process.platform !== 'darwin' ) {
 			ignore( 'This evaluation only works in OSX' );
+			return;
+		}
+
+		if ( ! ( await isDockerInstalled() ) ) {
+			ignore( 'Docker is not installed' );
 			return;
 		}
 
