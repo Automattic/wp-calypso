@@ -34,6 +34,7 @@ module.exports = {
 	fix: () => {
 		const desiredValue = getMemInMb() * 0.75;
 		const shell = getShellRc();
-		return `Add \`NODE_OPTIONS=--max-old-space-size=${ desiredValue }\` to ${ shell }`;
+		if ( shell ) return `Add \`NODE_OPTIONS=--max-old-space-size=${ desiredValue }\` to ${ shell }`;
+		return `Set env variable \`NODE_OPTIONS\` with value \`--max-old-space-size=${ desiredValue }\``;
 	},
 };
