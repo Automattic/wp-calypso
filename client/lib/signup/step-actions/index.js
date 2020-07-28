@@ -248,7 +248,7 @@ function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSitePara
 		siteSlug: 'no-site',
 	};
 
-	return defer( () => callback( undefined, providedDependencies ) );
+	callback( undefined, providedDependencies );
 }
 
 export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
@@ -283,7 +283,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} );
 
 	if ( isEmpty( bearerToken ) && 'onboarding-new' === flowToCheck ) {
-		return saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
+		saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
+		return;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
