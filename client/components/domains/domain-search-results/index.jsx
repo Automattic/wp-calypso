@@ -59,6 +59,7 @@ class DomainSearchResults extends React.Component {
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
+		isReskinned: PropTypes.bool,
 	};
 
 	componentDidUpdate() {

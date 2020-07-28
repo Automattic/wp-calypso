@@ -61,6 +61,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		unavailableDomains: PropTypes.array,
 		productCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
+		isReskinned: PropTypes.bool,
 	};
 
 	componentDidMount() {
