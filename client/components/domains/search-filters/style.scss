@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .search-filters__dropdown-filters {
 	align-items: center;
 	border-left: 1px solid var( --color-neutral-10 );
@@ -212,6 +215,14 @@
 		color: var( --color-neutral-70 );
 		&.is-selected span {
 			color: var( --color-text-inverted );
+		}
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	.search-filters-extensions__popover {
+		@include break-medium {
+			transform: translateX( 65px );
 		}
 	}
 }

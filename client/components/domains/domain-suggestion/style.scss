@@ -296,7 +296,9 @@ body.is-section-signup.is-white-signup {
 				box-shadow: 0 0 0 1px var( --color-primary-40 );
 
 				.domain-suggestion__action {
+					border-radius: 4px;
 					display: block;
+					padding: 0.85em 1.7em;
 				}
 
 				.domain-product-price {

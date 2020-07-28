@@ -105,12 +105,6 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.search-filters__popover {
-		width: calc( 100vw - 40px );
-
-		@include break-mobile {
-			width: 28em;
-		}
-
 		.button.is-primary {
 			background: $accent-blue;
 			border-color: $accent-blue;
