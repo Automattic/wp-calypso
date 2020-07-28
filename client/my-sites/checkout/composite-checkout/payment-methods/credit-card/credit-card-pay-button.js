@@ -112,10 +112,6 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 							} );
 						return;
 					}
-					if ( paymentPartner === 'dlocal' ) {
-						// TODO
-						throw new Error( 'dlocal handler not implemented' );
-					}
 					throw new Error(
 						'Unrecognized payment partner in submit handler: "' + paymentPartner + '"'
 					);

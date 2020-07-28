@@ -178,12 +178,6 @@ export function createCreditCardPaymentMethodStore() {
 		return false;
 	}
 
-	function shouldUseDlocal( state = null ) {
-		// TODO
-		debug( 'dlocal decider not implemented', state );
-		return false;
-	}
-
 	// Which payment partner to use for submitting is a function of the form
 	// state; we derive it in the reducer but do not allow directly changing it.
 	// We need to have this data here (rather than just deriving it in the
@@ -192,9 +186,6 @@ export function createCreditCardPaymentMethodStore() {
 		let paymentPartner = 'stripe';
 		if ( shouldUseEbanx( state ) ) {
 			paymentPartner = 'ebanx';
-		}
-		if ( shouldUseDlocal( state ) ) {
-			paymentPartner = 'dlocal';
 		}
 		debug( 'credit card form selects payment partner: "' + paymentPartner + '"' );
 		return { ...state, paymentPartner };

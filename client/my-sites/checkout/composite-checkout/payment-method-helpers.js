@@ -127,11 +127,6 @@ export async function submitEbanxCardTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function submitDlocalCardTransaction( transactionData, submit ) {
-	// TODO
-	debug( 'dlocal card transaction submit not implemented', transactionData, submit );
-}
-
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
 	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
 		?.name;
