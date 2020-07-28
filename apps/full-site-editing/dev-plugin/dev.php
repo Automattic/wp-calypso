@@ -1,12 +1,8 @@
 <?php
 /**
- * Plugin Name: Full Site Editing Development
- * Description: Overrides for Full Site Editing development.
+ * Plugin Name: WordPress.com Editor Toolkit Development
+ * Description: Overrides for Editor Toolkit development.
  * Version: dev
- * Author: Automattic
- * Author URI: https://automattic.com/wordpress-plugins/
- * License: GPLv2 or later
- * Text Domain: full-site-editing
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
