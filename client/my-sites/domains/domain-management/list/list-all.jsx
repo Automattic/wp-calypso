@@ -59,10 +59,6 @@ class ListAll extends Component {
 
 	renderedQuerySiteDomains = {};
 
-	componentDidMount() {
-		this.props.listAllView();
-	}
-
 	clickAddDomain = () => {
 		this.props.addDomainClick();
 		page( domainAddNew( '' ) );
@@ -172,8 +168,6 @@ class ListAll extends Component {
 	}
 }
 
-const listAllView = () => recordTracksEvent( 'calypso_domain_management_list_all_view' );
-
 const addDomainClick = () =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in ListAll' ),
@@ -199,10 +193,7 @@ export default connect(
 			user,
 		};
 	},
-	( dispatch ) => {
-		return {
-			addDomainClick: () => dispatch( addDomainClick() ),
-			listAllView: () => dispatch( listAllView() ),
-		};
+	{
+		addDomainClick,
 	}
 )( localize( ListAll ) );

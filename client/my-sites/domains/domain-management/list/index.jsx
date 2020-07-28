@@ -84,10 +84,6 @@ export class List extends React.Component {
 		isPopoverCartVisible: false,
 	};
 
-	componentDidMount() {
-		this.props.listView();
-	}
-
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
 	}
@@ -642,8 +638,6 @@ export class List extends React.Component {
 	};
 }
 
-const listView = () => recordTracksEvent( 'calypso_domain_management_list_site_view' );
-
 const addDomainClick = () =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in List' ),
@@ -711,7 +705,6 @@ export default connect(
 						cta_name: 'domain_info_notice',
 					} )
 				),
-			listView: () => dispatch( listView() ),
 			setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
 			addDomainClick: () => dispatch( addDomainClick() ),
 			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),

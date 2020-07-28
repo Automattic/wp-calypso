@@ -34,7 +34,7 @@ import {
 } from 'my-sites/domains/paths';
 import Spinner from 'components/spinner';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -441,20 +441,10 @@ class DomainItem extends PureComponent {
 }
 
 const addEmailClick = ( domain ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "Add Email" Button in DomainItem',
-			'Domain Name',
-			domain.name
-		),
-		recordTracksEvent( 'calypso_domain_management_domain_item_add_email_click', {
-			section: domain.type,
-		} )
-	);
+	recordTracksEvent( 'calypso_domain_management_domain_item_add_email_click', {
+		section: domain.type,
+	} );
 
-export default connect( null, ( dispatch ) => {
-	return {
-		addEmailClick: ( domain ) => dispatch( addEmailClick( domain ) ),
-	};
+export default connect( null, {
+	addEmailClick,
 } )( localize( DomainItem ) );
