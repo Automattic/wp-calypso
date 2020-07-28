@@ -10,8 +10,6 @@ import { Card } from '@automattic/components';
  */
 import InlineSupportLink from 'components/inline-support-link';
 import { localizeUrl } from 'lib/i18n-utils';
-// import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-//import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -37,7 +35,6 @@ export const QuickStartVideo = () => {
 						tracksEvent="calypso_customer_home_education"
 						statsGroup="calypso_customer_home"
 						tracksOptions={ {
-							url,
 							card_name: "QuickStartVideo",
 						} }
 						statsName="QuickStartVideo" 
