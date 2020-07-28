@@ -1,6 +1,16 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 
+/**
+ * Returns the imports relative to a directory.
+ * For example, if the FS is:
+ *   - dir/
+ *      └ subdir/
+ *      └ file.js
+ *      └ data.json
+ *
+ * It will return the array ['subdir', 'file', 'data.json']
+ */
 const getRelativeImports = ( relativeDir ) => {
 	return fs.readdirSync( relativeDir, { withFileTypes: true } ).map( ( file ) => {
 		const fileName = file.name;
@@ -11,12 +21,19 @@ const getRelativeImports = ( relativeDir ) => {
 	} );
 };
 
+/**
+ * For each import (CJS and ESM), check if the import could be relative to one of the
+ * configured `mapping` (eg: if you are importing 'X' and 'X' is a subdirectory of ./client)
+ * If it is, prepend the import with the module (eg: `import 'X'` becomes `import 'wp-client/X'`)
+ */
 const reportIfPackageRelative = ( { context, node, dependency } ) => {
 	const { mapping, warnOnDynamicImport } = context.options[ 0 ];
 
+	// Because ExportNamedDeclaration and ExportAllDeclaration may not have an imported source (aka node.source)
 	if ( ! dependency ) return;
 	const { value: dependencyName, type: dependencyType } = dependency;
 
+	// This part is only relevant for CJS imports
 	if ( dependencyType !== 'Literal' ) {
 		if ( warnOnDynamicImport ) {
 			// eslint-disable-next-line no-console
