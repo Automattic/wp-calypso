@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-
 import { States } from './constants.js';
 import { get } from 'lodash';
+
+import 'state/exporter/init';
 
 export const getExportingState = ( state, siteId ) => {
 	const exportingState = state.exporter.exportingState;
@@ -116,4 +117,8 @@ export function prepareExportRequest( state, siteId, { exportAll = true } = {} )
 	const postType = getSelectedPostType( state );
 	const selectedFieldValues = getPostTypeFieldValues( state, siteId, postType );
 	return Object.assign( { post_type: postType }, selectedFieldValues );
+}
+
+export function getDownloadUrl( state ) {
+	return state.exporter.downloadURL;
 }

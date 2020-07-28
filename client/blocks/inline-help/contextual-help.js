@@ -9,7 +9,6 @@ import i18n, { translate } from 'i18n-calypso';
  */
 import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 import { localizeUrl } from 'lib/i18n-utils';
-import { isEnabled } from 'config';
 
 /**
  * Module variables
@@ -1208,9 +1207,7 @@ const getVideosForSection = () => ( {
 		{
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/V8UToJoSf4Q',
-			title: isEnabled( 'earn/rename-payment-blocks' )
-				? translate( 'Add a Pay with PayPal button' )
-				: translate( 'Add a Simple Payment Button' ),
+			title: translate( 'Add a Pay with PayPal button' ),
 			description: translate(
 				'Find out how to add a payment button to your WordPress.com website.'
 			),

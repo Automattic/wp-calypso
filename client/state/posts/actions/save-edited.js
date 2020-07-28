@@ -17,7 +17,7 @@ import {
 	normalizePostForActions,
 	normalizeTermsForApi,
 } from 'state/posts/utils';
-import editedPostHasContent from 'state/selectors/edited-post-has-content';
+import { editedPostHasContent } from 'state/posts/selectors/edited-post-has-content';
 import {
 	editorAutosaveReset,
 	editorInitRawContent,

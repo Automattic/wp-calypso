@@ -1,11 +1,13 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 import uploadsReducer from 'state/imports/uploads/reducer';
 import siteImporterReducer from 'state/imports/site-importer/reducer';
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	uploads: uploadsReducer,
 	siteImporter: siteImporterReducer,
 } );
+
+export default withStorageKey( 'imports', combinedReducer );

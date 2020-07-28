@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -18,7 +17,7 @@ import StatsModuleContent from '../stats-module/content-text';
 import QueryPostLikes from 'components/data/query-post-likes';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
-import countPostLikes from 'state/selectors/count-post-likes';
+import { countPostLikes } from 'state/posts/selectors/count-post-likes';
 import PostLikes from 'blocks/post-likes';
 
 /**

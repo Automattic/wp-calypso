@@ -215,6 +215,14 @@ function WordPressLogo() {
 }
 
 async function createAccountCallback( response ) {
+	// Set siteId from response
+	const siteIdFromResponse = response?.blog_details?.blogid;
+	const siteSlugFromResponse = response?.blog_details?.site_slug;
+	const { dispatch } = defaultRegistry;
+	siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
+	siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
+
+	// Log in the user
 	wp.loadToken( response.bearer_token );
 	const url = 'https://wordpress.com/wp-login.php';
 	const bodyObj = {
@@ -255,6 +263,8 @@ async function createAccount( select ) {
 		recaptchaError = 'recaptcha_didnt_load';
 	}
 
+	const blogName = newSiteParams?.blog_name;
+
 	try {
 		const response = await wp.undocumented().createUserAndSite(
 			{
@@ -262,6 +272,7 @@ async function createAccount( select ) {
 				'g-recaptcha-error': recaptchaError,
 				'g-recaptcha-response': recaptchaToken || undefined,
 				is_passwordless: true,
+				extra: { username_hint: blogName },
 				signup_flow_name: 'onboarding-new',
 				validate: false,
 				ab_test_variations: getSavedVariations(),
@@ -291,14 +302,10 @@ function getErrorMessage( { error, message } ) {
 
 export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	if ( isLoggedOutCart ) {
-		const { select, dispatch } = defaultRegistry;
+		const { select } = defaultRegistry;
 
 		return createAccount( select ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
-			const siteSlugFromResponse = response?.blog_details?.site_slug;
-
-			siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
-			siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
 
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then
 			// the create account response will not have a site ID, so we fetch from state.
@@ -309,7 +316,7 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 					...payload.cart,
 					blog_id: siteId || '0',
 					cart_key: siteId || 'no-site',
-					create_new_blog: siteId ? false : true,
+					create_new_blog: false,
 				},
 			};
 
@@ -322,15 +329,14 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 
 export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
 	if ( isLoggedOutCart ) {
-		const { select, dispatch } = defaultRegistry;
+		const { select } = defaultRegistry;
 
 		return createAccount( select ).then( ( response ) => {
-			const siteId = response?.blog_details?.blogid;
-			const siteSlug = response?.blog_details?.site_slug;
+			const siteIdFromResponse = response?.blog_details?.blogid;
 
-			siteId && dispatch( 'wpcom' ).setSiteId( siteId );
-			siteSlug && dispatch( 'wpcom' ).setSiteSlug( siteSlug );
-
+			// If the account is already created(as happens when we are reprocessing after a transaction error), then
+			// the create account response will not have a site ID, so we fetch from state.
+			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
 			const newPayload = {
 				...payload,
 				siteId,
@@ -338,7 +344,7 @@ export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
 					...payload.cart,
 					blog_id: siteId || '0',
 					cart_key: siteId || 'no-site',
-					create_new_blog: siteId ? false : true,
+					create_new_blog: false,
 				},
 			};
 

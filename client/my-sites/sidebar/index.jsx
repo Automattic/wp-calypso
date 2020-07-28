@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
+// eslint-disable-next-line no-restricted-imports
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
 import { ProgressBar } from '@automattic/components';
@@ -1061,7 +1062,7 @@ function mapStateToProps( state ) {
 		scanState: getScanState( state, siteId ),
 		rewindState: getRewindState( state, siteId ),
 		isCloudEligible: isJetpackCloudEligible( state, siteId ),
-		isAllSitesView: getSelectedSiteId( state ) === null,
+		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
 	};
 }
 

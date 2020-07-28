@@ -70,7 +70,7 @@ class RenewButton extends React.Component {
 		}
 
 		const buttonClasses = classNames( 'renew-button', { 'is-loading': loading } );
-		let buttonLabel = translate( 'Renew for {{strong}}%(price)s{{/strong}}', {
+		let buttonLabel = translate( 'Renew now for {{strong}}%(price)s{{/strong}}', {
 			components: { strong: <strong /> },
 			args: { price: formattedPrice },
 		} );
