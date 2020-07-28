@@ -193,12 +193,12 @@ references:
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
   desktop-install-app-deps: &desktop-install-app-deps
-      name: Install Desktop Dependencies
-      command: |
-        source "$HOME/.nvm/nvm.sh"
-        nvm use
-        npm install -g yarn
-        yarn run build-desktop:install-app-deps
+    name: Install Desktop Dependencies
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
     - desktop/build
     - desktop/client
@@ -213,26 +213,26 @@ references:
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-restore-source-cache: &desktop-restore-source-cache
-      name: Restore desktop cache
-      keys:
-        - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+    name: Restore desktop cache
+    keys:
+      - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
   desktop-save-source-cache: &desktop-save-source-cache
-      name: Save desktop cache
-      key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
-      paths: *desktop-cache-paths
+    name: Save desktop cache
+    key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+    paths: *desktop-cache-paths
   desktop-notify-github-success: &desktop-notify-github-success
-      name: Notify Github Success
-      when: on_success
-      command: cd desktop && yarn ci:github:dismiss-review
+    name: Notify Github Success
+    when: on_success
+    command: cd desktop && yarn ci:github:dismiss-review
   desktop-notify-github-failure: &desktop-notify-github-failure
-      name: Notify Github Failure
-      when: on_fail
-      command: cd desktop && yarn ci:github:add-review
+    name: Notify Github Failure
+    when: on_fail
+    command: cd desktop && yarn ci:github:add-review
   desktop-notify-slack-failure: &desktop-notify-slack-failure
-      webhook: '$SLACK_WP_DESKTOP_E2E'
-      fail_only: true
-      mentions: '$CIRCLE_USERNAME'
-      failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
+    webhook: '$SLACK_WP_DESKTOP_E2E'
+    fail_only: true
+    mentions: '$CIRCLE_USERNAME'
+    failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
   prepare:
@@ -272,6 +272,45 @@ jobs:
           paths:
             - wp-calypso
 
+  translate:
+    <<: *defaults
+    steps:
+      - prepare
+      - run:
+          name: Extract strings
+          working_directory: wp-babel-makepot
+          command: npx https://github.com/Automattic/wp-babel-makepot "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso" --output "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
+      - run:
+          name: Build New Strings .pot
+          when: always
+          command: |
+            git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
+            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            rm -rf gp-localci-client
+      - store-artifacts-and-test-results
+      - run:
+          name: Notify GlotPress translations are ready
+          when: always
+          command: |
+            curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
+              -H 'Cache-Control: no-cache' \
+              -H 'Content-Type: application/json' \
+              -d '{
+                    "payload": {
+                      "branch": "'"$CIRCLE_BRANCH"'",
+                      "build_num": '"$CIRCLE_BUILD_NUM"',
+                      "pull_requests": [
+                        {
+                          "url": "'"$CIRCLE_PULL_REQUEST"'"
+                        }
+                      ],
+                      "reponame": "'"$CIRCLE_PROJECT_REPONAME"'",
+                      "username": "'"$CIRCLE_PROJECT_USERNAME"'",
+                      "vcs_revision": "'"$CIRCLE_SHA1"'",
+                      "vcs_type": "github"
+                    }
+                  }'
+
   typecheck-strict:
     <<: *defaults
     parallelism: 1
@@ -281,7 +320,7 @@ jobs:
           name: TypeScript strict typecheck of individual subprojects
           command: yarn run tsc --project client/landing/gutenboarding
 
-  lint-and-translate:
+  lint:
     <<: *defaults
     parallelism: 1
     steps:
@@ -320,42 +359,6 @@ jobs:
                 --output-file "$CIRCLE_TEST_REPORTS/eslint/results.xml" \
                 $FILES_TO_LINT
             fi
-      - run:
-          name: Build calypso-strings.pot
-          when: always
-          command: |
-            yarn run translate
-            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
-      - run:
-          name: Build New Strings .pot
-          when: always
-          command: |
-            git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
-            rm -rf gp-localci-client
-      - store-artifacts-and-test-results
-      - run:
-          name: Notify GlotPress translations are ready
-          when: always
-          command: |
-            curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
-              -H 'Cache-Control: no-cache' \
-              -H 'Content-Type: application/json' \
-              -d '{
-                    "payload": {
-                      "branch": "'"$CIRCLE_BRANCH"'",
-                      "build_num": '"$CIRCLE_BUILD_NUM"',
-                      "pull_requests": [
-                        {
-                          "url": "'"$CIRCLE_PULL_REQUEST"'"
-                        }
-                      ],
-                      "reponame": "'"$CIRCLE_PROJECT_REPONAME"'",
-                      "username": "'"$CIRCLE_PROJECT_USERNAME"'",
-                      "vcs_revision": "'"$CIRCLE_SHA1"'",
-                      "vcs_type": "github"
-                    }
-                  }'
 
   build-notifications:
     <<: *defaults
@@ -651,7 +654,7 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: "10.1.0"
+      xcode: '10.1.0'
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     steps:
@@ -667,11 +670,11 @@ jobs:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
           command: |
-                  set +e
-                  source $HOME/.nvm/nvm.sh
-                  nvm use
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
 
-                  yarn run build-desktop:app
+            yarn run build-desktop:app
       - run:
           name: e2e Tests
           command: |
@@ -716,11 +719,11 @@ jobs:
           environment:
             CSC_LINK: resource/certificates/win.p12
           command: |
-                  set +e
-                  source $HOME/.nvm/nvm.sh
-                  nvm use
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
 
-                  yarn run build-desktop:app
+            yarn run build-desktop:app
       - run:
           name: e2e Tests
           command: |
@@ -763,9 +766,9 @@ jobs:
       - run:
           name: Install Node Version
           command: |
-                  $NODE_VERSION = Get-Content .nvmrc
-                  nvm install $NODE_VERSION
-                  nvm use $NODE_VERSION
+            $NODE_VERSION = Get-Content .nvmrc
+            nvm install $NODE_VERSION
+            nvm use $NODE_VERSION
       - run:
           name: Install Yarn
           command: npm install -g yarn
@@ -781,20 +784,20 @@ jobs:
             - run:
                 name: Import Codesigning Certificate
                 command: |
-                        # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
-                        # Ref: https://travis-ci.community/t/codesigning-on-windows/
-                        #
-                        # Fix: Import .p12 into the local certificate store. Sign Tool will use
-                        # package.json's `certificateSubjectName` to find the imported cert.
-                        $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
-                        Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
+                  #
+                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
+                  # package.json's `certificateSubjectName` to find the imported cert.
+                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
+                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
           name: Build Desktop Windows
           command: |
-                  # Use make for bash-like environment variable substitution
+            # Use make for bash-like environment variable substitution
 
-                  If ( $env:CIRCLE_TAG ) { $env:ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName=""Automattic, Inc.""' }
-                  make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$env:ELECTRON_BUILDER_ARGS
+            If ( $env:CIRCLE_TAG ) { $env:ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName=""Automattic, Inc.""' }
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$env:ELECTRON_BUILDER_ARGS
       - run:
           name: Archive Unpacked Directories
           command: |
@@ -868,7 +871,10 @@ workflows:
       - build-wpcom-block-editor:
           requires:
             - setup
-      - lint-and-translate:
+      - translate:
+          requires:
+            - setup
+      - lint:
           requires:
             - setup
       - test-client:
@@ -894,10 +900,10 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-#      - test-e2e-canary:
-#          requires:
-#            - wait-calypso-live
-#          test-flags: '-C -S $CIRCLE_SHA1'
+      #      - test-e2e-canary:
+      #          requires:
+      #            - wait-calypso-live
+      #          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
@@ -962,7 +968,6 @@ workflows:
           filters:
             tags:
               only: /v.*/
-
   calypso-nightly:
     jobs:
       - setup

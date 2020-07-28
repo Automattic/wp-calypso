@@ -801,6 +801,7 @@ export class Checkout extends React.Component {
 			productsList,
 			setHeaderText,
 			userCountryCode,
+			infoMessage,
 		} = this.props;
 
 		if ( this.isLoading() ) {
@@ -833,6 +834,7 @@ export class Checkout extends React.Component {
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
+				infoMessage={ infoMessage }
 			>
 				{ this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>

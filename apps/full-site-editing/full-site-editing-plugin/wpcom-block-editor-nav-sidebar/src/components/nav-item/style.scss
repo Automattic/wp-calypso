@@ -12,7 +12,8 @@
 	text-align: initial;
 	color: $white;
 
-	&:hover {
+	&:hover,
+	&:not( [aria-disabled='true'] ):active {
 		color: $white;
 	}
 

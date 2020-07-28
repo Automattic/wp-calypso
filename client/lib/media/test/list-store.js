@@ -267,32 +267,6 @@ describe( 'MediaListStore', () => {
 		} );
 	} );
 
-	describe( '#isFetchingNextPage()', () => {
-		test( 'should return false no request has been made', () => {
-			expect( MediaListStore.isFetchingNextPage( DUMMY_SITE_ID ) ).to.not.be.ok;
-		} );
-
-		test( 'should return true if site media is being fetched', () => {
-			dispatchFetchMedia();
-
-			expect( MediaListStore.isFetchingNextPage( DUMMY_SITE_ID ) ).to.be.ok;
-		} );
-
-		test( 'should return false if site media was received', () => {
-			dispatchFetchMedia();
-			dispatchReceiveMediaItems();
-
-			expect( MediaListStore.isFetchingNextPage( DUMMY_SITE_ID ) ).to.not.be.ok;
-		} );
-
-		test( 'should return false when the query was changed', () => {
-			dispatchFetchMedia();
-			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
-
-			expect( MediaListStore.isFetchingNextPage( DUMMY_SITE_ID ) ).to.not.be.ok;
-		} );
-	} );
-
 	describe( '#isItemMatchingQuery', () => {
 		let isItemMatchingQuery;
 
@@ -382,10 +356,12 @@ describe( 'MediaListStore', () => {
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.not.be.undefined;
 		} );
 
-		test( 'should emit a change event when receiving updates', ( done ) => {
-			MediaListStore.once( 'change', done );
+		test( 'should emit a change event when receiving updates', () => {
+			return new Promise( ( done ) => {
+				MediaListStore.once( 'change', done );
 
-			dispatchReceiveMediaItems();
+				dispatchReceiveMediaItems();
+			} );
 		} );
 
 		test( 'should ignore received items where the query does not match', () => {

@@ -42,7 +42,7 @@
 .plans-grid__details-container {
 	@media ( max-width: $plans-grid-max-page-width ) {
 		overflow-x: auto;
-		width: 100vw;
+		width: 100%;
 		position: absolute;
 		left: 0;
 

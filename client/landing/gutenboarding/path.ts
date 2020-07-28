@@ -17,6 +17,7 @@ export const Step = {
 	IntentGathering: undefined,
 	DesignSelection: 'design',
 	Style: 'style',
+	Features: 'features',
 	Signup: 'signup',
 	Login: 'login',
 	CreateSite: 'create-site',

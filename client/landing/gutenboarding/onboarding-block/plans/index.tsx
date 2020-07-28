@@ -73,10 +73,10 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const header = (
 		<>
 			<div>
-				<Title>{ __( 'Choose a plan' ) }</Title>
+				<Title>{ __( 'Select a plan' ) }</Title>
 				<SubTitle>
 					{ __(
-						'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
+						'Pick a plan that’s right for you. There’s no risk, you can cancel for a full refund within 30 days.'
 					) }
 				</SubTitle>
 			</div>

@@ -14,6 +14,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@HEAD
 
+    - name: Run composer
+      uses: nick-zh/composer-php@HEAD
+      with:
+        action: 'install'
+
     # https://github.com/actions/cache/blob/HEAD/examples.md#node---lerna
     - name: Restore node_modules cache
       id: cache
@@ -140,3 +145,30 @@ jobs:
     - name: No changes found
       run: echo "No changes found to check!"
       if: ${{ steps.changes.outputs.all == '' }}
+
+  newspack-blocks:
+    name: Check newspack-blocks sync
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@HEAD
+
+    # It saves a bit of time to download the artifact rather than doing a build.
+    - name: Get build
+      uses: actions/download-artifact@HEAD
+      with:
+        name: fse-build-archive
+        path: apps/full-site-editing/full-site-editing-plugin
+
+    - name: Check if newspack-blocks exists
+      run: test -f ./apps/full-site-editing/full-site-editing-plugin/newspack-blocks/synced-newspack-blocks/class-newspack-blocks.php
+
+    - name: Run composer
+      uses: nick-zh/composer-php@HEAD
+      with:
+        action: 'install'
+
+    # This will fail if the textdomain has not been changed to full-site-editing, which indicates an issue with the sync or build scripts.
+    - name: Execute phpcs on newspack-blocks PHP files.
+      run: ./vendor/bin/phpcs --standard=apps/full-site-editing/bin/newspack-block-sync-phpcs.xml
