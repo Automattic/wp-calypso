@@ -47,3 +47,12 @@ import config from './config';
 import config from '../../../config';
 import config from 'dirA'; //when `dirA` is not a directory or file in ./client/
 ```
+
+## Configuration
+
+The rule accept a configuration object with:
+
+* `mapping`. An array of objects like `{dir: string, module: string}`. This defines which imports get replaced. It means: for every import of X, X being a subdirectory of `<dir>`, replace it with an import of `<module>/X`.
+
+* `warnOnDynamicImport`. There are some cases where this rule can't figure out if an import should be replaced or not, namely dynamic imports (e.g.: `require(path+'/thing')`. If this property is `true`, it will print out a warning when those imports are found.
+				
