@@ -121,6 +121,7 @@ export default function CompositeCheckout( {
 	couponCode: couponCodeFromUrl,
 	isComingFromUpsell,
 	isLoggedOutCart,
+	isNoSiteCart,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -130,6 +131,7 @@ export default function CompositeCheckout( {
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
+	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
 		reduxDispatch,
@@ -299,7 +301,7 @@ export default function CompositeCheckout( {
 
 			debug( 'just redirecting to', url );
 
-			if ( isLoggedOutCart ) {
+			if ( createUserAndSiteBeforeTransaction ) {
 				window.localStorage.removeItem( 'shoppingCart' );
 				window.localStorage.removeItem( 'siteParams' );
 				window.location = url;
@@ -494,7 +496,8 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
-			card: ( transactionData ) => stripeCardProcessor( transactionData, isLoggedOutCart ),
+			card: ( transactionData ) =>
+				stripeCardProcessor( transactionData, createUserAndSiteBeforeTransaction ),
 			alipay: ( transactionData ) =>
 				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
 			p24: ( transactionData ) =>
@@ -514,7 +517,12 @@ export default function CompositeCheckout( {
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>
-				payPalProcessor( transactionData, getThankYouUrl, couponItem, isLoggedOutCart ),
+				payPalProcessor(
+					transactionData,
+					getThankYouUrl,
+					couponItem,
+					createUserAndSiteBeforeTransaction
+				),
 		} ),
 		[ couponItem, getThankYouUrl, siteSlug ]
 	);

@@ -109,7 +109,11 @@ export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-export async function submitStripeCardTransaction( transactionData, submit, isLoggedOutCart ) {
+export async function submitStripeCardTransaction(
+	transactionData,
+	submit,
+	createUserAndSiteBeforeTransaction
+) {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
@@ -117,7 +121,7 @@ export async function submitStripeCardTransaction( transactionData, submit, isLo
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
-	return submit( formattedTransactionData, isLoggedOutCart );
+	return submit( formattedTransactionData, createUserAndSiteBeforeTransaction );
 }
 
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
@@ -235,6 +239,7 @@ async function createAccount( select ) {
 	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
 
 	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
+	const siteId = select( 'wpcom' )?.getSiteId();
 	const emailValue = email.value;
 	const recaptchaClientId = select( 'wpcom' )?.getRecaptchaClientId();
 	const isRecaptchaLoaded = typeof recaptchaClientId === 'number';
@@ -266,6 +271,7 @@ async function createAccount( select ) {
 				validate: false,
 				ab_test_variations: getSavedVariations(),
 				new_site_params: newSiteParams,
+				should_create_site: ! siteId,
 			},
 			null
 		);
@@ -289,8 +295,8 @@ function getErrorMessage( { error, message } ) {
 	}
 }
 
-export async function wpcomTransaction( payload, isLoggedOutCart ) {
-	if ( isLoggedOutCart ) {
+export async function wpcomTransaction( payload, createUserAndSiteBeforeTransaction ) {
+	if ( createUserAndSiteBeforeTransaction ) {
 		const { select, dispatch } = defaultRegistry;
 
 		return createAccount( select ).then( ( response ) => {
@@ -320,8 +326,8 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	return wp.undocumented().transactions( payload );
 }
 
-export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
-	if ( isLoggedOutCart ) {
+export async function wpcomPayPalExpress( payload, createUserAndSiteBeforeTransaction ) {
+	if ( createUserAndSiteBeforeTransaction ) {
 		const { select, dispatch } = defaultRegistry;
 
 		return createAccount( select ).then( ( response ) => {
