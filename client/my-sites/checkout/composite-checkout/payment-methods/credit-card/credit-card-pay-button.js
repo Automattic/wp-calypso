@@ -86,7 +86,7 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 						submitTransaction( {
 							name: cardholderName?.value || '',
 							countryCode: fields?.countryCode?.value || '',
-							number: fields?.number?.value || '',
+							number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
 							cvv: fields?.cvv?.value || '',
 							'expiration-date': fields[ 'expiration-date' ]?.value || '',
 							state: fields?.state?.value || '',
