@@ -16,6 +16,7 @@ import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
 import {
 	JETPACK_PLANS,
+	PLAN_JETPACK_PERSONAL,
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -253,7 +254,7 @@ export class PlansFeaturesMain extends Component {
 		} else if ( group === GROUP_JETPACK ) {
 			plans = compact( [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				isEnabled( 'plans/personal-plan' ) &&
+				( isEnabled( 'plans/personal-plan' ) || PLAN_JETPACK_PERSONAL === sitePlanSlug ) &&
 					findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
