@@ -719,6 +719,8 @@ export const PLANS_LIST = {
 			] ),
 		getSignupFeatures: () =>
 			compact( [
+				! isEnabled( 'plans/personal-plan' ) && constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+				! isEnabled( 'plans/personal-plan' ) && constants.FEATURE_SPAM_AKISMET_PLUS,
 				constants.FEATURE_MALWARE_SCANNING_DAILY,
 				constants.FEATURE_AUTOMATIC_SECURITY_FIXES,
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
@@ -788,6 +790,8 @@ export const PLANS_LIST = {
 			] ),
 		getSignupFeatures: () =>
 			compact( [
+				! isEnabled( 'plans/personal-plan' ) && constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+				! isEnabled( 'plans/personal-plan' ) && constants.FEATURE_SPAM_AKISMET_PLUS,
 				constants.FEATURE_MALWARE_SCANNING_DAILY,
 				constants.FEATURE_AUTOMATIC_SECURITY_FIXES,
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
