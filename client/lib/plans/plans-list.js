@@ -726,7 +726,7 @@ export const PLANS_LIST = {
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				constants.FEATURE_WORDADS_INSTANT,
 				constants.FEATURE_ADVANCED_SEO,
-				constants.FEATURE_ALL_FREE_FEATURES_JETPACK,
+				isEnabled( 'plans/personal-plan' ) ? constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK : constants.FEATURE_ALL_FREE_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
