@@ -211,11 +211,15 @@ function isCreditCardFormValid( store, __ ) {
 
 			const rawState = store.selectors.getFields( store.getState() );
 			const cardholderName = store.selectors.getCardholderName( store.getState() );
+			const numberWithoutSpaces = {
+				value: rawState?.number?.value?.replace( /\s+/g, '' ),
+			}; // the validator package we're using requires this
 			const validationResults = validatePaymentDetails(
 				Object.entries( {
 					...rawState,
 					country: rawState.countryCode,
 					name: cardholderName,
+					number: numberWithoutSpaces,
 				} ).reduce( ( accum, [ key, managedValue ] ) => {
 					accum[ key ] = managedValue?.value;
 					return accum;
