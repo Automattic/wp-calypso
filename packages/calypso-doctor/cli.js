@@ -3,16 +3,28 @@ const yargs = require( 'yargs' );
 const chalk = require( 'chalk' );
 const { runEvaluations } = require( './index.js' );
 
-const main = async ( args ) => {
-	const results = await runEvaluations( { fix: args.fix } );
+const main = async () => {
+	console.log( chalk.yellow( '-=- Calypso Doctor -=-' ) );
+	console.log( 'Checking the health of your system...' );
+	console.log();
+	console.log( chalk.redBright( 'Calypso Doctor is in beta.' ) );
+	console.log(
+		chalk.redBright( 'If you see any error please ignore it, but let Team Calypso know.' )
+	);
+
+	const results = await runEvaluations();
 
 	console.log( '' );
 	console.log( chalk.yellow( 'Tests' ) );
-	results.forEach( ( { title, group, result, message } ) => {
-		const mark = result ? chalk.green( '✓' ) : chalk.red( '✗' );
-		console.log( `* ${ mark } ${ group } > ${ title }` );
-
-		if ( message ) console.log( `    ${ message }` );
+	results.forEach( ( { title, group, result, ignored, evaluationMessage } ) => {
+		if ( ignored ) {
+			console.log( `* ${ chalk.gray( '?' ) } ${ group } > ${ title }` );
+		} else if ( result ) {
+			console.log( `* ${ chalk.green( '✓' ) } ${ group } > ${ title }` );
+		} else {
+			console.log( `* ${ chalk.red( '✗' ) } ${ group } > ${ title }` );
+		}
+		if ( evaluationMessage ) console.log( `    ${ evaluationMessage }` );
 	} );
 
 	console.log( '' );

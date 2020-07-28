@@ -14,22 +14,55 @@ const runEvaluations = async () => {
 
 	const results = Promise.all(
 		evaluations.map( async ( { title, group, test, fix } ) => {
-			const { result, message } = await test();
-
-			let fixMessage;
-			if ( ! result ) {
-				fixMessage = await fix();
-			}
-
-			return {
-				result,
+			const response = {
 				title,
 				group,
-				message,
-				fixMessage,
 			};
+
+			try {
+				const { result, ignored, evaluationMessage = '' } = await new Promise(
+					// eslint-disable-next-line no-async-promise-executor
+					async ( resolve, reject ) => {
+						try {
+							const testResult = await test( {
+								pass: () => resolve( { result: true } ),
+								fail: ( message ) => resolve( { result: false, evaluationMessage: message } ),
+								ignore: ( message ) => resolve( { ignored: true, evaluationMessage: message } ),
+							} );
+							// `test` is expected to call either pass or fail, which will resolve the promise. If
+							// we reach this point, it has returned without calling them and that's an error.
+							reject(
+								new Error(
+									`Evaluation '${ group } > ${ title }' returned an unexpected result: ${ testResult }`
+								)
+							);
+						} catch ( err ) {
+							reject( err );
+						}
+					}
+				);
+
+				response.result = result;
+				response.ignored = ignored;
+				response.evaluationMessage = evaluationMessage;
+			} catch ( err ) {
+				response.result = false;
+				response.evaluationMessage = `ERROR running this evaluation: \n${ err.stack }`;
+				return response;
+			}
+
+			try {
+				if ( ! response.result && ! response.ignored ) {
+					response.fixMessage = await fix();
+				}
+			} catch ( err ) {
+				response.fixMessage = `ERROR trying to fix evaluation '${ group } > ${ title }': ${ err.stack }`;
+			}
+
+			return response;
 		} )
 	);
+
 	return results;
 };
 

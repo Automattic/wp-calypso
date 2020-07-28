@@ -5,26 +5,31 @@ module.exports = {
 	group: 'Node.js',
 	description:
 		'Sets the maximum size of Node.js heap. As memory consumption approaches this limit, Node.js will spend more time on garbage collection in an effort to free unused memory.',
-	test: () => {
+	test: ( { pass, fail, ignore } ) => {
+		if ( process.platform !== 'darwin' && process.platform !== 'linux' ) {
+			ignore( 'This evaluation only works in OSX or Linux' );
+			return;
+		}
+
 		if ( ! process.env.NODE_OPTIONS ) {
-			return { result: false, message: 'NODE_OPTIONS is not set' };
+			fail( 'NODE_OPTIONS is not set' );
+			return;
 		}
 
 		const match = process.env.NODE_OPTIONS.match( /--max-old-space-size=([0-9]+)/ );
 		if ( ! match ) {
-			return { result: false, message: 'max-old-space-size not set' };
+			fail( 'max-old-space-size not set' );
+			return;
 		}
 
 		const currentValue = Number( match[ 1 ] );
 		const desiredValue = getMemInMb() * 0.75;
 		if ( desiredValue !== currentValue ) {
-			return {
-				result: false,
-				message: `Memory set to ${ currentValue } mb, ${ desiredValue } mb expected`,
-			};
+			fail( `Memory set to ${ currentValue } mb, ${ desiredValue } mb expected` );
+			return;
 		}
 
-		return { result: true };
+		pass();
 	},
 	fix: () => {
 		const desiredValue = getMemInMb() * 0.75;

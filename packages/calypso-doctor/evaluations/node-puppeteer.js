@@ -1,15 +1,21 @@
 const { getShellRc } = require( '../lib' );
 
 module.exports = {
-	title: 'Puppeteer skip download',
+	title: 'Skip Puppeteer download',
 	group: 'Node.js',
 	description: 'Do not download puppeteer',
-	test: () => {
-		if ( ! process.env.PUPPETEER_SKIP_DOWNLOAD ) {
-			return { result: false, message: 'PUPPETEER_SKIP_DOWNLOAD is not set' };
+	test: ( { pass, fail, ignore } ) => {
+		if ( process.platform !== 'darwin' && process.platform !== 'linux' ) {
+			ignore( 'This evaluation only works in OSX or Linux' );
+			return;
 		}
 
-		return { result: true };
+		if ( ! process.env.PUPPETEER_SKIP_DOWNLOAD ) {
+			fail( 'PUPPETEER_SKIP_DOWNLOAD is not set' );
+			return;
+		}
+
+		pass();
 	},
 	fix: () => {
 		const shell = getShellRc();

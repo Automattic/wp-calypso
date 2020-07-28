@@ -10,6 +10,7 @@ module.exports = {
 		'jest/expect-expect': 'off',
 		'jest/no-disabled-tests': 'off',
 		'jest/no-export': 'off',
+		'jest/no-test-callback': 'off',
 
 		// This is a CLI tool, we use console a lot
 		'no-console': 'off',
