@@ -11,7 +11,13 @@ import { requestRewindBackups } from 'state/rewind/backups/actions';
 
 const QueryRewindBackups = ( { siteId } ) => {
 	const dispatch = useDispatch();
-	useEffect( () => dispatch( requestRewindBackups( siteId ) ), [ dispatch, siteId ] );
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		dispatch( requestRewindBackups( siteId ) );
+	}, [ dispatch, siteId ] );
 
 	return null;
 };
