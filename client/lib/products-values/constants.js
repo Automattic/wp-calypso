@@ -104,6 +104,8 @@ export const getJetpackProductsShortNames = () => {
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Real-Time Backups' ),
 		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
+		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
+		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SCAN ]: translate( 'Daily Scan' ),
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Daily Scan' ),
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-Spam' ),
