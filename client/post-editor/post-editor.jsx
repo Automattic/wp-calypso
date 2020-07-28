@@ -57,7 +57,7 @@ import {
 	isEditedPostDirty,
 } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { editedPostHasContent } from 'state/posts/selectors/edited-post-has-content';
+import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
 import isVipSite from 'state/selectors/is-vip-site';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
@@ -302,6 +302,7 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
+				{ /* This condition needs to be kept in sync with https://github.com/Automattic/wp-calypso/blob/680cc77f39400aab3e090c373630c8dd0f1887cd/client/post-editor/editor-gutenberg-dialogs/index.tsx#L84*/ }
 				{ ! this.props.isEditorDeprecated && ! isEnabled( 'desktop' ) && (
 					<EditorDeprecationDialog />
 				) }
