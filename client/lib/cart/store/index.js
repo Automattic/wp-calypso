@@ -75,9 +75,14 @@ const CartStore = {
 	setSelectedSiteId( selectedSiteId, userLoggedIn = true ) {
 		let newCartKey = selectedSiteId;
 		_userLoggedIn = userLoggedIn;
+		const urlParams = new URLSearchParams( window.location.search );
 
 		if ( ! newCartKey && window.location.pathname.includes( '/checkout/no-site' ) ) {
-			newCartKey = _userLoggedIn ? 'no-site' : 'no-user';
+			newCartKey = 'no-user';
+
+			if ( _userLoggedIn ) {
+				newCartKey = 'no-user' === urlParams.get( 'cart' ) ? 'no-user' : 'no-site';
+			}
 		}
 
 		if ( _cartKey === newCartKey ) {
@@ -94,7 +99,6 @@ const CartStore = {
 		_synchronizer = cartSynchronizer( _cartKey, wpcom );
 		_synchronizer.on( 'change', emitChange );
 
-		const urlParams = new URLSearchParams( window.location.search );
 		const shouldPollFromLocalStorage =
 			'no-user' === newCartKey || 'no-user' === urlParams.get( 'cart' );
 
