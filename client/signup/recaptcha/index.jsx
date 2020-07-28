@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { memo, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
@@ -10,7 +11,7 @@ import { defaultRegistry } from '@automattic/composite-checkout';
 import { initGoogleRecaptcha } from 'lib/analytics/recaptcha';
 import config from 'config';
 
-function Recaptcha() {
+function Recaptcha( { badgePosition } ) {
 	useEffect( () => {
 		initGoogleRecaptcha(
 			'g-recaptcha',
@@ -26,7 +27,15 @@ function Recaptcha() {
 		} );
 	}, [] );
 
-	return <div id="g-recaptcha"></div>;
+	return <div id="g-recaptcha" data-badge={ badgePosition }></div>;
 }
+
+Recaptcha.propTypes = {
+	badgePosition: PropTypes.string,
+};
+
+Recaptcha.defaultProps = {
+	badgePosition: 'bottomright',
+};
 
 export default memo( Recaptcha );
