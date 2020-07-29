@@ -277,7 +277,6 @@ body.is-section-signup.is-white-signup {
 		$accent-blue: #117ac9;
 
 		&:not( .featured-domain-suggestion ) {
-			transition: none;
 
 			.domain-suggestion__content {
 				@include breakpoint-deprecated( '>660px' ) {
@@ -288,6 +287,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.domain-registration-suggestion__domain-title {
+				line-height: 40px;
 				.domain-registration-suggestion__domain-title-tld {
 					color: $accent-blue;
 				}
@@ -299,17 +299,21 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.domain-product-price__price {
-				color: var( --color-neutral-40 );
+				font-size: $font-body-small;
+				&:not( .domain-product-price__free-price ) {
+					color: var( --color-neutral-40 );
+				}
 			}
 
 			&.is-clickable:hover {
 				background: var( --color-primary-0 );
 				box-shadow: 0 0 0 1px var( --color-primary-40 );
 
-				.domain-suggestion__action {
+				.domain-suggestion__action:not( .is-borderless ) {
 					border-radius: 4px;
 					display: block;
-					padding: 0.85em 1.7em;
+					line-height: 17px;
+					padding: 11px 24px 10px;
 				}
 
 				.domain-product-price {
