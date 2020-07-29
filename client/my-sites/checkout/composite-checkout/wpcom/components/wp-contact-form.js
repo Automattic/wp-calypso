@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import {
@@ -10,11 +10,8 @@ import {
 	useFormStatus,
 	useIsStepActive,
 	useLineItems,
-	useSetStepComplete,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -24,7 +21,6 @@ import Field from './field';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import CountrySelectMenu from 'my-sites/checkout/composite-checkout/wpcom/components/country-select-menu';
 import {
@@ -34,8 +30,8 @@ import {
 	hasTransferProduct,
 } from 'lib/cart-values/cart-items';
 import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
-
-const debug = debugFactory( 'calypso:composite-checkout:wp-contact-form' );
+import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
+import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 
 export default function WPContactForm( {
 	summary,
@@ -56,8 +52,9 @@ export default function WPContactForm( {
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
 	const cart = useCart();
+	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
 
-	useSkipToLastStepIfFormComplete( contactValidationCallback );
+	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
 
 	if ( summary && isComplete ) {
 		return (
@@ -378,75 +375,6 @@ const ContactDetailsFormDescription = styled.p`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	margin: 0 0 16px;
 `;
-
-function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
-	const cachedContactDetails = useSelector( getContactDetailsCache );
-	const shouldValidateCachedContactDetails = useRef( true );
-	const shouldResetFormStatus = useRef( false );
-	const setStepCompleteStatus = useSetStepComplete();
-	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
-
-	useEffect( () => {
-		if ( ! contactValidationCallback ) {
-			debug( 'Cannot validate contact details; no validation callback' );
-			return;
-		}
-		if ( shouldValidateCachedContactDetails.current && cachedContactDetails ) {
-			shouldValidateCachedContactDetails.current = false;
-			if ( formStatus === 'ready' ) {
-				setFormValidating();
-				shouldResetFormStatus.current = true;
-			}
-			contactValidationCallback()
-				.then( ( areDetailsCompleteAndValid ) => {
-					// If the details are already populated and valid, jump to payment method step
-					if ( areDetailsCompleteAndValid ) {
-						debug( 'Contact details are already populated; skipping to payment method step' );
-						saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
-						setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
-					} else {
-						debug( 'Contact details are already populated but not valid' );
-					}
-					if ( shouldResetFormStatus.current ) {
-						setFormReady();
-					}
-				} )
-				.catch( () => {
-					if ( shouldResetFormStatus.current ) {
-						setFormReady();
-					}
-				} );
-		}
-	}, [
-		formStatus,
-		setFormReady,
-		setFormValidating,
-		cachedContactDetails,
-		contactValidationCallback,
-		setStepCompleteStatus,
-	] );
-}
-
-function saveStepNumberToUrl( stepNumber ) {
-	if ( ! window?.history || ! window?.location ) {
-		return;
-	}
-	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
-	if ( window.location.hash === newHash ) {
-		return;
-	}
-	const newUrl = window.location.hash
-		? window.location.href.replace( window.location.hash, newHash )
-		: window.location.href + newHash;
-	debug( 'updating url to', newUrl );
-	window.history.replaceState( null, '', newUrl );
-	// Modifying history does not trigger a hashchange event which is what
-	// composite-checkout uses to change its current step, so we must fire one
-	// manually. (HashChangeEvent is part of the web API so I'm not sure why
-	// eslint reports this as undefined.)
-	const event = new HashChangeEvent( 'hashchange' ); // eslint-disable-line no-undef
-	window.dispatchEvent( event );
-}
 
 function needsDomainDetails( cart ) {
 	if ( cart && hasOnlyRenewalItems( cart ) ) {
