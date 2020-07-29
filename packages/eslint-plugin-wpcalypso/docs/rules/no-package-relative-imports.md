@@ -18,11 +18,11 @@ import userFactory from 'wp-calypso/lib/user';
 
 Which works because `wp-calypso` is a valid package in our repository, points to `./client` and is declared as a dependency in the root `package.json`. This will work out of the box in all module resolution systems.
 
-This rule forbid the former approach and can auto-fix it to the latter.
+This rule forbids the former approach and can auto-fix it to the latter.
 
 ## Rule Details
 
-The following patterns are considered an error:
+The following patterns are considered incorrect:
 
 ```js
 import config from 'config';
@@ -33,7 +33,7 @@ export * from 'components/AppBar';
 const config = require('config');
 ```
 
-The following patterns are not warnings:
+The following patterns are correct
 
 ```js
 import config from 'wp-calypso/config';
@@ -52,7 +52,8 @@ import config from 'dirA'; //when `dirA` is not a directory or file in ./client/
 
 The rule accept a configuration object with:
 
-* `mapping`. An array of objects like `{dir: string, module: string}`. This defines which imports get replaced. It means: for every import of X, X being a subdirectory of `<dir>`, replace it with an import of `<module>/X`.
+* `mappings`. An array of objects like `{dir: string, module: string}`. This defines which imports get replaced. It means: for every import of X, X being a subdirectory or file of `<dir>`, replace it with an import of `<module>/X`.
 
-* `warnOnDynamicImport`. There are some cases where this rule can't figure out if an import should be replaced or not, namely dynamic imports (e.g.: `require(path+'/thing')`. If this property is `true`, it will print out a warning when those imports are found.
-				
+* `automaticExtensions`. An array with the list of extensions to try to import automatically. For example, `['.js', '.json', '.ts']`. This means that when the rule finds something like `import 'file'`, it will apply the mappings if `file.js`, `file.json`, or `file.ts` are files in `<dir>`
+
+* `warnOnNonLiteralImport`. There are some cases where this rule can't figure out if an import should be replaced or not, namely non-literal imports (e.g.: `require(path+'/thing')`. If this property is `true`, it will print out a warning when those imports are found.

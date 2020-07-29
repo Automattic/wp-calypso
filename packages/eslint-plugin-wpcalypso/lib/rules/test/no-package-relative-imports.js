@@ -19,15 +19,17 @@ const fs = require( 'fs' );
 //------------------------------------------------------------------------------
 
 const calypsoDir = path.join( __dirname, '../../../../../client' );
+const automaticExtensions = [ '.js', '.json', '.node', '.ts' ];
 const options = [
 	{
-		mapping: [
+		mappings: [
 			{
 				dir: calypsoDir,
 				module: 'wp-calypso',
 			},
 		],
-		warnOnDynamicImport: true,
+		automaticExtensions,
+		warnOnNonLiteralImport: true,
 	},
 ];
 
@@ -124,12 +126,19 @@ new RuleTester( {
 		// Dynamic test: test the rule with each subdirectory and file inside `./client`
 		...fs
 			.readdirSync( calypsoDir, { withFileTypes: true } )
+			// Filter out files that start with a dot (like .eslintrc)
+			.filter( ( file ) => ! file.name.startsWith( '.' ) )
 			.map( ( file ) => {
 				const fileName = file.name;
+				// If it is a directory, return the name to import it directly (eg: state)
 				if ( file.isDirectory() ) return fileName;
+
+				// If the file ends in one of the automatic extensions, just return the name (eg: index.ts -> index)
 				const extension = path.extname( fileName );
-				if ( extension !== '.js' ) return fileName;
-				return path.basename( fileName, extension );
+				if ( automaticExtensions.includes( extension ) ) {
+					return path.basename( fileName, extension );
+				}
+				return fileName;
 			} )
 			.map( ( dir ) => ( {
 				code: `import * as foo from '${ dir }';`,

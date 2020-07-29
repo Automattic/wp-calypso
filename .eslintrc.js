@@ -226,15 +226,16 @@ module.exports = {
 		],
 		// Disabled for now until we finish the migration
 		'wpcalypso/no-package-relative-imports': [
-			'off',
+			'error',
 			{
-				mapping: [
+				mappings: [
 					{
 						dir: path.join( __dirname, 'client' ),
 						module: 'wp-calypso',
 					},
 				],
-				warnOnDynamicImport: true,
+				warnOnNonLiteralImport: true,
+				automaticExtensions: [ '.js', '.ts', '.json', '.jsx', '.tsx' ],
 			},
 		],
 	},
