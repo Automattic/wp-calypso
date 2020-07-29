@@ -184,10 +184,6 @@ class MasterbarLoggedOut extends React.Component {
 						</span>
 					</div>
 					<Item className="masterbar__item-title">{ title }</Item>
-					<div className="masterbar__login-links">
-						{ this.renderSignupItem() }
-						{ this.renderLoginItem() }
-					</div>
 				</Masterbar>
 			);
 		}
