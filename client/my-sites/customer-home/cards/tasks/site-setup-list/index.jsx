@@ -113,6 +113,7 @@ const SiteSetupList = ( {
 	const [ currentTask, setCurrentTask ] = useState( null );
 	const [ taskIsManuallySelected, setTaskIsManuallySelected ] = useState( false );
 	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
+	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
@@ -238,14 +239,23 @@ const SiteSetupList = ( {
 								taskId={ task.id }
 								text={ enhancedTask.label || enhancedTask.title }
 								isCompleted={ isCompleted }
-								isCurrent={ isCurrent }
-								onClick={ () => {
-									setTaskIsManuallySelected( true );
-									setCurrentTaskId( task.id );
-								} }
+								isCurrent={
+									useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
+								}
+								onClick={
+									useAccordionLayout && isCurrent && showAccordionSelectedTask
+										? () => {
+												setShowAccordionSelectedTask( false );
+										  }
+										: () => {
+												setShowAccordionSelectedTask( true );
+												setTaskIsManuallySelected( true );
+												setCurrentTaskId( task.id );
+										  }
+								}
 								useAccordionLayout={ useAccordionLayout }
 							/>
-							{ useAccordionLayout && isCurrent ? (
+							{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
 								<CurrentTaskItem
 									currentTask={ currentTask }
 									skipTask={ () => {
