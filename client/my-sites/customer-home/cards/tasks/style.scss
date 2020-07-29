@@ -28,6 +28,18 @@
 		text-align: center;
 	}
 
+	.task__gauge {
+		width: 33.33%;
+		align-self: center;
+		flex-shrink: 0;
+		margin-left: auto;
+		text-align: center;
+
+		> div {
+			margin: auto;
+		}
+	}
+
 	.task__timing {
 		margin-bottom: 10px;
 		align-items: center;
