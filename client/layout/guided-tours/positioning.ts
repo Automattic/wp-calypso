@@ -58,6 +58,11 @@ function getDialogPosition( position: DialogPosition, rect: ClientRect ): Coordi
 				x: wouldBeOffscreen( rect.right ) ? fitOnScreen( rect.left ) : rect.right + DIALOG_PADDING,
 				y: rect.top + DIALOG_PADDING,
 			};
+		case 'left':
+			return {
+				x: fitOnScreen( rect.left ),
+				y: rect.top + DIALOG_PADDING,
+			};
 		case 'center':
 			return {
 				x: Math.max( 0, middle( rect.left, rect.right ) - DIALOG_WIDTH / 2 ),

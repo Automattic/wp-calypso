@@ -50,6 +50,7 @@ interface AcceptedProps {
 	style?: CSSProperties;
 	target?: string;
 	wait?: Function;
+	waitForTarget?: boolean;
 	when?: Function;
 }
 
@@ -60,6 +61,7 @@ interface DefaultProps {
 interface State {
 	initialized: boolean;
 	hasScrolled: boolean;
+	seenTarget: boolean;
 	stepPos?: Coordinate;
 }
 
@@ -87,6 +89,7 @@ export default class Step extends Component< Props, State > {
 	state: State = {
 		initialized: false,
 		hasScrolled: false,
+		seenTarget: false,
 	};
 
 	/**
@@ -119,9 +122,6 @@ export default class Step extends Component< Props, State > {
 			window.addEventListener( 'resize', this.onScrollOrResize );
 			this.watchTarget();
 		} );
-		if ( this.props.keepRepositioning ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
-		}
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
@@ -141,11 +141,6 @@ export default class Step extends Component< Props, State > {
 			this.setStepPosition( nextProps, shouldScrollTo );
 			this.watchTarget();
 		} );
-		if ( ! nextProps.keepRepositioning ) {
-			clearInterval( this.repositionInterval );
-		} else if ( ! this.repositionInterval ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
-		}
 	}
 
 	componentWillUnmount() {
@@ -157,7 +152,6 @@ export default class Step extends Component< Props, State > {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		}
 		this.unwatchTarget();
-		clearInterval( this.repositionInterval );
 	}
 
 	/*
@@ -184,8 +178,9 @@ export default class Step extends Component< Props, State > {
 
 	watchTarget() {
 		if (
-			! this.props.target ||
-			! this.props.onTargetDisappear ||
+			( ! this.props.keepRepositioning &&
+				( ! this.props.target ||
+					( ! this.props.onTargetDisappear && ! this.props.waitForTarget ) ) ) ||
 			typeof window === 'undefined' ||
 			typeof window.MutationObserver === 'undefined'
 		) {
@@ -194,18 +189,24 @@ export default class Step extends Component< Props, State > {
 
 		if ( ! this.observer ) {
 			this.observer = new window.MutationObserver( () => {
-				const { target, onTargetDisappear } = this.props;
+				const { target, onTargetDisappear, waitForTarget, keepRepositioning } = this.props;
 
-				if ( ! target || ! onTargetDisappear ) {
+				if ( keepRepositioning ) {
+					this.onScrollOrResize();
+				}
+
+				if ( ! target || ( ! waitForTarget && ! onTargetDisappear ) ) {
 					return;
 				}
 
-				const targetEl = document.querySelector( `[data-tip-target="${ target }"]` );
+				const targetEl = targetForSlug( target );
 				if ( ! targetEl ) {
 					onTargetDisappear( {
 						quit: () => this.context.quit( this.context ),
 						next: () => this.skipToNext( this.props, this.context ),
 					} );
+				} else {
+					this.safeSetState( { seenTarget: true } );
 				}
 			} );
 			this.observer.observe( document.body, { childList: true, subtree: true } );
@@ -337,7 +338,7 @@ export default class Step extends Component< Props, State > {
 	}
 
 	onScrollOrResize = () => {
-		if ( ! this.isUpdatingPosition ) {
+		if ( this.mounted && ! this.isUpdatingPosition ) {
 			window.requestAnimationFrame( () => {
 				this.setStepPosition( this.props );
 				this.isUpdatingPosition = false;
@@ -352,7 +353,7 @@ export default class Step extends Component< Props, State > {
 
 		// Reinitialize scrolling behaviour when step changes
 		if ( nextName !== name ) {
-			this.setState( { hasScrolled: false } );
+			this.safeSetState( { hasScrolled: false } );
 		}
 	}
 
@@ -364,7 +365,7 @@ export default class Step extends Component< Props, State > {
 			shouldScrollTo,
 			scrollContainer: this.scrollContainer,
 		} );
-		this.setState( ( state ) => ( {
+		this.safeSetState( ( state ) => ( {
 			stepPos,
 			hasScrolled: ! state.hasScrolled && scrollDiff > 0,
 		} ) );
@@ -373,7 +374,7 @@ export default class Step extends Component< Props, State > {
 	render() {
 		// `children` is a render prop where the value is not the usual JSX markup,
 		// but a React component to render, i.e., function or a class.
-		const { when, children: ContentComponent } = this.props;
+		const { when, children: ContentComponent, target, waitForTarget } = this.props;
 		const { isLastStep } = this.context;
 
 		if ( ! this.state.initialized ) {
@@ -387,6 +388,10 @@ export default class Step extends Component< Props, State > {
 		}
 
 		if ( when && ! this.context.isValid( when ) ) {
+			return null;
+		}
+
+		if ( target && waitForTarget && ! this.state.seenTarget ) {
 			return null;
 		}
 
