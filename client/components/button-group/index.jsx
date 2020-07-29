@@ -12,7 +12,7 @@ import './style.scss';
 
 class ButtonGroup extends PureComponent {
 	static propTypes = {
-		children(props) {
+		children( props ) {
 			let error = null;
 			React.Children.forEach( props.children, ( child ) => {
 				if ( child && ( ! child.props || child.props.type !== 'button' ) ) {
