@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .domain-suggestion:not( .featured-domain-suggestion ) {
 	display: flex;
 	flex-direction: column;
@@ -316,7 +319,11 @@ body.is-section-signup.is-white-signup {
 
 			&:not( .domain-transfer-suggestion ) {
 				.domain-suggestion__action {
-					display: none;
+					@include break-mobile {
+						display: none;
+						background: $accent-blue;
+						color: var( --color-surface );
+					}
 				}
 			}
 	
