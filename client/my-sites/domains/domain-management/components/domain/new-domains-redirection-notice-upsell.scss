@@ -8,4 +8,8 @@
 	.banner__description {
 		font-size: $font-body-small;
 	}
+
+	.button {
+		word-break: keep-all;
+	}
 }
