@@ -32,12 +32,7 @@ function trackOnboardingButtonClick() {
 	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
-const BusinessPlanDetails = ( {
-	selectedSite,
-	sitePlans,
-	selectedFeature,
-	purchases,
-} ) => {
+const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
 	const shouldPromoteJetpack = useSelector( ( state ) =>
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
 	);
