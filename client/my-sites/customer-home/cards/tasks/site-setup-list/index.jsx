@@ -214,11 +214,13 @@ const SiteSetupList = ( {
 			{ ! useAccordionLayout && (
 				<CurrentTaskItem
 					currentTask={ currentTask }
-					skipTask={ () => skipTask( dispatch, currentTask, tasks, siteId, setIsLoading ) }
+					skipTask={ () => {
+						setTaskIsManuallySelected( false );
+						skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
+					} }
 					startTask={ () =>
 						startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
 					}
-					setTaskIsManuallySelected={ setTaskIsManuallySelected }
 				/>
 			) }
 
