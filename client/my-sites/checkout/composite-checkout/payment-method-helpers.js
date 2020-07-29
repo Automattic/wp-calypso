@@ -98,10 +98,14 @@ export function getDomainDetails( select ) {
 	return prepareDomainContactDetails( managedContactDetails );
 }
 
-export function addDomainDetailsToSubmitData( submitData, select ) {
+export function addDomainDetailsToSubmitData(
+	submitData,
+	select,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	return {
 		...submitData,
-		domainDetails: getDomainDetails( select ),
+		domainDetails: includeDomainDetails || includeGSuiteDetails ? getDomainDetails( select ) : null,
 	};
 }
 
