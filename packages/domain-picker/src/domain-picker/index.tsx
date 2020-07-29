@@ -79,7 +79,7 @@ export interface Props {
 	onSetDomainSearch: ( value: string ) => void;
 
 	/** Weather to segregate free and paid domains from each other */
-	segregateFreeAndPaid: boolean;
+	segregateFreeAndPaid?: boolean;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
