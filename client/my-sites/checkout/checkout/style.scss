@@ -1,3 +1,5 @@
+@import 'jetpack-connect/colors.scss';
+
 @mixin section-border( $position ) {
 	&::before {
 		display: block;
@@ -1144,6 +1146,15 @@
 	display: block;
 	font-size: $font-body-extra-small;
 	font-style: italic;
+}
+
+.is-section-checkout.is-jetpack-site,
+.is-section-checkout-thank-you.is-jetpack-site {
+	@include jetpack-connect-colors();
+
+	.payment-box-section {
+		--color-primary: var( --color-primary-50 );
+	}
 }
 
 .checkout__site-created-notice-wrapper {
