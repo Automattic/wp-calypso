@@ -1,8 +1,10 @@
+import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
 import getSiteTaskList from 'state/selectors/get-site-task-list';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import canCurrentUserForSites from 'state/selectors/can-current-user-for-sites';
 import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 import { getSiteFrontPage } from 'state/sites/selectors';
 import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
@@ -51,5 +53,17 @@ export default function isSiteChecklistComplete( state, siteId ) {
 	};
 
 	const taskList = getSiteTaskList( state, siteId );
+
+	// If you are not the site owner, skip over personal tasks when determining
+	// if the checklist is complete.
+	//
+	// The left-side "Setup" bar is per-user, but the main area task list is per-blog.
+	// This stops non-owners from seeing a setup bar without a task list.
+	const isSiteOwnerCapability = canCurrentUserForSites( state, [ siteId ], 'own_site' );
+	const isSiteOwner = isSiteOwnerCapability[ siteId ];
+	if ( isSiteOwner !== true && taskList.tasks && isArray( taskList.tasks ) ) {
+		taskList.tasks = taskList.tasks.filter( ( task ) => task.taskType !== 'user' );
+	}
+
 	return taskList.getAll().every( isTaskComplete );
 }
