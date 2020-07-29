@@ -17,6 +17,9 @@ const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, LaunchAct
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
 	}
+	if ( action.type === 'UNSET_DOMAIN' ) {
+		return undefined;
+	}
 	return state;
 };
 
