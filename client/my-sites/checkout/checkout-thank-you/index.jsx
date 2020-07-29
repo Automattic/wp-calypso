@@ -84,7 +84,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getActiveTheme } from 'state/themes/selectors';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
-
+import { isProductsListFetching } from 'state/products-list/selectors';
 /**
  * Style dependencies
  */
@@ -246,7 +246,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	isDataLoaded = () => {
-		if ( this.isGenericReceipt() ) {
+		if ( this.isGenericReceipt() || this.props.isProductsListFetching ) {
 			return true;
 		}
 
@@ -642,6 +642,7 @@ export default connect(
 
 		return {
 			isFetchingTransfer: isFetchingTransfer( state, siteId ),
+			isProductsListFetching: isProductsListFetching( state ),
 			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
