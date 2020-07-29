@@ -1213,7 +1213,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Can Share Posts From Reader (PressThis)! @parallel', function () {
+	describe.only( 'Can Share Posts From Reader (PressThis)! @parallel', function () {
 		step( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			await this.loginFlow.login();
