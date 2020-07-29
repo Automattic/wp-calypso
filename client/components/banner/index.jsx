@@ -161,7 +161,7 @@ export class Banner extends Component {
 
 		let iconComponent;
 		if ( iconPath ) {
-			iconComponent = <img src={ iconPath } width={ 18 } alt="" />;
+			iconComponent = <img src={ iconPath } alt="" />;
 		} else {
 			iconComponent = <Gridicon icon={ icon || 'star' } size={ 18 } />;
 		}
