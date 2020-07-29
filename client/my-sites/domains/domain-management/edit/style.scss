@@ -66,10 +66,7 @@
 	.status-success {
 		@include domain_status_color( var( --color-success ) );
 	}
-	.status-parked {
-		@include domain_status_color( #787C82 );
-	}
-	.status-pending {
+	.status-neutral {
 		@include domain_status_color( var( --color-neutral ) );
 	}
 	.status-warning {
