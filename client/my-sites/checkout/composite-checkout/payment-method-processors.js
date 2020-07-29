@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { defaultRegistry } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
 import {
-	getDomainDetails,
+	addDomainDetailsToSubmitData,
 	wpcomTransaction,
 	wpcomPayPalExpress,
 	submitApplePayPayment,
@@ -51,16 +51,18 @@ export function genericRedirectProcessor( paymentMethodId, submitData, getThankY
 	} );
 	const pending = submitStripeRedirectTransaction(
 		paymentMethodId,
-		{
-			...submitData,
-			successUrl,
-			cancelUrl,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
-		},
+		addDomainDetailsToSubmitData(
+			{
+				...submitData,
+				successUrl,
+				cancelUrl,
+				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				siteId: select( 'wpcom' )?.getSiteId?.(),
+			},
+			select
+		),
 		wpcomTransaction
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
@@ -73,13 +75,15 @@ export function genericRedirectProcessor( paymentMethodId, submitData, getThankY
 
 export function applePayProcessor( submitData ) {
 	const pending = submitApplePayPayment(
-		{
-			...submitData,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-		},
+		addDomainDetailsToSubmitData(
+			{
+				...submitData,
+				siteId: select( 'wpcom' )?.getSiteId?.(),
+				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			},
+			select
+		),
 		wpcomTransaction
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
@@ -97,15 +101,17 @@ export async function stripeCardProcessor( submitData ) {
 		postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 	} );
 	const pending = submitStripeCardTransaction(
-		{
-			...submitData,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
-			paymentMethodToken,
-		},
+		addDomainDetailsToSubmitData(
+			{
+				...submitData,
+				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				siteId: select( 'wpcom' )?.getSiteId?.(),
+				paymentMethodToken,
+			},
+			select
+		),
 		wpcomTransaction
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
@@ -118,14 +124,16 @@ export async function stripeCardProcessor( submitData ) {
 
 export async function existingCardProcessor( submitData ) {
 	const pending = submitExistingCardPayment(
-		{
-			...submitData,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
-		},
+		addDomainDetailsToSubmitData(
+			{
+				...submitData,
+				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				siteId: select( 'wpcom' )?.getSiteId?.(),
+			},
+			select
+		),
 		wpcomTransaction
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
@@ -148,14 +156,16 @@ function createStripePaymentMethodToken( { stripe, name, country, postalCode } )
 
 export async function freePurchaseProcessor( submitData ) {
 	const pending = submitFreePurchaseTransaction(
-		{
-			...submitData,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
-			// this data is intentionally empty so we do not charge taxes
-			country: null,
-			postalCode: null,
-		},
+		addDomainDetailsToSubmitData(
+			{
+				...submitData,
+				siteId: select( 'wpcom' )?.getSiteId?.(),
+				// this data is intentionally empty so we do not charge taxes
+				country: null,
+				postalCode: null,
+			},
+			select
+		),
 		wpcomTransaction
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
@@ -167,14 +177,16 @@ export async function freePurchaseProcessor( submitData ) {
 
 export async function fullCreditsProcessor( submitData ) {
 	const pending = submitCreditsTransaction(
-		{
-			...submitData,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
-			// this data is intentionally empty so we do not charge taxes
-			country: null,
-			postalCode: null,
-		},
+		addDomainDetailsToSubmitData(
+			{
+				...submitData,
+				siteId: select( 'wpcom' )?.getSiteId?.(),
+				// this data is intentionally empty so we do not charge taxes
+				country: null,
+				postalCode: null,
+			},
+			select
+		),
 		wpcomTransaction
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
@@ -201,17 +213,19 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) 
 	} );
 
 	const pending = submitPayPalExpressRequest(
-		{
-			...submitData,
-			successUrl,
-			cancelUrl,
-			siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
-			domainDetails: getDomainDetails( select ),
-			couponId: couponItem?.wpcom_meta?.couponCode,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
-			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
-		},
+		addDomainDetailsToSubmitData(
+			{
+				...submitData,
+				successUrl,
+				cancelUrl,
+				siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
+				couponId: couponItem?.wpcom_meta?.couponCode,
+				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
+				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
+				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
+			},
+			select
+		),
 		wpcomPayPalExpress
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl

@@ -92,6 +92,13 @@ export function getDomainDetails( select ) {
 	return prepareDomainContactDetails( managedContactDetails );
 }
 
+export function addDomainDetailsToSubmitData( submitData, select ) {
+	return {
+		...submitData,
+		domainDetails: getDomainDetails( select ),
+	};
+}
+
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
