@@ -18,28 +18,17 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { useDomainNamesInCart } from '../hooks/has-domains';
 import Field from './field';
-import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
 import { isGSuiteProductSlug } from 'lib/gsuite';
-import CountrySelectMenu from 'my-sites/checkout/composite-checkout/wpcom/components/country-select-menu';
-import {
-	hasGoogleApps,
-	hasDomainRegistration,
-	hasOnlyRenewalItems,
-	hasTransferProduct,
-} from 'lib/cart-values/cart-items';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 
 export default function WPContactForm( {
-	summary,
-	isComplete,
-	isActive,
 	countriesList,
 	renderDomainContactFields,
 	shouldShowContactDetailsValidationErrors,
+	shouldShowDomainContactFields,
 	contactValidationCallback,
 } ) {
 	const translate = useTranslate();
@@ -51,29 +40,15 @@ export default function WPContactForm( {
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
-	const cart = useCart();
 	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
-	const isDomainFieldsVisible = needsDomainDetails( cart, isCachedContactFormValid );
 
 	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
-
-	if ( summary && isComplete ) {
-		return (
-			<ContactFormSummary
-				isDomainFieldsVisible={ isDomainFieldsVisible }
-				isGSuiteInCart={ isGSuiteInCart }
-			/>
-		);
-	}
-	if ( ! isActive ) {
-		return null;
-	}
 
 	return (
 		<BillingFormFields>
 			<RenderContactDetails
 				translate={ translate }
-				isDomainFieldsVisible={ isDomainFieldsVisible }
+				shouldShowDomainContactFields={ shouldShowDomainContactFields }
 				isGSuiteInCart={ isGSuiteInCart }
 				contactInfo={ contactInfo }
 				renderDomainContactFields={ renderDomainContactFields }
@@ -204,94 +179,9 @@ TaxFields.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
-	const translate = useTranslate();
-	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
-
-	const showDomainContactSummary = isDomainFieldsVisible;
-
-	// Check if paymentData is empty
-	if ( Object.entries( contactInfo ).length === 0 ) {
-		return null;
-	}
-
-	const fullName = joinNonEmptyValues(
-		' ',
-		contactInfo.firstName.value,
-		contactInfo.lastName.value
-	);
-	const cityAndState = joinNonEmptyValues( ', ', contactInfo.city.value, contactInfo.state.value );
-	const postalAndCountry = joinNonEmptyValues(
-		', ',
-		contactInfo.postalCode.value,
-		contactInfo.countryCode.value
-	);
-
-	return (
-		<GridRow>
-			<div>
-				<SummaryDetails>
-					{ ( isGSuiteInCart || showDomainContactSummary ) && fullName && (
-						<SummaryLine>{ fullName }</SummaryLine>
-					) }
-
-					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
-					) }
-
-					<AlternateEmailSummary
-						contactInfo={ contactInfo }
-						showDomainContactSummary={ showDomainContactSummary }
-						isGSuiteInCart={ isGSuiteInCart }
-					/>
-
-					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
-					) }
-				</SummaryDetails>
-
-				<SummaryDetails>
-					{ showDomainContactSummary && contactInfo.address1.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && contactInfo.address2.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.address2.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && cityAndState && (
-						<SummaryLine>{ cityAndState }</SummaryLine>
-					) }
-
-					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
-				</SummaryDetails>
-
-				{ contactInfo.vatId.value?.length > 0 && (
-					<SummaryDetails>
-						{ contactInfo.vatId.value?.length > 0 && (
-							<SummaryLine>
-								{ translate( 'VAT indentification number:' ) }
-								{ contactInfo.vatId.value }
-							</SummaryLine>
-						) }
-					</SummaryDetails>
-				) }
-			</div>
-		</GridRow>
-	);
-}
-
-function joinNonEmptyValues( joinString, ...values ) {
-	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
-}
-
 function RenderContactDetails( {
 	translate,
-	isDomainFieldsVisible,
+	shouldShowDomainContactFields,
 	isGSuiteInCart,
 	contactInfo,
 	renderDomainContactFields,
@@ -303,7 +193,7 @@ function RenderContactDetails( {
 	const domainNames = useDomainNamesInCart();
 	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
 
-	if ( isDomainFieldsVisible ) {
+	if ( shouldShowDomainContactFields ) {
 		return (
 			<React.Fragment>
 				<ContactDetailsFormDescription>
@@ -358,34 +248,8 @@ function RenderContactDetails( {
 	);
 }
 
-function AlternateEmailSummary( { contactInfo, showDomainContactSummary, isGSuiteInCart } ) {
-	if ( ! isGSuiteInCart && ! showDomainContactSummary ) {
-		return null;
-	}
-	if ( ! contactInfo.alternateEmail.value?.length ) {
-		return null;
-	}
-	if ( contactInfo.alternateEmail.value === contactInfo.email.value && showDomainContactSummary ) {
-		return null;
-	}
-	return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
-}
-
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;
 	color: ${ ( props ) => props.theme.colors.textColor };
 	margin: 0 0 16px;
 `;
-
-function needsDomainDetails( cart, isCachedContactFormValid ) {
-	if ( cart && hasOnlyRenewalItems( cart ) && isCachedContactFormValid ) {
-		return false;
-	}
-	if (
-		cart &&
-		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
-	) {
-		return true;
-	}
-	return false;
-}
