@@ -4043,9 +4043,9 @@
     "@types/react" "*"
 
 "@types/react-dom@*":
-  version "16.9.7"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.7.tgz#60844d48ce252d7b2dccf0c7bb937130e27c0cd2"
-  integrity sha512-GHTYhM8/OwUCf254WO5xqR/aqD3gC9kSTLpopWGpQLpnw23jk44RvMHsyUSEplvRJZdHxhJGMMLF0kCPYHPhQA==
+  version "16.9.8"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.8.tgz#fe4c1e11dfc67155733dfa6aa65108b4971cb423"
+  integrity sha512-ykkPQ+5nFknnlU6lDd947WbQ6TE3NNzbQAkInC2EKY1qeYdTKp7onFusmYZb+ityzx2YviqT6BXSu+LyWWJwcA==
   dependencies:
     "@types/react" "*"
 
@@ -4104,15 +4104,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*":
-  version "16.9.34"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.34.tgz#f7d5e331c468f53affed17a8a4d488cd44ea9349"
-  integrity sha512-8AJlYMOfPe1KGLKyHpflCg5z46n0b5DbRfqDksxBLBTUpB75ypDBAO9eCUcjNwE6LCUslwTz00yyG/X9gaVtow==
-  dependencies:
-    "@types/prop-types" "*"
-    csstype "^2.2.0"
-
-"@types/react@^16.9.43":
+"@types/react@*", "@types/react@^16.9.43":
   version "16.9.43"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.43.tgz#c287f23f6189666ee3bebc2eb8d0f84bcb6cdb6b"
   integrity sha512-PxshAFcnJqIWYpJbLPriClH53Z2WlJcVZE+NP2etUtWQs2s7yIMj3/LDKZT/5CHJ/F62iyjVCDu2H3jHEXIxSg==
@@ -4347,7 +4339,7 @@
     "@types/wordpress__media-utils" "*"
     "@wordpress/element" "^2.14.0"
 
-"@types/wordpress__element@*", "@types/wordpress__element@^2.4.1":
+"@types/wordpress__element@*":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/wordpress__element/-/wordpress__element-2.4.1.tgz#367fb0bd6194cd74d96470dccad400e9fccd3a5a"
   integrity sha512-cQpqHFnAQK6v2CP9WBrgXKqT9dFITTYc9E37KN74INOPl3Bvznc0tWMerFJcPXjfd0PLyE0tzgnSIh9+GDbhnw==
@@ -4355,6 +4347,13 @@
     "@types/react" "*"
     "@types/react-dom" "*"
     csstype "^2.2.0"
+
+"@types/wordpress__element@^2.4.1":
+  version "2.14.1"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__element/-/wordpress__element-2.14.1.tgz#4e8bc30b06e132283b33403ddca58f3be0521df1"
+  integrity sha512-qMp7A1r4Fdnm36FgSIQpwZ39CY6DDEfb2P4TfaLHoaSeZcPBdzs4hdhmIRrThX/W9AqOQYmGHyZ8RMzjg88KEg==
+  dependencies:
+    "@wordpress/element" "*"
 
 "@types/wordpress__hooks@^2.4.0":
   version "2.4.0"
@@ -8690,14 +8689,6 @@ chalk@^4.1.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chalk@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.0.tgz#4e14870a618d9e2edd97dd8345fd9d9dc315646a"
-  integrity sha512-qwx12AxXe2Q5xQ43Ac//I6v5aXTipYrSESdOgzrN+9XjgEpyjpKuvSGaN4qE93f7TQTlerQQ8S+EQ0EyDoVL1A==
-  dependencies:
-    ansi-styles "^4.1.0"
-    supports-color "^7.1.0"
-
 change-case@^3.0.1:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/change-case/-/change-case-3.1.0.tgz#0e611b7edc9952df2e8513b27b42de72647dd17e"
@@ -10436,7 +10427,12 @@ cssstyle@^2.2.0:
   dependencies:
     cssom "~0.3.6"
 
-csstype@^2.2.0, csstype@^2.5.7, csstype@^2.6.7:
+csstype@^2.2.0:
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.11.tgz#452f4d024149ecf260a852b025e36562a253ffc5"
+  integrity sha512-l8YyEC9NBkSm783PFTvh0FmJy7s5pFKrDp49ZL7zBGX3fWkO+N4EEyan1qqp8cwPLDcD0OSdyY6hAMoxp34JFw==
+
+csstype@^2.5.7, csstype@^2.6.7:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.9.tgz#05141d0cd557a56b8891394c1911c40c8a98d098"
   integrity sha512-xz39Sb4+OaTsULgUERcCk+TJj8ylkL4aSVDQiX/ksxbELSqwkgt4d4RD7fovIdgJGSuNYqwZEiVjYY5l0ask+Q==
