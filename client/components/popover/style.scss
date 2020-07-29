@@ -177,12 +177,18 @@
 		.gridicon {
 			color: var( --color-text-inverted );
 		}
+		.material-icon {
+			fill: var( --color-text-inverted );
+		}
 	}
 
 	&[disabled] {
 		color: var( --color-neutral-20 );
 		.gridicon {
 			color: var( --color-neutral-0 );
+		}
+		.material-icon {
+			fill: var( --color-neutral-0 );
 		}
 	}
 
@@ -207,6 +213,9 @@
 		vertical-align: bottom;
 		margin-right: 8px;
 		position: static;
+	}
+	.material-icon {
+		fill: var( --color-text-subtle );
 	}
 	.gridicons-cloud-download {
 		position: relative;
