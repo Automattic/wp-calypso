@@ -95,6 +95,12 @@ body.is-section-signup.is-white-signup {
 			box-shadow: none;
 		}
 
+		&.search-filters__dropdown-filters--has-filter-values {
+			.button.is-borderless {
+				color: $accent-blue;
+			}
+		}
+
 		.button {
 			flex-direction: row;
 
