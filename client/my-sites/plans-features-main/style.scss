@@ -181,6 +181,7 @@ body.is-section-signup.is-white-signup {
 				.plan-features__table-item {
 					border-left: 1px solid #e2e4e7;
 					border-right: 1px solid #e2e4e7;
+					background-clip: padding-box;
 					
 					.plan-features__description {
 						color: var( --color-neutral-60-rgb );
