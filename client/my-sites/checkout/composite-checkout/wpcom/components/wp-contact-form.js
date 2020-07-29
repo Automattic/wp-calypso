@@ -19,20 +19,13 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { useDomainNamesInCart } from '../hooks/has-domains';
+import { useHasDomainsInCart, useDomainNamesInCart } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { isGSuiteProductSlug } from 'lib/gsuite';
-import {
-	hasGoogleApps,
-	hasDomainRegistration,
-	hasOnlyRenewalItems,
-	hasTransferProduct,
-} from 'lib/cart-values/cart-items';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-contact-form' );
 
@@ -48,6 +41,7 @@ export default function WPContactForm( {
 } ) {
 	const translate = useTranslate();
 	const [ items ] = useLineItems();
+	const isDomainFieldsVisible = useHasDomainsInCart();
 	const isGSuiteInCart = items.some( ( item ) =>
 		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
 	);
@@ -55,14 +49,12 @@ export default function WPContactForm( {
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
-	const cart = useCart();
-
 	useSkipToLastStepIfFormComplete( contactValidationCallback );
 
 	if ( summary && isComplete ) {
 		return (
 			<ContactFormSummary
-				isDomainFieldsVisible={ needsDomainDetails( cart ) }
+				isDomainFieldsVisible={ isDomainFieldsVisible }
 				isGSuiteInCart={ isGSuiteInCart }
 			/>
 		);
@@ -75,7 +67,7 @@ export default function WPContactForm( {
 		<BillingFormFields>
 			<RenderContactDetails
 				translate={ translate }
-				isDomainFieldsVisible={ needsDomainDetails( cart ) }
+				isDomainFieldsVisible={ isDomainFieldsVisible }
 				isGSuiteInCart={ isGSuiteInCart }
 				contactInfo={ contactInfo }
 				renderDomainContactFields={ renderDomainContactFields }
@@ -450,14 +442,4 @@ function saveStepNumberToUrl( stepNumber ) {
 	// eslint reports this as undefined.)
 	const event = new HashChangeEvent( 'hashchange' ); // eslint-disable-line no-undef
 	window.dispatchEvent( event );
-}
-
-function needsDomainDetails( cart ) {
-	if ( cart && hasOnlyRenewalItems( cart ) ) {
-		return false;
-	}
-
-	return (
-		cart && ( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
-	);
 }
