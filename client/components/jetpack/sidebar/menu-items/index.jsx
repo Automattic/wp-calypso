@@ -20,6 +20,7 @@ import getIsSiteWPCOM from 'state/selectors/is-site-wpcom';
 import QueryScanState from 'components/data/query-jetpack-scan';
 import ScanBadge from 'components/jetpack/scan-badge';
 import SidebarItem from 'layout/sidebar/item';
+import { isEnabled } from 'config';
 
 export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const translate = useTranslate();
@@ -30,6 +31,8 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
 	const scanThreats = useSelector( ( state ) => getSiteScanThreats( state, siteId ) );
+
+	const isDesktop = isEnabled( 'desktop' );
 
 	const onNavigate = ( event ) => () => {
 		dispatch( recordTracksEvent( event ) );
@@ -53,15 +56,21 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				selected={ currentPathMatches( `/activity-log/${ siteSlug }` ) }
 				expandSection={ expandSection }
 			/>
-			<SidebarItem
-				materialIcon={ showIcons ? 'backup' : undefined }
-				materialIconStyle="filled"
-				label="Backup"
-				link={ backupPath( siteSlug ) }
-				onNavigate={ onNavigate( tracksEventNames.backupClicked ) }
-				selected={ currentPathMatches( backupPath( siteSlug ) ) }
-				expandSection={ expandSection }
-			/>
+			{
+				// Backup does not work in wp-desktop. Disable in the desktop app until
+				// it can be revisited: https://github.com/Automattic/wp-desktop/issues/943
+				! isDesktop && (
+					<SidebarItem
+						materialIcon={ showIcons ? 'backup' : undefined }
+						materialIconStyle="filled"
+						label="Backup"
+						link={ backupPath( siteSlug ) }
+						onNavigate={ onNavigate( tracksEventNames.backupClicked ) }
+						selected={ currentPathMatches( backupPath( siteSlug ) ) }
+						expandSection={ expandSection }
+					/>
+				)
+			}
 			{ ! isWPCOM && (
 				<SidebarItem
 					materialIcon={ showIcons ? 'security' : undefined }
