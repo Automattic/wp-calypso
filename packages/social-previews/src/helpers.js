@@ -17,3 +17,6 @@ export const hardTruncation = ( limit ) => ( title ) => title.slice( 0, limit ).
 
 export const firstValid = ( ...predicates ) => ( a ) =>
 	find( predicates, ( p ) => false !== p( a ) )( a );
+
+export const stripHtmlTags = ( description ) =>
+	description ? description.replace( /(<([^>]+)>)/gi, '' ) : '';
