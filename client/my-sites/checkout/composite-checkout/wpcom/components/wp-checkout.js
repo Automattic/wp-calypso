@@ -33,6 +33,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
+import WPContactFormSummary from './wp-contact-form-summary';
 import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
 import MaterialIcon from 'components/material-icon';
@@ -45,6 +46,12 @@ import {
 	getGSuiteValidationResult,
 } from 'my-sites/checkout/composite-checkout/contact-validation';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import {
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasOnlyRenewalItems,
+	hasTransferProduct,
+} from 'lib/cart-values/cart-items';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -108,12 +115,12 @@ export default function WPCheckout( {
 	const onEvent = useEvents();
 
 	const [ items ] = useLineItems();
-	const firstDomainItem = items.find( isLineItemADomain );
-	const isDomainFieldsVisible = !! firstDomainItem;
+	const areThereDomainProductsInCart = items.some( isLineItemADomain );
 	const isGSuiteInCart = items.some( ( item ) =>
 		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
 	);
-	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
+	const shouldShowContactStep = areThereDomainProductsInCart || total.amount.value > 0;
+	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
@@ -127,7 +134,7 @@ export default function WPCheckout( {
 
 	const validateContactDetailsAndDisplayErrors = async () => {
 		debug( 'validating contact details with side effects' );
-		if ( isDomainFieldsVisible ) {
+		if ( shouldShowDomainContactFields ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -154,7 +161,7 @@ export default function WPCheckout( {
 	};
 	const validateContactDetails = async () => {
 		debug( 'validating contact details' );
-		if ( isDomainFieldsVisible ) {
+		if ( shouldShowDomainContactFields ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
@@ -294,8 +301,6 @@ export default function WPCheckout( {
 							activeStepContent={
 								<WPContactForm
 									siteUrl={ siteUrl }
-									isComplete={ false }
-									isActive={ true }
 									countriesList={ countriesList }
 									StateSelect={ StateSelect }
 									renderDomainContactFields={ renderDomainContactFields }
@@ -303,10 +308,11 @@ export default function WPCheckout( {
 										shouldShowContactDetailsValidationErrors
 									}
 									contactValidationCallback={ validateContactDetails }
+									shouldShowDomainContactFields={ shouldShowDomainContactFields }
 								/>
 							}
 							completeStepContent={
-								<WPContactForm summary isComplete={ true } isActive={ false } />
+								<WPContactFormSummary showDomainContactSummary={ shouldShowDomainContactFields } />
 							}
 							titleContent={ <ContactFormTitle /> }
 							editButtonText={ translate( 'Edit' ) }
@@ -597,3 +603,16 @@ const CheckoutNoticeWrapper = styled.div`
 		}
 	}
 `;
+
+function needsDomainDetails( cart ) {
+	if ( cart && hasOnlyRenewalItems( cart ) ) {
+		return false;
+	}
+	if (
+		cart &&
+		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
+	) {
+		return true;
+	}
+	return false;
+}
