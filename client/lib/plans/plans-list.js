@@ -330,6 +330,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_NO_ADS,
 		constants.FEATURE_ADVANCED_DESIGN,
 		constants.FEATURE_VIDEO_UPLOADS,
+		constants.FEATURE_BUSINESS_ONBOARDING,
 	],
 	getSignupFeatures: () => [
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
