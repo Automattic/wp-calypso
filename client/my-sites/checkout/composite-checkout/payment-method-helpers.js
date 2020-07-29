@@ -17,6 +17,12 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	prepareDomainContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
+import {
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasOnlyRenewalItems,
+	hasTransferProduct,
+} from 'lib/cart-values/cart-items';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
@@ -354,4 +360,17 @@ export function filterAppropriatePaymentMethods( {
 				allowedPaymentMethods || serverAllowedPaymentMethods
 			);
 		} );
+}
+
+export function needsDomainDetails( cart ) {
+	if ( cart && hasOnlyRenewalItems( cart ) ) {
+		return false;
+	}
+	if (
+		cart &&
+		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
+	) {
+		return true;
+	}
+	return false;
 }
