@@ -212,7 +212,7 @@ export default function CompositeCheckout( {
 		loadingError,
 		addItem,
 	} = useShoppingCart(
-		isLoggedOutCart ? siteSlug : siteId,
+		isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsForCart,
 		couponCodeFromUrl,
