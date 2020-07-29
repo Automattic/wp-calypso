@@ -33,6 +33,7 @@ export { default as getSiteSlug } from './get-site-slug';
 export { default as getSiteThemeShowcasePath } from './get-site-theme-showcase-path';
 export { default as getSiteTitle } from './get-site-title';
 export { default as getSiteUrl } from './get-site-url';
+export { default as getStoreSetup } from './get-store-setup';
 export { default as getUpdatesBySiteId } from './get-updates-by-site-id';
 export { default as hasAllSitesList } from './has-all-sites-list';
 export { default as hasDefaultSiteTitle } from './has-default-site-title';

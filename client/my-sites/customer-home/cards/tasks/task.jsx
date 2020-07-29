@@ -16,6 +16,7 @@ import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Spinner from 'components/spinner';
+import Gauge from 'components/gauge';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -40,10 +41,13 @@ const Task = ( {
 	description,
 	illustration,
 	enableSkipOptions = true,
+	remainingTasks,
+	scary,
 	siteId,
 	taskId,
 	timing,
 	title,
+	totalTasks,
 	actionButton,
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -122,6 +126,7 @@ const Task = ( {
 						<Button
 							className="task__action"
 							primary
+							scary={ scary }
 							onClick={ startTask }
 							href={ actionUrl }
 							target={ actionTarget }
@@ -158,9 +163,14 @@ const Task = ( {
 					) }
 				</div>
 			</div>
-			{ isDesktop() && (
+			{ isDesktop() && illustration && (
 				<div className="task__illustration">
 					<img src={ illustration } alt="" />
+				</div>
+			) }
+			{ isDesktop() && remainingTasks && totalTasks && (
+				<div className="task__gauge">
+					<Gauge percentage={ ( remainingTasks / totalTasks ) * 100 } metric={ '' } />
 				</div>
 			) }
 		</div>

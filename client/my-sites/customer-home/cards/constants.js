@@ -18,6 +18,7 @@ export const TASK_CONNECT_ACCOUNTS = 'home-task-connect-accounts';
 export const TASK_FIND_DOMAIN = 'home-task-find-domain';
 export const TASK_GO_MOBILE_ANDROID = 'home-task-go-mobile-android';
 export const TASK_GO_MOBILE_IOS = 'home-task-go-mobile-ios';
+export const TASK_FINISH_STORE_SETUP = 'home-task-finish-store-setup';
 export const TASK_SITE_SETUP_CHECKLIST = 'home-task-site-setup-checklist';
 export const TASK_WEBINARS = 'home-task-webinars';
 export const TASK_EDITOR_DEPRECATION = 'home-task-editor-deprecation';
