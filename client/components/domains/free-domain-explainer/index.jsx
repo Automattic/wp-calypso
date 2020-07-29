@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -23,6 +24,7 @@ class FreeDomainExplainer extends React.Component {
 
 	render() {
 		const { translate } = this.props;
+		const isReskinned = 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return (
 			<div className="free-domain-explainer card is-compact">
@@ -42,7 +44,7 @@ class FreeDomainExplainer extends React.Component {
 							className="free-domain-explainer__subtitle-link"
 							onClick={ this.handleClick }
 						>
-							{ translate( 'Review our plans to get started' ) } &raquo;
+							{ translate( 'Review our plans to get started' ) } { ! isReskinned && <>&raquo;</> }
 						</Button>
 					</p>
 				</header>
