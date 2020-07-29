@@ -28,6 +28,7 @@ import {
 	TERM_BIENNIALLY,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 import {
 	JETPACK_PRODUCTS_LIST,
@@ -254,7 +255,7 @@ export class PlansFeaturesMain extends Component {
 		} else if ( group === GROUP_JETPACK ) {
 			plans = compact( [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				( isEnabled( 'plans/personal-plan' ) || PLAN_JETPACK_PERSONAL === sitePlanSlug ) &&
+				( isEnabled( 'jetpack/personal-plan' ) || PLAN_JETPACK_PERSONAL === sitePlanSlug ) &&
 					findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
@@ -283,7 +284,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
-			plans.splice( plans.indexOf( plans.filter( ( p ) => p.type === TYPE_PERSONAL )[ 0 ] ), 1 );
+			plans.splice( plans.indexOf( plans.filter( ( p ) => p === PLAN_PERSONAL )[ 0 ] ), 1 );
 		}
 
 		return plans;

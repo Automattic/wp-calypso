@@ -719,7 +719,7 @@ export const PLANS_LIST = {
 			] ),
 		getSignupFeatures: ( currentPlan ) => {
 			const showPersonalPlan =
-				isEnabled( 'plans/personal-plan' ) || constants.PLAN_JETPACK_PERSONAL === currentPlan;
+				isEnabled( 'jetpack/personal-plan' ) || constants.PLAN_JETPACK_PERSONAL === currentPlan;
 
 			return compact( [
 				! showPersonalPlan && constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -796,7 +796,7 @@ export const PLANS_LIST = {
 			] ),
 		getSignupFeatures: ( currentPlan ) => {
 			const showPersonalPlan =
-				isEnabled( 'plans/personal-plan' ) || constants.PLAN_JETPACK_PERSONAL === currentPlan;
+				isEnabled( 'jetpack/personal-plan' ) || constants.PLAN_JETPACK_PERSONAL === currentPlan;
 
 			return compact( [
 				! showPersonalPlan && constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
