@@ -315,6 +315,7 @@ export default function WPCheckout( {
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
+							isLoggedOutCart={ isLoggedOutCart }
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
