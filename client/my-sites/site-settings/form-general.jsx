@@ -358,7 +358,7 @@ export class SiteSettingsFormGeneral extends Component {
 						disabled={ isRequestingSettings }
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
 					/>
-					<span>{ translate( 'Discourage search engines from indexing my site' ) }</span>
+					<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
 					<FormSettingExplanation isIndented>
 						{ translate(
 							'This option does not block access to your site — it is up to search engines to honor your request.'

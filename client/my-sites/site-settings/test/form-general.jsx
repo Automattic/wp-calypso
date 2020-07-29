@@ -149,7 +149,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			[ 'Public', 'Public', -1, { blog_public: 1, wpcom_coming_soon: 0 } ],
 			[
 				'Hidden',
-				'Discourage search engines from indexing my site',
+				'Discourage search engines from indexing this site',
 				-1,
 				{ blog_public: 0, wpcom_coming_soon: 0 },
 			],
@@ -170,7 +170,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			testProps.fields.blog_public = -1;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing my site', {
+			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing this site', {
 				exact: false,
 			} );
 			expect( hiddenCheckbox ).not.toBeChecked();
@@ -189,7 +189,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			testProps.fields.blog_public = 0;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing my site', {
+			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing this site', {
 				exact: false,
 			} );
 			expect( hiddenCheckbox ).toBeChecked();
