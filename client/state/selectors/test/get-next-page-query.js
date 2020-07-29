@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import getNextPageQuery from 'state/selectors/get-next-page-query';
-import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'getNextPageQuery', () => {
 	const siteId = 23465832;
@@ -10,9 +9,8 @@ describe( 'getNextPageQuery', () => {
 	const query = {
 		number: 55,
 	};
-	const queryManager = new MediaQueryManager( [], { query } );
 
-	it( 'should return the default query when no query manager exists', () => {
+	it( `should return the default query when there's no active query`, () => {
 		const state = {
 			media: {
 				fetching: {},
@@ -28,9 +26,6 @@ describe( 'getNextPageQuery', () => {
 		( nextPageHandle ) => {
 			const state = {
 				media: {
-					queries: {
-						[ siteId ]: queryManager,
-					},
 					fetching: {
 						[ siteId ]: {
 							nextPageHandle,
