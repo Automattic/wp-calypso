@@ -4,11 +4,11 @@ on:
     paths:
     - 'apps/full-site-editing/**'
 
-name: Editing Toolkit
+name: Editing Toolkit Plugin
 
 jobs:
   build:
-    name: Build Editing Toolkit plugin
+    name: Build plugin
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -42,7 +42,7 @@ jobs:
       if: steps.cache.outputs.cache-hit == 'true'
       run: yarn run postinstall # Needed only when not running yarn install.
 
-    - name: Build Editing Toolkit
+    - name: Build JavaScript
       run: yarn build
       working-directory: apps/full-site-editing
 
