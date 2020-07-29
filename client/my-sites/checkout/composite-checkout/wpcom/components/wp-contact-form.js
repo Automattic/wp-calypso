@@ -53,13 +53,14 @@ export default function WPContactForm( {
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
 	const cart = useCart();
 	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
+	const isDomainFieldsVisible = needsDomainDetails( cart, isCachedContactFormValid );
 
 	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
 
 	if ( summary && isComplete ) {
 		return (
 			<ContactFormSummary
-				isDomainFieldsVisible={ needsDomainDetails( cart ) }
+				isDomainFieldsVisible={ isDomainFieldsVisible }
 				isGSuiteInCart={ isGSuiteInCart }
 			/>
 		);
@@ -72,7 +73,7 @@ export default function WPContactForm( {
 		<BillingFormFields>
 			<RenderContactDetails
 				translate={ translate }
-				isDomainFieldsVisible={ needsDomainDetails( cart ) }
+				isDomainFieldsVisible={ isDomainFieldsVisible }
 				isGSuiteInCart={ isGSuiteInCart }
 				contactInfo={ contactInfo }
 				renderDomainContactFields={ renderDomainContactFields }
@@ -376,12 +377,15 @@ const ContactDetailsFormDescription = styled.p`
 	margin: 0 0 16px;
 `;
 
-function needsDomainDetails( cart ) {
-	if ( cart && hasOnlyRenewalItems( cart ) ) {
+function needsDomainDetails( cart, isCachedContactFormValid ) {
+	if ( cart && hasOnlyRenewalItems( cart ) && isCachedContactFormValid ) {
 		return false;
 	}
-
-	return (
-		cart && ( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
-	);
+	if (
+		cart &&
+		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
+	) {
+		return true;
+	}
+	return false;
 }
