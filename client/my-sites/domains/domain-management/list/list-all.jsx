@@ -193,7 +193,7 @@ export default connect(
 			user,
 		};
 	},
-	( dispatch ) => {
-		return { addDomainClick: () => dispatch( addDomainClick() ) };
+	{
+		addDomainClick,
 	}
 )( localize( ListAll ) );
