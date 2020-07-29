@@ -14,7 +14,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@HEAD
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
@@ -33,7 +33,7 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile # Not needed when restoring from cache.
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
@@ -88,7 +88,7 @@ jobs:
         name: editing-toolkit-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
@@ -127,7 +127,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@HEAD
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
@@ -164,7 +164,7 @@ jobs:
     - name: Check if newspack-blocks exists
       run: test -f ./apps/full-site-editing/full-site-editing-plugin/newspack-blocks/synced-newspack-blocks/class-newspack-blocks.php
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
