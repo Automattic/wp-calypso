@@ -60,6 +60,10 @@ body.is-section-signup.is-white-signup {
 	.domains__step-content {
 		.search.is-open.has-focus {
 			box-shadow: 0 0 0 2px  $accent-blue;
+			background: var( --color-surface );
+			.search__input {
+				background: var( --color-surface );
+			}
 		}
 		.register-domain-step__search-card {
 			background: $light-white;
