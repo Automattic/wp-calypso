@@ -80,6 +80,12 @@ $transition-period: 100ms;
 
 	a {
 		color: $light-gray-800;
+
+		&:active,
+		&:focus,
+		&:hover {
+			color: $white;
+		}
 	}
 }
 
