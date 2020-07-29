@@ -46,12 +46,7 @@ import {
 	getGSuiteValidationResult,
 } from 'my-sites/checkout/composite-checkout/contact-validation';
 import { isGSuiteProductSlug } from 'lib/gsuite';
-import {
-	hasGoogleApps,
-	hasDomainRegistration,
-	hasOnlyRenewalItems,
-	hasTransferProduct,
-} from 'lib/cart-values/cart-items';
+import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -604,16 +599,3 @@ const CheckoutNoticeWrapper = styled.div`
 		}
 	}
 `;
-
-function needsDomainDetails( cart ) {
-	if ( cart && hasOnlyRenewalItems( cart ) ) {
-		return false;
-	}
-	if (
-		cart &&
-		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
-	) {
-		return true;
-	}
-	return false;
-}
