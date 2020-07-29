@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 
@@ -10,6 +11,8 @@ import { Card } from '@automattic/components';
  */
 import InlineSupportLink from 'components/inline-support-link';
 import { localizeUrl } from 'lib/i18n-utils';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { FEATURE_QUICK_START_VIDEO } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Style dependencies
@@ -17,8 +20,12 @@ import { localizeUrl } from 'lib/i18n-utils';
 import quickStartVideoImage from 'assets/images/customer-home/quick-start-video-ss.png';
 import './style.scss';
 
-export const QuickStartVideo = () => {
+export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 	const translate = useTranslate();
+
+	useEffect( () => {
+		trackQuickStartImpression();
+	}, [ trackQuickStartImpression ] );
 
 	return (
 		<div className="quick-start-video">
@@ -47,4 +54,17 @@ export const QuickStartVideo = () => {
 	);
 };
 
-export default QuickStartVideo;
+const trackCardImpression = () => {
+	return composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_card_impression', {
+			card: FEATURE_QUICK_START_VIDEO,
+		} ),
+		bumpStat( 'calypso_customer_home_card_impression', FEATURE_QUICK_START_VIDEO )
+	);
+};
+
+const mapDispatchToProps = {
+	trackQuickStartImpression: trackCardImpression,
+};
+
+export default connect( null, mapDispatchToProps )( QuickStartVideo );
