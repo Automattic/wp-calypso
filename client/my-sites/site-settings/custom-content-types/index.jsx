@@ -141,7 +141,7 @@ class CustomContentTypes extends Component {
 		const { translate } = this.props;
 		const fieldLabel = translate( 'Testimonials' );
 		const fieldDescription = translate(
-			'Add, organize, and display {{link /}}. If your theme doesn’t support testimonials yet, ' +
+			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
@@ -149,7 +149,6 @@ class CustomContentTypes extends Component {
 						<InlineSupportLink
 							supportLink={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) }
 							supportPostId={ 97757 }
-							text={ translate( 'testimonials' ) }
 						/>
 					),
 				},
@@ -163,7 +162,7 @@ class CustomContentTypes extends Component {
 		const { translate } = this.props;
 		const fieldLabel = translate( 'Portfolio projects' );
 		const fieldDescription = translate(
-			'Add, organize, and display {{link /}}. If your theme doesn’t support portfolio projects yet, ' +
+			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
@@ -171,7 +170,6 @@ class CustomContentTypes extends Component {
 						<InlineSupportLink
 							supportLink={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) }
 							supportPostId={ 84808 }
-							text={ translate( 'portfolio projects' ) }
 						/>
 					),
 				},
