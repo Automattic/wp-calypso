@@ -407,7 +407,9 @@ class DomainItem extends PureComponent {
 		const { domain, domainDetails, isManagingAllSites, showCheckbox, enableSelection } = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
-		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
+		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
+			'domain-item__enable-selection': enableSelection,
+		} );
 		const domainTitleClass = classNames( 'domain-item__title', {
 			'domain-item__primary': ! isManagingAllSites && domainDetails?.isPrimary,
 		} );
