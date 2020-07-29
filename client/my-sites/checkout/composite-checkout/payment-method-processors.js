@@ -23,7 +23,11 @@ import { createStripePaymentMethod } from 'lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
 
-export function genericRedirectProcessor( paymentMethodId, submitData, getThankYouUrl, siteSlug ) {
+export function genericRedirectProcessor(
+	paymentMethodId,
+	submitData,
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+) {
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
 		true
@@ -61,7 +65,11 @@ export function genericRedirectProcessor( paymentMethodId, submitData, getThankY
 				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				siteId: select( 'wpcom' )?.getSiteId?.(),
 			},
-			select
+			select,
+			{
+				includeDomainDetails,
+				includeGSuiteDetails,
+			}
 		),
 		wpcomTransaction
 	);
@@ -73,7 +81,7 @@ export function genericRedirectProcessor( paymentMethodId, submitData, getThankY
 	return pending;
 }
 
-export function applePayProcessor( submitData ) {
+export function applePayProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } ) {
 	const pending = submitApplePayPayment(
 		addDomainDetailsToSubmitData(
 			{
@@ -82,7 +90,11 @@ export function applePayProcessor( submitData ) {
 				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			},
-			select
+			select,
+			{
+				includeDomainDetails,
+				includeGSuiteDetails,
+			}
 		),
 		wpcomTransaction
 	);
@@ -94,7 +106,10 @@ export function applePayProcessor( submitData ) {
 	return pending;
 }
 
-export async function stripeCardProcessor( submitData ) {
+export async function stripeCardProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
 		...submitData,
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -110,7 +125,11 @@ export async function stripeCardProcessor( submitData ) {
 				siteId: select( 'wpcom' )?.getSiteId?.(),
 				paymentMethodToken,
 			},
-			select
+			select,
+			{
+				includeDomainDetails,
+				includeGSuiteDetails,
+			}
 		),
 		wpcomTransaction
 	);
@@ -122,7 +141,10 @@ export async function stripeCardProcessor( submitData ) {
 	return pending;
 }
 
-export async function existingCardProcessor( submitData ) {
+export async function existingCardProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const pending = submitExistingCardPayment(
 		addDomainDetailsToSubmitData(
 			{
@@ -132,7 +154,11 @@ export async function existingCardProcessor( submitData ) {
 				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				siteId: select( 'wpcom' )?.getSiteId?.(),
 			},
-			select
+			select,
+			{
+				includeDomainDetails,
+				includeGSuiteDetails,
+			}
 		),
 		wpcomTransaction
 	);
@@ -154,7 +180,10 @@ function createStripePaymentMethodToken( { stripe, name, country, postalCode } )
 	} );
 }
 
-export async function freePurchaseProcessor( submitData ) {
+export async function freePurchaseProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const pending = submitFreePurchaseTransaction(
 		addDomainDetailsToSubmitData(
 			{
@@ -164,7 +193,11 @@ export async function freePurchaseProcessor( submitData ) {
 				country: null,
 				postalCode: null,
 			},
-			select
+			select,
+			{
+				includeDomainDetails,
+				includeGSuiteDetails,
+			}
 		),
 		wpcomTransaction
 	);
@@ -175,7 +208,10 @@ export async function freePurchaseProcessor( submitData ) {
 	return pending;
 }
 
-export async function fullCreditsProcessor( submitData ) {
+export async function fullCreditsProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const pending = submitCreditsTransaction(
 		addDomainDetailsToSubmitData(
 			{
@@ -185,7 +221,11 @@ export async function fullCreditsProcessor( submitData ) {
 				country: null,
 				postalCode: null,
 			},
-			select
+			select,
+			{
+				includeDomainDetails,
+				includeGSuiteDetails,
+			}
 		),
 		wpcomTransaction
 	);
@@ -197,7 +237,10 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) {
+export async function payPalProcessor(
+	submitData,
+	{ getThankYouUrl, couponItem, includeDomainDetails, includeGSuiteDetails }
+) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const successUrl = formatUrl( {
 		protocol,
@@ -224,7 +267,11 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) 
 				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
 				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
 			},
-			select
+			select,
+			{
+				includeDomainDetails,
+				includeGSuiteDetails,
+			}
 		),
 		wpcomPayPalExpress
 	);
