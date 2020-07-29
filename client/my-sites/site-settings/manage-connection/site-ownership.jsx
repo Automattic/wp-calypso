@@ -20,7 +20,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
 import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
+import isJetpackUserConnectionOwner from 'state/selectors/is-jetpack-user-connection-owner';
 import OwnershipInformation from './ownership-information';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
@@ -156,7 +156,7 @@ class SiteOwnership extends Component {
 	}
 
 	renderConnectionDetails() {
-		const { siteIsConnected, siteIsInDevMode, translate, userIsMaster } = this.props;
+		const { siteIsConnected, siteIsInDevMode, translate, userIsConnectionOwner } = this.props;
 
 		if ( siteIsConnected === false ) {
 			return translate( 'The site is not connected.' );
@@ -174,14 +174,14 @@ class SiteOwnership extends Component {
 
 		return (
 			<Fragment>
-				{ userIsMaster !== null && (
+				{ userIsConnectionOwner !== null && (
 					<FormSettingExplanation>
-						{ userIsMaster
+						{ userIsConnectionOwner
 							? translate( "You are the owner of this site's connection to WordPress.com." )
 							: translate( "Somebody else owns this site's connection to WordPress.com." ) }
 					</FormSettingExplanation>
 				) }
-				{ userIsMaster && this.renderCurrentUserDropdown() }
+				{ userIsConnectionOwner && this.renderCurrentUserDropdown() }
 			</Fragment>
 		);
 	}
@@ -281,7 +281,7 @@ export default connect(
 			siteIsConnected: isJetpackSiteConnected( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
 			siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
-			userIsMaster: isJetpackUserMaster( state, siteId ),
+			userIsConnectionOwner: isJetpackUserConnectionOwner( state, siteId ),
 		};
 	},
 	{ changeOwner, recordTracksEvent, transferPlanOwnership }
