@@ -1,6 +1,7 @@
 # WordPress.com Editing Toolkit Plugin
 
 A simple test change.
+A second update.
 
 This plugin includes many sub-features which add blocks and new functionality to the Gutenberg editor. The plugin provides a single codebase which can be installed on any platform which requires these features, such as the WordPress.com multisite or other standalone WordPress instances.
 
