@@ -73,9 +73,9 @@ class InlineSupportLink extends Component {
 		};
 
 		// props.children overrides text prop if both are provided
-		const shouldDisplayChildren = children != null;
-		const shouldDisplayTextPropValue = ! children && showText;
-		const shouldDisplayIcon = ! children && supportPostId && showIcon;
+		const displayChildren = children != null;
+		const displayText = ! children && showText;
+		const displayIcon = ! children && supportPostId && showIcon;
 
 		return (
 			<LinkComponent
@@ -86,9 +86,9 @@ class InlineSupportLink extends Component {
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				{ shouldDisplayChildren && children }
-				{ shouldDisplayTextPropValue && ( text || translate( 'Learn more' ) ) }
-				{ shouldDisplayIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{ displayChildren && children }
+				{ displayText && ( text || translate( 'Learn more' ) ) }
+				{ displayIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
 			</LinkComponent>
 		);
 	}
