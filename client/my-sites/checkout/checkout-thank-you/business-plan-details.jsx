@@ -72,11 +72,10 @@ const BusinessPlanDetails = ( {
 				icon={ <img alt="" src={ conciergeImage } /> }
 				title={ i18n.translate( 'Get personalized help' ) }
 				description={ i18n.translate(
-					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
-						'your site and learn more about WordPress.com.'
+					'Schedule a $49 Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
 				) }
-				buttonText={ i18n.translate( 'Schedule a session' ) }
-				href={ `/me/concierge/${ selectedSite.slug }/book` }
+				buttonText={ i18n.translate( 'Purchase a session' ) }
+				href={ `/checkout/offer-quickstart-session` }
 				onClick={ trackOnboardingButtonClick }
 			/>
 
