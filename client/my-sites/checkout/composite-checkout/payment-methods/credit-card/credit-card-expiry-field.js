@@ -60,6 +60,7 @@ export default function CreditCardExpiryField( {
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }
+					disabled={ isDisabled }
 				/>
 			</StripeFieldWrapper>
 			{ cardExpiryError && <StripeErrorMessage>{ cardExpiryError }</StripeErrorMessage> }

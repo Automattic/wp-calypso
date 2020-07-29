@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
-import { useEvents, useSelect, useDispatch } from '@automattic/composite-checkout';
+import { useEvents, useSelect, useDispatch, useFormStatus } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -78,6 +78,8 @@ export default function CreditCardFields() {
 		}
 		return [];
 	};
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== 'ready';
 
 	const stripeElementStyle = {
 		base: {
@@ -110,6 +112,7 @@ export default function CreditCardFields() {
 					onChange={ changeCardholderName }
 					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
 					errorMessage={ __( 'This field is required' ) }
+					disabled={ isDisabled }
 				/>
 
 				{ shouldShowContactFieldCheckbox && (
@@ -119,6 +122,7 @@ export default function CreditCardFields() {
 								type="checkbox"
 								checked={ ! shouldShowContactFields }
 								onChange={ ( event ) => setShowContactFields( ! event.target.checked ) }
+								disabled={ isDisabled }
 							/>
 							<LabelText>{ __( 'Credit card address is the same as contact details' ) }</LabelText>
 						</Label>

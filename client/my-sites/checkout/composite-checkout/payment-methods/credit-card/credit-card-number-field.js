@@ -64,6 +64,7 @@ export default function CreditCardNumberField( {
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }
+					disabled={ isDisabled }
 				/>
 				<PaymentLogo brand={ brand } />
 

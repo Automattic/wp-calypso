@@ -71,6 +71,7 @@ export default function CreditCardCvvField( {
 							onChange={ ( input ) => {
 								handleStripeFieldChange( input );
 							} }
+							disabled={ isDisabled }
 						/>
 					</StripeFieldWrapper>
 				</LeftColumn>
