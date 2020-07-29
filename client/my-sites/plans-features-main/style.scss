@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 // Content group
 .plans-features-main__group {
 	& + & {
@@ -170,8 +173,10 @@ body.is-section-signup.is-white-signup {
 			}
 	
 			.plan-features__table {
-				border-spacing: 0;
-				border-collapse: collapse;
+				@include break-mobile {
+					border-spacing: 0;
+					border-collapse: collapse;
+				}
 		
 				tbody:first-child tr {
 					border-top-left-radius: 5px;
