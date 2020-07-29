@@ -2,49 +2,45 @@
  * External dependencies
  */
 import * as React from 'react';
-import type { ValuesType } from 'utility-types';
+import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
+import { LAUNCH_STORE } from '../stores';
+import { LaunchStep, LaunchSequence } from '../../../common/data-stores/launch/data';
+import type { LaunchStepType } from '../../../common/data-stores/launch/types';
+import NameStep from '../launch-steps/name-step';
 import DomainStep from '../launch-steps/domain-step';
 import PlanStep from '../launch-steps/plan-step';
+import FinalStep from '../launch-steps/final-step';
 import './styles.scss';
 
-export const LaunchStep = {
-	Domain: 'domain',
-	Plan: 'plan',
-};
-
-export type LaunchStepType = ValuesType< typeof LaunchStep >;
-
 const LaunchStepComponents = {
+	[ LaunchStep.Name ]: NameStep,
 	[ LaunchStep.Domain ]: DomainStep,
 	[ LaunchStep.Plan ]: PlanStep,
+	[ LaunchStep.Final ]: FinalStep,
 };
-
-const LaunchSequence = [ LaunchStep.Domain, LaunchStep.Plan ];
 
 interface Props {
 	step?: LaunchStepType;
 	onSubmit?: () => void;
 }
 
-const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Domain, onSubmit } ) => {
-	const initialSequence = LaunchSequence.indexOf( step );
+const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
+	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { setStep } = useDispatch( LAUNCH_STORE );
 
-	const [ currentSequence, setCurrentSequence ] = React.useState( initialSequence );
-
-	const currentStepName = LaunchSequence[ currentSequence ];
-
-	const CurrentLaunchStep = LaunchStepComponents[ currentStepName ];
+	const currentSequence = LaunchSequence.indexOf( currentStep );
 
 	const handlePrevStep = () => {
 		let prevSequence = currentSequence - 1;
 		if ( prevSequence < 0 ) {
 			prevSequence = 0;
 		}
-		setCurrentSequence( prevSequence );
+
+		setStep( LaunchSequence[ prevSequence ] );
 	};
 
 	const handleNextStep = () => {
@@ -53,8 +49,10 @@ const Launch: React.FunctionComponent< Props > = ( { step = LaunchStep.Domain, o
 		if ( nextSequence > maxSequence ) {
 			onSubmit?.();
 		}
-		setCurrentSequence( nextSequence );
+		setStep( LaunchSequence[ nextSequence ] );
 	};
+
+	const CurrentLaunchStep = LaunchStepComponents[ currentStep ];
 
 	return (
 		<div className="nux-launch">
