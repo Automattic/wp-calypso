@@ -30,7 +30,7 @@ function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bum
 		<PopoverMenuItem
 			href={ editUrl }
 			onClick={ bumpStat }
-			icon="pencil"
+			materialIcon="edit"
 			onMouseOver={ preloadEditor }
 			onFocus={ preloadEditor }
 		>

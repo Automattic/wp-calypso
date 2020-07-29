@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { noop, omit } from 'lodash';
 import Gridicon from 'components/gridicon';
+import MaterialIcon from 'components/material-icon';
 
 /**
  * Internal dependencies
@@ -19,6 +20,8 @@ export default class PopoverMenuItem extends Component {
 		className: PropTypes.string,
 		isSelected: PropTypes.bool,
 		icon: PropTypes.string,
+		materialIcon: PropTypes.string,
+		materialIconStyle: PropTypes.string,
 		focusOnHover: PropTypes.bool,
 		onMouseOver: PropTypes.func,
 		isExternalLink: PropTypes.bool,
@@ -43,10 +46,21 @@ export default class PopoverMenuItem extends Component {
 	};
 
 	render() {
-		const { children, className, href, icon, isSelected, isExternalLink } = this.props;
+		const {
+			children,
+			className,
+			href,
+			icon,
+			isSelected,
+			isExternalLink,
+			materialIcon,
+			materialIconStyle,
+		} = this.props;
 		const itemProps = omit(
 			this.props,
 			'icon',
+			'materialIcon',
+			'materialIconStyle',
 			'focusOnHover',
 			'isSelected',
 			'isExternalLink',
@@ -74,6 +88,9 @@ export default class PopoverMenuItem extends Component {
 				{ ...itemProps }
 			>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+				{ materialIcon && (
+					<MaterialIcon icon={ materialIcon } style={ materialIconStyle } size={ 18 } />
+				) }
 				{ children }
 			</ItemComponent>
 		);

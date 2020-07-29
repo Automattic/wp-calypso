@@ -31,7 +31,7 @@ function PostActionsEllipsisMenuStats( {
 		<PopoverMenuItem
 			href={ `/stats/post/${ postId }/${ siteSlug }` }
 			onClick={ bumpStat }
-			icon="stats-alt"
+			materialIcon="bar_chart"
 		>
 			{ translate( 'Stats' ) }
 		</PopoverMenuItem>
