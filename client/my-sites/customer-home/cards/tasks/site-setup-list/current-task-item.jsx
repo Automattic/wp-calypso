@@ -4,20 +4,13 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
-import Badge from 'components/badge';
-
 /**
  * Internal dependencies
  */
+import Badge from 'components/badge';
 import Gridicon from 'components/gridicon';
 
-const CurrentTaskItem = ( {
-	currentTask,
-	skipTask,
-	startTask,
-	setTaskIsManuallySelected,
-	useDrillLayout,
-} ) => {
+const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
 	return (
 		<div className="site-setup-list__task task">
 			<div className="site-setup-list__task-text task__text">
@@ -34,7 +27,7 @@ const CurrentTaskItem = ( {
 						} ) }
 					</div>
 				) }
-				{ useDrillLayout ? null : (
+				{ ! useAccordionLayout && (
 					<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
 				) }
 				<p className="site-setup-list__task-description task__description">
@@ -57,10 +50,7 @@ const CurrentTaskItem = ( {
 					{ currentTask.isSkippable && ! currentTask.isCompleted && (
 						<Button
 							className="site-setup-list__task-skip task__skip is-link"
-							onClick={ () => {
-								setTaskIsManuallySelected( false );
-								skipTask();
-							} }
+							onClick={ () => skipTask() }
 						>
 							{ translate( 'Skip for now' ) }
 						</Button>

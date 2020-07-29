@@ -112,7 +112,7 @@ const SiteSetupList = ( {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
 	const [ taskIsManuallySelected, setTaskIsManuallySelected ] = useState( false );
-	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
+	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
@@ -195,9 +195,9 @@ const SiteSetupList = ( {
 
 	useEffect( () => {
 		if ( isWithinBreakpoint( '<960px' ) ) {
-			setUseDrillLayout( true );
+			setUseAccordionLayout( true );
 		}
-		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseDrillLayout( isActive ) );
+		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseAccordionLayout( isActive ) );
 	}, [] );
 
 	if ( ! currentTask ) {
@@ -211,8 +211,7 @@ const SiteSetupList = ( {
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
-			{ useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
-			{ ! useDrillLayout && (
+			{ ! useAccordionLayout && (
 				<CurrentTaskItem
 					currentTask={ currentTask }
 					skipTask={ () => skipTask( dispatch, currentTask, tasks, siteId, setIsLoading ) }
@@ -224,7 +223,7 @@ const SiteSetupList = ( {
 			) }
 
 			<div className="site-setup-list__nav">
-				{ ! useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
+				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
 				{ tasks.map( ( task ) => {
 					const enhancedTask = getTask( task );
 					const isCurrent = task.id === currentTask.id;
@@ -242,17 +241,19 @@ const SiteSetupList = ( {
 									setTaskIsManuallySelected( true );
 									setCurrentTaskId( task.id );
 								} }
-								useDrillLayout={ useDrillLayout }
+								useAccordionLayout={ useAccordionLayout }
 							/>
-							{ useDrillLayout && isCurrent ? (
+							{ useAccordionLayout && isCurrent ? (
 								<CurrentTaskItem
 									currentTask={ currentTask }
-									skipTask={ () => skipTask( dispatch, currentTask, tasks, siteId, setIsLoading ) }
+									skipTask={ () => {
+										setTaskIsManuallySelected( false );
+										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
+									} }
 									startTask={ () =>
 										startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
 									}
-									useDrillLayout={ useDrillLayout }
-									setTaskIsManuallySelected={ setTaskIsManuallySelected }
+									useAccordionLayout={ useAccordionLayout }
 								/>
 							) : null }
 						</>
