@@ -7,5 +7,10 @@
  */
 export default function getStoreSetup( state, siteId ) {
 	// @todo this should return store setup information.
-	return {};
+	const storeSetup = {
+		timing: 1,
+		remainingTasks: 3,
+		totalTasks: 5,
+	};
+	return storeSetup;
 }
