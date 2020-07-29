@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
@@ -12,11 +12,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
 import CardHeading from 'components/card-heading';
 import Spinner from 'components/spinner';
 import { getTaskList } from 'lib/checklist';
-import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
@@ -30,6 +28,7 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { skipCurrentViewHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';
+import CurrentTaskItem from './current-task-item';
 import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
 
@@ -113,8 +112,8 @@ const SiteSetupList = ( {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
 	const [ taskIsManuallySelected, setTaskIsManuallySelected ] = useState( false );
-	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
-	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
+	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
+	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
@@ -197,9 +196,9 @@ const SiteSetupList = ( {
 
 	useEffect( () => {
 		if ( isWithinBreakpoint( '<960px' ) ) {
-			setUseDrillLayout( true );
+			setUseAccordionLayout( true );
 		}
-		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseDrillLayout( isActive ) );
+		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseAccordionLayout( isActive ) );
 	}, [] );
 
 	if ( ! currentTask ) {
@@ -213,96 +212,66 @@ const SiteSetupList = ( {
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
-			{ useDrillLayout && (
-				<CardHeading>
-					<>
-						{ currentDrillLayoutView === 'task' && (
-							<Gridicon
-								icon="chevron-left"
-								size={ 18 }
-								className="site-setup-list__nav-back"
-								onClick={ () => setCurrentDrillLayoutView( 'nav' ) }
-							/>
-						) }
-						{ translate( 'Site setup' ) }
-					</>
-				</CardHeading>
+			{ ! useAccordionLayout && (
+				<CurrentTaskItem
+					currentTask={ currentTask }
+					skipTask={ () => {
+						setTaskIsManuallySelected( false );
+						skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
+					} }
+					startTask={ () =>
+						startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+					}
+				/>
 			) }
-			{ ( ! useDrillLayout || currentDrillLayoutView === 'nav' ) && (
-				<div className="site-setup-list__nav">
-					{ ! useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
-					{ tasks.map( ( task ) => {
-						const enhancedTask = getTask( task );
 
-						return (
+			<div className="site-setup-list__nav">
+				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
+				{ tasks.map( ( task ) => {
+					const enhancedTask = getTask( task );
+					const isCurrent = task.id === currentTask.id;
+					const isCompleted = task.isCompleted;
+
+					return (
+						<>
 							<NavItem
 								key={ task.id }
 								taskId={ task.id }
 								text={ enhancedTask.label || enhancedTask.title }
-								isCompleted={ task.isCompleted }
-								isCurrent={ task.id === currentTask.id }
-								onClick={ () => {
-									setTaskIsManuallySelected( true );
-									setCurrentTaskId( task.id );
-									setCurrentDrillLayoutView( 'task' );
-								} }
-								showChevron={ useDrillLayout }
+								isCompleted={ isCompleted }
+								isCurrent={
+									useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
+								}
+								onClick={
+									useAccordionLayout && isCurrent && showAccordionSelectedTask
+										? () => {
+												setShowAccordionSelectedTask( false );
+										  }
+										: () => {
+												setShowAccordionSelectedTask( true );
+												setTaskIsManuallySelected( true );
+												setCurrentTaskId( task.id );
+										  }
+								}
+								useAccordionLayout={ useAccordionLayout }
 							/>
-						);
-					} ) }
-				</div>
-			) }
-			{ ( ! useDrillLayout || currentDrillLayoutView === 'task' ) && (
-				<div className="site-setup-list__task task">
-					<div className="site-setup-list__task-text task__text">
-						{ currentTask.isCompleted ? (
-							<Badge type="info" className="site-setup-list__task-badge task__badge">
-								{ translate( 'Complete' ) }
-							</Badge>
-						) : (
-							<div className="site-setup-list__task-timing task__timing">
-								<Gridicon icon="time" size={ 18 } />
-								{ translate( '%d minute', '%d minutes', {
-									count: currentTask.timing,
-									args: [ currentTask.timing ],
-								} ) }
-							</div>
-						) }
-						<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
-						<p className="site-setup-list__task-description task__description">
-							{ currentTask.description }
-						</p>
-						<div className="site-setup-list__task-actions task__actions">
-							{ currentTask.actionText && (
-								<Button
-									className="site-setup-list__task-action task__action"
-									primary
-									onClick={ () =>
-										startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
-									}
-									disabled={
-										currentTask.isDisabled ||
-										( currentTask.isCompleted && currentTask.actionDisableOnComplete )
-									}
-								>
-									{ currentTask.actionText }
-								</Button>
-							) }
-							{ currentTask.isSkippable && ! currentTask.isCompleted && (
-								<Button
-									className="site-setup-list__task-skip task__skip is-link"
-									onClick={ () => {
+							{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
+								<CurrentTaskItem
+									currentTask={ currentTask }
+									skipTask={ () => {
 										setTaskIsManuallySelected( false );
 										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
 									} }
-								>
-									{ translate( 'Skip for now' ) }
-								</Button>
-							) }
-						</div>
-					</div>
-				</div>
-			) }
+									startTask={ () =>
+										startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+									}
+									useAccordionLayout={ useAccordionLayout }
+								/>
+							) : null }
+						</>
+					);
+				} ) }
+			</div>
 		</Card>
 	);
 };

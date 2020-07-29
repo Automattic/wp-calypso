@@ -165,7 +165,7 @@
 
 // onaboarding-placeholder() mixin is a copy of 'client/assets/stylesheets/shared/mixins/placeholder'
 
-@mixin onboarding-placeholder( $color-property: $light-gray-200 ) {
+@mixin onboarding-placeholder( $color-property: $gray-100 ) {
 	animation: onboarding-loading-pulse 1.6s ease-in-out infinite;
 	background: $color-property;
 	color: transparent;

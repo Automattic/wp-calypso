@@ -45,6 +45,21 @@ describe( 'Facebook previews', () => {
 		expect( descTextNoEllipsis ).toHaveLength( 200 );
 	} );
 
+	it( 'should strip html tags from the description', () => {
+		const wrapper = shallow(
+			<Facebook description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+		);
+
+		const descEl = wrapper.find( '.facebook-preview__description' );
+		expect( descEl.exists() ).toBeTruthy();
+		expect( descEl.text() ).toEqual(
+			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
+		);
+
+		const descTextNoEllipsis = descEl.text().replace( '…', '' );
+		expect( descTextNoEllipsis ).toHaveLength( 200 );
+	} );
+
 	it( 'should display image only when provided', () => {
 		const wrapperNoImage = shallow( <Facebook /> );
 		const wrapperWithImage = shallow( <Facebook image={ IMAGE_SRC_FIXTURE } /> );
@@ -117,6 +132,18 @@ describe( 'Twitter previews', () => {
 	it( 'should display a untruncated description', () => {
 		const wrapper = shallow(
 			<Twitter description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+		);
+
+		const descEl = wrapper.find( '.twitter-preview__description' );
+		expect( descEl.exists() ).toBeTruthy();
+		expect( descEl.text() ).toEqual(
+			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+		);
+	} );
+
+	it( 'should strip html tasgs from the description', () => {
+		const wrapper = shallow(
+			<Twitter description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 		);
 
 		const descEl = wrapper.find( '.twitter-preview__description' );
@@ -252,6 +279,21 @@ describe( 'Search previews', () => {
 			);
 			const descriptionElNoEllipsis = descriptionEl.text().replace( '…', '' );
 			expect( descriptionElNoEllipsis ).toHaveLength( 160 );
+		} );
+
+		it( 'should strip html tags from the description', () => {
+			const descriptionUpperBound = 160 + 10;
+			const wrapper = shallow(
+				<Search description="<p style='color:red'>I am the very model</p> of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, <span>From</span> Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+			);
+
+			const descriptionEl = wrapper.find( '.search-preview__description' );
+			expect( descriptionEl.exists() ).toBeTruthy();
+			expect( descriptionEl.text() ).toEqual(
+				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From…"
+			);
+			const rawDescriptionText = descriptionEl.text().replace( '…', '' );
+			expect( rawDescriptionText.length ).toBeLessThanOrEqual( descriptionUpperBound );
 		} );
 	} );
 
