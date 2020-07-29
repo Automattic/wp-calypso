@@ -361,7 +361,7 @@ const freeShippingModel = {
 };
 
 /**
- * Master list of models by promotion type.
+ * Primary list of models by promotion type.
  *
  * Note: The keys of this object correspond with promotion.type
  */
@@ -379,7 +379,7 @@ export default allModels;
  *
  * @param {object} promotion The promotion to validate.
  * @param {string} currency The currency to use for validations.
- * @param { bool } showEmptyValidationErrors True if empty required fields should be errors.
+ * @param {boolean} showEmptyValidationErrors True if empty required fields should be errors.
  * @returns {object} Validation error strings keyed by their field names.
  */
 export function validateAll( promotion, currency, showEmptyValidationErrors ) {
