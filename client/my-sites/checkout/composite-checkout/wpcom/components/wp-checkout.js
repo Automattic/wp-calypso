@@ -119,7 +119,8 @@ export default function WPCheckout( {
 	const isGSuiteInCart = items.some( ( item ) =>
 		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
 	);
-	const shouldShowContactStep = areThereDomainProductsInCart || total.amount.value > 0;
+	const shouldShowContactStep =
+		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
 	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
