@@ -432,6 +432,7 @@ const CheckoutSummaryBody = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
+		max-width: 328px;
 		position: fixed;
 	}
 `;
