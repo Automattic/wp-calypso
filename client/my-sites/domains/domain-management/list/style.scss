@@ -188,7 +188,7 @@ input[type='radio'].domain-management-list-item__radio {
 .list-header {
 	.info-popover {
 		vertical-align: middle;
-		margin-left: 1px;
+		margin-left: 2px;
 	}
 
 	@include breakpoint-deprecated( '<960px' ) {
@@ -280,7 +280,7 @@ input[type='radio'].domain-management-list-item__radio {
 }
 
 .list__domain-auto-renew {
-	width: 95px;
+	width: 96px;
 }
 
 .list__domain-privacy {
