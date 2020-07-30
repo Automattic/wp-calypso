@@ -64,13 +64,7 @@ export { isTheme } from './is-theme';
 export { isCustomDesign } from './is-custom-design';
 export { isNoAds } from './is-no-ads';
 export { isVideoPress } from './is-video-press';
-
-export function isUnlimitedSpace( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'unlimited_space' === product.product_slug;
-}
+export { isUnlimitedSpace } from './is-unlimited-space';
 
 export function isUnlimitedThemes( product ) {
 	product = formatProduct( product );
