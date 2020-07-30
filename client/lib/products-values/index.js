@@ -39,6 +39,7 @@ import { isBusiness } from './is-business';
 import { isEcommerce } from './is-ecommerce';
 import { isEnterprise } from './is-enterprise';
 import { isJetpackPlan } from './is-jetpack-plan';
+import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 
 const productDependencies = {
 	domain: {
@@ -91,10 +92,7 @@ export { isMonthly } from './is-monthly';
 export { isYearly } from './is-yearly';
 export { isBiennially } from './is-biennially';
 export { isJetpackMonthlyPlan } from './is-jetpack-monthly-plan';
-
-export function isJetpackBackupSlug( productSlug ) {
-	return includes( JETPACK_BACKUP_PRODUCTS, productSlug );
-}
+export { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 
 export function isJetpackBackup( product ) {
 	product = formatProduct( product );
