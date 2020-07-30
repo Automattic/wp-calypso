@@ -48,4 +48,16 @@ export const PRODUCTS_LIST = {
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 	},
+	[ constants.PRODUCT_WPCOM_SEARCH ]: {
+		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_WPCOM_SEARCH ],
+		product_slug: constants.PRODUCT_WPCOM_SEARCH,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+	},
+	[ constants.PRODUCT_WPCOM_SEARCH_MONTHLY ]: {
+		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_WPCOM_SEARCH_MONTHLY ],
+		product_slug: constants.PRODUCT_WPCOM_SEARCH_MONTHLY,
+		term: TERM_MONTHLY,
+		bill_period: PLAN_MONTHLY_PERIOD,
+	},
 };

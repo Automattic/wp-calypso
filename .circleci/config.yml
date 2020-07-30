@@ -359,6 +359,8 @@ jobs:
                 --output-file "$CIRCLE_TEST_REPORTS/eslint/results.xml" \
                 $FILES_TO_LINT
             fi
+      - store_test_results:
+          path: /tmp/test_results
 
   build-notifications:
     <<: *defaults

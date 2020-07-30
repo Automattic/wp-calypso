@@ -40,6 +40,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getUserPurchases } from 'state/purchases/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { hasAllSitesList } from 'state/sites/selectors';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Style dependencies
@@ -132,24 +133,42 @@ class ListAll extends Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { domainsList, canManageSitesMap } = this.props;
-
-		const domainListItems = domainsList
-			.filter(
-				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
-			) // filter on sites we can manage, that aren't `wpcom` type
-			.map( ( domain, index ) => {
-				return this.renderDomainItem( domain, index );
-			} );
+		const domainListItems = this.filteredDomains().map( ( domain, index ) => {
+			return this.renderDomainItem( domain, index );
+		} );
 
 		return [ <ListHeader key="list-header" />, ...domainListItems ];
 	}
 
-	render() {
-		const { translate, user } = this.props;
+	filteredDomains() {
+		const { domainsList, canManageSitesMap } = this.props;
+		if ( ! domainsList ) {
+			return [];
+		}
+
+		// filter on sites we can manage, that aren't `wpcom` type
+		return domainsList.filter(
+			( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
+		);
+	}
+
+	renderContent() {
+		const { domainsList, translate, user } = this.props;
+
+		if ( domainsList.length > 0 && this.filteredDomains().length === 0 ) {
+			return (
+				<EmptyContent
+					title={ translate( 'Your next big idea starts here' ) }
+					line={ translate( 'Find the domain that defines you' ) }
+					action={ translate( 'Start your search' ) }
+					actionURL="/domains"
+					illustration="/calypso/images/illustrations/domains-blank-slate.svg"
+				/>
+			);
+		}
 
 		return (
-			<Main wideLayout>
+			<>
 				<div className="list-all__heading">
 					<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
 					<div className="list-all__heading-buttons">{ this.headerButtons() }</div>
@@ -163,8 +182,12 @@ class ListAll extends Component {
 						<div className="list-all__items">{ this.renderDomainsList() }</div>
 					</Main>
 				</div>
-			</Main>
+			</>
 		);
+	}
+
+	render() {
+		return <Main wideLayout>{ this.renderContent() }</Main>;
 	}
 }
 
@@ -193,7 +216,7 @@ export default connect(
 			user,
 		};
 	},
-	( dispatch ) => {
-		return { addDomainClick: () => dispatch( addDomainClick() ) };
+	{
+		addDomainClick,
 	}
 )( localize( ListAll ) );

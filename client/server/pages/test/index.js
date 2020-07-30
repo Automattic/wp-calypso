@@ -110,7 +110,7 @@ jest.mock( 'lib/oauth2-clients', () => ( {
 jest.mock( 'landing/gutenboarding/section', () => ( {
 	GUTENBOARDING_SECTION_DEFINITION: {
 		name: 'gutenboarding',
-		paths: [ `/new`, `/gutenboarding` ],
+		paths: [ '/new' ],
 		module: 'gutenboarding',
 		secondary: false,
 		group: 'gutenboarding',
@@ -1437,16 +1437,6 @@ describe( 'main app', () => {
 	describe( `Route /new`, () => {
 		assertSection( {
 			url: '/new',
-			sectionName: 'gutenboarding',
-			secondaryContent: undefined,
-			sectionGroup: 'gutenboarding',
-			entry: 'entry-gutenboarding',
-		} );
-	} );
-
-	describe( `Route /gutenboarding`, () => {
-		assertSection( {
-			url: '/gutenboarding',
 			sectionName: 'gutenboarding',
 			secondaryContent: undefined,
 			sectionGroup: 'gutenboarding',
