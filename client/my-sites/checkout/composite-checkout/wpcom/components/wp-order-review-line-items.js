@@ -428,7 +428,7 @@ function LineItemSublabelAndPrice( { item } ) {
 	const isDomainMap = item.type === 'domain_map';
 	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
 
-	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period ) {
+	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: item.sublabel,
@@ -438,6 +438,17 @@ function LineItemSublabelAndPrice( { item } ) {
 			comment: 'product type and monthly breakdown of total cost, separated by a colon',
 		} );
 	}
+
+	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period === 1 ) {
+		return translate( '%(sublabel)s: %(monthlyPrice)s per month', {
+			args: {
+				sublabel: item.sublabel,
+				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
+			},
+			comment: 'product type and monthly breakdown of total cost, separated by a colon',
+		} );
+	}
+
 	if (
 		( isDomainRegistration || isDomainMap || isGSuite ) &&
 		item.wpcom_meta?.months_per_bill_period === 12
