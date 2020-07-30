@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
@@ -18,7 +19,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import featureList from './feature-list';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { FEATURE_LIST, FeatureId } from './data';
 import useStepNavigation from '../../hooks/use-step-navigation';
 
 /**
@@ -30,15 +32,16 @@ const FeaturesStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goBack, goNext } = useStepNavigation();
 
-	const defaultSelectedFeature: Array< string > = [];
-	const [ selectedFeatures, setSelectedFeatures ] = React.useState( defaultSelectedFeature );
+	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
+	const { addFeature, removeFeature } = useDispatch( ONBOARD_STORE );
+
 	const hasSelectedFeatures = selectedFeatures.length > 0;
 
-	const toggleFeature = ( featureId: string ) => {
-		if ( selectedFeatures.indexOf( featureId ) > -1 ) {
-			setSelectedFeatures( selectedFeatures.filter( ( id ) => id !== featureId ) );
+	const toggleFeature = ( featureId: FeatureId ) => {
+		if ( selectedFeatures.includes( featureId ) ) {
+			removeFeature( featureId );
 		} else {
-			setSelectedFeatures( [ ...selectedFeatures, featureId ] );
+			addFeature( featureId );
 		}
 	};
 
@@ -64,12 +67,12 @@ const FeaturesStep: React.FunctionComponent = () => {
 			</div>
 			<div className="features__body">
 				<div className="features__items">
-					{ featureList.map( ( feature ) => (
+					{ Object.entries( FEATURE_LIST ).map( ( [ id, feature ] ) => (
 						<Button
 							className={ classnames( 'features__item', {
-								'is-selected': selectedFeatures.indexOf( feature.id ) > -1,
+								'is-selected': selectedFeatures.includes( feature.id ),
 							} ) }
-							key={ feature.id }
+							key={ id }
 							onClick={ () => toggleFeature( feature.id ) }
 							isTertiary
 						>

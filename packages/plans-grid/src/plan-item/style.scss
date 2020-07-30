@@ -232,10 +232,6 @@ ul.plan-item__feature-item-group {
 	line-height: 1.5;
 	color: var( --studio-gray-40 );
 
-	@include break-small {
-		display: none;
-	}
-
 	.plan-item:not( .is-open ) & {
 		display: none;
 	}
