@@ -100,13 +100,7 @@ export { allowedProductAttributes } from './allowed-product-attributes';
 export { isDomainTransfer } from './is-domain-transfer';
 export { isDomainTransferProduct } from './is-domain-transfer-product';
 export { isDelayedDomainTransfer } from './is-delayed-domain-transfer';
-
-export function isBundled( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return !! product.is_bundled;
-}
+export { isBundled } from './is-bundled';
 
 export function isCredits( product ) {
 	product = formatProduct( product );
