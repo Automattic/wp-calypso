@@ -51,6 +51,8 @@ class Customize extends React.Component {
 			timeoutError: false,
 			returnUrl: undefined,
 		};
+
+		this.customizerIframe = null;
 	}
 
 	static propTypes = {
@@ -99,6 +101,10 @@ class Customize extends React.Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
+
+	setCustomizerIframetRef = ( element ) => {
+		this.customizerIframe = element;
+	};
 
 	redirectIfNeeded = ( pathname ) => {
 		const { menusUrl, isJetpack, customizerUrl } = this.props;
@@ -300,6 +306,10 @@ class Customize extends React.Component {
 					debug( 'iframe says it is finished loading customizer' );
 					this.cancelWaitingTimer();
 					this.setState( { iframeLoaded: true } );
+					// focus the iframe
+					if ( this.customizerIframe ) {
+						this.customizerIframe.focus();
+					}
 					break;
 				case 'activated':
 					trackClick( 'customizer', 'activate' );
@@ -392,7 +402,12 @@ class Customize extends React.Component {
 				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
-					<iframe className={ iframeClassName } src={ iframeUrl } title="Customizer" />
+					<iframe
+						ref={ this.setCustomizerIframetRef }
+						className={ iframeClassName }
+						src={ iframeUrl }
+						title="Customizer"
+					/>
 				</div>
 			);
 		}
