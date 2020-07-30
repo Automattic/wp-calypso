@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, pick } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,6 @@ import {
 } from 'lib/plans/constants';
 
 import { domainProductSlugs } from 'lib/domains/constants';
-import schema from './schema.json';
 
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
@@ -99,6 +98,7 @@ export { isDomainProduct } from './is-domain-product';
 export { isDomainRedemption } from './is-domain-redemption';
 export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';
 export { isSiteRedirect } from './is-site-redirect';
+export { allowedProductAttributes } from './allowed-product-attributes';
 
 export function isDomainTransferProduct( product ) {
 	product = formatProduct( product );
@@ -279,10 +279,6 @@ export function isUnlimitedThemes( product ) {
 	assertValidProduct( product );
 
 	return 'unlimited_themes' === product.product_slug;
-}
-
-export function allowedProductAttributes( product ) {
-	return pick( product, Object.keys( schema.properties ) );
 }
 
 export function isSpaceUpgrade( product ) {
