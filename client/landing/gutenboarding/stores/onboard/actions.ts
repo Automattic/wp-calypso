@@ -15,6 +15,7 @@ import { SITE_STORE } from '../site';
 import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
+import type { FeatureId } from '../../onboarding-block/features/data';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -164,12 +165,12 @@ export function* createSite(
 	return success;
 }
 
-export const addFeature = ( featureId: string ) => ( {
+export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
 } );
 
-export const removeFeature = ( featureId: string ) => ( {
+export const removeFeature = ( featureId: FeatureId ) => ( {
 	type: 'REMOVE_FEATURE' as const,
 	featureId,
 } );

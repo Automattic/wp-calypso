@@ -20,10 +20,8 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { FEATURE_LIST } from './data';
+import { FEATURE_LIST, FeatureId } from './data';
 import useStepNavigation from '../../hooks/use-step-navigation';
-
-type FeatureId = import('./data').FeatureId;
 
 /**
  * Style dependencies
@@ -39,8 +37,13 @@ const FeaturesStep: React.FunctionComponent = () => {
 
 	const hasSelectedFeatures = selectedFeatures.length > 0;
 
-	const toggleFeature = ( featureId: FeatureId ) =>
-		( selectedFeatures.includes( featureId ) ? removeFeature : addFeature )( featureId );
+	const toggleFeature = ( featureId: FeatureId ) => {
+		if ( selectedFeatures.includes( featureId ) ) {
+			removeFeature( featureId );
+		} else {
+			addFeature( featureId );
+		}
+	};
 
 	return (
 		<div className="gutenboarding-page features">

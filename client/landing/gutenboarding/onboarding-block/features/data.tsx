@@ -5,33 +5,33 @@ import React, { ReactElement } from 'react';
 import { Plans } from '@automattic/data-stores';
 import { SVG, Path } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { keyBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 const { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } = Plans;
 
-export const FEATURE_DOMAIN = 'domain';
-export const FEATURE_STORE = 'store';
-export const FEATURE_SEO = 'seo';
-export const FEATURE_PLUGINS = 'plugins';
-export const FEATURE_AD_FREE = 'ad-free';
-export const FEATURE_IMAGE_STORAGE = 'image-storage';
-export const FEATURE_VIDEO_STORAGE = 'video-storage';
-export const FEATURE_SUPPORT = 'support';
+export type FeatureId =
+	| 'domain'
+	| 'store'
+	| 'seo'
+	| 'plugins'
+	| 'ad-free'
+	| 'image-storage'
+	| 'video-storage'
+	| 'support';
 
 export interface Feature {
-	id: string;
+	id: FeatureId;
 	name: string;
 	description: string;
 	minSupportedPlan: Plans.PlanSlug;
 	icon: ReactElement;
 }
 
-export const FEATURE_LIST: Record< string, Feature > = {
-	[ FEATURE_DOMAIN ]: {
-		id: FEATURE_DOMAIN,
+export const FEATURE_LIST: Record< FeatureId, Feature > = {
+	domain: {
+		id: 'domain',
 		name: translate( 'Custom domains' ) as string,
 		description: translate(
 			'Help your site stand out. The first year is free with a plan.'
@@ -47,8 +47,8 @@ export const FEATURE_LIST: Record< string, Feature > = {
 			</SVG>
 		),
 	},
-	[ FEATURE_STORE ]: {
-		id: FEATURE_STORE,
+	store: {
+		id: 'store',
 		name: translate( 'Store' ) as string,
 		description: translate(
 			'Sell products, digital subscriptions, and receive payments.'
@@ -64,8 +64,8 @@ export const FEATURE_LIST: Record< string, Feature > = {
 			</SVG>
 		),
 	},
-	[ FEATURE_SEO ]: {
-		id: FEATURE_SEO,
+	seo: {
+		id: 'seo',
 		name: translate( 'SEO tools' ) as string,
 		description: translate( 'Boost your SEO and connect a Google Analytics account.' ) as string,
 		minSupportedPlan: PLAN_BUSINESS,
@@ -78,8 +78,8 @@ export const FEATURE_LIST: Record< string, Feature > = {
 			</SVG>
 		),
 	},
-	[ FEATURE_PLUGINS ]: {
-		id: FEATURE_PLUGINS,
+	plugins: {
+		id: 'plugins',
 		name: translate( 'Plugins' ) as string,
 		description: translate( 'Install plugins to extend the power of your site.' ) as string,
 		minSupportedPlan: PLAN_BUSINESS,
@@ -98,8 +98,8 @@ export const FEATURE_LIST: Record< string, Feature > = {
 			</SVG>
 		),
 	},
-	[ FEATURE_AD_FREE ]: {
-		id: FEATURE_AD_FREE,
+	'ad-free': {
+		id: 'ad-free',
 		name: translate( 'Ad-free' ) as string,
 		description: translate( 'Remove advertisements and own your brand.' ) as string,
 		minSupportedPlan: PLAN_PERSONAL,
@@ -113,8 +113,8 @@ export const FEATURE_LIST: Record< string, Feature > = {
 			</SVG>
 		),
 	},
-	[ FEATURE_IMAGE_STORAGE ]: {
-		id: FEATURE_IMAGE_STORAGE,
+	'image-storage': {
+		id: 'image-storage',
 		name: translate( 'Image storage' ) as string,
 		description: translate( 'Extended storage space for hi-res images.' ) as string,
 		minSupportedPlan: PLAN_PREMIUM,
@@ -128,8 +128,8 @@ export const FEATURE_LIST: Record< string, Feature > = {
 			</SVG>
 		),
 	},
-	[ FEATURE_VIDEO_STORAGE ]: {
-		id: FEATURE_VIDEO_STORAGE,
+	'video-storage': {
+		id: 'video-storage',
 		name: translate( 'Video storage' ) as string,
 		description: translate( 'Host your own ad-free videos' ) as string,
 		minSupportedPlan: PLAN_PREMIUM,
@@ -143,8 +143,8 @@ export const FEATURE_LIST: Record< string, Feature > = {
 			</SVG>
 		),
 	},
-	[ FEATURE_SUPPORT ]: {
-		id: FEATURE_SUPPORT,
+	support: {
+		id: 'support',
 		name: translate( 'Priority support' ) as string,
 		description: translate( 'Chat with an expert live.' ) as string,
 		minSupportedPlan: PLAN_BUSINESS,
