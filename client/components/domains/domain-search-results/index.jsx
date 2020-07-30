@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, includes, times, first } from 'lodash';
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import { hideSitePreview } from 'state/signup/preview/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -224,7 +226,8 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions } = this.props;
+		const { isDomainOnly, suggestions, isReskinned } = this.props;
+		const isReskinnedAndNotOnMobile = isReskinned && ! isMobile();
 		let suggestionCount;
 		let featuredSuggestionElement;
 		let suggestionElements;
@@ -292,6 +295,7 @@ class DomainSearchResults extends React.Component {
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
+						buttonStyles={ { primary: isReskinnedAndNotOnMobile } }
 					/>
 				);
 			} );
@@ -335,6 +339,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		// Set site design type only if we're in signup
 		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
 		isSitePreviewVisible: ownProps.isSignupStep && isSitePreviewVisible( state ),
+		isReskinned: 'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
 	};
 };
 

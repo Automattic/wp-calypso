@@ -454,6 +454,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	$breakpoint-mobile: 660px;
 
 	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
 
 	.signup-header .wordpress-logo {
 		position: absolute;
@@ -511,7 +512,6 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	}
 
 	button.is-primary {
-		background: #117ac9;
 		box-shadow: none;
 		border: 0;
 	}
