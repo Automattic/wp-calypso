@@ -37,6 +37,9 @@ new RuleTester( {
 	parserOptions: {
 		ecmaVersion: 6,
 		sourceType: 'module',
+		ecmaFeatures: {
+			jsx: true,
+		},
 	},
 } ).run( 'no-package-relative-imports', rule, {
 	valid: [
@@ -50,6 +53,8 @@ new RuleTester( {
 		},
 		{ code: "export * from 'wp-calypso/components/AppBar';", options },
 		{ code: "const config = require('wp-calypso/config');", options },
+		{ code: "const config = asyncRequire('wp-calypso/config');", options },
+		{ code: "const component = <AsyncLoad require='wp-calypso/config'/>", options },
 		{ code: "import config from './config';", options },
 		{ code: "import config from '../../../config';", options },
 		{ code: "import config from 'random-directory';", options },
@@ -121,6 +126,28 @@ new RuleTester( {
 				},
 			],
 			output: `const config = require('wp-calypso/config');`,
+		},
+		{
+			code: `const config = asyncRequire('config');`,
+			options,
+			errors: [
+				{
+					message: `Import config relative to \`${ calypsoDir }\` is not allowed`,
+					type: 'CallExpression',
+				},
+			],
+			output: `const config = asyncRequire('wp-calypso/config');`,
+		},
+		{
+			code: `const component = <AsyncLoad require="config"/>`,
+			options,
+			errors: [
+				{
+					message: `Import config relative to \`${ calypsoDir }\` is not allowed`,
+					type: 'JSXElement',
+				},
+			],
+			output: `const component = <AsyncLoad require="wp-calypso/config"/>`,
 		},
 
 		// Dynamic test: test the rule with each subdirectory and file inside `./client`
