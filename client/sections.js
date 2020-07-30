@@ -292,13 +292,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'feature-upsell',
-		paths: [ '/feature' ],
-		module: 'my-sites/feature-upsell',
-		group: 'sites',
-		secondary: true,
-	},
-	{
 		name: 'post-editor',
 		paths: [ '/post', '/page', '/edit' ],
 		module: 'post-editor',

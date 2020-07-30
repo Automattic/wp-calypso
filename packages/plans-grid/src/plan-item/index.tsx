@@ -175,7 +175,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								<span>{ __( '/mo' ) }</span>
 							</div>
 							<div className="plan-item__price-note">
-								{ isFree ? __( 'free forever' ) : __( 'per month, billed annually' ) }
+								{ isFree ? __( 'free forever' ) : __( 'billed annually' ) }
 							</div>
 						</div>
 						{ ! isOpen && <div className="plan-item__dropdown-chevron">{ ChevronDown }</div> }

@@ -195,21 +195,6 @@ MediaListStore.getAll = function ( siteId ) {
 	}
 };
 
-MediaListStore.getNextPageQuery = function ( siteId ) {
-	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
-		return MediaListStore.DEFAULT_QUERY;
-	}
-
-	return assign(
-		{},
-		MediaListStore.DEFAULT_QUERY,
-		{
-			page_handle: MediaListStore._activeQueries[ siteId ].nextPageHandle,
-		},
-		MediaListStore._activeQueries[ siteId ].query
-	);
-};
-
 MediaListStore.hasNextPage = function ( siteId ) {
 	return (
 		! ( siteId in MediaListStore._activeQueries ) ||

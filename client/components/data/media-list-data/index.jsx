@@ -14,6 +14,7 @@ import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import passToChildren from 'lib/react-pass-to-children';
 import utils from './utils';
+import { setQuery } from 'state/media/actions';
 import { fetchNextMediaPage } from 'state/media/thunks';
 
 function getStateData( siteId ) {
@@ -38,6 +39,7 @@ export class MediaListData extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		MediaActions.setQuery( this.props.siteId, this.getQuery() );
+		this.props.setQuery( this.props.siteId, this.getQuery() );
 		MediaListStore.on( 'change', this.updateStateData );
 		this.updateStateData();
 	}
@@ -51,6 +53,7 @@ export class MediaListData extends React.Component {
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
 			MediaActions.setQuery( nextProps.siteId, nextQuery );
+			this.props.setQuery( nextProps.siteId, nextQuery );
 			this.setState( getStateData( nextProps.siteId ) );
 		}
 	}
@@ -105,4 +108,8 @@ export class MediaListData extends React.Component {
 	}
 }
 
-export default connect( null, { fetchNextMediaPage } )( MediaListData );
+MediaListData.defaultProps = {
+	setQuery: () => {},
+};
+
+export default connect( null, { fetchNextMediaPage, setQuery } )( MediaListData );
