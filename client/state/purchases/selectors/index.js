@@ -16,10 +16,9 @@ export { getIncludedDomainPurchase } from './get-included-domain-purchase';
 export { getDowngradePlanFromPurchase } from './get-downgrade-plan-from-purchase';
 export { getDowngradePlanRawPrice } from './get-downgrade-plan-raw-price';
 export { isUserPaid } from './is-user-paid';
-
-export const isFetchingUserPurchases = ( state ) => state.purchases.isFetchingUserPurchases;
-export const isFetchingSitePurchases = ( state ) => state.purchases.isFetchingSitePurchases;
-export const hasLoadedUserPurchasesFromServer = ( state ) =>
-	state.purchases.hasLoadedUserPurchasesFromServer;
-export const hasLoadedSitePurchasesFromServer = ( state ) =>
-	state.purchases.hasLoadedSitePurchasesFromServer;
+export {
+	isFetchingUserPurchases,
+	isFetchingSitePurchases,
+	hasLoadedUserPurchasesFromServer,
+	hasLoadedSitePurchasesFromServer,
+} from './fetching.js';
