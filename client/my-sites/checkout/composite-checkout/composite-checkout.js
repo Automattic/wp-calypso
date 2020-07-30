@@ -133,6 +133,7 @@ export default function CompositeCheckout( {
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
 	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
+	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
 		reduxDispatch,
@@ -306,6 +307,9 @@ export default function CompositeCheckout( {
 			if ( createUserAndSiteBeforeTransaction ) {
 				window.localStorage.removeItem( 'shoppingCart' );
 				window.localStorage.removeItem( 'siteParams' );
+
+				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
+				// Using page.redirect() will take to the log in page which we don't want.
 				window.location = url;
 				return;
 			}
@@ -509,8 +513,7 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
-			card: ( transactionData ) =>
-				stripeCardProcessor( transactionData, createUserAndSiteBeforeTransaction ),
+			card: ( transactionData ) => stripeCardProcessor( transactionData, transactionOptions ),
 			alipay: ( transactionData ) =>
 				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
 			p24: ( transactionData ) =>
@@ -530,12 +533,7 @@ export default function CompositeCheckout( {
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>
-				payPalProcessor(
-					transactionData,
-					getThankYouUrl,
-					couponItem,
-					createUserAndSiteBeforeTransaction
-				),
+				payPalProcessor( transactionData, getThankYouUrl, couponItem, transactionOptions ),
 		} ),
 		[ couponItem, getThankYouUrl, siteSlug ]
 	);

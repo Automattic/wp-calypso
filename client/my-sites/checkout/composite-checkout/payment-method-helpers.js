@@ -92,12 +92,12 @@ export async function submitApplePayPayment( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function submitPayPalExpressRequest( transactionData, submit, isLoggedOutCart ) {
+export async function submitPayPalExpressRequest( transactionData, submit, transactionOptions ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return submit( formattedTransactionData, isLoggedOutCart );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
 export function getDomainDetails( select ) {
@@ -109,11 +109,7 @@ export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-export async function submitStripeCardTransaction(
-	transactionData,
-	submit,
-	createUserAndSiteBeforeTransaction
-) {
+export async function submitStripeCardTransaction( transactionData, submit, transactionOptions ) {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
@@ -121,7 +117,7 @@ export async function submitStripeCardTransaction(
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
-	return submit( formattedTransactionData, createUserAndSiteBeforeTransaction );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
@@ -306,7 +302,9 @@ function getErrorMessage( { error, message } ) {
 	}
 }
 
-export async function wpcomTransaction( payload, createUserAndSiteBeforeTransaction ) {
+export async function wpcomTransaction( payload, transactionOptions ) {
+	const { createUserAndSiteBeforeTransaction } = transactionOptions;
+
 	if ( createUserAndSiteBeforeTransaction ) {
 		const { select } = defaultRegistry;
 
@@ -333,7 +331,9 @@ export async function wpcomTransaction( payload, createUserAndSiteBeforeTransact
 	return wp.undocumented().transactions( payload );
 }
 
-export async function wpcomPayPalExpress( payload, createUserAndSiteBeforeTransaction ) {
+export async function wpcomPayPalExpress( payload, transactionOptions ) {
+	const { createUserAndSiteBeforeTransaction } = transactionOptions;
+
 	if ( createUserAndSiteBeforeTransaction ) {
 		const { select } = defaultRegistry;
 
