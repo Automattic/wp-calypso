@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, get, includes, pick } from 'lodash';
+import { get, includes, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,6 +47,7 @@ import { domainProductSlugs } from 'lib/domains/constants';
 import schema from './schema.json';
 
 import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
 
 const productDependencies = {
 	domain: {
@@ -78,19 +79,7 @@ const productDependencies = {
 	},
 };
 
-export function formatProduct( product ) {
-	return assign( {}, product, {
-		product_slug: product.product_slug || product.productSlug,
-		product_type: product.product_type || product.productType,
-		included_domain_purchase_amount:
-			product.included_domain_purchase_amount || product.includedDomainPurchaseAmount,
-		is_domain_registration:
-			product.is_domain_registration !== undefined
-				? product.is_domain_registration
-				: product.isDomainRegistration,
-		free_trial: product.free_trial || product.freeTrial,
-	} );
-}
+export { formatProduct } from './format-product';
 
 export function isChargeback( product ) {
 	product = formatProduct( product );
