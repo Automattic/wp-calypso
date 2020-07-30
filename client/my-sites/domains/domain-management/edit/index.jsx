@@ -23,6 +23,7 @@ import RegisteredDomainType from './domain-types/registered-domain-type';
 import MappedDomainType from './domain-types/mapped-domain-type';
 import TransferInDomainType from './domain-types/transfer-in-domain-type';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 /**
  * Style dependencies
@@ -47,13 +48,20 @@ class Edit extends React.Component {
 				>
 					{ this.props.translate( '%(domainType)s Settings', {
 						args: {
-							domainType: getDomainTypeText( domain ),
+							domainType: this.getDomainTypeText( domain ),
 						},
 					} ) }
 				</Header>
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
+	}
+
+	getDomainTypeText( domain ) {
+		if ( this.props.hasDomainOnlySite ) {
+			return 'Parked Domain';
+		}
+		return getDomainTypeText( domain );
 	}
 
 	getDetailsForType = ( type ) => {
@@ -99,8 +107,9 @@ class Edit extends React.Component {
 	};
 }
 
-export default connect( ( state ) => {
+export default connect( ( state, ownProps ) => {
 	return {
 		currentRoute: getCurrentRoute( state ),
+		hasDomainOnlySite: isDomainOnlySite( state, ownProps.selectedSite.ID ),
 	};
 } )( localize( Edit ) );

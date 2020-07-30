@@ -1,4 +1,5 @@
 const { merge } = require( 'lodash' );
+const path = require( 'path' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
 module.exports = {
@@ -221,6 +222,20 @@ module.exports = {
 					'site_blacklisted',
 					'blacklisted_domain',
 				],
+			},
+		],
+		// Disabled for now until we finish the migration
+		'wpcalypso/no-package-relative-imports': [
+			'off',
+			{
+				mappings: [
+					{
+						dir: path.join( __dirname, 'client' ),
+						module: 'wp-calypso',
+					},
+				],
+				warnOnNonLiteralImport: true,
+				automaticExtensions: [ '.js', '.ts', '.json', '.jsx', '.tsx' ],
 			},
 		],
 	},
