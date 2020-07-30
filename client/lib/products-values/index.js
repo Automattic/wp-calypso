@@ -59,13 +59,7 @@ export { getJetpackProductTagline } from './get-jetpack-product-tagline';
 export { isDependentProduct } from './is-dependent-product';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
 export { isGoogleApps } from './is-google-apps';
-
-export function isGuidedTransfer( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'guided_transfer' === product.product_slug;
-}
+export { isGuidedTransfer } from './is-guided-transfer';
 
 export function isTheme( product ) {
 	product = formatProduct( product );
