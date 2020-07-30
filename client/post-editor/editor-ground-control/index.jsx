@@ -23,7 +23,7 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
-import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
+import { pauseGuidedTour } from 'state/guided-tours/actions';
 
 /**
  * Style dependencies

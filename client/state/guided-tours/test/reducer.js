@@ -1,18 +1,18 @@
 /**
  * Internal dependencies
  */
-import { guidedTour } from '../reducer';
+import { guidedTours } from '../reducer';
 import { GUIDED_TOUR_UPDATE } from 'state/action-types';
 
 describe( 'reducer', () => {
-	describe( '#guidedTour()', () => {
+	describe( '#guidedTours()', () => {
 		test( 'should default to an empty object', () => {
-			const state = guidedTour( undefined, {} );
+			const state = guidedTours( undefined, {} );
 			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return expected state', () => {
-			const state = guidedTour(
+			const state = guidedTours(
 				{},
 				{
 					type: GUIDED_TOUR_UPDATE,

@@ -10,7 +10,6 @@ import {
 import { combineReducers, withoutPersistence } from 'state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
-import guidedTour from './guided-tours/reducer';
 import editorDeprecationDialog from './editor-deprecation-dialog/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
 import language from './language/reducer';
@@ -91,7 +90,6 @@ const reducer = combineReducers( {
 	actionLog,
 	checkout,
 	editorDeprecationDialog,
-	guidedTour,
 	gutenbergOptInDialog,
 	hasSidebar,
 	isLoading,

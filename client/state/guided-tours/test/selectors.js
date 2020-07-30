@@ -14,7 +14,7 @@ import { constant, times } from 'lodash';
 import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
 
 jest.mock( 'layout/guided-tours/config', () => {
-	return require( 'state/ui/guided-tours/test/fixtures/config' );
+	return require( 'state/guided-tours/test/fixtures/config' );
 } );
 jest.mock( 'lib/user', () => () => {} );
 
@@ -66,9 +66,9 @@ describe( 'selectors', () => {
 						initial: {},
 					},
 				},
+				guidedTours: false,
 				ui: {
 					shouldShow: false,
-					guidedTour: false,
 					actionLog: [],
 				},
 				preferences: {
