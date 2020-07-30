@@ -4,6 +4,7 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
+import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -25,6 +26,7 @@ import {
 } from 'lib/cart-values/cart-items';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
+const { select } = defaultRegistry;
 
 export function useStoredCards( getStoredCards, onEvent ) {
 	const [ state, dispatch ] = useReducer( storedCardsReducer, {
@@ -93,19 +95,18 @@ export async function submitPayPalExpressRequest( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export function getDomainDetails( select ) {
+function getDomainDetails() {
 	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
 	return prepareDomainContactDetails( managedContactDetails );
 }
 
 export function addDomainDetailsToSubmitData(
 	submitData,
-	select,
 	{ includeDomainDetails, includeGSuiteDetails }
 ) {
 	return {
 		...submitData,
-		domainDetails: includeDomainDetails || includeGSuiteDetails ? getDomainDetails( select ) : null,
+		domainDetails: includeDomainDetails || includeGSuiteDetails ? getDomainDetails() : null,
 	};
 }
 
