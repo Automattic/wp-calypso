@@ -43,7 +43,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 
 * `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`. Use `init` to indicate the step that the tour should start with.
 * `target`: (string, optional) Target which this step belongs to and which will be used for positioning. See [Targeting elements in Calypso](#targeting-elements-in-calypso) for more info about the format.
-* `placement`: (string, optional) Placement. Possible values: `below`, `above`, `beside`, `center`, `middle`, `right`.
+* `placement`: (string, optional) Placement. Possible values: `below`, `above`, `beside`, `center`, `middle`, `right`, `left`.
 * `arrow`: (string, optional) If defined, the step will be rendered with an arrow on its border pointing in a given direction. Available: 'top-left', 'top-center', 'top-right', 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'.
 * `style`: (object, optional) Will be used as the step's inline style. Use sparingly and with caution for minor tweaks in positioning or z-indexes and avoid changing the look and feel of Guided Tours. If you use this in a way that could benefit all of Guided Tours globally, please consider creating an issue. Example: `style={ { backgroundColor: 'red' } }`
 * `wait`: (function, optional) If defined, the step will be waiting until `wait` function has done. In case of returning a `Promise`, the step starts when resolved.
