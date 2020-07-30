@@ -333,6 +333,7 @@ export default function CompositeCheckout( {
 			total,
 			couponItem,
 			responseCart,
+			isLoggedOutCart,
 		]
 	);
 
@@ -540,7 +541,7 @@ export default function CompositeCheckout( {
 			paypal: ( transactionData ) =>
 				payPalProcessor( transactionData, getThankYouUrl, couponItem, isLoggedOutCart ),
 		} ),
-		[ couponItem, getThankYouUrl, siteSlug ]
+		[ couponItem, getThankYouUrl, siteSlug, isLoggedOutCart ]
 	);
 
 	useRecordCheckoutLoaded(
