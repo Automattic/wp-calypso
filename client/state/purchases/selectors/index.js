@@ -1,11 +1,10 @@
 /**
  * Internal Dependencies
  */
-import { getPlan, findPlansKeys } from 'lib/plans';
-import { TYPE_PERSONAL } from 'lib/plans/constants';
 import { getPlanRawPrice } from 'state/plans/selectors';
 
 import { getUserPurchases } from './get-user-purchases';
+import { getDowngradePlanFromPurchase } from './get-downgrade-plan-from-purchase';
 
 import 'state/purchases/init';
 
@@ -19,21 +18,7 @@ export { siteHasJetpackProductPurchase } from './site-has-jetpack-product-purcha
 export { siteHasBackupProductPurchase } from './site-has-backup-product-purchase';
 export { siteHasScanProductPurchase } from './site-has-scan-product-purchase';
 export { getIncludedDomainPurchase } from './get-included-domain-purchase';
-
-export const getDowngradePlanFromPurchase = ( purchase ) => {
-	const plan = getPlan( purchase.productSlug );
-	if ( ! plan ) {
-		return null;
-	}
-
-	const newPlanKeys = findPlansKeys( {
-		group: plan.group,
-		type: TYPE_PERSONAL,
-		term: plan.term,
-	} );
-
-	return getPlan( newPlanKeys[ 0 ] );
-};
+export { getDowngradePlanFromPurchase } from './get-downgrade-plan-from-purchase';
 
 export const getDowngradePlanRawPrice = ( state, purchase ) => {
 	const plan = getDowngradePlanFromPurchase( purchase );
