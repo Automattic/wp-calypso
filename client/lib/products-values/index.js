@@ -87,13 +87,7 @@ export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
 export { isJetpackPlanSlug } from './is-jetpack-plan-slug';
 export { isJetpackPlan } from './is-jetpack-plan';
-
-export function isJetpackBusiness( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isBusiness( product ) && isJetpackPlan( product );
-}
+export { isJetpackBusiness } from './is-jetpack-business';
 
 export function isJetpackPremium( product ) {
 	product = formatProduct( product );
