@@ -306,8 +306,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							supportPostId={ 154624 }
 							supportLink="https://wordpress.com/support/wordpress-editor/blocks/recurring-payments-button/" // TODO: Link to specific section once article is update
 							showIcon={ false }
-							text={ translate( 'Learn more.' ) }
-						/>
+						>
+							{ translate( 'Learn more.' ) }
+						</InlineSupportLink>
 					</p>
 					<FormToggle
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }

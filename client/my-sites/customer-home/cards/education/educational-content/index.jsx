@@ -51,7 +51,6 @@ const EducationalContent = ( {
 									supportPostId={ postId }
 									supportLink={ url }
 									showIcon={ false }
-									text={ text }
 									tracksEvent="calypso_customer_home_education"
 									statsGroup="calypso_customer_home"
 									tracksOptions={ {
@@ -59,7 +58,9 @@ const EducationalContent = ( {
 										card_name: cardName,
 									} }
 									statsName={ cardName }
-								/>
+								>
+									{ text }
+								</InlineSupportLink>
 							) }
 							{ externalLink && (
 								<ExternalLink

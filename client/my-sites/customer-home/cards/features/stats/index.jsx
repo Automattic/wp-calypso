@@ -88,11 +88,12 @@ export const StatsV2 = ( {
 								supportPostId={ 4454 }
 								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
 								showIcon={ false }
-								text={ translate( 'Learn about stats.' ) }
 								tracksEvent="calypso_customer_home_stats_support_page_view"
 								statsGroup="calypso_customer_home"
 								statsName="stats_learn_more"
-							/>
+							>
+								{ translate( 'Learn about stats.' ) }
+							</InlineSupportLink>
 						</div>
 					</Chart>
 				) }
@@ -114,11 +115,12 @@ export const StatsV2 = ( {
 								supportPostId={ 4454 }
 								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
 								showIcon={ false }
-								text={ translate( 'Read more.' ) }
 								tracksEvent="calypso_customer_home_stats_support_page_view"
 								statsGroup="calypso_customer_home"
 								statsName="stats_learn_more"
-							/>
+							>
+								{ translate( 'Read more.' ) }
+							</InlineSupportLink>
 						</div>
 					</div>
 				) }
