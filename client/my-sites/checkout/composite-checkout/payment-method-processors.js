@@ -9,6 +9,7 @@ import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-
  */
 import {
 	getDomainDetails,
+	createStripePaymentMethodToken,
 	wpcomTransaction,
 	wpcomPayPalExpress,
 	submitApplePayPayment,
@@ -19,7 +20,6 @@ import {
 	submitExistingCardPayment,
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
-import { createStripePaymentMethod } from 'lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
 
@@ -144,16 +144,6 @@ export async function existingCardProcessor(
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
-}
-
-function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
-	return createStripePaymentMethod( stripe, {
-		name,
-		address: {
-			country,
-			postal_code: postalCode,
-		},
-	} );
 }
 
 export async function freePurchaseProcessor(

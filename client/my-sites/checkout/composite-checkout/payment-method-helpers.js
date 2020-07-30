@@ -24,6 +24,7 @@ import {
 	hasOnlyRenewalItems,
 	hasTransferProduct,
 } from 'lib/cart-values/cart-items';
+import { createStripePaymentMethod } from 'lib/stripe';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
@@ -369,4 +370,14 @@ export function needsDomainDetails( cart ) {
 		return true;
 	}
 	return false;
+}
+
+export function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
+	return createStripePaymentMethod( stripe, {
+		name,
+		address: {
+			country,
+			postal_code: postalCode,
+		},
+	} );
 }
