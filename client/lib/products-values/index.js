@@ -28,7 +28,6 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
-	PLAN_CHARGEBACK,
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
@@ -80,13 +79,7 @@ const productDependencies = {
 };
 
 export { formatProduct } from './format-product';
-
-export function isChargeback( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === PLAN_CHARGEBACK;
-}
+export { isChargeback } from './is-chargeback';
 
 export function includesProduct( products, product ) {
 	product = formatProduct( product );
