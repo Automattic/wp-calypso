@@ -1,9 +1,3 @@
-/**
- * Internal dependencies
- */
-import { assertValidProduct } from './utils/assert-valid-product';
-import { formatProduct } from './format-product';
-
 export { formatProduct } from './format-product';
 export { isChargeback } from './is-chargeback';
 export { includesProduct } from './includes-product';
@@ -67,10 +61,4 @@ export { isVideoPress } from './is-video-press';
 export { isUnlimitedSpace } from './is-unlimited-space';
 export { isUnlimitedThemes } from './is-unlimited-themes';
 export { isSpaceUpgrade } from './is-space-upgrade';
-
-export function isConciergeSession( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'concierge-session' === product.product_slug;
-}
+export { isConciergeSession } from './is-concierge-session';
