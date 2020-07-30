@@ -194,11 +194,19 @@ export default class Step extends Component< Props, State > {
 					this.onScrollOrResize();
 				}
 
+				// This is checking that we have a target and that we
+				// either want to wait for it to appear, or invoke a callback
+				// when it disappears. If not, then there's nothing for us to do!
 				if ( ! target || ( ! waitForTarget && ! onTargetDisappear ) ) {
 					return;
 				}
 
 				const targetEl = targetForSlug( target );
+				// If the target isn't found and we want to invoke a callback when
+				// it disappears, then check that we've either previously seen the target
+				// or that we've not been waiting to see it. If so, invoke the callback.
+				// Otherwise, if the target is in the DOM update our state to show that
+				// it's been seen.
 				if ( ! targetEl && onTargetDisappear && ( ! waitForTarget || this.state.seenTarget ) ) {
 					debug( 'Step#watchTarget: Target has disappeared' );
 					onTargetDisappear( {
