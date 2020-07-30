@@ -13,17 +13,23 @@ import debugFactory from 'debug';
 import { requestPlans } from 'state/plans/actions';
 import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { getPlan, findPlansKeys } from 'lib/plans';
-import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import {
+	GROUP_WPCOM,
+	GROUP_JETPACK,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+} from 'lib/plans/constants';
 import { requestProductsList } from 'state/products-list/actions';
 import { myFormatCurrency } from 'blocks/subscription-length-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
-export function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscounts } ) {
+export function useProductVariants( { siteId, productSlug, credits, couponDiscounts } ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
-	const variantProductSlugs = useVariantWpcomPlanProductSlugs( productSlug );
+	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
 
 	const productsWithPrices = useSelector( ( state ) => {
 		return computeProductsWithPrices(
@@ -94,7 +100,7 @@ function VariantPriceDiscount( { variant } ) {
 	);
 }
 
-function useVariantWpcomPlanProductSlugs( productSlug ) {
+function useVariantPlanProductSlugs( productSlug ) {
 	const reduxDispatch = useDispatch();
 
 	const chosenPlan = getPlan( productSlug );
@@ -117,8 +123,8 @@ function useVariantWpcomPlanProductSlugs( productSlug ) {
 		return [];
 	}
 
-	// Only construct variants for WP.com plans
-	if ( chosenPlan.group !== GROUP_WPCOM ) {
+	// Only construct variants for WP.com and Jetpack plans
+	if ( chosenPlan.group !== GROUP_WPCOM && chosenPlan.group !== GROUP_JETPACK ) {
 		return [];
 	}
 

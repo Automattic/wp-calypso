@@ -84,7 +84,7 @@ import { AUTO_RENEWAL } from 'lib/url/support';
 import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
-import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
+import { useProductVariants } from './wpcom/hooks/product-variants';
 import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './wpcom/lib/translate-cart';
 import useShoppingCartManager from './wpcom/hooks/use-shopping-cart-manager';
@@ -468,7 +468,7 @@ export default function CompositeCheckout( {
 		);
 	};
 
-	const getItemVariants = useWpcomProductVariants( {
+	const getItemVariants = useProductVariants( {
 		siteId,
 		productSlug: getPlanProductSlugs( items )[ 0 ],
 	} );
