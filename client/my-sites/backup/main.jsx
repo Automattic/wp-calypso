@@ -16,7 +16,6 @@ import DocumentHead from 'components/data/document-head';
 import { updateFilter, setFilter } from 'state/activity-log/actions';
 import {
 	getDailyBackupDeltas,
-	// getMetaDiffForDailyBackup,
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
 	INDEX_FORMAT,
@@ -44,10 +43,6 @@ import ActivityCardList from 'components/activity-card-list';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { applySiteOffset } from 'lib/site/timezone';
-import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 import { backupMainPath } from './paths';
 import { emptyFilter } from 'state/activity-log/reducer';
@@ -72,9 +67,9 @@ class BackupsPage extends Component {
 	}
 
 	onDateChange = ( date ) => {
-		const { siteSlug, moment, timezone, gmtOffset } = this.props;
+		const { siteSlug, moment } = this.props;
 
-		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+		const today = moment();
 
 		if ( date && date.isValid() && date <= today ) {
 			// Valid dates
@@ -90,12 +85,9 @@ class BackupsPage extends Component {
 	};
 
 	getSelectedDate() {
-		const { timezone, gmtOffset, moment, queryDate } = this.props;
+		const { moment, queryDate } = this.props;
 
-		const today = applySiteOffset( moment(), {
-			timezone: timezone,
-			gmtOffset: gmtOffset,
-		} );
+		const today = moment();
 
 		const selectedDate = moment( queryDate, INDEX_FORMAT );
 
@@ -153,9 +145,7 @@ class BackupsPage extends Component {
 			isLoadingBackups,
 			oldestDateAvailable,
 			lastDateAvailable,
-			timezone,
 			translate,
-			gmtOffset,
 		} = this.props;
 
 		const backupsFromSelectedDate = this.backupsFromSelectedDate();
@@ -163,7 +153,7 @@ class BackupsPage extends Component {
 		const realtimeBackups = backupsFromSelectedDate.rewindableActivities;
 
 		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
-		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+		const today = moment();
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
 		// todo: commented as a quick fix before Jetpack Cloud launch. All the non-english account break here.
 		// See: 1169345694087188-as-1176670093007897
@@ -178,7 +168,6 @@ class BackupsPage extends Component {
 
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
-				<QuerySiteSettings siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 
 				{ isLoadingBackups && <BackupPlaceholder /> }
@@ -206,8 +195,6 @@ class BackupsPage extends Component {
 									backup: lastBackup,
 									lastDateAvailable,
 									selectedDate: this.getSelectedDate(),
-									timezone,
-									gmtOffset,
 									hasRealtimeBackups,
 									onDateChange: this.onDateChange,
 									deltas,
@@ -300,24 +287,16 @@ class BackupsPage extends Component {
  * Create an indexed log of backups based on the date of the backup and in the site time zone
  *
  * @param {Array} logs The activity logs retrieved from the store
- * @param {string} timezone The site time zone
- * @param {number} gmtOffset The site offset from the GMT
  */
-const createIndexedLog = ( logs, timezone, gmtOffset ) => {
+const createIndexedLog = ( logs ) => {
 	const indexedLog = {};
-	let oldestDateAvailable = applySiteOffset( momentDate(), {
-		timezone,
-		gmtOffset,
-	} );
+	let oldestDateAvailable = momentDate();
 	let lastDateAvailable = null;
 
 	if ( 'success' === logs.state ) {
 		logs.data.forEach( ( log ) => {
-			//Move the backup date to the site timezone
-			const backupDate = applySiteOffset( momentDate( log.activityTs ), {
-				timezone,
-				gmtOffset,
-			} );
+			// Move the backup date to the site timezone
+			const backupDate = momentDate( log.activityTs );
 
 			//Get the index for this backup, index format: YYYYMMDD
 			const index = backupDate.format( INDEX_FORMAT );
@@ -365,8 +344,6 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const logs = requestActivityLogs( siteId, filter );
-	const gmtOffset = getSiteGmtOffset( state, siteId );
-	const timezone = getSiteTimezoneValue( state, siteId );
 	const rewind = getRewindState( state, siteId );
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
@@ -375,11 +352,7 @@ const mapStateToProps = ( state ) => {
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
-	const { indexedLog, oldestDateAvailable, lastDateAvailable } = createIndexedLog(
-		logs,
-		timezone,
-		gmtOffset
-	);
+	const { indexedLog, oldestDateAvailable, lastDateAvailable } = createIndexedLog( logs );
 
 	const isLoadingBackups = ! ( logs.state === 'success' );
 
@@ -395,8 +368,6 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		siteUrl: getSiteUrl( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
-		timezone,
-		gmtOffset,
 		indexedLog,
 		oldestDateAvailable,
 		lastDateAvailable,

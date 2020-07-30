@@ -42,11 +42,10 @@ class DailyBackupStatus extends Component {
 	};
 
 	getDisplayDate = ( date, withLatest = true ) => {
-		const { translate, moment, timezone, gmtOffset } = this.props;
+		const { translate, moment } = this.props;
 
-		//Apply the time offset
-		const backupDate = applySiteOffset( moment( date ), { timezone, gmtOffset } );
-		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+		const backupDate = moment( date );
+		const today = moment();
 
 		const isToday = today.isSame( backupDate, 'day' );
 		const yearToday = today.format( 'YYYY' );
