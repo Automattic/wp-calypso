@@ -25,7 +25,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_HOST_BUNDLE,
-	PLAN_WPCOM_ENTERPRISE,
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
@@ -43,6 +42,7 @@ import { isBlogger } from './is-blogger';
 import { isPremium } from './is-premium';
 import { isBusiness } from './is-business';
 import { isEcommerce } from './is-ecommerce';
+import { isEnterprise } from './is-enterprise';
 
 const productDependencies = {
 	domain: {
@@ -85,13 +85,7 @@ export { isBlogger } from './is-blogger';
 export { isPremium } from './is-premium';
 export { isBusiness } from './is-business';
 export { isEcommerce } from './is-ecommerce';
-
-export function isEnterprise( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === PLAN_WPCOM_ENTERPRISE;
-}
+export { isEnterprise } from './is-enterprise';
 
 export function isJetpackPlanSlug( productSlug ) {
 	return planMatches( productSlug, { group: GROUP_JETPACK } );
