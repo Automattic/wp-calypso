@@ -20,8 +20,8 @@ import { getPlan, findPlansKeys } from 'lib/plans';
 import { TYPE_PERSONAL } from 'lib/plans/constants';
 import { getPlanRawPrice } from 'state/plans/selectors';
 
-import { getPurchases } from './get-purchases';
 import { getUserPurchases } from './get-user-purchases';
+import { getSitePurchases } from './get-site-purchases';
 
 import 'state/purchases/init';
 
@@ -29,16 +29,7 @@ export { getPurchases } from './get-purchases';
 export { getUserPurchases } from './get-user-purchases';
 export { getPurchasesError } from './get-purchases-error';
 export { getByPurchaseId } from './get-by-purchase-id';
-
-/**
- * Returns a list of Purchases associated with a Site from the state using its siteId
- *
- * @param   {object} state       global state
- * @param   {number} siteId      the site id
- * @returns {object} the matching purchases if there are some
- */
-export const getSitePurchases = ( state, siteId ) =>
-	getPurchases( state ).filter( ( purchase ) => purchase.siteId === siteId );
+export { getSitePurchases } from './get-site-purchases';
 
 /**
  * Returns a list of Purchases associated with a Site that may be expiring soon
