@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useLayoutEffect, useRef, useEffect, useState } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	Button as OriginalButton,
@@ -204,7 +205,7 @@ function WpcomBlockEditorNavSidebar() {
 					/>
 				</div>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
-					<h2>{ siteTitle }</h2>
+					<h2>{ decodeEntities( siteTitle ) }</h2>
 					{ SITE_HOME_URL && (
 						<ExternalLink href={ SITE_HOME_URL }>
 							{ __( 'Visit site', 'full-site-editing' ) }

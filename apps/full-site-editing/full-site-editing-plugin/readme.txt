@@ -1,4 +1,4 @@
-=== Full Site Editing ===
+=== WordPress.com Editing Toolkit ===
 Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
@@ -8,7 +8,7 @@ Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Enhances your page creation workflow within the Block Editor.
+Enhances the editing experience in the Block Editor.
 
 == Description ==
 

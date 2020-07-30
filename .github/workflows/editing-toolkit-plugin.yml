@@ -1,20 +1,20 @@
 on:
   pull_request:
-    # only trigger this workflow if FSE plugin files have been modified, or if packages have been updated.
+    # only trigger this workflow if Editing Toolkit plugin files have been modified, or if packages have been updated.
     paths:
     - 'apps/full-site-editing/**'
 
-name: FSE plugin
+name: Editing Toolkit Plugin
 
 jobs:
   build:
-    name: Build FSE plugin
+    name: Build plugin
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@HEAD
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
@@ -33,7 +33,7 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile # Not needed when restoring from cache.
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
@@ -42,14 +42,14 @@ jobs:
       if: steps.cache.outputs.cache-hit == 'true'
       run: yarn run postinstall # Needed only when not running yarn install.
 
-    - name: Build FSE
+    - name: Build JavaScript
       run: yarn build
       working-directory: apps/full-site-editing
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v1
       with:
-        name: fse-build-archive
+        name: editing-toolkit-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
 
   mc_upload:
@@ -57,7 +57,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      CALYPSO_APP: fse_plugin
+      CALYPSO_APP: editing_toolkit_plugin
       TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
     steps:
     - name: Checkout code
@@ -67,7 +67,7 @@ jobs:
     - name: Get Build
       uses: actions/download-artifact@HEAD
       with:
-        name: fse-build-archive
+        name: editing-toolkit-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
 
     - name: Send hook to Mission Control
@@ -85,10 +85,10 @@ jobs:
     - name: Get build
       uses: actions/download-artifact@HEAD
       with:
-        name: fse-build-archive
+        name: editing-toolkit-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
@@ -127,7 +127,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@HEAD
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
@@ -158,17 +158,17 @@ jobs:
     - name: Get build
       uses: actions/download-artifact@HEAD
       with:
-        name: fse-build-archive
+        name: editing-toolkit-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
 
     - name: Check if newspack-blocks exists
       run: test -f ./apps/full-site-editing/full-site-editing-plugin/newspack-blocks/synced-newspack-blocks/class-newspack-blocks.php
 
-    - name: Run composer
+    - name: Composer install
       uses: nick-zh/composer-php@HEAD
       with:
         action: 'install'
 
-    # This will fail if the textdomain has not been changed to full-site-editing, which indicates an issue with the sync or build scripts.
+    # This will fail if the textdomain has not been changed to "full-site-editing", which indicates an issue with the sync or build scripts.
     - name: Execute phpcs on newspack-blocks PHP files.
       run: ./vendor/bin/phpcs --standard=apps/full-site-editing/bin/newspack-block-sync-phpcs.xml

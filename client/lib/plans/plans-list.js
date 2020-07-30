@@ -717,15 +717,23 @@ export const PLANS_LIST = {
 				constants.FEATURE_ADVANCED_SEO,
 				constants.FEATURE_GOOGLE_ANALYTICS,
 			] ),
-		getSignupFeatures: () =>
-			compact( [
+		getSignupFeatures: ( currentPlan ) => {
+			const showPersonalPlan =
+				isEnabled( 'plans/personal-plan' ) || constants.PLAN_JETPACK_PERSONAL === currentPlan;
+
+			return compact( [
+				! showPersonalPlan && constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+				! showPersonalPlan && constants.FEATURE_SPAM_AKISMET_PLUS,
 				constants.FEATURE_MALWARE_SCANNING_DAILY,
 				constants.FEATURE_AUTOMATIC_SECURITY_FIXES,
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				constants.FEATURE_WORDADS_INSTANT,
 				constants.FEATURE_ADVANCED_SEO,
-				constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
-			] ),
+				showPersonalPlan
+					? constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK
+					: constants.FEATURE_ALL_FREE_FEATURES_JETPACK,
+			] );
+		},
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getHiddenFeatures: () => [
@@ -786,15 +794,23 @@ export const PLANS_LIST = {
 				constants.FEATURE_ADVANCED_SEO,
 				constants.FEATURE_GOOGLE_ANALYTICS,
 			] ),
-		getSignupFeatures: () =>
-			compact( [
+		getSignupFeatures: ( currentPlan ) => {
+			const showPersonalPlan =
+				isEnabled( 'plans/personal-plan' ) || constants.PLAN_JETPACK_PERSONAL === currentPlan;
+
+			return compact( [
+				! showPersonalPlan && constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+				! showPersonalPlan && constants.FEATURE_SPAM_AKISMET_PLUS,
 				constants.FEATURE_MALWARE_SCANNING_DAILY,
 				constants.FEATURE_AUTOMATIC_SECURITY_FIXES,
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				constants.FEATURE_WORDADS_INSTANT,
 				constants.FEATURE_ADVANCED_SEO,
-				constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
-			] ),
+				showPersonalPlan
+					? constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK
+					: constants.FEATURE_ALL_FREE_FEATURES_JETPACK,
+			] );
+		},
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 		getHiddenFeatures: () => [

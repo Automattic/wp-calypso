@@ -22,7 +22,6 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import GdprBanner from 'blocks/gdpr-banner';
-import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 /**
@@ -151,7 +150,7 @@ export default connect( ( state ) => {
 	const section = getSection( state );
 	const currentRoute = getCurrentRoute( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
-	const isGutenboardingLogin = startsWith( currentRoute, `/log-in/${ GUTENBOARDING_BASE_NAME }` );
+	const isGutenboardingLogin = startsWith( currentRoute, '/log-in/new' );
 	const noMasterbarForRoute = isJetpackLogin || isGutenboardingLogin;
 	const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
