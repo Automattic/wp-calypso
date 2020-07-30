@@ -49,9 +49,25 @@
 	}
 }
 
+.domain-only-notice__button-row {
+	margin: 17px 0;
+
+	button {
+		padding: 8px 34px;
+
+		&.is-borderless {
+			color: var( --color-link );
+			margin-left: 29px;
+		}
+	}
+}
+
 .domain-types__container {
 	.status-success {
 		@include domain_status_color( #008a20 );
+	}
+	.status-parked {
+		@include domain_status_color( #787C82 );
 	}
 	.status-pending {
 		@include domain_status_color( #3582C4 );

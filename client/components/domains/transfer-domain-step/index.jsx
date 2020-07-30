@@ -124,6 +124,14 @@ class TransferDomainStep extends React.Component {
 		}
 	}
 
+	canInitiateTransfer = () => {
+		const { cart, selectedSite } = this.props;
+		const { searchQuery } = this.state;
+		return (
+			getTld( searchQuery ) && ! hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery )
+		);
+	};
+
 	getMapDomainUrl() {
 		const { basePath, mapDomainUrl, selectedSite } = this.props;
 		if ( mapDomainUrl ) {
@@ -226,7 +234,7 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const { cart, selectedSite, translate } = this.props;
+		const { translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
 
@@ -255,11 +263,7 @@ class TransferDomainStep extends React.Component {
 							onFocus={ this.recordInputFocus }
 						/>
 						<Button
-							disabled={
-								! getTld( searchQuery ) ||
-								hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ||
-								submitting
-							}
+							disabled={ submitting || ! this.canInitiateTransfer() }
 							busy={ submitting }
 							className="transfer-domain-step__go button is-primary"
 							onClick={ this.handleFormSubmit }
@@ -474,6 +478,11 @@ class TransferDomainStep extends React.Component {
 
 	handleFormSubmit = ( event ) => {
 		event.preventDefault();
+
+		// Check for a keyboard-driven submission of invalid data.
+		if ( ! this.canInitiateTransfer() ) {
+			return;
+		}
 
 		const { analyticsSection, searchQuery } = this.state;
 		const domain = getFixedDomainSearch( searchQuery );

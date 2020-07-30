@@ -8,10 +8,30 @@ import { dispatch, select } from '@wordpress/data-controls';
  * Internal dependencies
  */
 import { SITE_ID, SITE_STORE, PLANS_STORE } from './constants';
+import type { LaunchStepType } from './types';
+
+export const setStep = ( step: LaunchStepType ) => ( {
+	type: 'SET_STEP' as const,
+	step,
+} );
+
+export const setStepComplete = ( step: LaunchStepType ) => ( {
+	type: 'SET_STEP_COMPLETE' as const,
+	step,
+} );
+
+export const setStepIncomplete = ( step: LaunchStepType ) => ( {
+	type: 'SET_STEP_INCOMPLETE' as const,
+	step,
+} );
 
 export const setDomain = ( domain: DomainSuggestions.DomainSuggestion ) => ( {
 	type: 'SET_DOMAIN' as const,
 	domain,
+} );
+
+export const unsetDomain = () => ( {
+	type: 'UNSET_DOMAIN' as const,
 } );
 
 export const setDomainSearch = ( domainSearch: string ) => ( {
@@ -38,4 +58,12 @@ export function* launchSite() {
 	}
 }
 
-export type LaunchAction = ReturnType< typeof setDomain | typeof setDomainSearch | typeof setPlan >;
+export type LaunchAction = ReturnType<
+	| typeof unsetDomain
+	| typeof setStep
+	| typeof setStepComplete
+	| typeof setStepIncomplete
+	| typeof setDomain
+	| typeof setDomainSearch
+	| typeof setPlan
+>;

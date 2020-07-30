@@ -22,7 +22,7 @@
 	&.components-button {
 		@include onboarding-medium-text;
 		background: var( --studio-blue-0 );
-		border-radius: $radius-round-rectangle;
+		border-radius: $radius-block-ui;
 		color: var( --studio-blue-40 );
 		max-width: 100%;
 		height: auto; // prevent clipping when there are 2 lines
