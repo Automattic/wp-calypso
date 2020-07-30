@@ -51,6 +51,7 @@ import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import LayoutLoader from './loader';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
+import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -161,6 +162,10 @@ class Layout extends Component {
 
 			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
 				optionalProps.bodyClass = 'is-new-launch-flow';
+			}
+
+			if ( 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) ) {
+				optionalProps.bodyClass = classnames( optionalProps.bodyClass, 'is-white-signup' );
 			}
 
 			return optionalProps;
