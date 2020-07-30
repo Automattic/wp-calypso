@@ -306,6 +306,14 @@ body.is-section-signup.is-white-signup {
 				}
 			}
 
+			.domain-product-price__free-price {
+				font-size: $font-body;
+				
+				@include break-mobile {
+					font-size: $font-body-small;
+				}
+			}
+
 			.domain-product-price__free-text {
 				font-size: $font-body;
 				
@@ -314,7 +322,7 @@ body.is-section-signup.is-white-signup {
 				}
 			}
 
-			.domain-product-price__price {
+			.domain-product-price__price:not( .domain-product-price__free-price ) {
 				font-size: $font-body-small;
 
 				@include break-mobile {
