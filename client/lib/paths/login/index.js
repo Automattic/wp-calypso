@@ -4,7 +4,6 @@
 import { addQueryArgs } from 'lib/url';
 import { addLocaleToPath, localizeUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
-import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 export function login( {
 	isJetpack,
@@ -32,7 +31,7 @@ export function login( {
 		} else if ( twoFactorAuthType && isJetpack ) {
 			url += '/jetpack/' + twoFactorAuthType;
 		} else if ( twoFactorAuthType && isGutenboarding ) {
-			url += `/${ GUTENBOARDING_BASE_NAME }/` + twoFactorAuthType;
+			url += '/new/' + twoFactorAuthType;
 		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
 		} else if ( socialConnect ) {
@@ -40,7 +39,7 @@ export function login( {
 		} else if ( isJetpack ) {
 			url += '/jetpack';
 		} else if ( isGutenboarding ) {
-			url += `/${ GUTENBOARDING_BASE_NAME }`;
+			url += '/new';
 		} else if ( useMagicLink ) {
 			url += '/link';
 		}

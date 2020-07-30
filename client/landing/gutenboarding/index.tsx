@@ -13,7 +13,6 @@ import type { Site as SiteStore } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
-import GUTENBOARDING_BASE_NAME from './basename.json';
 import Gutenboard from './gutenboard';
 import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
@@ -58,7 +57,7 @@ const DEVELOPMENT_BASENAME = '/gutenboarding';
 window.AppBoot = async () => {
 	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
 		const url = new URL( window.location.href );
-		url.pathname = GUTENBOARDING_BASE_NAME + url.pathname.substring( DEVELOPMENT_BASENAME.length );
+		url.pathname = 'new' + url.pathname.substring( DEVELOPMENT_BASENAME.length );
 		window.location.replace( url.toString() );
 		return;
 	}
@@ -79,7 +78,7 @@ window.AppBoot = async () => {
 	ReactDom.render(
 		<LocaleContext>
 			<WindowLocaleEffectManager />
-			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
+			<BrowserRouter basename="new">
 				<Switch>
 					<Route exact path={ path }>
 						<Gutenboard />
@@ -97,7 +96,7 @@ window.AppBoot = async () => {
 async function checkAndRedirectIfSiteWasCreatedRecently() {
 	const shouldPathCauseRedirectForSelectedSite = () => {
 		return [ Step.CreateSite, Step.Plans, Step.Style ].some( ( step ) => {
-			if ( window.location.pathname.startsWith( `/${ GUTENBOARDING_BASE_NAME }/${ step }` ) ) {
+			if ( window.location.pathname.startsWith( `/new/${ step }` ) ) {
 				return true;
 			}
 		} );
