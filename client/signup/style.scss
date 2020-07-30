@@ -453,6 +453,8 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	$gray-50: #646970;
 	$breakpoint-mobile: 660px;
 
+	--color-accent: #117ac9;
+
 	.signup-header .wordpress-logo {
 		position: absolute;
 		left: 16px;
@@ -479,6 +481,8 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	}
 
 	.formatted-header {
+		margin-top: 48px;
+
 		.formatted-header__title {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
