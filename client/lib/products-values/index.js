@@ -19,14 +19,13 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 } from 'lib/plans/constants';
 
-import { domainProductSlugs } from 'lib/domains/constants';
-
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 import { isPlan } from './is-plan';
 import { isDomainMapping } from './is-domain-mapping';
 import { isDomainRegistration } from './is-domain-registration';
+import { isDomainTransfer } from './is-domain-transfer';
 
 const productDependencies = {
 	domain: {
@@ -99,19 +98,13 @@ export { isDomainRedemption } from './is-domain-redemption';
 export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';
 export { isSiteRedirect } from './is-site-redirect';
 export { allowedProductAttributes } from './allowed-product-attributes';
+export { isDomainTransfer } from './is-domain-transfer';
 
 export function isDomainTransferProduct( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return isDomainTransfer( product );
-}
-
-export function isDomainTransfer( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === domainProductSlugs.TRANSFER_IN;
 }
 
 export function isDelayedDomainTransfer( product ) {
