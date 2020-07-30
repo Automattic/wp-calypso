@@ -66,19 +66,7 @@ export { isNoAds } from './is-no-ads';
 export { isVideoPress } from './is-video-press';
 export { isUnlimitedSpace } from './is-unlimited-space';
 export { isUnlimitedThemes } from './is-unlimited-themes';
-
-export function isSpaceUpgrade( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return (
-		'1gb_space_upgrade' === product.product_slug ||
-		'5gb_space_upgrade' === product.product_slug ||
-		'10gb_space_upgrade' === product.product_slug ||
-		'50gb_space_upgrade' === product.product_slug ||
-		'100gb_space_upgrade' === product.product_slug
-	);
-}
+export { isSpaceUpgrade } from './is-space-upgrade';
 
 export function isConciergeSession( product ) {
 	product = formatProduct( product );
