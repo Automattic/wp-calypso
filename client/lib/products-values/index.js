@@ -40,6 +40,7 @@ import { isEcommerce } from './is-ecommerce';
 import { isEnterprise } from './is-enterprise';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
+import { isJetpackScanSlug } from './is-jetpack-scan-slug';
 
 const productDependencies = {
 	domain: {
@@ -94,10 +95,7 @@ export { isBiennially } from './is-biennially';
 export { isJetpackMonthlyPlan } from './is-jetpack-monthly-plan';
 export { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
-
-export function isJetpackScanSlug( productSlug ) {
-	return JETPACK_SCAN_PRODUCTS.includes( productSlug );
-}
+export { isJetpackScanSlug } from './is-jetpack-scan-slug';
 
 export function isJetpackAntiSpamSlug( productSlug ) {
 	return JETPACK_ANTI_SPAM_PRODUCTS.includes( productSlug );
