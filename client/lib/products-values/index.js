@@ -28,10 +28,8 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
-	GROUP_JETPACK,
 } from 'lib/plans/constants';
 
-import { planMatches } from 'lib/plans';
 import { domainProductSlugs } from 'lib/domains/constants';
 import schema from './schema.json';
 
@@ -43,6 +41,7 @@ import { isPremium } from './is-premium';
 import { isBusiness } from './is-business';
 import { isEcommerce } from './is-ecommerce';
 import { isEnterprise } from './is-enterprise';
+import { isJetpackPlanSlug } from './is-jetpack-plan-slug';
 
 const productDependencies = {
 	domain: {
@@ -86,10 +85,7 @@ export { isPremium } from './is-premium';
 export { isBusiness } from './is-business';
 export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
-
-export function isJetpackPlanSlug( productSlug ) {
-	return planMatches( productSlug, { group: GROUP_JETPACK } );
-}
+export { isJetpackPlanSlug } from './is-jetpack-plan-slug';
 
 export function isJetpackPlan( product ) {
 	product = formatProduct( product );
