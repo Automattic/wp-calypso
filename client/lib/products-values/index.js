@@ -89,13 +89,7 @@ export { isJetpackPlanSlug } from './is-jetpack-plan-slug';
 export { isJetpackPlan } from './is-jetpack-plan';
 export { isJetpackBusiness } from './is-jetpack-business';
 export { isJetpackPremium } from './is-jetpack-premium';
-
-export function isVipPlan( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'vip' === product.product_slug;
-}
+export { isVipPlan } from './is-vip-plan';
 
 export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
