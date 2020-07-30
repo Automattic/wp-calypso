@@ -15,7 +15,6 @@ import {
 
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
-import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 import { isPlan } from './is-plan';
 import { isDomainMapping } from './is-domain-mapping';
 import { isDomainRegistration } from './is-domain-registration';
@@ -100,14 +99,7 @@ export { isCredits } from './is-credits';
 export { getDomainProductRanking } from './get-domain-product-ranking';
 export { getDomain } from './get-domain';
 export { getProductsSlugs } from './get-products-slugs';
-
-export function getProductClass( productSlug ) {
-	if ( isJetpackBackupSlug( productSlug ) ) {
-		return 'is-jetpack-backup';
-	}
-
-	return '';
-}
+export { getProductClass } from './get-product-class';
 
 /**
  * Get Jetpack product display name based on the product purchase object.
