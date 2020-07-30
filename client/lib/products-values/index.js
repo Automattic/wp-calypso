@@ -24,15 +24,9 @@ import schema from './schema.json';
 
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
-import { isPersonal } from './is-personal';
-import { isBlogger } from './is-blogger';
-import { isPremium } from './is-premium';
-import { isBusiness } from './is-business';
-import { isEcommerce } from './is-ecommerce';
-import { isEnterprise } from './is-enterprise';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
-import { isJpphpBundle } from './is-jpphp-bundle';
+import { isPlan } from './is-plan';
 
 const productDependencies = {
 	domain: {
@@ -96,21 +90,7 @@ export { isJetpackProductSlug } from './is-jetpack-product-slug';
 export { isJetpackProduct } from './is-jetpack-product';
 export { getProductFromSlug } from './get-product-from-slug';
 export { isJpphpBundle } from './is-jpphp-bundle';
-
-export function isPlan( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return (
-		isBlogger( product ) ||
-		isPersonal( product ) ||
-		isPremium( product ) ||
-		isBusiness( product ) ||
-		isEcommerce( product ) ||
-		isEnterprise( product ) ||
-		isJpphpBundle( product )
-	);
-}
+export { isPlan } from './is-plan';
 
 export function isDotComPlan( product ) {
 	return isPlan( product ) && ! isJetpackPlan( product );
