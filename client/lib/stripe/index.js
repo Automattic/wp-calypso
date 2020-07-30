@@ -420,3 +420,15 @@ function getStripeLocaleForLocale( locale ) {
 	}
 	return stripeLocale;
 }
+
+export async function showStripeModalAuth( { stripeConfiguration, response } ) {
+	const authenticationResponse = await confirmStripePaymentIntent(
+		stripeConfiguration,
+		response.message.payment_intent_client_secret
+	);
+
+	if ( authenticationResponse?.status ) {
+		return authenticationResponse;
+	}
+	return null;
+}

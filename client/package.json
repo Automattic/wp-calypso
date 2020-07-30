@@ -97,6 +97,7 @@
 		"electron-updater": "^4.2.5",
 		"email-validator": "^2.0.4",
 		"emoji-text": "^0.2.6",
+		"emotion-theming": "^10.0.27",
 		"events": "^3.1.0",
 		"express": "^4.17.1",
 		"express-useragent": "^1.0.13",
