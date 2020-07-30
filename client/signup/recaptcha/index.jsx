@@ -11,6 +11,11 @@ import { defaultRegistry } from '@automattic/composite-checkout';
 import { initGoogleRecaptcha } from 'lib/analytics/recaptcha';
 import config from 'config';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function Recaptcha( { badgePosition } ) {
 	useEffect( () => {
 		initGoogleRecaptcha(
