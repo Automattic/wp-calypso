@@ -102,17 +102,7 @@ export { isDomainTransferProduct } from './is-domain-transfer-product';
 export { isDelayedDomainTransfer } from './is-delayed-domain-transfer';
 export { isBundled } from './is-bundled';
 export { isCredits } from './is-credits';
-
-export function getDomainProductRanking( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	if ( isDomainRegistration( product ) ) {
-		return 0;
-	} else if ( isDomainMapping( product ) ) {
-		return 1;
-	}
-}
+export { getDomainProductRanking } from './get-domain-product-ranking';
 
 export function getDomain( product ) {
 	product = formatProduct( product );
