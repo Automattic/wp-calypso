@@ -53,6 +53,7 @@ export class Banner extends Component {
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		iconPath: PropTypes.string,
 		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
@@ -144,7 +145,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, jetpack, showIcon } = this.props;
+		const { icon, iconPath, jetpack, showIcon } = this.props;
 
 		if ( ! showIcon ) {
 			return;
@@ -158,14 +159,17 @@ export class Banner extends Component {
 			);
 		}
 
+		let iconComponent;
+		if ( iconPath ) {
+			iconComponent = <img src={ iconPath } alt="" />;
+		} else {
+			iconComponent = <Gridicon icon={ icon || 'star' } size={ 18 } />;
+		}
+
 		return (
 			<div className="banner__icons">
-				<div className="banner__icon">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
-				</div>
-				<div className="banner__icon-circle">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
-				</div>
+				<div className="banner__icon">{ iconComponent }</div>
+				<div className="banner__icon-circle">{ iconComponent }</div>
 			</div>
 		);
 	}

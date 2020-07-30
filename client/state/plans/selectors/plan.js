@@ -7,7 +7,6 @@ import { get, find } from 'lodash';
  * Internal Dependencies
  */
 import createSelector from 'lib/create-selector';
-import { calculateMonthlyPriceForPlan } from 'lib/plans';
 
 import 'state/plans/init';
 
@@ -54,25 +53,6 @@ export const getPlanBySlug = createSelector(
 	( state, planSlug ) => find( getPlans( state ), { product_slug: planSlug } ),
 	( state ) => getPlans( state )
 );
-
-/**
- * Returns a plan price
- *
- * @param  {object}  state     global state
- * @param  {number}  productId the plan productId
- * @param  {boolean} isMonthly if true, returns monthly price
- * @returns {number}  plan price
- */
-export function getPlanRawPrice( state, productId, isMonthly = false ) {
-	const plan = getPlan( state, productId );
-	if ( get( plan, 'raw_price', -1 ) < 0 ) {
-		return null;
-	}
-
-	return isMonthly
-		? calculateMonthlyPriceForPlan( plan.product_slug, plan.raw_price )
-		: plan.raw_price;
-}
 
 /**
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.

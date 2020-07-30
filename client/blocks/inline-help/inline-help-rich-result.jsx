@@ -25,7 +25,7 @@ import { Button } from '@automattic/components';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getSearchQuery from 'state/inline-help/selectors/get-search-query';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { requestGuidedTour } from 'state/guided-tours/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
 const amendYouTubeLink = ( link = '' ) =>

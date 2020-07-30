@@ -24,7 +24,7 @@ import {
 import { EDITOR_PASTE_EVENT } from 'state/action-types';
 
 jest.mock( 'layout/guided-tours/config', () => {
-	return require( 'state/ui/guided-tours/test/fixtures/config' );
+	return require( 'state/guided-tours/test/fixtures/config' );
 } );
 jest.mock( 'lib/user', () => () => {} );
 

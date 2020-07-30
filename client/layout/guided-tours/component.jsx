@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import AllTours from './all-tours';
 import QueryPreferences from 'components/data/query-preferences';
 import { RootChild } from '@automattic/components';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { getGuidedTourState } from 'state/guided-tours/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getSectionName, isSectionLoading } from 'state/ui/selectors';
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
@@ -20,7 +20,7 @@ import {
 	nextGuidedTourStep,
 	quitGuidedTour,
 	resetGuidedToursHistory,
-} from 'state/ui/guided-tours/actions';
+} from 'state/guided-tours/actions';
 
 /**
  * Style dependencies
