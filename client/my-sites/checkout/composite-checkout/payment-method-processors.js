@@ -90,7 +90,7 @@ export function applePayProcessor( submitData ) {
 	return pending;
 }
 
-export async function stripeCardProcessor( submitData, createUserAndSiteBeforeTransaction ) {
+export async function stripeCardProcessor( submitData, transactionOptions ) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
 		...submitData,
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -107,7 +107,7 @@ export async function stripeCardProcessor( submitData, createUserAndSiteBeforeTr
 			paymentMethodToken,
 		},
 		wpcomTransaction,
-		createUserAndSiteBeforeTransaction
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -190,7 +190,7 @@ export async function payPalProcessor(
 	submitData,
 	getThankYouUrl,
 	couponItem,
-	createUserAndSiteBeforeTransaction
+	transactionOptions
 ) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const successUrl = formatUrl( {
@@ -219,7 +219,7 @@ export async function payPalProcessor(
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
 		},
 		wpcomPayPalExpress,
-		createUserAndSiteBeforeTransaction
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {

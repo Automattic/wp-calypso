@@ -10,13 +10,13 @@
 }
 
 .card-heading-54 {
-	font-size: 54px;
+	font-size: $font-headline-large;
 }
 
 /* 47px is deprecated, use .card-heading-48 */
 .card-heading-47,
 .card-heading-48 {
-	font-size: 47px;
+	font-size: $font-headline-medium;
 }
 
 .card-heading-36 {

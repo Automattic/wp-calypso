@@ -32,6 +32,8 @@ export class FacebookPreview extends PureComponent {
 	render() {
 		const { url, type, title, description, image, author } = this.props;
 
+		const strippedDescription = description ? description.replace( /<[^>]+>/g, '' ) : '';
+
 		return (
 			<div className={ `facebook-preview facebook-preview__${ type }` }>
 				<div className="facebook-preview__content">
@@ -41,7 +43,7 @@ export class FacebookPreview extends PureComponent {
 					<div className="facebook-preview__body">
 						<div className="facebook-preview__title">{ facebookTitle( title || '' ) }</div>
 						<div className="facebook-preview__description">
-							{ facebookDescription( description || '' ) }
+							{ facebookDescription( strippedDescription ) }
 						</div>
 						<div className="facebook-preview__url">
 							{ compact( [ baseDomain( url ), author ] ).join( ' | ' ) }

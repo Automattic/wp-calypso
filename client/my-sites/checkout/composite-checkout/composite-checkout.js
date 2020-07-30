@@ -11,7 +11,6 @@ import { useSelector, useDispatch, useStore } from 'react-redux';
 import {
 	WPCheckout,
 	useWpcomStore,
-	useShoppingCart,
 	FormFieldAnnotation,
 	areDomainsInLineItems,
 	emptyManagedContactDetails,
@@ -90,6 +89,9 @@ import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
 import { CartProvider } from './cart-provider';
+import { translateResponseCartToWPCOMCart } from './wpcom/lib/translate-cart';
+import useShoppingCartManager from './wpcom/hooks/use-shopping-cart-manager';
+import useShowAddCouponSuccessMessage from './wpcom/hooks/use-show-add-coupon-success-message';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -133,6 +135,7 @@ export default function CompositeCheckout( {
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
 	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
+	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
 		reduxDispatch,
@@ -191,36 +194,45 @@ export default function CompositeCheckout( {
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 
 	const {
-		items,
-		tax,
-		couponItem,
-		total,
-		credits,
 		removeItem,
+		couponStatus,
 		submitCoupon,
 		removeCoupon,
 		updateLocation,
-		couponStatus,
 		changeItemVariant,
-		errors,
-		subtotal,
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
-		allowedPaymentMethods: serverAllowedPaymentMethods,
-		variantSelectOverride,
 		responseCart,
 		loadingError,
 		addItem,
-	} = useShoppingCart(
-		isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
-		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
-		productsForCart,
-		couponCodeFromUrl,
-		setCart || wpcomSetCart,
-		getCart || wpcomGetCart,
-		showAddCouponSuccessMessage,
-		recordEvent
+		variantSelectOverride,
+	} = useShoppingCartManager( {
+		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
+		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
+		productsToAdd: productsForCart,
+		couponToAdd: couponCodeFromUrl,
+		setCart: setCart || wpcomSetCart,
+		getCart: getCart || wpcomGetCart,
+		onEvent: recordEvent,
+	} );
+
+	const {
+		items,
+		tax,
+		coupon: couponItem,
+		total,
+		credits,
+		subtotal,
+		allowedPaymentMethods: serverAllowedPaymentMethods,
+	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
+
+	useShowAddCouponSuccessMessage(
+		couponStatus === 'applied',
+		couponItem?.wpcom_meta?.couponCode ?? '',
+		showAddCouponSuccessMessage
 	);
+
+	const errors = responseCart.messages?.errors ?? [];
 
 	const getThankYouUrl = useGetThankYouUrl( {
 		siteSlug,
@@ -306,6 +318,9 @@ export default function CompositeCheckout( {
 			if ( createUserAndSiteBeforeTransaction ) {
 				window.localStorage.removeItem( 'shoppingCart' );
 				window.localStorage.removeItem( 'siteParams' );
+
+				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
+				// Using page.redirect() will take to the log in page which we don't want.
 				window.location = url;
 				return;
 			}
@@ -509,8 +524,7 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
-			card: ( transactionData ) =>
-				stripeCardProcessor( transactionData, createUserAndSiteBeforeTransaction ),
+			card: ( transactionData ) => stripeCardProcessor( transactionData, transactionOptions ),
 			alipay: ( transactionData ) =>
 				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
 			p24: ( transactionData ) =>
@@ -530,12 +544,7 @@ export default function CompositeCheckout( {
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
 			paypal: ( transactionData ) =>
-				payPalProcessor(
-					transactionData,
-					getThankYouUrl,
-					couponItem,
-					createUserAndSiteBeforeTransaction
-				),
+				payPalProcessor( transactionData, getThankYouUrl, couponItem, transactionOptions ),
 		} ),
 		[ couponItem, getThankYouUrl, siteSlug ]
 	);

@@ -122,7 +122,7 @@ class P2Site extends React.Component {
 		if ( ! isEmpty( fields.site ) ) {
 			wpcom.undocumented().sitesNew(
 				{
-					blog_name: `${ fields.site }.p2.blog`,
+					blog_name: fields.site,
 					blog_title: fields.siteTitle,
 					validate: true,
 				},
@@ -310,7 +310,7 @@ class P2Site extends React.Component {
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent }
 					/>
-					<span className="p2-site__wordpress-domain-suffix">.p2.blog</span>
+					<span className="p2-site__wordpress-domain-suffix">.wordpress.com</span>
 				</ValidationFieldset>
 			</>
 		);

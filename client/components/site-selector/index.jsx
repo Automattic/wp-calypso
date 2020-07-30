@@ -10,7 +10,7 @@ import page from 'page';
 import classNames from 'classnames';
 import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
 import debugFactory from 'debug';
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
