@@ -43,12 +43,10 @@ export const handleFetchExperiments = ( action ) =>
 
 /**
  * Inform the data-layer to request new experiments from the API
- *
- * @param anonId The anonymous identifier to send to the API
  */
-export const fetchExperiments = ( anonId ) => ( {
+export const fetchExperiments = () => ( {
 	type: EXPERIMENT_FETCH,
-	anonId: anonId == null ? getAnonIdFromCookie() : anonId,
+	anonId: getAnonIdFromCookie(),
 } );
 
 /**
