@@ -96,12 +96,9 @@ export class List extends React.Component {
 					position="domain-list"
 					selectedSite={ this.props.selectedSite }
 					allowedRules={ [
-						'newDomainsWithPrimary',
-						'newDomains',
 						'unverifiedDomainsCanManage',
 						'pendingGSuiteTosAcceptanceDomains',
 						'unverifiedDomainsCannotManage',
-						'wrongNSMappedDomains',
 						'transferStatus',
 						'newTransfersWrongNS',
 						'pendingConsent',

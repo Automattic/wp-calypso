@@ -49,6 +49,8 @@ export function resolveDomainStatus(
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
 					icon: 'info',
+					listStatusText: translate( 'Complete setup' ),
+					listStatusClass: 'warning',
 				};
 			}
 
