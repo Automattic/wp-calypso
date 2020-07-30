@@ -41,7 +41,7 @@ import { isPremium } from './is-premium';
 import { isBusiness } from './is-business';
 import { isEcommerce } from './is-ecommerce';
 import { isEnterprise } from './is-enterprise';
-import { isJetpackPlanSlug } from './is-jetpack-plan-slug';
+import { isJetpackPlan } from './is-jetpack-plan';
 
 const productDependencies = {
 	domain: {
@@ -86,13 +86,7 @@ export { isBusiness } from './is-business';
 export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
 export { isJetpackPlanSlug } from './is-jetpack-plan-slug';
-
-export function isJetpackPlan( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isJetpackPlanSlug( product.product_slug );
-}
+export { isJetpackPlan } from './is-jetpack-plan';
 
 export function isJetpackBusiness( product ) {
 	product = formatProduct( product );
