@@ -11,6 +11,7 @@ import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import type { SiteVertical, Design } from './types';
 import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
+import type { FeatureId } from '../../onboarding-block/features/data';
 
 const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
 	state,
@@ -164,6 +165,21 @@ const plan: Reducer< Plans.Plan | undefined, OnboardAction > = ( state, action )
 	return state;
 };
 
+const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
+	state: FeatureId[] = [],
+	action
+) => {
+	if ( action.type === 'ADD_FEATURE' ) {
+		return [ ...state, action.featureId ];
+	}
+
+	if ( action.type === 'REMOVE_FEATURE' ) {
+		return state.filter( ( id ) => id !== action.featureId );
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -179,6 +195,7 @@ const reducer = combineReducers( {
 	siteVertical,
 	showSignupDialog,
 	plan,
+	selectedFeatures,
 } );
 
 export type State = ReturnType< typeof reducer >;

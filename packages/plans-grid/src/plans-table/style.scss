@@ -21,3 +21,17 @@
 		margin: 32px auto;
 	}
 }
+
+.plans-table__recommend-hint {
+	color: var( --studio-gray-40 );
+	font-size: $font-body-small;
+	text-align: right;
+	margin-bottom: 16px;
+
+	svg {
+		fill: var( --studio-yellow-30 );
+		margin-right: $grid-unit-10;
+		position: relative;
+		top: 2px;
+	}
+}

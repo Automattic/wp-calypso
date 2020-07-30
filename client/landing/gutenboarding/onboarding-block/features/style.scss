@@ -53,10 +53,6 @@
 		color: var( --studio-gray-100 );
 	}
 
-	&:focus:not( :disabled ) {
-		box-shadow: none;
-	}
-
 	&.is-selected,
 	&.is-selected:hover:not( :disabled ) {
 		border-color: var( --studio-blue-40 );

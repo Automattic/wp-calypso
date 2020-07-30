@@ -1,14 +1,42 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React, { ReactElement } from 'react';
+import { Plans } from '@automattic/data-stores';
 import { SVG, Path } from '@wordpress/components';
+import { translate } from 'i18n-calypso';
 
-const featureList = [
-	{
+/**
+ * Internal dependencies
+ */
+const { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } = Plans;
+
+export type FeatureId =
+	| 'domain'
+	| 'store'
+	| 'seo'
+	| 'plugins'
+	| 'ad-free'
+	| 'image-storage'
+	| 'video-storage'
+	| 'support';
+
+export interface Feature {
+	id: FeatureId;
+	name: string;
+	description: string;
+	minSupportedPlan: Plans.PlanSlug;
+	icon: ReactElement;
+}
+
+export const FEATURE_LIST: Record< FeatureId, Feature > = {
+	domain: {
 		id: 'domain',
-		name: 'Domain',
-		description: 'Help your site stand out. The first year is free with a plan.',
+		name: translate( 'Custom domains' ) as string,
+		description: translate(
+			'Help your site stand out. The first year is free with a plan.'
+		) as string,
+		minSupportedPlan: PLAN_PERSONAL,
 		icon: (
 			<SVG viewBox="0 0 24 24">
 				<Path
@@ -19,10 +47,13 @@ const featureList = [
 			</SVG>
 		),
 	},
-	{
+	store: {
 		id: 'store',
-		name: 'Store',
-		description: 'Sell products, digital subscriptions, and receive payments.',
+		name: translate( 'Store' ) as string,
+		description: translate(
+			'Sell products, digital subscriptions, and receive payments.'
+		) as string,
+		minSupportedPlan: PLAN_PREMIUM,
 		icon: (
 			<SVG viewBox="0 0 24 24">
 				<Path
@@ -33,10 +64,11 @@ const featureList = [
 			</SVG>
 		),
 	},
-	{
+	seo: {
 		id: 'seo',
-		name: 'SEO',
-		description: 'Boost your SEO and connect a Google Analytics account.',
+		name: translate( 'SEO tools' ) as string,
+		description: translate( 'Boost your SEO and connect a Google Analytics account.' ) as string,
+		minSupportedPlan: PLAN_BUSINESS,
 		icon: (
 			<SVG viewBox="0 0 24 24">
 				<Path d="M8.1437 15.8563H5.57227V9.42773H8.1437V15.8563Z" />
@@ -46,10 +78,11 @@ const featureList = [
 			</SVG>
 		),
 	},
-	{
+	plugins: {
 		id: 'plugins',
-		name: 'Plugins',
-		description: 'Install plugins to extend the power of your site.',
+		name: translate( 'Plugins' ) as string,
+		description: translate( 'Install plugins to extend the power of your site.' ) as string,
+		minSupportedPlan: PLAN_BUSINESS,
 		icon: (
 			<SVG viewBox="0 0 24 28">
 				<Path
@@ -65,10 +98,11 @@ const featureList = [
 			</SVG>
 		),
 	},
-	{
-		id: 'remove-ads',
-		name: 'Remove Ads',
-		description: 'Remove advertisements and own your brand.',
+	'ad-free': {
+		id: 'ad-free',
+		name: translate( 'Ad-free' ) as string,
+		description: translate( 'Remove advertisements and own your brand.' ) as string,
+		minSupportedPlan: PLAN_PERSONAL,
 		icon: (
 			<SVG viewBox="0 0 24 24">
 				<Path
@@ -79,10 +113,11 @@ const featureList = [
 			</SVG>
 		),
 	},
-	{
+	'image-storage': {
 		id: 'image-storage',
-		name: 'Image storage',
-		description: 'Extended storage space for hi-res images.',
+		name: translate( 'Image storage' ) as string,
+		description: translate( 'Extended storage space for hi-res images.' ) as string,
+		minSupportedPlan: PLAN_PREMIUM,
 		icon: (
 			<SVG viewBox="0 0 24 24">
 				<Path
@@ -93,10 +128,11 @@ const featureList = [
 			</SVG>
 		),
 	},
-	{
+	'video-storage': {
 		id: 'video-storage',
-		name: 'Video storage',
-		description: 'Host your own ad-free videos',
+		name: translate( 'Video storage' ) as string,
+		description: translate( 'Host your own ad-free videos' ) as string,
+		minSupportedPlan: PLAN_PREMIUM,
 		icon: (
 			<SVG viewBox="0 0 24 24">
 				<Path
@@ -107,10 +143,11 @@ const featureList = [
 			</SVG>
 		),
 	},
-	{
+	support: {
 		id: 'support',
-		name: 'Priority Support',
-		description: 'Chat with an expert live.',
+		name: translate( 'Priority support' ) as string,
+		description: translate( 'Chat with an expert live.' ) as string,
+		minSupportedPlan: PLAN_BUSINESS,
 		icon: (
 			<SVG viewBox="0 0 24 24">
 				<Path
@@ -121,6 +158,4 @@ const featureList = [
 			</SVG>
 		),
 	},
-];
-
-export default featureList;
+};
