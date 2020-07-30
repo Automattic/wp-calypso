@@ -7,7 +7,9 @@ import { difference, get, includes, pick, values, isFunction } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
+import { isFreeJetpackPlan } from 'lib/products-values/is-free-jetpack-plan';
+import { isJetpackPlan } from 'lib/products-values/is-jetpack-plan';
+import { isMonthly } from 'lib/products-values/is-monthly';
 import { format as formatUrl, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
 import {
 	PLAN_FREE,
