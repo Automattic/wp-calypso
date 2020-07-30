@@ -99,13 +99,7 @@ export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-
 export { isSiteRedirect } from './is-site-redirect';
 export { allowedProductAttributes } from './allowed-product-attributes';
 export { isDomainTransfer } from './is-domain-transfer';
-
-export function isDomainTransferProduct( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isDomainTransfer( product );
-}
+export { isDomainTransferProduct } from './is-domain-transfer-product';
 
 export function isDelayedDomainTransfer( product ) {
 	return isDomainTransfer( product ) && product.delayedProvisioning;
