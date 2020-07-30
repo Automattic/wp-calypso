@@ -19,12 +19,8 @@ import {
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
 } from '..';
-import {
-	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_PRODUCTS_LIST,
-	getJetpackProductsDisplayNames,
-	getJetpackProductsTaglines,
-} from '../constants';
+import { JETPACK_BACKUP_PRODUCTS, JETPACK_PRODUCTS_LIST } from '../constants';
+import { getJetpackProductsDisplayNames, getJetpackProductsTaglines } from '../translations';
 import {
 	JETPACK_PLANS,
 	PLAN_FREE,

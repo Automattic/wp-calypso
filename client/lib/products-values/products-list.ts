@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import * as constants from './constants';
+import { getJetpackProductsShortNames } from './translations';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -9,7 +10,7 @@ import {
 	PLAN_ANNUAL_PERIOD,
 } from 'lib/plans/constants';
 
-const PRODUCT_SHORT_NAMES = constants.getJetpackProductsShortNames();
+const PRODUCT_SHORT_NAMES = getJetpackProductsShortNames();
 
 export const PRODUCTS_LIST = {
 	[ constants.PRODUCT_JETPACK_BACKUP_DAILY ]: {

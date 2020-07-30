@@ -7,11 +7,8 @@ import { get, pick } from 'lodash';
  * Internal dependencies
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
-import {
-	getJetpackProductsDisplayNames,
-	getJetpackProductsTaglines,
-	JETPACK_PRODUCTS_LIST,
-} from './constants';
+import { JETPACK_PRODUCTS_LIST } from './constants';
+import { getJetpackProductsDisplayNames, getJetpackProductsTaglines } from './translations';
 import { PRODUCTS_LIST } from './products-list';
 import {
 	PLAN_BUSINESS_MONTHLY,
