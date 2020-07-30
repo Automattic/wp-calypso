@@ -40,7 +40,6 @@ export default function CreditCardFields() {
 	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
-	const [ shouldShowContactFields, setShowContactFields ] = useState( false );
 	const cart = useCart();
 	const shouldShowContactFieldCheckbox = cart?.allowed_payment_methods?.includes(
 		paymentMethodClassName( 'ebanx' )
