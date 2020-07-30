@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, includes, pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,6 +37,7 @@ import { isEcommerce } from './is-ecommerce';
 import { isEnterprise } from './is-enterprise';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
+import { isJetpackProductSlug } from './is-jetpack-product-slug';
 
 const productDependencies = {
 	domain: {
@@ -96,10 +97,7 @@ export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackScan } from './is-jetpack-scan';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackCloudProductSlug } from './is-jetpack-cloud-product-slug';
-
-export function isJetpackProductSlug( productSlug ) {
-	return includes( JETPACK_PRODUCTS_LIST, productSlug );
-}
+export { isJetpackProductSlug } from './is-jetpack-product-slug';
 
 export function isJetpackProduct( product ) {
 	product = formatProduct( product );
