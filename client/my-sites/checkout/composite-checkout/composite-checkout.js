@@ -656,7 +656,7 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors, isLogged
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, isLoading, errors ] );
+	}, [ redirectUrl, items, isLoading, errors, isLoggedOutCart ] );
 }
 
 function useCountryList( overrideCountryList ) {
