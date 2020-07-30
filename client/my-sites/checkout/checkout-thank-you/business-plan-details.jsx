@@ -69,7 +69,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 					title={ i18n.translate( 'Get personalized help' ) }
 					description={ i18n.translate(
 						'Schedule a Quick Start session with a Happiness Engineer to set up ' +
-						'your site and learn more about WordPress.com.'
+							'your site and learn more about WordPress.com.'
 					) }
 					buttonText={ i18n.translate( 'Purchase a session' ) }
 					href={ `/checkout/offer-quickstart-session` }
