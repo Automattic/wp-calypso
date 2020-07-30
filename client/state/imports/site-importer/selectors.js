@@ -20,5 +20,5 @@ export function getImportStage( state ) {
 }
 
 export function getValidatedSiteUrl( state ) {
-	state.imports.siteImporter?.validatedSiteUrl;
+	return state.imports.siteImporter?.validatedSiteUrl;
 }
