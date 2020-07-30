@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find, some } from 'lodash';
+import { find, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -27,14 +27,7 @@ import 'state/purchases/init';
 
 export { getPurchases } from './get-purchases';
 export { getUserPurchases } from './get-user-purchases';
-
-/**
- * Returns the server error for site or user purchases (if there is one)
- *
- * @param   {object} state - current state object
- * @returns {object} an error object from the server
- */
-export const getPurchasesError = ( state ) => get( state, 'purchases.error', '' );
+export { getPurchasesError } from './get-purchases-error';
 
 /**
  * Returns a Purchase object from the state using its id
