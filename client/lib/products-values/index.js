@@ -101,13 +101,7 @@ export { isDomainTransfer } from './is-domain-transfer';
 export { isDomainTransferProduct } from './is-domain-transfer-product';
 export { isDelayedDomainTransfer } from './is-delayed-domain-transfer';
 export { isBundled } from './is-bundled';
-
-export function isCredits( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'wordpress-com-credits' === product.product_slug;
-}
+export { isCredits } from './is-credits';
 
 export function getDomainProductRanking( product ) {
 	product = formatProduct( product );
