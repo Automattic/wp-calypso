@@ -80,13 +80,7 @@ const productDependencies = {
 
 export { formatProduct } from './format-product';
 export { isChargeback } from './is-chargeback';
-
-export function includesProduct( products, product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return products.indexOf( product.product_slug ) >= 0;
-}
+export { includesProduct } from './includes-product';
 
 export function isFreePlan( product ) {
 	product = formatProduct( product );
