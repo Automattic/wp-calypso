@@ -13,7 +13,6 @@ import {
 	isDomainMapping,
 	isJetpackBackup,
 	isJetpackScan,
-	isJetpackProduct,
 } from 'lib/products-values';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { TYPE_PERSONAL } from 'lib/plans/constants';
@@ -30,20 +29,7 @@ export { getPurchasesError } from './get-purchases-error';
 export { getByPurchaseId } from './get-by-purchase-id';
 export { getSitePurchases } from './get-site-purchases';
 export { getRenewableSitePurchases } from './get-renewable-site-purchases';
-
-/**
- * Returns whether or not a Site has an active purchase of a Jetpack product.
- *
- * @param {object} state global state
- * @param {number} siteId the site id
- * @returns {boolean} True if the site has an active Jetpack purchase, false otherwise.
- */
-export const siteHasJetpackProductPurchase = ( state, siteId ) => {
-	return some(
-		getSitePurchases( state, siteId ),
-		( purchase ) => purchase.active && isJetpackProduct( purchase )
-	);
-};
+export { siteHasJetpackProductPurchase } from './site-has-jetpack-product-purchase';
 
 /**
  * Whether a site has an active Jetpack backup purchase.
