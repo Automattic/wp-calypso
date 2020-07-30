@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -33,6 +34,7 @@ import {
 } from 'my-sites/domains/paths';
 import Spinner from 'components/spinner';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -85,8 +87,11 @@ class DomainItem extends PureComponent {
 	};
 
 	addEmailClick = ( event ) => {
-		const { currentRoute, disabled, domain, site } = this.props;
+		const { trackAddEmailClick, currentRoute, disabled, domain, site } = this.props;
 		event.stopPropagation();
+
+		trackAddEmailClick( domain ); // analytics/tracks
+
 		if ( disabled ) {
 			return;
 		}
@@ -435,4 +440,11 @@ class DomainItem extends PureComponent {
 	}
 }
 
-export default localize( DomainItem );
+const trackAddEmailClick = ( domain ) =>
+	recordTracksEvent( 'calypso_domain_management_domain_item_add_email_click', {
+		section: domain.type,
+	} );
+
+export default connect( null, {
+	trackAddEmailClick,
+} )( localize( DomainItem ) );

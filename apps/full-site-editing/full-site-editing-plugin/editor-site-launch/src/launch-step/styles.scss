@@ -3,6 +3,7 @@
 
 .nux-launch-step {
 	@include onboarding-block-margin;
+	background: var( --studio-white );
 }
 
 .nux-launch-step__header {

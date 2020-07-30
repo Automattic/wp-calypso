@@ -29,7 +29,6 @@ import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
-import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -86,7 +85,7 @@ export class LoginLinks extends React.Component {
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
 		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = `${ GUTENBOARDING_BASE_NAME }/link`;
+			loginParameters.twoFactorAuthType = 'new/link';
 		}
 
 		page( login( loginParameters ) );
@@ -227,7 +226,7 @@ export class LoginLinks extends React.Component {
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
 		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = `${ GUTENBOARDING_BASE_NAME }/link`;
+			loginParameters.twoFactorAuthType = 'new/link';
 		}
 
 		return (
@@ -346,7 +345,7 @@ export class LoginLinks extends React.Component {
 
 		if ( isGutenboarding ) {
 			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-			signupUrl = this.props.signupUrl || `/${ GUTENBOARDING_BASE_NAME }` + langFragment;
+			signupUrl = this.props.signupUrl || '/new' + langFragment;
 		}
 
 		if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {

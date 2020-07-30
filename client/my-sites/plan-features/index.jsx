@@ -861,13 +861,15 @@ export default connect(
 							break;
 						default:
 							if ( planConstantObj.getSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+								planFeatures = getPlanFeaturesObject(
+									planConstantObj.getSignupFeatures( currentPlan )
+								);
 							}
 					}
 				}
 
 				if ( displayJetpackPlans ) {
-					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
 				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
 

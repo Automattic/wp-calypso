@@ -156,8 +156,8 @@ class StatsSite extends Component {
 		return (
 			<>
 				<PrivacyPolicyBanner />
-				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
+				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<FormattedHeader
 					brandFont
 					className="stats__section-header"
