@@ -1,8 +1,6 @@
 /**
  * Internal dependencies
  */
-import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
-
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 
@@ -60,13 +58,7 @@ export { getJetpackProductDisplayName } from './get-jetpack-product-display-name
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
 export { isDependentProduct } from './is-dependent-product';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
-
-export function isGoogleApps( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
-}
+export { isGoogleApps } from './is-google-apps';
 
 export function isGuidedTransfer( product ) {
 	product = formatProduct( product );
