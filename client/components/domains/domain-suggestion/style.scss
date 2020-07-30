@@ -352,8 +352,6 @@ body.is-section-signup.is-white-signup {
 				.domain-suggestion__action {
 					@include break-mobile {
 						display: none;
-						background: $accent-blue;
-						color: var( --color-surface );
 					}
 				}
 			}
