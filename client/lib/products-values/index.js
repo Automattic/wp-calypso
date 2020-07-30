@@ -63,13 +63,7 @@ export { isGuidedTransfer } from './is-guided-transfer';
 export { isTheme } from './is-theme';
 export { isCustomDesign } from './is-custom-design';
 export { isNoAds } from './is-no-ads';
-
-export function isVideoPress( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'videopress' === product.product_slug;
-}
+export { isVideoPress } from './is-video-press';
 
 export function isUnlimitedSpace( product ) {
 	product = formatProduct( product );
