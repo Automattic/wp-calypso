@@ -25,7 +25,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_HOST_BUNDLE,
-	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
 } from 'lib/plans/constants';
 
@@ -91,6 +90,7 @@ export { isJetpackBusiness } from './is-jetpack-business';
 export { isJetpackPremium } from './is-jetpack-premium';
 export { isVipPlan } from './is-vip-plan';
 export { isMonthly } from './is-monthly';
+export { isYearly } from './is-yearly';
 
 export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
@@ -151,13 +151,6 @@ export function getProductFromSlug( productSlug ) {
 		return formatProduct( PRODUCTS_LIST[ productSlug ] );
 	}
 	return productSlug; // Consistent behavior with `getPlan`.
-}
-
-export function isYearly( rawProduct ) {
-	const product = formatProduct( rawProduct );
-	assertValidProduct( product );
-
-	return parseInt( product.bill_period, 10 ) === PLAN_ANNUAL_PERIOD;
 }
 
 export function isBiennially( rawProduct ) {
