@@ -97,13 +97,7 @@ export { isDomainMapping } from './is-domain-mapping';
 export { isDomainRegistration } from './is-domain-registration';
 export { isDomainProduct } from './is-domain-product';
 export { isDomainRedemption } from './is-domain-redemption';
-
-export function getIncludedDomainPurchaseAmount( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.included_domain_purchase_amount;
-}
+export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';
 
 export function isSiteRedirect( product ) {
 	product = formatProduct( product );
