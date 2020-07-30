@@ -2,19 +2,29 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Title, SubTitle } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
-import LaunchStep, { Props as LaunchStepProps } from '../../launch-step';
+import { LAUNCH_STORE } from '../../stores';
+import { LaunchStep } from '../../../../common/data-stores/launch/data';
+import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import DomainPickerFSE from '../../../../editor-domain-picker/src/domain-picker-fse';
 import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
+	const { setStepComplete } = useDispatch( LAUNCH_STORE );
+
+	const handleSelect = () => {
+		setStepComplete( LaunchStep.Domain );
+		onNextStep?.();
+	};
+
 	return (
-		<LaunchStep className="nux-launch-domain-step">
+		<LaunchStepContainer className="nux-launch-domain-step">
 			<div className="nux-launch-step__header">
 				<div>
 					<Title>{ __( 'Choose a domain', 'full-site-editing' ) }</Title>
@@ -24,9 +34,9 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 				</div>
 			</div>
 			<div className="nux-launch-step__body">
-				<DomainPickerFSE onSelect={ onNextStep } />
+				<DomainPickerFSE onSelect={ handleSelect } />
 			</div>
-		</LaunchStep>
+		</LaunchStepContainer>
 	);
 };
 

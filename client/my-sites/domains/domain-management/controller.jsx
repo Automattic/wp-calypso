@@ -27,6 +27,7 @@ import {
 	domainManagementTransferToOtherSite,
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
+	domainManagementRoot,
 } from 'my-sites/domains/paths';
 import {
 	emailManagement,
@@ -55,14 +56,21 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		pageContext.primary = <DomainManagement.ListAll />;
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementRoot() }
+				analyticsTitle="Domain Management > All Domains"
+				component={ DomainManagement.ListAll }
+				context={ pageContext }
+			/>
+		);
 		next();
 	},
 
 	domainManagementEdit( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
-				analyticsPath={ domainManagementEdit( ':site', ':domain' ) }
+				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Edit }
 				context={ pageContext }

@@ -1,12 +1,30 @@
-# Full Site Editing (FSE) Plugin
+# WordPress.com Editing Toolkit Plugin
 
-This plugin should not be confused with the site editor work in core Gutenberg. This plugin includes many sub-features which add blocks and ophew functionality to the Gutenberg editor. The plugin provides a single codebase which can be installed on any platform which requires these features, such as the WordPress.com multisite or other standalone WordPress instances. 
+This plugin includes many sub-features which add blocks and new functionality to the Gutenberg editor. The plugin provides a single codebase which can be installed on any platform which requires these features, such as the WordPress.com multisite or other standalone WordPress instances.
+
+**Note: This plugin is currently being renamed from Full Site Editing Plugin to WordPress.com Editing Toolkit Plugin.**
+In the near future, the following will be changed:
+
+- Directories and filenames referencing "full site editing"
+- Code referencing those filenames
+- Documentation
+- CI job names
+
+Those will be updated to use "editing-toolkit" in place of "full-site-editing"
+
+The following items will likely not change:
+
+- The plugin slug, which will remain `full-site-editing` due to rename limitations in WordPress.
+- The root full-site-editing-plugin.php file (to preserve the plugin slug).
+- The `full-site-editing` textdomain, also to reference the slug.
+- The \A8C\FSE php namespace may not ever be fully converted, since it is referenced in many places outside of the plugin.
 
 ## File Architecture
-* `package.json`: The package file for the FSE monorepo app.
-* `.wp-env.json`: Local environment configuration for the FSE plugin.
-* `bin/`: Scripts to assis with your local developmenet environment and testing.
-* `full-site-editing-plugin/`: The root of the FSE plugin.
+
+- `package.json`: The package file for the editing toolkit monorepo app.
+- `.wp-env.json`: Local environment configuration for the editing toolkit plugin.
+- `bin/`: Scripts to assis with your local developmenet environment and testing.
+- `full-site-editing-plugin/`: The root of the editing toolkit plugin.
   - `full-site-editing-plugin.php`: All initialization code should go here.
   - `block-patterns/`: Additional block patterns for Gutenberg.
   - `common/`: General functionality which doesn't fit a specific feature and is always executed.
@@ -15,7 +33,7 @@ This plugin should not be confused with the site editor work in core Gutenberg. 
   - `event-countdown-block/`: A block which counts down to a specified date.
   - `global-styles/`: (_deprecated_) A plugin which adds a global font picker to the editor. (Superceeded by global style work in Gutenberg.)
   - `jetpack-timeline/`: A block which lets you create a timeline of events.
-  - `newspack-blocks/`: Container for newspack blocks such as the carousel block and the blog post block. 
+  - `newspack-blocks/`: Container for newspack blocks such as the carousel block and the blog post block.
   - `posts-list-block/`: (_deprecated_) A simple block to show a list of posts on a page. (Superceeded by the blog-posts-block.)
   - `site-editor/`: Gutenberg site-editor integration code for WordPress.com.
   - `starter-page-templates/`: Allows you to select different page layouts made of blocks.
@@ -41,20 +59,20 @@ import 'a8c-fse-common-data-stores';
 _Note: `cd` to `apps/full-site-editing` before running these commands_
 
 - `yarn dev`<br>
-Compiles the plugins and watches for changes.
+  Compiles the plugins and watches for changes.
 
 - `yarn build`<br>
-Compiles and minifies the plugins for production.
+  Compiles and minifies the plugins for production.
 
 Both these scripts will also move all source and PHP files into `/dist` in their respective folders.
 
 The entry point is:
 
-- __Plugin__: `/full-site-editing-plugin/{{plugin-directory}}/index.js`
+- **Plugin**: `/full-site-editing-plugin/{{plugin-directory}}/index.js`
 
 The output is:
 
-- __Plugin__: `/full-site-editing-plugin/{{plugin-directory}}/dist`
+- **Plugin**: `/full-site-editing-plugin/{{plugin-directory}}/dist`
 
 ### Building Individual _Plugins_
 
@@ -68,7 +86,9 @@ yarn build:posts-list-block`
 ## Local Development
 
 ### Docker:
+
 For a simple Docker experience, use wp-env.
+
 ```sh
 # From wp-calypso root:
 ./apps/full-site-editing/bin/setup-env.sh
@@ -85,9 +105,10 @@ wp-env stop
 wp-env run cli wp ... # Runs a wp-cli command.
 ```
 
-Once the environment running, you can use the dev script (shown above), and the environment will automatically see the updated build. It works by mounting the FSE plugin as a Docker volume.
+Once the environment running, you can use the dev script (shown above), and the environment will automatically see the updated build. It works by mounting the editing toolkit plugin as a Docker volume.
 
 ### Other:
+
 Build (or `dev`) and symlink the plugin into a local WordPress install.
 
 E.g.
