@@ -10,6 +10,7 @@ import React, { useState, useCallback, FunctionComponent } from 'react';
  */
 import ExternalLink from 'components/external-link';
 import FoldableCard from 'components/foldable-card';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 import FeaturesItem from './features-item';
 import type { Features } from './types';
 
@@ -22,9 +23,23 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 	features,
 	isExpanded: isExpandedByDefault,
 } ) => {
+	const trackShowFeatures = useTrackCallback(
+		undefined,
+		'calypso_jetpack_show_product_card_features'
+	);
+	const trackHideFeatures = useTrackCallback(
+		undefined,
+		'calypso_jetpack_hide_product_card_features'
+	);
 	const [ isExpanded, setExpanded ] = useState( !! isExpandedByDefault );
-	const onOpen = useCallback( () => setExpanded( true ), [ setExpanded ] );
-	const onClose = useCallback( () => setExpanded( false ), [ setExpanded ] );
+	const onOpen = useCallback( () => {
+		setExpanded( true );
+		trackShowFeatures();
+	}, [ setExpanded, trackShowFeatures ] );
+	const onClose = useCallback( () => {
+		setExpanded( false );
+		trackHideFeatures();
+	}, [ setExpanded, trackHideFeatures ] );
 	const translate = useTranslate();
 
 	const { items, more } = features;
