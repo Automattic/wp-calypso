@@ -75,6 +75,7 @@ import getPreviousRoute from 'state/selectors/get-previous-route';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
+import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -146,6 +147,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			customHeader,
+			isReskinned,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -202,6 +204,7 @@ export class PlansFeaturesMain extends Component {
 						availablePlans,
 					} ) }
 					siteId={ siteId }
+					isReskinned={ isReskinned }
 				/>
 			</div>
 		);
@@ -428,7 +431,7 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { hideFreePlan, translate, flowName, isInSignup, customHeader } = this.props;
+		const { hideFreePlan, translate, flowName, isInSignup, customHeader, isReskinned } = this.props;
 		const className = 'is-free-plan';
 		const callToAction =
 			isInSignup && flowName === 'launch-site'
@@ -442,8 +445,12 @@ export class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main__banner">
 				<div className="plans-features-main__banner-content">
-					{ translate( 'Not sure yet?' ) }
-					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
+					<span>{ translate( 'Not sure yet?' ) }</span>
+					<Button
+						className={ className }
+						onClick={ this.handleFreePlanButtonClick }
+						borderless={ ! isReskinned }
+					>
 						{ callToAction }
 					</Button>
 				</div>
@@ -592,6 +599,7 @@ PlansFeaturesMain.propTypes = {
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
 	customHeader: PropTypes.node,
+	isReskinned: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -606,6 +614,7 @@ PlansFeaturesMain.defaultProps = {
 	siteSlug: '',
 	withWPPlanTabs: false,
 	plansWithScroll: false,
+	isReskinned: false,
 };
 
 export default connect(
@@ -618,6 +627,8 @@ export default connect(
 			selectedPlan: props.selectedPlan,
 			currentPlan,
 		} );
+
+		const isReskinned = 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
@@ -635,6 +646,7 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
+			isReskinned,
 		};
 	},
 	{
