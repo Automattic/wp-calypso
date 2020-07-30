@@ -37,7 +37,6 @@ import { isEcommerce } from './is-ecommerce';
 import { isEnterprise } from './is-enterprise';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
-import { isJetpackProductSlug } from './is-jetpack-product-slug';
 
 const productDependencies = {
 	domain: {
@@ -98,13 +97,7 @@ export { isJetpackScan } from './is-jetpack-scan';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackCloudProductSlug } from './is-jetpack-cloud-product-slug';
 export { isJetpackProductSlug } from './is-jetpack-product-slug';
-
-export function isJetpackProduct( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isJetpackProductSlug( product.product_slug );
-}
+export { isJetpackProduct } from './is-jetpack-product';
 
 export function getProductFromSlug( productSlug ) {
 	if ( PRODUCTS_LIST[ productSlug ] ) {
