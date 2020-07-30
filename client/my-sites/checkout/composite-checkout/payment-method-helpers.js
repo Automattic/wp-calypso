@@ -243,6 +243,7 @@ async function createAccount( select ) {
 	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
 
 	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
+	const siteId = select( 'wpcom' )?.getSiteId();
 	const emailValue = email.value;
 	const recaptchaClientId = select( 'wpcom' )?.getRecaptchaClientId();
 	const isRecaptchaLoaded = typeof recaptchaClientId === 'number';
@@ -277,6 +278,7 @@ async function createAccount( select ) {
 				validate: false,
 				ab_test_variations: getSavedVariations(),
 				new_site_params: newSiteParams,
+				should_create_site: ! siteId,
 			},
 			null
 		);
