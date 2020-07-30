@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, createPortal, useState } from '@wordpress/element';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
@@ -42,6 +42,12 @@ registerPlugin( 'a8c-full-site-editing-nav-sidebar', {
 				document.body.removeChild( clickGuardRoot );
 			};
 		} );
+
+		// Uses presence of data store to detect whether this is the experimental site editor.
+		const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
+		if ( isSiteEditor ) {
+			return null;
+		}
 
 		return (
 			<MainDashboardButton>
