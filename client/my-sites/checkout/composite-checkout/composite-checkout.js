@@ -339,7 +339,7 @@ export default function CompositeCheckout( {
 			total,
 			couponItem,
 			responseCart,
-			isLoggedOutCart,
+			createUserAndSiteBeforeTransaction,
 		]
 	);
 
@@ -367,7 +367,7 @@ export default function CompositeCheckout( {
 
 	let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
 
-	if ( isLoggedOutCart ) {
+	if ( createUserAndSiteBeforeTransaction ) {
 		const siteSlugLoggedOutCart = select( 'wpcom' )?.getSiteSlug();
 		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
 	}
@@ -377,7 +377,7 @@ export default function CompositeCheckout( {
 		cartEmptyRedirectUrl,
 		isLoadingCart,
 		[ ...errors, loadingError ].filter( Boolean ),
-		isLoggedOutCart
+		createUserAndSiteBeforeTransaction
 	);
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
@@ -547,7 +547,7 @@ export default function CompositeCheckout( {
 			paypal: ( transactionData ) =>
 				payPalProcessor( transactionData, getThankYouUrl, couponItem, transactionOptions ),
 		} ),
-		[ couponItem, getThankYouUrl, siteSlug, isLoggedOutCart ]
+		[ couponItem, getThankYouUrl, siteSlug, transactionOptions ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -647,11 +647,17 @@ function isNotCouponError( error ) {
 	return ! couponErrorCodes.includes( error.code );
 }
 
-function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors, isLoggedOutCart ) {
+function useRedirectIfCartEmpty(
+	items,
+	redirectUrl,
+	isLoading,
+	errors,
+	createUserAndSiteBeforeTransaction
+) {
 	useEffect( () => {
 		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
-			if ( isLoggedOutCart ) {
+			if ( createUserAndSiteBeforeTransaction ) {
 				window.localStorage.removeItem( 'siteParams' );
 
 				// We use window.location instead of page.redirect() so that if the user already has an account and site at
@@ -663,7 +669,7 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors, isLogged
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, isLoading, errors, isLoggedOutCart ] );
+	}, [ redirectUrl, items, isLoading, errors, createUserAndSiteBeforeTransaction ] );
 }
 
 function useCountryList( overrideCountryList ) {
