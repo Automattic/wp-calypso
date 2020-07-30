@@ -2,6 +2,12 @@
 @import '~@wordpress/base-styles/variables';
 @import '~@wordpress/base-styles/z-index';
 
+body.has-nux-launch-modal {
+	// Prevent jumpyness when switching between
+	// long & short launch step content.
+	overflow-y: scroll;
+}
+
 .nux-launch-modal-overlay {
 	&.components-modal__screen-overlay {
 		background: none;
@@ -23,6 +29,8 @@
 		border: none;
 		box-shadow: none;
 		position: absolute;
+		overflow: hidden;
+		background: transparent;
 	}
 
 	.components-modal__header {
@@ -30,19 +38,18 @@
 	}
 
 	.components-modal__content {
+		display: flex;
 		padding: 0;
+		overflow: auto;
 	}
 }
 
-// This mimics WP's modal header.
 .nux-launch-modal-header {
-	position: sticky;
+	position: fixed;
 	top: 0;
 	z-index: z-index( '.components-modal__header' );
+	width: 100%;
 	height: $header-height;
-	border-bottom: 1px solid var( --studio-gray-5 );
-	padding: 24px;
-	margin: 0 -24px 24px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -58,7 +65,30 @@
 	height: 60px;
 }
 
-.nux-launch-modal-header__close-button.components-button.is-link {
+.nux-launch-modal-body {
+	flex-grow: 1;
+	padding-top: $header-height;
+	background: var( --studio-white );
+}
+
+.nux-launch-modal-aside {
+	position: sticky;
+	width: $sidebar-width;
+	height: 100%;
+	min-width: $sidebar-width;
+	max-width: $sidebar-width;
+	top: 0;
+	border-left: 1px solid var( --studio-gray-5 );
+	padding-top: $header-height;
+	background: var( --studio-white );
+	z-index: z-index( '.components-modal__header' ) + 1;
+}
+
+.nux-launch-modal__close-button.components-button.is-link {
+	position: fixed;
+	top: 0;
+	right: 0;
+	z-index: z-index( '.components-modal__header' ) + 2;
 	width: 60px;
 	height: 60px;
 	justify-content: center;

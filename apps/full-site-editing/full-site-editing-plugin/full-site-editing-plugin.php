@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Full Site Editing
+ * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
  * Version: 1.14
  * Author: Automattic
@@ -22,8 +22,8 @@ namespace A8C\FSE;
  * includes your feature's files via the 'plugins_loaded' action.
  *
  * Please take care to _not_ load your feature's files if there are situations
- * which could cause bugs. For example, FSE files are only loaded if FSE is
- * active on the site.
+ * which could cause bugs. For example, dotcom FSE files are only loaded if dotcom
+ * FSE isactive on the site.
  *
  * Finally, don't forget to use the A8C\FSE namespace for your code. :)
  */
@@ -50,7 +50,7 @@ function load_core_site_editor() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor' );
 
 /**
- * Load Full Site Editing.
+ * Load dotcom-FSE.
  */
 function load_full_site_editing() {
 	// Bail if FSE should not be active on the site. We do not
@@ -185,9 +185,9 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_gutenboarding_launch
  * Add front-end CoBlocks gallery block scripts.
  *
  * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,
- * but for our FSE header and footer content. `frontend_scripts` uses `has_block` to determine
- * if gallery blocks are present, and `has_block` is not aware of content sections outside of
- * post_content yet.
+ * but for dotcom FSE header and footer content. `frontend_scripts` uses
+ * `has_block` to determine if gallery blocks are present, and `has_block` is
+ * not aware of content sections outside of post_content yet.
  */
 function enqueue_coblocks_gallery_scripts() {
 	if ( ! function_exists( 'CoBlocks' ) || ! is_full_site_editing_active() ) {
@@ -272,7 +272,7 @@ function load_wpcom_block_editor_nux() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
- * Load FSE block patterns
+ * Load editing toolkit block patterns
  */
 function load_block_patterns() {
 	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {

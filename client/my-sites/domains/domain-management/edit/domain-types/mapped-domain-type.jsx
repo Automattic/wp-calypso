@@ -211,12 +211,10 @@ class MappedDomainType extends React.Component {
 		const { domain, selectedSite, purchase, mappingPurchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus(
-			domain,
-			purchase,
-			this.props.isJetpackSite,
-			this.props.isSiteAutomatedTransfer
-		);
+		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
+			isJetpackSite: this.props.isJetpackSite,
+			isSiteAutomatedTransfer: this.props.isSiteAutomatedTransfer,
+		} );
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
 		const newDomainManagementNavigation = config.isEnabled(

@@ -46,6 +46,7 @@ const DuplicateProductNoticeContent: FunctionComponent< Props > = ( { product, s
 						args: {
 							product: product.productName,
 						},
+						comment: 'The `product` variable refers to the product the customer owns already',
 						components: {
 							link: <a href={ subscriptionUrl } />,
 						},

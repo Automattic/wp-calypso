@@ -22,6 +22,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
 import { localizeUrl } from 'lib/i18n-utils';
+import InlineSupportLink from 'components/inline-support-link';
 
 /**
  * Style dependencies
@@ -144,7 +145,12 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					link: <a href={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) } />,
+					link: (
+						<InlineSupportLink
+							supportLink={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) }
+							supportPostId={ 97757 }
+						/>
+					),
 				},
 			}
 		);
@@ -160,7 +166,12 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					link: <a href={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) } />,
+					link: (
+						<InlineSupportLink
+							supportLink={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) }
+							supportPostId={ 84808 }
+						/>
+					),
 				},
 			}
 		);

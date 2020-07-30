@@ -8,20 +8,24 @@ import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
-
 interface Props {
-	suggestion: DomainSuggestion;
-	railcarId: string | undefined;
+	domain: string;
+	cost: string;
+	isFree?: boolean;
+	isExistingSubdomain?: boolean;
 	isRecommended?: boolean;
+	railcarId: string | undefined;
 	onRender: () => void;
-	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
+	onSelect: ( domain: string ) => void;
 	selected?: boolean;
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
-	suggestion,
+	domain,
+	cost,
 	railcarId,
+	isFree = false,
+	isExistingSubdomain = false,
 	isRecommended = false,
 	onSelect,
 	onRender,
@@ -29,7 +33,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const domain = suggestion.domain_name;
 	const dotPos = domain.indexOf( '.' );
 	const domainName = domain.slice( 0, dotPos );
 	const domainTld = domain.slice( dotPos );
@@ -57,13 +60,13 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				railcarId: previousRailcarId,
 			} );
 		}
-		onSelect( suggestion );
+		onSelect( domain );
 	};
 
 	return (
 		<label
 			className={ classnames( 'domain-picker__suggestion-item', {
-				'is-free': suggestion.is_free,
+				'is-free': isFree,
 				'is-selected': selected,
 			} ) }
 		>
@@ -76,18 +79,25 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				checked={ selected }
 			/>
 			<div className="domain-picker__suggestion-item-name">
-				<span className="domain-picker__domain-name">{ domainName }</span>
-				<span className="domain-picker__domain-tld">{ domainTld }</span>
-				{ isRecommended && (
-					<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
+				<div>
+					<span className="domain-picker__domain-name">{ domainName }</span>
+					<span className="domain-picker__domain-tld">{ domainTld }</span>
+					{ isRecommended && (
+						<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
+					) }
+				</div>
+				{ isExistingSubdomain && (
+					<div className="domain-picker__change-subdomain-tip">
+						{ __( 'You can change your free subdomain later under Domain Settings.' ) }
+					</div>
 				) }
 			</div>
 			<div
 				className={ classnames( 'domain-picker__price', {
-					'is-paid': ! suggestion.is_free,
+					'is-paid': ! isFree,
 				} ) }
 			>
-				{ suggestion.is_free ? (
+				{ isFree ? (
 					__( 'Free' )
 				) : (
 					<>
@@ -95,7 +105,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						<span className="domain-picker__price-cost">
 							{
 								/* translators: %s is the price with currency. Eg: $15/year. */
-								sprintf( __( '%s/year' ), suggestion.cost )
+								sprintf( __( '%s/year' ), cost )
 							}
 						</span>
 					</>

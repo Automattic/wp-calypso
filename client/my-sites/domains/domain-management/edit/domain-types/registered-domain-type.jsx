@@ -44,6 +44,8 @@ import OutboundTransferConfirmation from '../../components/outbound-transfer-con
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import { resolveDomainStatus } from 'lib/domains';
+import getSiteIsDomainOnly from 'state/selectors/is-domain-only-site';
+import DomainOnlyNotice from '../domain-only-notice';
 
 class RegisteredDomainType extends React.Component {
 	renderExpired() {
@@ -167,6 +169,15 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	renderDomainOnlyNotice() {
+		const { domain, selectedSite, isDomainOnlySite } = this.props;
+		if ( isDomainOnlySite ) {
+			return <DomainOnlyNotice domain={ domain } selectedSiteSlug={ selectedSite.slug } />;
+		}
+
+		return null;
+	}
+
 	renderPendingGSuiteTosNotice() {
 		const { domain, purchase, selectedSite } = this.props;
 
@@ -286,10 +297,12 @@ class RegisteredDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase, isDomainOnlySite } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase );
+		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
+			isDomainOnlySite,
+		} );
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
 		const newDomainManagementNavigation = config.isEnabled(
@@ -329,6 +342,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 					{ this.renderOutboundTransferInProgress() }
+					{ this.renderDomainOnlyNotice() }
 					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
@@ -376,9 +390,10 @@ export default connect(
 			: null;
 
 		return {
-			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
+			isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},

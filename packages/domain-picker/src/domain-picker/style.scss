@@ -67,12 +67,12 @@
 .domain-picker__suggestion-group-label {
 	margin: 0;
 	margin-top: 1.5em;
-	margin-bottom: 1em;
+	margin-bottom: 0.5em;
 	text-transform: uppercase;
-	color: var( --studio-gray-20 );
+	color: var( --studio-gray-40 );
 	font-size: 12px;
-	font-weight: 400;
 	letter-spacing: 1px;
+	font-weight: bold;
 }
 
 .domain-picker__suggestion-item {
@@ -126,10 +126,14 @@
 		}
 	}
 
+	$radio-button-size: 16px;
+
 	input[type='radio'].domain-picker__suggestion-radio-button {
-		width: 16px;
-		height: 16px;
-		min-width: 16px; // prevents long domain from squishing the radio button
+		@include radio-control; // explicitly include Gutenberg's radio-control style mixin, see https://github.com/WordPress/gutenberg/pull/22596
+
+		width: $radio-button-size;
+		height: $radio-button-size;
+		min-width: $radio-button-size; // prevents long domain from squishing the radio button
 		padding: 0;
 		margin: 1px 12px 0 0;
 		vertical-align: middle;
@@ -139,10 +143,15 @@
 			border-color: var( --studio-blue-30 );
 			background-color: var( --studio-blue-30 );
 
+			// wp-admin's forms.css uses ::before on radio button
+			&::before {
+				display: none;
+			}
+
 			&::after {
 				content: '';
-				width: 12px;
-				height: 12px;
+				width: $radio-button-size - 2 * $border-width;
+				height: $radio-button-size - 2 * $border-width;
 				border: 2px solid white;
 				border-radius: 50%;
 				position: absolute;
@@ -264,4 +273,9 @@
 .domain-picker__aside {
 	width: 220px;
 	padding-right: 30px;
+}
+
+.domain-picker__change-subdomain-tip {
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-40 );
 }
