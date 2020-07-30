@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
-import { JETPACK_PRODUCTS_LIST } from './constants';
 import { getJetpackProductsDisplayNames, getJetpackProductsTaglines } from './translations';
 import {
 	PLAN_BUSINESS_MONTHLY,
@@ -100,10 +99,7 @@ export { isBundled } from './is-bundled';
 export { isCredits } from './is-credits';
 export { getDomainProductRanking } from './get-domain-product-ranking';
 export { getDomain } from './get-domain';
-
-export function getProductsSlugs() {
-	return JETPACK_PRODUCTS_LIST;
-}
+export { getProductsSlugs } from './get-products-slugs';
 
 export function getProductClass( productSlug ) {
 	if ( isJetpackBackupSlug( productSlug ) ) {
