@@ -367,7 +367,7 @@ $devdocs-max-width: 720px;
 
 	h1 {
 		color: var( --color-neutral-70 );
-		font-size: 54px;
+		font-size: $font-headline-large;
 		line-height: 1.4;
 		margin-top: 0;
 	}

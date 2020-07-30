@@ -19,7 +19,7 @@ module.exports = {
 	},
 	fix: () => {
 		const shell = getShellRc();
-		if ( shell ) return `Add \`CHROMEDRIVER_SKIP_DOWNLOAD=true\` to ${ shell }`;
+		if ( shell ) return `Add \`export CHROMEDRIVER_SKIP_DOWNLOAD=true\` to ${ shell }`;
 		return 'Set env variable `CHROMEDRIVER_SKIP_DOWNLOAD` with value `true`';
 	},
 };
