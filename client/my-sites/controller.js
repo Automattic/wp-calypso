@@ -374,7 +374,7 @@ export function siteSelection( context, next ) {
 		const redirectToPrimary = ( primarySiteSlug ) => {
 			const pathNameSplit = context.pathname.split( '/no-site' )[ 0 ];
 			const pathname = pathNameSplit.replace( /\/?$/, '/' ); // append trailing slash if not present
-			let redirectPath = `${ pathname }/${ primarySiteSlug }`;
+			let redirectPath = `${ pathname }${ primarySiteSlug }`;
 			if ( context.querystring ) {
 				redirectPath += `?${ context.querystring }`;
 			}
