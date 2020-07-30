@@ -93,13 +93,7 @@ export { isYearly } from './is-yearly';
 export { isBiennially } from './is-biennially';
 export { isJetpackMonthlyPlan } from './is-jetpack-monthly-plan';
 export { isJetpackBackupSlug } from './is-jetpack-backup-slug';
-
-export function isJetpackBackup( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isJetpackBackupSlug( product.product_slug );
-}
+export { isJetpackBackup } from './is-jetpack-backup';
 
 export function isJetpackScanSlug( productSlug ) {
 	return JETPACK_SCAN_PRODUCTS.includes( productSlug );
