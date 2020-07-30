@@ -607,6 +607,7 @@ export default function CompositeCheckout( {
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
 						isLoggedOutCart={ isLoggedOutCart }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						infoMessage={ infoMessage }
 					/>
 				</CheckoutProvider>
