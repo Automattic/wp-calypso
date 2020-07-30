@@ -11,7 +11,7 @@ import React, { useState, useCallback, FunctionComponent } from 'react';
 import ExternalLink from 'components/external-link';
 import FoldableCard from 'components/foldable-card';
 import FeaturesItem from './features-item';
-import { Features } from './types';
+import type { Features } from './types';
 
 export type Props = {
 	features: Features;

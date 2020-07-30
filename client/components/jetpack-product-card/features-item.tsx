@@ -9,7 +9,7 @@ import React, { FunctionComponent } from 'react';
 import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
 import { preventWidows } from 'lib/formatting';
-import { FeaturesItem } from './types';
+import type { FeaturesItem } from './types';
 
 export type Props = {
 	item: FeaturesItem;
