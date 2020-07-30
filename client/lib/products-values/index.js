@@ -25,7 +25,6 @@ import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 import { isPlan } from './is-plan';
 import { isDomainMapping } from './is-domain-mapping';
 import { isDomainRegistration } from './is-domain-registration';
-import { isDomainTransfer } from './is-domain-transfer';
 
 const productDependencies = {
 	domain: {
@@ -100,10 +99,7 @@ export { isSiteRedirect } from './is-site-redirect';
 export { allowedProductAttributes } from './allowed-product-attributes';
 export { isDomainTransfer } from './is-domain-transfer';
 export { isDomainTransferProduct } from './is-domain-transfer-product';
-
-export function isDelayedDomainTransfer( product ) {
-	return isDomainTransfer( product ) && product.delayedProvisioning;
-}
+export { isDelayedDomainTransfer } from './is-delayed-domain-transfer';
 
 export function isBundled( product ) {
 	product = formatProduct( product );
