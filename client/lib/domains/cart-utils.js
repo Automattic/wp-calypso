@@ -7,7 +7,7 @@ import { isEmpty, find, values } from 'lodash';
  * Internal dependencies
  */
 import { hasDomainRegistration, getDomainRegistrations } from 'lib/cart-values/cart-items';
-import { isDomainRegistration } from 'lib/products-values';
+import { isDomainRegistration } from 'lib/products-values/is-domain-registration';
 
 /**
  * Depending on the current step in checkout, the user's domain can be found in
