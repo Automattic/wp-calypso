@@ -149,7 +149,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			[ 'Public', 'Public', -1, { blog_public: 1, wpcom_coming_soon: 0 } ],
 			[
 				'Hidden',
-				'Do not allow search engines to index my site',
+				'Discourage search engines from indexing this site',
 				-1,
 				{ blog_public: 0, wpcom_coming_soon: 0 },
 			],
@@ -159,7 +159,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				testProps.fields.blog_public = initialBlogPublic;
 				const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
-				const radioButton = getByLabelText( text );
+				const radioButton = getByLabelText( text, { exact: false } );
 				expect( radioButton ).not.toBeChecked();
 				fireEvent.click( radioButton );
 				expect( testProps.updateFields ).toBeCalledWith( updatedFields );
@@ -170,7 +170,9 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			testProps.fields.blog_public = -1;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
+			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing this site', {
+				exact: false,
+			} );
 			expect( hiddenCheckbox ).not.toBeChecked();
 
 			const publicRadio = getByLabelText( 'Public' );
@@ -187,7 +189,9 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			testProps.fields.blog_public = 0;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
+			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing this site', {
+				exact: false,
+			} );
 			expect( hiddenCheckbox ).toBeChecked();
 
 			const publicRadio = getByLabelText( 'Public' );
