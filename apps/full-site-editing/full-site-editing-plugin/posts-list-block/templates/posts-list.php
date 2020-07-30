@@ -2,7 +2,7 @@
 /**
  * Posts List
  *
- * @package full-site-editing
+ * @package A8C\EditingToolkit
  */
 
 /**

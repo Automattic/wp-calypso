@@ -2,7 +2,7 @@
 /**
  * Fallback to provide serialize_block support being added to WP 5.3.0
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 if ( ! function_exists( 'serialize_block' ) ) {

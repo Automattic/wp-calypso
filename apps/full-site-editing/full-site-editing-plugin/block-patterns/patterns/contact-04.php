@@ -2,7 +2,7 @@
 /**
  * Contact pattern.
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 // phpcs:disable WordPress.WP.CapitalPDangit.Misspelled

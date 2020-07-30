@@ -10,7 +10,7 @@ const path = require( 'path' );
 
 const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );
-
+console.log( phpcbfPath );
 function quotedPath( pathToQuote ) {
 	if ( pathToQuote.includes( ' ' ) ) {
 		return `"${ pathToQuote }"`;

@@ -2,7 +2,7 @@
 /**
  * Is FSE Active Tests File
  *
- * @package full-site-editing-plugin
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE;

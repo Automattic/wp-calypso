@@ -6,7 +6,7 @@
  * plugin is activated on the site. (Not to be confused with whether FSE is
  * active on the site!)
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE;

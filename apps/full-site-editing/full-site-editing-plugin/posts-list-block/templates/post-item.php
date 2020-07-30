@@ -2,7 +2,7 @@
 /**
  * Post Item.
  *
- * @package full-site-editing
+ * @package A8C\EditingToolkit
  *
  * phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
  */

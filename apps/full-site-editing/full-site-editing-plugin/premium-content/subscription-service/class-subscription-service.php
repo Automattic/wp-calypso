@@ -1,6 +1,6 @@
 <?php declare( strict_types = 1 );
 /**
- * @package A8C\FSE\Earn\PremiumContent;
+ * @package A8C\EditingToolkit\Earn\PremiumContent;
  *
  * The Subscription Service represents the entity responsible for making sure a visitor
  * can see blocks that are considered premium content.

@@ -2,7 +2,7 @@
 /**
  * WP_REST_Sideload_Image_Controller file.
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE;

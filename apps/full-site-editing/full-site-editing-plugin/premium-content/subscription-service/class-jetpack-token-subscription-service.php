@@ -1,7 +1,7 @@
 <?php declare( strict_types = 1 );
 
 /**
- * @package A8C\FSE\Earn
+ * @package A8C\EditingToolkit\Earn
  *
  * A paywall that exchanges JWT tokens from WordPress.com to allow
  * a current visitor to view content that has been deemed "Premium content".

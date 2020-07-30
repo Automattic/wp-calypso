@@ -2,7 +2,7 @@
 /**
  * Two images side-by-side pattern.
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 $markup = '

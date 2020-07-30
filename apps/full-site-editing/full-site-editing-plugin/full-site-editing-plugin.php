@@ -8,7 +8,7 @@
  * License: GPLv2 or later
  * Text Domain: full-site-editing
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE;

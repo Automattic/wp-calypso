@@ -13,7 +13,7 @@
  * The difference being that that was a custom Dotcom solution and this one is being built on
  * top of core FSE. When ready, it should completely replace the existing dotcom-fse functionality.
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE;

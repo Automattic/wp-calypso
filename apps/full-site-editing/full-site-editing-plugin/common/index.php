@@ -6,7 +6,7 @@
  * Currently, this module may not be the best place if you need to load
  * front-end assets, but you could always add a separate action for that.
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE\Common;

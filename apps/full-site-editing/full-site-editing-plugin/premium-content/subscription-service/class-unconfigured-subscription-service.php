@@ -1,6 +1,6 @@
 <?php declare( strict_types = 1 );
 /**
- * @package A8C\FSE\Earn
+ * @package A8C\EditingToolkit\Earn
  *
  * The environment does not have a subscription service available.
  *

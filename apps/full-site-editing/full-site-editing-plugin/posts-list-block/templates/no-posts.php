@@ -2,7 +2,7 @@
 /**
  * Template for displaying a message that posts cannot be found.
  *
- * @package full-site-editing
+ * @package A8C\EditingToolkit
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
  */
 

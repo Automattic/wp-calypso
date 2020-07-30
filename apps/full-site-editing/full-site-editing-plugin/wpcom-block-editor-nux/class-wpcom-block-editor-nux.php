@@ -2,7 +2,7 @@
 /**
  * WPCOM Block Editor NUX file.
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE;

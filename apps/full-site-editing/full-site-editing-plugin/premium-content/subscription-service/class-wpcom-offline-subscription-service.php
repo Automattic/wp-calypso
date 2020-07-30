@@ -1,6 +1,6 @@
 <?php declare( strict_types = 1 );
 /**
- * @package A8C\FSE\Earn
+ * @package A8C\EditingToolkit\Earn
  *
  * This subscription service is used when a subscriber is offline and a token is not available.
  * This subscription service will be used when rendering content in email and reader on WPCOM only.

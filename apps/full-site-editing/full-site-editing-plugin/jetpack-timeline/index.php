@@ -2,7 +2,7 @@
 /**
  * Timeline Block
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 // Register Block Scripts.

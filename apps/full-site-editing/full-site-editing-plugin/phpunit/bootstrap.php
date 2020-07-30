@@ -4,7 +4,7 @@
  *
  * @see https://github.com/WordPress/gutenberg/blob/HEAD/phpunit/bootstrap.php
  *
- * @package FullSiteEditing
+ * @package A8C\EditingToolkit
  */
 
 // Require composer dependencies.

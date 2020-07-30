@@ -2,7 +2,7 @@
 /**
  * Block Inserter Modifications
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE\Block_Inserter_Modifications;

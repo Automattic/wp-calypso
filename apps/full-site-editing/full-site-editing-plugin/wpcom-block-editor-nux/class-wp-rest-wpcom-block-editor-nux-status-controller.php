@@ -2,7 +2,7 @@
 /**
  * WP_REST_WPCOM_Block_Editor_NUX_Status_Controller file.
  *
- * @package A8C\FSE
+ * @package A8C\EditingToolkit
  */
 
 namespace A8C\FSE;
