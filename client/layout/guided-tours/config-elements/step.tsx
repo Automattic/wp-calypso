@@ -177,20 +177,19 @@ export default class Step extends Component< Props, State > {
 	}
 
 	watchTarget() {
+		const { target, onTargetDisappear, waitForTarget, keepRepositioning } = this.props;
 		if (
-			( ! this.props.keepRepositioning &&
-				( ! this.props.target ||
-					( ! this.props.onTargetDisappear && ! this.props.waitForTarget ) ) ) ||
+			( ! keepRepositioning && ( ! target || ( ! onTargetDisappear && ! waitForTarget ) ) ) ||
 			typeof window === 'undefined' ||
 			typeof window.MutationObserver === 'undefined'
 		) {
 			return;
 		}
 
+		this.safeSetState( { seenTarget: ! target || targetForSlug( target ) } );
+
 		if ( ! this.observer ) {
 			this.observer = new window.MutationObserver( () => {
-				const { target, onTargetDisappear, waitForTarget, keepRepositioning } = this.props;
-
 				if ( keepRepositioning ) {
 					this.onScrollOrResize();
 				}
@@ -200,12 +199,13 @@ export default class Step extends Component< Props, State > {
 				}
 
 				const targetEl = targetForSlug( target );
-				if ( ! targetEl ) {
+				if ( ! targetEl && onTargetDisappear && ( ! waitForTarget || this.state.seenTarget ) ) {
+					debug( 'Step#watchTarget: Target has disappeared' );
 					onTargetDisappear( {
 						quit: () => this.context.quit( this.context ),
 						next: () => this.skipToNext( this.props, this.context ),
 					} );
-				} else {
+				} else if ( targetEl ) {
 					this.safeSetState( { seenTarget: true } );
 				}
 			} );
