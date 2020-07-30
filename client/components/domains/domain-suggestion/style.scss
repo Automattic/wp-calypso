@@ -331,18 +331,20 @@ body.is-section-signup.is-white-signup {
 			}
 
 			&.is-clickable:hover {
-				background: var( --color-primary-0 );
-				box-shadow: 0 0 0 1px var( --color-primary-40 );
+				@include break-mobile {
+					background: var( --color-primary-0 );
+					box-shadow: 0 0 0 1px var( --color-primary-40 );
 
-				.domain-suggestion__action:not( .is-borderless ) {
-					border-radius: 4px;
-					display: block;
-					line-height: 17px;
-					padding: 11px 24px 10px;
-				}
+					.domain-suggestion__action:not( .is-borderless ) {
+						border-radius: 4px;
+						display: block;
+						line-height: 17px;
+						padding: 11px 24px 10px;
+					}
 
-				.domain-product-price {
-					display: none;
+					.domain-product-price {
+						display: none;
+					}
 				}
 			}
 
