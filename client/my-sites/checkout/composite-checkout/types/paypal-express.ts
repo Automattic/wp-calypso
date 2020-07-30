@@ -23,7 +23,7 @@ export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
 	cancelUrl: string;
 	cart: WPCOMTransactionEndpointCart;
-	domainDetails: DomainContactDetails;
+	domainDetails: DomainContactDetails | null;
 	country: string;
 	postalCode: string;
 };
@@ -46,7 +46,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	country: string;
 	postalCode: string;
 	subdivisionCode: string;
-	domainDetails: DomainContactDetails;
+	domainDetails: DomainContactDetails | null;
 	items: WPCOMCartItem[];
 } ): PayPalExpressEndpointRequestPayload {
 	return {
