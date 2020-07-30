@@ -100,7 +100,7 @@ process.on( 'exit', handleExit );
 
 async function run() {
 	try {
-		const requiredENVs = [ 'E2EUSERNAME', 'E2EPASSWORD' ];
+		const requiredENVs = [ 'E2EUSERNAME', 'E2EGUTENBERGUSER', 'E2EPASSWORD' ];
 		const missingENVs = requiredENVs.filter(
 			( name ) => ! process.env[ name ] || process.env[ name ] === ''
 		);
@@ -128,7 +128,7 @@ async function run() {
 			driverLog.fd
 		);
 
-		const tests = path.join( E2E_DIR, 'tests', 'e2e.js' );
+		const tests = path.join( E2E_DIR, 'tests', 'e2e*.js' );
 		execSync( `npx mocha ${ tests } --timeout 20000`, {
 			stdio: 'inherit',
 		} );
