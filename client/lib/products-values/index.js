@@ -37,7 +37,6 @@ import {
 	isEcommercePlan,
 	isBusinessPlan,
 	isPremiumPlan,
-	isPersonalPlan,
 	isBloggerPlan,
 } from 'lib/plans';
 import { domainProductSlugs } from 'lib/domains/constants';
@@ -45,6 +44,7 @@ import schema from './schema.json';
 
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
+import { isPersonal } from './is-personal';
 
 const productDependencies = {
 	domain: {
@@ -82,13 +82,7 @@ export { includesProduct } from './includes-product';
 export { isFreePlan } from './is-free-plan';
 export { isFreeJetpackPlan } from './is-free-jetpack-plan';
 export { isFreeTrial } from './is-free-trial';
-
-export function isPersonal( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isPersonalPlan( product.product_slug );
-}
+export { isPersonal } from './is-personal';
 
 export function isBlogger( product ) {
 	product = formatProduct( product );
