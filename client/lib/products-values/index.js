@@ -59,12 +59,7 @@ export { getProductClass } from './get-product-class';
 export { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
 export { isDependentProduct } from './is-dependent-product';
-
-export function isFreeWordPressComDomain( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-	return product.is_free === true;
-}
+export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
 
 export function isGoogleApps( product ) {
 	product = formatProduct( product );
