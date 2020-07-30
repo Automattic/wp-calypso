@@ -33,8 +33,13 @@ import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'lib/login';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import JetpackLogo from 'components/jetpack-logo';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -427,6 +432,7 @@ export class UserStep extends Component {
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
 					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
+					horizontal={ 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
