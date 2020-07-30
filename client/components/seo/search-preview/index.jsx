@@ -32,6 +32,8 @@ const googleUrl = hardTruncation( 79 );
 export default function SearchPreview( { description, title, url } ) {
 	const translate = useTranslate();
 
+	const strippedDescription = description ? description.replace( /<[^>]+>/g, '' ) : '';
+
 	return (
 		<div className="search-preview">
 			<h2 className="search-preview__header">{ translate( 'Search Preview' ) }</h2>
@@ -39,7 +41,7 @@ export default function SearchPreview( { description, title, url } ) {
 				<div className="search-preview__title">{ googleTitle( title ) }</div>
 				<div className="search-preview__url">{ googleUrl( url ) } ▾</div>
 				<div className="search-preview__description">
-					{ googleDescription( description || '' ) }
+					{ googleDescription( strippedDescription ) }
 				</div>
 			</div>
 		</div>

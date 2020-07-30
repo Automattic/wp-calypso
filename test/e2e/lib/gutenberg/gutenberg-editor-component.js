@@ -467,7 +467,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async dismissEditorWelcomeModal() {
 		const welcomeModal = By.css( '.components-guide__container' );
-		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, welcomeModal ) ) {
+		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, welcomeModal, this.explicitWaitMS / 5 ) ) {
 			try {
 				// Easiest way to dismiss it, but it might not work in IE.
 				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
