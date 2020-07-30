@@ -10,9 +10,7 @@ import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
 	getJetpackProductsDisplayNames,
 	getJetpackProductsTaglines,
-	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	JETPACK_SCAN_PRODUCTS,
 } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 import {
@@ -97,12 +95,7 @@ export { isJetpackScanSlug } from './is-jetpack-scan-slug';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackScan } from './is-jetpack-scan';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
-
-export function isJetpackCloudProductSlug( productSlug ) {
-	return (
-		JETPACK_SCAN_PRODUCTS.includes( productSlug ) || JETPACK_BACKUP_PRODUCTS.includes( productSlug )
-	);
-}
+export { isJetpackCloudProductSlug } from './is-jetpack-cloud-product-slug';
 
 export function isJetpackProductSlug( productSlug ) {
 	return includes( JETPACK_PRODUCTS_LIST, productSlug );
