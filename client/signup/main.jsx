@@ -22,7 +22,6 @@ import {
 	startsWith,
 } from 'lodash';
 import { connect } from 'react-redux';
-import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -710,9 +709,7 @@ export default connect(
 			false
 		);
 		const isReskinned =
-			'onboarding' === ownProps.flowName &&
-			! /^en\b/.test( getLocaleSlug() ) &&
-			'reskinned' === abtest( 'reskinSignupFlow' );
+			'onboarding' === ownProps.flowName && 'reskinned' === abtest( 'reskinSignupFlow' );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
