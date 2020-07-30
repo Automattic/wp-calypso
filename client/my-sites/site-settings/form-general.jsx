@@ -282,6 +282,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const {
 			fields,
 			isRequestingSettings,
+			isWPForTeamsSite,
 			eventTracker,
 			siteIsJetpack,
 			siteIsAtomic,
@@ -294,7 +295,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset>
-				{ ! isNonAtomicJetpackSite && (
+				{ ! isNonAtomicJetpackSite && ! isWPForTeamsSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-coming-soon">
 							<FormRadio

@@ -38,6 +38,7 @@ import {
 	failMediaRequest,
 	receiveMedia,
 	setMediaItemErrors,
+	setNextPageHandle,
 	setMediaLibrarySelectedItems,
 	successMediaItemRequest,
 } from '../actions';
@@ -984,6 +985,21 @@ describe( 'reducer', () => {
 			const state = fetching( deepFreeze( state1 ), { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should set the next page handle', () => {
+			const nextPage = Symbol( 'next page handle' );
+			const state = fetching(
+				deepFreeze( state1 ),
+				setNextPageHandle( 2916284, { next_page: nextPage } )
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					...state[ 2916284 ],
+					nextPageHandle: nextPage,
+				},
+			} );
 		} );
 	} );
 } );

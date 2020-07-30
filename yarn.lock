@@ -7069,7 +7069,7 @@ axobject-query@^2.0.2:
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-2.1.2.tgz#2bdffc0371e643e5f03ba99065d5179b9ca79799"
   integrity sha512-ICt34ZmrVt8UQnvPl6TVyDTkmhXmAyAT4Jh5ugfGUX4MOrZ+U/ZY6/sdylRw3qGNr9Ub5AJsaHeDMzNLehRdOQ==
 
-babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
+babel-code-frame@6.26.0, babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.26.0.tgz#63fd43f7dc1e3bb7ce35947db8fe369a3f58c74b"
   integrity sha1-Y/1D99weO7fONZR9uP42mj9Yx0s=
@@ -11936,6 +11936,24 @@ eslint-config-prettier@^6.10.1, eslint-config-prettier@^6.11.0:
   dependencies:
     get-stdin "^6.0.0"
 
+eslint-filtered-fix@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-filtered-fix/-/eslint-filtered-fix-0.1.1.tgz#07e08a8c7cde059c6db00c3b2b001fa4756cb74e"
+  integrity sha1-B+CKjHzeBZxtsAw7KwAfpHVst04=
+  dependencies:
+    optionator "^0.8.2"
+
+eslint-formatter-friendly@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-formatter-friendly/-/eslint-formatter-friendly-6.0.0.tgz#8363888f7b50f992dfaed72a849a604fc97d598f"
+  integrity sha512-fOBwGn2r8BPQ1KSKyVzjXP8VFxJ2tWKxxn2lIF+k1ezN/pFB44HDlrn5kBm1vxbyyRa/LC+1vHJwc7WETUAZ2Q==
+  dependencies:
+    babel-code-frame "6.26.0"
+    chalk "^2.0.1"
+    extend "^3.0.0"
+    strip-ansi "^4.0.0"
+    text-table "^0.2.0"
+
 eslint-import-resolver-node@^0.3.2:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.3.tgz#dbaa52b6b2816b50bc6711af75422de808e98404"
@@ -11951,6 +11969,19 @@ eslint-module-utils@^2.4.1:
   dependencies:
     debug "^2.6.9"
     pkg-dir "^2.0.0"
+
+eslint-nibble@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-nibble/-/eslint-nibble-5.1.0.tgz#f279b6ae0d60a61636c7f95142bdd43f913f68e2"
+  integrity sha512-wgmhwlMaNBbaDHrxg8/Os0LCOOatfzy6IaU07HFk6/UirfsTCqD9XoH0+9UNk2V16uPZXgLSiUIwGBtxliXnHw==
+  dependencies:
+    chalk "^2.4.1"
+    eslint-filtered-fix "^0.1.1"
+    eslint-formatter-friendly "^6.0.0"
+    eslint-stats ianvs/eslint-stats#cb1ff8251b50c7f0cb431a2b395431ebfdeb10c8
+    eslint-summary "^1.0.0"
+    inquirer "^6.2.0"
+    optionator "^0.8.2"
 
 eslint-plugin-import@^2.20.0:
   version "2.20.0"
@@ -12090,6 +12121,21 @@ eslint-scope@^5.0.0:
   dependencies:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
+
+eslint-stats@ianvs/eslint-stats#cb1ff8251b50c7f0cb431a2b395431ebfdeb10c8:
+  version "1.0.0"
+  resolved "https://codeload.github.com/ianvs/eslint-stats/tar.gz/cb1ff8251b50c7f0cb431a2b395431ebfdeb10c8"
+  dependencies:
+    chalk "^2.4.1"
+    lodash "^4.17.4"
+
+eslint-summary@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-summary/-/eslint-summary-1.0.0.tgz#b811f00437016b20c0f6f5234479bd6395b57886"
+  integrity sha1-uBHwBDcBayDA9vUjRHm9Y5W1eIY=
+  dependencies:
+    chalk "^1.0.0"
+    text-table "^0.2.0"
 
 eslint-utils@^1.4.3:
   version "1.4.3"
@@ -20080,7 +20126,7 @@ optimist@^0.6.1:
     minimist "~0.0.1"
     wordwrap "~0.0.2"
 
-optionator@^0.8.1, optionator@^0.8.3:
+optionator@^0.8.1, optionator@^0.8.2, optionator@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.8.3.tgz#84fa1d036fe9d3c7e21d99884b601167ec8fb495"
   integrity sha512-+IW9pACdk3XWmmTXG8m3upGUJst5XRGzxMRjXzAuJ1XnIFNvfhjjIuYkDvysnPQ7qzqVzLt78BCruntqRhWQbA==

@@ -34,9 +34,9 @@ import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
 } from 'state/sharing/keyring/selectors';
-import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions';
+import { pauseGuidedTour, resumeGuidedTour } from 'state/guided-tours/actions';
 import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { getGuidedTourState } from 'state/guided-tours/selectors';
 import { withoutNotice } from 'state/notices/actions';
 import { clearMediaErrors, changeMediaSource } from 'state/media/actions';
 

@@ -90,7 +90,7 @@ import {
 	isNewUser,
 	isEnabled,
 	isSelectedSitePreviewable,
-} from 'state/ui/guided-tours/contexts';
+} from 'state/guided-tours/contexts';
 
 export const TutorialSitePreviewTour = makeTour(
 );
@@ -181,7 +181,7 @@ Note that we've set the `enabled` variation to 0% so we don't show the tour to a
 
 Now we need to make sure the tour only triggers if the user in the `enabled` variant.
 
-First, add an import for `isAbTestInVariant` to the list of things we import from `state/ui/guided-tours/contexts` in `meta.js`.
+First, add an import for `isAbTestInVariant` to the list of things we import from `state/guided-tours/contexts` in `meta.js`.
 
 Now, use the import in the `when` property like so:
 

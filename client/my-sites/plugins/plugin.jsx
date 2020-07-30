@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -36,7 +35,7 @@ import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import NoPermissionsError from './no-permissions-error';
-import getToursHistory from 'state/ui/guided-tours/selectors/get-tours-history';
+import getToursHistory from 'state/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'state/selectors/has-navigated';
 
 /* eslint-disable react/prefer-es6-class */

@@ -24,8 +24,8 @@ import ExternalLink from 'components/external-link';
  * Style dependencies
  */
 import './style.scss';
-import connectedIcon from './images/server-connected.svg';
-import disconnectedIcon from './images/server-disconnected.svg';
+import connectedIcon from 'assets/images/jetpack/connected.svg';
+import disconnectedIcon from 'assets/images/jetpack/disconnected.svg';
 
 const connectedProps = ( translate ) => ( {
 	iconPath: connectedIcon,

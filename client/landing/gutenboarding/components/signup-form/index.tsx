@@ -17,7 +17,6 @@ import { useLangRouteParam, usePath, Step, useCurrentStep } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
-import GUTENBOARDING_BASE_NAME from '../../basename.json';
 import {
 	initGoogleRecaptcha,
 	recordGoogleRecaptchaAction,
@@ -160,12 +159,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/${ GUTENBOARDING_BASE_NAME }${ makePath( Step.CreateSite ) }?new`
+		`${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
 	);
-	const signupUrl = encodeURIComponent(
-		`/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }?signup`
-	);
-	const loginUrl = `/log-in/${ GUTENBOARDING_BASE_NAME }${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
+	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
+	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
 	return (
 		<Modal

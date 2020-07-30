@@ -18,12 +18,13 @@ import {
 	MEDIA_ITEM_DELETE,
 } from 'state/action-types';
 import {
-	failMediaRequest,
-	failMediaItemRequest,
-	receiveMedia,
-	successMediaRequest,
-	successMediaItemRequest,
 	deleteMedia,
+	failMediaItemRequest,
+	failMediaRequest,
+	receiveMedia,
+	setNextPageHandle,
+	successMediaItemRequest,
+	successMediaRequest,
 } from 'state/media/actions';
 import { requestMediaStorage } from 'state/sites/media-storage/actions';
 import {
@@ -109,6 +110,7 @@ export function requestMedia( action ) {
 export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch ) => {
 	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
 	dispatch( successMediaRequest( siteId, query ) );
+	dispatch( setNextPageHandle( siteId, data.meta ) );
 
 	dispatchFluxRequestMediaItemsSuccess( siteId, data, query );
 };

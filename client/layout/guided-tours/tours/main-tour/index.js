@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 
 /**
@@ -18,10 +17,7 @@ import {
 	Continue,
 	Link,
 } from 'layout/guided-tours/config-elements';
-import {
-	isSelectedSitePreviewable,
-	isSelectedSiteCustomizable,
-} from 'state/ui/guided-tours/contexts';
+import { isSelectedSitePreviewable, isSelectedSiteCustomizable } from 'state/guided-tours/contexts';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
 import scrollTo from 'lib/scroll-to';
 import { ViewSiteButton } from 'layout/guided-tours/button-labels';

@@ -76,6 +76,7 @@ $transition-period: 100ms;
 		margin: 0;
 		font-size: $big-font-size;
 		line-height: $default-line-height;
+		word-wrap: break-word;
 	}
 
 	a {

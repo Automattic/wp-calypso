@@ -84,7 +84,7 @@ import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
+import { pauseGuidedTour } from 'state/guided-tours/actions';
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 import { isEnabled } from 'config';
 
