@@ -81,13 +81,7 @@ export { isChargeback } from './is-chargeback';
 export { includesProduct } from './includes-product';
 export { isFreePlan } from './is-free-plan';
 export { isFreeJetpackPlan } from './is-free-jetpack-plan';
-
-export function isFreeTrial( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return Boolean( product.free_trial );
-}
+export { isFreeTrial } from './is-free-trial';
 
 export function isPersonal( product ) {
 	product = formatProduct( product );
