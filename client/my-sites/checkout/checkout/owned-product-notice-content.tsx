@@ -26,7 +26,7 @@ type Props = {
 	selectedSite: Site;
 };
 
-const DuplicateProductNoticeContent: FunctionComponent< Props > = ( { product, selectedSite } ) => {
+const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selectedSite } ) => {
 	const translate = useTranslate();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const purchase = isArray( purchases )
@@ -60,4 +60,4 @@ const DuplicateProductNoticeContent: FunctionComponent< Props > = ( { product, s
 	);
 };
 
-export default DuplicateProductNoticeContent;
+export default OwnedProductNoticeContent;

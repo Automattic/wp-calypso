@@ -4,6 +4,8 @@
 import createSelector from 'lib/create-selector';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
+	FEATURE_JETPACK_BACKUP_REALTIME,
+	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_BUSINESS,
@@ -140,6 +142,41 @@ export const isPlanIncludingSiteBackup = createSelector(
 			] ),
 		],
 	]
+);
+
+/**
+ * Check if a Backup product is already included in a site plan.
+ *
+ * @param {AppState} state The redux state.
+ * @param {number} siteId The site ID.
+ * @param {string} productSlug The product slug.
+ * @returns {boolean|null} True if the product is already included in a plan, or null when it's unable to be determined.
+ */
+export const isBackupProductIncludedInSitePlan = createSelector(
+	( state: AppState, siteId: number | null, productSlug: string ): boolean | null => {
+		if ( ! siteId ) {
+			return null;
+		}
+
+		let feature;
+
+		if (
+			[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes( productSlug )
+		) {
+			feature = FEATURE_JETPACK_BACKUP_DAILY;
+		} else if (
+			[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
+				productSlug
+			)
+		) {
+			feature = FEATURE_JETPACK_BACKUP_REALTIME;
+		} else {
+			return null;
+		}
+
+		return hasFeature( state, siteId, feature );
+	},
+	[ ( state: AppState, siteId: number | null, productSlug: string ) => [ siteId, productSlug ] ]
 );
 
 export type IncompatibleProducts = {
