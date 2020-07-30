@@ -28,18 +28,7 @@ import 'state/purchases/init';
 export { getPurchases } from './get-purchases';
 export { getUserPurchases } from './get-user-purchases';
 export { getPurchasesError } from './get-purchases-error';
-
-/**
- * Returns a Purchase object from the state using its id
- *
- * @param   {object} state       global state
- * @param   {number} purchaseId  the purchase id
- * @returns {object} the matching purchase if there is one
- */
-export const getByPurchaseId = ( state, purchaseId ) =>
-	getPurchases( state )
-		.filter( ( purchase ) => purchase.id === purchaseId )
-		.shift();
+export { getByPurchaseId } from './get-by-purchase-id';
 
 /**
  * Returns a list of Purchases associated with a Site from the state using its siteId
