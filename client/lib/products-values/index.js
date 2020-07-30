@@ -13,7 +13,6 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_SCAN_PRODUCTS,
-	JETPACK_ANTI_SPAM_PRODUCTS,
 } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 import {
@@ -41,6 +40,7 @@ import { isEnterprise } from './is-enterprise';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 import { isJetpackScanSlug } from './is-jetpack-scan-slug';
+import { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 
 const productDependencies = {
 	domain: {
@@ -96,10 +96,7 @@ export { isJetpackMonthlyPlan } from './is-jetpack-monthly-plan';
 export { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
 export { isJetpackScanSlug } from './is-jetpack-scan-slug';
-
-export function isJetpackAntiSpamSlug( productSlug ) {
-	return JETPACK_ANTI_SPAM_PRODUCTS.includes( productSlug );
-}
+export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 
 export function isJetpackScan( product ) {
 	product = formatProduct( product );
