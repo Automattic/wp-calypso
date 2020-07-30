@@ -24,7 +24,6 @@ import schema from './schema.json';
 
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
-import { isJetpackPlan } from './is-jetpack-plan';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 import { isPlan } from './is-plan';
 
@@ -91,10 +90,7 @@ export { isJetpackProduct } from './is-jetpack-product';
 export { getProductFromSlug } from './get-product-from-slug';
 export { isJpphpBundle } from './is-jpphp-bundle';
 export { isPlan } from './is-plan';
-
-export function isDotComPlan( product ) {
-	return isPlan( product ) && ! isJetpackPlan( product );
-}
+export { isDotComPlan } from './is-dot-com-plan';
 
 export function isDomainProduct( product ) {
 	product = formatProduct( product );
