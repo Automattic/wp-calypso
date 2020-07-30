@@ -232,6 +232,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
 	},
 };
