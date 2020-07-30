@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, some } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,7 +11,6 @@ import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
 	isDomainMapping,
-	isJetpackScan,
 } from 'lib/products-values';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { TYPE_PERSONAL } from 'lib/plans/constants';
@@ -30,20 +29,7 @@ export { getSitePurchases } from './get-site-purchases';
 export { getRenewableSitePurchases } from './get-renewable-site-purchases';
 export { siteHasJetpackProductPurchase } from './site-has-jetpack-product-purchase';
 export { siteHasBackupProductPurchase } from './site-has-backup-product-purchase';
-
-/**
- * Whether a site has an active Jetpack Scan purchase.
- *
- * @param   {object} state       global state
- * @param   {number} siteId      the site id
- * @returns {boolean} True if the site has an active Jetpack Scan purchase, false otherwise.
- */
-export const siteHasScanProductPurchase = ( state, siteId ) => {
-	return some(
-		getSitePurchases( state, siteId ),
-		( purchase ) => purchase.active && isJetpackScan( purchase )
-	);
-};
+export { siteHasScanProductPurchase } from './site-has-scan-product-purchase';
 
 /**
  * Returns a purchase object that corresponds to that subscription's included domain
