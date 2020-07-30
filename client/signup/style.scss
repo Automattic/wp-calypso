@@ -433,11 +433,10 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;
-	$accent-blue: #117ac9;
-	$accent-blue-60: #0e64a5;
 	$breakpoint-mobile: 660px;
 
 	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
 
 	.signup-header .wordpress-logo {
 		position: absolute;
@@ -495,23 +494,9 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		}
 	}
 
-	button.is-primary:not( .is-busy ) {
-		background: $accent-blue;
+	button.is-primary {
 		box-shadow: none;
 		border: 0;
 	}
 
-	button.is-primary {
-		&.is-busy {
-			background-size: 120px 100%;
-			background-image: linear-gradient(
-				-45deg,
-				$accent-blue 28%,
-				$accent-blue-60 28%,
-				$accent-blue-60 72%,
-				$accent-blue 72%
-				);
-			}
-			border-color: $accent-blue;
-	}
 }
