@@ -95,13 +95,7 @@ export { isPlan } from './is-plan';
 export { isDotComPlan } from './is-dot-com-plan';
 export { isDomainMapping } from './is-domain-mapping';
 export { isDomainRegistration } from './is-domain-registration';
-
-export function isDomainProduct( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isDomainMapping( product ) || isDomainRegistration( product );
-}
+export { isDomainProduct } from './is-domain-product';
 
 export function isDomainRedemption( product ) {
 	product = formatProduct( product );
