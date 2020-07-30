@@ -26,6 +26,7 @@ import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 import { isPlan } from './is-plan';
+import { isDomainMapping } from './is-domain-mapping';
 
 const productDependencies = {
 	domain: {
@@ -91,6 +92,7 @@ export { getProductFromSlug } from './get-product-from-slug';
 export { isJpphpBundle } from './is-jpphp-bundle';
 export { isPlan } from './is-plan';
 export { isDotComPlan } from './is-dot-com-plan';
+export { isDomainMapping } from './is-domain-mapping';
 
 export function isDomainProduct( product ) {
 	product = formatProduct( product );
@@ -111,13 +113,6 @@ export function isDomainRegistration( product ) {
 	assertValidProduct( product );
 
 	return !! product.is_domain_registration;
-}
-
-export function isDomainMapping( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === 'domain_map';
 }
 
 export function getIncludedDomainPurchaseAmount( product ) {
