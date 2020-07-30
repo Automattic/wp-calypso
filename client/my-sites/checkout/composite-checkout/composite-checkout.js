@@ -339,6 +339,7 @@ export default function CompositeCheckout( {
 			total,
 			couponItem,
 			responseCart,
+			isLoggedOutCart,
 		]
 	);
 
@@ -546,7 +547,7 @@ export default function CompositeCheckout( {
 			paypal: ( transactionData ) =>
 				payPalProcessor( transactionData, getThankYouUrl, couponItem, transactionOptions ),
 		} ),
-		[ couponItem, getThankYouUrl, siteSlug ]
+		[ couponItem, getThankYouUrl, siteSlug, isLoggedOutCart ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -662,7 +663,7 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors, isLogged
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, isLoading, errors ] );
+	}, [ redirectUrl, items, isLoading, errors, isLoggedOutCart ] );
 }
 
 function useCountryList( overrideCountryList ) {
