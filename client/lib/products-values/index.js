@@ -65,13 +65,7 @@ export { isCustomDesign } from './is-custom-design';
 export { isNoAds } from './is-no-ads';
 export { isVideoPress } from './is-video-press';
 export { isUnlimitedSpace } from './is-unlimited-space';
-
-export function isUnlimitedThemes( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'unlimited_themes' === product.product_slug;
-}
+export { isUnlimitedThemes } from './is-unlimited-themes';
 
 export function isSpaceUpgrade( product ) {
 	product = formatProduct( product );
