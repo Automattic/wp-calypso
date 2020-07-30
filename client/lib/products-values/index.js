@@ -62,13 +62,7 @@ export { isGoogleApps } from './is-google-apps';
 export { isGuidedTransfer } from './is-guided-transfer';
 export { isTheme } from './is-theme';
 export { isCustomDesign } from './is-custom-design';
-
-export function isNoAds( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'no-adverts/no-adverts.php' === product.product_slug;
-}
+export { isNoAds } from './is-no-ads';
 
 export function isVideoPress( product ) {
 	product = formatProduct( product );
