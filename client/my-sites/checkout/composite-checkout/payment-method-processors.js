@@ -65,7 +65,6 @@ export function genericRedirectProcessor(
 				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				siteId: select( 'wpcom' )?.getSiteId?.(),
 			},
-			select,
 			{
 				includeDomainDetails,
 				includeGSuiteDetails,
@@ -90,7 +89,6 @@ export function applePayProcessor( submitData, { includeDomainDetails, includeGS
 				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			},
-			select,
 			{
 				includeDomainDetails,
 				includeGSuiteDetails,
@@ -125,7 +123,6 @@ export async function stripeCardProcessor(
 				siteId: select( 'wpcom' )?.getSiteId?.(),
 				paymentMethodToken,
 			},
-			select,
 			{
 				includeDomainDetails,
 				includeGSuiteDetails,
@@ -154,7 +151,6 @@ export async function existingCardProcessor(
 				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				siteId: select( 'wpcom' )?.getSiteId?.(),
 			},
-			select,
 			{
 				includeDomainDetails,
 				includeGSuiteDetails,
@@ -193,7 +189,6 @@ export async function freePurchaseProcessor(
 				country: null,
 				postalCode: null,
 			},
-			select,
 			{
 				includeDomainDetails,
 				includeGSuiteDetails,
@@ -221,7 +216,6 @@ export async function fullCreditsProcessor(
 				country: null,
 				postalCode: null,
 			},
-			select,
 			{
 				includeDomainDetails,
 				includeGSuiteDetails,
@@ -267,7 +261,6 @@ export async function payPalProcessor(
 				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
 				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
 			},
-			select,
 			{
 				includeDomainDetails,
 				includeGSuiteDetails,
