@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
-import { getJetpackProductsDisplayNames, getJetpackProductsTaglines } from './translations';
+import { getJetpackProductsTaglines } from './translations';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -100,20 +100,7 @@ export { getDomainProductRanking } from './get-domain-product-ranking';
 export { getDomain } from './get-domain';
 export { getProductsSlugs } from './get-products-slugs';
 export { getProductClass } from './get-product-class';
-
-/**
- * Get Jetpack product display name based on the product purchase object.
- *
- * @param   product {object}             Product purchase object
- * @returns         {string|object} Product display name
- */
-export function getJetpackProductDisplayName( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
-
-	return jetpackProductsDisplayNames?.[ product.productSlug ];
-}
+export { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
 
 /**
  * Get Jetpack product tagline based on the product purchase object.
