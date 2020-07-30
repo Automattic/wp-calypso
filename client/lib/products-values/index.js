@@ -24,7 +24,6 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_FREE,
 	PLAN_JETPACK_FREE,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
@@ -81,13 +80,7 @@ const productDependencies = {
 export { formatProduct } from './format-product';
 export { isChargeback } from './is-chargeback';
 export { includesProduct } from './includes-product';
-
-export function isFreePlan( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === PLAN_FREE;
-}
+export { isFreePlan } from './is-free-plan';
 
 export function isFreeJetpackPlan( product ) {
 	product = formatProduct( product );
