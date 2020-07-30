@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
@@ -25,6 +20,7 @@ import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 import { isPlan } from './is-plan';
 import { isDomainMapping } from './is-domain-mapping';
 import { isDomainRegistration } from './is-domain-registration';
+import { getDomain } from './get-domain';
 
 const productDependencies = {
 	domain: {
@@ -103,18 +99,7 @@ export { isDelayedDomainTransfer } from './is-delayed-domain-transfer';
 export { isBundled } from './is-bundled';
 export { isCredits } from './is-credits';
 export { getDomainProductRanking } from './get-domain-product-ranking';
-
-export function getDomain( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	const domainToBundle = get( product, 'extra.domain_to_bundle', false );
-	if ( domainToBundle ) {
-		return domainToBundle;
-	}
-
-	return product.meta;
-}
+export { getDomain } from './get-domain';
 
 export function getProductsSlugs() {
 	return JETPACK_PRODUCTS_LIST;
