@@ -27,6 +27,7 @@ import { formatProduct } from './format-product';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 import { isPlan } from './is-plan';
 import { isDomainMapping } from './is-domain-mapping';
+import { isDomainRegistration } from './is-domain-registration';
 
 const productDependencies = {
 	domain: {
@@ -93,6 +94,7 @@ export { isJpphpBundle } from './is-jpphp-bundle';
 export { isPlan } from './is-plan';
 export { isDotComPlan } from './is-dot-com-plan';
 export { isDomainMapping } from './is-domain-mapping';
+export { isDomainRegistration } from './is-domain-registration';
 
 export function isDomainProduct( product ) {
 	product = formatProduct( product );
@@ -106,13 +108,6 @@ export function isDomainRedemption( product ) {
 	assertValidProduct( product );
 
 	return product.product_slug === 'domain_redemption';
-}
-
-export function isDomainRegistration( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return !! product.is_domain_registration;
 }
 
 export function getIncludedDomainPurchaseAmount( product ) {
