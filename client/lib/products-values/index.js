@@ -32,7 +32,7 @@ import {
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
 
-import { planMatches, isEcommercePlan, isBusinessPlan } from 'lib/plans';
+import { planMatches, isEcommercePlan } from 'lib/plans';
 import { domainProductSlugs } from 'lib/domains/constants';
 import schema from './schema.json';
 
@@ -41,6 +41,7 @@ import { formatProduct } from './format-product';
 import { isPersonal } from './is-personal';
 import { isBlogger } from './is-blogger';
 import { isPremium } from './is-premium';
+import { isBusiness } from './is-business';
 
 const productDependencies = {
 	domain: {
@@ -81,13 +82,7 @@ export { isFreeTrial } from './is-free-trial';
 export { isPersonal } from './is-personal';
 export { isBlogger } from './is-blogger';
 export { isPremium } from './is-premium';
-
-export function isBusiness( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return isBusinessPlan( product.product_slug );
-}
+export { isBusiness } from './is-business';
 
 export function isEcommerce( product ) {
 	product = formatProduct( product );
