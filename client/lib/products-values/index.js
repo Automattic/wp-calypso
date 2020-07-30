@@ -98,13 +98,7 @@ export { isDomainRegistration } from './is-domain-registration';
 export { isDomainProduct } from './is-domain-product';
 export { isDomainRedemption } from './is-domain-redemption';
 export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';
-
-export function isSiteRedirect( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === 'offsite_redirect';
-}
+export { isSiteRedirect } from './is-site-redirect';
 
 export function isDomainTransferProduct( product ) {
 	product = formatProduct( product );
