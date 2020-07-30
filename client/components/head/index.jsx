@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import config from 'config';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 const Head = ( {
 	title = 'WordPress.com',
@@ -49,32 +50,8 @@ const Head = ( {
 			<link rel="shortcut icon" type="image/x-icon" href={ faviconURL } sizes="16x16 32x32" />
 			<link rel="icon" type="image/x-icon" href={ faviconURL } sizes="16x16 32x32" />
 
-			<link
-				rel="icon"
-				type="image/png"
-				href={ cdn + '/i/favicons/favicon-64x64.png' }
-				sizes="64x64"
-			/>
-			<link
-				rel="icon"
-				type="image/png"
-				href={ cdn + '/i/favicons/favicon-96x96.png' }
-				sizes="96x96"
-			/>
-			<link
-				rel="icon"
-				type="image/png"
-				href={ cdn + '/i/favicons/android-chrome-192x192.png' }
-				sizes="192x192"
-			/>
-			{ [ 57, 60, 72, 76, 114, 120, 144, 152, 180 ].map( ( size ) => (
-				<link
-					key={ size }
-					rel="apple-touch-icon"
-					sizes={ `${ size }x${ size }` }
-					href={ cdn + `/i/favicons/apple-touch-icon-${ size }x${ size }.png` }
-				/>
-			) ) }
+			{ isJetpackCloud() && <JetpackFavicons /> }
+			{ ! isJetpackCloud() && <WordPressFavicons cdn={ cdn } /> }
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 
@@ -118,6 +95,67 @@ const Head = ( {
 		</head>
 	);
 };
+
+const WordPressFavicons = ( { cdn } ) => (
+	<>
+		<link
+			rel="icon"
+			type="image/png"
+			href={ cdn + '/i/favicons/favicon-64x64.png' }
+			sizes="64x64"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href={ cdn + '/i/favicons/favicon-96x96.png' }
+			sizes="96x96"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href={ cdn + '/i/favicons/android-chrome-192x192.png' }
+			sizes="192x192"
+		/>
+		{ [ 57, 60, 72, 76, 114, 120, 144, 152, 180 ].map( ( size ) => (
+			<link
+				key={ size }
+				rel="apple-touch-icon"
+				sizes={ `${ size }x${ size }` }
+				href={ cdn + `/i/favicons/apple-touch-icon-${ size }x${ size }.png` }
+			/>
+		) ) }
+	</>
+);
+
+const JetpackFavicons = () => (
+	<>
+		<link
+			rel="mask-icon"
+			href="/calypso/images/jetpack/favicons/safari-pinned-tab.svg"
+			color="#00be28"
+		/>
+		<meta name="application-name" content="Jetpack.com" />
+		<meta
+			name="msapplication-config"
+			content="/calypso/images/jetpack/favicons/browserconfig.xml"
+		/>
+		<link
+			rel="icon"
+			sizes="512x512"
+			href="/calypso/images/jetpack/favicons/android-chrome-512x512.png"
+		/>
+		<link
+			rel="icon"
+			sizes="192x192"
+			href="/calypso/images/jetpack/favicons/android-chrome-192x192.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="180x180"
+			href="/calypso/images/jetpack/favicons/apple-touch-icon.png"
+		/>
+	</>
+);
 
 Head.propTypes = {
 	title: PropTypes.string,
