@@ -38,7 +38,29 @@ test/
 
 Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
 
+### devDependencies
+
 It used to be that `devDependencies` needed to be added to the root `package.json` but since we moved to `yarn` workspaces we're able to add them as regular `devDependencies` within the package that uses them.
+
+### dependencies
+
+Running the following in your `wp-calypso` root  
+`yarn workspace @automattic/{{your-package}} run prepare && npx @yarnpkg/doctor packages/{{your-package}}`  
+will output all the unmet dependencies.
+
+### sideEffects
+
+> A "side effect" is defined as code that performs a special behavior when imported, other than exposing one or more exports. An example of this are polyfills, which affect the global scope and usually do not provide an export. [Read more](https://webpack.js.org/guides/tree-shaking/)
+
+If your package contains ie `css` and `scss` files, update your `sideEffects` array as follows:
+
+```json
+{
+	"sideEffects": [ "*.css", "*.scss" ]
+}
+```
+
+failing to do so, will make your package work correctly in the dev build but tree shaking in production builds will result in discarding those files.
 
 ### A sample `package.json`
 
@@ -75,7 +97,10 @@ It used to be that `devDependencies` needed to be added to the root `package.jso
 }
 ```
 
-If your package requires compilation, the `package.json` `prepare` script should compile the package. If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds.
+If your package requires compilation, the `package.json` `prepare` script should compile the package:
+
+- If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
+- If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"prepare": "check-npm-client && transpile && copy-assets"`.
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
@@ -126,9 +151,9 @@ yarn workspace @automattic/your-package run your-script
 When developing packages in Calypso repository that external consumers (like Jetpack repository) depend on, you might want to test them without going through the publishing flow first.
 
 1. Enter the package you're testing
-1. Run [`npm link`](https://docs.npmjs.com/cli/link) — the package will be installed on global scope and symlinked to the folder in Calypso
+1. Run [`yarn link`](https://classic.yarnpkg.com/en/docs/cli/link/) — the package will be installed on global scope and symlinked to the folder in Calypso
 1. Enter the consumer's folder (such as Jetpack)
-1. Type `npm link @automattic/package-name` — the package will be symlinked between Calypso and Jetpack and any modifications you make in Calypso, will show up in Jetpack.
+1. Type `yarn link @automattic/package-name` — the package will be symlinked between Calypso and Jetpack and any modifications you make in Calypso, will show up in Jetpack.
 1. Remember to build your changes between modifications in Calypso.
 
 Note that if you're building with Webpack, you may need to turn off [`resolve.symlinks`](https://webpack.js.org/configuration/resolve/#resolvesymlinks) for it to work as expected.
@@ -219,10 +244,13 @@ NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish from-package --yes
 What if you want to publish just one updated package? `lerna publish from-package` either publishes all eligible packages, or nothing. It doesn't give you a choice. That's where you need `lerna publish from-git`.
 
 To publish only selected packages, you need to create Git tags in form `name@version`. For example:
+
 ```
 git tag "@automattic/calypso-build@6.1.0"
 ```
+
 or
+
 ```
 git tag "@automattic/components@1.0.0"
 ```

@@ -58,6 +58,7 @@ class InlineSupportLink extends Component {
 			iconSize,
 			translate,
 			openDialog,
+			children,
 		} = this.props;
 
 		if ( ! supportPostId && ! supportLink ) {
@@ -71,6 +72,11 @@ class InlineSupportLink extends Component {
 			iconSize,
 		};
 
+		// props.children overrides text prop if both are provided
+		const displayChildren = children != null;
+		const displayText = ! children && showText;
+		const displayIcon = ! children && supportPostId && showIcon;
+
 		return (
 			<LinkComponent
 				className="inline-support-link"
@@ -80,8 +86,9 @@ class InlineSupportLink extends Component {
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				{ showText && ( text || translate( 'Learn more' ) ) }
-				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{ displayChildren && children }
+				{ displayText && ( text || translate( 'Learn more' ) ) }
+				{ displayIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
 			</LinkComponent>
 		);
 	}
