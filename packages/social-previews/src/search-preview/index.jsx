@@ -5,7 +5,13 @@
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { firstValid, hardTruncation, shortEnough, truncatedAtSpace } from '../helpers';
+import {
+	firstValid,
+	hardTruncation,
+	shortEnough,
+	truncatedAtSpace,
+	stripHtmlTags,
+} from '../helpers';
 
 /**
  * Style dependencies
@@ -39,7 +45,7 @@ export default function SearchPreview( { description, title, url } ) {
 				<div className="search-preview__title">{ googleTitle( title ) }</div>
 				<div className="search-preview__url">{ googleUrl( url ) } ▾</div>
 				<div className="search-preview__description">
-					{ googleDescription( description || '' ) }
+					{ googleDescription( stripHtmlTags( description ) ) }
 				</div>
 			</div>
 		</div>
