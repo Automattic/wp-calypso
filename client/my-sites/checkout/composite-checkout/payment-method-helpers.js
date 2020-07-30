@@ -95,19 +95,10 @@ export async function submitPayPalExpressRequest( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-function getDomainDetails() {
+export function getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) {
 	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
-	return prepareDomainContactDetails( managedContactDetails );
-}
-
-export function addDomainDetailsToSubmitData(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails }
-) {
-	return {
-		...submitData,
-		domainDetails: includeDomainDetails || includeGSuiteDetails ? getDomainDetails() : null,
-	};
+	const domainDetails = prepareDomainContactDetails( managedContactDetails );
+	return includeDomainDetails || includeGSuiteDetails ? domainDetails : null;
 }
 
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
