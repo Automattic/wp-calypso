@@ -9,7 +9,6 @@ import { get, pick } from 'lodash';
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import { JETPACK_PRODUCTS_LIST } from './constants';
 import { getJetpackProductsDisplayNames, getJetpackProductsTaglines } from './translations';
-import { PRODUCTS_LIST } from './products-list';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -95,13 +94,7 @@ export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackCloudProductSlug } from './is-jetpack-cloud-product-slug';
 export { isJetpackProductSlug } from './is-jetpack-product-slug';
 export { isJetpackProduct } from './is-jetpack-product';
-
-export function getProductFromSlug( productSlug ) {
-	if ( PRODUCTS_LIST[ productSlug ] ) {
-		return formatProduct( PRODUCTS_LIST[ productSlug ] );
-	}
-	return productSlug; // Consistent behavior with `getPlan`.
-}
+export { getProductFromSlug } from './get-product-from-slug';
 
 export function isJpphpBundle( product ) {
 	product = formatProduct( product );
