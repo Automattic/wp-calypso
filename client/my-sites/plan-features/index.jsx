@@ -64,6 +64,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
+	FEATURE_BUSINESS_ONBOARDING,
+	PLAN_BUSINESS,
 } from 'lib/plans/constants';
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
@@ -832,11 +834,14 @@ export default connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
+				let features = planConstantObj.getPlanCompareFeatures( abtest );
 
-				let planFeatures = getPlanFeaturesObject(
-					planConstantObj.getPlanCompareFeatures( abtest )
-				);
+				// TODO: remove this once Quick Start sessions have been removed from Business Plan
+				if ( PLAN_BUSINESS === plan ) {
+					features = features.filter( ( feature ) => feature !== FEATURE_BUSINESS_ONBOARDING );
+				}
 
+				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
 				}
