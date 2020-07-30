@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { compact } from 'lodash';
-import { firstValid, hardTruncation, shortEnough } from '../helpers';
+import { firstValid, hardTruncation, shortEnough, stripHtmlTags } from '../helpers';
 
 /**
  * Style dependencies
@@ -32,8 +32,6 @@ export class FacebookPreview extends PureComponent {
 	render() {
 		const { url, type, title, description, image, author } = this.props;
 
-		const strippedDescription = description ? description.replace( /<[^>]+>/g, '' ) : '';
-
 		return (
 			<div className={ `facebook-preview facebook-preview__${ type }` }>
 				<div className="facebook-preview__content">
@@ -43,7 +41,7 @@ export class FacebookPreview extends PureComponent {
 					<div className="facebook-preview__body">
 						<div className="facebook-preview__title">{ facebookTitle( title || '' ) }</div>
 						<div className="facebook-preview__description">
-							{ facebookDescription( strippedDescription ) }
+							{ facebookDescription( stripHtmlTags( description ) ) }
 						</div>
 						<div className="facebook-preview__url">
 							{ compact( [ baseDomain( url ), author ] ).join( ' | ' ) }
