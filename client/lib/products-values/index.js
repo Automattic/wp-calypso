@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
+import { assign, get, includes, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,6 +46,8 @@ import {
 import { domainProductSlugs } from 'lib/domains/constants';
 import schema from './schema.json';
 
+import { assertValidProduct } from './utils/assert-valid-product';
+
 const productDependencies = {
 	domain: {
 		domain_redemption: true,
@@ -75,16 +77,6 @@ const productDependencies = {
 		domain_redemption: true,
 	},
 };
-
-function assertValidProduct( product ) {
-	const missingAttributes = difference( schema.required, Object.keys( product ) );
-
-	if ( ! isEmpty( missingAttributes ) ) {
-		throw new Error(
-			'Missing required attributes for ProductValue: [' + missingAttributes.join( ', ' ) + ']'
-		);
-	}
-}
 
 export function formatProduct( product ) {
 	return assign( {}, product, {
