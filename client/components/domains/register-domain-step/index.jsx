@@ -148,7 +148,6 @@ class RegisterDomainStep extends React.Component {
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
 		deemphasiseTlds: PropTypes.array,
-		premiumLevel: PropTypes.number,
 		recordFiltersSubmit: PropTypes.func.isRequired,
 		recordFiltersReset: PropTypes.func.isRequired,
 		vertical: PropTypes.string,
@@ -164,7 +163,6 @@ class RegisterDomainStep extends React.Component {
 		onAddMapping: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
-		premiumLevel: 0,
 		vendor: getSuggestionsVendor(),
 		showExampleSuggestions: false,
 	};
@@ -841,16 +839,12 @@ class RegisterDomainStep extends React.Component {
 
 	getDomainsSuggestions = ( domain, timestamp ) => {
 		const suggestionQuantity = SUGGESTION_QUANTITY - this.getFreeSubdomainSuggestionsQuantity();
-		const premiumLevel = config.isEnabled( 'domains/premium-domain-purchases' )
-			? this.props.premiumLevel
-			: 0;
 
 		const query = {
 			query: domain,
 			quantity: suggestionQuantity,
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
-			premium: premiumLevel,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: this.props.vendor,
 			vertical: this.props.vertical,

@@ -19,17 +19,3 @@ export const getSuggestionsVendor = ( isSignup = false ) => {
 	}
 	return 'variation2_front';
 };
-
-/**
- * Get the premium level to be used for suggestions.
- *
- * @param {boolean} [isSignup=false] Whether we are in the signup flow.
- *
- * @returns {number} Premium level to supply to the domain suggestions query.
- */
-export const getSuggestionsPremiumLevel = ( isSignup = false ) => {
-	if ( isSignup ) {
-		return 0;
-	}
-	return config.isEnabled( 'domains/premium-domain-purchases' ) ? 1 : 0;
-};

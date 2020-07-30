@@ -8,7 +8,6 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { getSuggestionsPremiumLevel } from 'lib/domains/suggestions';
 import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
@@ -300,7 +299,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,
-				premiumLevel: getSuggestionsPremiumLevel( false ),
 				shouldShowDomainTestCopy: false,
 			},
 		},
