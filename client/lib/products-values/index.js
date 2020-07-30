@@ -17,7 +17,6 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_HOST_BUNDLE,
 } from 'lib/plans/constants';
 
 import { domainProductSlugs } from 'lib/domains/constants';
@@ -33,6 +32,7 @@ import { isEcommerce } from './is-ecommerce';
 import { isEnterprise } from './is-enterprise';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
+import { isJpphpBundle } from './is-jpphp-bundle';
 
 const productDependencies = {
 	domain: {
@@ -95,13 +95,7 @@ export { isJetpackCloudProductSlug } from './is-jetpack-cloud-product-slug';
 export { isJetpackProductSlug } from './is-jetpack-product-slug';
 export { isJetpackProduct } from './is-jetpack-product';
 export { getProductFromSlug } from './get-product-from-slug';
-
-export function isJpphpBundle( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === PLAN_HOST_BUNDLE;
-}
+export { isJpphpBundle } from './is-jpphp-bundle';
 
 export function isPlan( product ) {
 	product = formatProduct( product );
