@@ -96,13 +96,7 @@ export { isDotComPlan } from './is-dot-com-plan';
 export { isDomainMapping } from './is-domain-mapping';
 export { isDomainRegistration } from './is-domain-registration';
 export { isDomainProduct } from './is-domain-product';
-
-export function isDomainRedemption( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === 'domain_redemption';
-}
+export { isDomainRedemption } from './is-domain-redemption';
 
 export function getIncludedDomainPurchaseAmount( product ) {
 	product = formatProduct( product );
