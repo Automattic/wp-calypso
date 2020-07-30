@@ -1,10 +1,7 @@
 /**
  * Internal Dependencies
  */
-import { getPlanRawPrice } from 'state/plans/selectors';
-
 import { getUserPurchases } from './get-user-purchases';
-import { getDowngradePlanFromPurchase } from './get-downgrade-plan-from-purchase';
 
 import 'state/purchases/init';
 
@@ -19,14 +16,7 @@ export { siteHasBackupProductPurchase } from './site-has-backup-product-purchase
 export { siteHasScanProductPurchase } from './site-has-scan-product-purchase';
 export { getIncludedDomainPurchase } from './get-included-domain-purchase';
 export { getDowngradePlanFromPurchase } from './get-downgrade-plan-from-purchase';
-
-export const getDowngradePlanRawPrice = ( state, purchase ) => {
-	const plan = getDowngradePlanFromPurchase( purchase );
-	if ( ! plan ) {
-		return null;
-	}
-	return getPlanRawPrice( state, plan.getProductId() );
-};
+export { getDowngradePlanRawPrice } from './get-downgrade-plan-raw-price';
 
 /**
  * Does the user have any current purchases?
