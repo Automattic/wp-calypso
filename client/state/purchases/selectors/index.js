@@ -1,8 +1,6 @@
 /**
  * Internal Dependencies
  */
-import { getUserPurchases } from './get-user-purchases';
-
 import 'state/purchases/init';
 
 export { getPurchases } from './get-purchases';
@@ -17,16 +15,7 @@ export { siteHasScanProductPurchase } from './site-has-scan-product-purchase';
 export { getIncludedDomainPurchase } from './get-included-domain-purchase';
 export { getDowngradePlanFromPurchase } from './get-downgrade-plan-from-purchase';
 export { getDowngradePlanRawPrice } from './get-downgrade-plan-raw-price';
-
-/**
- * Does the user have any current purchases?
- *
- * @param   {object}  state       global state
- * @param   {number}  userId      the user id
- * @returns {boolean} if the user currently has any purchases.
- */
-export const isUserPaid = ( state, userId ) =>
-	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state, userId ).length;
+export { isUserPaid } from './is-user-paid';
 
 export const isFetchingUserPurchases = ( state ) => state.purchases.isFetchingUserPurchases;
 export const isFetchingSitePurchases = ( state ) => state.purchases.isFetchingSitePurchases;
