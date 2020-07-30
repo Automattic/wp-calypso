@@ -7,7 +7,6 @@ import { get, find, some } from 'lodash';
  * Internal Dependencies
  */
 import createSelector from 'lib/create-selector';
-import { createPurchasesArray } from 'lib/purchases/assembler';
 import { isSubscription, needsToRenewSoon } from 'lib/purchases';
 import {
 	getIncludedDomainPurchaseAmount,
@@ -21,18 +20,11 @@ import { getPlan, findPlansKeys } from 'lib/plans';
 import { TYPE_PERSONAL } from 'lib/plans/constants';
 import { getPlanRawPrice } from 'state/plans/selectors';
 
+import { getPurchases } from './get-purchases';
+
 import 'state/purchases/init';
 
-/**
- * Return the list of purchases from state object
- *
- * @param   {object} state - current state object
- * @returns {Array} Purchases
- */
-export const getPurchases = createSelector(
-	( state ) => createPurchasesArray( state.purchases.data ),
-	( state ) => [ state.purchases.data ]
-);
+export { getPurchases } from './get-purchases';
 
 /**
  * Returns a list of Purchases associated with a User from the state using its userId
