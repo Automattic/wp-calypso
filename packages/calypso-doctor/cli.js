@@ -11,13 +11,6 @@ const main = async () => {
 			"If you don't want to run this tool automatically, set the env var CALYPSO_DOCTOR_SKIP=true"
 		)
 	);
-
-	console.log();
-	console.log( chalk.redBright( 'Calypso Doctor is in beta.' ) );
-	console.log(
-		chalk.redBright( 'If you see any error please ignore it, but let Team Calypso know.' )
-	);
-
 	const results = await runEvaluations();
 
 	console.log( '' );
