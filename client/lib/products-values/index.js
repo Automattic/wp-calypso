@@ -60,13 +60,7 @@ export { isDependentProduct } from './is-dependent-product';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
 export { isGoogleApps } from './is-google-apps';
 export { isGuidedTransfer } from './is-guided-transfer';
-
-export function isTheme( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'premium_theme' === product.product_slug;
-}
+export { isTheme } from './is-theme';
 
 export function isCustomDesign( product ) {
 	product = formatProduct( product );
