@@ -154,6 +154,9 @@ class Layout extends Component {
 					config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 					isWooOAuth2Client( this.props.oauth2Client ) &&
 					this.props.wccomFrom,
+				'is-white-signup':
+					'signup' === this.props.sectionName &&
+					'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
 			}
 		);
 
@@ -162,10 +165,6 @@ class Layout extends Component {
 
 			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
 				optionalProps.bodyClass = 'is-new-launch-flow';
-			}
-
-			if ( 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) ) {
-				optionalProps.bodyClass = classnames( optionalProps.bodyClass, 'is-white-signup' );
 			}
 
 			return optionalProps;
