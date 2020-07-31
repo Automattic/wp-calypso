@@ -21,6 +21,7 @@ import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+import GdprBanner from 'blocks/gdpr-banner';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 /**
@@ -127,9 +128,7 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && (
-				<AsyncLoad require="blocks/gdpr-banner" placeholder={ null } />
-			) }
+			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
 		</div>
 	);
 };
