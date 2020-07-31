@@ -28,11 +28,9 @@ const githubIcon = (
 	</SVG>
 );
 
-const Shell = ( props ) => {
-	const El = props.as || 'div';
-	const { className, title, subTitle, icon, body } = props;
+const Shell = ( { as: El = 'div', attrs, className, title, subTitle, icon, body } ) => {
 	return (
-		<El { ...props.attrs } className={ classNames( 'wp-block-a8c-github-template', className ) }>
+		<El { ...attrs } className={ classNames( 'wp-block-a8c-github-template', className ) }>
 			{ typeof icon === 'string' ? (
 				<div className="github-template__icon">{ icon }</div>
 			) : (
@@ -40,22 +38,21 @@ const Shell = ( props ) => {
 			) }
 			<span className="github-template__title">{ title }</span>
 			<div className="github-template__sub-title">{ subTitle }</div>
-			{ props.body && <span className="github-template__body">{ body }</span> }
+			{ body && <span className="github-template__body">{ body }</span> }
 		</El>
 	);
 };
 
-const Edit = ( props ) => {
-	const {
-		onChangeTitle,
-		onChangeUserOrOrg,
-		onChangeRepoName,
-		onChangeBody,
-		title,
-		userOrOrg,
-		repo,
-		body,
-	} = props;
+const Edit = ( {
+	onChangeTitle,
+	onChangeUserOrOrg,
+	onChangeRepoName,
+	onChangeBody,
+	title,
+	userOrOrg,
+	repo,
+	body,
+} ) => {
 	return (
 		<Shell
 			className="is-edit"
@@ -109,28 +106,22 @@ registerBlockType( 'a8c/github-issue-template', {
 			type: 'string',
 		},
 	},
-	edit: ( props ) => {
-		const {
-			attributes,
-			attributes: { userOrOrg, repo },
-			isSelected,
-		} = props;
-
+	edit: ( { setAttributes, attributes, attributes: { userOrOrg, repo }, isSelected } ) => {
 		const handlers = {
 			onChangeUserOrOrg( newUserOrOrg ) {
-				props.setAttributes( { userOrOrg: newUserOrOrg } );
+				setAttributes( { userOrOrg: newUserOrOrg } );
 			},
 
 			onChangeRepoName( newRepo ) {
-				props.setAttributes( { repo: newRepo } );
+				setAttributes( { repo: newRepo } );
 			},
 
 			onChangeTitle( newTitle ) {
-				props.setAttributes( { title: newTitle } );
+				setAttributes( { title: newTitle } );
 			},
 
 			onChangeBody( newBody ) {
-				props.setAttributes( { body: newBody } );
+				setAttributes( { body: newBody } );
 			},
 		};
 
@@ -143,11 +134,7 @@ registerBlockType( 'a8c/github-issue-template', {
 
 		return isValid ? <View { ...viewAttributes } /> : <Invalid />;
 	},
-	save: ( props ) => {
-		const {
-			attributes: { userOrOrg, repo, title, body },
-		} = props;
-
+	save: ( { attributes: { userOrOrg, repo, title, body } } ) => {
 		const isValid = userOrOrg && repo;
 		if ( isValid ) {
 			const url = createIssueUrl( {
