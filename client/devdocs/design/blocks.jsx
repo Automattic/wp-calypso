@@ -83,6 +83,7 @@ import ConversationFollowButton from 'blocks/conversation-follow-button/docs/exa
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 import UserMentions from 'blocks/user-mentions/docs/example';
 import SupportArticleDialog from 'blocks/support-article-dialog/docs/example';
+import TimeMismatchWarning from 'blocks/time-mismatch-warning/docs/example';
 import UpsellNudge from 'blocks/upsell-nudge/docs/example';
 
 export default class AppComponents extends React.Component {
@@ -198,6 +199,7 @@ export default class AppComponents extends React.Component {
 					) }
 					<SupportArticleDialog />
 					<ImageSelector readmeFilePath="image-selector" />
+					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />
 					<UpsellNudge />
 				</Collection>
 			</Main>
