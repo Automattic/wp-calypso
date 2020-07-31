@@ -26,6 +26,7 @@ class DocsExampleWrapper extends Component {
 		name: PropTypes.string.isRequired,
 		unique: PropTypes.bool,
 		url: PropTypes.string.isRequired,
+		onTitleClick: PropTypes.func,
 	};
 
 	state = {
