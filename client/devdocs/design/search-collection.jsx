@@ -110,7 +110,7 @@ const Collection = ( {
 					name={ exampleName }
 					unique={ !! component }
 					url={ exampleLink }
-					pageScroll={ scroll }
+					onTitleClick={ scroll }
 				>
 					{ example }
 				</DocsExampleWrapper>
