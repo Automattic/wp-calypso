@@ -20,7 +20,6 @@ type PlansSlug = Plans.PlanSlug;
 
 export interface Props {
 	header?: React.ReactElement;
-	recommendedPlan?: Plans.Plan;
 	currentPlan?: Plans.Plan;
 	onPlanSelect: ( plan: PlansSlug ) => void;
 	onPickDomainClick?: () => void;
@@ -29,7 +28,6 @@ export interface Props {
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
 	header,
-	recommendedPlan,
 	currentPlan,
 	currentDomain,
 	onPlanSelect,
@@ -44,7 +42,6 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
 					<PlansTable
-						recommendedPlanSlug={ recommendedPlan?.storeSlug ?? '' }
 						selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
 						onPlanSelect={ onPlanSelect }
 						currentDomain={ currentDomain }
