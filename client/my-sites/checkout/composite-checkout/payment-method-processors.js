@@ -117,7 +117,7 @@ export async function stripeCardProcessor( submitData, transactionOptions ) {
 	return pending;
 }
 
-export async function existingCardProcessor( submitData, isLoggedOutCart ) {
+export async function existingCardProcessor( submitData, transactionOptions ) {
 	const pending = submitExistingCardPayment(
 		{
 			...submitData,
@@ -128,7 +128,7 @@ export async function existingCardProcessor( submitData, isLoggedOutCart ) {
 			domainDetails: getDomainDetails( select ),
 		},
 		wpcomTransaction,
-		isLoggedOutCart
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -167,7 +167,7 @@ export async function freePurchaseProcessor( submitData ) {
 	return pending;
 }
 
-export async function fullCreditsProcessor( submitData, isLoggedOutCart ) {
+export async function fullCreditsProcessor( submitData, transactionOptions ) {
 	const pending = submitCreditsTransaction(
 		{
 			...submitData,
@@ -178,7 +178,7 @@ export async function fullCreditsProcessor( submitData, isLoggedOutCart ) {
 			postalCode: null,
 		},
 		wpcomTransaction,
-		isLoggedOutCart
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {

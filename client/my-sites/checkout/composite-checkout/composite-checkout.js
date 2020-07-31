@@ -543,9 +543,9 @@ export default function CompositeCheckout( {
 			eps: ( transactionData ) =>
 				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, siteSlug ),
 			'full-credits': ( transactionData ) =>
-				fullCreditsProcessor( transactionData, isLoggedOutCart ),
+				fullCreditsProcessor( transactionData, transactionOptions ),
 			'existing-card': ( transactionData ) =>
-				existingCardProcessor( transactionData, isLoggedOutCart ),
+				existingCardProcessor( transactionData, transactionOptions ),
 			paypal: ( transactionData ) =>
 				payPalProcessor( transactionData, getThankYouUrl, couponItem, transactionOptions ),
 		} ),
