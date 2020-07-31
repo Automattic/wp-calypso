@@ -28,9 +28,9 @@ const githubIcon = (
 	</SVG>
 );
 
-const Shell = ( { as: El = 'div', attrs, className, title, subTitle, icon, body } ) => {
+const Shell = ( { as: El = 'div', className, title, subTitle, icon, body, ...elementProps } ) => {
 	return (
-		<El { ...attrs } className={ classNames( 'wp-block-a8c-github-template', className ) }>
+		<El { ...elementProps } className={ classNames( 'wp-block-a8c-github-template', className ) }>
 			{ typeof icon === 'string' ? (
 				<div className="github-template__icon">{ icon }</div>
 			) : (
@@ -148,7 +148,7 @@ registerBlockType( 'a8c/github-issue-template', {
 
 			const viewAttributes = { title, userOrOrg, repo };
 
-			return <View as="a" attrs={ { href: url } } { ...viewAttributes } />;
+			return <View as="a" href={ url } { ...viewAttributes } />;
 		}
 	},
 } );
