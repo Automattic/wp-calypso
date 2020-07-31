@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import { TextControl, TextareaControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
-import * as newGithubIssueUrl from 'new-github-issue-url';
+import * as createIssueUrl from 'new-github-issue-url';
 import { SVG } from '@wordpress/primitives';
 import classNames from 'classnames';
 
@@ -154,7 +154,7 @@ registerBlockType( 'a8c/github-issue-template', {
 
 		const isValid = userOrOrg && repo;
 		if ( isValid ) {
-			const url = newGithubIssueUrl( {
+			const url = createIssueUrl( {
 				title,
 				repo,
 				user: userOrOrg,
