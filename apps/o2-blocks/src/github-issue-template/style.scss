@@ -1,21 +1,25 @@
 .wp-block-a8c-github-template {
-  display: block;
-  text-decoration: none;
-  color: #555;
-  box-shadow: inset 40px 0px 0px 0px #6cc644;
   background: #f3f6f8;
-  border: 1px solid #d8e2e9;
   border-radius: 2px;
+  border: 1px solid #d8e2e9;
+  box-shadow: inset 40px 0px 0px 0px #6cc644;
+  color: #555;
+  display: block;
   padding: 4px 6px 4px 50px;
+  position: relative;
+  text-decoration: none;
 
-  &:hover { text-decoration: none; color: #555 }
+  &:hover {
+    color: #555;
+    text-decoration: none;
+  }
 
   .github-template__icon {
-    position: absolute;
-    top: calc(50% - 10px);
-    left: 9px;
     color: white;
     font-size: large;
+    left: 9px;
+    position: absolute;
+    top: calc(50% - 10px);
   }
 
   .github-template__title {
@@ -31,8 +35,8 @@
     box-shadow: inset 40px 0px 0px 0px #FFCC00;
     .github-template__icon {
       color: white;
-      top: calc(50% - 22px);
       font-size: 26px;
+      top: calc(50% - 22px);
     }
    }
 }
