@@ -11,10 +11,10 @@ const os = require( 'os' );
 /**
  * Internal dependencies
  */
-const makePot = require( '../index' );
-const presets = require( '../presets' );
-const concatPot = require( '../utils/concat-pot' );
-const version = require( '../package.json' ).version;
+const makePot = require( './index' );
+const presets = require( './presets' );
+const concatPot = require( './utils/concat-pot' );
+const version = require( './package.json' ).version;
 
 const presetsKeys = Object.keys( presets );
 
