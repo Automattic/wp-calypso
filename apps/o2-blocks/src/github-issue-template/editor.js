@@ -99,15 +99,12 @@ registerBlockType( 'a8c/github-issue-template', {
 	attributes: {
 		userOrOrg: {
 			type: 'string',
-			default: 'automattic',
 		},
 		repo: {
 			type: 'string',
-			default: 'wp-calypso',
 		},
 		title: {
 			type: 'string',
-			default: 'Update Gutenberg to 8.6.0',
 		},
 		body: {
 			type: 'string',
