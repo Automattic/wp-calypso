@@ -125,6 +125,12 @@ class ReaderShare extends React.Component {
 
 	toggle = ( event ) => {
 		event.preventDefault();
+		if ( this.state.showingMenu ) {
+			if ( ! this.shareButton.current.contains( event.target ) ) {
+				return;
+			}
+		}
+
 		if ( ! this.state.showingMenu ) {
 			stats.recordAction( 'open_share' );
 			stats.recordGaEvent( 'Opened Share' );
