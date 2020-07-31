@@ -19,7 +19,6 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import { Step, usePath } from '../../path';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import useRecommendedPlan from '../../hooks/use-recommended-plan';
 
 type PlanSlug = Plans.PlanSlug;
 
@@ -54,8 +53,6 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
-	const recommendedPlan = useRecommendedPlan();
-
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handlePlanSelect = ( planSlug: PlanSlug ) => {
 		// When picking a free plan, if there is a paid domain selected, it's changed automatically to a free domain
@@ -76,10 +73,10 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const header = (
 		<>
 			<div>
-				<Title>{ __( 'Select a plan' ) }</Title>
+				<Title>{ __( 'Choose a plan' ) }</Title>
 				<SubTitle>
 					{ __(
-						'Pick a plan that’s right for you. There’s no risk, you can cancel for a full refund within 30 days.'
+						'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
 					) }
 				</SubTitle>
 			</div>
@@ -93,7 +90,6 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		<div className="gutenboarding-page plans">
 			<PlansGrid
 				header={ header }
-				recommendedPlan={ recommendedPlan }
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
