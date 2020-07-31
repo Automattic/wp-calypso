@@ -72,8 +72,7 @@ const Edit = ( props ) => {
 	);
 };
 
-const View = ( props ) => {
-	const { title, userOrOrg, repo, ...rest } = props;
+const View = ( { title, userOrOrg, repo, ...rest } ) => {
 	return (
 		<Shell
 			title={ `${ __( 'Create Issue:' ) } ${ title }` }
