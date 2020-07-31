@@ -56,15 +56,19 @@ const Edit = ( {
 	return (
 		<Shell
 			className="is-edit"
-			title={ <TextControl onChange={ onChangeTitle } value={ title } /> }
+			title={ <TextControl placeholder="Issue Title" onChange={ onChangeTitle } value={ title } /> }
 			subTitle={
 				<>
-					<TextControl onChange={ onChangeUserOrOrg } value={ userOrOrg } />
+					<TextControl
+						placeholder="User or Organization"
+						onChange={ onChangeUserOrOrg }
+						value={ userOrOrg }
+					/>
 					&nbsp;/&nbsp;
-					<TextControl onChange={ onChangeRepoName } value={ repo } />
+					<TextControl placeholder="Repository" onChange={ onChangeRepoName } value={ repo } />
 				</>
 			}
-			body={ <TextareaControl onChange={ onChangeBody } value={ body } /> }
+			body={ <TextareaControl placeholder="Issue Body" onChange={ onChangeBody } value={ body } /> }
 		/>
 	);
 };
