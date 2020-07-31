@@ -192,6 +192,7 @@ ul.plan-item__feature-item-group {
 		color: var( --studio-blue-40 );
 		display: flex;
 		align-items: flex-start;
+		padding: 0;
 	}
 
 	// the tick
@@ -209,10 +210,6 @@ ul.plan-item__feature-item-group {
 
 		// to make the tick thicker
 		stroke: rgb( 74, 161, 80 );
-	}
-
-	&.is-picked.is-link {
-		padding: 0;
 	}
 }
 
