@@ -7,7 +7,7 @@ import {
 	SUPPORT_HISTORY_SET,
 } from 'state/action-types';
 import courses from './courses/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 import directly from './directly/reducer';
 import ticket from './ticket/reducer';
 
@@ -59,7 +59,7 @@ export const supportHistory = ( state = [], { type, items } ) => {
 	}
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	courses,
 	directly,
 	links,
@@ -67,3 +67,5 @@ export default combineReducers( {
 	selectedSiteId,
 	supportHistory,
 } );
+
+export default withStorageKey( 'help', combinedReducer );

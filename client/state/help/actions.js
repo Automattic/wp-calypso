@@ -11,6 +11,7 @@ import {
 
 import 'state/data-layer/wpcom/help/search';
 import 'state/data-layer/wpcom/help/support-history';
+import 'state/help/init';
 
 export const selectSiteId = ( siteId ) => ( {
 	type: HELP_CONTACT_FORM_SITE_SELECT,
