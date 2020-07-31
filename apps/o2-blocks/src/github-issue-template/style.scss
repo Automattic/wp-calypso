@@ -33,11 +33,12 @@
 
    &.is-warning {
     box-shadow: inset 40px 0px 0px 0px #FFCC00;
+    padding-bottom: 10px;
 
     .github-template__icon {
       color: white;
       font-size: 26px;
-      top: calc(50% - 22px);
+      top: calc(50% - 23px);
     }
 
     .github-template__sub-title {

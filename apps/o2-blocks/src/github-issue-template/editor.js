@@ -82,9 +82,9 @@ const View = ( { title, userOrOrg, repo, ...rest } ) => (
 const Invalid = () => (
 	<Shell
 		className="is-warning"
-		title={ __( 'You must provide an org and repo!' ) }
+		title={ __( 'Please fill in the required fields' ) }
 		subTitle={ __(
-			'Please click here to fill the required fields and to avoid the block from not rendering in the frontend.'
+			'Title, Org, and Repository are required. Select this block to open the form and fill them.'
 		) }
 		icon="⚠"
 	/>
@@ -108,7 +108,7 @@ registerBlockType( 'a8c/github-issue-template', {
 			type: 'string',
 		},
 	},
-	edit: ( { setAttributes, attributes, attributes: { userOrOrg, repo }, isSelected } ) => {
+	edit: ( { setAttributes, attributes, attributes: { title, userOrOrg, repo }, isSelected } ) => {
 		const handlers = {
 			onChangeUserOrOrg( newUserOrOrg ) {
 				setAttributes( { userOrOrg: newUserOrOrg } );
@@ -127,7 +127,7 @@ registerBlockType( 'a8c/github-issue-template', {
 			},
 		};
 
-		const isValid = userOrOrg && repo;
+		const isValid = title && userOrOrg && repo;
 		const { body, ...viewAttributes } = attributes;
 
 		if ( isSelected ) {
@@ -137,7 +137,7 @@ registerBlockType( 'a8c/github-issue-template', {
 		return isValid ? <View { ...viewAttributes } /> : <Invalid />;
 	},
 	save: ( { attributes: { userOrOrg, repo, title, body } } ) => {
-		const isValid = userOrOrg && repo;
+		const isValid = title && userOrOrg && repo;
 		if ( isValid ) {
 			const url = createIssueUrl( {
 				title,
