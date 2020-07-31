@@ -33,22 +33,8 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	// Else, we're showing Domains step before Plans step.
 	let steps =
 		siteTitle?.length > 1
-			? [
-					Step.IntentGathering,
-					Step.Domains,
-					Step.DesignSelection,
-					Step.Style,
-					Step.Features,
-					Step.Plans,
-			  ]
-			: [
-					Step.IntentGathering,
-					Step.DesignSelection,
-					Step.Style,
-					Step.Domains,
-					Step.Features,
-					Step.Plans,
-			  ];
+			? [ Step.IntentGathering, Step.Domains, Step.DesignSelection, Step.Style, Step.Plans ]
+			: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
