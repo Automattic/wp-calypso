@@ -71,14 +71,14 @@ function storedCardsReducer( state, action ) {
 	}
 }
 
-export async function submitExistingCardPayment( transactionData, submit ) {
+export async function submitExistingCardPayment( transactionData, submit, isLoggedOutCart ) {
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, isLoggedOutCart );
 }
 
 export async function submitApplePayPayment( transactionData, submit ) {
@@ -138,14 +138,14 @@ export async function submitStripeRedirectTransaction( paymentMethodId, transact
 	return submit( formattedTransactionData );
 }
 
-export function submitCreditsTransaction( transactionData, submit ) {
+export function submitCreditsTransaction( transactionData, submit, isLoggedOutCart ) {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting full credits transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, isLoggedOutCart );
 }
 
 export function submitFreePurchaseTransaction( transactionData, submit ) {
