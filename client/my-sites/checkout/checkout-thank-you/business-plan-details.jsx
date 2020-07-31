@@ -32,13 +32,7 @@ function trackOnboardingButtonClick() {
 	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
-const BusinessPlanDetails = ( {
-	selectedSite,
-	sitePlans,
-	selectedFeature,
-	purchases,
-	displayMode,
-} ) => {
+const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
 	const shouldPromoteJetpack = useSelector( ( state ) =>
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
 	);
@@ -46,6 +40,7 @@ const BusinessPlanDetails = ( {
 	const plan = find( sitePlans.data, isBusiness );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 
+	const locale = i18n.getLocaleSlug();
 	return (
 		<div>
 			{ googleAppsWasPurchased && <GoogleAppsDetails purchases={ purchases } /> }
@@ -68,17 +63,19 @@ const BusinessPlanDetails = ( {
 				hasDomainCredit={ plan && plan.hasDomainCredit }
 			/>
 
-			<PurchaseDetail
-				icon={ <img alt="" src={ conciergeImage } /> }
-				title={ i18n.translate( 'Get personalized help' ) }
-				description={ i18n.translate(
-					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
-						'your site and learn more about WordPress.com.'
-				) }
-				buttonText={ i18n.translate( 'Schedule a session' ) }
-				href={ `/me/concierge/${ selectedSite.slug }/book` }
-				onClick={ trackOnboardingButtonClick }
-			/>
+			{ ( 'en' === locale || i18n.hasTranslation( 'Purchase a session' ) ) && (
+				<PurchaseDetail
+					icon={ <img alt="" src={ conciergeImage } /> }
+					title={ i18n.translate( 'Get personalized help' ) }
+					description={ i18n.translate(
+						'Schedule a Quick Start session with a Happiness Engineer to set up ' +
+							'your site and learn more about WordPress.com.'
+					) }
+					buttonText={ i18n.translate( 'Purchase a session' ) }
+					href={ `/checkout/offer-quickstart-session` }
+					onClick={ trackOnboardingButtonClick }
+				/>
+			) }
 
 			{ ! selectedFeature && (
 				<PurchaseDetail
