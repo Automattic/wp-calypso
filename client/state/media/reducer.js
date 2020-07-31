@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { isEmpty, mapValues, omit, pickBy, without, isNil, merge } from 'lodash';
+import { isEmpty, mapValues, omit, pickBy, without, isNil, merge, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -496,9 +496,15 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 		case MEDIA_SET_QUERY: {
 			const { siteId, query } = action;
 
+			const newState = { ...state[ siteId ], query };
+
+			if ( ! isEqual( query, state[ siteId ]?.query ) ) {
+				delete newState.nextPageHandle;
+			}
+
 			return {
 				...state,
-				[ siteId ]: { ...state[ siteId ], query },
+				[ siteId ]: newState,
 			};
 		}
 	}

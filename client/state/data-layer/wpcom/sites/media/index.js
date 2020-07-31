@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { toPairs } from 'lodash';
+import { toPairs, isEqual, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +38,7 @@ import {
 } from 'state/media/utils/flux-adapter';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import getNextPageQuery from 'state/selectors/get-next-page-query';
 
 /**
  * Module variables
@@ -107,7 +108,16 @@ export function requestMedia( action ) {
 	];
 }
 
-export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch ) => {
+export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch, getState ) => {
+	if (
+		! isEqual(
+			omit( query, 'page_handle' ),
+			omit( getNextPageQuery( getState(), siteId ), 'page_handle' )
+		)
+	) {
+		dispatch( successMediaRequest( siteId, query ) );
+		return;
+	}
 	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
 	dispatch( successMediaRequest( siteId, query ) );
 	dispatch( setNextPageHandle( siteId, data.meta ) );
