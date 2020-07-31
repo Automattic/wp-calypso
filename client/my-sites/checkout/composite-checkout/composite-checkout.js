@@ -39,6 +39,7 @@ import {
 	requestContactDetailsCache,
 	updateContactDetailsCache,
 } from 'state/domains/management/actions';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { StateSelect } from 'my-sites/domains/components/form';
@@ -531,6 +532,7 @@ export default function CompositeCheckout( {
 	return (
 		<React.Fragment>
 			<QuerySitePlans siteId={ siteId } />
+			<QuerySitePurchases siteId={ siteId } />
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
