@@ -82,8 +82,10 @@ const View = ( { title, userOrOrg, repo, ...rest } ) => {
 const Invalid = () => (
 	<Shell
 		className="is-warning"
-		title="You must provide an org and repo!"
-		subTitle="Please click here to re-configure to avoid the block from not rendering in the frontend"
+		title={ __( 'You must provide an org and repo!' ) }
+		subTitle={ __(
+			'Please click here to re-configure to avoid the block from not rendering in the frontend'
+		) }
 		icon="⚠"
 	/>
 );
