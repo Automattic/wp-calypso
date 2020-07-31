@@ -77,7 +77,7 @@ const View = ( props ) => {
 	return (
 		<Shell
 			title={ `${ __( 'Create Issue:' ) } ${ title }` }
-			subTitle={ `${ userOrOrg }/${ repo } ` }
+			subTitle={ `${ userOrOrg }/${ repo }` }
 			{ ...rest }
 		/>
 	);
