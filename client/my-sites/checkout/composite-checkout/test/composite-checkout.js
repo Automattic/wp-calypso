@@ -207,6 +207,7 @@ describe( 'CompositeCheckout', () => {
 						},
 					},
 				},
+				purchases: {},
 				countries: { payments: countryList, domains: countryList },
 			};
 		} );
