@@ -15,7 +15,6 @@ import {
 	RightColumn,
 } from 'my-sites/checkout/composite-checkout/wpcom/components/ie-fallback';
 import Spinner from 'my-sites/checkout/composite-checkout/wpcom/components/spinner';
-import { isValid } from 'my-sites/checkout/composite-checkout/wpcom/types';
 import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
@@ -76,17 +75,11 @@ export default function CreditCardFields() {
 	const getErrorMessagesForField = ( key ) => {
 		const managedValue = getField( key );
 
-		if ( managedValue.isRequired && managedValue.value === '' ) {
+		if ( managedValue?.isRequired && managedValue?.value === '' ) {
 			return [ __( 'This field is required.' ) ];
 		}
 
-		if ( ! isValid( getField( key ) ) ) {
-			return managedValue?.errors?.length !== 0
-				? managedValue.errors
-				: [ __( 'There is an error in this field.' ) ];
-		}
-
-		return [];
+		return managedValue.errors ?? [];
 	};
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== 'ready';
