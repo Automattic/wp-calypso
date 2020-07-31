@@ -13,19 +13,23 @@ import { isArray } from 'lodash';
  * Internal Dependencies
  */
 import CheckoutContainer from './checkout/checkout-container';
-import DuplicateProductNoticeContent from './checkout/duplicate-product-notice-content';
+import IncludedProductNoticeContent from './checkout/included-product-notice-content';
+import OwnedProductNoticeContent from './checkout/owned-product-notice-content';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
 import { GROUP_JETPACK } from 'lib/plans/constants';
-import { isJetpackBackup } from 'lib/products-values';
+import { isJetpackBackup, isJetpackBackupSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { isJetpackSite, getSiteProducts } from 'state/sites/selectors';
+import { isJetpackSite, getSiteProducts, getSitePlan } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
-import { isPlanIncludingSiteBackup } from 'state/sites/products/conflicts';
+import {
+	isPlanIncludingSiteBackup,
+	isBackupProductIncludedInSitePlan,
+} from 'state/sites/products/conflicts';
 import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -56,20 +60,36 @@ export default function CheckoutSystemDecider( {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
-	const isIncludingSiteBackup = useSelector( ( state ) =>
+	const isJetpackPlanIncludingSiteBackup = useSelector( ( state ) =>
 		jetpackPlan ? isPlanIncludingSiteBackup( state, siteId, jetpackPlan.getStoreSlug() ) : null
 	);
-	const products = useSelector( ( state ) => getSiteProducts( state, siteId ) );
+	const isBackupIncludedInSitePlan = useSelector( ( state ) =>
+		isJetpackBackupSlug( product )
+			? isBackupProductIncludedInSitePlan( state, siteId, product )
+			: null
+	);
+	const currentProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
+	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 
-	let duplicateBackupNotice;
+	let infoMessage;
 
-	if ( isIncludingSiteBackup && selectedSite ) {
-		const backupProduct = isArray( products ) && products.find( isJetpackBackup );
+	if ( isJetpackPlanIncludingSiteBackup && selectedSite ) {
+		const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
 
-		duplicateBackupNotice = backupProduct && (
-			<DuplicateProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
+		infoMessage = backupProduct && (
+			<OwnedProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
+		);
+	}
+
+	if ( isBackupIncludedInSitePlan && selectedSite ) {
+		infoMessage = currentPlan && (
+			<IncludedProductNoticeContent
+				plan={ currentPlan }
+				productSlug={ product }
+				selectedSite={ selectedSite }
+			/>
 		);
 	}
 
@@ -154,7 +174,7 @@ export default function CheckoutSystemDecider( {
 						plan={ plan }
 						cart={ cart }
 						isComingFromUpsell={ isComingFromUpsell }
-						infoMessage={ duplicateBackupNotice }
+						infoMessage={ infoMessage }
 					/>
 				</StripeHookProvider>
 			</CheckoutErrorBoundary>
@@ -177,7 +197,7 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
-			infoMessage={ duplicateBackupNotice }
+			infoMessage={ infoMessage }
 		/>
 	);
 }

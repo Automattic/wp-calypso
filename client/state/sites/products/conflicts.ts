@@ -2,8 +2,11 @@
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
+	FEATURE_JETPACK_BACKUP_REALTIME,
+	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_BUSINESS,
@@ -25,7 +28,7 @@ import {
 } from 'lib/products-values/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import isSiteWPCOM from 'state/selectors/is-site-wpcom';
-import { isJetpackSiteMultiSite, hasSiteProduct } from 'state/sites/selectors';
+import { isJetpackSiteMultiSite, hasSiteProduct, getSitePlanSlug } from 'state/sites/selectors';
 
 /**
  * Type dependencies
@@ -42,10 +45,10 @@ import type { CartItemValue } from 'lib/cart-values/types';
  */
 export const isAntiSpamConflicting = createSelector(
 	( state: AppState, siteId: number ): boolean | null => {
-		const planHasFeature = hasFeature( state, siteId, FEATURE_SPAM_AKISMET_PLUS );
+		const hasPlanFeature = hasFeature( state, siteId, FEATURE_SPAM_AKISMET_PLUS );
 		const isWPCOM = isSiteWPCOM( state, siteId );
 		const hasAntiSpam = hasSiteProduct( state, siteId, JETPACK_ANTI_SPAM_PRODUCTS );
-		return planHasFeature || isWPCOM || hasAntiSpam;
+		return hasPlanFeature || isWPCOM || hasAntiSpam;
 	},
 	[
 		( state: AppState, siteId: number ) => [
@@ -138,6 +141,55 @@ export const isPlanIncludingSiteBackup = createSelector(
 				PRODUCT_JETPACK_BACKUP_REALTIME,
 				PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 			] ),
+		],
+	]
+);
+
+/**
+ * Check if a Backup product is already included in a site plan.
+ *
+ * @param {AppState} state The redux state.
+ * @param {number} siteId The site ID.
+ * @param {string} productSlug The product slug.
+ * @returns {boolean|null} True if the product is already included in a plan, or null when it's unable to be determined.
+ */
+export const isBackupProductIncludedInSitePlan = createSelector(
+	( state: AppState, siteId: number | null, productSlug: string ): boolean | null => {
+		if ( ! siteId ) {
+			return null;
+		}
+
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
+
+		if ( ! sitePlanSlug || ! JETPACK_PLANS.includes( sitePlanSlug ) ) {
+			return null;
+		}
+
+		let feature;
+
+		if (
+			[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes( productSlug )
+		) {
+			feature = FEATURE_JETPACK_BACKUP_DAILY;
+		} else if (
+			[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
+				productSlug
+			)
+		) {
+			feature = FEATURE_JETPACK_BACKUP_REALTIME;
+		} else {
+			return null;
+		}
+
+		return (
+			planHasFeature( sitePlanSlug, feature ) || planHasSuperiorFeature( sitePlanSlug, feature )
+		);
+	},
+	[
+		( state: AppState, siteId: number | null, productSlug: string ) => [
+			siteId,
+			productSlug,
+			getSitePlanSlug( state, siteId ),
 		],
 	]
 );
