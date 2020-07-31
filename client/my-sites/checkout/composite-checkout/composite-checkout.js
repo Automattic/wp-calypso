@@ -204,7 +204,7 @@ export default function CompositeCheckout( {
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
-		cartKey: siteId,
+		cartKey: isLoggedOutCart ? siteSlug : siteId,
 		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsToAdd: productsForCart,
 		couponToAdd: couponCodeFromUrl,
