@@ -38,6 +38,7 @@ import {
 	getPlanPath,
 	isFreePlan,
 	isWpComEcommercePlan,
+	isWpComBusinessPlan,
 	getPlanClass,
 } from 'lib/plans';
 import {
@@ -65,7 +66,6 @@ import {
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
 	FEATURE_BUSINESS_ONBOARDING,
-	PLAN_BUSINESS,
 } from 'lib/plans/constants';
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
@@ -837,7 +837,7 @@ export default connect(
 				let features = planConstantObj.getPlanCompareFeatures( abtest );
 
 				// TODO: remove this once Quick Start sessions have been removed from Business Plan
-				if ( PLAN_BUSINESS === plan ) {
+				if ( isWpComBusinessPlan( plan ) ) {
 					features = features.filter( ( feature ) => feature !== FEATURE_BUSINESS_ONBOARDING );
 				}
 
