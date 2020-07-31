@@ -23,17 +23,30 @@ import {
 describe( 'media request', () => {
 	test( 'should dispatch SUCCESS action when request completes', () => {
 		const dispatch = jest.fn();
+		const getState = jest.fn( () => ( {
+			media: {
+				fetching: {
+					2916284: {
+						query: {
+							mime_type: 'image/',
+						},
+					},
+				},
+			},
+		} ) );
 
 		const meta = Symbol( 'media request meta' );
 
-		requestMediaSuccess(
-			{ siteId: 2916284, query: 'a=b' },
-			{ media: { ID: 10, title: 'media title' }, found: true, meta }
-		)( dispatch );
+		const query = { number: 20, mime_type: 'image/' };
 
-		expect( dispatch ).toHaveBeenCalledWith( successMediaRequest( 2916284, 'a=b' ) );
+		requestMediaSuccess(
+			{ siteId: 2916284, query },
+			{ media: { ID: 10, title: 'media title' }, found: true, meta }
+		)( dispatch, getState );
+
+		expect( dispatch ).toHaveBeenCalledWith( successMediaRequest( 2916284, query ) );
 		expect( dispatch ).toHaveBeenCalledWith(
-			receiveMedia( 2916284, { ID: 10, title: 'media title' }, true, 'a=b' )
+			receiveMedia( 2916284, { ID: 10, title: 'media title' }, true, query )
 		);
 		expect( dispatch ).toHaveBeenCalledWith( setNextPageHandle( 2916284, meta ) );
 	} );
