@@ -10,11 +10,7 @@ import { useSelector } from 'react-redux';
  * Internal Dependencies
  */
 import { getSitePurchases } from 'state/purchases/selectors';
-
-type Product = {
-	productSlug: string;
-	productName: string;
-};
+import type { SiteProduct } from 'state/sites/selectors/get-site-products';
 
 type Site = {
 	ID: number;
@@ -22,7 +18,7 @@ type Site = {
 };
 
 type Props = {
-	product: Product;
+	product: SiteProduct;
 	selectedSite: Site;
 };
 

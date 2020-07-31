@@ -17,7 +17,7 @@ export interface SiteProduct {
 	userIsOwner: boolean;
 }
 
-interface RawSiteProduct {
+export interface RawSiteProduct {
 	product_id: string;
 	product_slug: string;
 	product_name: string;

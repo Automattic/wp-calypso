@@ -11,11 +11,8 @@ import { useSelector } from 'react-redux';
  */
 import { getProductBySlug } from 'state/products-list/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
-
-type Plan = {
-	product_slug: string;
-	product_name_short: string;
-};
+import type { Plan } from 'state/plans/types';
+import type { RawSiteProduct } from 'state/sites/selectors/get-site-products';
 
 type Site = {
 	ID: number;
@@ -33,7 +30,9 @@ const IncludedProductNoticeContent: FunctionComponent< Props > = ( {
 	productSlug,
 	selectedSite,
 } ) => {
-	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
+	const product = useSelector( ( state ) =>
+		getProductBySlug( state, productSlug )
+	) as RawSiteProduct;
 	const translate = useTranslate();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const purchase = isArray( purchases )
@@ -52,7 +51,7 @@ const IncludedProductNoticeContent: FunctionComponent< Props > = ( {
 					{
 						args: {
 							plan: plan.product_name_short,
-							product: ( product as any )?.product_name,
+							product: product?.product_name,
 						},
 						comment:
 							'The `plan` variable refers to the short name of the plan the customer owns already. `product` refers to the product in the cart that is already included in the plan.',
