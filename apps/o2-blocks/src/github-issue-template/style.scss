@@ -5,7 +5,7 @@
   box-shadow: inset 40px 0px 0px 0px #6cc644;
   color: #555;
   display: block;
-  padding: 4px 6px 4px 50px;
+  padding: 4px 6px 8px 50px;
   position: relative;
   text-decoration: none;
 
@@ -33,10 +33,15 @@
 
    &.is-warning {
     box-shadow: inset 40px 0px 0px 0px #FFCC00;
+
     .github-template__icon {
       color: white;
       font-size: 26px;
       top: calc(50% - 22px);
+    }
+
+    .github-template__sub-title {
+      line-height: initial;
     }
    }
 }
