@@ -52,36 +52,32 @@ const Edit = ( {
 	userOrOrg,
 	repo,
 	body,
-} ) => {
-	return (
-		<Shell
-			className="is-edit"
-			title={ <TextControl placeholder="Issue Title" onChange={ onChangeTitle } value={ title } /> }
-			subTitle={
-				<>
-					<TextControl
-						placeholder="User or Organization"
-						onChange={ onChangeUserOrOrg }
-						value={ userOrOrg }
-					/>
-					&nbsp;/&nbsp;
-					<TextControl placeholder="Repository" onChange={ onChangeRepoName } value={ repo } />
-				</>
-			}
-			body={ <TextareaControl placeholder="Issue Body" onChange={ onChangeBody } value={ body } /> }
-		/>
-	);
-};
+} ) => (
+	<Shell
+		className="is-edit"
+		title={ <TextControl placeholder="Issue Title" onChange={ onChangeTitle } value={ title } /> }
+		subTitle={
+			<>
+				<TextControl
+					placeholder="User or Organization"
+					onChange={ onChangeUserOrOrg }
+					value={ userOrOrg }
+				/>
+				&nbsp;/&nbsp;
+				<TextControl placeholder="Repository" onChange={ onChangeRepoName } value={ repo } />
+			</>
+		}
+		body={ <TextareaControl placeholder="Issue Body" onChange={ onChangeBody } value={ body } /> }
+	/>
+);
 
-const View = ( { title, userOrOrg, repo, ...rest } ) => {
-	return (
-		<Shell
-			title={ `${ __( 'Create Issue:' ) } ${ title }` }
-			subTitle={ `${ userOrOrg }/${ repo }` }
-			{ ...rest }
-		/>
-	);
-};
+const View = ( { title, userOrOrg, repo, ...rest } ) => (
+	<Shell
+		title={ `${ __( 'Create Issue:' ) } ${ title }` }
+		subTitle={ `${ userOrOrg }/${ repo }` }
+		{ ...rest }
+	/>
+);
 
 const Invalid = () => (
 	<Shell
