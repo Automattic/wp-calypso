@@ -34,6 +34,7 @@
 
 .reader-share__button-label {
 	margin-left: 6px;
+	font-weight: normal;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
