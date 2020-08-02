@@ -1,16 +1,22 @@
-.reader-share__button {
-	align-items: center;
-	box-sizing: border-box;
+.reader-share__button.button {
 	color: var( --color-text-subtle );
-	display: inline-flex;
 	padding: 4px;
 	position: relative;
 
 	&:hover,
-	&:focus,
 	&:active {
-		cursor: pointer;
 		color: var( --color-primary );
+	}
+
+	&:focus {
+		outline: thin dotted;
+	}
+
+	&.is-borderless {
+		.gridicon {
+			width: 18px;
+			height: 18px;
+		}
 	}
 
 	.gridicon {
