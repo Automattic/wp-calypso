@@ -2,6 +2,8 @@
 	color: var( --color-text-subtle );
 	padding: 4px;
 	position: relative;
+	display: inline-flex;
+	align-items: center;
 
 	&:hover,
 	&:active {
@@ -14,8 +16,11 @@
 
 	&.is-borderless {
 		.gridicon {
-			width: 18px;
-			height: 18px;
+			width: unset;
+			height: unset;
+			margin-right: 0;
+			margin-top: 0;
+			top: 0;
 		}
 	}
 
