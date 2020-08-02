@@ -1163,6 +1163,34 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				border-color: transparent;
 			}
 		}
+
+		.jetpack-connect__magic-link-card {
+			text-align: center;
+			border-radius: 3px;
+			@include elevation( 1dp );
+			padding: 32px;
+
+			p {
+				font-size: $font-body;
+				line-height: 24px;
+				color: var( --color-neutral-60 );
+				margin-bottom: 0;
+			}
+
+			img {
+				margin: 24px;
+			}
+
+			.jetpack-connect__magic-link-resend {
+				font-size: $font-body-small;
+
+				button {
+					cursor: pointer;
+					text-decoration: underline;
+					color: var( --color-neutral-60 );
+				}
+			}
+		}
 	}
 
 	&.is-jetpack-woo-dna-flow .login__form-header-wrapper {
