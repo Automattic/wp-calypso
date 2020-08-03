@@ -26,7 +26,7 @@ export default function WPCheckoutOrderReview( {
 	onChangePlanLength,
 	siteUrl,
 	isSummary,
-	isLoggedOutCart,
+	createUserAndSiteBeforeTransaction,
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -58,7 +58,7 @@ export default function WPCheckoutOrderReview( {
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
-					isLoggedOutCart={ isLoggedOutCart }
+					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				/>
 			</WPOrderReviewSection>
 

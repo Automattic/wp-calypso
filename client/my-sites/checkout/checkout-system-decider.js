@@ -58,6 +58,7 @@ export default function CheckoutSystemDecider( {
 	clearTransaction,
 	cart,
 	isLoggedOutCart,
+	isNoSiteCart,
 } ) {
 	const siteId = selectedSite?.ID;
 	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
@@ -151,7 +152,11 @@ export default function CheckoutSystemDecider( {
 		let siteSlug = selectedSite?.slug;
 
 		if ( ! siteSlug ) {
-			siteSlug = isLoggedOutCart ? 'no-user' : 'no-site';
+			siteSlug = 'no-site';
+
+			if ( isLoggedOutCart || isNoSiteCart ) {
+				siteSlug = 'no-user';
+			}
 		}
 
 		return (
@@ -173,12 +178,13 @@ export default function CheckoutSystemDecider( {
 							cart={ cart }
 							isComingFromUpsell={ isComingFromUpsell }
 							isLoggedOutCart={ isLoggedOutCart }
-							getCart={ isLoggedOutCart ? () => Promise.resolve( cart ) : null }
+							isNoSiteCart={ isNoSiteCart }
+							getCart={ isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( cart ) : null }
 							infoMessage={ duplicateBackupNotice }
 						/>
 					</StripeHookProvider>
 				</CheckoutErrorBoundary>
-				{ isLoggedOutCart && <Recaptcha /> }
+				{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 			</>
 		);
 	}
