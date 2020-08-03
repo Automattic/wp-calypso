@@ -29,6 +29,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import { logToLogstash } from 'state/logstash/actions';
 import { isPlanIncludingSiteBackup } from 'state/sites/products/conflicts';
 import { abtest } from 'lib/abtest';
+import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -57,6 +58,7 @@ export default function CheckoutSystemDecider( {
 	clearTransaction,
 	cart,
 	isLoggedOutCart,
+	isNoSiteCart,
 } ) {
 	const siteId = selectedSite?.ID;
 	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
@@ -150,32 +152,40 @@ export default function CheckoutSystemDecider( {
 		let siteSlug = selectedSite?.slug;
 
 		if ( ! siteSlug ) {
-			siteSlug = isLoggedOutCart ? 'no-user' : 'no-site';
+			siteSlug = 'no-site';
+
+			if ( isLoggedOutCart || isNoSiteCart ) {
+				siteSlug = 'no-user';
+			}
 		}
 
 		return (
-			<CheckoutErrorBoundary
-				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-				onError={ logCheckoutError }
-			>
-				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-					<CompositeCheckout
-						siteSlug={ siteSlug }
-						siteId={ selectedSite?.ID }
-						product={ product }
-						purchaseId={ purchaseId }
-						couponCode={ couponCode }
-						redirectTo={ redirectTo }
-						feature={ selectedFeature }
-						plan={ plan }
-						cart={ cart }
-						isComingFromUpsell={ isComingFromUpsell }
-						isLoggedOutCart={ isLoggedOutCart }
-						getCart={ isLoggedOutCart ? () => Promise.resolve( cart ) : null }
-						infoMessage={ duplicateBackupNotice }
-					/>
-				</StripeHookProvider>
-			</CheckoutErrorBoundary>
+			<>
+				<CheckoutErrorBoundary
+					errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+					onError={ logCheckoutError }
+				>
+					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+						<CompositeCheckout
+							siteSlug={ siteSlug }
+							siteId={ selectedSite?.ID }
+							product={ product }
+							purchaseId={ purchaseId }
+							couponCode={ couponCode }
+							redirectTo={ redirectTo }
+							feature={ selectedFeature }
+							plan={ plan }
+							cart={ cart }
+							isComingFromUpsell={ isComingFromUpsell }
+							isLoggedOutCart={ isLoggedOutCart }
+							isNoSiteCart={ isNoSiteCart }
+							getCart={ isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( cart ) : null }
+							infoMessage={ duplicateBackupNotice }
+						/>
+					</StripeHookProvider>
+				</CheckoutErrorBoundary>
+				{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
+			</>
 		);
 	}
 

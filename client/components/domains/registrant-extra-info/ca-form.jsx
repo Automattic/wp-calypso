@@ -37,10 +37,14 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		ccTldDetails: PropTypes.object.isRequired,
 		onContactDetailsChange: PropTypes.func,
 		contactDetailsValidationErrors: PropTypes.object,
-		userWpcomLang: PropTypes.string.isRequired,
+		userWpcomLang: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		updateContactDetailsCache: PropTypes.func.isRequired,
 		isManaged: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		userWpcomLang: 'EN',
 	};
 
 	constructor( props ) {
@@ -107,7 +111,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		// Set the lang to FR if user languages is French, otherwise leave EN
-		if ( this.props.userWpcomLang.match( /^fr-?/i ) ) {
+		if ( this.props.userWpcomLang?.match( /^fr-?/i ) ) {
 			defaultValues.lang = 'FR';
 		}
 

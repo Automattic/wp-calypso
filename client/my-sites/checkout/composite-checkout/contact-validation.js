@@ -1,21 +1,23 @@
 /**
  * External dependencies
  */
-import {
-	prepareDomainContactValidationRequest,
-	prepareGSuiteContactValidationRequest,
-	formatDomainContactValidationResponse,
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
-	areRequiredFieldsNotEmpty,
-} from 'my-sites/checkout/composite-checkout/wpcom';
+import { isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
-import wp from 'lib/wp';
 
 /**
  * Internal dependencies
  */
 import { isLineItemADomain } from 'my-sites/checkout/composite-checkout/wpcom/hooks/has-domains';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import {
+	prepareDomainContactValidationRequest,
+	prepareGSuiteContactValidationRequest,
+	formatDomainContactValidationResponse,
+	getSignupValidationErrorResponse,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	areRequiredFieldsNotEmpty,
+} from 'my-sites/checkout/composite-checkout/wpcom';
+import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
@@ -33,6 +35,9 @@ const wpcomValidateDomainContactInformation = ( ...args ) =>
 			{ apiVersion: '1.2' }
 		);
 	} );
+async function wpcomValidateSignupEmail( ...args ) {
+	return wpcom.validateNewUser( ...args, null );
+}
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
@@ -53,6 +58,7 @@ export function handleContactValidationResult( {
 			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
 		},
 	} );
+
 	if ( ! validationResult ) {
 		showErrorMessage(
 			translate( 'There was an error validating your contact information. Please contact support.' )
@@ -92,6 +98,27 @@ export async function getDomainValidationResult( items, contactInfo ) {
 		.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
 	return wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
+}
+
+export async function getSignupEmailValidationResult( email, emailTakenLoginRedirect ) {
+	const response = await wpcomValidateSignupEmail( {
+		email,
+		is_from_registrationless_checkout: true,
+	} );
+	const signupValidationErrorResponse = getSignupValidationErrorResponse(
+		response,
+		email,
+		emailTakenLoginRedirect
+	);
+
+	if ( isEmpty( signupValidationErrorResponse ) ) {
+		return response;
+	}
+	const validationResponse = {
+		...response,
+		messages: signupValidationErrorResponse,
+	};
+	return validationResponse;
 }
 
 export async function getGSuiteValidationResult( items, contactInfo ) {

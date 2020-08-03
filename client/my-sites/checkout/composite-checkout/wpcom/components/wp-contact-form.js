@@ -365,6 +365,7 @@ function RenderContactDetails( {
 					} }
 					autoComplete="email"
 					isError={ email.isTouched && ! isValid( email ) }
+					errorMessage={ email.errors[ 0 ] || '' }
 					description={ translate( "You'll use this email address to access your account later" ) }
 				/>
 			) }

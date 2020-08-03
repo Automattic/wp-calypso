@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { defaultRegistry } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -90,7 +90,7 @@ export function applePayProcessor( submitData ) {
 	return pending;
 }
 
-export async function stripeCardProcessor( submitData ) {
+export async function stripeCardProcessor( submitData, transactionOptions ) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
 		...submitData,
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -106,7 +106,8 @@ export async function stripeCardProcessor( submitData ) {
 			domainDetails: getDomainDetails( select ),
 			paymentMethodToken,
 		},
-		wpcomTransaction
+		wpcomTransaction,
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -116,7 +117,7 @@ export async function stripeCardProcessor( submitData ) {
 	return pending;
 }
 
-export async function existingCardProcessor( submitData ) {
+export async function existingCardProcessor( submitData, transactionOptions ) {
 	const pending = submitExistingCardPayment(
 		{
 			...submitData,
@@ -126,7 +127,8 @@ export async function existingCardProcessor( submitData ) {
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( select ),
 		},
-		wpcomTransaction
+		wpcomTransaction,
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -165,7 +167,7 @@ export async function freePurchaseProcessor( submitData ) {
 	return pending;
 }
 
-export async function fullCreditsProcessor( submitData ) {
+export async function fullCreditsProcessor( submitData, transactionOptions ) {
 	const pending = submitCreditsTransaction(
 		{
 			...submitData,
@@ -175,7 +177,8 @@ export async function fullCreditsProcessor( submitData ) {
 			country: null,
 			postalCode: null,
 		},
-		wpcomTransaction
+		wpcomTransaction,
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -185,7 +188,12 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) {
+export async function payPalProcessor(
+	submitData,
+	getThankYouUrl,
+	couponItem,
+	transactionOptions
+) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const successUrl = formatUrl( {
 		protocol,
@@ -212,7 +220,8 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) 
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
 		},
-		wpcomPayPalExpress
+		wpcomPayPalExpress,
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
