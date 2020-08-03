@@ -250,7 +250,7 @@ export default {
 
 		if ( flowName === 'onboarding' || flowName === 'onboarding-plan-first' ) {
 			context.primary = (
-				<Experiment name="domain_step_plan_step_swap">
+				<Experiment name="signup_domain_plan_step_swap">
 					<DefaultVariation>
 						<SignupComponent
 							store={ context.store }
