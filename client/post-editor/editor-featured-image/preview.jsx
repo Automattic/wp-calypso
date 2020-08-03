@@ -34,6 +34,12 @@ class EditorFeaturedImagePreview extends Component {
 
 	state = this.constructor.initialState;
 
+	constructor( props ) {
+		super( props );
+
+		this.previewRef = React.createRef();
+	}
+
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const currentSrc = this.src();
 		if ( ! currentSrc || currentSrc === this.src( nextProps ) ) {
@@ -43,7 +49,7 @@ class EditorFeaturedImagePreview extends Component {
 		// To prevent container height from collapsing and expanding rapidly,
 		// we preserve the current height while the next image loads
 		const nextState = {
-			height: this.refs.preview.clientHeight,
+			height: this.previewRef.current.clientHeight,
 		};
 
 		// If the next image is the persisted copy of an in-progress upload, we
@@ -114,7 +120,7 @@ class EditorFeaturedImagePreview extends Component {
 		}
 
 		return (
-			<div ref="preview" className={ classes } style={ { height } }>
+			<div ref={ this.previewRef } className={ classes } style={ { height } }>
 				<Spinner />
 				<ImagePreloader
 					placeholder={ placeholder }
@@ -132,9 +138,9 @@ class EditorFeaturedImagePreview extends Component {
 
 export default connect(
 	( state ) => {
-	return {
-		siteId: getSelectedSiteId( state ),
-	};
+		return {
+			siteId: getSelectedSiteId( state ),
+		};
 	},
 	{ getMediaItem }
 )( EditorFeaturedImagePreview );
