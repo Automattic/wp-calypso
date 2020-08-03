@@ -108,9 +108,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		// TODO: remove this and just have isBusinessOnboardingAvailable = hasAvailableConciergeSessions once free QS sessions are actually removed from Business Plan
 		if ( currentPlan && hasAvailableConciergeSessions ) {
 			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
-			const businessOnboardingExpiration = this.props
-				.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE )
-				.add( '1', 'year' );
+			const businessOnboardingExpiration = this.props.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE );
 
 			isBusinessOnboardingAvailable = businessOnboardingExpiration.diff( expiryDateMoment ) > 0;
 		}

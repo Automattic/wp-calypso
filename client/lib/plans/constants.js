@@ -44,7 +44,7 @@ export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 
-export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2020-07-27T00:00:00+00:00';
+export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-30T00:00:00+00:00';
 
 export const NEW_PLANS = [];
 export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
