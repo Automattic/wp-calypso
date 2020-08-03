@@ -90,7 +90,7 @@ export function applePayProcessor( submitData ) {
 	return pending;
 }
 
-export async function stripeCardProcessor( submitData, isLoggedOutCart ) {
+export async function stripeCardProcessor( submitData, transactionOptions ) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
 		...submitData,
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -107,7 +107,7 @@ export async function stripeCardProcessor( submitData, isLoggedOutCart ) {
 			paymentMethodToken,
 		},
 		wpcomTransaction,
-		isLoggedOutCart
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -117,7 +117,7 @@ export async function stripeCardProcessor( submitData, isLoggedOutCart ) {
 	return pending;
 }
 
-export async function existingCardProcessor( submitData ) {
+export async function existingCardProcessor( submitData, transactionOptions ) {
 	const pending = submitExistingCardPayment(
 		{
 			...submitData,
@@ -127,7 +127,8 @@ export async function existingCardProcessor( submitData ) {
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( select ),
 		},
-		wpcomTransaction
+		wpcomTransaction,
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -166,7 +167,7 @@ export async function freePurchaseProcessor( submitData ) {
 	return pending;
 }
 
-export async function fullCreditsProcessor( submitData ) {
+export async function fullCreditsProcessor( submitData, transactionOptions ) {
 	const pending = submitCreditsTransaction(
 		{
 			...submitData,
@@ -176,7 +177,8 @@ export async function fullCreditsProcessor( submitData ) {
 			country: null,
 			postalCode: null,
 		},
-		wpcomTransaction
+		wpcomTransaction,
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
@@ -186,7 +188,12 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem, isLoggedOutCart ) {
+export async function payPalProcessor(
+	submitData,
+	getThankYouUrl,
+	couponItem,
+	transactionOptions
+) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const successUrl = formatUrl( {
 		protocol,
@@ -214,7 +221,7 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem, i
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
 		},
 		wpcomPayPalExpress,
-		isLoggedOutCart
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
