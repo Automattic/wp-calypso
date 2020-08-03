@@ -68,6 +68,7 @@
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch": true,
+		"gutenboarding/use-patterns": false,
 		"help": true,
 		"help/courses": true,
 		"home/layout-dev": true,

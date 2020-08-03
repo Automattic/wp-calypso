@@ -16,6 +16,7 @@ import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
 import type { FeatureId } from '../../onboarding-block/features/data';
+import { isEnabled } from 'config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -165,10 +166,10 @@ export function* createSite(
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
 			} ),
+			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-
 	const success = yield dispatch( SITE_STORE, 'createSite', params );
 
 	return success;
