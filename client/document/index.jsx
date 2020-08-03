@@ -29,7 +29,6 @@ class Document extends React.Component {
 			chunkFiles,
 			commitSha,
 			buildTimestamp,
-			faviconURL,
 			head,
 			i18nLocaleScript,
 			initialReduxState,
@@ -102,8 +101,6 @@ class Document extends React.Component {
 			>
 				<Head
 					title={ head.title }
-					faviconURL={ faviconURL }
-					cdn={ '//s1.wp.com' }
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 				>

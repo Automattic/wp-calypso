@@ -25,18 +25,11 @@ function DomainsLanding( {
 	isRTL,
 	lang,
 	manifest,
-	faviconURL,
 	addEvergreenCheck,
 } ) {
 	return (
 		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
-			<Head
-				title={ head.title }
-				faviconURL={ faviconURL }
-				cdn={ '//s1.wp.com' }
-				branchName={ branchName }
-				inlineScriptNonce={ inlineScriptNonce }
-			>
+			<Head title={ head.title } branchName={ branchName } inlineScriptNonce={ inlineScriptNonce }>
 				{ head.metas.map( ( props, index ) => (
 					<meta { ...props } key={ index } />
 				) ) }

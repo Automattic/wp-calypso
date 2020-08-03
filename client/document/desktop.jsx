@@ -20,7 +20,6 @@ class Desktop extends React.Component {
 		const {
 			app,
 			entrypoint,
-			faviconURL,
 			i18nLocaleScript,
 			isRTL,
 			lang,
@@ -37,7 +36,7 @@ class Desktop extends React.Component {
 
 		return (
 			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' } className={ classNames( 'is-desktop' ) }>
-				<Head title="WordPress.com" faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
+				<Head title="WordPress.com">
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>

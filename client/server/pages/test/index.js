@@ -467,11 +467,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.manifest ).toEqual( '/* webpack manifest for fallback */' );
 	} );
 
-	it( 'sets the favicon_url', async () => {
-		const { request } = await app.run();
-		expect( request.context.faviconURL ).toEqual( 'http://favicon.url/' );
-	} );
-
 	it( 'sets the abTestHepler when config is enabled', async () => {
 		app.withConfigEnabled( { 'dev/test-helper': true } );
 		const { request } = await app.run();
@@ -1672,7 +1667,6 @@ describe( 'main app', () => {
 						'/calypso/evergreen/entry-main.2.min.js',
 					],
 				},
-				faviconURL: 'http://favicon.url/',
 			} );
 		} );
 	} );
@@ -1717,7 +1711,6 @@ describe( 'main app', () => {
 						'/calypso/evergreen/entry-main.2.min.js',
 					],
 				},
-				faviconURL: 'http://favicon.url/',
 			} );
 		} );
 

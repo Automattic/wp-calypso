@@ -10,16 +10,10 @@ import Head from 'components/head';
 import EmptyContent from 'components/empty-content';
 import { chunkCssLinks } from './utils';
 
-function Browsehappy( { faviconURL, entrypoint, dashboardUrl } ) {
+function Browsehappy( { entrypoint, dashboardUrl } ) {
 	return (
 		<html lang="en">
-			<Head
-				title="Unsupported Browser — WordPress.com"
-				faviconURL={ faviconURL }
-				cdn={ '//s1.wp.com' }
-			>
-				{ chunkCssLinks( entrypoint ) }
-			</Head>
+			<Head title="Unsupported Browser — WordPress.com">{ chunkCssLinks( entrypoint ) }</Head>
 			<body>
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }
 				<div id="wpcom" className="wpcom-site">

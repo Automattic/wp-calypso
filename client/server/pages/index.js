@@ -157,7 +157,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		lang,
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifest: request.getAssets().manifests.manifest,
-		faviconURL: config( 'favicon_url' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
 		devDocsURL: '/devdocs',
@@ -494,7 +493,6 @@ function setUpRoute( req, res, next ) {
 
 const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	const ctx = {
-		faviconURL: config( 'favicon_url' ),
 		entrypoint: req.getFilesForEntrypoint( entrypoint ),
 	};
 
@@ -511,7 +509,6 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
 	}
 
 	const ctx = {
-		faviconURL: config( 'favicon_url' ),
 		entrypoint: req.getFilesForEntrypoint( entrypoint ),
 	};
 
