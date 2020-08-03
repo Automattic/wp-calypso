@@ -67,7 +67,11 @@ const report = ( { context, node, mappings, automaticExtensions, importedModule 
 					import: importedModule.value,
 				},
 				fix: ( fixer ) => {
-					return fixer.replaceText( importedModule, `'${ module }/${ importedModule.value }'` );
+					const quote = importedModule.raw[ 0 ];
+					return fixer.replaceText(
+						importedModule,
+						`${ quote }${ module }/${ importedModule.value }${ quote }`
+					);
 				},
 			} );
 		}
@@ -172,10 +176,20 @@ module.exports = {
 				if (
 					node.callee &&
 					node.callee.type === 'Identifier' &&
-					node.callee.name === 'require' &&
+					( node.callee.name === 'require' || node.callee.name === 'asyncRequire' ) &&
 					node.arguments.length === 1
 				) {
 					reportImport( node, node.arguments[ 0 ] );
+				}
+			},
+			JSXElement: ( node ) => {
+				if ( node.openingElement.name.name === 'AsyncLoad' ) {
+					const requireAttribute = node.openingElement.attributes
+						.filter( ( attr ) => attr.type === 'JSXAttribute' )
+						.find( ( attr ) => attr.name.name === 'require' );
+					if ( requireAttribute ) {
+						reportImport( node, requireAttribute.value );
+					}
 				}
 			},
 		};

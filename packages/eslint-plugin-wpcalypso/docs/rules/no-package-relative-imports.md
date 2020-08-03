@@ -24,24 +24,30 @@ This rule forbids the former approach and can auto-fix it to the latter.
 
 The following patterns are considered incorrect:
 
-```js
+```jsx
 import config from 'config';
 import * as stats from 'reader/stats';
 import { localizeUrl } from 'lib/i18n-utils';
 export { default as ActionCard } from 'components/action-card/docs/example';
 export * from 'components/AppBar';
-const config = require('config');
+const config1 = require('config');
+const config2 = asyncRequire('config');
+
+const component = <AsyncLoad require="config"/>
 ```
 
 The following patterns are correct
 
-```js
+```jsx
 import config from 'wp-calypso/config';
 import * as stats from 'wp-calypso/reader/stats';
 import { localizeUrl } from 'wp-calypso/lib/i18n-utils';
 export { default as ActionCard } from 'wp-calypso/components/action-card/docs/example';
 export * from 'wp-calypso/components/AppBar';
-const config = require('wp-calypso/config');
+const config1 = require('wp-calypso/config');
+const config2 = asyncRequire('wp-calypso/config');
+
+const component = <AsyncLoad require="wp-calypso/config"/>
 
 import config from './config';
 import config from '../../../config';
