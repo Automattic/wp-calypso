@@ -266,7 +266,7 @@ export default {
 							pageTitle={ getFlowPageTitle( flowName ) }
 						/>
 					</DefaultVariation>
-					<Variation name="show_swapped">
+					<Variation name="variant_plans_first">
 						<SignupComponent
 							store={ context.store }
 							path={ context.path }
