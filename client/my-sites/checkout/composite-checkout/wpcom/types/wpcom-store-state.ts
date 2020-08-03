@@ -401,7 +401,10 @@ export function prepareDomainContactDetails(
 		address2: details.address2?.value,
 		city: details.city?.value,
 		state: details.state?.value,
-		postalCode: details.postalCode?.value,
+		postalCode: tryToGuessPostalCodeFormat(
+			details.postalCode?.value ?? '',
+			details.countryCode?.value
+		),
 		countryCode: details.countryCode?.value,
 		fax: details.fax?.value,
 		extra: prepareTldExtraContactDetails( details ),
