@@ -11,7 +11,7 @@ function defaultFormatter( postalCode, delimiter, partLength ) {
  * Tries to convert given postal code based on the country code into a standardised format
  *
  * @param {string} postalCode user inputted postal code
- * @param {string} countryCode user selected country
+ * @param {string|null} countryCode user selected country
  * @returns {string} formatted postal code
  */
 export function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
