@@ -59,7 +59,6 @@
 	button {
 		opacity: 0;
 		position: absolute;
-		float: right;
 		margin-top: 16px;
 		transition: all 0.2s ease-in-out;
 
@@ -69,6 +68,7 @@
 
 		&.is-visible {
 			position: static;
+			float: right;
 			opacity: 1;
 			margin-bottom: -16px;
 		}
