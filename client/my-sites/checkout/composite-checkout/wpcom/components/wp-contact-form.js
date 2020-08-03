@@ -23,6 +23,7 @@ import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
+import CountrySelectMenu from './country-select-menu';
 
 export default function WPContactForm( {
 	countriesList,
