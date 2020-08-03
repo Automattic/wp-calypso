@@ -84,6 +84,8 @@ class AutoUpdater extends Updater {
 	}
 
 	onConfirm() {
+		log.info( `User selected 'Update & Restart'...` );
+
 		AppQuit.allowQuit();
 		autoUpdater.quitAndInstall();
 
