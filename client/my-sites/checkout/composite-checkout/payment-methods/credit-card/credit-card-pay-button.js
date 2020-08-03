@@ -20,6 +20,8 @@ import {
  */
 import { showStripeModalAuth } from 'lib/stripe';
 import { validatePaymentDetails } from 'lib/checkout/validation';
+import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
+import { paymentMethodClassName } from 'lib/cart-values';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -27,7 +29,6 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
-	const paymentPartner = useSelect( ( select ) => select( 'credit-card' ).getPaymentPartner() );
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const { formStatus } = useFormStatus();
 	const {
@@ -40,6 +41,23 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
+
+	const cart = useCart();
+	const contactCountryCode = useSelect(
+		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
+	);
+	const contactAndBillingInfoAreDifferent = useSelect( ( select ) =>
+		select( 'credit-card' ).getShowContactFields()
+	);
+
+	const inputs = {
+		cart,
+		explicitBillingCountryCode: fields?.countryCode?.value || '',
+		contactAndBillingInfoAreDifferent,
+		contactCountryCode,
+	};
+
+	const paymentPartner = getPaymentPartner( inputs );
 
 	useShowStripeModalAuth( transactionStatus === 'authorizing', stripeConfiguration );
 
@@ -121,18 +139,18 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents formStatus={ formStatus } total={ total } paymentPartner={ paymentPartner } />
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total, paymentPartner } ) {
 	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return sprintf( __( 'Pay %s (%s)' ), total.amount.displayValue, paymentPartner );
 	}
 	return __( 'Please wait…' );
 }
@@ -175,6 +193,48 @@ function useShowStripeModalAuth( shouldShowModal, stripeConfiguration ) {
 		setTransactionError,
 		stripeConfiguration,
 	] );
+}
+
+function getPaymentPartner( {
+	cart,
+	explicitBillingCountryCode,
+	contactAndBillingInfoAreDifferent,
+	contactCountryCode,
+} ) {
+	const isEbanxAvailable = Boolean(
+		cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) )
+	);
+
+	let paymentPartner = 'stripe';
+	if (
+		shouldUseEbanx( {
+			isEbanxAvailable,
+			contactAndBillingInfoAreDifferent,
+			explicitBillingCountryCode,
+			contactCountryCode,
+		} )
+	) {
+		paymentPartner = 'ebanx';
+	}
+	debug( 'credit card form selects payment partner: "' + paymentPartner + '"' );
+	return paymentPartner;
+}
+
+function shouldUseEbanx( {
+	isEbanxAvailable,
+	contactAndBillingInfoAreDifferent,
+	explicitBillingCountryCode,
+	contactCountryCode,
+} ) {
+	if ( ! isEbanxAvailable ) {
+		return false;
+	}
+
+	const actualBillingCountryCode = contactAndBillingInfoAreDifferent
+		? explicitBillingCountryCode
+		: contactCountryCode;
+
+	return actualBillingCountryCode === 'BR';
 }
 
 function isCreditCardFormValid( store, __ ) {

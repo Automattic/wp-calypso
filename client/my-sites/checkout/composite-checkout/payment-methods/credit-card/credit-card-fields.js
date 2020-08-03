@@ -40,8 +40,8 @@ export default function CreditCardFields() {
 		'credit-card'
 	);
 	const cart = useCart();
-	const shouldShowContactFieldCheckbox = cart?.allowed_payment_methods?.includes(
-		paymentMethodClassName( 'ebanx' )
+	const shouldShowContactFieldCheckbox = Boolean(
+		cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) )
 	);
 
 	const handleStripeFieldChange = ( input ) => {

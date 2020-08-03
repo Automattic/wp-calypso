@@ -171,26 +171,6 @@ export function createCreditCardPaymentMethodStore() {
 		}
 	}
 
-	function shouldUseEbanx( state = null ) {
-		if ( state?.fields?.countryCode?.value === 'BR' ) {
-			return true;
-		}
-		return false;
-	}
-
-	// Which payment partner to use for submitting is a function of the form
-	// state; we derive it in the reducer but do not allow directly changing it.
-	// We need to have this data here (rather than just deriving it in the
-	// processor function) so we can do the right thing in the submit button handler.
-	function appendPaymentPartner( state = null ) {
-		let paymentPartner = 'stripe';
-		if ( shouldUseEbanx( state ) ) {
-			paymentPartner = 'ebanx';
-		}
-		debug( 'credit card form selects payment partner: "' + paymentPartner + '"' );
-		return { ...state, paymentPartner };
-	}
-
 	const store = registerStore( 'credit-card', {
 		reducer(
 			state = {
@@ -203,14 +183,14 @@ export function createCreditCardPaymentMethodStore() {
 			},
 			action
 		) {
-			return appendPaymentPartner( {
+			return {
 				fields: fieldReducer( state.fields, action ),
 				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 				cardholderName: cardholderNameReducer( state.cardholderName, action ),
 				brand: brandReducer( state.brand, action ),
 				showContactFields: showContactFieldsReducer( state.showContactFields, action ),
-			} );
+			};
 		},
 		actions,
 		selectors,
