@@ -179,11 +179,6 @@ class PostCommentForm extends React.Component {
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
-		const formClasses = classNames( {
-			comments__form: true,
-			'is-active': this.state.haveFocus || this.hasCommentText(),
-		} );
-
 		const expandingAreaClasses = classNames( {
 			focused: this.state.haveFocus,
 			'expanding-area': true,
@@ -194,7 +189,7 @@ class PostCommentForm extends React.Component {
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
-			<form className={ formClasses }>
+			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<fieldset>
 					<Gravatar user={ this.props.currentUser } />
