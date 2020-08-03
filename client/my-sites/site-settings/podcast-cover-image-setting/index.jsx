@@ -17,8 +17,8 @@ import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
+import getMediaItem from 'state/media/thunks/get-media-item';
 import Image from 'components/image';
-import MediaStore from 'lib/media/store';
 import { addMedia } from 'state/media/thunks';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { resetAllImageEditorState } from 'state/editor/image-editor/actions';
@@ -96,7 +96,7 @@ class PodcastCoverImageSetting extends PureComponent {
 				fileContents: blob,
 				fileName,
 			};
-			const uploadedMedia = await this.props.addMedia( file, this.props.site );
+			const [ uploadedMedia ] = await this.props.addMedia( file, this.props.site );
 			debug( 'upload media', uploadedMedia );
 			this.props.onSelect( uploadedMedia.ID, uploadedMedia.URL );
 		} finally {
@@ -187,7 +187,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	renderCoverPreview() {
 		const { coverImageUrl, siteId, translate, isDisabled } = this.props;
 		const { transientMediaId, isUploading } = this.state;
-		const media = transientMediaId && MediaStore.get( siteId, transientMediaId );
+		const media = transientMediaId && this.props.getMediaItem( siteId, transientMediaId );
 		const imageUrl = ( media && media.URL ) || coverImageUrl;
 		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
 		const isTransient = !! transientMediaId;
@@ -303,5 +303,6 @@ export default connect(
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		onCancelEditingCoverImage: partial( setEditorMediaModalView, ModalViews.LIST ),
 		addMedia,
+		getMediaItem,
 	}
 )( localize( PodcastCoverImageSetting ) );
