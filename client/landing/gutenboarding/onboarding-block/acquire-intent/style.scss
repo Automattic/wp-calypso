@@ -133,6 +133,7 @@
 		caret-color: var( --mainColor );
 
 		&:focus {
+			box-shadow: none;
 			outline: none;
 		}
 
