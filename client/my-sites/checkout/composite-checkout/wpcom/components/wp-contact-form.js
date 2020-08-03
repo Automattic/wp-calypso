@@ -38,6 +38,7 @@ export default function WPContactForm( {
 	renderDomainContactFields,
 	shouldShowContactDetailsValidationErrors,
 	contactValidationCallback,
+	isLoggedOutCart,
 } ) {
 	const translate = useTranslate();
 	const [ items ] = useLineItems();
@@ -56,6 +57,7 @@ export default function WPContactForm( {
 			<ContactFormSummary
 				isDomainFieldsVisible={ isDomainFieldsVisible }
 				isGSuiteInCart={ isGSuiteInCart }
+				isLoggedOutCart={ isLoggedOutCart }
 			/>
 		);
 	}
@@ -75,6 +77,7 @@ export default function WPContactForm( {
 				countriesList={ countriesList }
 				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 				isDisabled={ isDisabled }
+				isLoggedOutCart={ isLoggedOutCart }
 			/>
 		</BillingFormFields>
 	);
@@ -200,11 +203,12 @@ TaxFields.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
+function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart, isLoggedOutCart } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
 	const showDomainContactSummary = isDomainFieldsVisible;
+	const showEmailSummary = isLoggedOutCart || showDomainContactSummary;
 
 	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
@@ -235,7 +239,7 @@ function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
 					) }
 
-					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
+					{ showEmailSummary && contactInfo.email.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 
@@ -295,10 +299,17 @@ function RenderContactDetails( {
 	countriesList,
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
+	isLoggedOutCart,
 } ) {
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
 	const domainNames = useDomainNamesInCart();
-	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
+	const {
+		updateDomainContactFields,
+		updateCountryCode,
+		updatePostalCode,
+		updateEmail,
+	} = useDispatch( 'wpcom' );
+	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
 	if ( isDomainFieldsVisible ) {
 		return (
@@ -342,6 +353,23 @@ function RenderContactDetails( {
 			<ContactDetailsFormDescription>
 				{ translate( 'Entering your billing information helps us prevent fraud.' ) }
 			</ContactDetailsFormDescription>
+
+			{ isLoggedOutCart && (
+				<Field
+					id="email"
+					type="email"
+					label={ translate( 'Email' ) }
+					disabled={ isDisabled }
+					onChange={ ( value ) => {
+						updateEmail( value );
+					} }
+					autoComplete="email"
+					isError={ email.isTouched && ! isValid( email ) }
+					errorMessage={ email.errors[ 0 ] || '' }
+					description={ translate( "You'll use this email address to access your account later" ) }
+				/>
+			) }
+
 			<TaxFields
 				section="contact"
 				taxInfo={ contactInfo }

@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { isEmpty } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -18,6 +23,7 @@ import {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
+import { SignupValidationResponse } from './backend/signup-validation-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
 	firstName?: T;
@@ -607,6 +613,27 @@ export function prepareGSuiteContactValidationRequest(
 	};
 }
 
+export function getSignupValidationErrorResponse(
+	response: SignupValidationResponse,
+	email: string,
+	emailTakenLoginRedirect: ( arg0: string ) => string
+): ManagedContactDetailsErrors {
+	const emailResponse = response.messages?.email || {};
+
+	if ( isEmpty( emailResponse ) ) {
+		return emailResponse;
+	}
+
+	const emailErrorMessageFromResponse = Object.values( emailResponse )[ 0 ] || '';
+	const errorMessage = emailResponse.hasOwnProperty( 'taken' )
+		? emailTakenLoginRedirect( email )
+		: emailErrorMessageFromResponse;
+
+	return {
+		email: [ errorMessage ],
+	};
+}
+
 export function formatDomainContactValidationResponse(
 	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
@@ -708,6 +735,7 @@ export type ManagedContactDetailsUpdaters = {
 	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateDomainContactFields: (
 		arg0: ManagedContactDetails,
@@ -754,6 +782,13 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		return {
 			...oldDetails,
 			postalCode: touchIfDifferent( newPostalCode, oldDetails.postalCode ),
+		};
+	},
+
+	updateEmail: ( oldDetails: ManagedContactDetails, newEmail: string ): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			email: touchIfDifferent( newEmail, oldDetails.email ),
 		};
 	},
 
@@ -833,6 +868,8 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 
 export type WpcomStoreState = {
 	siteId: string;
+	siteSlug: string;
+	recaptchaClientId: number;
 	transactionResult: object;
 	contactDetails: ManagedContactDetails;
 };
@@ -913,6 +950,8 @@ export function getInitialWpcomStoreState(
 ): WpcomStoreState {
 	return {
 		siteId: '',
+		siteSlug: '',
+		recaptchaClientId: -1,
 		transactionResult: {},
 		contactDetails,
 	};

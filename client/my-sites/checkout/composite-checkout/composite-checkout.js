@@ -123,6 +123,7 @@ export default function CompositeCheckout( {
 	couponCode: couponCodeFromUrl,
 	isComingFromUpsell,
 	isLoggedOutCart,
+	isNoSiteCart,
 	infoMessage,
 } ) {
 	const translate = useTranslate();
@@ -133,6 +134,8 @@ export default function CompositeCheckout( {
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
+	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
+	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
 		reduxDispatch,
@@ -204,7 +207,7 @@ export default function CompositeCheckout( {
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
-		cartKey: siteId,
+		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsToAdd: productsForCart,
 		couponToAdd: couponCodeFromUrl,
@@ -242,6 +245,7 @@ export default function CompositeCheckout( {
 		siteId,
 		hideNudge,
 		recordEvent,
+		isLoggedOutCart,
 	} );
 
 	const moment = useLocalizedMoment();
@@ -310,6 +314,17 @@ export default function CompositeCheckout( {
 			}
 
 			debug( 'just redirecting to', url );
+
+			if ( createUserAndSiteBeforeTransaction ) {
+				window.localStorage.removeItem( 'shoppingCart' );
+				window.localStorage.removeItem( 'siteParams' );
+
+				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
+				// Using page.redirect() will take to the log in page which we don't want.
+				window.location = url;
+				return;
+			}
+
 			page.redirect( url );
 		},
 		[
@@ -324,6 +339,7 @@ export default function CompositeCheckout( {
 			total,
 			couponItem,
 			responseCart,
+			createUserAndSiteBeforeTransaction,
 		]
 	);
 
@@ -349,11 +365,19 @@ export default function CompositeCheckout( {
 	).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
+	let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
+
+	if ( createUserAndSiteBeforeTransaction ) {
+		const siteSlugLoggedOutCart = select( 'wpcom' )?.getSiteSlug();
+		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
+	}
+
 	useRedirectIfCartEmpty(
 		items,
-		`/plans/${ siteSlug || '' }`,
+		cartEmptyRedirectUrl,
 		isLoadingCart,
-		[ ...errors, loadingError ].filter( Boolean )
+		[ ...errors, loadingError ].filter( Boolean ),
+		createUserAndSiteBeforeTransaction
 	);
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
@@ -361,6 +385,7 @@ export default function CompositeCheckout( {
 		recordEvent,
 		isLoggedOutCart
 	);
+
 	const {
 		canMakePayment: isApplePayAvailable,
 		isLoading: isApplePayLoading,
@@ -426,6 +451,7 @@ export default function CompositeCheckout( {
 					}
 					onContactDetailsChange={ updateDomainContactFields }
 					getIsFieldDisabled={ getIsFieldDisabled }
+					isLoggedOutCart={ isLoggedOutCart }
 				/>
 				{ tlds.includes( 'ca' ) && (
 					<RegistrantExtraInfoForm
@@ -499,7 +525,7 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
-			card: stripeCardProcessor,
+			card: ( transactionData ) => stripeCardProcessor( transactionData, transactionOptions ),
 			alipay: ( transactionData ) =>
 				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
 			p24: ( transactionData ) =>
@@ -516,11 +542,14 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, siteSlug ),
 			eps: ( transactionData ) =>
 				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, siteSlug ),
-			'full-credits': fullCreditsProcessor,
-			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
+			'full-credits': ( transactionData ) =>
+				fullCreditsProcessor( transactionData, transactionOptions ),
+			'existing-card': ( transactionData ) =>
+				existingCardProcessor( transactionData, transactionOptions ),
+			paypal: ( transactionData ) =>
+				payPalProcessor( transactionData, getThankYouUrl, couponItem, transactionOptions ),
 		} ),
-		[ couponItem, getThankYouUrl, siteSlug ]
+		[ couponItem, getThankYouUrl, siteSlug, transactionOptions ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -579,6 +608,8 @@ export default function CompositeCheckout( {
 						isCartPendingUpdate={ isCartPendingUpdate }
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
+						isLoggedOutCart={ isLoggedOutCart }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						infoMessage={ infoMessage }
 					/>
 				</CheckoutProvider>
@@ -619,14 +650,29 @@ function isNotCouponError( error ) {
 	return ! couponErrorCodes.includes( error.code );
 }
 
-function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors ) {
+function useRedirectIfCartEmpty(
+	items,
+	redirectUrl,
+	isLoading,
+	errors,
+	createUserAndSiteBeforeTransaction
+) {
 	useEffect( () => {
 		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
+			if ( createUserAndSiteBeforeTransaction ) {
+				window.localStorage.removeItem( 'siteParams' );
+
+				// We use window.location instead of page.redirect() so that if the user already has an account and site at
+				// this point, then window.location will reload with the cookies applied and takes to the /plans page.
+				// (page.redirect() will take to the log in page instead).
+				window.location = redirectUrl;
+				return;
+			}
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, isLoading, errors ] );
+	}, [ redirectUrl, items, isLoading, errors, createUserAndSiteBeforeTransaction ] );
 }
 
 function useCountryList( overrideCountryList ) {

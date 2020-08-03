@@ -42,9 +42,12 @@ import {
 	handleContactValidationResult,
 	isContactValidationResponseValid,
 	getDomainValidationResult,
+	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'my-sites/checkout/composite-checkout/contact-validation';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import { login } from 'lib/paths';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -100,7 +103,9 @@ export default function WPCheckout( {
 	subtotal,
 	isCartPendingUpdate,
 	showErrorMessageBriefly,
+	isLoggedOutCart,
 	infoMessage,
+	createUserAndSiteBeforeTransaction,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -126,8 +131,46 @@ export default function WPCheckout( {
 		setShouldShowContactDetailsValidationErrors,
 	] = useState( false );
 
+	const emailTakenLoginRedirectMessage = ( emailAddress ) => {
+		const redirectTo = '/checkout/no-site?cart=no-user';
+		const isNative = config.isEnabled( 'login/native-login-links' );
+		const loginUrl = login( { redirectTo, emailAddress, isNative } );
+		const loginRedirectMessage = translate(
+			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
+			{
+				components: {
+					a: <a href={ loginUrl } />,
+				},
+			}
+		);
+		return loginRedirectMessage;
+	};
+
 	const validateContactDetailsAndDisplayErrors = async () => {
 		debug( 'validating contact details with side effects' );
+		if ( isLoggedOutCart ) {
+			const email = contactInfo.email?.value ?? '';
+			const validationResult = await getSignupEmailValidationResult(
+				email,
+				emailTakenLoginRedirectMessage
+			);
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod.id,
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			const isSignupValidationValid = isContactValidationResponseValid(
+				validationResult,
+				contactInfo
+			);
+
+			if ( ! isSignupValidationValid ) {
+				return false;
+			}
+		}
+
 		if ( isDomainFieldsVisible ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
@@ -155,6 +198,22 @@ export default function WPCheckout( {
 	};
 	const validateContactDetails = async () => {
 		debug( 'validating contact details' );
+		if ( isLoggedOutCart ) {
+			const email = contactInfo.email?.value ?? '';
+			const validationResult = await getSignupEmailValidationResult(
+				email,
+				emailTakenLoginRedirectMessage
+			);
+			const isSignupValidationValid = isContactValidationResponseValid(
+				validationResult,
+				contactInfo
+			);
+
+			if ( ! isSignupValidationValid ) {
+				return false;
+			}
+		}
+
 		if ( isDomainFieldsVisible ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
@@ -257,6 +316,7 @@ export default function WPCheckout( {
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
@@ -289,8 +349,7 @@ export default function WPCheckout( {
 								// Touch the fields so they display validation errors
 								touchContactFields();
 								updateCartContactDetails();
-
-								return validateContactDetailsAndDisplayErrors();
+								return validateContactDetailsAndDisplayErrors( isLoggedOutCart );
 							} }
 							activeStepContent={
 								<WPContactForm
@@ -305,10 +364,16 @@ export default function WPCheckout( {
 										shouldShowContactDetailsValidationErrors
 									}
 									contactValidationCallback={ validateContactDetails }
+									isLoggedOutCart={ isLoggedOutCart }
 								/>
 							}
 							completeStepContent={
-								<WPContactForm summary isComplete={ true } isActive={ false } />
+								<WPContactForm
+									summary
+									isComplete={ true }
+									isActive={ false }
+									isLoggedOutCart={ isLoggedOutCart }
+								/>
 							}
 							titleContent={ <ContactFormTitle /> }
 							editButtonText={ translate( 'Edit' ) }
