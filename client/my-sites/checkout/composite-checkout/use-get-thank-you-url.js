@@ -155,7 +155,7 @@ export function getThankYouPageUrl( {
 	// when purchasing a concierge session.
 	const displayModeParam = getDisplayModeParamFromCart( cart );
 	if ( isEligibleForSignupDestinationResult && signupDestination ) {
-		debug( 'is elligible for signup destination', signupDestination );
+		debug( 'is eligible for signup destination', signupDestination );
 		return getUrlWithQueryParam( signupDestination, displayModeParam );
 	}
 	debug( 'returning fallback url', fallbackUrl );
@@ -357,6 +357,10 @@ export function useGetThankYouUrl( {
 		const receiptId = transactionResult.receipt_id;
 		const orderId = transactionResult.order_id;
 		const isTransactionResultEmpty = isEmpty( transactionResult );
+
+		if ( siteSlug === 'no-user' || ! siteSlug ) {
+			siteSlug = select( 'wpcom' ).getSiteSlug();
+		}
 
 		const getThankYouPageUrlArguments = {
 			siteSlug,

@@ -23,6 +23,7 @@ type WpcomStoreAction =
 	  }
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
+	| { type: 'SET_SITE_SLUG'; payload: string }
 	| { type: 'TRANSACTION_COMPLETE'; payload: object }
 	| { type: 'SET_RECAPTCHA_CLIENT_ID'; payload: number }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
@@ -101,6 +102,15 @@ export function useWpcomStore(
 		}
 	}
 
+	function siteSlugReducer( state: string, action: WpcomStoreAction ): string {
+		switch ( action.type ) {
+			case 'SET_SITE_SLUG':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	function recaptchaClientIdReducer( state: number, action: WpcomStoreAction ): number {
 		switch ( action.type ) {
 			case 'SET_RECAPTCHA_CLIENT_ID':
@@ -126,6 +136,7 @@ export function useWpcomStore(
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
+				siteSlug: siteSlugReducer( checkedState.siteSlug, action ),
 				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),
 				transactionResult: transactionResultReducer( checkedState.transactionResult, action ),
 			};
@@ -140,6 +151,10 @@ export function useWpcomStore(
 
 			setSiteId( payload: string ): WpcomStoreAction {
 				return { type: 'SET_SITE_ID', payload };
+			},
+
+			setSiteSlug( payload: string ): WpcomStoreAction {
+				return { type: 'SET_SITE_SLUG', payload };
 			},
 
 			setTransactionResponse( payload: object ): WpcomStoreAction {
@@ -198,12 +213,20 @@ export function useWpcomStore(
 				return state.siteId;
 			},
 
+			getSiteSlug( state: WpcomStoreState ): string {
+				return state.siteSlug;
+			},
+
 			getTransactionResult( state: WpcomStoreState ): object {
 				return state.transactionResult;
 			},
 
 			getContactInfo( state: WpcomStoreState ): ManagedContactDetails {
 				return state.contactDetails;
+			},
+
+			getRecaptchaClientId( state: WpcomStoreState ): number {
+				return state.recaptchaClientId;
 			},
 		},
 	} );

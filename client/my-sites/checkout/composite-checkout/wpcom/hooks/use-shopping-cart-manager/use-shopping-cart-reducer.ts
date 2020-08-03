@@ -132,6 +132,12 @@ function shoppingCartReducer(
 		case 'RECEIVE_UPDATED_RESPONSE_CART': {
 			const response = action.updatedResponseCart;
 			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
+			const cartKey = response.cart_key;
+			const productSlugsInCart = response.products.map( ( product ) => product.product_slug );
+
+			if ( cartKey === 'no-user' ) {
+				removeItemFromLocalStorage( productSlugsInCart );
+			}
 
 			return {
 				...state,
@@ -178,6 +184,26 @@ function getInitialShoppingCartState(): ShoppingCartState {
 		variantRequestStatus: 'fresh',
 		variantSelectOverride: [],
 	};
+}
+
+function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
+	const cartItemsFromLocalStorage = JSON.parse(
+		window.localStorage.getItem( 'shoppingCart' ) || '[]'
+	);
+
+	if ( ! Array.isArray( cartItemsFromLocalStorage ) ) {
+		return;
+	}
+
+	const newCartItems = cartItemsFromLocalStorage.filter( ( product ) =>
+		productSlugsInCart.includes( product.product_slug )
+	);
+
+	try {
+		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItems ) );
+	} catch ( e ) {
+		throw new Error( 'An unexpected error occured while saving your cart' );
+	}
 }
 
 function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {

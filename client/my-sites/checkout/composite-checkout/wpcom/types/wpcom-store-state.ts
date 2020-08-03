@@ -868,6 +868,7 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 
 export type WpcomStoreState = {
 	siteId: string;
+	siteSlug: string;
 	recaptchaClientId: number;
 	transactionResult: object;
 	contactDetails: ManagedContactDetails;
@@ -949,6 +950,7 @@ export function getInitialWpcomStoreState(
 ): WpcomStoreState {
 	return {
 		siteId: '',
+		siteSlug: '',
 		recaptchaClientId: -1,
 		transactionResult: {},
 		contactDetails,
