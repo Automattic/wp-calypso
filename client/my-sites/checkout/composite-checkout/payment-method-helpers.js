@@ -25,6 +25,7 @@ import {
 	hasTransferProduct,
 } from 'lib/cart-values/cart-items';
 import { createStripePaymentMethod } from 'lib/stripe';
+import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
@@ -380,4 +381,10 @@ export function createStripePaymentMethodToken( { stripe, name, country, postalC
 			postal_code: postalCode,
 		},
 	} );
+}
+
+export function getPostalCode() {
+	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
+	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value;
+	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
 }
