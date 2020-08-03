@@ -60,11 +60,12 @@ const BusinessPlanDetails = ( {
 			},
 		}
 	);
+
+	//TODO: remove this once price translations are finished and just use detailDescriptionWithPrice.
 	let detailDescription = i18n.translate(
 		'Schedule a Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
 	);
 
-	//TODO: remove this once price translations are finished
 	if (
 		isEnglish ||
 		i18n.hasTranslation(
