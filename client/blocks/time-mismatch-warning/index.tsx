@@ -4,7 +4,6 @@
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,4 +56,4 @@ export const TimeMismatchWarning: FC< ExternalProps & ConnectedProps > = ( {
 	);
 };
 
-export default flowRight( withApplySiteOffset )( TimeMismatchWarning );
+export default withApplySiteOffset( TimeMismatchWarning );
