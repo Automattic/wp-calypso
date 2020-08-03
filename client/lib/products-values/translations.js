@@ -28,6 +28,35 @@ export const getJetpackProductsShortNames = () => {
 	};
 };
 
+export function getShortNameCallbackForJetpackSearch(
+	productObject,
+	tierKey = 'price_tier_slug',
+	usageKey = 'price_tier_usage_quantity'
+) {
+	switch ( productObject[ tierKey ] ) {
+		case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
+			return translate( 'Up to 100 records' );
+		case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS:
+			return translate( 'Up to 1,000 records' );
+		case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS:
+			return translate( 'Up to 10,000 records' );
+		case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS:
+			return translate( 'Up to 100,000 records' );
+		case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS:
+			return translate( 'Up to 1,000,000 records' );
+		case CONSTANTS.JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS: {
+			const tierMaximumRecords = 1000000 * Math.ceil( productObject[ usageKey ] / 1000000 );
+			return translate( 'Up to %(tierMaximumRecords)s records', {
+				args: {
+					tierMaximumRecords: numberFormat( tierMaximumRecords ),
+				},
+			} );
+		}
+		default:
+			return null;
+	}
+}
+
 export const getJetpackProductsDisplayNames = () => {
 	const backupDaily = (
 		<>
@@ -238,40 +267,7 @@ export const getJetpackProducts = () => {
 				yearly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
 				monthly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ],
 			},
-			optionShortNamesCallback: ( productObject ) => {
-				const numberOfDefinedTiers = 5;
-				switch ( productObject.price_tier_slug ) {
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
-						return translate( 'Tier 1: Up to 100 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS:
-						return translate( 'Tier 2: Up to 1,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS:
-						return translate( 'Tier 3: Up to 10,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS:
-						return translate( 'Tier 4: Up to 100,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS:
-						return translate( 'Tier 5: Up to 1,000,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS: {
-						// This is a catch-all tier with prices increasing
-						// proportionally per million records, so define fake
-						// tiers here to show the user what they will actually
-						// pay and why.
-						const tierNumber =
-							numberOfDefinedTiers +
-							Math.floor( productObject.price_tier_usage_quantity / 1000000 );
-						const tierMaximumRecords =
-							1000000 * Math.ceil( productObject.price_tier_usage_quantity / 1000000 );
-						return translate( 'Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
-							args: {
-								tierNumber,
-								tierMaximumRecords: numberFormat( tierMaximumRecords ),
-							},
-						} );
-					}
-					default:
-						return null;
-				}
-			},
+			optionShortNamesCallback: getShortNameCallbackForJetpackSearch,
 			optionActionButtonNames: getJetpackProductsShortNames(),
 			optionDisplayNames: getJetpackProductsDisplayNames(),
 			optionDescriptions: getJetpackProductsDescriptions(),
