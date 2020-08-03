@@ -42,7 +42,7 @@ function renderFeedError( err: FeedError ) {
 		<div className="feed-item list-item is-error">
 			<div className="list-item__content">
 				<div className="list-item__icon">
-					<Gridicon icon="notice" size={ 24 } /> }
+					<Gridicon icon="notice" size={ 24 } />
 				</div>
 
 				<div className="list-item__info">
