@@ -496,6 +496,7 @@ const connectComponent = connect(
 			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
+				showGlobalNotices: true,
 			} ),
 	} )
 );

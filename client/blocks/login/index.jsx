@@ -535,6 +535,7 @@ export default connect(
 			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
+				showGlobalNotices: true,
 			} ),
 	} )
 )( localize( Login ) );
