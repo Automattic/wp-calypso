@@ -285,7 +285,8 @@ class DailyBackupStatus extends Component {
 		const lastBackupTime = lastBackupDate.format( 'LT' );
 
 		// Calculates the remaining hours for the next backup + 3 hours of safety margin
-		const hoursForNextBackup = 24 - today.diff( lastBackupDate, 'hours' ) + 1;
+		const DAY_HOURS = 24;
+		const hoursForNextBackup = DAY_HOURS - today.diff( lastBackupDate, 'hours' ) + 3;
 
 		const nextBackupHoursText =
 			hoursForNextBackup <= 1
