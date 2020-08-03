@@ -276,7 +276,7 @@ class DailyBackupStatus extends Component {
 			timezone: timezone,
 			gmtOffset: gmtOffset,
 		} );
-		const yesterday = today.subtract( 1, 'days' );
+		const yesterday = moment( today ).subtract( 1, 'days' );
 
 		const lastBackupDay = lastBackupDate.isSame( yesterday, 'day' )
 			? translate( 'Yesterday ' )
@@ -285,11 +285,11 @@ class DailyBackupStatus extends Component {
 		const lastBackupTime = lastBackupDate.format( 'LT' );
 
 		// Calculates the remaining hours for the next backup + 3 hours of safety margin
-		const hoursForNextBackup =
-			parseInt( lastBackupDate.format( 'H' ) ) - parseInt( today.format( 'H' ) ) + 3;
+		const DAY_HOURS = 24;
+		const hoursForNextBackup = DAY_HOURS - today.diff( lastBackupDate, 'hours' ) + 3;
 
 		const nextBackupHoursText =
-			hoursForNextBackup === 1
+			hoursForNextBackup <= 1
 				? translate( 'In the next hour' )
 				: translate( 'In the next %d hour', 'In the next %d hours', {
 						args: [ hoursForNextBackup ],
