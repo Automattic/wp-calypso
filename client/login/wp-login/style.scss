@@ -168,7 +168,8 @@ $image-height: 47px;
 }
 
 .layout.is-jetpack-woocommerce-flow,
-.layout.is-wccom-oauth-flow {
+.layout.is-wccom-oauth-flow,
+.layout.is-jetpack-woo-dna-flow {
 	@include woocommerce-colors();
 }
 
