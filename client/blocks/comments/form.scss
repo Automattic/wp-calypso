@@ -57,7 +57,8 @@
 	}
 
 	button {
-		display: none;
+		opacity: 0;
+		position: absolute;
 		float: right;
 		margin-top: 16px;
 		transition: all 0.2s ease-in-out;
@@ -67,7 +68,8 @@
 		}
 
 		&.is-visible {
-			display: inline-block;
+			position: static;
+			opacity: 1;
 			margin-bottom: -16px;
 		}
 	}
