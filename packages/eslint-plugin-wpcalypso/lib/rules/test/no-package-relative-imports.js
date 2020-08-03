@@ -34,6 +34,7 @@ const options = [
 ];
 
 new RuleTester( {
+	parser: require.resolve( 'babel-eslint' ),
 	parserOptions: {
 		ecmaVersion: 6,
 		sourceType: 'module',
@@ -54,6 +55,7 @@ new RuleTester( {
 		{ code: "export * from 'wp-calypso/components/AppBar';", options },
 		{ code: "const config = require('wp-calypso/config');", options },
 		{ code: "const config = asyncRequire('wp-calypso/config');", options },
+		{ code: "const getConfig = async () => await import('wp-calypso/config');", options },
 		{ code: "const component = <AsyncLoad require='wp-calypso/config'/>", options },
 		{ code: "import config from './config';", options },
 		{ code: "import config from '../../../config';", options },
@@ -137,6 +139,17 @@ new RuleTester( {
 				},
 			],
 			output: `const config = asyncRequire('wp-calypso/config');`,
+		},
+		{
+			code: `const config = async () => await import('config');`,
+			options,
+			errors: [
+				{
+					message: `Import config relative to \`${ calypsoDir }\` is not allowed`,
+					type: 'ImportExpression',
+				},
+			],
+			output: `const config = async () => await import('wp-calypso/config');`,
 		},
 		{
 			code: `const component = <AsyncLoad require="config"/>`,
