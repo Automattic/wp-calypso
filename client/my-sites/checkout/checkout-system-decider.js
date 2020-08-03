@@ -184,7 +184,7 @@ export default function CheckoutSystemDecider( {
 						/>
 					</StripeHookProvider>
 				</CheckoutErrorBoundary>
-				{ isLoggedOutCart && <Recaptcha /> }
+				{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 			</>
 		);
 	}
