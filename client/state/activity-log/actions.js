@@ -33,6 +33,7 @@ import 'state/data-layer/wpcom/activity-log/rewind/restore-status';
 import 'state/data-layer/wpcom/activity-log/rewind/to';
 import 'state/data-layer/wpcom/sites/rewind/downloads';
 import 'state/data-layer/wpcom/sites/rewind/restores';
+import 'state/activity-log/init';
 
 /**
  * Turn the 'rewind' feature on for a site.
