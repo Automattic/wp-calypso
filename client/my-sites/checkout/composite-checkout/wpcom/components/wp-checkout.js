@@ -93,7 +93,6 @@ export default function WPCheckout( {
 	CheckoutTerms,
 	countriesList,
 	StateSelect,
-	renderDomainContactFields,
 	variantSelectOverride,
 	getItemVariants,
 	responseCart,
@@ -299,7 +298,6 @@ export default function WPCheckout( {
 									siteUrl={ siteUrl }
 									countriesList={ countriesList }
 									StateSelect={ StateSelect }
-									renderDomainContactFields={ renderDomainContactFields }
 									shouldShowContactDetailsValidationErrors={
 										shouldShowContactDetailsValidationErrors
 									}
