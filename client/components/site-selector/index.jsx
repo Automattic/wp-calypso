@@ -10,6 +10,7 @@ import page from 'page';
 import classNames from 'classnames';
 import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
 import debugFactory from 'debug';
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -480,7 +481,19 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			// There is currently no "all sites" version of the insights page
 			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 		} else if ( siteBasePath ) {
-			return getSiteBasePath( site ) + '/' + site.slug;
+			const { protocol, hostname, port, pathname: urlPathname, query } = parseUrl(
+				getSiteBasePath( site ),
+				true
+			);
+			const newPathname = `${ urlPathname }/${ site.slug }`;
+
+			return formatUrl( {
+				protocol,
+				hostname,
+				port,
+				pathname: newPathname,
+				query,
+			} );
 		}
 	}
 

@@ -32,6 +32,7 @@ function WPLineItem( {
 	getItemVariants,
 	onChangePlanLength,
 	isSummary,
+	createUserAndSiteBeforeTransaction,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -39,7 +40,12 @@ function WPLineItem( {
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
+	const modalCopy = returnModalCopy(
+		item.type,
+		translate,
+		hasDomainsInCart,
+		createUserAndSiteBeforeTransaction
+	);
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== 'ready';
 
@@ -289,6 +295,7 @@ export function WPOrderReviewLineItems( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
+	createUserAndSiteBeforeTransaction,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -309,6 +316,7 @@ export function WPOrderReviewLineItems( {
 								getItemVariants={ getItemVariants }
 								onChangePlanLength={ onChangePlanLength }
 								isSummary={ isSummary }
+								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							/>
 						</WPOrderReviewListItem>
 					);
@@ -373,22 +381,31 @@ function GSuiteUsersList( { item } ) {
 	);
 }
 
-function returnModalCopy( product, translate, hasDomainsInCart ) {
+function returnModalCopy(
+	product,
+	translate,
+	hasDomainsInCart,
+	createUserAndSiteBeforeTransaction
+) {
 	const modalCopy = {};
 	const productType = product === 'plan' && hasDomainsInCart ? 'plan with dependencies' : product;
 
 	switch ( productType ) {
 		case 'plan with dependencies':
 			modalCopy.title = translate( 'You are about to remove your plan from the cart' );
-			modalCopy.description = translate(
-				'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
-			);
+			modalCopy.description = createUserAndSiteBeforeTransaction
+				? 'When you press Continue, we will remove your plan from the cart. Your site will be created on the free plan when you complete payment for the other product(s) in your cart.'
+				: translate(
+						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
+				  );
 			break;
 		case 'plan':
 			modalCopy.title = translate( 'You are about to remove your plan from the cart' );
-			modalCopy.description = translate(
-				'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. We will then take you back to your site.'
-			);
+			modalCopy.description = createUserAndSiteBeforeTransaction
+				? 'When you press Continue, we will remove your plan from the cart.'
+				: translate(
+						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. We will then take you back to your site.'
+				  );
 			break;
 		case 'domain':
 			modalCopy.title = translate( 'You are about to remove your domain from the cart' );
@@ -404,9 +421,11 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 			break;
 		default:
 			modalCopy.title = translate( 'You are about to remove your product from the cart' );
-			modalCopy.description = translate(
-				'When you press Continue, we will remove your product from the cart and your site will continue to run without it.'
-			);
+			modalCopy.description = createUserAndSiteBeforeTransaction
+				? 'When you press Continue, we will remove your product from the cart.'
+				: translate(
+						'When you press Continue, we will remove your product from the cart and your site will continue to run without it.'
+				  );
 	}
 
 	return modalCopy;

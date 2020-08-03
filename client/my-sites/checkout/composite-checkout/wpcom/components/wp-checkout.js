@@ -105,6 +105,7 @@ export default function WPCheckout( {
 	showErrorMessageBriefly,
 	isLoggedOutCart,
 	infoMessage,
+	createUserAndSiteBeforeTransaction,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -315,6 +316,7 @@ export default function WPCheckout( {
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
