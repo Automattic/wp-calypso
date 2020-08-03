@@ -57,6 +57,7 @@ const LayoutLoggedOut = ( {
 } ) => {
 	const sectionGroup = get( section, 'group', null );
 	const sectionName = get( section, 'name', null );
+	const isCheckout = sectionName === 'checkout';
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -104,7 +105,7 @@ const LayoutLoggedOut = ( {
 		masterbar = (
 			<MasterbarLoggedOut
 				title={ section.title }
-				sectionName={ section.name }
+				isCheckout={ isCheckout }
 				redirectUri={ redirectUri }
 			/>
 		);
@@ -121,6 +122,7 @@ const LayoutLoggedOut = ( {
 					id="notices"
 					notices={ notices.list }
 				/>
+				{ isCheckout && <AsyncLoad require="blocks/inline-help" placeholder={ null } /> }
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>

@@ -11,7 +11,7 @@ import { useSelect, useLineItems } from '@automattic/composite-checkout';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
-export default function WPContactFormSummary( { showDomainContactSummary } ) {
+export default function WPContactFormSummary( { showDomainContactSummary, isLoggedOutCart } ) {
 	const [ items ] = useLineItems();
 	const isGSuiteInCart = items.some( ( item ) =>
 		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
@@ -34,6 +34,7 @@ export default function WPContactFormSummary( { showDomainContactSummary } ) {
 		contactInfo.postalCode.value,
 		contactInfo.countryCode.value
 	);
+	const showEmailSummary = isLoggedOutCart || showDomainContactSummary;
 
 	return (
 		<GridRow>
@@ -47,7 +48,7 @@ export default function WPContactFormSummary( { showDomainContactSummary } ) {
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
 					) }
 
-					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
+					{ showEmailSummary && contactInfo.email.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 

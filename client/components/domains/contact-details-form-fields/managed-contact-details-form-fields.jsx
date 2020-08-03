@@ -180,31 +180,62 @@ export class ManagedContactDetailsFormFields extends Component {
 			}
 		} );
 	};
+	
+	renderContactDetailsEmailPhone() {
+		const { translate, isLoggedOutCart } = this.props;
 
-	renderContactDetailsFields() {
-		const { translate, hasCountryStates } = this.props;
-		const form = getFormFromContactDetails(
-			this.props.contactDetails,
-			this.props.contactDetailsErrors
-		);
-		const countryCode = form.countryCode?.value ?? '';
+		if ( isLoggedOutCart ) {
+			return (
+				<>
+					<div className="contact-details-form-fields__row">
+						{ this.createField(
+							'email',
+							Input,
+							{
+								label: translate( 'Email' ),
+								description: translate(
+									"You'll use this email address to access your account later"
+								),
+							},
+							{
+								customErrorMessage: this.props.contactDetailsErrors?.email,
+							}
+						) }
+					</div>
+
+					<div className="contact-details-form-fields__row">
+						{ this.createField(
+							'country-code',
+							CountrySelect,
+							{
+								label: translate( 'Country' ),
+								countriesList: this.props.countriesList,
+							},
+							{
+								customErrorMessage: this.props.contactDetailsErrors?.countryCode,
+							}
+						) }
+						{ this.createField(
+							'phone',
+							FormPhoneMediaInput,
+							{
+								label: translate( 'Phone' ),
+								onChange: this.handlePhoneChange,
+								countriesList: this.props.countriesList,
+								countryCode: this.state.phoneCountryCode,
+								enableStickyCountry: false,
+							},
+							{
+								customErrorMessage: this.props.contactDetailsErrors?.phone,
+							}
+						) }
+					</div>
+				</>
+			);
+		}
 
 		return (
-			<div className="contact-details-form-fields__contact-details">
-				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'organization',
-						HiddenInput,
-						{
-							label: translate( 'Organization' ),
-							text: translate( '+ Add organization name' ),
-						},
-						{
-							customErrorMessage: this.props.contactDetailsErrors?.organization,
-						}
-					) }
-				</div>
-
+			<>
 				<div className="contact-details-form-fields__row">
 					{ this.createField(
 						'email',
@@ -246,6 +277,35 @@ export class ManagedContactDetailsFormFields extends Component {
 						}
 					) }
 				</div>
+			</>
+		);
+	}
+
+	renderContactDetailsFields() {
+		const { translate, hasCountryStates } = this.props;
+		const form = getFormFromContactDetails(
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
+		);
+		const countryCode = form.countryCode?.value ?? '';
+
+		return (
+			<div className="contact-details-form-fields__contact-details">
+				<div className="contact-details-form-fields__row">
+					{ this.createField(
+						'organization',
+						HiddenInput,
+						{
+							label: translate( 'Organization' ),
+							text: translate( '+ Add organization name' ),
+						},
+						{
+							customErrorMessage: this.props.contactDetailsErrors?.organization,
+						}
+					) }
+				</div>
+
+				{ this.renderContactDetailsEmailPhone() }
 
 				{ countryCode && (
 					<RegionAddressFieldsets

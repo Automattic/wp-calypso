@@ -7,6 +7,7 @@ import debugFactory from 'debug';
 import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import cookie from 'cookie';
 import { isArray } from 'lodash';
 
 /**
@@ -23,7 +24,8 @@ import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { isJetpackBackup, isJetpackBackupSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
-import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { isJetpackSite, getSiteProducts, getSitePlan } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
@@ -32,9 +34,16 @@ import {
 	isBackupProductIncludedInSitePlan,
 } from 'state/sites/products/conflicts';
 import { abtest } from 'lib/abtest';
+import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
+
+function getGeoLocationFromCookie() {
+	const cookies = cookie.parse( document.cookie );
+
+	return cookies.country_code;
+}
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -53,14 +62,17 @@ export default function CheckoutSystemDecider( {
 	upgradeIntent,
 	clearTransaction,
 	cart,
+	isLoggedOutCart,
+	isNoSiteCart,
 } ) {
 	const siteId = selectedSite?.ID;
 	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
-	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
-	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const countryCode =
+		useSelector( ( state ) => getCurrentUserCountryCode( state ) ) || getGeoLocationFromCookie();
+	const locale = useSelector( ( state ) => getCurrentLocaleSlug( state ) );
 	const isJetpackPlanIncludingSiteBackup = useSelector( ( state ) =>
 		jetpackPlan ? isPlanIncludingSiteBackup( state, siteId, jetpackPlan.getStoreSlug() ) : null
 	);
@@ -158,27 +170,43 @@ export default function CheckoutSystemDecider( {
 	}
 
 	if ( 'composite-checkout' === checkoutVariant ) {
+		let siteSlug = selectedSite?.slug;
+
+		if ( ! siteSlug ) {
+			siteSlug = 'no-site';
+
+			if ( isLoggedOutCart || isNoSiteCart ) {
+				siteSlug = 'no-user';
+			}
+		}
+
 		return (
-			<CheckoutErrorBoundary
-				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-				onError={ logCheckoutError }
-			>
-				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-					<CompositeCheckout
-						siteSlug={ selectedSite?.slug }
-						siteId={ selectedSite?.ID }
-						product={ product }
-						purchaseId={ purchaseId }
-						couponCode={ couponCode }
-						redirectTo={ redirectTo }
-						feature={ selectedFeature }
-						plan={ plan }
-						cart={ cart }
-						isComingFromUpsell={ isComingFromUpsell }
-						infoMessage={ infoMessage }
-					/>
-				</StripeHookProvider>
-			</CheckoutErrorBoundary>
+			<>
+				<CheckoutErrorBoundary
+					errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+					onError={ logCheckoutError }
+				>
+					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+						<CompositeCheckout
+							siteSlug={ siteSlug }
+							siteId={ selectedSite?.ID }
+							product={ product }
+							purchaseId={ purchaseId }
+							couponCode={ couponCode }
+							redirectTo={ redirectTo }
+							feature={ selectedFeature }
+							plan={ plan }
+							cart={ cart }
+							isComingFromUpsell={ isComingFromUpsell }
+							infoMessage={ infoMessage }
+							isLoggedOutCart={ isLoggedOutCart }
+							isNoSiteCart={ isNoSiteCart }
+							getCart={ isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( cart ) : null }
+						/>
+					</StripeHookProvider>
+				</CheckoutErrorBoundary>
+				{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
+			</>
 		);
 	}
 
