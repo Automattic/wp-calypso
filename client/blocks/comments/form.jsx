@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import AutoDirection from 'components/auto-direction';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Gravatar from 'components/gravatar';
@@ -178,6 +179,11 @@ class PostCommentForm extends React.Component {
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
+		const formClasses = classNames( {
+			comments__form: true,
+			'is-active': this.state.haveFocus || this.hasCommentText(),
+		} );
+
 		const expandingAreaClasses = classNames( {
 			focused: this.state.haveFocus,
 			'expanding-area': true,
@@ -188,7 +194,7 @@ class PostCommentForm extends React.Component {
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
-			<form className="comments__form">
+			<form className={ formClasses }>
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<fieldset>
 					<Gravatar user={ this.props.currentUser } />
@@ -211,13 +217,13 @@ class PostCommentForm extends React.Component {
 							/>
 						</AutoDirection>
 					</div>
-					<button
+					<Button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }
 						onClick={ this.handleSubmit }
 					>
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
-					</button>
+					</Button>
 					{ this.renderError() }
 				</fieldset>
 			</form>
