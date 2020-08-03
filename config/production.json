@@ -63,7 +63,7 @@
 		"jetpack/anti-spam-product": true,
 		"jetpack/on-demand-scan": true,
 		"jetpack/backups-restore": true,
-		"jetpack/personal-plan": true,
+		"jetpack/personal-plan": false,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
