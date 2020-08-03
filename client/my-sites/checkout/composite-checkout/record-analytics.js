@@ -217,7 +217,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					recordTracksEvent( 'calypso_checkout_composite_add_coupon_clicked', {} )
 				);
 
-			case 'STEP_NUMBER_CHANGED': {
+			case 'STEP_NUMBER_CHANGED':
 				if ( action.payload.stepNumber === 2 && action.payload.previousStepNumber === 1 ) {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
@@ -232,7 +232,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						step: action.payload.stepNumber,
 					} )
 				);
-			}
 
 			case 'STRIPE_TRANSACTION_BEGIN': {
 				reduxDispatch(
