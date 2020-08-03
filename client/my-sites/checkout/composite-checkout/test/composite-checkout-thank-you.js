@@ -68,6 +68,24 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
+	it( 'redirects to the thank-you pending page with a order id when a site and orderId is set even if the quickstart offer would normally be included', () => {
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		const cart = {
+			products: [
+				{
+					product_slug: 'personal-bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			orderId: '1234abcd',
+			cart,
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
+	} );
+
 	// Note: This just verifies the existing behavior; this URL is invalid unless
 	// placed after a `redirectTo` query string; see the redirect payment
 	// processor
