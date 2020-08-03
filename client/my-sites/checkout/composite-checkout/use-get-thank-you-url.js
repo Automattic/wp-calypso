@@ -140,6 +140,7 @@ export function getThankYouPageUrl( {
 
 	const redirectPathForConciergeUpsell = getRedirectUrlForConciergeNudge( {
 		pendingOrReceiptId,
+		orderId,
 		cart,
 		siteSlug,
 		hideNudge,
@@ -217,6 +218,7 @@ function getFallbackDestination( {
 
 function maybeShowPlanBumpOfferConcierge( {
 	pendingOrReceiptId,
+	orderId,
 	cart,
 	siteSlug,
 	didPurchaseFail,
@@ -226,7 +228,7 @@ function maybeShowPlanBumpOfferConcierge( {
 		if ( 'variantShowPlanBump' === abtest( 'showBusinessPlanBump' ) ) {
 			return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
 		}
-		return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
+		return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
 	}
 
 	return;
@@ -234,6 +236,7 @@ function maybeShowPlanBumpOfferConcierge( {
 
 function getRedirectUrlForConciergeNudge( {
 	pendingOrReceiptId,
+	orderId,
 	cart,
 	siteSlug,
 	hideNudge,
@@ -257,6 +260,7 @@ function getRedirectUrlForConciergeNudge( {
 
 		const upgradePath = maybeShowPlanBumpOfferConcierge( {
 			pendingOrReceiptId,
+			orderId,
 			cart,
 			siteSlug,
 			didPurchaseFail,
@@ -270,11 +274,18 @@ function getRedirectUrlForConciergeNudge( {
 		// being offered and so sold, to be inline with HE availability.
 		// To dial back, uncomment the condition below and modify the test config.
 		if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-			return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
+			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
 		}
 	}
 
 	return;
+}
+
+function getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } ) {
+	if ( orderId ) {
+		return;
+	}
+	return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
 function getDisplayModeParamFromCart( cart ) {
