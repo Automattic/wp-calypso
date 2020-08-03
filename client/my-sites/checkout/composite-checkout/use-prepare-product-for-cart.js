@@ -251,7 +251,7 @@ function getProductSlugFromAlias( productAlias ) {
 	if ( productAlias === 'concierge-session' ) {
 		return 'concierge-session';
 	}
-	return null;
+	return productAlias;
 }
 
 function createRenewalItemToAddToCart( productAlias, productId, purchaseId, selectedSiteSlug ) {

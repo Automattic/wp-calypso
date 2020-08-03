@@ -27,7 +27,7 @@ import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-prog
 import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
@@ -38,6 +38,8 @@ import { requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { hasUnseen } from 'state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import JetpackLogo from 'components/jetpack-logo';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -167,6 +169,7 @@ class MasterbarLoggedIn extends React.Component {
 			isMigrationInProgress,
 			previousPath,
 			siteSlug,
+			isJetpackNotAtomic,
 		} = this.props;
 
 		if ( isCheckout === true ) {
@@ -186,7 +189,8 @@ class MasterbarLoggedIn extends React.Component {
 							tooltip={ translate( 'Close Checkout' ) }
 							tipTarget="close"
 						/>
-						<WordPressWordmark className="masterbar__wpcom-wordmark" />
+						{ ! isJetpackNotAtomic && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
+						{ isJetpackNotAtomic && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
 						<span className="masterbar__secure-checkout-text">
 							{ translate( 'Secure checkout' ) }
 						</span>
@@ -278,6 +282,7 @@ export default connect(
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
 			previousPath: getPreviousPath( state ),
+			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }

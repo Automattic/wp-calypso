@@ -17,7 +17,7 @@ import {
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
-import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
+import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -85,12 +85,13 @@ import { AUTO_RENEWAL } from 'lib/url/support';
 import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
-import { useWpcomProductVariants } from './wpcom/hooks/product-variants';
+import { useProductVariants } from './wpcom/hooks/product-variants';
 import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './wpcom/lib/translate-cart';
 import useShoppingCartManager from './wpcom/hooks/use-shopping-cart-manager';
 import useShowAddCouponSuccessMessage from './wpcom/hooks/use-show-add-coupon-success-message';
 import useCountryList from './wpcom/hooks/use-country-list';
+import { colors } from '@automattic/color-studio';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -468,7 +469,7 @@ export default function CompositeCheckout( {
 		);
 	};
 
-	const getItemVariants = useWpcomProductVariants( {
+	const getItemVariants = useProductVariants( {
 		siteId,
 		productSlug: getPlanProductSlugs( items )[ 0 ],
 	} );
@@ -529,6 +530,20 @@ export default function CompositeCheckout( {
 		product
 	);
 
+	const jetpackColors = isJetpackNotAtomic
+		? {
+				primary: colors[ 'Jetpack Green' ],
+				primaryBorder: colors[ 'Jetpack Green 80' ],
+				primaryOver: colors[ 'Jetpack Green 60' ],
+				success: colors[ 'Jetpack Green' ],
+				discount: colors[ 'Jetpack Green' ],
+				highlight: colors[ 'Blue 50' ],
+				highlightBorder: colors[ 'Blue 80' ],
+				highlightOver: colors[ 'Blue 60' ],
+		  }
+		: {};
+	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
+
 	return (
 		<React.Fragment>
 			<QuerySitePlans siteId={ siteId } />
@@ -555,6 +570,7 @@ export default function CompositeCheckout( {
 						isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
 					}
 					isValidating={ isCartPendingUpdate }
+					theme={ theme }
 				>
 					<WPCheckout
 						removeItem={ removeItem }

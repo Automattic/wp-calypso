@@ -75,7 +75,7 @@ See the [demo](demo/index.js) for an example of using this package.
 
 ## Styles and Themes
 
-Each component will be styled using [@emotion/styled](https://emotion.sh/docs/styled) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`.
+Each component will be styled using [@emotion/styled](https://emotion.sh/docs/styled) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`. The [`checkoutTheme`](#checkoutTheme) object is available from the package API, and can be merged with new values to customize the design.
 
 For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
 
@@ -270,6 +270,10 @@ A wrapper for a section of a list of related line items. Renders its `children` 
 Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+### checkoutTheme
+
+An [@emotion/styled](https://emotion.sh/docs/styled) theme object that can be merged with custom theme variables and passed to [CheckoutProvider](#checkout-provider) in order to customize the default Checkout design.
 
 ### createApplePayMethod
 

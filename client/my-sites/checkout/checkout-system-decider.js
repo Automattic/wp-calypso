@@ -230,13 +230,16 @@ function getCheckoutVariant(
 		return 'disallowed-geo';
 	}
 
-	// Disable if this is a jetpack site
-	if ( isJetpack && ! isAtomic ) {
+	// Disable for Jetpack sites in production
+	if ( config( 'env_id' ) === 'production' && isJetpack && ! isAtomic ) {
 		debug( 'shouldShowCompositeCheckout false because jetpack site' );
 		return 'jetpack-site';
 	}
-	// Disable for jetpack plans
-	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) ) ) {
+	// Disable for Jetpack plans in production
+	if (
+		config( 'env_id' ) === 'production' &&
+		cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) )
+	) {
 		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
 		return 'jetpack-product';
 	}
@@ -246,7 +249,7 @@ function getCheckoutVariant(
 	// products via URL, so we list those slugs here. Renewals use actual slugs,
 	// so they do not need to go through this check.
 	const isRenewal = !! purchaseId;
-	const pseudoSlugsToAllow = [
+	let pseudoSlugsToAllow = [
 		'blogger',
 		'blogger-2-years',
 		'business',
@@ -256,9 +259,24 @@ function getCheckoutVariant(
 		'ecommerce-2-years',
 		'personal',
 		'personal-2-years',
-		'premium',
+		'premium', // WordPress.com or Jetpack Premium Yearly
 		'premium-2-years',
 	];
+	const jetpackPseudoSlugsToAllow = [
+		'jetpack_backup_daily',
+		'jetpack_backup_realtime',
+		'jetpack_personal',
+		'jetpack-personal',
+		'jetpack-personal-monthly',
+		'jetpack_scan',
+		'jetpack_search',
+		'premium-monthly',
+		'professional',
+		'professional-monthly',
+	];
+	if ( config( 'env_id' ) !== 'production' ) {
+		pseudoSlugsToAllow = [ ...pseudoSlugsToAllow, ...jetpackPseudoSlugsToAllow ];
+	}
 	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
 		! isRenewal &&
