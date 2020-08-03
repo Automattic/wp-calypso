@@ -123,6 +123,7 @@ export default function CompositeCheckout( {
 	couponCode: couponCodeFromUrl,
 	isComingFromUpsell,
 	isLoggedOutCart,
+	isNoSiteCart,
 	infoMessage,
 } ) {
 	const translate = useTranslate();
@@ -133,6 +134,8 @@ export default function CompositeCheckout( {
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
+	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
+	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [
 		reduxDispatch,
@@ -204,7 +207,7 @@ export default function CompositeCheckout( {
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
-		cartKey: isLoggedOutCart ? siteSlug : siteId,
+		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsToAdd: productsForCart,
 		couponToAdd: couponCodeFromUrl,
@@ -312,9 +315,12 @@ export default function CompositeCheckout( {
 
 			debug( 'just redirecting to', url );
 
-			if ( isLoggedOutCart ) {
+			if ( createUserAndSiteBeforeTransaction ) {
 				window.localStorage.removeItem( 'shoppingCart' );
 				window.localStorage.removeItem( 'siteParams' );
+
+				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
+				// Using page.redirect() will take to the log in page which we don't want.
 				window.location = url;
 				return;
 			}
@@ -333,7 +339,7 @@ export default function CompositeCheckout( {
 			total,
 			couponItem,
 			responseCart,
-			isLoggedOutCart,
+			createUserAndSiteBeforeTransaction,
 		]
 	);
 
@@ -361,7 +367,7 @@ export default function CompositeCheckout( {
 
 	let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
 
-	if ( isLoggedOutCart ) {
+	if ( createUserAndSiteBeforeTransaction ) {
 		const siteSlugLoggedOutCart = select( 'wpcom' )?.getSiteSlug();
 		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
 	}
@@ -371,7 +377,7 @@ export default function CompositeCheckout( {
 		cartEmptyRedirectUrl,
 		isLoadingCart,
 		[ ...errors, loadingError ].filter( Boolean ),
-		isLoggedOutCart
+		createUserAndSiteBeforeTransaction
 	);
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
@@ -519,7 +525,7 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': applePayProcessor,
 			'free-purchase': freePurchaseProcessor,
-			card: ( transactionData ) => stripeCardProcessor( transactionData, isLoggedOutCart ),
+			card: ( transactionData ) => stripeCardProcessor( transactionData, transactionOptions ),
 			alipay: ( transactionData ) =>
 				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
 			p24: ( transactionData ) =>
@@ -537,13 +543,13 @@ export default function CompositeCheckout( {
 			eps: ( transactionData ) =>
 				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, siteSlug ),
 			'full-credits': ( transactionData ) =>
-				fullCreditsProcessor( transactionData, isLoggedOutCart ),
+				fullCreditsProcessor( transactionData, transactionOptions ),
 			'existing-card': ( transactionData ) =>
-				existingCardProcessor( transactionData, isLoggedOutCart ),
+				existingCardProcessor( transactionData, transactionOptions ),
 			paypal: ( transactionData ) =>
-				payPalProcessor( transactionData, getThankYouUrl, couponItem, isLoggedOutCart ),
+				payPalProcessor( transactionData, getThankYouUrl, couponItem, transactionOptions ),
 		} ),
-		[ couponItem, getThankYouUrl, siteSlug, isLoggedOutCart ]
+		[ couponItem, getThankYouUrl, siteSlug, transactionOptions ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -603,6 +609,7 @@ export default function CompositeCheckout( {
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
 						isLoggedOutCart={ isLoggedOutCart }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						infoMessage={ infoMessage }
 					/>
 				</CheckoutProvider>
@@ -643,11 +650,17 @@ function isNotCouponError( error ) {
 	return ! couponErrorCodes.includes( error.code );
 }
 
-function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors, isLoggedOutCart ) {
+function useRedirectIfCartEmpty(
+	items,
+	redirectUrl,
+	isLoading,
+	errors,
+	createUserAndSiteBeforeTransaction
+) {
 	useEffect( () => {
 		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
-			if ( isLoggedOutCart ) {
+			if ( createUserAndSiteBeforeTransaction ) {
 				window.localStorage.removeItem( 'siteParams' );
 
 				// We use window.location instead of page.redirect() so that if the user already has an account and site at
@@ -659,7 +672,7 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors, isLogged
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, isLoading, errors, isLoggedOutCart ] );
+	}, [ redirectUrl, items, isLoading, errors, createUserAndSiteBeforeTransaction ] );
 }
 
 function useCountryList( overrideCountryList ) {

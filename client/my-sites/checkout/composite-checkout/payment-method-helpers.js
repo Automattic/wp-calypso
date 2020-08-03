@@ -71,14 +71,14 @@ function storedCardsReducer( state, action ) {
 	}
 }
 
-export async function submitExistingCardPayment( transactionData, submit, isLoggedOutCart ) {
+export async function submitExistingCardPayment( transactionData, submit, transactionOptions ) {
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
-	return submit( formattedTransactionData, isLoggedOutCart );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
 export async function submitApplePayPayment( transactionData, submit ) {
@@ -92,12 +92,12 @@ export async function submitApplePayPayment( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function submitPayPalExpressRequest( transactionData, submit, isLoggedOutCart ) {
+export async function submitPayPalExpressRequest( transactionData, submit, transactionOptions ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return submit( formattedTransactionData, isLoggedOutCart );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
 export function getDomainDetails( select ) {
@@ -109,7 +109,7 @@ export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-export async function submitStripeCardTransaction( transactionData, submit, isLoggedOutCart ) {
+export async function submitStripeCardTransaction( transactionData, submit, transactionOptions ) {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
@@ -117,7 +117,7 @@ export async function submitStripeCardTransaction( transactionData, submit, isLo
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
-	return submit( formattedTransactionData, isLoggedOutCart );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
@@ -138,14 +138,14 @@ export async function submitStripeRedirectTransaction( paymentMethodId, transact
 	return submit( formattedTransactionData );
 }
 
-export function submitCreditsTransaction( transactionData, submit, isLoggedOutCart ) {
+export function submitCreditsTransaction( transactionData, submit, transactionOptions ) {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting full credits transaction', formattedTransactionData );
-	return submit( formattedTransactionData, isLoggedOutCart );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
 export function submitFreePurchaseTransaction( transactionData, submit ) {
@@ -302,8 +302,10 @@ function getErrorMessage( { error, message } ) {
 	}
 }
 
-export async function wpcomTransaction( payload, isLoggedOutCart ) {
-	if ( isLoggedOutCart ) {
+export async function wpcomTransaction( payload, transactionOptions ) {
+	const { createUserAndSiteBeforeTransaction } = transactionOptions;
+
+	if ( createUserAndSiteBeforeTransaction ) {
 		const { select } = defaultRegistry;
 
 		return createAccount( select ).then( ( response ) => {
@@ -329,8 +331,10 @@ export async function wpcomTransaction( payload, isLoggedOutCart ) {
 	return wp.undocumented().transactions( payload );
 }
 
-export async function wpcomPayPalExpress( payload, isLoggedOutCart ) {
-	if ( isLoggedOutCart ) {
+export async function wpcomPayPalExpress( payload, transactionOptions ) {
+	const { createUserAndSiteBeforeTransaction } = transactionOptions;
+
+	if ( createUserAndSiteBeforeTransaction ) {
 		const { select } = defaultRegistry;
 
 		return createAccount( select ).then( ( response ) => {
