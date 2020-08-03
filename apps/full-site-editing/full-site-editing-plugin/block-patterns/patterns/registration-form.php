@@ -62,10 +62,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Registration Form', 'full-site-editing' ),
-	'categories' => array( 'call-to-action', 'contact' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Registration Form', 'full-site-editing' ),
+	'categories'    => array( 'call-to-action', 'contact' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Register to Join Us', 'full-site-editing' ),
 		esc_html__( 'Seats are limited, so be sure to sign up soon to reserve your spot!', 'full-site-editing' ),

@@ -56,10 +56,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Image and Text Mosaic', 'full-site-editing' ),
-	'categories' => array( 'gallery', 'images', 'text' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Image and Text Mosaic', 'full-site-editing' ),
+	'categories'    => array( 'gallery', 'images', 'text' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Ceramic Tea Bowls"', 'full-site-editing' ),
 		esc_html__( 'A tea bowl is a central item in the traditional tea ceremony. In our shop you&rsquo;ll find one-of-a-kind, handmade bowls and cups made to order in our ceramic workshop. Each of our bowls is a unique creation so please allow for slight variances in shape and color. The bowls are glazed with special food-safe glazes.', 'full-site-editing' ),

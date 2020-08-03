@@ -58,10 +58,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Images', 'full-site-editing' ),
-	'categories' => array( 'gallery', 'images', 'text' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Images', 'full-site-editing' ),
+	'categories'    => array( 'gallery', 'images', 'text' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Vol.3', 'full-site-editing' ),
 		esc_html__( '5am, the Beach', 'full-site-editing' ),

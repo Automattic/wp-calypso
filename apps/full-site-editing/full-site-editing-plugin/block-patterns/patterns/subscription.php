@@ -48,10 +48,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Subscription', 'full-site-editing' ),
-	'categories' => array( 'call-to-action', 'subscribe' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Subscription', 'full-site-editing' ),
+	'categories'    => array( 'call-to-action', 'subscribe' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Get new recipes delivered directly to your inbox.', 'full-site-editing' ),
 		esc_html__( 'Sign up', 'full-site-editing' )

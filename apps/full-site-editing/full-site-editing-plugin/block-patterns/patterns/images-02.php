@@ -80,10 +80,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Images', 'full-site-editing' ),
-	'categories' => array( 'gallery', 'images' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Images', 'full-site-editing' ),
+	'categories'    => array( 'gallery', 'images' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Summer', 'full-site-editing' ),
 		esc_html__( '2019', 'full-site-editing' ),

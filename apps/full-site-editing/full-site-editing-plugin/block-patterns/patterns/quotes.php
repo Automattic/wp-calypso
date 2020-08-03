@@ -72,10 +72,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Quotes', 'full-site-editing' ),
-	'categories' => array( 'quotes', 'text', 'list' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Quotes', 'full-site-editing' ),
+	'categories'    => array( 'quotes', 'text', 'list' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'What Our Customers Are Saying', 'full-site-editing' ),
 		esc_html__( 'LIZ S.', 'full-site-editing' ),

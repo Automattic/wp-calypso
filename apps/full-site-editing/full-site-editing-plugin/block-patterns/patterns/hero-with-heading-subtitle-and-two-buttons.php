@@ -28,10 +28,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Hero with heading, subtitle and two buttons', 'full-site-editing' ),
-	'categories' => array( 'text', 'call-to-action' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Hero with heading, subtitle and two buttons', 'full-site-editing' ),
+	'categories'    => array( 'text', 'call-to-action' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'A Curated Collection of Refurbished Vintage Cameras &amp; Accessories', 'full-site-editing' ),
 		esc_html__( 'Lenses, filters, lighting and more. All in working condition at unbeatable prices.', 'full-site-editing' ),

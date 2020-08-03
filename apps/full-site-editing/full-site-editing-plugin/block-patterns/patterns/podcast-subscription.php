@@ -48,10 +48,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Podcast Subscription', 'full-site-editing' ),
-	'categories' => array( 'call-to-action', 'podcast' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Podcast Subscription', 'full-site-editing' ),
+	'categories'    => array( 'call-to-action', 'podcast' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Never miss an episode', 'full-site-editing' ),
 		esc_html__( 'Subscribe wherever you enjoy podcasts:', 'full-site-editing' ),

@@ -46,10 +46,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Call to Action', 'full-site-editing' ),
-	'categories' => array( 'call-to-action' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Call to Action', 'full-site-editing' ),
+	'categories'    => array( 'call-to-action' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Date:', 'full-site-editing' ),
 		esc_html__( 'May 28, 2021', 'full-site-editing' ),

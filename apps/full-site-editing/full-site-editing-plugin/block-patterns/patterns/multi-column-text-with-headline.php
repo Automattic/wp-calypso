@@ -84,10 +84,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Multi-column Text with Headline', 'full-site-editing' ),
-	'categories' => array( 'call-to-action', 'text' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Multi-column Text with Headline', 'full-site-editing' ),
+	'categories'    => array( 'call-to-action', 'text' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'Online Lesson', 'full-site-editing' ),
 		esc_html__( 'Introduction to the Technical Side of Photography', 'full-site-editing' ),

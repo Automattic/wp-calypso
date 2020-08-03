@@ -52,10 +52,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Quote', 'full-site-editing' ),
-	'categories' => array( 'quotes', 'text', 'list' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Quote', 'full-site-editing' ),
+	'categories'    => array( 'quotes', 'text', 'list' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'What People Are Saying', 'full-site-editing' ),
 		esc_html__( '“There are few people whom I really love, and still fewer of whom I think well. The more I see of the world, the more am I dissatisfied with it; and every day confirms my belief of the inconsistency of all human characters, and of the little dependence that can be placed on the appearance of merit or sense.”', 'full-site-editing' ),

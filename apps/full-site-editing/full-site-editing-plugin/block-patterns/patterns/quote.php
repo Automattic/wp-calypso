@@ -30,10 +30,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Quote', 'full-site-editing' ),
-	'categories' => array( 'quotes', 'text' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Quote', 'full-site-editing' ),
+	'categories'    => array( 'quotes', 'text' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( '"So many things are possible just as long as you don&rsquo;t know they&rsquo;re impossible."', 'full-site-editing' ),
 		esc_html__( '— Norton Juster', 'full-site-editing' )

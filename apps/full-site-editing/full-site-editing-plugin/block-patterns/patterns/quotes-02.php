@@ -80,10 +80,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Quotes', 'full-site-editing' ),
-	'categories' => array( 'quotes', 'text', 'list' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Quotes', 'full-site-editing' ),
+	'categories'    => array( 'quotes', 'text', 'list' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'What Our Customers Are Saying', 'full-site-editing' ),
 		esc_html__( 'Reasonably priced good food and drink. The menu favorite that keeps me coming back is the seafood chowder. Really tasty, nice and hot. It&rsquo;s perfect for a chilly winter night! Stuff is always very attentive and helpful. I always enjoy and relax with the calm atmosphere.', 'full-site-editing' ),

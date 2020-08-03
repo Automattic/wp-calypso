@@ -34,10 +34,10 @@ https://www.youtube.com/watch?v=k58xZ6osP3Y
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'YouTube Embed', 'full-site-editing' ),
-	'categories' => array( 'media' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'YouTube Embed', 'full-site-editing' ),
+	'categories'    => array( 'media' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'The Endless Movement', 'full-site-editing' ),
 		esc_html__( 'Watch our award-winning showreel: 2020 — The Endless Movement.', 'full-site-editing' )

@@ -18,10 +18,10 @@ $markup = '
 ';
 
 return array(
-	'__file'     => 'wp_block',
-	'title'      => esc_html__( 'Audio Player', 'full-site-editing' ),
-	'categories' => array( 'about', 'media', 'podcast' ),
-	'content'    => sprintf(
+	'__file'        => 'wp_block',
+	'title'         => esc_html__( 'Audio Player', 'full-site-editing' ),
+	'categories'    => array( 'about', 'media', 'podcast' ),
+	'content'       => sprintf(
 		$markup,
 		esc_html__( 'First time here? Let me tell you why this show rocks!', 'full-site-editing' )
 	),
