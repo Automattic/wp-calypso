@@ -246,14 +246,15 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	isDataLoaded = () => {
-		if ( this.isGenericReceipt() || this.props.isProductsListFetching ) {
+		if ( this.isGenericReceipt() ) {
 			return true;
 		}
 
 		return (
 			( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) &&
 			this.props.receipt.hasLoadedFromServer &&
-			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer )
+			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer ) &&
+			! this.props.isProductsListFetching
 		);
 	};
 

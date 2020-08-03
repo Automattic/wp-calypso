@@ -40,6 +40,7 @@ const BusinessPlanDetails = ( {
 	selectedFeature,
 	purchases,
 	hasProductsList,
+	productDisplayCost,
 } ) => {
 	const shouldPromoteJetpack = useSelector( ( state ) =>
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
@@ -49,6 +50,30 @@ const BusinessPlanDetails = ( {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 
 	const locale = i18n.getLocaleSlug();
+	const isEnglish = -1 !== [ 'en', 'en-gb' ].indexOf( locale );
+
+	const detailDescriptionWithPrice = i18n.translate(
+		'Schedule a %(price)s Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.',
+		{
+			args: {
+				price: productDisplayCost,
+			},
+		}
+	);
+	let detailDescription = i18n.translate(
+		'Schedule a Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
+	);
+
+	//TODO: remove this once price translations are finished
+	if (
+		isEnglish ||
+		i18n.hasTranslation(
+			'Schedule a %(price)s Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
+		)
+	) {
+		detailDescription = detailDescriptionWithPrice;
+	}
+
 	return (
 		<div>
 			{ googleAppsWasPurchased && <GoogleAppsDetails purchases={ purchases } /> }
@@ -71,18 +96,11 @@ const BusinessPlanDetails = ( {
 				hasDomainCredit={ plan && plan.hasDomainCredit }
 			/>
 
-			{ ( 'en' === locale || i18n.hasTranslation( 'Purchase a session' ) ) && (
+			{ ( isEnglish || i18n.hasTranslation( 'Purchase a session' ) ) && (
 				<PurchaseDetail
 					icon={ <img alt="" src={ conciergeImage } /> }
 					title={ i18n.translate( 'Get personalized help' ) }
-					description={ i18n.translate(
-						'Schedule a %(price)s Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.',
-						{
-							args: {
-								price: productDisplayCost,
-							},
-						}
-					) }
+					description={ detailDescription }
 					buttonText={ i18n.translate( 'Purchase a session' ) }
 					href={ `/checkout/offer-quickstart-session` }
 					onClick={ trackOnboardingButtonClick }
