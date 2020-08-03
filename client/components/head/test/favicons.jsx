@@ -40,12 +40,12 @@ describe( 'Favicons', () => {
 		expect( wrapper ).toMatchSnapshot();
 
 		expect(
-			wrapper.find( { rel: 'shortcut icon', type: 'image/vnd.microsoft.icon' } ).prop( 'href' )
+			findFaviconURL( wrapper, { rel: 'shortcut icon', type: 'image/vnd.microsoft.icon' } )
 		).toEqual( arbitraryURL );
-		expect( wrapper.find( { rel: 'shortcut icon', type: 'image/x-icon' } ).prop( 'href' ) ).toEqual(
+		expect( findFaviconURL( wrapper, { rel: 'shortcut icon', type: 'image/x-icon' } ) ).toEqual(
 			arbitraryURL
 		);
-		expect( wrapper.find( { rel: 'icon', type: 'image/x-icon' } ).prop( 'href' ) ).toEqual(
+		expect( findFaviconURL( wrapper, { rel: 'icon', type: 'image/x-icon' } ) ).toEqual(
 			arbitraryURL
 		);
 	} );
