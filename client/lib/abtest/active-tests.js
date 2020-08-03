@@ -232,6 +232,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-		countryCodeTargets: [ 'US' ],
+		countryCodeTargets: [ 'US', 'CA' ],
 	},
 };
