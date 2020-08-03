@@ -4,28 +4,10 @@
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
 	position: relative;
 
-	.task__text,
-	.task__illustration {
-		box-sizing: border-box;
-		padding: 24px;
-
-		@include breakpoint-deprecated( '>1040px' ) {
-			padding: 32px;
-		}
-	}
-
 	.task__text {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-	}
-
-	.task__illustration {
-		width: 33.33%;
-		align-self: center;
-		flex-shrink: 0;
-		margin-left: auto;
-		text-align: center;
 	}
 
 	.task__timing {
@@ -40,20 +22,14 @@
 		}
 	}
 
-	.task__badge {
-		background-color: var( --studio-gray-80 );
-		color: var( --color-text-inverted );
-		margin-bottom: 8px;
-	}
-
 	.task__title {
 		@extend .wp-brand-font;
-		font-size: $font-title-large;
+		font-size: 28px;
 		line-height: 36px;
 		margin-bottom: 4px;
 
 		@include breakpoint-deprecated( '>800px' ) {
-			font-size: $font-title-large;
+			font-size: 32px;
 			line-height: 40px;
 		}
 	}
@@ -65,7 +41,7 @@
 		color: var( --color-text );
 
 		@include breakpoint-deprecated( '>800px' ) {
-			font-size: $font-title-small;
+			font-size: 18px;
 			line-height: 28px;
 			margin-bottom: 32px;
 		}
@@ -97,4 +73,20 @@
 
 .task__skip-popover .popover__menu {
 	min-width: 130px;
+}
+
+.site-setup-checklist-ecommerce {
+	padding: 0;
+}
+
+.task__gauge {
+	width: 33.33%;
+	align-self: center;
+	flex-shrink: 0;
+	margin-left: auto;
+	text-align: center;
+
+	> div {
+		margin: auto;
+	}
 }
