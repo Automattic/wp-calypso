@@ -331,6 +331,16 @@ export function generateSteps( {
 			},
 		},
 
+		'select-domain': {
+			stepName: 'select-domain',
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'receiptId' ],
+			props: {
+				isAllDomains: true,
+				isDomainOnly: true,
+				shouldShowDomainTestCopy: false,
+			},
+		},
+
 		'domains-store': {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,

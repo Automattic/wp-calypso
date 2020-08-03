@@ -31,6 +31,7 @@ import {
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { domainManagementRoot } from 'my-sites/domains/paths';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -573,7 +574,12 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { flowName, siteType, translate } = this.props;
+		const { flowName, isAllDomains, siteType, translate } = this.props;
+
+		if ( isAllDomains ) {
+			return translate( 'Enter a name or keyword to get started.' );
+		}
+
 		const subHeaderPropertyName = this.isEligibleVariantForDomainTest()
 			? 'domainsStepSubheaderTestCopy'
 			: 'domainsStepSubheader';
@@ -592,7 +598,12 @@ class DomainsStep extends React.Component {
 	}
 
 	getHeaderText() {
-		const { headerText, siteType } = this.props;
+		const { headerText, isAllDomains, siteType, translate } = this.props;
+
+		if ( isAllDomains ) {
+			return translate( 'Add a domain' );
+		}
+
 		const headerPropertyName = this.isEligibleVariantForDomainTest()
 			? 'domainsStepHeaderTestCopy'
 			: 'domainsStepHeader';
@@ -650,7 +661,7 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, translate, sites } = this.props;
+		const { flowName, isAllDomains, translate, sites } = this.props;
 		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl, backLabelText;
 
@@ -666,6 +677,11 @@ class DomainsStep extends React.Component {
 		} else if ( 0 === this.props.positionInFlow && hasSite ) {
 			backUrl = '/sites/';
 			backLabelText = translate( 'Back to My Sites' );
+
+			if ( isAllDomains ) {
+				backUrl = domainManagementRoot();
+				backLabelText = translate( 'Back to All Domains' );
+			}
 		}
 
 		const headerText = this.getHeaderText();

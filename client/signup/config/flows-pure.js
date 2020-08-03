@@ -15,6 +15,7 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
+	getThankYouSiteDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 } = {} ) {
@@ -288,17 +289,17 @@ export function generateFlows( {
 
 	flows[ 'add-domain' ] = {
 		steps: [
-			'domain-only',
+			'select-domain',
 			'site-or-domain',
 			'site-picker',
 			'themes',
 			'plans-site-selected',
 			'user',
 		],
-		destination: getThankYouNoSiteDestination,
-		description: 'An experimental approach for WordPress.com/domains',
+		destination: getThankYouSiteDestination,
+		description: 'An approach to add a domain via the all domains view',
 		disallowResume: true,
-		lastModified: '2020-07-27',
+		lastModified: '2020-07-30',
 	};
 
 	flows[ 'site-selected' ] = {
