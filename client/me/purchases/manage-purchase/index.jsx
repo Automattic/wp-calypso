@@ -22,6 +22,7 @@ import {
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
 	getPartnerName,
+	getProductDescription,
 	getRenewalPrice,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
@@ -59,10 +60,12 @@ import {
 	isDomainTransfer,
 	isTheme,
 	isJetpackProduct,
+	isJetpackSearch,
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { getShortNameCallbackForJetpackSearch } from 'lib/products-values/translations';
 import { JETPACK_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
 import PlanPrice from 'my-sites/plan-price';
@@ -404,6 +407,32 @@ class ManagePurchase extends Component {
 				'Transfers an existing domain from another provider to WordPress.com, ' +
 					'helping you manage your site and domain in one place.'
 			);
+		} else if ( isJetpackProduct( purchase ) ) {
+			description = (
+				<Fragment>
+					<div className="manage-purchase__description-subcontent">
+						{ getProductDescription( purchase ) }
+					</div>
+					{ isJetpackSearch( purchase ) && (
+						<div className="manage-purchase__description-subcontent">
+							{ translate( '{{strong}}Your Search Tier{{/strong}}: %(tierDescription)s.', {
+								args: {
+									tierDescription: getShortNameCallbackForJetpackSearch(
+										this.props.purchase,
+										'renewalPriceTierSlug',
+										'renewalPriceTierUsageQuantity'
+									),
+								},
+								comment: 'An example tier description would read: "Up to 100 records"',
+								components: { strong: <strong /> },
+							} ) }{ ' ' }
+							<a href="https://jetpack.com/support/search/#pricing">
+								{ translate( 'Learn more about search tiers.' ) }
+							</a>
+						</div>
+					) }
+				</Fragment>
+			);
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
@@ -411,12 +440,12 @@ class ManagePurchase extends Component {
 
 		return (
 			<div className="manage-purchase__content">
-				<span className="manage-purchase__description">{ description }</span>
-				<span className="manage-purchase__settings-link">
-					{ ! isPartnerPurchase( purchase ) && site && (
+				<div className="manage-purchase__description">{ description }</div>
+				{ ! isPartnerPurchase( purchase ) && site && (
+					<div className="manage-purchase__settings-link">
 						<ProductLink purchase={ purchase } selectedSite={ site } />
-					) }
-				</span>
+					</div>
+				) }
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
 						{ domainRegistrationAgreementLinkText }
