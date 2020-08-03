@@ -190,14 +190,6 @@ describe( 'Search previews', () => {
 		expect( Search ).not.toBe( undefined );
 	} );
 
-	it( 'should display a header', () => {
-		const wrapper = shallow( <Search /> );
-
-		const headingEl = wrapper.find( '.search-preview__header' );
-		expect( headingEl.exists() ).toBeTruthy();
-		expect( headingEl.text() ).toEqual( 'Search Preview' );
-	} );
-
 	describe( 'Title truncation', () => {
 		it( 'should display entire title if short enough ', () => {
 			const wrapper = shallow( <Search title="I am the very model of a modern Major-General" /> );

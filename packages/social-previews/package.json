@@ -38,7 +38,6 @@
 		"prepare": "check-npm-client && transpile && copy-assets"
 	},
 	"dependencies": {
-		"i18n-calypso": "^5.0.0",
 		"lodash": "^4.17.15",
 		"prop-types": "^15.7.2",
 		"@babel/runtime": "^7.9.2"
