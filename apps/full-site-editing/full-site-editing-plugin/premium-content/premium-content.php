@@ -1,13 +1,8 @@
 <?php
 /**
- * Plugin Name:     Premium Content
- * Description:     Example block written with ESNext standard and JSX support – build step required.
- * Version:         0.1.0
- * Author:          The WordPress Contributors
- * License:         GPL-2.0-or-later
- * Text Domain:     create-block
+ * Registers premium block types only available on paid plans.
  *
- * @package create-block
+ * @package A8C\FSE\Earn\PremiumContent;
  */
 
 declare( strict_types = 1 );
