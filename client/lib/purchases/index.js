@@ -26,7 +26,7 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
+import { getJetpackProductsDisplayNames } from 'lib/products-values/translations';
 
 const debug = debugFactory( 'calypso:purchases' );
 

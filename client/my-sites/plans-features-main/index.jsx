@@ -30,11 +30,8 @@ import {
 	GROUP_JETPACK,
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
-import {
-	JETPACK_PRODUCTS_LIST,
-	JETPACK_PRODUCT_PRICE_MATRIX,
-	getJetpackProducts,
-} from 'lib/products-values/constants';
+import { JETPACK_PRODUCTS_LIST, JETPACK_PRODUCT_PRICE_MATRIX } from 'lib/products-values/constants';
+import { getJetpackProducts } from 'lib/products-values/translations';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';

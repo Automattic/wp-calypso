@@ -19,8 +19,8 @@ plans.getFeatureByKey = () => null;
 plans.shouldFetchSitePlans = () => false;
 
 jest.unmock( 'lib/products-values' );
-const productValues = require( 'lib/products-values' );
-productValues.isDotComPlan = jest.fn( () => false );
+const isDotComPlan = require( 'lib/products-values/is-dot-com-plan' );
+isDotComPlan.isDotComPlan = jest.fn( () => false );
 
 jest.mock( 'lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
