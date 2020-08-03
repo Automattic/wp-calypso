@@ -188,8 +188,9 @@ class ReaderShare extends React.Component {
 					className={ buttonClasses }
 					onClick={ this.toggle }
 					borderless
+					compact={ this.props.iconSize === 18 }
 				>
-					<Gridicon icon="share" size={ this.props.iconSize } />
+					<Gridicon icon="share" />
 					<span className="reader-share__button-label">
 						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>
