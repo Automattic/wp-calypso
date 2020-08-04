@@ -63,30 +63,6 @@ const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 
-const desktopTerserOpts = isDesktop
-	? {
-			parse: {
-				ecma: 8,
-			},
-			compress: {
-				ecma: 5,
-				warnings: false,
-				comparisons: false,
-				inline: 2,
-				drop_console: true,
-			},
-			output: {
-				ecma: 5,
-				comments: false,
-				ascii_only: true,
-			},
-			parallel: 2,
-			cache: true,
-			sourceMap: false,
-			extractComments: false,
-	  }
-	: {};
-
 function filterEntrypoints( entrypoints ) {
 	/* eslint-disable no-console */
 	if ( ! process.env.ENTRY_LIMIT ) {
@@ -201,7 +177,6 @@ const webpackConfig = {
 			sourceMap: Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
 				mangle: ! isDesktop,
-				...desktopTerserOpts,
 			},
 		} ),
 	},
