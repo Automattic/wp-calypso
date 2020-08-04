@@ -426,7 +426,7 @@ class Signup extends React.Component {
 			if (
 				isEmpty( bearerToken ) &&
 				isEmpty( username ) &&
-				'onboarding-new' === this.props.flowName
+				'onboarding-registrationless' === this.props.flowName
 			) {
 				window.location.href = destination;
 				return;

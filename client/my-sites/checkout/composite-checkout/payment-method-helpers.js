@@ -296,7 +296,7 @@ async function createAccount( select ) {
 				'g-recaptcha-response': recaptchaToken || undefined,
 				is_passwordless: true,
 				extra: { username_hint: blogName },
-				signup_flow_name: 'onboarding-new',
+				signup_flow_name: 'onboarding-registrationless',
 				validate: false,
 				ab_test_variations: getSavedVariations(),
 				new_site_params: newSiteParams,

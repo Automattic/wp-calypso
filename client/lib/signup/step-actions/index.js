@@ -282,8 +282,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		state,
 	} );
 
-	if ( isEmpty( bearerToken ) && 'onboarding-new' === flowToCheck ) {
-		return saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
+	if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
+		saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
+		return;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
@@ -437,7 +438,7 @@ export function createAccount(
 ) {
 	const flowToCheck = flowName || lastKnownFlow;
 
-	if ( 'onboarding-new' === flowToCheck ) {
+	if ( 'onboarding-registrationless' === flowToCheck ) {
 		const { cartItem, domainItem } = dependencies;
 		const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
 
@@ -693,7 +694,7 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
-	if ( 'onboarding-new' !== nextProps.flowName ) {
+	if ( 'onboarding-registrationless' !== nextProps.flowName ) {
 		return;
 	}
 
@@ -891,4 +892,3 @@ export function addOrRemoveFromProgressStore( stepName, defaultDependencies, nex
 		nextProps.removeStep( { stepName } );
 	}
 }
-

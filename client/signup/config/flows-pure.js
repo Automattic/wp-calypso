@@ -125,7 +125,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
-		'onboarding-new': {
+		'onboarding-registrationless': {
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
