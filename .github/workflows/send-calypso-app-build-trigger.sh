@@ -17,6 +17,7 @@ echo -e "Creating JSON payload…\n"
 
 echo "Logging GITHUB_ env vars:"
 echo GITHUB_ACTION "$GITHUB_ACTION"
+echo GH_ACTION "$GH_ACTION"
 echo GITHUB_ACTOR "$GITHUB_ACTOR"
 echo GITHUB_RUN_ID "$GITHUB_RUN_ID"
 echo GITHUB_RUN_NUMBER "$GITHUB_RUN_NUMBER"
