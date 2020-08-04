@@ -32,7 +32,7 @@ export class LanguagePicker extends PureComponent {
 		countryCode: PropTypes.string,
 		showEmpathyModeControl: PropTypes.bool,
 		empathyMode: PropTypes.bool,
-		getNonMagnificentLocaleNoticeMessage: PropTypes.func,
+		getIncompleteLocaleNoticeMessage: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -151,7 +151,7 @@ export class LanguagePicker extends PureComponent {
 			countryCode,
 			languages,
 			showEmpathyModeControl,
-			getNonMagnificentLocaleNoticeMessage,
+			getIncompleteLocaleNoticeMessage,
 		} = this.props;
 
 		return (
@@ -165,7 +165,7 @@ export class LanguagePicker extends PureComponent {
 				showEmpathyModeControl={ showEmpathyModeControl }
 				empathyMode={ this.state.empathyMode }
 				useFallbackForIncompleteLanguages={ this.state.useFallbackForIncompleteLanguages }
-				getNonMagnificentLocaleNoticeMessage={ getNonMagnificentLocaleNoticeMessage }
+				getIncompleteLocaleNoticeMessage={ getIncompleteLocaleNoticeMessage }
 			/>
 		);
 	}

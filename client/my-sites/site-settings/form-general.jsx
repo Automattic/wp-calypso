@@ -65,7 +65,7 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	}
 
-	getNonMagnificentLocaleNoticeMessage = ( language ) => {
+	getIncompleteLocaleNoticeMessage = ( language ) => {
 		const { translate } = this.props;
 
 		return translate(
@@ -279,7 +279,7 @@ export class SiteSettingsFormGeneral extends Component {
 					disabled={ isRequestingSettings || ( siteIsJetpack && errorNotice ) }
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 					showEmpathyModeControl={ false }
-					getNonMagnificentLocaleNoticeMessage={ this.getNonMagnificentLocaleNoticeMessage }
+					getIncompleteLocaleNoticeMessage={ this.getIncompleteLocaleNoticeMessage }
 				/>
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }

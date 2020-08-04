@@ -55,7 +55,7 @@ export class LanguagePickerModal extends PureComponent {
 		countryCode: PropTypes.string,
 		showEmpathyModeControl: PropTypes.bool,
 		empathyMode: PropTypes.bool,
-		getNonMagnificentLocaleNoticeMessage: PropTypes.func,
+		getIncompleteLocaleNoticeMessage: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -233,12 +233,12 @@ export class LanguagePickerModal extends PureComponent {
 		return ! isDefaultLocale( langSlug ) && ! isMagnificentLocale( langSlug );
 	}
 
-	getNonMagnificentLocaleNoticeMessage( langSlug ) {
-		const { translate, getNonMagnificentLocaleNoticeMessage } = this.props;
+	getIncompleteLocaleNoticeMessage( langSlug ) {
+		const { translate, getIncompleteLocaleNoticeMessage } = this.props;
 		const language = getLanguage( langSlug );
 
-		if ( typeof getNonMagnificentLocaleNoticeMessage === 'function' ) {
-			return getNonMagnificentLocaleNoticeMessage( language );
+		if ( typeof getIncompleteLocaleNoticeMessage === 'function' ) {
+			return getIncompleteLocaleNoticeMessage( language );
 		}
 
 		return translate(
@@ -472,7 +472,7 @@ export class LanguagePickerModal extends PureComponent {
 
 					{ this.getShouldRenderNoticeForNonMagnificentLocale( language.langSlug ) && (
 						<LanguagePickerItemTooltip langSlug={ language.langSlug }>
-							{ this.getNonMagnificentLocaleNoticeMessage( language.langSlug ) }
+							{ this.getIncompleteLocaleNoticeMessage( language.langSlug ) }
 						</LanguagePickerItemTooltip>
 					) }
 				</span>
@@ -529,7 +529,7 @@ export class LanguagePickerModal extends PureComponent {
 		);
 	}
 
-	renderNonMagnificentLocaleNotice() {
+	renderIncompleteLocaleNotice() {
 		const { selectedLanguageSlug, useFallbackForIncompleteLanguages } = this.state;
 
 		if ( ! this.getShouldRenderNoticeForNonMagnificentLocale( selectedLanguageSlug ) ) {
@@ -538,7 +538,7 @@ export class LanguagePickerModal extends PureComponent {
 
 		return (
 			<div className="language-picker__modal-locale-notice">
-				{ ! this.props.getNonMagnificentLocaleNoticeMessage && (
+				{ ! this.props.getIncompleteLocaleNoticeMessage && (
 					<FormLabel>
 						<FormCheckbox
 							checked={ useFallbackForIncompleteLanguages }
@@ -549,7 +549,7 @@ export class LanguagePickerModal extends PureComponent {
 				) }
 
 				<p className="language-picker__modal-locale-explanation form-setting-explanation">
-					{ this.getNonMagnificentLocaleNoticeMessage( selectedLanguageSlug ) }
+					{ this.getIncompleteLocaleNoticeMessage( selectedLanguageSlug ) }
 				</p>
 			</div>
 		);
@@ -600,7 +600,7 @@ export class LanguagePickerModal extends PureComponent {
 				{ this.renderLanguageList() }
 				{ this.renderSuggestedLanguages() }
 				{ this.renderEmpathyModeCheckbox() }
-				{ this.renderNonMagnificentLocaleNotice() }
+				{ this.renderIncompleteLocaleNotice() }
 			</Dialog>
 		);
 	}
