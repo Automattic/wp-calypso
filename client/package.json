@@ -143,6 +143,7 @@
 		"react-day-picker": "^7.4.0",
 		"react-dom": "^16.12.0",
 		"react-element-to-jsx-string": "^14.1.0",
+		"react-focus-lock": "^2.4.1",
 		"react-lazily-render": "^1.2.0",
 		"react-live": "^1.12.0",
 		"react-modal": "^3.11.1",
