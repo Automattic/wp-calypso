@@ -4,13 +4,17 @@ set -Eeuo pipefail
 # cd here so that the parent directories are not included in the zip file.
 cd apps/full-site-editing/full-site-editing-plugin
 
-echo -e "Creating archive file...\n"
+echo -e "Creating archive file…\n"
 
 # Create a zip of the FSE plugin. Should include built files at this point.
 build_archive=plugin-archive.zip
 zip --quiet --recurse-paths $build_archive ./*
 
-echo -e "Creating JSON payload...\n"
+echo -e "Creating JSON payload…\n"
+
+echo "Logging GITHUB_ACTION var:"
+echo "$GITHUB_ACTION"
+echo "=========================="
 
 # Use node to process data into JSON file
 node -e '
@@ -38,7 +42,7 @@ const output = JSON.stringify( {
 fs.writeFileSync( "workflow_data.json", output, "utf8" );
 '
 
-echo -e "Sending data to MC...\n"
+echo -e "Sending data to MC…\n"
 
 # Send metadata and build zip file to the endpoint.
 response=`curl -s \
