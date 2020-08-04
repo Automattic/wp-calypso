@@ -40,42 +40,45 @@ describe( 'ActionButtons', () => {
 
 	test( "disables all buttons when 'rewindId' is not provided", () => {
 		const wrapper = render( <ActionButtons /> );
+		const downloadButton = wrapper.find( '.daily-backup-status__download-button' ).hostNodes();
+		const restoreButton = wrapper.find( '.daily-backup-status__restore-button' ).hostNodes();
 
-		expect(
-			wrapper.find( 'button.daily-backup-status__download-button' ).prop( 'disabled' )
-		).toEqual( true );
+		expect( downloadButton.prop( 'disabled' ) ).toEqual( true );
+		expect( restoreButton.prop( 'disabled' ) ).toEqual( true );
 	} );
 
 	test( "disables all buttons when 'disabled' is true", () => {
 		const wrapper = render( <ActionButtons disabled rewindId="test" /> );
+		const downloadButton = wrapper.find( '.daily-backup-status__download-button' ).hostNodes();
+		const restoreButton = wrapper.find( '.daily-backup-status__restore-button' ).hostNodes();
 
-		expect(
-			wrapper.find( 'button.daily-backup-status__download-button' ).prop( 'disabled' )
-		).toEqual( true );
+		expect( downloadButton.prop( 'disabled' ) ).toEqual( true );
+		expect( restoreButton.prop( 'disabled' ) ).toEqual( true );
 	} );
 
 	test( "enables the download button when 'rewindId' is provided'", () => {
 		const wrapper = render( <ActionButtons rewindId="test" /> );
-		const downloadButton = wrapper.find( 'a.daily-backup-status__download-button' );
+		const downloadButton = wrapper.find( '.daily-backup-status__download-button' ).hostNodes();
 
 		expect( downloadButton.prop( 'href' ) ).toBeTruthy();
+		expect( downloadButton.prop( 'disabled' ) ).toBeFalsy();
 	} );
 
 	test( 'enables the restore button when credentials are not needed', () => {
 		getDoesRewindNeedCredentials.mockImplementation( () => false );
 
 		const wrapper = render( <ActionButtons rewindId="test" /> );
-		const restoreButton = wrapper.find( 'a.daily-backup-status__restore-button' );
+		const restoreButton = wrapper.find( '.daily-backup-status__restore-button' ).hostNodes();
 
-		expect( restoreButton.length ).toEqual( 1 );
 		expect( restoreButton.prop( 'href' ) ).toBeTruthy();
+		expect( restoreButton.prop( 'disabled' ) ).toBeFalsy();
 	} );
 
 	test( 'disables the restore button when credentials are needed', () => {
 		getDoesRewindNeedCredentials.mockImplementation( () => true );
 
 		const wrapper = render( <ActionButtons rewindId="test" /> );
-		const restoreButton = wrapper.find( 'button.daily-backup-status__restore-button' );
+		const restoreButton = wrapper.find( '.daily-backup-status__restore-button' ).hostNodes();
 
 		expect( restoreButton.prop( 'disabled' ) ).toEqual( true );
 	} );
@@ -84,9 +87,11 @@ describe( 'ActionButtons', () => {
 		getDoesRewindNeedCredentials.mockImplementation( () => true );
 
 		const wrapper = render( <ActionButtons rewindId="test" /> );
-		const activateButton = wrapper.find( 'a.daily-backup-status__activate-restores-button' );
+		const activateButton = wrapper
+			.find( '.daily-backup-status__activate-restores-button' )
+			.hostNodes();
 
-		expect( activateButton.length ).toEqual( 1 );
 		expect( activateButton.prop( 'href' ) ).toBeTruthy();
+		expect( activateButton.prop( 'disabled' ) ).toBeFalsy();
 	} );
 } );
