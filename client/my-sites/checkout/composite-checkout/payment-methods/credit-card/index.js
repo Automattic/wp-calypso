@@ -50,9 +50,6 @@ export function createCreditCardPaymentMethodStore() {
 		touchAllFields() {
 			return { type: 'TOUCH_ALL_FIELDS' };
 		},
-		setShowContactFields( payload ) {
-			return { type: 'SHOW_CONTACT_FIELDS_SET', payload };
-		},
 	};
 
 	const selectors = {
@@ -72,9 +69,6 @@ export function createCreditCardPaymentMethodStore() {
 		},
 		getFields( state ) {
 			return state.fields;
-		},
-		getShowContactFields( state ) {
-			return state.showContactFields || false;
 		},
 		getPaymentPartner( state ) {
 			return state.paymentPartner;
@@ -162,15 +156,6 @@ export function createCreditCardPaymentMethodStore() {
 		}
 	}
 
-	function showContactFieldsReducer( state = null, action ) {
-		switch ( action?.type ) {
-			case 'SHOW_CONTACT_FIELDS_SET':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
 	const store = registerStore( 'credit-card', {
 		reducer(
 			state = {
@@ -179,7 +164,6 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataComplete: cardDataCompleteReducer(),
 				cardholderName: cardholderNameReducer(),
 				brand: brandReducer(),
-				showContactFields: showContactFieldsReducer(),
 			},
 			action
 		) {
@@ -189,7 +173,6 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 				cardholderName: cardholderNameReducer( state.cardholderName, action ),
 				brand: brandReducer( state.brand, action ),
-				showContactFields: showContactFieldsReducer( state.showContactFields, action ),
 			};
 		},
 		actions,
