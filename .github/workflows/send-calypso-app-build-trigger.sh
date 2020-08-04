@@ -13,7 +13,6 @@ zip --quiet --recurse-paths $build_archive ./*
 echo -e "Creating JSON payload...\n"
 
 echo actionis${GITHUB_ACTION}x
-echo passthruidis${INPUT_PASS_THRU_ID}x
 
 printenv | sed 's;=.*;;'
 
