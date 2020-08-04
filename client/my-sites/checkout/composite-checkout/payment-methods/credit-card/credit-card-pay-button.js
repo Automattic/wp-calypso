@@ -46,18 +46,10 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 	const contactCountryCode = useSelect(
 		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
 	);
-	const contactAndBillingInfoAreDifferent = useSelect( ( select ) =>
-		select( 'credit-card' ).getShowContactFields()
-	);
-
-	const inputs = {
+	const paymentPartner = getPaymentPartner( {
 		cart,
-		explicitBillingCountryCode: fields?.countryCode?.value || '',
-		contactAndBillingInfoAreDifferent,
 		contactCountryCode,
-	};
-
-	const paymentPartner = getPaymentPartner( inputs );
+	} );
 
 	useShowStripeModalAuth( transactionStatus === 'authorizing', stripeConfiguration );
 
@@ -65,7 +57,7 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isCreditCardFormValid( store, __ ) ) {
+				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
 						setTransactionPending();
@@ -139,18 +131,18 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } paymentPartner={ paymentPartner } />
+			<ButtonContents formStatus={ formStatus } total={ total } />
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total, paymentPartner } ) {
+function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
 	if ( formStatus === 'submitting' ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
-		return sprintf( __( 'Pay %s (%s)' ), total.amount.displayValue, paymentPartner );
+		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
 }
@@ -195,51 +187,22 @@ function useShowStripeModalAuth( shouldShowModal, stripeConfiguration ) {
 	] );
 }
 
-function getPaymentPartner( {
-	cart,
-	explicitBillingCountryCode,
-	contactAndBillingInfoAreDifferent,
-	contactCountryCode,
-} ) {
+function getPaymentPartner( { cart, contactCountryCode } ) {
 	const isEbanxAvailable = Boolean(
 		cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) )
 	);
 
 	let paymentPartner = 'stripe';
-	if (
-		shouldUseEbanx( {
-			isEbanxAvailable,
-			contactAndBillingInfoAreDifferent,
-			explicitBillingCountryCode,
-			contactCountryCode,
-		} )
-	) {
+	if ( contactCountryCode === 'BR' && isEbanxAvailable ) {
 		paymentPartner = 'ebanx';
 	}
+
 	debug( 'credit card form selects payment partner: "' + paymentPartner + '"' );
 	return paymentPartner;
 }
 
-function shouldUseEbanx( {
-	isEbanxAvailable,
-	contactAndBillingInfoAreDifferent,
-	explicitBillingCountryCode,
-	contactCountryCode,
-} ) {
-	if ( ! isEbanxAvailable ) {
-		return false;
-	}
-
-	const actualBillingCountryCode = contactAndBillingInfoAreDifferent
-		? explicitBillingCountryCode
-		: contactCountryCode;
-
-	return actualBillingCountryCode === 'BR';
-}
-
-function isCreditCardFormValid( store, __ ) {
+function isCreditCardFormValid( store, paymentPartner, __ ) {
 	debug( 'validating credit card fields' );
-	const paymentPartner = store.selectors.getPaymentPartner( store.getState() );
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
