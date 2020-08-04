@@ -3,15 +3,15 @@ const { step } = require( 'mocha-steps' );
 const { assert } = require( 'chai' );
 const webdriver = require( 'selenium-webdriver' );
 const chrome = require( 'selenium-webdriver/chrome' );
-const EditorPage = require( './lib/pages/editor-page' );
 const LoginPage = require( './lib/pages/login-page' );
 const SignupStepsPage = require( './lib/pages/signup-steps-page' );
-const PostEditorToolbarComponent = require( './lib/components/post-editor-toolbar-component' );
 const NavBarComponent = require( './lib/components/nav-bar-component' );
 const ProfilePage = require( './lib/pages/profile-page' );
 const ReaderPage = require( './lib/pages/reader-page' );
 const ViewPostPage = require( './lib/pages/view-post-page' );
 const CheckoutPage = require( './lib/pages/checkout-page' );
+const GutenbergEditorComponent = require( './lib/components/gutenberg-editor-component' );
+const GutenbergEditorSidebarComponent = require( './lib/components/gutenberg-editor-sidebar-component' );
 
 const dataHelper = require( './lib/data-helper' );
 const options = new chrome.Options();
@@ -50,7 +50,7 @@ describe( 'User Can log in', function () {
 
 	step( 'Can log in', async function () {
 		const loginPage = await LoginPage.Expect( driver );
-		return await loginPage.login( process.env.E2EUSERNAME, process.env.E2EPASSWORD );
+		return await loginPage.login( process.env.E2EGUTENBERGUSER, process.env.E2EPASSWORD );
 	} );
 
 	step( 'Can see Reader Page after logging in', async function () {
@@ -71,18 +71,17 @@ describe( 'Publish a New Post', function () {
 	} );
 
 	step( 'Can enter post title and content', async function () {
-		const editorPage = await EditorPage.Expect( driver );
-		await editorPage.enterTitle( blogPostTitle );
-		await editorPage.enterContent( blogPostQuote + '\n' );
+		this.gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+		await this.gEditorComponent.enterTitle( blogPostTitle );
+		await this.gEditorComponent.enterText( blogPostQuote + '\n' );
 
-		const errorShown = await editorPage.errorDisplayed();
+		const errorShown = await this.gEditorComponent.errorDisplayed();
 		return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 	} );
 
 	step( 'Can publish and view content', async function () {
-		const postEditorToolbarComponent = await PostEditorToolbarComponent.Expect( driver );
-		await postEditorToolbarComponent.ensureSaved();
-		return await postEditorToolbarComponent.publishAndViewContent( { useConfirmStep: true } );
+		await this.gEditorComponent.ensureSaved();
+		return await this.gEditorComponent.publish( { visit: true } );
 	} );
 
 	step( 'Can see correct post title', async function () {
@@ -176,5 +175,6 @@ describe.skip( 'Can Sign up', function () {
 
 after( async function () {
 	this.timeout( 30000 );
+	await driver.executeScript( 'window.localStorage.clear();' );
 	return await driver.quit();
 } );

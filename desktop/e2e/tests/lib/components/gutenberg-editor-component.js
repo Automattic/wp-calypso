@@ -1,23 +1,20 @@
 /**
  * External dependencies
  */
-import { By, Key, until } from 'selenium-webdriver';
-import { kebabCase } from 'lodash';
+const webdriver = require( 'selenium-webdriver' );
 
 /**
  * Internal dependencies
  */
-import * as driverHelper from '../driver-helper';
-import * as driverManager from '../driver-manager.js';
-import AsyncBaseContainer from '../async-base-container';
-import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
-import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
-import { ImageBlockComponent } from './blocks/image-block-component';
+const driverHelper = require( '../driver-helper' );
+const AsyncBaseContainer = require( '../async-base-container' );
 
-export default class GutenbergEditorComponent extends AsyncBaseContainer {
-	constructor( driver, url, editorType = 'iframe' ) {
-		super( driver, By.css( '.edit-post-header' ), url );
-		this.editorType = editorType;
+const By = webdriver.By;
+const until = webdriver.until;
+
+class GutenbergEditorComponent extends AsyncBaseContainer {
+	constructor( driver ) {
+		super( driver, By.css( '.edit-post-header' ) );
 
 		this.publishSelector = By.css(
 			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button'
@@ -37,9 +34,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async _preInit() {
-		if ( this.editorType !== 'iframe' ) {
-			return;
-		}
 		await this.driver.switchTo().defaultContent();
 		await this.driver.wait(
 			until.ableToSwitchToFrame( this.editoriFrameSelector ),
@@ -96,4 +90,47 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
 		}
 	}
+
+	async ensureSaved() {
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-save-draft' ) );
+		const savedSelector = By.css( 'span.is-saved' );
+
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, savedSelector );
+	}
+
+	async publish( { visit = false, closePanel = true } = {} ) {
+		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
+		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
+		await this.driver.sleep( 1000 );
+		const button = await this.driver.findElement( this.publishSelector );
+		await this.driver.executeScript( 'arguments[0].click();', button );
+		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+		if ( closePanel ) {
+			await this.closePublishedPanel();
+		}
+		await this.waitForSuccessViewPostNotice();
+		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
+
+		if ( visit ) {
+			const snackbar = await this.driver.findElement( snackBarNoticeLinkSelector );
+			await this.driver.executeScript( 'arguments[0].click();', snackbar );
+		}
+		return url;
+	}
+
+	async closePublishedPanel() {
+		const closeButton = await this.driver.findElement(
+			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
+		);
+		return await this.driver.executeScript( 'arguments[0].click();', closeButton );
+	}
+
+	async waitForSuccessViewPostNotice() {
+		const noticeSelector = By.css( '.components-snackbar' );
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, noticeSelector );
+	}
 }
+
+module.exports = GutenbergEditorComponent;
