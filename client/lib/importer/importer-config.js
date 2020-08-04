@@ -42,8 +42,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 							supportPostId={ 67084 }
 							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
 							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -84,8 +85,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 							supportPostId={ 66764 }
 							supportLink="https://wordpress.com/support/import/coming-from-blogger/"
 							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -117,8 +119,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 						supportPostId={ 154436 }
 						supportLink="https://wordpress.com/support/import/import-from-godaddy/"
 						showIcon={ false }
-						text={ translate( 'Need help?' ) }
-					/>
+					>
+						{ translate( 'Need help?' ) }
+					</InlineSupportLink>
 				),
 			},
 		} ),
@@ -157,8 +160,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 							supportPostId={ 93180 }
 							supportLink="https://wordpress.com/support/import/import-from-medium/"
 							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -198,8 +202,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 							supportPostId={ 87696 }
 							supportLink="https://wordpress.com/support/import/import-from-squarespace/"
 							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -231,8 +236,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 						supportPostId={ 147777 }
 						supportLink="https://wordpress.com/support/import/import-from-wix/"
 						showIcon={ false }
-						text={ translate( 'Need help?' ) }
-					/>
+					>
+						{ translate( 'Need help?' ) }
+					</InlineSupportLink>
 				),
 			},
 		} ),

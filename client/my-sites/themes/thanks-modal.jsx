@@ -188,8 +188,9 @@ class ThanksModal extends Component {
 											supportPostId={ 167510 }
 											supportLink="https://wordpress.com/support/replacing-the-older-wordpress-com-editor-with-the-wordpress-block-editor/"
 											showIcon={ false }
-											text={ translate( 'Learn more' ) }
-										/>
+										>
+											{ translate( 'Learn more' ) }
+										</InlineSupportLink>
 									),
 								},
 							}

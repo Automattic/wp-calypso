@@ -30,7 +30,6 @@ class InlineSupportLink extends Component {
 		supportPostId: PropTypes.number,
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
-		text: PropTypes.string,
 		showIcon: PropTypes.bool,
 		iconSize: PropTypes.number,
 		tracksEvent: PropTypes.string,
@@ -43,7 +42,6 @@ class InlineSupportLink extends Component {
 		supportPostId: null,
 		supportLink: null,
 		showText: true,
-		text: null,
 		showIcon: true,
 		iconSize: 14,
 	};
@@ -51,7 +49,6 @@ class InlineSupportLink extends Component {
 	render() {
 		const {
 			showText,
-			text,
 			supportPostId,
 			supportLink,
 			showIcon,
@@ -72,10 +69,7 @@ class InlineSupportLink extends Component {
 			iconSize,
 		};
 
-		// props.children overrides text prop if both are provided
-		const displayChildren = children != null;
-		const displayText = ! children && showText;
-		const displayIcon = ! children && supportPostId && showIcon;
+		const text = children ? children : translate( 'Learn more' );
 
 		return (
 			<LinkComponent
@@ -86,9 +80,8 @@ class InlineSupportLink extends Component {
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				{ displayChildren && children }
-				{ displayText && ( text || translate( 'Learn more' ) ) }
-				{ displayIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{ showText && text }
+				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
 			</LinkComponent>
 		);
 	}
