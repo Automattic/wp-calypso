@@ -55,8 +55,8 @@ msgstr[1] \\"\\"
 msgid \\"Typescript react component string\\"
 msgstr \\"\\"
 
-#: test/examples/react-1.jsx:12
-#: test/examples/react-2.jsx:7
+#: test/examples/react-1.jsx:13
+#: test/examples/react-2.jsx:8
 #. Extract from leading
 msgctxt \\"react\\"
 msgid \\"Child string\\"
@@ -94,7 +94,7 @@ msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 msgid \\"Prop string\\"
 msgstr \\"\\"
 
-#: test/examples/react-1.jsx:12
+#: test/examples/react-1.jsx:13
 #. Extract from leading
 msgctxt \\"react\\"
 msgid \\"Child string\\"
@@ -111,7 +111,7 @@ msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 msgid \\"Prop string\\"
 msgstr \\"\\"
 
-#: test/examples/react-2.jsx:7
+#: test/examples/react-2.jsx:8
 #. Extract from leading
 msgctxt \\"react\\"
 msgid \\"Child string\\"

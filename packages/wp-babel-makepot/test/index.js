@@ -13,13 +13,16 @@ const concatPot = require( '../utils/concat-pot' );
 
 describe( 'makePot', () => {
 	const potOutputDir = path.join( __dirname, 'output/' );
+	const baseDir = path.resolve( __dirname, '..' );
 	const concatenatedPotOutputPath = path.join( potOutputDir, 'concatenated-strings.pot' );
 
 	beforeAll( () => {
 		const examplesGlob = path.join( __dirname, 'examples', '*.{js,jsx,ts,tsx}' );
 		const examplesPaths = glob.sync( examplesGlob );
 
-		examplesPaths.forEach( ( filepath ) => makePot( filepath, { dir: potOutputDir } ) );
+		examplesPaths.forEach( ( filepath ) =>
+			makePot( filepath, { dir: potOutputDir, base: baseDir } )
+		);
 
 		concatPot( potOutputDir, concatenatedPotOutputPath );
 	} );
