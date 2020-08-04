@@ -49,7 +49,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	React.useEffect( () => {
 		! isModal && setHasUsedDomainsStep( true );
-	}, [] );
+	}, [ isModal, setHasUsedDomainsStep ] );
 
 	// Keep a copy of the selected domain locally so it's available when the component is unmounting
 	const selectedDomainRef = React.useRef< string | undefined >();
@@ -85,12 +85,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			</div>
 			<ActionButtons>
 				<BackButton onClick={ handleBack } />
-				{ ! isModal &&
-					( domain ? (
-						<NextButton onClick={ handleNext } />
-					) : (
-						<SkipButton onClick={ handleNext } />
-					) ) }
+				{ domain ? <NextButton onClick={ handleNext } /> : <SkipButton onClick={ handleNext } /> }
 			</ActionButtons>
 		</div>
 	);
