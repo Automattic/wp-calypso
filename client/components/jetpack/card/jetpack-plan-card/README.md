@@ -12,7 +12,7 @@ import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
 export default function JetpackPlanCardExample() {
 	return (
 		<div>
-			<JetpackPlanCard />
+			<JetpackPlanCard { ...props } />
 		</div>
 	);
 }

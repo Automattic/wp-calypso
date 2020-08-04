@@ -12,7 +12,7 @@ import JetpackIndividualProductCard from 'components/jetpack/card/jetpack-indivi
 export default function JetpackBundleCardExample() {
 	return (
 		<div>
-			<JetpackIndividualProductCard />
+			<JetpackIndividualProductCard { ...props } />
 		</div>
 	);
 }

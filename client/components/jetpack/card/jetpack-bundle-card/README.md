@@ -12,7 +12,7 @@ import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 export default function JetpackBundleCardExample() {
 	return (
 		<div>
-			<JetpackBundleCard />
+			<JetpackBundleCard { ...props } />
 		</div>
 	);
 }
