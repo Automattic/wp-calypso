@@ -1,5 +1,8 @@
 #!/bin/bash
-set -Eeuo pipefail
+set -o pipefail
+set -o errexit
+set -o errtrace
+set -o nounset
 
 # cd here so that the parent directories are not included in the zip file.
 cd apps/full-site-editing/full-site-editing-plugin
@@ -12,20 +15,22 @@ zip --quiet --recurse-paths $build_archive ./*
 
 echo -e "Creating JSON payload…\n"
 
-echo "Logging GITHUB_ACTION var:"
-echo "$GITHUB_ACTION"
+echo "Logging GITHUB_ env vars:"
+echo GITHUB_ACTION "$GITHUB_ACTION"
+echo GITHUB_ACTOR "$GITHUB_ACTOR"
+echo GITHUB_RUN_ID "$GITHUB_RUN_ID"
+echo GITHUB_RUN_NUMBER "$GITHUB_RUN_NUMBER"
+echo GITHUB_REPOSITORY "$GITHUB_REPOSITORY"
 echo "=========================="
 
 # Use node to process data into JSON file
 node -e '
-const fs = require("fs");
+const fs = require( "fs" );
 const trigger_payload = JSON.parse( fs.readFileSync( process.env.GITHUB_EVENT_PATH, "utf8" ) );
 
-// Makes sure that the data we need exists.
+// Throw if expected data is missing
 const getEnv = ( varName ) => {
-	const envVal = process.env[ varName ];
-	// Fail for any falsey value except 0 (including empty strings).
-	if ( ! envVal && envVal !== 0 ) {
+	if ( process.env.hasOwnProperty( varName ) ) {
 		throw new Error( `${ varName } env variable missing!` );
 	}
 	return envVal;
