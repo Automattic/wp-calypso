@@ -23,6 +23,8 @@ const getEnv = ( varName ) => {
 	console.log( "is process =", !! process );
 	console.log( "is process.env =", !! process.env );
 	console.log( "accessing varName =", varName );
+	console.log( "value of varName =", envVal );
+	console.log( "typeof of value of varName =", typeof envVal );
 	console.log( "all variable names=", Object.keys( process.env ).join(", ") );
 	// Fail for any falsey value except 0 (including empty strings).
 	if ( ! envVal && envVal !== 0 ) {
