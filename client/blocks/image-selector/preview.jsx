@@ -18,7 +18,7 @@ import ImagePreloader from 'components/image-preloader';
 import MediaStore from 'lib/media/store';
 import Spinner from 'components/spinner';
 import { url } from 'lib/media/utils';
-import { fetchMediaItem } from 'state/media/thunks';
+import { fetchMediaItem, getMediaItem } from 'state/media/thunks';
 
 export class ImageSelectorPreview extends Component {
 	static propTypes = {
@@ -56,7 +56,7 @@ export class ImageSelectorPreview extends Component {
 		const newTransientImages = {};
 		this.state.images.forEach( ( image ) => {
 			if ( image.transient ) {
-				const media = MediaStore.get( this.props.siteId, image.ID );
+				const media = this.props.getMediaItem( this.props.siteId, image.ID );
 				newTransientImages[ media.ID ] = image.URL;
 			}
 		} );
@@ -79,7 +79,7 @@ export class ImageSelectorPreview extends Component {
 
 			itemIds.map( ( id ) => {
 				id = parseInt( id, 10 );
-				const media = MediaStore.get( siteId, id );
+				const media = this.props.getMediaItem( siteId, id );
 				if ( ! media ) {
 					this.props.fetchMediaItem( siteId, id );
 				}
@@ -93,7 +93,7 @@ export class ImageSelectorPreview extends Component {
 		const images = uniq(
 			itemIds
 				.map( ( id ) => {
-					return MediaStore.get( siteId, id );
+					return this.props.getMediaItem( siteId, id );
 				} )
 				.filter( function ( e ) {
 					return e;
@@ -238,4 +238,6 @@ export class ImageSelectorPreview extends Component {
 	}
 }
 
-export default connect( null, { fetchMediaItem } )( localize( ImageSelectorPreview ) );
+export default connect( null, { fetchMediaItem, getMediaItem } )(
+	localize( ImageSelectorPreview )
+);
