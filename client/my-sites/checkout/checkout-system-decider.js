@@ -19,6 +19,7 @@ import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
 import { GROUP_JETPACK } from 'lib/plans/constants';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { isJetpackBackup, isJetpackBackupSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
@@ -263,25 +264,20 @@ function getCheckoutVariant(
 		'premium-2-years',
 	];
 	const jetpackPseudoSlugsToAllow = [
-		'jetpack_anti_spam',
-		'jetpack_antispam_monthly',
-		'jetpack_backup_daily',
-		'jetpack_backup_daily_monthly',
-		'jetpack_backup_realtime',
-		'jetpack_backup_realtime_monthly',
 		'jetpack_personal',
 		'jetpack-personal',
 		'jetpack-personal-monthly',
-		'jetpack_scan',
-		'jetpack_search',
-		'jetpack_search_monthly',
 		'jetpack_premium',
 		'premium-monthly',
 		'professional',
 		'professional-monthly',
 	];
 	if ( config( 'env_id' ) !== 'production' ) {
-		pseudoSlugsToAllow = [ ...pseudoSlugsToAllow, ...jetpackPseudoSlugsToAllow ];
+		pseudoSlugsToAllow = [
+			...pseudoSlugsToAllow,
+			...jetpackPseudoSlugsToAllow,
+			...JETPACK_PRODUCTS_LIST,
+		];
 	}
 	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
