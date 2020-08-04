@@ -18,7 +18,7 @@ import OwnedProductNoticeContent from './checkout/owned-product-notice-content';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
-import { GROUP_JETPACK } from 'lib/plans/constants';
+import { GROUP_JETPACK, JETPACK_PLANS } from 'lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { isJetpackBackup, isJetpackBackupSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
@@ -264,10 +264,8 @@ function getCheckoutVariant(
 		'premium-2-years',
 	];
 	const jetpackPseudoSlugsToAllow = [
-		'jetpack_personal',
 		'jetpack-personal',
 		'jetpack-personal-monthly',
-		'jetpack_premium',
 		'premium-monthly',
 		'professional',
 		'professional-monthly',
@@ -276,6 +274,7 @@ function getCheckoutVariant(
 		pseudoSlugsToAllow = [
 			...pseudoSlugsToAllow,
 			...jetpackPseudoSlugsToAllow,
+			...JETPACK_PLANS,
 			...JETPACK_PRODUCTS_LIST,
 		];
 	}
