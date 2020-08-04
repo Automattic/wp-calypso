@@ -1,0 +1,15 @@
+.jetpack-plan-card {
+	$jetpack-plan-card-color: var( --studio-purple-30 );
+
+	.jetpack-product-card__header {
+		border-color: $jetpack-plan-card-color;
+	}
+
+	.plan-price {
+		border-color: $jetpack-plan-card-color;
+	}
+
+	.jetpack-product-card__badge {
+		color: $jetpack-plan-card-color;
+	}
+}
