@@ -52,10 +52,12 @@ export default function WPContactFormSummary( { showDomainContactSummary, isLogg
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 
-					{ isGSuiteInCart && <AlternateEmailSummary
-						contactInfo={ contactInfo }
-						showDomainContactSummary={ showDomainContactSummary }
-					/>
+					{ isGSuiteInCart && (
+						<AlternateEmailSummary
+							contactInfo={ contactInfo }
+							showDomainContactSummary={ showDomainContactSummary }
+						/>
+					) }
 
 					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
