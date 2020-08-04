@@ -1,5 +1,5 @@
 {
-	"name": "wp-calypso",
+	"name": "wp-calypso-client",
 	"author": "Automattic Inc.",
 	"version": "0.17.0",
 	"description": "A pure REST-API and JS based version of the WordPress.com admin",
