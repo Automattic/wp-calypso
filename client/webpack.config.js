@@ -245,6 +245,9 @@ const webpackConfig = {
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 				'@wordpress/data': require.resolve( '@wordpress/data' ),
 				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
+				// Alias wp-calypso to ./client. This allows for smaller bundles, as it ensures that
+				// importing `./client/file.js` is the same thing than importing `wp-calypso/file.js`
+				'wp-calypso': __dirname,
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
