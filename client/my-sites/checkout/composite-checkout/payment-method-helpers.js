@@ -25,6 +25,8 @@ import {
 	hasTransferProduct,
 } from 'lib/cart-values/cart-items';
 import { createStripePaymentMethod } from 'lib/stripe';
+import { prepareDomainContactDetailsForTransaction } from 'my-sites/checkout/composite-checkout/wpcom/types/wpcom-store-state';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
 import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
@@ -99,7 +101,7 @@ export async function submitPayPalExpressRequest( transactionData, submit ) {
 
 export function getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) {
 	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
-	const domainDetails = prepareDomainContactDetails( managedContactDetails );
+	const domainDetails = prepareDomainContactDetailsForTransaction( managedContactDetails );
 	return includeDomainDetails || includeGSuiteDetails ? domainDetails : null;
 }
 
