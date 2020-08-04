@@ -28,7 +28,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async selectDocumentTab() {
-		await this.selectTab( 'Document' );
+		// Recent versions of Gutenberg use "Post" or "Page"
+		// Older versions use "Document"
+		// @TODO: Remove "Document"
+		await this.selectTab( 'Post', 'Page', 'Document' );
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
 			By.css( '.components-panel' )
