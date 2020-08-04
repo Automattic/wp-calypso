@@ -34,6 +34,7 @@ import usePrepareProductsForCart, {
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import {
 	requestContactDetailsCache,
@@ -130,6 +131,7 @@ export default function CompositeCheckout( {
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
+	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
@@ -184,6 +186,7 @@ export default function CompositeCheckout( {
 		product,
 		purchaseId,
 		isJetpackNotAtomic,
+		isPrivate,
 	} );
 
 	useFetchProductsIfNotLoaded();
