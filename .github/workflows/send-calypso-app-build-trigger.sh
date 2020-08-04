@@ -23,6 +23,7 @@ const getEnv = ( varName ) => {
 	console.log( "is process =", !! process );
 	console.log( "is process.env =", !! process.env );
 	console.log( "accessing varName =", varName );
+	console.log( "all variable names=", Object.keys( process.env ).join(", ") );
 	// Fail for any falsey value except 0 (including empty strings).
 	if ( ! envVal && envVal !== 0 ) {
 		throw new Error( `${ varName } env variable missing!` );
