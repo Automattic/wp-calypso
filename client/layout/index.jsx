@@ -155,7 +155,7 @@ class Layout extends Component {
 					isWooOAuth2Client( this.props.oauth2Client ) &&
 					this.props.wccomFrom,
 				'is-white-signup':
-					'signup' === this.props.sectionName &&
+					'signup' === this.props.sectionName && //TODO: Check flowName here and remove this comment
 					'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
 			}
 		);

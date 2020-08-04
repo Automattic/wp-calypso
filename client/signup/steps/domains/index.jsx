@@ -49,7 +49,7 @@ import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/acti
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -72,6 +72,7 @@ class DomainsStep extends React.Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		vertical: PropTypes.string,
+		isReskinned: PropTypes.bool,
 	};
 
 	getDefaultState = () => ( {
@@ -484,6 +485,7 @@ class DomainsStep extends React.Component {
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
 				shouldHideFreeDomainExplainer={ shouldHideFreeDomainExplainer }
+				isReskinned={ this.props.isReskinned }
 			/>
 		);
 
@@ -724,6 +726,9 @@ export default connect(
 	( state, ownProps ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const isReskinned =
+			'onboarding' === ownProps.flowName &&
+			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			designType: getDesignType( state ),
@@ -735,6 +740,7 @@ export default connect(
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+			isReskinned,
 		};
 	},
 	{

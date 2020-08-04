@@ -32,7 +32,6 @@ import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
-import { getABTestVariation } from 'lib/abtest';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -420,7 +419,6 @@ const mapStateToProps = ( state, props ) => {
 			currentUserCurrencyCode,
 			stripZeros
 		),
-		isReskinned: props.isSignupStep && 'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
 	};
 };
 

@@ -394,7 +394,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, wccomFrom } = this.props;
+		const { oauth2Client, wccomFrom, flowName } = this.props;
 		let socialService, socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
@@ -415,6 +415,9 @@ export class UserStep extends Component {
 			isSocialSignupEnabled = true;
 		}
 
+		const isReskinned =
+			'onboarding' === flowName && 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
+
 		return (
 			<>
 				<SignupForm
@@ -432,7 +435,7 @@ export class UserStep extends Component {
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
 					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
-					horizontal={ 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) }
+					horizontal={ isReskinned }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
