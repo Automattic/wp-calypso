@@ -9,7 +9,6 @@
  * External dependencies
  */
 const path = require( 'path' );
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
 const webpack = require( 'webpack' );
 
 /**
