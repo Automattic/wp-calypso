@@ -240,6 +240,10 @@ async function createAccountCallback( response ) {
 	siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
 	siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
 
+	if ( ! response.bearer_token ) {
+		return;
+	}
+
 	// Log in the user
 	wp.loadToken( response.bearer_token );
 	const url = 'https://wordpress.com/wp-login.php';
@@ -301,7 +305,7 @@ async function createAccount( select ) {
 			null
 		);
 
-		response.bearer_token && createAccountCallback( response );
+		createAccountCallback( response );
 		return response;
 	} catch ( error ) {
 		const errorMessage = error?.message ? getErrorMessage( error ) : error;
