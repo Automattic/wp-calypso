@@ -44,6 +44,13 @@ function saveStepNumberToUrl( stepNumber ) {
 	// composite-checkout uses to change its current step, so we must fire one
 	// manually. (HashChangeEvent is part of the web API so I'm not sure why
 	// eslint reports this as undefined.)
-	const event = new HashChangeEvent( 'hashchange' ); // eslint-disable-line no-undef
-	window.dispatchEvent( event );
+	//
+	// We use try/catch because we support IE11 and that browser does not include
+	// HashChange.
+	try {
+		const event = new HashChangeEvent( 'hashchange' ); // eslint-disable-line no-undef
+		window.dispatchEvent( event );
+	} catch ( error ) {
+		debug( 'hashchange firing failed' );
+	}
 }
