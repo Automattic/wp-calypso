@@ -17,12 +17,16 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		super( driver, By.css( '.edit-post-header' ) );
 	}
 
-	async selectTab( name ) {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( `.edit-post-sidebar__panel-tab[aria-label^=${ name }]` )
-		);
+	async selectTab( ...names ) {
+		if ( ! names.length ) {
+			throw new Error( 'No tab name provided.' );
+		}
+		const selector = names
+			.map( ( name ) => `.edit-post-sidebar__panel-tab[aria-label^=${ name }]` )
+			.join();
+		return await driverHelper.clickWhenClickable( this.driver, By.css( selector ) );
 	}
+
 	async selectDocumentTab() {
 		await this.selectTab( 'Document' );
 		return await driverHelper.waitTillPresentAndDisplayed(
