@@ -8,7 +8,6 @@ import { mergeWith } from 'lodash';
  */
 import apiFetch from '@wordpress/api-fetch';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
-import { _x } from '@wordpress/i18n';
 import {
 	__experimentalAlignmentHookSettingsProvider,
 	__experimentalBlock,
@@ -86,25 +85,6 @@ const getMembershipsStatus = async () => {
 };
 
 /**
- * Appends a "paid" tag to the Premium Content block title if site requires an upgrade.
- *
- * @param membershipsStatus {object} Memberships status
- */
-const addPaidBlockFlags = ( membershipsStatus ) => {
-	if ( ! membershipsStatus.should_upgrade_to_access_memberships ) {
-		return;
-	}
-
-	const paidFlag = _x(
-		'paid',
-		'Short label appearing near a block requiring a paid plan',
-		'full-site-editing'
-	);
-
-	updateBlockType( container.name, { title: `${ container.settings.title } (${ paidFlag })` } );
-};
-
-/**
  * Hides the buttons block from the inserter if the Memberships module is not set up.
  *
  * @param membershipsStatus {object} Memberships status
@@ -126,7 +106,6 @@ const hideButtonsIfMembershipsNotSetUp = ( membershipsStatus ) => {
  */
 const configurePremiumContentBlocks = async () => {
 	const membershipsStatus = await getMembershipsStatus();
-	addPaidBlockFlags( membershipsStatus );
 	hideButtonsIfMembershipsNotSetUp( membershipsStatus );
 };
 
