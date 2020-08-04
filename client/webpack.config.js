@@ -174,7 +174,7 @@ const webpackConfig = {
 				? `${ process.env.HOME }/terser-cache/${ extraPath }`
 				: 'docker' !== process.env.CONTAINER,
 			parallel: isDesktop ? 2 : workerCount,
-			sourceMap: Boolean( process.env.SOURCEMAP ),
+			sourceMap: isDesktop ? false : Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
 				mangle: ! isDesktop,
 			},
