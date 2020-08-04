@@ -393,11 +393,18 @@ function returnModalCopy(
 	switch ( productType ) {
 		case 'plan with dependencies':
 			modalCopy.title = translate( 'You are about to remove your plan from the cart' );
-			modalCopy.description = createUserAndSiteBeforeTransaction
-				? 'When you press Continue, we will remove your plan from the cart. Your site will be created on the free plan when you complete payment for the other product(s) in your cart.'
+
+			if ( createUserAndSiteBeforeTransaction ) {
+				modalCopy.description = 'When you press Continue, we will remove your plan from the cart. Your site will be created on the free plan when you complete payment for the other product(s) in your cart.'	
+			} else {
+				modalCopy.description = isPwpoUser
+				? translate(
+						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
+				  )
 				: translate(
 						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
 				  );
+			}
 			break;
 		case 'plan':
 			modalCopy.title = translate( 'You are about to remove your plan from the cart' );
