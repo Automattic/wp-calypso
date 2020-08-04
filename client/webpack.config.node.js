@@ -112,6 +112,7 @@ const webpackConfig = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
+			'wp-calypso-client/config': 'server/config',
 			config: 'server/config',
 		},
 	},

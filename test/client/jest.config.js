@@ -1,6 +1,7 @@
 module.exports = {
 	moduleNameMapper: {
 		'^config$': '<rootDir>/server/config/index.js',
+		'^wp-calypso-client/config$': '<rootDir>/server/config/index.js',
 	},
 	transform: {
 		'\\.[jt]sx?$': 'babel-jest',
