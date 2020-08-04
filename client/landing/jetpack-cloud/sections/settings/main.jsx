@@ -151,7 +151,6 @@ const SettingsPage = () => {
 			{ ! isInitialized && <div className="settings__form-uninitialized" /> }
 			{ isInitialized && (
 				<FoldableCard
-					clickableHeader
 					header={
 						formOpen
 							? translate( 'Hide connection details' )
