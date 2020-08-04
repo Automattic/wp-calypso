@@ -59,6 +59,7 @@ jobs:
     env:
       CALYPSO_APP: editing_toolkit_plugin
       TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
+      PASS_THRU_ID: ${{ env.GITHUB_ACTION }}
     steps:
     - name: Checkout code
       uses: actions/checkout@HEAD
@@ -141,7 +142,7 @@ jobs:
     - name: Execute phpcs on changed files
       run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.modified ), ' ' ) }} ${{ join( fromJson( steps.changes.outputs.added ), ' ' ) }}
       if: ${{ steps.changes.outputs.all != '' }}
-    
+
     - name: No changes found
       run: echo "No changes found to check!"
       if: ${{ steps.changes.outputs.all == '' }}
