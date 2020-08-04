@@ -130,7 +130,7 @@ export default function WPCheckout( {
 
 	const validateContactDetailsAndDisplayErrors = async () => {
 		debug( 'validating contact details with side effects' );
-		if ( shouldShowDomainContactFields ) {
+		if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -157,7 +157,7 @@ export default function WPCheckout( {
 	};
 	const validateContactDetails = async () => {
 		debug( 'validating contact details' );
-		if ( shouldShowDomainContactFields ) {
+		if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
