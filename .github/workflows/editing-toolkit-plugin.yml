@@ -72,8 +72,6 @@ jobs:
 
       - name: Send hook to Mission Control
         run: .github/workflows/send-calypso-app-build-trigger.sh
-        with:
-          GH_ACTION: ${{ env.GITHUB_ACTION }}
 
   phpunit:
     name: Run phpunit tests
