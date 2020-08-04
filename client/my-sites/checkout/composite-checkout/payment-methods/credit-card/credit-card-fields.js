@@ -29,11 +29,26 @@ export default function CreditCardFields() {
 	const theme = useTheme();
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
-	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
+	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const getField = ( key ) => fields[ key ] || {};
+	const getFieldValue = ( key ) => getField( key ).value ?? '';
+	const getErrorMessagesForField = ( key ) => {
+		const managedValue = getField( key );
+		if ( managedValue?.isRequired && managedValue?.value === '' ) {
+			return [ __( 'This field is required.' ) ];
+		}
+		return managedValue.errors ?? [];
+	};
+	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
 	const cart = useCart();
+
+	const cardholderName = getField( 'cardholderName' );
+	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];
+	const cardholderNameErrorMessage = cardholderNameErrorMessages.length
+		? cardholderNameErrorMessages[ 0 ]
+		: null;
 
 	const handleStripeFieldChange = ( input ) => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -56,30 +71,19 @@ export default function CreditCardFields() {
 		setCardDataError( input.elementType, null );
 	};
 
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const contactCountryCode = useSelect(
 		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
 	);
 	const shouldShowContactFields =
 		contactCountryCode === 'BR' &&
 		Boolean( cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) ) );
-	const { setFieldValue } = useDispatch( 'credit-card' );
-	useEffect( () => {
-		setFieldValue( 'countryCode', contactCountryCode );
-	}, [ contactCountryCode ] );
-	const getField = ( key ) => fields[ key ] || {};
-	const getFieldValue = ( key ) => getField( key ).value ?? '';
-	const getErrorMessagesForField = ( key ) => {
-		const managedValue = getField( key );
-
-		if ( managedValue?.isRequired && managedValue?.value === '' ) {
-			return [ __( 'This field is required.' ) ];
-		}
-
-		return managedValue.errors ?? [];
-	};
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== 'ready';
+
+	// Cache the country code in our store for use by the processor function
+	useEffect( () => {
+		setFieldValue( 'countryCode', contactCountryCode );
+	}, [ contactCountryCode, setFieldValue ] );
 
 	const stripeElementStyle = {
 		base: {
@@ -109,10 +113,9 @@ export default function CreditCardFields() {
 					label={ __( 'Cardholder name' ) }
 					description={ __( "Enter your name as it's written on the card" ) }
 					value={ cardholderName?.value ?? '' }
-					onChange={ changeCardholderName }
-					// TODO: use the error property of cardholderName here
-					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
-					errorMessage={ __( 'This field is required' ) }
+					onChange={ ( value ) => setFieldValue( 'cardholderName', value ) }
+					isError={ !! cardholderNameErrorMessage }
+					errorMessage={ cardholderNameErrorMessage }
 					disabled={ isDisabled }
 				/>
 

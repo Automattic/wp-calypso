@@ -38,9 +38,6 @@ export function createCreditCardPaymentMethodStore() {
 		setCardDataComplete( type, complete ) {
 			return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
 		},
-		changeCardholderName( payload ) {
-			return { type: 'CARDHOLDER_NAME_SET', payload };
-		},
 		setFieldValue( key, value ) {
 			return { type: 'FIELD_VALUE_SET', payload: { key, value } };
 		},
@@ -55,9 +52,6 @@ export function createCreditCardPaymentMethodStore() {
 	const selectors = {
 		getBrand( state ) {
 			return state.brand || '';
-		},
-		getCardholderName( state ) {
-			return state.cardholderName || '';
 		},
 		getCardDataErrors( state ) {
 			return state.cardDataErrors;
@@ -138,15 +132,6 @@ export function createCreditCardPaymentMethodStore() {
 		}
 	}
 
-	function cardholderNameReducer( state = { value: '', isTouched: false }, action ) {
-		switch ( action?.type ) {
-			case 'CARDHOLDER_NAME_SET':
-				return { value: action.payload, isTouched: true };
-			default:
-				return state;
-		}
-	}
-
 	function brandReducer( state = null, action ) {
 		switch ( action?.type ) {
 			case 'BRAND_SET':
@@ -162,7 +147,6 @@ export function createCreditCardPaymentMethodStore() {
 				fields: fieldReducer(),
 				cardDataErrors: cardDataErrorsReducer(),
 				cardDataComplete: cardDataCompleteReducer(),
-				cardholderName: cardholderNameReducer(),
 				brand: brandReducer(),
 			},
 			action
@@ -171,7 +155,6 @@ export function createCreditCardPaymentMethodStore() {
 				fields: fieldReducer( state.fields, action ),
 				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
-				cardholderName: cardholderNameReducer( state.cardholderName, action ),
 				brand: brandReducer( state.brand, action ),
 			};
 		},
@@ -202,7 +185,8 @@ export function createCreditCardMethod( { store, stripe, stripeConfiguration } )
 }
 
 function CreditCardSummary() {
-	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
+	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const cardholderName = fields.cardholderName;
 	const brand = useSelect( ( select ) => select( 'credit-card' ).getBrand() );
 
 	return (

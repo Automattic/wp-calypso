@@ -28,8 +28,8 @@ const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 export default function CreditCardPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
-	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
 	const {
 		transactionStatus,
@@ -206,10 +206,11 @@ function isCreditCardFormValid( store, paymentPartner, __ ) {
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
-			const cardholderName = store.selectors.getCardholderName( store.getState() );
+			const fields = store.selectors.getFields( store.getState() );
+			const cardholderName = fields.cardholderName;
 			if ( ! cardholderName?.value.length ) {
 				// Touch the field so it displays a validation error
-				store.dispatch( store.actions.changeCardholderName( '' ) );
+				store.dispatch( store.actions.setFieldValue( 'cardholderName', '' ) );
 			}
 			const errors = store.selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
@@ -233,7 +234,7 @@ function isCreditCardFormValid( store, paymentPartner, __ ) {
 			let isValid = true;
 
 			const rawState = store.selectors.getFields( store.getState() );
-			const cardholderName = store.selectors.getCardholderName( store.getState() );
+			const cardholderName = rawState.cardholderName;
 			const numberWithoutSpaces = {
 				value: rawState?.number?.value?.replace( /\s+/g, '' ),
 			}; // the validator package we're using requires this
@@ -252,7 +253,6 @@ function isCreditCardFormValid( store, paymentPartner, __ ) {
 				errors.map( ( error ) => {
 					isValid = false;
 					store.dispatch( store.actions.setFieldError( key, error ) );
-					// TODO: set the error on cardholderName (it's not in the fields object)
 				} );
 			} );
 			debug( 'ebanx card details validation results: ', validationResults );
