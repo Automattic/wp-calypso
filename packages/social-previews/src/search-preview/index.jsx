@@ -3,7 +3,6 @@
  */
 
 import PropTypes from 'prop-types';
-import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import {
 	firstValid,
@@ -36,11 +35,8 @@ const googleDescription = firstValid(
 const googleUrl = hardTruncation( 79 );
 
 export default function SearchPreview( { description, title, url } ) {
-	const translate = useTranslate();
-
 	return (
 		<div className="search-preview">
-			<h2 className="search-preview__header">{ translate( 'Search Preview' ) }</h2>
 			<div className="search-preview__display">
 				<div className="search-preview__title">{ googleTitle( title ) }</div>
 				<div className="search-preview__url">{ googleUrl( url ) } ▾</div>

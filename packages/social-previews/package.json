@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "A suite of components to generate previews for a post for both social and search engines",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -9,10 +9,10 @@
 		"*.scss"
 	],
 	"keywords": [
-        "wordpress",
-        "social",
-        "seo",
-        "search"
+		"wordpress",
+		"social",
+		"seo",
+		"search"
 	],
 	"author": "Automattic Inc.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -38,7 +38,6 @@
 		"prepare": "check-npm-client && transpile && copy-assets"
 	},
 	"dependencies": {
-		"i18n-calypso": "^5.0.0",
 		"lodash": "^4.17.15",
 		"prop-types": "^15.7.2",
 		"@babel/runtime": "^7.9.2"
