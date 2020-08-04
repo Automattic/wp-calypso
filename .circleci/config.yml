@@ -636,8 +636,16 @@ jobs:
 
   wp-desktop-source:
     <<: *desktop_defaults
+    environment:
+      VERSION: << pipeline.git.tag >>
     steps:
       - checkout
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Ensure package.json Version And Tag Match
+                command: cd desktop/bin && node validate_tag.js $VERSION
       - run: *update-node
       - run: *yarn-install
       - restore_cache: *desktop-restore-source-cache
