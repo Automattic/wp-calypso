@@ -387,6 +387,6 @@ export function createStripePaymentMethodToken( { stripe, name, country, postalC
 
 export function getPostalCode() {
 	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
-	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value;
+	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
 	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
 }
