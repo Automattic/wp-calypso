@@ -20,6 +20,9 @@ const trigger_payload = JSON.parse( fs.readFileSync( process.env.GITHUB_EVENT_PA
 // Makes sure that the data we need exists.
 const getEnv = ( varName ) => {
 	const envVal = process.env[ varName ];
+	console.log( "is process =", !! process );
+	console.log( "is process.env =", !! process.env );
+	console.log( "accessing varName =", varName );
 	// Fail for any falsey value except 0 (including empty strings).
 	if ( ! envVal && envVal !== 0 ) {
 		throw new Error( `${ varName } env variable missing!` );
