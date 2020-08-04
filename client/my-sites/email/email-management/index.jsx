@@ -117,12 +117,16 @@ class EmailManagement extends React.Component {
 			);
 		}
 
-		return (
-			<PlansNavigation
-				cart={ cart }
-				path={ emailManagement( selectedSiteSlug, selectedDomainName ) }
-			/>
-		);
+		if ( ! config.isEnabled( 'manage/all-domains' ) ) {
+			return (
+				<PlansNavigation
+					cart={ cart }
+					path={ emailManagement( selectedSiteSlug, selectedDomainName ) }
+				/>
+			);
+		}
+
+		return null;
 	}
 
 	content() {
