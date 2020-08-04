@@ -12,6 +12,10 @@ zip --quiet --recurse-paths $build_archive ./*
 
 echo -e "Creating JSON payload...\n"
 
+echo actionis${GITHUB_ACTION}x
+
+printenv | sed 's;=.*;;'
+
 # Use node to process data into JSON file
 node -e '
 const fs = require("fs");
