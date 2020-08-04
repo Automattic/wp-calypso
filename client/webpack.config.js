@@ -36,9 +36,9 @@ const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './webpack/extensions' );
-const RequireChunkCallbackPlugin = require( './webpack/require-chunk-callback-plugin' );
-const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
+const getAliasesForExtensions = require( './webpack-utils/extensions' );
+const RequireChunkCallbackPlugin = require( './webpack-utils/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( './webpack-utils/generate-chunks-map-plugin' );
 
 /**
  * Internal variables
