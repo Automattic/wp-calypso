@@ -66,7 +66,7 @@ export const requestJetpackUserConnectionData = ( siteId ) => {
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
 					siteId,
-					data: response.data.currentUser,
+					data: response.data,
 				} );
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,

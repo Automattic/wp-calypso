@@ -6,11 +6,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
+import isJetpackUserConnectionOwner from 'state/selectors/is-jetpack-user-connection-owner';
 import { dataItems } from './fixtures/jetpack-connection';
 
-describe( 'isJetpackUserMaster()', () => {
-	test( "should return true if the user is the master user of the site's connection", () => {
+describe( 'isJetpackUserConnectionOwner()', () => {
+	test( "should return true if the user is the owner of the site's connection", () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -19,11 +19,11 @@ describe( 'isJetpackUserMaster()', () => {
 				},
 			},
 			siteId = 12345678;
-		const output = isJetpackUserMaster( stateIn, siteId );
+		const output = isJetpackUserConnectionOwner( stateIn, siteId );
 		expect( output ).to.be.true;
 	} );
 
-	test( "should return false if the user is not the master user of the site's connection", () => {
+	test( "should return false if the user is not the owner of the site's connection", () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -32,7 +32,7 @@ describe( 'isJetpackUserMaster()', () => {
 				},
 			},
 			siteId = 87654321;
-		const output = isJetpackUserMaster( stateIn, siteId );
+		const output = isJetpackUserConnectionOwner( stateIn, siteId );
 		expect( output ).to.be.false;
 	} );
 
@@ -45,7 +45,7 @@ describe( 'isJetpackUserMaster()', () => {
 				},
 			},
 			siteId = 88888888;
-		const output = isJetpackUserMaster( stateIn, siteId );
+		const output = isJetpackUserConnectionOwner( stateIn, siteId );
 		expect( output ).to.be.null;
 	} );
 } );
