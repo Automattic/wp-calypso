@@ -188,10 +188,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	async chooseDocumentSettings() {
 		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 		await gEditorComponent.openSidebar();
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '[aria-label^="Document settings"], [data-label^="Document"]' )
-		);
+		return this.selectDocumentTab();
 	}
 
 	async setVisibilityToPasswordProtected( password ) {
