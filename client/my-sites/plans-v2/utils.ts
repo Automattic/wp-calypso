@@ -12,8 +12,8 @@ export function stringToDuration( duration?: string ): Duration | undefined {
 	if ( duration === undefined ) {
 		return undefined;
 	}
-	if ( duration !== 'annual' ) {
-		return TERM_ANNUALLY;
+	if ( duration === 'monthly' ) {
+		return TERM_MONTHLY;
 	}
-	return TERM_MONTHLY;
+	return TERM_ANNUALLY;
 }
