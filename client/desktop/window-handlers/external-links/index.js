@@ -99,9 +99,4 @@ module.exports = function ( mainWindow ) {
 				handleUndefined( mainWindow, info );
 		}
 	} );
-
-	ipc.on( 'view-post-clicked', ( _, url ) => {
-		log.info( `View Post handler for URL: ${ url }` );
-		openInBrowser( null, url );
-	} );
 };
