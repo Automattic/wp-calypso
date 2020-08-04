@@ -135,11 +135,11 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	blogAddress() {
-		const { site, siteIsJetpack, siteSlug, translate } = this.props;
+		const { site, siteIsJetpack, siteSlug, translate, isWPForTeamsSite } = this.props;
 		let customAddress = '',
 			addressDescription = '';
 
-		if ( ! site || siteIsJetpack ) {
+		if ( ! site || siteIsJetpack || isWPForTeamsSite ) {
 			return null;
 		}
 
