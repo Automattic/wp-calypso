@@ -40,7 +40,7 @@ const BusinessPlanDetails = ( {
 	selectedFeature,
 	purchases,
 	hasProductsList,
-	productDisplayCost,
+	conciergeSessionDisplayCost,
 } ) => {
 	const shouldPromoteJetpack = useSelector( ( state ) =>
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
@@ -56,7 +56,7 @@ const BusinessPlanDetails = ( {
 		'Schedule a %(price)s Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.',
 		{
 			args: {
-				price: productDisplayCost,
+				price: conciergeSessionDisplayCost,
 			},
 		}
 	);
@@ -156,6 +156,6 @@ export default connect( ( state ) => {
 	const productsList = getProductsList( state );
 	return {
 		hasProductsList: Object.keys( productsList ).length > 0,
-		productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+		conciergeSessionDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 	};
 } )( BusinessPlanDetails );
