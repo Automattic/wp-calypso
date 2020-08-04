@@ -59,6 +59,7 @@ jobs:
     env:
       CALYPSO_APP: editing_toolkit_plugin
       TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
+      GH_ACTION: ${{ env.GITHUB_ACTION }}
     steps:
       - name: Checkout code
         uses: actions/checkout@HEAD
@@ -71,9 +72,9 @@ jobs:
           path: apps/full-site-editing/full-site-editing-plugin
 
       - name: Send hook to Mission Control
+        run: .github/workflows/send-calypso-app-build-trigger.sh
         with:
           GH_ACTION: ${{ env.GITHUB_ACTION }}
-        run: .github/workflows/send-calypso-app-build-trigger.sh
 
   phpunit:
     name: Run phpunit tests
