@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
 		"prebuild": "check-npm-client && yarn run clean",
-		"build": "check-npm-client && calypso-build editor='./src/editor.js' --env.WP"
+		"build": "check-npm-client && calypso-build editor='./src/editor.js' view='./src/view.js' --env.WP"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "^3.18.0",
@@ -34,6 +34,7 @@
 		"@wordpress/i18n": "^3.14.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
-		"moment": "^2.26.0"
+		"moment": "^2.26.0",
+		"new-github-issue-url": "^0.2.1"
 	}
 }
