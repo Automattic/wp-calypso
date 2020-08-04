@@ -249,7 +249,7 @@ export class LanguagePickerModal extends PureComponent {
 				},
 				args: {
 					language: language.name,
-					percentTranslated: language.percentTranslated,
+					percentTranslated: language.calypsoPercentTranslated,
 				},
 			}
 		);
