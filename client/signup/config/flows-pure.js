@@ -15,7 +15,6 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
-	getThankYouSiteDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 } = {} ) {
@@ -296,7 +295,7 @@ export function generateFlows( {
 			'plans-site-selected',
 			'user',
 		],
-		destination: getThankYouSiteDestination,
+		destination: getThankYouNoSiteDestination,
 		description: 'An approach to add a domain via the all domains view',
 		disallowResume: true,
 		lastModified: '2020-07-30',

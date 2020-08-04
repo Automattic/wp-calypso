@@ -333,7 +333,7 @@ export function generateSteps( {
 
 		'select-domain': {
 			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'receiptId' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isAllDomains: true,
 				isDomainOnly: true,
