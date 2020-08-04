@@ -9,6 +9,7 @@
  * External dependencies
  */
 const path = require( 'path' );
+// eslint-disable-next-line wpcalypso/no-package-relative-imports
 const webpack = require( 'webpack' );
 
 /**
@@ -65,8 +66,14 @@ function getExternals() {
 			'webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
+			'wp-calypso-client/webpack.config': {
+				commonjs: '../client/webpack.config.js',
+			},
 			// Exclude the devdocs search-index, as it's huge.
 			'server/devdocs/search-index': {
+				commonjs: '../client/server/devdocs/search-index.js',
+			},
+			'wp-calypso-client/server/devdocs/search-index': {
 				commonjs: '../client/server/devdocs/search-index.js',
 			},
 		},
@@ -137,6 +144,10 @@ const webpackConfig = {
 		} ),
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
+			'components/empty-component'
+		), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(
+			/^wp-calypso-client[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
 	].filter( Boolean ),
