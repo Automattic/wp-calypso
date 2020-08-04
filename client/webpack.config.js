@@ -173,7 +173,7 @@ const webpackConfig = {
 			cache: process.env.CIRCLECI
 				? `${ process.env.HOME }/terser-cache/${ extraPath }`
 				: 'docker' !== process.env.CONTAINER,
-			parallel: workerCount,
+			parallel: isDesktop ? 2 : workerCount,
 			sourceMap: Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
 				mangle: ! isDesktop,
