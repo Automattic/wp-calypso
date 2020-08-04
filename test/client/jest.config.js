@@ -13,7 +13,7 @@ module.exports = {
 	rootDir: '../../client',
 	testEnvironment: 'node',
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js|social-logos|gridicons)',
+		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js|social-logos|gridicons|wp-calypso-client)',
 	],
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/*.skip.[jt]s?(x)', '!**/.eslintrc.*' ],
 	testPathIgnorePatterns: [ '<rootDir>/server/' ],
