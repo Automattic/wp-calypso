@@ -421,7 +421,7 @@ const mapStateToProps = ( state, props ) => {
 			currentUserCurrencyCode,
 			stripZeros
 		),
-		isReskinned: 'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
+		isReskinned: props.isSignupStep && 'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
 	};
 };
 
