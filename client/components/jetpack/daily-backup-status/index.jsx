@@ -86,11 +86,21 @@ class DailyBackupStatus extends Component {
 			hasRealtimeBackups,
 			siteSlug,
 			deltas,
+			selectedDate,
 			// metaDiff,
 			translate,
+			moment,
+			timezone,
+			gmtOffset,
 		} = this.props;
 		const displayDate = this.getDisplayDate( backup.activityTs );
 		const displayDateNoLatest = this.getDisplayDate( backup.activityTs, false );
+
+		const today = applySiteOffset( moment(), {
+			timezone: timezone,
+			gmtOffset: gmtOffset,
+		} );
+		const isToday = selectedDate.isSame( today, 'day' );
 
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
@@ -104,7 +114,9 @@ class DailyBackupStatus extends Component {
 			<>
 				<div className="daily-backup-status__message-head">
 					<img src={ cloudSuccessIcon } alt="" role="presentation" />
-					<div className="daily-backup-status__hide-mobile">{ translate( 'Latest backup' ) }</div>
+					<div className="daily-backup-status__hide-mobile">
+						{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
+					</div>
 				</div>
 				<div className="daily-backup-status__hide-desktop">
 					<div className="daily-backup-status__title">{ displayDate }</div>
