@@ -54,6 +54,8 @@ function getExternals() {
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
+
+				/[^/]?wp-calypso-client\//,
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
