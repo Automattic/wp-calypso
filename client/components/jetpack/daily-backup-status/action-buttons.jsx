@@ -28,8 +28,8 @@ const DownloadButton = ( { disabled, rewindId } ) => {
 	const tracks = useDispatch( recordTracksEvent );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const href = ! disabled && backupDownloadPath( siteSlug, rewindId );
-	const onClick = ( event ) => {
+	const href = disabled ? undefined : backupDownloadPath( siteSlug, rewindId );
+	const onDownload = ( event ) => {
 		event.preventDefault();
 		if ( disabled ) {
 			return;
@@ -44,7 +44,7 @@ const DownloadButton = ( { disabled, rewindId } ) => {
 			className="daily-backup-status__download-button"
 			disabled={ disabled }
 			href={ href }
-			onClick={ onClick }
+			onClick={ onDownload }
 		>
 			{ translate( 'Download backup' ) }
 		</Button>
@@ -62,8 +62,8 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 	);
 
 	const canRestore = ! disabled && ! needsCredentials;
-	const href = canRestore && backupRestorePath( siteSlug, rewindId );
-	const onClick = ( event ) => {
+	const href = canRestore ? backupRestorePath( siteSlug, rewindId ) : undefined;
+	const onRestore = ( event ) => {
 		event.preventDefault();
 		if ( ! canRestore ) {
 			return;
@@ -78,7 +78,7 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 			className="daily-backup-status__restore-button"
 			disabled={ ! canRestore }
 			href={ href }
-			onClick={ onClick }
+			onClick={ onRestore }
 		>
 			<div className="daily-backup-status__restore-button-icon">
 				{ needsCredentials && <img src={ missingCredentialsIcon } alt="" role="presentation" /> }
@@ -93,7 +93,7 @@ const MissingCredentials = () => {
 	const tracks = useDispatch( recordTracksEvent );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const onClick = () => tracks( 'calypso_jetpack_backup_activate_click' );
+	const onActivateRestores = () => tracks( 'calypso_jetpack_backup_activate_click' );
 
 	return (
 		<div className="daily-backup-status__credentials-warning">
@@ -123,7 +123,7 @@ const MissingCredentials = () => {
 					isPrimary={ false }
 					className="daily-backup-status__activate-restores-button"
 					href={ settingsPath( siteSlug ) }
-					onClick={ onClick }
+					onClick={ onActivateRestores }
 				>
 					{ translate( 'Activate restores' ) }
 				</Button>
