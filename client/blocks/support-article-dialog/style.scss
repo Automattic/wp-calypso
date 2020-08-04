@@ -81,7 +81,7 @@
 	}
 
 	@include breakpoint-deprecated( '480px-960px' ) {
-		font-size: 32px;
+		font-size: $font-title-large;
 		line-height: 40px;
 	}
 

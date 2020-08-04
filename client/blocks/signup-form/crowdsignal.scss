@@ -22,7 +22,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup.is-crowdsignal .formatted-header__title {
 	@extend .wp-brand-font;
-	font-size: 32px;
+	font-size: $font-title-large;
 	font-weight: 600;
 	margin-bottom: 10px;
 }

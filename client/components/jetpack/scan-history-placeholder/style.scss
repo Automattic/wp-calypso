@@ -7,7 +7,7 @@
 .scan-history-placeholder__header {
 	margin: 32px 0 16px;
 
-	font-size: 28px;
+	font-size: $font-title-large;
 	line-height: 1;
 
 	@include breakpoint-deprecated( '>660px' ) {

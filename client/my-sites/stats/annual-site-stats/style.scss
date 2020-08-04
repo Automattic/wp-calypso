@@ -71,7 +71,7 @@
 		font-size: $font-body-small;
 
 		@include breakpoint-deprecated( '>480px' ) {
-			font-size: 30px;
+			font-size: $font-title-large;
 		}
 	}
 }

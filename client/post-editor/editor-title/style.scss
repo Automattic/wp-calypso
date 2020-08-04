@@ -40,7 +40,7 @@
 	padding-right: 10px;
 	border: none;
 	font-family: $serif;
-	font-size: 28px;
+	font-size: $font-title-medium;
 	color: var( --color-neutral-70 );
 	font-weight: 600;
 	resize: none;
@@ -51,7 +51,7 @@
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 32px;
+		font-size: $font-title-large;
 	}
 }
 

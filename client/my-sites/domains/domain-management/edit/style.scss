@@ -81,11 +81,11 @@
 
 	.domain-status__card {
 		h2 {
-			font-size: 32px;
+			font-size: $font-title-large;
 
 			@include breakpoint-deprecated( '<480px' ) {
 				&.mobile-m {
-					font-size: 28px;
+					font-size: $font-title-large;
 				}
 				&.mobile-l {
 					font-size: $font-title-medium;
@@ -100,7 +100,7 @@
 
 			@include breakpoint-deprecated( '>480px' ) {
 				&.desktop-m {
-					font-size: 28px;
+					font-size: $font-title-large;
 				}
 				&.desktop-l {
 					font-size: $font-title-medium;
