@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
@@ -19,13 +19,7 @@ import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
-import {
-	FieldRow,
-	Label,
-	LabelText,
-	CreditCardFieldsWrapper,
-	CreditCardField,
-} from './form-layout-components';
+import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
 import { paymentMethodClassName } from 'lib/cart-values';
 import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
@@ -40,9 +34,6 @@ export default function CreditCardFields() {
 		'credit-card'
 	);
 	const cart = useCart();
-	const shouldShowContactFieldCheckbox = Boolean(
-		cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) )
-	);
 
 	const handleStripeFieldChange = ( input ) => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -66,10 +57,16 @@ export default function CreditCardFields() {
 	};
 
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
-	const shouldShowContactFields = useSelect( ( select ) =>
-		select( 'credit-card' ).getShowContactFields()
+	const contactCountryCode = useSelect(
+		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
 	);
-	const { setFieldValue, setShowContactFields } = useDispatch( 'credit-card' );
+	const shouldShowContactFields =
+		contactCountryCode === 'BR' &&
+		Boolean( cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) ) );
+	const { setFieldValue } = useDispatch( 'credit-card' );
+	useEffect( () => {
+		setFieldValue( 'countryCode', contactCountryCode );
+	}, [ contactCountryCode ] );
 	const getField = ( key ) => fields[ key ] || {};
 	const getFieldValue = ( key ) => getField( key ).value ?? '';
 	const getErrorMessagesForField = ( key ) => {
@@ -118,20 +115,6 @@ export default function CreditCardFields() {
 					errorMessage={ __( 'This field is required' ) }
 					disabled={ isDisabled }
 				/>
-
-				{ shouldShowContactFieldCheckbox && (
-					<FieldRow>
-						<Label>
-							<input
-								type="checkbox"
-								checked={ ! shouldShowContactFields }
-								onChange={ () => setShowContactFields( ! shouldShowContactFields ) }
-								disabled={ isDisabled }
-							/>
-							<LabelText>{ __( 'Credit card address is the same as contact details' ) }</LabelText>
-						</Label>
-					</FieldRow>
-				) }
 
 				{ shouldShowContactFields && (
 					<ContactFields
