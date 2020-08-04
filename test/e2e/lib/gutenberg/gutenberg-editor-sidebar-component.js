@@ -228,6 +228,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async scheduleFuturePost() {
+		await this.expandStatusAndVisibility();
 		const nextMonthSelector = By.css( '.DayPickerNavigation_rightButton__horizontalDefault' );
 		const firstDay = By.css( '.CalendarDay' );
 		const publishDateSelector = By.css( '.edit-post-post-schedule__toggle' );
