@@ -14,10 +14,7 @@ import {
 	createTransactionEndpointRequestPayloadFromLineItems,
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
 } from './types';
-import {
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
-	prepareDomainContactDetails,
-} from 'my-sites/checkout/composite-checkout/wpcom';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -26,7 +23,6 @@ import {
 } from 'lib/cart-values/cart-items';
 import { createStripePaymentMethod } from 'lib/stripe';
 import { prepareDomainContactDetailsForTransaction } from 'my-sites/checkout/composite-checkout/wpcom/types/wpcom-store-state';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
 import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
