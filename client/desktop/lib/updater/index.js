@@ -65,7 +65,6 @@ class Updater extends EventEmitter {
 			const button = selected.response;
 
 			if ( button === 0 ) {
-				// Confirm
 				this.onConfirm();
 			} else {
 				this.onCancel();
