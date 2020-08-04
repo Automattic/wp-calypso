@@ -215,4 +215,13 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	offerResetFlow: {
+		datestamp: '20200804',
+		variations: {
+			showOfferResetFlow: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
