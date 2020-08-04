@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { defaultRegistry } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
 import {
 	getDomainDetails,
+	createStripePaymentMethodToken,
 	wpcomTransaction,
 	wpcomPayPalExpress,
 	submitApplePayPayment,
@@ -19,11 +20,14 @@ import {
 	submitExistingCardPayment,
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
-import { createStripePaymentMethod } from 'lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
 
-export function genericRedirectProcessor( paymentMethodId, submitData, getThankYouUrl, siteSlug ) {
+export function genericRedirectProcessor(
+	paymentMethodId,
+	submitData,
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+) {
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
 		true
@@ -59,7 +63,7 @@ export function genericRedirectProcessor( paymentMethodId, submitData, getThankY
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
 	);
@@ -71,14 +75,14 @@ export function genericRedirectProcessor( paymentMethodId, submitData, getThankY
 	return pending;
 }
 
-export function applePayProcessor( submitData ) {
+export function applePayProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } ) {
 	const pending = submitApplePayPayment(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
 	);
@@ -90,7 +94,10 @@ export function applePayProcessor( submitData ) {
 	return pending;
 }
 
-export async function stripeCardProcessor( submitData ) {
+export async function stripeCardProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
 		...submitData,
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -103,7 +110,7 @@ export async function stripeCardProcessor( submitData ) {
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 			paymentMethodToken,
 		},
 		wpcomTransaction
@@ -116,7 +123,10 @@ export async function stripeCardProcessor( submitData ) {
 	return pending;
 }
 
-export async function existingCardProcessor( submitData ) {
+export async function existingCardProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const pending = submitExistingCardPayment(
 		{
 			...submitData,
@@ -124,7 +134,7 @@ export async function existingCardProcessor( submitData ) {
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
 	);
@@ -136,22 +146,15 @@ export async function existingCardProcessor( submitData ) {
 	return pending;
 }
 
-function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
-	return createStripePaymentMethod( stripe, {
-		name,
-		address: {
-			country,
-			postal_code: postalCode,
-		},
-	} );
-}
-
-export async function freePurchaseProcessor( submitData ) {
+export async function freePurchaseProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const pending = submitFreePurchaseTransaction(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 			// this data is intentionally empty so we do not charge taxes
 			country: null,
 			postalCode: null,
@@ -165,12 +168,15 @@ export async function freePurchaseProcessor( submitData ) {
 	return pending;
 }
 
-export async function fullCreditsProcessor( submitData ) {
+export async function fullCreditsProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const pending = submitCreditsTransaction(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 			// this data is intentionally empty so we do not charge taxes
 			country: null,
 			postalCode: null,
@@ -185,7 +191,10 @@ export async function fullCreditsProcessor( submitData ) {
 	return pending;
 }
 
-export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) {
+export async function payPalProcessor(
+	submitData,
+	{ getThankYouUrl, couponItem, includeDomainDetails, includeGSuiteDetails }
+) {
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const successUrl = formatUrl( {
 		protocol,
@@ -206,11 +215,11 @@ export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) 
 			successUrl,
 			cancelUrl,
 			siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
-			domainDetails: getDomainDetails( select ),
 			couponId: couponItem?.wpcom_meta?.couponCode,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomPayPalExpress
 	);

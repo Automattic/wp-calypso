@@ -86,7 +86,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode: string;
 	subdivisionCode?: string;
 	items: WPCOMCartItem[];
-	contactDetails: DomainContactDetails;
+	contactDetails: DomainContactDetails | null;
 } ): WPCOMTransactionEndpointCart {
 	debug( 'creating cart from items', items );
 
@@ -131,7 +131,7 @@ function createTransactionEndpointCartItemFromLineItem(
 
 function addRegistrationDataToGSuiteItem(
 	item: WPCOMCartItem,
-	contactDetails: DomainContactDetails
+	contactDetails: DomainContactDetails | null
 ): WPCOMCartItem {
 	if ( ! isGSuiteProductSlug( item.wpcom_meta?.product_slug ) ) {
 		return item;

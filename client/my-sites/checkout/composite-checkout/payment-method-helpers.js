@@ -4,6 +4,7 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
+import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -17,8 +18,16 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	prepareDomainContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
+import {
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasOnlyRenewalItems,
+	hasTransferProduct,
+} from 'lib/cart-values/cart-items';
+import { createStripePaymentMethod } from 'lib/stripe';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
+const { select } = defaultRegistry;
 
 export function useStoredCards( getStoredCards, onEvent ) {
 	const [ state, dispatch ] = useReducer( storedCardsReducer, {
@@ -87,9 +96,10 @@ export async function submitPayPalExpressRequest( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export function getDomainDetails( select ) {
+export function getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) {
 	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
-	return prepareDomainContactDetails( managedContactDetails );
+	const domainDetails = prepareDomainContactDetails( managedContactDetails );
+	return includeDomainDetails || includeGSuiteDetails ? domainDetails : null;
 }
 
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
@@ -347,4 +357,27 @@ export function filterAppropriatePaymentMethods( {
 				allowedPaymentMethods || serverAllowedPaymentMethods
 			);
 		} );
+}
+
+export function needsDomainDetails( cart ) {
+	if ( cart && hasOnlyRenewalItems( cart ) ) {
+		return false;
+	}
+	if (
+		cart &&
+		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
+	) {
+		return true;
+	}
+	return false;
+}
+
+export function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
+	return createStripePaymentMethod( stripe, {
+		name,
+		address: {
+			country,
+			postal_code: postalCode,
+		},
+	} );
 }

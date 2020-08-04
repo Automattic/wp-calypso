@@ -92,6 +92,8 @@ import useShoppingCartManager from './wpcom/hooks/use-shopping-cart-manager';
 import useShowAddCouponSuccessMessage from './wpcom/hooks/use-show-add-coupon-success-message';
 import useCountryList from './wpcom/hooks/use-country-list';
 import { colors } from '@automattic/color-studio';
+import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -491,32 +493,56 @@ export default function CompositeCheckout( {
 		[ addItem, products ]
 	);
 
+	const includeDomainDetails = needsDomainDetails( responseCart );
+	const includeGSuiteDetails = items.some( ( item ) =>
+		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
+	);
+	const dataForProcessor = useMemo(
+		() => ( {
+			includeDomainDetails,
+			includeGSuiteDetails,
+		} ),
+		[ includeDomainDetails, includeGSuiteDetails ]
+	);
+	const dataForRedirectProcessor = useMemo(
+		() => ( {
+			...dataForProcessor,
+			getThankYouUrl,
+			siteSlug,
+		} ),
+		[ dataForProcessor, getThankYouUrl, siteSlug ]
+	);
+
 	const paymentProcessors = useMemo(
 		() => ( {
-			'apple-pay': applePayProcessor,
-			'free-purchase': freePurchaseProcessor,
-			card: stripeCardProcessor,
+			'apple-pay': ( transactionData ) => applePayProcessor( transactionData, dataForProcessor ),
+			'free-purchase': ( transactionData ) =>
+				freePurchaseProcessor( transactionData, dataForProcessor ),
+			card: ( transactionData ) => stripeCardProcessor( transactionData, dataForProcessor ),
 			alipay: ( transactionData ) =>
-				genericRedirectProcessor( 'alipay', transactionData, getThankYouUrl, siteSlug ),
+				genericRedirectProcessor( 'alipay', transactionData, dataForRedirectProcessor ),
 			p24: ( transactionData ) =>
-				genericRedirectProcessor( 'p24', transactionData, getThankYouUrl, siteSlug ),
+				genericRedirectProcessor( 'p24', transactionData, dataForRedirectProcessor ),
 			bancontact: ( transactionData ) =>
-				genericRedirectProcessor( 'bancontact', transactionData, getThankYouUrl, siteSlug ),
+				genericRedirectProcessor( 'bancontact', transactionData, dataForRedirectProcessor ),
 			giropay: ( transactionData ) =>
-				genericRedirectProcessor( 'giropay', transactionData, getThankYouUrl, siteSlug ),
+				genericRedirectProcessor( 'giropay', transactionData, dataForRedirectProcessor ),
 			wechat: ( transactionData ) =>
-				genericRedirectProcessor( 'wechat', transactionData, getThankYouUrl, siteSlug ),
+				genericRedirectProcessor( 'wechat', transactionData, dataForRedirectProcessor ),
 			ideal: ( transactionData ) =>
-				genericRedirectProcessor( 'ideal', transactionData, getThankYouUrl, siteSlug ),
+				genericRedirectProcessor( 'ideal', transactionData, dataForRedirectProcessor ),
 			sofort: ( transactionData ) =>
-				genericRedirectProcessor( 'sofort', transactionData, getThankYouUrl, siteSlug ),
+				genericRedirectProcessor( 'sofort', transactionData, dataForRedirectProcessor ),
 			eps: ( transactionData ) =>
-				genericRedirectProcessor( 'eps', transactionData, getThankYouUrl, siteSlug ),
-			'full-credits': fullCreditsProcessor,
-			'existing-card': existingCardProcessor,
-			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
+				genericRedirectProcessor( 'eps', transactionData, dataForRedirectProcessor ),
+			'full-credits': ( transactionData ) =>
+				fullCreditsProcessor( transactionData, dataForProcessor ),
+			'existing-card': ( transactionData ) =>
+				existingCardProcessor( transactionData, dataForProcessor ),
+			paypal: ( transactionData ) =>
+				payPalProcessor( transactionData, { ...dataForProcessor, getThankYouUrl, couponItem } ),
 		} ),
-		[ couponItem, getThankYouUrl, siteSlug ]
+		[ couponItem, dataForProcessor, dataForRedirectProcessor, getThankYouUrl ]
 	);
 
 	useRecordCheckoutLoaded(

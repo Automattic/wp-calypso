@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import {
@@ -10,38 +10,30 @@ import {
 	useFormStatus,
 	useIsStepActive,
 	useLineItems,
-	useSetStepComplete,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart, useDomainNamesInCart } from '../hooks/has-domains';
+import { useDomainNamesInCart } from '../hooks/has-domains';
 import Field from './field';
-import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { isGSuiteProductSlug } from 'lib/gsuite';
-import CountrySelectMenu from 'my-sites/checkout/composite-checkout/wpcom/components/country-select-menu';
-
-const debug = debugFactory( 'calypso:composite-checkout:wp-contact-form' );
+import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
+import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
+import CountrySelectMenu from './country-select-menu';
 
 export default function WPContactForm( {
-	summary,
-	isComplete,
-	isActive,
 	countriesList,
 	renderDomainContactFields,
 	shouldShowContactDetailsValidationErrors,
+	shouldShowDomainContactFields,
 	contactValidationCallback,
 } ) {
 	const translate = useTranslate();
 	const [ items ] = useLineItems();
-	const isDomainFieldsVisible = useHasDomainsInCart();
 	const isGSuiteInCart = items.some( ( item ) =>
 		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
 	);
@@ -49,25 +41,15 @@ export default function WPContactForm( {
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
-	useSkipToLastStepIfFormComplete( contactValidationCallback );
+	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
 
-	if ( summary && isComplete ) {
-		return (
-			<ContactFormSummary
-				isDomainFieldsVisible={ isDomainFieldsVisible }
-				isGSuiteInCart={ isGSuiteInCart }
-			/>
-		);
-	}
-	if ( ! isActive ) {
-		return null;
-	}
+	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
 
 	return (
 		<BillingFormFields>
 			<RenderContactDetails
 				translate={ translate }
-				isDomainFieldsVisible={ isDomainFieldsVisible }
+				shouldShowDomainContactFields={ shouldShowDomainContactFields }
 				isGSuiteInCart={ isGSuiteInCart }
 				contactInfo={ contactInfo }
 				renderDomainContactFields={ renderDomainContactFields }
@@ -198,94 +180,9 @@ TaxFields.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
-	const translate = useTranslate();
-	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
-
-	const showDomainContactSummary = isDomainFieldsVisible;
-
-	// Check if paymentData is empty
-	if ( Object.entries( contactInfo ).length === 0 ) {
-		return null;
-	}
-
-	const fullName = joinNonEmptyValues(
-		' ',
-		contactInfo.firstName.value,
-		contactInfo.lastName.value
-	);
-	const cityAndState = joinNonEmptyValues( ', ', contactInfo.city.value, contactInfo.state.value );
-	const postalAndCountry = joinNonEmptyValues(
-		', ',
-		contactInfo.postalCode.value,
-		contactInfo.countryCode.value
-	);
-
-	return (
-		<GridRow>
-			<div>
-				<SummaryDetails>
-					{ ( isGSuiteInCart || showDomainContactSummary ) && fullName && (
-						<SummaryLine>{ fullName }</SummaryLine>
-					) }
-
-					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
-					) }
-
-					<AlternateEmailSummary
-						contactInfo={ contactInfo }
-						showDomainContactSummary={ showDomainContactSummary }
-						isGSuiteInCart={ isGSuiteInCart }
-					/>
-
-					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
-					) }
-				</SummaryDetails>
-
-				<SummaryDetails>
-					{ showDomainContactSummary && contactInfo.address1.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && contactInfo.address2.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.address2.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && cityAndState && (
-						<SummaryLine>{ cityAndState }</SummaryLine>
-					) }
-
-					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
-				</SummaryDetails>
-
-				{ contactInfo.vatId.value?.length > 0 && (
-					<SummaryDetails>
-						{ contactInfo.vatId.value?.length > 0 && (
-							<SummaryLine>
-								{ translate( 'VAT indentification number:' ) }
-								{ contactInfo.vatId.value }
-							</SummaryLine>
-						) }
-					</SummaryDetails>
-				) }
-			</div>
-		</GridRow>
-	);
-}
-
-function joinNonEmptyValues( joinString, ...values ) {
-	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
-}
-
 function RenderContactDetails( {
 	translate,
-	isDomainFieldsVisible,
+	shouldShowDomainContactFields,
 	isGSuiteInCart,
 	contactInfo,
 	renderDomainContactFields,
@@ -297,7 +194,7 @@ function RenderContactDetails( {
 	const domainNames = useDomainNamesInCart();
 	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
 
-	if ( isDomainFieldsVisible ) {
+	if ( shouldShowDomainContactFields ) {
 		return (
 			<React.Fragment>
 				<ContactDetailsFormDescription>
@@ -352,90 +249,8 @@ function RenderContactDetails( {
 	);
 }
 
-function AlternateEmailSummary( { contactInfo, showDomainContactSummary, isGSuiteInCart } ) {
-	if ( ! isGSuiteInCart && ! showDomainContactSummary ) {
-		return null;
-	}
-	if ( ! contactInfo.alternateEmail.value?.length ) {
-		return null;
-	}
-	if ( contactInfo.alternateEmail.value === contactInfo.email.value && showDomainContactSummary ) {
-		return null;
-	}
-	return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
-}
-
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;
 	color: ${ ( props ) => props.theme.colors.textColor };
 	margin: 0 0 16px;
 `;
-
-function useSkipToLastStepIfFormComplete( contactValidationCallback ) {
-	const cachedContactDetails = useSelector( getContactDetailsCache );
-	const shouldValidateCachedContactDetails = useRef( true );
-	const shouldResetFormStatus = useRef( false );
-	const setStepCompleteStatus = useSetStepComplete();
-	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
-
-	useEffect( () => {
-		if ( ! contactValidationCallback ) {
-			debug( 'Cannot validate contact details; no validation callback' );
-			return;
-		}
-		if ( shouldValidateCachedContactDetails.current && cachedContactDetails ) {
-			shouldValidateCachedContactDetails.current = false;
-			if ( formStatus === 'ready' ) {
-				setFormValidating();
-				shouldResetFormStatus.current = true;
-			}
-			contactValidationCallback()
-				.then( ( areDetailsCompleteAndValid ) => {
-					// If the details are already populated and valid, jump to payment method step
-					if ( areDetailsCompleteAndValid ) {
-						debug( 'Contact details are already populated; skipping to payment method step' );
-						saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
-						setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
-					} else {
-						debug( 'Contact details are already populated but not valid' );
-					}
-					if ( shouldResetFormStatus.current ) {
-						setFormReady();
-					}
-				} )
-				.catch( () => {
-					if ( shouldResetFormStatus.current ) {
-						setFormReady();
-					}
-				} );
-		}
-	}, [
-		formStatus,
-		setFormReady,
-		setFormValidating,
-		cachedContactDetails,
-		contactValidationCallback,
-		setStepCompleteStatus,
-	] );
-}
-
-function saveStepNumberToUrl( stepNumber ) {
-	if ( ! window?.history || ! window?.location ) {
-		return;
-	}
-	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
-	if ( window.location.hash === newHash ) {
-		return;
-	}
-	const newUrl = window.location.hash
-		? window.location.href.replace( window.location.hash, newHash )
-		: window.location.href + newHash;
-	debug( 'updating url to', newUrl );
-	window.history.replaceState( null, '', newUrl );
-	// Modifying history does not trigger a hashchange event which is what
-	// composite-checkout uses to change its current step, so we must fire one
-	// manually. (HashChangeEvent is part of the web API so I'm not sure why
-	// eslint reports this as undefined.)
-	const event = new HashChangeEvent( 'hashchange' ); // eslint-disable-line no-undef
-	window.dispatchEvent( event );
-}
