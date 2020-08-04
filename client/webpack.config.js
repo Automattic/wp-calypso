@@ -337,11 +337,19 @@ const webpackConfig = {
 		/*
 		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
 		 */
-		browserslistEnv === 'evergreen' &&
-			new webpack.NormalModuleReplacementPlugin(
-				/^lib[/\\]local-storage-polyfill$/,
-				'lodash-es/noop'
-			),
+		...( browserslistEnv === 'evergreen'
+			? [
+					new webpack.NormalModuleReplacementPlugin(
+						/^lib[/\\]local-storage-polyfill$/,
+						'lodash-es/noop'
+					),
+					new webpack.NormalModuleReplacementPlugin(
+						/^wp-calypso-client[/\\]lib[/\\]local-storage-polyfill$/,
+						'lodash-es/noop'
+					),
+			  ]
+			: [] ),
+
 		/*
 		 * When not available, replace languages-meta.json with fallback-languages-meta.json.
 		 */
