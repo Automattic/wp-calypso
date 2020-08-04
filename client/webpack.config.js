@@ -80,7 +80,7 @@ const desktopTerserOpts = isDesktop
 				comments: false,
 				ascii_only: true,
 			},
-			parallel: 2,
+			parallel: 1,
 			cache: true,
 			sourceMap: false,
 			extractComments: false,
