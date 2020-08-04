@@ -339,7 +339,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		// Set site design type only if we're in signup
 		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
 		isSitePreviewVisible: ownProps.isSignupStep && isSitePreviewVisible( state ),
-		isReskinned: 'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
+		isReskinned: ownProps.isSignupStep && 'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
 	};
 };
 

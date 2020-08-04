@@ -628,7 +628,8 @@ export default connect(
 			currentPlan,
 		} );
 
-		const isReskinned = 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
+		const isReskinned =
+			props.isInSignup && 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
