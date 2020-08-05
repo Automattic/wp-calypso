@@ -31,8 +31,6 @@ references:
     resource_class: medium
     environment:
       CONFIG_ENV: release
-      DETECT_CHROMEDRIVER_VERSION: 'false'
-      CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
       NODE_ARGS: --max_old_space_size=6144
 
   setup-results-and-artifacts: &setup-results-and-artifacts
@@ -657,7 +655,6 @@ jobs:
             - run:
                 name: Ensure package.json Version And Tag Match
                 command: cd desktop/bin && node validate_tag.js $VERSION
-      # - run: *update-node
       - run:
           name: Update Chromedriver
           command: |
@@ -680,6 +677,9 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm use
             npm install -g yarn
+
+            yarn config set chromedriver_filepath '/usr/local/bin/chromedriver'
+
             yarn install --frozen-lockfile
       # - run: *yarn-install
       - restore_cache: *desktop-restore-source-cache
