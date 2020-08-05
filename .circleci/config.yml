@@ -694,8 +694,8 @@ jobs:
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
           paths: *desktop-cache-paths
-      # - run: *desktop-notify-github-failure
-      # - slack/status: *desktop-notify-slack-failure
+      - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
 
   wp-desktop-mac:
     macos:
