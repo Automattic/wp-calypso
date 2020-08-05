@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const path = require( 'path' );
 const MiniCssExtractPluginWithRTL = require( '@automattic/mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 
@@ -18,6 +19,12 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
+		{
+			loader: require.resolve( 'cache-loader' ),
+			options: {
+				cacheDirectory: path.resolve( process.env.HOME, '.cache', 'webpack', 'css' ),
+			},
+		},
 		{
 			loader: require.resolve( 'css-loader' ),
 			options: {
