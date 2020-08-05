@@ -1,8 +1,9 @@
 .plans-filter-bar {
 	display: flex;
-	align-items: center;
 	justify-content: space-between;
-	background: white;
+	align-items: center;
+	flex-wrap: wrap;
+	background: var( --color-surface );
 	padding: 16px 24px;
 
 	$height: 36px;
@@ -47,6 +48,12 @@
 
 	.segmented-control {
 		border-radius: $border-radius;
+
+		width: 160px;
+
+		.segmented-control__item {
+			flex: 1 1 50%;
+		}
 
 		.segmented-control__item:first-of-type .segmented-control__link {
 			border-top-left-radius: $border-radius;
