@@ -116,10 +116,11 @@ export default function WPCheckout( {
 	);
 	const shouldShowContactStep =
 		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
-	const [ shouldShowInvalidContactDetails, setshouldShowInvalidContactDetails ] = useState( false );
+
+	const [ areContactDetailsInvalid, setAreContactDetailsInvalid ] = useState( false );
+
 	const shouldShowDomainContactFields =
-		shouldShowContactStep &&
-		( needsDomainDetails( responseCart ) || shouldShowInvalidContactDetails );
+		shouldShowContactStep && ( needsDomainDetails( responseCart ) || areContactDetailsInvalid );
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
@@ -132,7 +133,7 @@ export default function WPCheckout( {
 	] = useState( false );
 
 	const validateContactDetailsAndDisplayErrors = async () => {
-		debug( 'validating contact details with side effects' );
+		debug( 'validating contact details and reporting errors' );
 		if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
@@ -142,9 +143,10 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod.id,
 				validationResult,
 				applyDomainContactValidationResults,
-				setshouldShowInvalidContactDetails,
 			} );
-			return isContactValidationResponseValid( validationResult, contactInfo );
+			const isValid = isContactValidationResponseValid( validationResult, contactInfo );
+			setAreContactDetailsInvalid( ! isValid );
+			return isValid;
 		} else if ( isGSuiteInCart ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
@@ -154,22 +156,28 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod.id,
 				validationResult,
 				applyDomainContactValidationResults,
-				setshouldShowInvalidContactDetails,
 			} );
-			return isContactValidationResponseValid( validationResult, contactInfo );
+			const isValid = isContactValidationResponseValid( validationResult, contactInfo );
+			setAreContactDetailsInvalid( ! isValid );
+			return isValid;
 		}
 		return isCompleteAndValid( contactInfo );
 	};
+
 	const validateContactDetails = async () => {
-		debug( 'validating contact details' );
+		debug( 'validating contact details without reporting errors' );
 		if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
-			return isContactValidationResponseValid( validationResult, contactInfo );
+			const isValid = isContactValidationResponseValid( validationResult, contactInfo );
+			setAreContactDetailsInvalid( ! isValid );
+			return isValid;
 		} else if ( isGSuiteInCart ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
-			return isContactValidationResponseValid( validationResult, contactInfo );
+			const isValid = isContactValidationResponseValid( validationResult, contactInfo );
+			setAreContactDetailsInvalid( ! isValid );
+			return isValid;
 		}
 		return isCompleteAndValid( contactInfo );
 	};
