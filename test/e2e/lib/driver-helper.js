@@ -43,13 +43,12 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 								);
 								return true;
 							}
-							console.log( 'Failure A' );
+
 							return false;
 						}
 					);
 				},
 				function () {
-					console.log( 'Failure B' );
 					return false;
 				}
 			);
