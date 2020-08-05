@@ -211,6 +211,7 @@ function mergeStrings( source, target ) {
 		source.comments.extracted += '\n' + target.comments.extracted;
 	}
 
+	// A previous singular string matches a plural string. In PO files those are merged.
 	if ( ! source.hasOwnProperty( 'msgid_plural' ) && target.hasOwnProperty( 'msgid_plural' ) ) {
 		source.msgid_plural = target.msgid_plural;
 		source.msgstr = target.msgstr;
