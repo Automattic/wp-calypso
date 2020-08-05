@@ -1,5 +1,5 @@
 {
-	"name": "wp-calypso-monorepo",
+	"name": "wp-calypso",
 	"author": "Automattic Inc.",
 	"version": "0.17.0",
 	"description": "A pure REST-API and JS based version of the WordPress.com admin",
@@ -375,7 +375,7 @@
 		"webpack-hot-middleware": "^2.25.0",
 		"webpack-node-externals": "^2.1.0",
 		"whybundled": "^1.4.2",
-		"wp-calypso": "^0.17.0",
+		"wp-calypso-client": "^0.17.0",
 		"wp-e2e-tests": "^0.0.1",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",

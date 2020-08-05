@@ -25,7 +25,7 @@ const options = [
 		mappings: [
 			{
 				dir: calypsoDir,
-				module: 'wp-calypso',
+				module: 'wp-calypso-client',
 			},
 		],
 		automaticExtensions,
@@ -44,19 +44,19 @@ new RuleTester( {
 	},
 } ).run( 'no-package-relative-imports', rule, {
 	valid: [
-		{ code: `import config from 'wp-calypso/config';`, options },
-		{ code: "import * as stats from 'wp-calypso/reader/stats';", options },
-		{ code: "import { localizeUrl } from 'wp-calypso/lib/i18n-utils';", options },
+		{ code: `import config from 'wp-calypso-client/config';`, options },
+		{ code: "import * as stats from 'wp-calypso-client/reader/stats';", options },
+		{ code: "import { localizeUrl } from 'wp-calypso-client/lib/i18n-utils';", options },
 		{
 			code:
-				"export { default as ActionCard } from 'wp-calypso/components/action-card/docs/example';",
+				"export { default as ActionCard } from 'wp-calypso-client/components/action-card/docs/example';",
 			options,
 		},
-		{ code: "export * from 'wp-calypso/components/AppBar';", options },
-		{ code: "const config = require('wp-calypso/config');", options },
-		{ code: "const config = asyncRequire('wp-calypso/config');", options },
-		{ code: "const getConfig = async () => await import('wp-calypso/config');", options },
-		{ code: "const component = <AsyncLoad require='wp-calypso/config'/>", options },
+		{ code: "export * from 'wp-calypso-client/components/AppBar';", options },
+		{ code: "const config = require('wp-calypso-client/config');", options },
+		{ code: "const config = asyncRequire('wp-calypso-client/config');", options },
+		{ code: "const getConfig = async () => await import('wp-calypso-client/config');", options },
+		{ code: "const component = <AsyncLoad require='wp-calypso-client/config'/>", options },
 		{ code: "import config from './config';", options },
 		{ code: "import config from '../../../config';", options },
 		{ code: "import config from 'random-directory';", options },
@@ -72,7 +72,7 @@ new RuleTester( {
 					type: 'ImportDeclaration',
 				},
 			],
-			output: `import config from 'wp-calypso/config';`,
+			output: `import config from 'wp-calypso-client/config';`,
 		},
 		{
 			code: `import * as stats from 'reader/stats';`,
@@ -83,7 +83,7 @@ new RuleTester( {
 					type: 'ImportDeclaration',
 				},
 			],
-			output: `import * as stats from 'wp-calypso/reader/stats';`,
+			output: `import * as stats from 'wp-calypso-client/reader/stats';`,
 		},
 		{
 			code: `import { localizeUrl } from 'lib/i18n-utils';`,
@@ -94,7 +94,7 @@ new RuleTester( {
 					type: 'ImportDeclaration',
 				},
 			],
-			output: `import { localizeUrl } from 'wp-calypso/lib/i18n-utils';`,
+			output: `import { localizeUrl } from 'wp-calypso-client/lib/i18n-utils';`,
 		},
 		{
 			code: `export { default as ActionCard } from 'components/action-card/docs/example';`,
@@ -105,7 +105,7 @@ new RuleTester( {
 					type: 'ExportNamedDeclaration',
 				},
 			],
-			output: `export { default as ActionCard } from 'wp-calypso/components/action-card/docs/example';`,
+			output: `export { default as ActionCard } from 'wp-calypso-client/components/action-card/docs/example';`,
 		},
 		{
 			code: `export * from 'components/AppBar';`,
@@ -116,7 +116,7 @@ new RuleTester( {
 					type: 'ExportAllDeclaration',
 				},
 			],
-			output: `export * from 'wp-calypso/components/AppBar';`,
+			output: `export * from 'wp-calypso-client/components/AppBar';`,
 		},
 		{
 			code: `const config = require('config');`,
@@ -127,7 +127,7 @@ new RuleTester( {
 					type: 'CallExpression',
 				},
 			],
-			output: `const config = require('wp-calypso/config');`,
+			output: `const config = require('wp-calypso-client/config');`,
 		},
 		{
 			code: `const config = asyncRequire('config');`,
@@ -138,7 +138,7 @@ new RuleTester( {
 					type: 'CallExpression',
 				},
 			],
-			output: `const config = asyncRequire('wp-calypso/config');`,
+			output: `const config = asyncRequire('wp-calypso-client/config');`,
 		},
 		{
 			code: `const config = async () => await import('config');`,
@@ -149,7 +149,7 @@ new RuleTester( {
 					type: 'ImportExpression',
 				},
 			],
-			output: `const config = async () => await import('wp-calypso/config');`,
+			output: `const config = async () => await import('wp-calypso-client/config');`,
 		},
 		{
 			code: `const component = <AsyncLoad require="config"/>`,
@@ -160,7 +160,7 @@ new RuleTester( {
 					type: 'JSXElement',
 				},
 			],
-			output: `const component = <AsyncLoad require="wp-calypso/config"/>`,
+			output: `const component = <AsyncLoad require="wp-calypso-client/config"/>`,
 		},
 
 		// Dynamic test: test the rule with each subdirectory and file inside `./client`
@@ -189,7 +189,7 @@ new RuleTester( {
 						type: 'ImportDeclaration',
 					},
 				],
-				output: `import * as foo from 'wp-calypso/${ dir }';`,
+				output: `import * as foo from 'wp-calypso-client/${ dir }';`,
 			} ) ),
 	],
 } );

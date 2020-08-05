@@ -18,13 +18,13 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
-import wpcom from 'wp-calypso/lib/wp';
-import { recordTracksEvent } from 'wp-calypso/lib/analytics/tracks';
-import config from 'wp-calypso/config';
-import { recordTracksEvent as recordTracksEventAction } from 'wp-calypso/state/analytics/actions';
-import getCurrentLocaleSlug from 'wp-calypso/state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'wp-calypso/state/selectors/get-current-locale-variant';
-import { setUnseenCount } from 'wp-calypso/state/notifications';
+import wpcom from 'wp-calypso-client/lib/wp';
+import { recordTracksEvent } from 'wp-calypso-client/lib/analytics/tracks';
+import config from 'wp-calypso-client/config';
+import { recordTracksEvent as recordTracksEventAction } from 'wp-calypso-client/state/analytics/actions';
+import getCurrentLocaleSlug from 'wp-calypso-client/state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'wp-calypso-client/state/selectors/get-current-locale-variant';
+import { setUnseenCount } from 'wp-calypso-client/state/notifications';
 
 /**
  * Internal dependencies
