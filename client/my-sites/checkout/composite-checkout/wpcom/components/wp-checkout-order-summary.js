@@ -372,6 +372,7 @@ const CheckoutSummaryFeaturesListItem = styled.li`
 	margin-bottom: 4px;
 	padding-left: 24px;
 	position: relative;
+	overflow-wrap: break-word;
 
 	.rtl & {
 		padding-right: 24px;
