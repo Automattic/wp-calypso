@@ -1,0 +1,147 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../../variables.scss';
+@import '../../../mixins';
+@import '~@automattic/onboarding/styles/z-index';
+
+// Restyle `<Suggestion />` component
+.vertical-select {
+	transition: flex-grow $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	display: flex;
+	flex-direction: column;
+
+	&--with-suggestions {
+		flex-grow: 1;
+	}
+
+	@include break-small {
+		display: block;
+		margin-top: 0;
+	}
+
+	.suggestions__category-heading {
+		display: none;
+	}
+	.suggestions__title {
+		line-height: normal;
+		padding: 10px 16px;
+	}
+	.suggestions__item {
+		border: none;
+		background-color: var( --studio-white );
+
+		&.has-highlight {
+			box-shadow: none;
+			background-color: var( --studio-white );
+
+			@include break-small {
+				box-shadow: inset 0 0 0 1px var( --studio-blue-30 );
+				border-radius: 2px;
+			}
+		}
+	}
+}
+
+.vertical-select__whitespace {
+	display: inline-block;
+	visibility: hidden;
+	width: 0;
+	height: 0;
+}
+
+.vertical-select__suggestions-wrapper {
+	position: relative;
+	display: block;
+	flex: 1;
+	z-index: z-index( '.vertical-select__suggestions-wrapper' );
+
+	@include break-small {
+		display: inline;
+	}
+}
+
+.vertical-select__suggestions {
+	position: absolute;
+	left: -16px;
+	margin-top: 20px;
+	min-height: 100px;
+	max-height: calc( 100% - 50px );
+	overflow: auto;
+
+	@include break-small {
+		width: 250px;
+		max-height: 400px;
+	}
+}
+
+.vertical-select__input-wrapper {
+	position: relative;
+
+	&--with-arrow {
+		margin-right: 40px; // make space for absolute positioned arrow
+	}
+
+	.madlib__input:empty {
+		@include break-small {
+			padding-right: 300px; // there's not enough container width on smaller screens
+		}
+		@include break-medium {
+			padding-right: 400px;
+		}
+	}
+}
+
+.vertical-select__input {
+	height: 100%;
+	margin-bottom: 10px;
+	display: inline-block;
+
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 1px;
+		height: 2px;
+		background: var( --mainColor );
+
+		@include break-small {
+			bottom: 4px;
+		}
+	}
+
+	input[type='text'].components-text-control__input {
+		@include onboarding-heading-text-mobile;
+		height: auto;
+		background: transparent;
+		border: none;
+		padding: 0;
+		color: var( --mainColor );
+		caret-color: var( --mainColor );
+
+		&:focus {
+			box-shadow: none;
+			outline: none;
+		}
+
+		&::-ms-clear {
+			display: none;
+		}
+
+		@include break-small {
+			@include onboarding-heading-text;
+		}
+
+		@include break-medium {
+			font-size: 64px;
+		}
+
+		&::placeholder {
+			color: $light-gray-700;
+			line-height: normal;
+		}
+
+		&::-ms-clear {
+			display: none;
+		}
+	}
+}
