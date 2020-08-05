@@ -171,8 +171,7 @@ const getLanguageManifest = ( langSlug, target ) => {
 
 export function attachI18n( context ) {
 	const shouldUseFallbackLocale =
-		context.user?.use_fallback_for_incomplete_languages &&
-		! isTranslatedIncompletely( context.lang );
+		context.user?.use_fallback_for_incomplete_languages && isTranslatedIncompletely( context.lang );
 	const langSlug = shouldUseFallbackLocale ? config( 'i18n_default_locale_slug' ) : context.lang;
 
 	if ( ! isDefaultLocale( langSlug ) ) {

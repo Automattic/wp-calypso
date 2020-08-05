@@ -230,7 +230,7 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	getShouldRenderNoticeForIncompleteLocale( langSlug ) {
-		return ! isDefaultLocale( langSlug ) && ! isTranslatedIncompletely( langSlug );
+		return ! isDefaultLocale( langSlug ) && isTranslatedIncompletely( langSlug );
 	}
 
 	getIncompleteLocaleNoticeMessage( langSlug ) {
