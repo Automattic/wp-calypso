@@ -658,16 +658,13 @@ jobs:
       - run:
           name: Install Node
           command: |
-            set +e
-            set +x
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            ./desktop/bin/circle-refresh-nvm.sh
             nvm install
             nvm use
       - run:
           name: Install Dependencies
           command: |
-            sh desktop/bin/circle-refresh-nvm.sh
+            ./desktop/bin/circle-refresh-nvm.sh
             nvm use
             npm install -g yarn
 
@@ -684,7 +681,7 @@ jobs:
           name: Build Desktop Source
           no_output_timeout: 15m
           command: |
-            sh desktop/bin/circle-refresh-nvm.sh
+            ./desktop/bin/circle-refresh-nvm.sh
             nvm use
             yarn run build-desktop:source
       - save_cache: *desktop-save-source-cache
