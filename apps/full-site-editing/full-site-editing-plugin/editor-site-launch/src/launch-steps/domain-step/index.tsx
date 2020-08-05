@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Title, SubTitle } from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, NextButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -20,6 +20,10 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 
 	const handleSelect = () => {
 		setStepComplete( LaunchStep.Domain );
+	};
+
+	const handleNext = () => {
+		setStepComplete( LaunchStep.Domain );
 		onNextStep?.();
 	};
 
@@ -32,6 +36,9 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 						{ __( 'Free for the first year with any paid plan', 'full-site-editing' ) }
 					</SubTitle>
 				</div>
+				<ActionButtons>
+					<NextButton onClick={ handleNext } />
+				</ActionButtons>
 			</div>
 			<div className="nux-launch-step__body">
 				<DomainPickerFSE onSelect={ handleSelect } />
