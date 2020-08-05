@@ -32,6 +32,7 @@ references:
     environment:
       CONFIG_ENV: release
       DETECT_CHROMEDRIVER_VERSION: 'false'
+      CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
       NODE_ARGS: --max_old_space_size=6144
 
   setup-results-and-artifacts: &setup-results-and-artifacts
