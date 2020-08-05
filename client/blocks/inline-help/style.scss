@@ -174,7 +174,7 @@
 			}
 
 			.search__input {
-				font-size: 18px;
+				font-size: $font-title-small;
 				padding: 12px 0;
 				color: var( --color-text );
 
@@ -376,7 +376,7 @@
 	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 		line-height: 1.3;
 	}
 

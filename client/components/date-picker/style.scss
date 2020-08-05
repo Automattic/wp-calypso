@@ -112,7 +112,7 @@ $date-picker_nav_button_size: 20px;
 	background-position: center;
 	background-size: contain;
 	cursor: pointer;
-	font-size: 18px;
+	font-size: $font-title-small;
 
 	&::before {
 		height: $date-picker_nav_button_size;
@@ -124,7 +124,7 @@ $date-picker_nav_button_size: 20px;
 	text-align: center;
 	height: $date-picker_caption_height;
 	line-height: $date-picker_caption_height;
-	font-size: 18px;
+	font-size: $font-title-small;
 	margin: 0 $date-picker_nav_button_size * 1.5;
 	position: relative;
 	cursor: pointer;
