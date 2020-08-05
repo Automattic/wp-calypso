@@ -9,7 +9,6 @@ import { stringify } from 'qs';
 import { cloneDeep, get, startsWith } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
-import FocusLock from 'react-focus-lock';
 
 /**
  * Internal dependencies
@@ -399,18 +398,16 @@ class Customize extends React.Component {
 			// component. If the loading takes longer than 25 seconds (see
 			// waitForLoading above) then an error will be shown.
 			return (
-				<FocusLock>
-					<div className="main main-column customize customize__main is-iframe" role="main">
-						<PageViewTracker path="/customize/:site" title="Customizer" />
-						<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
-						<iframe
-							ref={ this.setCustomizerIframetRef }
-							className={ iframeClassName }
-							src={ iframeUrl }
-							title="Customizer"
-						/>
-					</div>
-				</FocusLock>
+				<div className="main main-column customize customize__main is-iframe" role="main">
+					<PageViewTracker path="/customize/:site" title="Customizer" />
+					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
+					<iframe
+						ref={ this.setCustomizerIframetRef }
+						className={ iframeClassName }
+						src={ iframeUrl }
+						title="Customizer"
+					/>
+				</div>
 			);
 		}
 
