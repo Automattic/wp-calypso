@@ -116,11 +116,7 @@ export default function WPCheckout( {
 	);
 	const shouldShowContactStep =
 		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
-
-	const [ areContactDetailsInvalid, setAreContactDetailsInvalid ] = useState( false );
-
-	const shouldShowDomainContactFields =
-		shouldShowContactStep && ( needsDomainDetails( responseCart ) || areContactDetailsInvalid );
+	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
@@ -133,8 +129,7 @@ export default function WPCheckout( {
 	] = useState( false );
 
 	const validateContactDetailsAndDisplayErrors = async () => {
-		debug( 'validating contact details and reporting errors' );
-		let isValid = false;
+		debug( 'validating contact details with side effects' );
 		if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
@@ -145,7 +140,7 @@ export default function WPCheckout( {
 				validationResult,
 				applyDomainContactValidationResults,
 			} );
-			isValid = isContactValidationResponseValid( validationResult, contactInfo );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
@@ -156,30 +151,22 @@ export default function WPCheckout( {
 				validationResult,
 				applyDomainContactValidationResults,
 			} );
-			isValid = isContactValidationResponseValid( validationResult, contactInfo );
-		} else {
-			isValid = isCompleteAndValid( contactInfo );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
-		setAreContactDetailsInvalid( ! isValid );
-		return isValid;
+		return isCompleteAndValid( contactInfo );
 	};
-
 	const validateContactDetails = async () => {
-		debug( 'validating contact details without reporting errors' );
-		let isValid = false;
+		debug( 'validating contact details' );
 		if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
-			isValid = isContactValidationResponseValid( validationResult, contactInfo );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
-			isValid = isContactValidationResponseValid( validationResult, contactInfo );
-		} else {
-			isValid = isCompleteAndValid( contactInfo );
+			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
-		setAreContactDetailsInvalid( ! isValid );
-		return isValid;
+		return isCompleteAndValid( contactInfo );
 	};
 
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
