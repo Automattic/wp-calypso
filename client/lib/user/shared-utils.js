@@ -35,6 +35,7 @@ const allowedKeys = [
 	'abtests',
 	'lasagna_jwt',
 	'i18n_empathy_mode',
+	'use_fallback_for_incomplete_languages',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];

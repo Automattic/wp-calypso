@@ -14,7 +14,7 @@ import fs from 'fs';
  * Internal dependencies
  */
 import config from 'config';
-import { isDefaultLocale, isLocaleRtl } from 'lib/i18n-utils';
+import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -170,23 +170,27 @@ const getLanguageManifest = ( langSlug, target ) => {
 };
 
 export function attachI18n( context ) {
-	if ( ! isDefaultLocale( context.lang ) ) {
-		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+	const shouldUseFallbackLocale =
+		context.user?.use_fallback_for_incomplete_languages && isTranslatedIncompletely( context.lang );
+	const langSlug = shouldUseFallbackLocale ? config( 'i18n_default_locale_slug' ) : context.lang;
+
+	if ( ! isDefaultLocale( langSlug ) ) {
+		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || langSlug;
 
 		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js', context.languageRevisions );
 	}
 
-	if ( ! isDefaultLocale( context.lang ) && context.useTranslationChunks ) {
+	if ( ! isDefaultLocale( langSlug ) && context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
-		const languageManifest = getLanguageManifest( context.lang, context.target );
+		const languageManifest = getLanguageManifest( langSlug, context.target );
 
 		if ( languageManifest ) {
 			context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
-				localeSlug: context.lang,
+				localeSlug: langSlug,
 				fileType: 'js',
 				targetBuild: context.target,
-				hash: context?.languageRevisions?.hashes?.[ context.lang ],
+				hash: context?.languageRevisions?.hashes?.[ langSlug ],
 			} );
 
 			context.entrypoint.language.translations = context.entrypoint.js
@@ -196,19 +200,19 @@ export function attachI18n( context ) {
 				.map( ( chunkId ) =>
 					getTranslationChunkFileUrl( {
 						chunkId,
-						localeSlug: context.lang,
+						localeSlug: langSlug,
 						fileType: 'js',
 						targetBuild: context.target,
-						hash: context?.languageRevisions?.[ context.lang ],
+						hash: context?.languageRevisions?.[ langSlug ],
 					} )
 				);
 		}
 	}
 
 	if ( context.store ) {
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+		context.lang = getCurrentLocaleSlug( context.store.getState() ) || langSlug;
 
-		const isLocaleRTL = isLocaleRtl( context.lang );
+		const isLocaleRTL = isLocaleRtl( langSlug );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }

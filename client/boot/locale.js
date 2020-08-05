@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { getLanguageSlugs, isDefaultLocale } from 'lib/i18n-utils';
+import { getLanguageSlugs, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils';
 import {
 	loadUserUndeployedTranslations,
 	getLanguageManifestFile,
@@ -87,8 +87,14 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		initLanguageEmpathyMode();
 	}
 
+	const shouldUseFallbackLocale =
+		currentUser?.use_fallback_for_incomplete_languages &&
+		isTranslatedIncompletely( currentUser.localeSlug );
+	const userLocaleSlug = shouldUseFallbackLocale
+		? config( 'i18n_default_locale_slug' )
+		: currentUser.localeSlug;
+
 	if ( useTranslationChunks && '__requireChunkCallback__' in window ) {
-		const userLocaleSlug = currentUser && currentUser.localeSlug;
 		const pathname = window.location.pathname.replace( /\/$/, '' );
 		const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
 		const pathLocaleSlug =
@@ -112,7 +118,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		}
 	} else if ( currentUser && currentUser.localeSlug ) {
 		// Use the current user's and load traslation data with a fetch request
-		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
+		reduxStore.dispatch( setLocale( userLocaleSlug, currentUser.localeVariant ) );
 	}
 
 	// If user is logged out and translations are not boostrapped, we assume default locale

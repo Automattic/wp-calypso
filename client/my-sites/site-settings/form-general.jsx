@@ -65,6 +65,19 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	}
 
+	getIncompleteLocaleNoticeMessage = ( language ) => {
+		const { translate } = this.props;
+
+		return translate(
+			'Your site language is now %(language)s. Once you choose your theme, make sure it’s translated so the theme strings on your site show up in your language!',
+			{
+				args: {
+					language: language.name,
+				},
+			}
+		);
+	};
+
 	onTimezoneSelect = ( timezone ) => {
 		this.props.updateFields( {
 			timezone_string: timezone,
@@ -266,6 +279,7 @@ export class SiteSettingsFormGeneral extends Component {
 					disabled={ isRequestingSettings || ( siteIsJetpack && errorNotice ) }
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 					showEmpathyModeControl={ false }
+					getIncompleteLocaleNoticeMessage={ this.getIncompleteLocaleNoticeMessage }
 				/>
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }

@@ -127,11 +127,18 @@ const Account = createReactClass( {
 	},
 
 	updateLanguage( event ) {
-		const { value, empathyMode } = event.target;
+		const { value, empathyMode, useFallbackForIncompleteLanguages } = event.target;
 		this.updateUserSetting( 'language', value );
 
 		if ( typeof empathyMode !== 'undefined' ) {
 			this.updateUserSetting( 'i18n_empathy_mode', empathyMode );
+		}
+
+		if ( typeof useFallbackForIncompleteLanguages !== 'undefined' ) {
+			this.updateUserSetting(
+				'use_fallback_for_incomplete_languages',
+				useFallbackForIncompleteLanguages
+			);
 		}
 
 		const shouldRedirect =
@@ -612,6 +619,9 @@ const Account = createReactClass( {
 							this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
 						}
 						empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
+						useFallbackForIncompleteLanguages={ this.getUserSetting(
+							'use_fallback_for_incomplete_languages'
+						) }
 						onChange={ this.updateLanguage }
 					/>
 					<FormSettingExplanation>
