@@ -151,6 +151,7 @@ class RegisterDomainStep extends React.Component {
 		recordFiltersSubmit: PropTypes.func.isRequired,
 		recordFiltersReset: PropTypes.func.isRequired,
 		vertical: PropTypes.string,
+		isReskinned: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -1100,6 +1101,7 @@ class RegisterDomainStep extends React.Component {
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
+						isReskinned={ this.props.isReskinned }
 					/>
 				);
 			}, this );
@@ -1145,7 +1147,12 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderFreeDomainExplainer() {
-		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
+		return (
+			<FreeDomainExplainer
+				onSkip={ this.props.hideFreePlan }
+				isReskinned={ this.props.isReskinned }
+			/>
+		);
 	}
 
 	onAddDomain = ( suggestion ) => {
@@ -1267,6 +1274,7 @@ class RegisterDomainStep extends React.Component {
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
+					isReskinned={ this.props.isReskinned }
 				>
 					{ this.props.isEligibleVariantForDomainTest &&
 						hasResults &&
