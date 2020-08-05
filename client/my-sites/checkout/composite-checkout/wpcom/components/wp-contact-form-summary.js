@@ -35,12 +35,6 @@ export default function WPContactFormSummary( { showDomainContactSummary, isLogg
 		contactInfo.countryCode.value
 	);
 
-	const shouldShowEmailSummary =
-		contactInfo.email.value?.length > 0 &&
-		( showDomainContactSummary || isGSuiteInCart ) &&
-		( ! contactInfo.alternateEmail.value?.length > 0 ||
-			contactInfo.alternateEmail.value === contactInfo.email.value );
-
 	return (
 		<GridRow>
 			<div>
@@ -53,14 +47,12 @@ export default function WPContactFormSummary( { showDomainContactSummary, isLogg
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
 					) }
 
-					{ isLoggedOutCart || shouldShowEmailSummary && <SummaryLine>{ contactInfo.email.value }</SummaryLine> }
-
-					{ isGSuiteInCart && (
-						<AlternateEmailSummary
-							contactInfo={ contactInfo }
-							showDomainContactSummary={ showDomainContactSummary }
-						/>
-					) }
+					<EmailSummary
+						isLoggedOutCart={ isLoggedOutCart }
+						contactInfo={ contactInfo }
+						showDomainContactSummary={ showDomainContactSummary }
+						isGSuiteInCart={ isGSuiteInCart }
+					/>
 
 					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
@@ -101,12 +93,27 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
-function AlternateEmailSummary( { contactInfo, showDomainContactSummary } ) {
-	if ( ! contactInfo.alternateEmail.value?.length ) {
+function EmailSummary( {
+	contactInfo,
+	showDomainContactSummary,
+	isGSuiteInCart,
+	isLoggedOutCart,
+} ) {
+	if ( ! showDomainContactSummary && ! isGSuiteInCart && ! isLoggedOutCart ) {
 		return null;
 	}
-	if ( contactInfo.alternateEmail.value === contactInfo.email.value && showDomainContactSummary ) {
+
+	if ( ! contactInfo.alternateEmail.value && ! contactInfo.email.value ) {
 		return null;
 	}
-	return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
+
+	if ( isGSuiteInCart && contactInfo.alternateEmail.value ) {
+		return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
+	}
+
+	if ( ! contactInfo.email.value ) {
+		return null;
+	}
+
+	return <SummaryLine>{ contactInfo.email.value }</SummaryLine>;
 }
