@@ -6,11 +6,8 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-
 	background: var( --color-surface );
-
-	padding: 16px 24px;
-
+	padding: 16px;
 	border: 1px solid var( --color-neutral-5 );
 	box-sizing: border-box;
 
@@ -26,14 +23,12 @@
 		height: $height;
 
 		.select-dropdown__header {
+			font-weight: 400;
 			background-color: var( --color-primary );
 			color: var( --color-text-inverted );
 			border-color: var( --color-primary );
 			border: solid 1px var( --color-neutral-10 );
 			border-radius: $border-radius;
-
-			font-weight: 400;
-
 			height: $height;
 
 			.gridicons-chevron-down {
@@ -60,7 +55,6 @@
 
 	.segmented-control {
 		border-radius: $border-radius;
-
 		width: 100%;
 		max-width: 180px;
 
