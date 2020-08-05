@@ -1,14 +1,20 @@
 @import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap' );
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 .p2-step-wrapper {
 	box-sizing: border-box;
 	margin: 0 auto;
-	max-width: 376px;
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	padding: 80px 20px 0;
+	padding: 32px 32px 0;
 	font-family: var( --p2-font-inter );
+
+	@include break-mobile {
+		padding: 80px 20px 0;
+		max-width: 400px;
+	}
 
 	input,
 	button {
@@ -29,7 +35,10 @@
 }
 
 .p2-step-wrapper__header {
-	margin-bottom: 110px;
+	margin-bottom: 40px;
+	@include break-mobile {
+		margin-bottom: 80px;
+	}
 }
 
 .p2-step-wrapper__header-text {
@@ -44,7 +53,10 @@
 .p2-step-wrapper__footer {
 	text-align: center;
 	margin-top: auto;
-	margin-bottom: 35px;
+	margin-bottom: 24px;
+	@include break-mobile {
+		margin-bottom: 32px;
+	}
 }
 
 .p2-step-wrapper__w-logo {

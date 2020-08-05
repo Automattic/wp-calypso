@@ -23,14 +23,16 @@ function P2SignupProcessingScreen() {
 			</div>
 
 			<div className="p2-processing-screen__text">
-				{ translate( '{{h2}}Hooray!{{br/}}Your new P2 is{{br/}}almost ready.{{/h2}}', {
+				{ translate( '{{h2}}Hooray!{{/h2}} {{p}}Your new P2 is almost ready.{{/p}}', {
 					components: {
 						// eslint-disable-next-line jsx-a11y/heading-has-content
 						h2: <h2 />,
-						br: <br />,
+						p: <p />,
 					},
 				} ) }
 			</div>
+
+			<div className="p2-processing-screen__spinner"></div>
 
 			<div className="p2-processing-screen__footer">
 				<img
