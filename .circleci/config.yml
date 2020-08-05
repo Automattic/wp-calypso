@@ -656,12 +656,6 @@ jobs:
                 name: Ensure package.json Version And Tag Match
                 command: cd desktop/bin && node validate_tag.js $VERSION
       - run:
-          name: Update Chromedriver
-          command: |
-            wget https://chromedriver.storage.googleapis.com/2.29/chromedriver_linux64.zip
-            unzip chromedriver_linux64.zip
-            sudo cp chromedriver /usr/local/bin/chromedriver
-      - run:
           name: Install Node
           command: |
             set +e
@@ -689,13 +683,12 @@ jobs:
           name: Build Desktop Source
           no_output_timeout: 15m
           command: |
-            # Cannot resolve pre-installed NVM_DIR on Linux machine executor:
-            # https://discuss.circleci.com/t/circleci-forgetting-node-version-on-machine-executor/28813
             set +e
             set +x
             export NVM_DIR="/opt/circleci/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm use
+
             yarn run build-desktop:source
       - save_cache: *desktop-save-source-cache
       - persist_to_workspace:
