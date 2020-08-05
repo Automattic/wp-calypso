@@ -25,10 +25,9 @@ references:
       NODE_ARGS: --max_old_space_size=3072
   desktop_machine_defaults: &desktop_machine_defaults
     working_directory: ~/wp-calypso
-    build:
-      machine:
-        image: ubuntu-1604:201903-01
-        resource_class: large
+    machine:
+      image: ubuntu-1604:201903-01
+    resource_class: large
     environment:
       CONFIG_ENV: release
       DETECT_CHROMEDRIVER_VERSION: 'false'
