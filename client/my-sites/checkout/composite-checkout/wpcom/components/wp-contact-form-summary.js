@@ -55,7 +55,6 @@ export default function WPContactFormSummary( {
 				<AddressSummary
 					contactInfo={ contactInfo }
 					areThereDomainProductsInCart={ areThereDomainProductsInCart }
-					isGSuiteInCart={ isGSuiteInCart }
 				/>
 			</div>
 		</GridRow>
@@ -101,17 +100,14 @@ function EmailSummary( {
 	return <SummaryLine>{ contactInfo.email.value }</SummaryLine>;
 }
 
-function AddressSummary( { contactInfo, areThereDomainProductsInCart, isGSuiteInCart } ) {
-	if ( ! areThereDomainProductsInCart && ! isGSuiteInCart ) {
-		return null;
-	}
+function AddressSummary( { contactInfo, areThereDomainProductsInCart } ) {
 	const postalAndCountry = joinNonEmptyValues(
 		', ',
 		contactInfo.postalCode.value,
 		contactInfo.countryCode.value
 	);
 
-	if ( ! areThereDomainProductsInCart && isGSuiteInCart ) {
+	if ( ! areThereDomainProductsInCart ) {
 		return (
 			<SummaryDetails>
 				{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
