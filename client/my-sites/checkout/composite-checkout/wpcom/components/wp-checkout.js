@@ -372,7 +372,8 @@ export default function WPCheckout( {
 							}
 							completeStepContent={
 								<WPContactFormSummary
-									showDomainContactSummary={ shouldShowDomainContactFields }
+									areThereDomainProductsInCart={ areThereDomainProductsInCart }
+									isGSuiteInCart={ isGSuiteInCart }
 									isLoggedOutCart={ isLoggedOutCart }
 								/>
 							}

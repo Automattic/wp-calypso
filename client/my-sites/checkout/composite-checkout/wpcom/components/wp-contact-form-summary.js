@@ -3,19 +3,18 @@
  */
 import React from 'react';
 import styled from '@emotion/styled';
-import { useSelect, useLineItems } from '@automattic/composite-checkout';
+import { useSelect } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import { SummaryLine, SummaryDetails } from './summary-details';
-import { isGSuiteProductSlug } from 'lib/gsuite';
 
-export default function WPContactFormSummary( { showDomainContactSummary, isLoggedOutCart } ) {
-	const [ items ] = useLineItems();
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
+export default function WPContactFormSummary( {
+	areThereDomainProductsInCart,
+	isGSuiteInCart,
+	isLoggedOutCart,
+} ) {
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
 	// Check if paymentData is empty
@@ -28,52 +27,36 @@ export default function WPContactFormSummary( { showDomainContactSummary, isLogg
 		contactInfo.firstName.value,
 		contactInfo.lastName.value
 	);
-	const cityAndState = joinNonEmptyValues( ', ', contactInfo.city.value, contactInfo.state.value );
-	const postalAndCountry = joinNonEmptyValues(
-		', ',
-		contactInfo.postalCode.value,
-		contactInfo.countryCode.value
-	);
 
 	return (
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ ( isGSuiteInCart || showDomainContactSummary ) && fullName && (
+					{ ( isGSuiteInCart || areThereDomainProductsInCart ) && fullName && (
 						<SummaryLine>{ fullName }</SummaryLine>
 					) }
 
-					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
+					{ areThereDomainProductsInCart && contactInfo.organization.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
 					) }
 
 					<EmailSummary
 						isLoggedOutCart={ isLoggedOutCart }
 						contactInfo={ contactInfo }
-						showDomainContactSummary={ showDomainContactSummary }
+						areThereDomainProductsInCart={ areThereDomainProductsInCart }
 						isGSuiteInCart={ isGSuiteInCart }
 					/>
 
-					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
+					{ areThereDomainProductsInCart && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
 					) }
 				</SummaryDetails>
 
-				<SummaryDetails>
-					{ showDomainContactSummary && contactInfo.address1.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && contactInfo.address2.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.address2.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && cityAndState && (
-						<SummaryLine>{ cityAndState }</SummaryLine>
-					) }
-
-					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
-				</SummaryDetails>
+				<AddressSummary
+					contactInfo={ contactInfo }
+					areThereDomainProductsInCart={ areThereDomainProductsInCart }
+					isGSuiteInCart={ isGSuiteInCart }
+				/>
 			</div>
 		</GridRow>
 	);
@@ -95,11 +78,11 @@ function joinNonEmptyValues( joinString, ...values ) {
 
 function EmailSummary( {
 	contactInfo,
-	showDomainContactSummary,
+	areThereDomainProductsInCart,
 	isGSuiteInCart,
 	isLoggedOutCart,
 } ) {
-	if ( ! showDomainContactSummary && ! isGSuiteInCart && ! isLoggedOutCart ) {
+	if ( ! areThereDomainProductsInCart && ! isGSuiteInCart && ! isLoggedOutCart ) {
 		return null;
 	}
 
@@ -116,4 +99,40 @@ function EmailSummary( {
 	}
 
 	return <SummaryLine>{ contactInfo.email.value }</SummaryLine>;
+}
+
+function AddressSummary( { contactInfo, areThereDomainProductsInCart, isGSuiteInCart } ) {
+	if ( ! areThereDomainProductsInCart && ! isGSuiteInCart ) {
+		return null;
+	}
+	const postalAndCountry = joinNonEmptyValues(
+		', ',
+		contactInfo.postalCode.value,
+		contactInfo.countryCode.value
+	);
+
+	if ( ! areThereDomainProductsInCart && isGSuiteInCart ) {
+		return (
+			<SummaryDetails>
+				{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
+			</SummaryDetails>
+		);
+	}
+
+	const cityAndState = joinNonEmptyValues( ', ', contactInfo.city.value, contactInfo.state.value );
+	return (
+		<SummaryDetails>
+			{ contactInfo.address1.value?.length > 0 && (
+				<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
+			) }
+
+			{ contactInfo.address2.value?.length > 0 && (
+				<SummaryLine>{ contactInfo.address2.value } </SummaryLine>
+			) }
+
+			{ cityAndState && <SummaryLine>{ cityAndState }</SummaryLine> }
+
+			{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
+		</SummaryDetails>
+	);
 }
