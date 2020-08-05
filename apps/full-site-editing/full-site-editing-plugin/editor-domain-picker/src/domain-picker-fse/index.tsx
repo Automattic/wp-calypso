@@ -22,7 +22,6 @@ interface Props {
 const DomainPickerFSE: React.FunctionComponent< Props > = ( { onSelect } ) => {
 	const site = useSite();
 
-	// TODO: add a new prop on domain Picker to display this value in a disabled state
 	const freeDomain = useCurrentDomainName();
 
 	const { domain, domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );

@@ -24,7 +24,10 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 
 	const handleSave = () => {
 		saveEditedEntityRecord( 'root', 'site' );
+
+		// update domainSearch only if there is no custom Domain selected
 		! domain && setDomainSearch( title );
+
 		title.length ? setStepComplete( LaunchStep.Name ) : setStepIncomplete( LaunchStep.Name );
 	};
 
