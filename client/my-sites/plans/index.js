@@ -10,6 +10,8 @@ import { features, plans, redirectToCheckout, redirectToPlans } from './controll
 import { currentPlan } from './current-plan/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import plansV2 from 'my-sites/plans-v2';
 
 const trackedPage = ( url, ...rest ) => {
 	page( url, ...rest, makeLayout, clientRender );
@@ -17,6 +19,12 @@ const trackedPage = ( url, ...rest ) => {
 
 export default function () {
 	trackedPage( '/plans', siteSelection, sites );
+
+	// Load offer reset plans picker.
+	if ( shouldShowOfferResetFlow() ) {
+		plansV2( '/plans/:site', navigation );
+		return;
+	}
 	trackedPage( '/plans/compare', siteSelection, navigation, redirectToPlans );
 	trackedPage( '/plans/compare/:domain', siteSelection, navigation, redirectToPlans );
 	trackedPage( '/plans/features', siteSelection, navigation, redirectToPlans );
