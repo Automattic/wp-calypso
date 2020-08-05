@@ -25,10 +25,6 @@ const PERFORMANCE = 'performance';
 const SECURITY = 'security';
 
 const productTypeOptions = {
-	[ ALL ]: {
-		id: ALL,
-		label: translate( 'All' ),
-	},
 	[ SECURITY ]: {
 		id: SECURITY,
 		label: translate( 'Security' ),
@@ -36,6 +32,10 @@ const productTypeOptions = {
 	[ PERFORMANCE ]: {
 		id: PERFORMANCE,
 		label: translate( 'Performance' ),
+	},
+	[ ALL ]: {
+		id: ALL,
+		label: translate( 'All' ),
 	},
 };
 
