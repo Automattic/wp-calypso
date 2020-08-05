@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import url from 'url';
 import { stringify } from 'qs';
 import { cloneDeep, get, startsWith } from 'lodash';
 import { connect } from 'react-redux';
@@ -32,6 +31,7 @@ import wpcom from 'lib/wp';
 import { addItem } from 'lib/cart/actions';
 import { trackClick } from 'my-sites/themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
+import { getUrlParts } from 'lib/url';
 
 /**
  * Style dependencies
@@ -259,8 +259,8 @@ class Customize extends React.Component {
 			return;
 		}
 
-		const parsedOrigin = url.parse( event.origin, true );
-		const parsedSite = url.parse( site.options.unmapped_url );
+		const parsedOrigin = getUrlParts( event.origin );
+		const parsedSite = getUrlParts( site.options.unmapped_url );
 
 		if (
 			parsedOrigin.hostname !== this.props.domain &&
