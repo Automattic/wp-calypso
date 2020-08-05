@@ -24,7 +24,7 @@ registerStore< State >( STORE_KEY, {
 	controls,
 	reducer: reducer as any,
 	selectors,
-	persist: [ 'domain', 'plan' ],
+	persist: [ 'domain', 'domainSearch', 'plan', 'completedSteps' ],
 } );
 
 declare module '@wordpress/data' {
