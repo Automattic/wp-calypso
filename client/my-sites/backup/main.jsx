@@ -200,7 +200,6 @@ class BackupsPage extends Component {
 
 							<DailyBackupStatus
 								{ ...{
-									allowRestore,
 									siteUrl,
 									siteSlug,
 									backup: lastBackup,
@@ -212,8 +211,6 @@ class BackupsPage extends Component {
 									onDateChange: this.onDateChange,
 									deltas,
 									// metaDiff, todo: commented because the non-english account issue
-									doesRewindNeedCredentials,
-									dispatchRecordTracksEvent,
 								} }
 							/>
 						</div>
