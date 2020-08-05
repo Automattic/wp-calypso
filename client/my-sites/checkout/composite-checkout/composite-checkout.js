@@ -573,7 +573,6 @@ export default function CompositeCheckout( {
 						isLoggedOutCart={ isLoggedOutCart }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						infoMessage={ infoMessage }
-						isPwpoUser={ isPwpoUser }
 					/>
 				</CheckoutProvider>
 			</CartProvider>

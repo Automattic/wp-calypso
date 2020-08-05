@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { CheckoutModal, useFormStatus, useEvents, Button } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,6 +15,8 @@ import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import { currentUserHasFlag } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
