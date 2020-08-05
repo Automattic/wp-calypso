@@ -32,7 +32,7 @@ references:
     environment:
       CONFIG_ENV: release
       DETECT_CHROMEDRIVER_VERSION: 'false'
-      NODE_ARGS: --max_old_space_size=3072
+      NODE_ARGS: --max_old_space_size=8192
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
