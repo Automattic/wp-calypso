@@ -678,6 +678,7 @@ jobs:
             nvm use
             npm install -g yarn
 
+            yarn config set chromedriver_skip_download true
             yarn config set chromedriver_filepath '/usr/local/bin/chromedriver'
 
             yarn install --frozen-lockfile
