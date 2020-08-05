@@ -117,6 +117,7 @@ export default function WPCheckout( {
 	const shouldShowContactStep =
 		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
 	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
+	const areDomainDetailsNeededForTransaction = needsDomainDetails( responseCart ) || isGSuiteInCart;
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
@@ -130,8 +131,7 @@ export default function WPCheckout( {
 
 	const validateContactDetailsAndDisplayErrors = async () => {
 		debug( 'validating contact details and reporting errors' );
-		const areDomainDetailsNeeded = needsDomainDetails( responseCart ) || isGSuiteInCart;
-		if ( ! areDomainDetailsNeeded ) {
+		if ( ! areDomainDetailsNeededForTransaction ) {
 			return isCompleteAndValid( contactInfo );
 		} else if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
@@ -160,8 +160,7 @@ export default function WPCheckout( {
 	};
 	const validateContactDetails = async () => {
 		debug( 'validating contact details without reporting errors' );
-		const areDomainDetailsNeeded = needsDomainDetails( responseCart ) || isGSuiteInCart;
-		if ( ! areDomainDetailsNeeded ) {
+		if ( ! areDomainDetailsNeededForTransaction ) {
 			return isCompleteAndValid( contactInfo );
 		} else if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
