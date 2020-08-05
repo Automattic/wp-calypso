@@ -17,8 +17,8 @@ references:
       CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
       NODE_OPTIONS: --max-old-space-size=3072
       CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
-      npm_config_cache: ~/.cache/yarn
-      YARN_CACHE_FOLDER: ~/.cache/yarn
+      npm_config_cache: /home/circleci/.cache/yarn
+      YARN_CACHE_FOLDER: /home/circleci/.cache/yarn
   desktop_defaults: &desktop_defaults
     working_directory: ~/wp-calypso
     docker:
