@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.2.0
+
+* Introduce Google Color
+
 ## 2.1.1
 
 * Updated the color palette to the most recent version.
