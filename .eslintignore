@@ -9,6 +9,7 @@ node_modules/
 !.eslintrc.js
 /client/server/devdocs/search-index.js
 /packages/calypso-codemods/tests
+/packages/wp-babel-makepot/test
 
 # Built packages
 /packages/*/dist/
