@@ -259,9 +259,6 @@
 body.is-section-signup.is-white-signup {
 	.featured-domain-suggestions {
 		.domain-registration-suggestion__title {
-			@import '~@automattic/typography/styles/fonts';
-			@import '~@automattic/onboarding/styles/mixins';
-			@include onboarding-font-recoleta;
 			font-size: 1.625rem;
 		}
 	}

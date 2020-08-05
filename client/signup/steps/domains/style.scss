@@ -66,7 +66,8 @@ body.is-section-signup.is-white-signup {
 		}
 		.register-domain-step__search-card {
 			background: $light-white;
-			box-shadow: none;
+			box-shadow: 0 0 0 1.5px  var( --color-neutral-10 );
+			border-radius: 4px;
 			margin: 20px;
 
 			@include break-mobile {
@@ -75,6 +76,9 @@ body.is-section-signup.is-white-signup {
 		}
 		.search__input {
 			background:  $light-white;
+			&::placeholder {
+				color: var( --color-neutral-100 );
+			}
 		}
 		.search.is-open .search__input-fade.ltr::before {
 			display: none;
@@ -102,6 +106,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.search-filters__dropdown-filters-button-text {
+				color: var( --color-neutral-60 );
 				padding-left: 6px;
 			}
 		}
