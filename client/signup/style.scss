@@ -25,6 +25,15 @@ body.is-section-signup {
 		&.has-loading-screen-signup {
 			background: var( --p2-color-text );
 			color: var( --p2-color-text-white );
+			&::before {
+				content: '';
+				position: absolute;
+				display: block;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient( 126.81deg, #001424 7.92%, #02223a 89.27% );
+				animation: p2-fade 5s ease-in-out infinite alternate;
+			}
 		}
 
 		.layout__content {
@@ -32,7 +41,16 @@ body.is-section-signup {
 		}
 
 		.layout:not( .dops ) .step-wrapper {
-			margin: 0;
+			margin: 0 0 24px;
+		}
+
+		@include breakpoint-deprecated( '<480px' ) {
+			.locale-suggestions {
+				margin-top: 0;
+				.notice {
+					border-radius: 0;
+				}
+			}
 		}
 	}
 
