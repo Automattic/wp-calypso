@@ -18,6 +18,7 @@ import {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
+import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 
 export type ManagedContactDetailsShape< T > = {
 	firstName?: T;
@@ -407,6 +408,30 @@ export function prepareDomainContactDetails(
 	};
 }
 
+export function prepareDomainContactDetailsForTransaction(
+	details: ManagedContactDetails
+): DomainContactDetails {
+	return {
+		firstName: details.firstName?.value,
+		lastName: details.lastName?.value,
+		organization: details.organization?.value,
+		email: details.email?.value,
+		alternateEmail: details.alternateEmail?.value,
+		phone: details.phone?.value,
+		address1: details.address1?.value,
+		address2: details.address2?.value,
+		city: details.city?.value,
+		state: details.state?.value,
+		postalCode: tryToGuessPostalCodeFormat(
+			details.postalCode?.value ?? '',
+			details.countryCode?.value
+		),
+		countryCode: details.countryCode?.value,
+		fax: details.fax?.value,
+		extra: prepareTldExtraContactDetails( details ),
+	};
+}
+
 export function prepareDomainContactDetailsErrors(
 	details: ManagedContactDetails
 ): DomainContactDetailsErrors {
@@ -584,7 +609,10 @@ export function prepareDomainContactValidationRequest(
 			address2: details.address2?.value,
 			city: details.city?.value,
 			state: details.state?.value,
-			postalCode: details.postalCode?.value,
+			postalCode: tryToGuessPostalCodeFormat(
+				details.postalCode?.value ?? '',
+				details.countryCode?.value
+			),
 			countryCode: details.countryCode?.value,
 			fax: details.fax?.value,
 			vatId: details.vatId?.value,
@@ -601,7 +629,10 @@ export function prepareGSuiteContactValidationRequest(
 			firstName: details.firstName?.value ?? '',
 			lastName: details.lastName?.value ?? '',
 			alternateEmail: details.alternateEmail?.value ?? '',
-			postalCode: details.postalCode?.value ?? '',
+			postalCode: tryToGuessPostalCodeFormat(
+				details.postalCode?.value ?? '',
+				details.countryCode?.value
+			),
 			countryCode: details.countryCode?.value ?? '',
 		},
 	};

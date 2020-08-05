@@ -41,12 +41,9 @@ import {
 	updateContactDetailsCache,
 } from 'state/domains/management/actions';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { StateSelect } from 'my-sites/domains/components/form';
-import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import { getPlan } from 'lib/plans';
-import { getTopLevelOfTld } from 'lib/domains';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
@@ -64,14 +61,7 @@ import {
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import { fillInSingleCartItemAttributes } from 'lib/cart-values';
-import {
-	hasGoogleApps,
-	hasDomainRegistration,
-	hasTransferProduct,
-	hasRenewalItem,
-	getRenewalItems,
-	hasPlan,
-} from 'lib/cart-values/cart-items';
+import { hasRenewalItem, getRenewalItems, hasPlan } from 'lib/cart-values/cart-items';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -402,78 +392,6 @@ export default function CompositeCheckout( {
 				serverAllowedPaymentMethods,
 		  } );
 
-	const renderDomainContactFields = (
-		domainNames,
-		contactDetails,
-		contactDetailsErrors,
-		updateDomainContactFields,
-		shouldShowContactDetailsValidationErrors,
-		isDisabled
-	) => {
-		const needsOnlyGoogleAppsDetails =
-			hasGoogleApps( responseCart ) &&
-			! hasDomainRegistration( responseCart ) &&
-			! hasTransferProduct( responseCart );
-		const getIsFieldDisabled = () => isDisabled;
-		const tlds = getAllTopLevelTlds( domainNames );
-
-		return (
-			<React.Fragment>
-				<ManagedContactDetailsFormFields
-					needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
-					contactDetails={ contactDetails }
-					contactDetailsErrors={
-						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-					}
-					onContactDetailsChange={ updateDomainContactFields }
-					getIsFieldDisabled={ getIsFieldDisabled }
-				/>
-				{ tlds.includes( 'ca' ) && (
-					<RegistrantExtraInfoForm
-						contactDetails={ contactDetails }
-						ccTldDetails={ contactDetails?.extra?.ca ?? {} }
-						onContactDetailsChange={ updateDomainContactFields }
-						contactDetailsValidationErrors={
-							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-						}
-						tld={ 'ca' }
-						getDomainNames={ () => domainNames }
-						translate={ translate }
-						isManaged={ true }
-					/>
-				) }
-				{ tlds.includes( 'uk' ) && (
-					<RegistrantExtraInfoForm
-						contactDetails={ contactDetails }
-						ccTldDetails={ contactDetails?.extra?.uk ?? {} }
-						onContactDetailsChange={ updateDomainContactFields }
-						contactDetailsValidationErrors={
-							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-						}
-						tld={ 'uk' }
-						getDomainNames={ () => domainNames }
-						translate={ translate }
-						isManaged={ true }
-					/>
-				) }
-				{ tlds.includes( 'fr' ) && (
-					<RegistrantExtraInfoForm
-						contactDetails={ contactDetails }
-						ccTldDetails={ contactDetails?.extra?.fr ?? {} }
-						onContactDetailsChange={ updateDomainContactFields }
-						contactDetailsValidationErrors={
-							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-						}
-						tld={ 'fr' }
-						getDomainNames={ () => domainNames }
-						translate={ translate }
-						isManaged={ true }
-					/>
-				) }
-			</React.Fragment>
-		);
-	};
-
 	const getItemVariants = useProductVariants( {
 		siteId,
 		productSlug: getPlanProductSlugs( items )[ 0 ],
@@ -612,7 +530,6 @@ export default function CompositeCheckout( {
 						siteUrl={ siteSlug }
 						countriesList={ countriesList }
 						StateSelect={ StateSelect }
-						renderDomainContactFields={ renderDomainContactFields }
 						variantSelectOverride={ variantSelectOverride }
 						getItemVariants={ getItemVariants }
 						responseCart={ responseCart }
@@ -768,10 +685,6 @@ function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeatur
 		analyticsPath = '/checkout/no-site';
 	}
 	return { analyticsPath, analyticsProps };
-}
-
-function getAllTopLevelTlds( domainNames ) {
-	return Array.from( new Set( domainNames.map( getTopLevelOfTld ) ) ).sort();
 }
 
 function displayRenewalSuccessNotice( responseCart, purchases, translate, moment ) {

@@ -27,6 +27,7 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
+import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 
 /**
  * Style dependencies
@@ -94,8 +95,12 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 	};
 
-	handleFieldChange = ( event ) => {
+	handleFieldChangeEvent = ( event ) => {
 		const { name, value } = event.target;
+		this.handleFieldChange( name, value );
+	};
+
+	handleFieldChange = ( name, value ) => {
 		let form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -110,7 +115,6 @@ export class ManagedContactDetailsFormFields extends Component {
 		form = updateFormWithContactChange( form, name, value );
 
 		this.updateParentState( form, phoneCountryCode );
-		return;
 	};
 
 	handlePhoneChange = ( { value, countryCode } ) => {
@@ -144,7 +148,8 @@ export class ManagedContactDetailsFormFields extends Component {
 			disabled: getIsFieldDisabled( name ),
 			isError: !! form[ camelName ]?.errors?.length,
 			errorMessage: customErrorMessage || getFirstError( form[ camelName ] ),
-			onChange: this.handleFieldChange,
+			onChange: this.handleFieldChangeEvent,
+			onBlur: this.handleBlur,
 			value: form[ camelName ]?.value ?? '',
 			name,
 			eventFormName,
@@ -155,6 +160,24 @@ export class ManagedContactDetailsFormFields extends Component {
 		return createElement( componentClass, {
 			...this.getFieldProps( name, fieldPropOptions ),
 			...additionalProps,
+		} );
+	};
+
+	handleBlur = () => {
+		const form = getFormFromContactDetails(
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
+		);
+
+		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
+			if ( fieldName === 'postalCode' ) {
+				debug( 'reformatting postal code', form.postalCode?.value );
+				const formattedPostalCode = tryToGuessPostalCodeFormat(
+					form.postalCode?.value.toUpperCase?.() ?? '',
+					form.countryCode?.value
+				);
+				this.handleFieldChange( 'postal-code', formattedPostalCode );
+			}
 		} );
 	};
 

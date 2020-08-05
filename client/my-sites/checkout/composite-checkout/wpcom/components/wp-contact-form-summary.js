@@ -4,7 +4,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useSelect, useLineItems } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,7 +16,6 @@ export default function WPContactFormSummary( { showDomainContactSummary } ) {
 	const isGSuiteInCart = items.some( ( item ) =>
 		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
 	);
-	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
 	// Check if paymentData is empty
@@ -79,17 +77,6 @@ export default function WPContactFormSummary( { showDomainContactSummary } ) {
 
 					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
 				</SummaryDetails>
-
-				{ contactInfo.vatId.value?.length > 0 && (
-					<SummaryDetails>
-						{ contactInfo.vatId.value?.length > 0 && (
-							<SummaryLine>
-								{ translate( 'VAT indentification number:' ) }
-								{ contactInfo.vatId.value }
-							</SummaryLine>
-						) }
-					</SummaryDetails>
-				) }
 			</div>
 		</GridRow>
 	);
