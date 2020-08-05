@@ -657,6 +657,7 @@ jobs:
                 command: cd desktop/bin && node validate_tag.js $VERSION
       # - run: *update-node
       - run:
+          name: Install Dependencies
           command: |
             export NVM_DIR="/opt/circleci/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
