@@ -66,6 +66,8 @@ class InlineHelpPopover extends Component {
 		activeSecondaryView: '',
 	};
 
+	secondaryViewRef = React.createRef();
+
 	openResultView = ( event ) => {
 		event.preventDefault();
 		this.openSecondaryView( VIEW_RICH_RESULT );
@@ -96,6 +98,8 @@ class InlineHelpPopover extends Component {
 			location: 'inline-help-popover',
 		} );
 		this.setState( { showSecondaryView: true } );
+		// Focus the secondary popover contents
+		setTimeout( () => this.secondaryViewRef.current.focus(), 0 )
 	};
 
 	closeSecondaryView = () => {
@@ -172,7 +176,7 @@ class InlineHelpPopover extends Component {
 			`inline-help__${ this.state.activeSecondaryView }`
 		);
 		return (
-			<div className={ classes }>
+			<section ref={ this.secondaryViewRef } className={ classes } tabIndex="-1">
 				{
 					{
 						[ VIEW_CONTACT ]: <InlineHelpContactView />,
@@ -185,7 +189,7 @@ class InlineHelpPopover extends Component {
 						),
 					}[ this.state.activeSecondaryView ]
 				}
-			</div>
+			</section>
 		);
 	};
 
