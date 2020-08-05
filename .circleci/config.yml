@@ -647,6 +647,7 @@ jobs:
     <<: *desktop_machine_defaults
     environment:
       VERSION: << pipeline.git.tag >>
+    shell: /bin/bash --login
     steps:
       - checkout
       - when:
@@ -658,6 +659,8 @@ jobs:
       - run:
           name: Update Node
           command: |
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm install
             nvm use
             nvm alias default node
