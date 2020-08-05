@@ -1042,10 +1042,11 @@ function mapStateToProps( state ) {
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink: ! (
-			isSiteUsingFullSiteEditing( state, selectedSiteId ) ||
-			isSiteUsingCoreSiteEditor( state, selectedSiteId )
-		),
+		showCustomizerLink:
+			! (
+				isSiteUsingFullSiteEditing( state, selectedSiteId ) ||
+				isSiteUsingCoreSiteEditor( state, selectedSiteId )
+			) && siteId,
 		showSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
 		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,
