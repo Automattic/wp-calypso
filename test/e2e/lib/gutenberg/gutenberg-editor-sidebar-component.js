@@ -21,10 +21,11 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		if ( ! names.length ) {
 			throw new Error( 'No tab name provided.' );
 		}
-		const selector = names
-			.map( ( name ) => `.edit-post-sidebar__panel-tab[aria-label^=${ name }]` )
-			.join();
-		return await driverHelper.clickWhenClickable( this.driver, By.css( selector ) );
+		const by = By.css(
+			names.map( ( name ) => `.edit-post-sidebar__panel-tab[aria-label^=${ name }]` ).join()
+		);
+		await driverHelper.scrollIntoView( this.driver, by );
+		return driverHelper.clickWhenClickable( this.driver, by );
 	}
 
 	async selectDocumentTab() {
