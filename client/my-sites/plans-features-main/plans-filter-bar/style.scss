@@ -4,4 +4,58 @@
 	justify-content: space-between;
 	background: white;
 	padding: 16px 24px;
+
+	$height: 36px;
+	// SegmentedControl uses a border-radius of 4px while our design specifies 3px
+	$border-radius: 3px;
+
+	.select-dropdown {
+		height: $height;
+
+		.select-dropdown__header {
+			background-color: var( --color-primary );
+			color: var( --color-text-inverted );
+			border-color: var( --color-primary );
+			border: solid 1px var( --color-neutral-10 );
+			border-radius: $border-radius;
+
+			font-weight: 400;
+
+			height: $height;
+
+			.gridicons-chevron-down {
+				fill: currentColor;
+			}
+		}
+
+		.select-dropdown__option,
+		.select-dropdown__item {
+			height: $height;
+		}
+
+		.select-dropdown__options {
+			border-radius: 0 0 $border-radius $border-radius;
+		}
+
+		&.is-open {
+			.select-dropdown__header {
+				color: var( --color-neutral-70 );
+				border-radius: $border-radius $border-radius 0 0;
+			}
+		}
+	}
+
+	.segmented-control {
+		border-radius: $border-radius;
+
+		.segmented-control__item:first-of-type .segmented-control__link {
+			border-top-left-radius: $border-radius;
+			border-bottom-left-radius: $border-radius;
+		}
+
+		.segmented-control__item:last-of-type .segmented-control__link {
+			border-top-right-radius: $border-radius;
+			border-bottom-right-radius: $border-radius;
+		}
+	}
 }
