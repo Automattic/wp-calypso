@@ -9,6 +9,8 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
+import { __ } from '@wordpress/i18n';
+
 
 /**
  * Internal Dependencies
@@ -98,7 +100,13 @@ class InlineHelpPopover extends Component {
 			location: 'inline-help-popover',
 		} );
 		// Focus the secondary popover contents after the state is set
-		this.setState( { showSecondaryView: true }, () => this.secondaryViewRef.current.focus() );
+		this.setState( { showSecondaryView: true }, () => {
+			const contentTitle = this.secondaryViewRef.current.querySelector('h2');
+			
+			if(contentTitle) {
+				contentTitle.focus();
+			}
+		} );
 	};
 
 	closeSecondaryView = () => {
@@ -176,10 +184,15 @@ class InlineHelpPopover extends Component {
 			`inline-help__${ this.state.activeSecondaryView }`
 		);
 		return (
-			<section ref={ this.secondaryViewRef } className={ classes } tabIndex="-1">
+			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
 					{
-						[ VIEW_CONTACT ]: <InlineHelpContactView />,
+						[ VIEW_CONTACT ]: (
+							<Fragment>
+								<h2 className="help-contact__title" tabIndex="-1">{ __( 'Contact Us' ) }</h2>
+								<InlineHelpContactView />
+							</Fragment>
+						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
 								result={ selectedResult }

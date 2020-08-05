@@ -103,7 +103,7 @@ class InlineHelpRichResult extends Component {
 
 		return (
 			<div>
-				<h2 className={ classes }>{ preventWidows( decodeEntities( title ) ) }</h2>
+				<h2 className={ classes } tabIndex="-1">{ preventWidows( decodeEntities( title ) ) }</h2>
 				<p>{ preventWidows( decodeEntities( description ) ) }</p>
 				<Button primary onClick={ this.handleClick } href={ link }>
 					{ buttonIcon && <Gridicon icon={ buttonIcon } size={ 12 } /> }
