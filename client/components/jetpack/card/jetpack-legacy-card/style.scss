@@ -1,0 +1,15 @@
+.jetpack-legacy-card {
+	$jetpack-legacy-card-color: var( --studio-yellow-40 );
+
+	.jetpack-product-card__header {
+		border-color: $jetpack-legacy-card-color;
+	}
+
+	.plan-price {
+		border-color: $jetpack-legacy-card-color;
+	}
+
+	.jetpack-product-card__badge {
+		color: $jetpack-legacy-card-color;
+	}
+}
