@@ -10,7 +10,7 @@ In the near future, the following will be changed:
 - Documentation
 - CI job names
 
-Those will be updated to use "editing-toolkit" in place of "full-site-editing"
+Those will be updated to use "editing-toolkit" in place of "full-site-editing."
 
 The following items will likely not change:
 

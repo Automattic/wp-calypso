@@ -33,11 +33,6 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile # Not needed when restoring from cache.
 
-    - name: Composer install
-      uses: nick-zh/composer-php@HEAD
-      with:
-        action: 'install'
-
     - name: Build packages
       if: steps.cache.outputs.cache-hit == 'true'
       run: yarn run postinstall # Needed only when not running yarn install.
@@ -52,6 +47,39 @@ jobs:
         name: editing-toolkit-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
 
+  jest:
+    name: Run JS tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@HEAD
+
+    # https://github.com/actions/cache/blob/HEAD/examples.md#node---lerna
+    - name: Restore node_modules cache
+      id: cache
+      uses: actions/cache@HEAD
+      with:
+        path: |
+          node_modules
+          */*/node_modules
+        key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: yarn install --frozen-lockfile # Not needed when restoring from cache.
+
+    # It saves a bit of time to download the artifact rather than doing a build.
+    - name: Get build
+      uses: actions/download-artifact@HEAD
+      with:
+        name: editing-toolkit-build-archive
+        path: apps/full-site-editing/full-site-editing-plugin
+
+    - name: Test JavaScript
+      run: yarn run test:js
+      working-directory: apps/full-site-editing
+
   mc_upload:
     name: Create wpcom sync diff
     needs: build
@@ -64,7 +92,7 @@ jobs:
       uses: actions/checkout@HEAD
 
     # It saves a bit of time to download the artifact rather than doing a build.
-    - name: Get Build
+    - name: Get build
       uses: actions/download-artifact@HEAD
       with:
         name: editing-toolkit-build-archive
