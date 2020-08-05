@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
-import { planCardWithBadge, planCardWithDiscount } from '../fixture';
+import { planCardWithBadge, planCardWithDiscount, deprecatedPlanCard } from '../fixture';
 
 export default function JetpackPlanCardExample() {
 	return (
@@ -17,6 +17,9 @@ export default function JetpackPlanCardExample() {
 			<br />
 			<h3>Jetpack Plan Card with Discount</h3>
 			<JetpackPlanCard { ...planCardWithDiscount } />
+			<br />
+			<h3>Deprecated Jetpack Plan Card</h3>
+			<JetpackPlanCard { ...deprecatedPlanCard } />
 		</div>
 	);
 }

@@ -20,4 +20,8 @@ export default function JetpackPlanCardExample() {
 
 #### Props
 
-See `components/jetpack/card/jetpack-product-card`;
+| Name         | Type      | Default | Description                            |
+| ------------ | --------- | ------- | -------------------------------------- |
+| `deprecated` | `boolean` | `false` | Use to identify the plan as deprecated |
+
+See other props at `components/jetpack/card/jetpack-product-card`;

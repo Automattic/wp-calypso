@@ -76,7 +76,6 @@ import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card/docs/example';
 import JetpackHeaderExample from 'components/jetpack-header/docs/example';
 import JetpackIndividualProductCard from 'components/jetpack/card/jetpack-individual-product-card/docs/example';
-import JetpackLegacyCard from 'components/jetpack/card/jetpack-legacy-card/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
 import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card/docs/example';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card/docs/example';
@@ -238,7 +237,6 @@ export default class DesignAssets extends React.Component {
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackIndividualProductCard readmeFilePath="jetpack-individual-product-card" />
-					<JetpackLegacyCard readmeFilePath="jetpack-legacy-card" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<JetpackPlanCard readmeFilePath="jetpack-plan-card" />
 					<JetpackProductCard readmeFilePath="jetpack-product-card" />
