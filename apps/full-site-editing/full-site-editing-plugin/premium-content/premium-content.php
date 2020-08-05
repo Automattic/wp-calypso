@@ -2,7 +2,7 @@
 /**
  * Registers premium block types only available on paid plans.
  *
- * @package A8C\FSE\Earn\PremiumContent;
+ * @package A8C\EditingToolkit\Earn\PremiumContent;
  */
 
 declare( strict_types = 1 );
