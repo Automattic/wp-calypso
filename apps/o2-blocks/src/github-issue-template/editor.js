@@ -68,7 +68,7 @@ const Edit = ( {
 
 const View = ( { title, userOrOrg, repo, ...rest } ) => (
 	<Shell
-		title={ `${ __( 'Create Issue:' ) } ${ title }` }
+		title={ __( 'Create Issue' ) + `${ title ? `: ${ title }` : '' }` }
 		subTitle={ `${ userOrOrg }/${ repo }` }
 		{ ...rest }
 	/>
@@ -79,7 +79,7 @@ const Invalid = () => (
 		className="is-warning"
 		title={ __( 'Please fill in the required fields' ) }
 		subTitle={ __(
-			'Title, Org, and Repository are required. Select this block to open the form and fill them.'
+			'Org, and Repository are required. Select this block to open the form and fill them.'
 		) }
 	/>
 );
@@ -121,7 +121,7 @@ registerBlockType( 'a8c/github-issue-template', {
 			},
 		};
 
-		const isValid = title && userOrOrg && repo;
+		const isValid = userOrOrg && repo;
 		const { body, ...viewAttributes } = attributes;
 
 		if ( isSelected ) {
@@ -131,7 +131,7 @@ registerBlockType( 'a8c/github-issue-template', {
 		return isValid ? <View { ...viewAttributes } /> : <Invalid />;
 	},
 	save: ( { attributes: { userOrOrg, repo, title, body } } ) => {
-		const isValid = title && userOrOrg && repo;
+		const isValid = userOrOrg && repo;
 		if ( isValid ) {
 			const url = createIssueUrl( {
 				title,
