@@ -129,8 +129,11 @@ export default function WPCheckout( {
 	] = useState( false );
 
 	const validateContactDetailsAndDisplayErrors = async () => {
-		debug( 'validating contact details with side effects' );
-		if ( areThereDomainProductsInCart ) {
+		debug( 'validating contact details and reporting errors' );
+		const areDomainDetailsNeeded = needsDomainDetails( responseCart ) || isGSuiteInCart;
+		if ( ! areDomainDetailsNeeded ) {
+			return isCompleteAndValid( contactInfo );
+		} else if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -156,8 +159,11 @@ export default function WPCheckout( {
 		return isCompleteAndValid( contactInfo );
 	};
 	const validateContactDetails = async () => {
-		debug( 'validating contact details' );
-		if ( areThereDomainProductsInCart ) {
+		debug( 'validating contact details without reporting errors' );
+		const areDomainDetailsNeeded = needsDomainDetails( responseCart ) || isGSuiteInCart;
+		if ( ! areDomainDetailsNeeded ) {
+			return isCompleteAndValid( contactInfo );
+		} else if ( areThereDomainProductsInCart ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
