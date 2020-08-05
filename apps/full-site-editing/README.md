@@ -94,7 +94,7 @@ For a simple Docker experience, use wp-env.
 ./apps/full-site-editing/bin/setup-env.sh
 ```
 
-That script will set up the correct dependencies and install wp-env. Once the dependencies are in the correct location, make sure that they are built, and you can use `wp-env` commands to control the environment:
+That script will set up the correct dependencies and install wp-env. Note that this includes `gutenberg` and `themes` directories installed next to (i.e. outside) the root calypso directory. Once the dependencies are in the correct location, make sure that they are built, and you can use `wp-env` commands to control the environment:
 
 ```sh
 # All commands should be run from apps/full-site-editing,
@@ -136,6 +136,14 @@ If you wish to "watch" and run tests on file change then run:
 // Note the additional `:watch` below
 yarn test:js:watch
 ```
+
+### Troubleshooting wp-env
+
+- Make sure you're using `npx <command>` to favour the local tools over global installs. There's no harm in running `npx some-command-not-in-node_modules/.bin`
+- If there's an error connecting to the docker deamon, check that `docker-machine ls` shows a running machine named 'default', and try `docker-machine start`
+- If the default machine is already running (or the mysql connection is refused) you may need to re-run `eval $(docker-machine env)`
+- If there are missing includes or defines from Gutenberg and/or themes, check that they're installed and up-to-date. By default, `wp-env` expects to find Gutenberg next to (outside) the top level `wp-calypso` directory, as per `./apps/full-site-editing/bin/setup-env.sh`
+- You can get a lot more information by calling `wp-env` with the `--debug=true` flag, e.g. `npx wp-env --debug=true run phpunit 'phpunit -c /var/www/html/wp-content/plugins/full-site-editing-plugin/phpunit.xml.dist'`. In particular, this flag will show you where to find the docker-machine configuration file and show you where files from your local environment are being mounted into the container images. It will also show that that first `phpunit` in this example is indicating the command should be run within the `phpunit` service defined in the Docker Compose config.
 
 ### Updating Snapshots
 
