@@ -116,7 +116,10 @@ export default function WPCheckout( {
 	);
 	const shouldShowContactStep =
 		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
-	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
+	const [ shouldShowInvalidContactDetails, setshouldShowInvalidContactDetails ] = useState( false );
+	const shouldShowDomainContactFields =
+		shouldShowContactStep &&
+		( needsDomainDetails( responseCart ) || shouldShowInvalidContactDetails );
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
@@ -139,6 +142,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod.id,
 				validationResult,
 				applyDomainContactValidationResults,
+				setshouldShowInvalidContactDetails,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( isGSuiteInCart ) {
@@ -150,6 +154,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod.id,
 				validationResult,
 				applyDomainContactValidationResults,
+				setshouldShowInvalidContactDetails,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		}

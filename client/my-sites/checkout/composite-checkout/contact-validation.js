@@ -45,6 +45,7 @@ export function handleContactValidationResult( {
 	paymentMethodId,
 	validationResult,
 	applyDomainContactValidationResults,
+	setshouldShowInvalidContactDetails,
 } ) {
 	recordEvent( {
 		type: 'VALIDATE_DOMAIN_CONTACT_INFO',
@@ -64,6 +65,7 @@ export function handleContactValidationResult( {
 				'We could not validate your contact information. Please review and update all the highlighted fields.'
 			)
 		);
+		setshouldShowInvalidContactDetails( true );
 	}
 	applyDomainContactValidationResults(
 		formatDomainContactValidationResponse( validationResult ?? {} )
