@@ -34,7 +34,7 @@
 		"@automattic/tree-select": "^1.0.3",
 		"@automattic/viewport": "^1.0.0",
 		"@automattic/viewport-react": "^1.0.0",
-		"@babel/runtime": "^7.9.2",
+		"@babel/runtime": "^7.11.1",
 		"@emotion/core": "^10.0.27",
 		"@emotion/styled": "^10.0.27",
 		"@github/webauthn-json": "^0.4.1",

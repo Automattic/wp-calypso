@@ -41,7 +41,7 @@
 		"prepare": "check-npm-client && transpile"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.8.4",
+		"@babel/runtime": "^7.11.1",
 		"debug": "^4.1.1",
 		"progress-event": "^1.0.0",
 		"uuid": "^7.0.1",
