@@ -34,7 +34,12 @@ export default function WPContactFormSummary( { showDomainContactSummary, isLogg
 		contactInfo.postalCode.value,
 		contactInfo.countryCode.value
 	);
-	const showEmailSummary = isLoggedOutCart || showDomainContactSummary;
+
+	const shouldShowEmailSummary =
+		contactInfo.email.value?.length > 0 &&
+		( showDomainContactSummary || isGSuiteInCart ) &&
+		( ! contactInfo.alternateEmail.value?.length > 0 ||
+			contactInfo.alternateEmail.value === contactInfo.email.value );
 
 	return (
 		<GridRow>
@@ -48,9 +53,7 @@ export default function WPContactFormSummary( { showDomainContactSummary, isLogg
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
 					) }
 
-					{ showEmailSummary && contactInfo.email.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
-					) }
+					{ isLoggedOutCart || shouldShowEmailSummary && <SummaryLine>{ contactInfo.email.value }</SummaryLine> }
 
 					{ isGSuiteInCart && (
 						<AlternateEmailSummary
