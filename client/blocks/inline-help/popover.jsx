@@ -11,7 +11,6 @@ import Gridicon from 'components/gridicon';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 
-
 /**
  * Internal Dependencies
  */
@@ -101,9 +100,9 @@ class InlineHelpPopover extends Component {
 		} );
 		// Focus the secondary popover contents after the state is set
 		this.setState( { showSecondaryView: true }, () => {
-			const contentTitle = this.secondaryViewRef.current.querySelector('h2');
-			
-			if(contentTitle) {
+			const contentTitle = this.secondaryViewRef.current.querySelector( 'h2' );
+
+			if ( contentTitle ) {
 				contentTitle.focus();
 			}
 		} );
@@ -189,7 +188,9 @@ class InlineHelpPopover extends Component {
 					{
 						[ VIEW_CONTACT ]: (
 							<Fragment>
-								<h2 className="inline-help__title" tabIndex="-1">{ __( 'Get Support' ) }</h2>
+								<h2 className="inline-help__title" tabIndex="-1">
+									{ __( 'Get Support' ) }
+								</h2>
 								<InlineHelpContactView />
 							</Fragment>
 						),
