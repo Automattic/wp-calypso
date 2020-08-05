@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { MultiCartPrototype } from 'components/multi-cart-prototype';
 import AsyncLoad from 'components/async-load';
 import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
@@ -177,7 +178,8 @@ export class PlansFeaturesMain extends Component {
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
 				{ customHeader }
-				{ this.renderSecondaryFormattedHeader() }
+				<FormattedHeader headerText={ 'MultiCart Prototype' } compactOnMobile isSecondary />
+				<MultiCartPrototype />
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
@@ -203,6 +205,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 				/>
+				{ this.renderSecondaryFormattedHeader() }
 			</div>
 		);
 	}

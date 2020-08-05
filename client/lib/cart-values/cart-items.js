@@ -155,13 +155,13 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 	}
 
 	if ( isJetpackPlan( cartItem ) ) {
-		// adding a jetpack bundle should replace the cart
-		return true;
+		// adding a jetpack bundle should not replace the cart
+		return false;
 	}
 
 	if ( isJetpackProduct( cartItem ) ) {
-		// adding a Jetpack product should replace the cart
-		return true;
+		// adding a Jetpack product should not replace the cart
+		return false;
 	}
 
 	return false;
