@@ -97,9 +97,8 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
 			location: 'inline-help-popover',
 		} );
-		this.setState( { showSecondaryView: true } );
-		// Focus the secondary popover contents
-		setTimeout( () => this.secondaryViewRef.current.focus(), 0 );
+		// Focus the secondary popover contents after the state is set
+		this.setState( { showSecondaryView: true }, () => this.secondaryViewRef.current.focus() );
 	};
 
 	closeSecondaryView = () => {
