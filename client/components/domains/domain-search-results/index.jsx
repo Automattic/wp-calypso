@@ -25,7 +25,6 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import { hideSitePreview } from 'state/signup/preview/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
-import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -60,6 +59,7 @@ class DomainSearchResults extends React.Component {
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
+		isReskinned: PropTypes.bool,
 	};
 
 	componentDidUpdate() {
@@ -339,7 +339,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		// Set site design type only if we're in signup
 		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
 		isSitePreviewVisible: ownProps.isSignupStep && isSitePreviewVisible( state ),
-		isReskinned: ownProps.isSignupStep && 'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
 	};
 };
 
