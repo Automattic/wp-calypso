@@ -9,6 +9,9 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/wp-babel-makepot"
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"keywords": [
 		"makepot",
 		"calypso"
