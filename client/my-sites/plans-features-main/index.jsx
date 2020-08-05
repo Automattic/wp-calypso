@@ -35,6 +35,7 @@ import { getJetpackProducts } from 'lib/products-values/translations';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';
+import PlansFilterBar from './plans-filter-bar';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
@@ -76,6 +77,7 @@ import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
+const shouldShowOfferResetFlow = () => true;
 /**
  * Style dependencies
  */
@@ -458,6 +460,11 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 		if ( displayJetpackPlans ) {
+			// TODO: remove this from there since we will use an enterely new Plans page
+			// for the Offer Reset project
+			if ( shouldShowOfferResetFlow() ) {
+				return <PlansFilterBar />;
+			}
 			return this.getIntervalTypeToggle();
 		}
 		if ( withWPPlanTabs && this.isPersonalCustomerTypePlanVisible() ) {
