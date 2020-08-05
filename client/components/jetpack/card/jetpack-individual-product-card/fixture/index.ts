@@ -17,7 +17,7 @@ export const features = {
 };
 
 export const individualProductCard = {
-	iconSlug: 'jetpack_backup_daily',
+	iconSlug: 'jetpack_backup_v2',
 	productName: 'Jetpack Backup',
 	subheadline: '',
 	description: '',

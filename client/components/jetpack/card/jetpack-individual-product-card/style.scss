@@ -1,5 +1,5 @@
 .jetpack-individual-product-card {
-	$jetpack-individual-product-card-color: #33b3db;
+	$jetpack-individual-product-card-color: var( --studio-wordpress-blue-30 );
 
 	.jetpack-product-card__header {
 		border-color: $jetpack-individual-product-card-color;
