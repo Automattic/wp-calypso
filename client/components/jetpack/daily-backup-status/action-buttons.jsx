@@ -25,25 +25,19 @@ import missingCredentialsIcon from './missing-credentials.svg';
 
 const DownloadButton = ( { disabled, rewindId } ) => {
 	const translate = useTranslate();
-	const tracks = useDispatch( recordTracksEvent );
+	const dispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const href = disabled ? undefined : backupDownloadPath( siteSlug, rewindId );
-	const onDownload = ( event ) => {
-		event.preventDefault();
-		if ( disabled ) {
-			return;
-		}
-
-		tracks( 'calypso_jetpack_backup_download', { rewindId } );
-	};
+	const onDownload = () =>
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_download', { rewind_id: rewindId } ) );
 
 	return (
 		<Button
 			isPrimary={ false }
 			className="daily-backup-status__download-button"
-			disabled={ disabled }
 			href={ href }
+			disabled={ disabled }
 			onClick={ onDownload }
 		>
 			{ translate( 'Download backup' ) }
@@ -53,7 +47,7 @@ const DownloadButton = ( { disabled, rewindId } ) => {
 
 const RestoreButton = ( { disabled, rewindId } ) => {
 	const translate = useTranslate();
-	const tracks = useDispatch( recordTracksEvent );
+	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -63,21 +57,15 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 
 	const canRestore = ! disabled && ! needsCredentials;
 	const href = canRestore ? backupRestorePath( siteSlug, rewindId ) : undefined;
-	const onRestore = ( event ) => {
-		event.preventDefault();
-		if ( ! canRestore ) {
-			return;
-		}
-
-		tracks( 'calypso_jetpack_backup_restore', { rewindId } );
-	};
+	const onRestore = () =>
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore', { rewind_id: rewindId } ) );
 
 	return (
 		<Button
 			isPrimary
 			className="daily-backup-status__restore-button"
-			disabled={ ! canRestore }
 			href={ href }
+			disabled={ ! canRestore }
 			onClick={ onRestore }
 		>
 			<div className="daily-backup-status__restore-button-icon">
@@ -90,10 +78,11 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 
 const MissingCredentials = () => {
 	const translate = useTranslate();
-	const tracks = useDispatch( recordTracksEvent );
+	const dispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const onActivateRestores = () => tracks( 'calypso_jetpack_backup_activate_click' );
+	const onActivateRestores = () =>
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_activate_click' ) );
 
 	return (
 		<div className="daily-backup-status__credentials-warning">

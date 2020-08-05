@@ -23,6 +23,9 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 jest.mock( 'state/selectors/get-does-rewind-need-credentials' );
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
 
+import * as record from 'state/analytics/actions/record';
+const recordTracksEvent = jest.spyOn( record, 'recordTracksEvent' );
+
 function render( component ) {
 	const store = {
 		getState: () => ( {} ),
@@ -36,6 +39,10 @@ describe( 'ActionButtons', () => {
 	beforeAll( () => {
 		getSelectedSiteId.mockImplementation( () => 0 );
 		getSelectedSiteSlug.mockImplementation( () => '' );
+	} );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	test( "disables all buttons when 'rewindId' is not provided", () => {
@@ -93,5 +100,42 @@ describe( 'ActionButtons', () => {
 
 		expect( activateButton.prop( 'href' ) ).toBeTruthy();
 		expect( activateButton.prop( 'disabled' ) ).toBeFalsy();
+	} );
+
+	test( 'emits a Tracks event when the download button is enabled and clicked', () => {
+		const rewindId = 'test';
+		const wrapper = render( <ActionButtons rewindId={ rewindId } /> );
+		const downloadButton = wrapper.find( '.daily-backup-status__download-button' ).hostNodes();
+
+		downloadButton.simulate( 'click' );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_jetpack_backup_download', {
+			rewind_id: rewindId,
+		} );
+	} );
+
+	test( 'emits a Tracks event when the restore button is enabled and clicked', () => {
+		getDoesRewindNeedCredentials.mockImplementation( () => false );
+		const rewindId = 'test';
+		const wrapper = render( <ActionButtons rewindId={ rewindId } /> );
+
+		const restoreButton = wrapper.find( '.daily-backup-status__restore-button' ).hostNodes();
+		restoreButton.simulate( 'click' );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_jetpack_backup_restore', {
+			rewind_id: rewindId,
+		} );
+	} );
+
+	test( "emits a Tracks event when the 'Activate restores' button is clicked", () => {
+		getDoesRewindNeedCredentials.mockImplementation( () => true );
+		const wrapper = render( <ActionButtons rewindId="test" /> );
+
+		const activateButton = wrapper
+			.find( '.daily-backup-status__activate-restores-button' )
+			.hostNodes();
+		activateButton.simulate( 'click' );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_jetpack_backup_activate_click' );
 	} );
 } );
