@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import url from 'url';
 import { stringify } from 'qs';
 import { cloneDeep, get, startsWith } from 'lodash';
 import { connect } from 'react-redux';
@@ -31,6 +30,7 @@ import wpcom from 'lib/wp';
 import { addItem } from 'lib/cart/actions';
 import { trackClick } from 'my-sites/themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
+import { getUrlParts } from 'lib/url';
 
 /**
  * Style dependencies
@@ -38,7 +38,6 @@ import { themeItem } from 'lib/cart-values/cart-items';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:my-sites:customize' );
-
 // Used to allow timing-out the iframe loading process
 let loadingTimer;
 
@@ -51,6 +50,8 @@ class Customize extends React.Component {
 			timeoutError: false,
 			returnUrl: undefined,
 		};
+
+		this.customizerIframe = null;
 	}
 
 	static propTypes = {
@@ -99,6 +100,10 @@ class Customize extends React.Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
+
+	setCustomizerIframetRef = ( element ) => {
+		this.customizerIframe = element;
+	};
 
 	redirectIfNeeded = ( pathname ) => {
 		const { menusUrl, isJetpack, customizerUrl } = this.props;
@@ -253,8 +258,8 @@ class Customize extends React.Component {
 			return;
 		}
 
-		const parsedOrigin = url.parse( event.origin, true );
-		const parsedSite = url.parse( site.options.unmapped_url );
+		const parsedOrigin = getUrlParts( event.origin );
+		const parsedSite = getUrlParts( site.options.unmapped_url );
 
 		if (
 			parsedOrigin.hostname !== this.props.domain &&
@@ -300,6 +305,10 @@ class Customize extends React.Component {
 					debug( 'iframe says it is finished loading customizer' );
 					this.cancelWaitingTimer();
 					this.setState( { iframeLoaded: true } );
+					// focus the iframe
+					if ( this.customizerIframe ) {
+						this.customizerIframe.focus();
+					}
 					break;
 				case 'activated':
 					trackClick( 'customizer', 'activate' );
@@ -392,7 +401,12 @@ class Customize extends React.Component {
 				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
-					<iframe className={ iframeClassName } src={ iframeUrl } title="Customizer" />
+					<iframe
+						ref={ this.setCustomizerIframetRef }
+						className={ iframeClassName }
+						src={ iframeUrl }
+						title="Customizer"
+					/>
 				</div>
 			);
 		}
