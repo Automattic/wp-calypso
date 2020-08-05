@@ -74,9 +74,10 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
  * @param {object} props.className CSS class to apply to component
  * @param {string} props.bodyClassName CSS class to apply to the iframe's `<body>` tag
  * @param {number} props.viewportWidth pixel width of the viewable size of the preview
- * @param {Array}  props.blocks array of Gutenberg Block objects
+ * @param {Array} props.blocks array of Gutenberg Block objects
  * @param {object} props.settings block Editor settings object
  * @param {Function} props.setTimeout safe version of window.setTimeout via `withSafeTimeout`
+ * @param props.title
  */
 const BlockFramePreview = ( {
 	className = 'block-iframe-preview',

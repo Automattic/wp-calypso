@@ -77,7 +77,7 @@ class FSE_Patterns_Test extends TestCase {
 		$pattern_data = array();
 		$patterns     = Block_Patterns::get_instance()->get_patterns();
 		foreach ( $patterns as $name => $details ) {
-			// if( $name !== 'a8c/list' ) { continue; }
+			if ( $name !== 'a8c/hero-right-column' ) { continue; }
 			$pattern_data[] = array( $name, $details );
 		}
 
