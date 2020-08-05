@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
@@ -15,18 +15,11 @@ import {
 	RightColumn,
 } from 'my-sites/checkout/composite-checkout/wpcom/components/ie-fallback';
 import Spinner from 'my-sites/checkout/composite-checkout/wpcom/components/spinner';
-import { isValid } from 'my-sites/checkout/composite-checkout/wpcom/types';
 import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
-import {
-	FieldRow,
-	Label,
-	LabelText,
-	CreditCardFieldsWrapper,
-	CreditCardField,
-} from './form-layout-components';
+import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
 import { paymentMethodClassName } from 'lib/cart-values';
 import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
@@ -36,15 +29,26 @@ export default function CreditCardFields() {
 	const theme = useTheme();
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const cardholderName = useSelect( ( select ) => select( 'credit-card' ).getCardholderName() );
-	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
+	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const getField = ( key ) => fields[ key ] || {};
+	const getFieldValue = ( key ) => getField( key ).value ?? '';
+	const getErrorMessagesForField = ( key ) => {
+		const managedValue = getField( key );
+		if ( managedValue?.isRequired && managedValue?.value === '' ) {
+			return [ __( 'This field is required.' ) ];
+		}
+		return managedValue.errors ?? [];
+	};
+	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
-	const [ shouldShowContactFields, setShowContactFields ] = useState( false );
 	const cart = useCart();
-	const shouldShowContactFieldCheckbox = cart?.allowed_payment_methods?.includes(
-		paymentMethodClassName( 'ebanx' )
-	);
+
+	const cardholderName = getField( 'cardholderName' );
+	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];
+	const cardholderNameErrorMessage = cardholderNameErrorMessages.length
+		? cardholderNameErrorMessages[ 0 ]
+		: null;
 
 	const handleStripeFieldChange = ( input ) => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -67,19 +71,19 @@ export default function CreditCardFields() {
 		setCardDataError( input.elementType, null );
 	};
 
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
-	const { setFieldValue } = useDispatch( 'credit-card' );
-	const getField = ( key ) => fields[ key ] || {};
-	const getFieldValue = ( key ) => getField( key ).value ?? '';
-	const getErrorMessagesForField = ( key ) => {
-		// TODO: do actual validation
-		if ( ! isValid( getField( key ) ) ) {
-			return [ __( 'This field is required.' ) ];
-		}
-		return [];
-	};
+	const contactCountryCode = useSelect(
+		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
+	);
+	const shouldShowContactFields =
+		contactCountryCode === 'BR' &&
+		Boolean( cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) ) );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== 'ready';
+
+	// Cache the country code in our store for use by the processor function
+	useEffect( () => {
+		setFieldValue( 'countryCode', contactCountryCode );
+	}, [ contactCountryCode, setFieldValue ] );
 
 	const stripeElementStyle = {
 		base: {
@@ -109,25 +113,11 @@ export default function CreditCardFields() {
 					label={ __( 'Cardholder name' ) }
 					description={ __( "Enter your name as it's written on the card" ) }
 					value={ cardholderName?.value ?? '' }
-					onChange={ changeCardholderName }
-					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
-					errorMessage={ __( 'This field is required' ) }
+					onChange={ ( value ) => setFieldValue( 'cardholderName', value ) }
+					isError={ !! cardholderNameErrorMessage }
+					errorMessage={ cardholderNameErrorMessage }
 					disabled={ isDisabled }
 				/>
-
-				{ shouldShowContactFieldCheckbox && (
-					<FieldRow>
-						<Label>
-							<input
-								type="checkbox"
-								checked={ ! shouldShowContactFields }
-								onChange={ ( event ) => setShowContactFields( ! event.target.checked ) }
-								disabled={ isDisabled }
-							/>
-							<LabelText>{ __( 'Credit card address is the same as contact details' ) }</LabelText>
-						</Label>
-					</FieldRow>
-				) }
 
 				{ shouldShowContactFields && (
 					<ContactFields

@@ -116,6 +116,16 @@ export async function submitStripeCardTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
+export async function submitEbanxCardTransaction( transactionData, submit ) {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		...transactionData,
+		paymentMethodToken: transactionData.paymentMethodToken.token,
+		paymentMethodType: 'WPCOM_Billing_Ebanx',
+	} );
+	debug( 'sending ebanx transaction', formattedTransactionData );
+	return submit( formattedTransactionData );
+}
+
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
 	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
 		?.name;

@@ -15,12 +15,14 @@ import {
 	wpcomPayPalExpress,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
+	submitEbanxCardTransaction,
 	submitStripeRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
 	submitExistingCardPayment,
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
+import { createEbanxToken } from 'lib/store-transactions';
 
 const { select, dispatch } = defaultRegistry;
 
@@ -122,6 +124,51 @@ export async function stripeCardProcessor(
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
+}
+
+export async function ebanxCardProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
+	const paymentMethodToken = await createEbanxToken( 'new_purchase', {
+		country: submitData.countryCode,
+		name: submitData.name,
+		number: submitData.number,
+		cvv: submitData.cvv,
+		'expiration-date': submitData[ 'expiration-date' ],
+	} );
+	const pending = submitEbanxCardTransaction(
+		{
+			...submitData,
+			siteId: select( 'wpcom' )?.getSiteId?.(),
+			deviceId: paymentMethodToken?.deviceId,
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+			paymentMethodToken,
+		},
+		wpcomTransaction
+	);
+	pending.then( ( result ) => {
+		// TODO: do this automatically when calling setTransactionComplete
+		dispatch( 'wpcom' ).setTransactionResponse( result );
+	} );
+	return pending;
+}
+
+export async function multiPartnerCardProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
+	const paymentPartner = submitData.paymentPartner;
+
+	if ( paymentPartner === 'stripe' ) {
+		return stripeCardProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } );
+	}
+
+	if ( paymentPartner === 'ebanx' ) {
+		return ebanxCardProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } );
+	}
+
+	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
 }
 
 export async function existingCardProcessor(

@@ -149,8 +149,15 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	siteId,
 	couponId,
 	country,
+	state,
 	postalCode,
 	subdivisionCode,
+	city,
+	address,
+	streetNumber,
+	phoneNumber,
+	document,
+	deviceId,
 	domainDetails,
 	items,
 	paymentMethodType,
@@ -166,13 +173,20 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	siteId: string;
 	couponId?: string;
 	country: string;
+	state?: string;
 	postalCode: string;
 	subdivisionCode?: string;
+	city?: string;
+	address?: string;
+	streetNumber?: string;
+	phoneNumber?: string;
+	document?: string;
+	deviceId?: string;
 	domainDetails?: DomainContactDetails;
 	items: WPCOMCartItem[];
 	paymentMethodType: string;
 	paymentMethodToken?: string;
-	paymentPartnerProcessorId: string;
+	paymentPartnerProcessorId?: string;
 	storedDetailsId?: string;
 	name: string;
 	email?: string;
@@ -199,8 +213,16 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			name,
 			email,
 			country,
+			countryCode: country,
+			state,
 			postalCode,
 			zip: postalCode, // TODO: do we need this in addition to postalCode?
+			city,
+			address,
+			streetNumber,
+			phoneNumber,
+			document,
+			deviceId,
 			successUrl,
 			cancelUrl,
 			idealBank,
