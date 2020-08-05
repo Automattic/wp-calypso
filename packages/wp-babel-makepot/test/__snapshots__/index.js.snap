@@ -31,17 +31,21 @@ msgstr[1] \\"\\"
 #: test/examples/wordpress-i18n.js:14
 #. String comment
 msgid \\"String with comment\\"
-msgstr \\"\\"
+msgid_plural \\"Plural with comment\\"
+msgstr[0] \\"\\"
+msgstr[1] \\"\\"
 
 #: test/examples/translate-2.js:11
 #: test/examples/translate-2.js:12
 #. First comment
+#. Second comment
 msgid \\"Stack comments\\"
 msgstr \\"\\"
 
 #: test/examples/translate-2.js:15
 #: test/examples/translate-2.js:18
 #. Extract from leading comment first
+#. Extract from leading comment second
 msgid \\"Extract from leading comment\\"
 msgstr \\"\\"
 
@@ -70,7 +74,9 @@ msgstr[1] \\"\\"
 #: test/examples/wordpress-i18n.js:8
 msgctxt \\"simple context\\"
 msgid \\"String with context\\"
-msgstr \\"\\"
+msgid_plural \\"Plural with context\\"
+msgstr[0] \\"\\"
+msgstr[1] \\"\\"
 
 # THIS IS THE END OF THE GENERATED FILE."
 `;
@@ -138,13 +144,17 @@ msgstr[1] \\"\\"
 #: test/examples/translate-1.js:18
 #. String comment
 msgid \\"String with comment\\"
-msgstr \\"\\"
+msgid_plural \\"Plural with comment\\"
+msgstr[0] \\"\\"
+msgstr[1] \\"\\"
 
 #: test/examples/translate-1.js:6
 #: test/examples/translate-1.js:10
 msgctxt \\"simple context\\"
 msgid \\"String with context\\"
-msgstr \\"\\""
+msgid_plural \\"Plural with context\\"
+msgstr[0] \\"\\"
+msgstr[1] \\"\\""
 `;
 
 exports[`makePot pot files should match their snapshots 5`] = `
@@ -159,12 +169,14 @@ msgstr \\"\\"
 #: test/examples/translate-2.js:11
 #: test/examples/translate-2.js:12
 #. First comment
+#. Second comment
 msgid \\"Stack comments\\"
 msgstr \\"\\"
 
 #: test/examples/translate-2.js:15
 #: test/examples/translate-2.js:18
 #. Extract from leading comment first
+#. Extract from leading comment second
 msgid \\"Extract from leading comment\\"
 msgstr \\"\\"
 
@@ -202,11 +214,15 @@ msgstr[1] \\"\\"
 #: test/examples/wordpress-i18n.js:14
 #. String comment
 msgid \\"String with comment\\"
-msgstr \\"\\"
+msgid_plural \\"Plural with comment\\"
+msgstr[0] \\"\\"
+msgstr[1] \\"\\"
 
 #: test/examples/wordpress-i18n.js:6
 #: test/examples/wordpress-i18n.js:8
 msgctxt \\"simple context\\"
 msgid \\"String with context\\"
-msgstr \\"\\""
+msgid_plural \\"Plural with context\\"
+msgstr[0] \\"\\"
+msgstr[1] \\"\\""
 `;

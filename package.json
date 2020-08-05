@@ -152,7 +152,7 @@
 		"media-library:storybook:start": "check-npm-client && start-storybook -c packages/media-library/.storybook -h calypso.localhost -p 3001"
 	},
 	"dependencies": {
-		"@automattic/babel-plugin-i18n-calypso": "^1.1.0",
+		"@automattic/babel-plugin-i18n-calypso": "^1.2.0",
 		"@automattic/babel-plugin-transform-wpcalypso-async": "^1.0.1",
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "^6.1.0",

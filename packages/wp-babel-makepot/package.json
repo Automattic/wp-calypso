@@ -22,7 +22,7 @@
 		"test": "npx rimraf test/output && jest"
 	},
 	"dependencies": {
-		"@automattic/babel-plugin-i18n-calypso": "^1.1.0",
+		"@automattic/babel-plugin-i18n-calypso": "^1.2.0",
 		"@babel/cli": "^7.10.4",
 		"@babel/core": "^7.10.4",
 		"@babel/plugin-proposal-class-properties": "^7.10.4",
