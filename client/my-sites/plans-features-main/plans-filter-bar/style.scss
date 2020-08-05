@@ -1,14 +1,26 @@
 .plans-filter-bar {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	flex-wrap: wrap;
-	background: var( --color-surface );
-	padding: 16px 24px;
-
 	$height: 36px;
 	// SegmentedControl uses a border-radius of 4px while our design specifies 3px
 	$border-radius: 3px;
+
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	background: var( --color-surface );
+
+	padding: 16px 24px;
+
+	border: 1px solid var( --color-neutral-5 );
+	box-sizing: border-box;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		justify-content: center;
+
+		.select-dropdown {
+			margin-right: 24px;
+		}
+	}
 
 	.select-dropdown {
 		height: $height;
@@ -49,7 +61,8 @@
 	.segmented-control {
 		border-radius: $border-radius;
 
-		width: 160px;
+		width: 100%;
+		max-width: 180px;
 
 		.segmented-control__item {
 			flex: 1 1 50%;
