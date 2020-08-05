@@ -125,7 +125,10 @@ export async function stripeCardProcessor(
 	return pending;
 }
 
-export async function ebanxCardProcessor( submitData ) {
+export async function ebanxCardProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const paymentMethodToken = await createEbanxToken( 'new_purchase', {
 		country: submitData.countryCode,
 		name: submitData.name,
@@ -138,7 +141,7 @@ export async function ebanxCardProcessor( submitData ) {
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			deviceId: paymentMethodToken?.deviceId,
-			domainDetails: getDomainDetails( select ),
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 			paymentMethodToken,
 		},
 		wpcomTransaction
@@ -150,15 +153,18 @@ export async function ebanxCardProcessor( submitData ) {
 	return pending;
 }
 
-export async function multiPartnerCardProcessor( submitData ) {
+export async function multiPartnerCardProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails }
+) {
 	const paymentPartner = submitData.paymentPartner;
 
 	if ( paymentPartner === 'stripe' ) {
-		return stripeCardProcessor( submitData );
+		return stripeCardProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } );
 	}
 
 	if ( paymentPartner === 'ebanx' ) {
-		return ebanxCardProcessor( submitData );
+		return ebanxCardProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } );
 	}
 
 	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
