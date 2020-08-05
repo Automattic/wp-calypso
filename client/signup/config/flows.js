@@ -18,7 +18,6 @@ function getCheckoutUrl( dependencies, localeSlug ) {
 	// Append the locale slug for the userless checkout page.
 	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
 		checkoutURL += `/${ localeSlug }`;
-		
 	}
 
 	return addQueryArgs(

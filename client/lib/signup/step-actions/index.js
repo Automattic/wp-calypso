@@ -248,7 +248,7 @@ function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSitePara
 		siteSlug: 'no-site',
 	};
 
-	return defer( () => callback( undefined, providedDependencies ) );
+	callback( undefined, providedDependencies );
 }
 
 export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
@@ -695,31 +695,6 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
 	if ( 'onboarding-registrationless' !== nextProps.flowName ) {
-		return;
-	}
-
-	const { submitSignupStep } = nextProps;
-	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
-	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
-	const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
-
-	if ( isPurchasingItem ) {
-		submitSignupStep(
-			{ stepName },
-			{ bearer_token: null, username: null, marketing_price_group: null }
-		);
-		recordExcludeStepEvent( stepName, null );
-
-		const fulfilledDependencies = [ 'bearer_token', 'username', 'marketing_price_group' ];
-
-		if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-			flows.excludeStep( stepName );
-		}
-	}
-}
-
-export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
-	if ( 'onboarding-new' !== nextProps.flowName ) {
 		return;
 	}
 
