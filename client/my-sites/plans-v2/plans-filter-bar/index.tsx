@@ -11,18 +11,13 @@ import { translate } from 'i18n-calypso';
 import SegmentedControl from 'components/segmented-control';
 import SelectDropdown from 'components/select-dropdown';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
+import type { Duration, ProductType } from '../types';
+import { ALL, PERFORMANCE, SECURITY } from '../constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-type ProductTypeFilter = ALL | PERFORMANCE | SECURITY;
-type DurationTypeFilter = TERM_MONTHLY | TERM_ANNUALLY;
-
-const ALL = 'all';
-const PERFORMANCE = 'performance';
-const SECURITY = 'security';
 
 const productTypeOptions = {
 	[ SECURITY ]: {
@@ -39,11 +34,19 @@ const productTypeOptions = {
 	},
 };
 
-const PlansFilterBar = () => {
-	// TODO: since the duration or duration will be store in the URL, we need to
-	// replace this internal state and use the path to get it and set it
-	const [ duration, setDuration ] = useState< DurationTypeFilter >( TERM_ANNUALLY );
-	const [ productType, setProductType ] = useState< ProductTypeFilter >( SECURITY );
+interface Props {
+	duration: Duration;
+	productType: ProductType;
+	onDurationChange: Function;
+	onProductTypeChange: Function;
+}
+
+const PlansFilterBar = ( {
+	duration,
+	productType,
+	onDurationChange,
+	onProductTypeChange,
+}: Props ) => {
 	return (
 		<div className="plans-filter-bar">
 			<SelectDropdown selectedText={ productTypeOptions[ productType ].label }>
@@ -51,7 +54,7 @@ const PlansFilterBar = () => {
 					<SelectDropdown.Item
 						key={ option.id }
 						selected={ productType === option.id }
-						onClick={ () => setProductType( option.id ) }
+						onClick={ () => onProductTypeChange( option.id ) }
 					>
 						{ option.label }
 					</SelectDropdown.Item>
@@ -59,14 +62,14 @@ const PlansFilterBar = () => {
 			</SelectDropdown>
 			<SegmentedControl primary={ true }>
 				<SegmentedControl.Item
-					onClick={ () => setDuration( TERM_MONTHLY ) }
+					onClick={ () => onDurationChange( TERM_MONTHLY ) }
 					selected={ duration === TERM_MONTHLY }
 				>
 					{ translate( 'Monthly' ) }
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
-					onClick={ () => setDuration( TERM_ANNUALLY ) }
+					onClick={ () => onDurationChange( TERM_ANNUALLY ) }
 					selected={ duration === TERM_ANNUALLY }
 				>
 					{ translate( 'Yearly' ) }
