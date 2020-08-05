@@ -23,15 +23,16 @@ references:
       CONFIG_ENV: release
       DETECT_CHROMEDRIVER_VERSION: 'false'
       NODE_ARGS: --max_old_space_size=3072
-  desktop_machine_defaults: &desktop_machine_defaults
+  desktop_machine_executor_defaults: &desktop_machine_executor_defaults
     working_directory: ~/wp-calypso
+    # Use Linux machine executor, NOT docker image for higher available RAM (7.5GB)
     machine:
       image: ubuntu-1604:201903-01
     resource_class: medium
     environment:
       CONFIG_ENV: release
       DETECT_CHROMEDRIVER_VERSION: 'false'
-      NODE_ARGS: --max_old_space_size=8192
+      NODE_ARGS: --max_old_space_size=6144
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -644,7 +645,7 @@ jobs:
           webhook: << parameters.slack-webhook >>
 
   wp-desktop-source:
-    <<: *desktop_machine_defaults
+    <<: *desktop_machine_executor_defaults
     environment:
       VERSION: << pipeline.git.tag >>
     steps:
@@ -657,13 +658,19 @@ jobs:
                 command: cd desktop/bin && node validate_tag.js $VERSION
       # - run: *update-node
       - run:
-          name: Install Dependencies
+          name: Install Node
           command: |
             set +e
             set +x
             export NVM_DIR="/opt/circleci/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm install
+            nvm use
+      - run:
+          name: Install Dependencies
+          command: |
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm use
             npm install -g yarn
             yarn install --frozen-lockfile
@@ -674,6 +681,8 @@ jobs:
           name: Build Desktop Source
           no_output_timeout: 15m
           command: |
+            # Cannot resolve pre-installed NVM_DIR on Linux machine executor:
+            # https://discuss.circleci.com/t/circleci-forgetting-node-version-on-machine-executor/28813
             set +e
             set +x
             export NVM_DIR="/opt/circleci/.nvm"
