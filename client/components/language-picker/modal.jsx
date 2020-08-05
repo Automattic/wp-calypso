@@ -37,7 +37,7 @@ import getLocalizedLanguageNames from 'state/selectors/get-localized-language-na
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getLanguage, isDefaultLocale, isMagnificentLocale } from 'lib/i18n-utils/utils';
+import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils/utils';
 
 /**
  * Style dependencies
@@ -229,8 +229,8 @@ export class LanguagePickerModal extends PureComponent {
 		return Math.floor( wrapperWidth / wrapperChildWidth );
 	}
 
-	getShouldRenderNoticeForNonMagnificentLocale( langSlug ) {
-		return ! isDefaultLocale( langSlug ) && ! isMagnificentLocale( langSlug );
+	getShouldRenderNoticeForIncompleteLocale( langSlug ) {
+		return ! isDefaultLocale( langSlug ) && ! isTranslatedIncompletely( langSlug );
 	}
 
 	getIncompleteLocaleNoticeMessage( langSlug ) {
@@ -470,7 +470,7 @@ export class LanguagePickerModal extends PureComponent {
 				<span className={ classes } lang={ language.langSlug }>
 					{ language.name }
 
-					{ this.getShouldRenderNoticeForNonMagnificentLocale( language.langSlug ) && (
+					{ this.getShouldRenderNoticeForIncompleteLocale( language.langSlug ) && (
 						<LanguagePickerItemTooltip langSlug={ language.langSlug }>
 							{ this.getIncompleteLocaleNoticeMessage( language.langSlug ) }
 						</LanguagePickerItemTooltip>
@@ -532,7 +532,7 @@ export class LanguagePickerModal extends PureComponent {
 	renderIncompleteLocaleNotice() {
 		const { selectedLanguageSlug, useFallbackForIncompleteLanguages } = this.state;
 
-		if ( ! this.getShouldRenderNoticeForNonMagnificentLocale( selectedLanguageSlug ) ) {
+		if ( ! this.getShouldRenderNoticeForIncompleteLocale( selectedLanguageSlug ) ) {
 			return null;
 		}
 

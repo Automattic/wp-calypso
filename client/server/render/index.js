@@ -14,7 +14,7 @@ import fs from 'fs';
  * Internal dependencies
  */
 import config from 'config';
-import { isDefaultLocale, isLocaleRtl, isMagnificentLocale } from 'lib/i18n-utils';
+import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -171,7 +171,8 @@ const getLanguageManifest = ( langSlug, target ) => {
 
 export function attachI18n( context ) {
 	const shouldUseFallbackLocale =
-		context.user?.use_fallback_for_incomplete_languages && ! isMagnificentLocale( context.lang );
+		context.user?.use_fallback_for_incomplete_languages &&
+		! isTranslatedIncompletely( context.lang );
 	const langSlug = shouldUseFallbackLocale ? config( 'i18n_default_locale_slug' ) : context.lang;
 
 	if ( ! isDefaultLocale( langSlug ) ) {
