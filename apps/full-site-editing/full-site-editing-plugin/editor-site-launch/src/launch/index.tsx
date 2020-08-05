@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { EntityProvider } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
@@ -56,7 +57,9 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	return (
 		<div className="nux-launch">
-			<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
+			<EntityProvider kind="root" type="site">
+				<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
+			</EntityProvider>
 		</div>
 	);
 };
