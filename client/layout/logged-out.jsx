@@ -105,6 +105,7 @@ const LayoutLoggedOut = ( {
 		masterbar = (
 			<MasterbarLoggedOut
 				title={ section.title }
+				sectionName={ section.name }
 				isCheckout={ isCheckout }
 				redirectUri={ redirectUri }
 			/>
