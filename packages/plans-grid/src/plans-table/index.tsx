@@ -21,6 +21,7 @@ export interface Props {
 	onPlanSelect: ( planSlug: string ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
+	disabledPlans?: { [ planSlug: string ]: string };
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
@@ -28,6 +29,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	onPlanSelect,
 	onPickDomainClick,
 	currentDomain,
+	disabledPlans,
 } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
@@ -52,6 +54,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							onSelect={ onPlanSelect }
 							onPickDomainClick={ onPickDomainClick }
 							onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
+							disabledLabel={ disabledPlans?.[ plan.storeSlug ] }
 						></PlanItem>
 					)
 			) }

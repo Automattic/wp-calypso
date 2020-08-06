@@ -101,6 +101,7 @@ export interface Props {
 	onPickDomainClick?: () => void;
 	onToggleExpandAll?: () => void;
 	allPlansExpanded: boolean;
+	disabledLabel?: string;
 }
 
 const PlanItem: React.FunctionComponent< Props > = ( {
@@ -115,6 +116,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	onPickDomainClick,
 	onToggleExpandAll,
 	allPlansExpanded,
+	disabledLabel,
 } ) => {
 	const { __ } = useI18n();
 
@@ -170,20 +172,32 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								} }
 								isPrimary
 								isLarge
+								disabled={ !! disabledLabel }
 							>
 								<span>{ __( 'Choose' ) }</span>
 							</Button>
 						</div>
-						<div className="plan-item__domain">
-							{ domainMessage && (
-								<Button className={ domainMessage.className } onClick={ onPickDomainClick } isLink>
-									{ domainMessage.icon }
-									{ domainMessage.domainMessage }
-								</Button>
-							) }
-						</div>
 						<div className="plan-item__features">
 							<ul className="plan-item__feature-item-group">
+								<li className="plan-item__feature-item">
+									{ disabledLabel ? (
+										<span className="plan-item__disabled-message">
+											{ CrossIcon }
+											{ disabledLabel }
+										</span>
+									) : (
+										domainMessage && (
+											<Button
+												className={ domainMessage.className }
+												onClick={ onPickDomainClick }
+												isLink
+											>
+												{ domainMessage.icon }
+												{ domainMessage.domainMessage }
+											</Button>
+										)
+									) }
+								</li>
 								{ features.map( ( feature, i ) => (
 									<li key={ i } className="plan-item__feature-item">
 										{ TickIcon } { feature }
