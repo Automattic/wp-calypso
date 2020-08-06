@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, get, includes, pick, values, isFunction } from 'lodash';
+import { difference, get, has, includes, pick, values, isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -186,6 +186,10 @@ export function filterPlansBySiteAndProps(
  * @returns {string}          Monthly version slug or "" if the slug could not be converted.
  */
 export function getMonthlyPlanByYearly( planSlug ) {
+	const plan = getPlan( planSlug );
+	if ( has( plan, 'getMonthlySlug' ) ) {
+		return plan.getMonthlySlug();
+	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
 }
 
@@ -197,6 +201,10 @@ export function getMonthlyPlanByYearly( planSlug ) {
  * @returns {string}          Yearly version slug or "" if the slug could not be converted.
  */
 export function getYearlyPlanByMonthly( planSlug ) {
+	const plan = getPlan( planSlug );
+	if ( has( plan, 'getAnnualSlug' ) ) {
+		return plan.getAnnualSlug();
+	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
 }
 
