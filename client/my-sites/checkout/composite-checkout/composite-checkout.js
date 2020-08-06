@@ -57,6 +57,7 @@ import {
 	existingCardProcessor,
 	payPalProcessor,
 	genericRedirectProcessor,
+	ebanxTefProcessor,
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
@@ -484,6 +485,8 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'sofort', transactionData, dataForRedirectProcessor ),
 			eps: ( transactionData ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForRedirectProcessor ),
+			'ebanx-tef': ( transactionData ) =>
+				ebanxTefProcessor( transactionData, dataForRedirectProcessor ),
 			'full-credits': ( transactionData ) =>
 				fullCreditsProcessor( transactionData, dataForProcessor, transactionOptions ),
 			'existing-card': ( transactionData ) =>

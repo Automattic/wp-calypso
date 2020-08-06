@@ -285,6 +285,10 @@ function useCreateEps( {
 	);
 }
 
+function useCreateEbanxTef( {} ) {
+	// TODO
+}
+
 function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
 	const shouldLoadFullCreditsMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'full-credits' )
@@ -446,6 +450,8 @@ export default function useCreatePaymentMethods( {
 		stripe,
 	} );
 
+	const ebanxTefMethod = useCreateEbanxTef( {} );
+
 	const sofortMethod = useCreateSofort( {
 		onlyLoadPaymentMethods,
 		isStripeLoading,
@@ -504,6 +510,7 @@ export default function useCreatePaymentMethods( {
 		idealMethod,
 		giropayMethod,
 		sofortMethod,
+		ebanxTefMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,

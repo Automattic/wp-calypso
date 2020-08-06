@@ -156,6 +156,15 @@ export async function submitStripeRedirectTransaction( paymentMethodId, transact
 	return submit( formattedTransactionData );
 }
 
+export async function submitEbanxTefTransaction( transactionData, submit ) {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
+	} );
+	debug( 'sending ebanx tef transaction', formattedTransactionData );
+	return submit( formattedTransactionData );
+}
+
 export function submitCreditsTransaction( transactionData, submit, transactionOptions ) {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
