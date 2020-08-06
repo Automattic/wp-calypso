@@ -28,6 +28,15 @@
 	}
 }
 
+.acquire-intent__skip-vertical {
+	// increase specificity
+	&.components-button.is-link {
+		padding: 0;
+		text-decoration: none;
+		color: var( --studio-gray-50 );
+	}
+}
+
 .site-title {
 	@include break-small {
 		display: flex;
