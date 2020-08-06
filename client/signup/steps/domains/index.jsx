@@ -577,7 +577,7 @@ class DomainsStep extends React.Component {
 		const { flowName, isAllDomains, siteType, translate } = this.props;
 
 		if ( isAllDomains ) {
-			return translate( 'Enter a name or keyword to get started.' );
+			return translate( 'Find the domain that defines you' );
 		}
 
 		const subHeaderPropertyName = this.isEligibleVariantForDomainTest()
@@ -601,7 +601,7 @@ class DomainsStep extends React.Component {
 		const { headerText, isAllDomains, siteType, translate } = this.props;
 
 		if ( isAllDomains ) {
-			return translate( 'Add a domain' );
+			return translate( 'Your next big idea starts here' );
 		}
 
 		const headerPropertyName = this.isEligibleVariantForDomainTest()
