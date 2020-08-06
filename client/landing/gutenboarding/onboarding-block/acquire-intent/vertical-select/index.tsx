@@ -35,7 +35,6 @@ interface Props {
 
 const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	const { __ } = useI18n();
-	const inputRef = React.useRef< HTMLInputElement >( null );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
 	const [ suggestions, setSuggestions ] = React.useState< Suggestion[] >( [] );
 	const [ textValue, setTextValue ] = React.useState< string >( '' );
@@ -65,7 +64,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 	const isMobile = useViewportMatch( 'small', '<' );
 
-	const inputText = inputRef?.current?.value ?? '';
+	const inputText = textValue ?? '';
 	const isInputEmpty = ! textValue.length;
 
 	const animatedPlaceholder = useTyper(
@@ -146,9 +145,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		onNext();
 	};
 
-	const handleInputKeyUpEvent = (
-		e: React.KeyboardEvent< HTMLInputElement > | React.ChangeEvent< HTMLInputElement >
-	) => {
+	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
 		const input = e.currentTarget.value.trim();
 		if ( ! input.length ) {
 			resetSiteVertical();
@@ -174,12 +171,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	};
 
 	React.useEffect( () => {
-		if ( isInputEmpty ) {
-			inputRef?.current?.focus();
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
-
-	React.useEffect( () => {
 		const { slug, label } = siteVertical || {};
 		setTextValue( label ?? '' );
 		recordVerticalSelection( slug, label );
@@ -202,25 +193,22 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			<label htmlFor="vertical-input">{ __( 'My site is about' ) } </label>
 			<span className="vertical-select__suggestions-wrapper">
 				{ ! isMobile && <span className="vertical-select__whitespace"></span> }
-				<span className="vertical-select__input-wrapper">
-					<TextControl
-						id="vertical-input"
-						placeholder={ animatedPlaceholder }
-						data-hj-whitelist
-						tabIndex={ 0 }
-						spellCheck={ false }
-						value={ textValue }
-						ref={ inputRef }
-						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-						className="vertical-select__input"
-						onKeyDown={ handleInputKeyDownEvent }
-						onKeyUp={ handleInputKeyUpEvent }
-						onFocus={ () => setIsFocused( true ) }
-						onChange={ setTextValue }
-						onBlur={ selectLastInputValue }
-					/>
-				</span>
-				{ !! suggestions.length && (
+				<TextControl
+					id="vertical-input"
+					placeholder={ animatedPlaceholder }
+					data-hj-whitelist
+					tabIndex={ 0 }
+					spellCheck={ false }
+					value={ textValue }
+					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+					className="vertical-select__input"
+					onKeyDown={ handleInputKeyDownEvent }
+					onKeyUp={ handleInputKeyUpEvent }
+					onFocus={ () => setIsFocused( true ) }
+					onChange={ setTextValue }
+					onBlur={ selectLastInputValue }
+				/>
+				{ !! suggestions.length && isFocused && (
 					<div className="vertical-select__suggestions">
 						<Suggestions
 							ref={ suggestionRef }

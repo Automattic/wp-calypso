@@ -71,12 +71,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	// declare UI elements here to avoid duplication when returning for mobile/desktop layouts
-	const siteTitleInput = (
-		<SiteTitle
-			isVisible={ showSiteTitleAndNext }
-			isMobile={ isMobile }
-			onSubmit={ handleSiteTitleSubmit }
-		/>
+	const siteTitleInput = showSiteTitleAndNext && (
+		<SiteTitle isVisible={ showSiteTitleAndNext } onSubmit={ handleSiteTitleSubmit } />
 	);
 	const verticalSelect = <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } />;
 	const nextStepButton = (

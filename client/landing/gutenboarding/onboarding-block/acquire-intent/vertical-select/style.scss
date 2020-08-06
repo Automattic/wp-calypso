@@ -9,10 +9,6 @@
 	display: flex;
 	flex-direction: column;
 
-	&--with-suggestions {
-		flex-grow: 1;
-	}
-
 	@include break-small {
 		display: block;
 		margin-top: 0;
@@ -62,8 +58,8 @@
 .vertical-select__suggestions {
 	position: absolute;
 	left: -16px;
-	margin-top: 20px;
-	min-height: 100px;
+	margin-top: -20px;
+	min-height: 300px;
 	max-height: calc( 100% - 50px );
 	overflow: auto;
 
