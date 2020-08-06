@@ -261,7 +261,7 @@ async function createAccountCallback( response ) {
 	} );
 }
 
-async function createAccount( select ) {
+async function createAccount() {
 	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
 
 	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
@@ -328,9 +328,7 @@ export async function wpcomTransaction( payload, transactionOptions ) {
 	const { createUserAndSiteBeforeTransaction } = transactionOptions;
 
 	if ( createUserAndSiteBeforeTransaction ) {
-		const { select } = defaultRegistry;
-
-		return createAccount( select ).then( ( response ) => {
+		return createAccount().then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then
@@ -357,9 +355,7 @@ export async function wpcomPayPalExpress( payload, transactionOptions ) {
 	const { createUserAndSiteBeforeTransaction } = transactionOptions;
 
 	if ( createUserAndSiteBeforeTransaction ) {
-		const { select } = defaultRegistry;
-
-		return createAccount( select ).then( ( response ) => {
+		return createAccount().then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then

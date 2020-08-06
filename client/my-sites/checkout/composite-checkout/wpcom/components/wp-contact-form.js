@@ -169,7 +169,12 @@ function ContactDetailsContainer( {
 	isLoggedOutCart,
 } ) {
 	const domainNames = useDomainNamesInCart();
-	const { updateDomainContactFields, updateCountryCode, updatePostalCode, updateEmail } = useDispatch( 'wpcom' );
+	const {
+		updateDomainContactFields,
+		updateCountryCode,
+		updatePostalCode,
+		updateEmail,
+	} = useDispatch( 'wpcom' );
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );

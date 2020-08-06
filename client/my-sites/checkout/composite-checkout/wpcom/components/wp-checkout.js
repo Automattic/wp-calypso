@@ -217,7 +217,7 @@ export default function WPCheckout( {
 				return false;
 			}
 		}
-		
+
 		if ( ! areDomainDetailsNeededForTransaction ) {
 			return isCompleteAndValid( contactInfo );
 		} else if ( areThereDomainProductsInCart ) {
@@ -371,7 +371,10 @@ export default function WPCheckout( {
 								/>
 							}
 							completeStepContent={
-								<WPContactFormSummary showDomainContactSummary={ shouldShowDomainContactFields } isLoggedOutCart={ isLoggedOutCart } />
+								<WPContactFormSummary
+									showDomainContactSummary={ shouldShowDomainContactFields }
+									isLoggedOutCart={ isLoggedOutCart }
+								/>
 							}
 							titleContent={ <ContactFormTitle /> }
 							editButtonText={ translate( 'Edit' ) }
