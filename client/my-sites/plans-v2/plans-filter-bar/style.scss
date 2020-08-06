@@ -43,11 +43,12 @@
 		}
 
 		.select-dropdown__item:hover {
-			color: inherit;
+			color: currentColor;
 			background-color: var( --studio-gray-0 );
 		}
 
 		.select-dropdown__item.is-selected {
+			color: var( --color-text-inverted );
 			background-color: var( --color-primary );
 		}
 
