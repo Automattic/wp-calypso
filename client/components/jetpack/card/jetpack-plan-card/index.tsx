@@ -16,13 +16,17 @@ import JetpackProductCard, {
  */
 import './style.scss';
 
-type Props = JetpackProductCardProps;
+type Props = JetpackProductCardProps & {
+	deprecated?: boolean;
+};
 
 const JetpackPlanCard: FunctionComponent< Props > = ( props ) => {
 	return (
 		<JetpackProductCard
 			{ ...props }
-			className={ classNames( props.className, 'jetpack-plan-card' ) }
+			className={ classNames( props.className, 'jetpack-plan-card', {
+				'is-deprecated': props.deprecated,
+			} ) }
 		/>
 	);
 };

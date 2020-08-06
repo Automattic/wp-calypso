@@ -39,3 +39,11 @@ export const planCardWithDiscount = {
 	discountedPrice: 80,
 	withStartingPrice: true,
 };
+
+export const deprecatedPlanCard = {
+	...planCard,
+	badgeLabel: 'Best value',
+	discountedPrice: 80,
+	withStartingPrice: true,
+	deprecated: true,
+};
