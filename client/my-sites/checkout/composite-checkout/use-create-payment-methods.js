@@ -38,6 +38,10 @@ import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from './payment-methods/credit-card';
+import {
+	createEbanxTefPaymentMethodStore,
+	createEbanxTefMethod,
+} from './payment-methods/ebanx-tef';
 
 function useCreatePayPal( { onlyLoadPaymentMethods } ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
@@ -285,8 +289,23 @@ function useCreateEps( {
 	);
 }
 
-function useCreateEbanxTef( {} ) {
-	// TODO
+function useCreateEbanxTef( { onlyLoadPaymentMethods } ) {
+	console.log( 'XYZZY useCreateEbanxTef' );
+	// If this PM is allowed by props and allowed by the cart, then create the PM.
+	const isMethodAllowed = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'ebanx-tef' )
+		: true;
+	const shouldLoad = isMethodAllowed;
+	const paymentMethodStore = useMemo( () => createEbanxTefPaymentMethodStore(), [] );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createEbanxTefMethod( {
+						store: paymentMethodStore,
+				  } )
+				: null,
+		[ shouldLoad, paymentMethodStore ]
+	);
 }
 
 function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
@@ -450,7 +469,7 @@ export default function useCreatePaymentMethods( {
 		stripe,
 	} );
 
-	const ebanxTefMethod = useCreateEbanxTef( {} );
+	const ebanxTefMethod = useCreateEbanxTef( { onlyLoadPaymentMethods } );
 
 	const sofortMethod = useCreateSofort( {
 		onlyLoadPaymentMethods,

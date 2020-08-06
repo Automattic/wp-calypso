@@ -407,7 +407,7 @@ export default function CompositeCheckout( {
 		( onlyLoadPaymentMethods
 			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
 			: isApplePayLoading );
-
+	console.log( 'XYZZY all payment method objects', paymentMethodObjects );
 	const paymentMethods = arePaymentMethodsLoading
 		? []
 		: filterAppropriatePaymentMethods( {
