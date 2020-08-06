@@ -15,3 +15,39 @@
 .quick-start-video__all {
 	font-size: $font-body-small;
 }
+
+
+.quick-start-video__content {
+	display: flex;
+
+	.quick-start-video__content-wrapper {
+		flex: 70%;
+	}
+
+	.quick-start-video__content-illustration {
+		flex: 30%;
+		margin-left: 1rem;
+		text-align: center;
+	}
+
+	h3 {
+		font-weight: 600;
+		font-size: $font-body;
+		margin-bottom: 8px;
+	}
+
+	.quick-start-video__content-link {
+		margin-bottom: 12px;
+		display: flex;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		.gridicon,
+		.material-icon {
+			margin-right: 0.5rem;
+			fill: var( --color-neutral-60 );
+		}
+	}
+}
