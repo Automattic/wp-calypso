@@ -4,6 +4,7 @@
 .dialog__backdrop,
 .dialog__backdrop.card {
 	background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
+	backdrop-filter: blur( 6px ); // blur everything under the backdrop
 	align-items: center;
 	bottom: 0;
 	left: 0;
@@ -12,7 +13,7 @@
 	position: fixed;
 	right: 0;
 	top: 46px;
-	transition: background-color 0.2s ease-in;
+	transition: background-color 0.2s ease-in backdrop-filter 0.2s ease-in;
 	z-index: z-index(
         'root',
         '.dialog__backdrop'
