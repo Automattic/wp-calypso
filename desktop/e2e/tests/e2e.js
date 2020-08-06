@@ -115,7 +115,6 @@ describe( 'Publish a New Post', function () {
 	} );
 } );
 
-// FIXME: flakey, should fix
 describe( 'Can Log Out', function () {
 	this.timeout( 30000 );
 
@@ -135,7 +134,7 @@ describe( 'Can Log Out', function () {
 } );
 
 // FIXME: flakey, should fix
-describe( 'Can Sign up', function () {
+describe.skip( 'Can Sign up', function () {
 	this.timeout( 90000 );
 	const blogName = dataHelper.getNewBlogName();
 	const emailAddress = blogName + '@e2edesktop.test';
