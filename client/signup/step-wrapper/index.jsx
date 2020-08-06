@@ -52,7 +52,7 @@ class StepWrapper extends Component {
 				stepName={ this.props.stepName }
 				stepSectionName={ this.props.stepSectionName }
 				backUrl={ this.props.backUrl }
-				rel={ this.props.externalBackUrl ? 'external' : '' }
+				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
 			/>

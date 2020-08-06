@@ -665,7 +665,7 @@ class DomainsStep extends React.Component {
 
 		const { flowName, isAllDomains, translate, sites } = this.props;
 		const hasSite = Object.keys( sites ).length > 0;
-		let backUrl, backLabelText;
+		let backUrl, backLabelText, isExternalBackUrl;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
 			backUrl = getStepUrl(
@@ -693,9 +693,7 @@ class DomainsStep extends React.Component {
 		};
 		const source = get( this.props, 'queryObject.source' );
 
-		let isExternalBackUrl;
-
-		if ( backUrlSourceOverrides[ source ] ) {
+		if ( source && backUrlSourceOverrides[ source ] ) {
 			backUrl = backUrlSourceOverrides[ source ];
 			backLabelText = translate( 'Back' );
 
@@ -712,10 +710,10 @@ class DomainsStep extends React.Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				backUrl={ backUrl }
-				externalBackUrl={ isExternalBackUrl }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
 				subHeaderText={ fallbackSubHeaderText }
+				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
