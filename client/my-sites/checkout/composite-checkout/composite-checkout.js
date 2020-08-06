@@ -465,7 +465,7 @@ export default function CompositeCheckout( {
 			'apple-pay': ( transactionData ) =>
 				applePayProcessor( transactionData, dataForProcessor, transactionOptions ),
 			'free-purchase': ( transactionData ) =>
-				freePurchaseProcessor( transactionData, dataForProcessor, transactionOptions ),
+				freePurchaseProcessor( transactionData, dataForProcessor ),
 			card: ( transactionData ) =>
 				multiPartnerCardProcessor( transactionData, dataForProcessor, transactionOptions ),
 			alipay: ( transactionData ) =>
