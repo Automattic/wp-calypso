@@ -16,7 +16,6 @@ import config from 'config';
 import { Button } from '@automattic/components';
 import canCurrentUserForSites from 'state/selectors/can-current-user-for-sites';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { domainAddNew } from 'my-sites/domains/paths';
 import DocumentHead from 'components/data/document-head';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
@@ -62,7 +61,7 @@ class ListAll extends Component {
 
 	clickAddDomain = () => {
 		this.props.addDomainClick();
-		page( domainAddNew( '' ) );
+		page( '/start/add-domain' );
 	};
 
 	handleDomainItemClick = ( domain ) => {
