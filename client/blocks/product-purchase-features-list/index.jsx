@@ -103,10 +103,13 @@ export class ProductPurchaseFeaturesList extends Component {
 			scheduleId,
 		} = this.props;
 
-		const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
-		const businessOnboardingExpiration = this.props.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE );
+		let hasBusinessOnboardingExpired;
+		if ( currentPlan ) {
+			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
+			const businessOnboardingExpiration = this.props.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE );
 
-		const hasBusinessOnboardingExpired = businessOnboardingExpiration.diff( expiryDateMoment ) < 0;
+			hasBusinessOnboardingExpired = businessOnboardingExpiration.diff( expiryDateMoment ) < 0;
+		}
 
 		const hasIncludedSessions = scheduleId === 1;
 		const hasPurchsedSessions = scheduleId > 1;
