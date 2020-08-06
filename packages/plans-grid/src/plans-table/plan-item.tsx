@@ -1,17 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
-import { useI18n } from '@automattic/react-i18n';
-import { sprintf } from '@wordpress/i18n';
+import * as React from 'react';
+import classNames from 'classnames';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
-import classNames from 'classnames';
 import { useViewportMatch } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 // TODO: remove when all needed core types are available
@@ -120,7 +116,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const [ isOpenInternalState, setIsOpenInternalState ] = useState( false );
+	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );
 
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
@@ -129,7 +125,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
-	useEffect( () => {
+	React.useEffect( () => {
 		setIsOpenInternalState( allPlansExpanded );
 	}, [ allPlansExpanded ] );
 
