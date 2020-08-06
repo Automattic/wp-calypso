@@ -180,7 +180,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			}
 		} );
 	};
-	
+
 	renderContactDetailsEmailPhone() {
 		const { translate, isLoggedOutCart } = this.props;
 
