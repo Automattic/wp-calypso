@@ -189,7 +189,7 @@ class InlineHelpPopover extends Component {
 					{
 						[ VIEW_CONTACT ]: (
 							<Fragment>
-								<h2 className="inline-help__title" tabIndex="-1">{ __( 'Contact Us' ) }</h2>
+								<h2 className="inline-help__title" tabIndex="-1">{ __( 'Get Support' ) }</h2>
 								<InlineHelpContactView />
 							</Fragment>
 						),
