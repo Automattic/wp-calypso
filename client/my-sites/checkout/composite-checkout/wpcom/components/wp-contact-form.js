@@ -28,6 +28,7 @@ import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
+	needsExplicitAlternateEmailForGSuite,
 } from 'lib/cart-values/cart-items';
 import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
 import { getTopLevelOfTld } from 'lib/domains';
@@ -263,12 +264,16 @@ function DomainContactDetails( {
 		! hasDomainRegistration( responseCart ) &&
 		! hasTransferProduct( responseCart );
 	const getIsFieldDisabled = () => isDisabled;
+	const needsAlternateEmailForGSuite =
+		needsOnlyGoogleAppsDetails &&
+		needsExplicitAlternateEmailForGSuite( responseCart, contactDetails );
 	const tlds = getAllTopLevelTlds( domainNames );
 
 	return (
 		<React.Fragment>
 			<ManagedContactDetailsFormFields
 				needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
+				needsAlternateEmailForGSuite={ needsAlternateEmailForGSuite }
 				contactDetails={ contactDetails }
 				contactDetailsErrors={
 					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}

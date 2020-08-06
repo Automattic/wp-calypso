@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal Dependencies
@@ -66,6 +67,8 @@ class InlineHelpPopover extends Component {
 		activeSecondaryView: '',
 	};
 
+	secondaryViewRef = React.createRef();
+
 	openResultView = ( event ) => {
 		event.preventDefault();
 		this.openSecondaryView( VIEW_RICH_RESULT );
@@ -95,7 +98,14 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
 			location: 'inline-help-popover',
 		} );
-		this.setState( { showSecondaryView: true } );
+		// Focus the secondary popover contents after the state is set
+		this.setState( { showSecondaryView: true }, () => {
+			const contentTitle = this.secondaryViewRef.current.querySelector( 'h2' );
+
+			if ( contentTitle ) {
+				contentTitle.focus();
+			}
+		} );
 	};
 
 	closeSecondaryView = () => {
@@ -149,7 +159,11 @@ class InlineHelpPopover extends Component {
 			<Fragment>
 				<QuerySupportTypes />
 				<div className="inline-help__search">
-					<InlineHelpSearchCard onSelect={ this.openResultView } query={ this.props.searchQuery } />
+					<InlineHelpSearchCard
+						onSelect={ this.openResultView }
+						query={ this.props.searchQuery }
+						isVisible={ ! this.state.showSecondaryView }
+					/>
 					<InlineHelpSearchResults
 						onSelect={ this.openResultView }
 						onAdminSectionSelect={ this.setAdminSection }
@@ -169,10 +183,17 @@ class InlineHelpPopover extends Component {
 			`inline-help__${ this.state.activeSecondaryView }`
 		);
 		return (
-			<div className={ classes }>
+			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
 					{
-						[ VIEW_CONTACT ]: <InlineHelpContactView />,
+						[ VIEW_CONTACT ]: (
+							<Fragment>
+								<h2 className="inline-help__title" tabIndex="-1">
+									{ __( 'Get Support' ) }
+								</h2>
+								<InlineHelpContactView />
+							</Fragment>
+						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
 								result={ selectedResult }
@@ -182,7 +203,7 @@ class InlineHelpPopover extends Component {
 						),
 					}[ this.state.activeSecondaryView ]
 				}
-			</div>
+			</section>
 		);
 	};
 

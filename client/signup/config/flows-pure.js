@@ -286,6 +286,21 @@ export function generateFlows( {
 		lastModified: '2019-06-21',
 	};
 
+	flows[ 'add-domain' ] = {
+		steps: [
+			'select-domain',
+			'site-or-domain',
+			'site-picker',
+			'themes',
+			'plans-site-selected',
+			'user',
+		],
+		destination: getThankYouNoSiteDestination,
+		description: 'An approach to add a domain via the all domains view',
+		disallowResume: true,
+		lastModified: '2020-07-30',
+	};
+
 	flows[ 'site-selected' ] = {
 		steps: [ 'themes-site-selected', 'plans-site-selected' ],
 		destination: getSiteDestination,

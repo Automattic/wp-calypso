@@ -58,6 +58,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		getIsFieldDisabled: PropTypes.func,
 		userCountryCode: PropTypes.string,
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
+		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		translate: PropTypes.func,
 	};
@@ -71,6 +72,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		getIsFieldDisabled: () => {},
 		onContactDetailsChange: () => {},
 		needsOnlyGoogleAppsDetails: false,
+		needsAlternateEmailForGSuite: false,
 		hasCountryStates: false,
 		translate: ( x ) => x,
 		userCountryCode: 'US',
@@ -321,12 +323,24 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 
 	renderAlternateEmailFieldForGSuite() {
+		let customErrorMessage = this.props.contactDetailsErrors?.alternateEmail;
+		// We also show 'email' field errors because this field will only be shown
+		// if email is invalid (and email will not be shown) so we should show
+		// those errors somewhere. However, only show them if the `alternateEmail`
+		// has not been entered.
+		if (
+			! customErrorMessage &&
+			this.props.contactDetailsErrors?.email &&
+			! this.props.contactDetails?.alternateEmail?.length > 0
+		) {
+			customErrorMessage = this.props.contactDetailsErrors.email;
+		}
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input
 					label={ this.props.translate( 'Alternate email address' ) }
 					{ ...this.getFieldProps( 'alternate-email', {
-						customErrorMessage: this.props.contactDetailsErrors?.alternateEmail,
+						customErrorMessage,
 					} ) }
 				/>
 			</div>
@@ -366,7 +380,7 @@ export class ManagedContactDetailsFormFields extends Component {
 						}
 					) }
 				</div>
-				{ this.props.needsOnlyGoogleAppsDetails && this.renderAlternateEmailFieldForGSuite() }
+				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
 				{ this.props.needsOnlyGoogleAppsDetails ? (
 					<GSuiteFields

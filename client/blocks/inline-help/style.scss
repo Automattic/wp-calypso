@@ -238,6 +238,11 @@
 }
 
 .inline-help__contact {
+
+	.inline-help__title  {
+		@include hide-content-accessibly;
+	}
+
 	.help-contact__form {
 		margin: 0;
 		padding: 0;
