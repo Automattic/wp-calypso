@@ -7,13 +7,15 @@ import { sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
 import classNames from 'classnames';
-import '../types-patch';
 import { useViewportMatch } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 import type { DomainSuggestions } from '@automattic/data-stores';
+
+// TODO: remove when all needed core types are available
+/*#__PURE__*/ import '../types-patch';
 
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 const CrossIcon = <Icon icon={ close } size={ 17 } />;
