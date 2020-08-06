@@ -58,8 +58,8 @@ Plan or product slug. Can be one of the following:
 - `jetpack_scan_monthly`
 - `jetpack_anti_spam`
 - `jetpack_anti_spam_monthly`
-- `jetpack_all_in_v2`
-- `jetpack_all_in_monthly_v2`
+- `jetpack_complete_v2`
+- `jetpack_complete_monthly_v2`
 - `jetpack_security_v2`
 - `jetpack_security_daily_v2`
 - `jetpack_security_daily_monthly_v2`

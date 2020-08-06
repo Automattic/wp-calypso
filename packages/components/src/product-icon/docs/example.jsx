@@ -81,7 +81,7 @@ function ProductIconExample() {
 			<h3>Jetpack Plan Icons v2</h3>
 			<div style={ wrapperStyle }>
 				<div style={ iconStyle }>
-					<ProductIcon slug="jetpack_all_in_v2" />
+					<ProductIcon slug="jetpack_complete_v2" />
 				</div>
 			</div>
 
