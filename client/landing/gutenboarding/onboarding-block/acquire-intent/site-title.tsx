@@ -7,7 +7,6 @@ import { TextControl } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
-import { _x } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -21,63 +20,52 @@ interface Props {
 	onSubmit: () => void;
 }
 
-/**
- * Shuffles an array in place
- *
- * @param arr the array to shuffle
- */
-function shuffle( arr: string[] ) {
-	return arr.sort( () => ( Math.random() > 0.5 ? -1 : 1 ) );
-}
-
-/* we have them outside ot the component to avoid re-shuffling on every render */
-const siteTitleExamples = shuffle( [
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'The Local Latest', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'North Peak Cycling', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Sunshine Daycare', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Quick Wins Consulting', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Puns and Pedantry', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Yoga For Everyone', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Pugs Wearing Bowties', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Behind the Lens', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Marketing Magic', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Cortado Coffee', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Mumbai Bites', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'RPM Motors', 'sample site title' ),
-	/* translators: This is an example of a site name,
-	   feel free to create your own but please keep it under 22 characters */
-	_x( 'Max’s Burger Bar', 'sample site title' ),
-] );
-
 const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
+	const siteTitleExamples = [
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'The Local Latest', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'North Peak Cycling', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Sunshine Daycare', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Quick Wins Consulting', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Puns and Pedantry', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Yoga For Everyone', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Pugs Wearing Bowties', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Behind the Lens', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Marketing Magic', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Cortado Coffee', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Mumbai Bites', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'RPM Motors', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Max’s Burger Bar', 'sample site title' ),
+	];
 
 	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		// hitting 'Enter' when focused on the input field should direct to next step.
