@@ -96,7 +96,7 @@ main.concierge-support-session.main {
 		margin-bottom: 0.75em;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: $font-title-small;
+			font-size: $font-body;
 		}
 	}
 

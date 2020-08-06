@@ -149,7 +149,7 @@ main.white-glove.main {
 		margin-bottom: 1.6em;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: $font-title-small;
+			font-size: $font-body;
 		}
 	}
 
