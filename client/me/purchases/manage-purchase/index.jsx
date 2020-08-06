@@ -208,10 +208,6 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		if ( isPartnerPurchase( purchase ) ) {
-			return null;
-		}
-
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getEditCardDetailsPath( this.props.siteSlug, purchase );
 			const renewing = isRenewing( purchase );
@@ -237,10 +233,6 @@ class ManagePurchase extends Component {
 	}
 
 	renderRemovePurchaseNavItem() {
-		if ( isPartnerPurchase( this.props.purchase ) ) {
-			return null;
-		}
-
 		return (
 			<RemovePurchase
 				hasLoadedSites={ this.props.hasLoadedSites }
@@ -294,7 +286,7 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) ) {
+		if ( ! isCancelable( purchase ) ) {
 			return null;
 		}
 
@@ -413,9 +405,7 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					{ ! isPartnerPurchase( purchase ) && site && (
-						<ProductLink purchase={ purchase } selectedSite={ site } />
-					) }
+					{ site && <ProductLink purchase={ purchase } selectedSite={ site } /> }
 				</span>
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
