@@ -171,27 +171,33 @@ class Global_Styles {
 					'type'    => 'literal',
 					'default' => array(
 						array(
-							'label'    => 'Playfair Display & Roboto',
-							'headings' => 'Playfair Display',
-							'base'     => 'Roboto',
+							'label'    => 'Cabin & Raleway',
+							'headings' => 'Cabin',
+							'base'     => 'Raleway',
 							'preview'  => 'PLAY_ROBOTO', // See font-pairings-panel-previews.js.
 						),
 						array(
-							'label'    => 'Rubik & Work Sans',
-							'headings' => 'Rubik',
-							'base'     => 'Work Sans',
+							'label'    => 'Chivo & Open Sans',
+							'headings' => 'Chivo',
+							'base'     => 'Open Sans',
 							'preview'  => 'RUBIK_WORK', // See font-pairings-panel-previews.js.
 						),
 						array(
-							'label'    => 'System Font & Libre Baskerville',
-							'headings' => self::SYSTEM_FONT,
-							'base'     => 'Libre Baskerville',
+							'label'    => 'Playfair Display & Fira Sans',
+							'headings' => 'Playfair Display',
+							'base'     => 'Fira Sans',
 							'preview'  => 'SYSTEM_BASKER', // See font-pairings-panel-previews.js.
 						),
 						array(
-							'label'    => 'Space Mono & Lora',
+							'label'    => 'Arvo & Montserrat',
+							'headings' => 'Arvo',
+							'base'     => 'Montserrat',
+							'preview'  => 'SPACE_LORA', // See font-pairings-panel-previews.js.
+						),
+						array(
+							'label'    => 'Space Mono & Roboto',
 							'headings' => 'Space Mono',
-							'base'     => 'Lora',
+							'base'     => 'Roboto',
 							'preview'  => 'SPACE_LORA', // See font-pairings-panel-previews.js.
 						),
 					),
