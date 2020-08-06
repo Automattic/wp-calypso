@@ -126,6 +126,7 @@ export default {
 						-1 === context.pathname.indexOf( 'with-theme' ) &&
 						'variantUserless' === abtest( 'userlessCheckout', countryCode )
 					) {
+						removeWhiteBackground();
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
 						const localeFromParams = context.params.lang;
@@ -135,7 +136,6 @@ export default {
 							stepSectionName,
 							localeFromParams
 						);
-						removeWhiteBackground();
 						window.location = urlWithLocale;
 					} else {
 						removeWhiteBackground();
