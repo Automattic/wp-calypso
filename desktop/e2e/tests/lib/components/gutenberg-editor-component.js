@@ -131,6 +131,14 @@ class GutenbergEditorComponent extends AsyncBaseContainer {
 		const noticeSelector = By.css( '.components-snackbar' );
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, noticeSelector );
 	}
+
+	async launchPreview() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.components-button.editor-post-preview' ),
+			this.explicitWaitMS
+		);
+	}
 }
 
 module.exports = GutenbergEditorComponent;

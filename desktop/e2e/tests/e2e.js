@@ -8,10 +8,9 @@ const SignupStepsPage = require( './lib/pages/signup-steps-page' );
 const NavBarComponent = require( './lib/components/nav-bar-component' );
 const ProfilePage = require( './lib/pages/profile-page' );
 const ReaderPage = require( './lib/pages/reader-page' );
-const ViewPostPage = require( './lib/pages/view-post-page' );
+const PostPreviewComponent = require( './lib/components/post-preview-component' );
 const CheckoutPage = require( './lib/pages/checkout-page' );
 const GutenbergEditorComponent = require( './lib/components/gutenberg-editor-component' );
-const GutenbergEditorSidebarComponent = require( './lib/components/gutenberg-editor-sidebar-component' );
 
 const dataHelper = require( './lib/data-helper' );
 const options = new chrome.Options();
@@ -63,7 +62,7 @@ describe( 'Publish a New Post', function () {
 	this.timeout( 30000 );
 	const blogPostTitle = dataHelper.randomPhrase();
 	const blogPostQuote =
-		'“Whenever you find yourself on the side of the majority, it is time to pause and reflect.”\n- Mark Twain';
+		'“Whenever you find yourself on the side of the majority, it is time to pause and reflect.” Mark Twain';
 
 	step( 'Can navigate to post editor', async function () {
 		const navbarComponent = await NavBarComponent.Expect( driver );
@@ -71,26 +70,43 @@ describe( 'Publish a New Post', function () {
 	} );
 
 	step( 'Can enter post title and content', async function () {
-		this.gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-		await this.gEditorComponent.enterTitle( blogPostTitle );
-		await this.gEditorComponent.enterText( blogPostQuote + '\n' );
+		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+		await gEditorComponent.enterTitle( blogPostTitle );
+		await gEditorComponent.enterText( blogPostQuote + '\n' );
 
-		const errorShown = await this.gEditorComponent.errorDisplayed();
+		const errorShown = await gEditorComponent.errorDisplayed();
 		return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 	} );
 
-	step( 'Can publish and view content', async function () {
-		await this.gEditorComponent.ensureSaved();
-		return await this.gEditorComponent.publish( { visit: true } );
+	step( 'Can publish and preview content', async function () {
+		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+		await gEditorComponent.ensureSaved();
+		await gEditorComponent.publish();
+		return gEditorComponent.launchPreview();
 	} );
 
-	step( 'Can see correct post title', async function () {
-		const viewPostPage = await ViewPostPage.Expect( driver );
-		const postTitle = await viewPostPage.postTitle();
-		return assert.strictEqual(
-			postTitle.toLowerCase(),
-			blogPostTitle.toLowerCase(),
-			'The published blog post title is not correct'
+	step( 'Can see correct page title in preview', async function () {
+		const postPreviewComponent = await PostPreviewComponent.Expect( driver );
+		await postPreviewComponent.displayed();
+		const actualPageTitle = await postPreviewComponent.postTitle();
+		assert.strictEqual(
+			actualPageTitle.toUpperCase(),
+			blogPostTitle.toUpperCase(),
+			'The post preview title is not correct'
+		);
+	} );
+
+	step( 'Can see correct page content in preview', async function () {
+		const postPreviewComponent = await PostPreviewComponent.Expect( driver );
+		const content = await postPreviewComponent.postContent();
+		assert.equal(
+			content.indexOf( blogPostQuote ) > -1,
+			true,
+			'The post preview content (' +
+			content +
+			') does not include the expected content (' +
+			blogPostQuote +
+			')'
 		);
 	} );
 
@@ -100,7 +116,7 @@ describe( 'Publish a New Post', function () {
 } );
 
 // FIXME: flakey, should fix
-describe.skip( 'Can Log Out', function () {
+describe( 'Can Log Out', function () {
 	this.timeout( 30000 );
 
 	step( 'Can view profile to log out', async function () {
@@ -119,7 +135,7 @@ describe.skip( 'Can Log Out', function () {
 } );
 
 // FIXME: flakey, should fix
-describe.skip( 'Can Sign up', function () {
+describe( 'Can Sign up', function () {
 	this.timeout( 90000 );
 	const blogName = dataHelper.getNewBlogName();
 	const emailAddress = blogName + '@e2edesktop.test';

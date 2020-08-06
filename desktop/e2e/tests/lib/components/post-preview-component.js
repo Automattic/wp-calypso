@@ -13,6 +13,12 @@ class PostPreviewComponent extends AsyncBaseContainer {
 		super( driver, By.css( '#main' ) );
 	}
 
+	async postContent() {
+		await PostPreviewComponent.switchToIFrame( this.driver );
+		this.viewPostPage = await ViewPostPage.Expect( this.driver );
+		return await this.viewPostPage.postContent();
+	}
+
 	async postTitle() {
 		await PostPreviewComponent.switchToIFrame( this.driver );
 		this.viewPostPage = await ViewPostPage.Expect( this.driver );
