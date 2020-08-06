@@ -256,7 +256,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		}
 
 		const inserterBlockItemSelector = By.css(
-			`li.block-editor-block-types-list__list-item button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 		const insertedBlockSelector = By.css(
 			`.block-editor-block-list__block.${
@@ -467,7 +467,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async dismissEditorWelcomeModal() {
 		const welcomeModal = By.css( '.components-guide__container' );
-		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, welcomeModal, this.explicitWaitMS / 5 ) ) {
+		if (
+			await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				welcomeModal,
+				this.explicitWaitMS / 5
+			)
+		) {
 			try {
 				// Easiest way to dismiss it, but it might not work in IE.
 				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
