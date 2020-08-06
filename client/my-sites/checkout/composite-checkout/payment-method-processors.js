@@ -78,7 +78,11 @@ export function genericRedirectProcessor(
 	return pending;
 }
 
-export function applePayProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } ) {
+export function applePayProcessor(
+	submitData,
+	{ includeDomainDetails, includeGSuiteDetails },
+	transactionOptions
+) {
 	const pending = submitApplePayPayment(
 		{
 			...submitData,
@@ -87,7 +91,8 @@ export function applePayProcessor( submitData, { includeDomainDetails, includeGS
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 			postalCode: getPostalCode(),
 		},
-		wpcomTransaction
+		wpcomTransaction,
+		transactionOptions
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {

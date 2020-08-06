@@ -88,7 +88,7 @@ export async function submitExistingCardPayment( transactionData, submit, transa
 	return submit( formattedTransactionData, transactionOptions );
 }
 
-export async function submitApplePayPayment( transactionData, submit ) {
+export async function submitApplePayPayment( transactionData, submit, transactionOptions ) {
 	debug( 'formatting apple-pay transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
@@ -96,7 +96,7 @@ export async function submitApplePayPayment( transactionData, submit ) {
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'submitting apple-pay transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
 export async function submitPayPalExpressRequest( transactionData, submit, transactionOptions ) {
