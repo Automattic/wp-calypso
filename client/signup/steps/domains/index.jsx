@@ -48,8 +48,8 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { abtest } from 'lib/abtest';
+import getSitesItems from 'state/selectors/get-sites-items';
 
 /**
  * Style dependencies
@@ -123,7 +123,12 @@ class DomainsStep extends React.Component {
 		this.showTestCopy = false;
 
 		const isEligibleFlowForDomainTest = includes(
-			[ 'onboarding', 'onboarding-plan-first', 'onboarding-passwordless' ],
+			[
+				'onboarding',
+				'onboarding-plan-first',
+				'onboarding-passwordless',
+				'onboarding-registrationless',
+			],
 			props.flowName
 		);
 
@@ -645,7 +650,8 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, translate, hasInitializedSitesBackUrl } = this.props;
+		const { flowName, translate, sites } = this.props;
+		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl, backLabelText;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
@@ -657,8 +663,8 @@ class DomainsStep extends React.Component {
 			);
 		} else if ( this.props.stepSectionName ) {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
-		} else if ( 0 === this.props.positionInFlow && hasInitializedSitesBackUrl ) {
-			backUrl = hasInitializedSitesBackUrl;
+		} else if ( 0 === this.props.positionInFlow && hasSite ) {
+			backUrl = '/sites/';
 			backLabelText = translate( 'Back to My Sites' );
 		}
 
@@ -741,7 +747,7 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
-			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+			sites: getSitesItems( state ),
 		};
 	},
 	{

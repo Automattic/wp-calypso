@@ -277,8 +277,14 @@ function onSelectedSiteAvailable( context, basePath ) {
 function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
 
+	let filteredPathName = contextPath.split( '/no-site' )[ 0 ];
+
+	if ( context.querystring ) {
+		filteredPathName = `${ filteredPathName }?${ context.querystring }`;
+	}
+
 	// This path sets the URL to be visited once a site is selected
-	const basePath = contextPath === '/sites' ? '/home' : contextPath;
+	const basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
 
 	recordPageView( contextPath, sitesPageTitleForAnalytics );
 
@@ -315,8 +321,16 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 
 // Clears selected site from global redux state
 export function noSite( context, next ) {
-	context.store.dispatch( setSelectedSiteId( null ) );
-	return next();
+	const { getState } = getStore( context );
+	const currentUser = getCurrentUser( getState() );
+	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+
+	if ( hasSite ) {
+		siteSelection( context, next );
+	} else {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return next();
+	}
 }
 
 /*
@@ -358,7 +372,8 @@ export function siteSelection( context, next ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 
 		const redirectToPrimary = ( primarySiteSlug ) => {
-			const pathname = context.pathname.replace( /\/?$/, '/' ); // append trailing slash if not present
+			const pathNameSplit = context.pathname.split( '/no-site' )[ 0 ];
+			const pathname = pathNameSplit.replace( /\/?$/, '/' ); // append trailing slash if not present
 			let redirectPath = `${ pathname }${ primarySiteSlug }`;
 			if ( context.querystring ) {
 				redirectPath += `?${ context.querystring }`;
@@ -403,7 +418,15 @@ export function siteSelection( context, next ) {
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) ).then( () => {
-			const freshSiteId = getSiteId( getState(), siteFragment );
+			let freshSiteId = getSiteId( getState(), siteFragment );
+
+			if ( ! freshSiteId ) {
+				const wpcomStagingFragment = siteFragment.replace(
+					/\b.wordpress.com/,
+					'.wpcomstaging.com'
+				);
+				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+			}
 
 			if ( freshSiteId ) {
 				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect

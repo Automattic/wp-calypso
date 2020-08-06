@@ -43,6 +43,7 @@ import { requestGeoLocation } from 'state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
 import Experiment, { DefaultVariation, Variation } from 'components/experiment';
+import user from 'lib/user';
 
 /**
  * Constants
@@ -86,6 +87,7 @@ export default {
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
 			context.pathname.indexOf( 'onboarding-plan-first' ) >= 0 ||
+			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.params.flowName === 'user' ||
@@ -114,6 +116,27 @@ export default {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
 						window.location.replace( window.location.origin + '/new' + window.location.search );
+					} else if (
+						( ! user() || ! user().get() ) &&
+						-1 === context.pathname.indexOf( 'free' ) &&
+						-1 === context.pathname.indexOf( 'personal' ) &&
+						-1 === context.pathname.indexOf( 'premium' ) &&
+						-1 === context.pathname.indexOf( 'business' ) &&
+						-1 === context.pathname.indexOf( 'ecommerce' ) &&
+						-1 === context.pathname.indexOf( 'with-theme' ) &&
+						'variantUserless' === abtest( 'userlessCheckout', countryCode )
+					) {
+						removeWhiteBackground();
+						const stepName = getStepName( context.params );
+						const stepSectionName = getStepSectionName( context.params );
+						const localeFromParams = context.params.lang;
+						const urlWithLocale = getStepUrl(
+							'onboarding-registrationless',
+							stepName,
+							stepSectionName,
+							localeFromParams
+						);
+						window.location = urlWithLocale;
 					} else {
 						removeWhiteBackground();
 						next();

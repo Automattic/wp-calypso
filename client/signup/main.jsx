@@ -13,6 +13,7 @@ import {
 	get,
 	includes,
 	indexOf,
+	isEmpty,
 	isEqual,
 	kebabCase,
 	map,
@@ -78,6 +79,7 @@ import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'signup/p2-processing-screen';
 import user from 'lib/user';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 /**
  * Style dependencies
@@ -273,7 +275,12 @@ class Signup extends React.Component {
 	}
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
-		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
+		const filteredDestination = getDestination(
+			destination,
+			dependencies,
+			this.props.flowName,
+			this.props.localeSlug
+		);
 
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
@@ -415,6 +422,15 @@ class Signup extends React.Component {
 			debug( `Handling regular login` );
 
 			const { bearer_token: bearerToken, username } = dependencies;
+
+			if (
+				isEmpty( bearerToken ) &&
+				isEmpty( username ) &&
+				'onboarding-registrationless' === this.props.flowName
+			) {
+				window.location.href = destination;
+				return;
+			}
 
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
 				this.setState( {
@@ -680,6 +696,7 @@ export default connect(
 			siteType: getSiteType( state ),
 			shouldStepShowSitePreview,
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
+			localeSlug: getCurrentLocaleSlug( state ),
 		};
 	},
 	{

@@ -35,7 +35,7 @@ import { resetSignup, updateDependencies } from 'state/signup/actions';
 import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
 
 interface Dependencies {
-	[ other: string ]: any;
+	[ other: string ]: string[];
 }
 
 interface Flow {
@@ -46,7 +46,7 @@ interface Flow {
 
 interface Step {
 	apiRequestFunction?: (
-		callback: ( errors: any, providedDependencies: Dependencies ) => void,
+		callback: ( errors: Record< string, string >[], providedDependencies: Dependencies ) => void,
 		dependenciesFound: Dependencies,
 		step: Step,
 		reduxStore: Store
@@ -58,6 +58,7 @@ interface Step {
 	optionalDependencies?: string[];
 	providesToken?: boolean;
 	stepName: string;
+	allowUnauthenticated?: boolean;
 }
 
 const steps: Record< string, Step > = untypedSteps;
@@ -277,10 +278,15 @@ export default class SignupFlowController {
 		);
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
+		const allowUnauthenticated = get(
+			getSignupDependencyStore( this._reduxStore.getState() ),
+			'allowUnauthenticated',
+			false
+		);
 
 		return (
 			dependenciesSatisfied &&
-			( providesToken || this._canMakeAuthenticatedRequests() ) &&
+			( allowUnauthenticated || providesToken || this._canMakeAuthenticatedRequests() ) &&
 			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
 		);
 	}

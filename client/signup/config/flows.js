@@ -12,14 +12,21 @@ import user from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
 
-function getCheckoutUrl( dependencies ) {
+function getCheckoutUrl( dependencies, localeSlug ) {
+	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
+
+	// Append the locale slug for the userless checkout page.
+	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
+		checkoutURL += `/${ localeSlug }`;
+	}
+
 	return addQueryArgs(
 		{
 			signup: 1,
 			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 		},
-		`/checkout/${ dependencies.siteSlug }`
+		checkoutURL
 	);
 }
 
@@ -54,6 +61,10 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
+	if ( 'no-site' === dependencies.siteSlug ) {
+		return '/home';
+	}
+
 	return `/home/${ dependencies.siteSlug }`;
 }
 
@@ -93,9 +104,9 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
-function filterDestination( destination, dependencies ) {
+function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
+		return getCheckoutUrl( dependencies, localeSlug );
 	}
 
 	return destination;
