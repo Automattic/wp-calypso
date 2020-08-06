@@ -634,7 +634,9 @@ export function prepareGSuiteContactValidationRequest(
 		contact_information: {
 			firstName: details.firstName?.value ?? '',
 			lastName: details.lastName?.value ?? '',
-			alternateEmail: details.alternateEmail?.value ?? '',
+			...( details.alternateEmail?.value && { alternateEmail: details.alternateEmail?.value } ),
+			...( ! details.alternateEmail?.value &&
+				details.email?.value && { email: details.email?.value } ),
 			postalCode: tryToGuessPostalCodeFormat(
 				details.postalCode?.value ?? '',
 				details.countryCode?.value
@@ -881,10 +883,7 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 			lastName: setValueUnlessTouched( newDetails.lastName, oldDetails.lastName ),
 			organization: setValueUnlessTouched( newDetails.organization, oldDetails.organization ),
 			email: setValueUnlessTouched( newDetails.email, oldDetails.email ),
-			alternateEmail: setValueUnlessTouched(
-				newDetails.alternateEmail || newDetails.email,
-				oldDetails.alternateEmail
-			),
+			alternateEmail: setValueUnlessTouched( newDetails.alternateEmail, oldDetails.alternateEmail ),
 			phone: setValueUnlessTouched( newDetails.phone, oldDetails.phone ),
 			address1: setValueUnlessTouched( newDetails.address1, oldDetails.address1 ),
 			address2: setValueUnlessTouched( newDetails.address2, oldDetails.address2 ),

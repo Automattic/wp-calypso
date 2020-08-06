@@ -28,7 +28,8 @@ export type GSuiteContactValidationRequest = {
 	contact_information: {
 		firstName: string;
 		lastName: string;
-		alternateEmail: string;
+		email?: string;
+		alternateEmail?: string;
 		postalCode: string;
 		countryCode: string;
 	};
