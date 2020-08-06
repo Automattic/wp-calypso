@@ -28,6 +28,7 @@ const InlineHelpSearchCard = ( {
 	location = 'inline-help-popover',
 	setSearchQuery,
 	isSearching,
+	isVisible = true,
 	placeholder,
 	translate = identity,
 } ) => {
@@ -37,14 +38,14 @@ const InlineHelpSearchCard = ( {
 	useEffect( () => {
 		const inputElement = cardRef.current?.searchInput;
 		// Focuses only in the popover.
-		if ( location !== 'inline-help-popover' || ! inputElement ) {
+		if ( location !== 'inline-help-popover' || ! inputElement || ! isVisible ) {
 			return;
 		}
 
 		const timerId = setTimeout( () => inputElement.focus(), 0 );
 
 		return () => window.clearTimeout( timerId );
-	}, [ cardRef, location ] );
+	}, [ cardRef, location, isVisible ] );
 
 	const searchHelperHandler = ( searchQuery ) => {
 		const inputQuery = searchQuery.trim();
