@@ -433,6 +433,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 
 const getPlanJetpackCompleteDetails = () => ( {
 	group: constants.GROUP_JETPACK,
+	type: constants.TYPE_ALL,
 	getTitle: () => translate( 'Jetpack Complete' ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
@@ -1176,6 +1177,7 @@ export const PLANS_LIST = {
 	[ constants.PLAN_JETPACK_SECURITY_DAILY ]: {
 		...getPlanJetpackSecurityDailyDetails(),
 		...getAnnualTimeframe(),
+		getMonthlySlug: () => constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_DAILY,
 		getPathSlug: () => 'security-daily',
 		getProductId: () => 2010,
@@ -1184,6 +1186,7 @@ export const PLANS_LIST = {
 	[ constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: {
 		...getPlanJetpackSecurityDailyDetails(),
 		...getMonthlyTimeframe(),
+		getAnnualSlug: () => constants.PLAN_JETPACK_SECURITY_DAILY,
 		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 		getPathSlug: () => 'security-daily-monthly',
 		getProductId: () => 2011,
@@ -1192,6 +1195,7 @@ export const PLANS_LIST = {
 	[ constants.PLAN_JETPACK_SECURITY_REALTIME ]: {
 		...getPlanJetpackSecurityRealtimeDetails(),
 		...getAnnualTimeframe(),
+		getMonthlySlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME,
 		getPathSlug: () => 'security-realtime',
 		getProductId: () => 2012,
@@ -1200,6 +1204,7 @@ export const PLANS_LIST = {
 	[ constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: {
 		...getPlanJetpackSecurityDailyDetails(),
 		...getMonthlyTimeframe(),
+		getAnnualSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME,
 		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 		getPathSlug: () => 'security-realtime-monthly',
 		getProductId: () => 2013,
