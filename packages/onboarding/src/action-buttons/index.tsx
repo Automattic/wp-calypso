@@ -51,7 +51,6 @@ export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
 		<Button
 			className={ classnames( 'action_buttons__button action-buttons__next', className ) }
 			isPrimary
-			isLarge
 			{ ...buttonProps }
 		>
 			{ children ||
@@ -70,7 +69,6 @@ export const SkipButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	return (
 		<Button
 			className={ classnames( 'action_buttons__button action-buttons__skip', className ) }
-			isLarge
 			{ ...buttonProps }
 		>
 			{ children ||
