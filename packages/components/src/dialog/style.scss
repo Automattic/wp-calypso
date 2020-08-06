@@ -13,7 +13,7 @@
 	position: fixed;
 	right: 0;
 	top: 46px;
-	transition: background-color 0.2s ease-in backdrop-filter 0.2s ease-in;
+	transition: background-color 0.2s ease-in;
 	z-index: z-index(
         'root',
         '.dialog__backdrop'
