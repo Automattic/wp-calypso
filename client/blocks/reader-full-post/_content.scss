@@ -288,18 +288,13 @@
 	}
 
 	.wp-block-latest-posts__list {
-		margin: 0px;
+		margin: 0;
+		margin-bottom: 1.5em;
 		list-style: none;
-		margin-bottom: 4rem;
-		margin-top: 4rem;
 	}
 
 	.wp-block-latest-posts__post-date {
 		display: block;
-	}
-
-	.wp-block-latest-posts li {
-		margin-top: 1.5rem;
 	}
 }
 
