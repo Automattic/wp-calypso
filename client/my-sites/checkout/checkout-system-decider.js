@@ -114,8 +114,7 @@ export default function CheckoutSystemDecider( {
 		purchaseId,
 		isJetpack,
 		isAtomic,
-		isLoggedOutCart,
-		isNoSiteCart
+		isLoggedOutCart
 	);
 
 	useEffect( () => {
@@ -241,8 +240,7 @@ function getCheckoutVariant(
 	purchaseId,
 	isJetpack,
 	isAtomic,
-	isLoggedOutCart,
-	isNoSiteCart
+	isLoggedOutCart
 ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
@@ -335,7 +333,8 @@ function getCheckoutVariant(
 	}
 
 	// Show composite checkout for registrationless checkout users
-	if ( isLoggedOutCart || isNoSiteCart ) {
+	const urlParams = new URLSearchParams( window.location.search );
+	if ( isLoggedOutCart || 'no-user' === urlParams.get( 'cart' ) ) {
 		debug( 'shouldShowCompositeCheckout true' );
 		return 'composite-checkout';
 	}

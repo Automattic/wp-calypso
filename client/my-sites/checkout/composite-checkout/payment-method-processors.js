@@ -255,6 +255,7 @@ export async function payPalProcessor(
 	{ getThankYouUrl, couponItem, includeDomainDetails, includeGSuiteDetails },
 	transactionOptions
 ) {
+	const { createUserAndSiteBeforeTransaction } = transactionOptions;
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 	const successUrl = formatUrl( {
 		protocol,
@@ -267,6 +268,7 @@ export async function payPalProcessor(
 		hostname,
 		port,
 		pathname,
+		query: createUserAndSiteBeforeTransaction ? { cart: 'no-user' } : {},
 	} );
 
 	const pending = submitPayPalExpressRequest(
