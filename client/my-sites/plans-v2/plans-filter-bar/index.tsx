@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import React, { useState } from 'react';
+import React from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -11,28 +10,17 @@ import { translate } from 'i18n-calypso';
 import SegmentedControl from 'components/segmented-control';
 import SelectDropdown from 'components/select-dropdown';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
+import { PRODUCT_TYPE_OPTIONS } from '../constants';
+
+/**
+ * Type dependencies
+ */
 import type { Duration, ProductType } from '../types';
-import { ALL, PERFORMANCE, SECURITY } from '../constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const productTypeOptions = {
-	[ SECURITY ]: {
-		id: SECURITY,
-		label: translate( 'Security' ),
-	},
-	[ PERFORMANCE ]: {
-		id: PERFORMANCE,
-		label: translate( 'Performance' ),
-	},
-	[ ALL ]: {
-		id: ALL,
-		label: translate( 'All' ),
-	},
-};
 
 interface Props {
 	duration: Duration;
@@ -49,8 +37,8 @@ const PlansFilterBar = ( {
 }: Props ) => {
 	return (
 		<div className="plans-filter-bar">
-			<SelectDropdown selectedText={ productTypeOptions[ productType ].label }>
-				{ Object.values( productTypeOptions ).map( ( option ) => (
+			<SelectDropdown selectedText={ PRODUCT_TYPE_OPTIONS[ productType ].label }>
+				{ Object.values( PRODUCT_TYPE_OPTIONS ).map( ( option ) => (
 					<SelectDropdown.Item
 						key={ option.id }
 						selected={ productType === option.id }
