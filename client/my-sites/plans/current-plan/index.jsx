@@ -85,13 +85,9 @@ class CurrentPlan extends Component {
 	}
 
 	isLoading() {
-		const {
-			selectedSite,
-			isRequestingSitePlans: isRequestingPlans,
-			hasAvailableConciergeSessions,
-		} = this.props;
-
-		return ! selectedSite || isRequestingPlans || null === hasAvailableConciergeSessions;
+		const { selectedSite, isRequestingSitePlans: isRequestingPlans, hasAvailableConciergeSessions } = this.props;
+		console.log('hasAvailableConciergeSessions', hasAvailableConciergeSessions);
+		return ! selectedSite || isRequestingPlans || hasAvailableConciergeSessions === null;
 	}
 
 	renderThankYou() {
