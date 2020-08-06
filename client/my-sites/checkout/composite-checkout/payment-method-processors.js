@@ -158,12 +158,17 @@ export async function ebanxCardProcessor(
 
 export async function multiPartnerCardProcessor(
 	submitData,
-	{ includeDomainDetails, includeGSuiteDetails }
+	{ includeDomainDetails, includeGSuiteDetails },
+	transactionOptions
 ) {
 	const paymentPartner = submitData.paymentPartner;
 
 	if ( paymentPartner === 'stripe' ) {
-		return stripeCardProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } );
+		return stripeCardProcessor(
+			submitData,
+			{ includeDomainDetails, includeGSuiteDetails },
+			transactionOptions
+		);
 	}
 
 	if ( paymentPartner === 'ebanx' ) {
