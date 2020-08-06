@@ -41,6 +41,10 @@ program
 		'Set the filename for POT concatenation output. Set `false` to disable concatenation.',
 		'build/bundle-strings.pot'
 	)
+	.option(
+		'-l, --lines-filter <file>',
+		'JSON file containing files and line numbers filters. Only included line numbers will be passed.'
+	)
 	.action( ( command, [ files = '.' ] = [] ) => {
 		if ( ! presetsKeys.includes( program.preset ) ) {
 			console.log(
@@ -54,7 +58,7 @@ program
 		const filesGlob = files.replace( /^~/, os.homedir() );
 		const ignore = program.ignore && program.ignore.split( ',' );
 
-		const { dir, base, output } = program;
+		const { dir, base, output, linesFilter } = program;
 
 		glob.sync( filesGlob, { nodir: true, absolute: true, ignore } ).forEach( ( filepath ) =>
 			makePot( filepath, {
@@ -64,7 +68,7 @@ program
 		);
 
 		if ( output && output !== 'false' ) {
-			concatPot( dir, output );
+			concatPot( dir, output, linesFilter );
 		}
 	} )
 	.parse( process.argv );
