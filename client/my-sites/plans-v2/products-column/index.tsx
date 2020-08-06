@@ -55,7 +55,10 @@ const ProductsColumn = ( { duration, onProductClick }: ProductsColumnType ) => {
 					description={ getJetpackProductDescription( product ) }
 					currencyCode="USD"
 					billingTimeFrame={ durationToText( product.term ) }
-					buttonLabel={ translate( 'Get %s', { args: getJetpackProductShortName( product ) } ) }
+					buttonLabel={ translate( 'Get %s', {
+						args: getJetpackProductShortName( product ),
+						context: '%s is the name of a product',
+					} ) }
 					onButtonClick={ () => onProductClick( product.product_slug ) }
 					features={ { items: [] } }
 					originalPrice={ 100 }
