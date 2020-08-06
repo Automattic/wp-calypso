@@ -1,13 +1,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
-import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -23,7 +21,7 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 import { isDefaultLocale, addLocaleToPath } from 'lib/i18n-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import AsyncLoad from 'components/async-load';
 
 class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
@@ -152,40 +150,12 @@ class MasterbarLoggedOut extends React.Component {
 			</Item>
 		);
 	}
-	clickClose = () => {
-		const { select } = defaultRegistry;
-		const siteSlug = select( 'wpcom' )?.getSiteSlug();
-		const closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
-		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
-		window.location = closeUrl;
-	};
 
 	render() {
-		const { title, isCheckout, translate } = this.props;
+		const { title, isCheckout } = this.props;
 
-		if ( isCheckout === true ) {
-			return (
-				<Masterbar>
-					<div className="masterbar__secure-checkout">
-						<Item
-							url={ '#' }
-							icon="cross"
-							className="masterbar__close-button"
-							onClick={ this.clickClose }
-							tooltip={ translate( 'Close Checkout' ) }
-							tipTarget="close"
-						/>
-						<Item className="masterbar__item-logo">
-							<WordPressLogo className="masterbar__wpcom-logo" />
-							<WordPressWordmark className="masterbar__wpcom-wordmark" />
-						</Item>
-						<span className="masterbar__secure-checkout-text">
-							{ translate( 'Secure checkout' ) }
-						</span>
-					</div>
-					<Item className="masterbar__item-title">{ title }</Item>
-				</Masterbar>
-			);
+		if ( isCheckout ) {
+			return <AsyncLoad require="layout/masterbar/checkout" placeholder={ null } title={ title } />;
 		}
 
 		return (
@@ -204,12 +174,7 @@ class MasterbarLoggedOut extends React.Component {
 	}
 }
 
-export default connect(
-	( state ) => (
-		{
-			currentQuery: getCurrentQueryArguments( state ),
-			currentRoute: getCurrentRoute( state ),
-		},
-		{ recordTracksEvent }
-	)
-)( localize( MasterbarLoggedOut ) );
+export default connect( ( state ) => ( {
+	currentQuery: getCurrentQueryArguments( state ),
+	currentRoute: getCurrentRoute( state ),
+} ) )( localize( MasterbarLoggedOut ) );
