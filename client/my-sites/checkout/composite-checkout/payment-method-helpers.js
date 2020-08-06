@@ -325,9 +325,7 @@ function getErrorMessage( { error, message } ) {
 }
 
 export async function wpcomTransaction( payload, transactionOptions ) {
-	const { createUserAndSiteBeforeTransaction } = transactionOptions;
-
-	if ( createUserAndSiteBeforeTransaction ) {
+	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
 		return createAccount().then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
@@ -352,9 +350,7 @@ export async function wpcomTransaction( payload, transactionOptions ) {
 }
 
 export async function wpcomPayPalExpress( payload, transactionOptions ) {
-	const { createUserAndSiteBeforeTransaction } = transactionOptions;
-
-	if ( createUserAndSiteBeforeTransaction ) {
+	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
 		return createAccount().then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
