@@ -113,7 +113,9 @@ export default function CheckoutSystemDecider( {
 		product,
 		purchaseId,
 		isJetpack,
-		isAtomic
+		isAtomic,
+		isLoggedOutCart,
+		isNoSiteCart
 	);
 
 	useEffect( () => {
@@ -238,7 +240,9 @@ function getCheckoutVariant(
 	productSlug,
 	purchaseId,
 	isJetpack,
-	isAtomic
+	isAtomic,
+	isLoggedOutCart,
+	isNoSiteCart
 ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
@@ -329,6 +333,13 @@ function getCheckoutVariant(
 		debug( 'shouldShowCompositeCheckout true' );
 		return 'composite-checkout';
 	}
+
+	// Show composite checkout for registrationless checkout users
+	if ( isLoggedOutCart || isNoSiteCart ) {
+		debug( 'shouldShowCompositeCheckout true' );
+		return 'composite-checkout';
+	}
+
 	// Add remaining users to new AB test with 10% holdout
 	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
 		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );
