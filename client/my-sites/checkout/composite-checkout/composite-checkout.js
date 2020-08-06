@@ -487,7 +487,11 @@ export default function CompositeCheckout( {
 			'existing-card': ( transactionData ) =>
 				existingCardProcessor( transactionData, dataForProcessor, transactionOptions ),
 			paypal: ( transactionData ) =>
-				payPalProcessor( transactionData, { ...dataForProcessor, getThankYouUrl, couponItem }, transactionOptions ),
+				payPalProcessor(
+					transactionData,
+					{ ...dataForProcessor, getThankYouUrl, couponItem },
+					transactionOptions
+				),
 		} ),
 		[ couponItem, dataForProcessor, dataForRedirectProcessor, getThankYouUrl, transactionOptions ]
 	);
@@ -615,6 +619,7 @@ function useRedirectIfCartEmpty(
 		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
 			if ( createUserAndSiteBeforeTransaction ) {
+				window.localStorage.removeItem( 'shoppingCart' );
 				window.localStorage.removeItem( 'siteParams' );
 
 				// We use window.location instead of page.redirect() so that if the user already has an account and site at
