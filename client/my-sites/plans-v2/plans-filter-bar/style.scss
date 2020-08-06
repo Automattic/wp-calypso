@@ -6,7 +6,7 @@
 	justify-content: space-between;
 	align-items: center;
 	background: var( --color-surface );
-	padding: 16px;
+	padding: 16px 0;
 	border: 1px solid var( --color-neutral-5 );
 	box-sizing: border-box;
 
@@ -20,6 +20,8 @@
 
 	.select-dropdown {
 		height: $height;
+		margin-left: 16px;
+		margin-right: 8px;
 
 		.select-dropdown__header {
 			font-weight: 400;
@@ -65,6 +67,8 @@
 	.segmented-control {
 		width: 100%;
 		max-width: 180px;
+		margin-left: 8px;
+		margin-right: 16px;
 
 		.segmented-control__item {
 			flex: 1 1 50%;
