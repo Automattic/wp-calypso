@@ -135,6 +135,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_failure', {
 			site_id: action.siteId,
 			error: error.code,
+			message: error.message,
 			status_code: error.data ?? error.statusCode,
 			host: action.credentials.host,
 			kpri: action.credentials.krpi ? 'provided but [omitted here]' : 'not provided',
