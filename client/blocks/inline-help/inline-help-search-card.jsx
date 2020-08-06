@@ -38,7 +38,7 @@ const InlineHelpSearchCard = ( {
 	useEffect( () => {
 		const inputElement = cardRef.current?.searchInput;
 		// Focuses only in the popover.
-		if ( location !== 'inline-help-popover' || ! inputElement || ! isVisible) {
+		if ( location !== 'inline-help-popover' || ! inputElement || ! isVisible ) {
 			return;
 		}
 
