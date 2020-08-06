@@ -22,6 +22,7 @@ import {
 import { TERM_ANNUALLY } from 'lib/plans/constants';
 import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import getSiteProducts from 'state/sites/selectors/get-site-products';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import FormattedHeader from 'components/formatted-header';
 
@@ -35,14 +36,17 @@ interface ProductsColumnType {
 	duration: Duration;
 	onProductClick: PurchaseCallback;
 	productType: ProductType;
+	siteId: number | null;
 }
+
+type ProductWithBought = Product & { owned?: boolean };
 
 const ProductComponent = ( {
 	product,
 	onClick,
 	currencyCode,
 }: {
-	product: Product;
+	product: ProductWithBought;
 	onClick: PurchaseCallback;
 	currencyCode: string;
 } ) => {
@@ -62,24 +66,38 @@ const ProductComponent = ( {
 			onButtonClick={ () => onClick( product.product_slug ) }
 			features={ { items: [] } }
 			originalPrice={ price }
+			isOwned={ product.owned }
 		/>
 	);
 };
 
-const ProductsColumn = ( { duration, onProductClick, productType }: ProductsColumnType ) => {
+const ProductsColumn = ( {
+	duration,
+	onProductClick,
+	productType,
+	siteId,
+}: ProductsColumnType ) => {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const currentProducts = (
+		useSelector( ( state ) => getSiteProducts( state, siteId ) ) || []
+	).map( ( product ) => product.productSlug );
 
-	const productObjects: Product[] = useMemo(
+	const productObjects: ProductWithBought[] = useMemo(
 		() =>
-			JETPACK_PRODUCTS_LIST.map( ( productSlug ) => getProductFromSlug( productSlug ) ).filter(
-				( product: Product ) =>
-					!! product?.product_slug &&
-					! product.product_slug.startsWith( 'wpcom' ) &&
-					PRODUCTS_TYPES[ productType ].includes( product.product_slug ) &&
-					( duration === TERM_ANNUALLY ? ! isMonthly( product ) : isMonthly( product ) )
-			),
-		[ duration, productType ]
+			JETPACK_PRODUCTS_LIST.map( ( productSlug ) => getProductFromSlug( productSlug ) )
+				.filter(
+					( product: Product ) =>
+						!! product?.product_slug &&
+						! product.product_slug.startsWith( 'wpcom' ) &&
+						PRODUCTS_TYPES[ productType ].includes( product.product_slug ) &&
+						( duration === TERM_ANNUALLY ? ! isMonthly( product ) : isMonthly( product ) )
+				)
+				.map( ( product: Product ) => ( {
+					...product,
+					owned: currentProducts.includes( product.product_slug ),
+				} ) ),
+		[ duration, productType, currentProducts ]
 	);
 
 	if ( ! currencyCode || isFetchingProducts ) {
@@ -91,6 +109,7 @@ const ProductsColumn = ( { duration, onProductClick, productType }: ProductsColu
 			<FormattedHeader headerText={ translate( 'Individual Products' ) } brandFont />
 			{ productObjects.map( ( product ) => (
 				<ProductComponent
+					key={ product.product_slug }
 					onClick={ onProductClick }
 					product={ product }
 					currencyCode={ currencyCode }
