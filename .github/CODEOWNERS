@@ -85,9 +85,3 @@
 # FSE Workflow Files
 /.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
 /.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
-
-# Gutenboarding
-/client/landing/gutenboarding @Automattic/luna
-
-# @automattic/data-stores package
-/packages/data-stores @Automattic/luna
