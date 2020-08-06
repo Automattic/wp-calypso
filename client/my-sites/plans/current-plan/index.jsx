@@ -49,8 +49,8 @@ import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-yo
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 import { getSitePurchases } from 'state/purchases/selectors';
-import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 
 /**
  * Style dependencies
@@ -85,9 +85,9 @@ class CurrentPlan extends Component {
 	}
 
 	isLoading() {
-		const { selectedSite, isRequestingSitePlans: isRequestingPlans, hasAvailableConciergeSessions } = this.props;
-		console.log('hasAvailableConciergeSessions', hasAvailableConciergeSessions);
-		return ! selectedSite || isRequestingPlans || hasAvailableConciergeSessions === null;
+		const { selectedSite, isRequestingSitePlans: isRequestingPlans, scheduleId } = this.props;
+
+		return ! selectedSite || isRequestingPlans || null === scheduleId;
 	}
 
 	renderThankYou() {
@@ -161,7 +161,10 @@ class CurrentPlan extends Component {
 					headerText={ translate( 'Plans' ) }
 					align="left"
 				/>
-				{ selectedSiteId && <QueryConciergeInitial siteId={ selectedSiteId } /> }
+				{ selectedSiteId && (
+					// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
+					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
+				) }
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<QuerySitePurchases siteId={ selectedSiteId } />
@@ -261,6 +264,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
-		hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
+		scheduleId: getConciergeScheduleId( state ),
 	};
 } )( localize( CurrentPlan ) );
