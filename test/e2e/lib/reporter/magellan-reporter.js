@@ -34,7 +34,7 @@ Reporter.prototype.listenTo = function ( testRun, test, source ) {
 	fs.mkdir( finalScreenshotDir, () => {} );
 	fs.mkdir( './reports', () => {} );
 
-	// Only enable Slack messages on the master branch
+	// Only enable Slack messages on the primary branch
 	const slackClient = getSlackClient();
 
 	source.on( 'message', ( msg ) => {
@@ -61,7 +61,7 @@ Reporter.prototype.listenTo = function ( testRun, test, source ) {
 					files
 						.filter( ( file ) => file.match( /png$/i ) )
 						.forEach( ( screenshotPath ) => {
-							// Send screenshot to Slack on master branch only
+							// Send screenshot to Slack on primary branch only
 							if (
 								config.has( 'slackTokenForScreenshots' ) &&
 								process.env.CIRCLE_BRANCH === 'master' &&
@@ -197,7 +197,7 @@ function copyScreenshots( slackClient, dir, path, finalScreenshotDir ) {
 	}
 }
 
-// Only enable Slack messages on the master branch & not for live branches
+// Only enable Slack messages on the primary branch & not for live branches
 function getSlackClient() {
 	if ( process.env.CIRCLE_BRANCH === 'master' && ! process.env.LIVEBRANCHES ) {
 		const slackHook = configGet( 'slackHook' );
