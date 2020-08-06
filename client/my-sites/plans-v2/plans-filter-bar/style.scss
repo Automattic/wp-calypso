@@ -40,6 +40,15 @@
 			height: $height;
 		}
 
+		.select-dropdown__item:hover {
+			color: inherit;
+			background-color: var( --studio-gray-0 );
+		}
+
+		.select-dropdown__item.is-selected {
+			background-color: var( --color-primary );
+		}
+
 		.select-dropdown__options {
 			border-radius: 0 0 $border-radius $border-radius;
 		}
@@ -47,6 +56,7 @@
 		&.is-open {
 			.select-dropdown__header {
 				color: var( --color-neutral-70 );
+				background-color: var( --studio-gray-0 );
 				border-radius: $border-radius $border-radius 0 0;
 			}
 		}
