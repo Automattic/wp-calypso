@@ -9,6 +9,7 @@
  * External dependencies
  */
 const path = require( 'path' );
+const fs = require( 'fs' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
 const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
@@ -62,6 +63,10 @@ const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
+
+const hasLanguagesMeta = fs.existsSync(
+	path.join( __dirname, 'languages', 'languages-meta.json' )
+);
 
 function filterEntrypoints( entrypoints ) {
 	/* eslint-disable no-console */
@@ -329,6 +334,14 @@ const webpackConfig = {
 			new webpack.NormalModuleReplacementPlugin(
 				/^lib[/\\]local-storage-polyfill$/,
 				'lodash-es/noop'
+			),
+		/*
+		 * When not available, replace languages-meta.json with fallback-languages-meta.json.
+		 */
+		! hasLanguagesMeta &&
+			new webpack.NormalModuleReplacementPlugin(
+				/^languages[/\\]languages-meta.json$/,
+				'languages/fallback-languages-meta.json'
 			),
 		/*
 		 * Replace `lodash` with `lodash-es`
