@@ -311,14 +311,23 @@ ul.plan-item__feature-item-group {
 	}
 
 	.plan-item__disabled-message {
-		display: flex;
-		align-items: flex-start;
-		font-weight: bold;
-		color: rgb( 206, 134, 61 );
+		svg {
+			align-self: flex-start;
+			width: 18px;
+			height: 18px;
 
-		svg path {
-			fill: rgb( 206, 134, 61 );
-			stroke: rgb( 206, 134, 61 );
+			path {
+				fill: rgb( 206, 134, 61 );
+				stroke: rgb( 206, 134, 61 );
+			}
+		}
+
+		p {
+			font-size: $font-body-small;
+			line-height: 20px;
+			letter-spacing: 0.2px;
+			font-weight: bold;
+			color: rgb( 206, 134, 61 );
 		}
 	}
 }

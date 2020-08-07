@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import classNames from 'classnames';
-import { Button } from '@wordpress/components';
+import { Button, Tip } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
@@ -180,8 +180,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								<li className="plan-item__feature-item">
 									{ disabledLabel ? (
 										<span className="plan-item__disabled-message">
-											{ CrossIcon }
-											{ disabledLabel }
+											<Tip>{ disabledLabel }</Tip>
 										</span>
 									) : (
 										domainMessage && (
