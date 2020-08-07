@@ -8,18 +8,8 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { durationToText } from '../utils';
-import { PRODUCTS_TYPES } from '../constants';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import {
-	getJetpackProductDescription,
-	getJetpackProductDisplayName,
-	getJetpackProductShortName,
-	getJetpackProductTagline,
-	isMonthly,
-	getProductFromSlug,
-} from 'lib/products-values';
-import { TERM_ANNUALLY } from 'lib/plans/constants';
+import { durationToText, slugToItem, itemToSelectorProduct, productButtonLabel } from '../utils';
+import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
@@ -29,8 +19,7 @@ import FormattedHeader from 'components/formatted-header';
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, ProductType } from '../types';
-import type { Product } from 'lib/products-values/products-list';
+import type { Duration, PurchaseCallback, ProductType, SelectorProduct } from '../types';
 
 interface ProductsColumnType {
 	duration: Duration;
@@ -39,7 +28,7 @@ interface ProductsColumnType {
 	siteId: number | null;
 }
 
-type ProductWithBought = Product & { owned?: boolean };
+type ProductWithBought = SelectorProduct & { owned?: boolean };
 
 const ProductComponent = ( {
 	product,
@@ -50,20 +39,20 @@ const ProductComponent = ( {
 	onClick: PurchaseCallback;
 	currencyCode: string;
 } ) => {
-	const price = useSelector( ( state ) => getProductCost( state, product.product_slug ) ) || 0;
+	const price =
+		useSelector( ( state ) =>
+			getProductCost( state, product.costProductSlug || product.productSlug )
+		) || 0;
 	return (
 		<JetpackProductCard
-			iconSlug={ product.product_slug }
-			productName={ getJetpackProductDisplayName( product ) }
-			subheadline={ getJetpackProductTagline( product ) }
-			description={ getJetpackProductDescription( product ) }
+			iconSlug={ product.iconSlug }
+			productName={ product.displayName }
+			subheadline={ product.tagline }
+			description={ product.description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( product.term ) }
-			buttonLabel={ translate( 'Get %s', {
-				args: getJetpackProductShortName( product ),
-				context: '%s is the name of a product',
-			} ) }
-			onButtonClick={ () => onClick( product.product_slug ) }
+			buttonLabel={ productButtonLabel( product ) }
+			onButtonClick={ () => onClick( product.productSlug ) }
 			features={ { items: [] } }
 			originalPrice={ price }
 			isOwned={ product.owned }
@@ -85,17 +74,19 @@ const ProductsColumn = ( {
 
 	const productObjects: ProductWithBought[] = useMemo(
 		() =>
-			JETPACK_PRODUCTS_LIST.map( ( productSlug ) => getProductFromSlug( productSlug ) )
+			SELECTOR_PRODUCTS.map( ( productSlug ) => {
+				const item = slugToItem( productSlug );
+				return item && itemToSelectorProduct( item );
+			} )
 				.filter(
-					( product: Product ) =>
-						!! product?.product_slug &&
-						! product.product_slug.startsWith( 'wpcom' ) &&
-						PRODUCTS_TYPES[ productType ].includes( product.product_slug ) &&
-						( duration === TERM_ANNUALLY ? ! isMonthly( product ) : isMonthly( product ) )
+					( product: SelectorProduct | null ): product is SelectorProduct =>
+						!! product &&
+						duration === product.term &&
+						PRODUCTS_TYPES[ productType ].includes( product.productSlug )
 				)
-				.map( ( product: Product ) => ( {
+				.map( ( product: SelectorProduct ) => ( {
 					...product,
-					owned: currentProducts.includes( product.product_slug ),
+					owned: currentProducts.includes( product.productSlug ),
 				} ) ),
 		[ duration, productType, currentProducts ]
 	);
@@ -109,7 +100,7 @@ const ProductsColumn = ( {
 			<FormattedHeader headerText={ translate( 'Individual Products' ) } brandFont />
 			{ productObjects.map( ( product ) => (
 				<ProductComponent
-					key={ product.product_slug }
+					key={ product.productSlug }
 					onClick={ onProductClick }
 					product={ product }
 					currencyCode={ currencyCode }
