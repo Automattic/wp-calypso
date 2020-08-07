@@ -4,6 +4,9 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { sprintf } from '@wordpress/i18n';
+import { useDebounce } from 'use-debounce';
+
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 
@@ -28,14 +31,47 @@ const Header: React.FunctionComponent = () => {
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
+	const [ domainSearch ] = useDebounce( siteTitle, 1000 /*ms*/ );
+
+	const recommendedDomain = useSelect(
+		( select ) => {
+			if ( ! domainSearch || domainSearch.length < 2 ) {
+				return;
+			}
+			return select( 'automattic/domains/suggestions' ).getDomainSuggestions( domainSearch, {
+				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
+				include_wordpressdotcom: false,
+				include_dotblogsubdomain: false,
+				quantity: 1, // this will give the recommended domain only
+				locale: i18nLocale,
+			} );
+		},
+		[ domainSearch ]
+	)?.[ 0 ];
+
+	const getDomainElementContent = () => {
+		// If no site title entered (user skips intent gathering)
+		// and no domain was selected, show "Pick a domain"
+		if ( ! siteTitle && ! domain ) {
+			return null;
+		}
+
+		if ( recommendedDomain && ! domain ) {
+			/* translators: domain name is available, eg: "yourname.com is available" */
+			return sprintf( __( '%s is available' ), recommendedDomain.domain_name );
+		}
+
+		return __( 'Choose a domain' );
+	};
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const domainElement = domain ? (
-		domain.domain_name
-	) : (
-		<span className="gutenboarding__header-domain-picker-button-domain">
-			{ __( 'Choose a domain' ) }
-		</span>
-	);
+	const domainElement = domain
+		? domain.domain_name
+		: getDomainElementContent() && (
+				<span className="gutenboarding__header-domain-picker-button-domain">
+					{ getDomainElementContent() }
+				</span>
+		  );
 
 	const hideFullHeader = [
 		'IntentGathering',
