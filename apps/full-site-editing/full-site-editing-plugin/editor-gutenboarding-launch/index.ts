@@ -86,10 +86,7 @@ function updateEditor() {
 
 			if ( isNewLaunch ) {
 				// Open editor-site-launch sidebar
-				dispatch( 'core/interface' ).enableComplementaryArea(
-					'core/edit-post',
-					'a8c-editor-site-launch/launch-modal'
-				);
+				dispatch( 'automattic/launch' ).openSidebar();
 			} else {
 				// Using window.top to escape from the editor iframe on WordPress.com
 				window.top.location.href = launchHref;

@@ -58,6 +58,14 @@ export function* launchSite() {
 	}
 }
 
+export const openSidebar = () => ( {
+	type: 'OPEN_SIDEBAR' as const,
+} );
+
+export const closeSidebar = () => ( {
+	type: 'CLOSE_SIDEBAR' as const,
+} );
+
 export type LaunchAction = ReturnType<
 	| typeof unsetDomain
 	| typeof setStep
@@ -66,4 +74,6 @@ export type LaunchAction = ReturnType<
 	| typeof setDomain
 	| typeof setDomainSearch
 	| typeof setPlan
+	| typeof openSidebar
+	| typeof closeSidebar
 >;
