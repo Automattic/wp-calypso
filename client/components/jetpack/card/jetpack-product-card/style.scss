@@ -221,7 +221,7 @@ $jetpack-product-card-icon-size: 55px;
 	padding-bottom: 6px;
 
 	border-bottom: solid 1px var( --color-border-subtle );
-	color: var( --color-text-subtle );
+	color: var( --studio-gray-70 );
 
 	font-weight: 600;
 }
@@ -251,6 +251,8 @@ $jetpack-product-card-icon-size: 55px;
 
 .jetpack-product-card__features-icon {
 	margin-right: 14px;
+
+	fill: var( --studio-gray-50 );
 
 	&.gridicons-checkmark {
 		fill: var( --color-primary-50 );
