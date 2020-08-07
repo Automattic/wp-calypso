@@ -17,6 +17,7 @@ import {
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
+import { camelCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,6 +30,7 @@ import {
 } from 'my-sites/checkout/composite-checkout/wpcom/components/summary-details';
 import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/wpcom/components/payment-method-logos';
 import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
+import { maskField } from 'lib/checkout';
 
 const debug = debugFactory( 'composite-checkout:ebanx-tef-payment-method' );
 
@@ -81,32 +83,41 @@ export function createEbanxTefPaymentMethodStore() {
 				case 'FIELD_VALUE_SET':
 					return {
 						...state,
-						[ action.payload.key ]: {
-							value: maskField(
-								action.payload.key,
-								state[ action.payload.key ],
-								action.payload.value
-							),
-							isTouched: true,
-							errors: [],
+						fields: {
+							...state.fields,
+							[ action.payload.key ]: {
+								value: maskField(
+									action.payload.key,
+									state[ action.payload.key ],
+									action.payload.value
+								),
+								isTouched: true,
+								errors: [],
+							},
 						},
 					};
 				case 'FIELD_ERROR_SET':
 					return {
 						...state,
-						[ action.payload.key ]: {
-							...state[ action.payload.key ],
-							errors: [ action.payload.message ],
+						fields: {
+							...state.fields,
+							[ action.payload.key ]: {
+								...state[ action.payload.key ],
+								errors: [ action.payload.message ],
+							},
 						},
 					};
 				case 'TOUCH_ALL_FIELDS':
-					return Object.entries( state ).reduce( ( obj, [ key, value ] ) => {
-						obj[ key ] = {
-							value: value.value,
-							isTouched: true,
-						};
-						return obj;
-					}, {} );
+					return {
+						...state,
+						fields: Object.entries( state.fields ).reduce( ( obj, [ key, value ] ) => {
+							obj[ key ] = {
+								value: value.value,
+								isTouched: true,
+							};
+							return obj;
+						}, {} ),
+					};
 			}
 			return state;
 		},
@@ -271,7 +282,7 @@ const SelectWrapper = styled.div`
 	}
 `;
 
-function EbanxTefPayButton( { disabled, store, stripe, stripeConfiguration } ) {
+function EbanxTefPayButton( { disabled, store } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
@@ -284,6 +295,11 @@ function EbanxTefPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'ebanx-tef' ).getCustomerName() );
 	const customerBank = useSelect( ( select ) => select( 'ebanx-tef' ).getCustomerBank() );
+	const fields = useSelect( ( select ) => select( 'ebanx-tef' ).getFields() );
+	const massagedFields = Object.entries( fields ).reduce(
+		( accum, [ key, managedValue ] ) => ( { ...accum, [ camelCase( key ) ]: managedValue.value } ),
+		{}
+	);
 
 	return (
 		<Button
@@ -297,12 +313,11 @@ function EbanxTefPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 						payload: { paymentMethodId: 'ebanx-tef' },
 					} );
 					submitTransaction( {
-						stripe,
 						name: customerName?.value,
-						ebanxTefBank: customerBank?.value,
+						...massagedFields,
+						tefBank: customerBank?.value,
 						items,
 						total,
-						stripeConfiguration,
 					} )
 						.then( ( stripeResponse ) => {
 							if ( ! stripeResponse?.redirect_url ) {
@@ -372,7 +387,6 @@ function isFormValid( store ) {
 }
 
 function EbanxTefLabel() {
-	const { __ } = useI18n();
 	return (
 		<React.Fragment>
 			<span>{ 'Transferência bancária' }</span>

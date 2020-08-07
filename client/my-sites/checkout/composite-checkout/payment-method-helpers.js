@@ -138,6 +138,7 @@ export async function submitEbanxCardTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
+// NOTE: not really stripe specific
 export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
 	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
 		?.name;
@@ -147,7 +148,7 @@ export async function submitStripeRedirectTransaction( paymentMethodId, transact
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType,
-		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+		paymentPartnerProcessorId: transactionData.stripeConfiguration?.processor_id,
 	} );
 	debug(
 		`sending stripe redirect transaction for type: ${ paymentMethodId }`,
