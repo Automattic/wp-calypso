@@ -115,7 +115,7 @@ export function itemToSelectorProduct(
 	} else if ( objectIsProduct( item ) ) {
 		return {
 			productSlug: item.product_slug,
-			iconSlug: '',
+			iconSlug: `${ item.product_slug }_v2`,
 			displayName: getJetpackProductDisplayName( item ),
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),

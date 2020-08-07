@@ -74,7 +74,7 @@ export const OPTION_PLAN_SECURITY: SelectorProduct = {
 	term: TERM_ANNUALLY,
 	subtypes: [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_REALTIME ],
 	costProductSlug: PLAN_JETPACK_SECURITY_DAILY,
-	iconSlug: '',
+	iconSlug: 'jetpack_security_v2',
 	displayName: translate( 'Jetpack Security' ),
 	tagline: translate( 'Comprehensive WordPress protection' ),
 	description: translate(
@@ -97,7 +97,7 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	term: TERM_ANNUALLY,
 	subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_REALTIME ],
 	costProductSlug: PRODUCT_JETPACK_BACKUP_DAILY,
-	iconSlug: '',
+	iconSlug: 'jetpack_backup_v2',
 	displayName: translate( 'Jetpack Backup' ),
 	tagline: '',
 	description: '',
