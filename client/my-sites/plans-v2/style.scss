@@ -1,0 +1,11 @@
+.plans-v2__columns {
+	display: flex;
+
+	& > div {
+		margin-left: 24px;
+	}
+
+	& > div:first-child {
+		margin-left: 0;
+	}
+}
