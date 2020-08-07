@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
 import { sprintf } from '@wordpress/i18n';
 import { useDebounce } from 'use-debounce';
-
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 
@@ -78,7 +77,6 @@ const Header: React.FunctionComponent = () => {
 		'Domains',
 		'DomainsModal',
 		'Plans',
-		'PlansModal',
 		'LanguageModal',
 		'CreateSite',
 	].includes( currentStep );
