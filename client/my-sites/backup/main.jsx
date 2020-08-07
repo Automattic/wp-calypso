@@ -361,13 +361,25 @@ const getIsEmptyFilter = ( filter ) => {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
-	const logs = requestActivityLogs( siteId, filter );
 	const gmtOffset = getSiteGmtOffset( state, siteId );
 	const timezone = getSiteTimezoneValue( state, siteId );
 	const rewind = getRewindState( state, siteId );
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
 	const siteCapabilities = getRewindCapabilities( state, siteId );
+	const hasDailyBackups = includes( siteCapabilities, 'backup-daily' );
+
+	let logs;
+
+	if ( hasDailyBackups ) {
+		// We query only for complete backups
+		logs = requestActivityLogs( siteId, {
+			page: 1,
+			group: [ 'rewind' ],
+		} );
+	} else {
+		logs = requestActivityLogs( siteId, filter );
+	}
 
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
