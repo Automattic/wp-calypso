@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate, TranslateResult } from 'i18n-calypso';
-import { difference, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,13 +45,13 @@ export function durationToText( duration: Duration ): TranslateResult {
 }
 
 function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug {
-	return slug in PRODUCTS_WITH_OPTIONS;
+	return PRODUCTS_WITH_OPTIONS.includes( slug as typeof PRODUCTS_WITH_OPTIONS[ number ] );
 }
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
-	return slug in Object.keys( JETPACK_PRODUCTS_LIST );
+	return slug in JETPACK_PRODUCTS_LIST;
 }
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
-	return slug in [ ...JETPACK_PLANS, JETPACK_RESET_PLANS ];
+	return [ ...JETPACK_PLANS, JETPACK_RESET_PLANS ].includes( slug );
 }
 
 export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null {
@@ -74,7 +74,7 @@ function objectIsSelectorProduct( item: object ): item is SelectorProduct {
 		'description',
 		'term',
 	];
-	return difference( Object.keys( item ), requiredKeys ).length === 0;
+	return requiredKeys.every( ( k ) => k in item );
 }
 function objectIsPlan( item: object ): item is Plan {
 	const requiredKeys = [
@@ -87,7 +87,7 @@ function objectIsPlan( item: object ): item is Plan {
 		'getProductId',
 		'getStoreSlug',
 	];
-	return difference( Object.keys( item ), requiredKeys ).length === 0;
+	return requiredKeys.every( ( k ) => k in item );
 }
 
 /**
