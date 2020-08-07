@@ -64,7 +64,7 @@ export const productCardWithDiscount = {
 
 export const productCardWithLongTexts = {
 	...productCard,
-	productName: 'Security Bundle Security Bundle Security Bundle',
+	productName: 'Jetpack Security Jetpack Security Jetpack Security Jetpack Security',
 	subheadline:
 		'Get all of the essential security tools. Get all of the essential security tools. Get all of the essential security tools.',
 	features: {
@@ -72,7 +72,8 @@ export const productCardWithLongTexts = {
 			...featuresItems,
 			{
 				icon: 'lock',
-				text: 'Real-Time Security Bundle Real-Time Security Bundle Real-Time Security Bundle',
+				text:
+					'Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.',
 				description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
 			},
 		],
