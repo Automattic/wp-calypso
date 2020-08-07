@@ -3,12 +3,12 @@
  */
 import * as React from 'react';
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import LaunchMenu from '../launch-menu';
+
 import './styles.scss';
 
 const LaunchSidebar = () => {

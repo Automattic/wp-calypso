@@ -8,23 +8,24 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-
 import { LAUNCH_STORE } from '../stores';
-import { LaunchStep, LaunchSequence } from '../../../common/data-stores/launch/data';
 import LaunchMenuItem from './item';
-import './styles.scss';
 
-const LaunchStepMenuItemTitles = {
-	[ LaunchStep.Name ]: __( 'Name your site', 'full-site-editing' ),
-	[ LaunchStep.Domain ]: __( 'Choose a domain', 'full-site-editing' ),
-	[ LaunchStep.Plan ]: __( 'Choose a plan', 'full-site-editing' ),
-	[ LaunchStep.Final ]: __( 'Launch your site', 'full-site-editing' ),
-};
+import './styles.scss';
 
 const LaunchMenu = () => {
 	const { step: currentStep, completedSteps } = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getState()
 	);
+	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
+	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
+
+	const LaunchStepMenuItemTitles = {
+		[ LaunchStep.Name ]: __( 'Name your site', 'full-site-editing' ),
+		[ LaunchStep.Domain ]: __( 'Select a domain', 'full-site-editing' ),
+		[ LaunchStep.Plan ]: __( 'Select a plan', 'full-site-editing' ),
+		[ LaunchStep.Final ]: __( 'Launch your site', 'full-site-editing' ),
+	};
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 

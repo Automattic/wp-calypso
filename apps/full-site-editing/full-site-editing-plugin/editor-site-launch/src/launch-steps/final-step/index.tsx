@@ -7,6 +7,7 @@ import { Button } from '@wordpress/components';
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
+
 import './styles.scss';
 
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {

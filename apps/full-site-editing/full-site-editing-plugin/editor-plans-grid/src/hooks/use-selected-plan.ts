@@ -19,7 +19,5 @@ export function useSelectedPlan() {
 		return defaultPaidPlan;
 	}
 
-	// TODO: Switch to paid plan when use switch to paid domain.
-
 	return plan;
 }
