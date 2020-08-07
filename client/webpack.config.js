@@ -338,10 +338,10 @@ const webpackConfig = {
 		/*
 		 * When not available, replace languages-meta.json with fallback-languages-meta.json.
 		 */
-		! hasLanguagesMeta &&
+		hasLanguagesMeta &&
 			new webpack.NormalModuleReplacementPlugin(
-				/^languages[/\\]languages-meta.json$/,
-				'languages/fallback-languages-meta.json'
+				/^languages[/\\]fallback-languages-meta.json$/,
+				'languages/languages-meta.json'
 			),
 		/*
 		 * Replace `lodash` with `lodash-es`
