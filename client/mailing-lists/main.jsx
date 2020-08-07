@@ -146,7 +146,9 @@ class MainComponent extends React.Component {
 		} else if ( 'news' === category ) {
 			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
 		} else if ( 'promotion' === category ) {
-			return this.props.translate( 'Sales and promotions for WordPress.com products and services.' );
+			return this.props.translate(
+				'Sales and promotions for WordPress.com products and services.'
+			);
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
 		} else if ( 'jetpack_research' === category ) {
