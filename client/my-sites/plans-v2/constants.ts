@@ -7,7 +7,6 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
@@ -17,7 +16,6 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 } from 'lib/products-values/constants';
 import {
-	JETPACK_SECURITY_PLANS,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	TERM_ANNUALLY,
@@ -31,7 +29,7 @@ import {
 /**
  * Type dependencies
  */
-import { SelectorProduct, SelectorProductSlug } from './types';
+import { SelectorProduct, SelectorProductSlug, ProductType } from './types';
 
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';
@@ -125,10 +123,12 @@ export const OPTIONS_SLUG_MAP: Record< SelectorProductSlug, SelectorProduct > = 
  * Provides categorization of products for filters.
  */
 const PRODUCTS_TYPE_SECURITY = [
+	OPTIONS_JETPACK_BACKUP,
+	OPTIONS_JETPACK_BACKUP_MONTHLY,
 	...JETPACK_SCAN_PRODUCTS,
-	...JETPACK_BACKUP_PRODUCTS,
 	...JETPACK_ANTI_SPAM_PRODUCTS,
-	...JETPACK_SECURITY_PLANS,
+	OPTIONS_JETPACK_SECURITY,
+	OPTIONS_JETPACK_SECURITY_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
@@ -139,7 +139,7 @@ const PRODUCTS_TYPE_PERFORMANCE = [
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
 
-export const PRODUCTS_TYPES = {
+export const PRODUCTS_TYPES: Record< ProductType, string[] > = {
 	[ SECURITY ]: PRODUCTS_TYPE_SECURITY,
 	[ PERFORMANCE ]: PRODUCTS_TYPE_PERFORMANCE,
 	[ ALL ]: [ ...PRODUCTS_TYPE_SECURITY, ...PRODUCTS_TYPE_PERFORMANCE ],
