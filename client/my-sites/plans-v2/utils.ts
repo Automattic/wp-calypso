@@ -20,6 +20,7 @@ import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-va
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-product-tagline';
 import { getJetpackProductDescription } from 'lib/products-values/get-jetpack-product-description';
+import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-product-short-name';
 
 /**
  * Type dependencies
@@ -42,6 +43,16 @@ export function durationToText( duration: Duration ): TranslateResult {
 	return duration === TERM_MONTHLY
 		? translate( 'per month, billed monthly' )
 		: translate( 'per year' );
+}
+
+export function productButtonLabel( product: SelectorProduct ): TranslateResult {
+	return (
+		product.buttonLabel ??
+		translate( 'Get %s', {
+			args: product.displayName,
+			context: '%s is the name of a product',
+		} )
+	);
 }
 
 function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug {
@@ -108,6 +119,10 @@ export function itemToSelectorProduct(
 			displayName: getJetpackProductDisplayName( item ),
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
+			buttonLabel: translate( 'Get %s', {
+				args: getJetpackProductShortName( item ),
+				context: '%s is the name of a product',
+			} ),
 			term: item.term,
 			features: [],
 		};
