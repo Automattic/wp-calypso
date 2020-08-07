@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { difference } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import * as constants from './constants';
@@ -103,3 +108,8 @@ export const PRODUCTS_LIST: Record< ProductSlug, Product > = {
 		bill_period: PLAN_MONTHLY_PERIOD,
 	},
 };
+
+export function objectIsProduct( item: object ): item is Product {
+	const productKeys = [ 'product_slug', 'product_name', 'term', 'bill_period' ];
+	return difference( Object.keys( item ), productKeys ).length === 0;
+}
