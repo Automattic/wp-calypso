@@ -16,7 +16,6 @@ import { Step, usePath } from '../../path';
 import Link from '../../components/link';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
-import Arrow from './arrow';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 
@@ -98,7 +97,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 			{ isMobile && ( isSiteTitleActive ? siteTitleInput : verticalSelect ) }
 			{ ! isMobile && (
 				<>
-					{ verticalSelect }
+					{ ! wasVerticalSkipped() && verticalSelect }
 					{ siteTitleInput }
 				</>
 			) }
