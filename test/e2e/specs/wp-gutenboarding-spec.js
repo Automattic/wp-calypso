@@ -92,6 +92,11 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await designSelectorPage.selectPaidDesign();
 		} );
 
+		step( 'Can see Style Preview and continue', async function () {
+			const stylePreviewPage = await StylePreviewPage.Expect( driver );
+			await stylePreviewPage.continue();
+		} );
+
 		step( 'Can see Plans Grid with no selected plan', async function () {
 			const plansPage = await PlansPage.Expect( driver );
 			const hasSelectedPlan = await plansPage.hasSelectedPlan();
