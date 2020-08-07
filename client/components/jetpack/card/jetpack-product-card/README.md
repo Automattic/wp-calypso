@@ -1,6 +1,6 @@
 # Jetpack Product Card
 
-This component represents a generic Jetpack product card. It doesn't represent any product type. Use it as a foundation to create product cards, such as in the example below:
+This component is used to display a Jetpack product card.
 
 ---
 
@@ -9,19 +9,19 @@ This component represents a generic Jetpack product card. It doesn't represent a
 ```js
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 
-export default function JetpackBundleCard() {
+export default function JetpackProductCardExample() {
 	return (
         <JetpackProductCard
-            iconSlug="jetpack_security"
-            productName="Security Security"
-            subheadline="Comprehensive WordPress protection"
-            description="Enjoy the peace of mind of complete site security. Easy-to-use, powerful security tools guard your site, so you can focus on your business."
+            iconSlug="jetpack_backup_v2"
+            productName="Jetpack Backup"
+            subheadline=""
+            description=""
             currencyCode="USD"
-            originalPrice={25}
+            originalPrice={10}
             billingTimeFrame="per month, billed monthly"
-            buttonLabel="Get Jetpack Security"
+            buttonLabel="Get Backup"
             onButtonClick={ () => /* do something */ }
-            features={ [ { text: 'Backup' } ] }
+            features={ [ { text: 'Automated WordPress backups' } ] }
         />
 	);
 }

@@ -1,3 +1,4 @@
+$jetpack-product-card-color: #33b3db;
 $jetpack-product-card-circle-size: 65px;
 $jetpack-product-card-icon-size: 55px;
 
@@ -62,7 +63,7 @@ $jetpack-product-card-icon-size: 55px;
 
 	padding: 42px 16px 12px;
 
-	border-bottom: solid 2px var( --color-border-subtle );
+	border-bottom: solid 2px $jetpack-product-card-color;
 }
 
 .jetpack-product-card .product-icon {
@@ -147,6 +148,8 @@ $jetpack-product-card-icon-size: 55px;
 }
 
 .jetpack-product-card .plan-price {
+	border-color: $jetpack-product-card-color;
+
 	&.is-original::before {
 		// Enable the overwrite of the border color by setting it to .plan-price
 		border-color: inherit;
@@ -182,7 +185,7 @@ $jetpack-product-card-icon-size: 55px;
 	background: var( --color-surface );
 	border: 1px solid currentColor;
 	border-radius: 4px;
-	color: var( --color-border );
+	color: $jetpack-product-card-color;
 
 	font-size: rem( 13px );
 	line-height: $jetpack-product-card-badge-height;
