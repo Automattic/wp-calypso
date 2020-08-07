@@ -7,7 +7,8 @@
 }
 
 .export-card .foldable-card__header,
-.export-media-card .foldable-card__header {
+.export-media-card .foldable-card__header,
+.export-card .foldable-card.is-expanded .foldable-card__content {
 	padding: 24px;
 }
 
