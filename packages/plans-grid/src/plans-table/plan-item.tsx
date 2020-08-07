@@ -110,6 +110,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	isFree = false,
 	domain,
 	features,
+	isSelected,
 	onSelect,
 	onPickDomainClick,
 	onToggleExpandAll,
@@ -164,15 +165,23 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 						<div className="plan-item__actions">
 							<Button
-								className="plan-item__select-button"
+								className={ classNames( 'plan-item__select-button', {
+									'is-selected': isSelected,
+								} ) }
 								onClick={ () => {
 									onSelect( slug );
 								} }
-								isPrimary
 								isLarge
 								disabled={ !! disabledLabel }
 							>
-								<span>{ __( 'Choose' ) }</span>
+								{ isSelected ? (
+									<>
+										{ TickIcon }
+										<span>{ __( 'Selected' ) }</span>
+									</>
+								) : (
+									<span>{ __( 'Select' ) }</span>
+								) }
 							</Button>
 						</div>
 						<div className="plan-item__features">

@@ -258,12 +258,18 @@ ul.plan-item__feature-item-group {
 	}
 }
 
-.plan-item__select-button.components-button.is-primary {
+.plan-item__select-button.components-button {
+	border: 1px solid var( --studio-blue-40 );
+	border-radius: 4px;
+	color: var( --studio-blue-40 );
 	padding: 0 24px;
 	height: 40px;
 
-	&:disabled {
-		opacity: 0.5;
+	&.is-selected,
+	&.is-selected:active {
+		background: var( --studio-black );
+		color: var( --studio-white );
+		border: 0;
 	}
 
 	svg {

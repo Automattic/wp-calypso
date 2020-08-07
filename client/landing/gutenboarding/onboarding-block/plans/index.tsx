@@ -93,6 +93,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
+				currentPlan={ plan }
 			/>
 		</div>
 	);
