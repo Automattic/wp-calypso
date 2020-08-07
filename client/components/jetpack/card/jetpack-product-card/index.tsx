@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { isFinite, isNumber } from 'lodash';
 import React, { createElement, useRef, FunctionComponent, ReactNode } from 'react';
 
@@ -23,19 +23,19 @@ import './style.scss';
 type OwnProps = {
 	className?: string;
 	iconSlug: string;
-	productName: string;
+	productName: TranslateResult;
 	productType?: string;
 	headingLevel?: number;
-	subheadline: string;
+	subheadline: TranslateResult;
 	description: ReactNode;
 	currencyCode: string;
 	originalPrice: number;
 	discountedPrice?: number;
 	withStartingPrice?: boolean;
-	billingTimeFrame: string;
+	billingTimeFrame: TranslateResult;
 	badgeLabel?: string;
 	discountMessage?: string;
-	buttonLabel: string;
+	buttonLabel: TranslateResult;
 	onButtonClick: () => void;
 	cancelLabel?: string;
 	onCancelClick?: () => void;
