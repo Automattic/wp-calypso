@@ -9,7 +9,7 @@ import jetpackFree from './images/jetpack-free.svg';
 import jetpackPersonal from './images/jetpack-personal.svg';
 import jetpackPremium from './images/jetpack-premium.svg';
 import jetpackProfessional from './images/jetpack-professional.svg';
-import jetpackAllInV2 from './images/jetpack-all-in-v2.svg';
+import jetpackCompleteV2 from './images/jetpack-complete-v2.svg';
 import jetpackSearch from './images/jetpack-search.svg';
 import jetpackSearchV2 from './images/jetpack-search-v2.svg';
 import jetpackSecurityV2 from './images/jetpack-security-v2.svg';
@@ -32,7 +32,7 @@ export const paths = {
 	'jetpack-personal': jetpackPersonal,
 	'jetpack-premium': jetpackPremium,
 	'jetpack-professional': jetpackProfessional,
-	'jetpack-all-in-v2': jetpackAllInV2,
+	'jetpack-complete-v2': jetpackCompleteV2,
 	'jetpack-search': jetpackSearch,
 	'jetpack-search-v2': jetpackSearchV2,
 	'jetpack-security-v2': jetpackSecurityV2,
@@ -59,7 +59,7 @@ export const iconToProductSlugMap = {
 	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],
 	'jetpack-premium': [ 'jetpack_premium', 'jetpack_premium_monthly' ],
 	'jetpack-professional': [ 'jetpack_business', 'jetpack_business_monthly' ],
-	'jetpack-all-in-v2': [ 'jetpack_all_in_v2', 'jetpack_all_in_monthly_v2' ],
+	'jetpack-complete-v2': [ 'jetpack_complete_v2', 'jetpack_complete_monthly_v2' ],
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 	'jetpack-backup-v2': [

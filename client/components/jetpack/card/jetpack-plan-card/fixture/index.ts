@@ -17,14 +17,14 @@ export const features = {
 };
 
 export const planCard = {
-	iconSlug: 'jetpack_business',
-	productName: 'Jetpack All In',
+	iconSlug: 'jetpack_complete_v2',
+	productName: 'Jetpack Complete',
 	subheadline: 'Complete WordPress security, performance, and growth',
 	description: 'The most powerful WordPress sites: Top-tier security bundle, enhanced search',
 	currencyCode: 'USD',
 	originalPrice: 100,
 	billingTimeFrame: 'per month, billed monthly',
-	buttonLabel: 'Get Jetpack All In',
+	buttonLabel: 'Get Jetpack Complete',
 	onButtonClick: noop,
 	features,
 };
