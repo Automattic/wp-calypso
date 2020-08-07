@@ -15,7 +15,7 @@ const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > 
 	originalRegisterPlugin( name, settings as any );
 
 registerPlugin( 'a8c-editor-site-launch', {
-	render: function NavSidebar() {
+	render: function LaunchSidebar() {
 		const { isSidebarOpen } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 		const { closeSidebar } = useDispatch( LAUNCH_STORE );
 

@@ -6,6 +6,7 @@ import domReady from '@wordpress/dom-ready';
 import { addAction } from '@wordpress/hooks';
 import { dispatch } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import 'a8c-fse-common-data-stores';
 
 // Depend on `core/editor` store.
 import '@wordpress/editor';
