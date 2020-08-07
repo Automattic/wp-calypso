@@ -113,7 +113,9 @@ class WPCOMNotifications extends React.Component {
 					name={ options.promotion }
 					isEnabled={ get( settings, options.promotion ) }
 					title={ translate( 'Promotions' ) }
-					description={ translate( 'Sales and promotions for WordPress.com products and services.' ) }
+					description={ translate(
+						'Sales and promotions for WordPress.com products and services.'
+					) }
 				/>
 
 				<EmailCategory
