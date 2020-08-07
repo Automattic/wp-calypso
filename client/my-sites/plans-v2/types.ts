@@ -30,10 +30,16 @@ export interface UpsellPageProps {
 
 export type SelectorProductSlug = typeof PRODUCTS_WITH_OPTIONS[ number ];
 
-export interface SelectorProduct {
+export type SelectorProductCost = {
+	cost?: number;
+	discountCost?: number;
+};
+
+export interface SelectorProduct extends SelectorProductCost {
 	productSlug: string;
 	iconSlug: string;
 	costProductSlug?: string;
+	monthlyProductSlug?: string;
 	displayName: TranslateResult;
 	tagline: TranslateResult;
 	description: TranslateResult | ReactNode;
@@ -41,4 +47,11 @@ export interface SelectorProduct {
 	buttonLabel?: TranslateResult;
 	features: string[];
 	subtypes?: string[];
+	owned?: boolean;
+	legacy?: boolean;
+}
+
+export interface AvailableProductData {
+	product_slug: string;
+	cost: number;
 }
