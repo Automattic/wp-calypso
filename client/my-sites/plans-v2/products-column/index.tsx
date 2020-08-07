@@ -8,9 +8,15 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { durationToText, slugToItem, itemToSelectorProduct, productButtonLabel } from '../utils';
+import {
+	durationToText,
+	slugToItem,
+	itemToSelectorProduct,
+	productButtonLabel,
+	getProductPrices,
+} from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
-import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
+import { isProductsListFetching, getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
@@ -28,37 +34,30 @@ interface ProductsColumnType {
 	siteId: number | null;
 }
 
-type ProductWithBought = SelectorProduct & { owned?: boolean };
-
 const ProductComponent = ( {
 	product,
 	onClick,
 	currencyCode,
 }: {
-	product: ProductWithBought;
+	product: SelectorProduct;
 	onClick: PurchaseCallback;
 	currencyCode: string;
-} ) => {
-	const price =
-		useSelector( ( state ) =>
-			getProductCost( state, product.costProductSlug || product.productSlug )
-		) || 0;
-	return (
-		<JetpackProductCard
-			iconSlug={ product.iconSlug }
-			productName={ product.displayName }
-			subheadline={ product.tagline }
-			description={ product.description }
-			currencyCode={ currencyCode }
-			billingTimeFrame={ durationToText( product.term ) }
-			buttonLabel={ productButtonLabel( product ) }
-			onButtonClick={ () => onClick( product.productSlug ) }
-			features={ { items: [] } }
-			originalPrice={ price }
-			isOwned={ product.owned }
-		/>
-	);
-};
+} ) => (
+	<JetpackProductCard
+		iconSlug={ product.iconSlug }
+		productName={ product.displayName }
+		subheadline={ product.tagline }
+		description={ product.description }
+		currencyCode={ currencyCode }
+		billingTimeFrame={ durationToText( product.term ) }
+		buttonLabel={ productButtonLabel( product ) }
+		onButtonClick={ () => onClick( product.productSlug ) }
+		features={ { items: [] } }
+		discountedPrice={ product.discountCost }
+		originalPrice={ product.cost || 0 }
+		isOwned={ product.owned }
+	/>
+);
 
 const ProductsColumn = ( {
 	duration,
@@ -68,11 +67,12 @@ const ProductsColumn = ( {
 }: ProductsColumnType ) => {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const availableProducts = useSelector( ( state ) => getAvailableProductsList( state ) );
 	const currentProducts = (
 		useSelector( ( state ) => getSiteProducts( state, siteId ) ) || []
 	).map( ( product ) => product.productSlug );
 
-	const productObjects: ProductWithBought[] = useMemo(
+	const productObjects: SelectorProduct[] = useMemo(
 		() =>
 			SELECTOR_PRODUCTS.map( ( productSlug ) => {
 				const item = slugToItem( productSlug );
@@ -86,9 +86,10 @@ const ProductsColumn = ( {
 				)
 				.map( ( product: SelectorProduct ) => ( {
 					...product,
+					...getProductPrices( product, availableProducts ),
 					owned: currentProducts.includes( product.productSlug ),
 				} ) ),
-		[ duration, productType, currentProducts ]
+		[ duration, productType, currentProducts, availableProducts ]
 	);
 
 	if ( ! currencyCode || isFetchingProducts ) {
