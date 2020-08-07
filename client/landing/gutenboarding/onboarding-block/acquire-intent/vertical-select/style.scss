@@ -51,9 +51,10 @@
 	z-index: z-index( '.vertical-select__suggestions-wrapper' );
 
 	@include break-small {
-		display: inline;
+		display: inline-block;
 		padding-bottom: 5px;
 	}
+	
 }
 
 .vertical-select__suggestions {
@@ -72,19 +73,6 @@
 
 .vertical-select__input-wrapper {
 	position: relative;
-
-	&--with-arrow {
-		margin-right: 40px; // make space for absolute positioned arrow
-	}
-
-	.madlib__input:empty {
-		@include break-small {
-			padding-right: 300px; // there's not enough container width on smaller screens
-		}
-		@include break-medium {
-			padding-right: 400px;
-		}
-	}
 }
 
 .vertical-select__input {
@@ -103,7 +91,11 @@
 		background: var( --mainColor );
 
 		@include break-small {
-			bottom: 4px;
+			bottom: 15px;
+		}
+
+		@include break-medium {
+			bottom: 20px;
 		}
 	}
 
