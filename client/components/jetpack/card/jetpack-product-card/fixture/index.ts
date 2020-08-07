@@ -5,11 +5,11 @@ import { noop } from 'lodash';
 
 export const featuresItems = [
 	{
-		text: 'Static file hosting',
+		text: 'Backup',
 	},
 	{
-		icon: 'lock',
-		text: 'Real-Time Security Bundle',
+		icon: 'bug',
+		text: 'Anti-spam ',
 		description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
 	},
 ];
@@ -25,15 +25,15 @@ export const categorizedFeatures = {
 };
 
 export const productCard = {
-	iconSlug: 'jetpack_anti_spam',
-	productName: 'Security Bundle',
-	subheadline: 'Get all of the essential security tools',
+	iconSlug: 'jetpack_security_v2',
+	productName: 'Jetpack Security',
+	subheadline: 'Comprehensive WordPress protection',
 	description:
-		'Enjoy the peace of mind of complete site protection. This bundle includes everything you need to keep your site backed up, free of spam and one-step ahead of threats. Options available: Real-Time or Daily',
+		'Enjoy the peace of mind of complete site security. Easy-to-use, powerful security tools guard your site, so you can focus on your business.',
 	currencyCode: 'USD',
 	originalPrice: 30,
 	billingTimeFrame: 'per month, billed yearly',
-	buttonLabel: 'Get the Security Bundle',
+	buttonLabel: 'Get Jetpack Security',
 	onButtonClick: noop,
 	features,
 };
@@ -64,7 +64,7 @@ export const productCardWithDiscount = {
 
 export const productCardWithLongTexts = {
 	...productCard,
-	productName: 'Security Bundle Security Bundle Security Bundle',
+	productName: 'Jetpack Security Jetpack Security Jetpack Security Jetpack Security',
 	subheadline:
 		'Get all of the essential security tools. Get all of the essential security tools. Get all of the essential security tools.',
 	features: {
@@ -72,7 +72,8 @@ export const productCardWithLongTexts = {
 			...featuresItems,
 			{
 				icon: 'lock',
-				text: 'Real-Time Security Bundle Real-Time Security Bundle Real-Time Security Bundle',
+				text:
+					'Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.',
 				description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
 			},
 		],
