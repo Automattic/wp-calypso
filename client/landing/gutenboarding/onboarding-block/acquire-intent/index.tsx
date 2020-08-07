@@ -95,18 +95,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	return (
 		<div className="gutenboarding-page acquire-intent">
-			{ isMobile &&
-				( isSiteTitleActive ? (
-					<div>
-						<Arrow
-							className="acquire-intent__mobile-back-arrow"
-							onClick={ () => setIsSiteTitleActive( false ) }
-						/>
-						{ siteTitleInput }
-					</div>
-				) : (
-					verticalSelect
-				) ) }
+			{ isMobile && ( isSiteTitleActive ? siteTitleInput : verticalSelect ) }
 			{ ! isMobile && (
 				<>
 					{ verticalSelect }

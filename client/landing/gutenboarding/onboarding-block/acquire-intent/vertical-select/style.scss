@@ -52,6 +52,7 @@
 
 	@include break-small {
 		display: inline;
+		padding-bottom: 5px;
 	}
 }
 
@@ -88,8 +89,9 @@
 
 .vertical-select__input {
 	height: 100%;
-	margin-bottom: 10px;
 	display: inline-block;
+	line-height: 1;
+	padding-bottom: 5px;
 
 	&::after {
 		content: '';
@@ -139,5 +141,9 @@
 		&::-ms-clear {
 			display: none;
 		}
+	}
+
+	div.components-base-control__field {
+		margin-bottom: 0;
 	}
 }
