@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
-import { ALL, PERFORMANCE, SECURITY } from './constants';
+import { ALL, PERFORMANCE, SECURITY, PRODUCTS_WITH_OPTIONS } from './constants';
 
 /**
  * Type dependencies
  */
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode } from 'react';
+import type { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
 export type ProductType = typeof ALL | typeof PERFORMANCE | typeof SECURITY;
@@ -27,6 +27,8 @@ export interface UpsellPageProps {
 	duration: Duration;
 	productSlug: string;
 }
+
+export type SelectorProductSlug = typeof PRODUCTS_WITH_OPTIONS[ number ];
 
 export interface SelectorProduct {
 	productSlug: string;

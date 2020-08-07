@@ -31,7 +31,7 @@ import {
 /**
  * Type dependencies
  */
-import { SelectorProduct } from './types';
+import { SelectorProduct, SelectorProductSlug } from './types';
 
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';
@@ -68,7 +68,7 @@ export const PRODUCTS_WITH_OPTIONS = [
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 	OPTIONS_JETPACK_BACKUP,
 	OPTIONS_JETPACK_BACKUP_MONTHLY,
-];
+] as const;
 
 // Jetpack Security
 export const OPTION_PLAN_SECURITY: SelectorProduct = {
@@ -111,6 +111,14 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 	term: TERM_MONTHLY,
 	subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ],
 	costProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+};
+
+// Map slug to objects.
+export const OPTIONS_SLUG_MAP: Record< SelectorProductSlug, SelectorProduct > = {
+	[ OPTIONS_JETPACK_SECURITY ]: OPTION_PLAN_SECURITY,
+	[ OPTIONS_JETPACK_SECURITY_MONTHLY ]: OPTION_PLAN_SECURITY_MONTHLY,
+	[ OPTIONS_JETPACK_BACKUP ]: OPTION_PRODUCT_BACKUP,
+	[ OPTIONS_JETPACK_BACKUP_MONTHLY ]: OPTION_PRODUCT_BACKUP_MONTHLY,
 };
 
 /**
