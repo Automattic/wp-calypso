@@ -7,7 +7,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import PlansGrid from '@automattic/plans-grid';
 import type { Plans } from '@automattic/data-stores';
-import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -54,6 +54,8 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
+	const handleNext = () => ( isModal ? history.goBack() : goNext() );
+
 	const handlePlanSelect = ( planSlug: PlanSlug ) => {
 		// When picking a free plan, if there is a paid domain selected, it's changed automatically to a free domain
 		if ( isPlanFree( planSlug ) && ! domain?.is_free ) {
@@ -61,12 +63,6 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		}
 
 		updatePlan( planSlug );
-
-		if ( isModal ) {
-			history.goBack();
-		} else {
-			goNext();
-		}
 	};
 	const handlePickDomain = () => history.push( makePath( Step.DomainsModal ) );
 
@@ -82,6 +78,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			</div>
 			<ActionButtons>
 				<BackButton onClick={ handleBack } />
+				<NextButton onClick={ handleNext } />
 			</ActionButtons>
 		</>
 	);
