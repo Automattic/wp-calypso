@@ -3,7 +3,7 @@
  */
 import type { State } from './reducer';
 import { planDetails, PLANS_LIST } from './plans-data';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE } from './constants';
+import { DEFAULT_FREE_PLAN, DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE } from './constants';
 import type { PlanSlug } from './types';
 
 function getPlan( slug: PlanSlug ) {
@@ -13,6 +13,7 @@ function getPlan( slug: PlanSlug ) {
 export const getPlanBySlug = ( _: State, slug: PlanSlug ) => getPlan( slug );
 
 export const getDefaultPaidPlan = () => getPlan( DEFAULT_PAID_PLAN );
+export const getDefaultFreePlan = () => getPlan( DEFAULT_FREE_PLAN );
 
 export const getSupportedPlans = ( state: State ) => state.supportedPlanSlugs.map( getPlan );
 
