@@ -78,27 +78,33 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 
+	// This gets all plan objects for us to parse.
 	const planObjects: PlanWithBought[] = useMemo( () => {
 		let owned = false;
+		// Map over all plan slugs and convert them to SelectorProduct types.
 		const plans: PlanWithBought[] = SELECTOR_PLANS.map( ( productSlug ) => {
 			const item = slugToItem( productSlug );
 			if ( ! owned && currentPlan ) {
+				// Check if we own a plan in here. If we don't the user has a legacy plan, handled below.
 				owned = productSlug === currentPlan;
 			}
 			return item && itemToSelectorProduct( item );
 		} )
+			// Remove plans that don't fit the filters or have invalid data.
 			.filter(
 				( product: SelectorProduct | null ): product is SelectorProduct =>
 					!! product &&
 					duration === product.term &&
 					PRODUCTS_TYPES[ productType ].includes( product.productSlug )
 			)
+			// Iterate over plans and set whether they are legacy and if the user owns them.
 			.map( ( product: SelectorProduct ) => ( {
 				...product,
 				owned: product.productSlug === currentPlan,
 				legacy: false,
 			} ) );
 
+		// If the user does not own a current plan, get it and insert it on the top of the plan array.
 		if ( ! owned && currentPlan && currentPlan !== PLAN_JETPACK_FREE ) {
 			const item = slugToItem( currentPlan );
 			const currentPlanSelector = item && itemToSelectorProduct( item );

@@ -72,18 +72,22 @@ const ProductsColumn = ( {
 		useSelector( ( state ) => getSiteProducts( state, siteId ) ) || []
 	).map( ( product ) => product.productSlug );
 
+	// Gets all products in an array to be parsed.
 	const productObjects: SelectorProduct[] = useMemo(
 		() =>
+			// Convert product slugs to ProductSelector types.
 			SELECTOR_PRODUCTS.map( ( productSlug ) => {
 				const item = slugToItem( productSlug );
 				return item && itemToSelectorProduct( item );
 			} )
+				// Remove products that don't fit the filters or have invalid data.
 				.filter(
 					( product: SelectorProduct | null ): product is SelectorProduct =>
 						!! product &&
 						duration === product.term &&
 						PRODUCTS_TYPES[ productType ].includes( product.productSlug )
 				)
+				// Insert product prices as well as whether they are owned already.
 				.map( ( product: SelectorProduct ) => ( {
 					...product,
 					...getProductPrices( product, availableProducts ),
