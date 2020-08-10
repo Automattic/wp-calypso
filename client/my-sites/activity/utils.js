@@ -40,5 +40,6 @@ export const retrieveAllActivities = ( siteId, filter ) => {
 	return {
 		areActivitiesRetrieved,
 		activities,
+		state: response.state,
 	};
 };
