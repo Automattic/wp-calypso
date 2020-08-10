@@ -43,7 +43,7 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -415,27 +415,31 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when saving new post fails', ( done ) => {
-			savePost( 77203074, null, { title: 'Hello World' } )( spy ).catch( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_SAVE_FAILURE,
-					siteId: 77203074,
-					postId: null,
-					error: sinon.match( { message: 'User cannot edit posts' } ),
+		test( 'should dispatch failure action when saving new post fails', () => {
+			return new Promise( ( done ) => {
+				savePost( 77203074, null, { title: 'Hello World' } )( spy ).catch( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: POST_SAVE_FAILURE,
+						siteId: 77203074,
+						postId: null,
+						error: sinon.match( { message: 'User cannot edit posts' } ),
+					} );
+					done();
 				} );
-				done();
 			} );
 		} );
 
-		test( 'should dispatch failure action when saving existing post fails', ( done ) => {
-			savePost( 77203074, 102, { title: 'Hello World' } )( spy ).catch( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_SAVE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot edit post' } ),
+		test( 'should dispatch failure action when saving existing post fails', () => {
+			return new Promise( ( done ) => {
+				savePost( 77203074, 102, { title: 'Hello World' } )( spy ).catch( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: POST_SAVE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: sinon.match( { message: 'User cannot edit post' } ),
+					} );
+					done();
 				} );
-				done();
 			} );
 		} );
 	} );
@@ -494,18 +498,20 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when deleting post fails', ( done ) => {
-			deletePost(
-				77203074,
-				102
-			)( spy ).catch( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_DELETE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot delete posts' } ),
+		test( 'should dispatch failure action when deleting post fails', () => {
+			return new Promise( ( done ) => {
+				deletePost(
+					77203074,
+					102
+				)( spy ).catch( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: POST_DELETE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: sinon.match( { message: 'User cannot delete posts' } ),
+					} );
+					done();
 				} );
-				done();
 			} );
 		} );
 	} );
@@ -561,18 +567,20 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when restoring post fails', ( done ) => {
-			restorePost(
-				77203074,
-				102
-			)( spy ).catch( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_RESTORE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot restore trashed posts' } ),
+		test( 'should dispatch failure action when restoring post fails', () => {
+			return new Promise( ( done ) => {
+				restorePost(
+					77203074,
+					102
+				)( spy ).catch( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: POST_RESTORE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: sinon.match( { message: 'User cannot restore trashed posts' } ),
+					} );
+					done();
 				} );
-				done();
 			} );
 		} );
 	} );

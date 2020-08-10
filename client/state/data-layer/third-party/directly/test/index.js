@@ -14,7 +14,7 @@ import {
 	DIRECTLY_INITIALIZATION_ERROR,
 } from 'state/action-types';
 import * as analytics from 'state/analytics/actions/record';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'Directly data layer', () => {
 	let store;
@@ -79,55 +79,63 @@ describe( 'Directly data layer', () => {
 			);
 		} );
 
-		test( 'should dispatch a success action if initialization completes', ( done ) => {
-			initialize( store )
-				.then( () =>
-					expect( store.dispatch ).to.have.been.calledWithMatch( {
-						type: DIRECTLY_INITIALIZATION_SUCCESS,
-					} )
-				)
-				.then( () => done() );
-
-			simulateInitializationSuccess();
-		} );
-
-		test( 'should dispatch an analytics event if initialization completes', ( done ) => {
-			initialize( store )
-				.then( () =>
-					expect( analytics.recordTracksEvent ).to.have.been.calledWith(
-						'calypso_directly_initialization_success'
+		test( 'should dispatch a success action if initialization completes', () => {
+			return new Promise( ( done ) => {
+				initialize( store )
+					.then( () =>
+						expect( store.dispatch ).to.have.been.calledWithMatch( {
+							type: DIRECTLY_INITIALIZATION_SUCCESS,
+						} )
 					)
-				)
-				.then( () => done() );
+					.then( () => done() );
 
-			simulateInitializationSuccess();
+				simulateInitializationSuccess();
+			} );
 		} );
 
-		test( 'should dispatch an error action if initialization fails', ( done ) => {
-			initialize( store )
-				.then( () =>
-					expect( store.dispatch ).to.have.been.calledWithMatch( {
-						type: DIRECTLY_INITIALIZATION_ERROR,
-					} )
-				)
-				.then( () => done() );
-
-			simulateInitializationError();
-		} );
-
-		test( 'should dispatch an analytics event if initialization fails', ( done ) => {
-			initialize( store )
-				.then( () =>
-					expect( analytics.recordTracksEvent ).to.have.been.calledWith(
-						'calypso_directly_initialization_error',
-						{
-							error: 'Error: Something went wrong',
-						}
+		test( 'should dispatch an analytics event if initialization completes', () => {
+			return new Promise( ( done ) => {
+				initialize( store )
+					.then( () =>
+						expect( analytics.recordTracksEvent ).to.have.been.calledWith(
+							'calypso_directly_initialization_success'
+						)
 					)
-				)
-				.then( () => done() );
+					.then( () => done() );
 
-			simulateInitializationError( new Error( 'Something went wrong' ) );
+				simulateInitializationSuccess();
+			} );
+		} );
+
+		test( 'should dispatch an error action if initialization fails', () => {
+			return new Promise( ( done ) => {
+				initialize( store )
+					.then( () =>
+						expect( store.dispatch ).to.have.been.calledWithMatch( {
+							type: DIRECTLY_INITIALIZATION_ERROR,
+						} )
+					)
+					.then( () => done() );
+
+				simulateInitializationError();
+			} );
+		} );
+
+		test( 'should dispatch an analytics event if initialization fails', () => {
+			return new Promise( ( done ) => {
+				initialize( store )
+					.then( () =>
+						expect( analytics.recordTracksEvent ).to.have.been.calledWith(
+							'calypso_directly_initialization_error',
+							{
+								error: 'Error: Something went wrong',
+							}
+						)
+					)
+					.then( () => done() );
+
+				simulateInitializationError( new Error( 'Something went wrong' ) );
+			} );
 		} );
 	} );
 } );

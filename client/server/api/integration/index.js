@@ -8,7 +8,7 @@ import unmodifiedConfig from 'config';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'api', () => {
 	let app, config, localRequest, sandbox;

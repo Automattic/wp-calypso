@@ -17,8 +17,8 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
