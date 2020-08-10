@@ -69,7 +69,11 @@
 	line-height: 14px;
 	opacity: 0;
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
-	margin-top: 5px;
+	margin-top: 10px;
+
+	@include break-medium {
+		margin-top: 15px;
+	}
 
 	.site-title.is-touched & {
 		opacity: 1;
