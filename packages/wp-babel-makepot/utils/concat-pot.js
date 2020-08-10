@@ -46,7 +46,7 @@ const filterByLines = ( potData, linesFilterFile ) => {
 		console.error( 'Failed to line filter file: ', error );
 	}
 
-	if ( typeof lines === 'undefined' ) {
+	if ( typeof lines === 'undefined' || typeof potData.translations === 'undefined' ) {
 		return;
 	}
 
