@@ -1,6 +1,7 @@
 @import '~@wordpress/base-styles/mixins';
 @import '~@wordpress/base-styles/variables';
 @import '~@wordpress/base-styles/z-index';
+@import '~@automattic/typography/styles/variables';
 
 body.has-nux-launch-modal {
 	overflow: hidden;
@@ -79,4 +80,16 @@ body.has-nux-launch-modal {
 	&:hover {
 		color: var( --studio-gray-40 );
 	}
+}
+
+.nux-launch-modal-body__launching {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: $font-body;
 }

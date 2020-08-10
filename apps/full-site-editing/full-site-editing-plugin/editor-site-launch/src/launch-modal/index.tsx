@@ -48,26 +48,34 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 			onRequestClose={ onClose }
 			title=""
 		>
-			<div className="nux-launch-modal-header">
-				<div className="nux-launch-modal-header__wp-logo">
-					<Icon icon={ wordpress } size={ 36 } />
+			{ isLaunching ? (
+				<div className="nux-launch-modal-body__launching">
+					{ __( 'Hooray! Your site will be ready shortly.', 'full-site-editing' ) }
 				</div>
-			</div>
-			<div className="nux-launch-modal-body">
-				{ isLaunching ? 'launch animation' : <Launch onSubmit={ handleLaunch } /> }
-			</div>
-			<div className="nux-launch-modal-aside">
-				<Button
-					isLink
-					className="nux-launch-modal__close-button"
-					onClick={ onClose }
-					aria-label={ __( 'Close dialog', 'full-site-editing' ) }
-					disabled={ ! onClose }
-				>
-					<Icon icon={ close } size={ 24 } />
-				</Button>
-				<LaunchSidebar />
-			</div>
+			) : (
+				<>
+					<div className="nux-launch-modal-header">
+						<div className="nux-launch-modal-header__wp-logo">
+							<Icon icon={ wordpress } size={ 36 } />
+						</div>
+					</div>
+					<div className="nux-launch-modal-body">
+						<Launch onSubmit={ handleLaunch } />
+					</div>
+					<div className="nux-launch-modal-aside">
+						<Button
+							isLink
+							className="nux-launch-modal__close-button"
+							onClick={ onClose }
+							aria-label={ __( 'Close dialog', 'full-site-editing' ) }
+							disabled={ ! onClose }
+						>
+							<Icon icon={ close } size={ 24 } />
+						</Button>
+						<LaunchSidebar />
+					</div>
+				</>
+			) }
 		</Modal>
 	);
 };
