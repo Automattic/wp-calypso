@@ -38,6 +38,12 @@ export default function ContactFields( {
 }
 
 const CountrySpecificPaymentFieldsUI = styled( CountrySpecificPaymentFields )`
+	margin-top: 0;
+
+	& .checkout__form-info-text {
+		display: none;
+	}
+
 	& .document,
 	& .phone,
 	& .postal-code,
@@ -50,7 +56,15 @@ const CountrySpecificPaymentFieldsUI = styled( CountrySpecificPaymentFields )`
 		margin-left: 0;
 	}
 
-	& .checkout__form-info-text {
+	& .checkout__form-info-text,
+	& .form__hidden-input a {
 		margin-left: 0;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		& .address-1,
+		& .state {
+			margin-right: 15px;
+		}
 	}
 `;
