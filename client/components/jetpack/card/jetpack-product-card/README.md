@@ -14,8 +14,6 @@ export default function JetpackProductCardExample() {
         <JetpackProductCard
             iconSlug="jetpack_backup_v2"
             productName="Jetpack Backup"
-            subheadline=""
-            description=""
             currencyCode="USD"
             originalPrice={10}
             billingTimeFrame="per month, billed monthly"
@@ -53,3 +51,5 @@ export default function JetpackProductCardExample() {
 | `isOwned`            | `boolean`    | `false` | Use when the product is already owned or included in another product owned by the customer |
 | `features`\*         | `Features`   | none    | Features of the product                                                                    |
 | `isExpanded`         | `boolean`    | `false` | Use to expand the card and show the product features                                       |
+| `isDeprecated`       | `boolean`    | `false` | Use to identify the plan as deprecated                                                     |
+| `expiryDate`         | `Moment`     | none    | Expiry date of the product                                                                 |

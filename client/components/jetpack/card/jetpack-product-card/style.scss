@@ -1,4 +1,4 @@
-$jetpack-product-card-color: #33b3db;
+$jetpack-product-card-color: var( --studio-wordpress-blue-30 );
 $jetpack-product-card-circle-size: 65px;
 $jetpack-product-card-icon-size: 55px;
 
@@ -122,7 +122,8 @@ $jetpack-product-card-icon-size: 55px;
 }
 
 .jetpack-product-card__from,
-.jetpack-product-card__billing-time-frame {
+.jetpack-product-card__billing-time-frame,
+.jetpack-product-card__expiration-date {
 	display: block;
 
 	color: var( --color-text-subtle );
@@ -130,6 +131,14 @@ $jetpack-product-card-icon-size: 55px;
 	font-size: $font-body-extra-small;
 	font-style: italic;
 	line-height: 1;
+}
+
+.jetpack-product-card__expiration-date {
+	margin-top: 10px;
+
+	color: var( --studio-pink-50 );
+
+	text-align: right;
 }
 
 .jetpack-product-card__from {

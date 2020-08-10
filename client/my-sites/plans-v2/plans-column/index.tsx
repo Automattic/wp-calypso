@@ -67,7 +67,7 @@ const PlanComponent = ( {
 			features={ { items: [] } }
 			originalPrice={ price }
 			isOwned={ plan.owned }
-			deprecated={ plan.legacy }
+			isDeprecated={ plan.legacy }
 		/>
 	);
 };
