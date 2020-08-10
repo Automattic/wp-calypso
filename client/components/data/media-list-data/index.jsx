@@ -20,7 +20,6 @@ import getMediaSortedByDate from 'state/selectors/get-media-sorted-by-date';
 
 function getStateData( siteId ) {
 	return {
-		legacyMedia: MediaListStore.getAll( siteId ),
 		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
 	};
 }
