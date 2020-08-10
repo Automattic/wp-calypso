@@ -7,7 +7,14 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from 'calypso/my-sites/controller';
-import { authenticate, post, redirect, siteEditor, exitPost } from './controller';
+import {
+	authenticate,
+	post,
+	redirect,
+	siteEditor,
+	gutenbergWithoutIframe,
+	exitPost,
+} from './controller';
 import config from 'calypso/config';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
@@ -39,6 +46,16 @@ export default function () {
 	page( '/page', siteSelection, sites, makeLayout, clientRender );
 	page( '/page/new', '/page' ); // redirect from beep-beep-boop
 	page(
+		'/without-iframe/post/:site/:post?',
+		siteSelection,
+		redirect,
+		authenticate,
+		gutenbergWithoutIframe,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/page/:site/:post?',
 		siteSelection,
 		redirect,
@@ -47,8 +64,19 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page.exit( '/page/:site?/:post?', exitPost );
 	page( '/page/:site?', siteSelection, redirect, makeLayout, clientRender );
+
+	page(
+		'/without-iframe/page/:site/:post?',
+		siteSelection,
+		redirect,
+		authenticate,
+		gutenbergWithoutIframe,
+		makeLayout,
+		clientRender
+	);
 
 	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		page( '/edit/:customPostType', siteSelection, sites, makeLayout, clientRender );

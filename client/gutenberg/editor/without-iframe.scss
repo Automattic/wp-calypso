@@ -1,0 +1,62 @@
+// @import "~@wordpress/base-styles/colors";
+@import "~@wordpress/base-styles/variables";
+@import "~@wordpress/base-styles/mixins";
+@import "~@wordpress/base-styles/breakpoints";
+@import "~@wordpress/base-styles/animations";
+// @import "~@wordpress/base-styles/z-index";
+
+@import "./editor-styles";
+
+.editor__without-iframe {
+	@include break-small() {
+		width: calc(100% - #{$sidebar-width});
+	}
+	padding-top: 20px;
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	iframe {
+		width: 100%;
+	}
+
+	.components-navigate-regions {
+		height: 100%;
+	}
+}
+
+.without-iframe__sidebar {
+	position: fixed;
+	top: 46px;
+	right: 0;
+	bottom: 0;
+	width: $sidebar-width;
+	border-left: $border-width solid $gray-200;
+	height: auto;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+
+	// Temporarily disable the sidebar on mobile
+	display: none;
+	@include break-small() {
+		display: block;
+	}
+}
+
+/**
+ * Animations
+ */
+
+// These keyframes should not be part of the _animations.scss mixins file.
+// Because keyframe animations can't be defined as mixins properly, they are duplicated.
+// Since hey are intended only for the editor, we add them here instead.
+@keyframes edit-post__fade-in-animation {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

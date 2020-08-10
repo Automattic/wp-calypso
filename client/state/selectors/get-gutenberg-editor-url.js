@@ -30,9 +30,9 @@ export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 
 	const siteSlug = getSiteSlug( state, siteId );
 
 	if ( 'post' === postType || 'page' === postType ) {
-		return `/${ postType }/${ siteSlug }`;
+		return `/without-iframe/${ postType }/${ siteSlug }`;
 	}
-	return `/edit/${ postType }/${ siteSlug }`;
+	return `/without-iframe/edit/${ postType }/${ siteSlug }`;
 };
 
 export default getGutenbergEditorUrl;
