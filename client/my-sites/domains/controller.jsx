@@ -38,6 +38,7 @@ import { canUserPurchaseGSuite } from 'lib/gsuite';
 import { addItem } from 'lib/cart/actions';
 import { planItem } from 'lib/cart-values/cart-items';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -270,11 +271,23 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	}
 };
 
+const wpForTeamsNoDomainsWarning = ( context, next ) => {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && isSiteWPForTeams( state, selectedSite.ID ) ) {
+		return page.redirect( '/' );
+	}
+
+	next();
+};
+
 export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
 	domainSearch,
 	jetpackNoDomainsWarning,
+	wpForTeamsNoDomainsWarning,
 	siteRedirect,
 	mapDomain,
 	googleAppsWithRegistration,
