@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { TextControl } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -14,14 +13,15 @@ import classnames from 'classnames';
 import { STORE_KEY } from '../../stores/onboard';
 import { recordSiteTitleSelection } from '../../lib/analytics';
 import tip from './tip';
+import AcquireIntentTextInput from './acquire-intent-text-input';
 
 import useTyper from '../../hooks/use-typer';
+
 interface Props {
-	isVisible?: boolean;
 	onSubmit: () => void;
 }
 
-const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, onSubmit } ) => {
+const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { __, _x } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
@@ -89,10 +89,6 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, onSubmit } ) 
 		delayBetweenCharacters: 70,
 	} );
 
-	if ( ! isVisible ) {
-		return null;
-	}
-
 	return (
 		<form
 			className={ classnames( 'site-title', { 'is-touched': isTouched } ) }
@@ -106,21 +102,15 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, onSubmit } ) 
 					because without it the element is recreated
 					for every letter in the typing animation
 					*/ }
-				<TextControl
+				<AcquireIntentTextInput
 					key="site-title__input"
-					id="site-title__input"
-					className="site-title__input"
 					onChange={ setSiteTitle }
 					onFocus={ handleFocus }
 					onBlur={ handleBlur }
 					value={ siteTitle }
 					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-					spellCheck={ false }
-					autoComplete="off"
 					placeholder={ placeHolder }
-					autoCorrect="off"
-					data-hj-whitelist
-				></TextControl>
+				></AcquireIntentTextInput>
 				<p className="site-title__input-hint">
 					<Icon icon={ tip } size={ 18 } />
 					{ /* translators: The "it" here refers to the site title. */ }

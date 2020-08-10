@@ -54,13 +54,11 @@
 		display: inline-block;
 		padding-bottom: 5px;
 	}
-	
 }
 
 .vertical-select__suggestions {
 	position: absolute;
 	left: -16px;
-	margin-top: -20px;
 	min-height: 300px;
 	max-height: calc( 100% - 50px );
 	overflow: auto;
@@ -80,62 +78,4 @@
 	display: inline-block;
 	line-height: 1;
 	padding-bottom: 5px;
-
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 1px;
-		height: 2px;
-		background: var( --mainColor );
-
-		@include break-small {
-			bottom: 15px;
-		}
-
-		@include break-medium {
-			bottom: 20px;
-		}
-	}
-
-	input[type='text'].components-text-control__input {
-		@include onboarding-heading-text-mobile;
-		height: auto;
-		background: transparent;
-		border: none;
-		padding: 0;
-		color: var( --mainColor );
-		caret-color: var( --mainColor );
-
-		&:focus {
-			box-shadow: none;
-			outline: none;
-		}
-
-		&::-ms-clear {
-			display: none;
-		}
-
-		@include break-small {
-			@include onboarding-heading-text;
-		}
-
-		@include break-medium {
-			font-size: 64px;
-		}
-
-		&::placeholder {
-			color: $light-gray-700;
-			line-height: normal;
-		}
-
-		&::-ms-clear {
-			display: none;
-		}
-	}
-
-	div.components-base-control__field {
-		margin-bottom: 0;
-	}
 }

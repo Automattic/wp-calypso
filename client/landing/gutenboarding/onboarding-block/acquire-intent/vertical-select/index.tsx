@@ -9,7 +9,7 @@ import { ENTER, TAB } from '@wordpress/keycodes';
 import { useViewportMatch } from '@wordpress/compose';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
-import { TextControl } from '@wordpress/components';
+import AcquireIntentTextInput from '../acquire-intent-text-input';
 
 /**
  * Internal dependencies
@@ -128,7 +128,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
 		setIsFocused( false ); // prevent executing handleBlur()
-		// empty suggestions cache once a vertical is selceted
+		// empty suggestions cache once a vertical is selected
 		setSuggestions( [] );
 	};
 
@@ -193,15 +193,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			<label htmlFor="vertical-input">{ __( 'My site is about' ) } </label>
 			<span className="vertical-select__suggestions-wrapper">
 				{ ! isMobile && <span className="vertical-select__whitespace"></span> }
-				<TextControl
-					id="vertical-input"
+				<AcquireIntentTextInput
 					placeholder={ animatedPlaceholder }
-					data-hj-whitelist
-					tabIndex={ 0 }
-					spellCheck={ false }
 					value={ textValue }
-					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-					className="vertical-select__input"
 					onKeyDown={ handleInputKeyDownEvent }
 					onKeyUp={ handleInputKeyUpEvent }
 					onFocus={ () => setIsFocused( true ) }
