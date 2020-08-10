@@ -18,6 +18,7 @@ import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
+import Arrow from './arrow';
 
 /**
  * Style dependencies
@@ -29,6 +30,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const { getSelectedVertical, getSelectedSiteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
 		select( STORE_KEY )
 	);
+
+	const siteTitleRef = React.useRef< HTMLInputElement >();
 
 	const { skipSiteVertical } = useDispatch( STORE_KEY );
 
@@ -49,12 +52,6 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const hasSiteTitle = !! getSelectedSiteTitle();
 	const showSiteTitleAndNext = !! ( getSelectedVertical() || hasSiteTitle || wasVerticalSkipped() );
 
-	React.useEffect( () => {
-		if ( isMobile ) {
-			window.scrollTo( 0, 0 );
-		}
-	}, [ isSiteTitleActive, isMobile ] );
-
 	// translators: Button label for skipping filling an optional input in onboarding
 	const skipLabel = __( 'I donʼt know' );
 
@@ -64,14 +61,24 @@ const AcquireIntent: React.FunctionComponent = () => {
 		setIsSiteTitleActive( true );
 	};
 
+	const onNext = () => {
+		if ( isMobile ) {
+			window.scrollTo( 0, 0 );
+		}
+		setIsSiteTitleActive( true );
+		siteTitleRef.current?.focus();
+	};
+
 	const handleSiteTitleSubmit = () => {
 		history.push( nextStepPath );
 		! hasSiteTitle && recordSiteTitleSkip();
 	};
 
 	// declare UI elements here to avoid duplication when returning for mobile/desktop layouts
-	const siteTitleInput = showSiteTitleAndNext && <SiteTitle onSubmit={ handleSiteTitleSubmit } />;
-	const verticalSelect = <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } />;
+	const verticalSelect = <VerticalSelect onNext={ onNext } />;
+	const siteTitleInput = showSiteTitleAndNext && (
+		<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
+	);
 	const nextStepButton = (
 		<Link
 			className="acquire-intent__question-skip"
@@ -92,7 +99,19 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	return (
 		<div className="gutenboarding-page acquire-intent">
-			{ isMobile && ( isSiteTitleActive ? siteTitleInput : verticalSelect ) }
+			{ isMobile &&
+				( isSiteTitleActive ? (
+					<div>
+						<Arrow
+							className="acquire-intent__mobile-back-arrow"
+							onClick={ () => setIsSiteTitleActive( false ) }
+							transform="rotate(180)"
+						/>
+						{ siteTitleInput }
+					</div>
+				) : (
+					verticalSelect
+				) ) }
 			{ ! isMobile && (
 				<>
 					{ ! wasVerticalSkipped() && verticalSelect }
@@ -105,7 +124,9 @@ const AcquireIntent: React.FunctionComponent = () => {
 				{ isMobile &&
 					( isSiteTitleActive
 						? nextStepButton
-						: ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) }
+						: ( ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) || (
+								<Arrow className="acquire-intent__mobile-next-arrow" onClick={ onNext } />
+						  ) ) }
 
 				{ /* On desktop we always render nextStepButton when we render site title
 				Otherwise we render skipButton  */ }

@@ -159,6 +159,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		if ( suggestionRef.current ) {
 			suggestionRef.current.handleKeyEvent( e );
 		}
+
 		if ( e.keyCode === ENTER ) {
 			e.preventDefault();
 			input.length && ! suggestions.length && handleSelect( { label: input } );

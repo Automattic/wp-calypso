@@ -48,7 +48,6 @@
 .site-title__input-wrapper {
 	position: relative;
 	flex: 1;
-	margin-top: 20px;
 
 	@include break-small {
 		margin-top: 0;
@@ -58,6 +57,7 @@
 
 	@include break-medium {
 		max-width: 750px;
+		margin-top: 20px;
 	}
 }
 
@@ -91,6 +91,10 @@
 	@include break-small {
 		justify-content: flex-start;
 	}
+
+	.components-button.acquire-intent__skip-vertical.is-link {
+		padding: 0;
+	}
 }
 
 .acquire-intent--with-skip {
@@ -99,3 +103,7 @@
 	}
 }
 
+.acquire-intent__mobile-vertical-input {
+	display: flex;
+	flex-wrap: wrap;
+}

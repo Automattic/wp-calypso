@@ -46,7 +46,6 @@
 .acquire-intent-text-input__underline {
 	height: 2px;
 	background: var( --mainColor );
-	max-width: 550px;
 	margin-top: -5px;
 
 	@include break-medium {
@@ -54,6 +53,7 @@
 	}
 
 	&.is-empty {
+		max-width: 550px;
 		background: linear-gradient(
 			90deg,
 			$light-gray-700 0%,

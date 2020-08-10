@@ -19,9 +19,10 @@ import useTyper from '../../hooks/use-typer';
 
 interface Props {
 	onSubmit: () => void;
+	inputRef: React.MutableRefObject< HTMLInputElement | undefined >;
 }
 
-const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
+const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) => {
 	const { __, _x } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
@@ -103,6 +104,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 					for every letter in the typing animation
 					*/ }
 				<AcquireIntentTextInput
+					ref={ inputRef }
 					key="site-title__input"
 					onChange={ setSiteTitle }
 					onFocus={ handleFocus }
