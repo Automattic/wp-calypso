@@ -104,7 +104,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 					for every letter in the typing animation
 					*/ }
 				<AcquireIntentTextInput
-					ref={ inputRef }
+					ref={ inputRef as React.MutableRefObject< HTMLInputElement | null > }
 					key="site-title__input"
 					onChange={ setSiteTitle }
 					onFocus={ handleFocus }
