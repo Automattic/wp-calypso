@@ -16,10 +16,11 @@ import passToChildren from 'lib/react-pass-to-children';
 import utils from './utils';
 import { setQuery } from 'state/media/actions';
 import { fetchNextMediaPage } from 'state/media/thunks';
+import getMediaSortedByDate from 'state/selectors/get-media-sorted-by-date';
 
 function getStateData( siteId ) {
 	return {
-		media: MediaListStore.getAll( siteId ),
+		legacyMedia: MediaListStore.getAll( siteId ),
 		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
 	};
 }
@@ -112,4 +113,8 @@ MediaListData.defaultProps = {
 	setQuery: () => {},
 };
 
-export default connect( null, { fetchNextMediaPage, setQuery } )( MediaListData );
+const mapStateToProps = ( state, ownProps ) => ( {
+	media: getMediaSortedByDate( state, ownProps.siteId ),
+} );
+
+export default connect( mapStateToProps, { fetchNextMediaPage, setQuery } )( MediaListData );
