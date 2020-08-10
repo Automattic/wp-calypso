@@ -19,12 +19,11 @@ export const retrieveAllActivities = ( siteId, filter ) => {
 	let response = requestActivityLogs( siteId, filter );
 
 	if ( response.state === 'success' ) {
-		const totalPages = response.data.totalPages;
 		areActivitiesRetrieved = true;
 		activities = [ ...activities, ...response.data.activities ];
 
 		// If after the first result has more pages, let's retrieve all of them
-		for ( let page = 2; page <= totalPages; page++ ) {
+		for ( let page = 2; page <= response.data.totalPages; page++ ) {
 			filter.queryPage = page;
 			response = requestActivityLogs( siteId, filter );
 
