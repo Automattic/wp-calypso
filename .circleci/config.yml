@@ -22,7 +22,7 @@ references:
     environment:
       CONFIG_ENV: release
       DETECT_CHROMEDRIVER_VERSION: 'false'
-      NODE_ARGS: --max_old_space_size=3072
+      NODE_OPTIONS: --max_old_space_size=3072
   desktop_machine_executor_defaults: &desktop_machine_executor_defaults
     working_directory: ~/wp-calypso
     # Use Linux machine executor, NOT docker image for higher available RAM (7.5GB)
@@ -31,7 +31,9 @@ references:
     resource_class: medium
     environment:
       CONFIG_ENV: release
-      NODE_ARGS: --max_old_space_size=6144
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      NODE_OPTIONS: --max_old_space_size=6144
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -647,8 +649,10 @@ jobs:
             - run:
                 name: Ensure package.json Version And Tag Match
                 command: cd desktop/bin && node validate_tag.js $VERSION
+      - restore_cache: *desktop-restore-source-cache
+      - run: *desktop-decrypt-assets
       - run:
-          name: Install Node
+          name: Build sources
           command: |
             set +e
             set +x
@@ -656,30 +660,8 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm install
             nvm use
-      - run:
-          name: Install Dependencies
-          command: |
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm use
-            npm install -g yarn
-
-            yarn config set chromedriver_skip_download true
-            yarn config set chromedriver_filepath '/usr/local/bin/chromedriver'
 
             yarn install --frozen-lockfile
-      # - run: *yarn-install
-      - restore_cache: *desktop-restore-source-cache
-      - run: *desktop-decrypt-assets
-      - run:
-          name: Build Desktop Source
-          no_output_timeout: 15m
-          command: |
-            set +e
-            set +x
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm use
 
             yarn run build-desktop:source
       - save_cache: *desktop-save-source-cache
