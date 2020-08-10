@@ -25,6 +25,7 @@ export class CountrySpecificPaymentFields extends Component {
 		handleFieldChange: PropTypes.func.isRequired,
 		fieldClassName: PropTypes.string,
 		disableFields: PropTypes.bool,
+		className: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -101,13 +102,14 @@ export class CountrySpecificPaymentFields extends Component {
 		this.props.handleFieldChange( event.target.name, event.target.value );
 
 	render() {
-		const { translate, countriesList, countryCode } = this.props;
+		const { translate, countriesList, countryCode, className } = this.props;
 		const { userSelectedPhoneCountryCode } = this.state;
 		const countryData = find( countriesList, { code: countryCode } );
 		const countryName = countryData && countryData.name ? countryData.name : '';
 		const containerClassName = classNames(
 			'checkout__country-payment-fields',
-			`checkout__country-${ countryCode.toLowerCase() }`
+			`checkout__country-${ countryCode.toLowerCase() }`,
+			className
 		);
 
 		return (

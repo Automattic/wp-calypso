@@ -119,15 +119,6 @@ export default function CreditCardFields() {
 					disabled={ isDisabled }
 				/>
 
-				{ shouldShowContactFields && (
-					<ContactFields
-						getField={ getField }
-						getFieldValue={ getFieldValue }
-						setFieldValue={ setFieldValue }
-						getErrorMessagesForField={ getErrorMessagesForField }
-					/>
-				) }
-
 				<FieldRow>
 					<CreditCardNumberField
 						setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
@@ -162,6 +153,15 @@ export default function CreditCardFields() {
 						</RightColumn>
 					</FieldRow>
 				</FieldRow>
+
+				{ shouldShowContactFields && (
+					<ContactFields
+						getField={ getField }
+						getFieldValue={ getFieldValue }
+						setFieldValue={ setFieldValue }
+						getErrorMessagesForField={ getErrorMessagesForField }
+					/>
+				) }
 			</CreditCardFieldsWrapper>
 		</StripeFields>
 	);
