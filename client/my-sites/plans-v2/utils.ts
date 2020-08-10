@@ -70,14 +70,14 @@ export function getProductPrices(
 	// Return if not annual price.
 	if ( product.term !== TERM_ANNUALLY || ! availableProduct || ! product.monthlyProductSlug ) {
 		return {
-			cost: availableProduct.cost || 0,
+			cost: get( availableProduct, 'cost', 0 ),
 		};
 	}
 
 	const relatedAvailableProduct = availableProducts[ product.monthlyProductSlug ];
 	return {
-		discountCost: availableProduct.cost,
-		cost: relatedAvailableProduct.cost * 12 || 0,
+		discountCost: get( availableProduct, 'cost', 0 ),
+		cost: get( relatedAvailableProduct, 'cost', 0 ) * 12,
 	};
 }
 
