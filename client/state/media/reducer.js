@@ -184,7 +184,11 @@ export const queries = ( () => {
 			}
 			case MEDIA_SOURCE_CHANGE:
 			case MEDIA_CLEAR_SITE: {
-				return {};
+				if ( ! action.siteId ) {
+					return state;
+				}
+
+				return omit( state, action.siteId );
 			}
 		}
 

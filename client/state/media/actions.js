@@ -27,6 +27,7 @@ import {
 	MEDIA_ITEM_EDIT,
 	MEDIA_ITEM_DELETE,
 	MEDIA_SET_QUERY,
+	MEDIA_CLEAR_SITE,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/media';
@@ -326,5 +327,17 @@ export function setQuery( siteId, query ) {
 		type: MEDIA_SET_QUERY,
 		siteId,
 		query,
+	};
+}
+
+/**
+ * Returns an action object used in signallying that a media data from a given site
+ *
+ * @param {number} siteId Site ID
+ */
+export function clearSite( siteId ) {
+	return {
+		type: MEDIA_CLEAR_SITE,
+		siteId,
 	};
 }
