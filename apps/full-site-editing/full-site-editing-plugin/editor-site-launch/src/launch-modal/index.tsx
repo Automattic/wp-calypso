@@ -18,8 +18,6 @@ import { useSite } from '../hooks';
 
 import './styles.scss';
 
-import './styles.scss';
-
 interface Props {
 	onClose: () => void;
 }
@@ -59,17 +57,17 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 				{ isLaunching ? 'launch animation' : <Launch onSubmit={ handleLaunch } /> }
 			</div>
 			<div className="nux-launch-modal-aside">
+				<Button
+					isLink
+					className="nux-launch-modal__close-button"
+					onClick={ onClose }
+					aria-label={ __( 'Close dialog', 'full-site-editing' ) }
+					disabled={ ! onClose }
+				>
+					<Icon icon={ close } size={ 24 } />
+				</Button>
 				<LaunchSidebar />
 			</div>
-			<Button
-				isLink
-				className="nux-launch-modal__close-button"
-				onClick={ onClose }
-				aria-label={ __( 'Close dialog', 'full-site-editing' ) }
-				disabled={ ! onClose }
-			>
-				<Icon icon={ close } size={ 24 } />
-			</Button>
 		</Modal>
 	);
 };

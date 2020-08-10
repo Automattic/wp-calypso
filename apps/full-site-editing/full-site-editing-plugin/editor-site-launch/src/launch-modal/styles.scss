@@ -3,9 +3,7 @@
 @import '~@wordpress/base-styles/z-index';
 
 body.has-nux-launch-modal {
-	// Prevent jumpyness when switching between
-	// long & short launch step content.
-	overflow-y: scroll;
+	overflow: none;
 }
 
 .nux-launch-modal-overlay {
@@ -30,7 +28,6 @@ body.has-nux-launch-modal {
 		box-shadow: none;
 		position: absolute;
 		overflow: hidden;
-		background: transparent;
 	}
 
 	.components-modal__header {
@@ -40,7 +37,9 @@ body.has-nux-launch-modal {
 	.components-modal__content {
 		display: flex;
 		padding: 0;
-		overflow: auto;
+		// Prevent jumpyness when switching between
+		// long & short launch step content.
+		overflow-y: scroll;
 	}
 }
 
@@ -54,7 +53,6 @@ body.has-nux-launch-modal {
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	background: var( --studio-white );
 }
 
 .nux-launch-modal-header__wp-logo {
@@ -85,7 +83,7 @@ body.has-nux-launch-modal {
 }
 
 .nux-launch-modal__close-button.components-button.is-link {
-	position: fixed;
+	position: absolute;
 	top: 0;
 	right: 0;
 	z-index: z-index( '.components-modal__header' ) + 2;
