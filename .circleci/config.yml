@@ -30,6 +30,7 @@ references:
       image: ubuntu-1604:201903-01
     resource_class: medium
     environment:
+      VERSION: << pipeline.git.tag >>
       CONFIG_ENV: release
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
@@ -639,8 +640,6 @@ jobs:
 
   wp-desktop-source:
     <<: *desktop_machine_executor_defaults
-    environment:
-      VERSION: << pipeline.git.tag >>
     steps:
       - checkout
       - when:
@@ -777,7 +776,6 @@ jobs:
     executor:
       name: win/default
     working_directory: C:\Users\circleci\wp-calypso
-    environment:
     steps:
       - checkout
       - attach_workspace:
