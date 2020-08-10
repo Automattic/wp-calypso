@@ -97,7 +97,7 @@ const ProductsColumn = ( {
 	}
 
 	return (
-		<div>
+		<div className="plans-column products-column">
 			<FormattedHeader headerText={ translate( 'Individual Products' ) } brandFont />
 			{ productObjects.map( ( product ) => (
 				<ProductComponent

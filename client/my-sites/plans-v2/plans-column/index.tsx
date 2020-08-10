@@ -114,7 +114,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 	}
 
 	return (
-		<div>
+		<div className="plans-column">
 			<FormattedHeader headerText={ translate( 'Plans' ) } brandFont />
 			{ planObjects.map( ( plan ) => (
 				<PlanComponent
