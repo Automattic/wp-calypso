@@ -345,6 +345,12 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
+.domain-item__enable-selection {
+	> .list__domain-transfer-lock, > .list__domain-privacy, > .list__domain-auto-renew, > .list__domain-email, > .list__domain-options {
+		visibility: hidden;
+	}
+}
+
 .domain-item__overlay {
 	z-index: 2;
 	background-color: rgba( 255, 255, 255, 0.8 );
