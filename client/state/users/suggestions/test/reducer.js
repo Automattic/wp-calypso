@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -20,7 +19,7 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should insert a new suggestion', () => {
@@ -36,7 +35,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 			} );
 
-			expect( state[ 123 ][ 0 ] ).to.eql( newSuggestion );
+			expect( state[ 123 ][ 0 ] ).toEqual( newSuggestion );
 		} );
 
 		test( 'should store an empty array in the event that suggestions is null', () => {
@@ -56,7 +55,7 @@ describe( 'reducer', () => {
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index requesting state by site ID', () => {
@@ -65,7 +64,7 @@ describe( 'reducer', () => {
 				type: USER_SUGGESTIONS_REQUEST,
 				siteId,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				123: true,
 			} );
 		} );
@@ -78,7 +77,7 @@ describe( 'reducer', () => {
 				type: USER_SUGGESTIONS_REQUEST,
 				siteId: 123,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				124: false,
 				123: true,
 			} );
@@ -94,7 +93,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				124: false,
 				123: false,
 			} );
@@ -107,7 +106,7 @@ describe( 'reducer', () => {
 					123: true,
 				} );
 				const state = requesting( original, { type: SERIALIZE } );
-				expect( state ).to.be.undefined;
+				expect( state ).toBeUndefined();
 			} );
 
 			test( 'never loads persisted state', () => {
@@ -116,7 +115,7 @@ describe( 'reducer', () => {
 					123: true,
 				} );
 				const state = requesting( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 		} );
 	} );
