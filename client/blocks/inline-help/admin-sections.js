@@ -173,21 +173,21 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( "Change my site's timezone" ),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-settings__blogtimezone`,
 		synonyms: [ 'time', 'date' ],
 		icon: 'cog',
 	},
 	{
 		title: translate( 'Launch my site' ),
 		description: translate( 'Switch your site from private to public.' ),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-privacy-settings`,
 		synonyms: [ 'private', 'public' ],
 		icon: 'cog',
 	},
 	{
 		title: translate( "Delete a site or a site's content" ),
 		description: translate( 'Remove all posts, pages, and media, or delete a site completely.' ),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-tools__header`,
 		icon: 'cog',
 	},
 	{
@@ -201,7 +201,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		description: translate(
 			'You can customize your website by changing the footer credit in customizer.'
 		),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-settings__footer-credit-header`,
 		synonyms: [ 'remove footer', 'update footer' ],
 		icon: 'cog',
 	},
@@ -265,13 +265,13 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Set up a podcast' ),
-		link: `/settings/writing/${ siteSlug }`,
+		link: `/settings/writing/${ siteSlug }#podcasting-details__link-header`,
 		synonyms: [ 'podcast', 'radio', 'audio' ],
 		icon: 'cog',
 	},
 	{
 		title: translate( "Change my site's privacy settings" ),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-privacy-settings`,
 		synonyms: [ 'privacy' ],
 		icon: 'cog',
 	},
@@ -296,7 +296,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Change the dashboard color scheme' ),
-		link: '/me/account',
+		link: '/me/account#account__color_scheme',
 		synonyms: [ 'theme' ],
 		icon: 'cog',
 	},
@@ -305,7 +305,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		description: translate(
 			'Update the language of the interface you see across WordPress.com as a whole.'
 		),
-		link: '/me/account',
+		link: '/me/account#account__language',
 		synonyms: [ 'dashboard', 'change', 'language' ],
 		icon: 'cog',
 	},

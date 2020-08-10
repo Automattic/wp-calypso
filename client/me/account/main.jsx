@@ -609,7 +609,9 @@ const Account = createReactClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="language">{ translate( 'Interface language' ) }</FormLabel>
+					<FormLabel id="account__language" htmlFor="language">
+						{ translate( 'Interface language' ) }
+					</FormLabel>
 					<LanguagePicker
 						disabled={ this.getDisabledState() }
 						languages={ languages }
@@ -637,7 +639,9 @@ const Account = createReactClass( {
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) && supportsCssCustomProperties() && (
 					<FormFieldset>
-						<FormLabel htmlFor="color_scheme">{ translate( 'Dashboard color scheme' ) }</FormLabel>
+						<FormLabel id="account__color_scheme" htmlFor="color_scheme">
+							{ translate( 'Dashboard color scheme' ) }
+						</FormLabel>
 						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
 					</FormFieldset>
 				) }
