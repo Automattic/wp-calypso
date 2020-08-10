@@ -31,11 +31,6 @@ export const retrieveAllActivities = ( siteId, filter ) => {
 			if ( response.state === 'success' ) {
 				areActivitiesRetrieved = true;
 				activities = [ ...activities, ...response.data.activities ];
-
-				if ( response.totalItems === 0 ) {
-					// We don't have more items. Issue: bad pagination from API?
-					break;
-				}
 			} else {
 				areActivitiesRetrieved = false;
 			}
