@@ -35,6 +35,7 @@ import ToolsMenu from './tools-menu';
 import isCurrentPlanPaid from 'state/sites/selectors/is-current-plan-paid';
 import { siteHasJetpackProductPurchase } from 'state/purchases/selectors';
 import { isFreeTrial, isEcommerce } from 'lib/products-values';
+import { isWpMobileApp } from 'lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -554,6 +555,7 @@ export class MySitesSidebar extends Component {
 			path,
 			site,
 			translate,
+			isWpMobile,
 		} = this.props;
 
 		if ( ! site ) {
@@ -601,6 +603,11 @@ export class MySitesSidebar extends Component {
 					size={ 24 }
 				/>
 			);
+		}
+
+		// Don't show the "Plans" sidebar item in WP Mobile App WebViews to avoid them being rejected
+		if ( isWpMobile ) {
+			return;
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -1064,6 +1071,7 @@ function mapStateToProps( state ) {
 		rewindState: getRewindState( state, siteId ),
 		isCloudEligible: isJetpackCloudEligible( state, siteId ),
 		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
+		isWpMobile: isWpMobileApp(),
 	};
 }
 
