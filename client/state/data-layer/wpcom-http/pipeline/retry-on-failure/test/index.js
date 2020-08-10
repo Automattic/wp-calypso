@@ -12,7 +12,7 @@ import { spy } from 'sinon';
 import { retryOnFailure as rof } from '../';
 import { noRetry, exponentialBackoff } from '../policies';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'test-helpers/use-sinon';
 
 const retryOnFailure = rof();
 const retryWithDelay = ( delay ) => rof( () => delay );

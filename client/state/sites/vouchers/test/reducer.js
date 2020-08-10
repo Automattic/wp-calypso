@@ -34,7 +34,7 @@ import {
 	SITE_VOUCHERS_REQUEST_FAILURE,
 } from 'state/action-types';
 
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;

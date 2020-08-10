@@ -24,7 +24,7 @@ import {
 	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
 import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );

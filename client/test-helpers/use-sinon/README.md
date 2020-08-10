@@ -5,7 +5,7 @@ A set of helpers for folks using sinon to fake, mock, spy and bend time.
 
 ### Full sandbox
 ```js
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'my tests that use a sandbox and arrow functions', function() {
 	let sandbox = null;
@@ -23,7 +23,7 @@ describe( 'my tests that use a sandbox and arrow functions', function() {
 
 ### Fake Clock
 ```js
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'test-helpers/use-sinon';
 
 describe( 'my time dependent test', function() {
 	let clock;

@@ -24,7 +24,7 @@ import {
 	SITE_SETTINGS_UPDATE,
 } from 'state/action-types';
 import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 const getState = () => ( {
 	sites: { items: { 2916284: { options: {} } } },

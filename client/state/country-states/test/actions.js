@@ -15,7 +15,7 @@ import {
 	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'state/action-types';
 import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

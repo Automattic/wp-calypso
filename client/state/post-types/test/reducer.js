@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { items } from '../reducer';
 import { POST_TYPES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
