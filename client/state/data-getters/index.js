@@ -70,8 +70,9 @@ export const getRequestActivityLogsId = ( siteId, filter ) => {
 	const after = filter && filter.after ? filter.after : '';
 	const on = filter && filter.on ? filter.on : '';
 	const aggregate = filter && filter.aggregate ? filter.aggregate : '';
+	const queryPage = filter && filter.queryPage ? filter.queryPage : '';
 
-	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
+	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }-${ queryPage }`;
 };
 
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {

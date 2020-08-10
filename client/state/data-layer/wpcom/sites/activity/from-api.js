@@ -23,7 +23,13 @@ export const DEFAULT_GRIDICON = 'info-outline';
  * @returns {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
-	return get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem );
+	const response = {
+		totalItems: apiResponse.totalItems,
+		totalPages: apiResponse.totalPages,
+		page: apiResponse.page,
+		activities: get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem ),
+	};
+	return response;
 }
 
 /**

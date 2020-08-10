@@ -23,7 +23,6 @@ import {
 } from 'lib/jetpack/backup-utils';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
 import BackupPlaceholder from 'components/jetpack/backup-placeholder';
 import EmptyContent from 'components/empty-content';
@@ -52,6 +51,7 @@ import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 import { backupMainPath } from './paths';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { retrieveAllActivities } from 'my-sites/activity/utils';
 
 /**
  * Style dependencies
@@ -296,11 +296,11 @@ class BackupsPage extends Component {
 /**
  * Create an indexed log of backups based on the date of the backup and in the site time zone
  *
- * @param {Array} logs The activity logs retrieved from the store
+ * @param {Array} response The response with the activity logs retrieved
  * @param {string} timezone The site time zone
  * @param {number} gmtOffset The site offset from the GMT
  */
-const createIndexedLog = ( logs, timezone, gmtOffset ) => {
+const createIndexedLog = ( response, timezone, gmtOffset ) => {
 	const indexedLog = {};
 	let oldestDateAvailable = applySiteOffset( momentDate(), {
 		timezone,
@@ -308,8 +308,8 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	} );
 	let lastDateAvailable = null;
 
-	if ( 'success' === logs.state ) {
-		logs.data.forEach( ( log ) => {
+	if ( response.areActivitiesRetrieved ) {
+		response.activities.forEach( ( log ) => {
 			//Move the backup date to the site timezone
 			const backupDate = applySiteOffset( momentDate( log.activityTs ), {
 				timezone,
@@ -367,30 +367,19 @@ const mapStateToProps = ( state ) => {
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
 	const siteCapabilities = getRewindCapabilities( state, siteId );
-	const hasDailyBackups = includes( siteCapabilities, 'backup-daily' );
 
-	let logs;
-
-	if ( hasDailyBackups ) {
-		// We query only for complete backups
-		logs = requestActivityLogs( siteId, {
-			page: 1,
-			group: [ 'rewind' ],
-		} );
-	} else {
-		logs = requestActivityLogs( siteId, filter );
-	}
+	// Get all the activities of the site
+	const response = retrieveAllActivities( siteId, filter );
 
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
 	const { indexedLog, oldestDateAvailable, lastDateAvailable } = createIndexedLog(
-		logs,
+		response,
 		timezone,
 		gmtOffset
 	);
-
-	const isLoadingBackups = ! ( logs.state === 'success' );
+	const isLoadingBackups = ! response.areActivitiesRetrieved;
 
 	return {
 		allowRestore,
@@ -399,7 +388,7 @@ const mapStateToProps = ( state ) => {
 		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 		isEmptyFilter: getIsEmptyFilter( filter ),
 		siteCapabilities,
-		logs: logs?.data ?? [],
+		logs: response?.activities ?? [],
 		rewind,
 		siteId,
 		siteUrl: getSiteUrl( state, siteId ),

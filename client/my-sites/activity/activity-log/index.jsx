@@ -72,7 +72,7 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
 import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
-import { requestActivityLogs } from 'state/data-getters';
+import { retrieveAllActivities } from 'my-sites/activity/utils';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { applySiteOffset } from 'lib/site/timezone';
@@ -609,7 +609,7 @@ export default connect(
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 		const filter = getActivityLogFilter( state, siteId );
-		const logs = siteId && requestActivityLogs( siteId, filter );
+		const logs = siteId && retrieveAllActivities( siteId, filter );
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
@@ -625,7 +625,7 @@ export default connect(
 			filter,
 			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
-			logs: ( siteId && logs.data ) || emptyList,
+			logs: ( siteId && logs.activities ) || emptyList,
 			logLoadingState: logs && logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
 			requestedRestoreId,
