@@ -25,6 +25,7 @@ export function generateFlows( {
 			description: 'Create an account without a blog.',
 			lastModified: '2015-07-07',
 			pageTitle: translate( 'Create an account' ),
+			showRecaptcha: true,
 		},
 
 		business: {
@@ -32,6 +33,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2020-03-03',
+			showRecaptcha: true,
 		},
 
 		premium: {
@@ -39,6 +41,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2020-03-03',
+			showRecaptcha: true,
 		},
 
 		personal: {
@@ -46,6 +49,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2020-03-03',
+			showRecaptcha: true,
 		},
 
 		free: {
@@ -53,6 +57,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2020-03-03',
+			showRecaptcha: true,
 		},
 
 		'rebrand-cities': {
@@ -62,6 +67,7 @@ export function generateFlows( {
 			},
 			description: 'Create an account for REBRAND cities partnership',
 			lastModified: '2019-06-17',
+			showRecaptcha: true,
 		},
 
 		'with-theme': {
@@ -69,6 +75,7 @@ export function generateFlows( {
 			destination: getChecklistThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
 			lastModified: '2019-08-20',
+			showRecaptcha: true,
 		},
 
 		'design-first': {
@@ -84,6 +91,7 @@ export function generateFlows( {
 			destination: getChecklistThemeDestination,
 			description: 'Start with one of our template-first (Gutenberg) themes.',
 			lastModified: '2019-10-16',
+			showRecaptcha: true,
 		},
 
 		main: {
@@ -91,6 +99,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'The current best performing flow in AB tests',
 			lastModified: '2019-06-20',
+			showRecaptcha: true,
 		},
 
 		'onboarding-with-preview': {
@@ -138,6 +147,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Signup flow for desktop app',
 			lastModified: '2019-06-20',
+			showRecaptcha: true,
 		},
 
 		developer: {
@@ -195,6 +205,7 @@ export function generateFlows( {
 			destination: '/',
 			description: 'A very simple signup flow',
 			lastModified: '2019-05-09',
+			showRecaptcha: true,
 		},
 	};
 
@@ -222,6 +233,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-03-04',
+			showRecaptcha: true,
 		};
 
 		flows[ 'ecommerce-onboarding' ] = {
@@ -229,6 +241,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-03-04',
+			showRecaptcha: true,
 		};
 
 		flows[ 'ecommerce-design-first' ] = {
@@ -243,6 +256,7 @@ export function generateFlows( {
 			description:
 				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
 			lastModified: '2019-11-27',
+			showRecaptcha: true,
 		};
 	}
 
@@ -262,6 +276,7 @@ export function generateFlows( {
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'P2 signup flow',
 			lastModified: '2020-06-04',
+			showRecaptcha: true,
 		};
 
 		// Original name for the project was "WP for Teams". Since then, we've renamed it to "P2".
@@ -284,6 +299,7 @@ export function generateFlows( {
 		description: 'An experimental approach for WordPress.com/domains',
 		disallowResume: true,
 		lastModified: '2019-06-21',
+		showRecaptcha: true,
 	};
 
 	flows[ 'add-domain' ] = {
@@ -299,6 +315,7 @@ export function generateFlows( {
 		description: 'An approach to add a domain via the all domains view',
 		disallowResume: true,
 		lastModified: '2020-07-30',
+		showRecaptcha: true,
 	};
 
 	flows[ 'site-selected' ] = {
@@ -336,6 +353,7 @@ export function generateFlows( {
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
 		lastModified: '2019-07-30',
+		showRecaptcha: true,
 	};
 
 	flows[ 'import-onboarding' ] = {
@@ -346,6 +364,7 @@ export function generateFlows( {
 		description: 'Import flow that can be used from the onboarding flow',
 		disallowResume: true,
 		lastModified: '2019-08-01',
+		showRecaptcha: true,
 	};
 
 	flows.reader = {
@@ -353,6 +372,7 @@ export function generateFlows( {
 		destination: '/',
 		description: 'Signup for an account and migrate email subs to the Reader.',
 		lastModified: '2018-10-29',
+		showRecaptcha: true,
 	};
 
 	flows.crowdsignal = {
@@ -369,6 +389,7 @@ export function generateFlows( {
 		destination: getSiteDestination,
 		description: 'Allow users to select a plan without a domain',
 		lastModified: '2018-12-12',
+		showRecaptcha: true,
 	};
 
 	if ( isEnabled( 'signup/full-site-editing' ) ) {
@@ -377,6 +398,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'User testing Signup flow for Full Site Editing',
 			lastModified: '2019-12-02',
+			showRecaptcha: true,
 		};
 	}
 
