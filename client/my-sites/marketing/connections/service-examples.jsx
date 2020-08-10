@@ -123,7 +123,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/facebook-sharing.png',
+					src: '/calypso/images/sharing/connections-button-facebook.png',
 					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -203,7 +203,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/linkedin-sharing.png',
+					src: '/calypso/images/sharing/connections-button-linkedin.png',
 					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -236,7 +236,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/tumblr-sharing.png',
+					src: '/calypso/images/sharing/connections-button-tumblr.png',
 					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 				},
 				label: this.props.translate(
