@@ -97,7 +97,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 								) }
 							</>
 						) }
-						<p className="jetpack-product-card__subheadline">{ preventWidows( subheadline ) }</p>
+						{ subheadline && (
+							<p className="jetpack-product-card__subheadline">{ preventWidows( subheadline ) }</p>
+						) }
 					</div>
 					<div
 						className={ classNames( 'jetpack-product-card__price', {
@@ -141,7 +143,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 						{ cancelLabel }
 					</Button>
 				) }
-				<p className="jetpack-product-card__description">{ description }</p>
+				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 			</div>
 			<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
 		</div>
