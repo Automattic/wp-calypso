@@ -94,12 +94,7 @@
 
 	.components-button.acquire-intent__skip-vertical.is-link {
 		padding: 0;
-	}
-}
-
-.acquire-intent--with-skip {
-	.site-title__input::after {
-		background-image: linear-gradient( to right, $light-gray-700, $gray-100 );
+		color: $dark-gray-600;
 	}
 }
 
