@@ -652,6 +652,7 @@ jobs:
       - run: *desktop-decrypt-assets
       - run:
           name: Build sources
+          no_output_timeout: 30m
           command: |
             set +e
             set +x
