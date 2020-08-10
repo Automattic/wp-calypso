@@ -8,19 +8,15 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { durationToText } from '../utils';
-import { PRODUCTS_TYPES } from '../constants';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import {
-	getJetpackProductDescription,
-	getJetpackProductDisplayName,
-	getJetpackProductShortName,
-	getJetpackProductTagline,
-	isMonthly,
-	getProductFromSlug,
-} from 'lib/products-values';
-import { TERM_ANNUALLY } from 'lib/plans/constants';
-import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
+	durationToText,
+	slugToItem,
+	itemToSelectorProduct,
+	productButtonLabel,
+	getProductPrices,
+} from '../utils';
+import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
+import { isProductsListFetching, getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
@@ -29,8 +25,7 @@ import FormattedHeader from 'components/formatted-header';
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, ProductType } from '../types';
-import type { Product } from 'lib/products-values/products-list';
+import type { Duration, PurchaseCallback, ProductType, SelectorProduct } from '../types';
 
 interface ProductsColumnType {
 	duration: Duration;
@@ -39,37 +34,30 @@ interface ProductsColumnType {
 	siteId: number | null;
 }
 
-type ProductWithBought = Product & { owned?: boolean };
-
 const ProductComponent = ( {
 	product,
 	onClick,
 	currencyCode,
 }: {
-	product: ProductWithBought;
+	product: SelectorProduct;
 	onClick: PurchaseCallback;
 	currencyCode: string;
-} ) => {
-	const price = useSelector( ( state ) => getProductCost( state, product.product_slug ) ) || 0;
-	return (
-		<JetpackProductCard
-			iconSlug={ product.product_slug }
-			productName={ getJetpackProductDisplayName( product ) }
-			subheadline={ getJetpackProductTagline( product ) }
-			description={ getJetpackProductDescription( product ) }
-			currencyCode={ currencyCode }
-			billingTimeFrame={ durationToText( product.term ) }
-			buttonLabel={ translate( 'Get %s', {
-				args: getJetpackProductShortName( product ),
-				context: '%s is the name of a product',
-			} ) }
-			onButtonClick={ () => onClick( product.product_slug ) }
-			features={ { items: [] } }
-			originalPrice={ price }
-			isOwned={ product.owned }
-		/>
-	);
-};
+} ) => (
+	<JetpackProductCard
+		iconSlug={ product.iconSlug }
+		productName={ product.displayName }
+		subheadline={ product.tagline }
+		description={ product.description }
+		currencyCode={ currencyCode }
+		billingTimeFrame={ durationToText( product.term ) }
+		buttonLabel={ productButtonLabel( product ) }
+		onButtonClick={ () => onClick( product.productSlug ) }
+		features={ { items: [] } }
+		discountedPrice={ product.discountCost }
+		originalPrice={ product.cost || 0 }
+		isOwned={ product.owned }
+	/>
+);
 
 const ProductsColumn = ( {
 	duration,
@@ -79,25 +67,33 @@ const ProductsColumn = ( {
 }: ProductsColumnType ) => {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const availableProducts = useSelector( ( state ) => getAvailableProductsList( state ) );
 	const currentProducts = (
 		useSelector( ( state ) => getSiteProducts( state, siteId ) ) || []
 	).map( ( product ) => product.productSlug );
 
-	const productObjects: ProductWithBought[] = useMemo(
+	// Gets all products in an array to be parsed.
+	const productObjects: SelectorProduct[] = useMemo(
 		() =>
-			JETPACK_PRODUCTS_LIST.map( ( productSlug ) => getProductFromSlug( productSlug ) )
+			// Convert product slugs to ProductSelector types.
+			SELECTOR_PRODUCTS.map( ( productSlug ) => {
+				const item = slugToItem( productSlug );
+				return item && itemToSelectorProduct( item );
+			} )
+				// Remove products that don't fit the filters or have invalid data.
 				.filter(
-					( product: Product ) =>
-						!! product?.product_slug &&
-						! product.product_slug.startsWith( 'wpcom' ) &&
-						PRODUCTS_TYPES[ productType ].includes( product.product_slug ) &&
-						( duration === TERM_ANNUALLY ? ! isMonthly( product ) : isMonthly( product ) )
+					( product: SelectorProduct | null ): product is SelectorProduct =>
+						!! product &&
+						duration === product.term &&
+						PRODUCTS_TYPES[ productType ].includes( product.productSlug )
 				)
-				.map( ( product: Product ) => ( {
+				// Insert product prices as well as whether they are owned already.
+				.map( ( product: SelectorProduct ) => ( {
 					...product,
-					owned: currentProducts.includes( product.product_slug ),
+					...getProductPrices( product, availableProducts ),
+					owned: currentProducts.includes( product.productSlug ),
 				} ) ),
-		[ duration, productType, currentProducts ]
+		[ duration, productType, currentProducts, availableProducts ]
 	);
 
 	if ( ! currencyCode || isFetchingProducts ) {
@@ -105,11 +101,11 @@ const ProductsColumn = ( {
 	}
 
 	return (
-		<div>
+		<div className="plans-column products-column">
 			<FormattedHeader headerText={ translate( 'Individual Products' ) } brandFont />
 			{ productObjects.map( ( product ) => (
 				<ProductComponent
-					key={ product.product_slug }
+					key={ product.productSlug }
 					onClick={ onProductClick }
 					product={ product }
 					currencyCode={ currencyCode }

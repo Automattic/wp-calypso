@@ -59,7 +59,12 @@ export const iconToProductSlugMap = {
 	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],
 	'jetpack-premium': [ 'jetpack_premium', 'jetpack_premium_monthly' ],
 	'jetpack-professional': [ 'jetpack_business', 'jetpack_business_monthly' ],
-	'jetpack-complete-v2': [ 'jetpack_complete_v2', 'jetpack_complete_monthly_v2' ],
+	'jetpack-complete-v2': [
+		'jetpack_complete',
+		'jetpack_complete_monthly',
+		'jetpack_complete_v2',
+		'jetpack_complete_monthly_v2',
+	],
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 	'jetpack-backup-v2': [
@@ -72,6 +77,7 @@ export const iconToProductSlugMap = {
 	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
 	'jetpack-scan-v2': [
 		'jetpack_scan_v2',
+		'jetpack_scan_monthly_v2',
 		'jetpack_scan_daily_v2',
 		'jetpack_scan_daily_monthly_v2',
 		'jetpack_scan_realtime_v2',
@@ -85,15 +91,10 @@ export const iconToProductSlugMap = {
 	],
 	'jetpack-search-v2': [ 'jetpack_search_v2', 'jetpack_search_monthly_v2' ],
 	'jetpack-anti-spam': [ 'jetpack_anti_spam', 'jetpack_anti_spam_monthly' ],
-	'jetpack-anti-spam-v2': [
-		'jetpack_anti_spam_v2',
-		'jetpack_anti_spam_daily_v2',
-		'jetpack_anti_spam_daily_monthly_v2',
-		'jetpack_anti_spam_realtime_v2',
-		'jetpack_anti_spam_realtime_monthly_v2',
-	],
+	'jetpack-anti-spam-v2': [ 'jetpack_anti_spam_v2', 'jetpack_anti_spam_monthly_v2' ],
 	'jetpack-security-v2': [
 		'jetpack_security_v2',
+		'jetpack_security_monthly_v2',
 		'jetpack_security_daily_v2',
 		'jetpack_security_daily_monthly_v2',
 		'jetpack_security_realtime_v2',

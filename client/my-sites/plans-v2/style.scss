@@ -1,0 +1,17 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+@include break-medium {
+	.plans-v2__columns {
+		display: flex;
+
+		& > .plans-column {
+			flex-basis: 50%;
+			flex-grow: 0;
+		}
+
+		& > .products-column {
+			margin-left: 24px;
+		}
+	}
+}
