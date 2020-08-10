@@ -3,3 +3,13 @@
 .nux-launch-domain-step {
 	padding-bottom: $onboarding-footer-height + 28px;
 }
+
+.domain-picker__suggestion-item {
+	input[type='radio'].domain-picker__suggestion-radio-button {
+		// Specific for WP-Admin environment.
+		&:checked::after {
+			top: 0;
+			left: 0;
+		}
+	}
+}
