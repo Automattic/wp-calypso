@@ -11,7 +11,7 @@ This feature was originally implemented in [#2754](https://github.com/Automattic
 
 At a high level, implementing this is straightforward. We subscribe to any Redux store changes, and on change we update
 our browser storage with the new state of the Redux tree. On page load, if we detect stored state in browser storage during
-our initial render, we create our Redux store with that persisted initial state. However, significat issues exist that require special solutions:
+our initial render, we create our Redux store with that persisted initial state. However, significant issues exist that require special solutions:
 * [Subtrees may contain class instances](#problem-subtrees-may-contain-class-instances)
 * [Data shapes change over time ](#problem-data-shapes-change-over-time--3101-)
 * [Some reducers are loaded dynamically](#problem-some-reducers-are-loaded-dynamically)
