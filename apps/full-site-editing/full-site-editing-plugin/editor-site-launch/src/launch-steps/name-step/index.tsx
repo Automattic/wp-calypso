@@ -51,7 +51,7 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 					<SubTitle>{ __( 'Pick a name for your site.', 'full-site-editing' ) }</SubTitle>
 				</div>
 				<ActionButtons>
-					<NextButton onClick={ handleNext } disabled={ ! title } />
+					<NextButton onClick={ handleNext } disabled={ ! title?.trim() } />
 				</ActionButtons>
 			</div>
 			<div className="nux-launch-step__body">
