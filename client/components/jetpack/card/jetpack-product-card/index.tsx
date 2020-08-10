@@ -13,7 +13,9 @@ import { Button, ProductIcon } from '@automattic/components';
 import { useLocalizedMoment } from 'components/localized-moment';
 import { preventWidows } from 'lib/formatting';
 import PlanPrice from 'my-sites/plan-price';
+import { getRealtimeFromDaily } from 'my-sites/plans-v2/utils';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
+import JetpackProductCardUpgradeNudge from './upgrade-nudge';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
 
 /**
@@ -30,6 +32,7 @@ type OwnProps = {
 	className?: string;
 	iconSlug: string;
 	productName: TranslateResult;
+	productSlug?: string;
 	productType?: string;
 	headingLevel?: number;
 	subheadline?: TranslateResult;
@@ -57,6 +60,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	className,
 	iconSlug,
 	productName,
+	productSlug,
 	productType,
 	headingLevel,
 	subheadline,
@@ -90,6 +94,23 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 		: 2;
 	const parsedExpiryDate =
 		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
+
+	// TODO: this condition is only for testing purposes since at this moment we can't
+	// purchase Jetpack Security Daily. We need to remove this after that's possible.
+	if ( productSlug && productSlug.includes( 'jetpack_security' ) ) {
+		isOwned = true;
+		productSlug =
+			productSlug === 'jetpack_security'
+				? 'jetpack_security_daily'
+				: 'jetpack_security_daily_monthly';
+	}
+
+	// In the future, from this product upgrade we can get the list of features, descrition,
+	// price, and any other piece of information we need in the upgrade nudge card. Right now,
+	// most of it is hardcoded.
+	const upgradeToProductSlug = productSlug && getRealtimeFromDaily( productSlug );
+	// Show upgrade nudge only if the user owns Jetpack Security Daily
+	const showUpgradeNudge = isOwned && upgradeToProductSlug;
 
 	return (
 		<div
@@ -177,6 +198,16 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 			</div>
 			<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
+			{ showUpgradeNudge && (
+				<JetpackProductCardUpgradeNudge
+					billingTimeFrame={ billingTimeFrame }
+					currencyCode={ currencyCode }
+					discountedPrice={ discountedPrice }
+					originalPrice={ originalPrice }
+					onUpgradeClick={ () => null }
+					onCancelClick={ () => null }
+				/>
+			) }
 		</div>
 	);
 };

@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PRODUCTS_WITH_OPTIONS, OPTIONS_SLUG_MAP } from './constants';
+import { DAILY_PLAN_TO_REALTIME_PLAN, PRODUCTS_WITH_OPTIONS, OPTIONS_SLUG_MAP } from './constants';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -34,7 +34,12 @@ import type {
 	SelectorProductCost,
 	DurationString,
 } from './types';
-import type { JetpackPlanSlugs, Plan } from 'lib/plans/types';
+import type {
+	JetpackOfferDailyPlans,
+	JetpackOfferRealtimePlans,
+	JetpackPlanSlugs,
+	Plan,
+} from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
 
 /**
@@ -223,4 +228,10 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
 		return null;
 	}
 	return itemToSelectorProduct( item );
+}
+
+export function getRealtimeFromDaily(
+	productSlug: JetpackOfferDailyPlans
+): JetpackOfferRealtimePlans | null {
+	return DAILY_PLAN_TO_REALTIME_PLAN[ productSlug ];
 }

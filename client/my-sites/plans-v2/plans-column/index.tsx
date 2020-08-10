@@ -58,6 +58,7 @@ const PlanComponent = ( {
 		<CardComponent
 			iconSlug={ plan.iconSlug }
 			productName={ plan.displayName }
+			productSlug={ plan.productSlug }
 			subheadline={ plan.tagline }
 			description={ plan.description }
 			currencyCode={ currencyCode }

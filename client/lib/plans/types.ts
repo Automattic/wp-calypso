@@ -53,3 +53,11 @@ export type Plan = {
 	getHiddenFeatures?: () => string[];
 	getInferiorHiddenFeatures?: () => string[];
 };
+
+export type JetpackOfferDailyPlans =
+	| typeof constants.PLAN_JETPACK_SECURITY_DAILY
+	| typeof constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY;
+
+export type JetpackOfferRealtimePlans =
+	| typeof constants.PLAN_JETPACK_SECURITY_REALTIME
+	| typeof constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY;

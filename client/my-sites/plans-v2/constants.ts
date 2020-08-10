@@ -29,7 +29,8 @@ import {
 /**
  * Type dependencies
  */
-import { SelectorProduct, SelectorProductSlug, ProductType } from './types';
+import type { JetpackOfferDailyPlans, JetpackOfferRealtimePlans } from 'lib/plans/types';
+import type { SelectorProduct, SelectorProductSlug, ProductType } from './types';
 
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';
@@ -164,3 +165,11 @@ export const SELECTOR_PLANS = [
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
+
+export const DAILY_PLAN_TO_REALTIME_PLAN: Record<
+	JetpackOfferDailyPlans,
+	JetpackOfferRealtimePlans
+> = {
+	[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY_REALTIME,
+	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+};
