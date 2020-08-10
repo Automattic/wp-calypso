@@ -134,7 +134,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 
 	const selectLastInputValue = () => {
 		const lastQuery = inputText.trim();
-		if ( isFocused && lastQuery.length ) {
+		if ( ! siteVertical && isFocused && lastQuery.length ) {
 			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
 			handleSelect( vertical );
 		}
@@ -162,7 +162,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 
 		if ( e.keyCode === ENTER ) {
 			e.preventDefault();
-			input.length && ! suggestions.length && handleSelect( { label: input } );
+			if ( input.length && ! suggestions.length ) {
+				handleSelect( { label: input } );
+			}
 			return;
 		}
 		if ( e.keyCode === TAB && input.length ) {
