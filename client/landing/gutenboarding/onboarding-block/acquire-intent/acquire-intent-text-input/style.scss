@@ -6,7 +6,7 @@
 }
 
 .acquire-intent-text-input__input {
-	height: 100%;
+	width: 100%;
 
 	@include onboarding-heading-text-mobile;
 	height: auto;
@@ -47,6 +47,7 @@
 	height: 2px;
 	background: var( --mainColor );
 	margin-top: -5px;
+	max-width: 100%;
 
 	@include break-medium {
 		margin-top: -12px;
