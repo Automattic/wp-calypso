@@ -107,7 +107,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/facebook-profile.png',
+					src: '/calypso/images/sharing/connections-facebook.png',
 					alt: this.props.translate( 'Share posts to your Facebook page', {
 						textOnly: true,
 					} ),
@@ -187,7 +187,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/linkedin-publicize.png',
+					src: '/calypso/images/sharing/connections-linkedin.png',
 					alt: this.props.translate( 'Share posts with your LinkedIn connections', {
 						textOnly: true,
 					} ),
@@ -222,7 +222,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/tumblr-publicize.png',
+					src: '/calypso/images/sharing/connections-tumblr.png',
 					alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -255,7 +255,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/twitter-publicize.png',
+					src: '/calypso/images/sharing/connections-twitter2.png',
 					alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -269,7 +269,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/twitter-timeline.png',
+					src: '/calypso/images/sharing/connections-twitter.png',
 					alt: this.props.translate( 'Add a Twitter Timeline Widget', { textOnly: true } ),
 				},
 				label: this.props.translate(
