@@ -64,19 +64,16 @@
 
 .domain-types__container {
 	.status-success {
-		@include domain_status_color( #008a20 );
+		@include domain_status_color( var( --color-success ) );
 	}
-	.status-parked {
-		@include domain_status_color( #787C82 );
-	}
-	.status-pending {
-		@include domain_status_color( #3582C4 );
+	.status-neutral {
+		@include domain_status_color( var( --color-neutral ) );
 	}
 	.status-warning {
-		@include domain_status_color( #B69000 );
+		@include domain_status_color( var( --color-warning ) );
 	}
 	.status-error {
-		@include domain_status_color( #C9356E );
+		@include domain_status_color( var( --color-error ) );
 	}
 
 	.domain-status__card {
