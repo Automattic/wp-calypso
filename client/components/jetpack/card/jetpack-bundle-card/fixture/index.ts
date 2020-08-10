@@ -8,12 +8,16 @@ export const featuresItems = [
 		text: 'Backup',
 	},
 	{
-		text: 'Scan',
+		icon: 'bug',
+		text: 'Anti-spam ',
+		description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
 	},
 ];
 
-export const features = {
-	items: featuresItems,
+export const categorizedFeatures = {
+	items: {
+		Security: featuresItems,
+	},
 };
 
 export const bundleCard = {
@@ -27,7 +31,7 @@ export const bundleCard = {
 	billingTimeFrame: 'per month, billed monthly',
 	buttonLabel: 'Get Jetpack Security',
 	onButtonClick: noop,
-	features,
+	features: categorizedFeatures,
 };
 
 export const bundleCardWithBadge = {
