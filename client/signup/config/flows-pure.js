@@ -25,7 +25,6 @@ export function generateFlows( {
 			description: 'Create an account without a blog.',
 			lastModified: '2015-07-07',
 			pageTitle: translate( 'Create an account' ),
-			showRecaptcha: true,
 		},
 
 		business: {
@@ -67,7 +66,6 @@ export function generateFlows( {
 			},
 			description: 'Create an account for REBRAND cities partnership',
 			lastModified: '2019-06-17',
-			showRecaptcha: true,
 		},
 
 		'with-theme': {
@@ -91,7 +89,6 @@ export function generateFlows( {
 			destination: getChecklistThemeDestination,
 			description: 'Start with one of our template-first (Gutenberg) themes.',
 			lastModified: '2019-10-16',
-			showRecaptcha: true,
 		},
 
 		main: {
@@ -99,7 +96,6 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'The current best performing flow in AB tests',
 			lastModified: '2019-06-20',
-			showRecaptcha: true,
 		},
 
 		'onboarding-with-preview': {
@@ -114,7 +110,6 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2020-03-03',
-			showRecaptcha: true,
 		},
 
 		onboarding: {
@@ -205,7 +200,6 @@ export function generateFlows( {
 			destination: '/',
 			description: 'A very simple signup flow',
 			lastModified: '2019-05-09',
-			showRecaptcha: true,
 		},
 	};
 
@@ -241,7 +235,6 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-03-04',
-			showRecaptcha: true,
 		};
 
 		flows[ 'ecommerce-design-first' ] = {
@@ -256,7 +249,6 @@ export function generateFlows( {
 			description:
 				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
 			lastModified: '2019-11-27',
-			showRecaptcha: true,
 		};
 	}
 
@@ -398,7 +390,6 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'User testing Signup flow for Full Site Editing',
 			lastModified: '2019-12-02',
-			showRecaptcha: true,
 		};
 	}
 
