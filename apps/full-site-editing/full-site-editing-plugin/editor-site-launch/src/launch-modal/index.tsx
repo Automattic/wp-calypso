@@ -11,14 +11,11 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import './styles.scss';
-
-/**
- * Internal dependencies
- */
 import { LAUNCH_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
+
+import './styles.scss';
 
 interface Props {
 	onClose?: () => void;

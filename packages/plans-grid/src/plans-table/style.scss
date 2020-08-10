@@ -258,9 +258,13 @@ ul.plan-item__feature-item-group {
 	}
 }
 
-.plan-item__select-button.components-button {
+.plan-item__select-button.components-button.is-primary {
 	padding: 0 24px;
 	height: 40px;
+
+	&:disabled {
+		opacity: 0.5;
+	}
 
 	svg {
 		margin-left: -8px;
@@ -304,5 +308,26 @@ ul.plan-item__feature-item-group {
 	svg path {
 		fill: rgb( 74, 161, 80 );
 		stroke: rgb( 74, 161, 80 );
+	}
+
+	.plan-item__disabled-message {
+		svg {
+			align-self: flex-start;
+			width: 18px;
+			height: 18px;
+
+			path {
+				fill: rgb( 206, 134, 61 );
+				stroke: rgb( 206, 134, 61 );
+			}
+		}
+
+		p {
+			font-size: $font-body-small;
+			line-height: 20px;
+			letter-spacing: 0.2px;
+			font-weight: bold;
+			color: rgb( 206, 134, 61 );
+		}
 	}
 }

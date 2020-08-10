@@ -3,9 +3,9 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import PlansGrid from '@automattic/plans-grid';
-
-import type { Plans } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -18,14 +18,33 @@ interface Props {
 
 const PlansGridFSE: React.FunctionComponent< Props > = ( { onSelect } ) => {
 	const { domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const { updatePlan } = useDispatch( LAUNCH_STORE );
+	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
+
+	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
 
 	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
 		updatePlan( planSlug );
 		onSelect?.();
 	};
 
-	return <PlansGrid currentDomain={ domain } onPlanSelect={ handleSelect } />;
+	const handlePickDomain = () => {
+		setStep( LaunchStep.Domain );
+	};
+
+	return (
+		<PlansGrid
+			currentDomain={ domain }
+			onPlanSelect={ handleSelect }
+			onPickDomainClick={ handlePickDomain }
+			disabledPlans={
+				domain && ! domain.is_free
+					? {
+							[ Plans.PLAN_FREE ]: __( 'Not available with custom domain', 'full-site-editing' ),
+					  }
+					: undefined
+			}
+		/>
+	);
 };
 
 export default PlansGridFSE;
