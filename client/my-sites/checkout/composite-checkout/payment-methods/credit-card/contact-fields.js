@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import styled from '@emotion/styled';
 import { useFormStatus } from '@automattic/composite-checkout';
 
 /**
@@ -21,9 +22,9 @@ export default function ContactFields( {
 	const countriesList = useCountryList( [] );
 
 	return (
-		<div>
+		<div className="contact-fields">
 			{ shouldRenderAdditionalCountryFields( getFieldValue( 'countryCode' ) ) && (
-				<CountrySpecificPaymentFields
+				<CountrySpecificPaymentFieldsUI
 					countryCode={ getFieldValue( 'countryCode' ) }
 					countriesList={ countriesList }
 					getErrorMessage={ getErrorMessagesForField }
@@ -35,3 +36,21 @@ export default function ContactFields( {
 		</div>
 	);
 }
+
+const CountrySpecificPaymentFieldsUI = styled( CountrySpecificPaymentFields )`
+	& .document,
+	& .phone,
+	& .postal-code,
+	& .checkout__form-state-field {
+		flex-basis: auto;
+	}
+
+	& .checkout__checkout-field,
+	& .checkout__form-state-field {
+		margin-left: 0;
+	}
+
+	& .checkout__form-info-text {
+		margin-left: 0;
+	}
+`;
