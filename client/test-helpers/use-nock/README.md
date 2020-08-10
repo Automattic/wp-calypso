@@ -16,11 +16,11 @@ useNock();
 ## Usage
 
 ```js
-import useNock, { nock } from 'test/helpers/use-nock';
+import useNock, { nock } from 'test-helpers/use-nock';
 //or
-import { useNock, nock } from 'test/helpers/use-nock';
+import { useNock, nock } from 'test-helpers/use-nock';
 //or
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 import nock from 'nock';
 
 describe('my test suite', () = {
@@ -37,10 +37,10 @@ describe('my test suite', () = {
 	            id: 42,
 	            name: 'Leeroy Jenkins'
             } );
-        
+
         expect( nock.isDone() ).to.be.false;
 	} );
-	
+
 	it( 'persists beyond where it was used', () => {
 	    expect( nock.isDone() ).to.be.false;
 	} );

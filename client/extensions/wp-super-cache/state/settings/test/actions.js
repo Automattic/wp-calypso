@@ -20,7 +20,7 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../../action-types';
 import { receiveSettings, requestSettings, restoreSettings, saveSettings } from '../actions';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {

@@ -28,7 +28,7 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {

@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { failureMeta, queueRequest, successMeta } from '../';
 import { extendAction } from 'state/utils';
-import useNock, { nock } from 'test/helpers/use-nock';
+import useNock, { nock } from 'test-helpers/use-nock';
 
 const processInbound = ( action ) => action;
 const processOutbound = ( action, store, data, error ) => ( {

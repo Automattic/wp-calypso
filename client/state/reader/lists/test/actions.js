@@ -23,7 +23,7 @@ import {
 	READER_LISTS_FOLLOW,
 	READER_LISTS_UNFOLLOW,
 } from 'state/reader/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

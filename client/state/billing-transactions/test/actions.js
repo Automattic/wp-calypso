@@ -17,7 +17,7 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
