@@ -101,5 +101,10 @@ const AcquireIntentTextInput: React.FunctionComponent< Props > = ( {
 };
 
 export default React.forwardRef< HTMLInputElement, Omit< Props, 'forwardedRef' > >(
-	( props, ref ) => <AcquireIntentTextInput { ...props } forwardedRef={ ref } />
+	( props, ref ) => (
+		<AcquireIntentTextInput
+			{ ...props }
+			forwardedRef={ ref as React.MutableRefObject< HTMLInputElement | undefined > }
+		/>
+	)
 );
