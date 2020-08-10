@@ -214,9 +214,6 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Manage sharing and social media connections' ),
-		description: translate(
-			'You can customize your website by changing the footer credit in customizer.'
-		),
 		link: `/sharing/${ siteSlug }`,
 		synonyms: [ 'facebook', 'twitter', 'twitter', 'tumblr', 'eventbrite' ],
 		icon: 'share',
@@ -232,9 +229,6 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Install, manage, and search for site Plugins' ),
-		description: translate(
-			'You can customize your website by changing the footer credit in customizer.'
-		),
 		link: `/plugins/${ siteSlug }`,
 		synonyms: [ 'upload' ],
 		icon: 'plugins',
