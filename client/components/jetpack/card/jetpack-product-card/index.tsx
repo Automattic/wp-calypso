@@ -26,8 +26,8 @@ type OwnProps = {
 	productName: TranslateResult;
 	productType?: string;
 	headingLevel?: number;
-	subheadline: TranslateResult;
-	description: ReactNode;
+	subheadline?: TranslateResult;
+	description?: ReactNode;
 	currencyCode: string;
 	originalPrice: number;
 	discountedPrice?: number;
