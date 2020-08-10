@@ -105,9 +105,8 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				: 'jetpack_security_daily_monthly';
 	}
 
-	// In the future, from this product upgrade we can get the list of features, descrition,
-	// price, and any other piece of information we need in the upgrade nudge card. Right now,
-	// most of it is hardcoded.
+	// In the future, from this product slug we should be able to get everything we need inside
+	// the nudge upgrade component: description, features, prices, and everything else.
 	const upgradeToProductSlug = productSlug && getRealtimeFromDaily( productSlug );
 	// Show upgrade nudge only if the user owns Jetpack Security Daily
 	const showUpgradeNudge = isOwned && upgradeToProductSlug;
@@ -197,7 +196,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				) }
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 			</div>
+
 			<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
+
 			{ showUpgradeNudge && (
 				<JetpackProductCardUpgradeNudge
 					billingTimeFrame={ billingTimeFrame }
@@ -205,7 +206,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 					discountedPrice={ discountedPrice }
 					originalPrice={ originalPrice }
 					onUpgradeClick={ () => null }
-					onCancelClick={ () => null }
+					productSlug={ upgradeToProductSlug }
 				/>
 			) }
 		</div>
