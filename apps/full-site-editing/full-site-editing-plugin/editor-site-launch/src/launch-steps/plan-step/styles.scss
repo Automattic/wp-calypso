@@ -1,0 +1,8 @@
+@import '~@wordpress/base-styles/variables';
+
+.nux-launch-modal.step-plan {
+	.nux-launch-modal-body {
+		margin-right: #{$sidebar-width * -1};
+		padding-right: #{$sidebar-width * 2};
+	}
+}
