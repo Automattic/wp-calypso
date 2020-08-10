@@ -20,7 +20,6 @@ import MaterialIcon from 'components/material-icon';
  * Style dependencies
  */
 import quickStartVideoImage from 'assets/images/customer-home/quick-start-video-ss.png';
-import './style.scss';
 
 export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 	const translate = useTranslate();
@@ -83,7 +82,7 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 									url: localizeUrl(
 										'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com'
 									),
-									card_name: 'QuickStartVideo',
+									card_name: 'FEATURE_QUICK_START_VIDEO',
 								} }
 								statsName="QuickStartVideo"
 							>
