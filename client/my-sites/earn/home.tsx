@@ -53,8 +53,7 @@ interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug;
 	isFreePlan: boolean;
-	isJetpack: boolean;
-	isAtomicSite: boolean;
+	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
@@ -71,8 +70,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
 	isFreePlan,
-	isJetpack,
-	isAtomicSite,
+	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
 	hasSimplePayments,
@@ -99,6 +97,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			setPeerReferralLink( ! error && data ? data : '' );
 		} );
 	};
+
+	const getPlanNames = () =>
+		// Space isn't included in the translatable string to prevent it being easily missed.
+		isNonAtomicJetpack
+			? ' ' + translate( 'Available only with a Premium or Professional plan.' )
+			: ' ' + translate( 'Available only with a Premium, Business, or eCommerce plan.' );
 
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
@@ -127,18 +131,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			? null
 			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		const title = translate( 'Collect PayPal payments' );
-		const body = hasSimplePayments
-			? translate(
+		const body = (
+			<>
+				{ translate(
 					'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
-			  )
-			: translate(
-					'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  );
+				) }
+				{ ! hasSimplePayments && <em>{ getPlanNames() }</em> }
+			</>
+		);
+
 		return {
 			title,
 			body,
@@ -335,9 +336,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPeerReferralsCard = () => {
-		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
-
-		if ( isJetpackNotAtomic ) {
+		if ( isNonAtomicJetpack ) {
 			return;
 		}
 
@@ -409,18 +408,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 				  };
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
-		const body = hasSetupAds
-			? translate(
-					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
-			  )
-			: translate(
-					'Make money each time someone visits your site by displaying advertisements on all your posts and pages. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  );
+		const body = hasSetupAds ? (
+			translate(
+				"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
+			)
+		) : (
+			<>
+				{ translate(
+					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
+				) }
+				{ <em>{ getPlanNames() }</em> }
+			</>
+		);
 
 		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
@@ -506,8 +505,8 @@ export default connect< ConnectedProps, {}, {} >(
 			siteId,
 			selectedSiteSlug,
 			isFreePlan,
-			isJetpack: isJetpackSite( state, siteId ),
-			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			isNonAtomicJetpack:
+				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
