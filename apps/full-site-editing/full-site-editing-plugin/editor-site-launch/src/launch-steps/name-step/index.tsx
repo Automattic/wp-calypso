@@ -23,12 +23,19 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 	const { saveEditedEntityRecord } = useDispatch( 'core' );
 
 	const handleSave = () => {
+		const newTitle = title.trim();
+
+		setTitle( newTitle );
 		saveEditedEntityRecord( 'root', 'site' );
 
 		// update domainSearch only if there is no custom Domain selected
-		! domain && setDomainSearch( title );
+		! domain && setDomainSearch( newTitle );
 
-		title.length ? setStepComplete( LaunchStep.Name ) : setStepIncomplete( LaunchStep.Name );
+		if ( newTitle ) {
+			setStepComplete( LaunchStep.Name );
+		} else {
+			setStepIncomplete( LaunchStep.Name );
+		}
 	};
 
 	const handleNext = () => {
