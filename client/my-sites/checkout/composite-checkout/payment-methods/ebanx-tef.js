@@ -315,6 +315,7 @@ function EbanxTefPayButton( { disabled, store } ) {
 					submitTransaction( {
 						name: customerName?.value,
 						...massagedFields,
+						address: massagedFields?.address1,
 						tefBank: customerBank?.value,
 						items,
 						total,

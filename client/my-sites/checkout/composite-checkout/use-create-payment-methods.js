@@ -290,7 +290,6 @@ function useCreateEps( {
 }
 
 function useCreateEbanxTef( { onlyLoadPaymentMethods } ) {
-	console.log( 'XYZZY useCreateEbanxTef' );
 	// If this PM is allowed by props and allowed by the cart, then create the PM.
 	const isMethodAllowed = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'ebanx-tef' )
