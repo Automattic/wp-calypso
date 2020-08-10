@@ -7,7 +7,7 @@
 	input[type='text'].components-text-control__input {
 		padding: 6px 40px 6px 16px;
 		height: 38px;
-		background: #f0f0f0;
+		background: $gray-100;
 		border: none;
 
 		&::placeholder {
