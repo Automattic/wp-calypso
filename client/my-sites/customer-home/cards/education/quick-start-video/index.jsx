@@ -35,16 +35,16 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 				{ translate( 'Watch this video to get started' ) }
 			</h2>
 			<Card>
-				<div class="quick-start-video__content">
-					<div className="quick-start-video__content-wrapper">
+				<div class="quick-start-video__content educational-content">
+					<div className="quick-start-video__content-wrapper educational-content__wrapper">
 						<h3>{ translate( 'Video: Getting started on WordPress.com' ) }</h3>
-						<p className="quick-start-video__content-description customer-home__card-subheader">
+						<p className="quick-start-video__content-description educational-content__description customer-home__card-subheader">
 							{ translate(
 								'This video tour of WordPress.com will show you everything you need to know to start building your website.'
 							) }
 						</p>
-						<div className="quick-start-video__content-links">
-							<div className="quick-start-video__content-link">
+						<div className="quick-start-video__content-links educational-content__links">
+							<div className="quick-start-video__content-link educational-content__link">
 								<MaterialIcon icon="play_circle_outline" />
 								<InlineSupportLink
 									supportPostId={ 158974 }
@@ -56,7 +56,10 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 									tracksEvent="calypso_customer_home_education"
 									statsGroup="calypso_customer_home"
 									tracksOptions={ {
-										card_name: 'QuickStartVideo',
+										url: localizeUrl(
+											'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com'
+										),
+										card_name: 'FEATURE_QUICK_START_VIDEO',
 									} }
 									statsName="QuickStartVideo"
 								>
@@ -66,7 +69,7 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 						</div>
 					</div>
 					{ isDesktop() && (
-						<div className="quick-start-video__content-illustration">
+						<div className="quick-start-video__content-illustration educational-content__illustration">
 							<InlineSupportLink
 								supportPostId={ 158974 }
 								supportLink={ localizeUrl(
@@ -77,6 +80,9 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 								tracksEvent="calypso_customer_home_education"
 								statsGroup="calypso_customer_home"
 								tracksOptions={ {
+									url: localizeUrl(
+										'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com'
+									),
 									card_name: 'QuickStartVideo',
 								} }
 								statsName="QuickStartVideo"
