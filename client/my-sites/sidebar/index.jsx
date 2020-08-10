@@ -605,7 +605,7 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		// Don't show the "Plans" sidebar item in WP Mobile App WebViews to avoid them being rejected
+		// Hide "Plans" because the App/Play Stores reject apps that present non In-App Purchase flows, even in a WebView
 		if ( isWpMobile ) {
 			return;
 		}
@@ -1071,7 +1071,7 @@ function mapStateToProps( state ) {
 		rewindState: getRewindState( state, siteId ),
 		isCloudEligible: isJetpackCloudEligible( state, siteId ),
 		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
-		isWpMobile: isWpMobileApp(),
+		isWpMobile: isWpMobileApp(), // This doesn't rely on state, but we inject it here for future testability
 	};
 }
 
