@@ -1,6 +1,4 @@
 @import '~@automattic/onboarding/styles/mixins';
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import 'landing/gutenboarding/onboarding-block/colors';
 
 $progress-duration: 800ms;
 
@@ -32,8 +30,9 @@ $progress-duration: 800ms;
 	}
 
 	&__progress-step {
-		@include onboarding-heading-text-mobile;
-
+		@include onboarding-font-recoleta;
+		font-size: 26px;
+		line-height: 40px;
 		text-align: center;
 		vertical-align: middle;
 		margin: 0;
