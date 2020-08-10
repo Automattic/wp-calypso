@@ -22,6 +22,8 @@ import { camelCase } from 'lodash';
 /**
  * Internal dependencies
  */
+import notices from 'notices';
+import { validatePaymentDetails } from 'lib/checkout/validation';
 import useCountryList from 'my-sites/checkout/composite-checkout/wpcom/hooks/use-country-list';
 import Field from 'my-sites/checkout/composite-checkout/wpcom/components/field';
 import {
@@ -56,10 +58,10 @@ export function createEbanxTefPaymentMethodStore() {
 
 	const selectors = {
 		getCustomerName( state ) {
-			return state.customerName || '';
+			return state.customerName;
 		},
 		getCustomerBank( state ) {
-			return state.customerBank || '';
+			return state.customerBank;
 		},
 		getFields( state ) {
 			return state.fields;
@@ -300,12 +302,15 @@ function EbanxTefPayButton( { disabled, store } ) {
 		( accum, [ key, managedValue ] ) => ( { ...accum, [ camelCase( key ) ]: managedValue.value } ),
 		{}
 	);
+	const contactCountryCode = useSelect(
+		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
+	);
 
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store ) ) {
+				if ( isFormValid( store, contactCountryCode, __ ) ) {
 					debug( 'submitting ebanx-tef payment' );
 					setTransactionPending();
 					onEvent( {
@@ -369,22 +374,53 @@ function EbanxTefSummary() {
 	);
 }
 
-function isFormValid( store ) {
+function isFormValid( store, contactCountryCode, __ ) {
+	// Touch fields so that we show errors
+	store.dispatch( store.actions.touchAllFields() );
+	let isValid = true;
+
 	const customerName = store.selectors.getCustomerName( store.getState() );
 	const customerBank = store.selectors.getCustomerBank( store.getState() );
 
 	if ( ! customerName?.value.length ) {
 		// Touch the field so it displays a validation error
 		store.dispatch( store.actions.changeCustomerName( '' ) );
+		isValid = false;
 	}
 	if ( ! customerBank?.value.length ) {
 		// Touch the field so it displays a validation error
 		store.dispatch( store.actions.changeCustomerBank( '' ) );
+		isValid = false;
 	}
-	if ( ! customerName?.value.length || ! customerBank?.value.length ) {
-		return false;
+
+	const rawState = store.selectors.getFields( store.getState() );
+
+	const validationResults = validatePaymentDetails(
+		Object.entries( {
+			...rawState,
+			country: { value: contactCountryCode },
+			name: customerName,
+			'tef-bank': customerBank,
+		} ).reduce( ( accum, [ key, managedValue ] ) => {
+			accum[ key ] = managedValue.value;
+			return accum;
+		}, {} ),
+		'brazil-tef'
+	);
+
+	Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
+		errors.map( ( error ) => {
+			isValid = false;
+			store.dispatch( store.actions.setFieldError( key, error ) );
+		} );
+	} );
+	debug( 'ebanx card details validation results: ', validationResults );
+
+	if ( validationResults.errors?.country?.length > 0 ) {
+		const countryErrorMessage = validationResults.errors.country[ 0 ];
+		notices.error( countryErrorMessage || __( 'An error occurred during your purchase.' ) );
 	}
-	return true;
+	return isValid;
 }
 
 function EbanxTefLabel() {
