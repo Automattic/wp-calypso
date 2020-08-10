@@ -71,8 +71,8 @@ export const updateMediaError = ( { siteId }, error ) => (/* dispatch, getState 
 };
 
 export const editMedia = ( action ) => {
-	const { siteId, item } = action;
-	const { ID: mediaId, ...rest } = item;
+	const { siteId, data } = action;
+	const { ID: mediaId, ...rest } = data;
 
 	return [
 		http(

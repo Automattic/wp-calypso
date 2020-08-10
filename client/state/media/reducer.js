@@ -24,6 +24,7 @@ import {
 	MEDIA_SOURCE_CHANGE,
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
+	MEDIA_ITEM_EDIT,
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
@@ -177,9 +178,11 @@ export const queries = ( () => {
 				const { siteId, mediaIds } = action;
 				return applyToManager( state, siteId, 'removeItems', true, mediaIds );
 			}
-			case MEDIA_SOURCE_CHANGE: {
-				return {};
+			case MEDIA_ITEM_EDIT: {
+				const { siteId, mediaItem } = action;
+				return applyToManager( state, siteId, 'receive', true, mediaItem, { patch: true } );
 			}
+			case MEDIA_SOURCE_CHANGE:
 			case MEDIA_CLEAR_SITE: {
 				return {};
 			}

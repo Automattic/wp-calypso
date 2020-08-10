@@ -175,12 +175,14 @@ export function createMediaItem( site, transientMedia ) {
  * are to be edited.
  *
  * @param {number} siteId site identifier
- * @param {object} item media item
+ * @param {object} mediaItem media item with updated properties
+ * @param {object} data binary updated item data (to be sent to the server)
  */
-export const editMediaItem = ( siteId, item ) => ( {
+export const editMediaItem = ( siteId, mediaItem, data ) => ( {
 	type: MEDIA_ITEM_EDIT,
 	siteId,
-	item,
+	mediaItem,
+	data,
 } );
 
 /**
