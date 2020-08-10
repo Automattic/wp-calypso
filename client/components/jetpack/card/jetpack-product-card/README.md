@@ -36,8 +36,8 @@ export default function JetpackBundleCard() {
 | `productName`\*      | `string`     | none    | Name of the product, shown as the title of the card                                        |
 | `productType`        | `string`     | none    | Product type (e.g. 'Daily', or 'Real Time'), appended to its name                          |
 | `headingLevel`       | `number`     | 2       | Heading level of the HTML element wrapping the product name                                |
-| `subheadline`\*      | `string`     | none    | Summary of the product                                                                     |
-| `description`\*      | `React.Node` | none    | Description of the product                                                                 |
+| `subheadline`        | `string`     | none    | Summary of the product                                                                     |
+| `description`        | `React.Node` | none    | Description of the product                                                                 |
 | `currencyCode`\*     | `string`     | none    | Code of the currency in which to display the price                                         |
 | `originalPrice`\*    | `number`     | none    | Price of the product                                                                       |
 | `discountedPrice`    | `number`     | none    | Discounted price of the product                                                            |
