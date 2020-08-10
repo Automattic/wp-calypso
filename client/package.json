@@ -57,6 +57,7 @@
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/block-editor": "^4.3.6",
 		"@wordpress/block-library": "^2.22.6",
+		"@wordpress/block-serialization-default-parser": "^3.7.0",
 		"@wordpress/blocks": "^6.20.3",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/compose": "^3.19.3",

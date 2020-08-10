@@ -11,8 +11,9 @@ import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
+import WithoutIframe from './without-iframe';
 import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
-import { addQueryArgs } from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
 import {
@@ -24,7 +25,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import { isEnabled } from 'calypso/config';
 import { Placeholder } from './placeholder';
-
 import { makeLayout, render } from 'calypso/controller';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -32,6 +32,7 @@ import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/
 import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { stopEditingPost } from 'calypso/state/editor/actions';
+import NavigationComponent from 'calypso/my-sites/navigation';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/post/' ) ) {
@@ -238,6 +239,63 @@ export const post = ( context, next ) => {
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
+		/>
+	);
+
+	return next();
+};
+
+function createNavigation( context ) {
+	const siteFragment = getSiteFragment( context.pathname );
+	let basePath = context.pathname;
+
+	if ( siteFragment ) {
+		basePath = sectionify( context.pathname );
+	}
+
+	return (
+		<NavigationComponent
+			path={ context.path }
+			allSitesPath={ basePath }
+			siteBasePath={ basePath }
+		/>
+	);
+}
+
+export const gutenbergWithoutIframe = ( context, next ) => {
+	// See post-editor/controller.js for reference.
+
+	const postId = getPostID( context );
+	const postType = determinePostType( context );
+	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
+
+	// Check if this value is an integer.
+	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
+
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const pressThis = getPressThisData( context.query );
+	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
+	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
+
+	// Set postId on state.editor.postId, so components like editor revisions can read from it.
+	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+
+	// Set post type on state.posts.[ id ].type, so components like document head can read from it.
+	context.store.dispatch( { type: POST_EDIT, post: { type: postType }, siteId, postId } );
+
+	context.secondary = createNavigation( context );
+	context.primary = (
+		<WithoutIframe
+			key={ postId }
+			siteId={ siteId }
+			postId={ postId }
+			postType={ postType }
+			duplicatePostId={ duplicatePostId }
+			pressThis={ pressThis }
+			fseParentPageId={ fseParentPageId }
+			parentPostId={ parentPostId }
+			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
 		/>
 	);
 
