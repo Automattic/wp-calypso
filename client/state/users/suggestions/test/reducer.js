@@ -38,6 +38,19 @@ describe( 'reducer', () => {
 
 			expect( state[ 123 ][ 0 ] ).to.eql( newSuggestion );
 		} );
+
+		test( 'should store an empty array in the event that suggestions is null', () => {
+			const state = items(
+				{},
+				{
+					type: USER_SUGGESTIONS_RECEIVE,
+					suggestions: null,
+					siteId: 123,
+				}
+			);
+
+			expect( state[ 123 ] ).toEqual( [] );
+		} );
 	} );
 
 	describe( '#requesting()', () => {
