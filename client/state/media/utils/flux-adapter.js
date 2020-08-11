@@ -114,6 +114,3 @@ export const dispatchFluxRequestMediaItemsSuccess = ( siteId, data, query ) => {
 		query,
 	} );
 };
-
-export const dispatchFluxFetchMediaLimits = ( siteId ) =>
-	Dispatcher.handleServerAction( { type: 'FETCH_MEDIA_LIMITS', siteId } );

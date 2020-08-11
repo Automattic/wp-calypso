@@ -158,12 +158,6 @@ MediaStore.dispatchToken = Dispatcher.register( function ( payload ) {
 
 			MediaStore.emit( 'change' );
 			break;
-		case 'FETCH_MEDIA_LIMITS':
-			if ( ! action.siteId ) {
-				break;
-			}
-			MediaStore.emit( 'fetch-media-limits' );
-			break;
 	}
 } );
 
