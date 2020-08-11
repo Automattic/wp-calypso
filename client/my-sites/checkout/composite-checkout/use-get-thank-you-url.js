@@ -232,7 +232,6 @@ function getFallbackDestination( {
 
 function maybeShowPlanBumpOffer( {
 	pendingOrReceiptId,
-	orderId,
 	cart,
 	siteSlug,
 	didPurchaseFail,
@@ -271,7 +270,6 @@ function getRedirectUrlForConciergeNudge( {
 
 		const upgradePath = maybeShowPlanBumpOffer( {
 			pendingOrReceiptId,
-			orderId,
 			cart,
 			siteSlug,
 			didPurchaseFail,
