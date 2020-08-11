@@ -12,11 +12,12 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath, useVerticalQueryParam } from '../../path';
+import { Step, usePath } from '../../path';
 import Link from '../../components/link';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
+import { useShowVerticalInput } from '../../hooks/use-show-vertical-input';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
 
@@ -103,11 +104,11 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const siteVertical = getSelectedVertical();
 
-	const shouldShowVerticalInput = useVerticalQueryParam();
+	const showVerticalInput = useShowVerticalInput();
 
 	return (
 		<div className="gutenboarding-page acquire-intent">
-			{ shouldShowVerticalInput ? (
+			{ showVerticalInput ? (
 				<>
 					{ isMobile &&
 						( isSiteTitleActive ? (

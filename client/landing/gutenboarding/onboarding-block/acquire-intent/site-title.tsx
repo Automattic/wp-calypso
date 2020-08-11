@@ -15,7 +15,7 @@ import { recordSiteTitleSelection } from '../../lib/analytics';
 import tip from './tip';
 import AcquireIntentTextInput from './acquire-intent-text-input';
 import useTyper from '../../hooks/use-typer';
-import { useVerticalQueryParam } from '../../path';
+import { useShowVerticalInput } from '../../hooks/use-show-vertical-input';
 
 interface Props {
 	onSubmit: () => void;
@@ -27,6 +27,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
+	const showVerticalInput = useShowVerticalInput();
 	const siteTitleExamples = [
 		/* translators: This is an example of a site name,
 		   feel free to create your own but please keep it under 22 characters */
@@ -83,10 +84,8 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		setIsTouched( true );
 	};
 
-	const shouldShowVerticalInput = useVerticalQueryParam();
-
 	// translators: label for site title input in Gutenboarding
-	const inputLabel = shouldShowVerticalInput ? __( "It's called" ) : __( 'My site is called' );
+	const inputLabel = showVerticalInput ? __( "It's called" ) : __( 'My site is called' );
 
 	const placeHolder = useTyper( siteTitleExamples, ! siteTitle, {
 		delayBetweenCharacters: 70,
