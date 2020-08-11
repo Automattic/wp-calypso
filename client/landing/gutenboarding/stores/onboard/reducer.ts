@@ -86,6 +86,16 @@ const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, a
 	return state;
 };
 
+const shouldShowVerticalInput: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_SHOW_SITE_VERTICAL_INPUT' ) {
+		return action.shouldShowVerticalInput;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
 		const layout = action.pageLayout;
@@ -207,6 +217,7 @@ const reducer = combineReducers( {
 	plan,
 	selectedFeatures,
 	wasVerticalSkipped,
+	shouldShowVerticalInput,
 } );
 
 export type State = ReturnType< typeof reducer >;
