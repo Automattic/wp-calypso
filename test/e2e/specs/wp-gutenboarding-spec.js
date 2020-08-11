@@ -12,7 +12,6 @@ import NewPage from '../lib/pages/gutenboarding/new-page.js';
 import AcquireIntentPage from '../lib/pages/gutenboarding/acquire-intent-page.js';
 import DesignSelectorPage from '../lib/pages/gutenboarding/design-selector-page.js';
 import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
-import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';
 import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 
 import * as driverManager from '../lib/driver-manager.js';
@@ -50,11 +49,6 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await acquireIntentPage.goToNextStep();
 		} );
 
-		step( 'Can see Domains Page and skip selecting a domain', async function () {
-			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.skipStep();
-		} );
-
 		step( 'Can see Design Selector and select a random free design', async function () {
 			const designSelectorPage = await DesignSelectorPage.Expect( driver );
 			await designSelectorPage.selectFreeDesign();
@@ -82,7 +76,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 	} );
 
-	describe( 'Skip first step in Gutenboarding, select paid design and see Domains page after Style preview @parallel', function () {
+	describe( 'Skip first step in Gutenboarding, select paid design and see Plans page after Style preview @parallel', function () {
 		before( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 			await NewPage.Visit( driver );
@@ -98,10 +92,15 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await designSelectorPage.selectPaidDesign();
 		} );
 
-		step( 'Can see Domains step after Style Preview step', async function () {
+		step( 'Can see Style Preview and continue', async function () {
 			const stylePreviewPage = await StylePreviewPage.Expect( driver );
 			await stylePreviewPage.continue();
-			await DomainsPage.Expect( driver );
+		} );
+
+		step( 'Can see Plans Grid with no selected plan', async function () {
+			const plansPage = await PlansPage.Expect( driver );
+			const hasSelectedPlan = await plansPage.hasSelectedPlan();
+			assert.strictEqual( hasSelectedPlan, false, 'There is a preselected plan' );
 		} );
 	} );
 } );
