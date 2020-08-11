@@ -15,17 +15,17 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	}
 
 	async enterSiteTitle( siteTitle ) {
-		const siteTitleSelector = By.css( '#site-title__input' );
+		const siteTitleSelector = By.css( '.acquire-intent-text-input__input' );
 		return await driverHelper.setWhenSettable( this.driver, siteTitleSelector, siteTitle );
 	}
 
 	async goToNextStep() {
-		const nextButtonSelector = By.css( '.action-buttons__next' );
+		const nextButtonSelector = By.css( '.acquire-intent__question-skip.is-primary' );
 		return await driverHelper.clickWhenClickable( this.driver, nextButtonSelector );
 	}
 
 	async skipStep() {
-		const skipButtonSelector = By.css( '.action-buttons__skip' );
+		const skipButtonSelector = By.css( '.acquire-intent__question-skip' );
 		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
 	}
 }
