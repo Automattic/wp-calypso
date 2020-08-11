@@ -105,7 +105,7 @@ const UpgradeNudge = ( {
 				</div>
 			</div>
 			<p className="jetpack-product-card__nudge-description">
-				{ preventWidows( plan.description ) }
+				{ preventWidows( plan.getDescription() ) }
 			</p>
 
 			<Button className="jetpack-product-card__nudge-button" primary onClick={ onUpgradeClick }>
