@@ -46,9 +46,11 @@ export function resolveDomainStatus(
 
 			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
 				return {
-					statusText: translate( 'Action required' ),
-					statusClass: 'status-error',
+					statusText: translate( 'Complete setup' ),
+					statusClass: 'status-warning',
 					icon: 'info',
+					listStatusText: translate( 'Complete setup' ),
+					listStatusClass: 'warning',
 				};
 			}
 
