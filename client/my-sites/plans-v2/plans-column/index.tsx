@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
+import React, { useMemo, ReactNode } from 'react';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 
@@ -16,12 +16,14 @@ import {
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 } from '../constants';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import { isUpgradeable, getRealtimeFromDaily } from 'my-sites/plans-v2/utils';
 import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
 import FormattedHeader from 'components/formatted-header';
+import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
 
 /**
  * Type dependencies
@@ -35,7 +37,10 @@ interface PlanColumnType {
 	siteId: number | null;
 }
 
-type PlanWithBought = SelectorProduct & { owned: boolean; legacy: boolean };
+type PlanWithBought = SelectorProduct & { owned: boolean; legacy: boolean } & {
+	upgradeable: boolean;
+	UpgradeNudge?: ReactNode;
+};
 
 const PlanComponent = ( {
 	plan,
@@ -54,11 +59,34 @@ const PlanComponent = ( {
 	)
 		? JetpackBundleCard
 		: JetpackPlanCard;
+
+	if ( plan.upgradeable ) {
+		// TODO: remove this once we can purchase new plans.
+		// We need this now to make the nudge appear inside the Jetpack Security Bundle card
+		// and make it work as it was Jetpack Security Daily (monthly or annually).
+		const productSlug =
+			plan.productSlug === 'jetpack_security'
+				? 'jetpack_security_daily'
+				: 'jetpack_security_daily_monthly';
+
+		const upgradeToProductSlug = productSlug && getRealtimeFromDaily( productSlug );
+
+		plan.UpgradeNudge = upgradeToProductSlug ? (
+			<JetpackProductCardUpgradeNudge
+				billingTimeFrame={ durationToText( plan.term ) }
+				currencyCode={ currencyCode }
+				discountedPrice={ 67 }
+				originalPrice={ price }
+				onUpgradeClick={ () => null }
+				productSlug={ upgradeToProductSlug }
+			/>
+		) : undefined;
+	}
+
 	return (
 		<CardComponent
 			iconSlug={ plan.iconSlug }
 			productName={ plan.displayName }
-			productSlug={ plan.productSlug }
 			subheadline={ plan.tagline }
 			description={ plan.description }
 			currencyCode={ currencyCode }
@@ -69,6 +97,8 @@ const PlanComponent = ( {
 			originalPrice={ price }
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
+			deprecated={ plan.legacy }
+			UpgradeNudge={ plan.UpgradeNudge }
 		/>
 	);
 };
@@ -99,18 +129,26 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					PRODUCTS_TYPES[ productType ].includes( product.productSlug )
 			)
 			// Iterate over plans and set whether they are legacy and if the user owns them.
-			.map( ( product: SelectorProduct ) => ( {
-				...product,
-				owned: product.productSlug === currentPlan,
-				legacy: false,
-			} ) );
+			// Verify if plan is upgradeable.
+			.map( ( product: SelectorProduct ) => {
+				const isOwned = product.productSlug === currentPlan;
+				return {
+					...product,
+					owned: isOwned,
+					legacy: false,
+					// TODO: since we can't own Jetpack Security Bundle, we have to disable
+					// this check while we can't purchase the real plan.
+					// upgradeable: isOwned && isUpgradeable( product.productSlug ),
+					upgradeable: isUpgradeable( product.productSlug ),
+				};
+			} );
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.
 		if ( ! owned && currentPlan && currentPlan !== PLAN_JETPACK_FREE ) {
 			const item = slugToItem( currentPlan );
 			const currentPlanSelector = item && itemToSelectorProduct( item );
 			if ( currentPlanSelector ) {
-				plans.unshift( { ...currentPlanSelector, owned: true, legacy: true } );
+				plans.unshift( { ...currentPlanSelector, owned: true, legacy: true, upgradeable: false } );
 			}
 		}
 		return plans;

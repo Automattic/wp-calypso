@@ -7,7 +7,12 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { DAILY_PLAN_TO_REALTIME_PLAN, PRODUCTS_WITH_OPTIONS, OPTIONS_SLUG_MAP } from './constants';
+import {
+	DAILY_PLAN_TO_REALTIME_PLAN,
+	PRODUCTS_WITH_OPTIONS,
+	OPTIONS_SLUG_MAP,
+	UPGRADEABLE_WITH_NUDGE,
+} from './constants';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -35,8 +40,8 @@ import type {
 	DurationString,
 } from './types';
 import type {
-	JetpackOfferDailyPlans,
-	JetpackOfferRealtimePlans,
+	JetpackDailyPlan,
+	JetpackRealtimePlan,
 	JetpackPlanSlugs,
 	Plan,
 } from 'lib/plans/types';
@@ -230,8 +235,10 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
 	return itemToSelectorProduct( item );
 }
 
-export function getRealtimeFromDaily(
-	productSlug: JetpackOfferDailyPlans
-): JetpackOfferRealtimePlans | null {
+export function getRealtimeFromDaily( productSlug: JetpackDailyPlan ): JetpackRealtimePlan | null {
 	return DAILY_PLAN_TO_REALTIME_PLAN[ productSlug ];
+}
+
+export function isUpgradeable( productSlug: string ): boolean {
+	return UPGRADEABLE_WITH_NUDGE.includes( productSlug );
 }

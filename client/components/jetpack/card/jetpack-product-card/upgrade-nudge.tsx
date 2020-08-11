@@ -17,14 +17,15 @@ import PlanPrice from 'my-sites/plan-price';
 import { JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS } from 'my-sites/plans-v2/constants';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
+import { getPlan } from 'lib/plans';
 
-// This data should come from an API. It's now hardcoded until we figure out where is
-// this coming from.
-const DEFAULT_DESCRIPTION = globalTranslate(
-	'Additional security for sites with 24/7 activity.' +
-		' Recommended for eCommerce stores, news organizations, and online forums.'
-);
+/**
+ * Type dependencies
+ */
+import { JetpackRealtimePlan } from 'lib/plans/types';
 
+// TODO: replace this hardcoded data with real data when we have an endpoint for it or
+// a more definitive place in our own codebase.
 const DEFAULT_FEATURES = [
 	{
 		title: globalTranslate( 'Real-Time Backup' ),
@@ -40,19 +41,17 @@ type OwnProps = {
 	billingTimeFrame: TranslateResult;
 	className?: string;
 	currencyCode: string;
-	description?: TranslatedResult;
 	discountedPrice?: number;
-	features?: TranslatedResult[];
+	features?: typeof DEFAULT_FEATURES;
 	onUpgradeClick: () => void;
 	originalPrice: number;
-	productSlug: string;
+	productSlug: JetpackRealtimePlan;
 };
 
 const UpgradeNudge = ( {
 	billingTimeFrame,
 	className,
 	currencyCode,
-	description = DEFAULT_DESCRIPTION,
 	discountedPrice,
 	features = DEFAULT_FEATURES,
 	onUpgradeClick,
@@ -61,6 +60,8 @@ const UpgradeNudge = ( {
 }: OwnProps ) => {
 	const translate = useTranslate();
 	const isDiscounted = isFinite( discountedPrice );
+
+	const plan = getPlan( productSlug );
 
 	const storedPreference = useSelector( ( state ) =>
 		getPreference( state, JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS )
@@ -103,15 +104,17 @@ const UpgradeNudge = ( {
 					<span className="jetpack-product-card__billing-time-frame">{ billingTimeFrame }</span>
 				</div>
 			</div>
-			<p className="jetpack-product-card__nudge-description">{ preventWidows( description ) }</p>
+			<p className="jetpack-product-card__nudge-description">
+				{ preventWidows( plan.description ) }
+			</p>
 
 			<Button className="jetpack-product-card__nudge-button" primary onClick={ onUpgradeClick }>
 				{ translate( 'Upgrade' ) }
 			</Button>
 
 			<ul className="jetpack-product-card__nudge-features">
-				{ features.map( ( { subtitle, title } ) => (
-					<li className="jetpack-product-card__nudge-feature" key={ title }>
+				{ features.map( ( { subtitle, title }, index ) => (
+					<li className="jetpack-product-card__nudge-feature" key={ index }>
 						<Gridicon icon="checkmark" />
 						<div className="jetpack-product-card__nudge-feature-desc">
 							<strong>{ title }</strong>

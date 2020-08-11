@@ -13,9 +13,7 @@ import { Button, ProductIcon } from '@automattic/components';
 import { useLocalizedMoment } from 'components/localized-moment';
 import { preventWidows } from 'lib/formatting';
 import PlanPrice from 'my-sites/plan-price';
-import { getRealtimeFromDaily } from 'my-sites/plans-v2/utils';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
-import JetpackProductCardUpgradeNudge from './upgrade-nudge';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
 
 /**
@@ -32,7 +30,6 @@ type OwnProps = {
 	className?: string;
 	iconSlug: string;
 	productName: TranslateResult;
-	productSlug?: string;
 	productType?: string;
 	headingLevel?: number;
 	subheadline?: TranslateResult;
@@ -52,6 +49,7 @@ type OwnProps = {
 	isOwned?: boolean;
 	isDeprecated?: boolean;
 	expiryDate?: Moment;
+	UpgradeNudge?: ReactNode;
 };
 
 export type Props = OwnProps & FeaturesProps;
@@ -60,7 +58,6 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	className,
 	iconSlug,
 	productName,
-	productSlug,
 	productType,
 	headingLevel,
 	subheadline,
@@ -82,6 +79,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	expiryDate,
 	features,
 	isExpanded,
+	UpgradeNudge,
 } ) => {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
@@ -94,22 +92,6 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 		: 2;
 	const parsedExpiryDate =
 		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
-
-	// TODO: this condition is only for testing purposes since at this moment we can't
-	// purchase Jetpack Security Daily. We need to remove this after that's possible.
-	if ( productSlug && productSlug.includes( 'jetpack_security' ) ) {
-		isOwned = true;
-		productSlug =
-			productSlug === 'jetpack_security'
-				? 'jetpack_security_daily'
-				: 'jetpack_security_daily_monthly';
-	}
-
-	// In the future, from this product slug we should be able to get everything we need inside
-	// the nudge upgrade component: description, features, prices, and everything else.
-	const upgradeToProductSlug = productSlug && getRealtimeFromDaily( productSlug );
-	// Show upgrade nudge only if the user owns Jetpack Security Daily
-	const showUpgradeNudge = isOwned && upgradeToProductSlug;
 
 	return (
 		<div
@@ -199,16 +181,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 
 			<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
 
-			{ showUpgradeNudge && (
-				<JetpackProductCardUpgradeNudge
-					billingTimeFrame={ billingTimeFrame }
-					currencyCode={ currencyCode }
-					discountedPrice={ discountedPrice }
-					originalPrice={ originalPrice }
-					onUpgradeClick={ () => null }
-					productSlug={ upgradeToProductSlug }
-				/>
-			) }
+			{ UpgradeNudge }
 		</div>
 	);
 };
