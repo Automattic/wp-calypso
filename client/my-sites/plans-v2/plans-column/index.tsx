@@ -76,7 +76,7 @@ const PlanComponent = ( {
 				billingTimeFrame={ durationToText( plan.term ) }
 				currencyCode={ currencyCode }
 				discountedPrice={ 67 }
-				originalPrice={ price }
+				originalPrice={ price || 100 }
 				onUpgradeClick={ () => null }
 				productSlug={ upgradeToProductSlug }
 			/>
