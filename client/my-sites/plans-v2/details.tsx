@@ -57,6 +57,7 @@ const ProductComponent = ( {
 	const price = useSelector( ( state ) => getProductCost( state, productSlug ) ) || 0;
 	const product = slugToSelectorProduct( productSlug );
 	if ( ! product ) {
+		// Exit if invalid product.
 		return null;
 	}
 	const isBundle = [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ].includes(
@@ -64,6 +65,8 @@ const ProductComponent = ( {
 	);
 	const JetpackCard = isBundle ? JetpackBundleCard : JetpackProductCard;
 
+	// Gets the cost of the product/plan.
+	// TODO: Pull this all from the API.
 	let cost: Cost = { originalPrice: 0 };
 	if ( isBundle ) {
 		cost = { originalPrice: price || 0 };
