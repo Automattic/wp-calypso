@@ -27,3 +27,4 @@ export const getDomainSearch = ( state: State ) =>
 	state.domainSearch || getSelectedSiteTitle( state );
 export const getPlan = ( state: State ) => state.plan;
 export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
+export const wasVerticalSkipped = ( state: State ): boolean => state.wasVerticalSkipped;
