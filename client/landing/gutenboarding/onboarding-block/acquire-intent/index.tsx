@@ -12,7 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath } from '../../path';
+import { Step, usePath, useVerticalQueryParam } from '../../path';
 import Link from '../../components/link';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
@@ -97,6 +97,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const siteVertical = getSelectedVertical();
 
+	const shouldShowVerticalInput = useVerticalQueryParam();
+
 	return (
 		<div className="gutenboarding-page acquire-intent">
 			{ isMobile &&
@@ -114,7 +116,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 				) ) }
 			{ ! isMobile && (
 				<>
-					{ ! wasVerticalSkipped() && verticalSelect }
+					{ ! wasVerticalSkipped() && shouldShowVerticalInput && verticalSelect }
 					{ siteTitleInput }
 				</>
 			) }

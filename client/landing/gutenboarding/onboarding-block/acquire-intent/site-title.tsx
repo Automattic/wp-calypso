@@ -14,8 +14,8 @@ import { STORE_KEY } from '../../stores/onboard';
 import { recordSiteTitleSelection } from '../../lib/analytics';
 import tip from './tip';
 import AcquireIntentTextInput from './acquire-intent-text-input';
-
 import useTyper from '../../hooks/use-typer';
+import { useVerticalQueryParam } from '../../path';
 
 interface Props {
 	onSubmit: () => void;
@@ -83,8 +83,10 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		setIsTouched( true );
 	};
 
+	const shouldShowVerticalInput = useVerticalQueryParam();
+
 	// translators: label for site title input in Gutenboarding
-	const inputLabel = __( "It's called" );
+	const inputLabel = shouldShowVerticalInput ? __( "It's called" ) : __( 'My site is called' );
 
 	const placeHolder = useTyper( siteTitleExamples, ! siteTitle, {
 		delayBetweenCharacters: 70,
