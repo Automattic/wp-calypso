@@ -14,6 +14,7 @@ import {
 	itemToSelectorProduct,
 	productButtonLabel,
 	getProductPrices,
+	slugIsSelectorProductSlug,
 } from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import { isProductsListFetching, getAvailableProductsList } from 'state/products-list/selectors';
@@ -55,6 +56,7 @@ const ProductComponent = ( {
 		features={ { items: [] } }
 		discountedPrice={ product.discountCost }
 		originalPrice={ product.cost || 0 }
+		withStartingPrice={ slugIsSelectorProductSlug( product.productSlug ) }
 		isOwned={ product.owned }
 	/>
 );

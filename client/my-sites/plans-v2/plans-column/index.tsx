@@ -8,7 +8,13 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { durationToText, slugToItem, itemToSelectorProduct, productButtonLabel } from '../utils';
+import {
+	durationToText,
+	slugToItem,
+	itemToSelectorProduct,
+	productButtonLabel,
+	slugIsSelectorProductSlug,
+} from '../utils';
 import {
 	PRODUCTS_TYPES,
 	SELECTOR_PLANS,
@@ -66,6 +72,7 @@ const PlanComponent = ( {
 			onButtonClick={ () => onClick( plan ) }
 			features={ { items: [] } }
 			originalPrice={ price }
+			withStartingPrice={ slugIsSelectorProductSlug( plan.productSlug ) }
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
 		/>
