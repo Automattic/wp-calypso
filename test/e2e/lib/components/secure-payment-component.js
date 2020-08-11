@@ -62,6 +62,13 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		//   https://github.com/Automattic/wp-calypso/pull/22239
 		const pauseBetweenKeysMS = 1;
 
+		// In old checkout, the tax fields are part of the credit card payment
+		// form, so we must fill them out here, but for new checkout, those fields
+		// are part of the contact form and must be filled out explicitly before
+		// calling this function by using
+		// SecurePaymentComponent.completeTaxDetailsInContactSection.
+		await this.completeTaxDetailsForCreditCard();
+
 		await driverHelper.setWhenSettable(
 			this.driver,
 			By.css( '#name,#cardholder-name' ),
@@ -84,29 +91,17 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async completeContactDetails( { cardPostCode, cardCountryCode } ) {
+	async completeTaxDetailsForCreditCard( { cardPostCode, cardCountryCode } ) {
 		// This PR introduced an issue with older browsers, specifically IE11:
 		//   https://github.com/Automattic/wp-calypso/pull/22239
 		const pauseBetweenKeysMS = 1;
 
+		// In old checkout, we have separate postal code and country fields that
+		// are part of the credit card form. In new checkout, these do not exist
+		// (those fields are in the contact step) so we can skip this step.
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			await driverHelper.setWhenSettable(
-				this.driver,
-				By.css( '#contact-postal-code' ),
-				cardPostCode,
-				{
-					pauseBetweenKeysMS,
-				}
-			);
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( `#country-selector option[value="${ cardCountryCode }"]` )
-			);
-			return driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( 'button[aria-label="Continue with the entered contact details"]' )
-			);
+			return;
 		}
 		await driverHelper.clickWhenClickable(
 			this.driver,
@@ -115,6 +110,39 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		return await driverHelper.setWhenSettable( this.driver, By.id( 'postal-code' ), cardPostCode, {
 			pauseBetweenKeysMS,
 		} );
+	}
+
+	async completeTaxDetailsInContactSection( { cardPostCode, cardCountryCode } ) {
+		// This PR introduced an issue with older browsers, specifically IE11:
+		//   https://github.com/Automattic/wp-calypso/pull/22239
+		const pauseBetweenKeysMS = 1;
+
+		// In old checkout, contact details are only requested for domain products
+		// (ignoring G Suite for the moment), so we do not need to fill them out in
+		// this step, we just need to fill out the tax fields in the contact
+		// section. If they need to be filled out for either checkout, see
+		// CheckOutPage.enterRegistarDetails.
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( ! isCompositeCheckout ) {
+			return;
+		}
+
+		await driverHelper.setWhenSettable(
+			this.driver,
+			By.css( '#contact-postal-code' ),
+			cardPostCode,
+			{
+				pauseBetweenKeysMS,
+			}
+		);
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `#country-selector option[value="${ cardCountryCode }"]` )
+		);
+		return driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( 'button[aria-label="Continue with the entered contact details"]' )
+		);
 	}
 
 	async submitPaymentDetails() {
@@ -185,7 +213,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		) {
 			await driverHelper.clickWhenClickable( this.driver, storedCardSelector );
 		} else {
-			await this.completeContactDetails( cardCredentials );
+			await this.completeTaxDetailsInContactSection( cardCredentials );
 			await this.enterTestCreditCardDetails( cardCredentials );
 		}
 
