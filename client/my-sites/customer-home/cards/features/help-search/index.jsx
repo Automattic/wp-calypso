@@ -44,6 +44,7 @@ const HelpSearch = ( {
 	openDialog,
 	tour,
 	track,
+	type,
 } ) => {
 	const translate = useTranslate();
 
@@ -69,7 +70,7 @@ const HelpSearch = ( {
 		const resultLink = amendYouTubeLink( get( result, RESULT_LINK ) );
 
 		track(
-			'calypso_inlinehelp_forums_open',
+			`calypso_inlinehelp_${ type }_open`,
 			omitBy(
 				{
 					search_query: searchQuery,
