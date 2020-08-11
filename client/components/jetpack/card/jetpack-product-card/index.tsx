@@ -4,17 +4,22 @@
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { isFinite, isNumber } from 'lodash';
-import moment, { Moment } from 'moment';
 import React, { createElement, useRef, FunctionComponent, ReactNode } from 'react';
 
 /**
  * Internal dependencies
  */
 import { Button, ProductIcon } from '@automattic/components';
+import { useLocalizedMoment } from 'components/localized-moment';
 import { preventWidows } from 'lib/formatting';
 import PlanPrice from 'my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
+
+/**
+ * Type dependencies
+ */
+import type { Moment } from 'moment';
 
 /**
  * Style dependencies
@@ -77,6 +82,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
 	const isHeaderWrapped = useFlexboxWrapDetection( priceEl );
+	const moment = useLocalizedMoment();
 
 	const isDiscounted = isFinite( discountedPrice );
 	const parsedHeadingLevel = isNumber( headingLevel )
