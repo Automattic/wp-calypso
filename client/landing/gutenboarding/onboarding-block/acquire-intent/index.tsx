@@ -12,7 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath } from '../../path';
+import { Step, usePath, useVerticalQueryParam } from '../../path';
 import Link from '../../components/link';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
@@ -82,7 +82,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const nextStepButton = (
 		<Link
 			className="acquire-intent__question-skip"
-			isPrimary
+			isPrimary={ hasSiteTitle }
+			isDefault={ ! hasSiteTitle }
 			onClick={ () => ! hasSiteTitle && recordSiteTitleSkip() }
 			to={ nextStepPath }
 		>
@@ -90,48 +91,64 @@ const AcquireIntent: React.FunctionComponent = () => {
 		</Link>
 	);
 	const skipButton = (
-		<Button isLink onClick={ handleSkip } className="acquire-intent__skip-vertical">
+		<Button
+			isLink={ isMobile }
+			isDefault={ ! isMobile }
+			onClick={ handleSkip }
+			className="acquire-intent__skip-vertical"
+		>
 			{ skipLabel }
 		</Button>
 	);
 
 	const siteVertical = getSelectedVertical();
 
+	const shouldShowVerticalInput = useVerticalQueryParam();
+
 	return (
 		<div className="gutenboarding-page acquire-intent">
-			{ isMobile &&
-				( isSiteTitleActive ? (
-					<div>
-						<Arrow
-							className="acquire-intent__mobile-back-arrow"
-							onClick={ () => setIsSiteTitleActive( false ) }
-							transform="rotate(180)"
-						/>
-						{ siteTitleInput }
-					</div>
-				) : (
-					verticalSelect
-				) ) }
-			{ ! isMobile && (
+			{ shouldShowVerticalInput ? (
 				<>
-					{ ! wasVerticalSkipped() && verticalSelect }
-					{ siteTitleInput }
+					{ isMobile &&
+						( isSiteTitleActive ? (
+							<div>
+								<Arrow
+									className="acquire-intent__mobile-back-arrow"
+									onClick={ () => setIsSiteTitleActive( false ) }
+									transform="rotate(180)"
+								/>
+								{ siteTitleInput }
+							</div>
+						) : (
+							verticalSelect
+						) ) }
+					{ ! isMobile && (
+						<>
+							{ ! wasVerticalSkipped() && verticalSelect }
+							{ siteTitleInput }
+						</>
+					) }
+					<div className="acquire-intent__footer">
+						{ /* On mobile we render skipButton on vertical step when there is no vertical with more than 2 characters selected which is the
+						case when we render the Next arrow button next to the input. On site title step we always render nextStepButton */ }
+						{ isMobile &&
+							( isSiteTitleActive
+								? nextStepButton
+								: ( ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) || (
+										<Arrow className="acquire-intent__mobile-next-arrow" onClick={ onNext } />
+								  ) ) }
+
+						{ /* On desktop we always render nextStepButton when we render site title
+						Otherwise we render skipButton  */ }
+						{ ! isMobile && ( showSiteTitleAndNext ? nextStepButton : skipButton ) }
+					</div>
+				</>
+			) : (
+				<>
+					<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
+					<div className="acquire-intent__footer">{ nextStepButton }</div>
 				</>
 			) }
-			<div className="acquire-intent__footer">
-				{ /* On mobile we render skipButton on vertical step when there is no vertical with more than 2 characters selected which is the
-				case when we render the Next arrow button next to the input. On site title step we always render nextStepButton */ }
-				{ isMobile &&
-					( isSiteTitleActive
-						? nextStepButton
-						: ( ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) || (
-								<Arrow className="acquire-intent__mobile-next-arrow" onClick={ onNext } />
-						  ) ) }
-
-				{ /* On desktop we always render nextStepButton when we render site title
-				Otherwise we render skipButton  */ }
-				{ ! isMobile && ( showSiteTitleAndNext ? nextStepButton : skipButton ) }
-			</div>
 		</div>
 	);
 };
