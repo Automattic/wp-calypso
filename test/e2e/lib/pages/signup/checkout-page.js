@@ -15,7 +15,7 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	constructor( driver, url = null ) {
 		super(
 			driver,
-			By.css( '.checkout__secure-payment-form,.secure-payment-form,.composite-checkout' ),
+			By.css( '.checkout,.composite-checkout' ),
 			url,
 			2 * config.get( 'explicitWaitMS' )
 		);
