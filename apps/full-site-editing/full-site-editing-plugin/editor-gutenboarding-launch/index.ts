@@ -7,7 +7,6 @@ import { addAction } from '@wordpress/hooks';
 import { dispatch } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import 'a8c-fse-common-data-stores';
-import { isWithinBreakpoint } from '@automattic/viewport';
 
 // Depend on `core/editor` store.
 import '@wordpress/editor';
@@ -86,7 +85,7 @@ function updateEditor() {
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click' );
 
-			if ( isNewLaunch && ! isWithinBreakpoint( '<800px' ) ) {
+			if ( isNewLaunch && window.innerWidth < 768 ) {
 				// Open editor-site-launch sidebar
 				dispatch( 'automattic/launch' ).openSidebar();
 			} else {
