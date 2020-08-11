@@ -41,7 +41,7 @@ const SelectorPage = ( { defaultDuration = TERM_ANNUALLY, rootUrl }: SelectorPag
 	const selectProduct: PurchaseCallback = ( product: SelectorProduct ) => {
 		const durationString = durationToString( currentDuration );
 		const root = rootUrl.replace( ':site', siteSlug );
-		if ( product.subtypes ) {
+		if ( product.subtypes.length ) {
 			page( `${ root }/${ product.productSlug }/${ durationString }/details` );
 		} else {
 			page( `${ root }/${ product.productSlug }/${ durationString }/additions` );
