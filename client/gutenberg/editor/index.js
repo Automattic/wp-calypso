@@ -17,6 +17,7 @@ import {
 } from './controller';
 import config from 'calypso/config';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { performanceTrackerStart } from 'calypso/lib/performance-tracking/performance-tracker-start';
 
 export default function () {
 	page(
@@ -50,6 +51,7 @@ export default function () {
 		siteSelection,
 		redirect,
 		authenticate,
+		performanceTrackerStart( 'without-iframe' ),
 		gutenbergWithoutIframe,
 		makeLayout,
 		clientRender
