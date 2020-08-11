@@ -101,39 +101,50 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	return (
 		<div className="gutenboarding-page acquire-intent">
-			{ isMobile &&
-				( isSiteTitleActive ? (
-					<div>
-						<Arrow
-							className="acquire-intent__mobile-back-arrow"
-							onClick={ () => setIsSiteTitleActive( false ) }
-							transform="rotate(180)"
-						/>
-						{ siteTitleInput }
-					</div>
-				) : (
-					verticalSelect
-				) ) }
-			{ ! isMobile && (
+			{ shouldShowVerticalInput ? (
 				<>
-					{ ! wasVerticalSkipped() && shouldShowVerticalInput && verticalSelect }
-					{ siteTitleInput }
+					{ isMobile &&
+						( isSiteTitleActive ? (
+							<div>
+								<Arrow
+									className="acquire-intent__mobile-back-arrow"
+									onClick={ () => setIsSiteTitleActive( false ) }
+									transform="rotate(180)"
+								/>
+								{ siteTitleInput }
+							</div>
+						) : (
+							verticalSelect
+						) ) }
+					{ ! isMobile && (
+						<>
+							{ ! wasVerticalSkipped() && verticalSelect }
+							{ siteTitleInput }
+						</>
+					) }
+					<div className="acquire-intent__footer">
+						{ /* On mobile we render skipButton on vertical step when there is no vertical with more than 2 characters selected which is the
+						case when we render the Next arrow button next to the input. On site title step we always render nextStepButton */ }
+						{ isMobile &&
+							( isSiteTitleActive
+								? nextStepButton
+								: ( ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) || (
+										<Arrow className="acquire-intent__mobile-next-arrow" onClick={ onNext } />
+								  ) ) }
+
+						{ /* On desktop we always render nextStepButton when we render site title
+						Otherwise we render skipButton  */ }
+						{ ! isMobile && ( showSiteTitleAndNext ? nextStepButton : skipButton ) }
+					</div>
+				</>
+			) : (
+				<>
+					<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
+					<div className="acquire-intent__footer">
+						{ hasSiteTitle ? nextStepButton : skipButton }
+					</div>
 				</>
 			) }
-			<div className="acquire-intent__footer">
-				{ /* On mobile we render skipButton on vertical step when there is no vertical with more than 2 characters selected which is the
-				case when we render the Next arrow button next to the input. On site title step we always render nextStepButton */ }
-				{ isMobile &&
-					( isSiteTitleActive
-						? nextStepButton
-						: ( ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) || (
-								<Arrow className="acquire-intent__mobile-next-arrow" onClick={ onNext } />
-						  ) ) }
-
-				{ /* On desktop we always render nextStepButton when we render site title
-				Otherwise we render skipButton  */ }
-				{ ! isMobile && ( showSiteTitleAndNext ? nextStepButton : skipButton ) }
-			</div>
 		</div>
 	);
 };
