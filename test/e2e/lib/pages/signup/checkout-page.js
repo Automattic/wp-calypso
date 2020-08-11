@@ -57,15 +57,6 @@ export default class CheckOutPage extends AsyncBaseContainer {
 		);
 
 		await driverHelper.setWhenSettable( this.driver, By.id( 'postal-code' ), postalCode );
-
-		const isCompositeCheckout = await this.isCompositeCheckout();
-
-		if ( isCompositeCheckout ) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( 'button[aria-label="Continue with the entered contact details"]' )
-			);
-		}
 	}
 
 	async isCompositeCheckout() {
@@ -73,14 +64,13 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	}
 
 	async submitForm() {
-		const disabledPaymentButton = By.css(
-			'.credit-card-payment-box button[disabled],.composite-checkout .checkout-submit-button button[disabled]'
-		);
-		const paymentButtonSelector = By.css(
-			'.credit-card-payment-box button.is-primary:not([disabled]),.composite-checkout .checkout-submit-button button'
-		);
-
-		await driverHelper.waitTillNotPresent( this.driver, disabledPaymentButton );
-		await driverHelper.clickWhenClickable( this.driver, paymentButtonSelector );
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			return await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Continue with the entered contact details"]' )
+			);
+		}
+		return await driverHelper.clickWhenClickable( this.driver, By.css( 'button[type="submit"]' ) );
 	}
 }
