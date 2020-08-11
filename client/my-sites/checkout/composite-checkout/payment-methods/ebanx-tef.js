@@ -443,7 +443,7 @@ function EbanxTefLogo( { className } ) {
 		<img
 			src="/calypso/images/upgrades/brazil-tef.svg"
 			alt="Transferência bancária"
-			class={ className }
+			className={ className }
 		/>
 	);
 }
