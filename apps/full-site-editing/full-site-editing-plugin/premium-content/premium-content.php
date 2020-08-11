@@ -380,5 +380,5 @@ function premium_content_default_service( $service ) {
 }
 
 add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_paywall_initialize', 9 );
-add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_block_init' );
+add_action( 'enqueue_block_editor_assets', 'A8C\FSE\Earn\PremiumContent\premium_content_block_init' );
 add_filter( PAYWALL_FILTER, 'A8C\FSE\Earn\PremiumContent\premium_content_default_service' );
