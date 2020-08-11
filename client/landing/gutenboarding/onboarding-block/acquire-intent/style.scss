@@ -48,19 +48,16 @@
 .site-title__input-wrapper {
 	position: relative;
 	flex: 1;
-	height: 42px;
-	margin-top: 10px;
 
 	@include break-small {
 		margin-top: 0;
 		min-width: 300px;
 		max-width: 400px;
-		height: 57px;
 	}
 
 	@include break-medium {
-		height: 80px;
 		max-width: 750px;
+		margin-top: 20px;
 	}
 }
 
@@ -72,6 +69,11 @@
 	line-height: 14px;
 	opacity: 0;
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	margin-top: 10px;
+
+	@include break-medium {
+		margin-top: 15px;
+	}
 
 	.site-title.is-touched & {
 		opacity: 1;
@@ -93,69 +95,14 @@
 	@include break-small {
 		justify-content: flex-start;
 	}
-}
 
-.acquire-intent--with-skip {
-	.site-title__input::after {
-		background-image: linear-gradient( to right, $light-gray-700, $gray-100 );
-	}
-}
-
-.site-title__input {
-	height: 100%;
-	margin-bottom: 10px;
-
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 1px;
-		height: 2px;
-		background: var( --mainColor );
-
-		@include break-small {
-			bottom: 4px;
-		}
-	}
-
-	& > div {
-		height: 100%;
-	}
-
-	input[type='text'].components-text-control__input {
-		@include onboarding-heading-text-mobile;
-		height: auto;
-		background: transparent;
-		border: none;
+	.components-button.acquire-intent__skip-vertical.is-link {
 		padding: 0;
-		color: var( --mainColor );
-		caret-color: var( --mainColor );
-
-		&:focus {
-			box-shadow: none;
-			outline: none;
-		}
-
-		&::-ms-clear {
-			display: none;
-		}
-
-		@include break-small {
-			@include onboarding-heading-text;
-		}
-
-		@include break-medium {
-			font-size: 64px;
-		}
-
-		&::placeholder {
-			color: $light-gray-700;
-			line-height: normal;
-		}
-
-		&::-ms-clear {
-			display: none;
-		}
+		color: $dark-gray-600;
 	}
+}
+
+.acquire-intent__mobile-vertical-input {
+	display: flex;
+	flex-wrap: wrap;
 }
