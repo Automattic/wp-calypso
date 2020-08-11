@@ -15,8 +15,8 @@ const trackedPage = ( url: string, ...rest: PageJS.Callback[] ) => {
 };
 
 export default function ( rootUrl: string, ...rest: PageJS.Callback[] ) {
-	trackedPage( `${ rootUrl }/:duration?`, productSelect, ...rest );
-	trackedPage( `${ rootUrl }/:product/details`, productDetails, ...rest );
-	trackedPage( `${ rootUrl }/:product/:duration/details`, productDetails, ...rest );
-	trackedPage( `${ rootUrl }/:product/:duration/additions`, productUpsell, ...rest );
+	trackedPage( `${ rootUrl }/:duration?`, productSelect( rootUrl ), ...rest );
+	trackedPage( `${ rootUrl }/:product/details`, productDetails( rootUrl ), ...rest );
+	trackedPage( `${ rootUrl }/:product/:duration/details`, productDetails( rootUrl ), ...rest );
+	trackedPage( `${ rootUrl }/:product/:duration/additions`, productUpsell( rootUrl ), ...rest );
 }

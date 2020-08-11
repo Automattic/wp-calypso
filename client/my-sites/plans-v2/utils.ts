@@ -182,3 +182,17 @@ export function itemToSelectorProduct(
 	}
 	return null;
 }
+
+/**
+ * Converts an item slug to a SelectorProduct item type.
+ *
+ * @param slug string
+ * @returns SelectorProduct | null
+ */
+export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
+	const item = slugToItem( slug );
+	if ( ! item ) {
+		return null;
+	}
+	return itemToSelectorProduct( item );
+}
