@@ -68,6 +68,12 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 											</li>
 										) ) }
 									</ul>
+									<p>
+										{ __( 'Questions?', 'full-site-editing' ) }{ ' ' }
+										<Button isLink href="https://wordpress.com/help/contact" target="_blank">
+											{ __( 'Ask a Happiness Engineer', 'full-site-editing' ) }
+										</Button>
+									</p>
 								</CheckoutSummaryCard>
 							</CheckoutSummaryArea>
 						) }
