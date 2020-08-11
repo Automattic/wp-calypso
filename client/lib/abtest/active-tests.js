@@ -235,7 +235,7 @@ export default {
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
 	verticalsOnGutenboarding: {
-		datestamp: '20200720',
+		datestamp: '20200811',
 		variations: {
 			verticals: 50,
 			noverticals: 50,

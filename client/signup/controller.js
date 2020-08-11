@@ -117,7 +117,7 @@ export default {
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
 						if ( 'verticals' === abtest( 'verticalsOnGutenboarding' ) ) {
 							window.location.replace(
-								window.location.origin + '/new?showVerticals=true&' + window.location.search
+								window.location.origin + '/new?vertical&' + window.location.search
 							);
 						} else {
 							window.location.replace( window.location.origin + '/new' + window.location.search );
