@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { ThemeProvider } from 'emotion-theming';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
@@ -83,9 +84,15 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 					<p className="nux-launch__summary-item__plan-name">WordPress.com Free</p>
 					<p>{ __( 'Plan subscription: Free forever', 'full-site-editing' ) }</p>
 					<Tip>
-						{ __(
-							'Upgrade to Premium to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
-							'full-site-editing'
+						{ createInterpolateElement(
+							/* translators: pressing <link> will redirect user to plan selection step */
+							__(
+								'<link>Upgrade to Premium</link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
+								'full-site-editing'
+							),
+							{
+								link: <Button isLink onClick={ () => setStep( LaunchStep.Plan ) } />,
+							}
 						) }
 					</Tip>
 				</>
