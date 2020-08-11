@@ -195,9 +195,10 @@ export function itemToSelectorProduct(
 		if ( item.term === TERM_ANNUALLY ) {
 			monthlyProductSlug = getMonthlyPlanByYearly( productSlug );
 		}
+		const iconAppend = JETPACK_RESET_PLANS.includes( productSlug ) ? '_v2' : '';
 		return {
 			productSlug,
-			iconSlug: productSlug,
+			iconSlug: productSlug + iconAppend,
 			displayName: item.getTitle(),
 			tagline: get( item, 'getTagline', () => '' )(),
 			description: item.getDescription(),
