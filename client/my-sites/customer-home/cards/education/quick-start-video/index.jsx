@@ -34,7 +34,7 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 				{ translate( 'Watch this video to get started' ) }
 			</h2>
 			<Card>
-				<div class="quick-start-video__content educational-content">
+				<div className="quick-start-video__content educational-content">
 					<div className="quick-start-video__content-wrapper educational-content__wrapper">
 						<h3>{ translate( 'Video: Getting started on WordPress.com' ) }</h3>
 						<p className="quick-start-video__content-description educational-content__description customer-home__card-subheader">
@@ -58,9 +58,9 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 										url: localizeUrl(
 											'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com'
 										),
-										card_name: 'FEATURE_QUICK_START_VIDEO',
+										card_name: FEATURE_QUICK_START_VIDEO,
 									} }
-									statsName="QuickStartVideo"
+									statsName={ FEATURE_QUICK_START_VIDEO }
 								>
 									{ translate( 'Watch the video' ) }
 								</InlineSupportLink>
@@ -82,9 +82,9 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 									url: localizeUrl(
 										'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com'
 									),
-									card_name: 'FEATURE_QUICK_START_VIDEO',
+									card_name: FEATURE_QUICK_START_VIDEO,
 								} }
-								statsName="QuickStartVideo"
+								statsName={ FEATURE_QUICK_START_VIDEO }
 							>
 								<img src={ quickStartVideoImage } alt="" width="186px" />
 							</InlineSupportLink>
