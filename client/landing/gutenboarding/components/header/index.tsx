@@ -76,7 +76,6 @@ const Header: React.FunctionComponent = () => {
 		'IntentGathering',
 		'Domains',
 		'DomainsModal',
-		'Plans',
 		'LanguageModal',
 		'CreateSite',
 	].includes( currentStep );
