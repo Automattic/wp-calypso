@@ -49,6 +49,10 @@ export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
 	siteVertical,
 } );
 
+export const skipSiteVertical = () => ( {
+	type: 'SKIP_SITE_VERTICAL' as const,
+} );
+
 export const resetSiteVertical = () => ( {
 	type: 'RESET_SITE_VERTICAL' as const,
 } );
@@ -182,6 +186,7 @@ export type OnboardAction = ReturnType<
 	| typeof setDomain
 	| typeof setDomainSearch
 	| typeof setDomainCategory
+	| typeof skipSiteVertical
 	| typeof setFonts
 	| typeof setIsRedirecting
 	| typeof setHasUsedDomainsStep

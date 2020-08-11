@@ -29,6 +29,7 @@ registerStore< State >( STORE_KEY, {
 		'domainSearch',
 		'siteTitle',
 		'siteVertical',
+		'wasVerticalSkipped',
 		'hasUsedDomainsStep',
 		'hasUsedPlansStep',
 		'pageLayouts',
