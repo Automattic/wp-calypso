@@ -1,14 +1,56 @@
-.nux-launch-modal.step-final {
-	// Try: Reveal site content behind
-	.nux-launch-modal-body {
-		background: transparent;
+@import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+
+.nux-launch__feature-list {
+	padding: 20px;
+}
+.nux-launch__feature-list-title {
+	margin: 0 0 10px;
+	color: $dark-gray-500;
+	font-weight: 400;
+}
+ul.nux-launch__feature-item-group {
+	margin: 0;
+}
+.nux-launch__feature-item {
+	font-size: $font-body-small;
+	line-height: 20px;
+	letter-spacing: 0.2px;
+	margin: 4px 0;
+	vertical-align: middle;
+	color: $dark-gray-500;
+	display: flex;
+	align-items: flex-start;
+
+	svg {
+		display: block;
+		margin-right: 6px;
+		margin-top: 2px;
+	}
+
+	// the tick
+	svg path {
+		fill: rgb( 74, 161, 80 );
+		stroke: rgb( 74, 161, 80 );
 	}
 }
-
-.nux-final-preview-hint {
-	background: var( --studio-blue-0 );
+.nux-launch__submit-button.components-button.is-primary {
+	background: var( --color-accent );
+	border: 1px solid var( --color-accent-dark );
 	width: 100%;
-	position: absolute;
-	left: 0;
-	padding: 20px;
+	justify-content: center;
+
+	&:hover,
+	&:active {
+		background: var( --color-accent-dark );
+	}
+
+	&:disabled {
+		color: $white;
+		opacity: 0.5;
+
+		&:hover {
+			background: var( --color-accent );
+		}
+	}
 }
