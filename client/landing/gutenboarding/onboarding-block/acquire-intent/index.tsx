@@ -82,7 +82,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const nextStepButton = (
 		<Link
 			className="acquire-intent__question-skip"
-			isPrimary
+			isPrimary={ hasSiteTitle }
+			isDefault={ ! hasSiteTitle }
 			onClick={ () => ! hasSiteTitle && recordSiteTitleSkip() }
 			to={ nextStepPath }
 		>
@@ -90,7 +91,12 @@ const AcquireIntent: React.FunctionComponent = () => {
 		</Link>
 	);
 	const skipButton = (
-		<Button isLink onClick={ handleSkip } className="acquire-intent__skip-vertical">
+		<Button
+			isLink={ isMobile }
+			isDefault={ ! isMobile }
+			onClick={ handleSkip }
+			className="acquire-intent__skip-vertical"
+		>
 			{ skipLabel }
 		</Button>
 	);
@@ -140,9 +146,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 			) : (
 				<>
 					<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
-					<div className="acquire-intent__footer">
-						{ hasSiteTitle ? nextStepButton : skipButton }
-					</div>
+					<div className="acquire-intent__footer">{ nextStepButton }</div>
 				</>
 			) }
 		</div>
