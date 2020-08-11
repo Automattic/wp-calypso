@@ -115,7 +115,13 @@ export default {
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						window.location.replace( window.location.origin + '/new' + window.location.search );
+						if ( 'verticals' === abtest( 'verticalsOnGutenboarding' ) ) {
+							window.location.replace(
+								window.location.origin + '/new?vertical&' + window.location.search
+							);
+						} else {
+							window.location.replace( window.location.origin + '/new' + window.location.search );
+						}
 					} else if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
