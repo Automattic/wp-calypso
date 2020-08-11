@@ -78,25 +78,6 @@ export function genericRedirectProcessor(
 	return pending;
 }
 
-export function ebanxTefProcessor(
-    submitData,
-    { getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
-) {
-    const successUrl = 'www.example.com/success'; // TODO
-    const cancelUrl = 'www.example.com/cancel'; // TODO
-    const pending = submitEbanxTefTransaction( {
-        ...submitData,
-        successUrl,
-        cancelUrl,
-        //TODO
-    } );
-    pending.then( ( result ) => {
-        // TODO: do this automatically when calling setTransactionComplete
-        dispatch( 'wpcom' ).setTransactionResponse( result );
-    } );
-    return pending;
-}
-
 export function applePayProcessor(
 	submitData,
 	{ includeDomainDetails, includeGSuiteDetails },
