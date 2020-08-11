@@ -444,7 +444,7 @@ const ContainerUI = styled.div`
 	}
 `;
 
-const MainContentUI = styled.div`
+export const MainContentUI = styled.div`
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -483,7 +483,7 @@ const CheckoutSummaryUI = styled.div`
 	}
 `;
 
-const CheckoutStepAreaUI = styled.div`
+export const CheckoutStepAreaUI = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	box-sizing: border-box;
 	margin: 0 auto;
@@ -508,7 +508,7 @@ const CheckoutStepAreaUI = styled.div`
 	}
 `;
 
-const SubmitButtonWrapperUI = styled.div`
+export const SubmitButtonWrapperUI = styled.div`
 	background: ${ ( props ) => props.theme.colors.background };
 	padding: 24px;
 	bottom: 0;
