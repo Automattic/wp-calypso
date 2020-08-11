@@ -84,28 +84,6 @@ describe( 'ImageSelector', () => {
 			);
 		} );
 
-		test( 'should not show an uploader when an image exists and multiple images not allowed', () => {
-			const wrapper = mount(
-				<Provider store={ store }>
-					<ImageSelector { ...testProps } imageIds={ [ 100 ] } />
-				</Provider>
-			);
-
-			expect( wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes() ).to.have.lengthOf(
-				0
-			);
-		} );
-
-		test( 'should show image when valid ID is passed', () => {
-			const wrapper = mount(
-				<Provider store={ store }>
-					<ImageSelector { ...testProps } imageIds={ [ 100 ] } />
-				</Provider>
-			);
-
-			expect( wrapper.find( '.image-selector__item' ).hostNodes() ).to.have.lengthOf( 1 );
-		} );
-
 		test( 'should not show image when invalid ID is passed', () => {
 			const wrapper = mount(
 				<Provider store={ store }>
@@ -127,24 +105,6 @@ describe( 'ImageSelector', () => {
 
 			wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes().simulate( 'click' );
 			expect( wrapper.find( 'ImageSelector' ).instance().state.isSelecting ).to.be.true;
-		} );
-
-		test( 'should pass back image for removal when remove button is clicked', () => {
-			const mockOnRemoveImage = sinon.spy();
-			const wrapper = mount(
-				<Provider store={ store }>
-					<ImageSelector
-						{ ...testProps }
-						imageIds={ [ 100 ] }
-						onRemoveImage={ mockOnRemoveImage }
-					/>
-				</Provider>
-			);
-
-			wrapper.find( '.image-selector__remove' ).hostNodes().simulate( 'click' );
-			expect( mockOnRemoveImage ).to.have.been.calledWith(
-				require( './fixtures' ).DUMMY_MEDIA[ 100 ]
-			);
 		} );
 
 		test( 'should pass back image when file is dropped', () => {
