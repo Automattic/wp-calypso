@@ -1,19 +1,9 @@
 @import 'jetpack-connect/colors.scss';
 @import 'woocommerce/components/text-control/style.scss';
 @import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/fonts';
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
-
-@font-face {
-	font-display: swap;
-	font-family: 'Recoleta';
-	font-weight: 400;
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
-}
 
 $image-height: 47px;
 
