@@ -20,7 +20,7 @@ const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name,
 };
 
 const completedSteps: Reducer< LaunchStepType[], LaunchAction > = ( state = [], action ) => {
-	if ( action.type === 'SET_STEP_COMPLETE' ) {
+	if ( action.type === 'SET_STEP_COMPLETE' && state.indexOf( action.step ) === -1 ) {
 		return [ ...state, action.step ];
 	}
 	if ( action.type === 'SET_STEP_INCOMPLETE' ) {

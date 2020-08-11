@@ -90,6 +90,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "*",
+		"@automattic/composite-checkout": "*",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
@@ -130,6 +131,7 @@
 		"@wordpress/server-side-render": "^1.16.3",
 		"@wordpress/url": "*",
 		"classnames": "^2.2.6",
+		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
 		"eslint": "^6.8.0",
 		"jest": "^26.0.1",
