@@ -67,6 +67,7 @@
 		"google-drive": true,
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/feature-picker": true,
+		"gutenboarding/new-launch": true,
 		"help": true,
 		"help/courses": true,
 		"home/layout-dev": true,

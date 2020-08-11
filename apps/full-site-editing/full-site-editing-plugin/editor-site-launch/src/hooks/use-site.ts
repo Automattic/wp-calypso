@@ -21,7 +21,6 @@ export function useSite() {
 	);
 
 	return {
-		isSiteUnlaunched: site?.launch_status === 'unlaunched' && ! launchStatus,
 		isFreePlan: site?.plan.is_free,
 		launchStatus,
 	};

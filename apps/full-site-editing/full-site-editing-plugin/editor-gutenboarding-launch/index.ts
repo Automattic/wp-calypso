@@ -6,6 +6,7 @@ import domReady from '@wordpress/dom-ready';
 import { addAction } from '@wordpress/hooks';
 import { dispatch } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import 'a8c-fse-common-data-stores';
 
 // Depend on `core/editor` store.
 import '@wordpress/editor';
@@ -63,10 +64,18 @@ function updateEditor() {
 		// Assert reason: We have an early return above with optional and falsy values. This should be a string.
 		const launchHref = window?.calypsoifyGutenberg?.frankenflowUrl as string;
 
+		// Temporary solution to test new launch flow
+		const isNewLaunch = launchHref === 'new-launch';
+
 		launchLink.href = launchHref;
 		launchLink.target = '_top';
 		launchLink.className = 'editor-gutenberg-launch__launch-button components-button is-primary';
-		const textContent = document.createTextNode( __( 'Launch', 'full-site-editing' ) );
+
+		const launchLabel = isNewLaunch
+			? __( 'Complete setup', 'full-site-editing' )
+			: __( 'Launch', 'full-site-editing' );
+
+		const textContent = document.createTextNode( launchLabel );
 		launchLink.appendChild( textContent );
 
 		const saveAndNavigate = async ( e: Event ) => {
@@ -76,8 +85,13 @@ function updateEditor() {
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click' );
 
-			// Using window.top to escape from the editor iframe on WordPress.com
-			window.top.location.href = launchHref;
+			if ( isNewLaunch ) {
+				// Open editor-site-launch sidebar
+				dispatch( 'automattic/launch' ).openSidebar();
+			} else {
+				// Using window.top to escape from the editor iframe on WordPress.com
+				window.top.location.href = launchHref;
+			}
 		};
 		launchLink.addEventListener( 'click', saveAndNavigate );
 

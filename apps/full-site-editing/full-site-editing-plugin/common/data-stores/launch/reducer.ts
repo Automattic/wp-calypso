@@ -56,12 +56,24 @@ const plan: Reducer< Plans.Plan | undefined, LaunchAction > = ( state, action ) 
 	return state;
 };
 
+const isSidebarOpen: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'OPEN_SIDEBAR' ) {
+		return true;
+	}
+
+	if ( action.type === 'CLOSE_SIDEBAR' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	step,
 	completedSteps,
 	domain,
 	domainSearch,
 	plan,
+	isSidebarOpen,
 } );
 
 export type State = ReturnType< typeof reducer >;

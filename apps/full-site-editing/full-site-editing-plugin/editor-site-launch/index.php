@@ -15,13 +15,6 @@ namespace A8C\FSE\EditorSiteLaunch;
  * Enqueue assets
  */
 function enqueue_script_and_style() {
-
-	// @TODO: Remove this block to enable in production
-	// Constant to disable the feature for development.
-	if ( ! ( defined( 'A8C_FSE_SITE_LAUNCH_ENABLE' ) && A8C_FSE_SITE_LAUNCH_ENABLE ) ) {
-		return;
-	}
-
 	// Avoid loading assets if possible.
 	if ( ! \A8C\FSE\Common\is_block_editor_screen() ) {
 		return;
