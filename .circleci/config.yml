@@ -12,9 +12,12 @@ references:
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
       DETECT_CHROMEDRIVER_VERSION: 'false'
       CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
+      NODE_OPTIONS: --max-old-space-size=3072
+      npm_config_cache: /home/circleci/.cache/yarn
+      YARN_CACHE_FOLDER: /home/circleci/.cache/yarn
   desktop_defaults: &desktop_defaults
     working_directory: ~/wp-calypso
     docker:
