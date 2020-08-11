@@ -57,7 +57,14 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		return await this.driver.switchTo().defaultContent();
 	}
 
-	async enterTestCreditCardDetails( { cardHolder, cardNumber, cardExpiry, cardCVV } ) {
+	async enterTestCreditCardDetails( {
+		cardHolder,
+		cardNumber,
+		cardExpiry,
+		cardCVV,
+		cardPostCode,
+		cardCountryCode,
+	} ) {
 		// This PR introduced an issue with older browsers, specifically IE11:
 		//   https://github.com/Automattic/wp-calypso/pull/22239
 		const pauseBetweenKeysMS = 1;
@@ -67,7 +74,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		// are part of the contact form and must be filled out explicitly before
 		// calling this function by using
 		// SecurePaymentComponent.completeTaxDetailsInContactSection.
-		await this.completeTaxDetailsForCreditCard();
+		await this.completeTaxDetailsForCreditCard( { cardPostCode, cardCountryCode } );
 
 		await driverHelper.setWhenSettable(
 			this.driver,
