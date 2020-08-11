@@ -85,7 +85,7 @@ function updateEditor() {
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click' );
 
-			if ( isNewLaunch && window.innerWidth < 768 ) {
+			if ( isNewLaunch && ! ( window.innerWidth < 768 ) ) {
 				// Open editor-site-launch sidebar
 				dispatch( 'automattic/launch' ).openSidebar();
 			} else {
