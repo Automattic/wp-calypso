@@ -10,10 +10,16 @@ import React, { createElement, useRef, FunctionComponent, ReactNode } from 'reac
  * Internal dependencies
  */
 import { Button, ProductIcon } from '@automattic/components';
+import { useLocalizedMoment } from 'components/localized-moment';
 import { preventWidows } from 'lib/formatting';
 import PlanPrice from 'my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
+
+/**
+ * Type dependencies
+ */
+import type { Moment } from 'moment';
 
 /**
  * Style dependencies
@@ -41,6 +47,8 @@ type OwnProps = {
 	onCancelClick?: () => void;
 	isHighlighted?: boolean;
 	isOwned?: boolean;
+	isDeprecated?: boolean;
+	expiryDate?: Moment;
 };
 
 export type Props = OwnProps & FeaturesProps;
@@ -66,20 +74,30 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	onCancelClick,
 	isHighlighted,
 	isOwned,
+	isDeprecated,
+	expiryDate,
 	features,
 	isExpanded,
 } ) => {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
 	const isHeaderWrapped = useFlexboxWrapDetection( priceEl );
+	const moment = useLocalizedMoment();
 
 	const isDiscounted = isFinite( discountedPrice );
 	const parsedHeadingLevel = isNumber( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel ), 1 ), 6 )
 		: 2;
+	const parsedExpiryDate =
+		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
 
 	return (
-		<div className={ classNames( className, 'jetpack-product-card', { 'is-owned': isOwned } ) }>
+		<div
+			className={ classNames( className, 'jetpack-product-card', {
+				'is-owned': isOwned,
+				'is-deprecated': isDeprecated,
+			} ) }
+		>
 			<header className="jetpack-product-card__header">
 				<ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } />
 				<div className="jetpack-product-card__summary">
@@ -120,7 +138,20 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 								<PlanPrice rawPrice={ discountedPrice } discounted currencyCode={ currencyCode } />
 							) }
 						</span>
-						<span className="jetpack-product-card__billing-time-frame">{ billingTimeFrame }</span>
+						{ parsedExpiryDate ? (
+							<time
+								className="jetpack-product-card__expiration-date"
+								dateTime={ parsedExpiryDate.format( 'YYYY-DD-YY' ) }
+							>
+								{ translate( 'expires %(date)s', {
+									args: {
+										date: parsedExpiryDate.format( 'L' ),
+									},
+								} ) }
+							</time>
+						) : (
+							<span className="jetpack-product-card__billing-time-frame">{ billingTimeFrame }</span>
+						) }
 					</div>
 				</div>
 				{ badgeLabel && <div className="jetpack-product-card__badge">{ badgeLabel }</div> }
