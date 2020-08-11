@@ -39,6 +39,7 @@ const LaunchMenu = () => {
 						isCompleted={ completedSteps.includes( step ) }
 						isCurrent={ step === currentStep }
 						onClick={ () => setStep( step ) }
+						isDisabled={ step === LaunchStep.Final && ! completedSteps.length }
 					/>
 				) ) }
 			</div>

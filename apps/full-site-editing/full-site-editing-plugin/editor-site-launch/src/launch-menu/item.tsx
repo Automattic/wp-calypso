@@ -20,6 +20,7 @@ interface Props {
 	title: string;
 	isCompleted: boolean;
 	isCurrent: boolean;
+	isDisabled: boolean;
 	onClick: () => void;
 }
 
@@ -27,6 +28,7 @@ const LaunchMenuItem: React.FunctionComponent< Props > = ( {
 	title,
 	isCompleted,
 	isCurrent,
+	isDisabled,
 	onClick,
 } ) => {
 	return (
@@ -36,6 +38,7 @@ const LaunchMenuItem: React.FunctionComponent< Props > = ( {
 				'is-completed': isCompleted,
 			} ) }
 			onClick={ onClick }
+			disabled={ isDisabled }
 			isLink
 		>
 			<Icon icon={ isCompleted ? check : circle } size={ 16 } />
