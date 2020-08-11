@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import classnames from 'classnames';
 import { ThemeProvider } from 'emotion-theming';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -26,7 +27,7 @@ import {
 import { LaunchStep } from '../../../../common/data-stores/launch/data';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
-import { useSite } from '../../hooks';
+import { useSite, useDomainSuggestion } from '../../hooks';
 
 import './styles.scss';
 
@@ -40,6 +41,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 	const { completedSteps } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { setStep } = useDispatch( LAUNCH_STORE );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const domainSuggestion = useDomainSuggestion();
 
 	const nameSummary = (
 		<div className="nux-launch__summary-item">
@@ -61,9 +63,24 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 						{ __( 'Free site address', 'full-site-editing' ) }: { currentDomainName }
 					</p>
 					<Tip>
-						{ __(
-							'A custom site address like madefreshbakery.com (now available!) is more unique and can help with your SEO ranking.',
-							'full-site-editing'
+						{ createInterpolateElement(
+							/* translators: <DomainName /> is the suggested custom domain name; <Link> will redirect users to domain selection step */
+							__(
+								'A custom site address like <DomainName /> (<Link>now available!</Link>) is more unique and can help with your SEO ranking.',
+								'full-site-editing'
+							),
+							{
+								DomainName: (
+									<span
+										className={ classnames( 'nux-launch__summary-item__domain-name', {
+											'is-loading': ! domainSuggestion,
+										} ) }
+									>
+										{ domainSuggestion?.domain_name || 'loading-example.com' }
+									</span>
+								),
+								Link: <Button isLink onClick={ () => setStep( LaunchStep.Domain ) } />,
+							}
 						) }
 					</Tip>
 				</>
@@ -85,13 +102,13 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 					<p>{ __( 'Plan subscription: Free forever', 'full-site-editing' ) }</p>
 					<Tip>
 						{ createInterpolateElement(
-							/* translators: pressing <link> will redirect user to plan selection step */
+							/* translators: pressing <Link> will redirect user to plan selection step */
 							__(
-								'<link>Upgrade to Premium</link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
+								'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
 								'full-site-editing'
 							),
 							{
-								link: <Button isLink onClick={ () => setStep( LaunchStep.Plan ) } />,
+								Link: <Button isLink onClick={ () => setStep( LaunchStep.Plan ) } />,
 							}
 						) }
 					</Tip>
