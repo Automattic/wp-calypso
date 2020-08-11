@@ -87,8 +87,13 @@ const UpgradeNudge = ( {
 		<div className={ classNames( 'jetpack-product-card__nudge', className ) }>
 			<div className="jetpack-product-card__summary">
 				<div className="jetpack-product-card__nudge-heading">
-					<h3>{ translate( 'Upgrade to' ) }</h3>
-					<h2 className="jetpack-product-card__nudge-product-type">{ translate( 'Real-Time' ) }</h2>
+					<h3>
+						{ translate( 'Upgrade to' ) }
+						<br />
+						<span className="jetpack-product-card__nudge-product-type">
+							{ translate( 'Real-Time' ) }
+						</span>
+					</h3>
 				</div>
 				<div className="jetpack-product-card__price">
 					<span className="jetpack-product-card__raw-price">
