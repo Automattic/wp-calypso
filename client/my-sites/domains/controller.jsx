@@ -271,7 +271,7 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	}
 };
 
-const wpForTeamsNoDomainsWarning = ( context, next ) => {
+const wpForTeamsNoDomainsRedirect = ( context, next ) => {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
@@ -287,7 +287,7 @@ export default {
 	domainsAddRedirectHeader,
 	domainSearch,
 	jetpackNoDomainsWarning,
-	wpForTeamsNoDomainsWarning,
+	wpForTeamsNoDomainsRedirect,
 	siteRedirect,
 	mapDomain,
 	googleAppsWithRegistration,
