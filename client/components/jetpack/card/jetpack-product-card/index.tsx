@@ -39,7 +39,7 @@ type OwnProps = {
 	discountedPrice?: number;
 	withStartingPrice?: boolean;
 	billingTimeFrame: TranslateResult;
-	badgeLabel?: string;
+	badgeLabel?: TranslateResult;
 	discountMessage?: string;
 	buttonLabel: TranslateResult;
 	onButtonClick: () => void;

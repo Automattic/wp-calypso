@@ -24,6 +24,7 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
 } from 'lib/plans/constants';
 
 /**
@@ -191,3 +192,16 @@ export const UPGRADEABLE_WITH_NUDGE = [
 
 export const JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS =
 	'jetpack-offer-reset-upgrade-nudge-dismiss';
+
+/**
+ * Products included in each plan
+ */
+
+export const PLANS_INCLUDED_PRODUCTS: Record< string, string[] > = {
+	[ PLAN_JETPACK_PREMIUM ]: [
+		...JETPACK_SCAN_PRODUCTS,
+		...JETPACK_ANTI_SPAM_PRODUCTS,
+		PRODUCT_JETPACK_BACKUP_DAILY,
+		PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	],
+};
