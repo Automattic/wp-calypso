@@ -57,19 +57,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		return await this.driver.switchTo().defaultContent();
 	}
 
-	async enterTestCreditCardDetails( {
-		cardHolder,
-		cardNumber,
-		cardExpiry,
-		cardCVV,
-		cardCountryCode,
-		cardPostCode,
-	} ) {
+	async enterTestCreditCardDetails( { cardHolder, cardNumber, cardExpiry, cardCVV } ) {
 		// This PR introduced an issue with older browsers, specifically IE11:
 		//   https://github.com/Automattic/wp-calypso/pull/22239
 		const pauseBetweenKeysMS = 1;
-
-		await this.completeContactDetails( { cardPostCode, cardCountryCode, pauseBetweenKeysMS } );
 
 		await driverHelper.setWhenSettable(
 			this.driver,
@@ -93,7 +84,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async completeContactDetails( { cardPostCode, cardCountryCode, pauseBetweenKeysMS } ) {
+	async completeContactDetails( { cardPostCode, cardCountryCode } ) {
+		// This PR introduced an issue with older browsers, specifically IE11:
+		//   https://github.com/Automattic/wp-calypso/pull/22239
+		const pauseBetweenKeysMS = 1;
+
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
 			await driverHelper.setWhenSettable(
@@ -101,7 +96,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				By.css( '#contact-postal-code' ),
 				cardPostCode,
 				{
-					pauseBetweenKeysMS: pauseBetweenKeysMS,
+					pauseBetweenKeysMS,
 				}
 			);
 			await driverHelper.clickWhenClickable(
@@ -118,7 +113,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			By.css( `div.country select option[value="${ cardCountryCode }"]` )
 		);
 		return await driverHelper.setWhenSettable( this.driver, By.id( 'postal-code' ), cardPostCode, {
-			pauseBetweenKeysMS: pauseBetweenKeysMS,
+			pauseBetweenKeysMS,
 		} );
 	}
 
@@ -181,9 +176,16 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async payWithStoredCardIfPossible( cardCredentials ) {
 		const storedCardSelector = By.css( '.credit-card__stored-card' );
-		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, storedCardSelector, this.explicitWaitMS / 5 ) ) {
+		if (
+			await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				storedCardSelector,
+				this.explicitWaitMS / 5
+			)
+		) {
 			await driverHelper.clickWhenClickable( this.driver, storedCardSelector );
 		} else {
+			await this.completeContactDetails( cardCredentials );
 			await this.enterTestCreditCardDetails( cardCredentials );
 		}
 
@@ -252,7 +254,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		// We need to remove the comma separator first, e.g. 1,024 or 2,048, so `match()` can parse out the whole number properly.
 		const amountMatches = cartText.replace( /,/g, '' ).match( /\d+\.?\d*/g );
 		const amountString = amountMatches[ 0 ];
-		return await parseFloat( amountString );
+		return parseFloat( amountString );
 	}
 
 	async applyCoupon() {
