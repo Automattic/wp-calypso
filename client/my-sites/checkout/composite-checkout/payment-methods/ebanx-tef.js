@@ -191,17 +191,48 @@ function EbanxTefFields() {
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
-			<CountrySpecificPaymentFields
-				countryCode={ 'BR' } // If this payment method is available and the country is not Brazil, we have other problems
-				countriesList={ countriesList }
-				getErrorMessage={ getErrorMessagesForField }
-				getFieldValue={ getFieldValue }
-				handleFieldChange={ setFieldValue }
-				disableFields={ isDisabled }
-			/>
+			<div className="ebanx-tef__contact-fields">
+				<CountrySpecificPaymentFieldsUI
+					countryCode={ 'BR' } // If this payment method is available and the country is not Brazil, we have other problems
+					countriesList={ countriesList }
+					getErrorMessage={ getErrorMessagesForField }
+					getFieldValue={ getFieldValue }
+					handleFieldChange={ setFieldValue }
+					disableFields={ isDisabled }
+				/>
+			</div>
 		</EbanxTefFormWrapper>
 	);
 }
+
+// TODO: Merge this with payment-methods/credit-card/contact-fields.js
+const CountrySpecificPaymentFieldsUI = styled( CountrySpecificPaymentFields )`
+	margin-top: 0;
+	& .checkout__form-info-text {
+		display: none;
+	}
+
+	& .document,
+	& .phone,
+	& .postal-code,
+	& .checkout__form-state-field {
+		flex-basis: auto;
+	}
+	& .checkout__checkout-field,
+	& .checkout__form-state-field {
+		margin-left: 0;
+	}
+	& .checkout__form-info-text,
+	& .form__hidden-input a {
+		margin-left: 0;
+	}
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		& .address-1,
+		& .state {
+			margin-right: 15px;
+		}
+	}
+`;
 
 function BankSelector( { id, value, onChange, label, isError, errorMessage, disabled } ) {
 	const { __ } = useI18n();
