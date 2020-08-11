@@ -13,7 +13,12 @@ import * as driverHelper from '../../driver-helper.js';
 
 export default class CheckOutPage extends AsyncBaseContainer {
 	constructor( driver, url = null ) {
-		super( driver, By.css( '.checkout' ), url, config.get( 'explicitWaitMS' ) * 2 );
+		super(
+			driver,
+			By.css( '.checkout__secure-payment-form,.secure-payment-form,.composite-checkout' ),
+			url,
+			2 * config.get( 'explicitWaitMS' )
+		);
 	}
 
 	async enterRegistarDetails( {
@@ -51,10 +56,31 @@ export default class CheckOutPage extends AsyncBaseContainer {
 			By.css( `select[name=state] option[value="${ stateCode }"]` )
 		);
 
-		return await driverHelper.setWhenSettable( this.driver, By.id( 'postal-code' ), postalCode );
+		await driverHelper.setWhenSettable( this.driver, By.id( 'postal-code' ), postalCode );
+
+		const isCompositeCheckout = await this.isCompositeCheckout();
+
+		if ( isCompositeCheckout ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Continue with the entered contact details"]' )
+			);
+		}
+	}
+
+	async isCompositeCheckout() {
+		return driverHelper.isElementPresent( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async submitForm() {
-		return await driverHelper.clickWhenClickable( this.driver, By.css( 'button[type="submit"]' ) );
+		const disabledPaymentButton = By.css(
+			'.credit-card-payment-box button[disabled],.composite-checkout .checkout-submit-button button[disabled]'
+		);
+		const paymentButtonSelector = By.css(
+			'.credit-card-payment-box button.is-primary:not([disabled]),.composite-checkout .checkout-submit-button button'
+		);
+
+		await driverHelper.waitTillNotPresent( this.driver, disabledPaymentButton );
+		await driverHelper.clickWhenClickable( this.driver, paymentButtonSelector );
 	}
 }
