@@ -40,7 +40,12 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
-= 1.15
+= 1.16 =
+* Enable site launch flow for dev & horizon environment.
+* Premium Content: Remove Paid wording from title.
+* Premium Content: Fix duplicate Connect To Stripe message.
+
+= 1.15 =
 * Plugin display name changed to WordPress.com Editing Toolkit.
 * The donation block has been removed from the plugin.
 * Add a launch sidebar to the editor to walk the user through the launch flows.
