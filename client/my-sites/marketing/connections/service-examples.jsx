@@ -85,7 +85,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/google-photos.png',
+					src: '/calypso/images/sharing/connections-google-photos.png',
 					alt: this.props.translate(
 						'Connect to use photos stored in your Google Photos library directly inside the editor',
 						{ textOnly: true }
