@@ -54,6 +54,8 @@ function getExternals() {
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
+
+				/[^/]?wp-calypso-client\//,
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
@@ -63,8 +65,14 @@ function getExternals() {
 			'webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
+			'wp-calypso-client/webpack.config': {
+				commonjs: '../client/webpack.config.js',
+			},
 			// Exclude the devdocs search-index, as it's huge.
 			'server/devdocs/search-index': {
+				commonjs: '../client/server/devdocs/search-index.js',
+			},
+			'wp-calypso-client/server/devdocs/search-index': {
 				commonjs: '../client/server/devdocs/search-index.js',
 			},
 		},
@@ -110,6 +118,7 @@ const webpackConfig = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
+			'wp-calypso-client/config': 'server/config',
 			config: 'server/config',
 		},
 	},
@@ -136,12 +145,20 @@ const webpackConfig = {
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(
+			/^wp-calypso-client[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
+			'components/empty-component'
+		), // Depends on BOM
 	].filter( Boolean ),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' ),
+		new webpack.NormalModuleReplacementPlugin(
+			/^wp-calypso-client[/\\]lib[/\\]desktop$/,
+			'lodash/noop'
+		)
 	);
 }
 

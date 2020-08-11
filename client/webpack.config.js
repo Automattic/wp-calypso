@@ -36,9 +36,9 @@ const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './webpack/extensions' );
-const RequireChunkCallbackPlugin = require( './webpack/require-chunk-callback-plugin' );
-const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
+const getAliasesForExtensions = require( './webpack-utils/extensions' );
+const RequireChunkCallbackPlugin = require( './webpack-utils/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( './webpack-utils/generate-chunks-map-plugin' );
 
 /**
  * Internal variables
@@ -245,6 +245,9 @@ const webpackConfig = {
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 				'@wordpress/data': require.resolve( '@wordpress/data' ),
 				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
+				// Alias wp-calypso-client to ./client. This allows for smaller bundles, as it ensures that
+				// importing `./client/file.js` is the same thing than importing `wp-calypso-client/file.js`
+				'wp-calypso-client': __dirname,
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -309,8 +312,15 @@ const webpackConfig = {
 			} ),
 		new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-		! config.isEnabled( 'desktop' ) &&
-			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
+		...( ! config.isEnabled( 'desktop' )
+			? [
+					new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
+					new webpack.NormalModuleReplacementPlugin(
+						/^wp-calypso-client[/\\]lib[/\\]desktop$/,
+						'lodash/noop'
+					),
+			  ]
+			: [] ),
 		/*
 		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
 		 */
@@ -330,11 +340,19 @@ const webpackConfig = {
 		/*
 		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
 		 */
-		browserslistEnv === 'evergreen' &&
-			new webpack.NormalModuleReplacementPlugin(
-				/^lib[/\\]local-storage-polyfill$/,
-				'lodash-es/noop'
-			),
+		...( browserslistEnv === 'evergreen'
+			? [
+					new webpack.NormalModuleReplacementPlugin(
+						/^lib[/\\]local-storage-polyfill$/,
+						'lodash-es/noop'
+					),
+					new webpack.NormalModuleReplacementPlugin(
+						/^wp-calypso-client[/\\]lib[/\\]local-storage-polyfill$/,
+						'lodash-es/noop'
+					),
+			  ]
+			: [] ),
+
 		/*
 		 * When not available, replace languages-meta.json with fallback-languages-meta.json.
 		 */
