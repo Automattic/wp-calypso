@@ -5,7 +5,7 @@ import * as React from 'react';
 import { ThemeProvider } from 'emotion-theming';
 import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { Button } from '@wordpress/components';
+import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useEntityProp } from '@wordpress/core-data';
 import { Title, SubTitle } from '@automattic/onboarding';
@@ -24,7 +24,7 @@ import {
  */
 import { LaunchStep } from '../../../../common/data-stores/launch/data';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import { LAUNCH_STORE } from '../../stores';
+import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
 import { useSite } from '../../hooks';
 
 import './styles.scss';
@@ -38,6 +38,60 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const { completedSteps } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { setStep } = useDispatch( LAUNCH_STORE );
+	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+
+	const nameSummary = (
+		<div className="nux-launch__summary-item">
+			<p>
+				{ __( 'Site', 'full-site-editing' ) }: { title }
+			</p>
+		</div>
+	);
+
+	const domainSummary = (
+		<div className="nux-launch__summary-item">
+			{ domain?.domain_name ? (
+				<p>
+					{ __( 'Custom domain', 'full-site-editing' ) }: { domain.domain_name }
+				</p>
+			) : (
+				<>
+					<p>
+						{ __( 'Free site address', 'full-site-editing' ) }: { currentDomainName }
+					</p>
+					<Tip>
+						{ __(
+							'A custom site address like madefreshbakery.com (now available!) is more unique and can help with your SEO ranking.',
+							'full-site-editing'
+						) }
+					</Tip>
+				</>
+			) }
+		</div>
+	);
+
+	const planSummary = (
+		<div className="nux-launch__summary-item">
+			{ plan && ! plan?.isFree ? (
+				<>
+					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
+					{ __( 'Plan subscription', 'full-site-editing' ) }: { prices[ plan.storeSlug ] }{ ' ' }
+					{ __( 'per month, billed yearly', 'full-site-editing' ) }
+				</>
+			) : (
+				<>
+					<p className="nux-launch__summary-item__plan-name">WordPress.com Free</p>
+					<p>{ __( 'Plan subscription: Free forever', 'full-site-editing' ) }</p>
+					<Tip>
+						{ __(
+							'Upgrade to Premium to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
+							'full-site-editing'
+						) }
+					</Tip>
+				</>
+			) }
+		</div>
+	);
 
 	return (
 		<LaunchStepContainer className="nux-launch-final-step">
@@ -82,7 +136,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								titleContent={ __( 'Your site name', 'full-site-editing' ) }
 								isStepComplete={ completedSteps.includes( LaunchStep.Name ) }
 								goToThisStep={ () => setStep( LaunchStep.Name ) }
-								completeStepContent={ title }
+								completeStepContent={ nameSummary }
 								stepId="name"
 								formStatus="ready"
 							/>
@@ -90,7 +144,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								titleContent={ __( 'Your domain', 'full-site-editing' ) }
 								isStepComplete={ completedSteps.includes( LaunchStep.Domain ) }
 								goToThisStep={ () => setStep( LaunchStep.Domain ) }
-								completeStepContent={ domain?.domain_name || currentDomainName }
+								completeStepContent={ domainSummary }
 								stepId="domain"
 								formStatus="ready"
 							/>
@@ -98,7 +152,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								titleContent={ __( 'Your plan', 'full-site-editing' ) }
 								isStepComplete={ completedSteps.includes( LaunchStep.Plan ) }
 								goToThisStep={ () => setStep( LaunchStep.Plan ) }
-								completeStepContent={ plan?.title }
+								completeStepContent={ planSummary }
 								stepId="plan"
 								formStatus="ready"
 							/>

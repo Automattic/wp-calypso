@@ -54,3 +54,20 @@ ul.nux-launch__feature-item-group {
 		}
 	}
 }
+
+.nux-launch__summary-item {
+	p {
+		margin: 0;
+		word-break: break-word;
+	}
+	.components-tip {
+		margin-top: 10px;
+
+		svg {
+			align-self: flex-start;
+		}
+	}
+	&__plan-name {
+		color: var( --color-text );
+	}
+}
