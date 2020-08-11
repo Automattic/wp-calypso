@@ -37,15 +37,7 @@ const HELP_COMPONENT_LOCATION = 'customer-home';
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
-const HelpSearch = ( {
-	searchQuery,
-	hideInlineHelpUI,
-	showInlineHelpUI,
-	openDialog,
-	tour,
-	track,
-	type,
-} ) => {
+const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDialog, track } ) => {
 	const translate = useTranslate();
 
 	// When the Customer Home Support is shown we must hide the
@@ -68,20 +60,22 @@ const HelpSearch = ( {
 		// Grab properties using constants for safety
 		const resultPostId = get( result, RESULT_POST_ID );
 		const resultLink = amendYouTubeLink( get( result, RESULT_LINK ) );
+		const type = get( result, RESULT_TYPE, RESULT_ARTICLE );
+		const tour = get( result, RESULT_TOUR );
 
-		track(
-			`calypso_inlinehelp_${ type }_open`,
-			omitBy(
-				{
-					search_query: searchQuery,
-					tour,
-					result_url: resultLink,
-					location: HELP_COMPONENT_LOCATION,
-				},
-				isUndefined
-			)
+		// Create and send tracking event
+		const tracksData = omitBy(
+			{
+				search_query: searchQuery,
+				tour,
+				result_url: resultLink,
+				location: HELP_COMPONENT_LOCATION,
+			},
+			isUndefined
 		);
+		track( `calypso_inlinehelp_${ type }_open`, tracksData );
 
+		// Show the article
 		openDialog( { postId: resultPostId, actionUrl: resultLink } );
 	};
 
@@ -120,12 +114,9 @@ const HelpSearch = ( {
 	);
 };
 
-const mapStateToProps = ( state, { result } ) => ( {
+const mapStateToProps = ( state ) => ( {
 	searchQuery: getSearchQuery( state ),
 	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-	type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
-	tour: get( result, RESULT_TOUR ),
-	link: amendYouTubeLink( get( result, RESULT_LINK ) ),
 } );
 
 const mapDispatchToProps = {
