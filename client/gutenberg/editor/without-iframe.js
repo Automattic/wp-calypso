@@ -39,6 +39,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import { Placeholder } from './placeholder';
 import './without-iframe.scss';
+import PerformanceTrackerStop from 'lib/performance-tracking/performance-tracker-stop';
 
 const getStatsPath = ( { postId } ) =>
 	postId
@@ -104,6 +105,7 @@ function Gutenberg( props ) {
 				properties={ getStatsProps( props ) }
 			/>
 			<EditorDocumentHead />
+			<PerformanceTrackerStop />
 
 			<div className="editor__without-iframe" role="main">
 				<h1>Gutenberg In Calypso</h1>
