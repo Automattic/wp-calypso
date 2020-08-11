@@ -3,6 +3,10 @@
 
 .nux-launch__feature-list {
 	padding: 20px;
+
+	p {
+		margin: 10px 0 0;
+	}
 }
 .nux-launch__feature-list-title {
 	margin: 0 0 10px;
@@ -69,5 +73,12 @@ ul.nux-launch__feature-item-group {
 	}
 	&__plan-name {
 		color: var( --color-text );
+	}
+	&__domain-name {
+		font-weight: 600;
+
+		&.is-loading {
+			@include onboarding-placeholder();
+		}
 	}
 }

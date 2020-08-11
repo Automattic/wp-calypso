@@ -64,7 +64,7 @@ export const useOnLaunch = () => {
 				go();
 				return;
 			}
-			window.location.href = `https://wordpress.com/home/${ window._currentSiteId }`;
+			window.top.location.href = `https://wordpress.com/home/${ window._currentSiteId }`;
 		}
 	}, [ launchStatus ] );
 };
