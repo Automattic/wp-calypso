@@ -20,7 +20,7 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	}
 
 	async goToNextStep() {
-		const nextButtonSelector = By.css( '.action-buttons__next' );
+		const nextButtonSelector = By.css( '.acquire-intent__question-skip.is-primary' );
 		return await driverHelper.clickWhenClickable( this.driver, nextButtonSelector );
 	}
 
