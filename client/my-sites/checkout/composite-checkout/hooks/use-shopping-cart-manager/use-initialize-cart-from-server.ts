@@ -15,7 +15,7 @@ import {
 	addItemToResponseCart,
 	convertRawResponseCartToResponseCart,
 	addCouponToResponseCart,
-} from '../../types';
+} from '../../types/backend/shopping-cart-endpoint';
 import { CacheStatus, ShoppingCartAction, ReactStandardAction } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-initialize-cart-from-server' );

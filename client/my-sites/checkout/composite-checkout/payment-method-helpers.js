@@ -10,10 +10,8 @@ import { defaultRegistry } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import {
-	createTransactionEndpointRequestPayloadFromLineItems,
-	createPayPalExpressEndpointRequestPayloadFromLineItems,
-} from './types';
+import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
+import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
 import {
 	hasGoogleApps,

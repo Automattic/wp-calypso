@@ -19,7 +19,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useDomainNamesInCart } from '../hooks/has-domains';
 import Field from './field';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
+import {
+	prepareDomainContactDetails,
+	prepareDomainContactDetailsErrors,
+	isValid,
+} from '../types/wpcom-store-state';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';

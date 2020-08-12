@@ -10,15 +10,19 @@ import {
 	ResponseCart,
 	ResponseCartProduct,
 	TempResponseCartProduct,
+} from '../types/backend/shopping-cart-endpoint';
+import {
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
 	WPCOMCartCreditsItem,
 	CheckoutCartItem,
+} from '../types/checkout-cart';
+import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 	WPCOMPaymentMethodClass,
-} from '../types';
+} from '../types/backend/payment-method';
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'lib/products-values';
 
 /**
