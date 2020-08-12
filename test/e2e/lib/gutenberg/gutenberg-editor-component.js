@@ -254,6 +254,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				prefix = 'coblocks-';
 				blockClass = 'dynamic-separator';
 				break;
+			case 'Heading':
+				ariaLabel = 'Write heading…';
+				break;
 		}
 
 		const selectorAriaLabel = ariaLabel || `Block: ${ name }`;
