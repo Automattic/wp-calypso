@@ -76,7 +76,13 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 				if ( ! productSlug ) {
 					return null;
 				}
-				const [ slug ] = productSlug.split( ':' );
+				let [ slug ] = productSlug.split( ':' );
+
+				// See https://github.com/Automattic/wp-calypso/pull/15043 for explanation of
+				// the no-ads alias (seems a little strange to me that the product slug is a
+				// php file).
+				slug = slug === 'no-ads' ? 'no-adverts/no-adverts.php' : slug;
+
 				const product = products[ slug ];
 				if ( ! product ) {
 					debug( 'no product found with slug', productSlug );
