@@ -8,29 +8,18 @@ import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import cookie from 'cookie';
-import { isArray } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import CheckoutContainer from './checkout/checkout-container';
-import IncludedProductNoticeContent from './checkout/included-product-notice-content';
-import OwnedProductNoticeContent from './checkout/owned-product-notice-content';
-import JetpackMinimumPluginVersionNoticeContent from './checkout/jetpack-minimum-plugin-version-notice-content';
+import PrePurchaseNotices from './checkout/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
-import { getPlanByPathSlug } from 'lib/plans';
-import { GROUP_JETPACK } from 'lib/plans/constants';
-import { isJetpackBackup, isJetpackBackupSlug, getProductFromSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { isJetpackMinimumVersion, getSiteProducts, getSitePlan } from 'state/sites/selectors';
 import { logToLogstash } from 'state/logstash/actions';
-import {
-	isPlanIncludingSiteBackup,
-	isBackupProductIncludedInSitePlan,
-} from 'state/sites/products/conflicts';
 import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -62,57 +51,12 @@ export default function CheckoutSystemDecider( {
 	isLoggedOutCart,
 	isNoSiteCart,
 } ) {
-	const siteId = selectedSite?.ID;
-	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
-
 	const countryCode =
 		useSelector( ( state ) => getCurrentUserCountryCode( state ) ) || getGeoLocationFromCookie();
-	const isJetpackPlanIncludingSiteBackup = useSelector( ( state ) =>
-		jetpackPlan ? isPlanIncludingSiteBackup( state, siteId, jetpackPlan.getStoreSlug() ) : null
-	);
-	const isBackupIncludedInSitePlan = useSelector( ( state ) =>
-		isJetpackBackupSlug( product )
-			? isBackupProductIncludedInSitePlan( state, siteId, product )
-			: null
-	);
-
-	const BACKUP_MINIMUM_PLUGIN_VERSION = '8.5';
-	const siteHasBackupMinPluginVersion = useSelector( ( state ) =>
-		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_PLUGIN_VERSION )
-	);
-	const currentProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
-	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 
-	let infoMessage;
-
-	if ( isJetpackBackupSlug( product ) && ! siteHasBackupMinPluginVersion ) {
-		const backupProductInCart = getProductFromSlug( product );
-		infoMessage = (
-			<JetpackMinimumPluginVersionNoticeContent
-				product={ backupProductInCart }
-				minVersion={ BACKUP_MINIMUM_PLUGIN_VERSION }
-			/>
-		);
-	}
-
-	if ( isJetpackPlanIncludingSiteBackup && selectedSite ) {
-		const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
-		infoMessage = backupProduct && (
-			<OwnedProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
-		);
-	}
-
-	if ( isBackupIncludedInSitePlan && selectedSite ) {
-		infoMessage = currentPlan && (
-			<IncludedProductNoticeContent
-				plan={ currentPlan }
-				productSlug={ product }
-				selectedSite={ selectedSite }
-			/>
-		);
-	}
+	const prepurchaseNotices = <PrePurchaseNotices cart={ cart } />;
 
 	const checkoutVariant = getCheckoutVariant( countryCode );
 
@@ -183,7 +127,7 @@ export default function CheckoutSystemDecider( {
 							plan={ plan }
 							cart={ cart }
 							isComingFromUpsell={ isComingFromUpsell }
-							infoMessage={ infoMessage }
+							infoMessage={ prepurchaseNotices }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
 							getCart={ isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( cart ) : null }
@@ -211,7 +155,7 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
-			infoMessage={ infoMessage }
+			infoMessage={ prepurchaseNotices }
 		/>
 	);
 }
