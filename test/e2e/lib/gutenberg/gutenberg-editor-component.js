@@ -257,6 +257,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Heading':
 				ariaLabel = 'Write heading…';
 				break;
+			case 'Heading':
+				ariaLabel = 'Write heading…';
+				break;
 		}
 
 		const selectorAriaLabel = ariaLabel || `Block: ${ name }`;
