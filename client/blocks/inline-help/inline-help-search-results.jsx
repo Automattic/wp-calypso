@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
+import { speak } from '@wordpress/a11y';
+import { useEffect } from 'react';
 
 /**
  * Internal Dependencies
@@ -43,6 +45,22 @@ function HelpSearchResults( {
 	placeholderLines,
 	track,
 } ) {
+
+
+	useEffect( () => {
+		// If there's no query, then we don't need to announce anything.
+		if( ! searchQuery.length ) {
+			return;
+		}
+
+		if ( isSearching ) {
+			speak( 'Loading search results.', 'polite' );
+		} else if ( searchResults.length ) {
+			speak( 'Search results loaded.', 'polite' );
+		}
+
+	}, [isSearching, searchResults]);
+
 	function getTitleBySectionType( type, query = '' ) {
 		let title = '';
 		switch ( type ) {
@@ -155,14 +173,10 @@ function HelpSearchResults( {
 
 	const renderSearchResults = () => {
 		if ( isSearching && ! searchResults.length ) {
+
 			// search, but no results so far
 			return (
-				<>
-					<div className="inline-help__visually-hidden">
-						{ translate( 'Loading search results' ) }
-					</div>
-					<PlaceholderLines lines={ placeholderLines } />
-				</>
+				<PlaceholderLines lines={ placeholderLines } />
 			);
 		}
 
@@ -175,6 +189,7 @@ function HelpSearchResults( {
 						) }
 					</p>
 				) }
+				
 
 				<div className="inline-help__results" aria-label={ translate( 'Search Results' ) }>
 					{ renderSearchSections( searchResults, searchQuery ) }
@@ -186,7 +201,7 @@ function HelpSearchResults( {
 	return (
 		<>
 			<QueryInlineHelpSearch query={ searchQuery } />
-			<div aria-live="polite">{ renderSearchResults() }</div>
+			{ renderSearchResults() }
 		</>
 	);
 }
