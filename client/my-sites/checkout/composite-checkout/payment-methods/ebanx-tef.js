@@ -31,8 +31,8 @@ import {
 	SummaryDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom/components/summary-details';
 import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/wpcom/components/payment-method-logos';
-import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
 import { maskField } from 'lib/checkout';
+import CountrySpecificPaymentFieldsUI from '../wpcom/components/country-specific-payment-fields-ui';
 
 const debug = debugFactory( 'composite-checkout:ebanx-tef-payment-method' );
 
@@ -204,35 +204,6 @@ function EbanxTefFields() {
 		</EbanxTefFormWrapper>
 	);
 }
-
-// TODO: Merge this with payment-methods/credit-card/contact-fields.js
-const CountrySpecificPaymentFieldsUI = styled( CountrySpecificPaymentFields )`
-	margin-top: 0;
-	& .checkout__form-info-text {
-		display: none;
-	}
-
-	& .document,
-	& .phone,
-	& .postal-code,
-	& .checkout__form-state-field {
-		flex-basis: auto;
-	}
-	& .checkout__checkout-field,
-	& .checkout__form-state-field {
-		margin-left: 0;
-	}
-	& .checkout__form-info-text,
-	& .form__hidden-input a {
-		margin-left: 0;
-	}
-	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
-		& .address-1,
-		& .state {
-			margin-right: 15px;
-		}
-	}
-`;
 
 function BankSelector( { id, value, onChange, label, isError, errorMessage, disabled } ) {
 	const { __ } = useI18n();

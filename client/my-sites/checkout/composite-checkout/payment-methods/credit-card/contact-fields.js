@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import { useFormStatus } from '@automattic/composite-checkout';
 
 /**
@@ -10,7 +9,7 @@ import { useFormStatus } from '@automattic/composite-checkout';
  */
 import useCountryList from 'my-sites/checkout/composite-checkout/wpcom/hooks/use-country-list';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
-import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
+import CountrySpecificPaymentFieldsUI from '../../wpcom/components/country-specific-payment-fields-ui';
 
 export default function ContactFields( {
 	getFieldValue,
@@ -36,35 +35,3 @@ export default function ContactFields( {
 		</div>
 	);
 }
-
-const CountrySpecificPaymentFieldsUI = styled( CountrySpecificPaymentFields )`
-	margin-top: 0;
-
-	& .checkout__form-info-text {
-		display: none;
-	}
-
-	& .document,
-	& .phone,
-	& .postal-code,
-	& .checkout__form-state-field {
-		flex-basis: auto;
-	}
-
-	& .checkout__checkout-field,
-	& .checkout__form-state-field {
-		margin-left: 0;
-	}
-
-	& .checkout__form-info-text,
-	& .form__hidden-input a {
-		margin-left: 0;
-	}
-
-	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
-		& .address-1,
-		& .state {
-			margin-right: 15px;
-		}
-	}
-`;
