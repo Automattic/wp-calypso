@@ -14,27 +14,33 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { useSite } from '../../hooks';
+import { useSite, useDomainSearch } from '../../hooks';
 import { FLOW_ID } from '../../constants';
 import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
-	const { domain, domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const { siteName, currentDomainName } = useSite();
+	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { currentDomainName } = useSite();
+	const domainSearch = useDomainSearch();
 
-	const { setDomain, unsetDomain, setDomainSearch, setStepComplete } = useDispatch( LAUNCH_STORE );
-
-	const search = ( domainSearch.trim() || siteName ) ?? '';
+	const {
+		setDomain,
+		unsetDomain,
+		setDomainSearch,
+		unsetPlan,
+		confirmDomainSelection,
+	} = useDispatch( LAUNCH_STORE );
 
 	const handleNext = () => {
-		setStepComplete( LaunchStep.Domain );
+		confirmDomainSelection();
 		onNextStep?.();
 	};
 
 	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
 		setDomain( suggestion );
-		setStepComplete( LaunchStep.Domain );
+		if ( plan?.isFree ) {
+			unsetPlan();
+		}
 	};
 
 	const handleExistingSubdomainSelect = () => {
@@ -65,7 +71,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 			<div className="nux-launch-step__body">
 				<DomainPicker
 					analyticsFlowId={ FLOW_ID }
-					initialDomainSearch={ search }
+					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
 					currentDomain={ domain?.domain_name || currentDomainName }

@@ -12,13 +12,12 @@ import { Title, SubTitle, ActionButtons, NextButton } from '@automattic/onboardi
  * Internal dependencies
  */
 import { LAUNCH_STORE } from '../../stores';
-import { LaunchStep } from '../../../../common/data-stores/launch/data';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const { setStepComplete, setStepIncomplete, setDomainSearch } = useDispatch( LAUNCH_STORE );
+	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 	const [ title, setTitle ] = useEntityProp( 'root', 'site', 'title' );
 	const { saveEditedEntityRecord } = useDispatch( 'core' );
 
@@ -30,12 +29,6 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 
 		// update domainSearch only if there is no custom Domain selected
 		! domain && setDomainSearch( newTitle );
-
-		if ( newTitle ) {
-			setStepComplete( LaunchStep.Name );
-		} else {
-			setStepIncomplete( LaunchStep.Name );
-		}
 	};
 
 	const handleNext = () => {

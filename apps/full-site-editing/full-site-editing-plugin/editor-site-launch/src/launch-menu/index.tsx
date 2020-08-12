@@ -14,11 +14,11 @@ import LaunchMenuItem from './item';
 import './styles.scss';
 
 const LaunchMenu = () => {
-	const { step: currentStep, completedSteps } = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getState()
-	);
+	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
+	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
+	const isFlowStarted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowStarted() );
 
 	const LaunchStepMenuItemTitles = {
 		[ LaunchStep.Name ]: __( 'Name your site', 'full-site-editing' ),
@@ -36,10 +36,10 @@ const LaunchMenu = () => {
 				{ LaunchSequence.map( ( step ) => (
 					<LaunchMenuItem
 						title={ LaunchStepMenuItemTitles[ step ] }
-						isCompleted={ completedSteps.includes( step ) }
+						isCompleted={ isStepCompleted( step ) }
 						isCurrent={ step === currentStep }
 						onClick={ () => setStep( step ) }
-						isDisabled={ step === LaunchStep.Final && ! completedSteps.length }
+						isDisabled={ step === LaunchStep.Final && ! isFlowStarted }
 					/>
 				) ) }
 			</div>

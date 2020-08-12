@@ -19,11 +19,10 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 
-	const { updatePlan, setStep, setStepComplete } = useDispatch( LAUNCH_STORE );
+	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
 
 	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
 		updatePlan( planSlug );
-		setStepComplete( LaunchStep.Plan );
 		onNextStep?.();
 	};
 
