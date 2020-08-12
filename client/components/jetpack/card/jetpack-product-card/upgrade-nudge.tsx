@@ -17,13 +17,12 @@ import PlanPrice from 'my-sites/plan-price';
 import { JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS } from 'my-sites/plans-v2/constants';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { getPlan } from 'lib/plans';
 import { DEFAULT_UPGRADE_NUDGE_FEATURES } from './fixtures';
 
 /**
  * Type dependencies
  */
-import type { JetpackRealtimePlan } from 'lib/plans/types';
+import type { SelectorProduct } from 'my-sites/plans-v2/types';
 import type { FeaturesItem } from './types';
 
 type OwnProps = {
@@ -34,7 +33,8 @@ type OwnProps = {
 	features?: FeaturesItem[];
 	onUpgradeClick: () => void;
 	originalPrice: number;
-	productSlug: JetpackRealtimePlan;
+	productType?: string;
+	selectorProduct: SelectorProduct;
 };
 
 const UpgradeNudge = ( {
@@ -45,16 +45,17 @@ const UpgradeNudge = ( {
 	features = DEFAULT_UPGRADE_NUDGE_FEATURES,
 	onUpgradeClick,
 	originalPrice,
-	productSlug,
+	selectorProduct,
+	productType = 'Real-time',
 }: OwnProps ) => {
 	const translate = useTranslate();
 	const isDiscounted = isFinite( discountedPrice );
 
-	const plan = getPlan( productSlug );
-
 	const storedPreference = useSelector( ( state ) =>
 		getPreference( state, JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS )
 	);
+
+	const { description, productSlug } = selectorProduct;
 
 	// Save dismiss to never show up the nudge again for this specific plan/product.
 	const dispatch = useDispatch();
@@ -79,9 +80,7 @@ const UpgradeNudge = ( {
 					<h3>
 						{ translate( 'Upgrade to' ) }
 						<br />
-						<span className="jetpack-product-card__nudge-product-type">
-							{ translate( 'Real-Time' ) }
-						</span>
+						<span className="jetpack-product-card__nudge-product-type">{ productType }</span>
 					</h3>
 				</div>
 				<div className="jetpack-product-card__price">
@@ -98,22 +97,20 @@ const UpgradeNudge = ( {
 					<span className="jetpack-product-card__billing-time-frame">{ billingTimeFrame }</span>
 				</div>
 			</div>
-			<p className="jetpack-product-card__nudge-description">
-				{ preventWidows( plan.getDescription() ) }
-			</p>
+			<p className="jetpack-product-card__nudge-description">{ preventWidows( description ) }</p>
 
 			<Button className="jetpack-product-card__nudge-button" primary onClick={ onUpgradeClick }>
 				{ translate( 'Upgrade' ) }
 			</Button>
 
 			<ul className="jetpack-product-card__nudge-features">
-				{ features.map( ( { description, text }, index ) => (
+				{ features.map( ( feature, index ) => (
 					<li className="jetpack-product-card__nudge-feature" key={ index }>
 						<Gridicon icon="checkmark" />
 						<div className="jetpack-product-card__nudge-feature-desc">
-							<strong>{ text }</strong>
+							<strong>{ feature.text }</strong>
 							<br />
-							{ description }
+							{ feature.description }
 						</div>
 					</li>
 				) ) }

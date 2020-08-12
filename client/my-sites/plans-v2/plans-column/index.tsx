@@ -70,15 +70,17 @@ const PlanComponent = ( {
 				: 'jetpack_security_daily_monthly';
 
 		const upgradeToProductSlug = productSlug && getRealtimeFromDaily( productSlug );
+		const item = upgradeToProductSlug && slugToItem( upgradeToProductSlug );
+		const selectorProductToUpgrade = item && itemToSelectorProduct( item );
 
-		plan.UpgradeNudge = upgradeToProductSlug ? (
+		plan.UpgradeNudge = selectorProductToUpgrade ? (
 			<JetpackProductCardUpgradeNudge
 				billingTimeFrame={ durationToText( plan.term ) }
 				currencyCode={ currencyCode }
 				discountedPrice={ 67 }
 				originalPrice={ price || 100 }
 				onUpgradeClick={ () => null }
-				productSlug={ upgradeToProductSlug }
+				selectorProduct={ selectorProductToUpgrade }
 			/>
 		) : undefined;
 	}
