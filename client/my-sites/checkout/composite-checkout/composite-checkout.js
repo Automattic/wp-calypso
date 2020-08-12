@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
-import { WPCheckout } from 'my-sites/checkout/composite-checkout/components/wp-checkout';
+import WPCheckout from 'my-sites/checkout/composite-checkout/components/wp-checkout';
 import { useWpcomStore } from 'my-sites/checkout/composite-checkout/hooks/wpcom-store';
 import { areDomainsInLineItems } from 'my-sites/checkout/composite-checkout/hooks/has-domains';
 import {
