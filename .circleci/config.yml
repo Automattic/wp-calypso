@@ -35,8 +35,7 @@ references:
         "$CIRCLE_TEST_REPORTS/packages"         \
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
-        "$HOME/jest-cache"                      \
-        "$HOME/terser-cache"
+        "$HOME/jest-cache"
 
   # Jest cache caching
   #
@@ -68,20 +67,21 @@ references:
       - ~/jest-cache
 
   #
-  # Terser cache caching
+  # Build cache
   #
-  restore-terser-cache: &restore-terser-cache
-    name: Restore Terser cache
+  # This contains caches used by the build process (mainly webpack loaders and plugins)
+  restore-build-cache: &restore-build-cache
+    name: Restore build cache
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
-  save-terser-cache: &save-terser-cache
-    name: Save Terser cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build
+  save-build-cache: &save-build-cache
+    name: Save build cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/terser-cache
+      - .cache
 
   # Git cache
   #
