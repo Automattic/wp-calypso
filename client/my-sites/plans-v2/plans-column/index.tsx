@@ -8,7 +8,13 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { durationToText, slugToItem, itemToSelectorProduct, productButtonLabel } from '../utils';
+import {
+	durationToText,
+	slugToItem,
+	slugToSelectorProduct,
+	itemToSelectorProduct,
+	productButtonLabel,
+} from '../utils';
 import {
 	PRODUCTS_TYPES,
 	SELECTOR_PLANS,
@@ -74,8 +80,8 @@ const PlanComponent = ( {
 				: PLAN_JETPACK_SECURITY_DAILY_MONTHLY;
 
 		const upgradeToProductSlug = productSlug && getRealtimeFromDaily( productSlug );
-		const item = upgradeToProductSlug && slugToItem( upgradeToProductSlug );
-		const selectorProductToUpgrade = item && itemToSelectorProduct( item );
+		const selectorProductToUpgrade =
+			upgradeToProductSlug && slugToSelectorProduct( upgradeToProductSlug );
 
 		plan.UpgradeNudge = selectorProductToUpgrade ? (
 			<JetpackProductCardUpgradeNudge
