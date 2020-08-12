@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { translate as globalTranslate, useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { isFinite } from 'lodash';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,31 +18,20 @@ import { JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS } from 'my-sites/plans-v2/con
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { getPlan } from 'lib/plans';
+import { DEFAULT_UPGRADE_NUDGE_FEATURES } from './fixtures';
 
 /**
  * Type dependencies
  */
-import { JetpackRealtimePlan } from 'lib/plans/types';
-
-// TODO: replace this hardcoded data with real data when we have an endpoint for it or
-// a more definitive place in our own codebase.
-const DEFAULT_FEATURES = [
-	{
-		title: globalTranslate( 'Real-Time Backup' ),
-		subtitle: globalTranslate( 'Every edit gets saved immediatelly' ),
-	},
-	{
-		title: globalTranslate( 'Real-Time Scan' ),
-		subtitle: globalTranslate( 'On-demand scanning' ),
-	},
-];
+import type { JetpackRealtimePlan } from 'lib/plans/types';
+import type { FeaturesItem } from './types';
 
 type OwnProps = {
 	billingTimeFrame: TranslateResult;
 	className?: string;
 	currencyCode: string;
 	discountedPrice?: number;
-	features?: typeof DEFAULT_FEATURES;
+	features?: FeaturesItem[];
 	onUpgradeClick: () => void;
 	originalPrice: number;
 	productSlug: JetpackRealtimePlan;
@@ -53,7 +42,7 @@ const UpgradeNudge = ( {
 	className,
 	currencyCode,
 	discountedPrice,
-	features = DEFAULT_FEATURES,
+	features = DEFAULT_UPGRADE_NUDGE_FEATURES,
 	onUpgradeClick,
 	originalPrice,
 	productSlug,
@@ -118,13 +107,13 @@ const UpgradeNudge = ( {
 			</Button>
 
 			<ul className="jetpack-product-card__nudge-features">
-				{ features.map( ( { subtitle, title }, index ) => (
+				{ features.map( ( { description, text }, index ) => (
 					<li className="jetpack-product-card__nudge-feature" key={ index }>
 						<Gridicon icon="checkmark" />
 						<div className="jetpack-product-card__nudge-feature-desc">
-							<strong>{ title }</strong>
+							<strong>{ text }</strong>
 							<br />
-							{ subtitle }
+							{ description }
 						</div>
 					</li>
 				) ) }
