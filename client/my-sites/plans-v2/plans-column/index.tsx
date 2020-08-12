@@ -14,6 +14,8 @@ import {
 	slugToSelectorProduct,
 	itemToSelectorProduct,
 	productButtonLabel,
+	isUpgradeable,
+	getRealtimeFromDaily,
 } from '../utils';
 import {
 	PRODUCTS_TYPES,
@@ -26,7 +28,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from 'lib/plans/constants';
-import { isUpgradeable, getRealtimeFromDaily } from 'my-sites/plans-v2/utils';
 import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
