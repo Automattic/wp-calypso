@@ -66,7 +66,7 @@ const PlanComponent = ( {
 			onButtonClick={ () => onClick( plan ) }
 			features={ { items: [] } }
 			originalPrice={ price }
-			withStartingPrice={ Array.isArray( plan.subtypes ) && plan.subtypes.length > 0 }
+			withStartingPrice={ plan.subtypes && plan.subtypes.length > 0 }
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
 		/>

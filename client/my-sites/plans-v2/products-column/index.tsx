@@ -55,7 +55,7 @@ const ProductComponent = ( {
 		features={ { items: [] } }
 		discountedPrice={ product.discountCost }
 		originalPrice={ product.cost || 0 }
-		withStartingPrice={ Array.isArray( product.subtypes ) && product.subtypes.length > 0 }
+		withStartingPrice={ product.subtypes && product.subtypes.length > 0 }
 		isOwned={ product.owned }
 	/>
 );
