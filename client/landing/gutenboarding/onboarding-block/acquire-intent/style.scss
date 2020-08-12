@@ -34,6 +34,12 @@
 		flex-wrap: wrap;
 		align-items: baseline;
 	}
+
+	.vertical-select + & {
+		@include break-medium {
+			margin-top: 20px;
+		}
+	}
 }
 
 .site-title__input-label {
@@ -50,14 +56,12 @@
 	flex: 1;
 
 	@include break-small {
-		margin-top: 0;
 		min-width: 300px;
 		max-width: 400px;
 	}
 
 	@include break-medium {
 		max-width: 750px;
-		margin-top: 20px;
 	}
 }
 
