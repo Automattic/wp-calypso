@@ -17,9 +17,9 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prebuild": "check-npm-client && yarn run clean",
-		"build": "check-npm-client && calypso-build editor='./src/editor.js' view='./src/view.js' --env.WP"
+		"clean": "npx rimraf dist",
+		"prebuild": "yarn run clean",
+		"build": "calypso-build editor='./src/editor.js' view='./src/view.js' --env.WP"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "^3.18.0",

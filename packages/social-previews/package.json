@@ -33,9 +33,9 @@
 		"src"
 	],
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile && copy-assets"
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile && copy-assets"
 	},
 	"dependencies": {
 		"lodash": "^4.17.15",

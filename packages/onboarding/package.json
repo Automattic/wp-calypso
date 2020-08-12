@@ -24,10 +24,10 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist ../../.tsc-cache/packages__onboarding*",
-		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets && npx copyfiles ./styles/** dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+		"clean": "npx rimraf dist ../../.tsc-cache/packages__onboarding*",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets && npx copyfiles ./styles/** dist",
+		"prepublish": "yarn run clean",
+		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/react-i18n": "^1.0.0-alpha.0",

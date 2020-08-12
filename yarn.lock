@@ -8744,15 +8744,6 @@ check-node-version@^4.0.2:
     run-parallel "^1.1.4"
     semver "^6.3.0"
 
-check-npm-client@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/check-npm-client/-/check-npm-client-1.1.1.tgz#ccb7468ae0af882836c75025748139a8c52d8c57"
-  integrity sha512-Hp/zYhGknq4lFF5kTri+6ALSue5mgePy6RP2VjaUolKuWVeB2NdnhLNsqRaekJMKvTKMWgO5JKEJjy5+oXFn3Q==
-  dependencies:
-    chalk "^3.0.0"
-    debug "^4.1.1"
-    npm-config-user-agent-parser "^1.0.0"
-
 check-types@^8.0.3:
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/check-types/-/check-types-8.0.3.tgz#3356cca19c889544f2d7a95ed49ce508a0ecf552"
@@ -20074,13 +20065,6 @@ npm-bundled@^1.0.1:
   integrity sha512-gqkfgGePhTpAEgUsGEgcq1rqPXA+tv/aVBlgEzfXwA1yiUJF7xtEt3CtVwOjNYQOVknDk0F20w58Fnm3EtG0fA==
   dependencies:
     npm-normalize-package-bin "^1.0.1"
-
-npm-config-user-agent-parser@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/npm-config-user-agent-parser/-/npm-config-user-agent-parser-1.0.0.tgz#09d6a2fb3ab5c59af4135c6ee2da9c13ba7007d7"
-  integrity sha512-9cODT2ALnKGiNU4OR/dCnsEiZDzFEPMiEXD69pVH38FEzbF/GzP+MlJPIYVMjx5bzbP5sbMA7b7Wgo8MGfIncA==
-  dependencies:
-    semver "^5.5.0"
 
 npm-lifecycle@^3.1.2:
   version "3.1.4"
