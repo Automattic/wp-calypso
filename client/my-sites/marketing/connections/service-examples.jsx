@@ -162,7 +162,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/instagram-widget.png',
+					src: '/calypso/images/sharing/connections-instagram.png',
 					alt: this.props.translate( 'Add an Instagram widget', { textOnly: true } ),
 				},
 				label: this.props.translate(
