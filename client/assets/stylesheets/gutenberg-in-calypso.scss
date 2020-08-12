@@ -1,0 +1,34 @@
+// Color Schemes
+// Currently used only by Calypso dev badge shown in development mode
+@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+
+// Shared
+@import 'shared/reset'; // css reset before the rest of the styles are defined
+@import './shared/loading';
+@import './gutenberg-base-styles';
+
+// Gutenberg resets
+// Not an actual "CSS reset", but an opiniated base style for HTML elements in Gutenberg views.
+.editor__without-iframe {
+    h1, h2, h3, h4, h5, h6 {
+        margin-bottom: .5rem;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.2;
+        color: inherit;
+    }
+
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.75rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+    h6 { font-size: 1rem; }
+}
+
+// Gutenberg default typography
+html,
+body {
+	font-family: $default-font;
+	font-size: $font-body;
+}
