@@ -308,7 +308,7 @@ class CalypsoifyIframe extends Component<
 			const { postUrl } = payload;
 			config.isEnabled( 'desktop' )
 				? this.props.notifyDesktopViewPostClicked( postUrl )
-				: window.open( postUrl, '_top' );
+				: window.open( postUrl, '_blank' );
 		}
 
 		if ( EditorActions.OpenCustomizer === action ) {
