@@ -37,13 +37,13 @@
 		"@automattic/mini-css-extract-plugin-with-rtl": "^0.8.0",
 		"@babel/cli": "^7.10.5",
 		"@babel/core": "^7.11.1",
+		"@babel/helpers": "^7.10.4",
 		"@babel/plugin-proposal-class-properties": "^7.10.4",
 		"@babel/plugin-transform-react-jsx": "^7.10.4",
 		"@babel/plugin-transform-runtime": "^7.11.0",
 		"@babel/preset-env": "^7.11.0",
 		"@babel/preset-react": "^7.10.4",
 		"@babel/preset-typescript": "^7.10.4",
-		"@babel/helpers": "^7.10.4",
 		"@types/webpack-env": "^1.15.2",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^2.7.0",
 		"@wordpress/browserslist-config": "^2.7.0",
@@ -75,8 +75,8 @@
 	},
 	"peerDependencies": {
 		"enzyme": "^3.11.0",
+		"jest": ">=22.0.0",
 		"react": "^16.0.0",
-		"react-dom": "^16.0.0",
-		"jest": ">=22.0.0"
+		"react-dom": "^16.0.0"
 	}
 }
