@@ -184,8 +184,9 @@ export const UPGRADEABLE_WITH_NUDGE = [
 	// This is only for testing purposes to make the nudge appear inside the
 	// Jetpack Security bundle card. This because at the moment we can't purchase
 	// Jetpack Security Daily.
-	// TODO: remove this once we can purchase the new plans.
-	'jetpack_security',
+	// TODO: remove these two once we can purchase the new plans.
+	OPTIONS_JETPACK_SECURITY,
+	OPTIONS_JETPACK_SECURITY_MONTHLY,
 ];
 
 export const JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS =

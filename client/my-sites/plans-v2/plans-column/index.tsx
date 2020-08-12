@@ -15,7 +15,11 @@ import {
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 } from '../constants';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import {
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+} from 'lib/plans/constants';
 import { isUpgradeable, getRealtimeFromDaily } from 'my-sites/plans-v2/utils';
 import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -65,9 +69,9 @@ const PlanComponent = ( {
 		// We need this now to make the nudge appear inside the Jetpack Security Bundle card
 		// and make it work as it was Jetpack Security Daily (monthly or annually).
 		const productSlug =
-			plan.productSlug === 'jetpack_security'
-				? 'jetpack_security_daily'
-				: 'jetpack_security_daily_monthly';
+			plan.productSlug === OPTIONS_JETPACK_SECURITY
+				? PLAN_JETPACK_SECURITY_DAILY
+				: PLAN_JETPACK_SECURITY_DAILY_MONTHLY;
 
 		const upgradeToProductSlug = productSlug && getRealtimeFromDaily( productSlug );
 		const item = upgradeToProductSlug && slugToItem( upgradeToProductSlug );
