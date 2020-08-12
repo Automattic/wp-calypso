@@ -356,8 +356,13 @@ class Signup extends React.Component {
 		debug( 'The flow is completed. Destination: %s', destination );
 
 		const { isNewishUser, existingSiteCount } = this.props;
+		const isRegistrationlessCheckoutUser =
+			'onboarding-registrationless' === this.props.flowName && null === dependencies.bearer_token;
 
-		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewUser = !! (
+			isRegistrationlessCheckoutUser ||
+			( dependencies && dependencies.username )
+		);
 		const siteId = dependencies && dependencies.siteId;
 		const isNew7DUserSite = !! (
 			isNewUser ||
@@ -382,6 +387,7 @@ class Signup extends React.Component {
 			isNewUser,
 			hasCartItems,
 			isNew7DUserSite,
+			isRegistrationlessCheckoutUser,
 		} );
 
 		this.handleLogin( dependencies, destination );

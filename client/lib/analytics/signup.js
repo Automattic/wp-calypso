@@ -28,7 +28,7 @@ export function recordSignupStart( flow, ref ) {
 }
 
 export function recordSignupComplete(
-	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, isRegistrationlessCheckoutUser },
 	now
 ) {
 	const isNewSite = !! siteId;
@@ -64,7 +64,9 @@ export function recordSignupComplete(
 
 	gaRecordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
-	if ( isNew7DUserSite ) {
+	// We will not record this tracks event for a registrationless checkout user since we want this event
+	// to be fired only after account creation is complete.
+	if ( isNew7DUserSite && ! isRegistrationlessCheckoutUser ) {
 		// Tracks
 		recordTracksEvent( 'calypso_new_user_site_creation', { flow } );
 
