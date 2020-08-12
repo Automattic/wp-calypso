@@ -37,12 +37,6 @@ module.exports.loader = ( {
 			  ]
 			: [] ),
 		{
-			loader: require.resolve( 'cache-loader' ),
-			options: {
-				cacheDirectory: cacheDirectory,
-			},
-		},
-		{
 			loader: require.resolve( 'css-loader' ),
 			options: {
 				importLoaders: 2,
