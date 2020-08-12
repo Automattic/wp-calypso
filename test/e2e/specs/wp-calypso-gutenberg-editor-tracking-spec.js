@@ -20,6 +20,8 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
+// We need to trigger test runs against Gutenberg Edge (the "next" version of Gutenberg that
+// will be deployed to Dotcom) as well as the current version of Gutenberg.
 const gutenbergUser =
 	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
@@ -58,27 +60,11 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			await wpadminSidebarComponent.selectNewPost();
 		} );
 
-		step( 'Tracks "wpcom_block_inserted" event', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
-
-			// Insert some Blocks
-			await gEditorComponent.addBlock( 'Markdown' );
-			await gEditorComponent.addBlock( 'Columns' );
-			await gEditorComponent.addBlock( 'Columns' );
-
-			// Grab the events stack (only present on e2e test envs).
-			// see: https://github.com/Automattic/wp-calypso/pull/41329
+		step( 'Test for presence of e2e specific tracking events stack on global', async function () {
 			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
 
-			// Assert that Insertion Events were tracked.
-			assert.strictEqual(
-				eventsStack.some(
-					( [ eventName, eventData ] ) =>
-						eventName === 'wpcom_block_inserted' && eventData.block_name === 'core/columns'
-				),
-				true,
-				`"wpcom_block_inserted" event failed to fire for ${ eventsStack[ 0 ][ 1 ].block_name }`
-			);
+			// Check evaluates to truthy
+			assert( eventsStack, 'tracking events stack missing from window._e2eEventsStack' );
 		} );
 
 		after( async function () {} );
