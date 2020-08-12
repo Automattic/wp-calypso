@@ -4,24 +4,31 @@
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { Plans } from '@automattic/data-stores';
+import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import PlansGridFSE from '../../../../editor-plans-grid/src/plans-grid-fse';
 import { LAUNCH_STORE } from '../../stores';
-
 import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
+	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const { setStepComplete } = useDispatch( LAUNCH_STORE );
 
-	const handleNext = () => {
+	const { updatePlan, setStep, setStepComplete } = useDispatch( LAUNCH_STORE );
+
+	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
+		updatePlan( planSlug );
 		setStepComplete( LaunchStep.Plan );
 		onNextStep?.();
+	};
+
+	const handlePickDomain = () => {
+		setStep( LaunchStep.Domain );
 	};
 
 	return (
@@ -38,7 +45,21 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 				</div>
 			</div>
 			<div className="nux-launch-step__body">
-				<PlansGridFSE onSelect={ handleNext } />
+				<PlansGrid
+					currentDomain={ domain }
+					onPlanSelect={ handleSelect }
+					onPickDomainClick={ handlePickDomain }
+					disabledPlans={
+						domain && ! domain.is_free
+							? {
+									[ Plans.PLAN_FREE ]: __(
+										'Not available with custom domain',
+										'full-site-editing'
+									),
+							  }
+							: undefined
+					}
+				/>
 			</div>
 		</LaunchStepContainer>
 	);
