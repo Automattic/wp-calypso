@@ -64,15 +64,14 @@ const removeWhiteBackground = function () {
 };
 
 const gutenbergRedirect = function () {
+	const url = new URL( window.location );
+	url.pathname = '/new';
+
 	if ( 'verticals' === abtest( 'verticalsOnGutenboarding' ) ) {
-		window.location.replace(
-			`${ window.location.origin }/new${
-				window.location.search ? window.location.search + '&vertical' : '?vertical'
-			}`
-		);
-	} else {
-		window.location.replace( window.location.origin + '/new' + window.location.search );
+		url.searchParams.append( 'vertical', '' );
 	}
+
+	window.location.replace( url.toString() );
 };
 
 export const addP2SignupClassName = () => {
