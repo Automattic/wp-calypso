@@ -13,8 +13,8 @@ import { useEvents, useSelect, useDispatch, useFormStatus } from '@automattic/co
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/ie-fallback';
-import Spinner from 'my-sites/checkout/composite-checkout/wpcom/components/spinner';
+} from 'my-sites/checkout/composite-checkout/components/ie-fallback';
+import Spinner from 'my-sites/checkout/composite-checkout/components/spinner';
 import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';

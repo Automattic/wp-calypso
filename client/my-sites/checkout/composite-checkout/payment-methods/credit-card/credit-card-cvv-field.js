@@ -13,7 +13,7 @@ import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-spec
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/ie-fallback';
+} from 'my-sites/checkout/composite-checkout/components/ie-fallback';
 import {
 	GridRow,
 	Label,

@@ -7,9 +7,9 @@ import { useFormStatus } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import useCountryList from 'my-sites/checkout/composite-checkout/wpcom/hooks/use-country-list';
+import useCountryList from 'my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
-import CountrySpecificPaymentFieldsUI from '../../wpcom/components/country-specific-payment-fields-ui';
+import CountrySpecificPaymentFieldsUI from '../../components/country-specific-payment-fields-ui';
 
 export default function ContactFields( {
 	getFieldValue,

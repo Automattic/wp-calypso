@@ -8,15 +8,15 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
+import { WPCheckout } from 'my-sites/checkout/composite-checkout/wp-checkout';
+import { useWpcomStore } from 'my-sites/checkout/composite-checkout/hooks/wpcom-store';
+import { areDomainsInLineItems } from 'my-sites/checkout/composite-checkout/hooks/has-domains';
 import {
-	WPCheckout,
-	useWpcomStore,
-	areDomainsInLineItems,
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
-} from 'my-sites/checkout/composite-checkout/wpcom';
+} from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
 
 /**
@@ -75,12 +75,12 @@ import { AUTO_RENEWAL } from 'lib/url/support';
 import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
-import { useProductVariants } from './wpcom/hooks/product-variants';
+import { useProductVariants } from './hooks/product-variants';
 import { CartProvider } from './cart-provider';
-import { translateResponseCartToWPCOMCart } from './wpcom/lib/translate-cart';
-import useShoppingCartManager from './wpcom/hooks/use-shopping-cart-manager';
-import useShowAddCouponSuccessMessage from './wpcom/hooks/use-show-add-coupon-success-message';
-import useCountryList from './wpcom/hooks/use-country-list';
+import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
+import useShoppingCartManager from './hooks/use-shopping-cart-manager';
+import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
+import useCountryList from './hooks/use-country-list';
 import { colors } from '@automattic/color-studio';
 import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
 import { isGSuiteProductSlug } from 'lib/gsuite';

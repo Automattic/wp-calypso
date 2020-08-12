@@ -21,7 +21,7 @@ import {
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from 'lib/products-values/constants';
-import type { RequestCartProduct } from './wpcom/types';
+import type { RequestCartProduct } from './types/backend/shopping-cart-endpoint';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:composite-checkout:add-items' );
