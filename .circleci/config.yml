@@ -706,10 +706,6 @@ jobs:
             nvm use
             npm install -g yarn
 
-            # silence Chromedriver installation/resolution errors.
-            # yarn config set chromedriver_skip_download true
-            # yarn config set chromedriver_filepath '/usr/local/bin/chromedriver'
-
             # defer to restored packages whenever possible
             if [ -f packages-cache-restored ]; then
               export DISABLEPOSTINSTALL=1
