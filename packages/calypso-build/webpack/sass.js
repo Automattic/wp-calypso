@@ -19,12 +19,16 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {}, cacheDire
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
-		{
-			loader: require.resolve( 'cache-loader' ),
-			options: {
-				cacheDirectory: cacheDirectory,
-			},
-		},
+		...( cacheDirectory
+			? [
+					{
+						loader: require.resolve( 'cache-loader' ),
+						options: {
+							cacheDirectory: cacheDirectory,
+						},
+					},
+			  ]
+			: [] ),
 		{
 			loader: require.resolve( 'css-loader' ),
 			options: {
