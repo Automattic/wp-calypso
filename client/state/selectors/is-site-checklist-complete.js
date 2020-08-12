@@ -47,6 +47,11 @@ export default function isSiteChecklistComplete( state, siteId ) {
 			return true;
 		}
 
+		// The mobile app setup task shouldn't affect the site setup status.
+		if ( CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED === task.id ) {
+			return true;
+		}
+
 		return false;
 	};
 
