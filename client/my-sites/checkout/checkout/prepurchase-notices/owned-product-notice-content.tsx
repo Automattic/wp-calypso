@@ -13,6 +13,8 @@ import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-pr
 import { getSitePurchases } from 'state/purchases/selectors';
 import type { SiteProduct } from 'state/sites/selectors/get-site-products';
 
+import './style.scss';
+
 type Site = {
 	ID: number;
 	slug: string;
@@ -35,8 +37,8 @@ const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selec
 		: '/me/purchases/';
 
 	return (
-		<div className="checkout__conflict-notice">
-			<p className="checkout__conflict-notice-message">
+		<div className="owned-product-notice-content">
+			<p className="owned-product-notice-content__message">
 				{ translate(
 					'You currently own {{product/}}. The plan you are about to purchase also includes this product. Consider removing your {{link}}{{product/}} subscription{{/link}}.',
 					{
@@ -48,7 +50,7 @@ const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selec
 					}
 				) }
 			</p>
-			<a className="checkout__conflict-notice-link" href={ subscriptionUrl }>
+			<a className="owned-product-notice-content__link" href={ subscriptionUrl }>
 				{ translate( 'Manage subscription' ) }
 			</a>
 		</div>

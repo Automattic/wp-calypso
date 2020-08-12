@@ -11,14 +11,15 @@ import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { isJetpackPlan } from 'lib/products-values/is-jetpack-plan';
 import { isJetpackBackup } from 'lib/products-values/is-jetpack-backup';
 import getSelectedSite from 'state/ui/selectors/get-selected-site';
-import { getSitePlan, getSiteProducts } from 'state/sites/selectors';
+import { getSitePlan, getSiteProducts, isJetpackMinimumVersion } from 'state/sites/selectors';
 import {
 	isPlanIncludingSiteBackup,
 	isBackupProductIncludedInSitePlan,
 } from 'state/sites/products/conflicts';
 import Notice from 'components/notice';
-import IncludedProductNoticeContent from '../included-product-notice-content';
-import OwnedProductNoticeContent from '../owned-product-notice-content';
+import IncludedProductNoticeContent from './included-product-notice-content';
+import OwnedProductNoticeContent from './owned-product-notice-content';
+import JetpackMinimumPluginVersionNoticeContent from './jetpack-minimum-plugin-version-notice-content';
 
 import './style.scss';
 
@@ -64,6 +65,11 @@ const PrePurchaseNotices = ( { cart } ) => {
 			isBackupProductIncludedInSitePlan( state, siteId, backupProductInCart.product_slug )
 	);
 
+	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
+	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) =>
+		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
+	);
+
 	// This site has an active Jetpack Backup product purchase,
 	// but we're attempting to buy a plan that includes one as well
 	if ( cartPlanOverlapsSiteBackupPurchase ) {
@@ -82,6 +88,15 @@ const PrePurchaseNotices = ( { cart } ) => {
 				plan={ currentSitePlan }
 				productSlug={ backupProductInCart.product_slug }
 				selectedSite={ selectedSite }
+			/>
+		);
+	}
+
+	if ( backupProductInCart && ! siteHasBackupMinimumPluginVersion ) {
+		return (
+			<JetpackMinimumPluginVersionNoticeContent
+				product={ backupProductInCart }
+				minVersion={ BACKUP_MINIMUM_JETPACK_VERSION }
 			/>
 		);
 	}

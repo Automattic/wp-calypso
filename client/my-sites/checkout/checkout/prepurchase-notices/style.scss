@@ -12,14 +12,26 @@
 	}
 }
 
-.prepurchase-notices__container .notice .checkout__duplicate-notice-link {
-	margin-left: 20px;
+.prepurchase-notices__container .notice .included-product-notice-content,
+.prepurchase-notices__container .notice .owned-product-notice-content,
+.prepurchase-notices__container .notice .jetpack-minimum-plugin-version-notice-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 
-	color: var( --color-neutral-10 );
+	&__message {
+		max-width: 600px;
+	}
 
-	text-decoration: none;
+	&__link {
+		margin-left: 20px;
 
-	&:visited {
 		color: var( --color-neutral-10 );
+
+		text-decoration: none;
+
+		&:visited {
+			color: var( --color-neutral-10 );
+		}
 	}
 }

@@ -45,8 +45,8 @@ const IncludedProductNoticeContent: FunctionComponent< Props > = ( {
 		: '/me/purchases/';
 
 	return (
-		<div className="checkout__conflict-notice">
-			<p className="checkout__conflict-notice-message">
+		<div className="included-product-notice-content">
+			<p className="included-product-notice-content__message">
 				{ translate(
 					'You currently own Jetpack %(plan)s. The product you are about to purchase, {{product/}}, is already included in this plan.',
 					{
@@ -61,7 +61,7 @@ const IncludedProductNoticeContent: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<a className="checkout__conflict-notice-link" href={ subscriptionUrl }>
+			<a className="included-product-notice-content__link" href={ subscriptionUrl }>
 				{ translate( 'Manage subscription' ) }
 			</a>
 		</div>

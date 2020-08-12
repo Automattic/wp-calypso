@@ -62,10 +62,13 @@ const JetpackMinimumPluginVersionNoticeContent = ( { product, minVersion } ) => 
 	const message = getMessage( translate, product, siteJetpackVersion, minVersion );
 
 	return (
-		<div className="checkout__conflict-notice">
-			<p className="checkout__conflict-notice-message">{ message }</p>
+		<div className="jetpack-minimum-plugin-version-notice-content">
+			<p className="jetpack-minimum-plugin-version-notice-content__message">{ message }</p>
 			{ pluginUpgradeUrl && (
-				<a className="checkout__conflict-notice-link" href={ pluginUpgradeUrl }>
+				<a
+					className="jetpack-minimum-plugin-version-notice-content__link"
+					href={ pluginUpgradeUrl }
+				>
 					{ preventWidows( translate( 'Upgrade now' ) ) }
 				</a>
 			) }
