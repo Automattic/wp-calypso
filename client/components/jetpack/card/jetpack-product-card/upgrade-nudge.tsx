@@ -33,7 +33,7 @@ type OwnProps = {
 	features?: FeaturesItem[];
 	onUpgradeClick: () => void;
 	originalPrice: number;
-	productType?: string;
+	productType?: TranslateResult;
 	selectorProduct: SelectorProduct;
 };
 
@@ -78,7 +78,9 @@ const UpgradeNudge = ( {
 			<div className="jetpack-product-card__summary">
 				<div className="jetpack-product-card__nudge-heading">
 					<h3>
-						{ translate( 'Upgrade to' ) }
+						{ translate( 'Upgrade to', {
+							comment: 'to be accompanied with a product subtype such as "Real-time"',
+						} ) }
 						<br />
 						<span className="jetpack-product-card__nudge-product-type">{ productType }</span>
 					</h3>
@@ -121,7 +123,9 @@ const UpgradeNudge = ( {
 				borderless
 				onClick={ onCancelClick }
 			>
-				{ translate( 'No thanks' ) }
+				{ translate( 'No thanks', {
+					comment: 'label of a button that closes an upgrade nudge/promotion',
+				} ) }
 			</Button>
 		</div>
 	);
