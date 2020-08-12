@@ -268,7 +268,11 @@ const ReauthRequired = createReactClass( {
 				<TwoFactorActions
 					twoFactorAuthType={ twoFactorAuthType }
 					onChange={ this.handleAuthSwitch }
-					isSmsSupported={ method === 'sms' || method === 'authenticator' }
+					isSmsSupported={
+						method === 'sms' ||
+						( method === 'authenticator' &&
+							this.props.twoStepAuthorization.data.two_step_sms_last_four.length )
+					}
 					isAuthenticatorSupported={ method !== 'sms' }
 					isSmsAllowed={ shouldEnableSmsButton }
 					isSecurityKeySupported={ isSecurityKeySupported }
