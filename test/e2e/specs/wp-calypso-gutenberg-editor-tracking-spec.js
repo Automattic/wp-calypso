@@ -67,6 +67,38 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			assert( eventsStack, 'tracking events stack missing from window._e2eEventsStack' );
 		} );
 
+		step( 'Tracks "wpcom_block_inserted" event', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
+
+			// Insert some Blocks
+			await gEditorComponent.addBlock( 'Heading' );
+			await gEditorComponent.addBlock( 'Columns' );
+			await gEditorComponent.addBlock( 'Columns' );
+
+			// Grab the events stack (only present on e2e test envs).
+			// see: https://github.com/Automattic/wp-calypso/pull/41329
+			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
+
+			// Assert that Insertion Events were tracked for core/columns
+			assert.strictEqual(
+				eventsStack.filter(
+					( [ eventName, eventData ] ) =>
+						eventName === 'wpcom_block_inserted' && eventData.block_name === 'core/columns'
+				).length,
+				2,
+				`"wpcom_block_inserted" editor tracking event failed to fire twice for core/columns`
+			);
+
+			assert.strictEqual(
+				eventsStack.some(
+					( [ eventName, eventData ] ) =>
+						eventName === 'wpcom_block_inserted' && eventData.block_name === 'core/heading'
+				),
+				true,
+				`"wpcom_block_inserted" editor tracking event failed to fire for core/heading`
+			);
+		} );
+
 		afterEach( async function () {
 			// Reset e2e tests events stack after each step in order
 			// that we have a test specific stack to assert against.
