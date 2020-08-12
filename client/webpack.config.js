@@ -318,7 +318,7 @@ const webpackConfig = {
 		shouldShowProgress && new IncrementalProgressPlugin(),
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
-			cacheDir: path.resolve( 'build', '.moment-timezone-data-webpack-plugin-cache', extraPath ),
+			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
 		} ),
 		new ConfigFlagPlugin( {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
