@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+
+window.React = React;
 
 /**
  * WordPress dependencies
@@ -10,19 +11,14 @@ import { v4 as uuidv4 } from 'uuid';
 import '@wordpress/core-data';
 import '@wordpress/viewport';
 import '@wordpress/notices';
+import '@wordpress/edit-post';
 
-import {
-	BlockEditorKeyboardShortcuts,
-	BlockEditorProvider,
-	BlockList,
-	BlockInspector,
-	WritingFlow,
-	ObserveTyping,
-} from '@wordpress/block-editor';
+import { BlockContextProvider, BlockEditorProvider } from '@wordpress/block-editor';
 import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
 import { registerCoreBlocks } from '@wordpress/block-library';
 import { parse } from '@wordpress/blocks';
 import '@wordpress/format-library';
+import { useDispatch } from '@wordpress/data';
 
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/block-editor/build-style/style.css';
@@ -40,6 +36,7 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import { Placeholder } from './placeholder';
 import './without-iframe.scss';
 import PerformanceTrackerStop from 'lib/performance-tracking/performance-tracker-stop';
+import Layout from '@wordpress/edit-post/src/components/layout';
 
 const getStatsPath = ( { postId } ) =>
 	postId
@@ -70,13 +67,17 @@ const getStatsProps = ( { postId, postType } ) =>
 	postId ? { post_type: postType, post_id: postId } : { post_type: postType };
 
 function Gutenberg( props ) {
-	const { postId, siteId } = props;
+	const { postId, siteId, postType } = props;
 	const [ post, setPost ] = useState( null );
 	const [ blocks, updateBlocks ] = useState( null );
 
+	const { toggleFeature } = useDispatch( 'core/edit-post' );
+	const { setupEditor } = useDispatch( 'core/editor' );
+
 	useEffect( () => {
 		registerCoreBlocks();
-	}, [] );
+		toggleFeature( 'fullscreenMode' );
+	}, [ toggleFeature ] );
 
 	useEffect( () => {
 		// retrieve the full post description including "raw" content to access block markup
@@ -88,10 +89,12 @@ function Gutenberg( props ) {
 			return;
 		}
 
+		setupEditor( post, {} );
+
 		const parsedBlocks = parse( post.content );
 		// give the blocks and initial fake clientId of their starting index.
 		updateBlocks( parsedBlocks );
-	}, [ post ] );
+	}, [ post, setupEditor ] );
 
 	if ( ! post || ! blocks ) {
 		return <Placeholder />;
@@ -112,26 +115,16 @@ function Gutenberg( props ) {
 
 				<SlotFillProvider>
 					<DropZoneProvider>
-						<BlockEditorProvider
-							// clientId="gutenberg-in-calypso"
-							value={ blocks }
-							onInput={ updateBlocks }
-							onChange={ updateBlocks }
-						>
-							<div className="without-iframe__sidebar">
-								<BlockInspector />
-							</div>
-							<div className="without-iframe__styles-wrapper">
-								<Popover.Slot name="block-toolbar" />
-								<BlockEditorKeyboardShortcuts />
-								<WritingFlow>
-									<ObserveTyping>
-										<BlockList />
-									</ObserveTyping>
-								</WritingFlow>
-							</div>
-							<Popover.Slot />
-						</BlockEditorProvider>
+						<BlockContextProvider value={ { postId, postType } }>
+							<BlockEditorProvider
+								value={ blocks }
+								onInput={ updateBlocks }
+								onChange={ updateBlocks }
+							>
+								<Layout />
+								<Popover.Slot />
+							</BlockEditorProvider>
+						</BlockContextProvider>
 					</DropZoneProvider>
 				</SlotFillProvider>
 			</div>

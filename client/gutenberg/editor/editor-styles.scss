@@ -1,4 +1,9 @@
 .without-iframe__styles-wrapper {
+	flex-grow: 1;
+	display: flex;
+	overflow: auto;
+	overscroll-behavior-y: none;
+
 	font-family: $editor-font;
 	font-size: $editor-font-size;
 	line-height: $editor-line-height;

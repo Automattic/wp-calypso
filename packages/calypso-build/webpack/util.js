@@ -75,6 +75,7 @@ const nodeModulesToTranspile = [
 	'@automattic/lasagna/',
 	'@automattic/react-virtualized/',
 	'@github/webauthn-json/',
+	'@wordpress/edit-post/',
 	'acorn-jsx/',
 	'chalk/',
 	'coblocks/',
