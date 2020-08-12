@@ -217,6 +217,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		name = name.charAt( 0 ).toUpperCase() + name.slice( 1 ); // Capitalize block name
 		let blockClass = kebabCase( name.toLowerCase() );
 		let hasChildBlocks = false;
+		let ariaLabel;
 		let prefix = '';
 		switch ( name ) {
 			case 'Instagram':
@@ -255,13 +256,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				break;
 		}
 
+		const selectorAriaLabel = ariaLabel || `Block: ${ name }`;
+
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 		const insertedBlockSelector = By.css(
 			`.block-editor-block-list__block.${
 				hasChildBlocks ? 'has-child-selected' : 'is-selected'
-			}[aria-label*='Block: ${ name }']`
+			}[aria-label*='${ selectorAriaLabel }']`
 		);
 
 		await this.openBlockInserterAndSearch( name );
