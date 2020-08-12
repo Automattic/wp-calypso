@@ -88,11 +88,12 @@
 }
 
 .acquire-intent__footer {
-	margin-top: 40px;
+	margin-top: 20px;
 	display: flex;
 	justify-content: flex-end;
 
 	@include break-small {
+		margin-top: 40px;
 		justify-content: flex-start;
 	}
 
