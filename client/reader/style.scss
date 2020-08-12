@@ -75,7 +75,7 @@
 	word-wrap: break-word;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 		line-height: 1.3;
 	}
 

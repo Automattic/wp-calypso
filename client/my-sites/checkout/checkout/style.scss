@@ -527,7 +527,7 @@
 			.checkout__payment-box-section-content {
 				> h6 {
 					color: var( --color-primary );
-					font-size: 18px;
+					font-size: $font-title-small;
 				}
 
 				> span {

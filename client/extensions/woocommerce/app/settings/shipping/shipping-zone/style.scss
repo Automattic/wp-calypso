@@ -265,7 +265,7 @@
 
 .shipping-zone__method-dialog-header {
 	padding-bottom: 16px;
-	font-size: 18px;
+	font-size: $font-title-small;
 	display: flex;
 	justify-content: space-between;
 	flex-shrink: 0;
@@ -319,7 +319,7 @@
 
 .shipping-zone__location-dialog-header {
 	padding: 0 0 24px;
-	font-size: 18px;
+	font-size: $font-title-small;
 }
 
 .shipping-zone__location-dialog-list-item {
