@@ -49,6 +49,10 @@ function updateEditor() {
 			return;
 		}
 		clearInterval( awaitSettingsBar );
+
+		const isMobile = window.innerWidth < 768;
+		const isNewLaunch = ! window?.calypsoifyGutenberg?.isNewLaunch;
+
 		const body = document.querySelector( 'body' );
 		body.classList.add( 'editor-gutenberg-launch__fse-overrides' );
 
@@ -64,16 +68,14 @@ function updateEditor() {
 		// Assert reason: We have an early return above with optional and falsy values. This should be a string.
 		const launchHref = window?.calypsoifyGutenberg?.frankenflowUrl as string;
 
-		// Temporary solution to test new launch flow
-		const isNewLaunch = launchHref === 'new-launch';
-
 		launchLink.href = launchHref;
 		launchLink.target = '_top';
 		launchLink.className = 'editor-gutenberg-launch__launch-button components-button is-primary';
 
-		const launchLabel = isNewLaunch
-			? __( 'Complete setup', 'full-site-editing' )
-			: __( 'Launch', 'full-site-editing' );
+		// On mobile there is not enough space to display "Complete setup" label.
+		const launchLabel = isMobile
+			? __( 'Launch', 'full-site-editing' )
+			: __( 'Complete setup', 'full-site-editing' );
 
 		const textContent = document.createTextNode( launchLabel );
 		launchLink.appendChild( textContent );
@@ -85,7 +87,7 @@ function updateEditor() {
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click' );
 
-			if ( isNewLaunch && ! ( window.innerWidth < 768 ) ) {
+			if ( isNewLaunch && ! isMobile ) {
 				// Open editor-site-launch sidebar
 				dispatch( 'automattic/launch' ).openSidebar();
 			} else {

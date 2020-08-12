@@ -333,20 +333,13 @@ class CalypsoifyIframe extends Component<
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			const isGutenboarding =
 				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
-
-			// Temporary solution for new launch testing
-			let frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
-
+			const frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
 			const isGutenboardingNewLaunch = config.isEnabled( 'gutenboarding/new-launch' );
-			// END Temporary solution for new launch testing
-
-			if ( isGutenboardingNewLaunch ) {
-				frankenflowUrl = 'new-launch';
-			}
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				frankenflowUrl,
+				isNewLaunch: isGutenboardingNewLaunch,
 			} );
 		}
 
