@@ -37,6 +37,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 	};
 
 	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
+		confirmDomainSelection();
 		setDomain( suggestion );
 		if ( plan?.isFree ) {
 			unsetPlan();
