@@ -208,6 +208,7 @@ function useAddProductFromSlug( {
 		);
 		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
 	}, [
+		isPrivate,
 		plans,
 		products,
 		originalPurchaseId,
