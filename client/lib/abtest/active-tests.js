@@ -253,4 +253,14 @@ export default {
 		localeTargets: 'any',
 		localeExceptions: [ 'en', 'es' ],
 	},
+	existingUsersGutenbergOnboard: {
+		datestamp: '20200812',
+		variations: {
+			gutenberg: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: [ 'en' ],
+	},
 };

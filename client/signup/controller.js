@@ -63,6 +63,14 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
+const gutenbergRedirect = function () {
+	if ( 'verticals' === abtest( 'verticalsOnGutenboarding' ) ) {
+		window.location.replace( window.location.origin + '/new?vertical' + window.location.search );
+	} else {
+		window.location.replace( window.location.origin + '/new' + window.location.search );
+	}
+};
+
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -109,19 +117,18 @@ export default {
 
 			next();
 		} else {
+			const userLoggedIn = isUserLoggedIn( context.store.getState() );
+			if ( userLoggedIn && 'gutenberg' === abtest( 'existingUsersGutenbergOnboard' ) ) {
+				gutenbergRedirect();
+			}
+
 			waitForData( {
 				geo: () => requestGeoLocation(),
 			} )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						if ( 'verticals' === abtest( 'verticalsOnGutenboarding' ) ) {
-							window.location.replace(
-								window.location.origin + '/new?vertical&' + window.location.search
-							);
-						} else {
-							window.location.replace( window.location.origin + '/new' + window.location.search );
-						}
+						gutenbergRedirect();
 					} else if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
