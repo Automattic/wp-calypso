@@ -32,6 +32,20 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
+function getEventsFiredForBlock( eventsStack, event, block ) {
+	if ( ! eventsStack || ! event || ! block ) {
+		return false;
+	}
+
+	return eventsStack.filter(
+		( [ eventName, eventData ] ) => event === eventName && eventData.block_name === block
+	);
+}
+
+function getTotalEventsFiredForBlock( eventsStack, event, block ) {
+	return getEventsFiredForBlock( eventsStack, event, block ).length;
+}
+
 describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
@@ -61,8 +75,8 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 		} );
 
 		step( 'Test for presence of e2e specific tracking events stack on global', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
-
 			// Check evaluates to truthy
 			assert( eventsStack, 'tracking events stack missing from window._e2eEventsStack' );
 		} );
@@ -81,20 +95,14 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 
 			// Assert that Insertion Events were tracked for core/columns
 			assert.strictEqual(
-				eventsStack.filter(
-					( [ eventName, eventData ] ) =>
-						eventName === 'wpcom_block_inserted' && eventData.block_name === 'core/columns'
-				).length,
+				getTotalEventsFiredForBlock( eventsStack, 'wpcom_block_inserted', 'core/columns' ),
 				2,
 				`"wpcom_block_inserted" editor tracking event failed to fire twice for core/columns`
 			);
 
 			assert.strictEqual(
-				eventsStack.some(
-					( [ eventName, eventData ] ) =>
-						eventName === 'wpcom_block_inserted' && eventData.block_name === 'core/heading'
-				),
-				true,
+				getTotalEventsFiredForBlock( eventsStack, 'wpcom_block_inserted', 'core/heading' ),
+				1,
 				`"wpcom_block_inserted" editor tracking event failed to fire for core/heading`
 			);
 		} );
