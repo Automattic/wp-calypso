@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
+import { useViewportMatch } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -84,8 +85,11 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		setIsTouched( true );
 	};
 
+	const isMobile = useViewportMatch( 'small', '<' );
+
 	// translators: label for site title input in Gutenboarding
-	const inputLabel = showVerticalInput ? __( "It's called" ) : __( 'My site is called' );
+	const inputLabel =
+		showVerticalInput && ! isMobile ? __( "It's called" ) : __( 'My site is called' );
 
 	const placeHolder = useTyper( siteTitleExamples, ! siteTitle, {
 		delayBetweenCharacters: 70,

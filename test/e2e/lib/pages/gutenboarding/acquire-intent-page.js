@@ -20,12 +20,12 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	}
 
 	async goToNextStep() {
-		const nextButtonSelector = By.css( '.acquire-intent__question-skip.is-primary' );
+		const nextButtonSelector = By.css( '.action-buttons__next' );
 		return await driverHelper.clickWhenClickable( this.driver, nextButtonSelector );
 	}
 
 	async skipStep() {
-		const skipButtonSelector = By.css( '.acquire-intent__question-skip' );
+		const skipButtonSelector = By.css( '.action-buttons__skip' );
 		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
 	}
 }

@@ -195,7 +195,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		>
 			<label htmlFor="vertical-input">{ __( 'My site is about' ) } </label>
 			<span className="vertical-select__suggestions-wrapper">
-				{ ! isMobile && <span className="vertical-select__whitespace"></span> }
 				<AcquireIntentTextInput
 					placeholder={ animatedPlaceholder }
 					value={ textValue }
