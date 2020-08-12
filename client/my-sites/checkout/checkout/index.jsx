@@ -545,7 +545,12 @@ export class Checkout extends React.Component {
 			selectedSiteSlug,
 			transaction: { step: { data: stepResult = null } = {} } = {},
 			isJetpackNotAtomic,
+			returnToHome,
 		} = this.props;
+
+		if ( returnToHome ) {
+			return `/home/${ selectedSiteSlug }`;
+		}
 
 		const adminUrl = get( selectedSite, [ 'options', 'admin_url' ] );
 
