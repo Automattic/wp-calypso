@@ -58,6 +58,7 @@
 
 .vertical-select__suggestions {
 	position: absolute;
+	left: -16px;
 	min-height: 300px;
 	max-height: calc( 100% - 50px );
 	overflow: auto;
@@ -65,6 +66,10 @@
 	@include break-small {
 		width: 250px;
 		max-height: 400px;
+	}
+
+	@include break-medium {
+		left: 0;
 	}
 }
 
