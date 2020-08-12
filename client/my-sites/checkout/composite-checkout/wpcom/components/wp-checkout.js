@@ -296,7 +296,10 @@ export default function WPCheckout( {
 					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
 			</CheckoutSummaryAreaUI>
-			<CheckoutStepArea submitButtonHeader={ <SubmitButtonHeader /> }>
+			<CheckoutStepArea
+				submitButtonHeader={ <SubmitButtonHeader /> }
+				disableSubmitButton={ isOrderReviewActive }
+			>
 				{ infoMessage && (
 					<CheckoutNoticeWrapper>
 						<Notice status="is-info" showDismiss={ false }>
