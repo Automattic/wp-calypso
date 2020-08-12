@@ -150,14 +150,6 @@ function load_common_module() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
 
 /**
- * Sigh: load_editor_domain_picker
- */
-function load_editor_domain_picker() {
-	require_once __DIR__ . '/editor-domain-picker/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_domain_picker' );
-
-/**
  * Sigh: load_editor_plans_grid
  */
 function load_editor_plans_grid() {

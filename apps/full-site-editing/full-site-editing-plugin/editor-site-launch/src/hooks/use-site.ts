@@ -23,6 +23,7 @@ export function useSite() {
 	return {
 		isFreePlan: site?.plan.is_free,
 		launchStatus,
+		siteName: site?.name,
 		currentDomainName: site?.URL && new URL( site?.URL ).hostname,
 	};
 }

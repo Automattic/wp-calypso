@@ -2,29 +2,51 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import DomainPicker from '@automattic/domain-picker';
+import type { DomainSuggestions } from '@automattic/data-stores';
 import { Title, SubTitle, ActionButtons, NextButton } from '@automattic/onboarding';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../../stores';
-import { LaunchStep } from '../../../../common/data-stores/launch/data';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import DomainPickerFSE from '../../../../editor-domain-picker/src/domain-picker-fse';
+import { LAUNCH_STORE } from '../../stores';
+import { useSite } from '../../hooks';
+import { FLOW_ID } from '../../constants';
 import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
-	const { setStepComplete } = useDispatch( LAUNCH_STORE );
+	const { domain, domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
+	const { siteName, currentDomainName } = useSite();
 
-	const handleSelect = () => {
-		setStepComplete( LaunchStep.Domain );
-	};
+	const { setDomain, unsetDomain, setDomainSearch, setStepComplete } = useDispatch( LAUNCH_STORE );
+
+	const search = ( domainSearch.trim() || siteName ) ?? '';
 
 	const handleNext = () => {
 		setStepComplete( LaunchStep.Domain );
 		onNextStep?.();
+	};
+
+	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
+		setDomain( suggestion );
+		setStepComplete( LaunchStep.Domain );
+	};
+
+	const handleExistingSubdomainSelect = () => {
+		unsetDomain();
+	};
+
+	const trackDomainSearchInteraction = ( query: string ) => {
+		recordTracksEvent( 'calypso_newsite_domain_search_blur', {
+			flow: FLOW_ID,
+			query,
+			where: 'editor_domain_modal',
+		} );
 	};
 
 	return (
@@ -41,7 +63,18 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 				</ActionButtons>
 			</div>
 			<div className="nux-launch-step__body">
-				<DomainPickerFSE onSelect={ handleSelect } />
+				<DomainPicker
+					analyticsFlowId={ FLOW_ID }
+					initialDomainSearch={ search }
+					onSetDomainSearch={ setDomainSearch }
+					onDomainSearchBlur={ trackDomainSearchInteraction }
+					currentDomain={ domain?.domain_name || currentDomainName }
+					existingSubdomain={ currentDomainName }
+					onDomainSelect={ handleDomainSelect }
+					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
+					analyticsUiAlgo="editor_domain_modal"
+					segregateFreeAndPaid
+				/>
 			</div>
 		</LaunchStepContainer>
 	);
