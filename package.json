@@ -370,7 +370,7 @@
 		"vfile-message": "^2.0.4",
 		"webpack": "^4.44.1",
 		"webpack-bundle-analyzer": "^3.7.0",
-		"webpack-cli": "^3.3.11",
+		"webpack-cli": "^3.3.12",
 		"webpack-dev-middleware": "^3.7.2",
 		"webpack-dev-server": "^3.10.3",
 		"webpack-hot-middleware": "^2.25.0",
