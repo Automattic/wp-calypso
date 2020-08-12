@@ -235,10 +235,22 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
 	return itemToSelectorProduct( item );
 }
 
-export function getRealtimeFromDaily( productSlug: JetpackDailyPlan ): JetpackRealtimePlan | null {
-	return DAILY_PLAN_TO_REALTIME_PLAN[ productSlug ];
+/**
+ * Returns an item slug that represents the real-time version of a daily one.
+ *
+ * @param slug string
+ * @returns string | null
+ */
+export function getRealtimeFromDaily( slug: JetpackDailyPlan ): JetpackRealtimePlan | null {
+	return DAILY_PLAN_TO_REALTIME_PLAN[ slug ];
 }
 
-export function isUpgradeable( productSlug: string ): boolean {
-	return UPGRADEABLE_WITH_NUDGE.includes( productSlug );
+/**
+ * Returns wheter an item is upgradeable by a nudge.
+ *
+ * @param slug string
+ * @returns boolean | null
+ */
+export function isUpgradeable( slug: string ): boolean {
+	return UPGRADEABLE_WITH_NUDGE.includes( slug );
 }
