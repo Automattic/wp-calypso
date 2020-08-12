@@ -1,20 +1,14 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
 import { translate } from 'i18n-calypso';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import {
-	durationToText,
-	slugToItem,
-	itemToSelectorProduct,
-	productButtonLabel,
-	slugIsSelectorProductSlug,
-} from '../utils';
+import { durationToText, slugToItem, itemToSelectorProduct, productButtonLabel } from '../utils';
 import {
 	PRODUCTS_TYPES,
 	SELECTOR_PLANS,
@@ -72,7 +66,7 @@ const PlanComponent = ( {
 			onButtonClick={ () => onClick( plan ) }
 			features={ { items: [] } }
 			originalPrice={ price }
-			withStartingPrice={ slugIsSelectorProductSlug( plan.productSlug ) }
+			withStartingPrice={ Array.isArray( plan.subtypes ) && plan.subtypes.length > 0 }
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
 		/>

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
 import { translate } from 'i18n-calypso';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -14,7 +14,6 @@ import {
 	itemToSelectorProduct,
 	productButtonLabel,
 	getProductPrices,
-	slugIsSelectorProductSlug,
 } from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import { isProductsListFetching, getAvailableProductsList } from 'state/products-list/selectors';
@@ -56,7 +55,7 @@ const ProductComponent = ( {
 		features={ { items: [] } }
 		discountedPrice={ product.discountCost }
 		originalPrice={ product.cost || 0 }
-		withStartingPrice={ slugIsSelectorProductSlug( product.productSlug ) }
+		withStartingPrice={ Array.isArray( product.subtypes ) && product.subtypes.length > 0 }
 		isOwned={ product.owned }
 	/>
 );
