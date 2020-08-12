@@ -315,3 +315,11 @@ function load_wpcom_block_editor_sidebar() {
 	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
+
+/**
+ * Coming soon
+ */
+function load_coming_soon() {
+	require_once __DIR__ . '/coming-soon/coming-soon.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
