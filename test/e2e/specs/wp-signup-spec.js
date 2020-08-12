@@ -17,7 +17,7 @@ import StartPage from '../lib/pages/signup/start-page.js';
 import JetpackAddNewSitePage from '../lib/pages/signup/jetpack-add-new-site-page';
 
 import AboutPage from '../lib/pages/signup/about-page.js';
-import CustomerHomePage from '../lib/pages/customer-home-page'
+import CustomerHomePage from '../lib/pages/customer-home-page';
 import DomainFirstPage from '../lib/pages/signup/domain-first-page';
 import ReaderLandingPage from '../lib/pages/signup/reader-landing-page';
 import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page.js';
@@ -182,7 +182,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			try {
 				await CustomerHomePage.Expect( driver );
 			} catch ( e ) {
-				await ReaderPage.Expect( driver )
+				await ReaderPage.Expect( driver );
 			}
 		} );
 
@@ -464,6 +464,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can enter and submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
@@ -599,6 +600,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
@@ -708,6 +710,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
@@ -844,6 +847,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can enter/submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			// No need to fill out contact details here as they already have been completed
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
@@ -1035,6 +1039,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can enter/submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			// No need to fill out contact details here as they already have been completed
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
@@ -1252,6 +1257,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
