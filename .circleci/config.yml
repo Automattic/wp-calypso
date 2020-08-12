@@ -657,6 +657,7 @@ jobs:
       DETECT_CHROMEDRIVER_VERSION: 'false'
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       NODE_OPTIONS: --max-old-space-size=6144
+      YARN_CACHE_FOLDER: ~/.cache/yarn
     steps:
       - checkout
       - when:
@@ -710,11 +711,11 @@ jobs:
             if [ -f packages-cache-restored ]; then
               export DISABLEPOSTINSTALL=1
             fi
-            yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+            yarn install --frozen-lockfile
             echo "$(cat packages-hash)" > packages-cache-restored
       - save_cache: *desktop-save-yarn-cache
       - run:
-          name: Build desktop and calypso source
+          name: Build Desktop and Calypso source
           no_output_timeout: 15m
           command: |
             set +e
