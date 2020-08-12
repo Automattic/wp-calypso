@@ -9,6 +9,8 @@ import { get } from 'lodash';
 import getSelectedEditor from 'state/selectors/get-selected-editor';
 import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
 
+import 'state/gutenberg-opt-in-out/init';
+
 export const isGutenbergOptInEnabled = ( state, siteId ) => {
 	return (
 		get( state, [ 'gutenbergOptInOut', siteId, 'optIn' ], false ) &&
