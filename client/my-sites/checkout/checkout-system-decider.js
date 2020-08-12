@@ -39,7 +39,6 @@ import {
 	isPlanIncludingSiteBackup,
 	isBackupProductIncludedInSitePlan,
 } from 'state/sites/products/conflicts';
-import { abtest } from 'lib/abtest';
 import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -357,12 +356,6 @@ function getCheckoutVariant(
 	if ( isLoggedOutCart || 'no-user' === urlParams.get( 'cart' ) ) {
 		debug( 'shouldShowCompositeCheckout true' );
 		return 'composite-checkout';
-	}
-
-	// Add remaining users to new AB test with 10% holdout
-	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
-		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );
-		return 'control-variant';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );
