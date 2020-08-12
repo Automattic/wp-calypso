@@ -2,8 +2,7 @@
 @import './variables';
 
 @mixin onboarding-font-recoleta {
-	font-family: $brand-serif;
-	font-weight: 400;
+	@extend .wp-brand-font;
 	letter-spacing: -0.4px;
 }
 
