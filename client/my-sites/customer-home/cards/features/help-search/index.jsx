@@ -37,6 +37,8 @@ const HELP_COMPONENT_LOCATION = 'customer-home';
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
+const getResultLink = ( result ) => amendYouTubeLink( get( result, RESULT_LINK ) );
+
 const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDialog, track } ) => {
 	const translate = useTranslate();
 
@@ -49,21 +51,12 @@ const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDial
 		return () => showInlineHelpUI();
 	}, [ hideInlineHelpUI, showInlineHelpUI ] );
 
-	const openResultView = ( event, result ) => {
-		event.preventDefault();
-
-		// Edge case if no search result is selected
-		if ( ! result ) {
-			return;
-		}
-
-		// Grab properties using constants for safety
-		const resultPostId = get( result, RESULT_POST_ID );
-		const resultLink = amendYouTubeLink( get( result, RESULT_LINK ) );
+	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
+	const trackResultView = ( result ) => {
+		const resultLink = getResultLink( result );
 		const type = get( result, RESULT_TYPE, RESULT_ARTICLE );
 		const tour = get( result, RESULT_TOUR );
 
-		// Create and send tracking event
 		const tracksData = omitBy(
 			{
 				search_query: searchQuery,
@@ -74,8 +67,19 @@ const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDial
 			isUndefined
 		);
 		track( `calypso_inlinehelp_${ type }_open`, tracksData );
+	};
 
-		// Show the article
+	// openResultView: Given a result, open that result, and use trackResultView() to track it.
+	const openResultView = ( event, result ) => {
+		event.preventDefault();
+		if ( ! result ) {
+			return;
+		}
+
+		trackResultView( result );
+
+		const resultPostId = get( result, RESULT_POST_ID );
+		const resultLink = getResultLink( result );
 		openDialog( { postId: resultPostId, actionUrl: resultLink } );
 	};
 
