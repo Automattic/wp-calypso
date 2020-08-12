@@ -3,12 +3,13 @@
  */
 import { useTranslate } from 'i18n-calypso';
 import { isArray } from 'lodash';
-import React, { FunctionComponent } from 'react';
+import React, { ReactElement, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
+import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getSitePurchases } from 'state/purchases/selectors';
 import type { SiteProduct } from 'state/sites/selectors/get-site-products';
 
@@ -37,14 +38,12 @@ const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selec
 		<div className="checkout__duplicate-notice">
 			<p className="checkout__duplicate-notice-message">
 				{ translate(
-					'You currently own %(product)s. The plan you are about to purchase also includes this product. Consider removing your {{link}}%(product)s subscription{{/link}}.',
+					'You currently own {{product/}}. The plan you are about to purchase also includes this product. Consider removing your {{link}}{{product/}} subscription{{/link}}.',
 					{
-						args: {
-							product: product.productName,
-						},
 						comment: 'The `product` variable refers to the product the customer owns already',
 						components: {
 							link: <a href={ subscriptionUrl } />,
+							product: getJetpackProductDisplayName( product ) as ReactElement,
 						},
 					}
 				) }
