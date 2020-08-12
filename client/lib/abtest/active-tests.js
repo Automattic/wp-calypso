@@ -241,6 +241,16 @@ export default {
 			noverticals: 50,
 		},
 		defaultVariation: 'noverticals',
-		allowExistingUsers: true,
+	},
+	reskinSignupFlow: {
+		datestamp: '20200812',
+		variations: {
+			reskinned: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		localeTargets: 'any',
+		localeExceptions: [ 'en', 'es' ],
 	},
 };
