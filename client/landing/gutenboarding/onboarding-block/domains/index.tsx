@@ -43,6 +43,8 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { goBack, goNext } = useStepNavigation();
 
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+
+	// using the selector will get the explicit domain search query with site title and vertical as fallbacks
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
 
 	const { setDomain, setDomainSearch, setHasUsedDomainsStep } = useDispatch( ONBOARD_STORE );
