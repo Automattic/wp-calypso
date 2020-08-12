@@ -67,6 +67,10 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			assert( eventsStack, 'tracking events stack missing from window._e2eEventsStack' );
 		} );
 
-		after( async function () {} );
+		afterEach( async function () {
+			// Reset e2e tests events stack after each step in order
+			// that we have a test specific stack to assert against.
+			await driver.executeScript( `window._e2eEventsStack = [];` );
+		} );
 	} );
 } );
