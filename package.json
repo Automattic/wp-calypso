@@ -93,7 +93,7 @@
 		"clean:packages": "npx lerna run clean --stream",
 		"clean:public": "npx rimraf public",
 		"clean:translations": "npx rimraf build/strings calypso-strings.pot chunks-map.*.json",
-		"distclean": "yarn run clean && npx rimraf node_modules client/node_modules desktop/node_modules apps/*/node_modules packages/*/node_modules test/e2e/node_modules .tsc-cache vendor",
+		"distclean": "yarn run clean && npx rimraf node_modules client/node_modules desktop/node_modules apps/*/node_modules packages/*/node_modules test/e2e/node_modules .tsc-cache .cache vendor",
 		"docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
 		"docker-jetpack-cloud": "docker run -it --env CALYPSO_ENV=jetpack-cloud-production --name wp-calypso --rm -p 80:3000 wp-calypso",
 		"download-languages-meta": "node bin/download-languages-meta.js",
