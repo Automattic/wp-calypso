@@ -51,7 +51,7 @@ function updateEditor() {
 		clearInterval( awaitSettingsBar );
 
 		const isMobile = window.innerWidth < 768;
-		const isNewLaunch = ! window?.calypsoifyGutenberg?.isNewLaunch;
+		const isNewLaunch = window?.calypsoifyGutenberg?.isNewLaunch;
 
 		const body = document.querySelector( 'body' );
 		body.classList.add( 'editor-gutenberg-launch__fse-overrides' );
