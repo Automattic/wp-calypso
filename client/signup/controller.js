@@ -65,7 +65,11 @@ const removeWhiteBackground = function () {
 
 const gutenbergRedirect = function () {
 	if ( 'verticals' === abtest( 'verticalsOnGutenboarding' ) ) {
-		window.location.replace( window.location.origin + '/new?vertical' + window.location.search );
+		window.location.replace(
+			`${ window.location.origin }/new${
+				window.location.search ? window.location.search + '&vertical' : '?vertical'
+			}`
+		);
 	} else {
 		window.location.replace( window.location.origin + '/new' + window.location.search );
 	}
