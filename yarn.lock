@@ -5050,33 +5050,7 @@
     tinycolor2 "^1.4.1"
     uuid "^7.0.2"
 
-"@wordpress/compose@*", "@wordpress/compose@1.x.x - 3.x.x", "@wordpress/compose@^3.15.0", "@wordpress/compose@^3.9.0":
-  version "3.15.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/compose/-/compose-3.15.0.tgz#db6faacddc18c23baf6deec0ff4445c804f3afa6"
-  integrity sha512-v174JYkPLECIfS5ebaKPengCG5FTyi9Ie6r6Mn2qJYsYXegvEdqCSreLsA3JViPvqC3Shx8MHnXBraz+kqYqQQ==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    "@wordpress/element" "^2.14.0"
-    "@wordpress/is-shallow-equal" "^2.0.0"
-    lodash "^4.17.15"
-    mousetrap "^1.6.2"
-    react-resize-aware "^3.0.0"
-
-"@wordpress/compose@^3.19.0":
-  version "3.19.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/compose/-/compose-3.19.0.tgz#243fad68577991c7ac4e4cc9d4ff2b64f5a69769"
-  integrity sha512-MB/VPJJhyU/GeAeN3dRvUbkaWEKGlrbZvz/cTzF+qf27rtK7PmMyOQIGlTiQtw7wE5nhcWIifTzhyofodTlQiA==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    "@wordpress/element" "^2.16.0"
-    "@wordpress/is-shallow-equal" "^2.1.0"
-    "@wordpress/priority-queue" "^1.7.0"
-    clipboard "^2.0.1"
-    lodash "^4.17.15"
-    mousetrap "^1.6.5"
-    react-resize-aware "^3.0.1"
-
-"@wordpress/compose@^3.19.3":
+"@wordpress/compose@*", "@wordpress/compose@1.x.x - 3.x.x", "@wordpress/compose@^3.15.0", "@wordpress/compose@^3.19.0", "@wordpress/compose@^3.19.3", "@wordpress/compose@^3.9.0":
   version "3.19.3"
   resolved "https://registry.yarnpkg.com/@wordpress/compose/-/compose-3.19.3.tgz#5e06b2bbfd034a79f97068dc96430060d64aa2cb"
   integrity sha512-r00b7+tMn5+k5gdIjKi+tjAvcPBpNel9BPJrDQMZI4cc97BrOGHoTr2ZEiZ1yDB4FlV7vwQxPuc8ToS48DuTPA==
@@ -19382,7 +19356,7 @@ morgan@^1.9.1:
     on-finished "~2.3.0"
     on-headers "~1.0.1"
 
-mousetrap@^1.6.2, mousetrap@^1.6.5:
+mousetrap@^1.6.5:
   version "1.6.5"
   resolved "https://registry.yarnpkg.com/mousetrap/-/mousetrap-1.6.5.tgz#8a766d8c272b08393d5f56074e0b5ec183485bf9"
   integrity sha512-QNo4kEepaIBwiT8CDhP98umTetp+JNfQYBWvC1pc6/OAibuXtRcxZ58Qz8skvEHYvURne/7R8T5VoOI7rDsEUA==
@@ -23132,7 +23106,7 @@ react-redux@^7.2.0:
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
-react-resize-aware@^3.0.0, react-resize-aware@^3.0.1:
+react-resize-aware@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/react-resize-aware/-/react-resize-aware-3.0.1.tgz#39d6f264ad3b85dec461a5e04d9760860d14f44c"
   integrity sha512-HdPzwdcAv+BMFQEgyacFB40G4IxNMO7tSqaMjbnAouot8LXi5/Rx3/Fv+LU2cQekqiivE1LF4sGnwQ7SnoHrpg==
