@@ -31,7 +31,7 @@ export function recordSignupComplete(
 	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, isRegistrationlessCheckoutUser },
 	now
 ) {
-	const isNewSite = !! siteId;
+	const isNewSite = !! ( siteId || isRegistrationlessCheckoutUser );
 
 	if ( ! now ) {
 		// Delay using the analytics localStorage queue.
