@@ -100,33 +100,18 @@
 		margin-top: 40px;
 		justify-content: flex-start;
 	}
-
-	.components-button.acquire-intent__skip-vertical.is-link {
-		padding: 0;
-		color: $dark-gray-600;
-	}
-
-	// Applies to both
-	// - .components-button.acquire-intent__skip-vertical
-	// - .components-button.acquire-intent__question-skip
-	.components-button.is-secondary {
-		color: var( --studio-gray-50 );
-		box-shadow: inset 0 0 0 1px var( --studio-gray-50 );
-
-		&:active,
-		&:hover {
-			color: var( --studio-gray-60 );
-			box-shadow: inset 0 0 0 1px var( --studio-gray-60 );
-		}
-
-		&:focus {
-			color: var( --studio-gray-60 );
-			box-shadow: inset 0 0 0 1px #fff, 0 0 0 1.5px var( --highlightColor );
-		}
-	}
 }
 
 .acquire-intent__mobile-vertical-input {
 	display: flex;
 	flex-wrap: wrap;
+}
+
+.acquire-intent__mobile-next-arrow,
+.acquire-intent__mobile-back-arrow {
+	cursor: pointer;
+}
+
+.acquire-intent__mobile-back-arrow {
+	margin-bottom: 20px;
 }
