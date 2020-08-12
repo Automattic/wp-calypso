@@ -16,7 +16,7 @@ import {
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitEbanxCardTransaction,
-	submitStripeRedirectTransaction,
+	submitRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
 	submitExistingCardPayment,
@@ -56,7 +56,7 @@ export function genericRedirectProcessor(
 		pathname,
 		query: cancelUrlQuery,
 	} );
-	const pending = submitStripeRedirectTransaction(
+	const pending = submitRedirectTransaction(
 		paymentMethodId,
 		{
 			...submitData,
