@@ -208,14 +208,14 @@ const webpackConfig = {
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
-				cacheDirectory: path.resolve( 'build', '.babel-client-cache', extraPath ),
+				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
 				cacheIdentifier,
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
-				cacheDirectory: path.resolve( 'build', '.babel-client-cache', extraPath ),
+				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
 				cacheIdentifier,
 				include: shouldTranspileDependency,
 			} ),

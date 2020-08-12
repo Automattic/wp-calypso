@@ -160,21 +160,6 @@ references:
     paths:
       - ~/.cache/yarn
 
-  # Babel cache
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-babel-client-cache: &restore-babel-client-cache
-    name: Restore Babel Client Cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
-  save-babel-client-cache: &save-babel-client-cache
-    name: Save Babel Client Cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - 'build/.babel-client-cache'
-
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
     command: |
