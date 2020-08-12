@@ -32,9 +32,14 @@ import type {
 	SelectorProductSlug,
 	AvailableProductData,
 	SelectorProductCost,
+	DurationString,
 } from './types';
 import type { JetpackPlanSlugs, Plan } from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
+
+/**
+ * Duration utils.
+ */
 
 export function stringToDuration( duration?: string ): Duration | undefined {
 	if ( duration === undefined ) {
@@ -46,11 +51,23 @@ export function stringToDuration( duration?: string ): Duration | undefined {
 	return TERM_ANNUALLY;
 }
 
+export function stringToDurationString( duration?: string ): DurationString {
+	return duration !== 'monthly' ? 'annual' : 'monthly';
+}
+
+export function durationToString( duration: Duration ): DurationString {
+	return duration === TERM_MONTHLY ? 'monthly' : 'annual';
+}
+
 export function durationToText( duration: Duration ): TranslateResult {
 	return duration === TERM_MONTHLY
 		? translate( 'per month, billed monthly' )
 		: translate( 'per year' );
 }
+
+/**
+ * Product UI utils.
+ */
 
 export function productButtonLabel( product: SelectorProduct ): TranslateResult {
 	return (
@@ -81,6 +98,10 @@ export function getProductPrices(
 	};
 }
 
+/**
+ * Type guards.
+ */
+
 function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug {
 	return PRODUCTS_WITH_OPTIONS.includes( slug as typeof PRODUCTS_WITH_OPTIONS[ number ] );
 }
@@ -90,6 +111,10 @@ function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
 	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
 }
+
+/**
+ * Product parsing and data normalization utils.
+ */
 
 export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null {
 	if ( slugIsSelectorProductSlug( slug ) ) {
@@ -162,6 +187,7 @@ export function itemToSelectorProduct(
 			} ),
 			term: item.term,
 			features: [],
+			subtypes: [],
 		};
 	} else if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();
@@ -169,16 +195,32 @@ export function itemToSelectorProduct(
 		if ( item.term === TERM_ANNUALLY ) {
 			monthlyProductSlug = getMonthlyPlanByYearly( productSlug );
 		}
+		const iconAppend = JETPACK_RESET_PLANS.includes( productSlug ) ? '_v2' : '';
 		return {
 			productSlug,
-			iconSlug: productSlug,
+			iconSlug: productSlug + iconAppend,
 			displayName: item.getTitle(),
 			tagline: get( item, 'getTagline', () => '' )(),
 			description: item.getDescription(),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: [],
+			subtypes: [],
 		};
 	}
 	return null;
+}
+
+/**
+ * Converts an item slug to a SelectorProduct item type.
+ *
+ * @param slug string
+ * @returns SelectorProduct | null
+ */
+export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
+	const item = slugToItem( slug );
+	if ( ! item ) {
+		return null;
+	}
+	return itemToSelectorProduct( item );
 }

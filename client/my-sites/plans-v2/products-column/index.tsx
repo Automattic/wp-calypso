@@ -51,7 +51,7 @@ const ProductComponent = ( {
 		currencyCode={ currencyCode }
 		billingTimeFrame={ durationToText( product.term ) }
 		buttonLabel={ productButtonLabel( product ) }
-		onButtonClick={ () => onClick( product.productSlug ) }
+		onButtonClick={ () => onClick( product ) }
 		features={ { items: [] } }
 		discountedPrice={ product.discountCost }
 		originalPrice={ product.cost || 0 }

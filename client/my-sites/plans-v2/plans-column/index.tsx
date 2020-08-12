@@ -63,7 +63,7 @@ const PlanComponent = ( {
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( plan.term ) }
 			buttonLabel={ productButtonLabel( plan ) }
-			onButtonClick={ () => onClick( plan.productSlug ) }
+			onButtonClick={ () => onClick( plan ) }
 			features={ { items: [] } }
 			originalPrice={ price }
 			isOwned={ plan.owned }
