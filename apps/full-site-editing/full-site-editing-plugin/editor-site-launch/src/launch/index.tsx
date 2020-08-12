@@ -25,6 +25,9 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
+	const firstIncompleteStep = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getFirstIncompleteStep()
+	);
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
@@ -56,6 +59,12 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	};
 
 	const CurrentLaunchStep = LaunchStepComponents[ currentStep ];
+
+	React.useEffect( () => {
+		if ( firstIncompleteStep && firstIncompleteStep !== LaunchStep.Name ) {
+			setStep( firstIncompleteStep );
+		}
+	}, [] );
 
 	return (
 		<div className="nux-launch">

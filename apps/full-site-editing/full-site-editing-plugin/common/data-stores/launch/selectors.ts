@@ -47,3 +47,7 @@ export const isFlowCompleted = ( state: State ) =>
 // Check if at least one step is completed
 export const isFlowStarted = ( state: State ) =>
 	LaunchSequence.some( ( step ) => isStepCompleted( state, step ) );
+
+// Get first uncompleted step
+export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefined =>
+	LaunchSequence.find( ( step ) => ! isStepCompleted( state, step ) );
