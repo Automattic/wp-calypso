@@ -61,7 +61,6 @@ export interface SelectorProduct extends SelectorProductCost {
 	buttonLabel?: TranslateResult;
 	features: Features;
 	subtypes: string[];
-	owned?: boolean;
 	legacy?: boolean;
 }
 
