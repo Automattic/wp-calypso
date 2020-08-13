@@ -12,6 +12,7 @@ import { isEligibleForRenewalAtOldRate } from '../utils';
 import ExternalLink from 'components/external-link';
 import { getPlan, getYearlyPlanByMonthly } from 'lib/plans';
 import { isMonthly } from 'lib/plans/constants';
+import { isJetpackPlanSlug, getJetpackProductDisplayNameBySlug } from 'lib/products-values';
 
 /**
  * Type dependencies
@@ -58,7 +59,9 @@ const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase } ) => {
 								currentPlan: getPlan( purchase.productSlug ).getTitle(),
 							},
 							components: {
-								recommendedPlan: getPlan( recommendedSlug ).getTitle(),
+								recommendedPlan: isJetpackPlanSlug( recommendedSlug )
+									? getPlan( recommendedSlug ).getTitle()
+									: getJetpackProductDisplayNameBySlug( recommendedSlug ),
 							},
 						}
 					) }
