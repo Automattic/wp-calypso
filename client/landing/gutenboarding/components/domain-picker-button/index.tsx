@@ -24,7 +24,7 @@ import './style.scss';
 const DomainPickerButton: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
 	const makePath = usePath();
-	const { domain, domainSearch, siteTitle, siteVertical } = useSelect( ( select ) =>
+	const { domain, domainSearch, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 
@@ -50,14 +50,14 @@ const DomainPickerButton: React.FunctionComponent = () => {
 	const isLoadingSuggestion = suggestionQuery && ! domainSuggestion && ! domain;
 
 	// Show slide-in animation when a domain suggestion is loaded only if the user didn't interacted with Domain Picker
-	const showAnimation = ! domain && ! domainSearch && domainSuggestion;
+	const showAnimation = ! domain && ! domainSearch && ! selectedDesign && domainSuggestion;
 
 	const getDomainElementContent = () => {
+		if ( isLoadingSuggestion ) {
+			return null;
+		}
 		if ( domain ) {
 			return domain.domain_name;
-		}
-		if ( isLoadingSuggestion ) {
-			return 'example.wordpress.com';
 		}
 		if ( domainSuggestion ) {
 			/* translators: domain name is available, eg: "yourname.com is available" */
@@ -68,14 +68,13 @@ const DomainPickerButton: React.FunctionComponent = () => {
 	};
 
 	return (
-		<div>
-			<Link
-				to={ makePath( Step.DomainsModal ) }
-				className={ classnames( 'domain-picker-button', {
-					'domain-picker-button--has-first-content': showAnimation,
-					'domain-picker-button--has-placeholder': isLoadingSuggestion,
-				} ) }
-			>
+		<div
+			className={ classnames( 'domain-picker-button', {
+				'domain-picker-button--has-first-content': showAnimation,
+				'domain-picker-button--has-content': ! isLoadingSuggestion,
+			} ) }
+		>
+			<Link to={ makePath( Step.DomainsModal ) }>
 				<span className="domain-picker-button__label">{ getDomainElementContent() }</span>
 				<Icon icon={ chevronDown } size={ 22 } />
 			</Link>

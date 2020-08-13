@@ -1,5 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins.scss';
+@import '../../variables.scss';
 
 @keyframes domain-picker-button-slide-in {
 	from {
@@ -8,7 +9,13 @@
 		padding: 5px 0;
 	}
 
-	20% {
+	79% {
+		max-width: 0;
+		opacity: 0;
+		padding: 5px;
+	}
+
+	80% {
 		max-width: 0;
 		opacity: 0;
 		padding: 5px 12px;
@@ -22,24 +29,21 @@
 }
 
 .domain-picker-button {
+	opacity: 0;
+	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	&--has-content {
+		opacity: 1;
+	}
+
 	&--has-first-content {
-		animation-duration: 1.6s;
+		animation-duration: 4s;
 		animation-name: domain-picker-button-slide-in;
 		max-width: 1500px;
 		@include reduce-motion( 'animation' );
 	}
 
-	&--has-placeholder {
-		@include onboarding-placeholder;
-		@include reduce-motion( 'animation' );
-
-		& > span,
-		& > svg {
-			opacity: 0;
-		}
-	}
-
-	&.components-button {
+	.components-button {
 		@include onboarding-medium-text;
 		background: var( --studio-blue-0 );
 		border-radius: $radius-block-ui;
