@@ -120,6 +120,10 @@ function Gutenberg( props ) {
 								value={ blocks }
 								onInput={ updateBlocks }
 								onChange={ updateBlocks }
+								settings={ {
+									__experimentalBlockPatternCategories: [],
+									__experimentalBlockPatterns: [],
+								} }
 							>
 								<Layout />
 								<Popover.Slot />
