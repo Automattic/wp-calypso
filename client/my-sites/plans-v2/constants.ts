@@ -102,7 +102,7 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	iconSlug: 'jetpack_backup_v2',
 	displayName: translate( 'Jetpack Backup' ),
 	tagline: '',
-	description: '',
+	description: 'Lorem ipsum',
 	features: [],
 };
 export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {

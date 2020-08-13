@@ -35,7 +35,7 @@ interface PlanColumnType {
 	siteId: number | null;
 }
 
-type PlanWithBought = SelectorProduct & { owned: boolean; legacy: boolean };
+type PlanWithBought = SelectorProduct & { owned: boolean; legacy: boolean; showOptions?: boolean };
 
 const PlanComponent = ( {
 	plan,
@@ -68,6 +68,7 @@ const PlanComponent = ( {
 			originalPrice={ price }
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
+			showOptions={ plan.showOptions }
 		/>
 	);
 };
@@ -106,10 +107,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 			// If product is not owned already, show available options (Real-Time or Daily).
 			.map( ( product ) => ( {
 				...product,
-				description:
-					product.productSlug !== currentPlan && product?.subtypes.length
-						? product.description + ' ' + translate( 'Available options: Real-Time or Daily.' )
-						: product.description,
+				showOptions: !! ( product.productSlug !== currentPlan && product?.subtypes.length ),
 			} ) );
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.

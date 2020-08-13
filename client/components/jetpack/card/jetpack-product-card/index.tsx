@@ -49,6 +49,7 @@ type OwnProps = {
 	isOwned?: boolean;
 	isDeprecated?: boolean;
 	expiryDate?: Moment;
+	showOptions?: boolean;
 };
 
 export type Props = OwnProps & FeaturesProps;
@@ -78,6 +79,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	expiryDate,
 	features,
 	isExpanded,
+	showOptions,
 } ) => {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
@@ -174,7 +176,18 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 						{ cancelLabel }
 					</Button>
 				) }
-				{ description && <p className="jetpack-product-card__description">{ description }</p> }
+				{ description && (
+					<p className="jetpack-product-card__description">
+						{ description }
+						{ showOptions && ' ' }
+						{ showOptions &&
+							translate( '{{em}}Available options: Real-Time or Daily.{{/em}}', {
+								components: {
+									em: <em />,
+								},
+							} ) }
+					</p>
+				) }
 			</div>
 			<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
 		</div>

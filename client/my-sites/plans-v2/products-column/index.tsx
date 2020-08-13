@@ -39,7 +39,7 @@ const ProductComponent = ( {
 	onClick,
 	currencyCode,
 }: {
-	product: SelectorProduct;
+	product: SelectorProduct & { showOptions?: boolean };
 	onClick: PurchaseCallback;
 	currencyCode: string;
 } ) => (
@@ -56,6 +56,7 @@ const ProductComponent = ( {
 		discountedPrice={ product.discountCost }
 		originalPrice={ product.cost || 0 }
 		isOwned={ product.owned }
+		showOptions={ product.showOptions }
 	/>
 );
 
@@ -96,16 +97,9 @@ const ProductsColumn = ( {
 				// If product is not owned already, show available options (Real-Time or Daily).
 				.map( ( product: SelectorProduct ) => ( {
 					...product,
-					description:
-						! currentProducts.includes( product.productSlug ) && product?.subtypes.length
-							? product.description +
-							  ' ' +
-							  translate( '{{em}}Available options: Real-Time or Daily.{{/em}}', {
-									components: {
-										em: <em />,
-									},
-							  } )
-							: product.description,
+					showOptions:
+						product?.subtypes &&
+						! product?.subtypes.some( ( subtype ) => currentProducts.includes( subtype ) ),
 				} ) ),
 		[ duration, productType, currentProducts, availableProducts ]
 	);
