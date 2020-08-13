@@ -3,6 +3,7 @@
  */
 import { translate, TranslateResult } from 'i18n-calypso';
 import { get } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
