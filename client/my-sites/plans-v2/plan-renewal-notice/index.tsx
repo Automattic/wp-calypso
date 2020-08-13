@@ -15,7 +15,6 @@ import { isRenewable } from 'lib/purchases';
 /**
  * Type dependencies
  */
-
 import type { Purchase } from 'lib/purchases/types';
 
 type Props = {
