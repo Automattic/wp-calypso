@@ -179,13 +179,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				) }
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 			</div>
-
-			<JetpackProductCardFeatures
-				features={ features }
-				isExpanded={ isExpanded }
-				className={ UpgradeNudge ? 'foldable-card--square-border' : undefined }
-			/>
-
+			{ features.items.length > 0 && (
+				<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
+			) }
 			{ UpgradeNudge }
 		</div>
 	);
