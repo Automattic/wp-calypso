@@ -3,6 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -44,6 +45,8 @@ interface ProductCardProps {
 }
 
 const ProductCard = ( { item, onClick, siteId, currencyCode, className }: ProductCardProps ) => {
+	const translate = useTranslate();
+
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
@@ -87,7 +90,7 @@ const ProductCard = ( { item, onClick, siteId, currencyCode, className }: Produc
 			description={ item.description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabel( item ) }
+			buttonLabel={ isOwned ? translate( 'Manage subscription' ) : productButtonLabel( item ) }
 			onButtonClick={ () => onClick( item ) }
 			features={ item.features }
 			originalPrice={ originalPrice }
