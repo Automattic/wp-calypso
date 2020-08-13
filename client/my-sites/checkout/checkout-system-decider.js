@@ -16,6 +16,7 @@ import { isArray } from 'lodash';
 import CheckoutContainer from './checkout/checkout-container';
 import IncludedProductNoticeContent from './checkout/included-product-notice-content';
 import OwnedProductNoticeContent from './checkout/owned-product-notice-content';
+import JetpackMinimumPluginVersionNoticeContent from './checkout/jetpack-minimum-plugin-version-notice-content';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
@@ -26,7 +27,12 @@ import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { isJetpackSite, getSiteProducts, getSitePlan } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	getSiteProducts,
+	getSitePlan,
+} from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
 import {
@@ -81,6 +87,11 @@ export default function CheckoutSystemDecider( {
 			? isBackupProductIncludedInSitePlan( state, siteId, product )
 			: null
 	);
+
+	const BACKUP_MINIMUM_PLUGIN_VERSION = '8.5';
+	const siteHasBackupMinPluginVersion = useSelector( ( state ) =>
+		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_PLUGIN_VERSION )
+	);
 	const currentProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const reduxDispatch = useDispatch();
@@ -88,9 +99,17 @@ export default function CheckoutSystemDecider( {
 
 	let infoMessage;
 
-	if ( isJetpackPlanIncludingSiteBackup && selectedSite ) {
-		const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
+	const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
+	if ( backupProduct && ! siteHasBackupMinPluginVersion ) {
+		infoMessage = (
+			<JetpackMinimumPluginVersionNoticeContent
+				product={ backupProduct }
+				minVersion={ BACKUP_MINIMUM_PLUGIN_VERSION }
+			/>
+		);
+	}
 
+	if ( isJetpackPlanIncludingSiteBackup && selectedSite ) {
 		infoMessage = backupProduct && (
 			<OwnedProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
 		);
