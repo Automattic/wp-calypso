@@ -43,6 +43,7 @@ export const planCardWithDiscount = {
 
 export const deprecatedPlanCard = {
 	...planCard,
+	iconSlug: 'jetpack_business',
 	badgeLabel: 'Best value',
 	discountedPrice: 80,
 	withStartingPrice: true,

@@ -97,6 +97,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
 			} ) }
+			data-icon={ iconSlug }
 		>
 			<header className="jetpack-product-card__header">
 				<ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } />
