@@ -3,13 +3,14 @@
  */
 import { useTranslate } from 'i18n-calypso';
 import { isArray } from 'lodash';
-import React, { FunctionComponent } from 'react';
+import React, { ReactElement, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
 import { getProductBySlug } from 'state/products-list/selectors';
+import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getSitePurchases } from 'state/purchases/selectors';
 import type { Plan } from 'state/plans/types';
 import type { RawSiteProduct } from 'state/sites/selectors/get-site-products';
@@ -47,11 +48,13 @@ const IncludedProductNoticeContent: FunctionComponent< Props > = ( {
 		<div className="checkout__duplicate-notice">
 			<p className="checkout__duplicate-notice-message">
 				{ translate(
-					'You currently own Jetpack %(plan)s. The product you are about to purchase, %(product)s, is already included in this plan.',
+					'You currently own Jetpack %(plan)s. The product you are about to purchase, {{product/}}, is already included in this plan.',
 					{
 						args: {
 							plan: plan.product_name_short,
-							product: product?.product_name,
+						},
+						components: {
+							product: getJetpackProductDisplayName( product ) as ReactElement,
 						},
 						comment:
 							'The `plan` variable refers to the short name of the plan the customer owns already. `product` refers to the product in the cart that is already included in the plan.',
