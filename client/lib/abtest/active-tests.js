@@ -225,10 +225,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	userlessCheckout: {
-		datestamp: '20200806',
+		datestamp: '20210806',
 		variations: {
-			variantUserless: 0,
-			control: 100,
+			variantUserless: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
