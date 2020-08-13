@@ -708,6 +708,8 @@ jobs:
             npm install -g yarn
 
             # defer to restored packages whenever possible
+            # On a Machine executor, using cached built packages is significant:
+            # https://github.com/Automattic/wp-calypso/pull/44696#discussion_r468010942
             if [ -f packages-cache-restored ]; then
               export DISABLEPOSTINSTALL=1
             fi
