@@ -27,8 +27,6 @@ import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 import { getSavedVariations } from 'lib/abtest';
 import { stringifyBody } from 'state/login/utils';
 import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
@@ -245,11 +243,6 @@ async function createAccountCallback( response ) {
 	if ( ! response.bearer_token ) {
 		return;
 	}
-
-	// Tracks
-	recordTracksEvent( 'calypso_new_user_site_creation', { flow: 'onboarding-registrationless' } );
-	// Google Analytics
-	gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
 
 	// Log in the user
 	wp.loadToken( response.bearer_token );

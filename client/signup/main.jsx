@@ -378,6 +378,7 @@ class Signup extends React.Component {
 			isNew7DUserSite,
 			flow: this.props.flowName,
 			siteId,
+			isRegistrationlessCheckoutUser,
 		};
 		debug( 'Tracking signup completion.', debugProps );
 
