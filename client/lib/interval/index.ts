@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { TimeoutMS } from 'client/types';
+import { TimeoutMS } from 'wp-calypso-client/types';
 
 export { Interval } from './interval';
 export { useInterval } from './use-interval';
