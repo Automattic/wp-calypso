@@ -22,6 +22,7 @@ import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import getMediaItem from 'state/selectors/get-media-item';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import { getMimeType } from 'lib/media/utils';
@@ -79,7 +80,9 @@ class Media extends Component {
 			this.props.setMediaLibrarySelectedItems( this.props.selectedSite.ID, [] );
 		}
 
-		this.props.clearSite( this.props.selectedSite.ID );
+		if ( this.props.currentRoute !== redirect ) {
+			this.props.clearSite( this.props.selectedSite.ID );
+		}
 
 		page( redirect );
 	};
@@ -426,6 +429,7 @@ const mapStateToProps = ( state, { mediaId, site } ) => {
 	return {
 		selectedSite: getSelectedSite( state ),
 		previousRoute: getPreviousRoute( state ),
+		currentRoute: getCurrentRoute( state ),
 		media: getMediaItem( state, siteId, mediaId ),
 		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
 	};
