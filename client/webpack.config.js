@@ -63,7 +63,7 @@ const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
-
+const cachePath = path.resolve( '.cache', extraPath );
 const hasLanguagesMeta = fs.existsSync(
 	path.join( __dirname, 'languages', 'languages-meta.json' )
 );
@@ -212,6 +212,7 @@ const webpackConfig = {
 					},
 				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
