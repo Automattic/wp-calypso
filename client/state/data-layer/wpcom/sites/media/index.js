@@ -118,6 +118,7 @@ export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch, ge
 		dispatch( successMediaRequest( siteId, query ) );
 		return;
 	}
+
 	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
 	dispatch( successMediaRequest( siteId, query ) );
 	dispatch( setNextPageHandle( siteId, data.meta ) );
