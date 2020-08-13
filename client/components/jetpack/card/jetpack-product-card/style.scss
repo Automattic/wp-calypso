@@ -57,11 +57,17 @@ $jetpack-product-card-icon-size: 55px;
 	@media ( min-width: 660px ) {
 		border-left: 1px solid var( --color-border-subtle );
 		border-right: 1px solid var( --color-border-subtle );
-		border-radius: 5px;
+		border-radius: 2px;
 
+<<<<<<< HEAD
 		&:not( .with-nudge ) .foldable-card {
 			border-bottom-left-radius: 5px;
 			border-bottom-right-radius: 5px;
+=======
+		.foldable-card {
+			border-bottom-left-radius: 2px;
+			border-bottom-right-radius: 2px;
+>>>>>>> Try updating border radii to 2px across the board. See what happens.
 		}
 
 		.foldable-card--square-border {
@@ -206,7 +212,7 @@ $jetpack-product-card-icon-size: 55px;
 
 	background: var( --color-surface );
 	border: 1px solid currentColor;
-	border-radius: 4px;
+	border-radius: 2px;
 	color: $jetpack-product-card-color;
 
 	font-size: 0.75rem;

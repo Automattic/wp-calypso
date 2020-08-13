@@ -109,7 +109,7 @@ input[type='text'].token-field__input {
 		&.is-error {
 			.token-field__token-text {
 				color: var( --color-error );
-				border-radius: 4px 0 0 4px;
+				border-radius: 2px 0 0 4px;
 				padding: 0 4px 0 6px;
 			}
 		}
@@ -137,7 +137,7 @@ input[type='text'].token-field__input {
 }
 
 .token-field__token-text {
-	border-radius: 4px 0 0 4px;
+	border-radius: 2px 0 0 4px;
 	padding: 0 4px 0 6px;
 	white-space: nowrap;
 	overflow: hidden;

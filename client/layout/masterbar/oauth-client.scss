@@ -38,7 +38,7 @@
 
 .masterbar__oauth-client-wpcc-sign-in {
 	background-color: rgba( 255, 255, 255, 0.15 );
-	border-radius: 3px;
+	border-radius: 2px;
 	color: #fff;
 	display: block;
 	float: right;
@@ -102,7 +102,7 @@
 
 	.button {
 		background-color: var( --studio-gray-0 );
-		border-radius: 5px;
+		border-radius: 2px;
 		border-width: 1px 1px 2px;
 		box-shadow: none;
 		box-sizing: border-box;
@@ -540,7 +540,7 @@
 	textarea {
 		background-color: #fff;
 		border: 1px solid #e6e6e6;
-		border-radius: 3px;
+		border-radius: 2px;
 		box-sizing: border-box;
 		color: #666;
 		font-size: $font-title-small;
@@ -612,7 +612,7 @@
 	.step-wrapper {
 		background: #fff;
 		border: 1px solid #d3d3d3;
-		border-radius: 5px;
+		border-radius: 2px;
 		box-sizing: border-box;
 		padding: 20px $woo-form-whitespace;
 		width: 100%;
@@ -923,7 +923,7 @@
 		color: var( --studio-jetpack-green-60 );
 		background: var( --studio-white );
 		border: 1px solid var( --studio-jetpack-green-40 );
-		border-radius: 3px;
+		border-radius: 2px;
 
 		&:hover,
 		&:focus {

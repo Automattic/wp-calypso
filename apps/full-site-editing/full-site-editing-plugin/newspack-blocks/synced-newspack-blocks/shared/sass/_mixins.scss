@@ -1,0 +1,34 @@
+@mixin media( $res ) {
+	@if mobile == $res {
+		@media only screen and ( min-width: $mobile_width ) {
+			@content;
+		}
+	}
+
+	@if tablet == $res {
+		@media only screen and ( min-width: $tablet_width ) {
+			@content;
+		}
+	}
+
+	@if desktop == $res {
+		@media only screen and ( min-width: $desktop_width ) {
+			@content;
+		}
+	}
+
+	@if wide == $res {
+		@media only screen and ( min-width: $wide_width ) {
+			@content;
+		}
+	}
+}
+
+@mixin visuallyHidden {
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	clip: rect( 1px, 1px, 1px, 1px );
+	white-space: nowrap; /* added line */
+}

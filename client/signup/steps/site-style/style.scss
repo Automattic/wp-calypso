@@ -21,7 +21,7 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		max-width: 100%;
 		padding: 0 4px;
-		border-radius: 5px;
+		border-radius: 2px;
 	}
 
 	.site-style__fieldset {
@@ -68,7 +68,7 @@
 		// Make 'em feel like buttons.
 		cursor: pointer;
 		border: 1px solid var( --color-neutral-20 );
-		border-radius: 3px;
+		border-radius: 2px;
 
 		// Shorter names can be too small, so
 		// we give 'em a min-width.

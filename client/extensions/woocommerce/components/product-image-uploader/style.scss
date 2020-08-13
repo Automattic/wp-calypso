@@ -5,7 +5,7 @@
 	position: relative;
 	margin-bottom: 16px;
 	border: 1px dashed var( --color-neutral-light );
-	border-radius: 5px;
+	border-radius: 2px;
 
 	@include breakpoint-deprecated( '>960px' ) {
 		width: 250px;
@@ -69,7 +69,7 @@
 	border: 1px dashed var( --color-neutral-light );
 	width: 70px;
 	height: 70px;
-	border-radius: 5px;
+	border-radius: 2px;
 	display: inline-block;
 
 	@include breakpoint-deprecated( '>960px' ) {
