@@ -9,12 +9,18 @@ import { __ } from '@wordpress/i18n';
  * External dependencies
  */
 import { LAUNCH_STORE } from '../stores';
+import { useSite } from './';
 
 export function useDomainSearch() {
 	const { domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const [ title ] = useEntityProp( 'root', 'site', 'title' );
+	const { currentDomainName } = useSite();
 
-	const search = domainSearch.trim() || title;
+	let search = domainSearch.trim() || title;
 
-	return search !== __( 'Site Title', 'full-site-editing' ) ? search : '';
+	if ( ! search || search === __( 'Site Title', 'full-site-editing' ) ) {
+		search = currentDomainName?.split( '.' )[ 0 ] ?? '';
+	}
+
+	return search;
 }
