@@ -250,6 +250,9 @@ const ReauthRequired = createReactClass( {
 		const shouldEnableSmsButton =
 			this.state.smsRequestsAllowed || ( method === 'sms' && twoFactorAuthType === 'webauthn' );
 
+		const hasSmsRecoveryNumber = !! this.props.twoStepAuthorization.data.two_step_sms_last_four
+			?.length;
+
 		return (
 			<Dialog
 				autoFocus={ false }
@@ -269,9 +272,7 @@ const ReauthRequired = createReactClass( {
 					twoFactorAuthType={ twoFactorAuthType }
 					onChange={ this.handleAuthSwitch }
 					isSmsSupported={
-						method === 'sms' ||
-						( method === 'authenticator' &&
-							this.props.twoStepAuthorization.data.two_step_sms_last_four.length )
+						method === 'sms' || ( method === 'authenticator' && hasSmsRecoveryNumber )
 					}
 					isAuthenticatorSupported={ method !== 'sms' }
 					isSmsAllowed={ shouldEnableSmsButton }
