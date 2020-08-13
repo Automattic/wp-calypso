@@ -9,6 +9,8 @@ import { useSelect } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import { SummaryLine, SummaryDetails } from './summary-details';
+import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
+import { hasOnlyRenewalItems } from 'lib/cart-values/cart-items';
 
 export default function WPContactFormSummary( {
 	areThereDomainProductsInCart,
@@ -16,6 +18,8 @@ export default function WPContactFormSummary( {
 	isLoggedOutCart,
 } ) {
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
+	const cart = useCart();
+	const isRenewal = cart && hasOnlyRenewalItems( cart );
 
 	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
@@ -32,27 +36,31 @@ export default function WPContactFormSummary( {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ ( isGSuiteInCart || areThereDomainProductsInCart ) && fullName && (
+					{ ! isRenewal && ( isGSuiteInCart || areThereDomainProductsInCart ) && fullName && (
 						<SummaryLine>{ fullName }</SummaryLine>
 					) }
 
-					{ areThereDomainProductsInCart && contactInfo.organization.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
-					) }
+					{ ! isRenewal &&
+						areThereDomainProductsInCart &&
+						contactInfo.organization.value?.length > 0 && (
+							<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
+						) }
 
 					<EmailSummary
+						isRenewal={ isRenewal }
 						isLoggedOutCart={ isLoggedOutCart }
 						contactInfo={ contactInfo }
 						areThereDomainProductsInCart={ areThereDomainProductsInCart }
 						isGSuiteInCart={ isGSuiteInCart }
 					/>
 
-					{ areThereDomainProductsInCart && contactInfo.phone.value?.length > 0 && (
+					{ ! isRenewal && areThereDomainProductsInCart && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
 					) }
 				</SummaryDetails>
 
 				<AddressSummary
+					isRenewal={ isRenewal }
 					contactInfo={ contactInfo }
 					areThereDomainProductsInCart={ areThereDomainProductsInCart }
 				/>
@@ -76,11 +84,15 @@ function joinNonEmptyValues( joinString, ...values ) {
 }
 
 function EmailSummary( {
+	isRenewal,
 	contactInfo,
 	areThereDomainProductsInCart,
 	isGSuiteInCart,
 	isLoggedOutCart,
 } ) {
+	if ( isRenewal ) {
+		return null;
+	}
 	if ( ! areThereDomainProductsInCart && ! isGSuiteInCart && ! isLoggedOutCart ) {
 		return null;
 	}
@@ -100,14 +112,14 @@ function EmailSummary( {
 	return <SummaryLine>{ contactInfo.email.value }</SummaryLine>;
 }
 
-function AddressSummary( { contactInfo, areThereDomainProductsInCart } ) {
+function AddressSummary( { contactInfo, areThereDomainProductsInCart, isRenewal } ) {
 	const postalAndCountry = joinNonEmptyValues(
 		', ',
 		contactInfo.postalCode.value,
 		contactInfo.countryCode.value
 	);
 
-	if ( ! areThereDomainProductsInCart ) {
+	if ( ! areThereDomainProductsInCart || isRenewal ) {
 		return (
 			<SummaryDetails>
 				{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
