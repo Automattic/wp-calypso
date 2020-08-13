@@ -88,7 +88,7 @@ export default function CheckoutSystemDecider( {
 			: null
 	);
 
-	const BACKUP_MINIMUM_PLUGIN_VERSION = '8.9';
+	const BACKUP_MINIMUM_PLUGIN_VERSION = '8.5';
 	const siteHasBackupMinPluginVersion = useSelector( ( state ) =>
 		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_PLUGIN_VERSION )
 	);
