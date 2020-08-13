@@ -100,7 +100,7 @@ process.on( 'exit', handleExit );
 
 async function run() {
 	try {
-		const requiredENVs = [ 'E2EUSERNAME', 'E2EPASSWORD' ];
+		const requiredENVs = [ 'E2EGUTENBERGUSER', 'E2EPASSWORD' ];
 		const missingENVs = requiredENVs.filter(
 			( name ) => ! process.env[ name ] || process.env[ name ] === ''
 		);

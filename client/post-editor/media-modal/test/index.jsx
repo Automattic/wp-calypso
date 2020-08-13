@@ -16,7 +16,7 @@ import React from 'react';
 import { EditorMediaModal } from '../';
 import accept from 'lib/accept';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 jest.mock( 'component-closest', () => {} );
 jest.mock(

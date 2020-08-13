@@ -2,23 +2,36 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import { Plans } from '@automattic/data-stores';
+import PlansGrid from '@automattic/plans-grid';
+import { Title, SubTitle } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
-import LaunchStep, { Props as LaunchStepProps } from '../../launch-step';
-import PlansGridFSE from '../../../../editor-plans-grid/src/plans-grid-fse';
+import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
+import { LAUNCH_STORE } from '../../stores';
 import './styles.scss';
 
-const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const handleBack = () => {
-		onPrevStep?.();
+const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
+	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
+	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
+
+	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
+
+	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
+		updatePlan( planSlug );
+		onNextStep?.();
+	};
+
+	const handlePickDomain = () => {
+		setStep( LaunchStep.Domain );
 	};
 
 	return (
-		<LaunchStep className="nux-launch-plan-step">
+		<LaunchStepContainer className="nux-launch-plan-step">
 			<div className="nux-launch-step__header">
 				<div>
 					<Title>{ __( 'Choose a plan', 'full-site-editing' ) }</Title>
@@ -29,14 +42,25 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 						) }
 					</SubTitle>
 				</div>
-				<ActionButtons>
-					<BackButton onClick={ handleBack } />
-				</ActionButtons>
 			</div>
 			<div className="nux-launch-step__body">
-				<PlansGridFSE onSelect={ onNextStep } />
+				<PlansGrid
+					currentDomain={ domain }
+					onPlanSelect={ handleSelect }
+					onPickDomainClick={ handlePickDomain }
+					disabledPlans={
+						domain && ! domain.is_free
+							? {
+									[ Plans.PLAN_FREE ]: __(
+										'Not available with custom domain',
+										'full-site-editing'
+									),
+							  }
+							: undefined
+					}
+				/>
 			</div>
-		</LaunchStep>
+		</LaunchStepContainer>
 	);
 };
 

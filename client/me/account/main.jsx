@@ -127,11 +127,18 @@ const Account = createReactClass( {
 	},
 
 	updateLanguage( event ) {
-		const { value, empathyMode } = event.target;
+		const { value, empathyMode, useFallbackForIncompleteLanguages } = event.target;
 		this.updateUserSetting( 'language', value );
 
 		if ( typeof empathyMode !== 'undefined' ) {
 			this.updateUserSetting( 'i18n_empathy_mode', empathyMode );
+		}
+
+		if ( typeof useFallbackForIncompleteLanguages !== 'undefined' ) {
+			this.updateUserSetting(
+				'use_fallback_for_incomplete_languages',
+				useFallbackForIncompleteLanguages
+			);
 		}
 
 		const shouldRedirect =
@@ -602,7 +609,9 @@ const Account = createReactClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="language">{ translate( 'Interface language' ) }</FormLabel>
+					<FormLabel id="account__language" htmlFor="language">
+						{ translate( 'Interface language' ) }
+					</FormLabel>
 					<LanguagePicker
 						disabled={ this.getDisabledState() }
 						languages={ languages }
@@ -612,6 +621,9 @@ const Account = createReactClass( {
 							this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
 						}
 						empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
+						useFallbackForIncompleteLanguages={ this.getUserSetting(
+							'use_fallback_for_incomplete_languages'
+						) }
 						onChange={ this.updateLanguage }
 					/>
 					<FormSettingExplanation>
@@ -627,7 +639,9 @@ const Account = createReactClass( {
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) && supportsCssCustomProperties() && (
 					<FormFieldset>
-						<FormLabel htmlFor="color_scheme">{ translate( 'Dashboard color scheme' ) }</FormLabel>
+						<FormLabel id="account__color_scheme" htmlFor="color_scheme">
+							{ translate( 'Dashboard color scheme' ) }
+						</FormLabel>
 						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
 					</FormFieldset>
 				) }

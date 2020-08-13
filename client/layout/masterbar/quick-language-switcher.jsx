@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import MasterbarItem from './item';
 import LanguagePickerModal from 'components/language-picker/modal';
 import { languages } from 'languages';
@@ -19,8 +20,10 @@ import {
 
 function QuickLanguageSwitcher( props ) {
 	const [ isShowingModal, toggleLanguagesModal ] = useReducer( ( toggled ) => ! toggled, false );
-	const onSelected = ( languageSlug, empathyMode ) => {
-		props.setLocale( languageSlug );
+	const onSelected = ( languageSlug, { empathyMode, useFallbackForIncompleteLanguages } ) => {
+		props.setLocale(
+			useFallbackForIncompleteLanguages ? config( 'i18n_default_locale_slug' ) : languageSlug
+		);
 		toggleLanguageEmpathyMode( empathyMode );
 	};
 

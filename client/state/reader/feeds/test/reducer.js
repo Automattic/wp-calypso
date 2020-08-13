@@ -15,7 +15,7 @@ import {
 	READER_FEED_UPDATE,
 } from 'state/reader/action-types';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { captureConsole } from 'test/helpers/console';
+import { captureConsole } from 'test-helpers/console';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

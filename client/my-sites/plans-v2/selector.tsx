@@ -2,26 +2,78 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import { Button } from '@automattic/components';
+import { useSelector } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { SelectorPageProps } from './types';
-import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import PlansFilterBar from './plans-filter-bar';
+import PlansColumn from './plans-column';
+import ProductsColumn from './products-column';
+import { SECURITY } from './constants';
+import { durationToString } from './utils';
+import { TERM_ANNUALLY } from 'lib/plans/constants';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Main from 'components/main';
+import QueryProductsList from 'components/data/query-products-list';
+import QuerySites from 'components/data/query-sites';
 
-const SelectorPage = ( { defaultDuration = TERM_ANNUALLY }: SelectorPageProps ) => {
-	const [ currentDuration, setDuration ] = useState( defaultDuration );
-	const currentDurationString = currentDuration === TERM_ANNUALLY ? 'annual' : 'monthly';
+/**
+ * Type dependencies
+ */
+import type {
+	Duration,
+	ProductType,
+	SelectorPageProps,
+	SelectorProduct,
+	PurchaseCallback,
+} from './types';
 
-	const toggleDuration = () =>
-		setDuration( currentDuration === TERM_ANNUALLY ? TERM_MONTHLY : TERM_ANNUALLY );
+import './style.scss';
+
+const SelectorPage = ( { defaultDuration = TERM_ANNUALLY, rootUrl }: SelectorPageProps ) => {
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
+	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+
+	// Sends a user to a page based on whether there are subtypes.
+	const selectProduct: PurchaseCallback = ( product: SelectorProduct ) => {
+		const durationString = durationToString( currentDuration );
+		const root = rootUrl.replace( ':site', siteSlug );
+		if ( product.subtypes.length ) {
+			page( `${ root }/${ product.productSlug }/${ durationString }/details` );
+		} else {
+			page( `${ root }/${ product.productSlug }/${ durationString }/additions` );
+		}
+	};
+
 	return (
-		<div>
-			<h1>Hello this is the Selector Page!</h1>
-			<p>{ `You are currently looking at ${ currentDurationString } products` }</p>
-			<Button onClick={ toggleDuration }>Toggle duration</Button>
-		</div>
+		<Main className="selector__main" wideLayout>
+			<PlansFilterBar
+				onProductTypeChange={ setProductType }
+				productType={ productType }
+				onDurationChange={ setDuration }
+				duration={ currentDuration }
+			/>
+			<div className="plans-v2__columns">
+				<PlansColumn
+					duration={ currentDuration }
+					onPlanClick={ selectProduct }
+					productType={ productType }
+					siteId={ siteId }
+				/>
+				<ProductsColumn
+					duration={ currentDuration }
+					onProductClick={ selectProduct }
+					productType={ productType }
+					siteId={ siteId }
+				/>
+			</div>
+			<QueryProductsList />
+			{ siteId && <QuerySites siteId={ siteId } /> }
+		</Main>
 	);
 };
 

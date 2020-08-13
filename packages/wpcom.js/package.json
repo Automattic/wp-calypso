@@ -7,11 +7,11 @@
 	"author": "Automattic, Inc.",
 	"private": true,
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && run-s build:modules build:bundle",
-		"build:modules": "check-npm-client && transpile",
-		"build:bundle": "check-npm-client && webpack --display errors-only"
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "run-s build:modules build:bundle",
+		"build:modules": "transpile",
+		"build:bundle": "webpack --display errors-only"
 	},
 	"keywords": [
 		"wordpress",
@@ -37,7 +37,7 @@
 		"./dist/esm/lib/util/fs.js": "./dist/esm/lib/util/fs-browser.js"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.8.3",
+		"@babel/runtime": "^7.11.1",
 		"debug": "^4.1.1",
 		"qs": "^6.5.2"
 	}

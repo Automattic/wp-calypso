@@ -65,6 +65,19 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	}
 
+	getIncompleteLocaleNoticeMessage = ( language ) => {
+		const { translate } = this.props;
+
+		return translate(
+			'Your site language is now %(language)s. Once you choose your theme, make sure it’s translated so the theme strings on your site show up in your language!',
+			{
+				args: {
+					language: language.name,
+				},
+			}
+		);
+	};
+
 	onTimezoneSelect = ( timezone ) => {
 		this.props.updateFields( {
 			timezone_string: timezone,
@@ -266,6 +279,7 @@ export class SiteSettingsFormGeneral extends Component {
 					disabled={ isRequestingSettings || ( siteIsJetpack && errorNotice ) }
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 					showEmpathyModeControl={ false }
+					getIncompleteLocaleNoticeMessage={ this.getIncompleteLocaleNoticeMessage }
 				/>
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
@@ -415,7 +429,9 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="blogtimezone">{ translate( 'Site timezone' ) }</FormLabel>
+				<FormLabel htmlFor="blogtimezone" id="site-settings__blogtimezone">
+					{ translate( 'Site timezone' ) }
+				</FormLabel>
 
 				<Timezone
 					selectedZone={ fields.timezone_string }
@@ -591,7 +607,10 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
-						<SettingsSectionHeader title={ translate( 'Footer credit' ) } />
+						<SettingsSectionHeader
+							title={ translate( 'Footer credit' ) }
+							id="site-settings__footer-credit-header"
+						/>
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
 								{ preventWidows(

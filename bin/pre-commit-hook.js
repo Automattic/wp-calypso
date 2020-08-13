@@ -41,16 +41,17 @@ function parseGitDiffToPathArray( command ) {
 }
 
 function getPathForCommand( command ) {
-	const composerBinDir = path.join( __dirname, '..', 'vendor', 'bin' );
-	let path_to_command;
-	try {
-		path_to_command = execSync( 'command -v ' + command, { encoding: 'utf8' } );
-	} catch ( e ) {
-		path_to_command = path.join( composerBinDir, command );
-	}
-	if ( typeof path_to_command === 'undefined' || ! path_to_command ) {
-		return false;
-	}
+	/**
+	 * Only look for locally installed commands (phpcs, phpcbf). The reason for this is that we also require
+	 * a number of dependencies, such as WordPress Coding Standards, which we cannot guarantee are installed
+	 * system-wide, and system-wide installs of phpcs and phpcbf cannot find our local copies of those dependencies.
+	 *
+	 * If we cannot find these commands, we ask the user to run `composer install`, which will install all commands
+	 * and dependencies locally.
+	 *
+	 * @see printPhpcsDocs
+	 */
+	const path_to_command = path.join( __dirname, '..', 'vendor', 'bin', command );
 	return _.trim( path_to_command );
 }
 function linterFailure() {

@@ -41,6 +41,7 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
+	tefBank?: string;
 };
 
 export type WPCOMTransactionEndpointCart = {
@@ -149,8 +150,15 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	siteId,
 	couponId,
 	country,
+	state,
 	postalCode,
 	subdivisionCode,
+	city,
+	address,
+	streetNumber,
+	phoneNumber,
+	document,
+	deviceId,
 	domainDetails,
 	items,
 	paymentMethodType,
@@ -162,23 +170,32 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	cancelUrl,
 	successUrl,
 	idealBank,
+	tefBank,
 }: {
 	siteId: string;
 	couponId?: string;
 	country: string;
+	state?: string;
 	postalCode: string;
 	subdivisionCode?: string;
+	city?: string;
+	address?: string;
+	streetNumber?: string;
+	phoneNumber?: string;
+	document?: string;
+	deviceId?: string;
 	domainDetails?: DomainContactDetails;
 	items: WPCOMCartItem[];
 	paymentMethodType: string;
 	paymentMethodToken?: string;
-	paymentPartnerProcessorId: string;
+	paymentPartnerProcessorId?: string;
 	storedDetailsId?: string;
 	name: string;
 	email?: string;
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
+	tefBank?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
@@ -199,11 +216,20 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			name,
 			email,
 			country,
+			countryCode: country,
+			state,
 			postalCode,
 			zip: postalCode, // TODO: do we need this in addition to postalCode?
+			city,
+			address,
+			streetNumber,
+			phoneNumber,
+			document,
+			deviceId,
 			successUrl,
 			cancelUrl,
 			idealBank,
+			tefBank,
 		},
 	};
 }

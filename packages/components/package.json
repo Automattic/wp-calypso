@@ -28,7 +28,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.8.4",
+		"@babel/runtime": "^7.11.1",
 		"classnames": "^2.2.6",
 		"gridicons": "^3.3.1",
 		"lodash": "^4.17.15",
@@ -40,8 +40,8 @@
 		"react-dom": "^16.8"
 	},
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__components*\"",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile && tsc && copy-assets"
+		"clean": "npx rimraf dist \"../../.tsc-cache/packages__components*\"",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile && tsc && copy-assets"
 	}
 }

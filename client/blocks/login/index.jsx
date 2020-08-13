@@ -14,7 +14,11 @@ import classNames from 'classnames';
  */
 import Gridicon from 'components/gridicon';
 import config from 'config';
+import { sendEmailLogin } from 'state/auth/actions';
 import {
+	getAuthAccountType,
+	getRedirectToOriginal,
+	getLastCheckedUsernameOrEmail,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
@@ -28,6 +32,7 @@ import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import { rebootAfterLogin } from 'state/login/actions';
+import { isPasswordlessAccount } from 'state/login/utils';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -62,6 +67,7 @@ class Login extends Component {
 		privateSite: PropTypes.bool,
 		rebootAfterLogin: PropTypes.func.isRequired,
 		requestNotice: PropTypes.object,
+		sendEmailLogin: PropTypes.func.isRequired,
 		socialConnect: PropTypes.bool,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
@@ -100,6 +106,11 @@ class Login extends Component {
 
 		if ( isNewPage || hasNotice ) {
 			window.scrollTo( 0, 0 );
+		}
+
+		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
+			this.props.sendEmailLogin();
+			this.handleTwoFactorRequested( 'link' );
 		}
 	}
 
@@ -459,7 +470,6 @@ class Login extends Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
-				isJetpack={ isJetpack }
 				isGutenboarding={ isGutenboarding }
 				locale={ locale }
 				userEmail={ userEmail }
@@ -496,6 +506,9 @@ class Login extends Component {
 
 export default connect(
 	( state ) => ( {
+		accountType: getAuthAccountType( state ),
+		redirectTo: getRedirectToOriginal( state ),
+		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		currentUser: getCurrentUser( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
@@ -510,5 +523,19 @@ export default connect(
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
-	{ rebootAfterLogin }
+	{
+		rebootAfterLogin,
+		sendEmailLogin,
+	},
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		sendEmailLogin: () =>
+			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
+				redirectTo: stateProps.redirectTo,
+				loginFormFlow: true,
+				showGlobalNotices: true,
+			} ),
+	} )
 )( localize( Login ) );

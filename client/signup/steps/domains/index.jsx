@@ -31,6 +31,7 @@ import {
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { domainManagementRoot } from 'my-sites/domains/paths';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -48,8 +49,8 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
+import getSitesItems from 'state/selectors/get-sites-items';
 
 /**
  * Style dependencies
@@ -72,6 +73,7 @@ class DomainsStep extends React.Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		vertical: PropTypes.string,
+		isReskinned: PropTypes.bool,
 	};
 
 	getDefaultState = () => ( {
@@ -123,7 +125,12 @@ class DomainsStep extends React.Component {
 		this.showTestCopy = false;
 
 		const isEligibleFlowForDomainTest = includes(
-			[ 'onboarding', 'onboarding-plan-first', 'onboarding-passwordless' ],
+			[
+				'onboarding',
+				'onboarding-plan-first',
+				'onboarding-passwordless',
+				'onboarding-registrationless',
+			],
 			props.flowName
 		);
 
@@ -491,6 +498,7 @@ class DomainsStep extends React.Component {
 				hideFreePlan={ this.handleSkip }
 				selectedFreePlanInSwapFlow={ selectedFreePlanInSwapFlow }
 				selectedPaidPlanInSwapFlow={ selectedPaidPlanInSwapFlow }
+				isReskinned={ this.props.isReskinned }
 			/>
 		);
 
@@ -568,7 +576,12 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { flowName, siteType, translate } = this.props;
+		const { flowName, isAllDomains, siteType, translate } = this.props;
+
+		if ( isAllDomains ) {
+			return translate( 'Find the domain that defines you' );
+		}
+
 		const subHeaderPropertyName = this.isEligibleVariantForDomainTest()
 			? 'domainsStepSubheaderTestCopy'
 			: 'domainsStepSubheader';
@@ -587,7 +600,12 @@ class DomainsStep extends React.Component {
 	}
 
 	getHeaderText() {
-		const { headerText, siteType } = this.props;
+		const { headerText, isAllDomains, siteType, translate } = this.props;
+
+		if ( isAllDomains ) {
+			return translate( 'Your next big idea starts here' );
+		}
+
 		const headerPropertyName = this.isEligibleVariantForDomainTest()
 			? 'domainsStepHeaderTestCopy'
 			: 'domainsStepHeader';
@@ -645,7 +663,8 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, translate, hasInitializedSitesBackUrl } = this.props;
+		const { flowName, isAllDomains, translate, sites } = this.props;
+		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl, backLabelText;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
@@ -657,9 +676,14 @@ class DomainsStep extends React.Component {
 			);
 		} else if ( this.props.stepSectionName ) {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
-		} else if ( 0 === this.props.positionInFlow && hasInitializedSitesBackUrl ) {
-			backUrl = hasInitializedSitesBackUrl;
+		} else if ( 0 === this.props.positionInFlow && hasSite ) {
+			backUrl = '/sites/';
 			backLabelText = translate( 'Back to My Sites' );
+
+			if ( isAllDomains ) {
+				backUrl = domainManagementRoot();
+				backLabelText = translate( 'Back to All Domains' );
+			}
 		}
 
 		const headerText = this.getHeaderText();
@@ -731,6 +755,9 @@ export default connect(
 	( state, ownProps ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const isReskinned =
+			'onboarding' === ownProps.flowName &&
+			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			designType: getDesignType( state ),
@@ -741,7 +768,8 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
-			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+			sites: getSitesItems( state ),
+			isReskinned,
 		};
 	},
 	{

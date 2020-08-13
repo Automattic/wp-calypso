@@ -62,6 +62,26 @@
 	}
 }
 
+.language-picker__modal-item-notice {
+	display: inline-block;
+	vertical-align: middle;
+	margin: -4px 0 -4px 4px;
+	color: var( --color-warning );
+	line-height: 1;
+	visibility: hidden;
+
+	.language-picker__modal-item:hover &,
+	.language-picker__modal-item:focus &,
+	.is-selected & {
+		color: var( --color-warning-light );
+		visibility: visible;
+	}
+}
+
+.language-picker__modal-tooltip {
+	z-index: z-index( 'root', 'popover.is-dialog-visible' );
+}
+
 .language-picker__modal-list {
 	box-sizing: border-box;
 	width: 100%;
@@ -159,5 +179,22 @@
 		z-index: 1;
 		margin: 0;
 		padding: 4px 8px;
+	}
+}
+
+.language-picker__modal-locale-notice {
+	position: relative;
+	z-index: 1;
+	padding: 8px 16px;
+	text-align: right;
+
+	.form-label {
+		display: inline-block;
+		vertical-align: top;
+		margin: 0;
+	}
+
+	p {
+		margin: 0;
 	}
 }

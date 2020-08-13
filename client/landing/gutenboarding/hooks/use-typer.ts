@@ -72,7 +72,10 @@ export default function useTyper(
 					// start deleting
 					setMode( 'DELETING' );
 				} else {
-					setWordIndex( ( wordIndex + 1 ) % words.length );
+					// Pick any word except the current one
+					setWordIndex(
+						( wordIndex + Math.ceil( Math.random() * ( words.length - 1 ) ) ) % words.length
+					);
 					setMode( 'TYPING' );
 				}
 			}

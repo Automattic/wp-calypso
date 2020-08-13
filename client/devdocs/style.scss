@@ -11,7 +11,7 @@ $devdocs-max-width: 720px;
 .devdocs__result {
 	.devdocs__result-title {
 		font-weight: 600;
-		font-size: 18px;
+		font-size: $font-title-small;
 
 		.devdocs__result-link {
 			text-decoration: underline;
@@ -104,7 +104,7 @@ $devdocs-max-width: 720px;
 
 	.docs-example__wrapper-header-title {
 		font-family: $code;
-		font-size: 18px;
+		font-size: $font-title-small;
 		letter-spacing: 1px;
 		border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.65 );
 

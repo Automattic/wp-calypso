@@ -243,9 +243,9 @@ describe( 'LanguagePickerModal', () => {
 			);
 
 			expect( suggestedLanguagesTexts ).toHaveLength( 3 );
-			expect( suggestedLanguagesTexts.at( 0 ).text() ).toEqual( 'English (UK)' );
-			expect( suggestedLanguagesTexts.at( 1 ).text() ).toEqual( 'English' );
-			expect( suggestedLanguagesTexts.at( 2 ).text() ).toEqual( 'Italiano' );
+			expect( suggestedLanguagesTexts.at( 0 ).childAt( 0 ).text() ).toEqual( 'English (UK)' );
+			expect( suggestedLanguagesTexts.at( 1 ).childAt( 0 ).text() ).toEqual( 'English' );
+			expect( suggestedLanguagesTexts.at( 2 ).childAt( 0 ).text() ).toEqual( 'Italiano' );
 		} );
 
 		test( 'should omit the current user locale from suggestions', () => {
@@ -255,8 +255,8 @@ describe( 'LanguagePickerModal', () => {
 			);
 
 			expect( suggestedLanguagesTexts ).toHaveLength( 2 );
-			expect( suggestedLanguagesTexts.at( 0 ).text() ).toEqual( 'English (UK)' );
-			expect( suggestedLanguagesTexts.at( 1 ).text() ).toEqual( 'English' );
+			expect( suggestedLanguagesTexts.at( 0 ).childAt( 0 ).text() ).toEqual( 'English (UK)' );
+			expect( suggestedLanguagesTexts.at( 1 ).childAt( 0 ).text() ).toEqual( 'English' );
 		} );
 
 		test( 'should not render when there are no suggested languages', () => {

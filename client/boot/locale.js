@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { getLanguageSlugs, isDefaultLocale } from 'lib/i18n-utils';
+import { getLanguageSlugs, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils';
 import {
 	loadUserUndeployedTranslations,
 	getLanguageManifestFile,
@@ -20,6 +20,16 @@ import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { initLanguageEmpathyMode } from 'lib/i18n-utils/empathy-mode';
 
 const debug = debugFactory( 'calypso:i18n' );
+
+function getLocaleFromPathname() {
+	const pathname = window.location.pathname.replace( /\/$/, '' );
+	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
+	const pathLocaleSlug =
+		getLanguageSlugs().includes( lastPathSegment ) &&
+		! isDefaultLocale( lastPathSegment ) &&
+		lastPathSegment;
+	return pathLocaleSlug;
+}
 
 const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 	const { translatedChunks, locale } = await getLanguageManifestFile(
@@ -87,15 +97,15 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		initLanguageEmpathyMode();
 	}
 
+	const shouldUseFallbackLocale =
+		currentUser?.use_fallback_for_incomplete_languages &&
+		isTranslatedIncompletely( currentUser.localeSlug );
+	const userLocaleSlug = shouldUseFallbackLocale
+		? config( 'i18n_default_locale_slug' )
+		: currentUser.localeSlug;
+
 	if ( useTranslationChunks && '__requireChunkCallback__' in window ) {
-		const userLocaleSlug = currentUser && currentUser.localeSlug;
-		const pathname = window.location.pathname.replace( /\/$/, '' );
-		const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
-		const pathLocaleSlug =
-			getLanguageSlugs().includes( lastPathSegment ) &&
-			! isDefaultLocale( lastPathSegment ) &&
-			lastPathSegment;
-		const localeSlug = userLocaleSlug || pathLocaleSlug;
+		const localeSlug = userLocaleSlug || getLocaleFromPathname();
 
 		if ( localeSlug && ! isDefaultLocale( localeSlug ) ) {
 			setupTranslationChunks( localeSlug, reduxStore );
@@ -105,6 +115,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	if ( window.i18nLocaleStrings ) {
 		// Use the locale translation data that were boostrapped by the server
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
+
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
 		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
 		if ( languageSlug ) {
@@ -112,7 +123,11 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		}
 	} else if ( currentUser && currentUser.localeSlug ) {
 		// Use the current user's and load traslation data with a fetch request
-		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
+		reduxStore.dispatch( setLocale( userLocaleSlug, currentUser.localeVariant ) );
+	} else {
+		// For logged out Calypso pages, set the locale from slug
+		const pathLocaleSlug = getLocaleFromPathname();
+		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
 	}
 
 	// If user is logged out and translations are not boostrapped, we assume default locale

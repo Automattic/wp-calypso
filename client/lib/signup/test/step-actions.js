@@ -8,7 +8,7 @@ import {
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
 } from '../step-actions';
-import { useNock } from 'test/helpers/use-nock';
+import { useNock } from 'test-helpers/use-nock';
 import flows from 'signup/config/flows';
 import { isDomainStepSkippable } from 'signup/config/steps';
 import { getUserStub } from 'lib/user';

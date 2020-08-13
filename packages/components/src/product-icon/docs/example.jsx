@@ -75,6 +75,42 @@ function ProductIconExample() {
 					<ProductIcon slug="jetpack_anti_spam" />
 				</div>
 			</div>
+
+			<hr />
+
+			<h3>Jetpack Plan Icons v2</h3>
+			<div style={ wrapperStyle }>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_complete_v2" />
+				</div>
+			</div>
+
+			<hr />
+
+			<h3>Jetpack Bundle Icons v2</h3>
+			<div style={ wrapperStyle }>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_security_v2" />
+				</div>
+			</div>
+
+			<hr />
+
+			<h3>Jetpack Individual Product Icons v2</h3>
+			<div style={ wrapperStyle }>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_backup_v2" />
+				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_scan_v2" />
+				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_anti_spam_v2" />
+				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_search_v2" />
+				</div>
+			</div>
 		</Fragment>
 	);
 }

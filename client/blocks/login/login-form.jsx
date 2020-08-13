@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import { capitalize, defer, includes, get, startsWith } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
@@ -33,7 +32,6 @@ import {
 	resetAuthAccountType,
 } from 'state/login/actions';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { login } from 'lib/paths';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import {
@@ -45,7 +43,7 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'state/login/selectors';
-import { isPasswordlessAccount, isRegularAccount } from 'state/login/utils';
+import { isRegularAccount } from 'state/login/utils';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -77,7 +75,6 @@ export class LoginForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
-		isJetpack: PropTypes.bool,
 		isGutenboarding: PropTypes.bool,
 		locale: PropTypes.string,
 	};
@@ -113,7 +110,7 @@ export class LoginForm extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { disableAutoFocus, isJetpack, isGutenboarding } = this.props;
+		const { disableAutoFocus } = this.props;
 
 		if (
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
@@ -131,15 +128,6 @@ export class LoginForm extends Component {
 
 		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
 			! disableAutoFocus && defer( () => this.password && this.password.focus() );
-		}
-
-		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
-			this.props.sendEmailLogin( this.state.usernameOrEmail, {
-				redirectTo: nextProps.redirectTo,
-				loginFormFlow: true,
-			} );
-
-			page( login( { isNative: true, twoFactorAuthType: 'link', isJetpack, isGutenboarding } ) );
 		}
 	}
 

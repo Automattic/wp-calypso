@@ -3,7 +3,7 @@
 	line-height: 22px;
 	pointer-events: none;
 	position: absolute;
-	font-size: 18px;
+	font-size: $font-title-small;
 	top: 62px;
 	right: 24px;
 }
@@ -32,7 +32,7 @@
 	border: none;
 	border-radius: 40px;
 	font-weight: normal;
-	font-size: 18px;
+	font-size: $font-title-small;
 	color: var( --p2-color-text-white );
 	transition: background 0.2s ease;
 
@@ -54,7 +54,7 @@
 .p2-site__form .form-label {
 	color: var( --p2-color-text );
 	font-weight: normal;
-	font-size: 18px;
+	font-size: $font-title-small;
 	letter-spacing: -0.26px;
 	margin-bottom: 16px;
 }
@@ -63,7 +63,7 @@
 	padding: 18px 24px;
 	line-height: 1;
 	border-radius: 2px;
-	font-size: 18px;
+	font-size: $font-title-small;
 	color: var( --p2-color-text );
 	border-color: var( --p2-color-border );
 
@@ -105,7 +105,7 @@
 }
 
 .p2-site__form .p2-site__site-url.form-text-input {
-	padding-right: 94px;
+	padding-right: 160px;
 }
 
 .p2-site__form .form-input-validation {

@@ -14,7 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { ImageEditorToolbar } from '../image-editor-toolbar';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'ImageEditorToolbar', () => {
 	let defaultProps, wrapper;

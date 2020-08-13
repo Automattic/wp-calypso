@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -22,6 +21,7 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 import { isDefaultLocale, addLocaleToPath } from 'lib/i18n-utils';
+import AsyncLoad from 'components/async-load';
 
 class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
@@ -152,7 +152,12 @@ class MasterbarLoggedOut extends React.Component {
 	}
 
 	render() {
-		const { title } = this.props;
+		const { title, isCheckout } = this.props;
+
+		if ( isCheckout ) {
+			return <AsyncLoad require="layout/masterbar/checkout" placeholder={ null } title={ title } />;
+		}
+
 		return (
 			<Masterbar>
 				<Item className="masterbar__item-logo">

@@ -15,16 +15,6 @@ export const setStep = ( step: LaunchStepType ) => ( {
 	step,
 } );
 
-export const setStepComplete = ( step: LaunchStepType ) => ( {
-	type: 'SET_STEP_COMPLETE' as const,
-	step,
-} );
-
-export const setStepIncomplete = ( step: LaunchStepType ) => ( {
-	type: 'SET_STEP_INCOMPLETE' as const,
-	step,
-} );
-
 export const setDomain = ( domain: DomainSuggestions.DomainSuggestion ) => ( {
 	type: 'SET_DOMAIN' as const,
 	domain,
@@ -32,6 +22,10 @@ export const setDomain = ( domain: DomainSuggestions.DomainSuggestion ) => ( {
 
 export const unsetDomain = () => ( {
 	type: 'UNSET_DOMAIN' as const,
+} );
+
+export const confirmDomainSelection = () => ( {
+	type: 'CONFIRM_DOMAIN_SELECTION' as const,
 } );
 
 export const setDomainSearch = ( domainSearch: string ) => ( {
@@ -42,6 +36,10 @@ export const setDomainSearch = ( domainSearch: string ) => ( {
 export const setPlan = ( plan: Plans.Plan ) => ( {
 	type: 'SET_PLAN' as const,
 	plan,
+} );
+
+export const unsetPlan = () => ( {
+	type: 'UNSET_PLAN' as const,
 } );
 
 export function* updatePlan( planSlug: Plans.PlanSlug ) {
@@ -58,12 +56,22 @@ export function* launchSite() {
 	}
 }
 
+export const openSidebar = () => ( {
+	type: 'OPEN_SIDEBAR' as const,
+} );
+
+export const closeSidebar = () => ( {
+	type: 'CLOSE_SIDEBAR' as const,
+} );
+
 export type LaunchAction = ReturnType<
 	| typeof unsetDomain
 	| typeof setStep
-	| typeof setStepComplete
-	| typeof setStepIncomplete
 	| typeof setDomain
+	| typeof confirmDomainSelection
 	| typeof setDomainSearch
 	| typeof setPlan
+	| typeof unsetPlan
+	| typeof openSidebar
+	| typeof closeSidebar
 >;

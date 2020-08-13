@@ -13,7 +13,7 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		margin: 32px 0 24px;
 
-		font-size: 36px;
+		font-size: $font-headline-small;
 		font-weight: 600;
 	}
 }

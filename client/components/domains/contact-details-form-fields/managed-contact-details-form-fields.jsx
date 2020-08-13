@@ -27,6 +27,7 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
+import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 
 /**
  * Style dependencies
@@ -57,6 +58,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		getIsFieldDisabled: PropTypes.func,
 		userCountryCode: PropTypes.string,
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
+		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		translate: PropTypes.func,
 	};
@@ -70,6 +72,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		getIsFieldDisabled: () => {},
 		onContactDetailsChange: () => {},
 		needsOnlyGoogleAppsDetails: false,
+		needsAlternateEmailForGSuite: false,
 		hasCountryStates: false,
 		translate: ( x ) => x,
 		userCountryCode: 'US',
@@ -94,8 +97,12 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 	};
 
-	handleFieldChange = ( event ) => {
+	handleFieldChangeEvent = ( event ) => {
 		const { name, value } = event.target;
+		this.handleFieldChange( name, value );
+	};
+
+	handleFieldChange = ( name, value ) => {
 		let form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -110,7 +117,6 @@ export class ManagedContactDetailsFormFields extends Component {
 		form = updateFormWithContactChange( form, name, value );
 
 		this.updateParentState( form, phoneCountryCode );
-		return;
 	};
 
 	handlePhoneChange = ( { value, countryCode } ) => {
@@ -144,7 +150,8 @@ export class ManagedContactDetailsFormFields extends Component {
 			disabled: getIsFieldDisabled( name ),
 			isError: !! form[ camelName ]?.errors?.length,
 			errorMessage: customErrorMessage || getFirstError( form[ camelName ] ),
-			onChange: this.handleFieldChange,
+			onChange: this.handleFieldChangeEvent,
+			onBlur: this.handleBlur,
 			value: form[ camelName ]?.value ?? '',
 			name,
 			eventFormName,
@@ -158,30 +165,79 @@ export class ManagedContactDetailsFormFields extends Component {
 		} );
 	};
 
-	renderContactDetailsFields() {
-		const { translate, hasCountryStates } = this.props;
+	handleBlur = () => {
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
 		);
-		const countryCode = form.countryCode?.value ?? '';
+
+		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
+			if ( fieldName === 'postalCode' ) {
+				debug( 'reformatting postal code', form.postalCode?.value );
+				const formattedPostalCode = tryToGuessPostalCodeFormat(
+					form.postalCode?.value.toUpperCase?.() ?? '',
+					form.countryCode?.value
+				);
+				this.handleFieldChange( 'postal-code', formattedPostalCode );
+			}
+		} );
+	};
+
+	renderContactDetailsEmailPhone() {
+		const { translate, isLoggedOutCart } = this.props;
+
+		if ( isLoggedOutCart ) {
+			return (
+				<>
+					<div className="contact-details-form-fields__row">
+						{ this.createField(
+							'email',
+							Input,
+							{
+								label: translate( 'Email' ),
+								description: translate(
+									"You'll use this email address to access your account later"
+								),
+							},
+							{
+								customErrorMessage: this.props.contactDetailsErrors?.email,
+							}
+						) }
+					</div>
+
+					<div className="contact-details-form-fields__row">
+						{ this.createField(
+							'country-code',
+							CountrySelect,
+							{
+								label: translate( 'Country' ),
+								countriesList: this.props.countriesList,
+							},
+							{
+								customErrorMessage: this.props.contactDetailsErrors?.countryCode,
+							}
+						) }
+						{ this.createField(
+							'phone',
+							FormPhoneMediaInput,
+							{
+								label: translate( 'Phone' ),
+								onChange: this.handlePhoneChange,
+								countriesList: this.props.countriesList,
+								countryCode: this.state.phoneCountryCode,
+								enableStickyCountry: false,
+							},
+							{
+								customErrorMessage: this.props.contactDetailsErrors?.phone,
+							}
+						) }
+					</div>
+				</>
+			);
+		}
 
 		return (
-			<div className="contact-details-form-fields__contact-details">
-				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'organization',
-						HiddenInput,
-						{
-							label: translate( 'Organization' ),
-							text: translate( '+ Add organization name' ),
-						},
-						{
-							customErrorMessage: this.props.contactDetailsErrors?.organization,
-						}
-					) }
-				</div>
-
+			<>
 				<div className="contact-details-form-fields__row">
 					{ this.createField(
 						'email',
@@ -223,6 +279,35 @@ export class ManagedContactDetailsFormFields extends Component {
 						}
 					) }
 				</div>
+			</>
+		);
+	}
+
+	renderContactDetailsFields() {
+		const { translate, hasCountryStates } = this.props;
+		const form = getFormFromContactDetails(
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
+		);
+		const countryCode = form.countryCode?.value ?? '';
+
+		return (
+			<div className="contact-details-form-fields__contact-details">
+				<div className="contact-details-form-fields__row">
+					{ this.createField(
+						'organization',
+						HiddenInput,
+						{
+							label: translate( 'Organization' ),
+							text: translate( '+ Add organization name' ),
+						},
+						{
+							customErrorMessage: this.props.contactDetailsErrors?.organization,
+						}
+					) }
+				</div>
+
+				{ this.renderContactDetailsEmailPhone() }
 
 				{ countryCode && (
 					<RegionAddressFieldsets
@@ -238,12 +323,24 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 
 	renderAlternateEmailFieldForGSuite() {
+		let customErrorMessage = this.props.contactDetailsErrors?.alternateEmail;
+		// We also show 'email' field errors because this field will only be shown
+		// if email is invalid (and email will not be shown) so we should show
+		// those errors somewhere. However, only show them if the `alternateEmail`
+		// has not been entered.
+		if (
+			! customErrorMessage &&
+			this.props.contactDetailsErrors?.email &&
+			! this.props.contactDetails?.alternateEmail?.length > 0
+		) {
+			customErrorMessage = this.props.contactDetailsErrors.email;
+		}
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input
 					label={ this.props.translate( 'Alternate email address' ) }
 					{ ...this.getFieldProps( 'alternate-email', {
-						customErrorMessage: this.props.contactDetailsErrors?.alternateEmail,
+						customErrorMessage,
 					} ) }
 				/>
 			</div>
@@ -283,7 +380,7 @@ export class ManagedContactDetailsFormFields extends Component {
 						}
 					) }
 				</div>
-				{ this.props.needsOnlyGoogleAppsDetails && this.renderAlternateEmailFieldForGSuite() }
+				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
 				{ this.props.needsOnlyGoogleAppsDetails ? (
 					<GSuiteFields

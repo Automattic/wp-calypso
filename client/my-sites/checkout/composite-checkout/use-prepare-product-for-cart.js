@@ -28,6 +28,7 @@ export default function usePrepareProductsForCart( {
 	product: productAlias,
 	purchaseId: originalPurchaseId,
 	isJetpackNotAtomic,
+	isPrivate,
 } ) {
 	const planSlug = useSelector( ( state ) =>
 		getUpgradePlanSlugFromPath( state, siteId, productAlias )
@@ -45,6 +46,7 @@ export default function usePrepareProductsForCart( {
 		planSlug,
 		setState,
 		isJetpackNotAtomic,
+		isPrivate,
 		originalPurchaseId,
 	} );
 	useAddRenewalItems( { originalPurchaseId, productAlias, setState } );
@@ -74,7 +76,13 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 				if ( ! productSlug ) {
 					return null;
 				}
-				const [ slug ] = productSlug.split( ':' );
+				let [ slug ] = productSlug.split( ':' );
+
+				// See https://github.com/Automattic/wp-calypso/pull/15043 for explanation of
+				// the no-ads alias (seems a little strange to me that the product slug is a
+				// php file).
+				slug = slug === 'no-ads' ? 'no-adverts/no-adverts.php' : slug;
+
 				const product = products[ slug ];
 				if ( ! product ) {
 					debug( 'no product found with slug', productSlug );
@@ -145,6 +153,7 @@ function useAddProductFromSlug( {
 	planSlug,
 	setState,
 	isJetpackNotAtomic,
+	isPrivate,
 	originalPurchaseId,
 } ) {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
@@ -185,6 +194,7 @@ function useAddProductFromSlug( {
 			productAlias,
 			product_id: product.product_id,
 			isJetpackNotAtomic,
+			isPrivate,
 		} );
 		if ( ! cartProduct ) {
 			debug( 'there is a request to add a product but creating an item failed', productAlias );
@@ -198,6 +208,7 @@ function useAddProductFromSlug( {
 		);
 		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
 	}, [
+		isPrivate,
 		plans,
 		products,
 		originalPurchaseId,

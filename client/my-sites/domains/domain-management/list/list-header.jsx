@@ -3,6 +3,8 @@
  */
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,11 +18,17 @@ import InfoPopover from 'components/info-popover';
 import './style.scss';
 
 class ListHeader extends React.PureComponent {
+	static propTypes = {
+		headerClasses: PropTypes.object,
+	};
+
 	render() {
-		const { translate } = this.props;
+		const { headerClasses, translate } = this.props;
+
+		const listHeaderClasses = classNames( 'list-header', headerClasses );
 
 		return (
-			<CompactCard className="list-header">
+			<CompactCard className={ listHeaderClasses }>
 				<div className="list__domain-link" />
 				<div className="list__domain-transfer-lock">
 					{ translate( 'Transfer lock' ) }

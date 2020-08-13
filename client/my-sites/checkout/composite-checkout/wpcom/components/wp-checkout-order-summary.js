@@ -12,6 +12,7 @@ import {
 	useFormStatus,
 	useLineItemsOfType,
 	useTotal,
+	useSelect,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -33,6 +34,8 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
 import { isEnabled } from 'config';
+import { isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
@@ -98,10 +101,10 @@ function CheckoutSummaryFeaturesList() {
 	const domains = useDomainsInCart();
 	const hasPlanInCart = useHasPlanInCart();
 	const translate = useTranslate();
-
-	const supportText = hasPlanInCart
-		? translate( 'Email and live chat support' )
-		: translate( 'Email support' );
+	const siteId = useSelect( ( select ) => select( 'wpcom' )?.getSiteId?.() );
+	const isJetpackNotAtomic = useSelector(
+		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	);
 
 	let refundText = translate( 'Money back guarantee' );
 	if ( hasDomainsInCart && ! hasPlanInCart ) {
@@ -119,7 +122,7 @@ function CheckoutSummaryFeaturesList() {
 			{ hasPlanInCart && <CheckoutSummaryPlanFeatures /> }
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
-				{ supportText }
+				<SupportText hasPlanInCart={ hasPlanInCart } isJetpackNotAtomic={ isJetpackNotAtomic } />
 			</CheckoutSummaryFeaturesListItem>
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
@@ -127,6 +130,14 @@ function CheckoutSummaryFeaturesList() {
 			</CheckoutSummaryFeaturesListItem>
 		</CheckoutSummaryFeaturesListUI>
 	);
+}
+
+function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
+	const translate = useTranslate();
+	if ( hasPlanInCart && ! isJetpackNotAtomic ) {
+		return <span>{ translate( 'Email and live chat support' ) }</span>;
+	}
+	return <span>{ translate( 'Email support' ) }</span>;
 }
 
 function CheckoutSummaryFeaturesListDomainItem( { domain } ) {

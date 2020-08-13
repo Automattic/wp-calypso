@@ -197,7 +197,7 @@ html {
 		line-height: 32px;
 
 		@include breakpoint-deprecated('>660px') {
-			font-size: 36px;
+			font-size: $font-headline-small;
 			line-height: 40px;
 		}
 	}
@@ -208,7 +208,7 @@ html {
 		line-height: 23px;
 
 		@include breakpoint-deprecated( '>660px' ) {
-			font-size: 18px;
+			font-size: $font-title-small;
 			line-height: 23px;
 		}
 	}
@@ -218,7 +218,7 @@ html {
 		line-height: 24px;
 
 		@include breakpoint-deprecated('>660px') {
-			font-size: 18px;
+			font-size: $font-title-small;
 			line-height: 24px;
 		}
 	}

@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 import reducer, { items, itemReducer } from '../reducer';
 import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { addLiker, removeLiker, like, unlike } from '../actions';
-import { useFakeTimers, useSandbox } from 'test/helpers/use-sinon';
+import { useFakeTimers, useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

@@ -17,7 +17,7 @@ import site from './fixtures/site';
 import updatePluginData from './fixtures/updated-plugin';
 import Dispatcher from 'dispatcher';
 import PluginsStore from 'lib/plugins/store';
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'test-helpers/use-sinon';
 
 jest.mock( 'lib/redux-bridge', () => require( './mocks/redux-bridge' ) );
 

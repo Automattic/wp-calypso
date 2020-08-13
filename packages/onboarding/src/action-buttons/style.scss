@@ -44,6 +44,10 @@ button.action_buttons__button.components-button {
 		outline-color: transparent;
 	}
 
+	&:disabled {
+		opacity: 0.5;
+	}
+
 	&.action-buttons__back {
 		color: var( --studio-gray-50 );
 		white-space: nowrap;

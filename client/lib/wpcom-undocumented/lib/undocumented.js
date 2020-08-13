@@ -1434,6 +1434,21 @@ Undocumented.prototype.usersSocialNew = function ( query, fn ) {
 	return this.wpcom.req.post( args, fn );
 };
 
+Undocumented.prototype.createUserAndSite = function ( query, fn ) {
+	debug( '/users/new' );
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( query );
+
+	// Set the language for the user
+	query.locale = getLocaleSlug();
+	const args = {
+		path: '/users/new',
+		body: query,
+	};
+	return this.wpcom.req.post( args, fn );
+};
+
 /**
  * Verify user for new signups
  *

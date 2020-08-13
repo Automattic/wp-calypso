@@ -172,6 +172,7 @@ describe( 'CompositeCheckout', () => {
 					],
 				},
 				sites: { items: {} },
+				siteSettings: { items: {} },
 				ui: { selectedSiteId: 123 },
 				productsList: {
 					items: {

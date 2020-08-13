@@ -7,6 +7,7 @@ import debugFactory from 'debug';
 import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import cookie from 'cookie';
 import { isArray } from 'lodash';
 
 /**
@@ -15,15 +16,23 @@ import { isArray } from 'lodash';
 import CheckoutContainer from './checkout/checkout-container';
 import IncludedProductNoticeContent from './checkout/included-product-notice-content';
 import OwnedProductNoticeContent from './checkout/owned-product-notice-content';
+import JetpackMinimumPluginVersionNoticeContent from './checkout/jetpack-minimum-plugin-version-notice-content';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
-import { GROUP_JETPACK } from 'lib/plans/constants';
-import { isJetpackBackup, isJetpackBackupSlug } from 'lib/products-values';
+import { GROUP_JETPACK, JETPACK_PLANS } from 'lib/plans/constants';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { isJetpackBackup, isJetpackBackupSlug, getProductFromSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
-import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { isJetpackSite, getSiteProducts, getSitePlan } from 'state/sites/selectors';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	getSiteProducts,
+	getSitePlan,
+} from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
 import {
@@ -31,9 +40,16 @@ import {
 	isBackupProductIncludedInSitePlan,
 } from 'state/sites/products/conflicts';
 import { abtest } from 'lib/abtest';
+import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
+
+function getGeoLocationFromCookie() {
+	const cookies = cookie.parse( document.cookie );
+
+	return cookies.country_code;
+}
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -52,14 +68,17 @@ export default function CheckoutSystemDecider( {
 	upgradeIntent,
 	clearTransaction,
 	cart,
+	isLoggedOutCart,
+	isNoSiteCart,
 } ) {
 	const siteId = selectedSite?.ID;
 	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
-	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
-	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const countryCode =
+		useSelector( ( state ) => getCurrentUserCountryCode( state ) ) || getGeoLocationFromCookie();
+	const locale = useSelector( ( state ) => getCurrentLocaleSlug( state ) );
 	const isJetpackPlanIncludingSiteBackup = useSelector( ( state ) =>
 		jetpackPlan ? isPlanIncludingSiteBackup( state, siteId, jetpackPlan.getStoreSlug() ) : null
 	);
@@ -68,6 +87,11 @@ export default function CheckoutSystemDecider( {
 			? isBackupProductIncludedInSitePlan( state, siteId, product )
 			: null
 	);
+
+	const BACKUP_MINIMUM_PLUGIN_VERSION = '8.5';
+	const siteHasBackupMinPluginVersion = useSelector( ( state ) =>
+		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_PLUGIN_VERSION )
+	);
 	const currentProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const reduxDispatch = useDispatch();
@@ -75,9 +99,18 @@ export default function CheckoutSystemDecider( {
 
 	let infoMessage;
 
+	if ( isJetpackBackupSlug( product ) && ! siteHasBackupMinPluginVersion ) {
+		const backupProductInCart = getProductFromSlug( product );
+		infoMessage = (
+			<JetpackMinimumPluginVersionNoticeContent
+				product={ backupProductInCart }
+				minVersion={ BACKUP_MINIMUM_PLUGIN_VERSION }
+			/>
+		);
+	}
+
 	if ( isJetpackPlanIncludingSiteBackup && selectedSite ) {
 		const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
-
 		infoMessage = backupProduct && (
 			<OwnedProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
 		);
@@ -100,7 +133,8 @@ export default function CheckoutSystemDecider( {
 		product,
 		purchaseId,
 		isJetpack,
-		isAtomic
+		isAtomic,
+		isLoggedOutCart
 	);
 
 	useEffect( () => {
@@ -157,27 +191,43 @@ export default function CheckoutSystemDecider( {
 	}
 
 	if ( 'composite-checkout' === checkoutVariant ) {
+		let siteSlug = selectedSite?.slug;
+
+		if ( ! siteSlug ) {
+			siteSlug = 'no-site';
+
+			if ( isLoggedOutCart || isNoSiteCart ) {
+				siteSlug = 'no-user';
+			}
+		}
+
 		return (
-			<CheckoutErrorBoundary
-				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-				onError={ logCheckoutError }
-			>
-				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-					<CompositeCheckout
-						siteSlug={ selectedSite?.slug }
-						siteId={ selectedSite?.ID }
-						product={ product }
-						purchaseId={ purchaseId }
-						couponCode={ couponCode }
-						redirectTo={ redirectTo }
-						feature={ selectedFeature }
-						plan={ plan }
-						cart={ cart }
-						isComingFromUpsell={ isComingFromUpsell }
-						infoMessage={ infoMessage }
-					/>
-				</StripeHookProvider>
-			</CheckoutErrorBoundary>
+			<>
+				<CheckoutErrorBoundary
+					errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+					onError={ logCheckoutError }
+				>
+					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+						<CompositeCheckout
+							siteSlug={ siteSlug }
+							siteId={ selectedSite?.ID }
+							product={ product }
+							purchaseId={ purchaseId }
+							couponCode={ couponCode }
+							redirectTo={ redirectTo }
+							feature={ selectedFeature }
+							plan={ plan }
+							cart={ cart }
+							isComingFromUpsell={ isComingFromUpsell }
+							infoMessage={ infoMessage }
+							isLoggedOutCart={ isLoggedOutCart }
+							isNoSiteCart={ isNoSiteCart }
+							getCart={ isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( cart ) : null }
+						/>
+					</StripeHookProvider>
+				</CheckoutErrorBoundary>
+				{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
+			</>
 		);
 	}
 
@@ -209,7 +259,8 @@ function getCheckoutVariant(
 	productSlug,
 	purchaseId,
 	isJetpack,
-	isAtomic
+	isAtomic,
+	isLoggedOutCart
 ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
@@ -263,25 +314,19 @@ function getCheckoutVariant(
 		'premium-2-years',
 	];
 	const jetpackPseudoSlugsToAllow = [
-		'jetpack_anti_spam',
-		'jetpack_antispam_monthly',
-		'jetpack_backup_daily',
-		'jetpack_backup_daily_monthly',
-		'jetpack_backup_realtime',
-		'jetpack_backup_realtime_monthly',
-		'jetpack_personal',
 		'jetpack-personal',
 		'jetpack-personal-monthly',
-		'jetpack_scan',
-		'jetpack_search',
-		'jetpack_search_monthly',
-		'jetpack_premium',
 		'premium-monthly',
 		'professional',
 		'professional-monthly',
 	];
 	if ( config( 'env_id' ) !== 'production' ) {
-		pseudoSlugsToAllow = [ ...pseudoSlugsToAllow, ...jetpackPseudoSlugsToAllow ];
+		pseudoSlugsToAllow = [
+			...pseudoSlugsToAllow,
+			...jetpackPseudoSlugsToAllow,
+			...JETPACK_PLANS,
+			...JETPACK_PRODUCTS_LIST,
+		];
 	}
 	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
@@ -306,6 +351,14 @@ function getCheckoutVariant(
 		debug( 'shouldShowCompositeCheckout true' );
 		return 'composite-checkout';
 	}
+
+	// Show composite checkout for registrationless checkout users
+	const urlParams = new URLSearchParams( window.location.search );
+	if ( isLoggedOutCart || 'no-user' === urlParams.get( 'cart' ) ) {
+		debug( 'shouldShowCompositeCheckout true' );
+		return 'composite-checkout';
+	}
+
 	// Add remaining users to new AB test with 10% holdout
 	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
 		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );

@@ -19,6 +19,7 @@ import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/oauth2-clients/ui/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import GdprBanner from 'blocks/gdpr-banner';
@@ -57,6 +58,7 @@ const LayoutLoggedOut = ( {
 } ) => {
 	const sectionGroup = get( section, 'group', null );
 	const sectionName = get( section, 'name', null );
+	const isCheckout = sectionName === 'checkout';
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -105,6 +107,7 @@ const LayoutLoggedOut = ( {
 			<MasterbarLoggedOut
 				title={ section.title }
 				sectionName={ section.name }
+				isCheckout={ isCheckout }
 				redirectUri={ redirectUri }
 			/>
 		);
@@ -121,6 +124,7 @@ const LayoutLoggedOut = ( {
 					id="notices"
 					notices={ notices.list }
 				/>
+				{ isCheckout && <AsyncLoad require="blocks/inline-help" placeholder={ null } /> }
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
@@ -150,12 +154,12 @@ export default connect( ( state ) => {
 	const currentRoute = getCurrentRoute( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isGutenboardingLogin = startsWith( currentRoute, '/log-in/new' );
-	const noMasterbarForRoute = isJetpackLogin || isGutenboardingLogin;
+	const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
+	const noMasterbarForRoute = isJetpackLogin || isGutenboardingLogin || isJetpackWooDnaFlow;
 	const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
-	const isJetpackWooDnaFlow = wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow();
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 
 	return {

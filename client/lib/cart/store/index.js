@@ -61,6 +61,7 @@ const wpcom = wp.undocumented();
 let _cartKey = null;
 let _synchronizer = null;
 let _poller = null;
+let _userLoggedIn = true;
 
 const CartStore = {
 	get() {
@@ -72,11 +73,17 @@ const CartStore = {
 		} );
 	},
 	setSelectedSiteId( selectedSiteId, userLoggedIn = true ) {
-		if ( ! userLoggedIn ) {
-			return;
-		}
+		let newCartKey = selectedSiteId;
+		_userLoggedIn = userLoggedIn;
+		const urlParams = new URLSearchParams( window.location.search );
 
-		const newCartKey = selectedSiteId || 'no-site';
+		if ( ! newCartKey && window.location.pathname.includes( '/checkout/no-site' ) ) {
+			newCartKey = 'no-user';
+
+			if ( _userLoggedIn ) {
+				newCartKey = 'no-user' === urlParams.get( 'cart' ) ? 'no-user' : 'no-site';
+			}
+		}
 
 		if ( _cartKey === newCartKey ) {
 			return;
@@ -92,7 +99,12 @@ const CartStore = {
 		_synchronizer = cartSynchronizer( _cartKey, wpcom );
 		_synchronizer.on( 'change', emitChange );
 
-		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
+		const shouldPollFromLocalStorage =
+			'no-user' === newCartKey || 'no-user' === urlParams.get( 'cart' );
+
+		_poller = shouldPollFromLocalStorage
+			? PollerPool.add( CartStore, _synchronizer._pollFromLocalStorage.bind( _synchronizer ) )
+			: PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 	},
 };
 

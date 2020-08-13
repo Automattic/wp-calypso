@@ -12,17 +12,14 @@ references:
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
       DETECT_CHROMEDRIVER_VERSION: 'false'
       CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
+      NODE_OPTIONS: --max-old-space-size=3072
+      npm_config_cache: /home/circleci/.cache/yarn
+      YARN_CACHE_FOLDER: /home/circleci/.cache/yarn
   desktop_defaults: &desktop_defaults
     working_directory: ~/wp-calypso
-    docker:
-      - image: circleci/node:12.18.0-browsers
-    environment:
-      CONFIG_ENV: release
-      DETECT_CHROMEDRIVER_VERSION: 'false'
-      NODE_ARGS: --max_old_space_size=3072
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -212,14 +209,35 @@ references:
       openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
-  desktop-restore-source-cache: &desktop-restore-source-cache
-    name: Restore desktop cache
+  desktop-restore-yarn-cache: &desktop-restore-yarn-cache
+    name: Restore yarn cache
     keys:
-      - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
-  desktop-save-source-cache: &desktop-save-source-cache
-    name: Save desktop cache
-    key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
-    paths: *desktop-cache-paths
+      - v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+      - v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+  desktop-save-yarn-cache: &desktop-save-yarn-cache
+    name: Save yarn cache
+    key: v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+    paths:
+      - ~/.cache/yarn
+  desktop-restore-packages-cache: &desktop-restore-packages-cache
+    name: Restore packages cache
+    keys:
+      - v6-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+  desktop-save-packages-cache: &desktop-save-packages-cache
+    name: Save packages cache
+    key: v6-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+    paths:
+      - packages
+      - packages-cache-restored
+  desktop-restore-webpack-css-loader-cache: &desktop-restore-webpack-css-loader-cache
+    name: Restore webpack cache-loader cache
+    keys:
+      - v6-desktop-webpack-css-loader-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "webpack-css-loader-hash" }}
+  desktop-save-webpack-css-loader-cache: &desktop-save-webpack-css-loader-cache
+    name: Save webpack cache-loader cache
+    key: v6-desktop-webpack-css-loader-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "webpack-css-loader-hash" }}
+    paths:
+      - ~/.cache/webpack/css
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
@@ -394,15 +412,7 @@ jobs:
           command: |
             cd apps/wpcom-block-editor/ && yarn build --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
       - store-artifacts-and-test-results
-  test-full-site-editing:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Run Full Site Editing client tests
-          command: |
-            cd apps/full-site-editing && yarn run test:js
+
   test-client:
     <<: *defaults
     parallelism: 6
@@ -635,9 +645,19 @@ jobs:
           webhook: << parameters.slack-webhook >>
 
   wp-desktop-source:
+    # Use Linux machine executor, NOT docker image for higher available RAM (7.5GB)
+    machine:
+      image: ubuntu-1604:202004-01
+    resource_class: medium
     <<: *desktop_defaults
     environment:
+      NVM_DIR: '/opt/circleci/.nvm'
       VERSION: << pipeline.git.tag >>
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      DETECT_CHROMEDRIVER_VERSION: 'false'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      NODE_OPTIONS: --max-old-space-size=6144
+      YARN_CACHE_FOLDER: ~/.cache/yarn
     steps:
       - checkout
       - when:
@@ -646,16 +666,68 @@ jobs:
             - run:
                 name: Ensure package.json Version And Tag Match
                 command: cd desktop/bin && node validate_tag.js $VERSION
-      - run: *update-node
-      - run: *yarn-install
-      - restore_cache: *desktop-restore-source-cache
       - run: *desktop-decrypt-assets
       - run:
-          name: Build Desktop Source
+          name: Compute cache checksums
+          command: |
+            # Get latest commit that modified packages directory
+            echo "$(git log -n 1 --format='%h' -- packages .nvmrc yarn.lock)" > packages-hash
+
+            # Get latest commit that modified .css and related files
+            echo "$(git log -n 1 --format='%h' -- '*.css' '*.scss' '*.sass')" > webpack-css-loader-hash
+      - restore_cache: *desktop-restore-yarn-cache
+      - restore_cache: *desktop-restore-packages-cache
+      - restore_cache: *desktop-restore-webpack-css-loader-cache
+      - run:
+          name: Install Linux deps
+          command: |
+            sudo apt update
+            sudo apt-get install -y git-restore-mtime bc
+      - run:
+          name: Restore file modified time
+          command: |
+            # Webpack cache-loader depends on file mtime, which is reset by "git clone".
+            # Use git-restore-mtime to restore original modification time of files based
+            # on date of most recent commit that modified them.
+            # Ref: http://manpages.ubuntu.com/manpages/bionic/man1/git-restore-mtime.1.html
+            #
+            # Note: this utility is highly optimized and is able to process all Calypso
+            # files in less than 10 seconds!
+            /usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
+      - run:
+          name: Install Dependencies
+          command: |
+            # Install Node
+            # Note: this syntax is required to load NVM_DIR in the machine executor.
+            # Ref: https://discuss.circleci.com/t/circleci-forgetting-node-version-on-machine-executor/28813
+            set +e
+            set +x
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install
+            nvm use
+            npm install -g yarn
+
+            # defer to restored packages whenever possible
+            # On a Machine executor, using cached built packages is significant:
+            # https://github.com/Automattic/wp-calypso/pull/44696#discussion_r468010942
+            if [ -f packages-cache-restored ]; then
+              export DISABLEPOSTINSTALL=1
+            fi
+            yarn install --frozen-lockfile
+            echo "$(cat packages-hash)" > packages-cache-restored
+      - save_cache: *desktop-save-yarn-cache
+      - run:
+          name: Build Desktop and Calypso source
           no_output_timeout: 15m
           command: |
+            set +e
+            set +x
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use
+
             yarn run build-desktop:source
-      - save_cache: *desktop-save-source-cache
+      - save_cache: *desktop-save-packages-cache
+      - save_cache: *desktop-save-webpack-css-loader-cache
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
           paths: *desktop-cache-paths
@@ -684,7 +756,11 @@ jobs:
             source $HOME/.nvm/nvm.sh
             nvm use
 
-            yarn run build-desktop:app
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            ! git diff --name-only origin/master...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
       - run:
           name: e2e Tests
           command: |
@@ -693,6 +769,11 @@ jobs:
             npm install -g yarn
 
             yarn run test-desktop:e2e
+      - run:
+          name: Persist Mac Executable
+          command: |
+            # If this isn't a full artifact build, ensure to persist the built application for inspection
+            test -f desktop/release/*.zip || ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
       - run:
           when: always
           name: Clean Up
@@ -716,6 +797,8 @@ jobs:
       - slack/status: *desktop-notify-slack-failure
 
   wp-desktop-linux:
+    docker:
+      - image: circleci/node:12.18.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     steps:
@@ -733,7 +816,11 @@ jobs:
             source $HOME/.nvm/nvm.sh
             nvm use
 
-            yarn run build-desktop:app
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            ! git diff --name-only origin/master...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
       - run:
           name: e2e Tests
           command: |
@@ -742,6 +829,11 @@ jobs:
             npm install -g yarn
 
             yarn run test-desktop:e2e
+      - run:
+          name: Persist Linux Executable
+          command: |
+            # If this isn't a full artifact build, ensure to persist the built application for inspection
+            test -f desktop/release/*.tar.gz || tar -zcf desktop/release/linux-unpacked.tar.gz desktop/release/linux-unpacked
       - run:
           when: always
           name: Clean Up
@@ -806,13 +898,27 @@ jobs:
           command: |
             # Use make for bash-like environment variable substitution
 
-            If ( $env:CIRCLE_TAG ) { $env:ELECTRON_BUILDER_ARGS='-c.win.certificateSubjectName=""Automattic, Inc.""' }
-            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$env:ELECTRON_BUILDER_ARGS
+            # Codesign release (tagged) builds only
+            If ( $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName=""Automattic, Inc.""' }
+
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            If ( -Not $(git diff --name-only origin/master...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
+
+
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
       - run:
           name: Archive Unpacked Directories
           command: |
             tar -zcf desktop/release/win-unpacked-x64.tar.gz desktop/release/win-unpacked
-            tar -zcf desktop/release/win-unpacked-ia32.tar.gz desktop/release/win-ia32-unpacked
+
+            # Check if win-ia32 build is present before archiving: if this isn't a full
+            # artifact build, the win-ia32-unpacked executable will not be generated.
+            If ( $(Test-Path -Path release\win-ia32-unpacked) ) {
+              tar -zcf desktop/release/win-unpacked-ia32.tar.gz desktop/release/win-ia32-unpacked
+            } else {
+              echo "Skipping tar archive for 'desktop\release\win-ia32-unpacked' (not built)"
+            }
       - run:
           when: always
           name: Clean Up
@@ -869,9 +975,6 @@ workflows:
           filters:
             branches:
               ignore: master
-      - test-full-site-editing:
-          requires:
-            - setup
       - build-notifications:
           requires:
             - setup

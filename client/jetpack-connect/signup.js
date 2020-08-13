@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { Button, Card } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -36,6 +37,7 @@ import {
 import { isEnabled } from 'config';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { sendEmailLogin as sendEmailLoginAction } from 'state/auth/actions';
 import {
 	createAccount as createAccountAction,
 	createSocialAccount as createSocialAccountAction,
@@ -47,6 +49,7 @@ import {
 	getRequestError,
 	getLastCheckedUsernameOrEmail,
 	getAuthAccountType,
+	getRedirectToOriginal,
 } from 'state/login/selectors';
 import { resetAuthAccountType as resetAuthAccountTypeAction } from 'state/login/actions';
 import FormattedHeader from 'components/formatted-header';
@@ -290,6 +293,41 @@ export class JetpackSignup extends Component {
 		return <LoggedOutFormLinks>{ footerLinks }</LoggedOutFormLinks>;
 	}
 
+	renderWooDnaLoginMagicLink() {
+		const { translate, usernameOrEmail, sendEmailLogin } = this.props;
+		return (
+			<>
+				<Card className="jetpack-connect__magic-link-card">
+					<p>
+						{ translate( 'We’ve just sent a magic link to {{b}}%(email)s{{/b}}', {
+							args: {
+								email: usernameOrEmail,
+							},
+							components: {
+								b: <strong />,
+							},
+						} ) }
+					</p>
+					<p>{ translate( 'Click the link in the email to connect your store.' ) }</p>
+					<img src="/calypso/images/illustrations/illustration-woo-magic-link.svg" alt="" />
+					<p className="jetpack-connect__magic-link-resend">
+						{ translate( 'This email will expire in an hour. {{a}}Resend it{{/a}}.', {
+							components: {
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								a: <Button isLink onClick={ sendEmailLogin } />,
+							},
+						} ) }
+					</p>
+				</Card>
+				{ this.renderWooDnaFooter( [
+					<LoggedOutFormLinkItem key="login" onClick={ () => this.showWooDnaLoginView() }>
+						{ translate( 'Connect with a different email' ) }
+					</LoggedOutFormLinkItem>,
+				] ) }
+			</>
+		);
+	}
+
 	renderWooDna() {
 		const { authQuery, isFullLoginFormVisible, translate, usernameOrEmail } = this.props;
 		const {
@@ -304,7 +342,13 @@ export class JetpackSignup extends Component {
 		const wooDna = this.getWooDnaConfig();
 		let pageTitle;
 
-		if ( 'login' === this.state.wooDnaFormType ) {
+		if ( 'link' === loginTwoFactorAuthType ) {
+			// Passwordless link has been sent, nothing else to do here except tell the user.
+			header = wooDna.getServiceName();
+			subHeader = translate( 'Check your email!' );
+			pageTitle = translate( 'Connect' );
+			content = this.renderWooDnaLoginMagicLink();
+		} else if ( 'login' === this.state.wooDnaFormType ) {
 			if ( isFullLoginFormVisible ) {
 				header = translate( 'Log in to your WordPress.com account' );
 				/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
@@ -433,6 +477,7 @@ const connectComponent = connect(
 		loginRequestError: getRequestError( state ),
 		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		isFullLoginFormVisible: !! getAuthAccountType( state ),
+		redirectTo: getRedirectToOriginal( state ),
 	} ),
 	{
 		createAccount: createAccountAction,
@@ -441,7 +486,19 @@ const connectComponent = connect(
 		recordTracksEvent: recordTracksEventAction,
 		warningNotice: warningNoticeAction,
 		resetAuthAccountType: resetAuthAccountTypeAction,
-	}
+		sendEmailLogin: sendEmailLoginAction,
+	},
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		sendEmailLogin: () =>
+			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
+				redirectTo: stateProps.redirectTo,
+				loginFormFlow: true,
+				showGlobalNotices: true,
+			} ),
+	} )
 );
 
 export default flowRight( connectComponent, localize )( JetpackSignup );

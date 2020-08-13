@@ -26,6 +26,7 @@ export default function WPCheckoutOrderReview( {
 	onChangePlanLength,
 	siteUrl,
 	isSummary,
+	createUserAndSiteBeforeTransaction,
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -44,7 +45,9 @@ export default function WPCheckoutOrderReview( {
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
-			{ domainUrl && <DomainURL>{ translate( 'Site: %s', { args: domainUrl } ) }</DomainURL> }
+			{ domainUrl && 'no-user' !== domainUrl && (
+				<DomainURL>{ translate( 'Site: %s', { args: domainUrl } ) }</DomainURL>
+			) }
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
@@ -55,6 +58,7 @@ export default function WPCheckoutOrderReview( {
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
+					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				/>
 			</WPOrderReviewSection>
 

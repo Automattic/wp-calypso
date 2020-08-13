@@ -17,7 +17,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport-react#readme",
 	"dependencies": {
-		"@babel/runtime": "^7.8.4",
+		"@babel/runtime": "^7.11.1",
 		"@automattic/viewport": "^1.0.0",
 		"@wordpress/compose": "^3.19.3"
 	},
@@ -29,9 +29,9 @@
 		"regenerator-runtime": "^0.13.4"
 	},
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile"
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile"
 	},
 	"publishConfig": {
 		"access": "public"

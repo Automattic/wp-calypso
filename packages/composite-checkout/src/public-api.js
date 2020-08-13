@@ -17,6 +17,9 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useSetStepComplete,
+	MainContentUI,
+	CheckoutStepAreaUI,
+	SubmitButtonWrapperUI,
 } from './components/checkout-steps';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
@@ -142,4 +145,7 @@ export {
 	useTotal,
 	useTransactionStatus,
 	checkoutTheme,
+	MainContentUI,
+	CheckoutStepAreaUI,
+	SubmitButtonWrapperUI,
 };

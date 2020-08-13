@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 1.15
+Stable tag: 1.20
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -40,7 +40,30 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
-= 1.15
+= 1.20 =
+* Site setup: Fix delay when starting the flow because of the editor save action.
+* Site setup: Fix possible race condition causing the site to be immediately launched when pressing Complete Setup button.
+* Site setup: Clear Free plan selection when a custom domain is selected.
+* Site setup: Start the flow at the first incomplete step.
+* Site setup: Use site title and existing subdomain as fallbacks for domain search.
+* Site setup: Update step completion to be derived from state instead on saved in Launch store.
+
+= 1.19 =
+* Fix error in editor when accessing page as a non-user super admin.
+
+= 1.18 =
+* Fix broken link on mobile when selecting launch flow.
+
+= 1.17 =
+* Site setup list: fix bug opening customer home inside iframe.
+* Site setup list: show clickable links in launch summary step.
+
+= 1.16 =
+* Enable site launch flow for dev & horizon environment.
+* Premium Content: Remove Paid wording from title.
+* Premium Content: Fix duplicate Connect To Stripe message.
+
+= 1.15 =
 * Plugin display name changed to WordPress.com Editing Toolkit.
 * The donation block has been removed from the plugin.
 * Add a launch sidebar to the editor to walk the user through the launch flows.

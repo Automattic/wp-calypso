@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { compact, includes } from 'lodash';
-import i18n from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,6 +13,18 @@ import * as constants from './constants';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
+
+const getAnnualTimeframe = () => ( {
+	term: constants.TERM_ANNUALLY,
+	getBillingTimeFrame: () => translate( 'per year' ),
+	getSignupBillingTimeFrame: () => translate( 'per year' ),
+} );
+
+const getMonthlyTimeframe = () => ( {
+	term: constants.TERM_MONTHLY,
+	getBillingTimeFrame: () => translate( 'per month, billed monthly' ),
+	getSignupBillingTimeFrame: () => translate( 'per month' ),
+} );
 
 const plansDescriptionHeadingComponent = {
 	components: {
@@ -355,6 +367,99 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
 	getInferiorHiddenFeatures: () => [],
+} );
+
+const getPlanJetpackSecurityDailyDetails = () => ( {
+	group: constants.GROUP_JETPACK,
+	type: constants.TYPE_SECURITY,
+	getTitle: () =>
+		translate( 'Jetpack Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+	getAudience: () => translate(),
+	availableFor: ( plan ) =>
+		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Enjoy the peace of mind of complete site protection. ' +
+				'Great for brochure sites, restaurants, blogs, and resume sites.'
+		),
+	getTagline: () => translate( 'Best for sites with occasional updates' ),
+	getPlanCompareFeatures: () => [],
+	getSignupFeatures: () => [],
+	getHiddenFeatures: () => [
+		constants.FEATURE_JETPACK_BACKUP_DAILY,
+		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		constants.FEATURE_JETPACK_SCAN_DAILY,
+		constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		constants.FEATURE_JETPACK_ANTI_SPAM,
+		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+	],
+	getInferiorHiddenFeatures: () => [],
+} );
+
+const getPlanJetpackSecurityRealtimeDetails = () => ( {
+	group: constants.GROUP_JETPACK,
+	type: constants.TYPE_SECURITY,
+	getTitle: () =>
+		translate( 'Jetpack Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	getAudience: () => translate(),
+	availableFor: ( plan ) =>
+		[
+			constants.PLAN_JETPACK_FREE,
+			constants.PLAN_JETPACK_SECURITY_DAILY,
+			constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+			...constants.JETPACK_LEGACY_PLANS,
+		].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Additional security for sites with 24/7 activity. ' +
+				'Recommended for eCommerce stores, news organizations, and online forums.'
+		),
+	getTagline: () => translate( 'Best for sites with frequent updates' ),
+	getPlanCompareFeatures: () => [],
+	getSignupFeatures: () => [],
+	getHiddenFeatures: () => [
+		constants.FEATURE_JETPACK_BACKUP_REALTIME,
+		constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		constants.FEATURE_JETPACK_SCAN_DAILY,
+		constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		constants.FEATURE_JETPACK_ANTI_SPAM,
+		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+	],
+	getInferiorHiddenFeatures: () => [
+		constants.FEATURE_JETPACK_BACKUP_DAILY,
+		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+	],
+} );
+
+const getPlanJetpackCompleteDetails = () => ( {
+	group: constants.GROUP_JETPACK,
+	type: constants.TYPE_ALL,
+	getTitle: () => translate( 'Jetpack Complete' ),
+	getAudience: () => translate(),
+	availableFor: ( plan ) =>
+		[
+			constants.PLAN_JETPACK_FREE,
+			...constants.JETPACK_SECURITY_PLANS,
+			...constants.JETPACK_LEGACY_PLANS,
+		].includes( plan ),
+	getDescription: () =>
+		translate( 'The most powerful WordPress sites: Top-tier security bundle, enhanced search' ),
+	getTagline: () => translate( 'Complete WordPress security, performance, and growth' ),
+	getPlanCompareFeatures: () => [],
+	getSignupFeatures: () => [],
+	getHiddenFeatures: () => [],
+	getInferiorHiddenFeatures: () => [
+		constants.FEATURE_JETPACK_BACKUP_DAILY,
+		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		constants.FEATURE_JETPACK_BACKUP_REALTIME,
+		constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		constants.FEATURE_JETPACK_SCAN_DAILY,
+		constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		constants.FEATURE_JETPACK_ANTI_SPAM,
+		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		constants.FEATURE_JETPACK_SEARCH,
+		constants.FEATURE_JETPACK_SEARCH,
+	],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -1067,6 +1172,58 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY,
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
+	},
+
+	[ constants.PLAN_JETPACK_SECURITY_DAILY ]: {
+		...getPlanJetpackSecurityDailyDetails(),
+		...getAnnualTimeframe(),
+		getMonthlySlug: () => constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_DAILY,
+		getPathSlug: () => 'security-daily',
+		getProductId: () => 2010,
+	},
+
+	[ constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: {
+		...getPlanJetpackSecurityDailyDetails(),
+		...getMonthlyTimeframe(),
+		getAnnualSlug: () => constants.PLAN_JETPACK_SECURITY_DAILY,
+		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+		getPathSlug: () => 'security-daily-monthly',
+		getProductId: () => 2011,
+	},
+
+	[ constants.PLAN_JETPACK_SECURITY_REALTIME ]: {
+		...getPlanJetpackSecurityRealtimeDetails(),
+		...getAnnualTimeframe(),
+		getMonthlySlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME,
+		getPathSlug: () => 'security-realtime',
+		getProductId: () => 2012,
+	},
+
+	[ constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: {
+		...getPlanJetpackSecurityDailyDetails(),
+		...getMonthlyTimeframe(),
+		getAnnualSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME,
+		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+		getPathSlug: () => 'security-realtime-monthly',
+		getProductId: () => 2013,
+	},
+
+	[ constants.PLAN_JETPACK_COMPLETE ]: {
+		...getPlanJetpackCompleteDetails(),
+		...getAnnualTimeframe(),
+		getStoreSlug: () => constants.PLAN_JETPACK_COMPLETE,
+		getPathSlug: () => 'complete',
+		getProductId: () => 2014,
+	},
+
+	[ constants.PLAN_JETPACK_COMPLETE_MONTHLY ]: {
+		...getPlanJetpackCompleteDetails(),
+		...getMonthlyTimeframe(),
+		getStoreSlug: () => constants.PLAN_JETPACK_COMPLETE_MONTHLY,
+		getPathSlug: () => 'complete-monthly',
+		getProductId: () => 2015,
 	},
 };
 

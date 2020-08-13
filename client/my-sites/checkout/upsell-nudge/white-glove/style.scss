@@ -123,7 +123,7 @@ main.white-glove.main {
 	}
 
 	&__header {
-		font-size: 36px;
+		font-size: $font-headline-small;
 		font-weight: normal;
 		text-align: center;
 		line-height: 1.4;
@@ -149,7 +149,7 @@ main.white-glove.main {
 		margin-bottom: 1.6em;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 18px;
+			font-size: $font-body;
 		}
 	}
 

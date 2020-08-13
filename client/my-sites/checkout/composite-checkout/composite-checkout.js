@@ -34,18 +34,16 @@ import usePrepareProductsForCart, {
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import {
 	requestContactDetailsCache,
 	updateContactDetailsCache,
 } from 'state/domains/management/actions';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { StateSelect } from 'my-sites/domains/components/form';
-import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import { getPlan } from 'lib/plans';
-import { getTopLevelOfTld } from 'lib/domains';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
@@ -54,7 +52,7 @@ import useCreatePaymentMethods from './use-create-payment-methods';
 import {
 	applePayProcessor,
 	freePurchaseProcessor,
-	stripeCardProcessor,
+	multiPartnerCardProcessor,
 	fullCreditsProcessor,
 	existingCardProcessor,
 	payPalProcessor,
@@ -63,16 +61,8 @@ import {
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import { fillInSingleCartItemAttributes } from 'lib/cart-values';
-import {
-	hasGoogleApps,
-	hasDomainRegistration,
-	hasTransferProduct,
-	hasRenewalItem,
-	getRenewalItems,
-	hasPlan,
-} from 'lib/cart-values/cart-items';
+import { hasRenewalItem, getRenewalItems, hasPlan } from 'lib/cart-values/cart-items';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryStoredCards from 'components/data/query-stored-cards';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryPlans from 'components/data/query-plans';
 import QueryProducts from 'components/data/query-products-list';
@@ -124,16 +114,21 @@ export default function CompositeCheckout( {
 	cart,
 	couponCode: couponCodeFromUrl,
 	isComingFromUpsell,
+	isLoggedOutCart,
+	isNoSiteCart,
 	infoMessage,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
+	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
+	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
+	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -184,6 +179,7 @@ export default function CompositeCheckout( {
 		product,
 		purchaseId,
 		isJetpackNotAtomic,
+		isPrivate,
 	} );
 
 	useFetchProductsIfNotLoaded();
@@ -203,7 +199,7 @@ export default function CompositeCheckout( {
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
-		cartKey: siteId,
+		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsToAdd: productsForCart,
 		couponToAdd: couponCodeFromUrl,
@@ -241,6 +237,7 @@ export default function CompositeCheckout( {
 		siteId,
 		hideNudge,
 		recordEvent,
+		isLoggedOutCart,
 	} );
 
 	const moment = useLocalizedMoment();
@@ -309,6 +306,17 @@ export default function CompositeCheckout( {
 			}
 
 			debug( 'just redirecting to', url );
+
+			if ( createUserAndSiteBeforeTransaction ) {
+				window.localStorage.removeItem( 'shoppingCart' );
+				window.localStorage.removeItem( 'siteParams' );
+
+				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
+				// Using page.redirect() will take to the log in page which we don't want.
+				window.location = url;
+				return;
+			}
+
 			page.redirect( url );
 		},
 		[
@@ -323,6 +331,7 @@ export default function CompositeCheckout( {
 			total,
 			couponItem,
 			responseCart,
+			createUserAndSiteBeforeTransaction,
 		]
 	);
 
@@ -348,17 +357,27 @@ export default function CompositeCheckout( {
 	).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
+	let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
+
+	if ( createUserAndSiteBeforeTransaction ) {
+		const siteSlugLoggedOutCart = select( 'wpcom' )?.getSiteSlug();
+		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
+	}
+
 	useRedirectIfCartEmpty(
 		items,
-		`/plans/${ siteSlug || '' }`,
+		cartEmptyRedirectUrl,
 		isLoadingCart,
-		[ ...errors, loadingError ].filter( Boolean )
+		[ ...errors, loadingError ].filter( Boolean ),
+		createUserAndSiteBeforeTransaction
 	);
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
-		recordEvent
+		recordEvent,
+		isLoggedOutCart
 	);
+
 	const {
 		canMakePayment: isApplePayAvailable,
 		isLoading: isApplePayLoading,
@@ -398,78 +417,6 @@ export default function CompositeCheckout( {
 				allowedPaymentMethods,
 				serverAllowedPaymentMethods,
 		  } );
-
-	const renderDomainContactFields = (
-		domainNames,
-		contactDetails,
-		contactDetailsErrors,
-		updateDomainContactFields,
-		shouldShowContactDetailsValidationErrors,
-		isDisabled
-	) => {
-		const needsOnlyGoogleAppsDetails =
-			hasGoogleApps( responseCart ) &&
-			! hasDomainRegistration( responseCart ) &&
-			! hasTransferProduct( responseCart );
-		const getIsFieldDisabled = () => isDisabled;
-		const tlds = getAllTopLevelTlds( domainNames );
-
-		return (
-			<React.Fragment>
-				<ManagedContactDetailsFormFields
-					needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
-					contactDetails={ contactDetails }
-					contactDetailsErrors={
-						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-					}
-					onContactDetailsChange={ updateDomainContactFields }
-					getIsFieldDisabled={ getIsFieldDisabled }
-				/>
-				{ tlds.includes( 'ca' ) && (
-					<RegistrantExtraInfoForm
-						contactDetails={ contactDetails }
-						ccTldDetails={ contactDetails?.extra?.ca ?? {} }
-						onContactDetailsChange={ updateDomainContactFields }
-						contactDetailsValidationErrors={
-							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-						}
-						tld={ 'ca' }
-						getDomainNames={ () => domainNames }
-						translate={ translate }
-						isManaged={ true }
-					/>
-				) }
-				{ tlds.includes( 'uk' ) && (
-					<RegistrantExtraInfoForm
-						contactDetails={ contactDetails }
-						ccTldDetails={ contactDetails?.extra?.uk ?? {} }
-						onContactDetailsChange={ updateDomainContactFields }
-						contactDetailsValidationErrors={
-							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-						}
-						tld={ 'uk' }
-						getDomainNames={ () => domainNames }
-						translate={ translate }
-						isManaged={ true }
-					/>
-				) }
-				{ tlds.includes( 'fr' ) && (
-					<RegistrantExtraInfoForm
-						contactDetails={ contactDetails }
-						ccTldDetails={ contactDetails?.extra?.fr ?? {} }
-						onContactDetailsChange={ updateDomainContactFields }
-						contactDetailsValidationErrors={
-							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-						}
-						tld={ 'fr' }
-						getDomainNames={ () => domainNames }
-						translate={ translate }
-						isManaged={ true }
-					/>
-				) }
-			</React.Fragment>
-		);
-	};
 
 	const getItemVariants = useProductVariants( {
 		siteId,
@@ -515,10 +462,12 @@ export default function CompositeCheckout( {
 
 	const paymentProcessors = useMemo(
 		() => ( {
-			'apple-pay': ( transactionData ) => applePayProcessor( transactionData, dataForProcessor ),
+			'apple-pay': ( transactionData ) =>
+				applePayProcessor( transactionData, dataForProcessor, transactionOptions ),
 			'free-purchase': ( transactionData ) =>
 				freePurchaseProcessor( transactionData, dataForProcessor ),
-			card: ( transactionData ) => stripeCardProcessor( transactionData, dataForProcessor ),
+			card: ( transactionData ) =>
+				multiPartnerCardProcessor( transactionData, dataForProcessor, transactionOptions ),
 			alipay: ( transactionData ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForRedirectProcessor ),
 			p24: ( transactionData ) =>
@@ -535,14 +484,20 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'sofort', transactionData, dataForRedirectProcessor ),
 			eps: ( transactionData ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForRedirectProcessor ),
+			'ebanx-tef': ( transactionData ) =>
+				genericRedirectProcessor( 'brazil-tef', transactionData, dataForRedirectProcessor ),
 			'full-credits': ( transactionData ) =>
-				fullCreditsProcessor( transactionData, dataForProcessor ),
+				fullCreditsProcessor( transactionData, dataForProcessor, transactionOptions ),
 			'existing-card': ( transactionData ) =>
-				existingCardProcessor( transactionData, dataForProcessor ),
+				existingCardProcessor( transactionData, dataForProcessor, transactionOptions ),
 			paypal: ( transactionData ) =>
-				payPalProcessor( transactionData, { ...dataForProcessor, getThankYouUrl, couponItem } ),
+				payPalProcessor(
+					transactionData,
+					{ ...dataForProcessor, getThankYouUrl, couponItem },
+					transactionOptions
+				),
 		} ),
-		[ couponItem, dataForProcessor, dataForRedirectProcessor, getThankYouUrl ]
+		[ couponItem, dataForProcessor, dataForRedirectProcessor, getThankYouUrl, transactionOptions ]
 	);
 
 	useRecordCheckoutLoaded(
@@ -577,8 +532,6 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			<QueryStoredCards />
-
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 			<CartProvider cart={ responseCart }>
 				<CheckoutProvider
@@ -609,7 +562,6 @@ export default function CompositeCheckout( {
 						siteUrl={ siteSlug }
 						countriesList={ countriesList }
 						StateSelect={ StateSelect }
-						renderDomainContactFields={ renderDomainContactFields }
 						variantSelectOverride={ variantSelectOverride }
 						getItemVariants={ getItemVariants }
 						responseCart={ responseCart }
@@ -618,6 +570,8 @@ export default function CompositeCheckout( {
 						isCartPendingUpdate={ isCartPendingUpdate }
 						CheckoutTerms={ CheckoutTerms }
 						showErrorMessageBriefly={ showErrorMessageBriefly }
+						isLoggedOutCart={ isLoggedOutCart }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						infoMessage={ infoMessage }
 					/>
 				</CheckoutProvider>
@@ -658,14 +612,30 @@ function isNotCouponError( error ) {
 	return ! couponErrorCodes.includes( error.code );
 }
 
-function useRedirectIfCartEmpty( items, redirectUrl, isLoading, errors ) {
+function useRedirectIfCartEmpty(
+	items,
+	redirectUrl,
+	isLoading,
+	errors,
+	createUserAndSiteBeforeTransaction
+) {
 	useEffect( () => {
 		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
+			if ( createUserAndSiteBeforeTransaction ) {
+				window.localStorage.removeItem( 'shoppingCart' );
+				window.localStorage.removeItem( 'siteParams' );
+
+				// We use window.location instead of page.redirect() so that if the user already has an account and site at
+				// this point, then window.location will reload with the cookies applied and takes to the /plans page.
+				// (page.redirect() will take to the log in page instead).
+				window.location = redirectUrl;
+				return;
+			}
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, isLoading, errors ] );
+	}, [ redirectUrl, items, isLoading, errors, createUserAndSiteBeforeTransaction ] );
 }
 
 function useRecordCheckoutLoaded(
@@ -765,10 +735,6 @@ function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeatur
 		analyticsPath = '/checkout/no-site';
 	}
 	return { analyticsPath, analyticsProps };
-}
-
-function getAllTopLevelTlds( domainNames ) {
-	return Array.from( new Set( domainNames.map( getTopLevelOfTld ) ) ).sort();
 }
 
 function displayRenewalSuccessNotice( responseCart, purchases, translate, moment ) {

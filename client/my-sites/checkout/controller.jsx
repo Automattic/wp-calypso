@@ -23,14 +23,22 @@ import { canUserPurchaseGSuite } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
+import userFactory from 'lib/user';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	const currentUser = getCurrentUser( state );
+	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDisallowedForSitePicker =
+		context.pathname.includes( '/checkout/no-site' ) && ( isLoggedOut || ! hasSite );
 
-	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
 		sites( context, next );
 		return;
 	}
@@ -54,6 +62,12 @@ export function checkout( context, next ) {
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
+	const isLoggedOutCart = isLoggedOut && context.pathname.includes( '/checkout/no-site' );
+	const isNoSiteCart =
+		! isLoggedOut &&
+		context.pathname.includes( '/checkout/no-site' ) &&
+		'no-user' === context.query.cart;
+
 	context.primary = (
 		<CartData>
 			<CheckoutSystemDecider
@@ -71,6 +85,8 @@ export function checkout( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				upgradeIntent={ context.query.intent }
 				clearTransaction={ false }
+				isLoggedOutCart={ isLoggedOutCart }
+				isNoSiteCart={ isNoSiteCart }
 			/>
 		</CartData>
 	);

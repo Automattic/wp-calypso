@@ -105,7 +105,7 @@ main.plan-upgrade-upsell.main {
 		margin-bottom: 1.6em;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 18px;
+			font-size: $font-body;
 		}
 	}
 

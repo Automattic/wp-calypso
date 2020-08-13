@@ -3,22 +3,23 @@
  */
 import React from 'react';
 import styled from '@emotion/styled';
-import { useSelect, useLineItems } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
+import { useSelect } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import { SummaryLine, SummaryDetails } from './summary-details';
-import { isGSuiteProductSlug } from 'lib/gsuite';
+import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
+import { hasOnlyRenewalItems } from 'lib/cart-values/cart-items';
 
-export default function WPContactFormSummary( { showDomainContactSummary } ) {
-	const [ items ] = useLineItems();
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
-	const translate = useTranslate();
+export default function WPContactFormSummary( {
+	areThereDomainProductsInCart,
+	isGSuiteInCart,
+	isLoggedOutCart,
+} ) {
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
+	const cart = useCart();
+	const isRenewal = cart && hasOnlyRenewalItems( cart );
 
 	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
@@ -30,66 +31,39 @@ export default function WPContactFormSummary( { showDomainContactSummary } ) {
 		contactInfo.firstName.value,
 		contactInfo.lastName.value
 	);
-	const cityAndState = joinNonEmptyValues( ', ', contactInfo.city.value, contactInfo.state.value );
-	const postalAndCountry = joinNonEmptyValues(
-		', ',
-		contactInfo.postalCode.value,
-		contactInfo.countryCode.value
-	);
 
 	return (
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ ( isGSuiteInCart || showDomainContactSummary ) && fullName && (
+					{ ! isRenewal && ( isGSuiteInCart || areThereDomainProductsInCart ) && fullName && (
 						<SummaryLine>{ fullName }</SummaryLine>
 					) }
 
-					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
-					) }
+					{ ! isRenewal &&
+						areThereDomainProductsInCart &&
+						contactInfo.organization.value?.length > 0 && (
+							<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
+						) }
 
-					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
-					) }
-
-					<AlternateEmailSummary
+					<EmailSummary
+						isRenewal={ isRenewal }
+						isLoggedOutCart={ isLoggedOutCart }
 						contactInfo={ contactInfo }
-						showDomainContactSummary={ showDomainContactSummary }
+						areThereDomainProductsInCart={ areThereDomainProductsInCart }
 						isGSuiteInCart={ isGSuiteInCart }
 					/>
 
-					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
+					{ ! isRenewal && areThereDomainProductsInCart && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
 					) }
 				</SummaryDetails>
 
-				<SummaryDetails>
-					{ showDomainContactSummary && contactInfo.address1.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && contactInfo.address2.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.address2.value } </SummaryLine>
-					) }
-
-					{ showDomainContactSummary && cityAndState && (
-						<SummaryLine>{ cityAndState }</SummaryLine>
-					) }
-
-					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
-				</SummaryDetails>
-
-				{ contactInfo.vatId.value?.length > 0 && (
-					<SummaryDetails>
-						{ contactInfo.vatId.value?.length > 0 && (
-							<SummaryLine>
-								{ translate( 'VAT indentification number:' ) }
-								{ contactInfo.vatId.value }
-							</SummaryLine>
-						) }
-					</SummaryDetails>
-				) }
+				<AddressSummary
+					isRenewal={ isRenewal }
+					contactInfo={ contactInfo }
+					areThereDomainProductsInCart={ areThereDomainProductsInCart }
+				/>
 			</div>
 		</GridRow>
 	);
@@ -109,15 +83,64 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
-function AlternateEmailSummary( { contactInfo, showDomainContactSummary, isGSuiteInCart } ) {
-	if ( ! isGSuiteInCart && ! showDomainContactSummary ) {
+function EmailSummary( {
+	isRenewal,
+	contactInfo,
+	areThereDomainProductsInCart,
+	isGSuiteInCart,
+	isLoggedOutCart,
+} ) {
+	if ( isRenewal ) {
 		return null;
 	}
-	if ( ! contactInfo.alternateEmail.value?.length ) {
+	if ( ! areThereDomainProductsInCart && ! isGSuiteInCart && ! isLoggedOutCart ) {
 		return null;
 	}
-	if ( contactInfo.alternateEmail.value === contactInfo.email.value && showDomainContactSummary ) {
+
+	if ( ! contactInfo.alternateEmail.value && ! contactInfo.email.value ) {
 		return null;
 	}
-	return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
+
+	if ( isGSuiteInCart && contactInfo.alternateEmail.value ) {
+		return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
+	}
+
+	if ( ! contactInfo.email.value ) {
+		return null;
+	}
+
+	return <SummaryLine>{ contactInfo.email.value }</SummaryLine>;
+}
+
+function AddressSummary( { contactInfo, areThereDomainProductsInCart, isRenewal } ) {
+	const postalAndCountry = joinNonEmptyValues(
+		', ',
+		contactInfo.postalCode.value,
+		contactInfo.countryCode.value
+	);
+
+	if ( ! areThereDomainProductsInCart || isRenewal ) {
+		return (
+			<SummaryDetails>
+				{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
+			</SummaryDetails>
+		);
+	}
+
+	const cityAndState = joinNonEmptyValues( ', ', contactInfo.city.value, contactInfo.state.value );
+	return (
+		<SummaryDetails>
+			{ contactInfo.address1.value?.length > 0 && (
+				<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
+			) }
+
+			{ contactInfo.address2.value?.length > 0 && (
+				<SummaryLine>{ contactInfo.address2.value } </SummaryLine>
+			) }
+
+			{ cityAndState && <SummaryLine>{ cityAndState }</SummaryLine> }
+
+			{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
+		</SummaryDetails>
+	);
 }

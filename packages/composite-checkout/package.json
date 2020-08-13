@@ -6,9 +6,9 @@
 	"module": "dist/esm/public-api.js",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile"
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile"
 	},
 	"files": [
 		"dist",
@@ -35,10 +35,11 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/composite-checkout#readme",
 	"dependencies": {
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@babel/runtime": "^7.8.4",
+		"@babel/runtime": "^7.11.1",
 		"@emotion/core": "^10.0.27",
 		"@emotion/styled": "^10.0.27",
 		"@wordpress/i18n": "^3.14.0",
+		"cache-loader": "^4.1.0",
 		"debug": "^4.1.1",
 		"emotion-theming": "^10.0.27",
 		"prop-types": "^15.7.2",

@@ -37,7 +37,7 @@ const wpcom = wp.undocumented();
 /**
  * Make a purchase on WordPress.com.
  *
- * @returns {Readable} A stream of transaction flow steps.
+ * @returns {TransactionFlow} A stream of transaction flow steps.
  *
  * @param {object} params - Includes the cart, domainDetails etc...
  * @param {Function} onStep - Callback
@@ -446,7 +446,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 	}
 }
 
-function createEbanxToken( requestType, cardDetails ) {
+export async function createEbanxToken( requestType, cardDetails ) {
 	debug( 'creating token with ebanx' );
 
 	return new Promise( function ( resolve, reject ) {
