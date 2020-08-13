@@ -29,7 +29,8 @@ import {
 /**
  * Type dependencies
  */
-import { SelectorProduct, SelectorProductSlug, ProductType } from './types';
+import type { JetpackOfferDailyPlans, JetpackOfferRealtimePlans } from 'lib/plans/types';
+import type { SelectorProduct, SelectorProductSlug, ProductType } from './types';
 
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';
@@ -164,3 +165,29 @@ export const SELECTOR_PLANS = [
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
+
+export const DAILY_PLAN_TO_REALTIME_PLAN: Record<
+	JetpackOfferDailyPlans,
+	JetpackOfferRealtimePlans
+> = {
+	[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY_REALTIME,
+	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+};
+
+/**
+ * List of plans and products that can be upgraded from daily to real-time
+ * through an upgrade nunge.
+ */
+export const UPGRADEABLE_WITH_NUDGE = [
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	// This is only for testing purposes to make the nudge appear inside the
+	// Jetpack Security bundle card. This because at the moment we can't purchase
+	// Jetpack Security Daily.
+	// TODO: remove these two once we can purchase the new plans.
+	OPTIONS_JETPACK_SECURITY,
+	OPTIONS_JETPACK_SECURITY_MONTHLY,
+];
+
+export const JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS =
+	'jetpack-offer-reset-upgrade-nudge-dismiss';

@@ -7,7 +7,12 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PRODUCTS_WITH_OPTIONS, OPTIONS_SLUG_MAP } from './constants';
+import {
+	DAILY_PLAN_TO_REALTIME_PLAN,
+	PRODUCTS_WITH_OPTIONS,
+	OPTIONS_SLUG_MAP,
+	UPGRADEABLE_WITH_NUDGE,
+} from './constants';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -34,7 +39,12 @@ import type {
 	SelectorProductCost,
 	DurationString,
 } from './types';
-import type { JetpackPlanSlugs, Plan } from 'lib/plans/types';
+import type {
+	JetpackDailyPlan,
+	JetpackRealtimePlan,
+	JetpackPlanSlugs,
+	Plan,
+} from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
 
 /**
@@ -223,4 +233,24 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
 		return null;
 	}
 	return itemToSelectorProduct( item );
+}
+
+/**
+ * Returns an item slug that represents the real-time version of a daily one.
+ *
+ * @param slug string
+ * @returns string | null
+ */
+export function getRealtimeFromDaily( slug: JetpackDailyPlan ): JetpackRealtimePlan | null {
+	return DAILY_PLAN_TO_REALTIME_PLAN[ slug ];
+}
+
+/**
+ * Returns wheter an item is upgradeable by a nudge.
+ *
+ * @param slug string
+ * @returns boolean | null
+ */
+export function isUpgradeable( slug: string ): boolean {
+	return UPGRADEABLE_WITH_NUDGE.includes( slug );
 }
