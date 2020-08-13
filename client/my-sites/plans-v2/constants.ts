@@ -72,6 +72,11 @@ export const OPTIONS_JETPACK_SECURITY_MONTHLY = 'jetpack_security_monthly';
 export const OPTIONS_JETPACK_BACKUP = 'jetpack_backup';
 export const OPTIONS_JETPACK_BACKUP_MONTHLY = 'jetpack_backup_monthly';
 
+// Types of items. This determines the card UI.
+export const ITEM_TYPE_PLAN = 'item-type-plan';
+export const ITEM_TYPE_BUNDLE = 'item-type-bundle';
+export const ITEM_TYPE_PRODUCT = 'item-type-product';
+
 export const PRODUCTS_WITH_OPTIONS = [
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
@@ -83,6 +88,7 @@ export const PRODUCTS_WITH_OPTIONS = [
 export const OPTION_PLAN_SECURITY: SelectorProduct = {
 	productSlug: OPTIONS_JETPACK_SECURITY,
 	term: TERM_ANNUALLY,
+	type: ITEM_TYPE_BUNDLE,
 	subtypes: [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_REALTIME ],
 	costProductSlug: PLAN_JETPACK_SECURITY_DAILY,
 	monthlyProductSlug: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
@@ -107,6 +113,7 @@ export const OPTION_PLAN_SECURITY_MONTHLY: SelectorProduct = {
 export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	productSlug: OPTIONS_JETPACK_BACKUP,
 	term: TERM_ANNUALLY,
+	type: ITEM_TYPE_PRODUCT,
 	subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_REALTIME ],
 	costProductSlug: PRODUCT_JETPACK_BACKUP_DAILY,
 	monthlyProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,

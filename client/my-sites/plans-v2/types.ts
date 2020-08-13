@@ -1,18 +1,24 @@
-/**
- * Internal dependencies
- */
-import { ALL, PERFORMANCE, SECURITY, PRODUCTS_WITH_OPTIONS } from './constants';
-
+/* eslint-disable wpcalypso/import-docblock */
 /**
  * Type dependencies
  */
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 import type { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import type {
+	ALL,
+	PERFORMANCE,
+	SECURITY,
+	PRODUCTS_WITH_OPTIONS,
+	ITEM_TYPE_PLAN,
+	ITEM_TYPE_BUNDLE,
+	ITEM_TYPE_PRODUCT,
+} from './constants';
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
 export type DurationString = 'annual' | 'monthly';
 export type ProductType = typeof ALL | typeof PERFORMANCE | typeof SECURITY;
+export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_BUNDLE | typeof ITEM_TYPE_PRODUCT;
 export type PurchaseCallback = ( arg0: SelectorProduct ) => void;
 
 interface BasePageProps {
@@ -43,6 +49,7 @@ export type SelectorProductCost = {
 export interface SelectorProduct extends SelectorProductCost {
 	productSlug: string;
 	iconSlug: string;
+	type: ItemType;
 	costProductSlug?: string;
 	monthlyProductSlug?: string;
 	displayName: TranslateResult;
