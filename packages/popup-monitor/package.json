@@ -33,7 +33,7 @@
 		"prepare": "transpile"
 	},
 	"dependencies": {
-		"lodash": "^4.17.15"
+		"lodash": "^4.17.20"
 	},
 	"devDependencies": {
 		"chai": "^4.2.0"

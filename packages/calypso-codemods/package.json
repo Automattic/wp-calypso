@@ -23,7 +23,7 @@
 	"dependencies": {
 		"5to6-codemod": "^1.8.0",
 		"jscodeshift": "^0.9.0",
-		"lodash": "^4.17.10",
+		"lodash": "^4.17.20",
 		"react-codemod": "^5.0.5"
 	}
 }

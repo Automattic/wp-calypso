@@ -38,7 +38,7 @@
 		"prepare": "transpile && copy-assets"
 	},
 	"dependencies": {
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.20",
 		"prop-types": "^15.7.2",
 		"@babel/runtime": "^7.11.1"
 	},
