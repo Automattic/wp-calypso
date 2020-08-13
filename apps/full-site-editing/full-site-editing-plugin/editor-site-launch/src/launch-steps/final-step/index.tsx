@@ -26,7 +26,7 @@ import {
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
-import { useSite, useDomainSuggestion } from '../../hooks';
+import { useSite, useDomainSuggestion, useDomainSearch } from '../../hooks';
 
 import './styles.scss';
 
@@ -43,6 +43,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 	const [ title ] = useEntityProp( 'root', 'site', 'title' );
 	const { currentDomainName } = useSite();
 	const domainSuggestion = useDomainSuggestion();
+	const domainSearch = useDomainSearch();
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
@@ -66,25 +67,30 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 						{ __( 'Free site address', 'full-site-editing' ) }: { currentDomainName }
 					</p>
 					<Tip>
-						{ createInterpolateElement(
-							/* translators: <DomainName /> is the suggested custom domain name; <Link> will redirect users to domain selection step */
-							__(
-								'A custom site address like <DomainName /> (<Link>now available!</Link>) is more unique and can help with your SEO ranking.',
-								'full-site-editing'
-							),
-							{
-								DomainName: (
-									<span
-										className={ classnames( 'nux-launch__summary-item__domain-name', {
-											'is-loading': ! domainSuggestion,
-										} ) }
-									>
-										{ domainSuggestion?.domain_name || 'loading-example.com' }
-									</span>
-								),
-								Link: <Button isLink onClick={ () => setStep( LaunchStep.Domain ) } />,
-							}
-						) }
+						{ domainSearch
+							? createInterpolateElement(
+									/* translators: <DomainName /> is the suggested custom domain name; <Link> will redirect users to domain selection step */
+									__(
+										'A custom site address like <DomainName /> (<Link>now available!</Link>) is more unique and can help with your SEO ranking.',
+										'full-site-editing'
+									),
+									{
+										DomainName: (
+											<span
+												className={ classnames( 'nux-launch__summary-item__domain-name', {
+													'is-loading': ! domainSuggestion,
+												} ) }
+											>
+												{ domainSuggestion?.domain_name || 'loading-example.com' }
+											</span>
+										),
+										Link: <Button isLink onClick={ () => setStep( LaunchStep.Domain ) } />,
+									}
+							  )
+							: __(
+									'A custom site address is more unique and can help with your SEO ranking.',
+									'full-site-editing'
+							  ) }
 					</Tip>
 				</>
 			) }

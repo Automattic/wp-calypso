@@ -66,7 +66,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 					</SubTitle>
 				</div>
 				<ActionButtons>
-					<NextButton onClick={ handleNext } />
+					<NextButton onClick={ handleNext } disabled={ ! domainSearch } />
 				</ActionButtons>
 			</div>
 			<div className="nux-launch-step__body">
