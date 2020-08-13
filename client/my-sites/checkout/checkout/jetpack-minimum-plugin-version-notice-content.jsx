@@ -14,6 +14,39 @@ import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSiteOption from 'state/sites/selectors/get-site-option';
 import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
 
+const getMessage = ( translate, product, siteVersion, minVersion ) => {
+	const displayName = getJetpackProductDisplayName( product );
+
+	if ( ! siteVersion ) {
+		return translate(
+			'{{productName/}} requires version {{strong}}%(minVersion)s{{/strong}} of the Jetpack plugin.',
+			{
+				args: {
+					minVersion: minVersion,
+				},
+				components: {
+					productName: displayName,
+					strong: <strong />,
+				},
+			}
+		);
+	}
+
+	return translate(
+		'{{productName/}} requires version {{strong}}%(minVersion)s{{/strong}} of the Jetpack plugin; your site is using version {{strong}}%(siteVersion)s{{/strong}}.',
+		{
+			args: {
+				minVersion: minVersion,
+				siteVersion: siteVersion,
+			},
+			components: {
+				productName: displayName,
+				strong: <strong />,
+			},
+		}
+	);
+};
+
 const JetpackMinimumPluginVersionNoticeContent = ( { product, minVersion } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -26,25 +59,11 @@ const JetpackMinimumPluginVersionNoticeContent = ( { product, minVersion } ) => 
 		getSiteAdminUrl( state, siteId, 'update-core.php#update-plugins-table' )
 	);
 
-	const displayName = getJetpackProductDisplayName( product );
+	const message = getMessage( translate, product, siteJetpackVersion, minVersion );
 
 	return (
 		<div className="checkout__conflict-notice">
-			<p className="checkout__conflict-notice-message">
-				{ translate(
-					'{{productName/}} requires Jetpack version {{strong}}%(minVersion)s{{/strong}}; your site is using version {{strong}}%(siteVersion)s{{/strong}}.',
-					{
-						args: {
-							minVersion: minVersion,
-							siteVersion: siteJetpackVersion,
-						},
-						components: {
-							productName: displayName,
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
+			<p className="checkout__conflict-notice-message">{ message }</p>
 			{ pluginUpgradeUrl && (
 				<a className="checkout__conflict-notice-link" href={ pluginUpgradeUrl }>
 					{ preventWidows( translate( 'Upgrade now' ) ) }
