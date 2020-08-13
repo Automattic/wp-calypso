@@ -35,14 +35,7 @@ import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-prod
 /**
  * Type dependencies
  */
-import type {
-	Duration,
-	SelectorProduct,
-	SelectorProductSlug,
-	AvailableProductData,
-	SelectorProductCost,
-	DurationString,
-} from './types';
+import type { Duration, SelectorProduct, SelectorProductSlug, DurationString } from './types';
 import type {
 	JetpackDailyPlan,
 	JetpackRealtimePlan,
@@ -112,25 +105,6 @@ export function productBadgeLabel(
 	if ( currentPlan && planHasFeature( currentPlan, product.productSlug ) ) {
 		return translate( 'Included in your plan' );
 	}
-}
-
-export function getProductPrices(
-	product: SelectorProduct,
-	availableProducts: Record< string, AvailableProductData >
-): SelectorProductCost {
-	const availableProduct = availableProducts[ product.costProductSlug || product.productSlug ];
-	// Return if not annual price.
-	if ( product.term !== TERM_ANNUALLY || ! availableProduct || ! product.monthlyProductSlug ) {
-		return {
-			cost: get( availableProduct, 'cost', 0 ),
-		};
-	}
-
-	const relatedAvailableProduct = availableProducts[ product.monthlyProductSlug ];
-	return {
-		discountCost: get( availableProduct, 'cost', 0 ),
-		cost: get( relatedAvailableProduct, 'cost', 0 ) * 12,
-	};
 }
 
 /**
@@ -276,7 +250,7 @@ export function getRealtimeFromDaily( slug: JetpackDailyPlan ): JetpackRealtimeP
 }
 
 /**
- * Returns wheter an item is upgradeable by a nudge.
+ * Returns whether an item is upgradeable by a nudge.
  *
  * @param slug string
  * @returns boolean | null
