@@ -19,16 +19,6 @@ const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name,
 	return state;
 };
 
-const completedSteps: Reducer< LaunchStepType[], LaunchAction > = ( state = [], action ) => {
-	if ( action.type === 'SET_STEP_COMPLETE' && state.indexOf( action.step ) === -1 ) {
-		return [ ...state, action.step ];
-	}
-	if ( action.type === 'SET_STEP_INCOMPLETE' ) {
-		return state.filter( ( completedStep ) => completedStep !== action.step );
-	}
-	return state;
-};
-
 const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, LaunchAction > = (
 	state,
 	action
@@ -43,8 +33,15 @@ const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, LaunchAct
 };
 
 const domainSearch: Reducer< string, LaunchAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_DOMAIN_SEARCH' && action.domainSearch?.length > 1 ) {
+	if ( action.type === 'SET_DOMAIN_SEARCH' ) {
 		return action.domainSearch;
+	}
+	return state;
+};
+
+const confirmedDomainSelection: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'CONFIRM_DOMAIN_SELECTION' ) {
+		return true;
 	}
 	return state;
 };
@@ -52,6 +49,9 @@ const domainSearch: Reducer< string, LaunchAction > = ( state = '', action ) => 
 const plan: Reducer< Plans.Plan | undefined, LaunchAction > = ( state, action ) => {
 	if ( action.type === 'SET_PLAN' ) {
 		return action.plan;
+	}
+	if ( action.type === 'UNSET_PLAN' ) {
+		return undefined;
 	}
 	return state;
 };
@@ -69,8 +69,8 @@ const isSidebarOpen: Reducer< boolean, LaunchAction > = ( state = false, action 
 
 const reducer = combineReducers( {
 	step,
-	completedSteps,
 	domain,
+	confirmedDomainSelection,
 	domainSearch,
 	plan,
 	isSidebarOpen,

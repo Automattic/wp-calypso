@@ -6,10 +6,12 @@ import { useSelect } from '@wordpress/data';
 /**
  * External dependencies
  */
-import { DOMAINS_STORE, LAUNCH_STORE } from '../stores';
+import { DOMAINS_STORE } from '../stores';
+import { useDomainSearch } from './';
 
 export function useDomainSuggestion() {
-	const { domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const domainSearch = useDomainSearch();
+
 	const suggestion = useSelect(
 		( select ) => {
 			if ( ! domainSearch || domainSearch.length < 2 ) {
