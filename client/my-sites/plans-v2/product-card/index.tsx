@@ -3,7 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -81,12 +81,6 @@ const ProductCard = ( { item, onClick, siteId, currencyCode, className }: Produc
 		}
 	}
 
-	// Handle badge label.
-	let badgeLabel: TranslateResult = '';
-	if ( isOwned ) {
-		badgeLabel = translate( 'You own this' );
-	}
-
 	const CardComponent = itemToCard( item ); // Get correct card component.
 	return (
 		<CardComponent
@@ -98,7 +92,6 @@ const ProductCard = ( { item, onClick, siteId, currencyCode, className }: Produc
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ isOwned ? translate( 'Manage subscription' ) : productButtonLabel( item ) }
 			onButtonClick={ () => onClick( item ) }
-			badgeLabel={ badgeLabel }
 			features={ item.features }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
