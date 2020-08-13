@@ -132,8 +132,7 @@ export default function CheckoutSystemDecider( {
 		product,
 		purchaseId,
 		isJetpack,
-		isAtomic,
-		isLoggedOutCart
+		isAtomic
 	);
 
 	useEffect( () => {
@@ -258,8 +257,7 @@ function getCheckoutVariant(
 	productSlug,
 	purchaseId,
 	isJetpack,
-	isAtomic,
-	isLoggedOutCart
+	isAtomic
 ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
@@ -339,23 +337,6 @@ function getCheckoutVariant(
 			productSlug
 		);
 		return 'disallowed-product';
-	}
-
-	// Removes users from initial AB test
-	if (
-		cart.currency === 'USD' &&
-		countryCode?.toLowerCase() === 'us' &&
-		locale?.toLowerCase().startsWith( 'en' )
-	) {
-		debug( 'shouldShowCompositeCheckout true' );
-		return 'composite-checkout';
-	}
-
-	// Show composite checkout for registrationless checkout users
-	const urlParams = new URLSearchParams( window.location.search );
-	if ( isLoggedOutCart || 'no-user' === urlParams.get( 'cart' ) ) {
-		debug( 'shouldShowCompositeCheckout true' );
-		return 'composite-checkout';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );
