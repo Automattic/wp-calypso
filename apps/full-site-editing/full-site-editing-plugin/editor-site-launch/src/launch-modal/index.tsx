@@ -29,14 +29,14 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
 
-	const { isFreePlan } = useSite();
+	const { isPaidPlan } = useSite();
 
 	const handleLaunch = () => {
 		setIsLaunching( true );
 		launchSite();
 	};
 
-	if ( ! isFreePlan && ! isLaunching ) {
+	if ( isPaidPlan && ! isLaunching ) {
 		handleLaunch();
 	}
 
