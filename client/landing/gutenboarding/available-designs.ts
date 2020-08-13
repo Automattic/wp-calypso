@@ -37,7 +37,7 @@ export const getDesignImageUrl = ( design: Design ) => {
 		// When we update the static images, bump the version for cache busting
 		return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${
 			design.theme
-		}.${ canUseWebP ? 'webp' : 'jpg' }?v=2`;
+		}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 	}
 
 	const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';

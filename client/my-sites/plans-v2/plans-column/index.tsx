@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { useMemo, ReactNode } from 'react';
 import { translate } from 'i18n-calypso';
+import React, { useMemo, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -108,6 +108,7 @@ const PlanComponent = ( {
 			onButtonClick={ () => onClick( plan ) }
 			features={ { items: [] } }
 			originalPrice={ price }
+			withStartingPrice={ plan.subtypes && plan.subtypes.length > 0 }
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
 			deprecated={ plan.legacy }

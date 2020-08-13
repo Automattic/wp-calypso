@@ -35,17 +35,16 @@ export const getJetpackProductsDisplayNames = () => {
 				components: {
 					em: <em />,
 				},
-			} ) }{ ' ' }
+			} ) }
 		</>
 	);
 	const backupRealtime = (
 		<>
-			{ ' ' }
 			{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
 				components: {
 					em: <em />,
 				},
-			} ) }{ ' ' }
+			} ) }
 		</>
 	);
 	const search = translate( 'Jetpack Search' );
@@ -55,7 +54,7 @@ export const getJetpackProductsDisplayNames = () => {
 				components: {
 					em: <em />,
 				},
-			} ) }{ ' ' }
+			} ) }
 		</>
 	);
 

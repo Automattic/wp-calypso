@@ -21,7 +21,7 @@ function enqueue_script_and_style() {
 	}
 
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/editor-site-launch.asset.php';
-	$script_dependencies = isset( $asset_file['dependences'] ) ? $asset_file['dependencies'] : array();
+	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
 	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-site-launch.js' );
 	$style_version       = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-site-launch.css' );
 

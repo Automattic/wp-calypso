@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "1.18.0",
+	"version": "1.19.0",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
@@ -25,12 +25,6 @@
 		"common": "calypso-build --source='common' --source='common/data-stores'",
 		"dev:common": "yarn run common",
 		"build:common": "NODE_ENV=production yarn run common",
-		"editor-domain-picker": "calypso-build --source='editor-domain-picker'",
-		"dev:editor-domain-picker": "yarn run editor-domain-picker",
-		"build:editor-domain-picker": "NODE_ENV=production yarn run editor-domain-picker",
-		"editor-plans-grid": "calypso-build --source='editor-plans-grid'",
-		"dev:editor-plans-grid": "yarn run editor-plans-grid",
-		"build:editor-plans-grid": "NODE_ENV=production yarn run editor-plans-grid",
 		"editor-gutenboarding-launch": "calypso-build --source='editor-gutenboarding-launch'",
 		"dev:editor-gutenboarding-launch": "yarn run editor-gutenboarding-launch",
 		"build:editor-gutenboarding-launch": "NODE_ENV=production yarn run editor-gutenboarding-launch",
@@ -134,7 +128,7 @@
 		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
 		"eslint": "^6.8.0",
-		"jest": "^26.0.1",
+		"jest": "^26.4.0",
 		"lodash": "*",
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0",
@@ -150,6 +144,6 @@
 		"@types/wordpress__plugins": "^2.3.6",
 		"@babel/preset-typescript": "^7.10.4",
 		"@wordpress/eslint-plugin": "^7.1.0",
-		"babel-jest": "^26.0.1"
+		"babel-jest": "^26.3.0"
 	}
 }

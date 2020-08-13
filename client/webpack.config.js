@@ -63,7 +63,7 @@ const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
-
+const cachePath = path.resolve( '.cache', extraPath );
 const hasLanguagesMeta = fs.existsSync(
 	path.join( __dirname, 'languages', 'languages-meta.json' )
 );
@@ -164,6 +164,9 @@ const webpackConfig = {
 	},
 	optimization: {
 		concatenateModules: ! isDevelopment && shouldConcatenateModules,
+		// Desktop: override removeAvailableModules and removeEmptyChunks to minimize resource/RAM usage.
+		removeAvailableModules: ! isDesktop,
+		removeEmptyChunks: ! isDesktop,
 		splitChunks: {
 			chunks: 'all',
 			name: !! ( isDevelopment || shouldEmitStats ),
@@ -178,10 +181,24 @@ const webpackConfig = {
 			cache: process.env.CIRCLECI
 				? `${ process.env.HOME }/terser-cache/${ extraPath }`
 				: 'docker' !== process.env.CONTAINER,
+			// Desktop: number of workers should *not* exceed # of vCPUs available.
+			// For both medium Machine and Docker images, number of vCPUs == 2.
+			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
 			parallel: isDesktop ? 2 : workerCount,
+			// Desktop: disable sourceMaps for performance
 			sourceMap: isDesktop ? false : Boolean( process.env.SOURCEMAP ),
+			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
 			terserOptions: {
-				mangle: ! isDesktop,
+				...( isDesktop
+					? {
+							ecma: 2017,
+							mangle: true,
+							compress: false,
+							safari10: false,
+					  }
+					: {
+							mangle: true,
+					  } ),
 			},
 		} ),
 	},
@@ -212,6 +229,7 @@ const webpackConfig = {
 					},
 				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),

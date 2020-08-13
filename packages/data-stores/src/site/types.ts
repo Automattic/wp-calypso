@@ -62,7 +62,7 @@ export interface SiteDetails {
 	options: {
 		created_at: string;
 	};
-	plan: {
+	plan?: {
 		is_free: boolean;
 	};
 }
