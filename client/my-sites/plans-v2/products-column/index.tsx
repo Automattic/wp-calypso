@@ -26,7 +26,12 @@ interface ProductsColumnType {
 	siteId: number | null;
 }
 
-const ProductsColumn = ( { duration, onProductClick, productType }: ProductsColumnType ) => {
+const ProductsColumn = ( {
+	duration,
+	onProductClick,
+	productType,
+	siteId,
+}: ProductsColumnType ) => {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
 	// Gets all products in an array to be parsed.
@@ -54,8 +59,9 @@ const ProductsColumn = ( { duration, onProductClick, productType }: ProductsColu
 			{ productObjects.map( ( product ) => (
 				<ProductCard
 					key={ product.productSlug }
-					onClick={ onProductClick }
 					item={ product }
+					onClick={ onProductClick }
+					siteId={ siteId }
 					currencyCode={ currencyCode }
 				/>
 			) ) }

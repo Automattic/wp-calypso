@@ -49,7 +49,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 		if ( currentPlan && currentPlan !== PLAN_JETPACK_FREE ) {
 			const item = slugToSelectorProduct( currentPlan );
 			if ( item ) {
-				plans.unshift( { ...item, owned: true, legacy: true } );
+				plans.unshift( item );
 			}
 		}
 		return plans;
@@ -65,8 +65,9 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 			{ planObjects.map( ( plan ) => (
 				<ProductCard
 					key={ plan.productSlug }
-					onClick={ onPlanClick }
 					item={ plan }
+					siteId={ siteId }
+					onClick={ onPlanClick }
 					currencyCode={ currencyCode }
 				/>
 			) ) }
