@@ -36,9 +36,10 @@ interface ProductCardProps {
 	item: SelectorProduct;
 	onClick: PurchaseCallback;
 	currencyCode: string;
+	className?: string;
 }
 
-const ProductCard = ( { item, onClick, currencyCode }: ProductCardProps ) => {
+const ProductCard = ( { item, onClick, currencyCode, className }: ProductCardProps ) => {
 	const isFetchingPrices = useSelector( ( state ) => isProductsListFetching( state ) );
 	const itemCost = useSelector( ( state ) =>
 		getProductCost( state, item.costProductSlug || item.productSlug )
@@ -74,6 +75,7 @@ const ProductCard = ( { item, onClick, currencyCode }: ProductCardProps ) => {
 			withStartingPrice={ item.subtypes.length > 0 }
 			isOwned={ item.owned }
 			isDeprecated={ item.legacy }
+			className={ className }
 		/>
 	);
 };
