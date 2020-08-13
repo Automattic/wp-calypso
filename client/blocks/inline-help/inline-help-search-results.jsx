@@ -188,16 +188,9 @@ function HelpSearchResults( {
 
 	const renderSearchResults = () => {
 		if ( isSearching && ! searchResults.length ) {
-			// debounceSpeak('Loading search results.');
 			// search, but no results so far
 			return <PlaceholderLines lines={ placeholderLines } />;
 		}
-
-		// if ( ! isEmpty( searchQuery ) && ! hasAPIResults ) {
-		// 	debounceSpeak('No search results found.');
-		// } else if (! isEmpty( searchQuery ) && hasAPIResults ) {
-		// 	debounceSpeak('Search results loaded.');
-		// }
 
 		return (
 			<>
