@@ -14,6 +14,7 @@ import {
 	slugToSelectorProduct,
 	itemToSelectorProduct,
 	productButtonLabel,
+	productBadgeLabel,
 	isUpgradeable,
 	getRealtimeFromDaily,
 } from '../utils';
@@ -104,6 +105,7 @@ const PlanComponent = ( {
 			description={ plan.description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( plan.term ) }
+			badgeLabel={ productBadgeLabel( plan ) }
 			buttonLabel={ productButtonLabel( plan ) }
 			onButtonClick={ () => onClick( plan ) }
 			features={ { items: [] } }

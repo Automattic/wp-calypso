@@ -28,7 +28,7 @@
 			border-color: $jetpack-free-plan-color;
 		}
 
-		.jetpack-product-card__badge {
+		&:not( .is-owned ) .jetpack-product-card__badge {
 			color: $jetpack-free-plan-color;
 		}
 	}
@@ -38,7 +38,7 @@
 			border-color: $jetpack-personal-plan-color;
 		}
 
-		.jetpack-product-card__badge {
+		&:not( .is-owned ) .jetpack-product-card__badge {
 			color: $jetpack-personal-plan-color;
 		}
 	}
@@ -48,7 +48,7 @@
 			border-color: $jetpack-premium-plan-color;
 		}
 
-		.jetpack-product-card__badge {
+		&:not( .is-owned ) .jetpack-product-card__badge {
 			color: $jetpack-premium-plan-color;
 		}
 	}
@@ -58,7 +58,7 @@
 			border-color: $jetpack-professional-plan-color;
 		}
 
-		.jetpack-product-card__badge {
+		&:not( .is-owned ) .jetpack-product-card__badge {
 			color: $jetpack-professional-plan-color;
 		}
 	}
