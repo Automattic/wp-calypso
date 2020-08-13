@@ -196,7 +196,6 @@
 		"tracekit": "^0.4.5",
 		"twemoji": "^12.1.4",
 		"url": "^0.11.0",
-		"use-debounce": "^3.4.3",
 		"use-subscription": "^1.3.0",
 		"utility-types": "^3.10.0",
 		"uuid": "^7.0.3",
