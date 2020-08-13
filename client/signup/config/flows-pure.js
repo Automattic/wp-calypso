@@ -23,8 +23,9 @@ export function generateFlows( {
 			steps: [ 'user' ],
 			destination: '/',
 			description: 'Create an account without a blog.',
-			lastModified: '2015-07-07',
+			lastModified: '2020-08-12',
 			pageTitle: translate( 'Create an account' ),
+			showRecaptcha: true,
 		},
 
 		business: {
