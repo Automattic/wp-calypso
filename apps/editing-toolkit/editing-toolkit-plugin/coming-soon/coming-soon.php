@@ -41,7 +41,7 @@ function coming_soon_page() {
 		return;
 	}
 
-	$id = (int) get_option( 'page_for_coming_soon', 0 );
+	$id = (int) get_option( 'wpcom_coming_soon_page', 0 );
 
 	if ( empty( $id ) ) {
 		return;
