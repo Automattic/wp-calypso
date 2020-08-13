@@ -62,7 +62,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 				<div>
 					<Title>{ __( 'Choose a domain', 'full-site-editing' ) }</Title>
 					<SubTitle>
-						{ __( 'Free for the first year with any paid plan', 'full-site-editing' ) }
+						{ __( 'Free for the first year with any paid plan.', 'full-site-editing' ) }
 					</SubTitle>
 				</div>
 				<ActionButtons>
