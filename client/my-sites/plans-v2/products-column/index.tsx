@@ -92,6 +92,20 @@ const ProductsColumn = ( {
 					...product,
 					...getProductPrices( product, availableProducts ),
 					owned: currentProducts.includes( product.productSlug ),
+				} ) )
+				// If product is not owned already, show available options (Real-Time or Daily).
+				.map( ( product: SelectorProduct ) => ( {
+					...product,
+					description:
+						! currentProducts.includes( product.productSlug ) && product?.subtypes.length
+							? product.description +
+							  ' ' +
+							  translate( '{{em}}Available options: Real-Time or Daily.{{/em}}', {
+									components: {
+										em: <em />,
+									},
+							  } )
+							: product.description,
 				} ) ),
 		[ duration, productType, currentProducts, availableProducts ]
 	);
