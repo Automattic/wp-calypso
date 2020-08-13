@@ -22,7 +22,7 @@ import { fetchStripeConfiguration } from './composite-checkout/payment-method-he
 import { getPlanByPathSlug } from 'lib/plans';
 import { GROUP_JETPACK, JETPACK_PLANS } from 'lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { isJetpackBackup, isJetpackBackupSlug } from 'lib/products-values';
+import { isJetpackBackup, isJetpackBackupSlug, getProductFromSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
@@ -99,17 +99,18 @@ export default function CheckoutSystemDecider( {
 
 	let infoMessage;
 
-	const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
-	if ( backupProduct && ! siteHasBackupMinPluginVersion ) {
+	if ( isJetpackBackupSlug( product ) && ! siteHasBackupMinPluginVersion ) {
+		const backupProductInCart = getProductFromSlug( product );
 		infoMessage = (
 			<JetpackMinimumPluginVersionNoticeContent
-				product={ backupProduct }
+				product={ backupProductInCart }
 				minVersion={ BACKUP_MINIMUM_PLUGIN_VERSION }
 			/>
 		);
 	}
 
 	if ( isJetpackPlanIncludingSiteBackup && selectedSite ) {
+		const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
 		infoMessage = backupProduct && (
 			<OwnedProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
 		);
