@@ -41,8 +41,12 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 1.20 =
-* Fix delay when starting the Complete Setup flow because of the editor save action.
-* Fix possible race condition causing the site to be immediately launched when pressing Complete Setup button.
+* Site setup: Fix delay when starting the flow because of the editor save action.
+* Site setup: Fix possible race condition causing the site to be immediately launched when pressing Complete Setup button.
+* Site setup: Clear Free plan selection when a custom domain is selected.
+* Site setup: Start the flow at the first incomplete step.
+* Site setup: Use site title and existing subdomain as fallbacks for domain search.
+* Site setup: Update step completion to be derived from state instead on saved in Launch store.
 
 = 1.19 =
 * Fix error in editor when accessing page as a non-user super admin.
