@@ -4,7 +4,7 @@
 import { useSelect } from '@wordpress/data';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { SITE_STORE } from '../stores';
 

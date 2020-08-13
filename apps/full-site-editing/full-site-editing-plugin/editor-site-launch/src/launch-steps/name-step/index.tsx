@@ -2,8 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useEntityProp } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 import { TextControl, Tip } from '@wordpress/components';
 import { Title, SubTitle, ActionButtons, NextButton } from '@automattic/onboarding';
@@ -11,30 +9,19 @@ import { Title, SubTitle, ActionButtons, NextButton } from '@automattic/onboardi
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../../stores';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
+import { useTitle } from '../../hooks';
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
-	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
-	const [ title, setTitle ] = useEntityProp( 'root', 'site', 'title' );
-	const { saveEditedEntityRecord } = useDispatch( 'core' );
-
-	const handleSave = () => {
-		const newTitle = title.trim();
-
-		setTitle( newTitle );
-		saveEditedEntityRecord( 'root', 'site' );
-
-		// update domainSearch only if there is no custom Domain selected
-		! domain && setDomainSearch( newTitle );
-	};
+	const { title, updateTitle, saveTitle } = useTitle();
 
 	const handleNext = () => {
-		handleSave();
+		saveTitle();
 		onNextStep?.();
 	};
+
+	const handleBlur = () => saveTitle();
 
 	return (
 		<LaunchStepContainer className="nux-launch-name-step">
@@ -52,8 +39,8 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 					<TextControl
 						id="nux-launch-step__input"
 						className="nux-launch-step__input"
-						onChange={ setTitle }
-						onBlur={ handleSave }
+						onChange={ updateTitle }
+						onBlur={ handleBlur }
 						value={ title }
 						spellCheck={ false }
 						autoComplete="off"

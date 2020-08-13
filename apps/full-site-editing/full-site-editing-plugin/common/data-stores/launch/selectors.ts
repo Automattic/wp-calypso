@@ -38,9 +38,9 @@ export const isStepCompleted = ( state: State, step: LaunchStepType ) => {
 	return false;
 };
 
-// Check if all steps are completed except the final one
+// Check if all steps are completed except the last one
 export const isFlowCompleted = ( state: State ) =>
-	LaunchSequence.filter( ( step ) => step === LaunchStep.Final ).map( ( step ) =>
+	LaunchSequence.slice( 0, LaunchSequence.length - 1 ).every( ( step ) =>
 		isStepCompleted( state, step )
 	);
 
@@ -48,6 +48,6 @@ export const isFlowCompleted = ( state: State ) =>
 export const isFlowStarted = ( state: State ) =>
 	LaunchSequence.some( ( step ) => isStepCompleted( state, step ) );
 
-// Get first uncompleted step
+// Get first incomplete step
 export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefined =>
 	LaunchSequence.find( ( step ) => ! isStepCompleted( state, step ) );

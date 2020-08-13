@@ -3,16 +3,16 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { EntityProvider } from '@wordpress/core-data';
-
+import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
 import NameStep from '../launch-steps/name-step';
 import DomainStep from '../launch-steps/domain-step';
 import PlanStep from '../launch-steps/plan-step';
 import FinalStep from '../launch-steps/final-step';
+import { LAUNCH_STORE } from '../stores';
+import { useTitle } from '../hooks';
 
 import './styles.scss';
 
@@ -31,6 +31,8 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
+	const { title, saveTitle } = useTitle();
+
 	const LaunchStepComponents = {
 		[ LaunchStep.Name ]: NameStep,
 		[ LaunchStep.Domain ]: DomainStep,
@@ -45,7 +47,6 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		if ( prevSequence < 0 ) {
 			prevSequence = 0;
 		}
-
 		setStep( LaunchSequence[ prevSequence ] );
 	};
 
@@ -61,16 +62,17 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const CurrentLaunchStep = LaunchStepComponents[ currentStep ];
 
 	React.useEffect( () => {
-		if ( firstIncompleteStep && firstIncompleteStep !== LaunchStep.Name ) {
+		if ( title === __( 'Site Title', 'full-site-editing' ) ) {
+			// Clear title value if the site was created with the fallback title. This will also set the first step as incomplete.
+			saveTitle( '' );
+		} else if ( firstIncompleteStep && firstIncompleteStep !== LaunchStep.Name ) {
 			setStep( firstIncompleteStep );
 		}
 	}, [] );
 
 	return (
 		<div className="nux-launch">
-			<EntityProvider kind="root" type="site">
-				<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
-			</EntityProvider>
+			<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
 		</div>
 	);
 };

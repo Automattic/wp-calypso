@@ -33,7 +33,7 @@ const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, LaunchAct
 };
 
 const domainSearch: Reducer< string, LaunchAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_DOMAIN_SEARCH' && action.domainSearch?.length > 1 ) {
+	if ( action.type === 'SET_DOMAIN_SEARCH' ) {
 		return action.domainSearch;
 	}
 	return state;
