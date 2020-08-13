@@ -134,7 +134,7 @@
 		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
 		"eslint": "^6.8.0",
-		"jest": "^26.0.1",
+		"jest": "^26.4.0",
 		"lodash": "*",
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0",
@@ -150,6 +150,6 @@
 		"@types/wordpress__plugins": "^2.3.6",
 		"@babel/preset-typescript": "^7.10.4",
 		"@wordpress/eslint-plugin": "^7.1.0",
-		"babel-jest": "^26.0.1"
+		"babel-jest": "^26.3.0"
 	}
 }
