@@ -21,7 +21,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Type dependencies
@@ -31,6 +31,7 @@ import type { DetailsPageProps, PurchaseCallback, SelectorProduct } from './type
 import './style.scss';
 
 const DetailsPage = ( { duration, productSlug, rootUrl }: DetailsPageProps ) => {
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
@@ -85,6 +86,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl }: DetailsPageProps ) => 
 						<ProductCard
 							key={ subtypeSlug }
 							item={ subtypeItem }
+							siteId={ siteId }
 							currencyCode={ currencyCode }
 							onClick={ () => selectProduct( subtypeItem ) }
 							className="details__column"
