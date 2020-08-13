@@ -128,7 +128,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		// (ignoring G Suite for the moment), so we do not need to fill them out in
 		// this step, we just need to fill out the tax fields in the contact
 		// section. If they need to be filled out for either checkout, see
-		// CheckOutPage.enterRegistarDetails.
+		// CheckOutPage.enterRegistrarDetails.
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( ! isCompositeCheckout ) {
 			return;

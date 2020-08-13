@@ -21,7 +21,7 @@ export default class CheckOutPage extends AsyncBaseContainer {
 		);
 	}
 
-	async enterRegistarDetails( {
+	async enterRegistrarDetails( {
 		firstName,
 		lastName,
 		emailAddress,
