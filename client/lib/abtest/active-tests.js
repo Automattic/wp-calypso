@@ -227,8 +227,8 @@ export default {
 	userlessCheckout: {
 		datestamp: '20200806',
 		variations: {
-			variantUserless: 50,
-			control: 50,
+			variantUserless: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
