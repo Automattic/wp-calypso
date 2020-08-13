@@ -3,6 +3,7 @@
  */
 import { translate, TranslateResult } from 'i18n-calypso';
 import { get } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import {
 	PRODUCTS_WITH_OPTIONS,
 	OPTIONS_SLUG_MAP,
 	UPGRADEABLE_WITH_NUDGE,
+	OFFER_RESET_EFFECTIVE_DATE,
 } from './constants';
 import {
 	TERM_ANNUALLY,
@@ -46,6 +48,7 @@ import type {
 	Plan,
 } from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
+import type { Purchase } from 'lib/purchases/types';
 
 /**
  * Duration utils.
@@ -73,6 +76,23 @@ export function durationToText( duration: Duration ): TranslateResult {
 	return duration === TERM_MONTHLY
 		? translate( 'per month, billed monthly' )
 		: translate( 'per year' );
+}
+
+/**
+ * Renewal utils.
+ */
+
+export function isEligibleForRenewalAtOldRate( { mostRecentRenewDate }: Purchase ): boolean {
+	if ( mostRecentRenewDate ) {
+		const mostRecentRenewMoment = moment( mostRecentRenewDate );
+
+		return (
+			mostRecentRenewMoment.isValid() &&
+			mostRecentRenewMoment.isBefore( moment( OFFER_RESET_EFFECTIVE_DATE ) )
+		);
+	}
+
+	return false;
 }
 
 /**

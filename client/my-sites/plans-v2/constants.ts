@@ -24,6 +24,10 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	JETPACK_LEGACY_PLANS,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_BUSINESS,
 } from 'lib/plans/constants';
 
 /**
@@ -35,6 +39,11 @@ import type { SelectorProduct, SelectorProductSlug, ProductType } from './types'
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';
 export const SECURITY = 'security';
+
+// TODO: update before offer reset launch
+export const OFFER_RESET_EFFECTIVE_DATE = '2020-09-01T00:00:00+00:00';
+// TODO: update before offer reset launch
+export const OFFER_RESET_SUPPORT_PAGE = 'https://jetpack.com/support/';
 
 /*
  * Options displayed in the Product Type filter in the Plans page.
@@ -191,3 +200,15 @@ export const UPGRADEABLE_WITH_NUDGE = [
 
 export const JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS =
 	'jetpack-offer-reset-upgrade-nudge-dismiss';
+
+/**
+ * Recommends a plan for renewal for each legacy plan
+ */
+export const PLAN_RENEWAL_RECOMMENDATION: Record<
+	typeof JETPACK_LEGACY_PLANS[ number ],
+	string
+> = {
+	[ PLAN_JETPACK_PERSONAL ]: PRODUCT_JETPACK_BACKUP_DAILY,
+	[ PLAN_JETPACK_PREMIUM ]: PLAN_JETPACK_SECURITY_DAILY,
+	[ PLAN_JETPACK_BUSINESS ]: PLAN_JETPACK_SECURITY_REALTIME,
+};
