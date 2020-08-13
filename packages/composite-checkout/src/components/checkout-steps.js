@@ -147,7 +147,12 @@ export const CheckoutSummaryCard = styled.div`
 	}
 `;
 
-export function CheckoutStepArea( { children, className, submitButtonHeader } ) {
+export function CheckoutStepArea( {
+	children,
+	className,
+	submitButtonHeader,
+	disableSubmitButton,
+} ) {
 	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const { formStatus } = useFormStatus();
@@ -177,7 +182,9 @@ export function CheckoutStepArea( { children, className, submitButtonHeader } ) 
 					errorMessage={ __( 'There was a problem with the submit button.' ) }
 					onError={ onSubmitButtonLoadError }
 				>
-					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
+					<CheckoutSubmitButton
+						disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' || disableSubmitButton }
+					/>
 				</CheckoutErrorBoundary>
 			</SubmitButtonWrapperUI>
 		</CheckoutStepAreaUI>
