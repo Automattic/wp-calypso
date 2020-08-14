@@ -104,10 +104,13 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 				owned: product.productSlug === currentPlan,
 				legacy: false,
 			} ) )
-			// If product is not owned already, show available options (Real-Time or Daily).
+			// If product offers 'realtime' and 'daily' options, AND product is not already owned,
+			// show "Available Options: Real-Time and Daily" in the product description.
 			.map( ( product ) => ( {
 				...product,
-				showOptions: !! ( product.productSlug !== currentPlan && product?.subtypes.length ),
+				showOptions:
+					product.subtypes?.filter( ( subtype ) => /_(daily|realtime)$/.test( subtype ) ).length >=
+						2 && product.productSlug !== currentPlan,
 			} ) );
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.

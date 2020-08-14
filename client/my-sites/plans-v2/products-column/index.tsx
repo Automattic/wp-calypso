@@ -94,12 +94,13 @@ const ProductsColumn = ( {
 					...getProductPrices( product, availableProducts ),
 					owned: currentProducts.includes( product.productSlug ),
 				} ) )
-				// If product is not owned already, show available options (Real-Time or Daily).
+				// If product offers 'realtime' and 'daily' options, AND product is not already owned,
+				//  show "Available Options: Real-Time and Daily" in the product description.
 				.map( ( product: SelectorProduct ) => ( {
 					...product,
 					showOptions:
-						product?.subtypes &&
-						! product?.subtypes.some( ( subtype ) => currentProducts.includes( subtype ) ),
+						product.subtypes?.filter( ( subtype ) => /_(daily|realtime)$/.test( subtype ) )
+							.length >= 2 && ! currentProducts.includes( product.productSlug ),
 				} ) ),
 		[ duration, productType, currentProducts, availableProducts ]
 	);
