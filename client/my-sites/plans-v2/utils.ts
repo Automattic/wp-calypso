@@ -3,7 +3,6 @@
  */
 import { translate, TranslateResult } from 'i18n-calypso';
 import { get } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -82,7 +81,10 @@ export function durationToText( duration: Duration ): TranslateResult {
  * Renewal utils.
  */
 
-export function isEligibleForRenewalAtOldRate( { mostRecentRenewDate }: Purchase ): boolean {
+export function isEligibleForRenewalAtOldRate(
+	{ mostRecentRenewDate }: Purchase,
+	moment: any
+): boolean {
 	if ( mostRecentRenewDate ) {
 		const mostRecentRenewMoment = moment( mostRecentRenewDate );
 

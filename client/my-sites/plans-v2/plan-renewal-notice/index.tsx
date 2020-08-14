@@ -10,6 +10,7 @@ import React, { FunctionComponent } from 'react';
 import { OFFER_RESET_SUPPORT_PAGE, PLAN_RENEWAL_RECOMMENDATION } from '../constants';
 import { isEligibleForRenewalAtOldRate } from '../utils';
 import ExternalLink from 'components/external-link';
+import { useLocalizedMoment } from 'components/localized-moment';
 import { getPlan } from 'lib/plans';
 import { isJetpackPlanSlug, getJetpackProductDisplayNameBySlug } from 'lib/products-values';
 
@@ -24,11 +25,12 @@ type Props = {
 };
 
 const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase } ) => {
+	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	let notice;
 
-	if ( isEligibleForRenewalAtOldRate( purchase ) ) {
+	if ( isEligibleForRenewalAtOldRate( purchase, moment ) ) {
 		notice = translate(
 			"We're updating our plans to include new features and improved functionality. " +
 				'As a thank you for being a loyal Jetpack subscriber, you can renew your current plan one time – your choice, for one month or one year. ' +
