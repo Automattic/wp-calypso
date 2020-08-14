@@ -90,7 +90,7 @@ export function productButtonLabel( product: SelectorProduct ): TranslateResult 
 		product.buttonLabel ??
 		translate( 'Get %s', {
 			args: product.displayName,
-			context: '%s is the name of a product',
+			comment: '%s is the name of a product',
 		} )
 	);
 }
@@ -214,7 +214,7 @@ export function itemToSelectorProduct(
 			monthlyProductSlug,
 			buttonLabel: translate( 'Get %s', {
 				args: getJetpackProductShortName( item ),
-				context: '%s is the name of a product',
+				comment: '%s is the name of a product',
 			} ),
 			term: item.term,
 			features: [],
