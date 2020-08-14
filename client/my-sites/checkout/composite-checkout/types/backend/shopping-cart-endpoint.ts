@@ -57,6 +57,7 @@ export interface RequestCartProduct {
  * Response schema for the shopping cart endpoint
  */
 export interface ResponseCart {
+	cart_key: string;
 	products: ( TempResponseCartProduct | ResponseCartProduct )[];
 	total_tax_integer: number;
 	total_tax_display: string;
@@ -94,6 +95,7 @@ export interface ResponseCartError {
 }
 
 export const emptyResponseCart = {
+	cart_key: '',
 	products: [],
 	total_tax_integer: 0,
 	total_tax_display: '0',

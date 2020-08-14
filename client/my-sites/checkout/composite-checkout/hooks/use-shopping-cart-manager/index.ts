@@ -31,7 +31,7 @@ export default function useShoppingCartManager( {
 	getCart,
 	onEvent,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
-	const cartKeyString: string = cartKey || 'no-site';
+	const cartKeyString = String( cartKey || 'no-site' );
 	const setServerCart = useCallback( ( cartParam ) => setCart( cartKeyString, cartParam ), [
 		cartKeyString,
 		setCart,
@@ -43,7 +43,7 @@ export default function useShoppingCartManager( {
 	const responseCart: ResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
-	const loadingError: string = hookState.loadingError;
+	const loadingError: string | undefined = hookState.loadingError;
 	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
 	const variantSelectOverride = hookState.variantSelectOverride;
 
