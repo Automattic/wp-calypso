@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -22,6 +23,7 @@ import {
 	isPaidWithPayPalDirect,
 	isRenewing,
 	isSubscription,
+	isCloseToExpiration,
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'lib/purchases';
@@ -357,7 +359,13 @@ class PurchaseMeta extends Component {
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
 					<span className="manage-purchase__detail">{ subsRenewText }</span>
-					<span className="manage-purchase__detail">{ subsBillingText }</span>
+					<span
+						className={ classNames( 'manage-purchase__detail', {
+							'is-expiring': ! isAutorenewalEnabled && isCloseToExpiration( purchase ),
+						} ) }
+					>
+						{ subsBillingText }
+					</span>
 					{ site && (
 						<span className="manage-purchase__detail">
 							<AutoRenewToggle

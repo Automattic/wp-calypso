@@ -266,6 +266,10 @@
 		display: block;
 		cursor: pointer;
 	}
+
+	&.is-expiring .manage-purchase__detail-date-span {
+		color: var( --studio-pink-50 );
+	}
 }
 
 .manage-purchase__detail .user__name {
