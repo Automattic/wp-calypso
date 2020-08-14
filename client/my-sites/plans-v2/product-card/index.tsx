@@ -3,7 +3,6 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,6 +14,7 @@ import {
 	isUpgradeable,
 	getRealtimeFromDaily,
 	slugToSelectorProduct,
+	productBadgeLabel,
 } from '../utils';
 import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
 import { getProductCost } from 'state/products-list/selectors/get-product-cost';
@@ -95,9 +95,13 @@ interface ProductCardProps {
 	className?: string;
 }
 
-const ProductCard = ( { item, onClick, siteId, currencyCode, className }: ProductCardProps ) => {
-	const translate = useTranslate();
-
+const ProductCardWrapper = ( {
+	item,
+	onClick,
+	siteId,
+	currencyCode,
+	className,
+}: ProductCardProps ) => {
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
@@ -141,7 +145,8 @@ const ProductCard = ( { item, onClick, siteId, currencyCode, className }: Produc
 			description={ item.description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ isOwned ? translate( 'Manage subscription' ) : productButtonLabel( item ) }
+			buttonLabel={ productButtonLabel( item, isOwned ) }
+			badgeLabel={ productBadgeLabel( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item ) }
 			features={ item.features }
 			originalPrice={ originalPrice }
@@ -157,4 +162,4 @@ const ProductCard = ( { item, onClick, siteId, currencyCode, className }: Produc
 	);
 };
 
-export default ProductCard;
+export default ProductCardWrapper;

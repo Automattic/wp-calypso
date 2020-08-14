@@ -36,13 +36,9 @@ import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-prod
  * Type dependencies
  */
 import type { Duration, SelectorProduct, SelectorProductSlug, DurationString } from './types';
-import type {
-	JetpackDailyPlan,
-	JetpackRealtimePlan,
-	JetpackPlanSlugs,
-	Plan,
-} from 'lib/plans/types';
+import type { JetpackRealtimePlan, JetpackPlanSlugs, Plan } from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
+import type { SitePlan } from 'state/sites/selectors/get-site-plan';
 
 /**
  * Duration utils.
@@ -76,11 +72,11 @@ export function durationToText( duration: Duration ): TranslateResult {
  * Product UI utils.
  */
 
-export function productButtonLabel( product: SelectorProduct ): TranslateResult {
-	if ( product.owned ) {
-		return slugIsJetpackPlanSlug( product.productSlug )
-			? translate( 'Manage plan' )
-			: translate( 'Manage subscription' );
+export function productButtonLabel( product: SelectorProduct, isOwned: boolean ): TranslateResult {
+	if ( isOwned ) {
+		return product.type !== ITEM_TYPE_PRODUCT
+			? translate( 'Manage Plan' )
+			: translate( 'Manage Subscription' );
 	}
 
 	return (
@@ -94,9 +90,10 @@ export function productButtonLabel( product: SelectorProduct ): TranslateResult 
 
 export function productBadgeLabel(
 	product: SelectorProduct,
-	currentPlan?: string | null
+	isOwned: boolean,
+	currentPlan?: SitePlan | null
 ): TranslateResult | undefined {
-	if ( product.owned ) {
+	if ( isOwned ) {
 		return slugIsJetpackPlanSlug( product.productSlug )
 			? translate( 'Your plan' )
 			: translate( 'You own this' );
@@ -245,7 +242,7 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
  * @param slug string
  * @returns string | null
  */
-export function getRealtimeFromDaily( slug: JetpackDailyPlan ): JetpackRealtimePlan | null {
+export function getRealtimeFromDaily( slug: string ): JetpackRealtimePlan | null {
 	return DAILY_PLAN_TO_REALTIME_PLAN[ slug ];
 }
 
