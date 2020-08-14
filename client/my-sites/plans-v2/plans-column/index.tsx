@@ -32,6 +32,7 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from 'lib/plans/constants';
 import { isCloseToExpiration } from 'lib/purchases';
+import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
@@ -61,10 +62,12 @@ type PlanWithBought = SelectorProduct & { owned: boolean; legacy: boolean } & {
 
 const PlanComponent = ( {
 	plan,
+	purchases,
 	onClick,
 	currencyCode,
 }: {
 	plan: PlanWithBought;
+	purchases: Purchase[];
 	onClick: PurchaseCallback;
 	currencyCode: string;
 } ) => {
@@ -77,7 +80,7 @@ const PlanComponent = ( {
 	)
 		? JetpackBundleCard
 		: JetpackPlanCard;
-	const { purchase } = plan;
+	const purchase = getPurchaseByProductSlug( purchases, plan.productSlug );
 	const isExpiring = purchase && isCloseToExpiration( purchase );
 	const showExpiryNotice = plan.legacy && isExpiring;
 
@@ -195,6 +198,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					key={ plan.productSlug }
 					onClick={ onPlanClick }
 					plan={ plan }
+					purchases={ purchases }
 					currencyCode={ currencyCode }
 				/>
 			) ) }
