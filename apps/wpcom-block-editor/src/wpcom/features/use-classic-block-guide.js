@@ -5,7 +5,8 @@
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { Guide } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import url from 'url';
+// Disabling lint rule while trying to make an urgent fix -- feel free to update to lib/url later!
+import url from 'url'; // eslint-disable-line no-restricted-imports
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 /* eslint-enable import/no-extraneous-dependencies */
@@ -29,7 +30,12 @@ const ClassicGuide = () => {
 
 	// Make sure we don't end up with the standard wpcom nux showing as well.
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
-	setWpcomNuxStatus( { isNuxEnabled: false } );
+
+	// Check that wpcom nux store is available.
+	// See p9F6qB-5Ja-p2 for more information.
+	if ( 'function' === typeof setWpcomNuxStatus ) {
+		setWpcomNuxStatus( { isNuxEnabled: false } );
+	}
 
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
