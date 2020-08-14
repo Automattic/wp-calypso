@@ -25,8 +25,8 @@ import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 export default function useShoppingCartManager( {
 	cartKey,
 	canInitializeCart,
-	productsToAdd,
-	couponToAdd,
+	productsToAddOnInitialize,
+	couponToAddOnInitialize,
 	setCart,
 	getCart,
 	onEvent,
@@ -51,8 +51,8 @@ export default function useShoppingCartManager( {
 	useInitializeCartFromServer(
 		cacheStatus,
 		canInitializeCart,
-		productsToAdd,
-		couponToAdd,
+		productsToAddOnInitialize,
+		couponToAddOnInitialize,
 		getServerCart,
 		setServerCart,
 		hookDispatch,

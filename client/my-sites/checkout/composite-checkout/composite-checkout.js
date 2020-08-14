@@ -201,8 +201,8 @@ export default function CompositeCheckout( {
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
-		productsToAdd: productsForCart,
-		couponToAdd: couponCodeFromUrl,
+		productsToAddOnInitialize: productsForCart,
+		couponToAddOnInitialize: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
 		getCart: getCart || wpcomGetCart,
 		onEvent: recordEvent,
