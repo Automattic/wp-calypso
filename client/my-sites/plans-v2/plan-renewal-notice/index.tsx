@@ -2,17 +2,15 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, ReactElement } from 'react';
 
 /**
  * Internal dependencies
  */
 import { OFFER_RESET_SUPPORT_PAGE, PLAN_RENEWAL_RECOMMENDATION } from '../constants';
-import { isEligibleForRenewalAtOldRate } from '../utils';
+import { isEligibleForRenewalAtOldRate, slugToSelectorProduct } from '../utils';
 import ExternalLink from 'components/external-link';
 import { useLocalizedMoment } from 'components/localized-moment';
-import { getPlan } from 'lib/plans';
-import { isJetpackPlanSlug, getJetpackProductDisplayNameBySlug } from 'lib/products-values';
 
 /**
  * Type dependencies
@@ -54,12 +52,11 @@ const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase } ) => {
 							comment:
 								'`currentPlan` refers to the current deprecated plan. `recommendedPlan` is the plan we recommend instead.',
 							args: {
-								currentPlan: getPlan( purchase.productSlug ).getTitle(),
+								currentPlan: slugToSelectorProduct( currentSlug )?.displayName,
 							},
 							components: {
-								recommendedPlan: isJetpackPlanSlug( recommendedSlug )
-									? getPlan( recommendedSlug ).getTitle()
-									: getJetpackProductDisplayNameBySlug( recommendedSlug ),
+								recommendedPlan: slugToSelectorProduct( recommendedSlug )
+									?.displayName as ReactElement,
 							},
 						}
 					) }
