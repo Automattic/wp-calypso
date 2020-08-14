@@ -11,6 +11,7 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	getName,
 	isExpired,
@@ -323,7 +324,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const { purchase, site, translate, moment, isAutorenewalEnabled } = this.props;
+		const { purchase, site, translate, moment, isAutorenewalEnabled, hideAutoRenew } = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -337,36 +338,37 @@ class PurchaseMeta extends Component {
 			const subsRenewText = isAutorenewalEnabled
 				? translate( 'Auto-renew is ON' )
 				: translate( 'Auto-renew is OFF' );
-			const subsBillingText = isAutorenewalEnabled
-				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
-						args: {
-							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
-						},
-						components: {
-							dateSpan,
-						},
-				  } )
-				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
-						args: {
-							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
-						},
-						components: {
-							dateSpan,
-						},
-				  } );
+			const subsBillingText =
+				isAutorenewalEnabled && ! hideAutoRenew
+					? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
+							args: {
+								renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
+							},
+							components: {
+								dateSpan,
+							},
+					  } )
+					: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
+							args: {
+								expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+							},
+							components: {
+								dateSpan,
+							},
+					  } );
 
 			return (
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-					<span className="manage-purchase__detail">{ subsRenewText }</span>
+					{ ! hideAutoRenew && <span className="manage-purchase__detail">{ subsRenewText }</span> }
 					<span
 						className={ classNames( 'manage-purchase__detail', {
-							'is-expiring': ! isAutorenewalEnabled && isCloseToExpiration( purchase ),
+							'is-expiring': isCloseToExpiration( purchase ),
 						} ) }
 					>
 						{ subsBillingText }
 					</span>
-					{ site && (
+					{ site && ! hideAutoRenew && (
 						<span className="manage-purchase__detail">
 							<AutoRenewToggle
 								planName={ site.plan.product_name_short }
@@ -436,6 +438,7 @@ export default connect( ( state, { purchaseId } ) => {
 		site: purchase ? getSite( state, purchase.siteId ) : null,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
+		hideAutoRenew: shouldShowOfferResetFlow() && purchase && isCloseToExpiration( purchase ),
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 	};
 } )( localize( withLocalizedMoment( PurchaseMeta ) ) );
