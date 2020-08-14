@@ -41,10 +41,10 @@ const SelectorPage = ( { defaultDuration = TERM_ANNUALLY, rootUrl }: SelectorPag
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
 	// Sends a user to a page based on whether there are subtypes.
-	const selectProduct: PurchaseCallback = ( product: SelectorProduct, isOwned = false ) => {
+	const selectProduct: PurchaseCallback = ( product: SelectorProduct, purchase ) => {
 		const root = rootUrl.replace( ':site', siteSlug );
-		if ( isOwned ) {
-			page( managePurchase( siteSlug, 0 ) ); // TODO: Get purchase once #44942 is merged.
+		if ( purchase ) {
+			page( managePurchase( siteSlug, purchase.id ) );
 			return;
 		}
 		const durationString = durationToString( currentDuration );

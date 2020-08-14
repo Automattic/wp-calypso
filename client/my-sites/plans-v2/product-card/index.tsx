@@ -16,15 +16,20 @@ import {
 	slugToSelectorProduct,
 	productBadgeLabel,
 } from '../utils';
+import RenewalNotice from '../plan-renewal-notice';
+import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
 import { getProductCost } from 'state/products-list/selectors/get-product-cost';
+import { getSitePurchases } from 'state/purchases/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
+import { useLocalizedMoment } from 'components/localized-moment';
 import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
 import { TERM_MONTHLY } from 'lib/plans/constants';
+import { isCloseToExpiration } from 'lib/purchases';
 
 /**
  * Type dependencies
@@ -136,18 +141,27 @@ const ProductCardWrapper = ( {
 		}
 	}
 
+	// Handles expiry.
+	const moment = useLocalizedMoment();
+	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const purchase = getPurchaseByProductSlug( purchases, item.productSlug );
+	const isExpiring = purchase && isCloseToExpiration( purchase );
+	const showExpiryNotice = item.legacy && isExpiring;
+
 	const CardComponent = itemToCard( item ); // Get correct card component.
 	return (
 		<CardComponent
 			iconSlug={ item.iconSlug }
 			productName={ item.displayName }
 			subheadline={ item.tagline }
-			description={ item.description }
+			description={
+				showExpiryNotice && purchase ? <RenewalNotice purchase={ purchase } /> : item.description
+			}
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned ) }
 			badgeLabel={ productBadgeLabel( item, isOwned, sitePlan ) }
-			onButtonClick={ () => onClick( item, isOwned ) }
+			onButtonClick={ () => onClick( item, purchase ) }
 			features={ item.features }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
@@ -158,6 +172,7 @@ const ProductCardWrapper = ( {
 			UpgradeNudge={
 				<UpgradeNudgeWrapper item={ item } currencyCode={ currencyCode } onClick={ onClick } />
 			}
+			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 		/>
 	);
 };
