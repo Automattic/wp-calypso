@@ -10,8 +10,7 @@ import React, { FunctionComponent } from 'react';
 import { OFFER_RESET_SUPPORT_PAGE, PLAN_RENEWAL_RECOMMENDATION } from '../constants';
 import { isEligibleForRenewalAtOldRate } from '../utils';
 import ExternalLink from 'components/external-link';
-import { getPlan, getYearlyPlanByMonthly } from 'lib/plans';
-import { isMonthly } from 'lib/plans/constants';
+import { getPlan } from 'lib/plans';
 import { isJetpackPlanSlug, getJetpackProductDisplayNameBySlug } from 'lib/products-values';
 
 /**
@@ -41,10 +40,7 @@ const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase } ) => {
 		);
 
 		const { productSlug: currentSlug } = purchase;
-		const recommendedSlug =
-			PLAN_RENEWAL_RECOMMENDATION[
-				isMonthly( currentSlug ) ? getYearlyPlanByMonthly( currentSlug ) : currentSlug
-			];
+		const recommendedSlug = PLAN_RENEWAL_RECOMMENDATION[ currentSlug ];
 
 		if ( recommendedSlug ) {
 			notice = (
