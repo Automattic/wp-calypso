@@ -81,6 +81,7 @@ export function durationToText( duration: Duration ): TranslateResult {
  * Renewal utils.
  */
 
+// TODO: implementation will most likely change with information coming from the API
 export function isEligibleForRenewalAtOldRate(
 	{ mostRecentRenewDate }: Purchase,
 	moment: any
