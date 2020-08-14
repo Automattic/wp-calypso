@@ -56,8 +56,7 @@ export const useOnLaunch = () => {
 					// 	? `site-editor%2F${ newSite.site_slug }`
 					// 	: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 					// window.location.href = `https://wordpress.com/checkout/${ window._currentSiteId }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
-
-					window.top.location.href = `https://wordpress.com/checkout/${ window._currentSiteId }?preLaunch=1`;
+					window.top.location.href = `https://wordpress.com/checkout/${ window._currentSiteId }?preLaunch=1&redirect_to=%2Fhome%2F${ window._currentSiteId }`;
 				};
 
 				// TODO: record tracks event
