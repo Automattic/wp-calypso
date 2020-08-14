@@ -24,13 +24,18 @@ import {
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 } from '../constants';
+import RenewalNotice from '../plan-renewal-notice';
+import { useLocalizedMoment } from 'components/localized-moment';
 import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from 'lib/plans/constants';
+import { isCloseToExpiration } from 'lib/purchases';
+import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import { getProductCost, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getSitePurchases } from 'state/purchases/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
@@ -41,6 +46,7 @@ import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-prod
  * Type dependencies
  */
 import type { Duration, PurchaseCallback, ProductType, SelectorProduct } from '../types';
+import type { Purchase } from 'lib/purchases/types';
 
 interface PlanColumnType {
 	duration: Duration;
@@ -56,13 +62,16 @@ type PlanWithBought = SelectorProduct & { owned: boolean; legacy: boolean } & {
 
 const PlanComponent = ( {
 	plan,
+	purchases,
 	onClick,
 	currencyCode,
 }: {
 	plan: PlanWithBought;
+	purchases: Purchase[];
 	onClick: PurchaseCallback;
 	currencyCode: string;
 } ) => {
+	const moment = useLocalizedMoment();
 	const price =
 		useSelector( ( state ) => getProductCost( state, plan.costProductSlug || plan.productSlug ) ) ||
 		0;
@@ -71,6 +80,9 @@ const PlanComponent = ( {
 	)
 		? JetpackBundleCard
 		: JetpackPlanCard;
+	const purchase = getPurchaseByProductSlug( purchases, plan.productSlug );
+	const isExpiring = purchase && isCloseToExpiration( purchase );
+	const showExpiryNotice = plan.legacy && isExpiring;
 
 	if ( plan.upgradeable ) {
 		// TODO: remove this once we can purchase new plans.
@@ -102,7 +114,9 @@ const PlanComponent = ( {
 			iconSlug={ plan.iconSlug }
 			productName={ plan.displayName }
 			subheadline={ plan.tagline }
-			description={ plan.description }
+			description={
+				showExpiryNotice ? <RenewalNotice purchase={ purchase as Purchase } /> : plan.description
+			}
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( plan.term ) }
 			badgeLabel={ productBadgeLabel( plan ) }
@@ -114,6 +128,7 @@ const PlanComponent = ( {
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
 			UpgradeNudge={ plan.UpgradeNudge }
+			expiryDate={ showExpiryNotice ? moment( ( purchase as Purchase ).expiryDate ) : undefined }
 		/>
 	);
 };
@@ -123,6 +138,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
+	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
 	// This gets all plan objects for us to parse.
 	const planObjects: PlanWithBought[] = useMemo( () => {
@@ -181,6 +197,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					key={ plan.productSlug }
 					onClick={ onPlanClick }
 					plan={ plan }
+					purchases={ purchases }
 					currencyCode={ currencyCode }
 				/>
 			) ) }
