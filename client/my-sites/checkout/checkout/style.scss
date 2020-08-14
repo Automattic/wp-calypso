@@ -527,7 +527,7 @@
 			.checkout__payment-box-section-content {
 				> h6 {
 					color: var( --color-primary );
-					font-size: 18px;
+					font-size: $font-title-small;
 				}
 
 				> span {
@@ -1184,17 +1184,17 @@
 	background-color: var( --color-accent-40 );
 }
 
-.checkout__duplicate-notice {
+.checkout__conflict-notice {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
 
-.checkout__duplicate-notice-message {
+.checkout__conflict-notice-message {
 	max-width: 600px;
 }
 
-.checkout .notice__text .checkout__duplicate-notice-link {
+.checkout .notice__text .checkout__conflict-notice-link {
 	margin-left: 20px;
 
 	color: var( --color-neutral-10 );

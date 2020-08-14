@@ -16,24 +16,29 @@ import { isArray } from 'lodash';
 import CheckoutContainer from './checkout/checkout-container';
 import IncludedProductNoticeContent from './checkout/included-product-notice-content';
 import OwnedProductNoticeContent from './checkout/owned-product-notice-content';
+import JetpackMinimumPluginVersionNoticeContent from './checkout/jetpack-minimum-plugin-version-notice-content';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
 import { GROUP_JETPACK, JETPACK_PLANS } from 'lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { isJetpackBackup, isJetpackBackupSlug } from 'lib/products-values';
+import { isJetpackBackup, isJetpackBackupSlug, getProductFromSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { isJetpackSite, getSiteProducts, getSitePlan } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	getSiteProducts,
+	getSitePlan,
+} from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
 import {
 	isPlanIncludingSiteBackup,
 	isBackupProductIncludedInSitePlan,
 } from 'state/sites/products/conflicts';
-import { abtest } from 'lib/abtest';
 import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -81,6 +86,11 @@ export default function CheckoutSystemDecider( {
 			? isBackupProductIncludedInSitePlan( state, siteId, product )
 			: null
 	);
+
+	const BACKUP_MINIMUM_PLUGIN_VERSION = '8.5';
+	const siteHasBackupMinPluginVersion = useSelector( ( state ) =>
+		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_PLUGIN_VERSION )
+	);
 	const currentProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const reduxDispatch = useDispatch();
@@ -88,9 +98,18 @@ export default function CheckoutSystemDecider( {
 
 	let infoMessage;
 
+	if ( isJetpackBackupSlug( product ) && ! siteHasBackupMinPluginVersion ) {
+		const backupProductInCart = getProductFromSlug( product );
+		infoMessage = (
+			<JetpackMinimumPluginVersionNoticeContent
+				product={ backupProductInCart }
+				minVersion={ BACKUP_MINIMUM_PLUGIN_VERSION }
+			/>
+		);
+	}
+
 	if ( isJetpackPlanIncludingSiteBackup && selectedSite ) {
 		const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
-
 		infoMessage = backupProduct && (
 			<OwnedProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
 		);
@@ -113,8 +132,7 @@ export default function CheckoutSystemDecider( {
 		product,
 		purchaseId,
 		isJetpack,
-		isAtomic,
-		isLoggedOutCart
+		isAtomic
 	);
 
 	useEffect( () => {
@@ -239,8 +257,7 @@ function getCheckoutVariant(
 	productSlug,
 	purchaseId,
 	isJetpack,
-	isAtomic,
-	isLoggedOutCart
+	isAtomic
 ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
@@ -320,29 +337,6 @@ function getCheckoutVariant(
 			productSlug
 		);
 		return 'disallowed-product';
-	}
-
-	// Removes users from initial AB test
-	if (
-		cart.currency === 'USD' &&
-		countryCode?.toLowerCase() === 'us' &&
-		locale?.toLowerCase().startsWith( 'en' )
-	) {
-		debug( 'shouldShowCompositeCheckout true' );
-		return 'composite-checkout';
-	}
-
-	// Show composite checkout for registrationless checkout users
-	const urlParams = new URLSearchParams( window.location.search );
-	if ( isLoggedOutCart || 'no-user' === urlParams.get( 'cart' ) ) {
-		debug( 'shouldShowCompositeCheckout true' );
-		return 'composite-checkout';
-	}
-
-	// Add remaining users to new AB test with 10% holdout
-	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
-		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );
-		return 'control-variant';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );

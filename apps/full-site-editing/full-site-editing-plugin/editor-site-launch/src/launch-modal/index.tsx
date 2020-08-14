@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { EntityProvider } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 import { Modal, Button } from '@wordpress/components';
 import { Icon, wordpress, close } from '@wordpress/icons';
@@ -28,14 +29,14 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
 
-	const { isFreePlan } = useSite();
+	const { isPaidPlan } = useSite();
 
 	const handleLaunch = () => {
 		setIsLaunching( true );
 		launchSite();
 	};
 
-	if ( ! isFreePlan && ! isLaunching ) {
+	if ( isPaidPlan && ! isLaunching ) {
 		handleLaunch();
 	}
 
@@ -60,7 +61,9 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 						</div>
 					</div>
 					<div className="nux-launch-modal-body">
-						<Launch onSubmit={ handleLaunch } />
+						<EntityProvider kind="root" type="site">
+							<Launch onSubmit={ handleLaunch } />
+						</EntityProvider>
 					</div>
 					<div className="nux-launch-modal-aside">
 						<Button

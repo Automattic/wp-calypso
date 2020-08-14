@@ -79,7 +79,7 @@
 	}
 
 	select {
-		font-size: 18px;
+		font-size: $font-title-small;
 	}
 
 	input[type='number'] {
@@ -89,7 +89,7 @@
 	}
 
 	h4 {
-		font-size: 18px;
+		font-size: $font-title-small;
 		margin-bottom: 0.5em;
 	}
 
@@ -205,7 +205,7 @@
 	position: relative;
 
 	h3 {
-		font-size: 18px;
+		font-size: $font-title-small;
 		margin-bottom: 10px;
 	}
 

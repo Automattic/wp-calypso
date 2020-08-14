@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 1.16
+ * Version: 1.20
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '1.16' );
+define( 'PLUGIN_VERSION', '1.20' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -148,22 +148,6 @@ function load_common_module() {
 	require_once __DIR__ . '/common/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
-
-/**
- * Sigh: load_editor_domain_picker
- */
-function load_editor_domain_picker() {
-	require_once __DIR__ . '/editor-domain-picker/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_domain_picker' );
-
-/**
- * Sigh: load_editor_plans_grid
- */
-function load_editor_plans_grid() {
-	require_once __DIR__ . '/editor-plans-grid/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_plans_grid' );
 
 /**
  * Sigh: load_editor_site_launch

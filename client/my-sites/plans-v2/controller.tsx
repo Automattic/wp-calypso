@@ -11,32 +11,29 @@ import DetailsPage from './details';
 import UpsellPage from './upsell';
 import { stringToDuration } from './utils';
 
-/**
- * Type dependencies
- */
-import type PageJS from 'page';
-
-export const productSelect = ( context: PageJS.Context, next: Function ) => {
+export const productSelect = ( rootUrl: string ) => ( context: PageJS.Context, next: Function ) => {
 	const duration = stringToDuration( context.params.duration );
-	context.primary = <SelectorPage defaultDuration={ duration } />;
+	context.primary = <SelectorPage defaultDuration={ duration } rootUrl={ rootUrl } />;
 	next();
 };
 
-export const productDetails = ( context: PageJS.Context, next: Function ) => {
+export const productDetails = ( rootUrl: string ) => (
+	context: PageJS.Context,
+	next: Function
+) => {
 	const productType: string = context.params.product;
 	const duration = stringToDuration( context.params.duration );
-	context.primary = <DetailsPage productType={ productType } duration={ duration } />;
+	context.primary = (
+		<DetailsPage productSlug={ productType } duration={ duration } rootUrl={ rootUrl } />
+	);
 	next();
 };
 
-export const productUpsell = ( context: PageJS.Context, next: Function ) => {
+export const productUpsell = ( rootUrl: string ) => ( context: PageJS.Context, next: Function ) => {
 	const productSlug: string = context.params.product;
 	const duration = stringToDuration( context.params.duration );
-	if ( ! duration ) {
-		// TODO: Determine what to do here. Throw an error? Redirect the user?
-		next();
-		return;
-	}
-	context.primary = <UpsellPage productSlug={ productSlug } duration={ duration } />;
+	context.primary = (
+		<UpsellPage productSlug={ productSlug } duration={ duration } rootUrl={ rootUrl } />
+	);
 	next();
 };

@@ -169,7 +169,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									onSelect( slug );
 								} }
 								isPrimary
-								isLarge
 								disabled={ !! disabledLabel }
 							>
 								<span>{ __( 'Choose' ) }</span>

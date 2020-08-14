@@ -38,6 +38,6 @@
 		"lodash.mergewith": "^4.6.2"
 	},
 	"devDependencies": {
-		"jest": "^26.1.0"
+		"jest": "^26.4.0"
 	}
 }

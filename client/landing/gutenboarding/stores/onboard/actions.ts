@@ -16,6 +16,7 @@ import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
 import type { FeatureId } from '../../onboarding-block/features/data';
+import { isEnabled } from 'config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -49,8 +50,17 @@ export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
 	siteVertical,
 } );
 
+export const skipSiteVertical = () => ( {
+	type: 'SKIP_SITE_VERTICAL' as const,
+} );
+
 export const resetSiteVertical = () => ( {
 	type: 'RESET_SITE_VERTICAL' as const,
+} );
+
+export const showVerticalInput = ( shouldShowVerticalInput: boolean ) => ( {
+	type: 'SET_SHOW_SITE_VERTICAL_INPUT' as const,
+	shouldShowVerticalInput,
 } );
 
 export const setSiteTitle = ( siteTitle: string ) => ( {
@@ -156,10 +166,10 @@ export function* createSite(
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
 			} ),
+			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-
 	const success = yield dispatch( SITE_STORE, 'createSite', params );
 
 	return success;
@@ -182,6 +192,8 @@ export type OnboardAction = ReturnType<
 	| typeof setDomain
 	| typeof setDomainSearch
 	| typeof setDomainCategory
+	| typeof skipSiteVertical
+	| typeof showVerticalInput
 	| typeof setFonts
 	| typeof setIsRedirecting
 	| typeof setHasUsedDomainsStep

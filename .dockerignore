@@ -1,5 +1,6 @@
 Dockerfile
 /.tsc-cache
+/.cache
 .dockerignore
 .git
 .npm-debug.log*

@@ -3,16 +3,14 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { EntityProvider } from '@wordpress/core-data';
-
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
 import NameStep from '../launch-steps/name-step';
 import DomainStep from '../launch-steps/domain-step';
 import PlanStep from '../launch-steps/plan-step';
 import FinalStep from '../launch-steps/final-step';
+import { LAUNCH_STORE } from '../stores';
 
 import './styles.scss';
 
@@ -25,6 +23,9 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
+	const firstIncompleteStep = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getFirstIncompleteStep()
+	);
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
@@ -42,7 +43,6 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		if ( prevSequence < 0 ) {
 			prevSequence = 0;
 		}
-
 		setStep( LaunchSequence[ prevSequence ] );
 	};
 
@@ -57,11 +57,15 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 
 	const CurrentLaunchStep = LaunchStepComponents[ currentStep ];
 
+	React.useEffect( () => {
+		if ( firstIncompleteStep && firstIncompleteStep !== LaunchStep.Name ) {
+			setStep( firstIncompleteStep );
+		}
+	}, [] );
+
 	return (
 		<div className="nux-launch">
-			<EntityProvider kind="root" type="site">
-				<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
-			</EntityProvider>
+			<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
 		</div>
 	);
 };

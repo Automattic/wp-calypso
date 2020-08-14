@@ -16,7 +16,7 @@ import {
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitEbanxCardTransaction,
-	submitStripeRedirectTransaction,
+	submitRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
 	submitExistingCardPayment,
@@ -56,14 +56,14 @@ export function genericRedirectProcessor(
 		pathname,
 		query: cancelUrlQuery,
 	} );
-	const pending = submitStripeRedirectTransaction(
+	const pending = submitRedirectTransaction(
 		paymentMethodId,
 		{
 			...submitData,
 			successUrl,
 			cancelUrl,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: getPostalCode(),
+			postalCode: submitData.postalCode || getPostalCode(),
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),

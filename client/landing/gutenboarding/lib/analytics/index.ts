@@ -143,6 +143,13 @@ export function recordSiteTitleSelection( hasValue: boolean ) {
 }
 
 /**
+ * Records site topic input skip on Intent Gathering step
+ */
+export function recordVerticalSkip() {
+	trackEventWithFlow( 'calypso_newsite_vertical_skipped' );
+}
+
+/**
  * Records site title input skip on Intent Gathering step
  */
 export function recordSiteTitleSkip() {

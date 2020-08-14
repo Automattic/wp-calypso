@@ -296,7 +296,10 @@ export default function WPCheckout( {
 					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
 			</CheckoutSummaryAreaUI>
-			<CheckoutStepArea submitButtonHeader={ <SubmitButtonHeader /> }>
+			<CheckoutStepArea
+				submitButtonHeader={ <SubmitButtonHeader /> }
+				disableSubmitButton={ isOrderReviewActive }
+			>
 				{ infoMessage && (
 					<CheckoutNoticeWrapper>
 						<Notice status="is-info" showDismiss={ false }>
@@ -654,7 +657,7 @@ const CheckoutNoticeWrapper = styled.div`
 		background-color: var( --color-accent-40 );
 	}
 
-	.notice__text .checkout__duplicate-notice-link {
+	.notice__text .checkout__conflict-notice-link {
 		margin-left: 20px;
 
 		color: var( --color-neutral-10 );

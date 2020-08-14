@@ -49,7 +49,7 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import getSitesItems from 'state/selectors/get-sites-items';
 
 /**
@@ -73,6 +73,7 @@ class DomainsStep extends React.Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		vertical: PropTypes.string,
+		isReskinned: PropTypes.bool,
 	};
 
 	getDefaultState = () => ( {
@@ -488,7 +489,7 @@ class DomainsStep extends React.Component {
 				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( true ) }
+				vendor={ getSuggestionsVendor( { isSignup: true, isDomainOnly: this.props.isDomainOnly } ) }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
 				showSkipButton={ this.props.showSkipButton }
@@ -497,6 +498,7 @@ class DomainsStep extends React.Component {
 				hideFreePlan={ this.handleSkip }
 				selectedFreePlanInSwapFlow={ selectedFreePlanInSwapFlow }
 				selectedPaidPlanInSwapFlow={ selectedPaidPlanInSwapFlow }
+				isReskinned={ this.props.isReskinned }
 			/>
 		);
 
@@ -753,6 +755,9 @@ export default connect(
 	( state, ownProps ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const isReskinned =
+			'onboarding' === ownProps.flowName &&
+			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			designType: getDesignType( state ),
@@ -764,6 +769,7 @@ export default connect(
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
+			isReskinned,
 		};
 	},
 	{

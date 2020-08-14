@@ -1,33 +1,9 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
-@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
-@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../variables.scss';
 @import '~@automattic/onboarding/styles/z-index';
 
 $margin-left--gutenboarding__header-section-item: 13px; // matches design
 $padding--gutenboarding__header: $grid-unit-10;
-
-@keyframes gutenboarding_domain-slide-in {
-	from {
-		max-width: 0;
-		opacity: 0;
-	}
-
-	79% {
-		max-width: 0;
-		opacity: 0;
-	}
-
-	80% {
-		max-width: 0;
-		opacity: 0.5;
-	}
-
-	to {
-		max-width: 500px;
-		opacity: 1;
-	}
-}
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
@@ -68,13 +44,6 @@ $padding--gutenboarding__header: $grid-unit-10;
 	width: 100%;
 	align-items: center;
 	font-size: $font-body-small;
-
-	&--compact {
-		.gutenboarding__header-domain-section,
-		.gutenboarding__header-plan-section {
-			visibility: hidden;
-		}
-	}
 }
 
 .gutenboarding__header-section-item {
@@ -106,13 +75,6 @@ $padding--gutenboarding__header: $grid-unit-10;
 	// Ensure flex item doesn't exceed 100% of th
 	// available width, allowing content to have ellipsis.
 	min-width: 0;
-}
-
-.gutenboarding__header-domain-picker-button-container.no-domain {
-	animation-duration: 5s;
-	animation-name: gutenboarding_domain-slide-in;
-	max-width: 1500px;
-	@include reduce-motion( 'animation' );
 }
 
 .gutenboarding__header-site-title-section {

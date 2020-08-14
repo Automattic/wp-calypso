@@ -2,7 +2,9 @@
  * External dependencies
  */
 import * as React from 'react';
+import classnames from 'classnames';
 import { ThemeProvider } from 'emotion-theming';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
@@ -22,23 +24,28 @@ import {
 /**
  * Internal dependencies
  */
-import { LaunchStep } from '../../../../common/data-stores/launch/data';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
-import { useSite } from '../../hooks';
+import { useSite, useDomainSuggestion, useDomainSearch } from '../../hooks';
 
 import './styles.scss';
 
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
-	const [ title ] = useEntityProp( 'root', 'site', 'title' );
-	const { currentDomainName } = useSite();
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
-	const { completedSteps } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const planPrices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
+	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
+	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
+
+	const [ title ] = useEntityProp( 'root', 'site', 'title' );
+	const { currentDomainName } = useSite();
+	const domainSuggestion = useDomainSuggestion();
+	const domainSearch = useDomainSearch();
+
 	const { setStep } = useDispatch( LAUNCH_STORE );
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
 
 	const nameSummary = (
 		<div className="nux-launch__summary-item">
@@ -60,10 +67,30 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 						{ __( 'Free site address', 'full-site-editing' ) }: { currentDomainName }
 					</p>
 					<Tip>
-						{ __(
-							'A custom site address like madefreshbakery.com (now available!) is more unique and can help with your SEO ranking.',
-							'full-site-editing'
-						) }
+						{ domainSearch
+							? createInterpolateElement(
+									/* translators: <DomainName /> is the suggested custom domain name; <Link> will redirect users to domain selection step */
+									__(
+										'A custom site address like <DomainName /> (<Link>now available!</Link>) is more unique and can help with your SEO ranking.',
+										'full-site-editing'
+									),
+									{
+										DomainName: (
+											<span
+												className={ classnames( 'nux-launch__summary-item__domain-name', {
+													'is-loading': ! domainSuggestion,
+												} ) }
+											>
+												{ domainSuggestion?.domain_name || 'loading-example.com' }
+											</span>
+										),
+										Link: <Button isLink onClick={ () => setStep( LaunchStep.Domain ) } />,
+									}
+							  )
+							: __(
+									'A custom site address is more unique and can help with your SEO ranking.',
+									'full-site-editing'
+							  ) }
 					</Tip>
 				</>
 			) }
@@ -75,7 +102,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 			{ plan && ! plan?.isFree ? (
 				<>
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
-					{ __( 'Plan subscription', 'full-site-editing' ) }: { prices[ plan.storeSlug ] }{ ' ' }
+					{ __( 'Plan subscription', 'full-site-editing' ) }: { planPrices[ plan.storeSlug ] }{ ' ' }
 					{ __( 'per month, billed yearly', 'full-site-editing' ) }
 				</>
 			) : (
@@ -83,9 +110,15 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 					<p className="nux-launch__summary-item__plan-name">WordPress.com Free</p>
 					<p>{ __( 'Plan subscription: Free forever', 'full-site-editing' ) }</p>
 					<Tip>
-						{ __(
-							'Upgrade to Premium to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
-							'full-site-editing'
+						{ createInterpolateElement(
+							/* translators: pressing <Link> will redirect user to plan selection step */
+							__(
+								'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
+								'full-site-editing'
+							),
+							{
+								Link: <Button isLink onClick={ () => setStep( LaunchStep.Plan ) } />,
+							}
 						) }
 					</Tip>
 				</>
@@ -109,7 +142,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 			<div className="nux-launch-step__body">
 				<ThemeProvider theme={ checkoutTheme }>
 					<MainContentUI>
-						{ completedSteps.includes( LaunchStep.Plan ) && (
+						{ isStepCompleted( LaunchStep.Plan ) && (
 							<CheckoutSummaryArea>
 								<CheckoutSummaryCard className="nux-launch__feature-list">
 									<h3 className="nux-launch__feature-list-title">
@@ -134,7 +167,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 						<CheckoutStepAreaUI>
 							<CheckoutStepBody
 								titleContent={ __( 'Your site name', 'full-site-editing' ) }
-								isStepComplete={ completedSteps.includes( LaunchStep.Name ) }
+								isStepComplete={ isStepCompleted( LaunchStep.Name ) }
 								goToThisStep={ () => setStep( LaunchStep.Name ) }
 								completeStepContent={ nameSummary }
 								stepId="name"
@@ -142,7 +175,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 							/>
 							<CheckoutStepBody
 								titleContent={ __( 'Your domain', 'full-site-editing' ) }
-								isStepComplete={ completedSteps.includes( LaunchStep.Domain ) }
+								isStepComplete={ isStepCompleted( LaunchStep.Domain ) }
 								goToThisStep={ () => setStep( LaunchStep.Domain ) }
 								completeStepContent={ domainSummary }
 								stepId="domain"
@@ -150,7 +183,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 							/>
 							<CheckoutStepBody
 								titleContent={ __( 'Your plan', 'full-site-editing' ) }
-								isStepComplete={ completedSteps.includes( LaunchStep.Plan ) }
+								isStepComplete={ isStepCompleted( LaunchStep.Plan ) }
 								goToThisStep={ () => setStep( LaunchStep.Plan ) }
 								completeStepContent={ planSummary }
 								stepId="plan"
@@ -159,7 +192,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 							<SubmitButtonWrapperUI>
 								<Button
 									isPrimary
-									disabled={ completedSteps.length < 3 }
+									disabled={ ! isFlowCompleted }
 									onClick={ onNextStep }
 									className="nux-launch__submit-button"
 								>

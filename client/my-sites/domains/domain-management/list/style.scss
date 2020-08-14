@@ -81,7 +81,7 @@
 	line-height: normal;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 		font-weight: 600;
 		max-width: none;
 		white-space: normal;

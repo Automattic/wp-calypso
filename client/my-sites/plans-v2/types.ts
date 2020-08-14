@@ -11,20 +11,25 @@ import type { ReactNode } from 'react';
 import type { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
+export type DurationString = 'annual' | 'monthly';
 export type ProductType = typeof ALL | typeof PERFORMANCE | typeof SECURITY;
-export type PurchaseCallback = ( arg0: string ) => null;
+export type PurchaseCallback = ( arg0: SelectorProduct ) => void;
 
-export interface SelectorPageProps {
+interface BasePageProps {
+	rootUrl: string;
+}
+
+export interface SelectorPageProps extends BasePageProps {
 	defaultDuration?: Duration;
 }
 
-export interface DetailsPageProps {
+export interface DetailsPageProps extends BasePageProps {
 	duration?: Duration;
-	productType: string;
+	productSlug: string;
 }
 
-export interface UpsellPageProps {
-	duration: Duration;
+export interface UpsellPageProps extends BasePageProps {
+	duration?: Duration;
 	productSlug: string;
 }
 
@@ -46,7 +51,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	term: Duration;
 	buttonLabel?: TranslateResult;
 	features: string[];
-	subtypes?: string[];
+	subtypes: string[];
 	owned?: boolean;
 	legacy?: boolean;
 }

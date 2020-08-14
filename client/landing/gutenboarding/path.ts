@@ -96,3 +96,7 @@ export function useCurrentStep() {
 export function useNewQueryParam() {
 	return new URLSearchParams( useLocation().search ).has( 'new' );
 }
+
+export function useVerticalQueryParam() {
+	return new URLSearchParams( useLocation().search ).has( 'vertical' );
+}

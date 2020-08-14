@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
 import { translate } from 'i18n-calypso';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -13,11 +13,13 @@ import {
 	slugToItem,
 	itemToSelectorProduct,
 	productButtonLabel,
+	productBadgeLabel,
 	getProductPrices,
 } from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import { isProductsListFetching, getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import getSitePlan from 'state/sites/selectors/get-site-plan';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import FormattedHeader from 'components/formatted-header';
@@ -36,10 +38,12 @@ interface ProductsColumnType {
 
 const ProductComponent = ( {
 	product,
+	currentPlan,
 	onClick,
 	currencyCode,
 }: {
 	product: SelectorProduct;
+	currentPlan: string | null;
 	onClick: PurchaseCallback;
 	currencyCode: string;
 } ) => (
@@ -50,11 +54,13 @@ const ProductComponent = ( {
 		description={ product.description }
 		currencyCode={ currencyCode }
 		billingTimeFrame={ durationToText( product.term ) }
+		badgeLabel={ productBadgeLabel( product, currentPlan ) }
 		buttonLabel={ productButtonLabel( product ) }
-		onButtonClick={ () => onClick( product.productSlug ) }
+		onButtonClick={ () => onClick( product ) }
 		features={ { items: [] } }
 		discountedPrice={ product.discountCost }
 		originalPrice={ product.cost || 0 }
+		withStartingPrice={ product.subtypes && product.subtypes.length > 0 }
 		isOwned={ product.owned }
 	/>
 );
@@ -71,6 +77,8 @@ const ProductsColumn = ( {
 	const currentProducts = (
 		useSelector( ( state ) => getSiteProducts( state, siteId ) ) || []
 	).map( ( product ) => product.productSlug );
+	const currentPlan =
+		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 
 	// Gets all products in an array to be parsed.
 	const productObjects: SelectorProduct[] = useMemo(
@@ -108,6 +116,7 @@ const ProductsColumn = ( {
 					key={ product.productSlug }
 					onClick={ onProductClick }
 					product={ product }
+					currentPlan={ currentPlan }
 					currencyCode={ currencyCode }
 				/>
 			) ) }

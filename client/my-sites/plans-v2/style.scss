@@ -5,12 +5,14 @@
 	.plans-v2__columns {
 		display: flex;
 
-		& > .plans-column {
+		& > .plans-column,
+		& > .details__column {
 			flex-basis: 50%;
 			flex-grow: 0;
 		}
 
-		& > .products-column {
+		& > .products-column,
+		& > .details__column:not( :first-of-type ) {
 			margin-left: 24px;
 		}
 	}

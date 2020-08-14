@@ -129,12 +129,12 @@
 }
 
 .migrate__plan-name {
-	font-size: 18px;
+	font-size: $font-title-small;
 }
 
 .migrate__plan-price {
 	.plan-price__currency-symbol {
-		font-size: 18px;
+		font-size: $font-title-small;
 	}
 
 	.plan-price__integer {

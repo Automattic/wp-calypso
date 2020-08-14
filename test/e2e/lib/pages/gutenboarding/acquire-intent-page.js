@@ -15,7 +15,7 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	}
 
 	async enterSiteTitle( siteTitle ) {
-		const siteTitleSelector = By.css( '#site-title__input' );
+		const siteTitleSelector = By.css( '.acquire-intent-text-input__input' );
 		return await driverHelper.setWhenSettable( this.driver, siteTitleSelector, siteTitle );
 	}
 
