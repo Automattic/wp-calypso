@@ -33,8 +33,9 @@ const ClassicGuide = () => {
 
 	// Check that wpcom nux store is available.
 	// See p9F6qB-5Ja-p2 for more information.
-	if ( 'function' === typeof setWpcomNuxStatus ) {
-		setWpcomNuxStatus( { isNuxEnabled: false } );
+	if ( 'function' !== typeof setWpcomNuxStatus ) {
+		// Return at this point, because (strangely) the wpcom nux guide shows instead.
+		return;
 	}
 
 	return (
