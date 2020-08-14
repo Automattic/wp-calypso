@@ -52,7 +52,7 @@ type OwnProps = {
 	UpgradeNudge?: ReactNode;
 };
 
-export type Props = OwnProps & FeaturesProps;
+export type Props = OwnProps & Partial< FeaturesProps >;
 
 const JetpackProductCard: FunctionComponent< Props > = ( {
 	className,
@@ -179,7 +179,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				) }
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 			</div>
-			{ features.items.length > 0 && (
+			{ features && features.items.length > 0 && (
 				<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
 			) }
 			{ UpgradeNudge }
