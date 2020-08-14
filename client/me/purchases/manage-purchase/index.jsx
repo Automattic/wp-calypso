@@ -17,6 +17,7 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { applyTestFiltersToPlansList } from 'lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from 'config';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
@@ -35,6 +36,7 @@ import {
 	isRenewable,
 	isRenewing,
 	isSubscription,
+	isCloseToExpiration,
 	purchaseType,
 	getName,
 } from 'lib/purchases';
@@ -48,6 +50,8 @@ import { getCanonicalTheme } from 'state/themes/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import {
 	isPersonal,
 	isPremium,
@@ -81,6 +85,8 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
+import PlanRenewalNotice from 'my-sites/plans-v2/plan-renewal-notice';
+import { OFFER_RESET_SUPPORT_PAGE } from 'my-sites/plans-v2/constants';
 import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
 import CartStore from 'lib/cart/store';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
@@ -522,6 +528,7 @@ class ManagePurchase extends Component {
 			purchase,
 			purchaseAttachedTo,
 			isPurchaseTheme,
+			translate,
 		} = this.props;
 		const classes = 'manage-purchase';
 
@@ -529,6 +536,9 @@ class ManagePurchase extends Component {
 		if ( ! isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
 			editCardDetailsPath = getEditCardDetailsPath( siteSlug, purchase );
 		}
+
+		const showExpiryNotice =
+			shouldShowOfferResetFlow() && purchase && isCloseToExpiration( purchase );
 
 		return (
 			<Fragment>
@@ -545,16 +555,28 @@ class ManagePurchase extends Component {
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 				<Main className={ classes }>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
-					<PurchaseNotice
-						isDataLoading={ isDataLoading( this.props ) }
-						handleRenew={ this.handleRenew }
-						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
-						selectedSite={ site }
-						purchase={ purchase }
-						purchaseAttachedTo={ purchaseAttachedTo }
-						renewableSitePurchases={ renewableSitePurchases }
-						editCardDetailsPath={ editCardDetailsPath }
-					/>
+					{ showExpiryNotice ? (
+						<Notice
+							status="is-info"
+							text={ <PlanRenewalNotice purchase={ purchase } withoutLink /> }
+							showDismiss={ false }
+						>
+							<NoticeAction href={ OFFER_RESET_SUPPORT_PAGE }>
+								{ translate( 'More info' ) }
+							</NoticeAction>
+						</Notice>
+					) : (
+						<PurchaseNotice
+							isDataLoading={ isDataLoading( this.props ) }
+							handleRenew={ this.handleRenew }
+							handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
+							selectedSite={ site }
+							purchase={ purchase }
+							purchaseAttachedTo={ purchaseAttachedTo }
+							renewableSitePurchases={ renewableSitePurchases }
+							editCardDetailsPath={ editCardDetailsPath }
+						/>
+					) }
 					<AsyncLoad
 						require="blocks/product-plan-overlap-notices"
 						placeholder={ null }
