@@ -5,7 +5,6 @@ export { getDomainProductRanking } from './get-domain-product-ranking';
 export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';
 export { getJetpackProductDescription } from './get-jetpack-product-description';
 export { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
-export { getJetpackProductDisplayNameBySlug } from './get-jetpack-product-display-name-by-slug';
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
 export { getProductClass } from './get-product-class';
