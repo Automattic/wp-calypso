@@ -482,10 +482,6 @@
 	}
 }
 
-.inline-help__visually-hidden {
-	@include hide-content-accessibly;
-}
-
 @keyframes inline-help__results-placeholder-loading {
 	0% {
 		opacity: 0.3;
