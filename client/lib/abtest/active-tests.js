@@ -205,16 +205,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	showCompositeCheckoutI18N: {
-		datestamp: '20200710',
-		variations: {
-			composite: 90,
-			regular: 10,
-		},
-		defaultVariation: 'regular',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	offerResetFlow: {
 		datestamp: '20200804',
 		variations: {

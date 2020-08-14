@@ -39,7 +39,6 @@ import {
 	isPlanIncludingSiteBackup,
 	isBackupProductIncludedInSitePlan,
 } from 'state/sites/products/conflicts';
-import { abtest } from 'lib/abtest';
 import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -133,8 +132,7 @@ export default function CheckoutSystemDecider( {
 		product,
 		purchaseId,
 		isJetpack,
-		isAtomic,
-		isLoggedOutCart
+		isAtomic
 	);
 
 	useEffect( () => {
@@ -259,8 +257,7 @@ function getCheckoutVariant(
 	productSlug,
 	purchaseId,
 	isJetpack,
-	isAtomic,
-	isLoggedOutCart
+	isAtomic
 ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
@@ -340,29 +337,6 @@ function getCheckoutVariant(
 			productSlug
 		);
 		return 'disallowed-product';
-	}
-
-	// Removes users from initial AB test
-	if (
-		cart.currency === 'USD' &&
-		countryCode?.toLowerCase() === 'us' &&
-		locale?.toLowerCase().startsWith( 'en' )
-	) {
-		debug( 'shouldShowCompositeCheckout true' );
-		return 'composite-checkout';
-	}
-
-	// Show composite checkout for registrationless checkout users
-	const urlParams = new URLSearchParams( window.location.search );
-	if ( isLoggedOutCart || 'no-user' === urlParams.get( 'cart' ) ) {
-		debug( 'shouldShowCompositeCheckout true' );
-		return 'composite-checkout';
-	}
-
-	// Add remaining users to new AB test with 10% holdout
-	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
-		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );
-		return 'control-variant';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );
