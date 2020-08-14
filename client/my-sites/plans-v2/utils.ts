@@ -12,6 +12,7 @@ import {
 	PRODUCTS_WITH_OPTIONS,
 	OPTIONS_SLUG_MAP,
 	UPGRADEABLE_WITH_NUDGE,
+	OFFER_RESET_EFFECTIVE_DATE,
 } from './constants';
 import {
 	TERM_ANNUALLY,
@@ -20,7 +21,7 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 } from 'lib/plans/constants';
-import { getPlan, getMonthlyPlanByYearly } from 'lib/plans';
+import { getPlan, getMonthlyPlanByYearly, planHasFeature } from 'lib/plans';
 import { JETPACK_PRODUCT_PRICE_MATRIX } from 'lib/products-values/constants';
 import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-values/products-list';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
@@ -46,6 +47,7 @@ import type {
 	Plan,
 } from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
+import type { Purchase } from 'lib/purchases/types';
 
 /**
  * Duration utils.
@@ -76,17 +78,59 @@ export function durationToText( duration: Duration ): TranslateResult {
 }
 
 /**
+ * Renewal utils.
+ */
+
+// TODO: implementation will most likely change with information coming from the API
+export function isEligibleForRenewalAtOldRate(
+	{ mostRecentRenewDate }: Purchase,
+	moment: any
+): boolean {
+	if ( mostRecentRenewDate ) {
+		const mostRecentRenewMoment = moment( mostRecentRenewDate );
+
+		return (
+			mostRecentRenewMoment.isValid() &&
+			mostRecentRenewMoment.isBefore( moment( OFFER_RESET_EFFECTIVE_DATE ) )
+		);
+	}
+
+	return false;
+}
+
+/**
  * Product UI utils.
  */
 
 export function productButtonLabel( product: SelectorProduct ): TranslateResult {
+	if ( product.owned ) {
+		return slugIsJetpackPlanSlug( product.productSlug )
+			? translate( 'Manage Plan' )
+			: translate( 'Manage Subscription' );
+	}
+
 	return (
 		product.buttonLabel ??
 		translate( 'Get %s', {
 			args: product.displayName,
-			context: '%s is the name of a product',
+			comment: '%s is the name of a product',
 		} )
 	);
+}
+
+export function productBadgeLabel(
+	product: SelectorProduct,
+	currentPlan?: string | null
+): TranslateResult | undefined {
+	if ( product.owned ) {
+		return slugIsJetpackPlanSlug( product.productSlug )
+			? translate( 'Your plan' )
+			: translate( 'You own this' );
+	}
+
+	if ( currentPlan && planHasFeature( currentPlan, product.productSlug ) ) {
+		return translate( 'Included in your plan' );
+	}
 }
 
 export function getProductPrices(
@@ -193,7 +237,7 @@ export function itemToSelectorProduct(
 			monthlyProductSlug,
 			buttonLabel: translate( 'Get %s', {
 				args: getJetpackProductShortName( item ),
-				context: '%s is the name of a product',
+				comment: '%s is the name of a product',
 			} ),
 			term: item.term,
 			features: [],

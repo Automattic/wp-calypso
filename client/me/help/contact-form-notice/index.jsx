@@ -21,7 +21,12 @@ const ContactFormNotice = ( { showAt, hideAt, heading, message, compact } ) => {
 	const moment = useLocalizedMoment();
 	const currentDate = moment();
 
-	if ( ! currentDate.isBetween( showAt, hideAt ) ) {
+	// Don't display anything if we're before showAt or after hideAt
+	if ( currentDate.isBefore( showAt ) ) {
+		return null;
+	}
+
+	if ( hideAt && currentDate.isAfter( hideAt ) ) {
 		return null;
 	}
 

@@ -212,6 +212,7 @@ $jetpack-product-card-icon-size: 55px;
 
 .jetpack-product-card.is-owned .jetpack-product-card__badge {
 	background-color: var( --color-neutral-40 );
+	border: none;
 	color: var( --color-text-inverted );
 }
 

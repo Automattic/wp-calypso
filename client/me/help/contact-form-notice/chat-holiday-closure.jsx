@@ -22,7 +22,7 @@ export const xmasHolidayName = translate( 'Christmas', {
 	context: 'Holiday name',
 } );
 
-const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
+const ChatHolidayClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
 	const moment = useLocalizedMoment();
 
 	const currentDate = moment();
@@ -74,4 +74,4 @@ const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reo
 	);
 };
 
-export default LiveChatClosureNotice;
+export default ChatHolidayClosureNotice;

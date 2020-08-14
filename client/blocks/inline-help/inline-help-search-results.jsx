@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { identity, isEmpty, noop } from 'lodash';
+import { debounce, identity, isEmpty, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
+import { speak } from '@wordpress/a11y';
 
 /**
  * Internal Dependencies
@@ -30,6 +31,18 @@ import {
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
 
+function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
+	return debounce( () => {
+		speak( message, priority );
+	}, timeout );
+}
+
+const loadingSpeak = debounceSpeak( { message: 'Loading search results.', timeout: 1500 } );
+
+const resultsSpeak = debounceSpeak( { message: 'Search results loaded.' } );
+
+const errorSpeak = debounceSpeak( { message: 'No search results found.' } );
+
 function HelpSearchResults( {
 	hasAPIResults = false,
 	isSearching = false,
@@ -43,6 +56,26 @@ function HelpSearchResults( {
 	placeholderLines,
 	track,
 } ) {
+	useEffect( () => {
+		// Cancel all queued speak messages.
+		loadingSpeak.cancel();
+		resultsSpeak.cancel();
+		errorSpeak.cancel();
+
+		// If there's no query, then we don't need to announce anything.
+		if ( isEmpty( searchQuery ) ) {
+			return;
+		}
+
+		if ( isSearching ) {
+			loadingSpeak();
+		} else if ( ! hasAPIResults ) {
+			errorSpeak();
+		} else if ( hasAPIResults ) {
+			resultsSpeak();
+		}
+	}, [ isSearching ] );
+
 	function getTitleBySectionType( type, query = '' ) {
 		let title = '';
 		switch ( type ) {
@@ -156,14 +189,7 @@ function HelpSearchResults( {
 	const renderSearchResults = () => {
 		if ( isSearching && ! searchResults.length ) {
 			// search, but no results so far
-			return (
-				<>
-					<div className="inline-help__visually-hidden">
-						{ translate( 'Loading search results' ) }
-					</div>
-					<PlaceholderLines lines={ placeholderLines } />
-				</>
-			);
+			return <PlaceholderLines lines={ placeholderLines } />;
 		}
 
 		return (
@@ -186,7 +212,7 @@ function HelpSearchResults( {
 	return (
 		<>
 			<QueryInlineHelpSearch query={ searchQuery } />
-			<div aria-live="polite">{ renderSearchResults() }</div>
+			{ renderSearchResults() }
 		</>
 	);
 }

@@ -45,6 +45,7 @@
 		"@github/webauthn-json": "^0.4.1",
 		"@testing-library/jest-dom": "^5.9.0",
 		"@testing-library/react": "^10.0.5",
+		"@wordpress/a11y": "^2.11.0",
 		"@wordpress/api-fetch": "^3.18.0",
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/block-editor": "^4.3.3",

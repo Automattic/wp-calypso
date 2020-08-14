@@ -39,7 +39,7 @@ type OwnProps = {
 	discountedPrice?: number;
 	withStartingPrice?: boolean;
 	billingTimeFrame: TranslateResult;
-	badgeLabel?: string;
+	badgeLabel?: TranslateResult;
 	discountMessage?: string;
 	buttonLabel: TranslateResult;
 	onButtonClick: () => void;
@@ -52,7 +52,7 @@ type OwnProps = {
 	UpgradeNudge?: ReactNode;
 };
 
-export type Props = OwnProps & FeaturesProps;
+export type Props = OwnProps & Partial< FeaturesProps >;
 
 const JetpackProductCard: FunctionComponent< Props > = ( {
 	className,
@@ -179,13 +179,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				) }
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 			</div>
-
-			<JetpackProductCardFeatures
-				features={ features }
-				isExpanded={ isExpanded }
-				className={ UpgradeNudge ? 'foldable-card--square-border' : undefined }
-			/>
-
+			{ features && features.items.length > 0 && (
+				<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
+			) }
 			{ UpgradeNudge }
 		</div>
 	);

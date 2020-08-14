@@ -34,8 +34,8 @@ ul.nux-launch__feature-item-group {
 
 	// the tick
 	svg path {
-		fill: rgb( 74, 161, 80 );
-		stroke: rgb( 74, 161, 80 );
+		fill: var( --studio-green-40 );
+		stroke: var( --studio-green-40 );
 	}
 }
 .nux-launch__submit-button.components-button.is-primary {
