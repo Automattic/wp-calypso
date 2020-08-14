@@ -195,6 +195,10 @@ ul.plan-item__feature-item-group {
 		padding: 0;
 	}
 
+	.plan-item__url {
+		word-break: break-all;
+	}
+
 	// the tick
 	svg:first-child {
 		// we use a margin because there is a space,

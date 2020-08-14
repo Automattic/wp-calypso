@@ -3,10 +3,10 @@
  */
 import * as React from 'react';
 import classNames from 'classnames';
+import { createInterpolateElement } from '@wordpress/element';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
 import { useViewportMatch } from '@wordpress/compose';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
@@ -69,14 +69,26 @@ function domainMessageStateMachine(
 			FREE_PLAN: {
 				className: 'plan-item__domain-summary is-free',
 				icon: CrossIcon,
-				// translators: %s is a domain name eg: example.com is not included
-				domainMessage: sprintf( __( '%s is not included' ), domain?.domain_name ),
+				// translators: <url /> is a domain name eg: example.com is not included
+				domainMessage: (
+					<span>
+						{ createInterpolateElement( __( '<url /> is not included' ), {
+							url: <span className="plan-item__url">{ domain?.domain_name }</span>,
+						} ) }
+					</span>
+				),
 			},
 			PAID_PLAN: {
 				className: 'plan-item__domain-summary is-picked',
 				icon: TickIcon,
-				// translators: %s is a domain name eg: example.com is included
-				domainMessage: sprintf( __( '%s is included' ), domain?.domain_name ),
+				// translators: <url /> is a domain name eg: example.com is included
+				domainMessage: (
+					<span>
+						{ createInterpolateElement( __( '<url /> is included' ), {
+							url: <span className="plan-item__url">{ domain?.domain_name }</span>,
+						} ) }
+					</span>
+				),
 			},
 		},
 	};
