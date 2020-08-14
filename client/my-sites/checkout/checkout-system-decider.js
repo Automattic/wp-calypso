@@ -20,8 +20,7 @@ import JetpackMinimumPluginVersionNoticeContent from './checkout/jetpack-minimum
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
-import { GROUP_JETPACK, JETPACK_PLANS } from 'lib/plans/constants';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { GROUP_JETPACK } from 'lib/plans/constants';
 import { isJetpackBackup, isJetpackBackupSlug, getProductFromSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
@@ -115,7 +114,7 @@ export default function CheckoutSystemDecider( {
 		);
 	}
 
-	const checkoutVariant = getCheckoutVariant( countryCode, product, purchaseId );
+	const checkoutVariant = getCheckoutVariant( countryCode );
 
 	useEffect( () => {
 		if ( product ) {
@@ -232,7 +231,7 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function getCheckoutVariant( countryCode, productSlug, purchaseId ) {
+function getCheckoutVariant( countryCode ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
 		return 'old-checkout';
@@ -250,48 +249,6 @@ function getCheckoutVariant( countryCode, productSlug, purchaseId ) {
 			countryCode?.toLowerCase()
 		);
 		return 'disallowed-geo';
-	}
-
-	// If the URL is adding a product, only allow things already supported.
-	// Calypso uses special slugs that aren't real product slugs when adding
-	// products via URL, so we list those slugs here. Renewals use actual slugs,
-	// so they do not need to go through this check.
-	const isRenewal = !! purchaseId;
-	const jetpackPseudoSlugsToAllow = [
-		'jetpack-personal',
-		'jetpack-personal-monthly',
-		'premium-monthly',
-		'professional',
-		'professional-monthly',
-	];
-	const pseudoSlugsToAllow = [
-		'blogger',
-		'blogger-2-years',
-		'business',
-		'business-2-years',
-		'concierge-session',
-		'ecommerce',
-		'ecommerce-2-years',
-		'personal',
-		'personal-2-years',
-		'premium', // WordPress.com or Jetpack Premium Yearly
-		'premium-2-years',
-		...jetpackPseudoSlugsToAllow,
-		...JETPACK_PLANS,
-		...JETPACK_PRODUCTS_LIST,
-	];
-	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
-	if (
-		! isRenewal &&
-		productSlug &&
-		! pseudoSlugsToAllow.find( ( slug ) => productSlug === slug ) &&
-		! slugPrefixesToAllow.find( ( slugPrefix ) => productSlug.startsWith( slugPrefix ) )
-	) {
-		debug(
-			'shouldShowCompositeCheckout false because product does not match list of allowed products',
-			productSlug
-		);
-		return 'disallowed-product';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );
