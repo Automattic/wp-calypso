@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 window.React = React;
 
@@ -13,10 +13,7 @@ import '@wordpress/viewport';
 import '@wordpress/notices';
 import '@wordpress/edit-post';
 
-import { BlockContextProvider, BlockEditorProvider } from '@wordpress/block-editor';
-import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
 import { registerCoreBlocks } from '@wordpress/block-library';
-import { parse } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import { useDispatch } from '@wordpress/data';
 
@@ -30,13 +27,14 @@ import '@wordpress/format-library/build-style/style.css';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import EditorDocumentHead from 'post-editor/editor-document-head';
-import { Placeholder } from './placeholder';
 import './without-iframe.scss';
 import PerformanceTrackerStop from 'lib/performance-tracking/performance-tracker-stop';
-import Layout from '@wordpress/edit-post/src/components/layout';
+import Editor from '@wordpress/edit-post/src/editor';
+import { setCurrentSiteId } from './fix-api-fetch';
+
+registerCoreBlocks();
 
 const getStatsPath = ( { postId } ) =>
 	postId
@@ -68,37 +66,16 @@ const getStatsProps = ( { postId, postType } ) =>
 
 function Gutenberg( props ) {
 	const { postId, siteId, postType } = props;
-	const [ post, setPost ] = useState( null );
-	const [ blocks, updateBlocks ] = useState( null );
+
+	setCurrentSiteId( siteId );
 
 	const { toggleFeature } = useDispatch( 'core/edit-post' );
-	const { setupEditor } = useDispatch( 'core/editor' );
 
 	useEffect( () => {
-		registerCoreBlocks();
+		// the default for fullscreen mode is true, so toggle it to false to start off with
+		// is there a better way to do this?
 		toggleFeature( 'fullscreenMode' );
 	}, [ toggleFeature ] );
-
-	useEffect( () => {
-		// retrieve the full post description including "raw" content to access block markup
-		wpcom.site( siteId ).post( postId ).get( { context: 'edit' } ).then( setPost );
-	}, [ postId, siteId ] );
-
-	useEffect( () => {
-		if ( ! post ) {
-			return;
-		}
-
-		setupEditor( post, {} );
-
-		const parsedBlocks = parse( post.content );
-		// give the blocks and initial fake clientId of their starting index.
-		updateBlocks( parsedBlocks );
-	}, [ post, setupEditor ] );
-
-	if ( ! post || ! blocks ) {
-		return <Placeholder />;
-	}
 
 	return (
 		<>
@@ -111,26 +88,14 @@ function Gutenberg( props ) {
 			<PerformanceTrackerStop />
 
 			<div className="editor__without-iframe" role="main">
-				<h1>Gutenberg In Calypso</h1>
-
-				<SlotFillProvider>
-					<DropZoneProvider>
-						<BlockContextProvider value={ { postId, postType } }>
-							<BlockEditorProvider
-								value={ blocks }
-								onInput={ updateBlocks }
-								onChange={ updateBlocks }
-								settings={ {
-									__experimentalBlockPatternCategories: [],
-									__experimentalBlockPatterns: [],
-								} }
-							>
-								<Layout />
-								<Popover.Slot />
-							</BlockEditorProvider>
-						</BlockContextProvider>
-					</DropZoneProvider>
-				</SlotFillProvider>
+				<Editor
+					postId={ postId }
+					postType={ postType }
+					settings={ {
+						__experimentalBlockPatternCategories: [],
+						__experimentalBlockPatterns: [],
+					} }
+				/>
 			</div>
 		</>
 	);
