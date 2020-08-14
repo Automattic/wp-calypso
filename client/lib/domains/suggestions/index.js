@@ -7,6 +7,8 @@ import config from 'config';
  * Get the suggestions vendor
  *
  * @param {object} [options={}] Options to determine the suggestion vendor
+ * @param {boolean} [options.isSignup=false] Flag to indicate that we're in a signup context
+ * @param {boolean} [options.isDomainOnly=false] Flag to indicate that we're in a domain-only context
  *
  * @returns {string} Vendor string to pass as part of the domain suggestions query.
  */
