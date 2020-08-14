@@ -12,7 +12,6 @@ import {
 	PRODUCTS_WITH_OPTIONS,
 	OPTIONS_SLUG_MAP,
 	UPGRADEABLE_WITH_NUDGE,
-	OFFER_RESET_EFFECTIVE_DATE,
 } from './constants';
 import {
 	TERM_ANNUALLY,
@@ -47,7 +46,6 @@ import type {
 	Plan,
 } from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
-import type { Purchase } from 'lib/purchases/types';
 
 /**
  * Duration utils.
@@ -75,27 +73,6 @@ export function durationToText( duration: Duration ): TranslateResult {
 	return duration === TERM_MONTHLY
 		? translate( 'per month, billed monthly' )
 		: translate( 'per year' );
-}
-
-/**
- * Renewal utils.
- */
-
-// TODO: implementation will most likely change with information coming from the API
-export function isEligibleForRenewalAtOldRate(
-	{ mostRecentRenewDate }: Purchase,
-	moment: any
-): boolean {
-	if ( mostRecentRenewDate ) {
-		const mostRecentRenewMoment = moment( mostRecentRenewDate );
-
-		return (
-			mostRecentRenewMoment.isValid() &&
-			mostRecentRenewMoment.isBefore( moment( OFFER_RESET_EFFECTIVE_DATE ) )
-		);
-	}
-
-	return false;
 }
 
 /**

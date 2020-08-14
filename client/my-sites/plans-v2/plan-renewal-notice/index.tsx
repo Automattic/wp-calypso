@@ -8,9 +8,9 @@ import React, { FunctionComponent, ReactElement } from 'react';
  * Internal dependencies
  */
 import { OFFER_RESET_SUPPORT_PAGE, PLAN_RENEWAL_RECOMMENDATION } from '../constants';
-import { isEligibleForRenewalAtOldRate, slugToSelectorProduct } from '../utils';
+import { slugToSelectorProduct } from '../utils';
 import ExternalLink from 'components/external-link';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { isRenewable } from 'lib/purchases';
 
 /**
  * Type dependencies
@@ -23,12 +23,11 @@ type Props = {
 };
 
 const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase } ) => {
-	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	let notice;
 
-	if ( isEligibleForRenewalAtOldRate( purchase, moment ) ) {
+	if ( isRenewable( purchase ) ) {
 		notice = translate(
 			"We're updating our plans to include new features and improved functionality. " +
 				'As a thank you for being a loyal Jetpack subscriber, you can renew your current plan one time – your choice, for one month or one year. ' +
