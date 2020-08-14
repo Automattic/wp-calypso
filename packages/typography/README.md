@@ -50,6 +50,3 @@ Note that the `fonts.scss` file imports the `variables.scss` file.
 
 
 Please refer to the [Calypso Typography Docs](https://wpcalypso.wordpress.com/devdocs/typography) for more information.
-
-// Add usage about @import for both fonts.scss and variables.scss
-// link to https://wpcalypso.wordpress.com/devdocs/typography
