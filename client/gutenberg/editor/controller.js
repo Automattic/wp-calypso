@@ -35,10 +35,10 @@ import { stopEditingPost } from 'calypso/state/editor/actions';
 import NavigationComponent from 'calypso/my-sites/navigation';
 
 function determinePostType( context ) {
-	if ( context.path.startsWith( '/post/' ) ) {
+	if ( context.path.startsWith( '/post/' ) || context.path.startsWith( '/without-iframe/post/' ) ) {
 		return 'post';
 	}
-	if ( context.path.startsWith( '/page/' ) ) {
+	if ( context.path.startsWith( '/page/' ) || context.path.startsWith( '/without-iframe/page/' ) ) {
 		return 'page';
 	}
 
