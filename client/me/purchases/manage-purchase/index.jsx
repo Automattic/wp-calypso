@@ -185,6 +185,16 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	renderSelectNewButton() {
+		const { translate, siteId } = this.props;
+
+		return (
+			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }/` } compact>
+				{ translate( 'Select a new plan' ) }
+			</Button>
+		);
+	}
+
 	renderRenewNowNavItem() {
 		const { purchase, translate } = this.props;
 
@@ -515,7 +525,7 @@ class ManagePurchase extends Component {
 					{ ! isPartnerPurchase( purchase ) && (
 						<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
 					) }
-					{ this.renderRenewButton() }
+					{ showExpiryNotice ? this.renderSelectNewButton() : this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
 				{ showExpiryNotice ? this.renderSelectNewNavItem() : this.renderRenewNowNavItem() }
