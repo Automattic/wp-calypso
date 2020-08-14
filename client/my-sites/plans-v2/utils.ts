@@ -12,6 +12,7 @@ import {
 	PRODUCTS_WITH_OPTIONS,
 	OPTIONS_SLUG_MAP,
 	UPGRADEABLE_WITH_NUDGE,
+	UPSELL_PRODUCT_MATRIX,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
@@ -138,6 +139,7 @@ function objectIsSelectorProduct( item: object ): item is SelectorProduct {
 		'productSlug',
 		'iconSlug',
 		'displayName',
+		'shortName',
 		'tagline',
 		'description',
 		'term',
@@ -186,6 +188,7 @@ export function itemToSelectorProduct(
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
 			subtypes: [],
+			shortName: getJetpackProductShortName( item ),
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
 			monthlyProductSlug,
@@ -254,4 +257,14 @@ export function getRealtimeFromDaily( slug: string ): JetpackRealtimePlan | null
  */
 export function isUpgradeable( slug: string ): boolean {
 	return UPGRADEABLE_WITH_NUDGE.includes( slug );
+}
+
+/**
+ * Returns an upsell product, if any, for the slug.
+ *
+ * @param slug string
+ * @returns boolean | null
+ */
+export function getProductUpsell( slug: string ): string | null {
+	return UPSELL_PRODUCT_MATRIX[ slug ];
 }

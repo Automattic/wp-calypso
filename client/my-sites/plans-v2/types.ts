@@ -56,6 +56,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	costProductSlug?: string;
 	monthlyProductSlug?: string;
 	displayName: TranslateResult;
+	shortName: TranslateResult;
 	tagline: TranslateResult;
 	description: TranslateResult | ReactNode;
 	term: Duration;
