@@ -2638,4 +2638,15 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 	return request();
 };
 
+/**
+ * Retrieves information about a domain.
+ *
+ * @param {string} domain - The domain name to check.
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ */
+Undocumented.prototype.getDomainInfo = function ( domain, fn ) {
+	return this.wpcom.req.get( `/domains/${ encodeURIComponent( domain ) }`, fn );
+};
+
 export default Undocumented;
