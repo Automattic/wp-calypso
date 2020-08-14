@@ -80,12 +80,14 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
 					} ),
+					use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
 				} );
 				if ( isEnabled( 'gutenboarding/style-preview-verticals' ) ) {
 					url = addQueryArgs( url, {
 						vertical: siteVertical?.label,
 					} );
 				}
+
 				let resp;
 
 				try {

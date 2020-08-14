@@ -50,6 +50,7 @@ export interface CreateSiteParams {
 		timezone_string?: string;
 		font_headings?: string;
 		font_base?: string;
+		use_patterns?: boolean;
 	};
 }
 
