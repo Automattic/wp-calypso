@@ -17,9 +17,9 @@ import {
 	isBackupProductIncludedInSitePlan,
 } from 'state/sites/products/conflicts';
 import Notice from 'components/notice';
-import IncludedProductNoticeContent from './included-product-notice-content';
-import OwnedProductNoticeContent from './owned-product-notice-content';
-import JetpackMinimumPluginVersionNoticeContent from './jetpack-minimum-plugin-version-notice-content';
+import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
+import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
+import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
 
 import './style.scss';
 
@@ -76,7 +76,10 @@ const PrePurchaseNotices = ( { cart } ) => {
 		const siteBackupProduct = currentSiteProducts.find( isJetpackBackup );
 
 		return (
-			<OwnedProductNoticeContent product={ siteBackupProduct } selectedSite={ selectedSite } />
+			<CartPlanOverlapsOwnedProductNotice
+				product={ siteBackupProduct }
+				selectedSite={ selectedSite }
+			/>
 		);
 	}
 
@@ -84,7 +87,7 @@ const PrePurchaseNotices = ( { cart } ) => {
 	// but this site already has a plan that includes it
 	if ( sitePlanIncludesCartBackupProduct ) {
 		return (
-			<IncludedProductNoticeContent
+			<SitePlanIncludesCartProductNotice
 				plan={ currentSitePlan }
 				productSlug={ backupProductInCart.product_slug }
 				selectedSite={ selectedSite }
@@ -94,7 +97,7 @@ const PrePurchaseNotices = ( { cart } ) => {
 
 	if ( backupProductInCart && ! siteHasBackupMinimumPluginVersion ) {
 		return (
-			<JetpackMinimumPluginVersionNoticeContent
+			<JetpackPluginRequiredVersionNotice
 				product={ backupProductInCart }
 				minVersion={ BACKUP_MINIMUM_JETPACK_VERSION }
 			/>

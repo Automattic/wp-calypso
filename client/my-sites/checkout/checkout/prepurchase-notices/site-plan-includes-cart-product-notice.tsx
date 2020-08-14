@@ -9,12 +9,12 @@ import { useSelector } from 'react-redux';
 /**
  * Internal Dependencies
  */
+import { getProductBySlug } from 'state/products-list/selectors';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getSitePurchases } from 'state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
-import type { SiteProduct } from 'state/sites/selectors/get-site-products';
-
-import './style.scss';
+import type { Plan } from 'state/plans/types';
+import type { RawSiteProduct } from 'state/sites/selectors/get-site-products';
 
 type Site = {
 	ID: number;
@@ -22,15 +22,23 @@ type Site = {
 };
 
 type Props = {
-	product: SiteProduct;
+	plan: Plan;
+	productSlug: string;
 	selectedSite: Site;
 };
 
-const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selectedSite } ) => {
+const SitePlanIncludesCartProductNotice: FunctionComponent< Props > = ( {
+	plan,
+	productSlug,
+	selectedSite,
+} ) => {
+	const product = useSelector( ( state ) =>
+		getProductBySlug( state, productSlug )
+	) as RawSiteProduct;
 	const translate = useTranslate();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const purchase = isArray( purchases )
-		? purchases.find( ( p ) => p.productSlug === product.productSlug )
+		? purchases.find( ( p ) => p.productSlug === plan.product_slug )
 		: null;
 	const purchaseId = purchase?.id;
 	const subscriptionUrl = purchaseId
@@ -38,13 +46,16 @@ const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selec
 		: '/me/purchases/';
 
 	const message = translate(
-		'You currently own {{product/}}. The plan you are about to purchase also includes this product. Consider removing your {{link}}{{product/}} subscription{{/link}}.',
+		'You currently own Jetpack %(plan)s. The product you are about to purchase, {{product/}}, is already included in this plan.',
 		{
-			comment: 'The `product` variable refers to the product the customer owns already',
+			args: {
+				plan: plan.product_name_short,
+			},
 			components: {
-				link: <a href={ subscriptionUrl } />,
 				product: getJetpackProductDisplayName( product ) as ReactElement,
 			},
+			comment:
+				'The `plan` variable refers to the short name of the plan the customer owns already. `product` refers to the product in the cart that is already included in the plan.',
 		}
 	);
 
@@ -57,4 +68,4 @@ const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selec
 	);
 };
 
-export default OwnedProductNoticeContent;
+export default SitePlanIncludesCartProductNotice;

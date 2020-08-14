@@ -48,7 +48,7 @@ const getMessage = ( translate, product, siteVersion, minVersion ) => {
 	);
 };
 
-const JetpackMinimumPluginVersionNoticeContent = ( { product, minVersion } ) => {
+const JetpackPluginRequiredVersionNotice = ( { product, minVersion } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -71,4 +71,4 @@ const JetpackMinimumPluginVersionNoticeContent = ( { product, minVersion } ) => 
 	);
 };
 
-export default JetpackMinimumPluginVersionNoticeContent;
+export default JetpackPluginRequiredVersionNotice;
