@@ -171,8 +171,8 @@ function getCheckoutVariant( countryCode ) {
 		return 'composite-checkout';
 	}
 
-	// Disable for Brazil and India
-	if ( countryCode?.toLowerCase() === 'br' || countryCode?.toLowerCase() === 'in' ) {
+	// Disable for India
+	if ( countryCode?.toLowerCase() === 'in' ) {
 		debug(
 			'shouldShowCompositeCheckout false because country is not allowed',
 			countryCode?.toLowerCase()
