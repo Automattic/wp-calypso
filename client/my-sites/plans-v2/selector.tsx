@@ -15,8 +15,10 @@ import { SECURITY } from './constants';
 import { durationToString } from './utils';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { managePurchase } from 'me/purchases/paths';
 import Main from 'components/main';
 import QueryProductsList from 'components/data/query-products-list';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySites from 'components/data/query-sites';
 
 /**
@@ -39,9 +41,13 @@ const SelectorPage = ( { defaultDuration = TERM_ANNUALLY, rootUrl }: SelectorPag
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
 	// Sends a user to a page based on whether there are subtypes.
-	const selectProduct: PurchaseCallback = ( product: SelectorProduct ) => {
-		const durationString = durationToString( currentDuration );
+	const selectProduct: PurchaseCallback = ( product: SelectorProduct, isOwned = false ) => {
 		const root = rootUrl.replace( ':site', siteSlug );
+		if ( isOwned ) {
+			page( managePurchase( siteSlug, 0 ) ); // TODO: Get purchase once #44942 is merged.
+			return;
+		}
+		const durationString = durationToString( currentDuration );
 		if ( product.subtypes.length ) {
 			page( `${ root }/${ product.productSlug }/${ durationString }/details` );
 		} else {
@@ -72,6 +78,7 @@ const SelectorPage = ( { defaultDuration = TERM_ANNUALLY, rootUrl }: SelectorPag
 				/>
 			</div>
 			<QueryProductsList />
+			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySites siteId={ siteId } /> }
 		</Main>
 	);
