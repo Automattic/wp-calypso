@@ -207,6 +207,16 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	renderSelectNewNavItem() {
+		const { translate, siteId } = this.props;
+
+		return (
+			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }/` }>
+				{ translate( 'Select a new plan' ) }
+			</CompactCard>
+		);
+	}
+
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate } = this.props;
 
@@ -457,7 +467,7 @@ class ManagePurchase extends Component {
 		return ! hasLoadedDomains;
 	}
 
-	renderPurchaseDetail() {
+	renderPurchaseDetail( showExpiryNotice ) {
 		if ( isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
@@ -508,7 +518,7 @@ class ManagePurchase extends Component {
 					{ this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
-				{ this.renderRenewNowNavItem() }
+				{ showExpiryNotice ? this.renderSelectNewNavItem() : this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
 				{ this.renderRemovePurchaseNavItem() }
@@ -585,7 +595,7 @@ class ManagePurchase extends Component {
 						siteId={ siteId }
 						currentPurchase={ purchase }
 					/>
-					{ this.renderPurchaseDetail() }
+					{ this.renderPurchaseDetail( showExpiryNotice ) }
 					{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 				</Main>
 			</Fragment>
