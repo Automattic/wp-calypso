@@ -19,9 +19,10 @@ import type { Purchase } from 'lib/purchases/types';
 
 type Props = {
 	purchase: Purchase;
+	withoutLink?: boolean;
 };
 
-const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase } ) => {
+const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase, withoutLink } ) => {
 	const translate = useTranslate();
 
 	let notice;
@@ -66,9 +67,11 @@ const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase } ) => {
 	return (
 		<>
 			{ notice }&nbsp;
-			<ExternalLink icon href={ OFFER_RESET_SUPPORT_PAGE }>
-				{ translate( 'More info' ) }
-			</ExternalLink>
+			{ ! withoutLink && (
+				<ExternalLink icon href={ OFFER_RESET_SUPPORT_PAGE }>
+					{ translate( 'More info' ) }
+				</ExternalLink>
+			) }
 		</>
 	);
 };

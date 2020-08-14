@@ -14,6 +14,8 @@ import { localize } from 'i18n-calypso';
 import AsyncLoad from 'components/async-load';
 import { Dialog } from '@automattic/components';
 import Main from 'components/main';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -23,7 +25,9 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import PurchasesListing from './purchases-listing';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { getPlan } from 'lib/plans';
+import { isCloseToExpiration } from 'lib/purchases';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
@@ -32,6 +36,9 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
+import PlanRenewalNotice from 'my-sites/plans-v2/plan-renewal-notice';
+import { OFFER_RESET_SUPPORT_PAGE } from 'my-sites/plans-v2/constants';
+import { findJetpackLegacyPlaPurchase } from 'my-sites/plans-v2/utils';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -40,6 +47,7 @@ import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
+import { getSitePurchases } from 'state/purchases/selectors';
 
 /**
  * Style dependencies
@@ -53,6 +61,7 @@ class CurrentPlan extends Component {
 		isRequestingSitePlans: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		domains: PropTypes.array,
+		purchases: PropTypes.array,
 		currentPlan: PropTypes.object,
 		plan: PropTypes.string,
 		product: PropTypes.string,
@@ -109,6 +118,7 @@ class CurrentPlan extends Component {
 	render() {
 		const {
 			domains,
+			purchases,
 			hasDomainsLoaded,
 			path,
 			selectedSite,
@@ -129,6 +139,16 @@ class CurrentPlan extends Component {
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
+
+		let showExpiryNotice = false;
+		let jetpackLegacyPlanPurchase;
+
+		if ( shouldShowOfferResetFlow() ) {
+			jetpackLegacyPlanPurchase = findJetpackLegacyPlaPurchase( purchases );
+			showExpiryNotice =
+				!! jetpackLegacyPlanPurchase && isCloseToExpiration( jetpackLegacyPlanPurchase );
+		}
+
 		return (
 			<Main className="current-plan" wideLayout>
 				<SidebarNavigation />
@@ -172,6 +192,18 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
+				{ showExpiryNotice && (
+					<Notice
+						status="is-info"
+						text={ <PlanRenewalNotice purchase={ jetpackLegacyPlanPurchase } withoutLink /> }
+						showDismiss={ false }
+					>
+						<NoticeAction href={ OFFER_RESET_SUPPORT_PAGE }>
+							{ translate( 'More info' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+
 				<PurchasesListing />
 
 				{ showJetpackChecklist && (
@@ -206,6 +238,7 @@ export default connect( ( state, { requestThankYou } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDomainsBySiteId( state, selectedSiteId );
+	const purchases = getSitePurchases( state, selectedSiteId );
 
 	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
@@ -217,6 +250,7 @@ export default connect( ( state, { requestThankYou } ) => {
 	return {
 		currentPlan,
 		domains,
+		purchases,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		selectedSite,
