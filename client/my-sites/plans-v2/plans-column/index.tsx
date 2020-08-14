@@ -113,7 +113,6 @@ const PlanComponent = ( {
 			withStartingPrice={ plan.subtypes && plan.subtypes.length > 0 }
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
-			deprecated={ plan.legacy }
 			UpgradeNudge={ plan.UpgradeNudge }
 		/>
 	);
