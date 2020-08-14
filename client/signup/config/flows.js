@@ -23,7 +23,10 @@ function getCheckoutUrl( dependencies, localeSlug ) {
 	return addQueryArgs(
 		{
 			signup: 1,
-			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
+			...( dependencies.isPreLaunch && {
+				preLaunch: 1,
+				redirect_to: `/home/${ dependencies.siteSlug }`,
+			} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 		},
 		checkoutURL
