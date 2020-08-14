@@ -143,4 +143,4 @@ function wpcom_gutenberg_enable_custom_line_height( $settings ) {
 	$settings['enableCustomLineHeight'] = true;
 	return $settings;
 }
-add_filter( 'block_editor_settings', 'wpcom_gutenberg_enable_custom_line_height', 11 );
+add_filter( 'block_editor_settings', __NAMESPACE__ . '\wpcom_gutenberg_enable_custom_line_height', 11 );
