@@ -35,8 +35,9 @@ const ClassicGuide = () => {
 	// See p9F6qB-5Ja-p2 for more information.
 	if ( 'function' !== typeof setWpcomNuxStatus ) {
 		// Return at this point, because (strangely) the wpcom nux guide shows instead.
-		return;
+		return null;
 	}
+	setWpcomNuxStatus( { isNuxEnabled: false } );
 
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
