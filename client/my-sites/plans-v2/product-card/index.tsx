@@ -8,8 +8,19 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { ITEM_TYPE_PLAN, ITEM_TYPE_BUNDLE, ITEM_TYPE_PRODUCT } from '../constants';
-import { durationToText, productButtonLabel } from '../utils';
+import {
+	ITEM_TYPE_PLAN,
+	ITEM_TYPE_BUNDLE,
+	ITEM_TYPE_PRODUCT,
+	OPTIONS_JETPACK_SECURITY,
+} from '../constants';
+import {
+	durationToText,
+	productButtonLabel,
+	isUpgradeable,
+	getRealtimeFromDaily,
+	slugToSelectorProduct,
+} from '../utils';
 import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
 import { getProductCost } from 'state/products-list/selectors/get-product-cost';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
@@ -17,7 +28,12 @@ import getSiteProducts from 'state/sites/selectors/get-site-products';
 import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
-import { TERM_MONTHLY } from 'lib/plans/constants';
+import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
+import {
+	TERM_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+} from 'lib/plans/constants';
 
 /**
  * Type dependencies
@@ -81,6 +97,32 @@ const ProductCard = ( { item, onClick, siteId, currencyCode, className }: Produc
 		}
 	}
 
+	let UpgradeNudge = null;
+	if ( isUpgradeable( item.productSlug ) ) {
+		// TODO: remove this once we can purchase new plans.
+		// We need this now to make the nudge appear inside the Jetpack Security Bundle card
+		// and make it work as it was Jetpack Security Daily (monthly or annually).
+		const productSlug =
+			item.productSlug === OPTIONS_JETPACK_SECURITY
+				? PLAN_JETPACK_SECURITY_DAILY
+				: PLAN_JETPACK_SECURITY_DAILY_MONTHLY;
+
+		const upgradeToProductSlug = productSlug && getRealtimeFromDaily( productSlug );
+		const selectorProductToUpgrade =
+			upgradeToProductSlug && slugToSelectorProduct( upgradeToProductSlug );
+
+		UpgradeNudge = selectorProductToUpgrade && (
+			<JetpackProductCardUpgradeNudge
+				billingTimeFrame={ durationToText( item.term ) }
+				currencyCode={ currencyCode }
+				discountedPrice={ 67 }
+				originalPrice={ originalPrice || 100 }
+				onUpgradeClick={ () => onClick( item ) }
+				selectorProduct={ selectorProductToUpgrade }
+			/>
+		);
+	}
+
 	const CardComponent = itemToCard( item ); // Get correct card component.
 	return (
 		<CardComponent
@@ -99,6 +141,7 @@ const ProductCard = ( { item, onClick, siteId, currencyCode, className }: Produc
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
+			UpgradeNudge={ UpgradeNudge }
 		/>
 	);
 };
