@@ -206,10 +206,10 @@ ul.plan-item__feature-item-group {
 	}
 
 	svg:first-child path {
-		fill: rgb( 74, 161, 80 );
+		fill: var( --studio-green-40 );
 
 		// to make the tick thicker
-		stroke: rgb( 74, 161, 80 );
+		stroke: var( --studio-green-40 );
 	}
 }
 
@@ -234,8 +234,8 @@ ul.plan-item__feature-item-group {
 
 	// the tick
 	svg:first-child path {
-		fill: rgb( 74, 161, 80 );
-		stroke: rgb( 74, 161, 80 );
+		fill: var( --studio-green-40 );
+		stroke: var( --studio-green-40 );
 		margin-top: 5px;
 	}
 
@@ -250,11 +250,11 @@ ul.plan-item__feature-item-group {
 
 .plan-item__domain-summary.components-button.is-link.is-free {
 	font-weight: bold;
-	color: rgb( 206, 134, 61 );
+	color: var( --studio-orange-40 );
 	text-decoration: line-through; // the tick
 	svg path {
-		fill: rgb( 206, 134, 61 );
-		stroke: rgb( 206, 134, 61 );
+		fill: var( --studio-orange-40 );
+		stroke: var( --studio-orange-40 );
 	}
 }
 
@@ -306,8 +306,8 @@ ul.plan-item__feature-item-group {
 
 	// the tick
 	svg path {
-		fill: rgb( 74, 161, 80 );
-		stroke: rgb( 74, 161, 80 );
+		fill: var( --studio-green-40 );
+		stroke: var( --studio-green-40 );
 	}
 
 	.plan-item__disabled-message {
@@ -317,8 +317,8 @@ ul.plan-item__feature-item-group {
 			height: 18px;
 
 			path {
-				fill: rgb( 206, 134, 61 );
-				stroke: rgb( 206, 134, 61 );
+				fill: var( --studio-orange-40 );
+				stroke: var( --studio-orange-40 );
 			}
 		}
 
@@ -327,7 +327,7 @@ ul.plan-item__feature-item-group {
 			line-height: 20px;
 			letter-spacing: 0.2px;
 			font-weight: bold;
-			color: rgb( 206, 134, 61 );
+			color: var( --studio-orange-40 );
 		}
 	}
 }
