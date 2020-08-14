@@ -192,6 +192,7 @@ class Security2faCodePrompt extends React.Component {
 
 	render() {
 		const method = twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
+		const hasSmsRecoveryNumber = !! twoStepAuthorization.data.two_step_sms_last_four?.length;
 
 		return (
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
@@ -201,9 +202,9 @@ class Security2faCodePrompt extends React.Component {
 					</FormLabel>
 
 					<FormVerificationCodeInput
-						autoFocus
 						className="security-2fa-code-prompt__verification-code"
 						disabled={ this.state.submittingForm }
+						id="verification-code"
 						method={ method }
 						name="verificationCode"
 						onFocus={ function () {
@@ -215,7 +216,7 @@ class Security2faCodePrompt extends React.Component {
 					{ this.state.codeRequestPerformed ? (
 						<FormSettingExplanation>
 							{ this.props.translate(
-								'A code has been sent to your device via SMS.  ' +
+								'A code has been sent to your device via SMS. ' +
 									'You may request another code after one minute.'
 							) }
 						</FormSettingExplanation>
@@ -233,7 +234,7 @@ class Security2faCodePrompt extends React.Component {
 						{ this.getSubmitButtonLabel() }
 					</FormButton>
 
-					{ twoStepAuthorization.isTwoStepSMSEnabled() && this.props.showSMSButton ? (
+					{ hasSmsRecoveryNumber && this.props.showSMSButton ? (
 						<FormButton
 							className="security-2fa-code-prompt__send-code"
 							disabled={ ! this.state.codeRequestsAllowed }
