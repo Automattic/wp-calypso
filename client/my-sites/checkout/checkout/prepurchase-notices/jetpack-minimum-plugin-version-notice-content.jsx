@@ -13,6 +13,7 @@ import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-pr
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSiteOption from 'state/sites/selectors/get-site-option';
 import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
+import PrePurchaseNotice from './prepurchase-notice';
 
 const getMessage = ( translate, product, siteVersion, minVersion ) => {
 	const displayName = getJetpackProductDisplayName( product );
@@ -62,17 +63,11 @@ const JetpackMinimumPluginVersionNoticeContent = ( { product, minVersion } ) => 
 	const message = getMessage( translate, product, siteJetpackVersion, minVersion );
 
 	return (
-		<div className="jetpack-minimum-plugin-version-notice-content">
-			<p className="jetpack-minimum-plugin-version-notice-content__message">{ message }</p>
-			{ pluginUpgradeUrl && (
-				<a
-					className="jetpack-minimum-plugin-version-notice-content__link"
-					href={ pluginUpgradeUrl }
-				>
-					{ preventWidows( translate( 'Upgrade now' ) ) }
-				</a>
-			) }
-		</div>
+		<PrePurchaseNotice
+			message={ message }
+			linkUrl={ pluginUpgradeUrl }
+			linkText={ preventWidows( translate( 'Upgrade now' ) ) }
+		/>
 	);
 };
 

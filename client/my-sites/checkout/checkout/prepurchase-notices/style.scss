@@ -12,9 +12,7 @@
 	}
 }
 
-.prepurchase-notices__container .notice .included-product-notice-content,
-.prepurchase-notices__container .notice .owned-product-notice-content,
-.prepurchase-notices__container .notice .jetpack-minimum-plugin-version-notice-content {
+.prepurchase-notices__container .notice .prepurchase-notice {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
  */
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getSitePurchases } from 'state/purchases/selectors';
+import PrePurchaseNotice from './prepurchase-notice';
 import type { SiteProduct } from 'state/sites/selectors/get-site-products';
 
 import './style.scss';
@@ -36,24 +37,23 @@ const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selec
 		? `/me/purchases/${ selectedSite.slug }/${ purchaseId }`
 		: '/me/purchases/';
 
+	const message = translate(
+		'You currently own {{product/}}. The plan you are about to purchase also includes this product. Consider removing your {{link}}{{product/}} subscription{{/link}}.',
+		{
+			comment: 'The `product` variable refers to the product the customer owns already',
+			components: {
+				link: <a href={ subscriptionUrl } />,
+				product: getJetpackProductDisplayName( product ) as ReactElement,
+			},
+		}
+	);
+
 	return (
-		<div className="owned-product-notice-content">
-			<p className="owned-product-notice-content__message">
-				{ translate(
-					'You currently own {{product/}}. The plan you are about to purchase also includes this product. Consider removing your {{link}}{{product/}} subscription{{/link}}.',
-					{
-						comment: 'The `product` variable refers to the product the customer owns already',
-						components: {
-							link: <a href={ subscriptionUrl } />,
-							product: getJetpackProductDisplayName( product ) as ReactElement,
-						},
-					}
-				) }
-			</p>
-			<a className="owned-product-notice-content__link" href={ subscriptionUrl }>
-				{ translate( 'Manage subscription' ) }
-			</a>
-		</div>
+		<PrePurchaseNotice
+			message={ message }
+			linkUrl={ subscriptionUrl }
+			linkText={ translate( 'Manage subscription' ) }
+		/>
 	);
 };
 
