@@ -131,21 +131,6 @@ export default function CheckoutSystemDecider( {
 		}
 	}, [ reduxDispatch, product ] );
 
-	useEffect( () => {
-		if ( 'disallowed-product' === checkoutVariant ) {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message: 'CheckoutSystemDecider unsupported product for composite checkout',
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						productSlug: product,
-					},
-				} )
-			);
-		}
-	}, [ reduxDispatch, checkoutVariant, product ] );
-
 	const logCheckoutError = useCallback(
 		( error ) => {
 			reduxDispatch(
