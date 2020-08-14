@@ -471,7 +471,15 @@ export function filterAppropriatePaymentMethods( {
 	const isPurchaseFree = total.amount.value === 0;
 	const isFullCredits =
 		! isPurchaseFree && credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
-	debug( 'is purchase free?', isPurchaseFree, 'is full credits?', isFullCredits );
+	debug( 'filtering payment methods with this input', {
+		total,
+		credits,
+		subtotal,
+		allowedPaymentMethods,
+		serverAllowedPaymentMethods,
+		isPurchaseFree,
+		isFullCredits,
+	} );
 
 	return paymentMethodObjects
 		.filter( ( methodObject ) => {
