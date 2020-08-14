@@ -147,7 +147,7 @@ const ProductCardWrapper = ( {
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned ) }
 			badgeLabel={ productBadgeLabel( item, isOwned, sitePlan ) }
-			onButtonClick={ () => onClick( item ) }
+			onButtonClick={ () => onClick( item, isOwned ) }
 			features={ item.features }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
