@@ -36,7 +36,7 @@ import {
 /**
  * Type dependencies
  */
-import type { JetpackOfferDailyPlans, JetpackOfferRealtimePlans } from 'lib/plans/types';
+import type { JetpackDailyPlan, JetpackRealtimePlan } from 'lib/plans/types';
 import type { SelectorProduct, SelectorProductSlug, ProductType } from './types';
 
 export const ALL = 'all';
@@ -99,7 +99,7 @@ export const OPTION_PLAN_SECURITY: SelectorProduct = {
 		'Enjoy the peace of mind of complete site security. ' +
 			'Easy-to-use, powerful security tools guard your site, so you can focus on your business.'
 	),
-	features: [],
+	features: { items: [] },
 };
 export const OPTION_PLAN_SECURITY_MONTHLY: SelectorProduct = {
 	...OPTION_PLAN_SECURITY,
@@ -121,7 +121,7 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	displayName: translate( 'Jetpack Backup' ),
 	tagline: '',
 	description: '',
-	features: [],
+	features: { items: [] },
 };
 export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 	...OPTION_PRODUCT_BACKUP,
@@ -183,17 +183,14 @@ export const SELECTOR_PLANS = [
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
 
-export const DAILY_PLAN_TO_REALTIME_PLAN: Record<
-	JetpackOfferDailyPlans,
-	JetpackOfferRealtimePlans
-> = {
+export const DAILY_PLAN_TO_REALTIME_PLAN: Record< JetpackDailyPlan, JetpackRealtimePlan > = {
 	[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY_REALTIME,
 	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 };
 
 /**
  * List of plans and products that can be upgraded from daily to real-time
- * through an upgrade nunge.
+ * through an upgrade nudge.
  */
 export const UPGRADEABLE_WITH_NUDGE = [
 	PLAN_JETPACK_SECURITY_DAILY,
