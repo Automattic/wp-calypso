@@ -15,6 +15,16 @@
 		& > .details__column:not( :first-of-type ) {
 			margin-left: 24px;
 		}
+		.formatted-header {
+			margin-top: 40px;
+		}
+		.formatted-header__title {
+			font-size: 1rem;
+			color: #3c434a;
+			@media ( min-width: 660px ) {
+				font-size: 18px;
+			}
+		}
 	}
 }
 
