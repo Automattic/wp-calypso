@@ -112,13 +112,13 @@ $jetpack-product-card-icon-size: 55px;
 .jetpack-product-card__subheadline {
 	margin-bottom: 24px;
 
-	color: var( --color-text-subtle );
+	color: var( --color-neutral-50 );
 
 	font-size: $font-body-extra-small;
 	line-height: rem( 16px ) / $font-body-extra-small;
 
 	@media ( min-width: 660px ) {
-		font-size: $font-body;
+		font-size: $font-body-small;
 	}
 }
 
