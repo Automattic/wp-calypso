@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
-import { assign, debounce, find, findLast, pick, values } from 'lodash';
+import { assign, debounce, find, findLast, pick, values, isEqual } from 'lodash';
 import i18n from 'i18n-calypso';
 import { parse, stringify } from 'lib/shortcode';
 import closest from 'component-closest';
@@ -17,7 +17,6 @@ import * as MediaConstants from 'lib/media/constants';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
 import MediaMarkup from 'post-editor/media-modal/markup';
-import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
@@ -33,6 +32,7 @@ import Gridicon from 'components/gridicon';
 import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
 import { fetchMediaItem } from 'state/media/thunks';
 import getMediaItem from 'state/selectors/get-media-item';
+import getMedia from 'state/selectors/get-media';
 
 /**
  * Module variables
@@ -54,6 +54,9 @@ function mediaButton( editor ) {
 
 	let nodes = {};
 	let updateMedia; // eslint-disable-line
+	let unsubscribeFromReduxStore;
+	let previousMediaReference;
+	let currentMediaReference;
 
 	const getSelectedSiteFromState = () => getSelectedSite( getState() );
 
@@ -878,7 +881,17 @@ function mediaButton( editor ) {
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
 	editor.on( 'init', function () {
-		MediaStore.on( 'change', updateMedia );
+		unsubscribeFromReduxStore = store.subscribe( () => {
+			const { ID: siteId } = getSelectedSite( store.getState() );
+			if ( ! siteId ) {
+				return;
+			}
+			previousMediaReference = currentMediaReference;
+			currentMediaReference = getMedia( store.getState(), siteId );
+			if ( ! isEqual( previousMediaReference, currentMediaReference ) ) {
+				updateMedia();
+			}
+		} );
 		editor.getDoc().addEventListener( 'load', resizeOnImageLoad, true );
 		editor.dom.bind( editor.getDoc(), 'dragstart dragend', hideDropZoneOnDrag );
 		editor.selection.selectorChanged( '.wp-caption', removeEmptyCaptions );
@@ -897,7 +910,7 @@ function mediaButton( editor ) {
 		} );
 		nodes = {};
 
-		MediaStore.off( 'change', updateMedia );
+		unsubscribeFromReduxStore();
 		editor.getDoc().removeEventListener( 'load', resizeOnImageLoad );
 	} );
 
