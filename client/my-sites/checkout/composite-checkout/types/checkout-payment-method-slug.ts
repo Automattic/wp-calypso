@@ -15,6 +15,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'card'
 	| 'ebanx'
 	| 'brazil-tef'
+	| 'netbanking'
 	| 'eps'
 	| 'giropay'
 	| 'ideal'
@@ -30,15 +31,16 @@ export type CheckoutPaymentMethodSlug =
 export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 	paymentMethod: CheckoutPaymentMethodSlug
 ): string {
+	let paymentMethodSlug: string = paymentMethod;
 	// existing cards have unique paymentMethodIds
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
-		paymentMethod = 'credit_card';
+		paymentMethodSlug = 'credit_card';
 	}
-	switch ( paymentMethod ) {
+	switch ( paymentMethodSlug ) {
 		case 'card':
 			return 'credit_card';
 		case 'apple-pay':
 			return 'web_payment';
 	}
-	return snakeCase( paymentMethod );
+	return snakeCase( paymentMethodSlug );
 }
