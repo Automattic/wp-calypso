@@ -256,8 +256,8 @@ function NetBankingPayButton( { disabled, store } ) {
 						items,
 						total,
 					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
+						.then( ( transactionResponse ) => {
+							if ( ! transactionResponse?.redirect_url ) {
 								setTransactionError(
 									__(
 										'There was an error processing your payment. Please try again or contact support.'
@@ -265,8 +265,8 @@ function NetBankingPayButton( { disabled, store } ) {
 								);
 								return;
 							}
-							debug( 'netbanking transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
+							debug( 'netbanking transaction requires redirect', transactionResponse.redirect_url );
+							setTransactionRedirecting( transactionResponse.redirect_url );
 						} )
 						.catch( ( error ) => {
 							setTransactionError( error.message );
