@@ -147,10 +147,7 @@ export async function submitRedirectTransaction( paymentMethodId, transactionDat
 		paymentMethodType,
 		paymentPartnerProcessorId: transactionData.stripeConfiguration?.processor_id,
 	} );
-	debug(
-		`sending stripe redirect transaction for type: ${ paymentMethodId }`,
-		formattedTransactionData
-	);
+	debug( `sending redirect transaction for type: ${ paymentMethodId }`, formattedTransactionData );
 	return submit( formattedTransactionData );
 }
 
