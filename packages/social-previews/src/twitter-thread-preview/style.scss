@@ -62,6 +62,12 @@
 			letter-spacing: -0.3px;
 			color: #787c82;
 		}
+
+		.twitter-thread-preview__media {
+			img {
+				max-width: 100%;
+			}
+		}
 	}
 
 	.twitter-thread-preview__footer {

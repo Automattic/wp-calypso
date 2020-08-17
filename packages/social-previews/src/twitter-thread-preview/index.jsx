@@ -63,6 +63,13 @@ export class TwitterThreadPreview extends PureComponent {
 											className="twitter-thread-preview__text"
 											dangerouslySetInnerHTML={ this.createTweetMarkup( tweet ) }
 										/>
+										{ tweet.media && (
+											<div className="twitter-thread-preview__media">
+												{ tweet.media.map( ( mediaItem ) => (
+													<img alt="" src={ mediaItem.url } />
+												) ) }
+											</div>
+										) }
 									</div>
 									<div className="twitter-thread-preview__footer">
 										<span className="twitter-thread-preview__icon-replies">
