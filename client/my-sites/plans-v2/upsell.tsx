@@ -81,15 +81,15 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 		return <h1>Loading...</h1>;
 	}
 
-	const { shortName: OwnedProductName } = ownedProduct;
-	const { shortName: UpsellProductName } = upsellProduct;
+	const { shortName: ownedProductName } = ownedProduct;
+	const { shortName: upsellProductName } = upsellProduct;
 
 	const onUpgradeConfirm = () => {
-		window.alert( `Add ${ UpsellProductName } to the cart...` );
+		window.alert( `Add ${ upsellProductName } to the cart...` );
 	};
 
 	const onUpgradeCancel = () => {
-		window.alert( `Expressing no interest in adding ${ UpsellProductName } to the cart...` );
+		window.alert( `Expressing no interest in adding ${ upsellProductName } to the cart...` );
 	};
 
 	return (
@@ -98,7 +98,7 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 				<FormattedHeader
 					headerText={ preventWidows(
 						translate( 'Would you like to add %s?', {
-							args: [ OwnedProductName ],
+							args: [ upsellProductName ],
 							comment: '%s is the name of a product such as Jetpack Scan or Jetpack Backup',
 						} )
 					) }
@@ -113,8 +113,8 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 					{ preventWidows(
 						translate( 'Bundle %(ownedProduct)s with %(upsellProduct)s and save!', {
 							args: {
-								ownedProduct: OwnedProductName,
-								upsellProduct: UpsellProductName,
+								ownedProduct: ownedProductName,
+								upsellProduct: upsellProductName,
 							},
 							comment: '%s are abbreviated name of product such as Scan or Backup',
 						} )
@@ -128,8 +128,8 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 								args: {
 									savedAmount,
 									period,
-									ownedProduct: OwnedProductName,
-									upsellProduct: UpsellProductName,
+									ownedProduct: ownedProductName,
+									upsellProduct: upsellProductName,
 								},
 								comment: 'period can be month or year',
 							}
@@ -145,13 +145,13 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 				description={ upsellProduct.description }
 				currencyCode={ currencyCode }
 				billingTimeFrame={ durationToText( upsellProduct.term ) }
-				buttonLabel={ translate( 'Yes, add %s', { args: [ UpsellProductName ] } ) }
+				buttonLabel={ translate( 'Yes, add %s', { args: [ upsellProductName ] } ) }
 				features={ { items: [] } }
 				discountedPrice={ upsellProductPrices.discountCost }
 				originalPrice={ upsellProductPrices.cost || 0 }
 				onButtonClick={ onUpgradeConfirm }
 				cancelLabel={ translate( 'No, I do not want %s', {
-					args: [ UpsellProductName ],
+					args: [ upsellProductName ],
 				} ) }
 				onCancelClick={ onUpgradeCancel }
 			/>
