@@ -502,7 +502,7 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 			return {
 				...state,
 				[ siteId ]: merge( {}, state[ siteId ], {
-					nextPageHandle: mediaRequestMeta?.next_page ?? null,
+					nextPageHandle: mediaRequestMeta?.next_page || null,
 				} ),
 			};
 		}
@@ -514,6 +514,7 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 
 			if ( ! isEqual( query, state[ siteId ]?.query ) ) {
 				delete newState.nextPageHandle;
+				newState.nextPage = false;
 			}
 
 			return {

@@ -12,7 +12,7 @@ describe( 'getNextPageHandle', () => {
 		).toEqual( nextPageHandle );
 	} );
 
-	it( 'should return null when the handle does not exist', () => {
-		expect( getNextPageHandle( { media: { fetching: {} } }, siteId ) ).toBeNull();
+	it( 'should return undefined when the handle does not exist', () => {
+		expect( getNextPageHandle( { media: { fetching: {} } }, siteId ) ).toBeUndefined();
 	} );
 } );
