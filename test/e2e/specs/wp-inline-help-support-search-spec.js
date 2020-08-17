@@ -40,7 +40,6 @@ describe( `[${ host }] Inline Help support search: (${ screenSize }) @parallel`,
 		await loginFlow.loginAndSelectSettings();
 
 		// Initialize the helper component
-
 		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
 	} );
 
@@ -70,7 +69,7 @@ describe( `[${ host }] Inline Help support search: (${ screenSize }) @parallel`,
 		} );
 
 		step( 'Displays contextual search results by default', async function () {
-			const resultsCount = await supportSearchComponent.getSearchResultsCount();
+			const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 			assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
 		} );
 
@@ -81,19 +80,19 @@ describe( `[${ host }] Inline Help support search: (${ screenSize }) @parallel`,
 			assert.equal(
 				resultsCount <= 5,
 				true,
-				`Too many search results displayed. Should be less than or equal to 5 (was ${ resultsCount }).`
+				`Too many search results displayed. Should be less than or equal to 5.`
 			);
 			assert.equal(
 				resultsCount >= 1,
 				true,
-				`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsCount }).`
+				`Too few search results displayed. Should be more than or equal to 1.`
 			);
 		} );
 
 		step( 'Resets search UI to default state when search input is cleared ', async function () {
 			await supportSearchComponent.clearSearchField();
 
-			const resultsCount = await supportSearchComponent.getSearchResultsCount();
+			const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 
 			assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
 		} );
@@ -104,7 +103,7 @@ describe( `[${ host }] Inline Help support search: (${ screenSize }) @parallel`,
 				const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 
 				await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
-				const resultsCount = await supportSearchComponent.getSearchResultsCount();
+				const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 
 				const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
 
