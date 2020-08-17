@@ -11,10 +11,6 @@ The Media store extends the EventEmitter interface and can be monitored for chan
 
 This is the single source of truth for media data. As data flows through the Flux lifecycle, the latest version of media data for all sites is kept in-memory on the MediaStore object.
 
-### MediaListStore
-
-Whereas the MediaStore has no concept of ordering and is unaware of querying and pagination, the MediaListStore extends the base store with helper methods intended to be used when displaying paginated media items in list format.
-
 ## Usage
 
 The stores are singleton objects, which offer `get` and `getAll` methods to retrieve data.
