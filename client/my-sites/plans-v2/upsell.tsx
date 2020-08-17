@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
@@ -14,6 +14,8 @@ import Gridicon from 'components/gridicon';
 import FormattedHeader from 'components/formatted-header';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import Main from 'components/main';
+import { addItem, addItems } from 'lib/cart/actions';
+import { jetpackProductItem } from 'lib/cart-values/cart-items';
 import { preventWidows } from 'lib/formatting';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isProductsListFetching, getAvailableProductsList } from 'state/products-list/selectors';
@@ -34,63 +36,41 @@ import './style.scss';
 /**
  * Type dependencies
  */
-import type { UpsellPageProps } from './types';
+import type { SelectorProduct, UpsellPageProps } from './types';
 
-// There are several things that could go wrong depending on the URL's productSlug:
+// There are several things that could go wrong depending on the URL
 // - The product slug could not exist.
 // - The product slug could be of a product that does not have another product to
 // upsell to – Jetpack Anti-Spam is an example.
-// - The product slug could have an upsell product but what if the already has that
+// - The product slug could have an upsell product but what if the user already has that
 // product?
-//
-// TODO:
-// - handle the case in which the user already have the upsellProduct (what if the user comes
-// directly through an URL to this page?)
-// - use correct prices for the upsellProduct – it should be a heavily discounted price
+// - What if the user already owns the product associated with the product slug?
 
-const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
+interface Props {
+	currencyCode: string;
+	mainProduct: SelectorProduct;
+	upsellProduct: SelectorProduct;
+}
+
+const UpsellComponent = ( { currencyCode, mainProduct, upsellProduct }: Props ) => {
 	const translate = useTranslate();
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
-	const availableProducts = useSelector( ( state ) => getAvailableProductsList( state ) );
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
-	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
-	// TODO: Get upsells via API.
 
-	// If the product is not valid or there is no upsell product for it,
-	// send the user to the selector page.
-	const ownedProduct = slugToSelectorProduct( productSlug );
-	const upsellProductSlug = getProductUpsell( productSlug );
-	const upsellProduct = upsellProductSlug && slugToSelectorProduct( upsellProductSlug );
-	if ( ! ownedProduct || ! upsellProduct ) {
-		// The duration is optional, but if we have it keep it.
-		let durationSuffix = '';
-		if ( duration ) {
-			durationSuffix = '/' + durationToString( duration );
-		}
-		page.redirect( rootUrl.replace( ':site', siteSlug ) + durationSuffix );
-		return null;
-	}
+	const availableProducts = useSelector( ( state ) => getAvailableProductsList( state ) );
 
 	// Upsell prices should come from the API with the upsell products
 	const upsellProductPrices = getProductPrices( upsellProduct, availableProducts );
-
 	const savedAmount = 100;
-	const period = 'year';
 
-	if ( isFetchingProducts || ! currencyCode ) {
-		return <h1>Loading...</h1>;
-	}
+	const { shortName: mainProductName, productSlug } = mainProduct;
+	const { shortName: upsellProductName, productSlug: upsellProductSlug } = upsellProduct;
 
-	const { shortName: ownedProductName } = ownedProduct;
-	const { shortName: upsellProductName } = upsellProduct;
+	const onPurchaseBothProducts = useCallback( () => {
+		addItems( [ jetpackProductItem( productSlug ), jetpackProductItem( upsellProductSlug ) ] );
+	}, [ productSlug, upsellProductSlug ] );
 
-	const onUpgradeConfirm = () => {
-		window.alert( `Add ${ upsellProductName } to the cart...` );
-	};
-
-	const onUpgradeCancel = () => {
-		window.alert( `Expressing no interest in adding ${ upsellProductName } to the cart...` );
-	};
+	const onPurchaseSingleProduct = useCallback( () => {
+		addItem( [ jetpackProductItem( productSlug ) ] );
+	}, [ productSlug ] );
 
 	return (
 		<Main className="upsell">
@@ -105,15 +85,15 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 					brandFont
 				/>
 				<div className="upsell__icons">
-					<ProductIcon className="upsell__product-icon" slug={ ownedProduct.iconSlug } />
+					<ProductIcon className="upsell__product-icon" slug={ mainProduct.iconSlug } />
 					<Gridicon className="upsell__plus-icon" icon="plus-small" />
 					<ProductIcon className="upsell__product-icon" slug={ upsellProduct.iconSlug } />
 				</div>
 				<p className="upsell__subheader">
 					{ preventWidows(
-						translate( 'Bundle %(ownedProduct)s with %(upsellProduct)s and save!', {
+						translate( 'Bundle %(mainProduct)s with %(upsellProduct)s and save!', {
 							args: {
-								ownedProduct: ownedProductName,
+								mainProduct: mainProductName,
 								upsellProduct: upsellProductName,
 							},
 							comment: '%s are abbreviated name of product such as Scan or Backup',
@@ -123,15 +103,13 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 				<p className="upsell__saved-amount">
 					{ preventWidows(
 						translate(
-							'Save $%(savedAmount)d/%(period)s on %(upsellProduct)s when paired with %(ownedProduct)s',
+							'Save $%(savedAmount)d/year on %(upsellProduct)s when paired with %(mainProduct)s',
 							{
 								args: {
 									savedAmount,
-									period,
-									ownedProduct: ownedProductName,
+									mainProduct: mainProductName,
 									upsellProduct: upsellProductName,
 								},
-								comment: 'period can be month or year',
 							}
 						)
 					) }
@@ -149,13 +127,48 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 				features={ { items: [] } }
 				discountedPrice={ upsellProductPrices.discountCost }
 				originalPrice={ upsellProductPrices.cost || 0 }
-				onButtonClick={ onUpgradeConfirm }
+				onButtonClick={ onPurchaseBothProducts }
 				cancelLabel={ translate( 'No, I do not want %s', {
 					args: [ upsellProductName ],
 				} ) }
-				onCancelClick={ onUpgradeCancel }
+				onCancelClick={ onPurchaseSingleProduct }
 			/>
 		</Main>
+	);
+};
+
+const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
+
+	const mainProduct = slugToSelectorProduct( productSlug );
+	// TODO: Get upsells via API.
+	const upsellProductSlug = getProductUpsell( productSlug );
+	const upsellProduct = upsellProductSlug && slugToSelectorProduct( upsellProductSlug );
+
+	// If the product is not valid or there is no upsell product for it,
+	// send the user to the selector page.
+	if ( ! mainProduct || ! upsellProduct ) {
+		// The duration is optional, but if we have it keep it.
+		let durationSuffix = '';
+		if ( duration ) {
+			durationSuffix = '/' + durationToString( duration );
+		}
+		page.redirect( rootUrl.replace( ':site', siteSlug ) + durationSuffix );
+		return null;
+	}
+
+	if ( isFetchingProducts || ! currencyCode ) {
+		return <h1>Loading...</h1>;
+	}
+
+	return (
+		<UpsellComponent
+			currencyCode={ currencyCode }
+			mainProduct={ mainProduct }
+			upsellProduct={ upsellProduct }
+		/>
 	);
 };
 
