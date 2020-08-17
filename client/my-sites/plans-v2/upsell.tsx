@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { ProductIcon } from '@automattic/components';
+import { getCurrencyObject } from '@automattic/format-currency';
 import Gridicon from 'components/gridicon';
 import FormattedHeader from 'components/formatted-header';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
@@ -18,15 +19,10 @@ import { addItem, addItems } from 'lib/cart/actions';
 import { jetpackProductItem } from 'lib/cart-values/cart-items';
 import { preventWidows } from 'lib/formatting';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { isProductsListFetching, getAvailableProductsList } from 'state/products-list/selectors';
+import { isProductsListFetching } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	durationToString,
-	durationToText,
-	getProductPrices,
-	getProductUpsell,
-	slugToSelectorProduct,
-} from './utils';
+import useItemPrice from './use-item-price';
+import { durationToString, durationToText, getProductUpsell, slugToSelectorProduct } from './utils';
 
 /**
  * Style dependencies
@@ -39,9 +35,6 @@ import './style.scss';
 import type { SelectorProduct, UpsellPageProps } from './types';
 
 // There are several things that could go wrong depending on the URL
-// - The product slug could not exist.
-// - The product slug could be of a product that does not have another product to
-// upsell to – Jetpack Anti-Spam is an example.
 // - The product slug could have an upsell product but what if the user already has that
 // product?
 // - What if the user already owns the product associated with the product slug?
@@ -49,40 +42,33 @@ import type { SelectorProduct, UpsellPageProps } from './types';
 interface Props {
 	currencyCode: string;
 	mainProduct: SelectorProduct;
-	selectedSiteSlug: string;
 	upsellProduct: SelectorProduct;
+	onPurchaseSingleProduct: () => void;
+	onPurchaseBothProducts: () => void;
 }
 
 const UpsellComponent = ( {
 	currencyCode,
+	onPurchaseSingleProduct,
+	onPurchaseBothProducts,
 	mainProduct,
-	selectedSiteSlug,
 	upsellProduct,
 }: Props ) => {
 	const translate = useTranslate();
 
-	const availableProducts = useSelector( ( state ) => getAvailableProductsList( state ) );
-
 	// Upsell prices should come from the API with the upsell products
-	const upsellProductPrices = getProductPrices( upsellProduct, availableProducts );
+	const { originalPrice, discountedPrice } = useItemPrice(
+		upsellProduct,
+		upsellProduct.monthlyProductSlug || ''
+	);
 	const savedAmount = 100;
 
-	const { shortName: mainProductName, productSlug } = mainProduct;
-	const { shortName: upsellProductName, productSlug: upsellProductSlug } = upsellProduct;
+	const { shortName: mainProductName } = mainProduct;
+	const { shortName: upsellProductName } = upsellProduct;
 
-	const goToCheckout = useCallback( () => {
-		page( `/checkout/${ selectedSiteSlug }` );
-	}, [ selectedSiteSlug ] );
-
-	const onPurchaseBothProducts = useCallback( () => {
-		addItems( [ jetpackProductItem( productSlug ), jetpackProductItem( upsellProductSlug ) ] );
-		goToCheckout();
-	}, [ goToCheckout, productSlug, upsellProductSlug ] );
-
-	const onPurchaseSingleProduct = useCallback( () => {
-		addItem( jetpackProductItem( productSlug ) );
-		goToCheckout();
-	}, [ goToCheckout, productSlug ] );
+	const { symbol: currencySymbol } = getCurrencyObject( originalPrice, currencyCode ) || {
+		symbol: '$',
+	};
 
 	return (
 		<Main className="upsell">
@@ -108,20 +94,24 @@ const UpsellComponent = ( {
 								mainProduct: mainProductName,
 								upsellProduct: upsellProductName,
 							},
-							comment: '%s are abbreviated name of product such as Scan or Backup',
+							comment:
+								'%(mainProduct)s and %(upsellProduct)s are abbreviated name of product such as Scan or Backup',
 						} )
 					) }
 				</p>
 				<p className="upsell__saved-amount">
 					{ preventWidows(
 						translate(
-							'Save $%(savedAmount)d/year on %(upsellProduct)s when paired with %(mainProduct)s',
+							'Save %(currencySymbol)s%(savedAmount)d/year on %(upsellProduct)s when paired with %(mainProduct)s',
 							{
 								args: {
 									savedAmount,
 									mainProduct: mainProductName,
 									upsellProduct: upsellProductName,
+									currencySymbol,
 								},
+								comment:
+									'%(savedAmount)s refers to the saved amount by purchasing two products together such as Jetpack Backup and Jetpack Scan',
 							}
 						)
 					) }
@@ -137,8 +127,8 @@ const UpsellComponent = ( {
 				billingTimeFrame={ durationToText( upsellProduct.term ) }
 				buttonLabel={ translate( 'Yes, add %s', { args: [ upsellProductName ] } ) }
 				features={ { items: [] } }
-				discountedPrice={ upsellProductPrices.discountCost }
-				originalPrice={ upsellProductPrices.cost || 0 }
+				discountedPrice={ discountedPrice }
+				originalPrice={ originalPrice }
 				onButtonClick={ onPurchaseBothProducts }
 				cancelLabel={ translate( 'No, I do not want %s', {
 					args: [ upsellProductName ],
@@ -159,15 +149,37 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 	const upsellProductSlug = getProductUpsell( productSlug );
 	const upsellProduct = upsellProductSlug && slugToSelectorProduct( upsellProductSlug );
 
-	// If the product is not valid or there is no upsell product for it,
-	// send the user to the selector page.
-	if ( ! mainProduct || ! upsellProduct ) {
+	const goToCheckout = useCallback( () => {
+		page( `/checkout/${ selectedSiteSlug }` );
+	}, [ selectedSiteSlug ] );
+
+	const onPurchaseBothProducts = useCallback( () => {
+		addItems( [
+			jetpackProductItem( productSlug ),
+			jetpackProductItem( upsellProductSlug as string ),
+		] );
+		goToCheckout();
+	}, [ goToCheckout, productSlug, upsellProductSlug ] );
+
+	const onPurchaseSingleProduct = useCallback( () => {
+		addItem( jetpackProductItem( productSlug ) );
+		goToCheckout();
+	}, [ goToCheckout, productSlug ] );
+
+	// If the product is not valid send the user to the selector page.
+	if ( ! mainProduct ) {
 		// The duration is optional, but if we have it keep it.
 		let durationSuffix = '';
 		if ( duration ) {
 			durationSuffix = '/' + durationToString( duration );
 		}
 		page.redirect( rootUrl.replace( ':site', selectedSiteSlug ) + durationSuffix );
+		return null;
+	}
+
+	// If there is no upsell product, redirect the user to the checkout page.
+	if ( ! upsellProduct ) {
+		onPurchaseSingleProduct();
 		return null;
 	}
 
@@ -179,8 +191,9 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 		<UpsellComponent
 			currencyCode={ currencyCode }
 			mainProduct={ mainProduct }
-			selectedSiteSlug={ selectedSiteSlug }
 			upsellProduct={ upsellProduct }
+			onPurchaseSingleProduct={ onPurchaseSingleProduct }
+			onPurchaseBothProducts={ onPurchaseBothProducts }
 		/>
 	);
 };
