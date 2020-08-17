@@ -17,9 +17,8 @@ import {
 	productBadgeLabel,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
+import useItemPrice from '../use-item-price';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
-import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
-import { getProductCost } from 'state/products-list/selectors/get-product-cost';
 import { getSitePurchases } from 'state/purchases/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
@@ -28,7 +27,6 @@ import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
-import { TERM_MONTHLY } from 'lib/plans/constants';
 import { isCloseToExpiration } from 'lib/purchases';
 
 /**
@@ -59,25 +57,13 @@ const UpgradeNudgeWrapper = ( { item, currencyCode, onClick }: UpgradeNudgeProps
 		getRealtimeFromDaily( item.costProductSlug || item.productSlug ) || '';
 	const selectorProductToUpgrade = slugToSelectorProduct( upgradeToProductSlug );
 
-	const isFetchingPrices = useSelector( ( state ) => isProductsListFetching( state ) );
-
-	const itemCost = useSelector( ( state ) => getProductCost( state, upgradeToProductSlug ) );
-	const monthlyItemCost = useSelector( ( state ) =>
-		getProductCost( state, selectorProductToUpgrade?.monthlyProductSlug || '' )
+	const { isFetching, originalPrice, discountedPrice } = useItemPrice(
+		selectorProductToUpgrade,
+		selectorProductToUpgrade?.monthlyProductSlug || ''
 	);
 
-	if ( ! isUpgradeable( item.productSlug ) || isFetchingPrices || ! selectorProductToUpgrade ) {
+	if ( ! isUpgradeable( item.productSlug ) || isFetching || ! selectorProductToUpgrade ) {
 		return null;
-	}
-
-	let originalPrice = 0;
-	let discountedPrice = undefined;
-	if ( ! isFetchingPrices && itemCost ) {
-		originalPrice = itemCost;
-		if ( monthlyItemCost && selectorProductToUpgrade.term !== TERM_MONTHLY ) {
-			originalPrice = monthlyItemCost * 12;
-			discountedPrice = itemCost;
-		}
 	}
 
 	return (
@@ -123,23 +109,7 @@ const ProductCardWrapper = ( {
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 
 	// Calculate the product price.
-	const isFetchingPrices = useSelector( ( state ) => isProductsListFetching( state ) );
-	const itemCost = useSelector( ( state ) =>
-		getProductCost( state, item.costProductSlug || item.productSlug )
-	);
-	const monthlyItemCost = useSelector( ( state ) =>
-		getProductCost( state, item.monthlyProductSlug || '' )
-	);
-
-	let originalPrice = 0;
-	let discountedPrice = undefined;
-	if ( ! isFetchingPrices && itemCost ) {
-		originalPrice = itemCost;
-		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
-			originalPrice = monthlyItemCost * 12;
-			discountedPrice = itemCost;
-		}
-	}
+	const { originalPrice, discountedPrice } = useItemPrice( item, item?.monthlyProductSlug || '' );
 
 	// Handles expiry.
 	const moment = useLocalizedMoment();
