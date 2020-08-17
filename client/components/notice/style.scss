@@ -210,7 +210,6 @@ a.notice__action {
 			flex-shrink: 1;
 			flex-grow: 0;
 		align-items: center;
-		border-radius: 0;
 		font-size: $font-body-small;
 		margin: 0 0 0 auto; // forces the element to the right;
 		padding: 13px 16px;
@@ -243,7 +242,6 @@ a.notice__action {
 		flex-wrap: nowrap;
 		flex-direction: row;
 	width: auto;
-	border-radius: 2px;
 	min-height: 20px;
 	margin: 0;
 	padding: 0;
