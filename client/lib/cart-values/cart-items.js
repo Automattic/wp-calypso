@@ -161,7 +161,7 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( isJetpackProduct( cartItem ) ) {
 		// adding a Jetpack product should replace the cart
-		return true;
+		return false;
 	}
 
 	return false;
