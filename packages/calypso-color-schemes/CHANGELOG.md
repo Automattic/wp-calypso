@@ -1,8 +1,9 @@
 # Release Notes
 
-## 2.2.0
+## 2.1.2
 
-* Introduce Google Color
+* Added Google brand color:
+  * `--color-google`
 
 ## 2.1.1
 
