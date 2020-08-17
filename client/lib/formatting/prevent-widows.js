@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import React from 'react';
+
+/**
  * Prevent widows by replacing spaces between the last `wordsToKeep` words in the text with non-breaking spaces
  *
  * @param  {string|@i18n-calypso/TranslateResult} text the text to work on
@@ -6,35 +11,47 @@
  * @returns {string}             the widow-prevented string
  */
 export function preventWidows( text, wordsToKeep = 2 ) {
-	if ( typeof text !== 'string' ) {
-		if ( Array.isArray( text ) ) {
-			// Handle strings with interpolated components by only acting on the last element.
-			if ( typeof text[ text.length - 1 ] === 'string' ) {
-				const endingText = text.pop();
-				const startingWhitespace = endingText.match( /^\s+/ );
-				// The whitespace between component and text would be stripped by preventWidows.
-				startingWhitespace && text.push( startingWhitespace[ 0 ] );
-				text.push( preventWidows( endingText, wordsToKeep ) );
-			}
+	return preventWidowsInPart( text, Math.max( 1, wordsToKeep - 1 ) ).part;
+}
+
+const reverseSpaceRegex = /\s+(\S*)$/;
+
+function preventWidowsInPart( part, spacesToSubstitute ) {
+	let substituted = 0;
+
+	if ( 'string' === typeof part ) {
+		let text = part;
+		while ( substituted < spacesToSubstitute && text.match( reverseSpaceRegex ) ) {
+			text = text.replace( reverseSpaceRegex, '\xA0$1' ); //
+			substituted++;
 		}
-		return text;
+		return { part: text, substituted };
 	}
 
-	text = text && text.trim();
-	if ( ! text ) {
-		return text;
+	if ( Array.isArray( part ) ) {
+		let elements = [];
+		let idx = part.length - 1;
+		while ( substituted < spacesToSubstitute && idx >= 0 ) {
+			const result = preventWidowsInPart( part[ idx ], spacesToSubstitute - substituted );
+			elements.unshift( result.part );
+			substituted += result.substituted;
+			idx--;
+		}
+		elements = part.slice( 0, idx + 1 ).concat( elements );
+		return { part: elements, substituted };
 	}
 
-	const words = text.match( /\S+/g );
-	if ( ! words || 1 === words.length ) {
-		return text;
+	if ( React.isValidElement( part ) && part.props.children ) {
+		const result = preventWidowsInPart( part.props.children, spacesToSubstitute );
+		if ( result.substituted > 0 ) {
+			return {
+				part: React.cloneElement( part, part.props, result.part ),
+				substituted: result.substituted,
+			};
+		}
+		return { part, substituted };
 	}
 
-	if ( words.length <= wordsToKeep ) {
-		return words.join( '\xA0' );
-	}
-
-	const endWords = words.splice( -wordsToKeep, wordsToKeep );
-
-	return words.join( ' ' ) + ' ' + endWords.join( '\xA0' );
+	// Shouldn't get here, but just in case! Should this throw an exception?
+	return { part, substituted };
 }

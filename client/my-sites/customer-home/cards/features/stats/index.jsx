@@ -17,6 +17,7 @@ import Spinner from 'components/spinner';
 import QuerySiteStats from 'components/data/query-site-stats';
 import InlineSupportLink from 'components/inline-support-link';
 import { localizeUrl } from 'lib/i18n-utils';
+import { preventWidows } from 'lib/formatting';
 import { buildChartData } from 'my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'state/sites/selectors';
@@ -99,7 +100,7 @@ export const StatsV2 = ( {
 								statsGroup="calypso_customer_home"
 								statsName="stats_learn_more"
 							>
-								{ translate( 'Learn about stats.' ) }
+								{ preventWidows( translate( 'Learn about stats.' ) ) }
 							</InlineSupportLink>
 						</div>
 					</Chart>
