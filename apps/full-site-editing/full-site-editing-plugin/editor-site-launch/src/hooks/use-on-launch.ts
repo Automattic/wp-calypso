@@ -3,12 +3,13 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
 import { useSite } from './';
-import { LAUNCH_STORE, SITE_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 
 declare global {
 	interface Window {
@@ -19,6 +20,9 @@ declare global {
 export const useOnLaunch = () => {
 	const { launchStatus } = useSite();
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const isEcommercePlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).isPlanEcommerce( plan?.storeSlug )
+	);
 
 	const { getCart, setCart } = useDispatch( SITE_STORE );
 
@@ -57,7 +61,16 @@ export const useOnLaunch = () => {
 					// 	: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 					// window.location.href = `https://wordpress.com/checkout/${ window._currentSiteId }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
 
-					window.top.location.href = `https://wordpress.com/checkout/${ window._currentSiteId }?preLaunch=1`;
+					const checkoutUrl = addQueryArgs(
+						`https://wordpress.com/checkout/${ window._currentSiteId }`,
+						{
+							preLaunch: 1,
+							// Redirect to My Home after checkout only if the selected plan is not eCommerce
+							...( ! isEcommercePlan && { redirect_to: `/home/${ window._currentSiteId }` } ),
+						}
+					);
+
+					window.top.location.href = checkoutUrl;
 				};
 
 				// TODO: record tracks event
