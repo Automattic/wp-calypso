@@ -244,7 +244,7 @@ export default {
 		localeExceptions: [ 'en', 'es' ],
 	},
 	existingUsersGutenbergOnboard: {
-		datestamp: '20200812',
+		datestamp: '20200817',
 		variations: {
 			gutenberg: 50,
 			control: 50,
