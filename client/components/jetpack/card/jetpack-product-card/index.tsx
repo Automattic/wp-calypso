@@ -40,10 +40,10 @@ type OwnProps = {
 	withStartingPrice?: boolean;
 	billingTimeFrame: TranslateResult;
 	badgeLabel?: TranslateResult;
-	discountMessage?: string;
+	discountMessage?: TranslateResult;
 	buttonLabel: TranslateResult;
 	onButtonClick: () => void;
-	cancelLabel?: string;
+	cancelLabel?: TranslateResult;
 	onCancelClick?: () => void;
 	isHighlighted?: boolean;
 	isOwned?: boolean;

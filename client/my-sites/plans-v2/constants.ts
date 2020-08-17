@@ -36,7 +36,7 @@ import {
 /**
  * Type dependencies
  */
-import type { JetpackOfferDailyPlans, JetpackOfferRealtimePlans } from 'lib/plans/types';
+import type { JetpackRealtimePlan } from 'lib/plans/types';
 import type { SelectorProduct, SelectorProductSlug, ProductType } from './types';
 
 export const ALL = 'all';
@@ -72,6 +72,11 @@ export const OPTIONS_JETPACK_SECURITY_MONTHLY = 'jetpack_security_monthly';
 export const OPTIONS_JETPACK_BACKUP = 'jetpack_backup';
 export const OPTIONS_JETPACK_BACKUP_MONTHLY = 'jetpack_backup_monthly';
 
+// Types of items. This determines the card UI.
+export const ITEM_TYPE_PLAN = 'item-type-plan';
+export const ITEM_TYPE_BUNDLE = 'item-type-bundle';
+export const ITEM_TYPE_PRODUCT = 'item-type-product';
+
 export const PRODUCTS_WITH_OPTIONS = [
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
@@ -83,6 +88,7 @@ export const PRODUCTS_WITH_OPTIONS = [
 export const OPTION_PLAN_SECURITY: SelectorProduct = {
 	productSlug: OPTIONS_JETPACK_SECURITY,
 	term: TERM_ANNUALLY,
+	type: ITEM_TYPE_BUNDLE,
 	subtypes: [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_REALTIME ],
 	costProductSlug: PLAN_JETPACK_SECURITY_DAILY,
 	monthlyProductSlug: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
@@ -93,7 +99,7 @@ export const OPTION_PLAN_SECURITY: SelectorProduct = {
 		'Enjoy the peace of mind of complete site security. ' +
 			'Easy-to-use, powerful security tools guard your site, so you can focus on your business.'
 	),
-	features: [],
+	features: { items: [] },
 };
 export const OPTION_PLAN_SECURITY_MONTHLY: SelectorProduct = {
 	...OPTION_PLAN_SECURITY,
@@ -107,6 +113,7 @@ export const OPTION_PLAN_SECURITY_MONTHLY: SelectorProduct = {
 export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	productSlug: OPTIONS_JETPACK_BACKUP,
 	term: TERM_ANNUALLY,
+	type: ITEM_TYPE_PRODUCT,
 	subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_REALTIME ],
 	costProductSlug: PRODUCT_JETPACK_BACKUP_DAILY,
 	monthlyProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -114,7 +121,7 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	displayName: translate( 'Jetpack Backup' ),
 	tagline: '',
 	description: '',
-	features: [],
+	features: { items: [] },
 };
 export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 	...OPTION_PRODUCT_BACKUP,
@@ -176,17 +183,14 @@ export const SELECTOR_PLANS = [
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
 
-export const DAILY_PLAN_TO_REALTIME_PLAN: Record<
-	JetpackOfferDailyPlans,
-	JetpackOfferRealtimePlans
-> = {
+export const DAILY_PLAN_TO_REALTIME_PLAN: Record< string, JetpackRealtimePlan > = {
 	[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY_REALTIME,
 	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 };
 
 /**
  * List of plans and products that can be upgraded from daily to real-time
- * through an upgrade nunge.
+ * through an upgrade nudge.
  */
 export const UPGRADEABLE_WITH_NUDGE = [
 	PLAN_JETPACK_SECURITY_DAILY,

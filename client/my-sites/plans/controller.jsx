@@ -73,8 +73,9 @@ export function redirectToPlans( context ) {
 	return page.redirect( '/plans' );
 }
 
-export function redirectToPlansIfNotJetpack( context ) {
+export function redirectToPlansIfNotJetpack( context, next ) {
 	if ( ! showJetpackPlans( context ) ) {
 		page.redirect( `/plans/${ context.params.site }` );
 	}
+	next();
 }
