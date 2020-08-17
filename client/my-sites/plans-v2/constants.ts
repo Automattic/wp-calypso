@@ -44,8 +44,6 @@ export const PERFORMANCE = 'performance';
 export const SECURITY = 'security';
 
 // TODO: update before offer reset launch
-export const OFFER_RESET_EFFECTIVE_DATE = '2020-09-01T00:00:00+00:00';
-// TODO: update before offer reset launch
 export const OFFER_RESET_SUPPORT_PAGE = 'https://jetpack.com/support/';
 
 /*
