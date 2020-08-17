@@ -490,7 +490,6 @@ const sections = [
 		module: 'wp-calypso-client/my-sites/backup',
 		secondary: true,
 		group: 'sites',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'scan',
@@ -498,7 +497,6 @@ const sections = [
 		module: 'wp-calypso-client/my-sites/scan',
 		secondary: true,
 		group: 'sites',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'jetpack-cloud',
