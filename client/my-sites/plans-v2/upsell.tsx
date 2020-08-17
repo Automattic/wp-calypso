@@ -49,10 +49,16 @@ import type { SelectorProduct, UpsellPageProps } from './types';
 interface Props {
 	currencyCode: string;
 	mainProduct: SelectorProduct;
+	selectedSiteSlug: string;
 	upsellProduct: SelectorProduct;
 }
 
-const UpsellComponent = ( { currencyCode, mainProduct, upsellProduct }: Props ) => {
+const UpsellComponent = ( {
+	currencyCode,
+	mainProduct,
+	selectedSiteSlug,
+	upsellProduct,
+}: Props ) => {
 	const translate = useTranslate();
 
 	const availableProducts = useSelector( ( state ) => getAvailableProductsList( state ) );
@@ -64,13 +70,19 @@ const UpsellComponent = ( { currencyCode, mainProduct, upsellProduct }: Props ) 
 	const { shortName: mainProductName, productSlug } = mainProduct;
 	const { shortName: upsellProductName, productSlug: upsellProductSlug } = upsellProduct;
 
+	const goToCheckout = useCallback( () => {
+		page( `/checkout/${ selectedSiteSlug }` );
+	}, [ selectedSiteSlug ] );
+
 	const onPurchaseBothProducts = useCallback( () => {
 		addItems( [ jetpackProductItem( productSlug ), jetpackProductItem( upsellProductSlug ) ] );
-	}, [ productSlug, upsellProductSlug ] );
+		goToCheckout();
+	}, [ goToCheckout, productSlug, upsellProductSlug ] );
 
 	const onPurchaseSingleProduct = useCallback( () => {
-		addItem( [ jetpackProductItem( productSlug ) ] );
-	}, [ productSlug ] );
+		addItem( jetpackProductItem( productSlug ) );
+		goToCheckout();
+	}, [ goToCheckout, productSlug ] );
 
 	return (
 		<Main className="upsell">
@@ -138,7 +150,7 @@ const UpsellComponent = ( { currencyCode, mainProduct, upsellProduct }: Props ) 
 };
 
 const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
@@ -155,7 +167,7 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 		if ( duration ) {
 			durationSuffix = '/' + durationToString( duration );
 		}
-		page.redirect( rootUrl.replace( ':site', siteSlug ) + durationSuffix );
+		page.redirect( rootUrl.replace( ':site', selectedSiteSlug ) + durationSuffix );
 		return null;
 	}
 
@@ -167,6 +179,7 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 		<UpsellComponent
 			currencyCode={ currencyCode }
 			mainProduct={ mainProduct }
+			selectedSiteSlug={ selectedSiteSlug }
 			upsellProduct={ upsellProduct }
 		/>
 	);
