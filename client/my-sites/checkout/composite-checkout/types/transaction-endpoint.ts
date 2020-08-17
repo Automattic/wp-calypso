@@ -29,13 +29,21 @@ export type WPCOMTransactionEndpointRequestPayload = {
 export type WPCOMTransactionEndpointPaymentDetails = {
 	paymentMethod: string;
 	paymentKey?: string;
-	paymentPartner: string;
+	paymentPartner?: string;
 	storedDetailsId?: string;
 	name: string;
 	email?: string;
 	zip: string;
 	postalCode: string;
 	country: string;
+	countryCode: string;
+	state?: string;
+	city?: string;
+	address?: string;
+	streetNumber?: string;
+	phoneNumber?: string;
+	document?: string;
+	deviceId?: string;
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
