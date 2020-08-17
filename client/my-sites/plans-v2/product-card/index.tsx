@@ -16,7 +16,7 @@ import {
 	slugToSelectorProduct,
 	productBadgeLabel,
 } from '../utils';
-import RenewalNotice from '../plan-renewal-notice';
+import PlanRenewalMessage from '../plan-renewal-message';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
 import { getProductCost } from 'state/products-list/selectors/get-product-cost';
@@ -155,7 +155,11 @@ const ProductCardWrapper = ( {
 			productName={ item.displayName }
 			subheadline={ item.tagline }
 			description={
-				showExpiryNotice && purchase ? <RenewalNotice purchase={ purchase } /> : item.description
+				showExpiryNotice && purchase ? (
+					<PlanRenewalMessage purchase={ purchase } />
+				) : (
+					item.description
+				)
 			}
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
