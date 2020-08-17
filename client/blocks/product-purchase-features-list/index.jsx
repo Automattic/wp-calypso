@@ -19,6 +19,7 @@ import {
 	TYPE_BLOGGER,
 	TYPE_FREE,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
+	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
 } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
@@ -106,7 +107,10 @@ export class ProductPurchaseFeaturesList extends Component {
 		let hasBusinessOnboardingExpired;
 		if ( currentPlan ) {
 			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
-			const businessOnboardingExpiration = this.props.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE );
+			const is2YearPlan = selectedSite.plan.product_id === 1028;
+			const businessOnboardingExpiration = this.props.moment(
+				is2YearPlan ? PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE : PLAN_BUSINESS_ONBOARDING_EXPIRE
+			);
 
 			hasBusinessOnboardingExpired = businessOnboardingExpiration.diff( expiryDateMoment ) < 0;
 		}
