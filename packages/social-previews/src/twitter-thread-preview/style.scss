@@ -1,0 +1,77 @@
+/*
+ * CSS values in this file are specific and
+ * designed to match the CSS on Twitter. Therefore there
+ * will be exceptions to our CSS guidelines here
+ * but please do not "update" this file to conform.
+ *
+ * @blame: pento
+ */
+
+ /* stylelint-disable scales/font-size */
+
+.twitter-thread-preview {
+	width: inherit;
+	background-color: #fff;
+}
+
+.twitter-thread-preview__container {
+	display: grid;
+	grid-template-columns: 65px auto;
+	margin-bottom: 5px;
+	margin-right: 24px;
+
+	.twitter-thread-preview__sidebar {
+		display: grid;
+		grid-template-rows: 35px auto;
+		justify-items: center;
+
+		.twitter-thread-preview__profile-image {
+			img {
+				width: 30px;
+				border-radius: 15px;
+			}
+		}
+
+		.twitter-thread-preview__connector {
+			width: 2px;
+			background-color: #8c8f94;
+		}
+	}
+
+	.twitter-thread-preview__name {
+		font-weight: bold;
+		font-size: 16px;
+		line-height: 19px;
+	}
+
+	.twitter-thread-preview__screen-name,
+	.twitter-thread-preview__date {
+		color: #667886;
+		font-size: 16px;
+		line-height: 18px;
+		letter-spacing: -0.3px;
+		margin-left: 15px;
+	}
+
+	.twitter-thread-preview__content {
+		margin: 7px 0;
+
+		.twitter-thread-preview__text {
+			font-size: 14px;
+			line-height: 18px;
+			letter-spacing: -0.3px;
+			color: #787c82;
+		}
+	}
+
+	.twitter-thread-preview__footer {
+		display: grid;
+		grid-template-columns: repeat( 4, auto );
+
+		svg {
+			fill: #787c82;
+			height: 16px;
+			width: 16px;
+		}
+	}
+}
