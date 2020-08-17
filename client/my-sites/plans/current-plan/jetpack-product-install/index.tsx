@@ -22,7 +22,7 @@ import {
 } from 'state/jetpack-product-install/actions';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getPluginKeys, requestPluginKeys } from 'state/data-getters/wpcom/jetpack-blogs/keys';
-import { SiteId, TimeoutMS } from 'client/types';
+import { SiteId, TimeoutMS } from 'wp-calypso-client/types';
 import { logToLogstash } from 'state/logstash/actions';
 
 type PluginStateDescriptor = string;
