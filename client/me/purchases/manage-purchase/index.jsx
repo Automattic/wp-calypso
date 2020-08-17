@@ -560,11 +560,13 @@ class ManagePurchase extends Component {
 		let showExpiryNotice = false;
 		let preventRenewal = false;
 
-		if ( shouldShowOfferResetFlow() && purchase ) {
-			const isLegacyPlan = JETPACK_LEGACY_PLANS.includes( purchase.productSlug );
-
-			showExpiryNotice = isLegacyPlan && isCloseToExpiration( purchase );
-			preventRenewal = isLegacyPlan && ! isRenewable( purchase );
+		if (
+			shouldShowOfferResetFlow() &&
+			purchase &&
+			JETPACK_LEGACY_PLANS.includes( purchase.productSlug )
+		) {
+			showExpiryNotice = isCloseToExpiration( purchase );
+			preventRenewal = ! isRenewable( purchase );
 		}
 
 		return (
