@@ -51,8 +51,6 @@ import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import LayoutLoader from './loader';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
-import { getABTestVariation } from 'lib/abtest';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
 
 /**
  * Style dependencies
@@ -161,16 +159,8 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const optionalProps = {};
 
-			const bodyClass = classnames( {
-				'is-new-launch-flow': this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding,
-				'is-white-signup':
-					'signup' === this.props.sectionName &&
-					this.props.isOnboardingFlow &&
-					'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
-			} );
-
-			if ( bodyClass ) {
-				optionalProps.bodyClass = bodyClass;
+			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
+				optionalProps.bodyClass = 'is-new-launch-flow';
 			}
 
 			return optionalProps;
@@ -285,7 +275,6 @@ export default connect( ( state ) => {
 	const isEligibleForJITM =
 		[ 'stats', 'plans', 'themes', 'plugins', 'comments' ].indexOf( sectionName ) >= 0;
 	const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
-	const isOnboardingFlow = 'onboarding' === getCurrentFlowName( state );
 
 	return {
 		masterbarIsHidden:
@@ -318,6 +307,5 @@ export default connect( ( state ) => {
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 		isNewLaunchFlow,
 		isCheckoutFromGutenboarding,
-		isOnboardingFlow,
 	};
 } )( Layout );
