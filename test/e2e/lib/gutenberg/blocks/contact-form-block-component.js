@@ -15,7 +15,10 @@ export class ContactFormBlockComponent extends GutenbergBlockComponent {
 	}
 
 	async _postInit() {
-		return await driverHelper.clickWhenClickable( this.driver, By.css( '.components-button.block-editor-block-variation-picker__variation' ) );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.components-button.block-editor-block-variation-picker__variation' )
+		);
 	}
 
 	async openEditSettings() {

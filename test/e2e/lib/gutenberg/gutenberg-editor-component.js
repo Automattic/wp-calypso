@@ -10,7 +10,18 @@ import { kebabCase } from 'lodash';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
-import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
+import {
+	LayoutGridBlockComponent,
+	YoutubeBlockComponent,
+	BlogPostsBlockComponent,
+	TiledGalleryBlockComponent,
+	ContactFormBlockComponent,
+	ContactInfoBlockComponent,
+	SlideshowBlockComponent,
+	RatingStarBlockComponent,
+	DynamicSeparatorBlockComponent,
+	GalleryMasonryBlockComponent,
+} from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 
@@ -145,14 +156,197 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const contactFormBlock = await ContactFormBlockComponent.Expect( this.driver, blockID );
 		await contactFormBlock.openEditSettings();
 		await contactFormBlock.insertEmail( email );
-		return await contactFormBlock.insertSubject( subject );
+		return contactFormBlock.insertSubject( subject );
 	}
 
-	async contactFormDisplayedInEditor() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+	async switchToCodeView() {
+		// First click the "More tools and options" ellipsis menu in order to bring the floating menu
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.xpath( "//button[@aria-label='More tools & options']" )
+		);
+
+		// Now click to switch to the code editor
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[2]" )
+		);
+
+		return this.driver.findElement( By.css( 'textarea.editor-post-text-editor' ) );
+	}
+
+	async switchToBlockEditor() {
+		// First click the "More tools and options" ellipsis menu in order to bring the floating menu
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.xpath( "//button[@aria-label='More tools & options']" )
+		);
+
+		// Now click to switch to the block editor
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[1]" )
+		);
+	}
+
+	async getBlocksCode() {
+		const codeEditor = await this.switchToCodeView();
+		const val = await codeEditor.getAttribute( 'value' );
+		return val;
+	}
+
+	async copyBlocksCode() {
+		const codeEditor = await this.switchToCodeView();
+		return this.driver.executeScript(
+			'arguments[0].select(); document.execCommand("copy");',
+			codeEditor
+		);
+	}
+
+	async pasteBlocksCode() {
+		const codeEditor = await this.switchToCodeView();
+		return codeEditor.sendKeys( Key.CONTROL + 'v' );
+	}
+
+	async setBlocksCode( code ) {
+		const codeEditor = await this.switchToCodeView();
+		//this.driver.executeScript( 'arguments[0].value = arguments[1];', codeEditor, code );
+		return codeEditor.sendKeys( code );
+	}
+
+	// TODO Generalize to blockDisplayedInEditor(selector)?
+	contactFormDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
 			By.css( '[data-type="jetpack/contact-form"]' )
 		);
+	}
+
+	layoutGridDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="jetpack/layout-grid"]' )
+		);
+	}
+
+	youTubeDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="core-embed/youtube"]' )
+		);
+	}
+
+	blogPostsDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="a8c/blog-posts"]' )
+		);
+	}
+
+	subscriptionsDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="jetpack/subscriptions"]' )
+		);
+	}
+
+	tiledGalleryDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="jetpack/tiled-gallery"]' )
+		);
+	}
+
+	contactInfoDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="jetpack/contact-info"]' )
+		);
+	}
+
+	slideshowDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="jetpack/slideshow"]' )
+		);
+	}
+
+	ratingStarDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="jetpack/rating-star"]' )
+		);
+	}
+
+	dynamicSeparatorDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="coblocks/dynamic-separator"]' )
+		);
+	}
+
+	galleryMasonryDisplayedInEditor() {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '[data-type="coblocks/gallery-masonry"]' )
+		);
+	}
+
+	// Not taking sub-blocks into account right now
+	// jetpack/layout-grid -- TODO remember to test the addition of subblocks (regression test later)
+	async insertLayoutGrid() {
+		const blockID = await this.addBlock( 'Layout Grid' );
+		return LayoutGridBlockComponent.Expect( this.driver, blockID );
+	}
+
+	// core-embed/youtube
+	async insertYouTube() {
+		const blockID = await this.addBlock( 'YouTube' );
+		return YoutubeBlockComponent.Expect( this.driver, blockID );
+	}
+
+	// a8c/blog-posts
+	async insertBlogPosts() {
+		const blockID = await this.addBlock( 'Blog Posts' );
+		return BlogPostsBlockComponent.Expect( this.driver, blockID );
+	}
+
+	// jetpack/subscriptions
+	async insertSubscriptions() {
+		const blockID = await this.addBlock( 'Subscription Form' );
+		return LayoutGridBlockComponent.Expect( this.driver, blockID );
+	}
+
+	// jetpack/tiled-gallery
+	async insertTiledGallery() {
+		const blockID = await this.addBlock( 'Tiled Gallery' );
+		return TiledGalleryBlockComponent.Expect( this.driver, blockID );
+	}
+
+	// jetpack/contact-info
+	async insertContactInfo() {
+		const blockID = await this.addBlock( 'Contact Info' );
+		return ContactInfoBlockComponent.Expect( this.driver, blockID );
+	}
+	// jetpack/slideshow
+	async insertSlideshow() {
+		const blockID = await this.addBlock( 'Slideshow' );
+		return SlideshowBlockComponent.Expect( this.driver, blockID );
+	}
+	// jetpack/rating-star
+	async insertRatingStar() {
+		const blockID = await this.addBlock( 'Star Rating' );
+		return RatingStarBlockComponent.Expect( this.driver, blockID );
+	}
+	// coblocks/dynamic-separator
+	async insertDynamicSeparator() {
+		const blockID = await this.addBlock( 'Dynamic HR' );
+		return DynamicSeparatorBlockComponent.Expect( this.driver, blockID );
+	}
+	// coblocks/gallery-masonry
+	async insertGalleryMasonry() {
+		const blockID = await this.addBlock( 'Masonry' );
+		return GalleryMasonryBlockComponent.Expect( this.driver, blockID );
 	}
 
 	async errorDisplayed() {
@@ -256,6 +450,34 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				break;
 			case 'Heading':
 				ariaLabel = 'Write heading…';
+				break;
+			case 'Layout Grid':
+				prefix = 'jetpack-';
+				break;
+			case 'Blog Posts':
+				prefix = 'a8c-';
+				break;
+			case 'Subscription Form':
+				prefix = 'jetpack-';
+				blockClass = 'subscriptions';
+				break;
+			case 'Tiled Gallery':
+				prefix = 'jetpack-';
+				break;
+			case 'Contact Info':
+				prefix = 'jetpack-';
+				hasChildBlocks = true;
+				break;
+			case 'Slideshow':
+				prefix = 'jetpack-';
+				break;
+			case 'Star Rating':
+				prefix = 'jetpack-';
+				blockClass = 'rating-star';
+				break;
+			case 'Masonry':
+				prefix = 'coblocks-';
+				blockClass = 'gallery-masonry';
 				break;
 		}
 

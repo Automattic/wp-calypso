@@ -66,6 +66,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			await gEditorComponent.enterText( pageQuote );
 			await gEditorComponent.addImage( fileDetails );
 
+			debugger;
+
 			await gEditorComponent.openSidebar();
 			const gEditorSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gEditorSidebarComponent.enterImageAltText( fileDetails );
