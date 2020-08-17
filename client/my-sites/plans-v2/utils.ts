@@ -139,7 +139,6 @@ function objectIsSelectorProduct( item: object ): item is SelectorProduct {
 		'productSlug',
 		'iconSlug',
 		'displayName',
-		'shortName',
 		'tagline',
 		'description',
 		'term',
