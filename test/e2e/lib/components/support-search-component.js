@@ -13,9 +13,11 @@ import * as driverHelper from '../driver-helper.js';
 const searchInputSelectors = By.css(
 	'.inline-help__search input[type="search"], .help-search__search input[type="search"]'
 );
-const searchResultsSelectors = By.css(
-	'.inline-help__results-list .inline-help__results-item, .help-search__results-list .help-search__results-item'
+const defaultResultsSelectors = By.css(
+	'.inline-help__results-list li, .help-search__results-list li'
 );
+const searchResultsSelectors = By.css( '[aria-labelledby="inline-search--api_help"] li' );
+const adminSearchResultsSelectors = By.css( '[aria-labelledby="inline-search--admin_section"] li' );
 
 class SupportSearchComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -42,12 +44,30 @@ class SupportSearchComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async getDefaultResults() {
+		return await this.driver.findElements( defaultResultsSelectors );
+	}
+
+	async getDefaultResultsCount() {
+		const results = await this.getDefaultResults();
+		return results.length;
+	}
+
 	async getSearchResults() {
 		return await this.driver.findElements( searchResultsSelectors );
 	}
 
 	async getSearchResultsCount() {
 		const results = await this.getSearchResults();
+		return results.length;
+	}
+
+	async getAdminSearchResults() {
+		return await this.driver.findElements( adminSearchResultsSelectors );
+	}
+
+	async getAdminSearchResultsCount() {
+		const results = await this.getAdminSearchResults();
 		return results.length;
 	}
 
