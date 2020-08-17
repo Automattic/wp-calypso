@@ -9,6 +9,7 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 import config from 'config';
 import stepConfig from './steps';
 import user from 'lib/user';
+import { isEcommercePlan } from 'lib/plans';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
 
@@ -25,8 +26,11 @@ function getCheckoutUrl( dependencies, localeSlug ) {
 			signup: 1,
 			...( dependencies.isPreLaunch && {
 				preLaunch: 1,
-				redirect_to: `/home/${ dependencies.siteSlug }`,
 			} ),
+			...( dependencies.isPreLaunch &&
+				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
+					redirect_to: `/home/${ dependencies.siteSlug }`,
+				} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 		},
 		checkoutURL
