@@ -36,7 +36,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
-import PlanRenewalNotice from 'my-sites/plans-v2/plan-renewal-notice';
+import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
 import { OFFER_RESET_SUPPORT_PAGE } from 'my-sites/plans-v2/constants';
 import { findJetpackLegacyPlaPurchase } from 'my-sites/plans-v2/utils';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
@@ -195,7 +195,7 @@ class CurrentPlan extends Component {
 				{ showExpiryNotice && (
 					<Notice
 						status="is-info"
-						text={ <PlanRenewalNotice purchase={ jetpackLegacyPlanPurchase } withoutLink /> }
+						text={ <PlanRenewalMessage purchase={ jetpackLegacyPlanPurchase } withoutLink /> }
 						showDismiss={ false }
 					>
 						<NoticeAction href={ OFFER_RESET_SUPPORT_PAGE }>

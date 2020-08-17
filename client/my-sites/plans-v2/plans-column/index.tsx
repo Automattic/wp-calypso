@@ -24,7 +24,7 @@ import {
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 } from '../constants';
-import RenewalNotice from '../plan-renewal-notice';
+import PlanRenewalMessage from '../plan-renewal-message';
 import { useLocalizedMoment } from 'components/localized-moment';
 import {
 	PLAN_JETPACK_FREE,
@@ -115,7 +115,11 @@ const PlanComponent = ( {
 			productName={ plan.displayName }
 			subheadline={ plan.tagline }
 			description={
-				showExpiryNotice ? <RenewalNotice purchase={ purchase as Purchase } /> : plan.description
+				showExpiryNotice ? (
+					<PlanRenewalMessage purchase={ purchase as Purchase } />
+				) : (
+					plan.description
+				)
 			}
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( plan.term ) }

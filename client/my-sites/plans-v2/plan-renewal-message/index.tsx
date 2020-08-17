@@ -22,7 +22,7 @@ type Props = {
 	withoutLink?: boolean;
 };
 
-const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase, withoutLink } ) => {
+const PlanRenewalMessage: FunctionComponent< Props > = ( { purchase, withoutLink } ) => {
 	const translate = useTranslate();
 
 	let notice;
@@ -76,4 +76,4 @@ const PlanRenewalNotice: FunctionComponent< Props > = ( { purchase, withoutLink 
 	);
 };
 
-export default PlanRenewalNotice;
+export default PlanRenewalMessage;
