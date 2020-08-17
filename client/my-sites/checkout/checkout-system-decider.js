@@ -20,20 +20,12 @@ import JetpackMinimumPluginVersionNoticeContent from './checkout/jetpack-minimum
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { getPlanByPathSlug } from 'lib/plans';
-import { GROUP_JETPACK, JETPACK_PLANS } from 'lib/plans/constants';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { GROUP_JETPACK } from 'lib/plans/constants';
 import { isJetpackBackup, isJetpackBackupSlug, getProductFromSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import {
-	isJetpackSite,
-	isJetpackMinimumVersion,
-	getSiteProducts,
-	getSitePlan,
-} from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { isJetpackMinimumVersion, getSiteProducts, getSitePlan } from 'state/sites/selectors';
 import { logToLogstash } from 'state/logstash/actions';
 import {
 	isPlanIncludingSiteBackup,
@@ -73,11 +65,8 @@ export default function CheckoutSystemDecider( {
 	const siteId = selectedSite?.ID;
 	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
 
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const countryCode =
 		useSelector( ( state ) => getCurrentUserCountryCode( state ) ) || getGeoLocationFromCookie();
-	const locale = useSelector( ( state ) => getCurrentLocaleSlug( state ) );
 	const isJetpackPlanIncludingSiteBackup = useSelector( ( state ) =>
 		jetpackPlan ? isPlanIncludingSiteBackup( state, siteId, jetpackPlan.getStoreSlug() ) : null
 	);
@@ -125,15 +114,7 @@ export default function CheckoutSystemDecider( {
 		);
 	}
 
-	const checkoutVariant = getCheckoutVariant(
-		cart,
-		countryCode,
-		locale,
-		product,
-		purchaseId,
-		isJetpack,
-		isAtomic
-	);
+	const checkoutVariant = getCheckoutVariant( countryCode );
 
 	useEffect( () => {
 		if ( product ) {
@@ -149,21 +130,6 @@ export default function CheckoutSystemDecider( {
 			);
 		}
 	}, [ reduxDispatch, product ] );
-
-	useEffect( () => {
-		if ( 'disallowed-product' === checkoutVariant ) {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message: 'CheckoutSystemDecider unsupported product for composite checkout',
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						productSlug: product,
-					},
-				} )
-			);
-		}
-	}, [ reduxDispatch, checkoutVariant, product ] );
 
 	const logCheckoutError = useCallback(
 		( error ) => {
@@ -250,15 +216,7 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function getCheckoutVariant(
-	cart,
-	countryCode,
-	locale,
-	productSlug,
-	purchaseId,
-	isJetpack,
-	isAtomic
-) {
+function getCheckoutVariant( countryCode ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
 		return 'old-checkout';
@@ -276,67 +234,6 @@ function getCheckoutVariant(
 			countryCode?.toLowerCase()
 		);
 		return 'disallowed-geo';
-	}
-
-	// Disable for Jetpack sites in production
-	if ( config( 'env_id' ) === 'production' && isJetpack && ! isAtomic ) {
-		debug( 'shouldShowCompositeCheckout false because jetpack site' );
-		return 'jetpack-site';
-	}
-	// Disable for Jetpack plans in production
-	if (
-		config( 'env_id' ) === 'production' &&
-		cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) )
-	) {
-		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
-		return 'jetpack-product';
-	}
-
-	// If the URL is adding a product, only allow things already supported.
-	// Calypso uses special slugs that aren't real product slugs when adding
-	// products via URL, so we list those slugs here. Renewals use actual slugs,
-	// so they do not need to go through this check.
-	const isRenewal = !! purchaseId;
-	let pseudoSlugsToAllow = [
-		'blogger',
-		'blogger-2-years',
-		'business',
-		'business-2-years',
-		'concierge-session',
-		'ecommerce',
-		'ecommerce-2-years',
-		'personal',
-		'personal-2-years',
-		'premium', // WordPress.com or Jetpack Premium Yearly
-		'premium-2-years',
-	];
-	const jetpackPseudoSlugsToAllow = [
-		'jetpack-personal',
-		'jetpack-personal-monthly',
-		'premium-monthly',
-		'professional',
-		'professional-monthly',
-	];
-	if ( config( 'env_id' ) !== 'production' ) {
-		pseudoSlugsToAllow = [
-			...pseudoSlugsToAllow,
-			...jetpackPseudoSlugsToAllow,
-			...JETPACK_PLANS,
-			...JETPACK_PRODUCTS_LIST,
-		];
-	}
-	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
-	if (
-		! isRenewal &&
-		productSlug &&
-		! pseudoSlugsToAllow.find( ( slug ) => productSlug === slug ) &&
-		! slugPrefixesToAllow.find( ( slugPrefix ) => productSlug.startsWith( slugPrefix ) )
-	) {
-		debug(
-			'shouldShowCompositeCheckout false because product does not match list of allowed products',
-			productSlug
-		);
-		return 'disallowed-product';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );
