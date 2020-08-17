@@ -187,7 +187,7 @@ export function itemToSelectorProduct(
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
 			subtypes: [],
-			shortName: getJetpackProductShortName( item ),
+			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
 			monthlyProductSlug,
