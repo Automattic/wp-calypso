@@ -150,7 +150,7 @@ const ProductCardWrapper = ( {
 				<UpgradeNudgeWrapper item={ item } currencyCode={ currencyCode } onClick={ onClick } />
 			}
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
-			isHighlighted={ highlight && slugIsFeaturedProduct( item.productSlug ) }
+			isHighlighted={ highlight && ! isOwned && slugIsFeaturedProduct( item.productSlug ) }
 		/>
 	);
 };
