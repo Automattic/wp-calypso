@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 
 /**
  * WordPress dependencies
@@ -73,7 +72,7 @@ const edit = ( {
 				<span
 					style={ {
 						display: 'block',
-						width: ( completedTasks * 730 ) / ( allTasks + Number.EPSILON ),
+						width: ( completedTasks * 730 ) / allTasks,
 						background: '#22DE84',
 						height: '18px',
 					} }
@@ -81,7 +80,7 @@ const edit = ( {
 				<span
 					style={ {
 						display: 'block',
-						width: ( pendingTasks * 730 ) / ( allTasks + Number.EPSILON ),
+						width: ( pendingTasks * 730 ) / allTasks,
 						background: '#D6F3E3',
 						height: '18px',
 					} }

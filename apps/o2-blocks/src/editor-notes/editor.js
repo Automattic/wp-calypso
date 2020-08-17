@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { registerBlockType } from '@wordpress/blocks';
 import { RichText } from '@wordpress/editor';
 

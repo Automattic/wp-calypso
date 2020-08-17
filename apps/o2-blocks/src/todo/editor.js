@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { Button, Dashicon } from '@wordpress/components';
