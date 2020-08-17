@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { orderBy, values } from 'lodash';
+import { values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import getMediaQueryManager from './get-media-query-manager';
+import { sortItemsByDate } from 'lib/media/utils/sort-items-by-date';
 
 /**
  * Returns media for a specified site ID and query.
@@ -27,9 +28,5 @@ export default function getMediaSortedByDate( state, siteId ) {
 	const mediaItems = queryManager.getItemsIgnoringPage( query );
 	const transientItems = values( state.media.transientItems[ siteId ]?.transientItems );
 
-	return orderBy(
-		transientItems.concat( mediaItems ).filter( ( i ) => i ),
-		( item ) => Date.parse( item?.date ),
-		[ 'desc' ]
-	);
+	return sortItemsByDate( transientItems.concat( mediaItems ).filter( ( i ) => i ) );
 }
