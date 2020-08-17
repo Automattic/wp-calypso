@@ -15,6 +15,7 @@ import {
 	getRealtimeFromDaily,
 	slugToSelectorProduct,
 	productBadgeLabel,
+	slugIsFeaturedProduct,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
@@ -84,6 +85,7 @@ interface ProductCardProps {
 	siteId: number | null;
 	currencyCode: string;
 	className?: string;
+	highlight?: boolean;
 }
 
 const ProductCardWrapper = ( {
@@ -92,6 +94,7 @@ const ProductCardWrapper = ( {
 	siteId,
 	currencyCode,
 	className,
+	highlight = false,
 }: ProductCardProps ) => {
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
@@ -134,7 +137,7 @@ const ProductCardWrapper = ( {
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned ) }
-			badgeLabel={ productBadgeLabel( item, isOwned, sitePlan ) }
+			badgeLabel={ productBadgeLabel( item, isOwned, highlight, sitePlan ) }
 			onButtonClick={ () => onClick( item, purchase ) }
 			features={ item.features }
 			originalPrice={ originalPrice }
@@ -147,6 +150,7 @@ const ProductCardWrapper = ( {
 				<UpgradeNudgeWrapper item={ item } currencyCode={ currencyCode } onClick={ onClick } />
 			}
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
+			isHighlighted={ highlight && slugIsFeaturedProduct( item.productSlug ) }
 		/>
 	);
 };

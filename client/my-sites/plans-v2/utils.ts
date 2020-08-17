@@ -15,6 +15,7 @@ import {
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
+	FEATURED_PRODUCTS,
 } from './constants';
 import {
 	TERM_ANNUALLY,
@@ -88,9 +89,14 @@ export function productButtonLabel( product: SelectorProduct, isOwned: boolean )
 	);
 }
 
+export function slugIsFeaturedProduct( productSlug: string ): boolean {
+	return FEATURED_PRODUCTS.includes( productSlug );
+}
+
 export function productBadgeLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
+	highlight: boolean,
 	currentPlan?: SitePlan | null
 ): TranslateResult | undefined {
 	if ( isOwned ) {
@@ -101,6 +107,10 @@ export function productBadgeLabel(
 
 	if ( currentPlan && planHasFeature( currentPlan, product.productSlug ) ) {
 		return translate( 'Included in your plan' );
+	}
+
+	if ( highlight && slugIsFeaturedProduct( product.productSlug ) ) {
+		return translate( 'Best Value' );
 	}
 }
 
