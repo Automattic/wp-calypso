@@ -275,15 +275,3 @@ export function getRealtimeFromDaily( slug: JetpackDailyPlan ): JetpackRealtimeP
 export function isUpgradeable( slug: string ): boolean {
 	return UPGRADEABLE_WITH_NUDGE.includes( slug );
 }
-
-/**
- * Find the first purchase associated to a Jetpack legacy plan in a list of pruchases.
- *
- * @param {Purchase[]} purchases List of purchases to search in
- * @returns {Purchase} Found purchase, if any
- */
-export function findJetpackLegacyPlaPurchase( purchases: Purchase[] ): Purchase | undefined {
-	return purchases.find( ( purchase ) => {
-		return JETPACK_LEGACY_PLANS.includes( purchase.productSlug );
-	} );
-}
