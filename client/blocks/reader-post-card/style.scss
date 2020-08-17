@@ -515,7 +515,9 @@
 
 	.reader-share__button .gridicon {
 		position: relative;
-		top: 1px;
+		top: 0;
+		margin-right: 0;
+		margin-top: 0;
 	}
 
 	.like-button .gridicon {

@@ -1,16 +1,27 @@
-.reader-share__button {
-	align-items: center;
-	box-sizing: border-box;
+.reader-share__button.button {
 	color: var( --color-text-subtle );
-	display: inline-flex;
 	padding: 4px;
 	position: relative;
+	display: inline-flex;
+	align-items: center;
+	font-size: 100%;
+	line-height: 22px;
 
 	&:hover,
-	&:focus,
 	&:active {
-		cursor: pointer;
 		color: var( --color-primary );
+	}
+
+	&:focus {
+		outline: thin dotted;
+	}
+
+	&.is-borderless {
+		.gridicon {
+			margin-right: 0;
+			margin-top: 0;
+			top: 0;
+		}
 	}
 
 	.gridicon {
@@ -28,6 +39,7 @@
 
 .reader-share__button-label {
 	margin-left: 6px;
+	font-weight: normal;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
