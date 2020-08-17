@@ -12,7 +12,7 @@ import user from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
 
-function getCheckoutUrl( dependencies, localeSlug ) {
+function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
 	// Append the locale slug for the userless checkout page.
@@ -25,6 +25,7 @@ function getCheckoutUrl( dependencies, localeSlug ) {
 			signup: 1,
 			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
+			...( 'domain' === flowName && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
 	);
@@ -106,7 +107,7 @@ function removeUserStepFromFlow( flow ) {
 
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies, localeSlug );
+		return getCheckoutUrl( dependencies, localeSlug, flowName );
 	}
 
 	return destination;
