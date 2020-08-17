@@ -36,8 +36,8 @@ describe( `[${ host }] Inline Help support search: (${ screenSize }) @parallel`,
 
 		// The "inline help" FAB should not appear on the My Home
 		// because there is already a support search "Card" on that
-		// page. Therefore we select the "Themes" page for our tests.
-		await loginFlow.loginAndSelectThemes();
+		// page. Therefore we select the "Settings" page for our tests.
+		await loginFlow.loginAndSelectSettings();
 
 		// Initialize the helper component
 
