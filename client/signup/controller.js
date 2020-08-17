@@ -123,6 +123,7 @@ export default {
 			const userLoggedIn = isUserLoggedIn( context.store.getState() );
 			if ( userLoggedIn && 'gutenberg' === abtest( 'existingUsersGutenbergOnboard' ) ) {
 				gutenbergRedirect();
+				return;
 			}
 
 			waitForData( {
