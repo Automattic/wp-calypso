@@ -442,7 +442,7 @@ export default connect( ( state, { purchaseId } ) => {
 		hideAutoRenew:
 			purchase &&
 			shouldShowOfferResetFlow() &&
-			JETPACK_LEGACY_PLANS.include( purchase.productSlug ) &&
+			JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) &&
 			! isRenewable( purchase ),
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 	};
