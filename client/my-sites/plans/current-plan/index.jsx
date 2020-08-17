@@ -27,7 +27,9 @@ import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { getPlan } from 'lib/plans';
+import { JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
 import { isCloseToExpiration } from 'lib/purchases';
+import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
@@ -38,7 +40,6 @@ import FormattedHeader from 'components/formatted-header';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
 import { OFFER_RESET_SUPPORT_PAGE } from 'my-sites/plans-v2/constants';
-import { findJetpackLegacyPlaPurchase } from 'my-sites/plans-v2/utils';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -141,12 +142,11 @@ class CurrentPlan extends Component {
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
 		let showExpiryNotice = false;
-		let jetpackLegacyPlanPurchase;
+		let purchase = null;
 
-		if ( shouldShowOfferResetFlow() ) {
-			jetpackLegacyPlanPurchase = findJetpackLegacyPlaPurchase( purchases );
-			showExpiryNotice =
-				!! jetpackLegacyPlanPurchase && isCloseToExpiration( jetpackLegacyPlanPurchase );
+		if ( shouldShowOfferResetFlow() && JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
+			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
+			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}
 
 		return (
@@ -195,7 +195,7 @@ class CurrentPlan extends Component {
 				{ showExpiryNotice && (
 					<Notice
 						status="is-info"
-						text={ <PlanRenewalMessage purchase={ jetpackLegacyPlanPurchase } withoutLink /> }
+						text={ <PlanRenewalMessage purchase={ purchase } withoutLink /> }
 						showDismiss={ false }
 					>
 						<NoticeAction href={ OFFER_RESET_SUPPORT_PAGE }>
