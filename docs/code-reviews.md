@@ -4,7 +4,7 @@ Code Reviews
 Why Are Code and UX Reviews Awesome?
 ------------------------------------
 
-Code reviews are an important part of the Calypso workflow. They help to keep code quality consistent, spread ownership of the code and help every person working on Calypso improve over time. More importantly, each review instance is an opportunity to regularly act on making the design simpler, to identify common problems, and to refine or create new shared abstractions.
+Code reviews are an important part of the Calypso workflow. They help to keep code quality consistent, spread ownership of the code, and help every person working on Calypso improve over time. More importantly, each review instance is an opportunity to regularly act on making the design simpler, to identify common problems, and to refine or create new shared abstractions.
 
 A good code review should catch:
 
