@@ -27,6 +27,7 @@ import {
 	isCloseToExpiration,
 	paymentLogoType,
 	hasPaymentMethod,
+	isRenewable,
 } from 'lib/purchases';
 import {
 	isDomainRegistration,
@@ -50,7 +51,7 @@ import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'lib/url/support';
 import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
-import { TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -438,7 +439,11 @@ export default connect( ( state, { purchaseId } ) => {
 		site: purchase ? getSite( state, purchase.siteId ) : null,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
-		hideAutoRenew: shouldShowOfferResetFlow() && purchase && isCloseToExpiration( purchase ),
+		hideAutoRenew:
+			purchase &&
+			shouldShowOfferResetFlow() &&
+			JETPACK_LEGACY_PLANS.include( purchase.productSlug ) &&
+			! isRenewable( purchase ),
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 	};
 } )( localize( withLocalizedMoment( PurchaseMeta ) ) );

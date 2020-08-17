@@ -67,7 +67,7 @@ import {
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { JETPACK_PLANS } from 'lib/plans/constants';
+import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
@@ -85,7 +85,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-import PlanRenewalNotice from 'my-sites/plans-v2/plan-renewal-notice';
+import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
 import { OFFER_RESET_SUPPORT_PAGE } from 'my-sites/plans-v2/constants';
 import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
 import CartStore from 'lib/cart/store';
@@ -477,7 +477,7 @@ class ManagePurchase extends Component {
 		return ! hasLoadedDomains;
 	}
 
-	renderPurchaseDetail( showExpiryNotice ) {
+	renderPurchaseDetail( preventRenewal ) {
 		if ( isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
@@ -525,10 +525,10 @@ class ManagePurchase extends Component {
 					{ ! isPartnerPurchase( purchase ) && (
 						<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
 					) }
-					{ showExpiryNotice ? this.renderSelectNewButton() : this.renderRenewButton() }
+					{ preventRenewal ? this.renderSelectNewButton() : this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
-				{ showExpiryNotice ? this.renderSelectNewNavItem() : this.renderRenewNowNavItem() }
+				{ preventRenewal ? this.renderSelectNewNavItem() : this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
 				{ this.renderRemovePurchaseNavItem() }
@@ -557,8 +557,15 @@ class ManagePurchase extends Component {
 			editCardDetailsPath = getEditCardDetailsPath( siteSlug, purchase );
 		}
 
-		const showExpiryNotice =
-			shouldShowOfferResetFlow() && purchase && isCloseToExpiration( purchase );
+		let showExpiryNotice = false;
+		let preventRenewal = false;
+
+		if ( shouldShowOfferResetFlow() && purchase ) {
+			const isLegacyPlan = JETPACK_LEGACY_PLANS.includes( purchase.productSlug );
+
+			showExpiryNotice = isLegacyPlan && isCloseToExpiration( purchase );
+			preventRenewal = isLegacyPlan && ! isRenewable( purchase );
+		}
 
 		return (
 			<Fragment>
@@ -578,7 +585,7 @@ class ManagePurchase extends Component {
 					{ showExpiryNotice ? (
 						<Notice
 							status="is-info"
-							text={ <PlanRenewalNotice purchase={ purchase } withoutLink /> }
+							text={ <PlanRenewalMessage purchase={ purchase } withoutLink /> }
 							showDismiss={ false }
 						>
 							<NoticeAction href={ OFFER_RESET_SUPPORT_PAGE }>
@@ -605,7 +612,7 @@ class ManagePurchase extends Component {
 						siteId={ siteId }
 						currentPurchase={ purchase }
 					/>
-					{ this.renderPurchaseDetail( showExpiryNotice ) }
+					{ this.renderPurchaseDetail( preventRenewal ) }
 					{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 				</Main>
 			</Fragment>
