@@ -105,8 +105,8 @@ export function isEligibleForRenewalAtOldRate(
 export function productButtonLabel( product: SelectorProduct ): TranslateResult {
 	if ( product.owned ) {
 		return slugIsJetpackPlanSlug( product.productSlug )
-			? translate( 'Manage Plan' )
-			: translate( 'Manage Subscription' );
+			? translate( 'Manage plan' )
+			: translate( 'Manage subscription' );
 	}
 
 	return (
