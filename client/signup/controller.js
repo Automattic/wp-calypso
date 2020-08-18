@@ -67,10 +67,6 @@ const gutenbergRedirect = function () {
 	const url = new URL( window.location );
 	url.pathname = '/new';
 
-	if ( 'verticals' === abtest( 'verticalsOnGutenboarding' ) ) {
-		url.searchParams.append( 'vertical', '' );
-	}
-
 	window.location.replace( url.toString() );
 };
 

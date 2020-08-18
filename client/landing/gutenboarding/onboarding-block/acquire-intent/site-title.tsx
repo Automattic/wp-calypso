@@ -7,6 +7,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useViewportMatch } from '@wordpress/compose';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import { recordSiteTitleSelection } from '../../lib/analytics';
 import tip from './tip';
 import AcquireIntentTextInput from './acquire-intent-text-input';
 import useTyper from '../../hooks/use-typer';
-import { useShowVerticalInput } from '../../hooks/use-show-vertical-input';
 
 interface Props {
 	onSubmit: () => void;
@@ -28,7 +28,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
-	const showVerticalInput = useShowVerticalInput();
+	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
 	const siteTitleExamples = [
 		/* translators: This is an example of a site name,
 		   feel free to create your own but please keep it under 22 characters */
