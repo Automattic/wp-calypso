@@ -26,14 +26,47 @@ const PAYWALL_FILTER = 'earn_premium_content_subscription_service';
 require_once __DIR__ . '/subscription-service/include.php';
 
 /**
- * Registers all block assets so that they can be enqueued through the block editor
- * in the corresponding context.
+ * Register blocks and load block translations. If not done on init, the render
+ * callbacks of the dynamic blocks won't be executed in the front-end.
  *
  * @see    https://developer.wordpress.org/block-editor/tutorials/block-tutorial/applying-styles-with-stylesheets/
- * @throws RuntimeException If block assets files are not found.
+ * @see    https://github.com/Automattic/wp-calypso/pull/44825
  * @return void
  */
 function premium_content_block_init() {
+	register_blocks();
+	load_translations();
+}
+
+/**
+ * Action enqueue_block_editor_assets - Load static assets for the editor.
+ *
+ * @see    https://github.com/Automattic/wp-calypso/pull/44825
+ * @return void
+ */
+function premium_content_block_enqueue_block_editor_assets() {
+	load_static_editor();
+}
+
+/**
+ * Action enqueue_block_assets - Load static assets for the frontend.
+ *
+ * @see    https://github.com/Automattic/wp-calypso/pull/44825
+ * @return void
+ */
+function premium_content_block_enqueue_block_assets() {
+	load_static_frontend();
+}
+
+
+/**
+ * Helper; Get the 'script_asset', 'url_path', and 'dir'
+ * Used by init, enqueue_block_assets, and enqueue_block_editor_assets
+ *
+ * @throws RuntimeException If block assets files are not found.
+ * @return array
+ */
+function get_script_info() {
 	$url_path = rtrim( plugin_dir_url( __FILE__ ), '/' );
 	$dir      = __DIR__;
 
@@ -43,41 +76,27 @@ function premium_content_block_init() {
 			'You need to run `npm start` or `npm run build` for the "create-block/premium-content" block first.'
 		);
 	}
-	$index_js     = 'dist/premium-content.js';
 	$script_asset = include $script_asset_path;
-	wp_register_script(
-		'premium-content-editor',
-		"$url_path/$index_js",
-		$script_asset['dependencies'],
-		$script_asset['version'],
-		false
+	return array(
+		'script_asset' => $script_asset,
+		'url_path'     => $url_path,
+		'dir'          => $dir,
 	);
+}
 
-	wp_register_script(
-		'premium-content-frontend',
-		"$url_path/view.js",
-		array(),
-		$script_asset['version'],
-		false
-	);
 
-	$editor_css = 'editor.css';
-	wp_register_style(
-		'premium-content-editor',
-		"$url_path/$editor_css",
-		array(),
-		filemtime( "$dir/$editor_css" ),
-		false
-	);
+/**
+ * Load block translation.
+ */
+function load_translations() {
+	wp_set_script_translations( 'premium-content-container-block-editor', 'full-site-editing' );
+}
 
-	$style_css = 'style.css';
-	wp_register_style(
-		'premium-content-frontend',
-		"$url_path/$style_css",
-		array(),
-		filemtime( "$dir/$style_css" )
-	);
 
+/**
+ * Register the blocks.
+ */
+function register_blocks() {
 	// Determine required `context` key based on Gutenberg version.
 	$deprecated = function_exists( 'gutenberg_get_post_from_context' );
 	$provides   = $deprecated ? 'providesContext' : 'provides_context';
@@ -118,8 +137,61 @@ function premium_content_block_init() {
 			'style'           => 'premium-content-frontend',
 		)
 	);
+}
 
-	wp_set_script_translations( 'premium-content-container-block-editor', 'full-site-editing' );
+/**
+ * Load static assets for the editor.
+ */
+function load_static_editor() {
+	$info         = get_script_info();
+	$script_asset = $info['script_asset'];
+	$url_path     = $info['url_path'];
+	$dir          = $info['dir'];
+
+	$index_js = 'dist/premium-content.js';
+	wp_register_script(
+		'premium-content-editor',
+		"$url_path/$index_js",
+		$script_asset['dependencies'],
+		$script_asset['version'],
+		false
+	);
+
+	$editor_css = 'editor.css';
+	wp_register_style(
+		'premium-content-editor',
+		"$url_path/$editor_css",
+		array(),
+		filemtime( "$dir/$editor_css" ),
+		false
+	);
+}
+
+/**
+ * Load static assets for the frontend.
+ */
+function load_static_frontend() {
+	$info         = get_script_info();
+	$script_asset = $info['script_asset'];
+	$url_path     = $info['url_path'];
+	$dir          = $info['dir'];
+
+	$style_css = 'style.css';
+	wp_register_style(
+		'premium-content-frontend',
+		"$url_path/$style_css",
+		array(),
+		filemtime( "$dir/$style_css" )
+	);
+
+	wp_register_script(
+		'premium-content-frontend',
+		"$url_path/view.js",
+		array(),
+		$script_asset['version'],
+		false
+	);
+
 }
 
 /**
@@ -380,5 +452,9 @@ function premium_content_default_service( $service ) {
 }
 
 add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_paywall_initialize', 9 );
-add_action( 'enqueue_block_editor_assets', 'A8C\FSE\Earn\PremiumContent\premium_content_block_init' );
+
+add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_block_init' );
+add_action( 'enqueue_block_editor_assets', 'A8C\FSE\Earn\PremiumContent\premium_content_block_enqueue_block_editor_assets' );
+add_action( 'enqueue_block_assets', 'A8C\FSE\Earn\PremiumContent\premium_content_block_enqueue_block_assets' );
+
 add_filter( PAYWALL_FILTER, 'A8C\FSE\Earn\PremiumContent\premium_content_default_service' );
