@@ -83,6 +83,7 @@ const nodeModulesToTranspile = [
 	'escape-string-regexp/',
 	'filesize/',
 	'gridicons/',
+	'new-github-issue-url/',
 	'prismjs/',
 	'punycode/',
 	'react-spring/',
