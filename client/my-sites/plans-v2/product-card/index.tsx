@@ -119,6 +119,11 @@ const ProductCardWrapper = ( {
 	const showExpiryNotice = item.legacy && isExpiring;
 
 	const CardComponent = itemToCard( item ); // Get correct card component.
+
+	const UpgradeNudge = isOwned ? (
+		<UpgradeNudgeWrapper item={ item } currencyCode={ currencyCode } onClick={ onClick } />
+	) : null;
+
 	return (
 		<CardComponent
 			iconSlug={ item.iconSlug }
@@ -143,9 +148,7 @@ const ProductCardWrapper = ( {
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
-			UpgradeNudge={
-				<UpgradeNudgeWrapper item={ item } currencyCode={ currencyCode } onClick={ onClick } />
-			}
+			UpgradeNudge={ UpgradeNudge }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 		/>
 	);

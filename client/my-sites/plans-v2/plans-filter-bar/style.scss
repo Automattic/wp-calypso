@@ -7,11 +7,15 @@
 	align-items: center;
 	background: var( --color-surface );
 	padding: 16px 0;
-	border: 1px solid var( --color-neutral-5 );
+	border-color: var( --color-neutral-5 );
+	border-style: solid;
+	border-width: 1px 0;
 	box-sizing: border-box;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		justify-content: center;
+
+		border-width: 1px;
 
 		.select-dropdown {
 			margin-right: 24px;
