@@ -13,6 +13,8 @@ import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { getLanguageRouteParam } from 'lib/i18n-utils';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import plansV2 from 'my-sites/plans-v2';
 
 /**
  * Style dependencies
@@ -115,13 +117,17 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		`/jetpack/connect/store/:interval(yearly|monthly)?/${ locale }`,
-		controller.setLoggedOutLocale,
-		controller.plansLanding,
-		makeLayout,
-		clientRender
-	);
+	if ( shouldShowOfferResetFlow() ) {
+		plansV2( `/jetpack/connect/store`, controller.offerResetContext );
+	} else {
+		page(
+			`/jetpack/connect/store/:interval(yearly|monthly)?/${ locale }`,
+			controller.setLoggedOutLocale,
+			controller.plansLanding,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
