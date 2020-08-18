@@ -36,6 +36,7 @@ const debug = debugFactory( 'calypso:steps:p2-site' );
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 const ERROR_CODE_MISSING_SITE_TITLE = 123; // Random number, we don't need it.
 const ERROR_CODE_MISSING_SITE = 321; // Random number, we don't need it.
+const ERROR_CODE_TAKEN_SITE = 1337; // Random number, we don't need it.
 
 const SITE_TAKEN_ERROR_CODES = [
 	'blog_name_exists',
@@ -182,10 +183,20 @@ class P2Site extends React.Component {
 
 							this.logValidationErrorToLogstash( error.error, errorMessage );
 						} else {
-							messages.site = {
-								[ error.error ]: error.message,
-							};
+							if ( SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
+								messages.site = {
+									[ ERROR_CODE_TAKEN_SITE ]: this.props.translate(
+										'Sorry, that site already exists! Here are some available alternatives:'
+									),
+								};
+							} else {
+								messages.site = {
+									[ error.error ]: error.message,
+								};
+							}
 
+							// We want to log the real error code and message. The above is formatted for the end user
+							// only.
 							this.logValidationErrorToLogstash( error.error, error.message );
 						}
 
@@ -391,9 +402,27 @@ class P2Site extends React.Component {
 		return this.props.translate( 'Continue' );
 	};
 
-	render() {
+	renderSubdomainSuggestions() {
 		const { suggestedSubdomains } = this.state;
 
+		if ( isEmpty( suggestedSubdomains ) ) {
+			return null;
+		}
+
+		return (
+			<ul className="p2-site__subdomain-suggestions">
+				{ map( suggestedSubdomains, ( suggestion, index ) => {
+					return (
+						<li className="p2-site__subdomain-suggestions-item" key={ index }>
+							{ suggestion }
+						</li>
+					);
+				} ) }
+			</ul>
+		);
+	}
+
+	render() {
 		return (
 			<P2StepWrapper
 				flowName={ this.props.flowName }
@@ -405,6 +434,7 @@ class P2Site extends React.Component {
 			>
 				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }
+					{ this.renderSubdomainSuggestions() }
 					<div className="p2-site__form-footer">
 						<FormButton disabled={ this.state.submitting } className="p2-site__form-submit-btn">
 							{ this.buttonText() }
@@ -416,12 +446,6 @@ class P2Site extends React.Component {
 					<a href="https://wordpress.com/p2" className="p2-site__learn-more-link">
 						{ this.props.translate( 'Learn more about P2' ) }
 					</a>
-				</div>
-
-				<div>
-					{ map( suggestedSubdomains, ( suggestion, index ) => {
-						return <div key={ index }>{ suggestion }</div>;
-					} ) }
 				</div>
 			</P2StepWrapper>
 		);

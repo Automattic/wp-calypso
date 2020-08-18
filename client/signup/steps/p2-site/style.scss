@@ -131,3 +131,16 @@
 	font-size: 15px;
 	line-height: 28px;
 }
+
+.p2-site__subdomain-suggestions {
+	border: 1px solid var( --p2-color-border );
+}
+
+.p2-site__subdomain-suggestions-item {
+	border-bottom: 1px solid var( --p2-color-border );
+	padding: 18px 24px;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
