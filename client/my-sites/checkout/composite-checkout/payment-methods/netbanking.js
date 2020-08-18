@@ -24,15 +24,15 @@ import { camelCase } from 'lodash';
  */
 import notices from 'notices';
 import { validatePaymentDetails } from 'lib/checkout/validation';
-import useCountryList from 'my-sites/checkout/composite-checkout/wpcom/hooks/use-country-list';
-import Field from 'my-sites/checkout/composite-checkout/wpcom/components/field';
+import useCountryList from 'my-sites/checkout/composite-checkout/hooks/use-country-list';
+import Field from 'my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/summary-details';
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/wpcom/components/payment-method-logos';
+} from 'my-sites/checkout/composite-checkout/components/summary-details';
+import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
 import { maskField } from 'lib/checkout';
-import CountrySpecificPaymentFieldsUI from '../wpcom/components/country-specific-payment-fields-ui';
+import CountrySpecificPaymentFieldsUI from '../components/country-specific-payment-fields-ui';
 
 const debug = debugFactory( 'composite-checkout:netbanking-payment-method' );
 
