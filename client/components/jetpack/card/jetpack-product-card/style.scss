@@ -205,7 +205,7 @@ $jetpack-product-card-icon-size: 55px;
 	border-radius: 4px;
 	color: $jetpack-product-card-color;
 
-	font-size: rem( 13px );
+	font-size: 0.75rem;
 	line-height: $jetpack-product-card-badge-height;
 	text-transform: uppercase;
 }
@@ -254,11 +254,17 @@ $jetpack-product-card-icon-size: 55px;
 	list-style-type: none;
 }
 
-.jetpack-product-card__features-item {
+.jetpack-product-card__features-main {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px 0;
+}
+
+.jetpack-product-card__features-subitems {
+	margin-left: 36px;
+
+	list-style-type: none;
 }
 
 .jetpack-product-card__features-summary {
@@ -288,8 +294,8 @@ $jetpack-product-card-icon-size: 55px;
 	border-top: solid 1px var( --color-border-subtle );
 }
 
-/**/
-/* Upgrade Nudge styles
+/**
+ * Upgrade Nudge styles
  */
 .jetpack-product-card__nudge {
 	margin: 16px;
