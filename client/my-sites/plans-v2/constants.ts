@@ -195,12 +195,6 @@ export const DAILY_PLAN_TO_REALTIME_PLAN: Record< string, JetpackRealtimePlan > 
 export const UPGRADEABLE_WITH_NUDGE = [
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	// This is only for testing purposes to make the nudge appear inside the
-	// Jetpack Security bundle card. This because at the moment we can't purchase
-	// Jetpack Security Daily.
-	// TODO: remove these two once we can purchase the new plans.
-	OPTIONS_JETPACK_SECURITY,
-	OPTIONS_JETPACK_SECURITY_MONTHLY,
 ];
 
 export const JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS =
