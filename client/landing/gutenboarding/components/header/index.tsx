@@ -28,9 +28,13 @@ const Header: React.FunctionComponent = () => {
 	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	// steps (including modals) where we show Domains button
-	const showDomainsButton = [ 'DesignSelection', 'Style', 'Features', 'Plans' ].includes(
-		currentStep
-	);
+	const showDomainsButton = [
+		'DesignSelection',
+		'Style',
+		'Features',
+		'Plans',
+		'PlansModal',
+	].includes( currentStep );
 
 	// steps (including modals) where we hide Plans button
 	const showPlansButton = [ 'DesignSelection', 'Style', 'Features' ].includes( currentStep );

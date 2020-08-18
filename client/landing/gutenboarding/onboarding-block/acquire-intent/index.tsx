@@ -6,6 +6,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { SkipButton, NextButton } from '@automattic/onboarding';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import { STORE_KEY } from '../../stores/onboard';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
-import { useShowVerticalInput } from '../../hooks/use-show-vertical-input';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
@@ -87,7 +87,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const siteVertical = getSelectedVertical();
 
-	const showVerticalInput = useShowVerticalInput();
+	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
 
 	return (
 		<div className="gutenboarding-page acquire-intent">

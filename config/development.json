@@ -70,6 +70,7 @@
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch": true,
 		"gutenboarding/use-patterns": false,
+		"gutenboarding/show-vertical-input": false,
 		"help": true,
 		"help/courses": true,
 		"home/layout-dev": true,
