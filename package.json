@@ -186,7 +186,7 @@
 		"@babel/core": "^7.11.1",
 		"@babel/register": "^7.10.5",
 		"@babel/runtime": "^7.11.1",
-		"@signal-noise/stylelint-scales": "^1.3.0",
+		"@signal-noise/stylelint-scales": "1.4.0",
 		"@storybook/addon-actions": "^5.3.18",
 		"@storybook/preset-scss": "^1.0.2",
 		"@storybook/preset-typescript": "^1.2.2",
