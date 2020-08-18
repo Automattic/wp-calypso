@@ -9,10 +9,14 @@ import React, { FunctionComponent } from 'react';
 import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
 import { preventWidows } from 'lib/formatting';
-import type { FeaturesItem } from './types';
+
+/**
+ * Type dependencies
+ */
+import type { ProductCardFeaturesItem } from './types';
 
 export type Props = {
-	item: FeaturesItem;
+	item: ProductCardFeaturesItem;
 };
 
 const DEFAULT_ICON = 'checkmark';

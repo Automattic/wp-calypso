@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate, TranslateResult } from 'i18n-calypso';
-import { get } from 'lodash';
+import { compact, get, isArray, isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,18 +26,30 @@ import {
 	JETPACK_SECURITY_PLANS,
 } from 'lib/plans/constants';
 import { getPlan, getMonthlyPlanByYearly, planHasFeature } from 'lib/plans';
+import { getFeatureByKey, getFeatureCategoryByKey } from 'lib/plans/features-list';
 import { JETPACK_PRODUCT_PRICE_MATRIX } from 'lib/products-values/constants';
 import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-values/products-list';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-product-tagline';
 import { getJetpackProductDescription } from 'lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-product-short-name';
+import { PLAN_COMPARISON_PAGE } from 'my-sites/plans-v2/constants';
 
 /**
  * Type dependencies
  */
 import type { Duration, SelectorProduct, SelectorProductSlug, DurationString } from './types';
-import type { JetpackRealtimePlan, JetpackPlanSlugs, Plan } from 'lib/plans/types';
+import type {
+	ProductCardFeaturesItems,
+	ProductCardFeaturesItem,
+	ProductCardFeaturesSection,
+} from 'components/jetpack/card/jetpack-product-card/types';
+import type {
+	JetpackRealtimePlan,
+	JetpackPlanSlugs,
+	Plan,
+	JetpackPlanCardFeature,
+} from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
 import type { SitePlan } from 'state/sites/selectors/get-site-plan';
 
@@ -217,11 +229,89 @@ export function itemToSelectorProduct(
 			description: item.getDescription(),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
-			features: { items: [] },
+			features: {
+				items: buildCardFeaturesFromItem( item ),
+				more: {
+					url: PLAN_COMPARISON_PAGE,
+					label: translate( 'See all features' ),
+				},
+			},
 			legacy: ! isResetPlan,
 		};
 	}
 	return null;
+}
+
+/**
+ * Builds a feature object of a product card, from a feature key.
+ *
+ * @param {JetpackPlanCardFeature} featureKey Key of the feature
+ * @returns {ProductCardFeaturesItem} Feature item
+ */
+export function buildCardFeatureItemFromFeatureKey(
+	featureKey: JetpackPlanCardFeature
+): ProductCardFeaturesItem | undefined {
+	let feature;
+	let subFeaturesKeys;
+
+	if ( isArray( featureKey ) ) {
+		const [ key, subKeys ] = featureKey;
+
+		feature = getFeatureByKey( key );
+		subFeaturesKeys = subKeys;
+	} else {
+		feature = getFeatureByKey( featureKey );
+	}
+
+	if ( feature ) {
+		return {
+			icon: feature.getIcon?.(),
+			text: feature.getTitle(),
+			description: feature.getDescription?.(),
+			subitems: subFeaturesKeys
+				? compact( subFeaturesKeys.map( buildCardFeatureItemFromFeatureKey ) )
+				: undefined,
+		};
+	}
+}
+
+/**
+ * Builds the features object passed to the product card, from a plan or product.
+ *
+ * @param { Plan | Product} item Product or plan
+ * @returns {ProductCardFeaturesItems} Features
+ */
+export function buildCardFeaturesFromItem( item: Plan | Product ): ProductCardFeaturesItems {
+	if ( objectIsPlan( item ) ) {
+		const features = item.getPlanCardFeatures?.();
+
+		// Without sections
+		if ( isArray( features ) ) {
+			return compact( features.map( buildCardFeatureItemFromFeatureKey ) );
+		}
+
+		// With sections
+		if ( isObject( features ) ) {
+			const result = [] as ProductCardFeaturesSection[];
+
+			Object.getOwnPropertySymbols( features ).map( ( key ) => {
+				const category = getFeatureCategoryByKey( key );
+				// TODO: fix TS error
+				const subfeatures = features[ key ];
+
+				if ( category ) {
+					result.push( {
+						heading: category.getTitle(),
+						list: subfeatures.map( buildCardFeatureItemFromFeatureKey ),
+					} as ProductCardFeaturesSection );
+				}
+			} );
+
+			return compact( result );
+		}
+	}
+
+	return [];
 }
 
 /**

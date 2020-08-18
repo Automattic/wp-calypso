@@ -26,6 +26,9 @@ export type JetpackPlanSlugs =
 	| JetpackResetPlanSlugs
 	| JetpackLegacyPlanSlugs;
 
+export type JetpackPlanCardFeature = symbol | [ symbol, symbol[] ];
+export type JetpackPlanCardFeatureSection = Record< symbol, JetpackPlanCardFeature[] >;
+
 export type Plan = {
 	group: typeof constants.GROUP_WPCOM | typeof constants.GROUP_JETPACK;
 	type: string;
@@ -47,6 +50,7 @@ export type Plan = {
 	getStoreSlug: () => JetpackPlanSlugs | string;
 	getPathSlug?: () => string;
 	getPlanCompareFeatures?: () => string[];
+	getPlanCardFeatures?: () => JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection;
 	getSignupFeatures?: () => string[];
 	getBlogSignupFeatures?: () => string[];
 	getPortfolioSignupFeatures?: () => string[];

@@ -443,9 +443,36 @@ const getPlanJetpackCompleteDetails = () => ( {
 			...constants.JETPACK_LEGACY_PLANS,
 		].includes( plan ),
 	getDescription: () =>
-		translate( 'The most powerful WordPress sites: Top-tier security bundle, enhanced search' ),
-	getTagline: () => translate( 'Complete WordPress security, performance, and growth' ),
+		translate(
+			'Superpower your site with everything Jetpack has to offer: real-time security, enhanced search, CRM, and marketing, growth, and design tools.'
+		),
+	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCompareFeatures: () => [],
+	getPlanCardFeatures: () => ( {
+		[ constants.FEATURE_CATEGORY_SECURITY ]: [
+			[
+				constants.FEATURE_SECURITY_REALTIME_V2,
+				[
+					constants.FEATURE_BACKUP_REALTIME_V2,
+					constants.FEATURE_SCAN_REALTIME_V2,
+					constants.FEATURE_ANTISPAM_V2,
+					constants.FEATURE_ACTIVITY_LOG_ARCHIVE_V2,
+				],
+			],
+		],
+		[ constants.FEATURE_CATEGORY_PERFORMANCE ]: [
+			constants.FEATURE_SEARCH_V2,
+			constants.FEATURE_VIDEO_HOSTING_V2,
+		],
+		[ constants.FEATURE_CATEGORY_GROWTH ]: [
+			constants.FEATURE_CRM_V2,
+			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+			constants.FEATURE_COLLECT_PAYMENTS_V2,
+			constants.FEATURE_SITE_MONETIZATION_V2,
+		],
+		[ constants.FEATURE_CATEGORY_DESIGN ]: [ constants.FEATURE_PREMIUM_THEMES_V2 ],
+		[ constants.FEATURE_CATEGORY_OTHER ]: [ constants.FEATURE_PRIORITY_SUPPORT_V2 ],
+	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [],
 	getInferiorHiddenFeatures: () => [
