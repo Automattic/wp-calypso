@@ -67,6 +67,7 @@ import {
 	isWpComBloggerPlan,
 } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
@@ -161,7 +162,13 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( isJetpackProduct( cartItem ) ) {
 		// adding a Jetpack product should replace the cart
-		return false;
+
+		// Jetpack Offer Reset allows users to purchase multiple Jetpack products at the same time.
+		if ( shouldShowOfferResetFlow() ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	return false;
