@@ -37,6 +37,15 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 const ERROR_CODE_MISSING_SITE_TITLE = 123; // Random number, we don't need it.
 const ERROR_CODE_MISSING_SITE = 321; // Random number, we don't need it.
 
+const SITE_TAKEN_ERROR_CODES = [
+	'blog_name_exists',
+	'blog_name_reserved',
+	'blog_name_reserved_but_may_be_available',
+	'dotblog_subdomain_not_available',
+];
+
+const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
+
 /**
  * Module variables
  */
@@ -80,6 +89,8 @@ class P2Site extends React.Component {
 		this.state = {
 			form: this.formStateController.getInitialState(),
 			submitting: false,
+			suggestedSubdomains: [],
+			lastInvalidSite: '',
 		};
 	}
 
@@ -142,6 +153,12 @@ class P2Site extends React.Component {
 				( error, response ) => {
 					debug( error, response );
 
+					if ( this.state.lastInvalidSite !== fields.site ) {
+						this.setState( { suggestedSubdomains: [] } );
+					}
+
+					this.setState( { lastInvalidSite: fields.site } );
+
 					if ( error && error.message ) {
 						if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
 							siteUrlsSearched.push( fields.site );
@@ -170,6 +187,23 @@ class P2Site extends React.Component {
 							};
 
 							this.logValidationErrorToLogstash( error.error, error.message );
+						}
+
+						if ( error.error && SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
+							WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS.forEach( ( suffix ) => {
+								const suggestedSubdomain = `${ fields.site }${ suffix }.wordpress.com`;
+
+								wpcom.undocumented().getDomainInfo( suggestedSubdomain, ( apiError ) => {
+									if ( apiError && apiError.error && apiError.error === 'unknown_blog' ) {
+										this.setState( {
+											suggestedSubdomains: [
+												...this.state.suggestedSubdomains,
+												suggestedSubdomain,
+											],
+										} );
+									}
+								} );
+							} );
 						}
 					}
 
@@ -358,6 +392,8 @@ class P2Site extends React.Component {
 	};
 
 	render() {
+		const { suggestedSubdomains } = this.state;
+
 		return (
 			<P2StepWrapper
 				flowName={ this.props.flowName }
@@ -380,6 +416,12 @@ class P2Site extends React.Component {
 					<a href="https://wordpress.com/p2" className="p2-site__learn-more-link">
 						{ this.props.translate( 'Learn more about P2' ) }
 					</a>
+				</div>
+
+				<div>
+					{ map( suggestedSubdomains, ( suggestion, index ) => {
+						return <div key={ index }>{ suggestion }</div>;
+					} ) }
 				</div>
 			</P2StepWrapper>
 		);
