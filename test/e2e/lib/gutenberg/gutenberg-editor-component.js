@@ -441,10 +441,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			return await this.driver.navigate().back();
 		}
-		return await driverHelper.clickWhenClickable(
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
 				'.edit-post-header .edit-post-fullscreen-mode-close, .edit-post-header-toolbar__back'
+			)
+		);
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				'.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button'
 			)
 		);
 	}
