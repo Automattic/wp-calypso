@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
+import { shuffle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -74,7 +75,8 @@ export function getAvailableDesigns(
 	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ) {
-	let designs = availableDesigns;
+	// Randomize the list of designs to prevent bias in user selection
+	let designs = { ...availableDesigns, featured: shuffle( availableDesigns.featured ) };
 
 	if ( ! includeAlphaDesigns ) {
 		designs = {
