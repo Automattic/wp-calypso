@@ -13,7 +13,7 @@ import { saveAs } from 'browser-filesaver';
  */
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { Card, Button, CompactCard, Dialog } from '@automattic/components';
+import { Card, Button, Dialog } from '@automattic/components';
 import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
@@ -302,37 +302,51 @@ class MembershipsSection extends Component {
 		);
 	}
 
+	renderManagePlans() {
+		return (
+			<div>
+				<SectionHeader label={ this.props.translate( 'Manage plans' ) } />
+				<Card href={ '/earn/payments-plans/' + this.props.siteSlug }>
+					<QueryMembershipProducts siteId={ this.props.siteId } />
+					<div className="memberships__module-plans-content">
+						<div className="memberships__module-plans-icon">
+							<Gridicon size={ 36 } icon={ 'credit-card' } />
+						</div>
+						<div>
+							<div className="memberships__module-plans-title">
+								{ this.props.translate( 'Payment plans' ) }
+							</div>
+							<div className="memberships__module-plans-description">
+								{ this.props.translate(
+									'Single and recurring payments for goods, services, and subscriptions'
+								) }
+							</div>
+						</div>
+					</div>
+				</Card>
+			</div>
+		);
+	}
+
 	renderSettings() {
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Settings' ) } />
-				<CompactCard href={ '/earn/payments-plans/' + this.props.siteSlug }>
-					<QueryMembershipProducts siteId={ this.props.siteId } />
-					<div className="memberships__module-products-title">
-						{ this.props.translate( 'Payment plans' ) }
-					</div>
-					<div className="memberships__module-products-list">
-						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />
-						{ this.props.products
-							.map( ( product ) => formatCurrency( product.price, product.currency ) )
-							.join( ', ' ) }
-					</div>
-				</CompactCard>
-				<CompactCard
+				<Card
 					onClick={ () =>
 						this.setState( { disconnectedConnectedAccountId: this.props.connectedAccountId } )
 					}
 					className="memberships__settings-link"
 				>
-					<div className="memberships__settings-content">
-						<p className="memberships__settings-section-title is-warning">
+					<div className="memberships__module-plans-content">
+						<div className="memberships__module-plans-icon">
+							<Gridicon size={ 36 } icon={ 'link-break' } />
+						</div>
+						<div className="memberships__module-settings-title">
 							{ this.props.translate( 'Disconnect Stripe Account' ) }
-						</p>
-						<p className="memberships__settings-section-desc">
-							{ this.props.translate( 'Disconnect Payments from your Stripe account' ) }
-						</p>
+						</div>
 					</div>
-				</CompactCard>
+				</Card>
 				<Dialog
 					isVisible={ !! this.state.disconnectedConnectedAccountId }
 					buttons={ [
@@ -479,6 +493,7 @@ class MembershipsSection extends Component {
 				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
+				{ this.renderManagePlans() }
 				{ this.renderSettings() }
 			</div>
 		);
