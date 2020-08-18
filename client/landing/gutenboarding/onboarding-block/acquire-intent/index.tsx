@@ -74,9 +74,9 @@ const AcquireIntent: React.FunctionComponent = () => {
 		<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
 	);
 	const nextStepButton = hasSiteTitle ? (
-		<NextButton onClick={ handleSiteTitleSubmit }>{ __( 'Choose a domain' ) }</NextButton>
+		<NextButton onClick={ handleSiteTitleSubmit }>{ __( 'Continue' ) }</NextButton>
 	) : (
-		<SkipButton onClick={ handleSiteTitleSubmit }>{ __( 'I donʼt know' ) }</SkipButton>
+		<SkipButton onClick={ handleSiteTitleSubmit }>{ __( 'Skip for now' ) }</SkipButton>
 	);
 
 	const skipButton = (
