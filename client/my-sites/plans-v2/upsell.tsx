@@ -34,11 +34,6 @@ import './style.scss';
  */
 import type { SelectorProduct, UpsellPageProps } from './types';
 
-// There are several things that could go wrong depending on the URL
-// - The product slug could have an upsell product but what if the user already has that
-// product?
-// - What if the user already owns the product associated with the product slug?
-
 interface Props {
 	currencyCode: string;
 	mainProduct: SelectorProduct;
@@ -125,13 +120,17 @@ const UpsellComponent = ( {
 				description={ upsellProduct.description }
 				currencyCode={ currencyCode }
 				billingTimeFrame={ durationToText( upsellProduct.term ) }
-				buttonLabel={ translate( 'Yes, add %s', { args: [ upsellProductName ] } ) }
+				buttonLabel={ translate( 'Yes, add %s', {
+					args: [ upsellProductName ],
+					comment: '%s refers to a name of a product such as Jetpack Backup or Jetpack Scan',
+				} ) }
 				features={ { items: [] } }
 				discountedPrice={ discountedPrice }
 				originalPrice={ originalPrice }
 				onButtonClick={ onPurchaseBothProducts }
 				cancelLabel={ translate( 'No, I do not want %s', {
 					args: [ upsellProductName ],
+					comment: '%s refers to a name of a product such as Jetpack Backup or Jetpack Scan',
 				} ) }
 				onCancelClick={ onPurchaseSingleProduct }
 			/>
