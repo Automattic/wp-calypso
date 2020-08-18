@@ -118,6 +118,21 @@ describe( 'QueryManager', () => {
 
 			expect( manager.getItems( {} ) ).toBeNull();
 		} );
+
+		test( 'should memoize results unless items change', () => {
+			manager = manager.receive( { ID: 144 } ).receive( { ID: 152 }, { query: {} } );
+
+			const allItems1 = manager.getItems();
+			const queryItems1 = manager.getItems( {} );
+			const allItems2 = manager.getItems();
+			const queryItems2 = manager.getItems( {} );
+
+			expect( allItems1.map( ( item ) => item.ID ) ).toEqual( [ 144, 152 ] );
+			expect( allItems1 ).toBe( allItems2 );
+
+			expect( queryItems1.map( ( item ) => item.ID ) ).toEqual( [ 152 ] );
+			expect( queryItems1 ).toBe( queryItems2 );
+		} );
 	} );
 
 	describe( '#getFound()', () => {
