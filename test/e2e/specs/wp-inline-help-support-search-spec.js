@@ -13,6 +13,7 @@ import LoginFlow from '../lib/flows/login-flow.js';
 import * as dataHelper from '../lib/data-helper';
 import InlineHelpPopoverComponent from '../lib/components/inline-help-popover-component';
 import SupportSearchComponent from '../lib/components/support-search-component';
+import SidebarComponent from '../lib/components/sidebar-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -28,42 +29,51 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Inline Help support search: (${ screenSize }) @parallel`, async function () {
+describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function () {
 	this.timeout( mochaTimeOut );
 
 	step( 'Login and select a non My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
 
-		// The "inline help" FAB should not appear on the My Home
-		// because there is already a support search "Card" on that
-		// page. Therefore we select the "Settings" page for our tests.
-		await loginFlow.loginAndSelectSettings();
+		await loginFlow.loginAndSelectMySite();
 
 		// Initialize the helper component
 		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
 	} );
 
-	describe( 'Popover UI visibility and interactions', function () {
-		step( 'Check help toggle is visible', async function () {
+	describe( 'Popover UI visibility', function () {
+		step( 'Check help toggle is not visible on My Home page', async function () {
+			// The toggle only hides once the "Get help" card is rendered so
+			// we need to give it a little time to be removed.
+			await inlineHelpPopoverComponent.waitForToggleNotToBePresent();
+
+			// Once removed we can assert is is invisible.
+			const isToggleVisible = await inlineHelpPopoverComponent.isToggleVisible();
+			assert.equal(
+				isToggleVisible,
+				false,
+				'Inline Help support search was not correctly hidden on Home page.'
+			);
+		} );
+
+		step( 'Switch to non My Home page', async function () {
+			const sidebarComponent = await SidebarComponent.Expect( driver );
+
+			// The "inline help" FAB should not appear on the My Home
+			// because there is already a support search "Card" on that
+			// page. Therefore we select the "Themes" page for our tests
+			// and then we will switch away to the Homepage to verify
+			// that the Inline Help is not shown
+			await sidebarComponent.selectThemes();
+		} );
+
+		step( 'Check help toggle is visible on non My Home page', async function () {
 			await inlineHelpPopoverComponent.isToggleVisible();
-		} );
-
-		step( 'Open Inline Help popover', async function () {
-			await inlineHelpPopoverComponent.toggleOpen();
-
-			const isPopoverVisible = await inlineHelpPopoverComponent.isPopoverVisible();
-			assert.equal( isPopoverVisible, true, 'Popover was not opened correctly.' );
-		} );
-
-		step( 'Close Inline Help popover', async function () {
-			await inlineHelpPopoverComponent.toggleClosed();
-			const isPopoverVisible = await inlineHelpPopoverComponent.isPopoverVisible();
-			assert.equal( isPopoverVisible, false, 'Popover was not closed correctly.' );
 		} );
 	} );
 
 	describe( 'Performing searches', function () {
-		step( 'Re-open Inline Help popover', async function () {
+		step( 'Open Inline Help popover', async function () {
 			await inlineHelpPopoverComponent.toggleOpen();
 			supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		} );
@@ -127,6 +137,12 @@ describe( `[${ host }] Inline Help support search: (${ screenSize }) @parallel`,
 				false,
 				'A search was unexpectedly performed for an empty search query.'
 			);
+		} );
+
+		step( 'Close Inline Help popover', async function () {
+			await inlineHelpPopoverComponent.toggleClosed();
+			const isPopoverVisible = await inlineHelpPopoverComponent.isPopoverVisible();
+			assert.equal( isPopoverVisible, false, 'Popover was not closed correctly.' );
 		} );
 	} );
 } );
