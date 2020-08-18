@@ -11,7 +11,10 @@ import { useSelector } from 'react-redux';
  */
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getSitePurchases } from 'state/purchases/selectors';
+import PrePurchaseNotice from './prepurchase-notice';
 import type { SiteProduct } from 'state/sites/selectors/get-site-products';
+
+import './style.scss';
 
 type Site = {
 	ID: number;
@@ -23,7 +26,10 @@ type Props = {
 	selectedSite: Site;
 };
 
-const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selectedSite } ) => {
+const CartPlanOverlapsOwnedProductNotice: FunctionComponent< Props > = ( {
+	product,
+	selectedSite,
+} ) => {
 	const translate = useTranslate();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const purchase = isArray( purchases )
@@ -34,25 +40,24 @@ const OwnedProductNoticeContent: FunctionComponent< Props > = ( { product, selec
 		? `/me/purchases/${ selectedSite.slug }/${ purchaseId }`
 		: '/me/purchases/';
 
+	const message = translate(
+		'You currently own {{product/}}. The plan you are about to purchase also includes this product. Consider removing your {{link}}{{product/}} subscription{{/link}}.',
+		{
+			comment: 'The `product` variable refers to the product the customer owns already',
+			components: {
+				link: <a href={ subscriptionUrl } />,
+				product: getJetpackProductDisplayName( product ) as ReactElement,
+			},
+		}
+	);
+
 	return (
-		<div className="checkout__conflict-notice">
-			<p className="checkout__conflict-notice-message">
-				{ translate(
-					'You currently own {{product/}}. The plan you are about to purchase also includes this product. Consider removing your {{link}}{{product/}} subscription{{/link}}.',
-					{
-						comment: 'The `product` variable refers to the product the customer owns already',
-						components: {
-							link: <a href={ subscriptionUrl } />,
-							product: getJetpackProductDisplayName( product ) as ReactElement,
-						},
-					}
-				) }
-			</p>
-			<a className="checkout__conflict-notice-link" href={ subscriptionUrl }>
-				{ translate( 'Manage subscription' ) }
-			</a>
-		</div>
+		<PrePurchaseNotice
+			message={ message }
+			linkUrl={ subscriptionUrl }
+			linkText={ translate( 'Manage subscription' ) }
+		/>
 	);
 };
 
-export default OwnedProductNoticeContent;
+export default CartPlanOverlapsOwnedProductNotice;
