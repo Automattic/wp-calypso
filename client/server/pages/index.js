@@ -155,7 +155,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		badge: false,
 		lang,
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
-		manifest: request.getAssets().manifests.manifest,
+		manifest: Object.values( request.getAssets().manifests ).join( '\n' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
 		devDocsURL: '/devdocs',

@@ -39,6 +39,7 @@ const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( './webpack-utils/extensions' );
 const RequireChunkCallbackPlugin = require( './webpack-utils/require-chunk-callback-plugin' );
 const GenerateChunksMapPlugin = require( './webpack-utils/generate-chunks-map-plugin' );
+const ExtractManifestPlugin = require( './webpack-utils/extract-manifest-plugin' );
 
 /**
  * Internal variables
@@ -173,7 +174,7 @@ const webpackConfig = {
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: isDesktop ? false : { name: 'manifest' },
+		runtimeChunk: isDesktop ? false : { name: 'runtime' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
@@ -383,6 +384,11 @@ const webpackConfig = {
 		 * Replace `lodash` with `lodash-es`
 		 */
 		new ExtensiveLodashReplacementPlugin(),
+
+		new ExtractManifestPlugin( {
+			jsExtension: isDevelopment ? '.js' : '.min.js',
+			cssExtension: isDevelopment ? '.css' : '.min.css',
+		} ),
 	].filter( Boolean ),
 	externals: [ 'electron' ],
 };
