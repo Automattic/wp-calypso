@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormFieldAnnotation from 'my-sites/checkout/composite-checkout/wpcom/components/form-field-annotation';
+import FormFieldAnnotation from 'my-sites/checkout/composite-checkout/components/form-field-annotation';
 import FormCountrySelect from 'components/forms/form-country-select';
 
 export default function CountrySelectMenu( {

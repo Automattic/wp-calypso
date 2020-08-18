@@ -17,7 +17,7 @@ import {
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
 	ResponseCart,
-} from '../../types';
+} from '../../types/backend/shopping-cart-endpoint';
 import { ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-shopping-cart-reducer' );

@@ -6,7 +6,11 @@ import { useCallback } from 'react';
 /**
  * Internal dependencies
  */
-import { ResponseCart, RequestCartProduct, CartLocation } from '../../types';
+import {
+	ResponseCart,
+	RequestCartProduct,
+	CartLocation,
+} from '../../types/backend/shopping-cart-endpoint';
 import {
 	ShoppingCartManager,
 	ShoppingCartManagerArguments,

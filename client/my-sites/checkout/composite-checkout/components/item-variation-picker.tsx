@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { WPCOMCartItem } from '../types';
+import { WPCOMCartItem } from '../types/checkout-cart';
 import RadioButton from './radio-button';
 
 export type WPCOMProductSlug = string;

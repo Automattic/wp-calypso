@@ -33,7 +33,7 @@ import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
-import { isCompleteAndValid } from '../types';
+import { isCompleteAndValid } from '../types/wpcom-store-state';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';

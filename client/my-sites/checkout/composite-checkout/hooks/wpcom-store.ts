@@ -9,12 +9,14 @@ import { useRef } from 'react';
 import {
 	WpcomStoreState,
 	getInitialWpcomStoreState,
-	PossiblyCompleteDomainContactDetails,
-	DomainContactDetails,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters as updaters,
-} from '../types';
+} from '../types/wpcom-store-state';
+import {
+	PossiblyCompleteDomainContactDetails,
+	DomainContactDetails,
+} from '../types/backend/domain-contact-details-components';
 
 type WpcomStoreAction =
 	| {

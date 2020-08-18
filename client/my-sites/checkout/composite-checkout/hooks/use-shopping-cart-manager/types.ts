@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { ResponseCart, RequestCart, RequestCartProduct, CartLocation } from '../../types';
+import {
+	ResponseCart,
+	RequestCart,
+	RequestCartProduct,
+	CartLocation,
+} from '../../types/backend/shopping-cart-endpoint';
 
 export type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 
