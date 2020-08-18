@@ -25,6 +25,7 @@ export type PurchaseCallback = ( arg0: SelectorProduct, arg1?: Purchase ) => voi
 
 interface BasePageProps {
 	rootUrl: string;
+	header: ReactNode;
 }
 
 export interface SelectorPageProps extends BasePageProps {

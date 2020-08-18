@@ -138,7 +138,7 @@ const UpsellComponent = ( {
 	);
 };
 
-const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
+const UpsellPage = ( { duration, productSlug, rootUrl, header }: UpsellPageProps ) => {
 	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
@@ -187,13 +187,16 @@ const UpsellPage = ( { duration, productSlug, rootUrl }: UpsellPageProps ) => {
 	}
 
 	return (
-		<UpsellComponent
-			currencyCode={ currencyCode }
-			mainProduct={ mainProduct }
-			upsellProduct={ upsellProduct }
-			onPurchaseSingleProduct={ onPurchaseSingleProduct }
-			onPurchaseBothProducts={ onPurchaseBothProducts }
-		/>
+		<>
+			{ header }
+			<UpsellComponent
+				currencyCode={ currencyCode }
+				mainProduct={ mainProduct }
+				upsellProduct={ upsellProduct }
+				onPurchaseSingleProduct={ onPurchaseSingleProduct }
+				onPurchaseBothProducts={ onPurchaseBothProducts }
+			/>
+		</>
 	);
 };
 

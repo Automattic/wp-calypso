@@ -14,6 +14,7 @@ import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import isSiteWpcom from 'state/selectors/is-site-wpcom';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import { productSelect } from 'my-sites/plans-v2/controller';
+import setJetpackPlansHeader from 'my-sites/plans-v2/plans-header';
 
 function showJetpackPlans( context ) {
 	const getState = context.store.getState();
@@ -27,6 +28,7 @@ export function plans( context, next ) {
 		if ( context.params.intervalType ) {
 			return page.redirect( `/plans/${ context.params.site }` );
 		}
+		setJetpackPlansHeader( context );
 		return productSelect( '/plans/:site' )( context, next );
 	}
 
