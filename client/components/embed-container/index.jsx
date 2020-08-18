@@ -21,6 +21,7 @@ const embedsToLookFor = {
 	'fb\\:post, [class^=fb-]': embedFacebook,
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
+	'.wp-block-jetpack-story': embedStory,
 	'.embed-reddit': embedReddit,
 };
 
@@ -196,6 +197,31 @@ function embedSlideshow( domNode ) {
 		loadjQueryDependentScriptDesktopWrapper( SLIDESHOW_URLS.CYCLE_JS, () => {
 			createSlideshow();
 		} );
+	}
+}
+
+function embedStory( domNode ) {
+	debug( 'processing story for ', domNode );
+
+	loadCSS(
+		`https://s0.wp.com/wp-content/mu-plugins/jetpack/_inc/blocks/story/view.css${ cacheBustQuery }`
+	);
+
+	const articleUrl = domNode
+		.closest( 'article.reader-full-post__story' )
+		.querySelector( '.reader-full-post__header a' ).href;
+	const storyButton = domNode.querySelector( 'div.wp-story-overlay.wp-story-clickable' );
+
+	if ( storyButton ) {
+		// replace button with hyperlink
+		const link = document.createElement( 'a' );
+		link.setAttribute( 'target', '_blank' );
+		link.className = storyButton.className;
+		const articleUrlObject = new URL( articleUrl );
+		articleUrlObject.searchParams.set( 'wp-story-load-in-fullscreen', 'true' );
+		link.href = articleUrlObject.href;
+		link.innerHTML = storyButton.innerHTML;
+		storyButton.parentNode.replaceChild( link, storyButton );
 	}
 }
 
