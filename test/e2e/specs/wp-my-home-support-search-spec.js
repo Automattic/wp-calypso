@@ -14,6 +14,8 @@ import * as driverHelper from '../lib/driver-helper.js';
 import LoginFlow from '../lib/flows/login-flow.js';
 import * as dataHelper from '../lib/data-helper';
 import SupportSearchComponent from '../lib/components/support-search-component';
+import SidebarComponent from '../lib/components/sidebar-component';
+
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
@@ -35,9 +37,12 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 	step( 'Login and select a non My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
 
+		await loginFlow.loginAndSelectMySite();
+
 		// The "/home" route is the only one this support search
 		// "Card" will show on
-		await loginFlow.loginAndSelectMySite();
+		const sidebarComponent = await SidebarComponent.Expect( driver );
+		await sidebarComponent.selectMyHome();
 	} );
 
 	step( 'Verify "Get help" support card is displayed', async function () {
@@ -92,7 +97,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 			const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 
 			await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
-			const resultsCount = await supportSearchComponent.getDefaultResultsCount();
+			const resultsCount = await supportSearchComponent.getErrorResultsCount();
 
 			const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
 

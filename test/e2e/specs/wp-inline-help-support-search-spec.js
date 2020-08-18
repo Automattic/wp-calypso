@@ -112,7 +112,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function
 				const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 
 				await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
-				const resultsCount = await supportSearchComponent.getDefaultResultsCount();
+				const resultsCount = await supportSearchComponent.getErrorResultsCount();
 
 				const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
 
