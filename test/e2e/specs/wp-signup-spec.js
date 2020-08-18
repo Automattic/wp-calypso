@@ -31,7 +31,7 @@ import MagicLoginPage from '../lib/pages/magic-login-page';
 import ReaderPage from '../lib/pages/reader-page';
 import DomainOnlySettingsPage from '../lib/pages/domain-only-settings-page';
 import DomainDetailsPage from '../lib/pages/domain-details-page';
-import ManagePurchasePage from '../lib/pages/manage-purchase-page';
+import ProfilePage from '../lib/pages/profile-page';
 import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
 import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import ThemesPage from '../lib/pages/themes-page';
@@ -854,15 +854,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		step(
-			'Can see the domain is ready page and click "Manage Domain" button to see the domain only settings page',
-			async function () {
-				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
-				await domainOnlySettingsPage.manageDomain();
-				return await DomainDetailsPage.Expect( driver );
-			}
-		);
-
 		step( 'Can open the sidebar', async function () {
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
@@ -890,16 +881,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
 				await domainOnlySettingsPage.manageDomain();
 				const domainDetailsPage = await DomainDetailsPage.Expect( driver );
-				await domainDetailsPage.viewPaymentSettings();
-
-				const managePurchasePage = await ManagePurchasePage.Expect( driver );
-				const domainDisplayed = await managePurchasePage.domainDisplayed();
-				assert.strictEqual(
-					domainDisplayed,
-					expectedDomainName,
-					'The domain displayed on the manage purchase page is unexpected'
-				);
-				await managePurchasePage.chooseCancelAndRefund();
+				await domainDetailsPage.cancelDomain();
 
 				const cancelPurchasePage = await CancelPurchasePage.Expect( driver );
 				await cancelPurchasePage.clickCancelPurchase();
