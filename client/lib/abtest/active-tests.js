@@ -118,7 +118,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	newSiteGutenbergOnboarding: {
-		datestamp: '20200811',
+		datestamp: '20200818',
 		variations: {
 			gutenberg: 50,
 			control: 50,
@@ -224,14 +224,6 @@ export default {
 		allowExistingUsers: false,
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
-	verticalsOnGutenboarding: {
-		datestamp: '20200811',
-		variations: {
-			verticals: 50,
-			noverticals: 50,
-		},
-		defaultVariation: 'noverticals',
-	},
 	reskinSignupFlow: {
 		datestamp: '20200812',
 		variations: {
@@ -244,7 +236,7 @@ export default {
 		localeExceptions: [ 'en', 'es' ],
 	},
 	existingUsersGutenbergOnboard: {
-		datestamp: '20200817',
+		datestamp: '20200818',
 		variations: {
 			gutenberg: 50,
 			control: 50,
