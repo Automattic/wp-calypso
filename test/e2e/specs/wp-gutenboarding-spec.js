@@ -13,6 +13,7 @@ import AcquireIntentPage from '../lib/pages/gutenboarding/acquire-intent-page.js
 import DesignSelectorPage from '../lib/pages/gutenboarding/design-selector-page.js';
 import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
+import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -49,6 +50,12 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await acquireIntentPage.goToNextStep();
 		} );
 
+		step( 'Can see Domains Page and pick a free domain and continue', async function () {
+			const domainsPage = await DomainsPage.Expect( driver );
+			await domainsPage.selectFreeDomain();
+			await domainsPage.continueToNextStep();
+		} );
+
 		step( 'Can see Design Selector and select a random free design', async function () {
 			const designSelectorPage = await DesignSelectorPage.Expect( driver );
 			await designSelectorPage.selectFreeDesign();
@@ -76,7 +83,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 	} );
 
-	describe( 'Skip first step in Gutenboarding, select paid design and see Plans page after Style preview @parallel', function () {
+	describe( 'Skip first step in Gutenboarding, select paid design and see Domains page after Style preview @parallel', function () {
 		before( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 			await NewPage.Visit( driver );
@@ -97,10 +104,10 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await stylePreviewPage.continue();
 		} );
 
-		step( 'Can see Plans Grid with no selected plan', async function () {
-			const plansPage = await PlansPage.Expect( driver );
-			const hasSelectedPlan = await plansPage.hasSelectedPlan();
-			assert.strictEqual( hasSelectedPlan, false, 'There is a preselected plan' );
+		step( 'Can see Domain Picker in an empty state', async function () {
+			const domainPickerPage = await DomainsPage.Expect( driver );
+			const isEmptyState = await domainPickerPage.isInEmptyState();
+			assert.strictEqual( isEmptyState, true, 'Domain picker should be in empty state' );
 		} );
 	} );
 } );

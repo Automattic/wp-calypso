@@ -2,21 +2,20 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { SkipButton, NextButton } from '@automattic/onboarding';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath } from '../../path';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
-import { useShowVerticalInput } from '../../hooks/use-show-vertical-input';
+import useStepNavigation from '../../hooks/use-step-navigation';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
 
@@ -27,30 +26,34 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { getSelectedVertical, getSelectedSiteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
-		select( STORE_KEY )
-	);
+	const {
+		getSelectedVertical,
+		getSelectedSiteTitle,
+		wasVerticalSkipped,
+		hasSiteTitle,
+	} = useSelect( ( select ) => select( STORE_KEY ) );
 
 	const siteTitleRef = React.useRef< HTMLInputElement >();
 
-	const { skipSiteVertical } = useDispatch( STORE_KEY );
-
-	const history = useHistory();
-	const makePath = usePath();
-	const nextStepPath = makePath( Step.DesignSelection );
+	const { skipSiteVertical, setDomainSearch, setSiteTitle } = useDispatch( STORE_KEY );
 
 	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
 
 	const isMobile = useViewportMatch( 'small', '<' );
 
+	const { goNext } = useStepNavigation();
+
+	const showSiteTitleAndNext = !! (
+		getSelectedVertical() ||
+		hasSiteTitle() ||
+		wasVerticalSkipped()
+	);
+
 	useTrackStep( 'IntentGathering', () => ( {
 		selected_vertical_slug: getSelectedVertical()?.slug,
 		selected_vertical_label: getSelectedVertical()?.label,
-		has_selected_site_title: !! getSelectedSiteTitle(),
+		has_selected_site_title: hasSiteTitle(),
 	} ) );
-
-	const hasSiteTitle = !! getSelectedSiteTitle();
-	const showSiteTitleAndNext = !! ( getSelectedVertical() || hasSiteTitle || wasVerticalSkipped() );
 
 	const handleSkip = () => {
 		skipSiteVertical();
@@ -67,8 +70,16 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	const handleSiteTitleSubmit = () => {
-		history.push( nextStepPath );
-		! hasSiteTitle && recordSiteTitleSkip();
+		if ( hasSiteTitle() ) {
+			setDomainSearch( getSelectedSiteTitle() );
+		}
+		goNext();
+	};
+
+	const handleSiteTitleSkip = () => {
+		setSiteTitle( '' );
+		recordSiteTitleSkip();
+		goNext();
 	};
 
 	// declare UI elements here to avoid duplication when returning for mobile/desktop layouts
@@ -76,10 +87,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const siteTitleInput = showSiteTitleAndNext && (
 		<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
 	);
-	const nextStepButton = hasSiteTitle ? (
-		<NextButton onClick={ handleSiteTitleSubmit }>{ __( 'Choose a design' ) }</NextButton>
+	const nextStepButton = hasSiteTitle() ? (
+		<NextButton onClick={ handleSiteTitleSubmit }>{ __( 'Continue' ) }</NextButton>
 	) : (
-		<SkipButton onClick={ handleSiteTitleSubmit }>{ __( 'I donʼt know' ) }</SkipButton>
+		<SkipButton onClick={ handleSiteTitleSkip }>{ __( 'Skip for now' ) }</SkipButton>
 	);
 
 	const skipButton = (
@@ -90,7 +101,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const siteVertical = getSelectedVertical();
 
-	const showVerticalInput = useShowVerticalInput();
+	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
 
 	return (
 		<div className="gutenboarding-page acquire-intent">

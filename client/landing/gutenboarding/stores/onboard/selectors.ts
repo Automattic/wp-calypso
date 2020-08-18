@@ -23,6 +23,7 @@ export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedVertical = ( state: State ) => state.siteVertical;
 export const getSelectedDomain = ( state: State ) => state.domain;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
+export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 1; // for valid domain results, we need at least 2 characters
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch || getSelectedSiteTitle( state ) || getSelectedVertical( state )?.label;
 export const getPlan = ( state: State ) => state.plan;
