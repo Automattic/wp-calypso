@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
@@ -12,11 +11,11 @@ import { SkipButton, NextButton } from '@automattic/onboarding';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath } from '../../path';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useShowVerticalInput } from '../../hooks/use-show-vertical-input';
+import useStepNavigation from '../../hooks/use-step-navigation';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
 
@@ -35,13 +34,11 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const { skipSiteVertical } = useDispatch( STORE_KEY );
 
-	const history = useHistory();
-	const makePath = usePath();
-	const nextStepPath = makePath( Step.DesignSelection );
-
 	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
 
 	const isMobile = useViewportMatch( 'small', '<' );
+
+	const { goNext } = useStepNavigation();
 
 	useTrackStep( 'IntentGathering', () => ( {
 		selected_vertical_slug: getSelectedVertical()?.slug,
@@ -67,8 +64,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	const handleSiteTitleSubmit = () => {
-		history.push( nextStepPath );
 		! hasSiteTitle && recordSiteTitleSkip();
+		goNext();
 	};
 
 	// declare UI elements here to avoid duplication when returning for mobile/desktop layouts
