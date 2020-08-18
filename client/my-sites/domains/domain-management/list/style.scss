@@ -195,6 +195,11 @@ input[type='radio'].domain-management-list-item__radio {
 	@include breakpoint-deprecated( '<960px' ) {
 		display: none;
 	}
+
+	div {
+		display: flex;
+		justify-content: center;
+	}
 }
 
 .domain-item .domain-item__checkbox {
@@ -270,12 +275,15 @@ input[type='radio'].domain-management-list-item__radio {
 	text-align: center;
 	font-size: $font-body-small;
 	margin-right: 8px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 
 	@include breakpoint-deprecated( '<960px' ) {
 		display: none;
+	}
+
+	span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 }
 
