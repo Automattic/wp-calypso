@@ -43,20 +43,15 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function
 
 	describe( 'Popover UI visibility', function () {
 		step( 'Check help toggle is not visible on My Home page', async function () {
+			const sidebarComponent = await SidebarComponent.Expect( driver );
+			await sidebarComponent.selectMyHome();
+
 			// The toggle only hides once the "Get help" card is rendered so
 			// we need to give it a little time to be removed.
 			await inlineHelpPopoverComponent.waitForToggleNotToBePresent();
-
-			// Once removed we can assert is is invisible.
-			const isToggleVisible = await inlineHelpPopoverComponent.isToggleVisible();
-			assert.equal(
-				isToggleVisible,
-				false,
-				'Inline Help support search was not correctly hidden on Home page.'
-			);
 		} );
 
-		step( 'Switch to non My Home page', async function () {
+		step( 'Check help toggle is visible on Theme page', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 
 			// The "inline help" FAB should not appear on the My Home
@@ -65,10 +60,14 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function
 			// and then we will switch away to the Homepage to verify
 			// that the Inline Help is not shown
 			await sidebarComponent.selectThemes();
-		} );
 
-		step( 'Check help toggle is visible on non My Home page', async function () {
-			await inlineHelpPopoverComponent.isToggleVisible();
+			// Once removed we can assert is is invisible.
+			const isToggleVisible = await inlineHelpPopoverComponent.isToggleVisible();
+			assert.equal(
+				isToggleVisible,
+				true,
+				'Inline Help support search was not shown on Theme page.'
+			);
 		} );
 	} );
 
