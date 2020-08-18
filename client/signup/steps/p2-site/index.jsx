@@ -341,6 +341,15 @@ class P2Site extends React.Component {
 		} );
 	};
 
+	handleSubdomainSuggestionClick = ( suggestedSubdomain ) => {
+		const site = suggestedSubdomain.substring( 0, suggestedSubdomain.indexOf( '.' ) );
+
+		this.formStateController.handleFieldChange( {
+			name: 'site',
+			value: site,
+		} );
+	};
+
 	formFields = () => {
 		const fieldDisabled = this.state.submitting;
 
@@ -413,7 +422,11 @@ class P2Site extends React.Component {
 			<ul className="p2-site__subdomain-suggestions">
 				{ map( suggestedSubdomains, ( suggestion, index ) => {
 					return (
-						<li className="p2-site__subdomain-suggestions-item" key={ index }>
+						<li
+							key={ index }
+							className="p2-site__subdomain-suggestions-item"
+							onClick={ () => this.handleSubdomainSuggestionClick( suggestion ) }
+						>
 							{ suggestion }
 						</li>
 					);
