@@ -40,11 +40,12 @@ function WindowsPlatform( mainWindow ) {
 
 WindowsPlatform.prototype.onClosed = function ( ev ) {
 	if ( appQuit.shouldQuitToBackground() ) {
-		log.info( 'Window close puts app into background & creates tray' );
+		log.info( `User clicked 'close': hiding main window and creating tray...` );
 
 		ev.preventDefault();
 
 		this.window.hide();
+		this.window.webContents.send( 'close-notifications-panel' );
 		this.showBackgroundBubble();
 
 		return;

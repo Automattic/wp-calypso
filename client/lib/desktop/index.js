@@ -7,13 +7,13 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { newPost } from 'lib/paths';
+import store from 'store';
 import user from 'lib/user';
 import { ipcRenderer as ipc } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
 import { getReduxStore } from 'lib/redux-bridge';
-import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
 import { isEditorIframeLoaded } from 'state/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
@@ -22,6 +22,7 @@ import {
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
+	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 } from 'state/desktop/window-events';
 import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
@@ -47,6 +48,7 @@ const Desktop = {
 		ipc.on( 'new-post', this.onNewPost.bind( this ) );
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
+		ipc.on( 'close-notifications-panel', this.onCloseNotificationsPanel.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 		ipc.on( 'navigate', this.onNavigate.bind( this ) );
 		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
@@ -62,6 +64,11 @@ const Desktop = {
 			this.onViewPostClicked.bind( this )
 		);
 
+		window.addEventListener(
+			NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
+			this.onUnseenCountUpdated.bind( this )
+		);
+
 		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
 		this.store = await getReduxStore();
@@ -69,17 +76,14 @@ const Desktop = {
 		this.editorLoadedStatus();
 
 		// Send some events immediately - this sets the app state
-		this.notificationStatus();
+		this.sendNotificationUnseenCount();
 		this.sendUserLoginStatus();
 	},
 
 	selectedSite: null,
 
 	navigate: function ( to ) {
-		if ( isNotificationsOpen( this.store.getState() ) ) {
-			this.toggleNotificationsPanel();
-		}
-
+		this.onCloseNotificationsPanel();
 		this.store.dispatch( navigate( to ) );
 	},
 
@@ -91,21 +95,24 @@ const Desktop = {
 		this.selectedSite = site;
 	},
 
-	notificationStatus: function () {
-		let previousHasUnseen = hasUnseenNotifications( this.store.getState() );
+	sendNotificationUnseenCount: function () {
+		// Used to update unseen badge count when booting the app: no-op if not connected.
+		const navigator = window.navigator;
+		const connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
+		if ( ! connected ) {
+			return;
+		}
+		const unseenCount = store.get( 'wpnotes_unseen_count' );
+		if ( unseenCount !== null ) {
+			debug( `Sending unseen count: ${ unseenCount }` );
+			ipc.send( 'unread-notices-count', unseenCount );
+		}
+	},
 
-		// Send initial status to main process
-		ipc.send( 'unread-notices-count', previousHasUnseen );
-
-		this.store.subscribe( () => {
-			const hasUnseen = hasUnseenNotifications( this.store.getState() );
-
-			if ( hasUnseen !== previousHasUnseen ) {
-				ipc.send( 'unread-notices-count', hasUnseen );
-
-				previousHasUnseen = hasUnseen;
-			}
-		} );
+	onUnseenCountUpdated: function ( event ) {
+		const { unseenCount } = event.detail;
+		debug( `Sending unseen count: ${ unseenCount }` );
+		ipc.send( 'unread-notices-count', unseenCount );
 	},
 
 	sendUserLoginStatus: function () {
@@ -125,6 +132,12 @@ const Desktop = {
 		debug( 'Toggle notifications' );
 
 		this.toggleNotificationsPanel();
+	},
+
+	onCloseNotificationsPanel: function () {
+		if ( isNotificationsOpen( this.store.getState() ) ) {
+			this.toggleNotificationsPanel();
+		}
 	},
 
 	onSignout: function () {
