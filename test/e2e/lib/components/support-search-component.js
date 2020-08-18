@@ -56,6 +56,10 @@ class SupportSearchComponent extends AsyncBaseContainer {
 		return results.length;
 	}
 
+	async waitForDefaultResultsNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, defaultResultsSelectors );
+	}
+
 	async getErrorResults() {
 		return await this.driver.findElements( errorResultsSelectors );
 	}
@@ -63,6 +67,10 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	async getErrorResultsCount() {
 		const results = await this.getErrorResults();
 		return results.length;
+	}
+
+	async waitForErrorResultsNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, errorResultsSelectors );
 	}
 
 	async getSearchResults() {
@@ -74,6 +82,10 @@ class SupportSearchComponent extends AsyncBaseContainer {
 		return results.length;
 	}
 
+	async waitForSearchResultsNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, searchResultsSelectors );
+	}
+
 	async getAdminSearchResults() {
 		return await this.driver.findElements( adminSearchResultsSelectors );
 	}
@@ -81,6 +93,10 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	async getAdminSearchResultsCount() {
 		const results = await this.getAdminSearchResults();
 		return results.length;
+	}
+
+	async waitForAdminResultsNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, adminSearchResultsSelectors );
 	}
 
 	async searchFor( query = '' ) {

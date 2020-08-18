@@ -64,31 +64,56 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 	step( 'Displays contextual search results by default', async function () {
 		supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
-		assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
+		assert.equal( resultsCount, 5, 'The default results are displayed' );
 	} );
 
 	step( 'Returns search results for valid search query', async function () {
 		await supportSearchComponent.searchFor( 'Domain' );
-		const resultsCount = await supportSearchComponent.getSearchResultsCount();
+
+		const searchResultsCount = await supportSearchComponent.getSearchResultsCount();
+
+		const adminResultsCount = await supportSearchComponent.getAdminSearchResultsCount();
+
+		const defaultResults = await supportSearchComponent.waitForDefaultResultsNotToBePresent();
+
+		assert.equal( defaultResults, true, 'The default results are not displayed.' );
 
 		assert.equal(
-			resultsCount <= 5,
+			searchResultsCount <= 5,
 			true,
 			`Too many search results displayed. Should be less than or equal to 5.`
 		);
 		assert.equal(
-			resultsCount >= 1,
+			searchResultsCount >= 1,
 			true,
 			`Too few search results displayed. Should be more than or equal to 1.`
+		);
+		assert.equal(
+			adminResultsCount <= 3,
+			true,
+			`Too many admin results displayed. Should be less than or equal to 3.`
+		);
+		assert.equal(
+			adminResultsCount >= 1,
+			true,
+			`Too few admin results displayed. Should be more than or equal to 1.`
 		);
 	} );
 
 	step( 'Resets search UI to default state when search input is cleared ', async function () {
 		await supportSearchComponent.clearSearchField();
 
-		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
+		const searchResults = await supportSearchComponent.waitForSearchResultsNotToBePresent();
 
-		assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
+		const adminResults = await supportSearchComponent.waitForAdminResultsNotToBePresent();
+
+		const defaultResultsCount = await supportSearchComponent.getDefaultResultsCount();
+
+		assert.equal( searchResults, true, 'The API Search Results are not displayed.' );
+
+		assert.equal( adminResults, true, 'The Admin Results are not displayed.' );
+
+		assert.equal( defaultResultsCount, 5, 'The default results displayed' );
 	} );
 
 	step(
@@ -97,19 +122,34 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 			const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 
 			await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
+
+			const searchResults = await supportSearchComponent.waitForSearchResultsNotToBePresent();
+
 			const resultsCount = await supportSearchComponent.getErrorResultsCount();
 
 			const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
 
+			assert.equal( searchResults, true, 'The API Search Results are not displayed.' );
+
 			assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
-			assert.equal( resultsCount, 5, 'There are no contextual results displayed.' );
+			assert.equal( resultsCount, 5, 'The default error results are displayed.' );
 		}
 	);
 
-	step( 'Does not request search results for empty search queries', async function () {
+	step( 'Clearing search resets to default state', async function () {
 		await supportSearchComponent.clearSearchField();
 
+		const errorResults = await supportSearchComponent.waitForErrorResultsNotToBePresent();
+
+		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
+
+		assert.equal( errorResults, true, 'The default error results are not displayed.' );
+
+		assert.equal( resultsCount, 5, 'The default results are displayed' );
+	} );
+
+	step( 'Does not request search results for empty search queries', async function () {
 		const emptyWhitespaceQuery = '         ';
 
 		await supportSearchComponent.searchFor( emptyWhitespaceQuery );
