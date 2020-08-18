@@ -107,7 +107,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		step( 'Can see Domain Picker in an empty state', async function () {
 			const domainPickerPage = await DomainsPage.Expect( driver );
 			const isEmptyState = await domainPickerPage.isInEmptyState();
-			assert.strictEqual( isEmptyState, false, 'Domain picker should be in empty state' );
+			assert.strictEqual( isEmptyState, true, 'Domain picker should be in empty state' );
 		} );
 	} );
 } );
