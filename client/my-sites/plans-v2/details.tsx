@@ -30,7 +30,7 @@ import type { DetailsPageProps, PurchaseCallback, SelectorProduct } from './type
 
 import './style.scss';
 
-const DetailsPage = ( { duration, productSlug, rootUrl }: DetailsPageProps ) => {
+const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPageProps ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
@@ -71,6 +71,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl }: DetailsPageProps ) => 
 
 	return (
 		<Main className="details__main" wideLayout>
+			{ header }
 			<HeaderCake onClick={ backButton }>
 				{ isBundle ? translate( 'Bundle Options' ) : translate( 'Product Options' ) }
 			</HeaderCake>

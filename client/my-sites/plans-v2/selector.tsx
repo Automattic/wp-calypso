@@ -16,12 +16,10 @@ import { durationToString } from './utils';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { managePurchase } from 'me/purchases/paths';
-import CartData from 'components/data/cart';
 import Main from 'components/main';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySites from 'components/data/query-sites';
-import PlansNavigation from 'my-sites/plans/navigation';
 
 /**
  * Type dependencies
@@ -36,7 +34,11 @@ import type {
 
 import './style.scss';
 
-const SelectorPage = ( { defaultDuration = TERM_ANNUALLY, rootUrl }: SelectorPageProps ) => {
+const SelectorPage = ( {
+	defaultDuration = TERM_ANNUALLY,
+	rootUrl,
+	header,
+}: SelectorPageProps ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
@@ -59,9 +61,7 @@ const SelectorPage = ( { defaultDuration = TERM_ANNUALLY, rootUrl }: SelectorPag
 
 	return (
 		<Main className="selector__main" wideLayout>
-			<CartData>
-				<PlansNavigation path={ '/plans' } />
-			</CartData>
+			{ header }
 			<PlansFilterBar
 				onProductTypeChange={ setProductType }
 				productType={ productType }
