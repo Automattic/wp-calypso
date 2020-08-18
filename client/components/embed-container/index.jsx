@@ -219,6 +219,7 @@ function embedStory( domNode ) {
 		link.className = storyButton.className;
 		const articleUrlObject = new URL( articleUrl );
 		articleUrlObject.searchParams.set( 'wp-story-load-in-fullscreen', 'true' );
+		articleUrlObject.searchParams.set( 'wp-story-play-on-load', 'true' );
 		link.href = articleUrlObject.href;
 		link.innerHTML = storyButton.innerHTML;
 		storyButton.parentNode.replaceChild( link, storyButton );
