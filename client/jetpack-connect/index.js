@@ -141,13 +141,17 @@ export default function () {
 		);
 	}
 
-	page(
-		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
-		siteSelection,
-		controller.plansSelection,
-		makeLayout,
-		clientRender
-	);
+	if ( shouldShowOfferResetFlow() ) {
+		plansV2( `/jetpack/connect/plans/:site`, siteSelection, controller.offerResetContext );
+	} else {
+		page(
+			'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
+			siteSelection,
+			controller.plansSelection,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,

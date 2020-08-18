@@ -21,7 +21,9 @@ function StoreHeader() {
 	const translate = useTranslate();
 	const partnerSlug = useSelector( ( state ) => getPartnerSlugFromQuery( state ) );
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
-	const isStoreLanding = currentRoute === '/jetpack/connect/store';
+	const isStoreLanding =
+		currentRoute === '/jetpack/connect/store' ||
+		currentRoute.startsWith( '/jetpack/connect/plans/' );
 
 	const headerClass = classNames( 'jetpack-connect__main-logo', {
 		'add-bottom-margin': ! isStoreLanding,
