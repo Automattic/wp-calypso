@@ -17,3 +17,41 @@
 		}
 	}
 }
+
+.upsell__header {
+	text-align: center;
+
+	background-color: var( --color-surface );
+
+	padding: 16px;
+	margin: 24px 0;
+}
+
+.upsell__subheader {
+	font-style: italic;
+
+	margin-bottom: 8px;
+}
+
+.upsell__saved-amount {
+	color: var( --studio-jetpack-green-40 );
+}
+
+.upsell__icons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	margin: 24px 0;
+}
+
+.upsell__plus-icon {
+	margin: 0 8px;
+}
+
+.upsell__product-icon {
+	width: 40px;
+	height: 40px;
+
+	filter: grayscale( 1 );
+}
