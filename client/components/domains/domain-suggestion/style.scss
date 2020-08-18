@@ -296,7 +296,7 @@ body.is-section-signup.is-white-signup {
 
 			.domain-product-price__free-price {
 				font-size: $font-body;
-				
+
 				@include break-mobile {
 					font-size: $font-body-small;
 				}
@@ -304,7 +304,7 @@ body.is-section-signup.is-white-signup {
 
 			.domain-product-price__free-text {
 				font-size: $font-body;
-				
+
 				@include break-mobile {
 					font-size: $font-body-small;
 				}
@@ -346,4 +346,13 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 	}
+}
+
+.domain-suggestion__price-placeholder {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: var( --color-neutral-0 );
+	color: transparent;
+	height: 16px;
+	margin: auto 0;
+	width: 20%;
 }

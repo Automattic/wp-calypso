@@ -237,6 +237,7 @@ class RegisterDomainStep extends React.Component {
 			loadingSubdomainResults:
 				( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) && loadingResults,
 			pageNumber: 1,
+			premiumDomains: {},
 			searchResults: null,
 			showAvailabilityNotice: false,
 			showSuggestionNotice: false,
@@ -603,6 +604,24 @@ class RegisterDomainStep extends React.Component {
 		this.props.onSave( this.state );
 	};
 
+	saveAndGetPremiumPrices = () => {
+		this.save();
+
+		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
+			this.fetchDomainPricePromise( premiumDomain )
+				.catch( () => [] )
+				.then( ( domainPrice ) => {
+					this.setState( ( state ) => {
+						const newPremiumDomains = { ...state.premiumDomains };
+						newPremiumDomains[ premiumDomain ] = domainPrice;
+						return {
+							premiumDomains: newPremiumDomains,
+						};
+					} );
+				} );
+		} );
+	};
+
 	repeatSearch = ( stateOverride = {}, { shouldQuerySubdomains = true } = {} ) => {
 		this.save();
 
@@ -734,6 +753,26 @@ class RegisterDomainStep extends React.Component {
 				this.setState( { availableTlds } );
 			} )
 			.catch( noop );
+	};
+
+	fetchDomainPricePromise = ( domain ) => {
+		return new Promise( ( resolve ) => {
+			wpcom.undocumented().getDomainPrice( domain, ( serverError, result ) => {
+				if ( serverError ) {
+					resolve( {
+						pending: true,
+						error: serverError,
+					} );
+					return;
+				}
+
+				resolve( {
+					pending: false,
+					is_premium: result.is_premium,
+					cost: result.cost,
+				} );
+			} );
+		} );
 	};
 
 	preCheckDomainAvailability = ( domain ) => {
@@ -926,12 +965,22 @@ class RegisterDomainStep extends React.Component {
 			this.props.deemphasiseTlds
 		);
 
+		const premiumDomains = {};
+		markedSuggestions
+			.filter( ( suggestion ) => suggestion?.is_premium )
+			.map( ( suggestion ) => {
+				premiumDomains[ suggestion.domain_name ] = {
+					pending: true,
+				};
+			} );
+
 		this.setState(
 			{
+				premiumDomains,
 				searchResults: markedSuggestions,
 				loadingResults: false,
 			},
-			this.save
+			this.saveAndGetPremiumPrices
 		);
 	};
 
@@ -1195,6 +1244,7 @@ class RegisterDomainStep extends React.Component {
 			lastDomainIsTransferrable,
 			lastDomainSearched,
 			lastDomainStatus,
+			premiumDomains,
 		} = this.state;
 
 		const matchesSearchedDomain = ( suggestion ) => suggestion.domain_name === exactMatchDomain;
@@ -1260,6 +1310,7 @@ class RegisterDomainStep extends React.Component {
 					onClickUseYourDomain={ useYourDomainFunction }
 					tracksButtonClickSource="exact-match-top"
 					suggestions={ suggestions }
+					premiumDomains={ premiumDomains }
 					isLoadingSuggestions={ this.state.loadingResults }
 					products={ this.props.products }
 					selectedSite={ this.props.selectedSite }
