@@ -26,13 +26,16 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { getSelectedVertical, getSelectedSiteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
-		select( STORE_KEY )
-	);
+	const {
+		getSelectedVertical,
+		getSelectedSiteTitle,
+		wasVerticalSkipped,
+		hasSiteTitle,
+	} = useSelect( ( select ) => select( STORE_KEY ) );
 
 	const siteTitleRef = React.useRef< HTMLInputElement >();
 
-	const { skipSiteVertical } = useDispatch( STORE_KEY );
+	const { skipSiteVertical, setDomainSearch, setSiteTitle } = useDispatch( STORE_KEY );
 
 	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
 
@@ -40,14 +43,17 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const { goNext } = useStepNavigation();
 
+	const showSiteTitleAndNext = !! (
+		getSelectedVertical() ||
+		hasSiteTitle() ||
+		wasVerticalSkipped()
+	);
+
 	useTrackStep( 'IntentGathering', () => ( {
 		selected_vertical_slug: getSelectedVertical()?.slug,
 		selected_vertical_label: getSelectedVertical()?.label,
-		has_selected_site_title: !! getSelectedSiteTitle(),
+		has_selected_site_title: hasSiteTitle(),
 	} ) );
-
-	const hasSiteTitle = !! getSelectedSiteTitle();
-	const showSiteTitleAndNext = !! ( getSelectedVertical() || hasSiteTitle || wasVerticalSkipped() );
 
 	const handleSkip = () => {
 		skipSiteVertical();
@@ -64,7 +70,15 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	const handleSiteTitleSubmit = () => {
-		! hasSiteTitle && recordSiteTitleSkip();
+		if ( hasSiteTitle() ) {
+			setDomainSearch( getSelectedSiteTitle() );
+		}
+		goNext();
+	};
+
+	const handleSiteTitleSkip = () => {
+		setSiteTitle( '' );
+		recordSiteTitleSkip();
 		goNext();
 	};
 
@@ -73,10 +87,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const siteTitleInput = showSiteTitleAndNext && (
 		<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
 	);
-	const nextStepButton = hasSiteTitle ? (
+	const nextStepButton = hasSiteTitle() ? (
 		<NextButton onClick={ handleSiteTitleSubmit }>{ __( 'Continue' ) }</NextButton>
 	) : (
-		<SkipButton onClick={ handleSiteTitleSubmit }>{ __( 'Skip for now' ) }</SkipButton>
+		<SkipButton onClick={ handleSiteTitleSkip }>{ __( 'Skip for now' ) }</SkipButton>
 	);
 
 	const skipButton = (
