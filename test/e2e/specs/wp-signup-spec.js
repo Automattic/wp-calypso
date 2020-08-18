@@ -31,7 +31,6 @@ import MagicLoginPage from '../lib/pages/magic-login-page';
 import ReaderPage from '../lib/pages/reader-page';
 import DomainOnlySettingsPage from '../lib/pages/domain-only-settings-page';
 import DomainDetailsPage from '../lib/pages/domain-details-page';
-import ProfilePage from '../lib/pages/profile-page';
 import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
 import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import ThemesPage from '../lib/pages/themes-page';
