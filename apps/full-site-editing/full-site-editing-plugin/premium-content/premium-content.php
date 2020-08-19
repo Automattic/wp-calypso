@@ -45,7 +45,28 @@ function premium_content_block_init() {
  * @return void
  */
 function premium_content_block_enqueue_block_editor_assets() {
-	load_static_editor();
+	$info         = get_script_info();
+	$script_asset = $info['script_asset'];
+	$url_path     = $info['url_path'];
+	$dir          = $info['dir'];
+
+	$index_js = 'dist/premium-content.js';
+	wp_register_script(
+		'premium-content-editor',
+		"$url_path/$index_js",
+		$script_asset['dependencies'],
+		$script_asset['version'],
+		false
+	);
+
+	$editor_css = 'editor.css';
+	wp_register_style(
+		'premium-content-editor',
+		"$url_path/$editor_css",
+		array(),
+		filemtime( "$dir/$editor_css" ),
+		false
+	);
 }
 
 /**
@@ -55,7 +76,27 @@ function premium_content_block_enqueue_block_editor_assets() {
  * @return void
  */
 function premium_content_block_enqueue_block_assets() {
-	load_static_frontend();
+	$info         = get_script_info();
+	$script_asset = $info['script_asset'];
+	$url_path     = $info['url_path'];
+	$dir          = $info['dir'];
+
+	$style_css = 'style.css';
+	wp_register_style(
+		'premium-content-frontend',
+		"$url_path/$style_css",
+		array(),
+		filemtime( "$dir/$style_css" )
+	);
+
+	wp_register_script(
+		'premium-content-frontend',
+		"$url_path/view.js",
+		array(),
+		$script_asset['version'],
+		false
+	);
+
 }
 
 
@@ -137,61 +178,6 @@ function register_blocks() {
 			'style'           => 'premium-content-frontend',
 		)
 	);
-}
-
-/**
- * Load static assets for the editor.
- */
-function load_static_editor() {
-	$info         = get_script_info();
-	$script_asset = $info['script_asset'];
-	$url_path     = $info['url_path'];
-	$dir          = $info['dir'];
-
-	$index_js = 'dist/premium-content.js';
-	wp_register_script(
-		'premium-content-editor',
-		"$url_path/$index_js",
-		$script_asset['dependencies'],
-		$script_asset['version'],
-		false
-	);
-
-	$editor_css = 'editor.css';
-	wp_register_style(
-		'premium-content-editor',
-		"$url_path/$editor_css",
-		array(),
-		filemtime( "$dir/$editor_css" ),
-		false
-	);
-}
-
-/**
- * Load static assets for the frontend.
- */
-function load_static_frontend() {
-	$info         = get_script_info();
-	$script_asset = $info['script_asset'];
-	$url_path     = $info['url_path'];
-	$dir          = $info['dir'];
-
-	$style_css = 'style.css';
-	wp_register_style(
-		'premium-content-frontend',
-		"$url_path/$style_css",
-		array(),
-		filemtime( "$dir/$style_css" )
-	);
-
-	wp_register_script(
-		'premium-content-frontend',
-		"$url_path/view.js",
-		array(),
-		$script_asset['version'],
-		false
-	);
-
 }
 
 /**
