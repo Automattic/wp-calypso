@@ -8,6 +8,9 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
+//TODO: TEST_PENDING
+//Can the attribute domainsStepHeader, domainsStepSubheader completely replaced with the new text? since
+//these headers cannot be seen outside the signup flow.
 const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
@@ -115,7 +118,6 @@ export function getAllSiteTypes() {
 			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
 			siteTopicHeader: i18n.translate( 'What does your business do?' ),
 			siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
-
 			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your business a domain!" ),
 			signUpFlowDomainsStepSubheader: i18n.translate(
 				"Tell us your business's name or a few keywords, and we'll come up with some suggestions."

@@ -103,6 +103,7 @@ class DomainProductPrice extends React.Component {
 		return <div className="domain-product-price__price">{ priceText }</div>;
 	}
 
+	//TODO: TEST_PENDING , can this flow be reached outside of signup?
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.isSignupStep,
@@ -116,6 +117,7 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
+	//TODO: TEST_PENDING , can this flow be reached outside of signup?
 	renderFree() {
 		const { isSignupStep, translate } = this.props;
 
@@ -136,6 +138,7 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
+	//TODO: TEST_PENDING , can this flow be reached outside of signup?
 	renderSalePrice() {
 		const { price, salePrice, translate } = this.props;
 
@@ -156,6 +159,7 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
+	//VERIFIED_WORKING
 	renderPrice() {
 		const { salePrice, isSignupStep, price, translate } = this.props;
 		if ( salePrice ) {
