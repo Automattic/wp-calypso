@@ -207,22 +207,15 @@ function embedStory( domNode ) {
 		`https://s0.wp.com/wp-content/mu-plugins/jetpack/_inc/blocks/story/view.css${ cacheBustQuery }`
 	);
 
-	const articleUrl = domNode
-		.closest( 'article.reader-full-post__story' )
-		.querySelector( '.reader-full-post__header a' ).href;
-	const storyButton = domNode.querySelector( 'div.wp-story-overlay.wp-story-clickable' );
+	const storyLink = domNode.querySelector( 'a.wp-story-overlay' );
 
-	if ( storyButton ) {
-		// replace button with hyperlink
-		const link = document.createElement( 'a' );
-		link.setAttribute( 'target', '_blank' );
-		link.className = storyButton.className;
-		const articleUrlObject = new URL( articleUrl );
-		articleUrlObject.searchParams.set( 'wp-story-load-in-fullscreen', 'true' );
-		articleUrlObject.searchParams.set( 'wp-story-play-on-load', 'true' );
-		link.href = articleUrlObject.href;
-		link.innerHTML = storyButton.innerHTML;
-		storyButton.parentNode.replaceChild( link, storyButton );
+	// open story in a new tab and play it automatically in fullscreen
+	if ( storyLink ) {
+		storyLink.setAttribute( 'target', '_blank' );
+		const storyLinkUrl = new URL( storyLink.href );
+		storyLinkUrl.searchParams.set( 'wp-story-load-in-fullscreen', 'true' );
+		storyLinkUrl.searchParams.set( 'wp-story-play-on-load', 'true' );
+		storyLink.href = storyLinkUrl.href;
 	}
 }
 
