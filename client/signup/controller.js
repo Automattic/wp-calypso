@@ -117,17 +117,18 @@ export default {
 			next();
 		} else {
 			const userLoggedIn = isUserLoggedIn( context.store.getState() );
-			if ( userLoggedIn && 'gutenberg' === abtest( 'existingUsersGutenbergOnboard' ) ) {
-				gutenbergRedirect();
-				return;
-			}
 
 			waitForData( {
 				geo: () => requestGeoLocation(),
 			} )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
-					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
+					if (
+						userLoggedIn &&
+						'gutenberg' === abtest( 'existingUsersGutenbergOnboard', countryCode )
+					) {
+						gutenbergRedirect();
+					} else if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
 						gutenbergRedirect();
 					} else if (
 						( ! user() || ! user().get() ) &&
