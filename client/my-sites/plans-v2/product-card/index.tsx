@@ -3,6 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 
 /**
  * Internal dependencies
@@ -121,6 +122,10 @@ const ProductCardWrapper = ( {
 	const isExpiring = purchase && isCloseToExpiration( purchase );
 	const showExpiryNotice = item.legacy && isExpiring;
 
+	// Is highlighted?
+	const isMobile: boolean = useMobileBreakpoint();
+	const isHighlighted = highlight && ! isOwned && slugIsFeaturedProduct( item.productSlug );
+
 	const CardComponent = itemToCard( item ); // Get correct card component.
 	return (
 		<CardComponent
@@ -150,7 +155,8 @@ const ProductCardWrapper = ( {
 				<UpgradeNudgeWrapper item={ item } currencyCode={ currencyCode } onClick={ onClick } />
 			}
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
-			isHighlighted={ highlight && ! isOwned && slugIsFeaturedProduct( item.productSlug ) }
+			isHighlighted={ isHighlighted }
+			isExpanded={ isHighlighted && ! isMobile }
 		/>
 	);
 };
