@@ -785,8 +785,11 @@ class RegisterDomainStep extends React.Component {
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
+					const allowedAvailableStatuses = config.isEnabled( 'domains/premium-domain-purchases' )
+						? [ domainAvailability.AVAILABLE, domainAvailability.AVAILABLE_PREMIUM ]
+						: [ domainAvailability.AVAILABLE ];
 					resolve( {
-						status: status !== domainAvailability.AVAILABLE ? status : null,
+						status: ! allowedAvailableStatuses.includes( status ) ? status : null,
 						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
 					} );
 				}
