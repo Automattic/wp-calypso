@@ -39,7 +39,7 @@ const ProductComponent = ( {
 	onClick,
 	currencyCode,
 }: {
-	product: SelectorProduct & { showOptions?: boolean };
+	product: SelectorProduct;
 	onClick: PurchaseCallback;
 	currencyCode: string;
 } ) => (
@@ -56,7 +56,6 @@ const ProductComponent = ( {
 		discountedPrice={ product.discountCost }
 		originalPrice={ product.cost || 0 }
 		isOwned={ product.owned }
-		showOptions={ product.showOptions }
 	/>
 );
 
@@ -95,12 +94,23 @@ const ProductsColumn = ( {
 					owned: currentProducts.includes( product.productSlug ),
 				} ) )
 				// If product offers 'realtime' and 'daily' options, AND product is not already owned,
-				//  show "Available Options: Real-Time and Daily" in the product description.
+				// append "Available Options: Real-Time and Daily" to the product description.
 				.map( ( product: SelectorProduct ) => ( {
 					...product,
-					showOptions:
+					description:
 						product.subtypes?.filter( ( subtype ) => /_(daily|realtime)$/.test( subtype ) )
-							.length >= 2 && ! currentProducts.includes( product.productSlug ),
+							.length >= 2 && ! currentProducts.includes( product.productSlug ) ? (
+							<>
+								{ product.description }{ ' ' }
+								{ translate( '{{em}}Available options: Real-Time or Daily.{{/em}}', {
+									components: {
+										em: <em />,
+									},
+								} ) }
+							</>
+						) : (
+							product.description
+						),
 				} ) ),
 		[ duration, productType, currentProducts, availableProducts ]
 	);
