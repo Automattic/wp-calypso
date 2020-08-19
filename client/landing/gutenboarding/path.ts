@@ -96,3 +96,8 @@ export function useCurrentStep() {
 export function useNewQueryParam() {
 	return new URLSearchParams( useLocation().search ).has( 'new' );
 }
+
+// Returns true if the url has a `?v=1`, which is used to enable experimental features
+export function useExperimentalQueryParam() {
+	return new URLSearchParams( useLocation().search ).has( 'latest' );
+}

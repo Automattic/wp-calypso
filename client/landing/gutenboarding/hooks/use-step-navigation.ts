@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { useSelect, useDispatch } from '@wordpress/data';
+import { isEnabled } from 'config';
 import { useHistory } from 'react-router-dom';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -25,6 +26,7 @@ import useSignup from './use-signup';
  */
 export default function useStepNavigation(): { goBack: () => void; goNext: () => void } {
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	const makePath = usePath();
 	const history = useHistory();
@@ -36,6 +38,26 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	let steps = hasSiteTitle()
 		? [ Step.IntentGathering, Step.Domains, Step.DesignSelection, Step.Style, Step.Plans ]
 		: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
+
+	if ( isExperimental && isEnabled( 'gutenboarding/feature-picker' ) ) {
+		steps = hasSiteTitle()
+			? [
+					Step.IntentGathering,
+					Step.Domains,
+					Step.DesignSelection,
+					Step.Style,
+					Step.Features,
+					Step.Plans,
+			  ]
+			: [
+					Step.IntentGathering,
+					Step.DesignSelection,
+					Step.Style,
+					Step.Domains,
+					Step.Features,
+					Step.Plans,
+			  ];
+	}
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
