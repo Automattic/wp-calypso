@@ -246,9 +246,11 @@ class DomainRegistrationSuggestion extends React.Component {
 			comment: 'Shown next to a domain that has a special discounted sale price',
 		} );
 		const infoPopoverSize = isFeatured ? 22 : 18;
+
+		//VERIFIED_WORKING
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain-copy-test':
-				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
+				this.props.isSignupStep && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -304,7 +306,8 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = this.props.isEligibleVariantForDomainTest
+			//VERIFIED_WORKING
+			title = this.props.isSignupStep
 				? translate( 'Our Recommendation' )
 				: translate( 'Best Match' );
 			progressBarProps = {
@@ -323,7 +326,8 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
-			if ( this.props.isEligibleVariantForDomainTest ) {
+			//VERIFIED_WORKING
+			if ( this.props.isSignupStep ) {
 				const badgeClassName = classNames( '', {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
@@ -346,7 +350,8 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.isEligibleVariantForDomainTest ) {
+		//TODO: TEST_PENDING
+		if ( this.props.isSignupStep ) {
 			return null;
 		}
 
@@ -401,7 +406,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
-				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+				isSignupStep={ this.props.isSignupStep }
 				isFeatured={ isFeatured }
 				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 			>
@@ -417,7 +422,7 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
+	const stripZeros = props.isSignupStep ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 
 	let productCost;

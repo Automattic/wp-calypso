@@ -8,6 +8,9 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
+//TODO: TEST_PENDING
+//Can the attribute domainsStepHeader, domainsStepSubheader completely replaced with the new text? since
+//these headers cannot be seen outside the signup flow.
 const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
@@ -36,8 +39,8 @@ const getSiteTypePropertyDefaults = ( propertyKey ) =>
 			domainsStepSubheader: i18n.translate(
 				'Enter a keyword that describes your site to get started.'
 			),
-			domainsStepHeaderTestCopy: i18n.translate( "Let's get your site a domain!" ),
-			domainsStepSubheaderTestCopy: i18n.translate(
+			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your site a domain!" ),
+			signUpFlowDomainsStepSubheader: i18n.translate(
 				"Tell us your site's name or a few keywords, and we'll come up with some suggestions."
 			),
 			// Site styles step
@@ -106,8 +109,8 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your blog's name or some keywords that describe it to get started."
 			),
-			domainsStepHeaderTestCopy: i18n.translate( "Let's get your blog a domain!" ),
-			domainsStepSubheaderTestCopy: i18n.translate(
+			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your blog a domain!" ),
+			signUpFlowDomainsStepSubheader: i18n.translate(
 				"Tell us your blog's name or a few keywords, and we'll come up with some suggestions."
 			),
 		},
@@ -126,8 +129,8 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your business's name or some keywords that describe it to get started."
 			),
-			domainsStepHeaderTestCopy: i18n.translate( "Let's get your business a domain!" ),
-			domainsStepSubheaderTestCopy: i18n.translate(
+			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your business a domain!" ),
+			signUpFlowDomainsStepSubheader: i18n.translate(
 				"Tell us your business's name or a few keywords, and we'll come up with some suggestions."
 			),
 			customerType: 'business',
@@ -168,8 +171,8 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your site's name or some keywords that describe it to get started."
 			),
-			domainsStepHeaderTestCopy: i18n.translate( "Let's get your store a domain!" ),
-			domainsStepSubheaderTestCopy: i18n.translate(
+			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your store a domain!" ),
+			signUpFlowDomainsStepSubheader: i18n.translate(
 				"Tell us your store's name or a few keywords, and we'll come up with some suggestions."
 			),
 		},
