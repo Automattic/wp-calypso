@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { useI18n } from '@automattic/react-i18n';
@@ -12,18 +11,19 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import joinClasses from '../lib/join-classes';
 import Button from './button';
+import styled from '../lib/styled';
 
 export default function CheckoutModal( {
 	className,
 	title,
 	copy,
 	primaryAction,
-	cancelAction = () => {},
+	cancelAction = noop,
 	closeModal,
 	isVisible,
 	buttonCTA,
 	cancelButtonCTA,
-} ) {
+}: CheckoutModalProps ) {
 	const { __ } = useI18n();
 	useModalScreen( isVisible, closeModal );
 
@@ -69,6 +69,23 @@ CheckoutModal.propTypes = {
 	buttonCTA: PropTypes.string,
 	cancelButtonCTA: PropTypes.string,
 };
+
+type Callback = () => void;
+
+interface CheckoutModalProps {
+	closeModal: Callback;
+	title: string;
+	copy: string;
+	primaryAction: Callback;
+	cancelAction?: Callback;
+	isVisible: boolean;
+	className?: string;
+	buttonCTA?: string;
+	cancelButtonCTA?: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop(): void {}
 
 const fadeIn = keyframes`
   from {
@@ -153,21 +170,21 @@ const CheckoutModalActions = styled.div`
 	}
 `;
 
-function handlePrimaryAction( primaryAction, closeModal ) {
+function handlePrimaryAction( primaryAction: Callback, closeModal: Callback ) {
 	primaryAction();
 	closeModal();
 }
 
-function handleCancelAction( cancelAction, closeModal ) {
+function handleCancelAction( cancelAction: Callback, closeModal: Callback ) {
 	cancelAction();
 	closeModal();
 }
 
-function preventClose( event ) {
+function preventClose( event: React.MouseEvent< HTMLDivElement, MouseEvent > ) {
 	event.stopPropagation();
 }
 
-function useModalScreen( isVisible, closeModal ) {
+function useModalScreen( isVisible: boolean, closeModal: Callback ) {
 	useEffect( () => {
 		document.body.style.cssText = isVisible ? 'overflow: hidden' : '';
 		const keyPressHandler = makeHandleKeyPress( closeModal );
@@ -181,9 +198,9 @@ function useModalScreen( isVisible, closeModal ) {
 	}, [ isVisible, closeModal ] );
 }
 
-function makeHandleKeyPress( closeModal ) {
+function makeHandleKeyPress( closeModal: Callback ) {
 	const escapeKey = 27;
-	return ( key ) => {
+	return ( key: { keyCode: number } ) => {
 		if ( key.keyCode === escapeKey ) {
 			closeModal();
 		}
