@@ -225,6 +225,7 @@ export const FEATURE_SECURITY_REALTIME_V2 = Symbol();
 export const FEATURE_BACKUP_V2 = Symbol();
 export const FEATURE_BACKUP_DAILY_V2 = Symbol();
 export const FEATURE_BACKUP_REALTIME_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_V2 = Symbol();
 export const FEATURE_PRODUCT_BACKUP_DAILY_V2 = Symbol();
 export const FEATURE_PRODUCT_BACKUP_REALTIME_V2 = Symbol();
 export const FEATURE_SCAN_V2 = Symbol();

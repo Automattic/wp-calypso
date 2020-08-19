@@ -1034,6 +1034,21 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_V2,
+		getTitle: () => i18n.translate( 'Automated WordPress backups' ),
+	},
+
+	[ constants.FEATURE_BACKUP_DAILY_V2 ]: {
+		getSlug: () => constants.FEATURE_BACKUP_DAILY_V2,
+		getTitle: () => i18n.translate( 'Automated daily site backups' ),
+	},
+
+	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
+		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
+		getTitle: () => i18n.translate( 'Automated real-time site backups' ),
+	},
+
+	[ constants.FEATURE_PRODUCT_BACKUP_V2 ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_V2,
 		getIcon: () => 'cloud-upload',
 		getTitle: () => i18n.translate( 'Backup' ),
 		getDescription: () =>
@@ -1045,16 +1060,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-	},
-
-	[ constants.FEATURE_BACKUP_DAILY_V2 ]: {
-		getSlug: () => constants.FEATURE_BACKUP_DAILY_V2,
-		getTitle: () => i18n.translate( 'Automated daily site backups' ),
-	},
-
-	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
-		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
-		getTitle: () => i18n.translate( 'Automated real-time site backups' ),
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {

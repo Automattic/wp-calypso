@@ -35,6 +35,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	FEATURE_CATEGORY_SECURITY,
 	FEATURE_BACKUP_V2,
+	FEATURE_PRODUCT_BACKUP_V2,
 	FEATURE_SCAN_V2,
 	FEATURE_ANTISPAM_V2,
 	FEATURE_ACTIVITY_LOG_V2,
@@ -44,6 +45,8 @@ import {
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_SITE_MONETIZATION_V2,
 	FEATURE_PRIORITY_SUPPORT_V2,
+	FEATURE_ONE_CLICK_RESTORE_V2,
+	FEATURE_SECURE_STORAGE_V2,
 } from 'lib/plans/constants';
 import { buildCardFeaturesFromItem } from './utils';
 
@@ -125,7 +128,7 @@ export const OPTION_PLAN_SECURITY: SelectorProduct = {
 	features: {
 		items: buildCardFeaturesFromItem( {
 			[ FEATURE_CATEGORY_SECURITY ]: [
-				FEATURE_BACKUP_V2,
+				FEATURE_PRODUCT_BACKUP_V2,
 				FEATURE_SCAN_V2,
 				FEATURE_ANTISPAM_V2,
 				FEATURE_ACTIVITY_LOG_V2,
@@ -159,9 +162,21 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	monthlyProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	iconSlug: 'jetpack_backup_v2',
 	displayName: translate( 'Jetpack Backup' ),
-	tagline: '',
-	description: '',
-	features: { items: [] },
+	tagline: translate( 'Recommended for all sites' ),
+	description: translate( 'Never lose a word, image, page, or time worrying about your site' ),
+	buttonLabel: translate( 'Get Backup' ),
+	features: {
+		items: buildCardFeaturesFromItem(
+			[
+				FEATURE_BACKUP_V2,
+				FEATURE_ONE_CLICK_RESTORE_V2,
+				FEATURE_SECURE_STORAGE_V2,
+				FEATURE_ACTIVITY_LOG_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			],
+			{ withoutDescription: true }
+		),
+	},
 };
 export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 	...OPTION_PRODUCT_BACKUP,
