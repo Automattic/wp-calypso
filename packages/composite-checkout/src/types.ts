@@ -54,7 +54,7 @@ export interface CheckoutProviderProps {
 	showSuccessMessage: ( message: string ) => void;
 	onEvent?: ( event: ReactStandardAction ) => void;
 	isLoading?: boolean;
-	redirectToUrl: ( url: string ) => void;
+	redirectToUrl?: ( url: string ) => void;
 	paymentProcessors: PaymentProcessorProp;
 	isValidating?: boolean;
 }
