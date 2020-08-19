@@ -87,3 +87,13 @@ export interface TransactionStatusManager {
 	setTransactionRedirecting: ( url: string ) => void;
 	setTransactionAuthorizing: ( response: object ) => void;
 }
+
+export interface LineItemsState {
+	items: LineItem[];
+	total: LineItem;
+}
+
+export interface LineItemsProviderProps {
+	items: LineItem[];
+	total: LineItem;
+}
