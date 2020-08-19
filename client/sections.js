@@ -239,6 +239,7 @@ const sections = [
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'domains',

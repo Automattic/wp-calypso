@@ -64,6 +64,7 @@ import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -815,4 +816,4 @@ export default connect(
 		setThemePreviewOptions,
 		recordTracksEvent,
 	}
-)( localize( ThemeSheetWithOptions ) );
+)( localize( withPerformanceTrackerStop( ThemeSheetWithOptions ) ) );
