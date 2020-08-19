@@ -44,7 +44,6 @@ import {
 	getConnectedAccountIdForSiteId,
 	getConnectUrlForSiteId,
 } from 'state/memberships/settings/selectors';
-import { getProductsForSiteId } from 'state/memberships/product-list/selectors';
 
 /**
  * Image dependencies
@@ -636,8 +635,6 @@ class MembershipsSection extends Component {
 		);
 	}
 }
-//Used to avoid re-renders. Do not mutate!
-const emptyArray = [];
 
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
@@ -659,7 +656,6 @@ const mapStateToProps = ( state ) => {
 		connectUrl: getConnectUrlForSiteId( state, siteId ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
-		products: getProductsForSiteId( state, siteId ) ?? emptyArray,
 	};
 };
 
