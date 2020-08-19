@@ -60,9 +60,11 @@ export interface CheckoutProviderProps {
 }
 
 export interface PaymentProcessorProp {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[ key: string ]: ( ...args: any[] ) => void;
+	[ key: string ]: PaymentProcessorFunction;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type PaymentProcessorFunction = ( ...args: any[] ) => void;
 
 export interface TransactionStatus {
 	transactionStatus: string;
