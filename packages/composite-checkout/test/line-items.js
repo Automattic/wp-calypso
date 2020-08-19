@@ -24,21 +24,6 @@ describe( 'useLineItems', function () {
 		console.error = original;
 	} );
 
-	it( 'throws if outside of a CheckoutProvider', function () {
-		const ThingWithHook = () => {
-			const [ items, total ] = useLineItems();
-			return (
-				<div>
-					{ items.map( ( item ) => (
-						<span key={ item.id }>{ item.label }</span>
-					) ) }
-					<span key={ total.id }>{ total.label }</span>
-				</div>
-			);
-		};
-		expect( () => render( <ThingWithHook /> ) ).toThrow( /CheckoutProvider/ );
-	} );
-
 	it( 'does not throw if there are no items', function () {
 		const ThingWithHook = () => {
 			const [ items, total ] = useLineItems();
