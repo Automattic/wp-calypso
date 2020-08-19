@@ -36,8 +36,8 @@ function getItemsForKeys( items, itemKeys ) {
 		itemsCache.set( items, cacheForItems );
 	}
 
-	// `itemKeys === null` means a request for array of all items. Cache them with a special key.
-	if ( ! itemKeys ) {
+	// `itemKeys == null` means a request for array of all items. Cache them with a special key.
+	if ( itemKeys == null ) {
 		let resultForAllKeys = cacheForItems.get( ALL_ITEMS_KEY );
 		if ( ! resultForAllKeys ) {
 			resultForAllKeys = values( items );
