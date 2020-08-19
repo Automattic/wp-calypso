@@ -15,7 +15,6 @@ import type {
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PRODUCT,
 } from './constants';
-import type { ProductCardFeatures } from 'components/jetpack/card/jetpack-product-card/types';
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
 export type DurationString = 'annual' | 'monthly';
@@ -50,6 +49,26 @@ export type SelectorProductCost = {
 	loadingCost?: boolean;
 };
 
+export type SelectorProductFeaturesItem = {
+	icon?: string;
+	text: TranslateResult;
+	description?: TranslateResult;
+	subitems?: SelectorProductFeaturesItem[];
+};
+
+export type SelectorProductFeaturesSection = {
+	heading: TranslateResult;
+	list: SelectorProductFeaturesItem[];
+};
+
+export type SelectorProductFeatures = {
+	items: SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[];
+	more?: {
+		url: string;
+		label: TranslateResult;
+	};
+};
+
 export interface SelectorProduct extends SelectorProductCost {
 	productSlug: string;
 	iconSlug: string;
@@ -62,7 +81,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	description: TranslateResult | ReactNode;
 	term: Duration;
 	buttonLabel?: TranslateResult;
-	features: ProductCardFeatures;
+	features: SelectorProductFeatures;
 	subtypes: string[];
 	legacy?: boolean;
 }

@@ -5,29 +5,12 @@
 /**
  * Type dependencies
  */
+import type {
+	SelectorProductFeaturesItem,
+	SelectorProductFeaturesSection,
+	SelectorProductFeatures,
+} from 'my-sites/plans-v2/types';
 
-import type { TranslateResult } from 'i18n-calypso';
-
-export type ProductCardFeaturesItem = {
-	icon?: string;
-	text: TranslateResult;
-	description?: TranslateResult;
-	subitems?: ProductCardFeaturesItem[];
-};
-
-export type ProductCardFeaturesSection = {
-	heading: TranslateResult;
-	list: ProductCardFeaturesItem[];
-};
-
-export type ProductCardFeaturesItems = ProductCardFeaturesItem[] | ProductCardFeaturesSection[];
-
-export type ProductCardFeaturesLink = {
-	url: string;
-	label: TranslateResult;
-};
-
-export type ProductCardFeatures = {
-	items: ProductCardFeaturesItems;
-	more?: ProductCardFeaturesLink;
-};
+export type ProductCardFeaturesItem = SelectorProductFeaturesItem;
+export type ProductCardFeaturesSection = SelectorProductFeaturesSection;
+export type ProductCardFeatures = SelectorProductFeatures;

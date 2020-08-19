@@ -38,12 +38,14 @@ import { PLAN_COMPARISON_PAGE } from 'my-sites/plans-v2/constants';
 /**
  * Type dependencies
  */
-import type { Duration, SelectorProduct, SelectorProductSlug, DurationString } from './types';
 import type {
-	ProductCardFeaturesItems,
-	ProductCardFeaturesItem,
-	ProductCardFeaturesSection,
-} from 'components/jetpack/card/jetpack-product-card/types';
+	Duration,
+	SelectorProduct,
+	SelectorProductSlug,
+	DurationString,
+	SelectorProductFeaturesItem,
+	SelectorProductFeaturesSection,
+} from './types';
 import type {
 	JetpackRealtimePlan,
 	JetpackPlanSlugs,
@@ -246,11 +248,11 @@ export function itemToSelectorProduct(
  * Builds a feature object of a product card, from a feature key.
  *
  * @param {JetpackPlanCardFeature} featureKey Key of the feature
- * @returns {ProductCardFeaturesItem} Feature item
+ * @returns {SelectorProductFeaturesItem} Feature item
  */
 export function buildCardFeatureItemFromFeatureKey(
 	featureKey: JetpackPlanCardFeature
-): ProductCardFeaturesItem | undefined {
+): SelectorProductFeaturesItem | undefined {
 	let feature;
 	let subFeaturesKeys;
 
@@ -279,9 +281,11 @@ export function buildCardFeatureItemFromFeatureKey(
  * Builds the features object passed to the product card, from a plan or product.
  *
  * @param { Plan | Product} item Product or plan
- * @returns {ProductCardFeaturesItems} Features
+ * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
-export function buildCardFeaturesFromItem( item: Plan | Product ): ProductCardFeaturesItems {
+export function buildCardFeaturesFromItem(
+	item: Plan | Product
+): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
 		const features = item.getPlanCardFeatures?.();
 
@@ -292,18 +296,17 @@ export function buildCardFeaturesFromItem( item: Plan | Product ): ProductCardFe
 
 		// With sections
 		if ( isObject( features ) ) {
-			const result = [] as ProductCardFeaturesSection[];
+			const result = [] as SelectorProductFeaturesSection[];
 
 			Object.getOwnPropertySymbols( features ).map( ( key ) => {
 				const category = getFeatureCategoryByKey( key );
-				// TODO: fix TS error
 				const subfeatures = features[ key ];
 
 				if ( category ) {
 					result.push( {
 						heading: category.getTitle(),
 						list: subfeatures.map( buildCardFeatureItemFromFeatureKey ),
-					} as ProductCardFeaturesSection );
+					} as SelectorProductFeaturesSection );
 				}
 			} );
 
