@@ -56,9 +56,9 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function
 
 			// The "inline help" FAB should not appear on the My Home
 			// because there is already a support search "Card" on that
-			// page. Therefore we select the "Themes" page for our tests
-			// and then we will switch away to the Homepage to verify
-			// that the Inline Help is not shown
+			// page. Any other non-home page should show the FAB. There
+			// is nothing special about Themes page other than it's not
+			// the `/home` route :)
 			await sidebarComponent.selectThemes();
 
 			// Once removed we can assert is is invisible.

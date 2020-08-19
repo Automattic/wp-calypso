@@ -61,13 +61,13 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		);
 	} );
 
-	step( 'Displays contextual search results by default', async function () {
+	step( 'Displays Default Results initially', async function () {
 		supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
-		assert.equal( resultsCount, 5, 'The default results are displayed' );
+		assert.equal( resultsCount, 5, 'There are not 5 Default Results displayed.' );
 	} );
 
-	step( 'Returns search results for valid search query', async function () {
+	step( 'Returns API Search Results for valid search query', async function () {
 		await supportSearchComponent.searchFor( 'Domain' );
 
 		const searchResultsCount = await supportSearchComponent.getSearchResultsCount();
@@ -76,31 +76,35 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 		const defaultResults = await supportSearchComponent.waitForDefaultResultsNotToBePresent();
 
-		assert.equal( defaultResults, true, 'The default results are not displayed.' );
+		assert.equal(
+			defaultResults,
+			true,
+			'The Default Results are displayed. They should not be present after we have API Search Results.'
+		);
 
 		assert.equal(
 			searchResultsCount <= 5,
 			true,
-			`Too many search results displayed. Should be less than or equal to 5.`
+			`Too many API Search Results displayed. Should be less than or equal to 5.`
 		);
 		assert.equal(
 			searchResultsCount >= 1,
 			true,
-			`Too few search results displayed. Should be more than or equal to 1.`
+			`Too few API Search Results displayed. Should be more than or equal to 1.`
 		);
 		assert.equal(
 			adminResultsCount <= 3,
 			true,
-			`Too many admin results displayed. Should be less than or equal to 3.`
+			`Too many Admin Results displayed. Should be less than or equal to 3.`
 		);
 		assert.equal(
 			adminResultsCount >= 1,
 			true,
-			`Too few admin results displayed. Should be more than or equal to 1.`
+			`Too few Admin Results displayed. Should be more than or equal to 1.`
 		);
 	} );
 
-	step( 'Resets search UI to default state when search input is cleared ', async function () {
+	step( 'Resets search UI to default state when search input is cleared', async function () {
 		await supportSearchComponent.clearSearchField();
 
 		const searchResults = await supportSearchComponent.waitForSearchResultsNotToBePresent();
@@ -113,7 +117,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 		assert.equal( adminResults, true, 'The Admin Results are not displayed.' );
 
-		assert.equal( defaultResultsCount, 5, 'The default results displayed' );
+		assert.equal( defaultResultsCount, 5, 'The 5 Default Results are not displayed.' );
 	} );
 
 	step(
@@ -133,7 +137,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 			assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
-			assert.equal( resultsCount, 5, 'The default error results are displayed.' );
+			assert.equal( resultsCount, 5, 'The 5 default Error Results are not displayed.' );
 		}
 	);
 
@@ -144,12 +148,12 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 
-		assert.equal( errorResults, true, 'The default error results are not displayed.' );
+		assert.equal( errorResults, true, 'The default Error Results are not displayed.' );
 
-		assert.equal( resultsCount, 5, 'The default results are displayed' );
+		assert.equal( resultsCount, 5, 'The 5 Default Results are not displayed.' );
 	} );
 
-	step( 'Does not request search results for empty search queries', async function () {
+	step( 'Does not request API Search Results for empty search queries', async function () {
 		const emptyWhitespaceQuery = '         ';
 
 		await supportSearchComponent.searchFor( emptyWhitespaceQuery );
