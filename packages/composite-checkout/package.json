@@ -4,11 +4,13 @@
 	"description": "A checkout component for Automattic brands",
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
+	"types": "dist/types",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "npx rimraf dist \"../../.tsc-cache/packages__composite-checkout*\"",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"files": [
 		"dist",
