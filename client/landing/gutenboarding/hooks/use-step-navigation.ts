@@ -9,7 +9,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { Step, usePath, useCurrentStep } from '../path';
+import { Step, usePath, useCurrentStep, StepType } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { useShouldSiteBePublic } from './use-selected-plan';
@@ -35,10 +35,13 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	// If the user enters a site title on Intent Capture step we are showing Domains step next.
 	// Else, we're showing Domains step before Plans step.
-	let steps = hasSiteTitle()
+	let steps: StepType[];
+
+	steps = hasSiteTitle()
 		? [ Step.IntentGathering, Step.Domains, Step.DesignSelection, Step.Style, Step.Plans ]
 		: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
 
+	// When feature picker experiment is enabled, if site title is skipped, we're showing Domains step before Features step.
 	if ( isExperimental && isEnabled( 'gutenboarding/feature-picker' ) ) {
 		steps = hasSiteTitle()
 			? [
