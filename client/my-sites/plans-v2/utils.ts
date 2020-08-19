@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate, TranslateResult } from 'i18n-calypso';
-import { compact, get, isArray, isObject } from 'lodash';
+import { compact, get, isArray, isObject, isString } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +38,7 @@ import { MORE_FEATURES_LINK } from 'my-sites/plans-v2/constants';
 /**
  * Type dependencies
  */
+import type { ReactElement } from 'react';
 import type {
 	Duration,
 	SelectorProduct,
@@ -95,13 +96,19 @@ export function productButtonLabel( product: SelectorProduct, isOwned: boolean )
 			: translate( 'Manage Subscription' );
 	}
 
-	return (
-		product.buttonLabel ??
-		translate( 'Get %s', {
-			args: product.displayName,
-			comment: '%s is the name of a product',
-		} )
-	);
+	const { buttonLabel, displayName } = product;
+
+	return buttonLabel ?? isString( displayName )
+		? translate( 'Get %s', {
+				args: displayName,
+				comment: '%s is the name of a product',
+		  } )
+		: translate( 'Get {{name/}}', {
+				components: {
+					name: displayName as ReactElement,
+				},
+				comment: '{{name/}} is the name of a product',
+		  } );
 }
 
 export function productBadgeLabel(
@@ -283,11 +290,11 @@ export function buildCardFeatureItemFromFeatureKey(
  * Builds the feature items passed to the product card, from feature keys.
  *
  * @param {JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection} features Feature keys
- * @returns {ProductCardFeaturesItems} Features
+ * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromFeatureKeys(
 	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection
-): ProductCardFeaturesItems {
+): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	// Without sections (JetpackPlanCardFeature[])
 	if ( isArray( features ) ) {
 		return compact( features.map( buildCardFeatureItemFromFeatureKey ) );
@@ -309,7 +316,7 @@ export function buildCardFeaturesFromFeatureKeys(
 			}
 		} );
 
-		return compact( result );
+		return result;
 	}
 
 	return [];
@@ -319,11 +326,11 @@ export function buildCardFeaturesFromFeatureKeys(
  * Builds the feature items passed to the product card, from a plan, product, or object.
  *
  * @param {Plan | Product | object} item Product, plan, or object
- * @returns {ProductCardFeaturesItems} Features
+ * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromItem(
 	item: Plan | Product | object
-): ProductCardFeaturesItems {
+): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
 		const features = item.getPlanCardFeatures?.();
 
