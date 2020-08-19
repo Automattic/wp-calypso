@@ -20,3 +20,17 @@ export interface LineItemAmount {
 	value: number;
 	displayValue: string;
 }
+
+export interface FormStatusManager {
+	formStatus: string;
+	setFormReady: () => void;
+	setFormLoading: () => void;
+	setFormValidating: () => void;
+	setFormSubmitting: () => void;
+	setFormComplete: () => void;
+}
+
+export interface ReactStandardAction {
+	type: string;
+	payload?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
