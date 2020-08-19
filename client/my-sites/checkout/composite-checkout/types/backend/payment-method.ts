@@ -26,6 +26,7 @@ import { CheckoutPaymentMethodSlug } from '../checkout-payment-method-slug';
 export type WPCOMPaymentMethodClass =
 	| WPCOMBillingEbanx
 	| WPCOMBillingEbanxRedirectBrazilTef
+	| WPCOMBillingDlocalRedirectIndiaNetbanking
 	| WPCOMBillingPayPalDirect
 	| WPCOMBillingPayPalExpress
 	| WPCOMBillingStripePaymentMethod
@@ -50,6 +51,9 @@ export interface WPCOMBillingFree {
 }
 export interface WPCOMBillingEbanx {
 	name: 'WPCOM_Billing_Ebanx';
+}
+export interface WPCOMBillingDlocalRedirectIndiaNetbanking {
+	name: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
 }
 export interface WPCOMBillingEbanxRedirectBrazilTef {
 	name: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef';
@@ -112,6 +116,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodC
 		case 'WPCOM_Billing_WPCOM':
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
+		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
@@ -170,6 +175,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'stripe-three-d-secure';
 		case 'WPCOM_Billing_Stripe_Source_Wechat':
 			return 'wechat';
+		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
+			return 'netbanking';
 		case 'WPCOM_Billing_Web_Payment':
 			return 'apple-pay';
 	}
@@ -187,6 +194,8 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return { name: 'WPCOM_Billing_Ebanx' };
 		case 'brazil-tef':
 			return { name: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef' };
+		case 'netbanking':
+			return { name: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking' };
 		case 'paypal-direct':
 			return { name: 'WPCOM_Billing_PayPal_Direct' };
 		case 'paypal':

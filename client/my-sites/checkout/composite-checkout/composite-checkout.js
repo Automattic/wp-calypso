@@ -478,6 +478,8 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'giropay', transactionData, dataForRedirectProcessor ),
 			wechat: ( transactionData ) =>
 				genericRedirectProcessor( 'wechat', transactionData, dataForRedirectProcessor ),
+			netbanking: ( transactionData ) =>
+				genericRedirectProcessor( 'netbanking', transactionData, dataForRedirectProcessor ),
 			ideal: ( transactionData ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForRedirectProcessor ),
 			sofort: ( transactionData ) =>
