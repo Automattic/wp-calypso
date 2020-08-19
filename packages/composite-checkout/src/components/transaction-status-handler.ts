@@ -19,7 +19,7 @@ const debug = debugFactory( 'composite-checkout:transaction-status-handler' );
 export default function TransactionStatusHandler( {
 	redirectToUrl,
 }: {
-	redirectToUrl: ( url: string ) => void;
+	redirectToUrl?: ( url: string ) => void;
 } ): null {
 	const defaultRedirect = useCallback( ( url ) => ( window.location = url ), [] );
 	useTransactionStatusHandler( redirectToUrl || defaultRedirect );
