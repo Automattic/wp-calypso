@@ -30,11 +30,11 @@
 	flex-direction: column;
 	margin: 10px 12px;
 	overflow: hidden;
+	font-family: Helvetica, Arial, sans-serif;
 }
 
 .facebook-preview__title {
 	color: #1d2129;
-	font-family: Georgia, serif;
 	/* stylelint-disable-next-line scales/font-size */
 	font-size: 16px;
 	/* stylelint-disable-next-line scales/font-weight */
@@ -46,7 +46,6 @@
 
 .facebook-preview__description {
 	color: #606770;
-	font-family: helvetica, arial, sans-serif;
 	font-size: $font-body-extra-small;
 	line-height: 16px;
 	overflow-y: hidden;
@@ -54,7 +53,6 @@
 
 .facebook-preview__url {
 	color: #606770;
-	font-family: helvetica, arial, sans-serif;
 	font-size: $font-body-extra-small;
 	line-height: 12px;
 	text-transform: uppercase;
