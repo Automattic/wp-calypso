@@ -89,7 +89,13 @@
 	}
 
 	.facebook-preview__title {
-		margin-bottom: 6px;
+		margin-bottom: 1px;
+	}
+
+	.facebook-preview__description {
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
 	}
 
 	.facebook-preview__url {
