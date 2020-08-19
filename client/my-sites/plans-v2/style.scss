@@ -18,14 +18,15 @@
 		.formatted-header {
 			margin-top: 40px;
 		}
-		.formatted-header__title {
-			font-size: 1.25rem;
-			color: var( --studio-color-gray-70 );
-		}
 		.plan-price {
 			font-size: $font-title-medium;
 		}
 	}
+}
+
+.plans-v2__columns .formatted-header__title {
+	font-size: 1.25rem;
+	color: var( --studio-color-gray-70 );
 }
 
 .upsell__header {
