@@ -35,7 +35,7 @@ interface PlanColumnType {
 	siteId: number | null;
 }
 
-type PlanWithBought = SelectorProduct & { owned: boolean; legacy: boolean; showOptions?: boolean };
+type PlanWithBought = SelectorProduct & { owned: boolean; legacy: boolean };
 
 const PlanComponent = ( {
 	plan,
@@ -68,7 +68,6 @@ const PlanComponent = ( {
 			originalPrice={ price }
 			isOwned={ plan.owned }
 			isDeprecated={ plan.legacy }
-			showOptions={ plan.showOptions }
 		/>
 	);
 };
