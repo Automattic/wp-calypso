@@ -310,7 +310,7 @@ class MembershipsSection extends Component {
 					<QueryMembershipProducts siteId={ this.props.siteId } />
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 36 } icon={ 'credit-card' } />
+							<Gridicon size={ 24 } icon={ 'credit-card' } />
 						</div>
 						<div>
 							<div className="memberships__module-plans-title">
@@ -340,7 +340,7 @@ class MembershipsSection extends Component {
 				>
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 36 } icon={ 'link-break' } />
+							<Gridicon size={ 24 } icon={ 'link-break' } />
 						</div>
 						<div className="memberships__module-settings-title">
 							{ this.props.translate( 'Disconnect Stripe Account' ) }
