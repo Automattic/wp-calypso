@@ -1047,6 +1047,26 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ constants.FEATURE_BACKUP_DAILY_V2 ]: {
+		getSlug: () => constants.FEATURE_BACKUP_DAILY_V2,
+		getIcon: () => 'cloud-upload',
+		getTitle: () =>
+			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: <a href="https://jetpack.com/upgrade/backup/"></a>,
+					},
+				}
+			),
+	},
+
 	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
@@ -1069,10 +1089,31 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_SCAN_V2 ]: {
 		getSlug: () => constants.FEATURE_SCAN_V2,
+		getIcon: () => '',
 		getTitle: () => i18n.translate( 'Scan' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: <a href="https://jetpack.com/upgrade/scan/"></a>,
+					},
+				}
+			),
+	},
+
+	[ constants.FEATURE_SCAN_DAILY_V2 ]: {
+		getSlug: () => constants.FEATURE_SCAN_DAILY_V2,
+		getIcon: () => '',
+		getTitle: () =>
+			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate(
+				'Automated daily scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
 				{
 					components: {
 						link: <a href="https://jetpack.com/upgrade/scan/"></a>,
@@ -1130,8 +1171,22 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ constants.FEATURE_ACTIVITY_LOG_ARCHIVE_V2 ]: {
-		getSlug: () => constants.FEATURE_ACTIVITY_LOG_ARCHIVE_V2,
+	[ constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2 ]: {
+		getSlug: () => constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
+		getTitle: () => i18n.translate( 'Activity log: 30-day archive' ),
+		getDescription: () =>
+			i18n.translate(
+				'View every change to your site in the last 30 days. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
+				{
+					components: {
+						link: <a href="https://jetpack.com/features/security/activity-log/"></a>,
+					},
+				}
+			),
+	},
+
+	[ constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
+		getSlug: () => constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		getTitle: () => i18n.translate( 'Activity log: 1-year archive' ),
 		getDescription: () =>
 			i18n.translate(
