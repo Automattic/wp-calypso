@@ -25,6 +25,9 @@ const PAYWALL_FILTER = 'earn_premium_content_subscription_service';
 
 require_once __DIR__ . '/subscription-service/include.php';
 
+define( 'PREMIUM_CONTENT__URL_PATH', rtrim( plugin_dir_url( __FILE__ ), '/' ) );
+define( 'PREMIUM_CONTENT__PLUGIN_DIR', __DIR__ );
+
 /**
  * Register blocks and load block translations. If not done on init, the render
  * callbacks of the dynamic blocks won't be executed in the front-end.
@@ -47,8 +50,8 @@ function premium_content_block_init() {
 function premium_content_block_enqueue_block_editor_assets() {
 	$info         = get_script_info();
 	$script_asset = $info['script_asset'];
-	$url_path     = $info['url_path'];
-	$dir          = $info['dir'];
+	$url_path     = PREMIUM_CONTENT__URL_PATH;
+	$dir          = PREMIUM_CONTENT__PLUGIN_DIR;
 
 	$index_js = 'dist/premium-content.js';
 	wp_register_script(
@@ -78,8 +81,8 @@ function premium_content_block_enqueue_block_editor_assets() {
 function premium_content_block_enqueue_block_assets() {
 	$info         = get_script_info();
 	$script_asset = $info['script_asset'];
-	$url_path     = $info['url_path'];
-	$dir          = $info['dir'];
+	$url_path     = PREMIUM_CONTENT__URL_PATH;
+	$dir          = PREMIUM_CONTENT__PLUGIN_DIR;
 
 	$style_css = 'style.css';
 	wp_register_style(
@@ -101,16 +104,14 @@ function premium_content_block_enqueue_block_assets() {
 
 
 /**
- * Helper; Get the 'script_asset', 'url_path', and 'dir'
+ * Helper; Get the 'script_asset'
  * Used by enqueue_block_assets and enqueue_block_editor_assets
  *
  * @throws RuntimeException If block assets files are not found.
  * @return array
  */
 function get_script_info() {
-	$url_path = rtrim( plugin_dir_url( __FILE__ ), '/' );
-	$dir      = __DIR__;
-
+	$dir               = PREMIUM_CONTENT__PLUGIN_DIR;
 	$script_asset_path = "$dir/dist/premium-content.asset.php";
 	if ( ! file_exists( $script_asset_path ) ) {
 		throw new RuntimeException(
@@ -120,8 +121,6 @@ function get_script_info() {
 	$script_asset = include $script_asset_path;
 	return array(
 		'script_asset' => $script_asset,
-		'url_path'     => $url_path,
-		'dir'          => $dir,
 	);
 }
 
@@ -444,3 +443,4 @@ add_action( 'enqueue_block_editor_assets', 'A8C\FSE\Earn\PremiumContent\premium_
 add_action( 'enqueue_block_assets', 'A8C\FSE\Earn\PremiumContent\premium_content_block_enqueue_block_assets' );
 
 add_filter( PAYWALL_FILTER, 'A8C\FSE\Earn\PremiumContent\premium_content_default_service' );
+file_put_contents( '/tmp/1.log', "¡hola! 5\n", FILE_APPEND );
