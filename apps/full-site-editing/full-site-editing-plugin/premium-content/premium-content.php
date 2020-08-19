@@ -49,7 +49,6 @@ function premium_content_block_init() {
  */
 function premium_content_block_enqueue_block_editor_assets() {
 	$script_asset = get_script_asset();
-	$dir          = PREMIUM_CONTENT__PLUGIN_DIR;
 
 	$index_js = 'dist/premium-content.js';
 	wp_register_script(
@@ -65,7 +64,7 @@ function premium_content_block_enqueue_block_editor_assets() {
 		'premium-content-editor',
 		PREMIUM_CONTENT__URL_PATH . '/' . $editor_css,
 		array(),
-		filemtime( "$dir/$editor_css" ),
+		filemtime( PREMIUM_CONTENT__PLUGIN_DIR . '/' . $editor_css ),
 		false
 	);
 }
@@ -78,14 +77,13 @@ function premium_content_block_enqueue_block_editor_assets() {
  */
 function premium_content_block_enqueue_block_assets() {
 	$script_asset = get_script_asset();
-	$dir          = PREMIUM_CONTENT__PLUGIN_DIR;
 
 	$style_css = 'style.css';
 	wp_register_style(
 		'premium-content-frontend',
 		PREMIUM_CONTENT__URL_PATH . '/' . $style_css,
 		array(),
-		filemtime( "$dir/$style_css" )
+		filemtime( PREMIUM_CONTENT__PLUGIN_DIR . '/' . $style_css )
 	);
 
 	wp_register_script(
