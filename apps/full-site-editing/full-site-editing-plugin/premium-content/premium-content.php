@@ -49,13 +49,12 @@ function premium_content_block_init() {
  */
 function premium_content_block_enqueue_block_editor_assets() {
 	$script_asset = get_script_asset();
-	$url_path     = PREMIUM_CONTENT__URL_PATH;
 	$dir          = PREMIUM_CONTENT__PLUGIN_DIR;
 
 	$index_js = 'dist/premium-content.js';
 	wp_register_script(
 		'premium-content-editor',
-		"$url_path/$index_js",
+		PREMIUM_CONTENT__URL_PATH . '/' . $index_js,
 		$script_asset['dependencies'],
 		$script_asset['version'],
 		false
@@ -64,7 +63,7 @@ function premium_content_block_enqueue_block_editor_assets() {
 	$editor_css = 'editor.css';
 	wp_register_style(
 		'premium-content-editor',
-		"$url_path/$editor_css",
+		PREMIUM_CONTENT__URL_PATH . '/' . $editor_css,
 		array(),
 		filemtime( "$dir/$editor_css" ),
 		false
@@ -79,20 +78,19 @@ function premium_content_block_enqueue_block_editor_assets() {
  */
 function premium_content_block_enqueue_block_assets() {
 	$script_asset = get_script_asset();
-	$url_path     = PREMIUM_CONTENT__URL_PATH;
 	$dir          = PREMIUM_CONTENT__PLUGIN_DIR;
 
 	$style_css = 'style.css';
 	wp_register_style(
 		'premium-content-frontend',
-		"$url_path/$style_css",
+		PREMIUM_CONTENT__URL_PATH . '/' . $style_css,
 		array(),
 		filemtime( "$dir/$style_css" )
 	);
 
 	wp_register_script(
 		'premium-content-frontend',
-		"$url_path/view.js",
+		PREMIUM_CONTENT__URL_PATH . '/view.js',
 		array(),
 		$script_asset['version'],
 		false
