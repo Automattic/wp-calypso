@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { swatches } from './lib/swatches.js';
+import { swatches } from './swatches.js';
 
 export type Theme = {
 	colors: {

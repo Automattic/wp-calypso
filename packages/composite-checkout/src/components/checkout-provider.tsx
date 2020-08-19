@@ -16,7 +16,7 @@ import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
 import { useTransactionStatusManager } from '../lib/transaction-status';
-import defaultTheme from '../theme';
+import defaultTheme from '../lib/theme';
 import {
 	validateArg,
 	validateTotal,

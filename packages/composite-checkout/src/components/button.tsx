@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal Classes
  */
-import styled from '../styled';
+import styled from '../lib/styled';
 import joinClasses from '../lib/join-classes';
 
 type ButtonType = 'primary' | 'secondary' | 'text-button' | 'borderless' | 'paypal';
