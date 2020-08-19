@@ -5,6 +5,7 @@ import React, { useEffect, useCallback, useMemo, useState, useRef, FunctionCompo
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
 import { useI18n } from '@automattic/react-i18n';
+import { DataRegistry } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, defaultRegistry } from '../lib/registry';
-import { DataRegistry } from '@wordpress/data';
 import { useFormStatusManager } from '../lib/form-status';
 import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../theme';
@@ -24,7 +24,7 @@ import {
 	validatePaymentMethods,
 } from '../lib/validation';
 import TransactionStatusHandler from './transaction-status-handler';
-import { LineItem, PaymentMethod, ReactStandardAction } from '../types';
+import { PaymentMethod, CheckoutProviderProps } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -46,7 +46,7 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 		isValidating,
 		children,
 	} = props;
-	const [ paymentMethodId, setPaymentMethodId ] = useState(
+	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		paymentMethods?.length ? paymentMethods[ 0 ].id : null
 	);
 	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
@@ -58,7 +58,10 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 		}
 	}, [ paymentMethods, prevPaymentMethods ] );
 
-	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading, isValidating );
+	const [ formStatus, setFormStatus ] = useFormStatusManager(
+		Boolean( isLoading ),
+		Boolean( isValidating )
+	);
 	const transactionStatusManager = useTransactionStatusManager();
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
@@ -123,29 +126,6 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 		</CheckoutErrorBoundary>
 	);
 };
-
-interface CheckoutProviderProps {
-	theme?: object;
-	registry?: DataRegistry;
-	total: LineItem;
-	items: LineItem[];
-	paymentMethods: PaymentMethod[];
-	paymentMethodId?: string;
-	onPaymentComplete: ( { paymentMethodId }: { paymentMethodId: string | null } ) => void;
-	showErrorMessage: ( message: string ) => void;
-	showInfoMessage: ( message: string ) => void;
-	showSuccessMessage: ( message: string ) => void;
-	onEvent?: ( event: ReactStandardAction ) => void;
-	isLoading?: boolean;
-	redirectToUrl: ( url: string ) => void;
-	paymentProcessors: PaymentProcessorProp;
-	isValidating?: boolean;
-}
-
-interface PaymentProcessorProp {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[ key: string ]: ( ...args: any[] ) => void;
-}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop(): void {}

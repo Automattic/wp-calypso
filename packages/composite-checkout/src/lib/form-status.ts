@@ -8,10 +8,11 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
+import { FormStatusManager, FormStatusController, ReactStandardAction } from '../types';
 
 const debug = debugFactory( 'composite-checkout:form-status' );
 
-export function useFormStatus() {
+export function useFormStatus(): FormStatusController {
 	const { formStatus, setFormStatus } = useContext( CheckoutContext );
 	const formStatusActions = useMemo(
 		() => ( {
@@ -32,7 +33,10 @@ export function useFormStatus() {
 	);
 }
 
-export function useFormStatusManager( isLoading, isValidating ) {
+export function useFormStatusManager(
+	isLoading: boolean,
+	isValidating: boolean
+): FormStatusManager {
 	const [ formStatus, dispatchFormStatus ] = useReducer(
 		formStatusReducer,
 		isLoading ? 'loading' : 'ready'
@@ -51,7 +55,7 @@ export function useFormStatusManager( isLoading, isValidating ) {
 	return [ formStatus, setFormStatus ];
 }
 
-function formStatusReducer( state, action ) {
+function formStatusReducer( state: string, action: ReactStandardAction ): string {
 	switch ( action.type ) {
 		case 'FORM_STATUS_CHANGE':
 			validateStatus( action.payload );
@@ -62,14 +66,20 @@ function formStatusReducer( state, action ) {
 	}
 }
 
-function validateStatus( status ) {
+function validateStatus( status: string ): void {
 	const validStatuses = [ 'loading', 'ready', 'validating', 'submitting', 'complete' ];
 	if ( ! validStatuses.includes( status ) ) {
 		throw new Error( `Invalid form status '${ status }'` );
 	}
 }
 
-function getNewStatusFromProps( { isLoading, isValidating } ) {
+function getNewStatusFromProps( {
+	isLoading,
+	isValidating,
+}: {
+	isLoading: boolean;
+	isValidating: boolean;
+} ): string {
 	if ( isLoading ) {
 		return 'loading';
 	}
