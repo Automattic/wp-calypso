@@ -257,9 +257,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Heading':
 				ariaLabel = 'Write heading…';
 				break;
-			case 'Heading':
-				ariaLabel = 'Write heading…';
-				break;
 		}
 
 		const selectorAriaLabel = ariaLabel || `Block: ${ name }`;
@@ -458,9 +455,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css(
-				'.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button'
-			)
+			By.css( '.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button' )
 		);
 	}
 
