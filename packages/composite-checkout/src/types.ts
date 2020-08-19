@@ -63,3 +63,25 @@ export interface PaymentProcessorProp {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[ key: string ]: ( ...args: any[] ) => void;
 }
+
+export interface TransactionStatus {
+	transactionStatus: string;
+	previousTransactionStatus: string;
+	transactionLastResponse: object | null;
+	transactionError: string | null;
+	transactionRedirectUrl: string | null;
+}
+
+export interface TransactionStatusManager {
+	transactionStatus: string;
+	previousTransactionStatus: string;
+	transactionError: string | null;
+	transactionLastResponse: object | null;
+	transactionRedirectUrl: string | null;
+	resetTransaction: () => void;
+	setTransactionError: ( message: string ) => void;
+	setTransactionComplete: ( response: object ) => void;
+	setTransactionPending: () => void;
+	setTransactionRedirecting: ( url: string ) => void;
+	setTransactionAuthorizing: ( response: object ) => void;
+}

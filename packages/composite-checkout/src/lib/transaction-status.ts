@@ -7,21 +7,22 @@ import { useMemo, useContext, useCallback, useReducer } from 'react';
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
+import { ReactStandardAction, TransactionStatus, TransactionStatusManager } from '../types';
 
-export function useTransactionStatus() {
+export function useTransactionStatus(): TransactionStatusManager {
 	const { transactionStatusManager } = useContext( CheckoutContext );
 	return transactionStatusManager;
 }
 
-const initialState = {
-	previousTransactionStatus: 'not-started', // string
-	transactionStatus: 'not-started', // string
-	transactionError: null, // string | null
-	transactionLastResponse: null, // object | null
-	transactionRedirectUrl: null, // string | null
+const initialState: TransactionStatus = {
+	previousTransactionStatus: 'not-started',
+	transactionStatus: 'not-started',
+	transactionError: null,
+	transactionLastResponse: null,
+	transactionRedirectUrl: null,
 };
 
-export function useTransactionStatusManager() {
+export function useTransactionStatusManager(): TransactionStatusManager {
 	const [ state, dispatch ] = useReducer( transactionStatusReducer, initialState );
 	const resetTransaction = useCallback(
 		() => dispatch( { type: 'STATUS_SET', payload: { status: 'not-started' } } ),
@@ -57,7 +58,7 @@ export function useTransactionStatusManager() {
 		transactionLastResponse,
 		transactionError,
 		transactionRedirectUrl,
-	} = state;
+	}: TransactionStatus = state;
 
 	return useMemo(
 		() => ( {
@@ -89,7 +90,10 @@ export function useTransactionStatusManager() {
 	);
 }
 
-function transactionStatusReducer( state, action ) {
+function transactionStatusReducer(
+	state: TransactionStatus,
+	action: ReactStandardAction
+): TransactionStatus {
 	switch ( action.type ) {
 		case 'STATUS_SET': {
 			const { status, response, error, url } = action.payload;

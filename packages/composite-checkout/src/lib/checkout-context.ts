@@ -2,21 +2,12 @@
  * External dependencies
  */
 import { createContext } from 'react';
-import { ReactStandardAction, PaymentMethod, PaymentProcessorProp } from '../types';
-
-interface TransactionStatusManager {
-	transactionStatus: string;
-	previousTransactionStatus: string;
-	transactionError: string | null;
-	transactionLastResponse: object | null;
-	transactionRedirectUrl: string | null;
-	resetTransaction: () => void;
-	setTransactionError: ( message: string ) => void;
-	setTransactionComplete: ( response: object ) => void;
-	setTransactionPending: () => void;
-	setTransactionRedirecting: ( url: string ) => void;
-	setTransactionAuthorizing: () => void;
-}
+import {
+	ReactStandardAction,
+	PaymentMethod,
+	PaymentProcessorProp,
+	TransactionStatusManager,
+} from '../types';
 
 const defaultTransactionStatusManager: TransactionStatusManager = {
 	transactionStatus: 'not-started',
