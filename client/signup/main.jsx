@@ -82,6 +82,7 @@ import ReskinnedProcessingScreen from 'signup/reskinned-processing-screen';
 import user from 'lib/user';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { abtest } from 'lib/abtest';
+import detectHistoryNavigation from 'lib/detect-history-navigation';
 
 /**
  * Style dependencies
@@ -156,6 +157,10 @@ class Signup extends React.Component {
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		let providedDependencies;
+
+		if ( detectHistoryNavigation.loadedViaHistory() ) {
+			// do something
+		}
 
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
