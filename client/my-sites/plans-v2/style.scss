@@ -9,6 +9,7 @@
 		& > .details__column {
 			flex-basis: 50%;
 			flex-grow: 0;
+			align-self: flex-start;
 		}
 
 		& > .products-column,
