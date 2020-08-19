@@ -236,7 +236,7 @@ export default {
 		localeExceptions: [ 'en', 'es' ],
 	},
 	existingUsersGutenbergOnboard: {
-		datestamp: '20200818',
+		datestamp: '20200819',
 		variations: {
 			gutenberg: 50,
 			control: 50,
@@ -244,5 +244,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
+		countryCodeTargets: [ 'US', 'CA' ],
 	},
 };
