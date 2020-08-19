@@ -49,7 +49,7 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { getABTestVariation } from 'lib/abtest';
 import getSitesItems from 'state/selectors/get-sites-items';
 
 /**
@@ -122,27 +122,6 @@ class DomainsStep extends React.Component {
 			);
 
 			props.goToNextStep();
-		}
-
-		this.showTestCopy = false;
-
-		const isEligibleFlowForDomainTest = includes(
-			[
-				'onboarding',
-				'onboarding-plan-first',
-				'onboarding-passwordless',
-				'onboarding-registrationless',
-			],
-			props.flowName
-		);
-
-		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
-		if (
-			false !== this.props.shouldShowDomainTestCopy &&
-			isEligibleFlowForDomainTest &&
-			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
-		) {
-			this.showTestCopy = true;
 		}
 	}
 
