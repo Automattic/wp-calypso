@@ -22,7 +22,7 @@ import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
 import config from 'config';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/editor/actions';
 import { unblockSave } from 'state/editor/save-blockers/actions';
 import { getEditorRawContent, isEditorSaveBlocked } from 'state/editor/selectors';
@@ -882,12 +882,14 @@ function mediaButton( editor ) {
 
 	editor.on( 'init', function () {
 		unsubscribeFromReduxStore = store.subscribe( () => {
-			const { ID: siteId } = getSelectedSite( store.getState() );
+			const siteId = getSelectedSiteId( store.getState() );
 			if ( ! siteId ) {
 				return;
 			}
+
 			previousMediaReference = currentMediaReference;
 			currentMediaReference = getMedia( store.getState(), siteId );
+
 			if ( ! isEqual( previousMediaReference, currentMediaReference ) ) {
 				updateMedia();
 			}
