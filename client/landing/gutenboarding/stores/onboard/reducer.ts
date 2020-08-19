@@ -34,22 +34,22 @@ const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAc
 	return state;
 };
 
-const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
-		return action.domainSearch;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
+	}
+	return state;
+};
+
+const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
+		return action.domainSearch;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
 	}
 	return state;
 };
@@ -130,19 +130,6 @@ const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
 	return state;
 };
 
-const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_FONTS' ) {
-		return action.fonts;
-	}
-	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
@@ -165,6 +152,19 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 		return state.filter( ( id ) => id !== action.featureId );
 	}
 
+	return state;
+};
+
+const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_FONTS' ) {
+		return action.fonts;
+	}
+	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
 	return state;
 };
 
@@ -233,23 +233,23 @@ const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false,
 
 const reducer = combineReducers( {
 	domain,
-	domainSearch,
 	domainCategory,
+	domainSearch,
+	isExperimental,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	pageLayouts,
-	selectedFonts,
+	plan,
+	randomizedDesigns,
 	selectedDesign,
+	selectedFeatures,
+	selectedFonts,
 	selectedSite,
+	showSignupDialog,
 	siteTitle,
 	siteVertical,
-	showSignupDialog,
-	plan,
-	selectedFeatures,
 	wasVerticalSkipped,
-	isExperimental,
-	randomizedDesigns,
 	hasOnboardingStarted,
 } );
 
