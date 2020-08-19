@@ -102,7 +102,7 @@ function premium_content_block_enqueue_block_assets() {
 
 /**
  * Helper; Get the 'script_asset', 'url_path', and 'dir'
- * Used by init, enqueue_block_assets, and enqueue_block_editor_assets
+ * Used by enqueue_block_assets and enqueue_block_editor_assets
  *
  * @throws RuntimeException If block assets files are not found.
  * @return array
