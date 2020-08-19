@@ -122,7 +122,6 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
-						isSignupStep={ this.props.isSignupStep }
 						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
