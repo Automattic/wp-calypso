@@ -18,19 +18,21 @@
 	display: flex;
 	overflow-x: auto;
 	max-width: 527px;
-	margin: 0 auto;
+	margin: 20px;
 	-webkit-overflow-scrolling: touch;
 }
 
 .facebook-preview__content {
 	display: flex;
 	max-width: 100%;
+	background-color: #f2f3f5;
 }
 
 .facebook-preview__body {
 	display: flex;
 	flex-direction: column;
-	margin: 10px 12px;
+	padding: 10px 12px;
+	border: 1px solid #dadde1;
 	overflow: hidden;
 	font-family: Helvetica, Arial, sans-serif;
 }
