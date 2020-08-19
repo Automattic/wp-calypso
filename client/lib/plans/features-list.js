@@ -1049,6 +1049,16 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_DAILY_V2,
+		getTitle: () => i18n.translate( 'Automated daily site backups' ),
+	},
+
+	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
+		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
+		getTitle: () => i18n.translate( 'Automated real-time site backups' ),
+	},
+
+	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
 		getTitle: () =>
 			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
@@ -1067,8 +1077,8 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
-		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
+	[ constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
 		getTitle: () =>
 			i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
@@ -1297,6 +1307,16 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Priority support' ),
 		getDescription: () =>
 			i18n.translate( 'Get fast WordPress support from the WordPress experts. ' ),
+	},
+
+	[ constants.FEATURE_SECURE_STORAGE_V2 ]: {
+		getSlug: () => constants.FEATURE_SECURE_STORAGE_V2,
+		getTitle: () => i18n.translate( 'Unlimited secure storage' ),
+	},
+
+	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {
+		getSlug: () => constants.FEATURE_ONE_CLICK_RESTORE_V2,
+		getTitle: () => i18n.translate( 'One-click restores from desktop or mobile' ),
 	},
 };
 
