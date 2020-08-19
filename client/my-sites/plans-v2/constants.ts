@@ -47,6 +47,7 @@ export const SECURITY = 'security';
 
 // TODO: update before offer reset launch
 export const OFFER_RESET_SUPPORT_PAGE = 'https://jetpack.com/support/';
+export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
 
 /*
  * Options displayed in the Product Type filter in the Plans page.
