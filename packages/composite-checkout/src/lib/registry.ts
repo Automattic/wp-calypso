@@ -10,7 +10,10 @@ import {
 	StoreConfig,
 	SelectorMap,
 } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useRef } from 'react';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'composite-checkout:registry' );
 
 export { createRegistry, RegistryProvider, useRegistry, useDispatch, useSelect };
 
@@ -22,8 +25,12 @@ export function registerStore< T = {} >( key: string, storeConfig: StoreConfig< 
 
 export function useRegisterStore< T >( id: string, store: StoreConfig< T > ) {
 	const registry = useRegistry();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect( () => registry.registerStore( id, store ), [] );
+	const hasRegistered = useRef< boolean >( false );
+	if ( ! hasRegistered.current ) {
+		debug( 'registering store', id );
+		registry.registerStore( id, store );
+		hasRegistered.current = true;
+	}
 }
 
 const primaryStoreId = 'checkout';
