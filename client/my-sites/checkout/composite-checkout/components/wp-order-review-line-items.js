@@ -43,11 +43,15 @@ function WPLineItem( {
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const isPwpoUser = useSelector( ( state ) =>
+		currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+	);
 	const modalCopy = returnModalCopy(
 		item.type,
 		translate,
 		hasDomainsInCart,
-		createUserAndSiteBeforeTransaction
+		createUserAndSiteBeforeTransaction,
+		isPwpoUser
 	);
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== 'ready';
@@ -388,7 +392,8 @@ function returnModalCopy(
 	product,
 	translate,
 	hasDomainsInCart,
-	createUserAndSiteBeforeTransaction
+	createUserAndSiteBeforeTransaction,
+	isPwpoUser
 ) {
 	const modalCopy = {};
 	const productType = product === 'plan' && hasDomainsInCart ? 'plan with dependencies' : product;
@@ -398,15 +403,16 @@ function returnModalCopy(
 			modalCopy.title = translate( 'You are about to remove your plan from the cart' );
 
 			if ( createUserAndSiteBeforeTransaction ) {
-				modalCopy.description = 'When you press Continue, we will remove your plan from the cart. Your site will be created on the free plan when you complete payment for the other product(s) in your cart.'	
+				modalCopy.description =
+					'When you press Continue, we will remove your plan from the cart. Your site will be created on the free plan when you complete payment for the other product(s) in your cart.';
 			} else {
 				modalCopy.description = isPwpoUser
-				? translate(
-						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
-				  )
-				: translate(
-						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
-				  );
+					? translate(
+							'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
+					  )
+					: translate(
+							'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
+					  );
 			}
 			break;
 		case 'plan':
