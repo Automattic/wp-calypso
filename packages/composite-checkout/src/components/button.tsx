@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 
 /**
  * Internal Classes
@@ -12,21 +11,14 @@ import joinClasses from '../lib/join-classes';
 
 type ButtonType = 'primary' | 'secondary' | 'text-button' | 'borderless' | 'paypal';
 
-export default function Button( {
+const Button: React.FC< ButtonProps & React.ButtonHTMLAttributes< HTMLButtonElement > > = ( {
 	className,
 	buttonType,
 	isBusy,
 	children,
 	fullWidth,
 	...props
-}: {
-	className?: string;
-	buttonType: ButtonType;
-	isBusy?: boolean;
-	fullWidth?: boolean;
-	children?: React.ReactChildren;
-	props: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
-} ): JSX.Element {
+} ) => {
 	const classNames = joinClasses( [
 		'checkout-button',
 		...( buttonType ? [ 'is-status-' + buttonType ] : [] ),
@@ -44,17 +36,22 @@ export default function Button( {
 			{ children }
 		</CallToAction>
 	);
-}
-
-Button.propTypes = {
-	buttonType: PropTypes.oneOf( [ 'primary', 'secondary', 'text-button', 'borderless', 'paypal' ] ),
-	fullWidth: PropTypes.bool,
-	isBusy: PropTypes.bool,
 };
+
+export default Button;
+
+interface ButtonProps {
+	className?: string;
+	buttonType?: ButtonType;
+	isBusy?: boolean;
+	fullWidth?: boolean;
+	children?: React.ReactChildren;
+	props?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
 
 interface CallToActionProps {
 	fullWidth?: boolean;
-	buttonType: ButtonType;
+	buttonType?: ButtonType;
 	disabled?: boolean;
 }
 
@@ -113,13 +110,13 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 	}
 `;
 
-function getImageFilter( { buttonType }: { buttonType: ButtonType } ) {
+function getImageFilter( { buttonType }: { buttonType?: ButtonType } ) {
 	return `grayscale( ${
 		buttonType === 'primary' || buttonType === 'paypal' ? '0' : '100'
 	} ) invert( 0 );`;
 }
 
-function getImageOpacity( { buttonType }: { buttonType: ButtonType } ) {
+function getImageOpacity( { buttonType }: { buttonType?: ButtonType } ) {
 	return buttonType === 'primary' || buttonType === 'paypal' ? '1' : '0.5';
 }
 
@@ -129,7 +126,7 @@ function getRollOverColor( {
 	theme,
 }: {
 	disabled?: boolean;
-	buttonType: ButtonType;
+	buttonType?: ButtonType;
 	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 } ) {
 	const { colors } = theme;
@@ -157,7 +154,7 @@ function getTextColor( {
 	theme,
 }: {
 	disabled?: boolean;
-	buttonType: ButtonType;
+	buttonType?: ButtonType;
 	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 } ) {
 	const { colors } = theme;
@@ -182,7 +179,7 @@ function getBackgroundColor( {
 	theme,
 }: {
 	disabled?: boolean;
-	buttonType: ButtonType;
+	buttonType?: ButtonType;
 	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 } ) {
 	const { colors } = theme;
@@ -207,7 +204,7 @@ function getBackgroundAccentColor( {
 	theme,
 }: {
 	disabled?: boolean;
-	buttonType: ButtonType;
+	buttonType?: ButtonType;
 	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 } ) {
 	const { colors } = theme;
@@ -235,7 +232,7 @@ function getFontWeight( {
 	theme,
 }: {
 	disabled?: boolean;
-	buttonType: ButtonType;
+	buttonType?: ButtonType;
 	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 } ) {
 	if ( disabled || buttonType === 'text-button' ) {
@@ -244,6 +241,6 @@ function getFontWeight( {
 	return theme.weights.bold;
 }
 
-function getTextDecoration( { buttonType }: { buttonType: ButtonType } ) {
+function getTextDecoration( { buttonType }: { buttonType?: ButtonType } ) {
 	return buttonType === 'text-button' ? 'underline' : 'none';
 }
