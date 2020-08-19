@@ -23,12 +23,14 @@
 
 .facebook-preview__content {
 	display: flex;
+	max-width: 100%;
 }
 
 .facebook-preview__body {
 	display: flex;
 	flex-direction: column;
 	margin: 10px 12px;
+	overflow: hidden;
 }
 
 .facebook-preview__title {
