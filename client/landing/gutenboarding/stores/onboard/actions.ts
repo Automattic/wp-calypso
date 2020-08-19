@@ -184,6 +184,11 @@ export const enableExperimental = () => ( {
 	type: 'SET_ENABLE_EXPERIMENTAL' as const,
 } );
 
+export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
+	type: 'SET_RANDOMIZED_DESIGNS' as const,
+	randomizedDesigns,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof resetFonts
 	| typeof resetOnboardStore
@@ -206,4 +211,5 @@ export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
 	| typeof enableExperimental
+	| typeof setRandomizedDesigns
 >;

@@ -29,3 +29,4 @@ export const getDomainSearch = ( state: State ) =>
 export const getPlan = ( state: State ) => state.plan;
 export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const wasVerticalSkipped = ( state: State ): boolean => state.wasVerticalSkipped;
+export const getRandomizedDesigns = ( state: State ) => state.randomizedDesigns;
