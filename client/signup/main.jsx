@@ -197,7 +197,7 @@ class Signup extends React.Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { stepName, flowName, progress, isReskinned, path } = nextProps;
+		const { stepName, flowName, progress, isReskinned } = nextProps;
 
 		if ( this.props.stepName !== stepName ) {
 			this.removeFulfilledSteps( nextProps );
@@ -214,7 +214,7 @@ class Signup extends React.Component {
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
 		}
-		if ( isReskinned && ( ! this.props.isReskinned || path !== this.props.path ) ) {
+		if ( isReskinned ) {
 			this.addCssClassToBodyForReskinnedFlow();
 		}
 	}
