@@ -4,7 +4,7 @@
 	"description": "A checkout component for Automattic brands",
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
-	"types": "dist/types",
+	"types": "dist/types/public-api.d.ts",
 	"sideEffects": false,
 	"scripts": {
 		"clean": "npx rimraf dist \"../../.tsc-cache/packages__composite-checkout*\"",
