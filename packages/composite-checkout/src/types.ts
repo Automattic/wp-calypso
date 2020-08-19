@@ -43,7 +43,7 @@ export interface ReactStandardAction {
 }
 
 export interface CheckoutProviderProps {
-	theme?: object;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	registry?: DataRegistry;
 	total: LineItem;
 	items: LineItem[];

@@ -3,14 +3,30 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
 
 /**
  * Internal Classes
  */
+import styled from '../styled';
 import joinClasses from '../lib/join-classes';
 
-export default function Button( { className, buttonType, isBusy, children, ...props } ) {
+type ButtonType = 'primary' | 'secondary' | 'text-button' | 'borderless' | 'paypal';
+
+export default function Button( {
+	className,
+	buttonType,
+	isBusy,
+	children,
+	fullWidth,
+	...props
+}: {
+	className?: string;
+	buttonType: ButtonType;
+	isBusy?: boolean;
+	fullWidth?: boolean;
+	children?: React.ReactChildren;
+	props: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+} ): JSX.Element {
 	const classNames = joinClasses( [
 		'checkout-button',
 		...( buttonType ? [ 'is-status-' + buttonType ] : [] ),
@@ -19,7 +35,12 @@ export default function Button( { className, buttonType, isBusy, children, ...pr
 	] );
 
 	return (
-		<CallToAction buttonType={ buttonType } isBusy={ isBusy } className={ classNames } { ...props }>
+		<CallToAction
+			fullWidth={ fullWidth }
+			buttonType={ buttonType }
+			className={ classNames }
+			{ ...props }
+		>
 			{ children }
 		</CallToAction>
 	);
@@ -31,9 +52,15 @@ Button.propTypes = {
 	isBusy: PropTypes.bool,
 };
 
-const CallToAction = styled.button`
+interface CallToActionProps {
+	fullWidth?: boolean;
+	buttonType: ButtonType;
+	disabled?: boolean;
+}
+
+const CallToAction = styled( 'button' )< CallToActionProps >`
 	display: block;
-	width: ${ ( props ) => ( props.fullWidth ? '100%' : 'auto' ) };
+	width: ${ ( props: CallToActionProps ) => ( props.fullWidth ? '100%' : 'auto' ) };
 	font-size: 16px;
 	border-radius: ${ ( props ) => ( props.buttonType === 'paypal' ? '50px' : '2px' ) };
 	padding: ${ ( props ) => ( props.buttonType === 'text-button' ? '0' : '10px 15px' ) };
@@ -86,17 +113,25 @@ const CallToAction = styled.button`
 	}
 `;
 
-function getImageFilter( { buttonType } ) {
+function getImageFilter( { buttonType }: { buttonType: ButtonType } ) {
 	return `grayscale( ${
 		buttonType === 'primary' || buttonType === 'paypal' ? '0' : '100'
 	} ) invert( 0 );`;
 }
 
-function getImageOpacity( { buttonType } ) {
+function getImageOpacity( { buttonType }: { buttonType: ButtonType } ) {
 	return buttonType === 'primary' || buttonType === 'paypal' ? '1' : '0.5';
 }
 
-function getRollOverColor( { disabled, buttonType, theme } ) {
+function getRollOverColor( {
+	disabled,
+	buttonType,
+	theme,
+}: {
+	disabled?: boolean;
+	buttonType: ButtonType;
+	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+} ) {
 	const { colors } = theme;
 	if ( disabled ) {
 		return colors.disabledPaymentButtons;
@@ -116,7 +151,15 @@ function getRollOverColor( { disabled, buttonType, theme } ) {
 	}
 }
 
-function getTextColor( { disabled, buttonType, theme } ) {
+function getTextColor( {
+	disabled,
+	buttonType,
+	theme,
+}: {
+	disabled?: boolean;
+	buttonType: ButtonType;
+	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+} ) {
 	const { colors } = theme;
 	if ( disabled ) {
 		return colors.disabledButtons;
@@ -133,7 +176,15 @@ function getTextColor( { disabled, buttonType, theme } ) {
 	}
 }
 
-function getBackgroundColor( { disabled, buttonType, theme } ) {
+function getBackgroundColor( {
+	disabled,
+	buttonType,
+	theme,
+}: {
+	disabled?: boolean;
+	buttonType: ButtonType;
+	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+} ) {
 	const { colors } = theme;
 	if ( disabled ) {
 		return colors.disabledPaymentButtons;
@@ -150,7 +201,15 @@ function getBackgroundColor( { disabled, buttonType, theme } ) {
 	}
 }
 
-function getBackgroundAccentColor( { disabled, buttonType, theme } ) {
+function getBackgroundAccentColor( {
+	disabled,
+	buttonType,
+	theme,
+}: {
+	disabled?: boolean;
+	buttonType: ButtonType;
+	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+} ) {
 	const { colors } = theme;
 	if ( disabled ) {
 		return colors.disabledPaymentButtonsAccent;
@@ -170,13 +229,21 @@ function getBackgroundAccentColor( { disabled, buttonType, theme } ) {
 	}
 }
 
-function getFontWeight( { disabled, buttonType, theme } ) {
+function getFontWeight( {
+	disabled,
+	buttonType,
+	theme,
+}: {
+	disabled?: boolean;
+	buttonType: ButtonType;
+	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+} ) {
 	if ( disabled || buttonType === 'text-button' ) {
 		return theme.weights.normal;
 	}
 	return theme.weights.bold;
 }
 
-function getTextDecoration( { buttonType } ) {
+function getTextDecoration( { buttonType }: { buttonType: ButtonType } ) {
 	return buttonType === 'text-button' ? 'underline' : 'none';
 }

@@ -3,7 +3,61 @@
  */
 import { swatches } from './lib/swatches.js';
 
-const theme = {
+export type Theme = {
+	colors: {
+		background: string;
+		surface: string;
+		primary: string;
+		primaryBorder: string;
+		primaryOver: string;
+		highlight: string;
+		highlightBorder: string;
+		highlightOver: string;
+		success: string;
+		discount: string;
+		disabledPaymentButtons: string;
+		disabledPaymentButtonsAccent: string;
+		disabledButtons: string;
+		borderColor: string;
+		borderColorLight: string;
+		borderColorDark: string;
+		upcomingStepBackground: string;
+		textColor: string;
+		textColorLight: string;
+		textColorDark: string;
+		error: string;
+		warningBackground: string;
+		outline: string;
+		applePayButtonColor: string;
+		applePayButtonRollOverColor: string;
+		noticeBackground: string;
+		defaultNoticeIconBackground: string;
+		textColorOnDarkBackground: string;
+		paypalGold: string;
+		paypalGoldHover: string;
+		modalBackground: string;
+		disabledField: string;
+		placeHolderTextColor: string;
+	};
+	breakpoints: {
+		desktopUp: string;
+		tabletUp: string;
+		bigPhoneUp: string;
+		smallPhoneUp: string;
+	};
+	weights: {
+		bold: string;
+		normal: string;
+	};
+	fonts: {
+		body: string;
+	};
+	fontSize: {
+		small: string;
+	};
+};
+
+const theme: Theme = {
 	colors: {
 		background: swatches.gray0,
 		surface: swatches.white,
