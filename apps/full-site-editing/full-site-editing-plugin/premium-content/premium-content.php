@@ -48,8 +48,7 @@ function premium_content_block_init() {
  * @return void
  */
 function premium_content_block_enqueue_block_editor_assets() {
-	$info         = get_script_info();
-	$script_asset = $info['script_asset'];
+	$script_asset = get_script_asset();
 	$url_path     = PREMIUM_CONTENT__URL_PATH;
 	$dir          = PREMIUM_CONTENT__PLUGIN_DIR;
 
@@ -79,8 +78,7 @@ function premium_content_block_enqueue_block_editor_assets() {
  * @return void
  */
 function premium_content_block_enqueue_block_assets() {
-	$info         = get_script_info();
-	$script_asset = $info['script_asset'];
+	$script_asset = get_script_asset();
 	$url_path     = PREMIUM_CONTENT__URL_PATH;
 	$dir          = PREMIUM_CONTENT__PLUGIN_DIR;
 
@@ -108,9 +106,9 @@ function premium_content_block_enqueue_block_assets() {
  * Used by enqueue_block_assets and enqueue_block_editor_assets
  *
  * @throws RuntimeException If block assets files are not found.
- * @return array
+ * @return mixed
  */
-function get_script_info() {
+function get_script_asset() {
 	$dir               = PREMIUM_CONTENT__PLUGIN_DIR;
 	$script_asset_path = "$dir/dist/premium-content.asset.php";
 	if ( ! file_exists( $script_asset_path ) ) {
@@ -119,9 +117,7 @@ function get_script_info() {
 		);
 	}
 	$script_asset = include $script_asset_path;
-	return array(
-		'script_asset' => $script_asset,
-	);
+	return $script_asset;
 }
 
 
@@ -443,4 +439,3 @@ add_action( 'enqueue_block_editor_assets', 'A8C\FSE\Earn\PremiumContent\premium_
 add_action( 'enqueue_block_assets', 'A8C\FSE\Earn\PremiumContent\premium_content_block_enqueue_block_assets' );
 
 add_filter( PAYWALL_FILTER, 'A8C\FSE\Earn\PremiumContent\premium_content_default_service' );
-file_put_contents( '/tmp/1.log', "¡hola! 5\n", FILE_APPEND );
