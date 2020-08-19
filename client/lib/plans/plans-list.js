@@ -413,8 +413,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY,
-	getTitle: () =>
-		translate( 'Jetpack Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -430,6 +429,22 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		),
 	getTagline: () => translate( 'Best for sites with frequent updates' ),
 	getPlanCompareFeatures: () => [],
+	getPlanCardFeatures: () => ( {
+		[ constants.FEATURE_CATEGORY_SECURITY ]: [
+			constants.FEATURE_BACKUP_REALTIME_V2,
+			constants.FEATURE_SCAN_REALTIME_V2,
+			constants.FEATURE_ANTISPAM_V2,
+			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+		],
+		[ constants.FEATURE_CATEGORY_OTHER ]: [
+			constants.FEATURE_PREMIUM_THEMES_V2,
+			constants.FEATURE_VIDEO_HOSTING_V2,
+			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+			constants.FEATURE_COLLECT_PAYMENTS_V2,
+			constants.FEATURE_SITE_MONETIZATION_V2,
+			constants.FEATURE_PRIORITY_SUPPORT_V2,
+		],
+	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
