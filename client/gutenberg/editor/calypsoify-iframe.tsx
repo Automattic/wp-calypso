@@ -670,8 +670,6 @@ class CalypsoifyIframe extends Component<
 						/* eslint-disable jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
-							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-							className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
 							// in Jetpack sites
