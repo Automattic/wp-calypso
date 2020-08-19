@@ -34,8 +34,8 @@
 .facebook-preview__title {
 	color: #1d2129;
 	font-family: Georgia, serif;
-	font-size: 18px;
 	/* stylelint-disable-next-line scales/font-weight */
+	font-size: 18px;
 	font-weight: 600;
 	line-height: 22px;
 	max-height: 100px;
@@ -44,7 +44,6 @@
 
 .facebook-preview__description {
 	color: #1d2129;
-	flex-grow: 1;
 	font-family: helvetica, arial, sans-serif;
 	font-size: $font-body-extra-small;
 	line-height: 16px;
@@ -91,7 +90,7 @@
 	}
 
 	.facebook-preview__url {
-		margin-top: 9px;
+		margin-bottom: 5px;
 	}
 }
 
@@ -123,6 +122,8 @@
 
 	.facebook-preview__body {
 		width: 100%;
+		height: 136px; //value in Facebook's styles
+		justify-content: center;
 	}
 
 	.facebook-preview__title {
@@ -131,7 +132,9 @@
 	}
 
 	.facebook-preview__url {
-		margin-top: auto;
 		margin-bottom: 5px;
+	}
+	.facebook-preview__description {
+		max-height: 80px; //value in Facebook's styles
 	}
 }
