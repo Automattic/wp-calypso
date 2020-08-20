@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
-import { assign, debounce, find, findLast, pick, values, isEqual } from 'lodash';
+import { assign, debounce, find, findLast, pick, values } from 'lodash';
 import i18n from 'i18n-calypso';
 import { parse, stringify } from 'lib/shortcode';
 import closest from 'component-closest';
@@ -890,7 +890,7 @@ function mediaButton( editor ) {
 			previousMediaReference = currentMediaReference;
 			currentMediaReference = getMedia( store.getState(), siteId );
 
-			if ( ! isEqual( previousMediaReference, currentMediaReference ) ) {
+			if ( previousMediaReference !== currentMediaReference ) {
 				updateMedia();
 			}
 		} );
