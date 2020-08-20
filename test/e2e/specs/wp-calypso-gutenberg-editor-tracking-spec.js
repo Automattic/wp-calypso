@@ -71,7 +71,7 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			await wpadminSidebarComponent.selectNewPost();
 		} );
 
-		step( 'Test for presence of e2e specific tracking events stack on global', async function () {
+		step( 'Check for presence of e2e specific tracking events stack on global', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
 			// Check evaluates to truthy
