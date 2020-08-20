@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 1.21
+Stable tag: 1.22
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.22 =
+* Premium Content: load assets using proper hook (https://github.com/Automattic/wp-calypso/pull/44825)
+* EditingToolkit > GlobalStyles: Add new Google fonts (https://github.com/Automattic/wp-calypso/pull/44750)
 
 = 1.21 =
 * Site setup: Redirect to user's home after checkout. For both composite and old checkouts. And for simple and atomic (e-commerce) sites. See (https://github.com/Automattic/wp-calypso/pull/44881).
