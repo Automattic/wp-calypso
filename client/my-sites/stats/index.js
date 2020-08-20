@@ -16,11 +16,11 @@ import {
 	site,
 	summary,
 	wordAds,
+	redirectToActivity,
 	redirectToDefaultModulePage,
 	redirectToDefaultSitePage,
 	redirectToDefaultWordAdsPeriod,
 } from './controller';
-import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 /**
@@ -78,10 +78,7 @@ export default function () {
 	trackedPage( '/stats/follows/comment/:site', follows );
 	trackedPage( '/stats/follows/comment/:page_num/:site', follows );
 
-	// Can't convert to trackedPage because it uses `sites` instead of `navigation`
-	page( '/stats/activity', siteSelection, sites, redirectToAcivity, makeLayout, clientRender );
-
-	trackedPage( '/stats/activity/:site', redirectToAcivity );
+	page( '/stats/activity/:site?', redirectToActivity );
 
 	trackedPage( `/stats/ads/:period(${ validPeriods })/:site`, wordAds );
 

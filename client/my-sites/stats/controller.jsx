@@ -131,6 +131,14 @@ function getMomentSiteZone( state, siteId ) {
 	return moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 }
 
+export function redirectToActivity( context ) {
+	if ( context.params.site ) {
+		page.redirect( '/activity-log/' + context.params.site );
+	} else {
+		page.redirect( '/activity-log' );
+	}
+}
+
 export function redirectToDefaultSitePage( context ) {
 	const siteFragment = getSiteFragment( context.path );
 
