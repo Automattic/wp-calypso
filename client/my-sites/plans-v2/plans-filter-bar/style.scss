@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .plans-filter-bar {
 	$height: 36px;
 	$border-radius: 4px;
@@ -78,5 +81,40 @@
 		.segmented-control__item {
 			flex: 1 1 50%;
 		}
+	}
+}
+
+.plans-filter-bar.sticky {
+	position: fixed;
+
+	// This is the height of the masterbar
+	top: 47px;
+
+	width: 100%;
+	max-width: 1040px;
+
+	z-index: 2;
+
+	// At this screen size, div#content (wraps div#primary and div#secondary)
+	// has a left padding of 253px and a right padding of 24px which adds up to 277px.
+	@include breakpoint-deprecated( '>660px' ) {
+		width: calc( 100% - 277px );
+	}
+
+	// At this screen size, div#content (wraps div#primary and div#secondary)
+	// has a left padding of 305px and a right padding of 32px which adds up to 337px.
+	@include break-large {
+		width: calc( 100% - 337px );
+	}
+}
+
+// This margin fills the gap that making the filter bar sticky leaves. Without it,
+// there is a noticeable jump in the UI every time the filter bar goes from sticky
+// to its normal position.
+.plans-filter-bar.sticky + .plans-v2__columns {
+	margin-top: 100px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 80px;
 	}
 }
