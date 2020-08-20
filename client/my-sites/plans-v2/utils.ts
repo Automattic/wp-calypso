@@ -243,6 +243,7 @@ export function itemToSelectorProduct(
 			displayName: item.getTitle(),
 			type,
 			subtypes: [],
+			shortName: item.getTitle(),
 			tagline: get( item, 'getTagline', () => '' )(),
 			description: item.getDescription(),
 			monthlyProductSlug,
