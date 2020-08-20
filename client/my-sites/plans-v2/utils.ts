@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { translate, TranslateResult } from 'i18n-calypso';
-import { compact, get, isArray, isObject, isString } from 'lodash';
+import { compact, get, isArray, isObject } from 'lodash';
+import { createElement, Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -38,7 +39,6 @@ import { MORE_FEATURES_LINK } from 'my-sites/plans-v2/constants';
 /**
  * Type dependencies
  */
-import type { ReactElement } from 'react';
 import type {
 	Duration,
 	SelectorProduct,
@@ -98,17 +98,15 @@ export function productButtonLabel( product: SelectorProduct, isOwned: boolean )
 
 	const { buttonLabel, displayName } = product;
 
-	return buttonLabel ?? isString( displayName )
-		? translate( 'Get %s', {
-				args: displayName,
-				comment: '%s is the name of a product',
-		  } )
-		: translate( 'Get {{name/}}', {
-				components: {
-					name: displayName as ReactElement,
-				},
-				comment: '{{name/}} is the name of a product',
-		  } );
+	return (
+		buttonLabel ??
+		translate( 'Get {{name/}}', {
+			components: {
+				name: createElement( Fragment, {}, displayName ),
+			},
+			comment: '{{name/}} is the name of a product',
+		} )
+	);
 }
 
 export function productBadgeLabel(
