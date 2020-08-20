@@ -33,7 +33,6 @@ type OwnProps = {
 	features?: ProductCardFeaturesItem[];
 	onUpgradeClick: () => void;
 	originalPrice: number;
-	productType?: TranslateResult;
 	selectorProduct: SelectorProduct;
 };
 
@@ -46,7 +45,6 @@ const UpgradeNudge = ( {
 	onUpgradeClick,
 	originalPrice,
 	selectorProduct,
-	productType = 'Real-time',
 }: OwnProps ) => {
 	const translate = useTranslate();
 	const isDiscounted = isFinite( discountedPrice );
@@ -55,7 +53,7 @@ const UpgradeNudge = ( {
 		getPreference( state, JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS )
 	);
 
-	const { description, productSlug } = selectorProduct;
+	const { description, productSlug, displayName } = selectorProduct;
 
 	// Save dismiss to never show up the nudge again for this specific plan/product.
 	const dispatch = useDispatch();
@@ -82,7 +80,7 @@ const UpgradeNudge = ( {
 							comment: 'to be accompanied with a product subtype such as "Real-time"',
 						} ) }
 						<br />
-						<span className="jetpack-product-card__nudge-product-type">{ productType }</span>
+						<span className="jetpack-product-card__nudge-product-type">{ displayName }</span>
 					</h3>
 				</div>
 				<div className="jetpack-product-card__price">
@@ -109,11 +107,7 @@ const UpgradeNudge = ( {
 				{ features.map( ( feature, index ) => (
 					<li className="jetpack-product-card__nudge-feature" key={ index }>
 						<Gridicon icon="checkmark" />
-						<div className="jetpack-product-card__nudge-feature-desc">
-							<strong>{ feature.text }</strong>
-							<br />
-							{ feature.description }
-						</div>
+						<div className="jetpack-product-card__nudge-feature-desc">{ feature.text }</div>
 					</li>
 				) ) }
 			</ul>
