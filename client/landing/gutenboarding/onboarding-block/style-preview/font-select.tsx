@@ -14,19 +14,20 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { fontPairings, getFontTitle, FontPair } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
-import designs from '../../available-designs';
+import type { Design } from '../../stores/onboard/types';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { selectedDesign, selectedFonts } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
+	const { getRandomizedDesigns } = useSelect( ( select ) => select( STORE_KEY ) );
 	const { setFonts } = useDispatch( STORE_KEY );
 	const [ isOpen, setIsOpen ] = React.useState( false );
 
 	// TODO: Add font loading for unknown fonts
-	const selectedDesignDefaultFonts = designs.featured.find(
-		( design ) => design.slug === selectedDesign?.slug
+	const selectedDesignDefaultFonts = getRandomizedDesigns().featured.find(
+		( design: Design ) => design.slug === selectedDesign?.slug
 	)?.fonts;
 
 	const defaultFontOption = selectedDesignDefaultFonts ? (
