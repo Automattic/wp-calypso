@@ -23,8 +23,8 @@ export const getJetpackProductsShortNames = () => {
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Daily Scan' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Daily Scan' ),
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-Spam' ),
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-Spam' ),
+		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
+		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
 	};
 };
 
@@ -232,7 +232,7 @@ export const getJetpackProducts = () => {
 		} );
 	isEnabled( 'jetpack/anti-spam-product' ) &&
 		output.push( {
-			title: translate( 'Jetpack Anti-Spam' ),
+			title: translate( 'Jetpack Anti-spam' ),
 			description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ],
 			// There is only one option per billing interval, but this
 			// component still needs the full display with radio buttons.
