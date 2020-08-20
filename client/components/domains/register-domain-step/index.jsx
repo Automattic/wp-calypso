@@ -1274,7 +1274,6 @@ class RegisterDomainStep extends React.Component {
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
-					isReskinned={ this.props.isReskinned }
 				>
 					{ this.props.isEligibleVariantForDomainTest &&
 						hasResults &&
