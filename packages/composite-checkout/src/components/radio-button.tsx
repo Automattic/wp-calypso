@@ -3,7 +3,12 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
+
+/**
+ * Internal dependencies
+ */
+import { Theme } from 'src/lib/theme';
+import styled from '../lib/styled';
 
 export default function RadioButton( {
 	checked,
@@ -15,7 +20,7 @@ export default function RadioButton( {
 	disabled,
 	id,
 	ariaLabel,
-} ) {
+}: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
 
 	return (
@@ -45,6 +50,18 @@ export default function RadioButton( {
 	);
 }
 
+interface RadioButtonProps {
+	name: string;
+	id: string;
+	label: React.ReactNode;
+	disabled?: boolean;
+	checked?: boolean;
+	value: string;
+	onChange?: () => void;
+	ariaLabel: string;
+	children?: React.ReactNode;
+}
+
 RadioButton.propTypes = {
 	name: PropTypes.string.isRequired,
 	id: PropTypes.string.isRequired,
@@ -56,7 +73,9 @@ RadioButton.propTypes = {
 	ariaLabel: PropTypes.string.isRequired,
 };
 
-const RadioButtonWrapper = styled.div`
+const RadioButtonWrapper = styled.div<
+	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
+>`
 	position: relative;
 	margin-top: 8px;
 	border-radius: 3px;
@@ -116,7 +135,13 @@ const RadioButtonWrapper = styled.div`
 	${ handleWrapperDisabled };
 `;
 
-function handleWrapperDisabled( { disabled } ) {
+interface RadioButtonWrapperProps {
+	disabled?: boolean;
+	isFocused?: boolean;
+	checked?: boolean;
+}
+
+function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {
 	if ( ! disabled ) {
 		return null;
 	}
@@ -155,7 +180,12 @@ const Radio = styled.input`
 	appearance: none;
 `;
 
-const Label = styled.label`
+interface LabelProps {
+	disabled?: boolean;
+	checked?: boolean;
+}
+
+const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
 	position: relative;
 	padding: 16px 14px 16px 40px;
 	border-radius: 3px;
@@ -217,7 +247,7 @@ const Label = styled.label`
 	${ handleLabelDisabled };
 `;
 
-function handleLabelDisabled( { disabled } ) {
+function handleLabelDisabled( { disabled }: { disabled?: boolean } ) {
 	if ( ! disabled ) {
 		return null;
 	}
@@ -245,27 +275,36 @@ function handleLabelDisabled( { disabled } ) {
 	`;
 }
 
-const RadioButtonChildren = styled.div`
+const RadioButtonChildren = styled.div<
+	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
+>`
 	display: ${ ( props ) => ( props.checked ? 'block' : 'none' ) };
 `;
 
-function getBorderColor( { checked, theme } ) {
+function getBorderColor( { checked, theme }: { checked?: boolean; theme: Theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.borderColor;
 }
 
-function getRadioColor( { checked, theme } ) {
+function getRadioColor( { checked, theme }: { checked?: boolean; theme: Theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.surface;
 }
 
-function getBorderWidth( { checked } ) {
+function getBorderWidth( { checked }: { checked?: boolean } ) {
 	return checked ? '3px' : '1px';
 }
 
-function getGrayscaleValue( { checked } ) {
+function getGrayscaleValue( { checked }: { checked?: boolean } ) {
 	return checked ? 0 : '100%';
 }
 
-function getOutline( { isFocused, theme } ) {
+function getOutline( {
+	isFocused,
+	theme,
+}: {
+	isFocused?: boolean;
+	checked?: boolean;
+	theme: Theme;
+} ) {
 	if ( isFocused ) {
 		return theme.colors.outline + ' solid 2px';
 	}

@@ -26,7 +26,15 @@ import CheckoutErrorBoundary from './checkout-error-boundary';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
-export default function CheckoutPaymentMethods( { summary, isComplete, className } ) {
+export default function CheckoutPaymentMethods( {
+	summary,
+	isComplete,
+	className,
+}: {
+	summary?: boolean;
+	isComplete: boolean;
+	className?: string;
+} ) {
 	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const onError = useCallback(
@@ -36,7 +44,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
-	const onClickPaymentMethod = ( newMethod ) => {
+	const onClickPaymentMethod = ( newMethod: string ) => {
 		debug( 'setting payment method to', newMethod );
 		onEvent( { type: 'PAYMENT_METHOD_SELECT', payload: newMethod } );
 		setPaymentMethod( newMethod );
@@ -52,10 +60,13 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 					onError={ onError }
 				>
 					<PaymentMethod
-						{ ...paymentMethod }
+						id={ paymentMethod.id }
+						label={ paymentMethod.label }
+						activeContent={ paymentMethod.activeContent }
+						inactiveContent={ paymentMethod.inactiveContent }
 						checked={ true }
-						summary
-						ariaLabel={ paymentMethod.getAriaLabel( __ ) }
+						summary={ true }
+						ariaLabel={ paymentMethod.getAriaLabel( __ as ( text: string ) => string ) }
 					/>
 				</CheckoutErrorBoundary>
 			</div>
@@ -86,10 +97,13 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 						onError={ onError }
 					>
 						<PaymentMethod
-							{ ...method }
+							id={ method.id }
+							label={ method.label }
+							activeContent={ method.activeContent }
+							inactiveContent={ method.inactiveContent }
 							checked={ paymentMethod?.id === method.id }
 							onClick={ onClickPaymentMethod }
-							ariaLabel={ method.getAriaLabel( __ ) }
+							ariaLabel={ method.getAriaLabel( __ as ( text: string ) => string ) }
 						/>
 					</CheckoutErrorBoundary>
 				) ) }
@@ -120,10 +134,10 @@ function PaymentMethod( {
 	onClick,
 	ariaLabel,
 	summary,
-} ) {
+}: PaymentMethodProps ): JSX.Element {
 	const { formStatus } = useFormStatus();
 	if ( summary ) {
-		return inactiveContent;
+		return <>{ inactiveContent && inactiveContent }</>;
 	}
 
 	return (
@@ -133,7 +147,7 @@ function PaymentMethod( {
 			id={ id }
 			checked={ checked }
 			disabled={ formStatus !== 'ready' }
-			onChange={ onClick ? () => onClick( id ) : null }
+			onChange={ onClick ? () => onClick( id ) : undefined }
 			ariaLabel={ ariaLabel }
 			label={ label }
 		>
@@ -152,6 +166,17 @@ PaymentMethod.propTypes = {
 	inactiveContent: PropTypes.node,
 	summary: PropTypes.bool,
 };
+
+interface PaymentMethodProps {
+	id: string;
+	onClick?: ( id: string ) => void;
+	checked: boolean;
+	ariaLabel: string;
+	activeContent?: React.ReactNode;
+	label?: React.ReactNode;
+	inactiveContent?: React.ReactNode;
+	summary?: boolean;
+}
 
 export const RadioButtons = styled.div`
 	margin-bottom: 16px;

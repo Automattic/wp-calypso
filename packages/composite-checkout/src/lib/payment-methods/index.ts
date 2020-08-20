@@ -12,7 +12,7 @@ import { PaymentMethod } from '../../types';
 
 const debug = debugFactory( 'composite-checkout:payment-methods' );
 
-export function usePaymentMethodId() {
+export function usePaymentMethodId(): [ string | null, ( id: string ) => void ] {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
 	if ( ! setPaymentMethodId ) {
 		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
