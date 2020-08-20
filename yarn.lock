@@ -2861,18 +2861,18 @@
     lodash.merge "^4.4.0"
     postcss "^5.0.21"
 
-"@signal-noise/stylelint-scales@1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@signal-noise/stylelint-scales/-/stylelint-scales-1.4.0.tgz#42b0089fba683a8ed8ca1a2df28b40709866fa6a"
-  integrity sha512-b4bxnA26PbiDz4sIUr3MzkyHZq5McOHerq5JYDZ4pjvHZhuc+mt55blwMuJPbcrS6NC4NNBJLbsGteAnr+gG4A==
+"@signal-noise/stylelint-scales@^1.4.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@signal-noise/stylelint-scales/-/stylelint-scales-1.5.0.tgz#c7264639a779c8402e9630d6aabac6f99175d83b"
+  integrity sha512-V7penWCQ8DYaI0m14JD3z8G+E3LLJX6QL08A66wotlxt5MU0NRi+tkEWepzXsIT9BvSV7yKiEtsApa5gc+VVmQ==
   dependencies:
-    camelcase "^5.3.1"
+    camelcase "^6.0.0"
     css-border-property "^1.1.0"
     css-global-keywords "^1.0.1"
     font-family "^0.2.0"
-    lodash "^4.17.15"
+    lodash "^4.17.20"
     parse-css-font "^4.0.0"
-    postcss-values-parser "^3.1.1"
+    postcss-values-parser "^3.2.1"
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -18005,6 +18005,11 @@ lodash@^4.17.19:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
   integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
+lodash@^4.17.20:
+  version "4.17.20"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
+  integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
+
 log-symbols@^2.0.0, log-symbols@^2.1.0, log-symbols@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/log-symbols/-/log-symbols-2.2.0.tgz#5740e1c5d6f0dfda4ad9323b5332107ef6b4c40a"
@@ -21759,7 +21764,7 @@ postcss-values-parser@^2.0.0, postcss-values-parser@^2.0.1:
     indexes-of "^1.0.1"
     uniq "^1.0.1"
 
-postcss-values-parser@^3.0.5, postcss-values-parser@^3.1.1:
+postcss-values-parser@^3.0.5, postcss-values-parser@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/postcss-values-parser/-/postcss-values-parser-3.2.1.tgz#55114607de6631338ba8728d3e9c15785adcc027"
   integrity sha512-SQ7/88VE9LhJh9gc27/hqnSU/aZaREVJcRVccXBmajgP2RkjdJzNyH/a9GCVMI5nsRhT0jC5HpUMwfkz81DVVg==
