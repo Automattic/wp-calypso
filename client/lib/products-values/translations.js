@@ -146,7 +146,7 @@ export const getJetpackProductsTaglines = () => {
 
 export const getJetpackProductsDescriptions = () => {
 	const backupDailyDescription = translate(
-		'Never lose a word, image, page, or time worrying about your site'
+		'Never lose a word, image, page, or time worrying about your site.'
 	);
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'

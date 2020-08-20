@@ -163,7 +163,7 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	iconSlug: 'jetpack_backup_v2',
 	displayName: translate( 'Jetpack Backup' ),
 	tagline: translate( 'Recommended for all sites' ),
-	description: translate( 'Never lose a word, image, page, or time worrying about your site' ),
+	description: translate( 'Never lose a word, image, page, or time worrying about your site.' ),
 	buttonLabel: translate( 'Get Backup' ),
 	features: {
 		items: buildCardFeaturesFromItem(
