@@ -298,12 +298,12 @@ describe( 'Search previews', () => {
 		const urlEl = wrapper.find( '.search-preview__url' );
 		expect( urlEl.exists() ).toBeTruthy();
 		expect( urlEl.text() ).toEqual(
-			'https://wordpress.com/alongpathnameheretoensuretruncationoccursbutitdoesneedtob' +
+			'wordpress.com › alongpathnameheretoensuretruncationoccursbutitdoesne' +
 				'…' +
 				' ' +
 				downArrowChar
 		);
 		const urlTextRaw = urlEl.text().replace( '…', '' ).replace( downArrowChar, '' ).trimEnd();
-		expect( urlTextRaw ).toHaveLength( 79 );
+		expect( urlTextRaw ).toHaveLength( 68 );
 	} );
 } );
