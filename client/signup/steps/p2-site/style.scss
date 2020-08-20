@@ -3,7 +3,7 @@
 	line-height: 22px;
 	pointer-events: none;
 	position: absolute;
-	font-size: $font-title-small;
+	font-size: 18px;
 	top: 62px;
 	right: 24px;
 }
@@ -32,7 +32,7 @@
 	border: none;
 	border-radius: 40px;
 	font-weight: normal;
-	font-size: $font-title-small;
+	font-size: 18px;
 	color: var( --p2-color-text-white );
 	transition: background 0.2s ease;
 
@@ -54,7 +54,7 @@
 .p2-site__form .form-label {
 	color: var( --p2-color-text );
 	font-weight: normal;
-	font-size: $font-title-small;
+	font-size: 18px;
 	letter-spacing: -0.26px;
 	margin-bottom: 16px;
 }
@@ -63,7 +63,7 @@
 	padding: 18px 24px;
 	line-height: 1;
 	border-radius: 2px;
-	font-size: $font-title-small;
+	font-size: 18px;
 	color: var( --p2-color-text );
 	border-color: var( --p2-color-border );
 
@@ -109,11 +109,15 @@
 }
 
 .p2-site__form .form-input-validation {
-	color: var( --p2-color-text-red );
+	color: var( --p2-color-error );
 	font-size: 14px;
 	padding: 0;
 	padding-top: 9px;
 	padding-left: 2px;
+
+	&.is-error {
+		color: var( --p2-color-error );
+	}
 
 	svg {
 		display: none;
@@ -132,19 +136,24 @@
 	line-height: 28px;
 }
 
-.p2-site__subdomain-suggestions {
-	border: 1px solid var( --p2-color-border );
-}
-
 .p2-site__subdomain-suggestions-item {
-	border-bottom: 1px solid var( --p2-color-border );
+	border: 1px solid var( --p2-color-border );
 	padding: 18px 24px;
+	transition: border 0.2s ease;
+	margin-top: -1px;
+	position: relative;
+
+	&:first-child {
+		border-radius: 2px 2px 0 0;
+	}
 
 	&:last-child {
-		border-bottom: none;
+		border-radius: 0 0 2px 2px;
 	}
 
 	&:hover {
 		cursor: pointer;
+		border-color: var( --p2-color-link );
+		z-index: 1;
 	}
 }
