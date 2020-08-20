@@ -9,17 +9,24 @@ import React, { PureComponent } from 'react';
  * Internal dependencies
  */
 
-import { stripHtmlTags } from '../helpers';
+import { firstValid, hardTruncation, shortEnough, stripHtmlTags } from '../helpers';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const DESCRIPTION_LENGTH = 200;
+
 const baseDomain = ( url ) =>
 	url
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
 		.replace( /\/.*$/, '' ); // strip everything after the domain
+
+const twitterDescription = firstValid(
+	shortEnough( DESCRIPTION_LENGTH ),
+	hardTruncation( DESCRIPTION_LENGTH )
+);
 
 export class TwitterPreview extends PureComponent {
 	render() {
@@ -35,7 +42,9 @@ export class TwitterPreview extends PureComponent {
 					{ image && <div className="twitter-preview__image" style={ previewImageStyle } /> }
 					<div className="twitter-preview__body">
 						<div className="twitter-preview__title">{ title }</div>
-						<div className="twitter-preview__description">{ stripHtmlTags( description ) }</div>
+						<div className="twitter-preview__description">
+							{ twitterDescription( stripHtmlTags( description ) ) }
+						</div>
 						<div className="twitter-preview__url">{ baseDomain( url || '' ) }</div>
 					</div>
 				</div>
