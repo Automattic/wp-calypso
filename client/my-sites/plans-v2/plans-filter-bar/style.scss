@@ -88,8 +88,17 @@
 	top: 47px;
 
 	width: 100%;
+	max-width: 1040px;
 
 	z-index: 2;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		width: calc( 100% - 277px );
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		width: calc( 100% - 337px );
+	}
 }
 
 // This margin fills the gap that making the filter bar sticky leaves. Without it,
