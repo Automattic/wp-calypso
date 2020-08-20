@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useDispatch } from '@wordpress/data';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
@@ -26,8 +25,6 @@ import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 import useSignup from './hooks/use-signup';
 import useOnSignup from './hooks/use-on-signup';
 import useOnLogin from './hooks/use-on-login';
-import { useExperimentalQueryParam } from './path';
-import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 
 import './style.scss';
 
@@ -40,8 +37,6 @@ const Gutenboard: React.FunctionComponent = () => {
 	useOnSiteCreation();
 	usePageViewTracksEvents();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
-	const shouldEnableExperimental = useExperimentalQueryParam();
-	const { enableExperimental } = useDispatch( ONBOARD_STORE );
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
@@ -66,9 +61,7 @@ const Gutenboard: React.FunctionComponent = () => {
 			document.head.appendChild( linkBase );
 			document.head.appendChild( linkHeadings );
 		} );
-		if ( shouldEnableExperimental ) {
-			enableExperimental();
-		}
+
 		recordOnboardingStart();
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
