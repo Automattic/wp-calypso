@@ -1,0 +1,14 @@
+div.premium-badge {
+	background-color: var( --color-link );
+	padding-right: 6px;
+	color: var( --color-text-inverted );
+	.info-popover {
+		height: 16px;
+		vertical-align: middle;
+		margin-bottom: 1px;
+		margin-left: 5px;
+		.gridicon {
+			color: var( --color-text-inverted );
+		}
+	}
+}
