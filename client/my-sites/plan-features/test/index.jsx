@@ -22,10 +22,7 @@ jest.mock( 'i18n-calypso', () => ( {
 
 jest.mock( 'state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
-} ) );
-
-jest.mock( 'state/plans/selectors', () => ( {
-	getPlanRawPrice: jest.fn(),
+	getSitePlanRawPrice: jest.fn(),
 } ) );
 
 /**
@@ -57,8 +54,7 @@ import {
  */
 import { calculatePlanCredits, isPrimaryUpgradeByPlanDelta, PlanFeatures } from '../index';
 
-import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
-import { getPlanRawPrice } from 'state/plans/selectors';
+import { getPlanDiscountedRawPrice, getSitePlanRawPrice } from 'state/sites/plans/selectors';
 
 const identity = ( x ) => x;
 
@@ -176,11 +172,11 @@ describe( 'calculatePlanCredits', () => {
 	};
 	beforeEach( () => {
 		getPlanDiscountedRawPrice.mockReset();
-		getPlanRawPrice.mockReset();
+		getSitePlanRawPrice.mockReset();
 	} );
 	test( 'Should return max annual price difference between all available plans - 1 plan', () => {
 		getPlanDiscountedRawPrice.mockReturnValueOnce( 80 );
-		getPlanRawPrice.mockReturnValueOnce( 100 );
+		getSitePlanRawPrice.mockReturnValueOnce( 100 );
 		const credits = calculatePlanCredits( {}, 1, [ { ...baseProps, availableForPurchase: true } ] );
 		expect( credits ).toBe( 20 );
 	} );
@@ -190,7 +186,10 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 60 )
 			.mockReturnValueOnce( 70 );
 
-		getPlanRawPrice.mockReturnValueOnce( 100 ).mockReturnValueOnce( 90 ).mockReturnValueOnce( 130 );
+		getSitePlanRawPrice
+			.mockReturnValueOnce( 100 )
+			.mockReturnValueOnce( 90 )
+			.mockReturnValueOnce( 130 );
 		const credits = calculatePlanCredits( {}, 1, [
 			{ ...baseProps, availableForPurchase: true },
 			{ ...baseProps, availableForPurchase: true },
@@ -204,7 +203,10 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 60 )
 			.mockReturnValueOnce( 70 );
 
-		getPlanRawPrice.mockReturnValueOnce( 100 ).mockReturnValueOnce( 90 ).mockReturnValueOnce( 130 );
+		getSitePlanRawPrice
+			.mockReturnValueOnce( 100 )
+			.mockReturnValueOnce( 90 )
+			.mockReturnValueOnce( 130 );
 		const credits = calculatePlanCredits( {}, 1, [
 			{ ...baseProps, availableForPurchase: true },
 			{ ...baseProps, availableForPurchase: false },
@@ -214,7 +216,7 @@ describe( 'calculatePlanCredits', () => {
 	} );
 	test( 'Should return 0 when no plan is available', () => {
 		getPlanDiscountedRawPrice.mockReturnValueOnce( 70 );
-		getPlanRawPrice.mockReturnValueOnce( 130 );
+		getSitePlanRawPrice.mockReturnValueOnce( 130 );
 		const credits = calculatePlanCredits( {}, 1, [
 			{ ...baseProps, availableForPurchase: false },
 		] );
@@ -226,7 +228,10 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 90 )
 			.mockReturnValueOnce( 130 );
 
-		getPlanRawPrice.mockReturnValueOnce( 80 ).mockReturnValueOnce( 60 ).mockReturnValueOnce( 70 );
+		getSitePlanRawPrice
+			.mockReturnValueOnce( 80 )
+			.mockReturnValueOnce( 60 )
+			.mockReturnValueOnce( 70 );
 
 		const credits = calculatePlanCredits( {}, 1, [
 			{ ...baseProps, availableForPurchase: true },
