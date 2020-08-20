@@ -38,14 +38,6 @@ define( 'PREMIUM_CONTENT__PLUGIN_DIR', __DIR__ );
  * @throws RuntimeException If block assets files are not found.
  * @return void
  */
-
- /**
-  * Helper; Get the 'script_asset'
-  * Used by enqueue_block_assets and enqueue_block_editor_assets
-  *
-  * @throws RuntimeException If block assets files are not found.
-  * @return mixed
-  */
 function premium_content_block_init() {
 	register_blocks();
 	load_translations();
