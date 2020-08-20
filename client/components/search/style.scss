@@ -7,6 +7,7 @@
 }
 
 .search {
+	border-radius: 2px;
 	display: flex;
 	flex: 1 1 auto;
 	margin-bottom: 24px;
@@ -112,6 +113,7 @@
 	height: 100%;
 	background: var( --color-surface );
 	appearance: none;
+	border-radius: inherit;
 	box-sizing: border-box;
 	padding: 0;
 	-webkit-appearance: none;
@@ -157,11 +159,11 @@
 	}
 
 	.search__input-fade {
+		border-radius: inherit;
 		flex: 1 1 auto;
 		height: 100%;
 		position: relative;
 		font-size: $font-body;
-		border-radius: inherit;
 		&::before {
 			@include long-content-fade(
 				$size: 32px,

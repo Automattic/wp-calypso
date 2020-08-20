@@ -4,6 +4,7 @@
 
 .following__search.card.is-compact {
 	padding: 0;
+	border-radius: 2px;
 	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 	z-index: z-index( 'root', '.reader-following-search' );
 }
