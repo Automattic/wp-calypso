@@ -9,6 +9,7 @@ import config from '../../config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';
+import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,11 +18,13 @@ import Gutenboard from './gutenboard';
 import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
+import availableDesigns from './available-designs';
 import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 import { addHotJarScript } from 'lib/analytics/hotjar';
 import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
+import type { Design } from './stores/onboard/types';
 
 /**
  * Style dependencies
@@ -74,6 +77,9 @@ window.AppBoot = async () => {
 	try {
 		checkAndRedirectIfSiteWasCreatedRecently();
 	} catch {}
+
+	// Update list of randomized designs in the gutenboarding session store
+	checkIfRandomizedDesignsAreUpToDate();
 
 	ReactDom.render(
 		<LocaleContext>
@@ -143,4 +149,29 @@ function waitForSelectedSite(): Promise< Site | undefined > {
 		} );
 		select( SITE_STORE ).getSite( selectedSite );
 	} ).finally( unsubscribe );
+}
+/**
+ * If available-designs-config.json has been updated, replace the cached list
+ * of designs with the updated designs
+ */
+function checkIfRandomizedDesignsAreUpToDate() {
+	const designsInStore = select( ONBOARD_STORE ).getRandomizedDesigns();
+	if ( ! isUpToDate( designsInStore.featured, availableDesigns.featured ) ) {
+		dispatch( ONBOARD_STORE ).setRandomizedDesigns( {
+			...availableDesigns,
+			featured: shuffle( availableDesigns.featured ),
+		} );
+	}
+}
+
+/**
+ *
+ * Compare cached designs in the ONBOARD_STORE to the source of designs in
+ * available-designs-config.json
+ *
+ * @param stored randomizedDesigns cached in WP_ONBOARD
+ * @param available designs sourced from available-designs-config.json
+ */
+function isUpToDate( stored: Design[], available: Design[] ): boolean {
+	return isEmpty( xorWith( stored, available, isEqual ) );
 }
