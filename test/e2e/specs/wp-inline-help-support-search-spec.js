@@ -32,10 +32,12 @@ before( async function () {
 describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function () {
 	this.timeout( mochaTimeOut );
 
-	step( 'Login and select a non My Home page', async function () {
+	step( 'Login and select a page that is not the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
 
-		await loginFlow.loginAndSelectMySite();
+		// The "/home" route is the only one where the "FAB" inline help
+		// is not shown.
+		await loginFlow.loginAndSelectSettings();
 
 		// Initialize the helper component
 		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
@@ -51,22 +53,22 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function
 			await inlineHelpPopoverComponent.waitForToggleNotToBePresent();
 		} );
 
-		step( 'Check help toggle is visible on Theme page', async function () {
+		step( 'Check help toggle is visible on Settings page', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 
 			// The "inline help" FAB should not appear on the My Home
 			// because there is already a support search "Card" on that
 			// page. Any other non-home page should show the FAB. There
-			// is nothing special about Themes page other than it's not
+			// is nothing special about Settings page other than it's not
 			// the `/home` route :)
-			await sidebarComponent.selectThemes();
+			await sidebarComponent.selectSettings();
 
 			// Once removed we can assert is is invisible.
 			const isToggleVisible = await inlineHelpPopoverComponent.isToggleVisible();
 			assert.equal(
 				isToggleVisible,
 				true,
-				'Inline Help support search was not shown on Theme page.'
+				'Inline Help support search was not shown on Settings page.'
 			);
 		} );
 	} );

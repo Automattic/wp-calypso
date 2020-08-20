@@ -34,7 +34,7 @@ before( async function () {
 describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, async function () {
 	this.timeout( mochaTimeOut );
 
-	step( 'Login and select a non My Home page', async function () {
+	step( 'Login and select the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
 
 		await loginFlow.loginAndSelectMySite();
