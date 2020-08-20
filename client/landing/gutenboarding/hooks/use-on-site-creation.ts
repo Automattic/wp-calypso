@@ -13,6 +13,7 @@ import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldSiteBePublic } from './use-selected-plan';
+import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
 
 const wpcom = wp.undocumented();
 
@@ -101,6 +102,7 @@ export default function useOnSiteCreation() {
 						products: [ ...cart.products, planProduct, domainProduct ],
 					} );
 					resetOnboardStore();
+					clearLastNonEditorRoute();
 					setSelectedSite( newSite.blogid );
 
 					const editorUrl = design?.is_fse
@@ -122,6 +124,7 @@ export default function useOnSiteCreation() {
 
 			recordOnboardingComplete( flowCompleteTrackingParams );
 			resetOnboardStore();
+			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
 			window.location.href = design?.is_fse

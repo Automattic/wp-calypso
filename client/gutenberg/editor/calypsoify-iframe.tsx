@@ -26,7 +26,7 @@ import {
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, navigate } from 'state/ui/actions';
-import { setRoute } from 'state/route/actions';
+import { clearLastNonEditorRoute, setRoute } from 'state/route/actions';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
@@ -159,6 +159,14 @@ class CalypsoifyIframe extends Component<
 				}, 25000 );
 			}
 		}, 1000 );
+
+		// An earlier page with no access to the Calypso store (probably `/new`) has asked
+		// for the `lastNonEditorRoute` state to be cleared so that `getEditorCloseConfig()`
+		// will return the default close location.
+		if ( window.sessionStorage.getItem( 'a8c-clearLastNonEditorRoute' ) ) {
+			window.sessionStorage.removeItem( 'a8c-clearLastNonEditorRoute' );
+			this.props.clearLastNonEditorRoute();
+		}
 	}
 
 	componentWillUnmount() {
@@ -811,6 +819,7 @@ const mapDispatchToProps = {
 	setMediaLibrarySelectedItems,
 	fetchMediaItem,
 	getMediaItem,
+	clearLastNonEditorRoute,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
