@@ -114,6 +114,10 @@
 		height: 158px;
 		width: 158px;
 
+		box-sizing: border-box;
+		border: 1px solid #dadde1;
+		border-right: 0;
+
 		& img {
 			display: block;
 			font-size: $font-body-small;
@@ -126,9 +130,6 @@
 			display: block;
 			height: 100%;
 			width: 100%;
-			box-sizing: border-box;
-			border: 1px solid #dadde1;
-			border-right: 0;
 			background: #ffffff;
 		}
 	}
