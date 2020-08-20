@@ -37,6 +37,9 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function
 
 		await loginFlow.loginAndSelectMySite();
 
+		const sidebarComponent = await SidebarComponent.Expect( driver );
+		await sidebarComponent.selectSettings();
+
 		// Initialize the helper component
 		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
 	} );
