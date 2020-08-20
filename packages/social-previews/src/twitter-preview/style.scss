@@ -31,7 +31,6 @@
 
 .twitter-preview__summary {
 	height: 125px;
-	
 }
 
 .twitter-preview__large_image_summary {
@@ -100,6 +99,10 @@
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+}
+
+.twitter-preview__summary .twitter-preview__description {
+	-webkit-line-clamp: 3;
 }
 
 .twitter-preview__url {
