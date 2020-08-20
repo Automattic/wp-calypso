@@ -75,7 +75,10 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPagePro
 			<HeaderCake onClick={ backButton }>
 				{ isBundle ? translate( 'Bundle Options' ) : translate( 'Product Options' ) }
 			</HeaderCake>
-			<FormattedHeader headerText="Great choice! Now select a backup option:" brandFont />
+			<FormattedHeader
+				headerText={ translate( 'Great choice! Now select a Backup option:' ) }
+				brandFont
+			/>
 			<div className="plans-v2__columns">
 				{ product.subtypes.map( ( subtypeSlug ) => {
 					const subtypeItem = slugToSelectorProduct( subtypeSlug );
