@@ -40,7 +40,7 @@ const Button: React.FC< ButtonProps & React.ButtonHTMLAttributes< HTMLButtonElem
 
 export default Button;
 
-interface ButtonProps {
+export interface ButtonProps {
 	className?: string;
 	buttonType?: ButtonType;
 	isBusy?: boolean;

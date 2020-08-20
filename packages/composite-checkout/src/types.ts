@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { DataRegistry } from '@wordpress/data';
+import { ReactElement } from 'react';
 
 export interface PaymentMethod {
 	id: string;
 	label: React.ReactNode;
 	activeContent: React.ReactNode;
 	inactiveContent: React.ReactNode;
-	submitButton: React.ReactNode;
+	submitButton: ReactElement;
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
 }
 

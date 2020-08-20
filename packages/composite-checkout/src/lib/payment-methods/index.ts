@@ -8,6 +8,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import CheckoutContext from '../checkout-context';
+import { PaymentMethod } from '../../types';
 
 const debug = debugFactory( 'composite-checkout:payment-methods' );
 
@@ -19,7 +20,7 @@ export function usePaymentMethodId() {
 	return [ paymentMethodId, setPaymentMethodId ];
 }
 
-export function usePaymentMethod() {
+export function usePaymentMethod(): PaymentMethod | null {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
 	const allPaymentMethods = useAllPaymentMethods();
 	if ( ! setPaymentMethodId ) {

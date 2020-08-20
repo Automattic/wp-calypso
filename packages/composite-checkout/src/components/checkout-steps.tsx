@@ -1,7 +1,14 @@
 /**
  * External dependencies
  */
-import React, { useState, useContext, useEffect, useCallback } from 'react';
+import React, {
+	useState,
+	useContext,
+	useEffect,
+	useCallback,
+	SetStateAction,
+	Dispatch,
+} from 'react';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { useI18n } from '@automattic/react-i18n';
@@ -26,17 +33,58 @@ import {
 	useEvents,
 } from '../public-api';
 import styled from '../lib/styled';
+import { Theme } from '../lib/theme';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
-const CheckoutStepDataContext = React.createContext();
-const CheckoutSingleStepDataContext = React.createContext();
+interface StepCompleteStatus {
+	[ key: string ]: boolean;
+}
 
-export function Checkout( { children, className } ) {
+interface CheckoutStepDataContext {
+	activeStepNumber: number;
+	stepCompleteStatus: StepCompleteStatus;
+	totalSteps: number;
+	setActiveStepNumber: ( stepNumber: number ) => void;
+	setStepCompleteStatus: Dispatch< SetStateAction< StepCompleteStatus > >;
+	setTotalSteps: ( totalSteps: number ) => void;
+}
+
+interface CheckoutSingleStepDataContext {
+	stepNumber: number;
+	nextStepNumber: number | null;
+	isStepActive: boolean;
+	isStepComplete: boolean;
+	areStepsActive: boolean;
+}
+
+const CheckoutStepDataContext = React.createContext< CheckoutStepDataContext >( {
+	activeStepNumber: 0,
+	stepCompleteStatus: {},
+	totalSteps: 0,
+	setActiveStepNumber: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+	setStepCompleteStatus: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+	setTotalSteps: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+} );
+const CheckoutSingleStepDataContext = React.createContext< CheckoutSingleStepDataContext >( {
+	stepNumber: 0,
+	nextStepNumber: null,
+	isStepActive: false,
+	isStepComplete: false,
+	areStepsActive: false,
+} );
+
+export function Checkout( {
+	children,
+	className,
+}: {
+	children: React.ReactChildren;
+	className?: string;
+} ) {
 	const { isRTL } = useI18n();
 	const { formStatus } = useFormStatus();
-	const [ activeStepNumber, setActiveStepNumber ] = useState( 1 );
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
+	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< StepCompleteStatus >( {} );
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
@@ -114,6 +162,7 @@ function DefaultCheckoutSteps() {
 					/>
 					<CheckoutStep
 						stepId="payment-method-step"
+						isCompleteCallback={ () => true }
 						activeStepContent={ paymentMethodStep.activeStepContent }
 						completeStepContent={ paymentMethodStep.completeStepContent }
 						titleContent={ paymentMethodStep.titleContent }
@@ -125,13 +174,19 @@ function DefaultCheckoutSteps() {
 	);
 }
 
-export function CheckoutSummaryArea( { children, className } ) {
+export const CheckoutSummaryArea = ( {
+	children,
+	className,
+}: {
+	children: React.ReactNode;
+	className?: string;
+} ) => {
 	return (
 		<CheckoutSummaryUI className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
 			{ children }
 		</CheckoutSummaryUI>
 	);
-}
+};
 
 export const CheckoutSummaryCard = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
@@ -152,6 +207,11 @@ export function CheckoutStepArea( {
 	className,
 	submitButtonHeader,
 	disableSubmitButton,
+}: {
+	children: React.ReactNode;
+	className?: string;
+	submitButtonHeader?: React.ReactNode;
+	disableSubmitButton?: boolean;
 } ) {
 	const { __ } = useI18n();
 	const onEvent = useEvents();
@@ -191,13 +251,12 @@ export function CheckoutStepArea( {
 	);
 }
 
-CheckoutStep.propTypes = {
-	submitButtonHeader: PropTypes.node,
-};
-
-export function CheckoutSteps( { children, areStepsActive = true } ) {
+export const CheckoutSteps: Function = ( {
+	children,
+	areStepsActive = true,
+}: CheckoutStepsProps ): JSX.Element[] => {
 	let stepNumber = 0;
-	let nextStepNumber = 1;
+	let nextStepNumber: number | null = 1;
 
 	const steps = React.Children.toArray( children ).filter( ( child ) => child );
 	const totalSteps = steps.length;
@@ -219,7 +278,7 @@ export function CheckoutSteps( { children, areStepsActive = true } ) {
 	);
 
 	return steps.map( ( child ) => {
-		stepNumber = nextStepNumber;
+		stepNumber = nextStepNumber || 0;
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
 		const isStepActive = areStepsActive && activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
@@ -238,13 +297,14 @@ export function CheckoutSteps( { children, areStepsActive = true } ) {
 			</CheckoutSingleStepDataContext.Provider>
 		);
 	} );
-}
-
-CheckoutSteps.propTypes = {
-	areStepsActive: PropTypes.bool,
 };
 
-export function CheckoutStep( {
+interface CheckoutStepsProps {
+	children?: React.ReactNode;
+	areStepsActive?: boolean;
+}
+
+export const CheckoutStep = ( {
 	activeStepContent,
 	completeStepContent,
 	titleContent,
@@ -257,7 +317,20 @@ export function CheckoutStep( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
-} ) {
+}: {
+	stepId: string;
+	titleContent: React.ReactNode;
+	isCompleteCallback: () => boolean | Promise< boolean >;
+	activeStepContent?: React.ReactNode;
+	completeStepContent?: React.ReactNode;
+	className?: string;
+	editButtonText?: string;
+	editButtonAriaLabel?: string;
+	nextStepButtonText?: string;
+	nextStepButtonAriaLabel?: string;
+	validatingButtonText?: string;
+	validatingButtonAriaLabel?: string;
+} ) => {
 	const { __ } = useI18n();
 	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
@@ -266,12 +339,12 @@ export function CheckoutStep( {
 		CheckoutSingleStepDataContext
 	);
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
-	const setThisStepCompleteStatus = ( newStatus ) =>
+	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
 	const onEvent = useEvents();
 	const activePaymentMethod = usePaymentMethod();
-	const finishIsCompleteCallback = ( completeResult ) => {
+	const finishIsCompleteCallback = ( completeResult: boolean ) => {
 		setThisStepCompleteStatus( !! completeResult );
 		if ( completeResult ) {
 			onEvent( {
@@ -282,20 +355,19 @@ export function CheckoutStep( {
 					paymentMethodId: activePaymentMethod?.id ?? '',
 				},
 			} );
-			saveStepNumberToUrl( nextStepNumber );
-			setActiveStepNumber( nextStepNumber );
+			if ( nextStepNumber ) {
+				saveStepNumberToUrl( nextStepNumber );
+				setActiveStepNumber( nextStepNumber );
+			}
 		}
 		setFormReady();
 	};
 	const goToNextStep = async () => {
-		const completeResult = isCompleteCallback();
-		if ( completeResult.then ) {
-			setFormValidating();
-			const delayedCompleteResult = await completeResult;
-			finishIsCompleteCallback( delayedCompleteResult );
-			return;
-		}
-		finishIsCompleteCallback( completeResult );
+		// Wrapping this in Promise.resolve allows it to be a Promise or boolean
+		const completeResult = Promise.resolve( isCompleteCallback() );
+		setFormValidating();
+		const delayedCompleteResult = await completeResult;
+		finishIsCompleteCallback( delayedCompleteResult );
 	};
 
 	const classNames = [
@@ -332,17 +404,13 @@ export function CheckoutStep( {
 			stepId={ stepId }
 			titleContent={ titleContent }
 			goToThisStep={ areStepsActive ? goToThisStep : undefined }
-			goToNextStep={ nextStepNumber > 0 ? goToNextStep : undefined }
+			goToNextStep={ nextStepNumber && nextStepNumber > 0 ? goToNextStep : undefined }
 			activeStepContent={ activeStepContent }
 			formStatus={ formStatus }
 			completeStepContent={ completeStepContent }
 			className={ joinClasses( classNames ) }
 		/>
 	);
-}
-
-CheckoutStep.propTypes = {
-	nextStepNumber: PropTypes.number,
 };
 
 export function CheckoutStepBody( {
@@ -365,18 +433,14 @@ export function CheckoutStepBody( {
 	formStatus,
 	completeStepContent,
 	onError,
-} ) {
+}: CheckoutStepBodyProps ) {
 	const { __ } = useI18n();
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
 			onError={ onError }
 		>
-			<StepWrapperUI
-				isActive={ isStepActive }
-				isComplete={ isStepComplete }
-				className={ className }
-			>
+			<StepWrapperUI className={ className }>
 				<CheckoutStepHeader
 					id={ stepId }
 					stepNumber={ stepNumber }
@@ -386,7 +450,7 @@ export function CheckoutStepBody( {
 					onEdit={
 						formStatus === 'ready' && isStepComplete && goToThisStep && ! isStepActive
 							? goToThisStep
-							: null
+							: undefined
 					}
 					editButtonText={ editButtonText || __( 'Edit' ) }
 					editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
@@ -425,6 +489,28 @@ export function CheckoutStepBody( {
 	);
 }
 
+interface CheckoutStepBodyProps {
+	errorMessage?: string;
+	onError?: ( message: string ) => void;
+	editButtonAriaLabel?: string;
+	editButtonText?: string;
+	nextStepButtonText?: string;
+	nextStepButtonAriaLabel?: string;
+	isStepActive: boolean;
+	isStepComplete: boolean;
+	className?: string;
+	stepNumber?: number;
+	stepId: string;
+	titleContent: React.ReactNode;
+	goToThisStep?: () => void;
+	goToNextStep?: () => void;
+	activeStepContent?: React.ReactNode;
+	formStatus?: string;
+	completeStepContent?: React.ReactNode;
+	validatingButtonText?: string;
+	validatingButtonAriaLabel?: string;
+}
+
 CheckoutStepBody.propTypes = {
 	errorMessage: PropTypes.string,
 	onError: PropTypes.func,
@@ -443,6 +529,8 @@ CheckoutStepBody.propTypes = {
 	activeStepContent: PropTypes.node,
 	formStatus: PropTypes.string,
 	completeStepContent: PropTypes.node,
+	validatingButtonText: PropTypes.string,
+	validatingButtonAriaLabel: PropTypes.string,
 };
 
 const ContainerUI = styled.div`
@@ -572,17 +660,19 @@ export function useIsStepComplete() {
 export function useSetStepComplete() {
 	const { setStepCompleteStatus } = useContext( CheckoutStepDataContext );
 	const setTargetStepCompleteStatus = useCallback(
-		( stepNumber, newStatus ) =>
-			setStepCompleteStatus( ( stepCompleteStatus ) => ( {
-				...stepCompleteStatus,
-				[ stepNumber ]: newStatus,
-			} ) ),
+		( stepNumber: number, newStatus: boolean ) =>
+			setStepCompleteStatus(
+				( stepCompleteStatus: StepCompleteStatus ): StepCompleteStatus => ( {
+					...stepCompleteStatus,
+					[ stepNumber ]: newStatus,
+				} )
+			),
 		[ setStepCompleteStatus ]
 	);
 	return setTargetStepCompleteStatus;
 }
 
-const StepWrapperUI = styled.div`
+const StepWrapperUI = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	position: relative;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
@@ -612,6 +702,16 @@ function CheckoutStepHeader( {
 	onEdit,
 	editButtonText,
 	editButtonAriaLabel,
+}: {
+	id?: string;
+	className?: string;
+	stepNumber?: number;
+	title: React.ReactNode;
+	isActive?: boolean;
+	isComplete?: boolean;
+	onEdit?: () => void;
+	editButtonText?: string;
+	editButtonAriaLabel?: string;
 } ) {
 	const { __ } = useI18n();
 	const shouldShowEditButton = !! onEdit;
@@ -645,6 +745,7 @@ function CheckoutStepHeader( {
 CheckoutStepHeader.propTypes = {
 	id: PropTypes.string,
 	className: PropTypes.string,
+	stepNumber: PropTypes.number,
 	title: PropTypes.node.isRequired,
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
@@ -653,7 +754,19 @@ CheckoutStepHeader.propTypes = {
 	onEdit: PropTypes.func,
 };
 
-function Stepper( { isComplete, isActive, className, children, id } ) {
+function Stepper( {
+	isComplete,
+	isActive,
+	className,
+	children,
+	id,
+}: {
+	id?: string;
+	className?: string;
+	isComplete?: boolean;
+	isActive?: boolean;
+	children?: React.ReactNode;
+} ) {
 	// Prevent showing complete stepper when active
 	const isCompleteAndInactive = isActive ? false : isComplete;
 	return (
@@ -677,7 +790,7 @@ Stepper.propTypes = {
 	isActive: PropTypes.bool,
 };
 
-const StepTitle = styled.span`
+const StepTitle = styled.span< StepTitleProps & React.HTMLAttributes< HTMLSpanElement > >`
 	color: ${ ( props ) =>
 		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor };
 	font-weight: ${ ( props ) =>
@@ -691,13 +804,23 @@ const StepTitle = styled.span`
 	}
 `;
 
-const StepHeader = styled.h2`
+interface StepTitleProps {
+	isActive?: boolean;
+	fullWidth?: boolean;
+}
+
+const StepHeader = styled.h2< StepHeaderProps & React.HTMLAttributes< HTMLHeadingElement > >`
 	font-size: 16px;
 	display: flex;
 	width: 100%;
 	align-items: center;
 	margin: 0 0 ${ ( props ) => ( props.isComplete || props.isActive ? '8px' : '0' ) };
 `;
+
+interface StepHeaderProps {
+	isComplete?: boolean;
+	isActive?: boolean;
+}
 
 const StepNumberOuterWrapper = styled.div`
 	position: relative;
@@ -711,7 +834,9 @@ const StepNumberOuterWrapper = styled.div`
 	}
 `;
 
-const StepNumberInnerWrapper = styled.div`
+const StepNumberInnerWrapper = styled.div<
+	StepNumberInnerWrapperProps & React.HTMLAttributes< HTMLDivElement >
+>`
 	position: relative;
 	transform-origin: center center;
 	transition: transform 0.3s 0.1s ease-out;
@@ -719,7 +844,11 @@ const StepNumberInnerWrapper = styled.div`
 	transform: ${ ( props ) => ( props.isComplete ? 'rotateY(180deg)' : 'rotateY(0)' ) };
 `;
 
-const StepNumber = styled.div`
+interface StepNumberInnerWrapperProps {
+	isComplete?: boolean;
+}
+
+const StepNumber = styled.div< StepNumberProps & React.HTMLAttributes< HTMLDivElement > >`
 	background: ${ getStepNumberBackgroundColor };
 	font-weight: normal;
 	width: 27px;
@@ -747,6 +876,11 @@ const StepNumber = styled.div`
 	}
 `;
 
+interface StepNumberProps {
+	isComplete?: boolean;
+	isActive?: boolean;
+}
+
 const StepNumberCompleted = styled( StepNumber )`
 	background: ${ ( props ) => props.theme.colors.success };
 	transform: rotateY( 180deg );
@@ -769,7 +903,15 @@ const HeaderEditButton = styled( Button )`
 	padding-top: 1px;
 `;
 
-function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
+function getStepNumberBackgroundColor( {
+	isComplete,
+	isActive,
+	theme,
+}: {
+	isComplete?: boolean;
+	isActive?: boolean;
+	theme: Theme;
+} ) {
 	if ( isActive ) {
 		return theme.colors.highlight;
 	}
@@ -779,14 +921,22 @@ function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
 	return theme.colors.upcomingStepBackground;
 }
 
-function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
+function getStepNumberForegroundColor( {
+	isComplete,
+	isActive,
+	theme,
+}: {
+	isComplete?: boolean;
+	isActive?: boolean;
+	theme: Theme;
+} ) {
 	if ( isComplete || isActive ) {
 		return theme.colors.surface;
 	}
 	return theme.colors.textColor;
 }
 
-const StepContentUI = styled.div`
+const StepContentUI = styled.div< StepContentUIProps & React.HTMLAttributes< HTMLDivElement > >`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
@@ -797,7 +947,11 @@ const StepContentUI = styled.div`
 	}
 `;
 
-const StepSummaryUI = styled.div`
+interface StepContentUIProps {
+	isVisible?: boolean;
+}
+
+const StepSummaryUI = styled.div< StepContentUIProps & React.HTMLAttributes< HTMLDivElement > >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
@@ -809,7 +963,7 @@ const StepSummaryUI = styled.div`
 	}
 `;
 
-function saveStepNumberToUrl( stepNumber ) {
+function saveStepNumberToUrl( stepNumber: number ) {
 	if ( ! window.history?.pushState ) {
 		return;
 	}
@@ -821,20 +975,20 @@ function saveStepNumberToUrl( stepNumber ) {
 		? window.location.href.replace( window.location.hash, newHash )
 		: window.location.href + newHash;
 	debug( 'updating url to', newUrl );
-	window.history.pushState( null, null, newUrl );
+	window.history.pushState( null, '', newUrl );
 }
 
 function getStepNumberFromUrl() {
 	const hashValue = window.location?.hash;
 	if ( hashValue?.startsWith?.( '#step' ) ) {
 		const parts = hashValue.split( '#step' );
-		const stepNumber = parts.length > 1 ? parts[ 1 ] : 1;
+		const stepNumber = parts.length > 1 ? parts[ 1 ] : '1';
 		return parseInt( stepNumber, 10 );
 	}
 	return 1;
 }
 
-function useChangeStepNumberForUrl( setActiveStepNumber ) {
+function useChangeStepNumberForUrl( setActiveStepNumber: ( stepNumber: number ) => void ) {
 	// If there is a step number on page load, remove it
 	useEffect( () => {
 		const newStepNumber = getStepNumberFromUrl();
@@ -850,6 +1004,8 @@ function useChangeStepNumberForUrl( setActiveStepNumber ) {
 			debug( 'step number in url changed to', newStepNumber );
 			isSubscribed && setActiveStepNumber( newStepNumber );
 		} );
-		return () => ( isSubscribed = false );
+		return () => {
+			isSubscribed = false;
+		};
 	}, [ setActiveStepNumber ] );
 }
