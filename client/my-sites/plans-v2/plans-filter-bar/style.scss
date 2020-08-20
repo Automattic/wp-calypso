@@ -80,3 +80,25 @@
 		}
 	}
 }
+
+.plans-filter-bar.sticky {
+	position: fixed;
+
+	// This is the height of the masterbar
+	top: 47px;
+
+	width: 100%;
+
+	z-index: 2;
+}
+
+// This margin fills the gap that making the filter bar sticky leaves. Without it,
+// there is a noticeable jump in the UI every time the filter bar goes from sticky
+// to its normal position.
+.plans-filter-bar.sticky + .plans-v2__columns {
+	margin-top: 100px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 80px;
+	}
+}
