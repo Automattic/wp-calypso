@@ -43,6 +43,7 @@ import {
 } from 'lib/plans';
 import {
 	getPlanDiscountedRawPrice,
+	getSitePlanRawPrice,
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
 } from 'state/sites/plans/selectors';
@@ -904,7 +905,9 @@ export default connect(
 						newPlan ||
 						bestValue ||
 						plans.length === 1,
-					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
+					rawPrice: getSitePlanRawPrice( state, selectedSiteId, plan, {
+						isMonthly: showMonthlyPrice,
+					} ),
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 				};
