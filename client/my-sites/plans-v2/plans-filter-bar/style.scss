@@ -92,10 +92,14 @@
 
 	z-index: 2;
 
+	// At this screen size, div#content (wraps div#primary and div#secondary)
+	// has a left padding of 253px and a right padding of 24px which adds up to 277px.
 	@include breakpoint-deprecated( '>660px' ) {
 		width: calc( 100% - 277px );
 	}
 
+	// At this screen size, div#content (wraps div#primary and div#secondary)
+	// has a left padding of 305px and a right padding of 32px which adds up to 337px.
 	@include breakpoint-deprecated( '>960px' ) {
 		width: calc( 100% - 337px );
 	}
