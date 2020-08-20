@@ -50,9 +50,6 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 	this.timeout( mochaTimeOut );
 
 	describe( 'Tracking: @parallel', function () {
-		// Create image file for upload
-		before( async function () {} );
-
 		step( 'Can log in to WPAdmin and create new Post', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			if ( host !== 'WPCOM' ) {
