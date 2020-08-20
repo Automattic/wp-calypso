@@ -52,10 +52,10 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 	describe( 'Tracking: @parallel', function () {
 		step( 'Can log in to WPAdmin and create new Post', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+
 			if ( host !== 'WPCOM' ) {
 				this.loginFlow = new LoginFlow( driver );
 			}
-			// await this.loginFlow.loginAndStartNewPage();
 
 			await this.loginFlow.loginAndSelectWPAdmin();
 
