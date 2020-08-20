@@ -90,17 +90,17 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			// see: https://github.com/Automattic/wp-calypso/pull/41329
 			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
 
-			// Assert that Insertion Events were tracked for core/columns
-			assert.strictEqual(
-				getTotalEventsFiredForBlock( eventsStack, 'wpcom_block_inserted', 'core/columns' ),
-				2,
-				`"wpcom_block_inserted" editor tracking event failed to fire twice for core/columns`
-			);
-
+			// Assert that all block insertion events were tracked correctly
 			assert.strictEqual(
 				getTotalEventsFiredForBlock( eventsStack, 'wpcom_block_inserted', 'core/heading' ),
 				1,
 				`"wpcom_block_inserted" editor tracking event failed to fire for core/heading`
+			);
+
+			assert.strictEqual(
+				getTotalEventsFiredForBlock( eventsStack, 'wpcom_block_inserted', 'core/columns' ),
+				2,
+				`"wpcom_block_inserted" editor tracking event failed to fire twice for core/columns`
 			);
 		} );
 
