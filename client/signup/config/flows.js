@@ -111,6 +111,16 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
+function removeP2DetailsStepFromFlow( flow ) {
+	if ( ! flow ) {
+		return;
+	}
+
+	return assign( {}, flow, {
+		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
+	} );
+}
+
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies, localeSlug );
@@ -147,6 +157,10 @@ const Flows = {
 
 		if ( user() && user().get() ) {
 			flow = removeUserStepFromFlow( flow );
+		}
+
+		if ( flowName === 'p2' && user() && user().get() ) {
+			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
 		return Flows.filterExcludedSteps( flow );
