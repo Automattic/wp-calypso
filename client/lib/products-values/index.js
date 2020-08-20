@@ -3,6 +3,7 @@ export { formatProduct } from './format-product';
 export { getDomain } from './get-domain';
 export { getDomainProductRanking } from './get-domain-product-ranking';
 export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';
+export { getJetpackProductCallToAction } from './get-jetpack-product-call-to-action';
 export { getJetpackProductDescription } from './get-jetpack-product-description';
 export { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';

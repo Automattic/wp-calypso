@@ -65,7 +65,7 @@ describe( 'conflicts', () => {
 			expect( isProductConflicting ).to.be.null;
 		} );
 
-		test( 'should return true when testing for Anti-Spam annual', () => {
+		test( 'should return true when testing for Anti-spam annual', () => {
 			const isProductConflicting = isProductConflictingWithSite(
 				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTI_SPAM } ),
 				1234,
@@ -74,7 +74,7 @@ describe( 'conflicts', () => {
 			expect( isProductConflicting ).to.be.true;
 		} );
 
-		test( 'should return true when testing for Anti-Spam monthly', () => {
+		test( 'should return true when testing for Anti-spam monthly', () => {
 			const isProductConflicting = isProductConflictingWithSite(
 				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY } ),
 				1234,
@@ -101,7 +101,7 @@ describe( 'conflicts', () => {
 			expect( isConflicting ).to.be.true;
 		} );
 
-		test( 'should return true when the site already has Anti-Spam', () => {
+		test( 'should return true when the site already has Anti-spam', () => {
 			const isConflicting = isAntiSpamConflicting(
 				getStateForSite( { productSlug: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY } ),
 				1234

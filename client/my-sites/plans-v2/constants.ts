@@ -36,8 +36,8 @@ import {
 	FEATURE_CATEGORY_SECURITY,
 	FEATURE_BACKUP_V2,
 	FEATURE_PRODUCT_BACKUP_V2,
-	FEATURE_SCAN_V2,
-	FEATURE_ANTISPAM_V2,
+	FEATURE_PRODUCT_SCAN_V2,
+	FEATURE_PRODUCT_ANTISPAM_V2,
 	FEATURE_ACTIVITY_LOG_V2,
 	FEATURE_CATEGORY_OTHER,
 	FEATURE_VIDEO_HOSTING_V2,
@@ -129,8 +129,8 @@ export const OPTION_PLAN_SECURITY: SelectorProduct = {
 		items: buildCardFeaturesFromItem( {
 			[ FEATURE_CATEGORY_SECURITY ]: [
 				FEATURE_PRODUCT_BACKUP_V2,
-				FEATURE_SCAN_V2,
-				FEATURE_ANTISPAM_V2,
+				FEATURE_PRODUCT_SCAN_V2,
+				FEATURE_PRODUCT_ANTISPAM_V2,
 				FEATURE_ACTIVITY_LOG_V2,
 			],
 			[ FEATURE_CATEGORY_OTHER ]: [
@@ -163,7 +163,7 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	iconSlug: 'jetpack_backup_v2',
 	displayName: translate( 'Jetpack Backup' ),
 	tagline: translate( 'Recommended for all sites' ),
-	description: translate( 'Never lose a word, image, page, or time worrying about your site' ),
+	description: translate( 'Never lose a word, image, page, or time worrying about your site.' ),
 	buttonLabel: translate( 'Get Backup' ),
 	features: {
 		items: buildCardFeaturesFromItem(

@@ -37,7 +37,7 @@ import type { AppState } from 'types';
 import type { CartItemValue } from 'lib/cart-values/types';
 
 /**
- * Checks if Jetpack Anti-Spam is conflicting with a site's current products.
+ * Checks if Jetpack Anti-spam is conflicting with a site's current products.
  *
  * @param {AppState} state The redux state.
  * @param {number} siteId The site ID.
