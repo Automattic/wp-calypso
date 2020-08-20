@@ -154,6 +154,13 @@ export const FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP = 'unlimited-backup';
 export const FEATURE_MEMBERSHIPS = 'memberships';
 export const FEATURE_PREMIUM_CONTENT_BLOCK = 'premium-content-block';
 
+// jetpack features category
+export const FEATURE_CATEGORY_SECURITY = Symbol();
+export const FEATURE_CATEGORY_PERFORMANCE = Symbol();
+export const FEATURE_CATEGORY_GROWTH = Symbol();
+export const FEATURE_CATEGORY_DESIGN = Symbol();
+export const FEATURE_CATEGORY_OTHER = Symbol();
+
 // jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -212,6 +219,43 @@ export const FEATURE_JETPACK_ANTI_SPAM = PRODUCT_JETPACK_ANTI_SPAM;
 export const FEATURE_JETPACK_ANTI_SPAM_MONTHLY = PRODUCT_JETPACK_ANTI_SPAM_MONTHLY;
 export const FEATURE_JETPACK_SEARCH = PRODUCT_JETPACK_SEARCH;
 export const FEATURE_JETPACK_SEARCH_MONTHLY = PRODUCT_JETPACK_SEARCH_MONTHLY;
+
+// jetpack features constants (offer reset)
+export const FEATURE_SECURITY_REALTIME_V2 = Symbol();
+export const FEATURE_BACKUP_V2 = Symbol();
+export const FEATURE_BACKUP_DAILY_V2 = Symbol();
+export const FEATURE_BACKUP_REALTIME_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_DAILY_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_REALTIME_V2 = Symbol();
+export const FEATURE_SCAN_V2 = Symbol();
+export const FEATURE_PRODUCT_SCAN_V2 = Symbol();
+export const FEATURE_PRODUCT_SCAN_DAILY_V2 = Symbol();
+export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = Symbol();
+export const FEATURE_ANTISPAM_V2 = Symbol();
+export const FEATURE_PRODUCT_ANTISPAM_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_30_DAYS_V2 = Symbol();
+export const FEATURE_SEARCH_V2 = Symbol();
+export const FEATURE_PRODUCT_SEARCH_V2 = Symbol();
+export const FEATURE_VIDEO_HOSTING_V2 = Symbol();
+export const FEATURE_CRM_V2 = Symbol();
+export const FEATURE_SOCIAL_MEDIA_POSTING_V2 = Symbol();
+export const FEATURE_COLLECT_PAYMENTS_V2 = Symbol();
+export const FEATURE_SITE_MONETIZATION_V2 = Symbol();
+export const FEATURE_PREMIUM_THEMES_V2 = Symbol();
+export const FEATURE_PRIORITY_SUPPORT_V2 = Symbol();
+export const FEATURE_SECURE_STORAGE_V2 = Symbol();
+export const FEATURE_ONE_CLICK_RESTORE_V2 = Symbol();
+export const FEATURE_ONE_CLICK_FIX_V2 = Symbol();
+export const FEATURE_INSTANT_EMAIL_V2 = Symbol();
+export const FEATURE_AKISMET_V2 = Symbol();
+export const FEATURE_SPAM_BLOCK_V2 = Symbol();
+export const FEATURE_ADVANCED_STATS_V2 = Symbol();
+export const FEATURE_FILTERING_V2 = Symbol();
+export const FEATURE_LANGUAGE_SUPPORT_V2 = Symbol();
+export const FEATURE_SPELLING_CORRECTION_V2 = Symbol();
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';

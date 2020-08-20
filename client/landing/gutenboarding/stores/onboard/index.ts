@@ -29,7 +29,6 @@ registerStore< State >( STORE_KEY, {
 		'domainSearch',
 		'siteTitle',
 		'siteVertical',
-		'shouldShowVerticalInput',
 		'wasVerticalSkipped',
 		'hasUsedDomainsStep',
 		'hasUsedPlansStep',
@@ -39,6 +38,7 @@ registerStore< State >( STORE_KEY, {
 		'selectedSite',
 		'selectedFeatures',
 		'plan',
+		'isExperimental',
 	],
 } );
 

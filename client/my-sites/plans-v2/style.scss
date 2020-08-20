@@ -9,13 +9,29 @@
 		& > .details__column {
 			flex-basis: 50%;
 			flex-grow: 0;
+			align-self: flex-start;
 		}
 
 		& > .products-column,
 		& > .details__column:not( :first-of-type ) {
 			margin-left: 24px;
 		}
+		.formatted-header {
+			margin-top: 40px;
+		}
+		.plan-price {
+			font-size: $font-title-medium;
+		}
 	}
+}
+
+.plans-v2__columns .formatted-header__title {
+	font-size: 1.25rem;
+	color: var( --studio-color-gray-70 );
+}
+
+.selector__main {
+	position: relative;
 }
 
 .upsell__header {

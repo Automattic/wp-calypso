@@ -186,6 +186,10 @@ function HelpSearchResults( {
 		} );
 	};
 
+	const resultsLabel = hasAPIResults
+		? translate( 'Search Results' )
+		: translate( 'Helpful resources for this section' );
+
 	const renderSearchResults = () => {
 		if ( isSearching && ! searchResults.length ) {
 			// search, but no results so far
@@ -202,7 +206,7 @@ function HelpSearchResults( {
 					</p>
 				) }
 
-				<div className="inline-help__results" aria-label={ translate( 'Search Results' ) }>
+				<div className="inline-help__results" aria-label={ resultsLabel }>
 					{ renderSearchSections( searchResults, searchQuery ) }
 				</div>
 			</>

@@ -72,3 +72,37 @@
 	font-size: 14px;
 	line-height: 17px;
 }
+
+.p2-step-wrapper button {
+	float: none;
+	margin: 0;
+	padding: 18px 24px;
+	width: 100%;
+	background-color: var( --p2-color-button );
+	color: var( --p2-color-text );
+	border: none;
+	border-radius: 40px;
+	font-weight: normal;
+	font-size: 18px;
+	transition: background 0.2s ease;
+
+	&.is-primary {
+		background-color: var( --p2-color-link );
+		color: var( --p2-color-text-white );
+
+		&:hover,
+		&:focus {
+			background-color: var( --p2-color-link-dark );
+			border: none;
+			color: var( --p2-color-text-white );
+		}
+	}
+
+
+	&[disabled] {
+		opacity: 0.5;
+		color: var( --p2-color-text-white );
+		background-color: var( --p2-color-link );
+		border: none;
+	}
+}

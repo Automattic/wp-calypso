@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
-// eslint-disable-next-line no-restricted-imports
-import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
 import { ProgressBar } from '@automattic/components';
 
@@ -93,6 +91,7 @@ import JetpackSidebarMenuItems from 'components/jetpack/sidebar/menu-items/calyp
  * Style dependencies
  */
 import './style.scss';
+import { getUrlParts, getUrlFromParts } from 'lib/url';
 
 export class MySitesSidebar extends Component {
 	static propTypes = {
@@ -806,14 +805,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const adminUrl =
-			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
-				? formatUrl( {
-						...parseUrl( site.options.admin_url + 'admin.php' ),
-						query: { page: 'jetpack' },
-						hash: '/my-plan',
-				  } )
-				: site.options.admin_url;
+		let adminUrl = site.options.admin_url;
+
+		if ( this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip ) {
+			const urlParts = getUrlParts( site.options.admin_url + 'admin.php' );
+			delete urlParts.search;
+			adminUrl = getUrlFromParts( {
+				...urlParts,
+				protocol: urlParts.protocol || 'https:',
+				searchParams: new URLSearchParams( { page: 'jetpack' } ),
+				hash: '/my-plan',
+			} ).href;
+		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (

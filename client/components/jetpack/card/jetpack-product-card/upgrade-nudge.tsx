@@ -23,14 +23,14 @@ import { DEFAULT_UPGRADE_NUDGE_FEATURES } from './fixtures';
  * Type dependencies
  */
 import type { SelectorProduct } from 'my-sites/plans-v2/types';
-import type { FeaturesItem } from './types';
+import type { ProductCardFeaturesItem } from './types';
 
 type OwnProps = {
 	billingTimeFrame: TranslateResult;
 	className?: string;
 	currencyCode: string;
 	discountedPrice?: number;
-	features?: FeaturesItem[];
+	features?: ProductCardFeaturesItem[];
 	onUpgradeClick: () => void;
 	originalPrice: number;
 	productType?: TranslateResult;

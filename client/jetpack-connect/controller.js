@@ -69,7 +69,7 @@ const analyticsPageTitleByType = {
 	backup: 'Jetpack Daily Backup',
 	jetpack_search: 'Jetpack Search',
 	scan: 'Jetpack Scan Daily',
-	antispam: 'Jetpack Anti-Spam',
+	antispam: 'Jetpack Anti-spam',
 };
 
 const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );

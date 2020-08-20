@@ -16,7 +16,6 @@ export const transform = ( response ) => {
 		appointmentTimespan: response.appointment_timespan,
 		nextAppointment: nextAppointment,
 		scheduleId: response.schedule_id,
-		hasAvailableConciergeSessions: response.has_available_concierge_sessions,
 	};
 };
 

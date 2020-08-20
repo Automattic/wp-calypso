@@ -28,7 +28,9 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { selectedDesign, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { selectedDesign, siteTitle, isExperimental } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
@@ -100,7 +102,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Features ) }>
-					{ isEnabled( 'gutenboarding/feature-picker' ) ? <Features /> : redirectToLatestStep }
+					{ isEnabled( 'gutenboarding/feature-picker' ) && isExperimental ? (
+						<Features />
+					) : (
+						redirectToLatestStep
+					) }
 				</Route>
 
 				<Route path={ makePath( Step.Domains ) }>

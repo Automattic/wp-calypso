@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useRef } from 'react';
 import { translate } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import SegmentedControl from 'components/segmented-control';
 import SelectDropdown from 'components/select-dropdown';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
 import { PRODUCT_TYPE_OPTIONS } from '../constants';
+import useDetectWindowBoundary from '../use-detect-window-boundary';
 
 /**
  * Type dependencies
@@ -35,8 +37,11 @@ const PlansFilterBar = ( {
 	onDurationChange,
 	onProductTypeChange,
 }: Props ) => {
+	const barRef = useRef< HTMLDivElement | null >( null );
+	const hasCrossed = useDetectWindowBoundary( barRef );
+
 	return (
-		<div className="plans-filter-bar">
+		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
 			<SelectDropdown selectedText={ PRODUCT_TYPE_OPTIONS[ productType ].label }>
 				{ Object.values( PRODUCT_TYPE_OPTIONS ).map( ( option ) => (
 					<SelectDropdown.Item

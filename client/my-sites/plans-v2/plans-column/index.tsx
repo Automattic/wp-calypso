@@ -61,7 +61,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 
 	return (
 		<div className="plans-column">
-			<FormattedHeader headerText={ translate( 'Plans' ) } brandFont />
+			<FormattedHeader headerText={ translate( 'Plans' ) } isSecondary brandFont />
 			{ planObjects.map( ( plan ) => (
 				<ProductCard
 					key={ plan.productSlug }
@@ -69,6 +69,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					siteId={ siteId }
 					onClick={ onPlanClick }
 					currencyCode={ currencyCode }
+					highlight
 				/>
 			) ) }
 		</div>

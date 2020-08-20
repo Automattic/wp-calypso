@@ -3,6 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import {
 	getRealtimeFromDaily,
 	slugToSelectorProduct,
 	productBadgeLabel,
+	slugIsFeaturedProduct,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
@@ -84,6 +86,7 @@ interface ProductCardProps {
 	siteId: number | null;
 	currencyCode: string;
 	className?: string;
+	highlight?: boolean;
 }
 
 const ProductCardWrapper = ( {
@@ -92,6 +95,7 @@ const ProductCardWrapper = ( {
 	siteId,
 	currencyCode,
 	className,
+	highlight = false,
 }: ProductCardProps ) => {
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
@@ -118,6 +122,10 @@ const ProductCardWrapper = ( {
 	const isExpiring = purchase && isCloseToExpiration( purchase );
 	const showExpiryNotice = item.legacy && isExpiring;
 
+	// Is highlighted?
+	const isMobile: boolean = useMobileBreakpoint();
+	const isHighlighted = highlight && ! isOwned && slugIsFeaturedProduct( item.productSlug );
+
 	const CardComponent = itemToCard( item ); // Get correct card component.
 
 	const UpgradeNudge = isOwned ? (
@@ -126,6 +134,7 @@ const ProductCardWrapper = ( {
 
 	return (
 		<CardComponent
+			headingLevel={ 3 }
 			iconSlug={ item.iconSlug }
 			productName={ item.displayName }
 			subheadline={ item.tagline }
@@ -139,7 +148,7 @@ const ProductCardWrapper = ( {
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned ) }
-			badgeLabel={ productBadgeLabel( item, isOwned, sitePlan ) }
+			badgeLabel={ productBadgeLabel( item, isOwned, highlight, sitePlan ) }
 			onButtonClick={ () => onClick( item, purchase ) }
 			features={ item.features }
 			originalPrice={ originalPrice }
@@ -150,6 +159,8 @@ const ProductCardWrapper = ( {
 			className={ className }
 			UpgradeNudge={ UpgradeNudge }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
+			isHighlighted={ isHighlighted }
+			isExpanded={ isHighlighted && ! isMobile }
 		/>
 	);
 };

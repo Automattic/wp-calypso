@@ -1,15 +1,16 @@
-export type FeaturesItem = {
-	icon?: string;
-	text: string;
-	description?: string;
-};
+/**
+ * Internal dependencies
+ */
 
-export type FeaturesMoreLink = {
-	url: string;
-	label: string;
-};
+/**
+ * Type dependencies
+ */
+import type {
+	SelectorProductFeaturesItem,
+	SelectorProductFeaturesSection,
+	SelectorProductFeatures,
+} from 'my-sites/plans-v2/types';
 
-export type Features = {
-	items: FeaturesItem[] | { [ category: string ]: FeaturesItem[] };
-	more?: FeaturesMoreLink;
-};
+export type ProductCardFeaturesItem = SelectorProductFeaturesItem;
+export type ProductCardFeaturesSection = SelectorProductFeaturesSection;
+export type ProductCardFeatures = SelectorProductFeatures;

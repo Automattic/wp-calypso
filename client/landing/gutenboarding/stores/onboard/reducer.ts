@@ -13,6 +13,14 @@ import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
 import type { FeatureId } from '../../onboarding-block/features/data';
 
+// Returns true if the url has a `?latest`, which is used to enable experimental features
+export function hasExperimentalQueryParam() {
+	if ( typeof window !== 'undefined' ) {
+		return new URLSearchParams( window.location.search ).has( 'latest' );
+	}
+	return false;
+}
+
 const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
 	state,
 	action
@@ -79,16 +87,6 @@ const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state
 const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SKIP_SITE_VERTICAL' ) {
 		return true;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
-const shouldShowVerticalInput: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_SHOW_SITE_VERTICAL_INPUT' ) {
-		return action.shouldShowVerticalInput;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return false;
@@ -200,6 +198,19 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 	return state;
 };
 
+const isExperimental: Reducer< boolean, OnboardAction > = (
+	state = hasExperimentalQueryParam(),
+	action
+) => {
+	if ( action.type === 'SET_ENABLE_EXPERIMENTAL' ) {
+		return true;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -217,7 +228,7 @@ const reducer = combineReducers( {
 	plan,
 	selectedFeatures,
 	wasVerticalSkipped,
-	shouldShowVerticalInput,
+	isExperimental,
 } );
 
 export type State = ReturnType< typeof reducer >;

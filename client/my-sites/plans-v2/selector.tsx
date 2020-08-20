@@ -3,11 +3,13 @@
  */
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { translate } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import FormattedHeader from 'components/formatted-header';
 import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
@@ -61,6 +63,7 @@ const SelectorPage = ( {
 
 	return (
 		<Main className="selector__main" wideLayout>
+			<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
 			{ header }
 			<PlansFilterBar
 				onProductTypeChange={ setProductType }

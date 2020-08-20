@@ -33,7 +33,22 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	FEATURE_CATEGORY_SECURITY,
+	FEATURE_BACKUP_V2,
+	FEATURE_PRODUCT_BACKUP_V2,
+	FEATURE_PRODUCT_SCAN_V2,
+	FEATURE_PRODUCT_ANTISPAM_V2,
+	FEATURE_ACTIVITY_LOG_V2,
+	FEATURE_CATEGORY_OTHER,
+	FEATURE_VIDEO_HOSTING_V2,
+	FEATURE_SOCIAL_MEDIA_POSTING_V2,
+	FEATURE_COLLECT_PAYMENTS_V2,
+	FEATURE_SITE_MONETIZATION_V2,
+	FEATURE_PRIORITY_SUPPORT_V2,
+	FEATURE_ONE_CLICK_RESTORE_V2,
+	FEATURE_SECURE_STORAGE_V2,
 } from 'lib/plans/constants';
+import { buildCardFeaturesFromItem } from './utils';
 
 /**
  * Type dependencies
@@ -47,6 +62,15 @@ export const SECURITY = 'security';
 
 // TODO: update before offer reset launch
 export const OFFER_RESET_SUPPORT_PAGE = 'https://jetpack.com/support/';
+export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
+
+/**
+ * Link to plan comparison page.
+ */
+export const MORE_FEATURES_LINK = {
+	url: PLAN_COMPARISON_PAGE,
+	label: translate( 'See all features' ),
+};
 
 /*
  * Options displayed in the Product Type filter in the Plans page.
@@ -101,7 +125,24 @@ export const OPTION_PLAN_SECURITY: SelectorProduct = {
 		'Enjoy the peace of mind of complete site security. ' +
 			'Easy-to-use, powerful security tools guard your site, so you can focus on your business.'
 	),
-	features: { items: [] },
+	features: {
+		items: buildCardFeaturesFromItem( {
+			[ FEATURE_CATEGORY_SECURITY ]: [
+				FEATURE_PRODUCT_BACKUP_V2,
+				FEATURE_PRODUCT_SCAN_V2,
+				FEATURE_PRODUCT_ANTISPAM_V2,
+				FEATURE_ACTIVITY_LOG_V2,
+			],
+			[ FEATURE_CATEGORY_OTHER ]: [
+				FEATURE_VIDEO_HOSTING_V2,
+				FEATURE_SOCIAL_MEDIA_POSTING_V2,
+				FEATURE_COLLECT_PAYMENTS_V2,
+				FEATURE_SITE_MONETIZATION_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			],
+		} ),
+		more: MORE_FEATURES_LINK,
+	},
 };
 export const OPTION_PLAN_SECURITY_MONTHLY: SelectorProduct = {
 	...OPTION_PLAN_SECURITY,
@@ -121,9 +162,21 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	monthlyProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	iconSlug: 'jetpack_backup_v2',
 	displayName: translate( 'Jetpack Backup' ),
-	tagline: '',
-	description: '',
-	features: { items: [] },
+	tagline: translate( 'Recommended for all sites' ),
+	description: translate( 'Never lose a word, image, page, or time worrying about your site.' ),
+	buttonLabel: translate( 'Get Backup' ),
+	features: {
+		items: buildCardFeaturesFromItem(
+			[
+				FEATURE_BACKUP_V2,
+				FEATURE_ONE_CLICK_RESTORE_V2,
+				FEATURE_SECURE_STORAGE_V2,
+				FEATURE_ACTIVITY_LOG_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			],
+			{ withoutDescription: true }
+		),
+	},
 };
 export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 	...OPTION_PRODUCT_BACKUP,
@@ -226,3 +279,11 @@ export const PLAN_RENEWAL_RECOMMENDATION: Record<
 	[ PLAN_JETPACK_BUSINESS ]: PLAN_JETPACK_SECURITY_REALTIME,
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: PLAN_JETPACK_SECURITY_REALTIME,
 };
+
+/**
+ * Array of product slugs that get the highlight treatment.
+ */
+export const FEATURED_PRODUCTS: string[] = [
+	OPTIONS_JETPACK_SECURITY,
+	OPTIONS_JETPACK_SECURITY_MONTHLY,
+];

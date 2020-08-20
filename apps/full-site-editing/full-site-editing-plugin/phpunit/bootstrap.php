@@ -12,7 +12,6 @@ require_once dirname( dirname( __FILE__ ) ) . '/vendor/autoload.php';
 
 $_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
 
-
 if ( ! $_tests_dir ) {
 	throw new Exception( 'Could not find the WordPress test lib.' );
 }
@@ -59,3 +58,6 @@ require $_tests_dir . '/includes/bootstrap.php';
 
 // Use existing behavior for wp_die during actual test execution.
 remove_filter( 'wp_die_handler', 'fail_if_died' );
+
+// Don't let deprecation notices cause tests to fail.
+PHPUnit\Framework\Error\Deprecated::$enabled = false;

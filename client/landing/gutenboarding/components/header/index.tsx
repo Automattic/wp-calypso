@@ -36,7 +36,7 @@ const Header: React.FunctionComponent = () => {
 		'PlansModal',
 	].includes( currentStep );
 
-	// steps (including modals) where we hide Plans button
+	// steps (including modals) where we show Plans button
 	const showPlansButton = [ 'DesignSelection', 'Style', 'Features' ].includes( currentStep );
 
 	// CreateSite step clears state before redirecting, don't show the default text in this case

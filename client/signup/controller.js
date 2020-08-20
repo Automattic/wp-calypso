@@ -99,7 +99,8 @@ export default {
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.params.flowName === 'user' ||
 			context.params.flowName === 'account' ||
-			context.params.flowName === 'crowdsignal'
+			context.params.flowName === 'crowdsignal' ||
+			context.params.flowName === 'pressable-nux'
 		) {
 			removeWhiteBackground();
 			next();

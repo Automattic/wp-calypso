@@ -112,13 +112,13 @@ $jetpack-product-card-icon-size: 55px;
 .jetpack-product-card__subheadline {
 	margin-bottom: 24px;
 
-	color: var( --color-text-subtle );
+	color: var( --color-neutral-50 );
 
 	font-size: $font-body-extra-small;
 	line-height: rem( 16px ) / $font-body-extra-small;
 
 	@media ( min-width: 660px ) {
-		font-size: $font-body;
+		font-size: $font-body-small;
 	}
 }
 
@@ -205,7 +205,7 @@ $jetpack-product-card-icon-size: 55px;
 	border-radius: 4px;
 	color: $jetpack-product-card-color;
 
-	font-size: rem( 13px );
+	font-size: 0.75rem;
 	line-height: $jetpack-product-card-badge-height;
 	text-transform: uppercase;
 }
@@ -238,6 +238,10 @@ $jetpack-product-card-icon-size: 55px;
 	padding: 0 4px;
 }
 
+.jetpack-product-card .foldable-card.card.is-expanded {
+	margin-bottom: 0;
+}
+
 .jetpack-product-card__features-category {
 	margin: 8px 0 12px;
 	padding-bottom: 6px;
@@ -254,11 +258,17 @@ $jetpack-product-card-icon-size: 55px;
 	list-style-type: none;
 }
 
-.jetpack-product-card__features-item {
+.jetpack-product-card__features-main {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px 0;
+}
+
+.jetpack-product-card__features-subitems {
+	margin-left: 36px;
+
+	list-style-type: none;
 }
 
 .jetpack-product-card__features-summary {
@@ -288,8 +298,8 @@ $jetpack-product-card-icon-size: 55px;
 	border-top: solid 1px var( --color-border-subtle );
 }
 
-/**/
-/* Upgrade Nudge styles
+/**
+ * Upgrade Nudge styles
  */
 .jetpack-product-card__nudge {
 	margin: 16px;

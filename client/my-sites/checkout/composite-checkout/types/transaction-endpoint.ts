@@ -29,17 +29,27 @@ export type WPCOMTransactionEndpointRequestPayload = {
 export type WPCOMTransactionEndpointPaymentDetails = {
 	paymentMethod: string;
 	paymentKey?: string;
-	paymentPartner: string;
+	paymentPartner?: string;
 	storedDetailsId?: string;
 	name: string;
 	email?: string;
 	zip: string;
 	postalCode: string;
 	country: string;
+	countryCode: string;
+	state?: string;
+	city?: string;
+	address?: string;
+	streetNumber?: string;
+	phoneNumber?: string;
+	document?: string;
+	deviceId?: string;
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
 	tefBank?: string;
+	pan?: string;
+	gstin?: string;
 };
 
 export type WPCOMTransactionEndpointCart = {
@@ -169,6 +179,8 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	successUrl,
 	idealBank,
 	tefBank,
+	pan,
+	gstin,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -194,6 +206,8 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	cancelUrl?: string;
 	idealBank?: string;
 	tefBank?: string;
+	pan?: string;
+	gstin?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
@@ -228,6 +242,8 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			cancelUrl,
 			idealBank,
 			tefBank,
+			pan,
+			gstin,
 		},
 	};
 }
