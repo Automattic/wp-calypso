@@ -126,7 +126,7 @@ export function productBadgeLabel(
 			: translate( 'You own this' );
 	}
 
-	if ( currentPlan && planHasFeature( currentPlan, product.productSlug ) ) {
+	if ( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) ) {
 		return translate( 'Included in your plan' );
 	}
 
