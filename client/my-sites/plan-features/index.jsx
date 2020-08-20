@@ -23,7 +23,7 @@ import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest } from 'lib/abtest';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
+import { getPlan, getPlanBySlug, getPlanSlug } from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -755,17 +755,13 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
-		.map( ( { planName, planConstantObj, availableForPurchase } ) => {
+		.map( ( { planName, availableForPurchase } ) => {
 			if ( ! availableForPurchase ) {
 				return 0;
 			}
-			const planProductId = planConstantObj.getProductId();
-			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName, {
-				isMonthly: false,
-			} );
-			const annualRawPrice = getPlanRawPrice( state, planProductId, false );
-
-			if ( typeof annualDiscountPrice !== 'number' || typeof annualDiscountPrice !== 'number' ) {
+			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName );
+			const annualRawPrice = getSitePlanRawPrice( state, siteId, planName );
+			if ( typeof annualDiscountPrice !== 'number' || typeof annualRawPrice !== 'number' ) {
 				return 0;
 			}
 
