@@ -75,7 +75,7 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
 			// Check evaluates to truthy
-			assert( eventsStack, 'tracking events stack missing from window._e2eEventsStack' );
+			assert( eventsStack, 'Tracking events stack missing from window._e2eEventsStack' );
 		} );
 
 		step( 'Tracks "wpcom_block_inserted" event', async function () {
