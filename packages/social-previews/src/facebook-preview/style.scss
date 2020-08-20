@@ -122,12 +122,13 @@
 		}
 
 		&::after {
-			border: 1px solid;
-			border-color: rgba( 0, 0, 0, 0.098 ) rgba( 0, 0, 0, 0.149 ) rgba( 0, 0, 0, 0.231 );
 			content: '';
 			display: block;
 			height: 100%;
 			width: 100%;
+			box-sizing: border-box;
+			border: 1px solid #dadde1;
+			border-right: 0;
 		}
 	}
 
