@@ -3,7 +3,7 @@
 		{
 			"title": "Reynolds (FSE)",
 			"slug": "reynolds-fse",
-			"template": "reynolds",
+			"template": "reynolds-fse",
 			"theme": "seedlet-blocks",
 			"fonts": {
 				"headings": "Playfair Display",
