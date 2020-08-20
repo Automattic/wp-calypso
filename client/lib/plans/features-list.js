@@ -1104,6 +1104,11 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_SCAN_V2 ]: {
 		getSlug: () => constants.FEATURE_SCAN_V2,
+		getTitle: () => i18n.translate( 'Automated daily scanning' ),
+	},
+
+	[ constants.FEATURE_PRODUCT_SCAN_V2 ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_SCAN_V2,
 		getIcon: () => '',
 		getTitle: () => i18n.translate( 'Scan' ),
 		getDescription: () =>
@@ -1117,8 +1122,8 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ constants.FEATURE_SCAN_DAILY_V2 ]: {
-		getSlug: () => constants.FEATURE_SCAN_DAILY_V2,
+	[ constants.FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 		getIcon: () => '',
 		getTitle: () =>
 			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
@@ -1137,8 +1142,8 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ constants.FEATURE_SCAN_REALTIME_V2 ]: {
-		getSlug: () => constants.FEATURE_SCAN_REALTIME_V2,
+	[ constants.FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		getIcon: () => '',
 		getTitle: () =>
 			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
@@ -1159,6 +1164,11 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => constants.FEATURE_ANTISPAM_V2,
+		getTitle: () => i18n.translate( 'Automated spam protection' ),
+	},
+
+	[ constants.FEATURE_PRODUCT_ANTISPAM_V2 ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_ANTISPAM_V2,
 		getIcon: () => 'bug',
 		getTitle: () => i18n.translate( 'Anti-spam' ),
 		getDescription: () =>
@@ -1216,6 +1226,11 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_SEARCH_V2 ]: {
 		getSlug: () => constants.FEATURE_SEARCH_V2,
+		getTitle: () => i18n.translate( 'Instant search and indexing' ),
+	},
+
+	[ constants.FEATURE_PRODUCT_SEARCH_V2 ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_SEARCH_V2,
 		getTitle: () => i18n.translate( 'Search' ),
 		getDescription: () =>
 			i18n.translate(
@@ -1322,6 +1337,46 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {
 		getSlug: () => constants.FEATURE_ONE_CLICK_RESTORE_V2,
 		getTitle: () => i18n.translate( 'One-click restores from desktop or mobile' ),
+	},
+
+	[ constants.FEATURE_ONE_CLICK_FIX_V2 ]: {
+		getSlug: () => constants.FEATURE_ONE_CLICK_FIX_V2,
+		getTitle: () => i18n.translate( 'One-click fixes for most issues' ),
+	},
+
+	[ constants.FEATURE_INSTANT_EMAIL_V2 ]: {
+		getSlug: () => constants.FEATURE_INSTANT_EMAIL_V2,
+		getTitle: () => i18n.translate( 'Instant email notifications' ),
+	},
+
+	[ constants.FEATURE_AKISMET_V2 ]: {
+		getSlug: () => constants.FEATURE_AKISMET_V2,
+		getTitle: () => i18n.translate( 'Powered by Akismet' ),
+	},
+
+	[ constants.FEATURE_SPAM_BLOCK_V2 ]: {
+		getSlug: () => constants.FEATURE_SPAM_BLOCK_V2,
+		getTitle: () => i18n.translate( 'Block spam without CAPTCHAs' ),
+	},
+
+	[ constants.FEATURE_ADVANCED_STATS_V2 ]: {
+		getSlug: () => constants.FEATURE_ADVANCED_STATS_V2,
+		getTitle: () => i18n.translate( 'Advanced stats' ),
+	},
+
+	[ constants.FEATURE_FILTERING_V2 ]: {
+		getSlug: () => constants.FEATURE_FILTERING_V2,
+		getTitle: () => i18n.translate( 'Powerful filtering' ),
+	},
+
+	[ constants.FEATURE_LANGUAGE_SUPPORT_V2 ]: {
+		getSlug: () => constants.FEATURE_LANGUAGE_SUPPORT_V2,
+		getTitle: () => i18n.translate( 'Supports 29 languages' ),
+	},
+
+	[ constants.FEATURE_SPELLING_CORRECTION_V2 ]: {
+		getSlug: () => constants.FEATURE_SPELLING_CORRECTION_V2,
+		getTitle: () => i18n.translate( 'Spelling correction' ),
 	},
 };
 

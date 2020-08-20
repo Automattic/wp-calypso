@@ -57,8 +57,8 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }
 		</>
 	);
+	const antiSpam = <>{ translate( 'Jetpack Anti-spam' ) }</>;
 
-	const antiSpam = <>{ translate( 'Jetpack Anti-Spam' ) }</>;
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
@@ -74,23 +74,65 @@ export const getJetpackProductsDisplayNames = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
 };
-export const getJetpackProductsTaglines = () => {
-	const searchTagline = translate( 'Search your site.' );
-	const scanTagline = translate( 'Scan your site.' );
-	const antiSpamTagline = translate( 'Automatically clear spam from comments and forms.' );
+
+export const getJetpackProductsCallToAction = () => {
+	const backupDaily = (
+		<>
+			{ translate( 'Get Backup {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }
+		</>
+	);
+	const backupRealtime = (
+		<>
+			{ translate( 'Get Backup {{em}}Real-Time{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }
+		</>
+	);
+	const search = translate( 'Get Search' );
+	const scanDaily = (
+		<>
+			{ translate( 'Get Scan {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }
+		</>
+	);
+	const antiSpam = <>{ translate( 'Get Anti-spam' ) }</>;
+
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
-			'Best for sites with occasional updates'
-		),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate(
-			'Best for sites with occasional updates'
-		),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate(
-			'Best for sites with frequent updates'
-		),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
-			'Best for sites with frequent updates'
-		),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
+		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: search,
+		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
+		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDaily,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
+		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
+		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
+	};
+};
+
+export const getJetpackProductsTaglines = () => {
+	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
+	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
+	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
+	const scanTagline = translate( 'Protect your site' );
+	const antiSpamTagline = translate( 'Block spam automatically' );
+
+	return {
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyTagline,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyTagline,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeTagline,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeTagline,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: searchTagline,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchTagline,
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: searchTagline,
@@ -103,28 +145,27 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
+	const backupDailyDescription = translate(
+		'Never lose a word, image, page, or time worrying about your site'
+	);
+	const backupRealtimeDescription = translate(
+		'Real-time backups save every change and one-click restores get you back online quickly.'
+	);
 	const searchDescription = translate(
-		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+		'Help your site visitors find answers instantly so they keep reading and buying.'
 	);
 	const scanDescription = translate(
 		'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
 	);
 	const antiSpamDescription = translate(
-		'Automatically clear spam from comments and forms. Save time, get more responses, give your visitors a better experience – all without lifting a finger.'
+		'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
 	);
+
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
-			'Never lose a word, image, page, or time worrying about your site'
-		),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate(
-			'Never lose a word, image, page, or time worrying about your site'
-		),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate(
-			'Real-time backups save every change and one-click restores get you back online quickly.'
-		),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
-			'Real-time backups save every change and one-click restores get you back online quickly.'
-		),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: searchDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDescription,

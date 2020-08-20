@@ -33,6 +33,7 @@ import { JETPACK_PRODUCT_PRICE_MATRIX } from 'lib/products-values/constants';
 import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-values/products-list';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-product-tagline';
+import { getJetpackProductCallToAction } from 'lib/products-values/get-jetpack-product-call-to-action';
 import { getJetpackProductDescription } from 'lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-product-short-name';
 import { MORE_FEATURES_LINK } from 'my-sites/plans-v2/constants';
@@ -220,6 +221,7 @@ export function itemToSelectorProduct(
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
+			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
 			features: {
