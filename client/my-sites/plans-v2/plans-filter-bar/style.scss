@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .plans-filter-bar {
 	$height: 36px;
 	$border-radius: 4px;
@@ -100,7 +103,7 @@
 
 	// At this screen size, div#content (wraps div#primary and div#secondary)
 	// has a left padding of 305px and a right padding of 32px which adds up to 337px.
-	@include breakpoint-deprecated( '>960px' ) {
+	@include break-large {
 		width: calc( 100% - 337px );
 	}
 }
