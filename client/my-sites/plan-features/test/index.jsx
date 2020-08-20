@@ -53,7 +53,6 @@ import {
  * Internal dependencies
  */
 import { calculatePlanCredits, isPrimaryUpgradeByPlanDelta, PlanFeatures } from '../index';
-
 import { getPlanDiscountedRawPrice, getSitePlanRawPrice } from 'state/sites/plans/selectors';
 
 const identity = ( x ) => x;

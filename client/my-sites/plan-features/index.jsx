@@ -23,7 +23,7 @@ import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest } from 'lib/abtest';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlan, getPlanBySlug, getPlanSlug } from 'state/plans/selectors';
+import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -874,6 +874,9 @@ export default connect(
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
 				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
+				const rawPrice = siteId
+					? getSitePlanRawPrice( state, selectedSiteId, plan, { isMonthly: showMonthlyPrice } )
+					: getPlanRawPrice( state, planProductId, showMonthlyPrice );
 
 				return {
 					availableForPurchase,
@@ -901,9 +904,7 @@ export default connect(
 						newPlan ||
 						bestValue ||
 						plans.length === 1,
-					rawPrice: getSitePlanRawPrice( state, selectedSiteId, plan, {
-						isMonthly: showMonthlyPrice,
-					} ),
+					rawPrice: rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 				};
