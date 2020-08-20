@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import { isEnabled } from 'config';
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
@@ -34,6 +35,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const plan = useSelectedPlan();
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const { isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
 
 	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
@@ -93,6 +95,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
+				singleColumn={ isExperimental && isEnabled( 'gutenboarding/feature-picker' ) }
 			/>
 		</div>
 	);
