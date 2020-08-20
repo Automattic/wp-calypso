@@ -29,7 +29,7 @@ import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
 import * as mediaHelper from '../lib/media-helper';
 import * as dataHelper from '../lib/data-helper';
-import * as slackNotifier from '../slack-notifier';
+import * as slackNotifier from '../lib/slack-notifier';
 import * as twitterHelper from '../lib/twitter-helper';
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
