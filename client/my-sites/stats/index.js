@@ -33,28 +33,7 @@ const trackedPage = ( url, controller ) => {
 };
 
 export default function () {
-	const validPeriods = [ 'day', 'week', 'month', 'year' ];
-
-	// Redirect this to default /stats/day/ view in order to keep
-	// the paths and page view reporting consistent.
-	page( '/stats', () => page.redirect( getStatsDefaultSitePage() ) );
-
-	// Stat Overview Page
-	trackedPage( '/stats/day', overview );
-	trackedPage( '/stats/week', overview );
-	trackedPage( '/stats/month', overview );
-	trackedPage( '/stats/year', overview );
-
-	trackedPage( '/stats/insights', sites );
-
-	// Stat Insights Page
-	trackedPage( '/stats/insights/:site', insights );
-
-	// Stat Site Pages
-	trackedPage( '/stats/day/:site', site );
-	trackedPage( '/stats/week/:site', site );
-	trackedPage( '/stats/month/:site', site );
-	trackedPage( '/stats/year/:site', site );
+	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
 
 	const validModules = [
 		'posts',
@@ -67,17 +46,29 @@ export default function () {
 		'filedownloads',
 		'searchterms',
 		'annualstats',
-	];
+	].join( '|' );
+
+	// Redirect this to default /stats/day/ view in order to keep
+	// the paths and page view reporting consistent.
+	page( '/stats', () => page.redirect( getStatsDefaultSitePage() ) );
+
+	// Stat Overview Page
+	trackedPage( `/stats/:period(${ validPeriods })`, overview );
+
+	trackedPage( '/stats/insights', sites );
+
+	// Stat Insights Page
+	trackedPage( '/stats/insights/:site', insights );
+
+	// Stat Site Pages
+	trackedPage( `/stats/:period(${ validPeriods })/:site`, site );
 
 	// Redirect this to default /stats/day/:module/:site view to
 	// keep the paths and page view reporting consistent.
-	page( `/stats/:module(${ validModules.join( '|' ) })/:site`, redirectToDefaultModulePage );
+	page( `/stats/:module(${ validModules })/:site`, redirectToDefaultModulePage );
 
 	// Stat Summary Pages
-	trackedPage( `/stats/day/:module(${ validModules.join( '|' ) })/:site`, summary );
-	trackedPage( `/stats/week/:module(${ validModules.join( '|' ) })/:site`, summary );
-	trackedPage( `/stats/month/:module(${ validModules.join( '|' ) })/:site`, summary );
-	trackedPage( `/stats/year/:module(${ validModules.join( '|' ) })/:site`, summary );
+	trackedPage( `/stats/:period(${ validPeriods })/:module(${ validModules })/:site`, summary );
 
 	// Stat Single Post Page
 	trackedPage( '/stats/post/:post_id/:site', post );
@@ -92,7 +83,7 @@ export default function () {
 
 	trackedPage( '/stats/activity/:site', redirectToAcivity );
 
-	trackedPage( `/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`, wordAds );
+	trackedPage( `/stats/ads/:period(${ validPeriods })/:site`, wordAds );
 
 	// Anything else should redirect to default WordAds stats page
 	page( '/stats/wordads/(.*)', redirectToDefaultWordAdsPeriod );
