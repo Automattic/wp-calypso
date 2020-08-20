@@ -90,7 +90,7 @@ export function createEbanxTefPaymentMethodStore() {
 							[ action.payload.key ]: {
 								value: maskField(
 									action.payload.key,
-									state[ action.payload.key ],
+									state.fields[ action.payload.key ],
 									action.payload.value
 								),
 								isTouched: true,
@@ -104,7 +104,7 @@ export function createEbanxTefPaymentMethodStore() {
 						fields: {
 							...state.fields,
 							[ action.payload.key ]: {
-								...state[ action.payload.key ],
+								...state.fields[ action.payload.key ],
 								errors: [ action.payload.message ],
 							},
 						},
@@ -112,13 +112,16 @@ export function createEbanxTefPaymentMethodStore() {
 				case 'TOUCH_ALL_FIELDS':
 					return {
 						...state,
-						fields: Object.entries( state.fields ).reduce( ( obj, [ key, value ] ) => {
-							obj[ key ] = {
-								value: value.value,
-								isTouched: true,
-							};
-							return obj;
-						}, {} ),
+						fields: Object.keys( state.fields ).reduce(
+							( obj, key ) => ( {
+								...obj,
+								[ key ]: {
+									...state.fields[ key ],
+									isTouched: true,
+								},
+							} ),
+							{}
+						),
 					};
 			}
 			return state;
