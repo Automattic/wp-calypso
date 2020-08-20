@@ -11,6 +11,8 @@
 
 @import '../variables.scss';
 
+/* stylelint-disable scales/font-size */
+
 .twitter-preview {
 	width: inherit;
 	overflow-x: auto;
@@ -18,22 +20,21 @@
 	margin: 20px;
 }
 
-.twitter-preview__summary {
+.twitter-preview__summary,
+.twitter-preview__large_image_summary {
 	width: 506px;
-	height: 125px;
 	margin: 0 auto;
 	overflow: hidden;
 	border: 1px solid #e1e8ed;
-	border-radius: 0.42857em;
+	border-radius: 12px;
+}
+
+.twitter-preview__summary {
+	height: 125px;
 }
 
 .twitter-preview__large_image_summary {
-	width: 506px;
 	height: auto;
-	margin: 0 auto;
-	overflow: hidden;
-	border: 1px solid #e1e8ed;
-	border-radius: 0.42857em;
 }
 
 .twitter-preview__image {
@@ -92,8 +93,16 @@
 .twitter-preview__description {
 	margin-top: 0.32333em;
 	max-height: 3.9em;
-	overflow: hidden;
 	text-overflow: ellipsis;
+	//clamp after two lines
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.twitter-preview__summary .twitter-preview__description {
+	-webkit-line-clamp: 3;
 }
 
 .twitter-preview__url {

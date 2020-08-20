@@ -129,7 +129,7 @@ describe( 'Twitter previews', () => {
 		);
 	} );
 
-	it( 'should display a untruncated description', () => {
+	it( 'should display a truncated description', () => {
 		const wrapper = shallow(
 			<Twitter description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 		);
@@ -137,11 +137,14 @@ describe( 'Twitter previews', () => {
 		const descEl = wrapper.find( '.twitter-preview__description' );
 		expect( descEl.exists() ).toBeTruthy();
 		expect( descEl.text() ).toEqual(
-			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
+
+		const descTextNoEllipsis = descEl.text().replace( '…', '' );
+		expect( descTextNoEllipsis ).toHaveLength( 200 );
 	} );
 
-	it( 'should strip html tasgs from the description', () => {
+	it( 'should strip html tags from the description', () => {
 		const wrapper = shallow(
 			<Twitter description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 		);
@@ -149,7 +152,7 @@ describe( 'Twitter previews', () => {
 		const descEl = wrapper.find( '.twitter-preview__description' );
 		expect( descEl.exists() ).toBeTruthy();
 		expect( descEl.text() ).toEqual(
-			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
 	} );
 
