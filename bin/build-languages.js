@@ -151,10 +151,7 @@ function createLanguagesDir() {
 function getModuleReference( module ) {
 	// Rewrite module from `packages/` to match references in POT
 	if ( module.indexOf( 'packages/' ) === 0 ) {
-		return module
-			.replace( /^packages\//, '' )
-			.replace( '/dist/esm/', '/src/' )
-			.replace( /\.\w+/, '' );
+		return module.replace( '/dist/esm/', '/src/' ).replace( /\.\w+/, '' );
 	}
 
 	return module;
