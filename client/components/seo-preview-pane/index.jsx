@@ -98,7 +98,7 @@ const ReaderPost = ( site, post, frontPageMetaDescription ) => {
 	return (
 		<ReaderPreview
 			site={ site }
-			post={ post }
+			readerPost={ post }
 			postExcerpt={ formatExcerpt(
 				frontPageMetaDescription || get( post, 'excerpt', false ) || get( post, 'content', false )
 			) }
