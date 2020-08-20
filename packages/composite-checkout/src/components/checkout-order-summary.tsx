@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import { CheckoutSummaryCard, useLineItems, useLineItemsOfType, useTotal } from '../public-api';
+import styled from '../lib/styled';
 
 export default function CheckoutOrderSummaryStep() {
 	const [ items ] = useLineItems();

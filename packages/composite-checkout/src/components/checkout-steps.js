@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { useI18n } from '@automattic/react-i18n';
@@ -26,6 +25,7 @@ import {
 	usePaymentMethod,
 	useEvents,
 } from '../public-api';
+import styled from '../lib/styled';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
