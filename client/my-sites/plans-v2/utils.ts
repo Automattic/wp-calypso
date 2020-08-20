@@ -3,6 +3,7 @@
  */
 import { translate, TranslateResult } from 'i18n-calypso';
 import { compact, get, isArray, isObject } from 'lodash';
+import { createElement, Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -33,7 +34,7 @@ import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-pr
 import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-product-tagline';
 import { getJetpackProductDescription } from 'lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-product-short-name';
-import { PLAN_COMPARISON_PAGE } from 'my-sites/plans-v2/constants';
+import { MORE_FEATURES_LINK } from 'my-sites/plans-v2/constants';
 
 /**
  * Type dependencies
@@ -51,6 +52,7 @@ import type {
 	JetpackPlanSlugs,
 	Plan,
 	JetpackPlanCardFeature,
+	JetpackPlanCardFeatureSection,
 } from 'lib/plans/types';
 import type { JetpackProductSlug } from 'lib/products-values/types';
 import type { SitePlan } from 'state/sites/selectors/get-site-plan';
@@ -94,11 +96,15 @@ export function productButtonLabel( product: SelectorProduct, isOwned: boolean )
 			: translate( 'Manage Subscription' );
 	}
 
+	const { buttonLabel, displayName } = product;
+
 	return (
-		product.buttonLabel ??
-		translate( 'Get %s', {
-			args: product.displayName,
-			comment: '%s is the name of a product',
+		buttonLabel ??
+		translate( 'Get {{name/}}', {
+			components: {
+				name: createElement( Fragment, {}, displayName ),
+			},
+			comment: '{{name/}} is the name of a product',
 		} )
 	);
 }
@@ -233,10 +239,7 @@ export function itemToSelectorProduct(
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
 				items: buildCardFeaturesFromItem( item ),
-				more: {
-					url: PLAN_COMPARISON_PAGE,
-					label: translate( 'See all features' ),
-				},
+				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
 		};
@@ -245,7 +248,11 @@ export function itemToSelectorProduct(
 }
 
 /**
- * Builds a feature object of a product card, from a feature key.
+ * Feature utils.
+ */
+
+/**
+ * Builds the feature item of a product card, from a feature key.
  *
  * @param {JetpackPlanCardFeature} featureKey Key of the feature
  * @returns {SelectorProductFeaturesItem} Feature item
@@ -278,43 +285,59 @@ export function buildCardFeatureItemFromFeatureKey(
 }
 
 /**
- * Builds the features object passed to the product card, from a plan or product.
+ * Builds the feature items passed to the product card, from feature keys.
  *
- * @param { Plan | Product} item Product or plan
+ * @param {JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection} features Feature keys
+ * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
+ */
+export function buildCardFeaturesFromFeatureKeys(
+	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection
+): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
+	// Without sections (JetpackPlanCardFeature[])
+	if ( isArray( features ) ) {
+		return compact( features.map( buildCardFeatureItemFromFeatureKey ) );
+	}
+
+	// With sections (JetpackPlanCardFeatureSection)
+	if ( isObject( features ) ) {
+		const result = [] as SelectorProductFeaturesSection[];
+
+		Object.getOwnPropertySymbols( features ).map( ( key ) => {
+			const category = getFeatureCategoryByKey( key );
+			const subfeatures = features[ key ];
+
+			if ( category ) {
+				result.push( {
+					heading: category.getTitle(),
+					list: subfeatures.map( buildCardFeatureItemFromFeatureKey ),
+				} as SelectorProductFeaturesSection );
+			}
+		} );
+
+		return result;
+	}
+
+	return [];
+}
+
+/**
+ * Builds the feature items passed to the product card, from a plan, product, or object.
+ *
+ * @param {Plan | Product | object} item Product, plan, or object
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromItem(
-	item: Plan | Product
+	item: Plan | Product | object
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
 		const features = item.getPlanCardFeatures?.();
 
-		// Without sections
-		if ( isArray( features ) ) {
-			return compact( features.map( buildCardFeatureItemFromFeatureKey ) );
-		}
-
-		// With sections
-		if ( isObject( features ) ) {
-			const result = [] as SelectorProductFeaturesSection[];
-
-			Object.getOwnPropertySymbols( features ).map( ( key ) => {
-				const category = getFeatureCategoryByKey( key );
-				const subfeatures = features[ key ];
-
-				if ( category ) {
-					result.push( {
-						heading: category.getTitle(),
-						list: subfeatures.map( buildCardFeatureItemFromFeatureKey ),
-					} as SelectorProductFeaturesSection );
-				}
-			} );
-
-			return compact( result );
+		if ( features ) {
+			return buildCardFeaturesFromFeatureKeys( features );
 		}
 	}
 
-	return [];
+	return buildCardFeaturesFromFeatureKeys( item );
 }
 
 /**

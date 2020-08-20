@@ -372,8 +372,7 @@ const getPlanBusinessDetails = () => ( {
 const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY,
-	getTitle: () =>
-		translate( 'Jetpack Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),
@@ -384,6 +383,21 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		),
 	getTagline: () => translate( 'Best for sites with occasional updates' ),
 	getPlanCompareFeatures: () => [],
+	getPlanCardFeatures: () => ( {
+		[ constants.FEATURE_CATEGORY_SECURITY ]: [
+			constants.FEATURE_BACKUP_DAILY_V2,
+			constants.FEATURE_SCAN_DAILY_V2,
+			constants.FEATURE_ANTISPAM_V2,
+			constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
+		],
+		[ constants.FEATURE_CATEGORY_OTHER ]: [
+			constants.FEATURE_VIDEO_HOSTING_V2,
+			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+			constants.FEATURE_COLLECT_PAYMENTS_V2,
+			constants.FEATURE_SITE_MONETIZATION_V2,
+			constants.FEATURE_PRIORITY_SUPPORT_V2,
+		],
+	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -399,8 +413,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY,
-	getTitle: () =>
-		translate( 'Jetpack Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -416,6 +429,22 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		),
 	getTagline: () => translate( 'Best for sites with frequent updates' ),
 	getPlanCompareFeatures: () => [],
+	getPlanCardFeatures: () => ( {
+		[ constants.FEATURE_CATEGORY_SECURITY ]: [
+			constants.FEATURE_BACKUP_REALTIME_V2,
+			constants.FEATURE_SCAN_REALTIME_V2,
+			constants.FEATURE_ANTISPAM_V2,
+			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+		],
+		[ constants.FEATURE_CATEGORY_OTHER ]: [
+			constants.FEATURE_PREMIUM_THEMES_V2,
+			constants.FEATURE_VIDEO_HOSTING_V2,
+			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+			constants.FEATURE_COLLECT_PAYMENTS_V2,
+			constants.FEATURE_SITE_MONETIZATION_V2,
+			constants.FEATURE_PRIORITY_SUPPORT_V2,
+		],
+	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
@@ -456,7 +485,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 					constants.FEATURE_BACKUP_REALTIME_V2,
 					constants.FEATURE_SCAN_REALTIME_V2,
 					constants.FEATURE_ANTISPAM_V2,
-					constants.FEATURE_ACTIVITY_LOG_ARCHIVE_V2,
+					constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 				],
 			],
 		],

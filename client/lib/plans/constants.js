@@ -222,10 +222,16 @@ export const FEATURE_JETPACK_SEARCH_MONTHLY = PRODUCT_JETPACK_SEARCH_MONTHLY;
 
 // jetpack features constants (offer reset)
 export const FEATURE_SECURITY_REALTIME_V2 = Symbol();
+export const FEATURE_BACKUP_V2 = Symbol();
+export const FEATURE_BACKUP_DAILY_V2 = Symbol();
 export const FEATURE_BACKUP_REALTIME_V2 = Symbol();
+export const FEATURE_SCAN_V2 = Symbol();
+export const FEATURE_SCAN_DAILY_V2 = Symbol();
 export const FEATURE_SCAN_REALTIME_V2 = Symbol();
 export const FEATURE_ANTISPAM_V2 = Symbol();
-export const FEATURE_ACTIVITY_LOG_ARCHIVE_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_30_DAYS_V2 = Symbol();
 export const FEATURE_SEARCH_V2 = Symbol();
 export const FEATURE_VIDEO_HOSTING_V2 = Symbol();
 export const FEATURE_CRM_V2 = Symbol();
