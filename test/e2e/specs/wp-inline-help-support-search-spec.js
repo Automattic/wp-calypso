@@ -32,11 +32,13 @@ before( async function () {
 describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function () {
 	this.timeout( mochaTimeOut );
 
-	step( 'Login and select a non My Home page', async function () {
+	step( 'Login and select a page that is not the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
 
 		await loginFlow.loginAndSelectMySite();
 
+		// The "/home" route is the only one where the "FAB" inline help
+		// is not shown.
 		const sidebarComponent = await SidebarComponent.Expect( driver );
 		await sidebarComponent.selectSettings();
 
