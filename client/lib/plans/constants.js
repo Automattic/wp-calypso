@@ -225,6 +225,9 @@ export const FEATURE_SECURITY_REALTIME_V2 = Symbol();
 export const FEATURE_BACKUP_V2 = Symbol();
 export const FEATURE_BACKUP_DAILY_V2 = Symbol();
 export const FEATURE_BACKUP_REALTIME_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_DAILY_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_REALTIME_V2 = Symbol();
 export const FEATURE_SCAN_V2 = Symbol();
 export const FEATURE_SCAN_DAILY_V2 = Symbol();
 export const FEATURE_SCAN_REALTIME_V2 = Symbol();
@@ -240,6 +243,8 @@ export const FEATURE_COLLECT_PAYMENTS_V2 = Symbol();
 export const FEATURE_SITE_MONETIZATION_V2 = Symbol();
 export const FEATURE_PREMIUM_THEMES_V2 = Symbol();
 export const FEATURE_PRIORITY_SUPPORT_V2 = Symbol();
+export const FEATURE_SECURE_STORAGE_V2 = Symbol();
+export const FEATURE_ONE_CLICK_RESTORE_V2 = Symbol();
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';

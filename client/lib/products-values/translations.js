@@ -31,7 +31,7 @@ export const getJetpackProductsShortNames = () => {
 export const getJetpackProductsDisplayNames = () => {
 	const backupDaily = (
 		<>
-			{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
+			{ translate( 'Backup {{em}}Daily{{/em}}', {
 				components: {
 					em: <em />,
 				},
@@ -40,7 +40,7 @@ export const getJetpackProductsDisplayNames = () => {
 	);
 	const backupRealtime = (
 		<>
-			{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
+			{ translate( 'Backup {{em}}Real-Time{{/em}}', {
 				components: {
 					em: <em />,
 				},
@@ -80,16 +80,16 @@ export const getJetpackProductsTaglines = () => {
 	const antiSpamTagline = translate( 'Automatically clear spam from comments and forms.' );
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
-			'Your data is being securely backed up every day with a 30-day archive.'
+			'Best for sites with occasional updates'
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate(
-			'Your data is being securely backed up every day with a 30-day archive.'
+			'Best for sites with occasional updates'
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate(
-			'Your data is being securely backed up as you edit.'
+			'Best for sites with frequent updates'
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
-			'Your data is being securely backed up as you edit.'
+			'Best for sites with frequent updates'
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: searchTagline,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchTagline,
@@ -114,16 +114,16 @@ export const getJetpackProductsDescriptions = () => {
 	);
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
-			'Always-on backups ensure you never lose your site. Your changes are saved every day with a 30-day archive.'
+			'Never lose a word, image, page, or time worrying about your site'
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate(
-			'Always-on backups ensure you never lose your site. Your changes are saved every day with a 30-day archive.'
+			'Never lose a word, image, page, or time worrying about your site'
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate(
-			'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
+			'Real-time backups save every change and one-click restores get you back online quickly.'
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
-			'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
+			'Real-time backups save every change and one-click restores get you back online quickly.'
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: searchDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,

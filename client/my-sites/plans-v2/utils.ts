@@ -221,12 +221,12 @@ export function itemToSelectorProduct(
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
 			monthlyProductSlug,
-			buttonLabel: translate( 'Get %s', {
-				args: getJetpackProductShortName( item ),
-				comment: '%s is the name of a product',
-			} ),
 			term: item.term,
-			features: { items: [] },
+			features: {
+				items: item.features
+					? buildCardFeaturesFromItem( item.features, { withoutDescription: true } )
+					: [],
+			},
 		};
 	} else if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();
@@ -265,10 +265,12 @@ export function itemToSelectorProduct(
  * Builds the feature item of a product card, from a feature key.
  *
  * @param {JetpackPlanCardFeature} featureKey Key of the feature
+ * @param {object?} options Options
  * @returns {SelectorProductFeaturesItem} Feature item
  */
 export function buildCardFeatureItemFromFeatureKey(
-	featureKey: JetpackPlanCardFeature
+	featureKey: JetpackPlanCardFeature,
+	options?: { withoutDescription?: boolean }
 ): SelectorProductFeaturesItem | undefined {
 	let feature;
 	let subFeaturesKeys;
@@ -286,9 +288,11 @@ export function buildCardFeatureItemFromFeatureKey(
 		return {
 			icon: feature.getIcon?.(),
 			text: feature.getTitle(),
-			description: feature.getDescription?.(),
+			description: options?.withoutDescription ? undefined : feature.getDescription?.(),
 			subitems: subFeaturesKeys
-				? compact( subFeaturesKeys.map( buildCardFeatureItemFromFeatureKey ) )
+				? compact(
+						subFeaturesKeys.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options ) )
+				  )
 				: undefined,
 		};
 	}
@@ -298,14 +302,16 @@ export function buildCardFeatureItemFromFeatureKey(
  * Builds the feature items passed to the product card, from feature keys.
  *
  * @param {JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection} features Feature keys
+ * @param {object?} options Options
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromFeatureKeys(
-	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection
+	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection,
+	options?: object
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	// Without sections (JetpackPlanCardFeature[])
 	if ( isArray( features ) ) {
-		return compact( features.map( buildCardFeatureItemFromFeatureKey ) );
+		return compact( features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options ) ) );
 	}
 
 	// With sections (JetpackPlanCardFeatureSection)
@@ -319,7 +325,9 @@ export function buildCardFeaturesFromFeatureKeys(
 			if ( category ) {
 				result.push( {
 					heading: category.getTitle(),
-					list: subfeatures.map( buildCardFeatureItemFromFeatureKey ),
+					list: subfeatures.map( ( f: JetpackPlanCardFeature ) =>
+						buildCardFeatureItemFromFeatureKey( f, options )
+					),
 				} as SelectorProductFeaturesSection );
 			}
 		} );
@@ -334,20 +342,22 @@ export function buildCardFeaturesFromFeatureKeys(
  * Builds the feature items passed to the product card, from a plan, product, or object.
  *
  * @param {Plan | Product | object} item Product, plan, or object
+ * @param {object?} options Options
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromItem(
-	item: Plan | Product | object
+	item: Plan | Product | object,
+	options?: object
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
 		const features = item.getPlanCardFeatures?.();
 
 		if ( features ) {
-			return buildCardFeaturesFromFeatureKeys( features );
+			return buildCardFeaturesFromFeatureKeys( features, options );
 		}
 	}
 
-	return buildCardFeaturesFromFeatureKeys( item );
+	return buildCardFeaturesFromFeatureKeys( item, options );
 }
 
 /**

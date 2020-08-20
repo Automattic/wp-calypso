@@ -385,7 +385,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () => ( {
 		[ constants.FEATURE_CATEGORY_SECURITY ]: [
-			constants.FEATURE_BACKUP_DAILY_V2,
+			constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 			constants.FEATURE_SCAN_DAILY_V2,
 			constants.FEATURE_ANTISPAM_V2,
 			constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
@@ -431,7 +431,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () => ( {
 		[ constants.FEATURE_CATEGORY_SECURITY ]: [
-			constants.FEATURE_BACKUP_REALTIME_V2,
+			constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 			constants.FEATURE_SCAN_REALTIME_V2,
 			constants.FEATURE_ANTISPAM_V2,
 			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -482,7 +482,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 			[
 				constants.FEATURE_SECURITY_REALTIME_V2,
 				[
-					constants.FEATURE_BACKUP_REALTIME_V2,
+					constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 					constants.FEATURE_SCAN_REALTIME_V2,
 					constants.FEATURE_ANTISPAM_V2,
 					constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
