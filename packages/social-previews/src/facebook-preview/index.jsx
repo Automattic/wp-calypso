@@ -39,12 +39,12 @@ export class FacebookPreview extends PureComponent {
 						{ image && <img alt="Facebook Preview Thumbnail" src={ image } /> }
 					</div>
 					<div className="facebook-preview__body">
+						<div className="facebook-preview__url">
+							{ compact( [ baseDomain( url ), author ] ).join( ' | ' ) }
+						</div>
 						<div className="facebook-preview__title">{ facebookTitle( title || '' ) }</div>
 						<div className="facebook-preview__description">
 							{ facebookDescription( stripHtmlTags( description ) ) }
-						</div>
-						<div className="facebook-preview__url">
-							{ compact( [ baseDomain( url ), author ] ).join( ' | ' ) }
 						</div>
 					</div>
 				</div>
