@@ -134,6 +134,7 @@ const ProductCardWrapper = ( {
 
 	return (
 		<CardComponent
+			headingLevel={ 3 }
 			iconSlug={ item.iconSlug }
 			productName={ item.displayName }
 			subheadline={ item.tagline }

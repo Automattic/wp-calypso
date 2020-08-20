@@ -55,7 +55,7 @@ const ProductsColumn = ( {
 
 	return (
 		<div className="plans-column products-column">
-			<FormattedHeader headerText={ translate( 'Individual Products' ) } brandFont />
+			<FormattedHeader headerText={ translate( 'Individual Products' ) } isSecondary brandFont />
 			{ productObjects.map( ( product ) => (
 				<ProductCard
 					key={ product.productSlug }
