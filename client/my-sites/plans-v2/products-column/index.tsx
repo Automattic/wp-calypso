@@ -63,6 +63,7 @@ const ProductsColumn = ( {
 					onClick={ onProductClick }
 					siteId={ siteId }
 					currencyCode={ currencyCode }
+					highlight
 				/>
 			) ) }
 		</div>

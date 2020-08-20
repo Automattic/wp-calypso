@@ -69,6 +69,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					siteId={ siteId }
 					onClick={ onPlanClick }
 					currencyCode={ currencyCode }
+					highlight
 				/>
 			) ) }
 		</div>
