@@ -65,9 +65,10 @@ const removeWhiteBackground = function () {
 
 const gutenbergRedirect = function ( flowName ) {
 	const url = new URL( window.location );
-	url.pathname = '/new';
-	if ( flowName ) {
-		url.pathname += `/${ flowName }`;
+	if ( [ 'beginner', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		url.pathname = `/new/${ flowName }`;
+	} else {
+		url.pathname = '/new';
 	}
 	window.location.replace( url.toString() );
 };
