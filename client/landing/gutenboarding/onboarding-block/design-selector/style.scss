@@ -20,8 +20,18 @@
 		flex-grow: 1;
 	}
 
-	.design-selector__grid {
-		margin: 0 -32px 30px;
+	.design-selector__categories {
+		margin-top: 20px;
+
+		.components-button.is-link {
+			display: block;
+			padding: 6px 0;
+			text-decoration: none;
+
+			&.is-selected {
+				font-weight: bold;
+			}
+		}
 	}
 
 	.design-selector__design-option {
@@ -29,7 +39,6 @@
 		font-family: inherit;
 		float: left;
 		width: 100%;
-		margin: 32px; // only applies in IE
 
 		&:hover,
 		&:focus {
@@ -38,51 +47,31 @@
 			}
 		}
 
-		@include break-mobile {
-			width: calc( 50% - 32px );
+		@include break-medium {
+			width: calc( 50% - 64px );
+			margin: 0 32px;
 		}
 
-		@include break-large {
-			width: calc( 33.33% - 64px );
+		@include break-xlarge {
+			width: calc( 33% - 64px );
+			margin: 0 32px;
 		}
 
-		@include onboarding-break-gigantic {
+		@include break-wide {
 			width: calc( 25% - 64px );
+			margin: 0 32px;
 		}
 	}
 
-	@supports ( display: grid ) {
-		.design-selector__grid {
-			display: grid;
-			grid-template-columns: 1fr;
-			row-gap: 48px;
-			margin: 0 0 30px;
-
-			@include break-mobile {
-				grid-template-columns: 1fr 1fr;
-				column-gap: 32px;
-			}
-
-			@include break-large {
-				grid-template-columns: 1fr 1fr 1fr;
-				column-gap: 64px;
-			}
-
-			@include onboarding-break-gigantic {
-				grid-template-columns: 1fr 1fr 1fr 1fr;
-			}
-		}
-
+	.design-selector__design-grid.is-experimental {
 		.design-selector__design-option {
-			width: auto;
-			margin: 0;
+			position: absolute;
+			transition: all 0.5s ease-in-out;
 
-			@include break-large {
-				width: auto;
-			}
+			width: 20%;
 
-			@include onboarding-break-gigantic {
-				width: auto;
+			&-exit-active {
+				opacity: 0;
 			}
 		}
 	}

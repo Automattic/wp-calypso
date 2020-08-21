@@ -6,6 +6,7 @@ import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import type { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import { isEnabled } from 'config';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -81,7 +82,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}
 
 	return (
-		<div className="onboarding-block">
+		<div className={ classnames( 'onboarding-block', { 'is-experimental': isExperimental } ) }>
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }

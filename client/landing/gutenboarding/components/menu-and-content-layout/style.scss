@@ -1,0 +1,34 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins';
+
+.menu-and-content-layout__wrapper {
+	display: flex;
+}
+
+.menu-and-content-layout__menu {
+	width: 250px;
+	margin-right: 50px;
+}
+
+.menu-and-content-layout__content {
+	flex: 1;
+	@include onboarding-heading-padding;
+}
+
+.menu-and-content-layout__wrapper {
+	.action-buttons {
+		display: none;
+	}
+	.onboarding-title {
+		@include onboarding-font-recoleta-bold;
+
+		font-size: 2.25rem;
+		line-height: 40px;
+	}
+	.onboarding-subtitle {
+		margin-top: 15px;
+	}
+	div.design-selector__header {
+		display: block;
+	}
+}
