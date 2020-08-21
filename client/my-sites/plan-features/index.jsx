@@ -23,7 +23,13 @@ import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest } from 'lib/abtest';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
+import {
+	getPlan,
+	getPlanBySlug,
+	getPlanRawPrice,
+	getPlanSlug,
+	getDiscountedRawPrice,
+} from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -874,9 +880,13 @@ export default connect(
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
 				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
+				const isMonthlyObj = { isMonthly: showMonthlyPrice };
 				const rawPrice = siteId
-					? getSitePlanRawPrice( state, selectedSiteId, plan, { isMonthly: showMonthlyPrice } )
+					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getPlanRawPrice( state, planProductId, showMonthlyPrice );
+				const discountPrice = siteId
+					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
+					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
 				return {
 					availableForPurchase,
@@ -884,9 +894,7 @@ export default connect(
 					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
-						isMonthly: showMonthlyPrice,
-					} ),
+					discountPrice: discountPrice,
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
