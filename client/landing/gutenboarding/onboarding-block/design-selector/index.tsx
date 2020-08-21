@@ -40,6 +40,8 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const [ filteredCategory, setFilteredCategory ] = React.useState( 'all' );
 
+	// const isExperimental = false;
+
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: getSelectedDesign()?.slug,
 		is_selected_design_premium: hasPaidDesign(),
@@ -93,8 +95,8 @@ const DesignSelector: React.FunctionComponent = () => {
 						'is-experimental': isExperimental,
 					} ) }
 				>
-					<div>
-						<TransitionGroup>
+					<div className="design-selector__grid">
+						<TransitionGroup component={ null }>
 							{ getRandomizedDesigns()
 								.featured.filter(
 									( design ) =>
