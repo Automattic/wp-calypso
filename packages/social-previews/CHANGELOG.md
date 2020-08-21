@@ -1,6 +1,9 @@
 Changelog
 ========
 
+#### v1.0.3 (2020-08-21)
+- Refreshed styles of Twitter, Facebook and Google previews to match their latest design.
+
 #### v1.0.2 (2020-08-03)
 - Remove `i18n-calypso` dependency by removing search preview header.
 - Strip html tags from descriptions for social previews.
