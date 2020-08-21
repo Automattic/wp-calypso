@@ -30,7 +30,6 @@ export function getDefaultOrderSummaryStep() {
 		activeStepContent: null,
 		incompleteStepContent: null,
 		completeStepContent: <CheckoutOrderSummaryStep />,
-		isCompleteCallback: () => true,
 	};
 }
 
@@ -61,9 +60,5 @@ export function getDefaultOrderReviewStep() {
 		activeStepContent: <CheckoutReviewOrder />,
 		incompleteStepContent: null,
 		completeStepContent: null,
-		isCompleteCallback: ( { activeStep } ) => {
-			const isActive = activeStep.id === 'order-review';
-			return isActive;
-		},
 	};
 }
