@@ -29,7 +29,7 @@
 
 		"importHelpers": true,
 		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__react-i18n"
+		"tsBuildInfoFile": "../../.tsc-cache/packages__composite-checkout"
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
