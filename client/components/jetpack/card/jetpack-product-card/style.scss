@@ -46,6 +46,10 @@ $jetpack-product-card-icon-size: 55px;
 		background: inherit;
 	}
 
+	&:last-child {
+		margin-bottom: 0;
+	}
+
 	.foldable-card {
 		margin-bottom: 0;
 	}

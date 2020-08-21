@@ -1,0 +1,50 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.jetpack-free-card {
+	box-sizing: border-box;
+
+	background: var( --color-surface );
+
+	border: 1px solid var( --color-border-subtle );
+	@media ( max-width: 660px ) {
+		border-left: none;
+		border-right: none;
+	}
+}
+
+.jetpack-free-card__header {
+	padding: 24px 16px;
+	border-bottom: solid 1px var( --color-border-subtle );
+
+	h3 {
+		font-size: $font-title-medium;
+		font-weight: 600;
+		line-height: rem( 30px ) / $font-title-medium;
+	}
+}
+
+.jetpack-free-card__body {
+	padding: 24px 16px;
+
+	display: grid;
+	grid-template-rows: auto auto;
+	@include break-medium {
+		grid-template-columns: 50% 50%;
+	}
+
+	p {
+		margin-bottom: 0;
+		@include break-medium {
+			margin-right: 24px;
+		}
+	}
+
+	button {
+		height: 40px;
+
+		@include break-medium {
+			margin-left: 24px;
+		}
+	}
+}

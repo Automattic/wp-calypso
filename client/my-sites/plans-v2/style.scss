@@ -34,10 +34,14 @@
 	position: relative;
 }
 
+.selector__divider {
+	border-bottom: solid 1px var( --color-border-subtle );
+	margin: 40px 0;
+}
+
 /**
  * Upsell
  */
-
 .upsell__header {
 	text-align: center;
 
