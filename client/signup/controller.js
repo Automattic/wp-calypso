@@ -63,10 +63,12 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
-const gutenbergRedirect = function () {
+const gutenbergRedirect = function ( flowName ) {
 	const url = new URL( window.location );
 	url.pathname = '/new';
-
+	if ( flowName ) {
+		url.pathname += `/${ flowName }`;
+	}
 	window.location.replace( url.toString() );
 };
 
@@ -128,9 +130,9 @@ export default {
 						userLoggedIn &&
 						'gutenberg' === abtest( 'existingUsersGutenbergOnboard', countryCode )
 					) {
-						gutenbergRedirect();
+						gutenbergRedirect( context.params.flowName );
 					} else if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						gutenbergRedirect();
+						gutenbergRedirect( context.params.flowName );
 					} else if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
