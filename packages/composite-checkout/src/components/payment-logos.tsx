@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export function VisaLogo( { className } ) {
+export function VisaLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -32,7 +32,7 @@ VisaLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function MastercardLogo( { className } ) {
+export function MastercardLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -61,7 +61,7 @@ MastercardLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function AmexLogo( { className } ) {
+export function AmexLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -85,7 +85,7 @@ AmexLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function JcbLogo( { className } ) {
+export function JcbLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -121,7 +121,7 @@ JcbLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function DinersLogo( { className } ) {
+export function DinersLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -157,7 +157,7 @@ DinersLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function UnionpayLogo( { className } ) {
+export function UnionpayLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -189,7 +189,7 @@ UnionpayLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function DiscoverLogo( { className } ) {
+export function DiscoverLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
