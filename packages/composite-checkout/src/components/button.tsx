@@ -45,7 +45,6 @@ export interface ButtonProps {
 	buttonType?: ButtonType;
 	isBusy?: boolean;
 	fullWidth?: boolean;
-	children?: React.ReactChildren;
 	props?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
