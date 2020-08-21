@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -27,8 +27,8 @@ export default function Field( {
 	errorMessage,
 	autoComplete,
 	disabled,
-} ) {
-	const fieldOnChange = ( event ) => {
+}: FieldProps ) {
+	const fieldOnChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		if ( onChange ) {
 			onChange( event.target.value );
 		}
@@ -85,14 +85,33 @@ Field.propTypes = {
 	iconAction: PropTypes.func,
 	isIconVisible: PropTypes.bool,
 	placeholder: PropTypes.string,
-	tabIndex: PropTypes.string,
+	tabIndex: PropTypes.number,
 	description: PropTypes.string,
 	errorMessage: PropTypes.string,
 	autoComplete: PropTypes.string,
 	disabled: PropTypes.bool,
 };
 
-const Label = styled.label`
+interface FieldProps {
+	type?: string;
+	id: string;
+	className?: string;
+	isError?: boolean;
+	onChange?: ( value: string ) => void;
+	label?: string;
+	value?: string;
+	icon?: React.ReactNode;
+	iconAction?: () => void;
+	isIconVisible?: boolean;
+	placeholder?: string;
+	tabIndex?: number;
+	description?: string;
+	errorMessage?: string;
+	autoComplete?: string;
+	disabled?: boolean;
+}
+
+const Label = styled.label< { disabled?: boolean } & LabelHTMLAttributes< HTMLLabelElement > >`
 	display: block;
 	color: ${ ( props ) => props.theme.colors.textColor };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
@@ -104,7 +123,9 @@ const Label = styled.label`
 	}
 `;
 
-const Input = styled.input`
+const Input = styled.input<
+	{ isError?: boolean; icon?: React.ReactNode } & InputHTMLAttributes< HTMLInputElement >
+>`
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
@@ -195,7 +216,7 @@ const ButtonIconUI = styled.div`
 	}
 `;
 
-const Description = styled.p`
+const Description = styled.p< { isError?: boolean } & HTMLAttributes< HTMLParagraphElement > >`
 	margin: 8px 0 0;
 	color: ${ ( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
@@ -203,7 +224,15 @@ const Description = styled.p`
 	font-size: 14px;
 `;
 
-function RenderedIcon( { icon, iconAction, isIconVisible } ) {
+function RenderedIcon( {
+	icon,
+	iconAction,
+	isIconVisible,
+}: {
+	icon?: React.ReactNode;
+	iconAction?: () => void;
+	isIconVisible?: boolean;
+} ) {
 	if ( ! isIconVisible ) {
 		return null;
 	}
@@ -211,7 +240,7 @@ function RenderedIcon( { icon, iconAction, isIconVisible } ) {
 	if ( iconAction ) {
 		return (
 			<ButtonIconUI>
-				<Button onClick={ iconAction }>{ icon }</Button>
+				<Button onClick={ iconAction }>{ icon as React.ReactChildren }</Button>
 			</ButtonIconUI>
 		);
 	}
@@ -223,7 +252,15 @@ function RenderedIcon( { icon, iconAction, isIconVisible } ) {
 	return null;
 }
 
-function RenderedDescription( { description, isError, errorMessage } ) {
+function RenderedDescription( {
+	description,
+	isError,
+	errorMessage,
+}: {
+	description?: string;
+	isError?: boolean;
+	errorMessage?: string;
+} ) {
 	if ( description || isError ) {
 		return <Description isError={ isError }>{ isError ? errorMessage : description }</Description>;
 	}
