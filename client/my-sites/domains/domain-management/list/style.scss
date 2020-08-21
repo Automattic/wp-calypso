@@ -185,6 +185,10 @@ input[type='radio'].domain-management-list-item__radio {
 	align-items: center;
 }
 
+.domain-item:hover {
+	background: var( --color-neutral-0 );
+}
+
 .list-header {
 	.info-popover {
 		vertical-align: middle;
