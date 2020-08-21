@@ -3,14 +3,21 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
+import { LineItem } from 'src/types';
+import styled from '../lib/styled';
 
-export function OrderReviewSection( { children, className } ) {
+export function OrderReviewSection( {
+	children,
+	className,
+}: {
+	children?: React.ReactNode;
+	className?: string;
+} ) {
 	return (
 		<OrderReviewSectionArea className={ joinClasses( [ className, 'order-review-section' ] ) }>
 			{ children }
@@ -26,7 +33,7 @@ const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
 `;
 
-function LineItem( { item, className } ) {
+function OrderReviewLineItem( { item, className }: LineItemProps ) {
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
@@ -36,7 +43,14 @@ function LineItem( { item, className } ) {
 	);
 }
 
-LineItem.propTypes = {
+interface LineItemProps {
+	className?: string;
+	total?: boolean;
+	isSummaryVisible?: boolean;
+	item: LineItem;
+}
+
+OrderReviewLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummaryVisible: PropTypes.bool,
@@ -48,7 +62,7 @@ LineItem.propTypes = {
 	} ),
 };
 
-const LineItemUI = styled( LineItem )`
+const OrderReviewLineItemUI = styled( OrderReviewLineItem )< LineItemProps >`
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
@@ -64,22 +78,36 @@ const LineItemUI = styled( LineItem )`
 	}
 `;
 
-export function OrderReviewTotal( { total, className } ) {
+export function OrderReviewTotal( { total, className }: { total: LineItem; className?: string } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-total' ] ) }>
-			<LineItemUI total item={ total } />
+			<OrderReviewLineItemUI total item={ total } />
 		</div>
 	);
 }
 
-export function OrderReviewLineItems( { items, className, isSummaryVisible } ) {
+export function OrderReviewLineItems( {
+	items,
+	className,
+	isSummaryVisible,
+}: OrderReviewLineItemsProps ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items.map( ( item ) => (
-				<LineItemUI isSummaryVisible={ isSummaryVisible } key={ item.id } item={ item } />
+				<OrderReviewLineItemUI
+					isSummaryVisible={ isSummaryVisible }
+					key={ item.id }
+					item={ item }
+				/>
 			) ) }
 		</div>
 	);
+}
+
+interface OrderReviewLineItemsProps {
+	className?: string;
+	isSummaryVisible?: boolean;
+	items: LineItem[];
 }
 
 OrderReviewLineItems.propTypes = {

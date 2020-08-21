@@ -16,7 +16,7 @@ import {
 	OrderReviewSection,
 } from './order-review-line-items';
 
-export default function CheckoutReviewOrder( { className } ) {
+export default function CheckoutReviewOrder( { className }: { className?: string } ) {
 	const [ items, total ] = useLineItems();
 
 	return (
@@ -38,23 +38,4 @@ export function CheckoutReviewOrderTitle() {
 
 CheckoutReviewOrder.propTypes = {
 	className: PropTypes.string,
-};
-
-function LineItem( { item, className } ) {
-	return (
-		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<span>•</span>
-			<span>{ item.label }</span>
-			<span>{ item.amount.displayValue }</span>
-		</div>
-	);
-}
-
-LineItem.propTypes = {
-	item: PropTypes.shape( {
-		label: PropTypes.string,
-		amount: PropTypes.shape( {
-			displayValue: PropTypes.string,
-		} ),
-	} ),
 };
