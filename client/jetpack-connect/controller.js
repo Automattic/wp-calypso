@@ -24,6 +24,7 @@ import Plans from './plans';
 import PlansLanding from './plans-landing';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
+import StoreFooter from './store-footer';
 import { addQueryArgs, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
@@ -77,6 +78,7 @@ const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
 export function offerResetContext( context, next ) {
 	removeSidebar( context );
 	context.header = <StoreHeader />;
+	context.footer = <StoreFooter />;
 	next();
 }
 
