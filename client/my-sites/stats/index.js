@@ -7,7 +7,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { getStatsDefaultSitePage } from 'lib/route';
 import {
 	follows,
 	insights,
@@ -48,9 +47,9 @@ export default function () {
 		'annualstats',
 	].join( '|' );
 
-	// Redirect this to default /stats/day/ view in order to keep
+	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
-	page( '/stats', () => page.redirect( getStatsDefaultSitePage() ) );
+	page( '/stats', '/stats/day' );
 
 	// Stat Overview Page
 	trackedPage( `/stats/:period(${ validPeriods })`, overview );
