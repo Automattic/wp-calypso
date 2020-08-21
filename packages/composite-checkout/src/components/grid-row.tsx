@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
  */
 import styled from '../lib/styled';
 
-export default function GridRow( { gap, columnWidths, className, children } ) {
+export default function GridRow( { gap, columnWidths, className, children }: GridRowProps ) {
 	return (
 		<Row gap={ gap } columnWidths={ columnWidths } className={ className }>
 			{ children }
@@ -23,7 +23,14 @@ GridRow.propTypes = {
 	className: PropTypes.string,
 };
 
-const Row = styled.div`
+interface GridRowProps {
+	className?: string;
+	gap: string;
+	columnWidths: string;
+	children: React.ReactNode;
+}
+
+const Row = styled.div< GridRowProps & React.HTMLAttributes< HTMLDivElement > >`
 	display: -ms-grid;
 	display: grid;
 	width: 100%;
