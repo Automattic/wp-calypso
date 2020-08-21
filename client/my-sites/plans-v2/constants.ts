@@ -180,7 +180,7 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 				FEATURE_ACTIVITY_LOG_V2,
 				FEATURE_PRIORITY_SUPPORT_V2,
 			],
-			{ withoutDescription: true }
+			{ withoutDescription: true, withoutIcon: true }
 		),
 	},
 };

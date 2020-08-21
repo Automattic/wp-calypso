@@ -9,8 +9,9 @@ import { invoke } from 'lodash';
  * Internal dependencies
  */
 import * as constants from './constants';
-import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
+import MaterialIcon from 'components/material-icon';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
+import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
 
 export const FEATURE_CATEGORIES = {
 	[ constants.FEATURE_CATEGORY_SECURITY ]: {
@@ -1109,7 +1110,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SCAN_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_V2,
-		getIcon: () => '',
+		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () => i18n.translate( 'Scan' ),
 		getDescription: () =>
 			i18n.translate(
@@ -1124,7 +1125,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
-		getIcon: () => '',
+		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () =>
 			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
 				components: {
@@ -1144,7 +1145,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		getIcon: () => '',
+		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () =>
 			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
 				components: {
@@ -1184,6 +1185,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ACTIVITY_LOG_V2 ]: {
 		getSlug: () => constants.FEATURE_ACTIVITY_LOG_V2,
+		getIcon: () => 'clipboard',
 		getTitle: () => i18n.translate( 'Activity log' ),
 		getDescription: () =>
 			i18n.translate(
@@ -1198,6 +1200,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2 ]: {
 		getSlug: () => constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
+		getIcon: () => 'clipboard',
 		getTitle: () => i18n.translate( 'Activity log: 30-day archive' ),
 		getDescription: () =>
 			i18n.translate(
@@ -1212,6 +1215,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
 		getSlug: () => constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+		getIcon: () => 'clipboard',
 		getTitle: () => i18n.translate( 'Activity log: 1-year archive' ),
 		getDescription: () =>
 			i18n.translate(
