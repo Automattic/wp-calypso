@@ -71,8 +71,9 @@ export const getRequestActivityLogsId = ( siteId, filter ) => {
 	const on = filter && filter.on ? filter.on : '';
 	const aggregate = filter && filter.aggregate ? filter.aggregate : '';
 	const queryPage = filter && filter.queryPage ? filter.queryPage : '';
+	const searchAfter = filter && filter.search_after ? filter.search_after : '';
 
-	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }-${ queryPage }`;
+	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }-${ queryPage }-${ searchAfter }`;
 };
 
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {

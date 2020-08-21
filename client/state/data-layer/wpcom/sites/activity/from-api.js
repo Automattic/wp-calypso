@@ -27,6 +27,7 @@ export function transformer( apiResponse ) {
 		totalItems: apiResponse.totalItems,
 		totalPages: apiResponse.totalPages,
 		page: apiResponse.page,
+		nextAfter: get( apiResponse, [ 'nextAfter' ], [] ),
 		activities: get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem ),
 	};
 	return response;

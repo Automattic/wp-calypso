@@ -20,7 +20,8 @@ export const filterStateToApiQuery = ( filter ) => {
 		filter.notGroup && { not_group: filter.notGroup },
 		filter.name && { name: filter.name },
 		{ number: 1000 },
-		filter.queryPage && { page: filter.queryPage }
+		filter.queryPage && { page: filter.queryPage },
+		filter.search_after && { search_after: filter.search_after }
 	);
 };
 
