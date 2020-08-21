@@ -23,7 +23,7 @@ export default function StoreHeader() {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const isStoreLanding =
 		currentRoute === '/jetpack/connect/store' ||
-		currentRoute.startsWith( '/jetpack/connect/plans/' );
+		currentRoute.match( new RegExp( '^/jetpack/connect/plans/[^/]+$' ) );
 
 	const headerClass = classNames( 'jetpack-connect__main-logo', {
 		'add-bottom-margin': ! isStoreLanding,
