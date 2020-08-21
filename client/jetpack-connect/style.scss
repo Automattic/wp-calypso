@@ -1296,3 +1296,13 @@ body.is-section-jetpack-connect .layout {
 		border-color: var( --color-primary );
 	}
 }
+
+.is-section-jetpack-connect .faq {
+	.faq__heading {
+		color: var( --color-text-inverted );
+	}
+
+	.faq__question {
+		color: var( --color-neutral-10 );
+	}
+}
