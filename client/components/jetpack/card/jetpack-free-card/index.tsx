@@ -6,11 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 
 /**
- * Internal dependencies
- */
-import ExternalLink from 'components/external-link';
-
-/**
  * Style dependencies
  */
 import './style.scss';
@@ -29,7 +24,7 @@ const JetpackFreeCard: FunctionComponent = () => {
 						'Jetpack has many free features that are essential for every WordPress site. Get site stats, automated social media posting, downtime monitoring, brute force attack protection, activity log, & CDN (Content Delivery Network). {{a}}Learn more{{/a}}',
 						{
 							components: {
-								a: <ExternalLink icon={ true } href="https://jetpack.com/features/comparison/" />,
+								a: <a href="https://jetpack.com/features/comparison/" />,
 							},
 						}
 					) }
