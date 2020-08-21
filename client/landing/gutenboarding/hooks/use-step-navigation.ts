@@ -12,7 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Step, usePath, useCurrentStep, StepType } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
-import { useShouldSiteBePublic } from './use-selected-plan';
+import { useShouldSiteBePublic, useHasPaidPlanFromPath } from './use-selected-plan';
 import useSignup from './use-signup';
 
 /**
@@ -77,12 +77,14 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const plan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
+	const hasPaidPlanFromPath = useHasPaidPlanFromPath();
 
 	if ( domain && ! hasUsedDomainsStep ) {
 		steps = steps.filter( ( step ) => step !== Step.Domains );
 	}
 
-	if ( plan && ! hasUsedPlansStep ) {
+	// If the user landed from a marketing page after selecting a paid plan, don't show the mandatory Plans step.
+	if ( hasPaidPlanFromPath || ( plan && ! hasUsedPlansStep ) ) {
 		steps = steps.filter( ( step ) => step !== Step.Plans );
 	}
 
