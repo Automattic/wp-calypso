@@ -4,6 +4,7 @@
 import assert from 'assert';
 import config from 'config';
 import { times } from 'lodash';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import { times } from 'lodash';
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
+import PostPreviewEditorComponent from '../lib/components/post-preview-component';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -22,51 +24,69 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 let driver;
+let loginFlow;
+let gEditorComponent;
 let currentGutenbergBlocksCode;
 let galleryImages;
 
+async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
+	const now = Date.now() / 1000;
+
+	for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
+		await scrollCb( i );
+
+		await driver.takeScreenshot().then( ( data ) => {
+			return driver
+				.getCurrentUrl()
+				.then( ( url ) =>
+					mediaHelper.writeScreenshot( data, () => `${ siteName }-${ i }-${ now }.png`, { url } )
+				);
+		} );
+	}
+}
+
 before( async function () {
+	console.log( 'BEFORE CALLED!' );
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
-	this.loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
+
+	loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
 	galleryImages = times( 5, () => mediaHelper.createFile() );
 } );
 
-describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, function () {
+describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	// I'm still not sure about the structure and description here, will review it soon
-	describe( 'Smoke test popular blocks: @parallel', function () {
-		[
-			'e2egbupgradehever',
-			'e2egbupgradeshawburn',
-			'e2egbupgrademorden',
-			'e2egbupgradeexford',
-			'e2egbupgrademayland',
-		].forEach( ( siteName ) => {
-			step( `Test popular blocks in ${ siteName }`, async function () {
-				return await this.loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
+	[
+		'e2egbupgradehever',
+		'e2egbupgradeshawburn',
+		'e2egbupgrademorden',
+		'e2egbupgradeexford',
+		'e2egbupgrademayland',
+	].forEach( ( siteName ) => {
+		describe( 'Can add most popular blocks to the editor without errors', function () {
+			step( `Login to ${ siteName }`, async function () {
+				await loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
+				gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			} );
 
-			step( 'Popular blocks can be inserted and are shown without errors', async function () {
-				const contactEmail = 'testing@automattic.com';
-				const subject = "Let's work together";
-
-				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-
+			step( 'jetpack/tiled-gallery', async function () {
 				// jetpack/tiled-gallery
 				const tiledGallery = await gEditorComponent.insertTiledGallery();
 				await tiledGallery.uploadImages( galleryImages );
-				// TODO When passing the block markup to the edge site, it might worth verifying if the images have loaded... (how?)
-				// FWIW, I can verify by looking that the images do load across sites even if the gallery was setup in a different wpcom site.
+
 				const tiledGalleryDisplayedInEditor = await gEditorComponent.tiledGalleryDisplayedInEditor();
 				assert.strictEqual(
 					tiledGalleryDisplayedInEditor,
 					true,
 					'The tiled gallery block is not displayed in the editor'
 				);
+			} );
 
-				// jetpack/contact-form
+			step( 'jetpack/contact-form', async function () {
+				const contactEmail = 'testing@automattic.com';
+				const subject = "Let's work together";
+
 				await gEditorComponent.insertContactForm( contactEmail, subject );
 
 				const contactFormDisplayedInEditor = await gEditorComponent.contactFormDisplayedInEditor();
@@ -75,8 +95,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 					true,
 					'The contact form is not displayed in the editor'
 				);
+			} );
 
-				// jetpack/layout-grid
+			step( 'jetpack/layout-grid', async function () {
 				await gEditorComponent.insertLayoutGrid();
 				const layoutGridDisplayedInEditor = await gEditorComponent.layoutGridDisplayedInEditor();
 				assert.strictEqual(
@@ -84,106 +105,148 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 					true,
 					'The layout grid is not displayed in the editor'
 				);
-				// TODO Set it up with sample data (innerBlocks here)
+			} );
 
-				// core-embed/youtube
+			step( 'core-embed/youtube', async function () {
 				await gEditorComponent.insertYouTube();
-				// TODO Set it up with sample data
 				const youTubeDisplayedInEditor = await gEditorComponent.youTubeDisplayedInEditor();
 				assert.strictEqual(
 					youTubeDisplayedInEditor,
 					true,
 					'The youtube embed is not displayed in the editor'
 				);
+			} );
 
-				// a8c/blog-posts
+			step( 'a8c/blog-posts', async function () {
 				await gEditorComponent.insertBlogPosts();
-				// TODO Set it up with sample data
 				const blogPostsDisplayedInEditor = await gEditorComponent.blogPostsDisplayedInEditor();
 				assert.strictEqual(
 					blogPostsDisplayedInEditor,
 					true,
 					'The blog posts block is not displayed in the editor'
 				);
+			} );
 
-				// jetpack/subscriptions
+			step( 'jetpack/subscriptions', async function () {
 				await gEditorComponent.insertSubscriptions();
-				// TODO Set it up with sample data
 				const subscriptionsDisplayedInEditor = await gEditorComponent.subscriptionsDisplayedInEditor();
 				assert.strictEqual(
 					subscriptionsDisplayedInEditor,
 					true,
 					'The subscriptions block is not displayed in the editor'
 				);
+			} );
 
-				// jetpack/slideshow
+			step( 'jetpack/slideshow', async function () {
 				await gEditorComponent.insertSlideshow();
-				// TODO Set it up with sample data
 				const slideshowDisplayedInEditor = await gEditorComponent.slideshowDisplayedInEditor();
 				assert.strictEqual(
 					slideshowDisplayedInEditor,
 					true,
 					'The slideshow block is not displayed in the editor'
 				);
+			} );
 
-				// jetpack/rating-star
+			step( 'jetpack/rating-star', async function () {
 				await gEditorComponent.insertRatingStar();
-				// TODO Set it up with sample data
 				const ratingStarDisplayedInEditor = await gEditorComponent.ratingStarDisplayedInEditor();
 				assert.strictEqual(
 					ratingStarDisplayedInEditor,
 					true,
 					'The rating star block is not displayed in the editor'
 				);
+			} );
 
-				// coblocks/dynamic-separator
+			step( 'coblocks/dynamic-separator', async function () {
 				await gEditorComponent.insertDynamicSeparator();
-				// TODO Set it up with sample data
 				const dynamicSeparatorDisplayedInEditor = await gEditorComponent.dynamicSeparatorDisplayedInEditor();
 				assert.strictEqual(
 					dynamicSeparatorDisplayedInEditor,
 					true,
 					'The dynamic separator block is not displayed in the editor'
 				);
+			} );
 
-				// coblocks/gallery-masonry
+			step( 'coblocks/gallery-masonry', async function () {
 				await gEditorComponent.insertGalleryMasonry();
-				// TODO Set it up with sample data
 				const galleryMasonryDisplayedInEditor = await gEditorComponent.galleryMasonryDisplayedInEditor();
 				assert.strictEqual(
 					galleryMasonryDisplayedInEditor,
 					true,
 					'The gallery masonry block is not displayed in the editor'
 				);
+			} );
 
-				// jetpack/contact-info
-				// This is added last for now because it steals the focus of the inserter and any blocks added after it are considered innerBlocks of it
-				// I guess giving the editor focus again would be easy but it was easier to move it as the last-added block
+			step( 'jetpack/contact-info', async function () {
 				await gEditorComponent.insertContactInfo();
-				// TODO Set it up with sample data
 				const contactInfoDisplayedInEditor = await gEditorComponent.contactInfoDisplayedInEditor();
 				assert.strictEqual(
 					contactInfoDisplayedInEditor,
 					true,
 					'The contact info block is not displayed in the editor'
 				);
+			} );
 
+			step( 'Blocks will not error in the editor', async function () {
 				await gEditorComponent.ensureSaved();
+
 				const errorShown = await gEditorComponent.errorDisplayed();
 				assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+			} );
 
-				// IMPORTANT: Need to switch to the right iframe before selecting...
-				// TODO Refactor this into its own test component so that the iframe switching code is abstracted away (maybe reuse the Gutenberg component -- since it's part of it)
-				currentGutenbergBlocksCode = await gEditorComponent.copyBlocksCode();
+			step( 'Will take screenshots of all the blocks in the editor', async function () {
+				const editorViewport = await driver.findElement(
+					By.css( 'div.interface-interface-skeleton__content' )
+				);
+
+				// TODO Abstract this in the editor component
+				const editorViewportScrollHeight = await driver.executeScript(
+					'return arguments[0].scrollHeight',
+					editorViewport
+				);
+				const editorViewportClientHeight = await driver.executeScript(
+					'return arguments[0].clientHeight',
+					editorViewport
+				);
+
+				await takeScreenshot(
+					`${ siteName }-editor`,
+					editorViewportScrollHeight,
+					editorViewportClientHeight,
+					( i ) =>
+						driver.executeScript(
+							`arguments[0].scroll({top: arguments[0].clientHeight*${ i }})`,
+							editorViewport
+						)
+				);
+			} );
+
+			step(
+				'Will switch to the code editor and copy the code markup for all the blocks',
+				async function () {
+					currentGutenbergBlocksCode = await gEditorComponent.copyBlocksCode();
+				}
+			);
+
+			step( 'Will take a screenhot of all the blocks in the editor', async function () {
+				await gEditorComponent.launchPreview();
+				await PostPreviewEditorComponent.switchToIFrame( driver );
+				await driver.sleep( 3000 );
+
+				const totalHeight = await driver.executeScript( 'return document.body.offsetHeight' );
+				const windowHeight = await driver.executeScript( 'return window.outerHeight' );
+
+				await takeScreenshot( `${ siteName }-preview`, totalHeight, windowHeight, ( i ) =>
+					driver.executeScript( `window.scrollTo(0, window.outerHeight*${ i })` )
+				);
 			} );
 
 			step( 'Switches to edge site with next GB', async function () {
-				// Reuse the same session created earlier but change the site
-				return await this.loginFlow.loginAndStartNewPost( `${ siteName }edge.wordpress.com`, true );
+				// Re-use the same session created earlier but change the site
+				return await loginFlow.loginAndStartNewPost( `${ siteName }edge.wordpress.com`, true );
 			} );
 
 			step( 'Test blocks markup are loaded fine from edge', async function () {
-				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
 				await gEditorComponent.switchToBlockEditor();
 
@@ -192,11 +255,11 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 			} );
 		} );
-	} );
 
-	after( async function () {
-		await Promise.all(
-			galleryImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
-		);
+		after( async function () {
+			await Promise.all(
+				galleryImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
+			);
+		} );
 	} );
 } );
