@@ -64,7 +64,7 @@ function P2Details( {
 			<div className="p2-details">
 				<div className="p2-details__site-part">
 					<h3 className="p2-details__site-title">{ siteTitle }</h3>
-					<div className="p2-details__blog-name">{ `${ site }.p2.blog` }</div>
+					<div className="p2-details__blog-name">{ `${ site }.wordpress.com` }</div>
 					<a
 						href="/nowhere"
 						className="p2-details__change-details-link"
