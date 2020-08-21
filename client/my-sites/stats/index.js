@@ -27,7 +27,8 @@ import { makeLayout, render as clientRender } from 'controller';
  */
 import './style.scss';
 
-const trackedPage = ( url, controller ) => {
+// all Stats pages (except redirects) have the same handler structure
+const statsPage = ( url, controller ) => {
 	page( url, siteSelection, navigation, controller, makeLayout, clientRender );
 };
 
@@ -52,34 +53,34 @@ export default function () {
 	page( '/stats', '/stats/day' );
 
 	// Stat Overview Page
-	trackedPage( `/stats/:period(${ validPeriods })`, overview );
+	statsPage( `/stats/:period(${ validPeriods })`, overview );
 
-	trackedPage( '/stats/insights', sites );
+	statsPage( '/stats/insights', sites );
 
 	// Stat Insights Page
-	trackedPage( '/stats/insights/:site', insights );
+	statsPage( '/stats/insights/:site', insights );
 
 	// Stat Site Pages
-	trackedPage( `/stats/:period(${ validPeriods })/:site`, site );
+	statsPage( `/stats/:period(${ validPeriods })/:site`, site );
 
 	// Redirect this to default /stats/day/:module/:site view to
 	// keep the paths and page view reporting consistent.
 	page( `/stats/:module(${ validModules })/:site`, redirectToDefaultModulePage );
 
 	// Stat Summary Pages
-	trackedPage( `/stats/:period(${ validPeriods })/:module(${ validModules })/:site`, summary );
+	statsPage( `/stats/:period(${ validPeriods })/:module(${ validModules })/:site`, summary );
 
 	// Stat Single Post Page
-	trackedPage( '/stats/post/:post_id/:site', post );
-	trackedPage( '/stats/page/:post_id/:site', post );
+	statsPage( '/stats/post/:post_id/:site', post );
+	statsPage( '/stats/page/:post_id/:site', post );
 
 	// Stat Follows Page
-	trackedPage( '/stats/follows/comment/:site', follows );
-	trackedPage( '/stats/follows/comment/:page_num/:site', follows );
+	statsPage( '/stats/follows/comment/:site', follows );
+	statsPage( '/stats/follows/comment/:page_num/:site', follows );
 
 	page( '/stats/activity/:site?', redirectToActivity );
 
-	trackedPage( `/stats/ads/:period(${ validPeriods })/:site`, wordAds );
+	statsPage( `/stats/ads/:period(${ validPeriods })/:site`, wordAds );
 
 	// Anything else should redirect to default WordAds stats page
 	page( '/stats/wordads/(.*)', redirectToDefaultWordAdsPeriod );
