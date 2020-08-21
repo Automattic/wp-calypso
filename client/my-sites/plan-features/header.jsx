@@ -144,12 +144,20 @@ export class PlanFeaturesHeader extends Component {
 
 	getDiscountTooltipMessage() {
 		const { currencyCode, currentSitePlan, translate, rawPrice } = this.props;
+		const isUserCurrentlyOnAFreePlan =
+			currentSitePlan && planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } );
+		const price = formatCurrency( rawPrice, currencyCode );
+
+		if ( isUserCurrentlyOnAFreePlan ) {
+			return translate(
+				"You'll receive a discount for the first year. The plan will renew at %(price)s.",
+				{ args: { price } }
+			);
+		}
 
 		if ( planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } ) ) {
 			return translate( 'Price for the next 12 months' );
 		}
-
-		const price = formatCurrency( rawPrice, currencyCode );
 
 		return translate(
 			"You'll receive a discount from the full price of %(price)s because you already have a plan.",
@@ -159,7 +167,6 @@ export class PlanFeaturesHeader extends Component {
 
 	getBillingTimeframe() {
 		const {
-			currentSitePlan,
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
@@ -184,8 +191,6 @@ export class PlanFeaturesHeader extends Component {
 			);
 		}
 
-		const isUserCurrentlyOnAFreePlan =
-			currentSitePlan && planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } );
 		if (
 			isSiteAT ||
 			! isJetpack ||
@@ -195,7 +200,7 @@ export class PlanFeaturesHeader extends Component {
 			return (
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
-					{ isDiscounted && ! isUserCurrentlyOnAFreePlan && ! isPlaceholder && (
+					{ isDiscounted && ! isPlaceholder && (
 						<InfoPopover
 							className="plan-features__header-tip-info"
 							position={ isMobile() ? 'top' : 'bottom left' }
