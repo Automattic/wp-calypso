@@ -2,13 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 
-export default function ErrorMessage( { children } ) {
+/**
+ * Internal dependencies
+ */
+import styled from '../lib/styled';
+
+export default function ErrorMessage( { children }: { children?: React.ReactNode } ) {
 	return <Error>{ children }</Error>;
 }
 
-const Error = styled.div`
+const Error = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	display: block;
 	padding: 24px 16px;
 	border-left: 3px solid ${ ( props ) => props.theme.colors.error };

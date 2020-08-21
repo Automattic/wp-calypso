@@ -3,7 +3,11 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
+
+/**
+ * Internal dependencies
+ */
+import styled from '../lib/styled';
 
 export function CheckIcon( { className, id } ) {
 	return (

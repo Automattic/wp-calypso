@@ -1,7 +1,7 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-import styled from '@emotion/styled';
+import styled from '../styled';
 
 export const SummaryDetails = styled.ul`
 	margin: 8px 0 0 0;

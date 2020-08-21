@@ -3,7 +3,6 @@
  */
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useI18n } from '@automattic/react-i18n';
 import { sprintf } from '@wordpress/i18n';
@@ -11,6 +10,7 @@ import { sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import styled from '../lib/styled';
 import joinClasses from '../lib/join-classes';
 import RadioButton from './radio-button';
 import {

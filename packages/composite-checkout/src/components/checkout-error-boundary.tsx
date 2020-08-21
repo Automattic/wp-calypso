@@ -2,8 +2,12 @@
  * External dependencies
  */
 import React, { ErrorInfo } from 'react';
-import styled from '@emotion/styled';
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
+import styled from '../lib/styled';
 
 const debug = debugFactory( 'composite-checkout:checkout-error-boundary' );
 

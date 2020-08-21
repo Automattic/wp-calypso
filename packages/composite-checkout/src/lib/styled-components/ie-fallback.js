@@ -1,7 +1,7 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-import styled from '@emotion/styled';
+import styled from '../styled';
 
 export const LeftColumn = styled.div`
 	-ms-grid-column: 1;

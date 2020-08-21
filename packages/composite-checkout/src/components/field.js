@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
+import styled from '../lib/styled';
 import Button from './button';
 
 export default function Field( {
