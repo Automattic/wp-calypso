@@ -136,8 +136,10 @@
 	line-height: 28px;
 }
 
-.p2-site__subdomain-suggestions-item {
+.p2-site__subdomain-suggestions button.p2-site__subdomain-suggestions-item {
+	background: var( --p2-color-text-white );
 	border: 1px solid var( --p2-color-border );
+	border-bottom: none;
 	padding: 18px 24px;
 	transition: border 0.2s ease;
 	margin-top: -1px;
@@ -149,6 +151,7 @@
 
 	&:last-child {
 		border-radius: 0 0 2px 2px;
+		border-bottom: 1px solid var( --p2-color-border );
 	}
 
 	&:hover {

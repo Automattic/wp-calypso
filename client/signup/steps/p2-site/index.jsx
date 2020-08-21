@@ -427,20 +427,19 @@ class P2Site extends React.Component {
 		}
 
 		return (
-			<ul className="p2-site__subdomain-suggestions">
+			<div className="p2-site__subdomain-suggestions">
 				{ map( suggestedSubdomains, ( suggestion, index ) => {
 					return (
-						<li
-							role="presentation"
+						<button
 							key={ index }
 							className="p2-site__subdomain-suggestions-item"
 							onClick={ () => this.handleSubdomainSuggestionClick( suggestion ) }
 						>
 							{ suggestion }
-						</li>
+						</button>
 					);
 				} ) }
-			</ul>
+			</div>
 		);
 	}
 
