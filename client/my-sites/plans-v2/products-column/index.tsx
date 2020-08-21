@@ -11,8 +11,10 @@ import { useSelector } from 'react-redux';
 import { slugToSelectorProduct } from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import ProductCard from '../product-card';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import FormattedHeader from 'components/formatted-header';
+import { getPlan } from 'lib/plans';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import getSitePlan from 'state/sites/selectors/get-site-plan';
 
 /**
  * Type dependencies
@@ -33,20 +35,29 @@ const ProductsColumn = ( {
 	siteId,
 }: ProductsColumnType ) => {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
+	const currentPlan =
+		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
+
+	// Get features (products) included in the current user plan.
+	const ownedFeatures: string[] =
+		( currentPlan && getPlan( currentPlan )?.getHiddenFeatures() ) || [];
 
 	// Gets all products in an array to be parsed.
 	const productObjects: SelectorProduct[] = useMemo(
 		() =>
 			// Convert product slugs to ProductSelector types.
-			SELECTOR_PRODUCTS.map( slugToSelectorProduct )
+			[ ...new Set( [ ...ownedFeatures, ...SELECTOR_PRODUCTS ] ) ]
+				.map( slugToSelectorProduct )
 				// Remove products that don't fit the filters or have invalid data.
 				.filter(
 					( product: SelectorProduct | null ): product is SelectorProduct =>
 						!! product &&
 						duration === product.term &&
-						PRODUCTS_TYPES[ productType ].includes( product.productSlug )
+						PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
+						// Don't include a generic/option card if the user already owns a subtype.
+						! ownedFeatures.some( ( ownedFeature ) => product.subtypes.includes( ownedFeature ) )
 				),
-		[ duration, productType ]
+		[ duration, ownedFeatures, productType ]
 	);
 
 	if ( ! currencyCode ) {
