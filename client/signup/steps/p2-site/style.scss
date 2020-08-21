@@ -4,7 +4,7 @@
 	pointer-events: none;
 	position: absolute;
 	font-size: var( --p2-font-size-form );
-	top: 62px;
+	top: 67px;
 	right: 24px;
 }
 
@@ -110,7 +110,7 @@
 
 .p2-site__form .form-input-validation {
 	color: var( --p2-color-error );
-	font-size: 14px;
+	font-size: var( --p2-font-size-form-xs );
 	padding: 0;
 	padding-top: 9px;
 	padding-left: 2px;
@@ -132,18 +132,23 @@
 .p2-site__learn-more-link {
 	color: var( --p2-color-link );
 	text-decoration-line: underline;
-	font-size: 15px;
+	font-size: var( --p2-font-size-form-xs );
 	line-height: 28px;
 }
 
 .p2-site__subdomain-suggestions button.p2-site__subdomain-suggestions-item {
 	background: var( --p2-color-text-white );
 	border: 1px solid var( --p2-color-border );
-	border-bottom: none;
+	border-radius: 0;
+	text-align: left;
 	padding: 18px 24px;
 	transition: border 0.2s ease;
 	margin-top: -1px;
 	position: relative;
+	font-size: 15px; /* stylelint-disable-line */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 
 	&:first-child {
 		border-radius: 2px 2px 0 0;
@@ -151,10 +156,10 @@
 
 	&:last-child {
 		border-radius: 0 0 2px 2px;
-		border-bottom: 1px solid var( --p2-color-border );
 	}
 
-	&:hover {
+	&:hover,
+	&:focus {
 		cursor: pointer;
 		border-color: var( --p2-color-link );
 		z-index: 1;
