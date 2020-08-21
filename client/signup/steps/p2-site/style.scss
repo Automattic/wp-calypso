@@ -1,11 +1,19 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .p2-site__wordpress-domain-suffix {
 	color: var( --p2-color-link );
 	line-height: 22px;
 	pointer-events: none;
 	position: absolute;
-	font-size: $font-title-small;
-	top: 62px;
+	font-size: $font-body;
+	top: 64px;
 	right: 24px;
+
+	@include break-mobile {
+		font-size: $font-title-small;
+		top: 66px;
+	}
 }
 
 .p2-site__validation-site,
@@ -63,9 +71,13 @@
 	padding: 18px 24px;
 	line-height: 1;
 	border-radius: 2px;
-	font-size: $font-title-small;
+	font-size: $font-body;
 	color: var( --p2-color-text );
 	border-color: var( --p2-color-border );
+
+	@include break-mobile {
+		font-size: $font-title-small;
+	}
 
 	&:hover {
 		border-color: var( --p2-color-link );
