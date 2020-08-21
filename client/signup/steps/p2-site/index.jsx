@@ -299,6 +299,10 @@ class P2Site extends React.Component {
 			name: event.target.name,
 			value: event.target.value,
 		} );
+
+		if ( event.target.name === 'site' ) {
+			this.setState( { suggestedSubdomains: [] } );
+		}
 	};
 
 	handleFormControllerError = ( error ) => {
@@ -347,6 +351,10 @@ class P2Site extends React.Component {
 		this.formStateController.handleFieldChange( {
 			name: 'site',
 			value: site,
+		} );
+
+		this.setState( {
+			suggestedSubdomains: [],
 		} );
 	};
 
