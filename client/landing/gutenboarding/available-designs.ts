@@ -75,6 +75,7 @@ export function getAvailableDesigns(
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ) {
 	let designs = availableDesigns;
+
 	if ( ! includeAlphaDesigns ) {
 		designs = {
 			...designs,
