@@ -61,6 +61,8 @@ const ProductsColumn = ( {
 						duration === product.term &&
 						PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
 						// Don't include a generic/option card if the user already owns a subtype.
+						! ownedProducts.some( ( ownedProduct ) => product.subtypes.includes( ownedProduct ) ) &&
+						// Don't include a generic/option card if the product is included in the owned plan.
 						! includedInPlanProducts.some( ( includedProduct ) =>
 							product.subtypes.includes( includedProduct )
 						)
