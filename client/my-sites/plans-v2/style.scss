@@ -34,6 +34,10 @@
 	position: relative;
 }
 
+/**
+ * Upsell
+ */
+
 .upsell__header {
 	text-align: center;
 
@@ -70,4 +74,16 @@
 	height: 40px;
 
 	filter: grayscale( 1 );
+}
+
+/**
+ * Details
+ */
+
+.details__main .formatted-header {
+	margin-top: 32px;
+
+	@include break-medium {
+		margin-top: 40px;
+	}
 }
