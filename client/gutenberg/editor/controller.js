@@ -223,6 +223,7 @@ export const post = ( context, next ) => {
 			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
+			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
 		/>
 	);
 
