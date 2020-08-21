@@ -22,7 +22,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import P2StepWrapper from 'signup/p2-step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { logToLogstash } from 'state/logstash/actions';
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 
 /**
  * Style dependencies
@@ -93,7 +92,6 @@ class P2Site extends React.Component {
 			submitting: false,
 			suggestedSubdomains: [],
 			lastInvalidSite: '',
-			queryWpcomSubdomains: false,
 		};
 	}
 
@@ -229,7 +227,19 @@ class P2Site extends React.Component {
 										suggestedSubdomains: suggestions,
 									} );
 								} else {
-									this.setState( { queryWpcomSubdomains: true } );
+									wpcom
+										.domains()
+										.suggestions( {
+											quantity: 3,
+											query: fields.site,
+											only_wordpressdotcom: true,
+										} )
+										.then( ( suggestionObjects ) => {
+											this.setState( {
+												suggestedSubdomains: map( suggestionObjects, ( obj ) => obj.domain_name ),
+											} );
+										} )
+										.catch( () => {} );
 								}
 							} );
 						}
@@ -461,8 +471,6 @@ class P2Site extends React.Component {
 	}
 
 	render() {
-		const { queryWpcomSubdomains } = this.state;
-
 		return (
 			<P2StepWrapper
 				flowName={ this.props.flowName }
@@ -472,12 +480,6 @@ class P2Site extends React.Component {
 					'Share, discuss, review, and collaborate across time zones, without interruptions.'
 				) }
 			>
-				{ queryWpcomSubdomains && (
-					<QueryDomainsSuggestions
-						includeSubdomain
-						query={ formState.getFieldValue( this.state.form, 'site' ) }
-					/>
-				) }
 				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }
 					{ this.renderSubdomainSuggestions() }
