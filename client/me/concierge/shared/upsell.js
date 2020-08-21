@@ -24,19 +24,20 @@ class Upsell extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 		return (
 			<div>
 				<PrimaryHeader />
 				<CompactCard className="shared__site-block">
-					<Site siteId={ this.props.site.ID } />
+					<Site siteId={ site.ID } />
 				</CompactCard>
 				<CompactCard>
 					<p>
-						{ translate( 'Only sites on a Business or higher plan are eligible for a session.' ) }
+						{ translate( 'You do not have any available Quick Start sessions.' ) }{ ' ' }
+						{ translate( 'Click the button to purchase a new session.' ) }
 					</p>
-					<Button href={ `/plans/${ this.props.site.slug }` } primary>
-						{ translate( 'Upgrade to Business' ) }
+					<Button href={ `/checkout/offer-quickstart-session/${ site.slug }` } primary>
+						{ translate( 'Learn More' ) }
 					</Button>
 				</CompactCard>
 			</div>
