@@ -109,8 +109,9 @@
 }
 
 .p2-site__form .form-input-validation {
-	color: var( --p2-color-error );
+	color: var( --p2-color-text );
 	font-size: var( --p2-font-size-form-xs );
+	line-height: 1.5;
 	padding: 0;
 	padding-top: 9px;
 	padding-left: 2px;
@@ -134,6 +135,11 @@
 	text-decoration-line: underline;
 	font-size: var( --p2-font-size-form-xs );
 	line-height: 28px;
+}
+
+.p2-site__subdomain-suggestions {
+	display: flex;
+	flex-direction: column;
 }
 
 .p2-site__subdomain-suggestions button.p2-site__subdomain-suggestions-item {
