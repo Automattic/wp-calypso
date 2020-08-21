@@ -703,7 +703,7 @@ function CheckoutStepHeader( {
 	editButtonText,
 	editButtonAriaLabel,
 }: {
-	id?: string;
+	id: string;
 	className?: string;
 	stepNumber?: number;
 	title: React.ReactNode;
@@ -761,7 +761,7 @@ function Stepper( {
 	children,
 	id,
 }: {
-	id?: string;
+	id: string;
 	className?: string;
 	isComplete?: boolean;
 	isActive?: boolean;
