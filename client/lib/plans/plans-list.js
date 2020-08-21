@@ -1258,7 +1258,7 @@ export const PLANS_LIST = {
 	},
 
 	[ constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: {
-		...getPlanJetpackSecurityDailyDetails(),
+		...getPlanJetpackSecurityRealtimeDetails(),
 		...getMonthlyTimeframe(),
 		getAnnualSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME,
 		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
