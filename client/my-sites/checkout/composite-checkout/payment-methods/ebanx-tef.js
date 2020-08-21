@@ -323,8 +323,8 @@ function EbanxTefPayButton( { disabled, store } ) {
 						payload: { paymentMethodId: 'ebanx-tef' },
 					} );
 					submitTransaction( {
-						name: customerName?.value,
 						...massagedFields,
+						name: customerName?.value, // this needs to come after massagedFields to prevent it from being overridden
 						address: massagedFields?.address1,
 						tefBank: customerBank?.value,
 						items,
