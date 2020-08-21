@@ -15,6 +15,7 @@ import FormattedHeader from 'components/formatted-header';
 import { getPlan } from 'lib/plans';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
+import getSiteProducts from 'state/sites/selectors/get-site-products';
 
 /**
  * Type dependencies
@@ -38,15 +39,20 @@ const ProductsColumn = ( {
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 
-	// Get features (products) included in the current user plan.
-	const ownedFeatures: string[] =
+	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) ) || [];
+	const includedInPlanProducts: string[] =
 		( currentPlan && getPlan( currentPlan )?.getHiddenFeatures() ) || [];
 
-	// Gets all products in an array to be parsed.
+	const ownedProducts = siteProducts.map( ( { productSlug } ) => productSlug );
+
+	// The list of displayed products comes from a concatenation of:
+	// - Owned products from a direct purchase.
+	// - Included as a feature of an owned plan.
+	// - Generic/option product bundles with subtypes.
 	const productObjects: SelectorProduct[] = useMemo(
 		() =>
 			// Convert product slugs to ProductSelector types.
-			[ ...new Set( [ ...ownedFeatures, ...SELECTOR_PRODUCTS ] ) ]
+			[ ...new Set( [ ...ownedProducts, ...includedInPlanProducts, ...SELECTOR_PRODUCTS ] ) ]
 				.map( slugToSelectorProduct )
 				// Remove products that don't fit the filters or have invalid data.
 				.filter(
@@ -55,9 +61,11 @@ const ProductsColumn = ( {
 						duration === product.term &&
 						PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
 						// Don't include a generic/option card if the user already owns a subtype.
-						! ownedFeatures.some( ( ownedFeature ) => product.subtypes.includes( ownedFeature ) )
+						! includedInPlanProducts.some( ( includedProduct ) =>
+							product.subtypes.includes( includedProduct )
+						)
 				),
-		[ duration, ownedFeatures, productType ]
+		[ duration, includedInPlanProducts, ownedProducts, productType ]
 	);
 
 	if ( ! currencyCode ) {
