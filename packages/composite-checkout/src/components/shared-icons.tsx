@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
  */
 import styled from '../lib/styled';
 
-export function CheckIcon( { className, id } ) {
+export function CheckIcon( { className, id }: { className?: string; id: string } ) {
 	return (
 		<CheckIconUI
 			width="20"
@@ -46,7 +46,7 @@ const CheckIconUI = styled.svg`
 	fill: #fff;
 `;
 
-export function ErrorIcon( { className } ) {
+export function ErrorIcon( { className }: { className?: string } ) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +64,7 @@ export function ErrorIcon( { className } ) {
 	);
 }
 
-export function InfoIcon( { className } ) {
+export function InfoIcon( { className }: { className?: string } ) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
