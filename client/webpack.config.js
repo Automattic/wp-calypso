@@ -224,14 +224,11 @@ const webpackConfig = {
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
 				postCssOptions: {
-					plugins: () =>
-						[
-							autoprefixerPlugin(),
-							browserslistEnv === 'defaults' &&
-								postcssCustomPropertiesPlugin( {
-									importFrom: [ calypsoColorSchemes ],
-								} ),
-						].filter( Boolean ),
+					plugins: [
+						autoprefixerPlugin(),
+						browserslistEnv === 'defaults' &&
+							postcssCustomPropertiesPlugin( { importFrom: [ calypsoColorSchemes ] } ),
+					].filter( Boolean ),
 				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 				cacheDirectory: path.resolve( cachePath, 'css-loader' ),
