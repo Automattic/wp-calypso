@@ -49,7 +49,6 @@ type OwnProps = {
 	isOwned?: boolean;
 	isDeprecated?: boolean;
 	expiryDate?: Moment;
-	showOptions?: boolean;
 };
 
 export type Props = OwnProps & FeaturesProps;

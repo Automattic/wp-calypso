@@ -98,11 +98,11 @@ const ProductsColumn = ( {
 				.map( ( product: SelectorProduct ) => ( {
 					...product,
 					description:
-						product.subtypes?.filter( ( subtype ) => /_(daily|realtime)$/.test( subtype ) )
-							.length >= 2 && ! currentProducts.includes( product.productSlug ) ? (
+						product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
+							2 && ! currentProducts.includes( product.productSlug ) ? (
 							<>
 								{ product.description }{ ' ' }
-								{ translate( '{{em}}Available options: Real-Time or Daily.{{/em}}', {
+								{ translate( '{{em}}Available options: Real-time or Daily.{{/em}}', {
 									components: {
 										em: <em />,
 									},

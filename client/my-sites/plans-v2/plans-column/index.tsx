@@ -108,11 +108,13 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 			.map( ( product ) => ( {
 				...product,
 				description:
-					product.subtypes?.filter( ( subtype ) => /_(daily|realtime)$/.test( subtype ) ).length >=
-						2 && product.productSlug !== currentPlan ? (
+					product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
+						2 &&
+					currentPlan &&
+					! product.subtypes.includes( currentPlan ) ? (
 						<>
 							{ product.description }{ ' ' }
-							{ translate( '{{em}}Available options: Real-Time or Daily.{{/em}}', {
+							{ translate( '{{em}}Available options: Real-time or Daily.{{/em}}', {
 								components: {
 									em: <em />,
 								},
