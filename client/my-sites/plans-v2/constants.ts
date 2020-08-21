@@ -120,6 +120,9 @@ export const OPTION_PLAN_SECURITY: SelectorProduct = {
 	monthlyProductSlug: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	iconSlug: 'jetpack_security_v2',
 	displayName: translate( 'Jetpack Security' ),
+	shortName: translate( 'Security', {
+		comment: 'Short name of the Jetpack Security generic plan',
+	} ),
 	tagline: translate( 'Comprehensive WordPress protection' ),
 	description: translate(
 		'Enjoy the peace of mind of complete site security. ' +
@@ -162,6 +165,9 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	monthlyProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	iconSlug: 'jetpack_backup_v2',
 	displayName: translate( 'Jetpack Backup' ),
+	shortName: translate( 'Backup', {
+		comment: 'Short name of the Jetpack Backup generic product',
+	} ),
 	tagline: translate( 'Recommended for all sites' ),
 	description: translate( 'Never lose a word, image, page, or time worrying about your site.' ),
 	buttonLabel: translate( 'Get Backup' ),
