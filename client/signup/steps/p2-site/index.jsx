@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, map, deburr } from 'lodash';
+import { includes, isEmpty, map, deburr, filter } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -22,6 +22,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import P2StepWrapper from 'signup/p2-step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { logToLogstash } from 'state/logstash/actions';
+import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 
 /**
  * Style dependencies
@@ -92,6 +93,7 @@ class P2Site extends React.Component {
 			submitting: false,
 			suggestedSubdomains: [],
 			lastInvalidSite: '',
+			queryWpcomSubdomains: false,
 		};
 	}
 
@@ -201,19 +203,34 @@ class P2Site extends React.Component {
 						}
 
 						if ( error.error && SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
+							const requestsPromises = [];
+
 							WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS.forEach( ( suffix ) => {
 								const suggestedSubdomain = `${ fields.site }${ suffix }.wordpress.com`;
 
-								wpcom.undocumented().getDomainInfo( suggestedSubdomain, ( apiError ) => {
-									if ( apiError && apiError.error && apiError.error === 'unknown_blog' ) {
-										this.setState( {
-											suggestedSubdomains: [
-												...this.state.suggestedSubdomains,
-												suggestedSubdomain,
-											],
+								requestsPromises.push(
+									new Promise( ( resolve ) => {
+										wpcom.undocumented().getDomainInfo( suggestedSubdomain, ( apiError ) => {
+											if ( apiError && apiError.error && apiError.error === 'unknown_blog' ) {
+												resolve( suggestedSubdomain );
+											} else {
+												resolve( null );
+											}
 										} );
-									}
-								} );
+									} )
+								);
+							} );
+
+							Promise.all( requestsPromises ).then( ( suggestions ) => {
+								suggestions = filter( suggestions, ( suggestion ) => suggestion );
+
+								if ( ! isEmpty( suggestions ) ) {
+									this.setState( {
+										suggestedSubdomains: suggestions,
+									} );
+								} else {
+									this.setState( { queryWpcomSubdomains: true } );
+								}
 							} );
 						}
 					}
@@ -444,6 +461,8 @@ class P2Site extends React.Component {
 	}
 
 	render() {
+		const { queryWpcomSubdomains } = this.state;
+
 		return (
 			<P2StepWrapper
 				flowName={ this.props.flowName }
@@ -453,6 +472,12 @@ class P2Site extends React.Component {
 					'Share, discuss, review, and collaborate across time zones, without interruptions.'
 				) }
 			>
+				{ queryWpcomSubdomains && (
+					<QueryDomainsSuggestions
+						includeSubdomain
+						query={ formState.getFieldValue( this.state.form, 'site' ) }
+					/>
+				) }
 				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }
 					{ this.renderSubdomainSuggestions() }
