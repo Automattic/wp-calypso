@@ -27,6 +27,19 @@
 			"is_fse": true
 		},
 		{
+			"title": "Ibis (FSE)",
+			"slug": "ibis-fse",
+			"template": "ibis",
+			"theme": "ibis",
+			"fonts": {
+				"headings": "Lora",
+				"base": "Lora"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false,
+			"is_fse": true
+		},
+		{
 			"title": "Cassel",
 			"slug": "cassel",
 			"template": "cassel",
