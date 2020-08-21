@@ -17,7 +17,7 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 
 import './style.scss';
 
-function StoreHeader() {
+export default function StoreHeader() {
 	const translate = useTranslate();
 	const partnerSlug = useSelector( ( state ) => getPartnerSlugFromQuery( state ) );
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
@@ -49,5 +49,3 @@ function StoreHeader() {
 		</>
 	);
 }
-
-export default StoreHeader;

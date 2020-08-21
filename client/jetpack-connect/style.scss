@@ -177,7 +177,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.sites-dropdown__wrapper {
 			width: 100%;
-      margin-top: 20px;
+			margin-top: 20px;
 		}
 	}
 
@@ -1281,5 +1281,18 @@ body.is-section-jetpack-connect .layout {
 
 	.product-card__option-name {
 		text-align: left;
+	}
+}
+
+.is-section-jetpack-connect .plans-filter-bar {
+	background: var( --color-jetpack-onboarding-background );
+	border-width: 0;
+
+	&.sticky {
+		top: 0; // No masterbar here.
+	}
+
+	.select-dropdown .select-dropdown__header {
+		border-color: var( --color-primary );
 	}
 }
