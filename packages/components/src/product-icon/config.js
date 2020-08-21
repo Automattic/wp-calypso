@@ -99,6 +99,10 @@ export const iconToProductSlugMap = {
 		'jetpack_security_daily_monthly_v2',
 		'jetpack_security_realtime_v2',
 		'jetpack_security_realtime_monthly_v2',
+		'jetpack_security_daily',
+		'jetpack_security_daily_monthly',
+		'jetpack_security_realtime',
+		'jetpack_security_realtime_monthly',
 	],
 };
 
