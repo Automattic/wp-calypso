@@ -20,7 +20,6 @@ import {
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
-import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import { getSitePurchases } from 'state/purchases/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
@@ -29,7 +28,9 @@ import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
+import { planHasFeature } from 'lib/plans';
 import { isCloseToExpiration } from 'lib/purchases';
+import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 
 /**
  * Type dependencies
@@ -118,7 +119,13 @@ const ProductCardWrapper = ( {
 	// Handles expiry.
 	const moment = useLocalizedMoment();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const purchase = getPurchaseByProductSlug( purchases, item.productSlug );
+
+	// If item is a plan feature, use the plan purchase object.
+	const isItemPlanFeature = sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug );
+	const purchase = isItemPlanFeature
+		? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
+		: getPurchaseByProductSlug( purchases, item.productSlug );
+
 	const isExpiring = purchase && isCloseToExpiration( purchase );
 	const showExpiryNotice = item.legacy && isExpiring;
 
@@ -147,7 +154,7 @@ const ProductCardWrapper = ( {
 			}
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabel( item, isOwned ) }
+			buttonLabel={ productButtonLabel( item, isOwned, sitePlan ) }
 			badgeLabel={ productBadgeLabel( item, isOwned, highlight, sitePlan ) }
 			onButtonClick={ () => onClick( item, purchase ) }
 			features={ item.features }
