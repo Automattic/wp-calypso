@@ -13,16 +13,16 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { fontPairings, getFontTitle, FontPair } from '../../constants';
-import { STORE_KEY } from '../../stores/onboard';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import type { Design } from '../../stores/onboard/types';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { selectedDesign, selectedFonts } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
+		select( ONBOARD_STORE ).getState()
 	);
-	const { getRandomizedDesigns } = useSelect( ( select ) => select( STORE_KEY ) );
-	const { setFonts } = useDispatch( STORE_KEY );
+	const { getRandomizedDesigns } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { setFonts } = useDispatch( ONBOARD_STORE );
 	const [ isOpen, setIsOpen ] = React.useState( false );
 
 	// TODO: Add font loading for unknown fonts
