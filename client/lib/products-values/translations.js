@@ -292,3 +292,58 @@ export const getJetpackProducts = () => {
 
 	return output;
 };
+/**
+ * If product offers 'realtime' and 'daily' options, AND product is not already owned,
+ * append "Available Options: Real-time and Daily" to the product description.
+ *
+ * @param product SelectorProduct
+ * @param currentProducts array
+ *
+ * @returns ReactNode
+ */
+export const getJetpackProductDescriptionWithOptions = ( product, currentProducts ) => {
+	// check if 'subtypes' property contains daily and real-time options.
+	// and check that this product is not owned.
+	return product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
+		2 && ! currentProducts.includes( product.productSlug ) ? (
+		<>
+			{ product.description }{ ' ' }
+			{ translate( '{{em}}Available options: Real-time or Daily.{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }
+		</>
+	) : (
+		product.description
+	);
+};
+
+/**
+ * If plan offers 'realtime' and 'daily' options, AND plan is not already owned,
+ * append "Available Options: Real-time and Daily" to the plan description.
+ *
+ * @param product SelectorProduct
+ * @param currentPlan string
+ *
+ * @returns ReactNode
+ */
+export const getJetpackPlanDescriptionWithOptions = ( product, currentPlan ) => {
+	// check if 'subtypes' property contains daily and real-time options.
+	// and check that this product is not owned.
+	return product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
+		2 &&
+		currentPlan &&
+		! product.subtypes.includes( currentPlan ) ? (
+		<>
+			{ product.description }{ ' ' }
+			{ translate( '{{em}}Available options: Real-time or Daily.{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }
+		</>
+	) : (
+		product.description
+	);
+};

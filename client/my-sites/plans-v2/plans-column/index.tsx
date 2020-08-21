@@ -22,6 +22,7 @@ import getSitePlan from 'state/sites/selectors/get-site-plan';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
 import FormattedHeader from 'components/formatted-header';
+import { getJetpackPlanDescriptionWithOptions } from 'lib/products-values/translations';
 
 /**
  * Type dependencies
@@ -102,27 +103,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 				...product,
 				owned: product.productSlug === currentPlan,
 				legacy: false,
-			} ) )
-			// If product offers 'realtime' and 'daily' options, AND product is not already owned,
-			// append "Available Options: Real-Time and Daily" to the product description.
-			.map( ( product ) => ( {
-				...product,
-				description:
-					product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
-						2 &&
-					currentPlan &&
-					! product.subtypes.includes( currentPlan ) ? (
-						<>
-							{ product.description }{ ' ' }
-							{ translate( '{{em}}Available options: Real-time or Daily.{{/em}}', {
-								components: {
-									em: <em />,
-								},
-							} ) }
-						</>
-					) : (
-						product.description
-					),
+				description: getJetpackPlanDescriptionWithOptions( product, currentPlan ),
 			} ) );
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.

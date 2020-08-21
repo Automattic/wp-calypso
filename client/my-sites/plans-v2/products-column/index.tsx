@@ -21,6 +21,7 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import FormattedHeader from 'components/formatted-header';
+import { getJetpackProductDescriptionWithOptions } from 'lib/products-values/translations';
 
 /**
  * Type dependencies
@@ -92,25 +93,7 @@ const ProductsColumn = ( {
 					...product,
 					...getProductPrices( product, availableProducts ),
 					owned: currentProducts.includes( product.productSlug ),
-				} ) )
-				// If product offers 'realtime' and 'daily' options, AND product is not already owned,
-				// append "Available Options: Real-Time and Daily" to the product description.
-				.map( ( product: SelectorProduct ) => ( {
-					...product,
-					description:
-						product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
-							2 && ! currentProducts.includes( product.productSlug ) ? (
-							<>
-								{ product.description }{ ' ' }
-								{ translate( '{{em}}Available options: Real-time or Daily.{{/em}}', {
-									components: {
-										em: <em />,
-									},
-								} ) }
-							</>
-						) : (
-							product.description
-						),
+					description: getJetpackProductDescriptionWithOptions( product, currentProducts ),
 				} ) ),
 		[ duration, productType, currentProducts, availableProducts ]
 	);
