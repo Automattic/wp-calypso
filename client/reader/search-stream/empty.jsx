@@ -55,7 +55,7 @@ class SearchEmptyContent extends React.Component {
 			</a>
 		) : null;
 
-		const message = this.props.translate( 'No posts found for {{query /}} for your language.', {
+		const message = this.props.translate( 'No posts or sites found for {{query /}} for your language.', {
 			components: {
 				query: <em>{ this.props.query }</em>,
 			},
