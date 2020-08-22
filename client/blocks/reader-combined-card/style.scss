@@ -210,7 +210,6 @@
 	word-wrap: break-word;
 	position: relative;
 	margin-top: 4px;
-	white-space: nowrap;
 
 	&:not( .is-placeholder )::after {
 		@include long-content-fade( $size: 10% );
