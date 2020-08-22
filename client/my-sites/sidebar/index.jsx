@@ -103,7 +103,6 @@ export class MySitesSidebar extends Component {
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 	};
-	s;
 
 	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
 
