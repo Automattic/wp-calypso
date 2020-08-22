@@ -203,12 +203,9 @@
 	flex: 1 1 auto;
 }
 
-.search-stream .search-stream__post-header {
-	margin-right: 40px;
-}
-
-.search-stream .search-stream__site-header {
+.search-stream .search-stream__site-header:nth-child(2) {
 	max-width: 265px;
+	margin-left: 40px;
 }
 
 // Posts and Sites tabbed headers
@@ -269,9 +266,10 @@
 
 // Site results
 .search-stream .search-stream__site-results {
-	max-width: 265px;
-	min-width: 265px;
-	margin-left: 40px;
+	&:nth-child(2) {
+		width: 265px;
+		margin-left: 40px;
+	}
 
 	.reader-infinite-stream__row-wrapper {
 		border: 0;
@@ -320,8 +318,7 @@
 }
 
 .search-stream__results.is-two-columns .search-stream__post-results {
-	max-width: 660px;
-	width: calc( 100% - 300px );
+	flex: 1;
 
 	.reader-post-card__post {
 		@include breakpoint( '<960px' ) {
