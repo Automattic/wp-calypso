@@ -32,6 +32,9 @@ import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
 import FollowButton from 'reader/follow-button';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { getSearchPlaceholderText } from 'reader/search/utils';
+import { getStream } from 'state/reader/streams/selectors';
+import { getReaderFeedsForQuery } from 'state/reader/feed-searches/selectors';
+import EmptyContent from './empty';
 
 /**
  * Style dependencies
@@ -106,7 +109,7 @@ class SearchStream extends React.Component {
 	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
+		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl, showPostsColumn, showSitesColumn } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
@@ -131,7 +134,7 @@ class SearchStream extends React.Component {
 		} );
 
 		const searchStreamResultsClasses = classnames( 'search-stream__results', {
-			'is-two-columns': !! query,
+			'is-two-columns': !! query && showPostsColumn && showSitesColumn,
 		} );
 
 		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
@@ -172,7 +175,7 @@ class SearchStream extends React.Component {
 							initialValue={ query || '' }
 							value={ query || '' }
 						/>
-						{ query && (
+						{ query && (showPostsColumn || showSitesColumn) && (
 							<SegmentedControl compact className="search-stream__sort-picker">
 								<SegmentedControl.Item
 									selected={ sortOrder !== 'date' }
@@ -205,11 +208,13 @@ class SearchStream extends React.Component {
 							/>
 						</div>
 					) }
-					{ query && (
+					{ query && (showPostsColumn || showSitesColumn) && (
 						<SearchStreamHeader
 							selected={ searchType }
 							onSelection={ this.handleSearchTypeSelection }
 							wideDisplay={ wideDisplay }
+							showPostsColumn={ showPostsColumn }
+							showSitesColumn={ showSitesColumn }
 						/>
 					) }
 					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
@@ -217,10 +222,12 @@ class SearchStream extends React.Component {
 				<SpacerDiv domTarget={ this.fixedAreaRef } />
 				{ wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
-						<div className="search-stream__post-results">
-							<PostResults { ...this.props } />
-						</div>
-						{ query && (
+						{ query && showPostsColumn && (
+							<div className="search-stream__post-results">
+								<PostResults { ...this.props } />
+							</div>
+						)}
+						{ query && showSitesColumn && (
 							<div className="search-stream__site-results">
 								<SiteResults
 									query={ query }
@@ -229,6 +236,9 @@ class SearchStream extends React.Component {
 								/>
 							</div>
 						) }
+						{ query && ! (showPostsColumn || showSitesColumn) &&
+							<EmptyContent query={ query } />
+						}
 					</div>
 				) }
 				{ ! wideDisplay && (
@@ -259,7 +269,17 @@ const wrapWithMain = Component => props => (
 );
 /* eslint-enable */
 
-export default connect( ( state, ownProps ) => ( {
-	readerAliasedFollowFeedUrl:
-		ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
-} ) )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
+export default connect( ( state, ownProps ) => {
+	const stream = getStream( state, ownProps.streamKey );
+	const siteResults = getReaderFeedsForQuery( state, {
+		query: ownProps.query,
+		excludeFollowed: false,
+		sort: pickSort(ownProps.sort),
+	} )
+
+	return {
+		showSitesColumn: ! siteResults || siteResults.length > 0,
+		showPostsColumn: ! stream || stream.isRequesting || stream.items.length > 0 || ! stream.lastPage,
+		readerAliasedFollowFeedUrl:
+			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+} } )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
