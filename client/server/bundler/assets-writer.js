@@ -13,6 +13,7 @@ function AssetsWriter( options ) {
 			filename: 'assets.json',
 			runtimeChunk: 'runtime',
 			manifestFile: 'manifest',
+			runtimeFile: 'runtime',
 		},
 		options
 	);
@@ -69,8 +70,11 @@ Object.assign( AssetsWriter.prototype, {
 				chunks: _.reject( entry.chunks, ( chunk ) => {
 					String( chunk ).startsWith( this.options.runtimeChunk );
 				} ),
-				assets: _.reject( entry.assets, ( asset ) =>
-					asset.startsWith( this.options.manifestFile )
+				assets: _.reject(
+					entry.assets,
+					( asset ) =>
+						asset.startsWith( this.options.manifestFile ) ||
+						asset.startsWith( this.options.runtimeFile )
 				).map( fixupPath ),
 			} ) );
 
