@@ -490,17 +490,21 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			const { protocol, hostname, port, pathname: urlPathname, search } = getUrlParts( base );
 			const newPathname = `${ urlPathname }/${ site.slug }`;
 
-			// Get an absolute URL from the original URL, the modified path, and some defaults.
-			const absoluteUrl = getUrlFromParts( {
-				protocol: protocol || window.location.protocol,
-				hostname: hostname || window.location.hostname,
-				port: port || window.location.port,
-				pathname: newPathname,
-				search,
-			} );
+			try {
+				// Get an absolute URL from the original URL, the modified path, and some defaults.
+				const absoluteUrl = getUrlFromParts( {
+					protocol: protocol || window.location.protocol,
+					hostname: hostname || window.location.hostname,
+					port: port || window.location.port,
+					pathname: newPathname,
+					search,
+				} );
 
-			// Format the absolute URL down to the original URL type.
-			return format( absoluteUrl, urlType );
+				// Format the absolute URL down to the original URL type.
+				return format( absoluteUrl, urlType );
+			} catch {
+				return null;
+			}
 		}
 	}
 
