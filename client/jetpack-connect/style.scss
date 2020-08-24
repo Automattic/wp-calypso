@@ -889,20 +889,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
-	.jetpack-connect__back-button,
-	.jetpack-connect__skip-button .button {
+	.jetpack-connect__back-button {
 		color: var( --color-neutral-20 );
 		border-bottom-color: var( --color-neutral-70 );
 
 		&:hover,
 		&:focus {
 			color: var( --color-primary-20 );
-		}
-	}
-
-	.jetpack-connect__skip-button .button {
-		&:focus {
-			box-shadow: 0 0 0 transparent;
 		}
 	}
 
@@ -1206,16 +1199,6 @@ body.is-section-jetpack-connect .layout {
 		.wpcom-site__logo {
 			display: none;
 		}
-	}
-}
-
-.jetpack-connect__skip-button {
-	text-align: center;
-	margin: 17px 0;
-
-	.button .gridicon {
-		padding-left: 4px;
-		margin-right: -5px;
 	}
 }
 
