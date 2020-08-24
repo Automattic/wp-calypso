@@ -16,18 +16,34 @@ export function preventWidows( text, wordsToKeep = 2 ) {
 
 const reverseSpaceRegex = /\s+(\S*)$/;
 
+/**
+ * The hulper function to preventWidows that calls itself rucursively searching for spaces to substitute with
+ * non-breaking spaces.
+ *
+ * @param {string|@i18n-calypso/TranslateResult} part The section of the content to search, a string or a component
+ *     or an array of strings and components
+ * @param {number} spacesToSubstitute The number of spaces to substitute with non-breaking spaces. This is one less than the preventWidows wordsToKeep
+ * @returns object Contains two keys `part` the possibly modified `part` parameter passed in, and `substituted` the number of spaces substituted.
+ */
 function preventWidowsInPart( part, spacesToSubstitute ) {
 	let substituted = 0;
 
 	if ( 'string' === typeof part ) {
 		let text = part;
+		// If the part is a string, work from the right looking for spaces
+		// TODO Work out if we can tell that this is a RTL language, and if it's appropriate to join words in this way
 		while ( substituted < spacesToSubstitute && text.match( reverseSpaceRegex ) ) {
 			text = text.replace( reverseSpaceRegex, '\xA0$1' ); //
 			substituted++;
 		}
+		// Return the modified string and the number of spaces substituted
 		return { part: text, substituted };
 	}
 
+	/* If we're called with an array construct a copy of the array by calling
+	 * ourself on each element until we have substituted enough spaces. Then
+	 * concatentate the rest of the array
+	 */
 	if ( Array.isArray( part ) ) {
 		let elements = [];
 		let idx = part.length - 1;
@@ -41,6 +57,13 @@ function preventWidowsInPart( part, spacesToSubstitute ) {
 		return { part: elements, substituted };
 	}
 
+	/* If we're called with a component, and it has children
+	 * then call ourself with the value of the children prop
+	 * (an array that will be handled above)
+	 *
+	 * Then return a cloned component with the possibly modified
+	 * children, along with the tally of substituted spaces.
+	 */
 	if ( React.isValidElement( part ) && part.props.children ) {
 		const result = preventWidowsInPart( part.props.children, spacesToSubstitute );
 		if ( result.substituted > 0 ) {
@@ -52,6 +75,6 @@ function preventWidowsInPart( part, spacesToSubstitute ) {
 		return { part, substituted };
 	}
 
-	// Shouldn't get here, but just in case! Should this throw an exception?
+	// For anything else e.g. an element without children, there's nothing to do.
 	return { part, substituted };
 }
