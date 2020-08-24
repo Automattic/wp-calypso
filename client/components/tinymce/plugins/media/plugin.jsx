@@ -17,13 +17,12 @@ import * as MediaConstants from 'lib/media/constants';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
 import MediaMarkup from 'post-editor/media-modal/markup';
-import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
 import config from 'config';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/editor/actions';
 import { unblockSave } from 'state/editor/save-blockers/actions';
 import { getEditorRawContent, isEditorSaveBlocked } from 'state/editor/selectors';
@@ -34,6 +33,8 @@ import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/
 import { fetchMediaItem } from 'state/media/thunks';
 import getMediaItem from 'state/selectors/get-media-item';
 
+import getMedia from 'state/selectors/get-media';
+
 /**
  * Module variables
  */
@@ -42,6 +43,27 @@ const SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ];
 
 let lastDirtyImage = null,
 	numOfImagesToUpdate = null;
+
+const createMediaChangesListener = ( store, callback ) => {
+	let previousMediaReference, currentMediaReference;
+
+	return () => {
+		const siteId = getSelectedSiteId( store.getState() );
+
+		if ( ! siteId ) {
+			return;
+		}
+
+		previousMediaReference = currentMediaReference;
+		currentMediaReference = getMedia( store.getState(), siteId );
+
+		if ( previousMediaReference === currentMediaReference ) {
+			return;
+		}
+
+		callback();
+	};
+};
 
 function mediaButton( editor ) {
 	const store = editor.getParam( 'redux_store' );
@@ -54,6 +76,7 @@ function mediaButton( editor ) {
 
 	let nodes = {};
 	let updateMedia; // eslint-disable-line
+	let unsubscribeFromReduxStore;
 
 	const getSelectedSiteFromState = () => getSelectedSite( getState() );
 
@@ -878,7 +901,8 @@ function mediaButton( editor ) {
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
 	editor.on( 'init', function () {
-		MediaStore.on( 'change', updateMedia );
+		unsubscribeFromReduxStore = store.subscribe( createMediaChangesListener( store, updateMedia ) );
+
 		editor.getDoc().addEventListener( 'load', resizeOnImageLoad, true );
 		editor.dom.bind( editor.getDoc(), 'dragstart dragend', hideDropZoneOnDrag );
 		editor.selection.selectorChanged( '.wp-caption', removeEmptyCaptions );
@@ -897,7 +921,7 @@ function mediaButton( editor ) {
 		} );
 		nodes = {};
 
-		MediaStore.off( 'change', updateMedia );
+		unsubscribeFromReduxStore();
 		editor.getDoc().removeEventListener( 'load', resizeOnImageLoad );
 	} );
 
