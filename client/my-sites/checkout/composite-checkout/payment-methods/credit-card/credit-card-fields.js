@@ -100,12 +100,14 @@ export default function CreditCardFields() {
 		},
 	};
 
+	const isLoaded = shouldShowContactFields ? true : isStripeFullyLoaded;
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<StripeFields className="credit-card-form-fields">
-			{ ! isStripeFullyLoaded && <LoadingFields /> }
+			{ ! isLoaded && <LoadingFields /> }
 
-			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
+			<CreditCardFieldsWrapper isLoaded={ isLoaded }>
 				<CreditCardField
 					id="cardholder-name"
 					type="Text"
