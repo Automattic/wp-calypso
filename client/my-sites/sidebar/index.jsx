@@ -103,7 +103,6 @@ export class MySitesSidebar extends Component {
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 	};
-	s;
 
 	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
 
@@ -801,7 +800,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! site || ! site.options ) {
+		if ( ! site?.options?.admin_url ) {
 			return null;
 		}
 
@@ -810,12 +809,16 @@ export class MySitesSidebar extends Component {
 		if ( this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip ) {
 			const urlParts = getUrlParts( site.options.admin_url + 'admin.php' );
 			delete urlParts.search;
-			adminUrl = getUrlFromParts( {
-				...urlParts,
-				protocol: urlParts.protocol || 'https:',
-				searchParams: new URLSearchParams( { page: 'jetpack' } ),
-				hash: '/my-plan',
-			} ).href;
+			try {
+				adminUrl = getUrlFromParts( {
+					...urlParts,
+					protocol: urlParts.protocol || 'https:',
+					searchParams: new URLSearchParams( { page: 'jetpack' } ),
+					hash: '/my-plan',
+				} ).href;
+			} catch ( error ) {
+				return null;
+			}
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
