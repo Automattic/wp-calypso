@@ -10,6 +10,30 @@ import QueryManager from '../';
 import PaginatedQueryKey from './key';
 import { DEFAULT_PAGINATED_QUERY, PAGINATION_QUERY_KEYS } from './constants';
 
+const pageCache = new WeakMap();
+
+/*
+ * Compute paginated slices of the `items` array, with memoization
+ */
+function getPaginatedItems( items, start, count ) {
+	// retrieve cache for the `items` array, create a new record if doesn't exist
+	let itemsCache = pageCache.get( items );
+	if ( ! itemsCache ) {
+		itemsCache = new Map();
+		pageCache.set( items, itemsCache );
+	}
+
+	// cache the computed page slices
+	const pageKey = `${ start }/${ count }`;
+	let pageResult = itemsCache.get( pageKey );
+	if ( ! pageResult ) {
+		pageResult = items.slice( start, start + count );
+		itemsCache.set( pageKey, pageResult );
+	}
+
+	return pageResult;
+}
+
 /**
  * PaginatedQueryManager manages paginated data which can be queried and
  * change over time
@@ -26,13 +50,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @returns {boolean}       Whether query contains pagination key
 	 */
 	static hasQueryPaginationKeys( query ) {
-		if ( ! query ) {
-			return false;
-		}
-
-		return PAGINATION_QUERY_KEYS.some( ( key ) => {
-			return query.hasOwnProperty( key );
-		} );
+		return !! query && PAGINATION_QUERY_KEYS.some( ( key ) => query.hasOwnProperty( key ) );
 	}
 
 	/**
@@ -59,7 +77,7 @@ export default class PaginatedQueryManager extends QueryManager {
 		const perPage = query.number || this.constructor.DefaultQuery.number;
 		const startOffset = ( page - 1 ) * perPage;
 
-		return dataIgnoringPage.slice( startOffset, startOffset + perPage );
+		return getPaginatedItems( dataIgnoringPage, startOffset, perPage );
 	}
 
 	/**
