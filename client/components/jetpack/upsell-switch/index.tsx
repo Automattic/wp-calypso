@@ -121,15 +121,26 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 	}, [ uiState, isRequesting, state ] );
 
 	useEffect( () => {
-		// Show the expected content only if the state is distinct to unavailable
-		// (active, inactive, provisioning) or if the site is Atomic
-		if (
-			UI_STATE_LOADED === uiState &&
-			! atomicSite &&
-			( ! state || state === 'unavailable' || ! hasProduct )
-		) {
-			setUpsell( true );
+		// Don't show an upsell until the page is loaded
+		if ( UI_STATE_LOADED !== uiState ) {
+			setUpsell( false );
+			return;
 		}
+
+		// Don't show an upsell if this site already has the product in question
+		if ( hasProduct ) {
+			setUpsell( false );
+			return;
+		}
+
+		// Don't show an upsell if this is an Atomic site
+		if ( atomicSite ) {
+			setUpsell( false );
+			return;
+		}
+
+		// Only show an upsell if the state is 'unavailable'
+		setUpsell( state === 'unavailable' );
 	}, [ uiState, atomicSite, hasProduct, state ] );
 
 	if ( UI_STATE_LOADED !== uiState ) {
