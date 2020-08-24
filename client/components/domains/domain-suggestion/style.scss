@@ -259,7 +259,7 @@
 body.is-section-signup.is-white-signup {
 	.featured-domain-suggestions {
 		.domain-registration-suggestion__title {
-			font-size: 1.625rem;
+			font-size: $font-title-medium;
 		}
 	}
 
@@ -286,14 +286,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		&:not( .featured-domain-suggestion ) {
-
-			.domain-suggestion__content {
-				@include breakpoint-deprecated( '>660px' ) {
-					&.domain-suggestion__content-domain-copy-test {
-						justify-content: space-between;
-					}
-				}
-			}
 
 			.domain-registration-suggestion__domain-title {
 				line-height: 3rem;
@@ -330,28 +322,16 @@ body.is-section-signup.is-white-signup {
 				@include break-mobile {
 					background: var( --color-primary-0 );
 					box-shadow: 0 0 0 1px var( --color-primary-40 );
-
-					.domain-suggestion__action:not( .is-borderless ) {
-						border-radius: 4px;
-						display: block;
-						line-height: 17px;
-						padding: 11px 24px 10px;
-					}
-
-					.domain-product-price {
-						display: none;
-					}
 				}
 			}
 
-			&:not( .domain-transfer-suggestion ) {
-				.domain-suggestion__action {
-					@include break-mobile {
-						display: none;
-					}
-				}
+			.domain-suggestion__action:not( .is-borderless ) {
+				border-radius: 4px;
+				line-height: 17px;
+				padding-top: 11px;
+				padding-bottom: 10px;
 			}
-	
+
 			&.domain-transfer-suggestion {
 				$cod-grey: #2b2d2f;
 
