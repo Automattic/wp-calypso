@@ -32,6 +32,7 @@ import Gridicon from 'components/gridicon';
 import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
 import { fetchMediaItem } from 'state/media/thunks';
 import getMediaItem from 'state/selectors/get-media-item';
+
 import getMedia from 'state/selectors/get-media';
 
 /**
@@ -42,6 +43,27 @@ const SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ];
 
 let lastDirtyImage = null,
 	numOfImagesToUpdate = null;
+
+const createMediaChangesListener = ( store, callback ) => {
+	let previousMediaReference, currentMediaReference;
+
+	return () => {
+		const siteId = getSelectedSiteId( store.getState() );
+
+		if ( ! siteId ) {
+			return;
+		}
+
+		previousMediaReference = currentMediaReference;
+		currentMediaReference = getMedia( store.getState(), siteId );
+
+		if ( previousMediaReference === currentMediaReference ) {
+			return;
+		}
+
+		callback();
+	};
+};
 
 function mediaButton( editor ) {
 	const store = editor.getParam( 'redux_store' );
@@ -55,8 +77,6 @@ function mediaButton( editor ) {
 	let nodes = {};
 	let updateMedia; // eslint-disable-line
 	let unsubscribeFromReduxStore;
-	let previousMediaReference;
-	let currentMediaReference;
 
 	const getSelectedSiteFromState = () => getSelectedSite( getState() );
 
@@ -881,19 +901,8 @@ function mediaButton( editor ) {
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
 	editor.on( 'init', function () {
-		unsubscribeFromReduxStore = store.subscribe( () => {
-			const siteId = getSelectedSiteId( store.getState() );
-			if ( ! siteId ) {
-				return;
-			}
+		unsubscribeFromReduxStore = store.subscribe( createMediaChangesListener( store, updateMedia ) );
 
-			previousMediaReference = currentMediaReference;
-			currentMediaReference = getMedia( store.getState(), siteId );
-
-			if ( previousMediaReference !== currentMediaReference ) {
-				updateMedia();
-			}
-		} );
 		editor.getDoc().addEventListener( 'load', resizeOnImageLoad, true );
 		editor.dom.bind( editor.getDoc(), 'dragstart dragend', hideDropZoneOnDrag );
 		editor.selection.selectorChanged( '.wp-caption', removeEmptyCaptions );
