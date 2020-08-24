@@ -317,21 +317,17 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		let blocksByTemplateSlug;
 		const isCurrentPreview = templatesList[ 0 ]?.slug === 'current';
 
-		if ( isCurrentPreview ) {
-			blocksByTemplateSlug = {
-				current: this.props.currentBlocks,
-			};
-		} else {
-			// The raw `templates` prop is not filtered to remove Templates that
-			// contain missing Blocks. Therefore we compare with the keys of the
-			// filtered templates from `getBlocksByTemplateSlugs()` and filter this
-			// list to match. This ensures that the list of Template thumbnails is
-			// filtered so that it does not include Templates that have missing Blocks.
-			blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
-		}
+		const blocksByTemplateSlug = isCurrentPreview
+			? { current: this.props.currentBlocks }
+			: // The raw `templates` prop is not filtered to remove Templates that
+			  // contain missing Blocks. Therefore we compare with the keys of the
+			  // filtered templates from `getBlocksByTemplateSlugs()` and filter this
+			  // list to match. This ensures that the list of Template thumbnails is
+			  // filtered so that it does not include Templates that have missing Blocks.
+			  this.getBlocksByTemplateSlugs( this.props.templates );
+
 		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
 		const filterOutTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
