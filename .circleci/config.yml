@@ -770,6 +770,7 @@ jobs:
 
             yarn run test-desktop:e2e
       - run:
+          when: always
           name: Persist Mac Executable
           command: |
             # If this isn't a full artifact build, ensure to persist the built application for inspection
@@ -830,6 +831,7 @@ jobs:
 
             yarn run test-desktop:e2e
       - run:
+          when: always
           name: Persist Linux Executable
           command: |
             # If this isn't a full artifact build, ensure to persist the built application for inspection
