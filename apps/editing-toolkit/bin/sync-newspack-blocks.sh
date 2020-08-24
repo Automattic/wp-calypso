@@ -51,8 +51,8 @@ then
     exit 1
 fi
 
-TARGET=./full-site-editing-plugin/newspack-blocks/synced-newspack-blocks
-ENTRY=./full-site-editing-plugin/newspack-blocks/index.php
+TARGET=./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks
+ENTRY=./editing-toolkit-plugin/newspack-blocks/index.php
 
 if [[ ( "$MODE" != "path" ) && ( "$MODE" != "npm" ) ]];
 then
@@ -106,7 +106,7 @@ if [ ! -d "$CODE" ] ; then
 	exit 1
 fi
 
-echo Syncing files to FSE…
+echo Syncing files to editing toolkit plugin...
 
 # Remove the target dir so that we start on a clean slate.
 rm -rf "$TARGET"
