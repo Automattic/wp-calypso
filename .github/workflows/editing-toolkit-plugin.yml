@@ -199,4 +199,4 @@ jobs:
 
     # This will fail if the textdomain has not been changed to "full-site-editing", which indicates an issue with the sync or build scripts.
     - name: Execute phpcs on newspack-blocks PHP files.
-      run: ./vendor/bin/phpcs --standard=apps/full-site-editing/bin/newspack-block-sync-phpcs.xml
+      run: ./vendor/bin/phpcs --standard=apps/editing-toolkit/bin/newspack-block-sync-phpcs.xml
