@@ -13,6 +13,7 @@ import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import ProductCard from '../product-card';
 import FormattedHeader from 'components/formatted-header';
 import { getPlan } from 'lib/plans';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
@@ -36,14 +37,20 @@ const ProductsColumn = ( {
 	siteId,
 }: ProductsColumnType ) => {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
+
+	// Plan
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 
+	// Owned products (plans are filtered out)
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) ) || [];
+	const ownedProducts = siteProducts
+		.map( ( { productSlug } ) => productSlug )
+		.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) );
+
+	// Features included in plan
 	const includedInPlanProducts: string[] =
 		( currentPlan && getPlan( currentPlan )?.getHiddenFeatures() ) || [];
-
-	const ownedProducts = siteProducts.map( ( { productSlug } ) => productSlug );
 
 	// The list of displayed products comes from a concatenation of:
 	// - Owned products from a direct purchase.
