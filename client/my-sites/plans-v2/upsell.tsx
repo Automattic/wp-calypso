@@ -113,27 +113,29 @@ const UpsellComponent = ( {
 				</p>
 			</div>
 
-			<JetpackProductCard
-				iconSlug={ upsellProduct.iconSlug }
-				productName={ upsellProduct.displayName }
-				subheadline={ upsellProduct.tagline }
-				description={ upsellProduct.description }
-				currencyCode={ currencyCode }
-				billingTimeFrame={ durationToText( upsellProduct.term ) }
-				buttonLabel={ translate( 'Yes, add %s', {
-					args: [ upsellProductName ],
-					comment: '%s refers to a name of a product such as Jetpack Backup or Jetpack Scan',
-				} ) }
-				features={ { items: [] } }
-				discountedPrice={ discountedPrice }
-				originalPrice={ originalPrice }
-				onButtonClick={ onPurchaseBothProducts }
-				cancelLabel={ translate( 'No, I do not want %s', {
-					args: [ upsellProductName ],
-					comment: '%s refers to a name of a product such as Jetpack Backup or Jetpack Scan',
-				} ) }
-				onCancelClick={ onPurchaseSingleProduct }
-			/>
+			<div className="upsell__product-card">
+				<JetpackProductCard
+					iconSlug={ upsellProduct.iconSlug }
+					productName={ upsellProduct.displayName }
+					subheadline={ upsellProduct.tagline }
+					description={ upsellProduct.description }
+					currencyCode={ currencyCode }
+					billingTimeFrame={ durationToText( upsellProduct.term ) }
+					buttonLabel={ translate( 'Yes, add %s', {
+						args: [ upsellProductName ],
+						comment: '%s refers to a name of a product such as Jetpack Backup or Jetpack Scan',
+					} ) }
+					features={ { items: [] } }
+					discountedPrice={ discountedPrice }
+					originalPrice={ originalPrice }
+					onButtonClick={ onPurchaseBothProducts }
+					cancelLabel={ translate( 'No, I do not want %s', {
+						args: [ upsellProductName ],
+						comment: '%s refers to a name of a product such as Jetpack Backup or Jetpack Scan',
+					} ) }
+					onCancelClick={ onPurchaseSingleProduct }
+				/>
+			</div>
 		</Main>
 	);
 };
