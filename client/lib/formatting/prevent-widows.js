@@ -17,7 +17,7 @@ export function preventWidows( text, wordsToKeep = 2 ) {
 const reverseSpaceRegex = /\s+(\S*)$/;
 
 /**
- * The hulper function to preventWidows that calls itself rucursively searching for spaces to substitute with
+ * The helper function to preventWidows that calls itself recursively searching for spaces to substitute with
  * non-breaking spaces.
  *
  * @param {string|@i18n-calypso/TranslateResult} part The section of the content to search, a string or a component
