@@ -22,7 +22,7 @@ class SearchStreamHeader extends Component {
 		selected: PropTypes.oneOf( values( SEARCH_TYPES ) ),
 		onSelection: PropTypes.func,
 		showPostsColumn: PropTypes.bool,
-		showSitesColumn: PropTypes.bool
+		showSitesColumn: PropTypes.bool,
 	};
 	static defaultProps = {
 		onSelection: noop,
@@ -38,12 +38,12 @@ class SearchStreamHeader extends Component {
 		if ( wideDisplay ) {
 			return (
 				<ul className="search-stream__headers">
-					{ showPostsColumn && 
+					{ showPostsColumn && (
 						<li className="search-stream__post-header">{ translate( 'Posts' ) }</li>
-					}
-					{ showSitesColumn &&
+					) }
+					{ showSitesColumn && (
 						<li className="search-stream__site-header">{ translate( 'Sites' ) }</li>
-					}
+					) }
 				</ul>
 			);
 		}

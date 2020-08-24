@@ -109,7 +109,15 @@ class SearchStream extends React.Component {
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl, showPostsColumn, showSitesColumn } = this.props;
+		const {
+			query,
+			translate,
+			searchType,
+			suggestions,
+			readerAliasedFollowFeedUrl,
+			showPostsColumn,
+			showSitesColumn,
+		} = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
@@ -175,7 +183,7 @@ class SearchStream extends React.Component {
 							initialValue={ query || '' }
 							value={ query || '' }
 						/>
-						{ query && (showPostsColumn || showSitesColumn) && (
+						{ query && ( showPostsColumn || showSitesColumn ) && (
 							<SegmentedControl compact className="search-stream__sort-picker">
 								<SegmentedControl.Item
 									selected={ sortOrder !== 'date' }
@@ -208,7 +216,7 @@ class SearchStream extends React.Component {
 							/>
 						</div>
 					) }
-					{ query && (showPostsColumn || showSitesColumn) && (
+					{ query && ( showPostsColumn || showSitesColumn ) && (
 						<SearchStreamHeader
 							selected={ searchType }
 							onSelection={ this.handleSearchTypeSelection }
@@ -226,7 +234,7 @@ class SearchStream extends React.Component {
 							<div className="search-stream__post-results">
 								<PostResults { ...this.props } />
 							</div>
-						)}
+						) }
 						{ query && showSitesColumn && (
 							<div className="search-stream__site-results">
 								<SiteResults
@@ -236,9 +244,9 @@ class SearchStream extends React.Component {
 								/>
 							</div>
 						) }
-						{ query && ! (showPostsColumn || showSitesColumn) &&
+						{ query && ! ( showPostsColumn || showSitesColumn ) && (
 							<EmptyContent query={ query } />
-						}
+						) }
 					</div>
 				) }
 				{ ! wideDisplay && (
@@ -274,12 +282,14 @@ export default connect( ( state, ownProps ) => {
 	const siteResults = getReaderFeedsForQuery( state, {
 		query: ownProps.query,
 		excludeFollowed: false,
-		sort: pickSort(ownProps.sort),
-	} )
+		sort: pickSort( ownProps.sort ),
+	} );
 
 	return {
 		showSitesColumn: ! siteResults || siteResults.length > 0,
-		showPostsColumn: ! stream || stream.isRequesting || stream.items.length > 0 || ! stream.lastPage,
+		showPostsColumn:
+			! stream || stream.isRequesting || stream.items.length > 0 || ! stream.lastPage,
 		readerAliasedFollowFeedUrl:
 			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
-} } )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
+	};
+} )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );

@@ -203,7 +203,7 @@
 	flex: 1 1 auto;
 }
 
-.search-stream .search-stream__site-header:nth-child(2) {
+.search-stream .search-stream__site-header:nth-child( 2 ) {
 	max-width: 265px;
 	margin-left: 40px;
 }
@@ -266,7 +266,7 @@
 
 // Site results
 .search-stream .search-stream__site-results {
-	&:nth-child(2) {
+	&:nth-child( 2 ) {
 		width: 265px;
 		margin-left: 40px;
 	}
